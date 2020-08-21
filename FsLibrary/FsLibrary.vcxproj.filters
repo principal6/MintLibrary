@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\CommonDefinitions.h" />
+    <ClInclude Include="..\Math\Float2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\Float3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\Float4.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathCommon.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Container\StaticArray.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Platform\IWindow.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Platform\WindowsWindow.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\Int2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\File\BinaryFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\File\IFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\File\XmlFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\File\FileUtil.hpp">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="..\File\FileUtil.h">
+      <Filter>File</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Math">
+      <UniqueIdentifier>{d7c345a4-8f4b-4aa1-8290-d21f011c76e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Container">
+      <UniqueIdentifier>{b870a958-89fa-4c2c-8351-042cd7b9e8c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{58def46a-5b59-4e9a-b331-a2214bf2d38f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{bd3fe4ca-2529-4d8d-9d3a-034a8374b72f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Platform\WindowsWindow.cpp">
+      <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp" />
+    <ClCompile Include="..\File\BinaryFile.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="..\File\XmlFile.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
