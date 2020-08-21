@@ -57,8 +57,10 @@ namespace fs
 				RETURN_FAIL(CreationError::NullptrString);
 			}
 
-			const COLORREF backgroundColor = RGB(static_cast<uint8>(creationData._bgColor[0] * 255.0f),
-				static_cast<uint8>(creationData._bgColor[1] * 255.0f), static_cast<uint8>(creationData._bgColor[2] * 255.0f));
+			const COLORREF backgroundColor = RGB(
+				static_cast<uint8>(creationData._bgColor[0] * 255.0f),
+				static_cast<uint8>(creationData._bgColor[1] * 255.0f), 
+				static_cast<uint8>(creationData._bgColor[2] * 255.0f));
 
 			WNDCLASSEXW windowClass{};
 			windowClass.cbClsExtra = 0;
@@ -90,8 +92,8 @@ namespace fs
 				break;
 			}
 
-			const int32 x = (creationData._position.x() == kInt16Min) ? CW_USEDEFAULT : creationData._position.x();
-			const int32 y = (creationData._position.y() == kInt16Min) ? CW_USEDEFAULT : creationData._position.y();
+			const int32 x = (creationData._position.x() == kInt32Min) ? CW_USEDEFAULT : creationData._position.x();
+			const int32 y = (creationData._position.y() == kInt32Min) ? CW_USEDEFAULT : creationData._position.y();
 			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, creationData._title, windowStyle, x, y,
 				creationData._size.x(), creationData._size.y(), nullptr, nullptr, _hInstance, nullptr);
 			if (_hWnd == nullptr)
@@ -101,8 +103,7 @@ namespace fs
 
 			RECT rect;
 			GetWindowRect(_hWnd, &rect);
-			_creationData._position.x(static_cast<int16>(rect.left));
-			_creationData._position.y(static_cast<int16>(rect.top));
+			_creationData._position.set(rect.left, rect.top);
 
 			ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -122,18 +123,16 @@ namespace fs
 
 		bool WindowsWindow::isRunning() noexcept
 		{
-			MSG msg;
-			if (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
+			if (PeekMessageW(&_msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
 			{
-				if (msg.message == WM_QUIT)
+				if (_msg.message == WM_QUIT)
 				{
 					destroy();
 				}
 
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
+				TranslateMessage(&_msg);
+				DispatchMessageW(&_msg);
 			}
-
 			return __super::isRunning();
 		}
 
