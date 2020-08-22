@@ -29,7 +29,8 @@ namespace fs
 		void								deregisterSpace(const byte* ptr);
 
 	private:
-		bool								isInsideHolder(const byte* ptr, const byte unitCount);
+		bool								canRegister(const byte unitOffset, const byte unitCount, uint32& outAllocationMetaIndex, byte& outAlignmentIndex, byte& outBitMask) const noexcept;
+		bool								canDeregister(const byte* const ptr, const byte unitCount) const noexcept;
 
 	private:
 		StaticArray<byte, MaxUnitCount>		_allocationSizeArray;

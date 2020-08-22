@@ -73,7 +73,7 @@ namespace fs
 			FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
 			return _f[index];
 		}
-		float			operator[](const uint32 index) const noexcept
+		const float&	operator[](const uint32 index) const noexcept
 		{
 			FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
 			return _f[index];

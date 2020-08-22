@@ -62,12 +62,12 @@ namespace fs
 		}
 
 	public:
-		int32& operator[](const uint32 index) noexcept
+		int32&			operator[](const uint32 index) noexcept
 		{
 			FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
 			return _i[index];
 		}
-		int32			operator[](const uint32 index) const noexcept
+		const int32&	operator[](const uint32 index) const noexcept
 		{
 			FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
 			return _i[index];

@@ -80,7 +80,7 @@ namespace fs
 			FS_ASSERT("김장원", index < maxSize, "범위를 벗어난 접근입니다.");
 			return _data[index];
 		}
-		constexpr T				operator[](const uint32 index) const noexcept
+		constexpr const T&		operator[](const uint32 index) const noexcept
 		{
 			FS_ASSERT("김장원", index < maxSize, "범위를 벗어난 접근입니다.");
 			return _data[index];
