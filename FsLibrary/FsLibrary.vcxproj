@@ -18,6 +18,28 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CommonDefinitions.h" />
+    <ClInclude Include="Container\StaticArray.h" />
+    <ClInclude Include="File\BinaryFile.h" />
+    <ClInclude Include="File\FileUtil.h" />
+    <ClInclude Include="File\FileUtil.hpp" />
+    <ClInclude Include="File\IFile.h" />
+    <ClInclude Include="File\XmlFile.h" />
+    <ClInclude Include="Math\Float2.h" />
+    <ClInclude Include="Math\Float3.h" />
+    <ClInclude Include="Math\Float4.h" />
+    <ClInclude Include="Math\Int2.h" />
+    <ClInclude Include="Math\MathCommon.h" />
+    <ClInclude Include="Platform\IWindow.h" />
+    <ClInclude Include="Platform\WindowsWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="File\BinaryFile.cpp" />
+    <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Platform\WindowsWindow.cpp" />
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -72,17 +94,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)_output\</OutDir>
+    <IntDir>$(SolutionDir)_intermediate\</IntDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)_output\</OutDir>
+    <IntDir>$(SolutionDir)_intermediate\</IntDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)_output\</OutDir>
+    <IntDir>$(SolutionDir)_intermediate\</IntDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)_output\</OutDir>
+    <IntDir>$(SolutionDir)_intermediate\</IntDir>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -142,28 +174,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\CommonDefinitions.h" />
-    <ClInclude Include="..\Container\StaticArray.h" />
-    <ClInclude Include="..\File\BinaryFile.h" />
-    <ClInclude Include="..\File\FileUtil.h" />
-    <ClInclude Include="..\File\FileUtil.hpp" />
-    <ClInclude Include="..\File\IFile.h" />
-    <ClInclude Include="..\File\XmlFile.h" />
-    <ClInclude Include="..\Math\Float2.h" />
-    <ClInclude Include="..\Math\Float3.h" />
-    <ClInclude Include="..\Math\Float4.h" />
-    <ClInclude Include="..\Math\Int2.h" />
-    <ClInclude Include="..\Math\MathCommon.h" />
-    <ClInclude Include="..\Platform\IWindow.h" />
-    <ClInclude Include="..\Platform\WindowsWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\File\BinaryFile.cpp" />
-    <ClCompile Include="..\File\XmlFile.cpp" />
-    <ClCompile Include="..\Platform\WindowsWindow.cpp" />
-    <ClCompile Include="test.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
