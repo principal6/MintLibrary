@@ -56,7 +56,7 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline void StackHolder<UnitByteSize, MaxUnitCount>::deregisterSpace(const byte* ptr)
 	{
-		const uint32 byteOffset = ptr - _byteArray;
+		const uint32 byteOffset = ptr - &_byteArray[0];
 		const uint32 unitOffset = byteOffset / UnitByteSize;
 		byte& unitCount = _allocationSizeArray[unitOffset];
 		if (unitCount == 0)
@@ -82,12 +82,12 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline bool StackHolder<UnitByteSize, MaxUnitCount>::isInsideHolder(const byte* ptr, const byte unitCount)
 	{
-		if (ptr < _byteArray)
+		if (ptr < &_byteArray[0])
 		{
 			return false;
 		}
 
-		const uint32 rawOffset = ptr - _byteArray;
+		const uint32 rawOffset = ptr - &_byteArray[0];
 		if (kRawDataSize <= rawOffset)
 		{
 			return false;
@@ -100,5 +100,4 @@ namespace fs
 
 		return true;
 	}
-
 }

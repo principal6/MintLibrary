@@ -6,6 +6,7 @@
 
 
 #include <CommonDefinitions.h>
+#include <Container/StaticArray.h>
 
 
 namespace fs
@@ -14,32 +15,32 @@ namespace fs
 	class StackHolder final
 	{
 	public:
-									StackHolder();
-									StackHolder(const StackHolder& rhs) = delete;
-									StackHolder(StackHolder&& rhs) = delete;
-									~StackHolder();
+											StackHolder();
+											StackHolder(const StackHolder& rhs) = delete;
+											StackHolder(StackHolder&& rhs) = delete;
+											~StackHolder();
 
 	public:
-		StackHolder&				operator=(const StackHolder& rhs) = delete;
-		StackHolder&				operator=(StackHolder&& rhs) = delete;
+		StackHolder&						operator=(const StackHolder& rhs) = delete;
+		StackHolder&						operator=(StackHolder&& rhs) = delete;
 
 	public:
-		byte*						registerSpace(const byte unitCount);
-		void						deregisterSpace(const byte* ptr);
+		byte*								registerSpace(const byte unitCount);
+		void								deregisterSpace(const byte* ptr);
 
 	private:
-		bool						isInsideHolder(const byte* ptr, const byte unitCount);
+		bool								isInsideHolder(const byte* ptr, const byte unitCount);
 
 	private:
-		byte						_allocationSizeArray[MaxUnitCount];
+		StaticArray<byte, MaxUnitCount>		_allocationSizeArray;
 		
-		static constexpr uint32		kMetaDataSize = (MaxUnitCount / 8) + 1;
+		static constexpr uint32				kMetaDataSize = (MaxUnitCount / 8) + 1;
 		
-		byte						_allocationMeta[kMetaDataSize];
+		StaticArray<byte, kMetaDataSize>	_allocationMeta;
 
-		static constexpr uint32		kRawDataSize = UnitByteSize * MaxUnitCount;
+		static constexpr uint32				kRawDataSize = UnitByteSize * MaxUnitCount;
 
-		byte						_byteArray[kRawDataSize];
+		StaticArray<byte, kRawDataSize>		_byteArray;
 	};
 	
 }

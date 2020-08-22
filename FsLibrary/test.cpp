@@ -47,7 +47,6 @@ int main()
 
 		sh.deregisterSpace(shTestB);
 	}
-	
 #pragma endregion
 
 #pragma region Integer Test
