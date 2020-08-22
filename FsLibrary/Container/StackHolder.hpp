@@ -8,15 +8,18 @@ namespace fs
 {
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline StackHolder<UnitByteSize, MaxUnitCount>::StackHolder()
-		: _allocationSizeArray{}
-		, _allocationMeta{}
-		, _byteArray{}
+		: _allocCountDataArray{}
+		, _allocMetaDataArray{}
+		, _rawByteArray{}
 	{
-		if (MaxUnitCount % 8 != 0)
+		static_assert(0 < UnitByteSize, "UnitByteSize 를 1 이상의 값으로 지정하세요.");
+		static_assert(0 < MaxUnitCount, "MaxUnitCount 를 1 이상의 값으로 지정하세요.");
+
+		if (MaxUnitCount % kBitMaskSize != 0)
 		{
-			const uint32 deleteBitCount = 8 - (MaxUnitCount % 8);
-			const byte deleteBitMask = (static_cast<byte>(pow(2, deleteBitCount)) - 1);
-			_allocationMeta[kMetaDataSize - 1] |= deleteBitMask;
+			const uint32 deleteBitCount = kBitMaskSize - (MaxUnitCount % kBitMaskSize);
+			const BitMaskType deleteBitMask = (static_cast<BitMaskType>(pow(2, deleteBitCount)) - 1);
+			_allocMetaDataArray[kAllocMetaDataCount - 1] |= deleteBitMask;
 		}
 	}
 
@@ -27,22 +30,22 @@ namespace fs
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline byte* StackHolder<UnitByteSize, MaxUnitCount>::registerSpace(const byte unitCount)
+	inline byte* StackHolder<UnitByteSize, MaxUnitCount>::registerSpace(const CountMetaDataType unitCount)
 	{
 		FS_ASSERT("김장원", 0 < unitCount, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
-		FS_ASSERT("김장원", unitCount < 256, "!!! 한번에 할당 가능한 최대 Unit 수는 255 입니다 !!!");
+		FS_ASSERT("김장원", unitCount <= kBitMaskSize, "!!! 한번에 할당 가능한 최대 Unit 수를 넘었습니다 !!!");
 
-		uint32 allocationMetaIndex = 0;
-		byte alignmentIndex = 0;
-		byte bitMask = 0;
-		if (canRegister(0, unitCount, allocationMetaIndex, alignmentIndex, bitMask) == true)
+		uint32 allocMetaDataIndex = 0;
+		uint8 bitOffset = 0;
+		BitMaskType bitMask = 0;
+		if (canRegister(unitCount, allocMetaDataIndex, bitOffset, bitMask) == true)
 		{
 			// 할당 가능 !!!
-			const uint32 unitIndex = (allocationMetaIndex * 8 + alignmentIndex);
-			const uint32 byteAt = unitIndex * UnitByteSize;
-			_allocationSizeArray[unitIndex] = unitCount;
-			_allocationMeta[allocationMetaIndex] |= bitMask;
-			return &_byteArray[byteAt];
+			const uint32 unitIndex = (allocMetaDataIndex * kBitMaskSize + bitOffset);
+			const uint32 byteOffset = unitIndex * UnitByteSize;
+			_allocCountDataArray[unitIndex] = unitCount;
+			_allocMetaDataArray[allocMetaDataIndex] |= bitMask;
+			return &_rawByteArray[byteOffset];
 		}
 		FS_ASSERT("김장원", false, "!!! StackHolder 가 가득 찼습니다 !!! 할당 실패 !!!");
 		return nullptr;
@@ -51,12 +54,18 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline void StackHolder<UnitByteSize, MaxUnitCount>::deregisterSpace(const byte* ptr)
 	{
-		const uint32 byteOffset = ptr - &_byteArray[0];
-		const uint32 unitOffset = byteOffset / UnitByteSize;
-		byte& unitCount = _allocationSizeArray[unitOffset];
+		if (ptr == nullptr)
+		{
+			FS_ASSERT("김장원", false, "!!! nullptr 을 지울 수 없습니다 !!!");
+			return;
+		}
+
+		const uint32 rawByteOffset = ptr - &_rawByteArray[0];
+		const CountMetaDataType allocSizeDataIndex = rawByteOffset / UnitByteSize;
+		CountMetaDataType& unitCount = _allocCountDataArray[allocSizeDataIndex];
 		if (unitCount == 0)
 		{
-			FS_ASSERT("김장원", false, "!!! 할당되지 않은 ptr 를 지울 수 없습니다 !!!");
+			FS_ASSERT("김장원", false, "!!! 할당되지 않은 ptr 을 지울 수 없습니다 !!!");
 			return;
 		}
 
@@ -66,33 +75,33 @@ namespace fs
 			return;
 		}
 
-		const uint32 allocationMetaIndexOffset = unitOffset / 8;
-		const byte bitOffset = unitOffset % 8;
-		const byte bitMask = (static_cast<byte>(pow(2, unitCount)) - 1);
-		const byte bitMaskAligned = ((bitMask << (8 - unitCount)) >> bitOffset);
+		const uint32 allocMetaDataIndex = allocSizeDataIndex / kBitMaskSize;
+		const uint8 bitOffset = allocSizeDataIndex % kBitMaskSize;
+		const BitMaskType bitMask = (static_cast<BitMaskType>(pow(2, unitCount)) - 1);
+		const BitMaskType bitMaskAligned = ((bitMask << (kBitMaskSize - unitCount)) >> bitOffset);
 
-		_allocationMeta[allocationMetaIndexOffset] ^= bitMaskAligned;
+		_allocMetaDataArray[allocMetaDataIndex] ^= bitMaskAligned;
 		unitCount = 0;
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const byte unitOffset, const byte unitCount, uint32& outAllocationMetaIndex, byte& outAlignmentIndex, byte& outBitMask) const noexcept
+	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
 	{
-		const byte bitMask = (static_cast<byte>(pow(2, unitCount)) - 1);
-		for (uint32 allocationMetaIndex = 0; allocationMetaIndex < kMetaDataSize; ++allocationMetaIndex)
+		const BitMaskType bitMaskRightAligned = (static_cast<BitMaskType>(pow(2, unitCount)) - 1);
+		const BitMaskType bitMaskLeftAligned = bitMaskRightAligned << (kBitMaskSize - unitCount);
+		for (uint32 allocMetaDataIndex = 0; allocMetaDataIndex < kAllocMetaDataCount; ++allocMetaDataIndex)
 		{
-			const byte bitMaskPreAligned = bitMask << (8 - unitCount);
-			for (byte alignmentIndex = 0; alignmentIndex <= (8 - unitCount); ++alignmentIndex)
+			for (uint8 bitOffset = 0; bitOffset <= (kBitMaskSize - unitCount); ++bitOffset)
 			{
-				const byte bitMaskAligned = bitMaskPreAligned >> alignmentIndex;
-				const byte maskingResultClean0 = (_allocationMeta[allocationMetaIndex] ^ bitMaskAligned) << alignmentIndex;
-				const byte maskingResultClean1 = maskingResultClean0 >> (8 - unitCount);
-				const byte maskingResult = (maskingResultClean1 << (8 - unitCount)) >> alignmentIndex;
-				if (maskingResult == bitMaskAligned)
+				const BitMaskType offsetBitMask = bitMaskLeftAligned >> bitOffset;
+				const BitMaskType maskingProcess0 = (_allocMetaDataArray[allocMetaDataIndex] ^ offsetBitMask) << bitOffset;
+				const BitMaskType maskingProcess1 = maskingProcess0 >> (kBitMaskSize - unitCount);
+				const BitMaskType maskingResult = (maskingProcess1 << (kBitMaskSize - unitCount)) >> bitOffset;
+				if (maskingResult == offsetBitMask)
 				{
-					outAllocationMetaIndex = allocationMetaIndex;
-					outAlignmentIndex = alignmentIndex;
-					outBitMask = bitMaskAligned;
+					outAllocMetaDataIndex = allocMetaDataIndex;
+					outBitOffset = bitOffset;
+					outBitMask = offsetBitMask;
 					return true;
 				}
 			}
@@ -101,20 +110,21 @@ namespace fs
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const byte unitCount) const noexcept
+	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept
 	{
-		if (ptr < &_byteArray[0])
+		if (ptr < &_rawByteArray[0])
 		{
 			return false;
 		}
 
-		const uint32 rawOffset = ptr - &_byteArray[0];
-		if (kRawDataSize <= rawOffset)
+		const uint32 rawByteOffset = ptr - &_rawByteArray[0];
+		if (kRawByteCount <= rawByteOffset)
 		{
 			return false;
 		}
 
-		if (kRawDataSize < rawOffset + unitCount * UnitByteSize)
+		const uint32 unitByteCount = unitCount * UnitByteSize;
+		if (kRawByteCount < rawByteOffset + unitByteCount)
 		{
 			return false;
 		}

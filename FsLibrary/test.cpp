@@ -3,6 +3,9 @@
 #include <Container/StackHolder.hpp>
 
 
+//#define FS_TEST_FAILURES
+
+
 int main()
 {
 	using namespace fs;
@@ -47,17 +50,22 @@ int main()
 
 		sh.deregisterSpace(shTestB);
 	}
+#ifdef FS_TEST_FAILURES
+	{
+		StackHolder<0, 0> shA; // THIS MUST FAIL!
+		StackHolder<1, 0> shB; // THIS MUST FAIL!
+		StackHolder<0, 1> shC; // THIS MUST FAIL!
+	}
 	{
 		StackHolder<32, 16> sh;
 
-		byte* shTestA = sh.registerSpace(8);
+		byte* shTestA = sh.registerSpace(16);
 		memcpy((char*)(shTestA), "01_abcd_", 8);
 
-		byte* shTestB = sh.registerSpace(8);
-		memcpy((char*)(shTestB), "02_efgh_", 8);
-
-		sh.deregisterSpace(shTestB);
+		byte* shTestB = sh.registerSpace(8); // THIS MUST FAIL!
+		sh.deregisterSpace(shTestB); // THIS MUST FAIL!
 	}
+#endif
 #pragma endregion
 
 #pragma region Integer Test

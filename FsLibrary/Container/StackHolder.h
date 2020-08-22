@@ -14,36 +14,42 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	class StackHolder final
 	{
-	public:
-											StackHolder();
-											StackHolder(const StackHolder& rhs) = delete;
-											StackHolder(StackHolder&& rhs) = delete;
-											~StackHolder();
+		using BitMaskType								= uint16;
+		using CountMetaDataType							= uint8;
 
 	public:
-		StackHolder&						operator=(const StackHolder& rhs) = delete;
-		StackHolder&						operator=(StackHolder&& rhs) = delete;
+														StackHolder();
+														StackHolder(const StackHolder& rhs) = delete;
+														StackHolder(StackHolder&& rhs) = delete;
+														~StackHolder();
 
 	public:
-		byte*								registerSpace(const byte unitCount);
-		void								deregisterSpace(const byte* ptr);
+		StackHolder&									operator=(const StackHolder& rhs) = delete;
+		StackHolder&									operator=(StackHolder&& rhs) = delete;
+
+	public:
+		byte*											registerSpace(const CountMetaDataType unitCount);
+		void											deregisterSpace(const byte* ptr);
 
 	private:
-		bool								canRegister(const byte unitOffset, const byte unitCount, uint32& outAllocationMetaIndex, byte& outAlignmentIndex, byte& outBitMask) const noexcept;
-		bool								canDeregister(const byte* const ptr, const byte unitCount) const noexcept;
+		bool											canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
+		bool											canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
 
 	private:
-		StaticArray<byte, MaxUnitCount>		_allocationSizeArray;
-		
-		static constexpr uint32				kMetaDataSize = ((MaxUnitCount - 1) / 8) + 1;
-		
-		StaticArray<byte, kMetaDataSize>	_allocationMeta;
+		static constexpr uint32							kBitPerByte = 8;
+		static_assert(kBitPerByte == 8, "!!! Bit per Byte 는 반드시 8이어야 합니다 !!!");
+		static constexpr uint32							kBitMaskSize = sizeof(BitMaskType) * kBitPerByte;
 
-		static constexpr uint32				kRawDataSize = UnitByteSize * MaxUnitCount;
+		StaticArray<CountMetaDataType, MaxUnitCount>	_allocCountDataArray;
+		
+		static constexpr uint32							kAllocMetaDataCount = ((MaxUnitCount - 1) / kBitMaskSize) + 1;
+		
+		StaticArray<BitMaskType, kAllocMetaDataCount>	_allocMetaDataArray;
 
-		StaticArray<byte, kRawDataSize>		_byteArray;
+		static constexpr uint32							kRawByteCount = UnitByteSize * MaxUnitCount;
+
+		StaticArray<byte, kRawByteCount>				_rawByteArray;
 	};
-	
 }
 
 
