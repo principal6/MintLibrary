@@ -34,7 +34,7 @@ namespace fs
 	private:
 		StaticArray<byte, MaxUnitCount>		_allocationSizeArray;
 		
-		static constexpr uint32				kMetaDataSize = (MaxUnitCount / 8) + 1;
+		static constexpr uint32				kMetaDataSize = ((MaxUnitCount - 1) / 8) + 1;
 		
 		StaticArray<byte, kMetaDataSize>	_allocationMeta;
 

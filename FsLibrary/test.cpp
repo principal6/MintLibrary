@@ -47,6 +47,17 @@ int main()
 
 		sh.deregisterSpace(shTestB);
 	}
+	{
+		StackHolder<32, 16> sh;
+
+		byte* shTestA = sh.registerSpace(8);
+		memcpy((char*)(shTestA), "01_abcd_", 8);
+
+		byte* shTestB = sh.registerSpace(8);
+		memcpy((char*)(shTestB), "02_efgh_", 8);
+
+		sh.deregisterSpace(shTestB);
+	}
 #pragma endregion
 
 #pragma region Integer Test

@@ -12,9 +12,12 @@ namespace fs
 		, _allocationMeta{}
 		, _byteArray{}
 	{
-		const uint32 deleteBitCount = 8 - (MaxUnitCount % 8);
-		const byte deleteBitMask = (static_cast<byte>(pow(2, deleteBitCount)) - 1);
-		_allocationMeta[kMetaDataSize - 1] |= deleteBitMask;
+		if (MaxUnitCount % 8 != 0)
+		{
+			const uint32 deleteBitCount = 8 - (MaxUnitCount % 8);
+			const byte deleteBitMask = (static_cast<byte>(pow(2, deleteBitCount)) - 1);
+			_allocationMeta[kMetaDataSize - 1] |= deleteBitMask;
+		}
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
@@ -32,7 +35,9 @@ namespace fs
 		for (uint32 allocationMetaIndex = 0; allocationMetaIndex < kMetaDataSize; ++allocationMetaIndex)
 		{
 			const byte bitMaskPreAligned = bitMask << (8 - unitCount);
-			for (byte alignmentIndex = 0; alignmentIndex < (8 - unitCount); ++alignmentIndex)
+			
+			byte alignmentIndex = 0;
+			do
 			{
 				const byte bitMaskAligned = bitMaskPreAligned >> alignmentIndex;
 				const byte maskingResultClean0 = (_allocationMeta[allocationMetaIndex] ^ bitMaskAligned) << alignmentIndex;
@@ -47,7 +52,8 @@ namespace fs
 					_allocationMeta[allocationMetaIndex] |= bitMaskAligned;
 					return &_byteArray[byteAt];
 				}
-			}
+				++alignmentIndex;
+			} while (alignmentIndex < (8 - unitCount));
 		}
 		FS_ASSERT("김장원", false, "!!! StackHolder 가 가득 찼습니다 !!! 할당 실패 !!!");
 		return nullptr;
