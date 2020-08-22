@@ -29,15 +29,14 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline byte* StackHolder<UnitByteSize, MaxUnitCount>::registerSpace(const byte unitCount)
 	{
+		FS_ASSERT("김장원", 0 < unitCount, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
 		FS_ASSERT("김장원", unitCount < 256, "!!! 한번에 할당 가능한 최대 Unit 수는 255 입니다 !!!");
 
 		const byte bitMask = (static_cast<byte>(pow(2, unitCount)) - 1);
 		for (uint32 allocationMetaIndex = 0; allocationMetaIndex < kMetaDataSize; ++allocationMetaIndex)
 		{
 			const byte bitMaskPreAligned = bitMask << (8 - unitCount);
-			
-			byte alignmentIndex = 0;
-			do
+			for (byte alignmentIndex = 0; alignmentIndex <= (8 - unitCount); ++alignmentIndex)
 			{
 				const byte bitMaskAligned = bitMaskPreAligned >> alignmentIndex;
 				const byte maskingResultClean0 = (_allocationMeta[allocationMetaIndex] ^ bitMaskAligned) << alignmentIndex;
@@ -52,8 +51,7 @@ namespace fs
 					_allocationMeta[allocationMetaIndex] |= bitMaskAligned;
 					return &_byteArray[byteAt];
 				}
-				++alignmentIndex;
-			} while (alignmentIndex < (8 - unitCount));
+			}
 		}
 		FS_ASSERT("김장원", false, "!!! StackHolder 가 가득 찼습니다 !!! 할당 실패 !!!");
 		return nullptr;
