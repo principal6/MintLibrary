@@ -36,13 +36,11 @@ namespace fs
 		bool											canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
 
 	private:
-		static constexpr uint32							kBitPerByte = 8;
-		static_assert(kBitPerByte == 8, "!!! Bit per Byte 는 반드시 8이어야 합니다 !!!");
-		static constexpr uint32							kBitMaskSize = sizeof(BitMaskType) * kBitPerByte;
+		static constexpr uint32							kBitMaskByteCount = sizeof(BitMaskType) * kBitsPerByte;
 
 		StaticArray<CountMetaDataType, MaxUnitCount>	_allocCountDataArray;
 		
-		static constexpr uint32							kAllocMetaDataCount = ((MaxUnitCount - 1) / kBitMaskSize) + 1;
+		static constexpr uint32							kAllocMetaDataCount = ((MaxUnitCount - 1) / kBitMaskByteCount) + 1;
 		
 		StaticArray<BitMaskType, kAllocMetaDataCount>	_allocMetaDataArray;
 

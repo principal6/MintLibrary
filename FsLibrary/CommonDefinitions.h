@@ -35,6 +35,9 @@
 	static constexpr	uint16		kUint16Max	= (uint16) 0xFFFF;
 	static constexpr	uint32		kUint32Max	= (uint32) 0xFFFFFFFF;
 	static constexpr	uint64		kUint64Max	= (uint64) 0xFFFFFFFFFFFFFFFF;
+
+	static constexpr uint32			kBitsPerByte = 8;
+	static_assert(kBitsPerByte == 8, "!!! Bit per Byte 는 반드시 8이어야 합니다 !!!");
 #pragma endregion
 
 
