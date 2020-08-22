@@ -63,7 +63,7 @@ namespace fs
 		protected:
 			HWND								_hWnd{};
 			HINSTANCE							_hInstance{};
-			MSG									_msg;
+			MSG									_msg{};
 		};
 #pragma endregion
 	}

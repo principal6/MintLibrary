@@ -55,6 +55,12 @@
       <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="CommonDefinitions.h" />
+    <ClInclude Include="Container\StackHolder.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\StackHolder.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
