@@ -41,6 +41,11 @@
 #pragma endregion
 
 
+#pragma region String
+	static constexpr	uint32		kStringNPos		= kUint32Max;
+#pragma endregion
+
+
 #pragma region Assertion
 #if defined DEBUG || _DEBUG
 	#define FS_ASSERT(author, expression, content) if (!(expression)) { static char staticBuffer[300]{}; sprintf_s(staticBuffer, "[%s] %s\n%s: %d", author, content, __FILE__, __LINE__); MessageBoxA(nullptr, staticBuffer, "FS ASSERT", MB_OK); DebugBreak(); }

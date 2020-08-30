@@ -61,6 +61,12 @@
     <ClInclude Include="Container\StackHolder.hpp">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="Container\ScopeString.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\ScopeString.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

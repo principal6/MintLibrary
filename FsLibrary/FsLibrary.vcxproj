@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonDefinitions.h" />
+    <ClInclude Include="Container\ScopeString.h" />
+    <ClInclude Include="Container\ScopeString.hpp" />
     <ClInclude Include="Container\StackHolder.h" />
     <ClInclude Include="Container\StackHolder.hpp" />
     <ClInclude Include="Container\StaticArray.h" />
