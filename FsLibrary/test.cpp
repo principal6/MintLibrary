@@ -2,7 +2,9 @@
 #include <Platform/WindowsWindow.h>
 #include <Container/StackHolder.hpp>
 #include <Container/ScopeString.hpp>
-
+#include <Math/Float2.h>
+#include <Math/Float3.h>
+#include <Math/Float4.h>
 
 //#define FS_TEST_FAILURES
 
@@ -114,7 +116,9 @@ void testFloatTypes()
 		Float3 _a;
 		Float3 _b;
 	} st;
+	auto sizeFloat2 = sizeof(Float2);
 	auto sizeFloat3 = sizeof(Float3);
+	auto sizeFloat4 = sizeof(Float4);
 	auto sizeSt = sizeof(st);
 	Float3 p{ 1, 0, 0 };
 	Float3 q{ 0, 1, 0 };

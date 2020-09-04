@@ -10,33 +10,56 @@
 
 namespace fs
 {
-	// int32
-	struct Int2
+	// pair of int32
+	class Int2 final
 	{
 	public:
 		Int2() : _i{} { __noop; }
 		Int2(const int32 x, const int32 y) : _i{ x, y } { __noop; }
+		Int2(const Int2& rhs) : _i{ rhs._i[0], rhs._i[1] } { __noop; }
+		Int2(Int2&& rhs) noexcept : _i{ rhs._i[0], rhs._i[1] } { rhs.set(0, 0); }
+		~Int2() { __noop; }
 
 	public:
-		Int2& operator+=(const Int2& rhs) noexcept
+		Int2&			operator=(const Int2& rhs) noexcept
+		{
+			if (this != &rhs)
+			{
+				set(rhs.x(), rhs.y());
+			}
+			return *this;
+		}
+		Int2&			operator=(Int2&& rhs) noexcept
+		{
+			if (this != &rhs)
+			{
+				set(rhs.x(), rhs.y());
+
+				rhs.set(0, 0);
+			}
+			return *this;
+		}
+
+	public:
+		Int2&			operator+=(const Int2& rhs) noexcept
 		{
 			_i[0] += rhs._i[0];
 			_i[1] += rhs._i[1];
 			return *this;
 		}
-		Int2& operator-=(const Int2& rhs) noexcept
+		Int2&			operator-=(const Int2& rhs) noexcept
 		{
 			_i[0] -= rhs._i[0];
 			_i[1] -= rhs._i[1];
 			return *this;
 		}
-		Int2& operator*=(const int32 s) noexcept
+		Int2&			operator*=(const int32 s) noexcept
 		{
 			_i[0] *= s;
 			_i[1] *= s;
 			return *this;
 		}
-		Int2& operator/=(const int32 s) noexcept
+		Int2&			operator/=(const int32 s) noexcept
 		{
 			_i[0] /= s;
 			_i[1] /= s;
@@ -44,19 +67,19 @@ namespace fs
 		}
 
 	public:
-		Int2			operator+(const Int2& rhs) const noexcept
+		const Int2		operator+(const Int2& rhs) const noexcept
 		{
 			return Int2(_i[0] + rhs._i[0], _i[1] + rhs._i[1]);
 		}
-		Int2			operator-(const Int2& rhs) const noexcept
+		const Int2		operator-(const Int2& rhs) const noexcept
 		{
 			return Int2(_i[0] - rhs._i[0], _i[1] - rhs._i[1]);
 		}
-		Int2			operator*(const int32 s) const noexcept
+		const Int2		operator*(const int32 s) const noexcept
 		{
 			return Int2(_i[0] * s, _i[1] * s);
 		}
-		Int2			operator/(const int32 s) const noexcept
+		const Int2		operator/(const int32 s) const noexcept
 		{
 			return Int2(_i[0] / s, _i[1] / s);
 		}
@@ -74,11 +97,11 @@ namespace fs
 		}
 
 	public:
-		bool			operator==(const Int2& rhs) const noexcept
+		const bool		operator==(const Int2& rhs) const noexcept
 		{
 			return (_i[0] == rhs._i[0] && _i[1] == rhs._i[1]);
 		}
-		bool			operator!=(const Int2& rhs) const noexcept
+		const bool		operator!=(const Int2& rhs) const noexcept
 		{
 			return !(*this == rhs);
 		}
@@ -90,7 +113,7 @@ namespace fs
 		inline void		x(const int32 newX) noexcept { _i[0] = newX; }
 		inline void		y(const int32 newY) noexcept { _i[1] = newY; }
 
-	public:
+	private:
 		int32			_i[2];
 	};
 }

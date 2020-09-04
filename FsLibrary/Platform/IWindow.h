@@ -62,8 +62,21 @@ namespace fs
 			};
 			union Data
 			{
+				Data()
+				{
+					__noop;
+				}
+				Data(const Data& rhs)
+				{
+					_raw = rhs._raw;
+				}
+				~Data()
+				{
+					__noop;
+				}
+				uint64		_raw{};
 				Int2		_mousePosition;
-				KeyCode		_keyCode{};
+				KeyCode		_keyCode;
 			};
 
 			EventType		_type{ EventType::None };

@@ -11,7 +11,7 @@
 
 namespace fs
 {
-	class Float4
+	class Float4 final
 	{
 	public:
 						Float4() : _f{} { __noop; }
@@ -19,7 +19,7 @@ namespace fs
 						Float4(const float x, const float y, const float z, const float w) : _f{ x, y, z, w } { __noop; }
 						Float4(const Float4& rhs) = default;
 						Float4(Float4&& rhs) = default;
-		virtual			~Float4() { __noop; }
+						~Float4() { __noop; }
 
 	public:
 		Float4&			operator=(const Float4& rhs) = default;
