@@ -2,6 +2,7 @@
 #include <Platform/WindowsWindow.h>
 #include <Container/StackHolder.hpp>
 #include <Container/ScopeString.hpp>
+#include <Container/BitVector.hpp>
 #include <Math/Float2.h>
 #include <Math/Float3.h>
 #include <Math/Float4.h>
@@ -177,10 +178,53 @@ bool testWindow()
 	return true;
 }
 
+bool testBitVector()
+{
+	using fs::BitVector;
+
+	BitVector a;
+	a.reserve(4);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.set(1, true);
+	a.set(7, true);
+#ifdef FS_TEST_FAILURES
+	a.set(10, true);
+	a.set(16, true);
+#endif
+	const bool popped = a.pop_back();
+	const bool valueAt2 = a.get(2);
+	const bool valueAt3 = a.get(3);
+	const bool valueAt4 = a.get(4);
+#ifdef FS_TEST_FAILURES
+	const bool valueAt5 = a.get(5);
+#endif
+	return true;
+}
+
 
 int main()
 {
+	testScopeString();
+
+	testStackHolder();
+
+	testIntTypes();
+
 	testFloatTypes();
+
+	testStaticArray();
+
+	testBitVector();
+
+	// ===
 
 	testWindow();
 

@@ -55,8 +55,13 @@
 #pragma endregion
 
 
-#define FS_NEW new
-#define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
+#ifdef FS_CHECK_HEAP_ALLOCATION
 
+#else
+	#define FS_NEW(type) new type{}
+	#define FS_NEW_ARRAY(type, size) new type[size]{}
+	#define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
+	#define FS_DELETE_ARRAY(obj) if (obj != nullptr) { delete[] obj; obj = nullptr; }
+#endif
 
 #endif // !FS_COMMON_DEFINITIONS_H

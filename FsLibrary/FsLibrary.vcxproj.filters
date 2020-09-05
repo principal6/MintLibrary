@@ -67,6 +67,12 @@
     <ClInclude Include="Container\ScopeString.hpp">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="Container\BitVector.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\BitVector.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

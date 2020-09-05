@@ -18,7 +18,7 @@ namespace fs
 		if ((MaxUnitCount % kBitMaskByteCount) != 0)
 		{
 			const uint32 deleteBitCount = kBitMaskByteCount - (MaxUnitCount % kBitMaskByteCount);
-			const BitMaskType deleteBitMask = (static_cast<BitMaskType>(pow(2, deleteBitCount)) - 1);
+			const BitMaskType deleteBitMask = static_cast<BitMaskType>(pow2_ui32(deleteBitCount) - 1);
 			_allocMetaDataArray[kAllocMetaDataCount - 1] |= deleteBitMask;
 		}
 	}
@@ -77,7 +77,7 @@ namespace fs
 
 		const uint32 allocMetaDataIndex = allocSizeDataIndex / kBitMaskByteCount;
 		const uint8 bitOffset = allocSizeDataIndex % kBitMaskByteCount;
-		const BitMaskType bitMask = (static_cast<BitMaskType>(pow(2, unitCount)) - 1);
+		const BitMaskType bitMask = static_cast<BitMaskType>(pow2_ui32(unitCount) - 1);
 		const BitMaskType bitMaskAligned = ((bitMask << (kBitMaskByteCount - unitCount)) >> bitOffset);
 
 		_allocMetaDataArray[allocMetaDataIndex] ^= bitMaskAligned;
@@ -87,7 +87,7 @@ namespace fs
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
 	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
 	{
-		const BitMaskType bitMaskRightAligned = (static_cast<BitMaskType>(pow(2, unitCount)) - 1);
+		const BitMaskType bitMaskRightAligned = static_cast<BitMaskType>(pow2_ui32(unitCount) - 1);
 		const BitMaskType bitMaskLeftAligned = bitMaskRightAligned << (kBitMaskByteCount - unitCount);
 		for (uint32 allocMetaDataIndex = 0; allocMetaDataIndex < kAllocMetaDataCount; ++allocMetaDataIndex)
 		{

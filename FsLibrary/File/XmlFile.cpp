@@ -271,14 +271,14 @@ namespace fs
 	XmlFile::Node* XmlFile::createRootNode()
 	{
 		FS_DELETE(_rootNode);
-		_rootNode = FS_NEW Node();
+		_rootNode = FS_NEW(Node);
 		return _rootNode;
 	}
 
 	XmlFile::Node* XmlFile::insertChildNode(Node* const parentNode)
 	{
 		FS_ASSERT("김장원", parentNode != nullptr, "부모 노드가 nullptr일 수 없습니다.");
-		Node* const childNode = FS_NEW Node();
+		Node* const childNode = FS_NEW(Node);
 		childNode->_parentNode = parentNode;
 		parentNode->_childNodeArray.emplace_back(childNode);
 		return childNode;
