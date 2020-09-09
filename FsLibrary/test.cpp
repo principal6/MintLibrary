@@ -3,6 +3,7 @@
 #include <Container/StackHolder.hpp>
 #include <Container/ScopeString.hpp>
 #include <Container/BitVector.hpp>
+#include <Container/UniqueString.hpp>
 #include <Math/Float2.h>
 #include <Math/Float3.h>
 #include <Math/Float4.h>
@@ -210,6 +211,28 @@ bool testBitVector()
 }
 
 
+bool testUniqueString()
+{
+	using fs::UniqueStringA;
+
+	static constexpr uint32 kUniqueStringHolderCapacity = 256;
+
+	UniqueStringA<kUniqueStringHolderCapacity> a{ "ab" };
+	UniqueStringA<kUniqueStringHolderCapacity> b{ "cdef" };
+	UniqueStringA<kUniqueStringHolderCapacity> c{ "ab" };
+	UniqueStringA<kUniqueStringHolderCapacity> d;
+	UniqueStringA<kUniqueStringHolderCapacity> e{ "" };
+	UniqueStringA<kUniqueStringHolderCapacity> f{};
+	d = b;
+	d.assign("haha!");
+	const bool cmp0 = (a == b);
+	const bool cmp1 = (a == c);
+	const bool cmp2 = (e == f);
+
+	return true;
+}
+
+
 int main()
 {
 	testScopeString();
@@ -223,6 +246,8 @@ int main()
 	testStaticArray();
 
 	testBitVector();
+
+	testUniqueString();
 
 	// ===
 

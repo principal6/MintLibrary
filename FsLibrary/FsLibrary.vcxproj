@@ -27,6 +27,9 @@
     <ClInclude Include="Container\StackHolder.h" />
     <ClInclude Include="Container\StackHolder.hpp" />
     <ClInclude Include="Container\StaticArray.h" />
+    <ClInclude Include="Container\StringUtil.h" />
+    <ClInclude Include="Container\UniqueString.h" />
+    <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
     <ClInclude Include="File\FileUtil.h" />
     <ClInclude Include="File\FileUtil.hpp" />
@@ -143,6 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,6 +176,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

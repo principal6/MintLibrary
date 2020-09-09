@@ -73,6 +73,15 @@
     <ClInclude Include="Container\BitVector.hpp">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="Container\UniqueString.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\UniqueString.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\StringUtil.h">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

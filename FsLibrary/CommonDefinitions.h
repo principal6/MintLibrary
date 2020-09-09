@@ -10,6 +10,11 @@
 #include <Windows.h>
 
 
+#if defined DEBUG || _DEBUG
+#define FS_DEBUG
+#endif
+
+
 #pragma region Integer definitions
 	using				  int8						=   int8_t;
 	using				 int16						=  int16_t;
@@ -47,7 +52,7 @@
 
 
 #pragma region Assertion
-#if defined DEBUG || _DEBUG
+#if defined FS_DEBUG
 	#define FS_ASSERT(author, expression, content) if (!(expression)) { static char staticBuffer[300]{}; sprintf_s(staticBuffer, "[%s] %s\n%s: %d", author, content, __FILE__, __LINE__); MessageBoxA(nullptr, staticBuffer, "FS ASSERT", MB_OK); DebugBreak(); }
 #else
 	#define FS_ASSERT(author, expression, content)
