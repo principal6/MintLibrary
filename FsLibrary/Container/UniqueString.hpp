@@ -69,7 +69,9 @@ namespace fs
 		: _holder{ UniqueStringAHolder<HolderCapacity>::getInstance() }
 		, _index{ kUniqueStringInvalidIndex }
 	{
-		__noop;
+#if defined FS_DEBUG
+		_str = nullptr;
+#endif
 	}
 
 	template<uint32 HolderCapacity>

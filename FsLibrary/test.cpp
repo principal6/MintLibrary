@@ -8,35 +8,9 @@
 #include <Math/Float3.h>
 #include <Math/Float4.h>
 
+
 //#define FS_TEST_FAILURES
 
-
-void testScopeString()
-{
-	using namespace fs;
-
-	ScopeStringA<256> a{ "abcd" };
-	ScopeStringA<256> b = a;
-	b += b;
-	b += b;
-	b += b;
-	b = "abcdefgh";
-	a = b.substr(3);
-	const uint32 found0 = b.rfind("def");
-	const uint32 found1 = b.rfind("fgh");
-	const uint32 found2 = b.rfind("ghi");
-	const uint32 found3 = b.rfind("abc");
-	const uint32 found4 = b.rfind("abcdc");
-	const uint32 found5 = b.rfind("zab");
-	if (b == "abcdefgh")
-	{
-		a = b;
-	}
-	if (a == b)
-	{
-		b = "YEAH!";
-	}
-}
 
 void testStackHolder()
 {
@@ -210,24 +184,54 @@ bool testBitVector()
 	return true;
 }
 
-
-bool testUniqueString()
+bool testStringTypes()
 {
+	using fs::ScopeStringA;
 	using fs::UniqueStringA;
 
-	static constexpr uint32 kUniqueStringHolderCapacity = 256;
+#pragma region ScopeString
+	{
+		ScopeStringA<256> a{ "abcd" };
+		ScopeStringA<256> b = a;
+		b += b;
+		b += b;
+		b += b;
+		b = "abcdefgh";
+		a = b.substr(3);
+		const uint32 found0 = b.rfind("def");
+		const uint32 found1 = b.rfind("fgh");
+		const uint32 found2 = b.rfind("ghi");
+		const uint32 found3 = b.rfind("abc");
+		const uint32 found4 = b.rfind("abcdc");
+		const uint32 found5 = b.rfind("zab");
+		if (b == "abcdefgh")
+		{
+			a = b;
+		}
+		if (a == b)
+		{
+			b = "YEAH!";
+		}
+	}
+#pragma endregion
 
-	UniqueStringA<kUniqueStringHolderCapacity> a{ "ab" };
-	UniqueStringA<kUniqueStringHolderCapacity> b{ "cdef" };
-	UniqueStringA<kUniqueStringHolderCapacity> c{ "ab" };
-	UniqueStringA<kUniqueStringHolderCapacity> d;
-	UniqueStringA<kUniqueStringHolderCapacity> e{ "" };
-	UniqueStringA<kUniqueStringHolderCapacity> f{};
-	d = b;
-	d.assign("haha!");
-	const bool cmp0 = (a == b);
-	const bool cmp1 = (a == c);
-	const bool cmp2 = (e == f);
+#pragma region UniqueString
+	{
+		static constexpr uint32 kUniqueStringHolderCapacity = 256;
+
+		UniqueStringA<kUniqueStringHolderCapacity> a{ "ab" };
+		UniqueStringA<kUniqueStringHolderCapacity> b{ "cdef" };
+		UniqueStringA<kUniqueStringHolderCapacity> c{ "ab" };
+		UniqueStringA<kUniqueStringHolderCapacity> d;
+		UniqueStringA<kUniqueStringHolderCapacity> e{ "" };
+		UniqueStringA<kUniqueStringHolderCapacity> f{};
+		d = b;
+		d.assign("haha!");
+		const bool cmp0 = (a == b);
+		const bool cmp1 = (a == c);
+		const bool cmp2 = (e == f);
+	}
+#pragma endregion
 
 	return true;
 }
@@ -235,19 +239,17 @@ bool testUniqueString()
 
 int main()
 {
-	testScopeString();
-
-	testStackHolder();
-
 	testIntTypes();
 
 	testFloatTypes();
 
 	testStaticArray();
 
-	testBitVector();
+	testStackHolder();
 
-	testUniqueString();
+	testStringTypes();
+
+	testBitVector();
 
 	// ===
 
