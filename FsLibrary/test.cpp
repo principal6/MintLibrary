@@ -1,16 +1,56 @@
-﻿#include <Container/StaticArray.h>
+﻿#include <stdafx.h>
+#include <Container/StaticArray.h>
 #include <Platform/WindowsWindow.h>
 #include <Container/StackHolder.hpp>
 #include <Container/ScopeString.hpp>
 #include <Container/BitVector.hpp>
 #include <Container/UniqueString.hpp>
-#include <Math/Float2.h>
-#include <Math/Float3.h>
-#include <Math/Float4.h>
+#include <Math/Int2.hpp>
+#include <Math/Float2.hpp>
+#include <Math/Float3.hpp>
+#include <Math/Float4.hpp>
 
 
 //#define FS_TEST_FAILURES
 
+
+void testIntTypes()
+{
+	using namespace fs;
+	Int2 ni;
+	Int2 a{ 1, 2 };
+	Int2 b{ 3, 4 };
+	Int2 c = a + b;
+}
+
+void testFloatTypes()
+{
+	using namespace fs;
+	float a = 15.000001f;
+	float b = 15.000002f;
+	float c = 15000.0001f;
+	float d = 15000.0005f;
+	float e = 15000.0015f;
+
+	struct
+	{
+		Float3 _a;
+		Float3 _b;
+	} st;
+	auto sizeFloat2 = sizeof(Float2);
+	auto sizeFloat3 = sizeof(Float3);
+	auto sizeFloat4 = sizeof(Float4);
+	auto sizeSt = sizeof(st);
+	Float3 p{ 1, 0, 0 };
+	Float3 q{ 0, 1, 0 };
+	Float3 r = Float3::cross(p, q);
+}
+
+void testStaticArray()
+{
+	using namespace fs;
+	constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
+}
 
 void testStackHolder()
 {
@@ -70,120 +110,6 @@ void testStackHolder()
 #endif
 }
 
-void testIntTypes()
-{
-	using namespace fs;
-	Int2 a{ 1, 2 };
-	Int2 b{ 3, 4 };
-	Int2 c = a + b;
-}
-
-void testFloatTypes()
-{
-	using namespace fs;
-	float a = 15.000001f;
-	float b = 15.000002f;
-	float c = 15000.0001f;
-	float d = 15000.0005f;
-	float e = 15000.0015f;
-
-	struct
-	{
-		Float3 _a;
-		Float3 _b;
-	} st;
-	auto sizeFloat2 = sizeof(Float2);
-	auto sizeFloat3 = sizeof(Float3);
-	auto sizeFloat4 = sizeof(Float4);
-	auto sizeSt = sizeof(st);
-	Float3 p{ 1, 0, 0 };
-	Float3 q{ 0, 1, 0 };
-	Float3 r = Float3::cross(p, q);
-}
-
-void testStaticArray()
-{
-	using namespace fs;
-	constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
-}
-
-bool testWindow()
-{
-	using namespace fs;
-	using namespace fs::Window;
-
-	CreationData windowCreationData;
-	windowCreationData._style = Style::Default;
-	windowCreationData._position.set(200, 100);
-	windowCreationData._size.set(800, 600);
-	windowCreationData._title = L"HI";
-	windowCreationData._bgColor.set(0.4f, 0.6f, 1.0f);
-
-	WindowsWindow window;
-	if (window.create(windowCreationData) == false)
-	{
-		CreationError error = window.getCreationError();
-		return false;
-	}
-
-	while (window.isRunning() == true)
-	{
-		if (window.hasEvent() == true)
-		{
-			EventData event = window.popEvent();
-			if (event._type == EventType::KeyDown)
-			{
-				if (event._data._keyCode == EventData::KeyCode::Escape)
-				{
-					window.destroy();
-				}
-				else if (event._data._keyCode == EventData::KeyCode::Left)
-				{
-					const Int2 pos = window.position();
-					window.position(pos - Int2(5, 0));
-				}
-				else if (event._data._keyCode == EventData::KeyCode::Right)
-				{
-					const Int2 pos = window.position();
-					window.position(pos + Int2(5, 0));
-				}
-			}
-		}
-	}
-	return true;
-}
-
-bool testBitVector()
-{
-	using fs::BitVector;
-
-	BitVector a;
-	a.reserve(4);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.push_back(true);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.set(1, true);
-	a.set(7, true);
-#ifdef FS_TEST_FAILURES
-	a.set(10, true);
-	a.set(16, true);
-#endif
-	const bool popped = a.pop_back();
-	const bool valueAt2 = a.get(2);
-	const bool valueAt3 = a.get(3);
-	const bool valueAt4 = a.get(4);
-#ifdef FS_TEST_FAILURES
-	const bool valueAt5 = a.get(5);
-#endif
-	return true;
-}
-
 bool testStringTypes()
 {
 	using fs::ScopeStringA;
@@ -233,6 +159,83 @@ bool testStringTypes()
 	}
 #pragma endregion
 
+	return true;
+}
+
+bool testBitVector()
+{
+	using fs::BitVector;
+
+	BitVector a;
+	a.reserve(4);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.set(1, true);
+	a.set(7, true);
+#ifdef FS_TEST_FAILURES
+	a.set(10, true);
+	a.set(16, true);
+#endif
+	const bool popped = a.pop_back();
+	const bool valueAt2 = a.get(2);
+	const bool valueAt3 = a.get(3);
+	const bool valueAt4 = a.get(4);
+#ifdef FS_TEST_FAILURES
+	const bool valueAt5 = a.get(5);
+#endif
+	return true;
+}
+
+bool testWindow()
+{
+	using namespace fs;
+	using namespace fs::Window;
+
+	CreationData windowCreationData;
+	windowCreationData._style = Style::Default;
+	windowCreationData._position.set(200, 100);
+	windowCreationData._size.set(800, 600);
+	windowCreationData._title = L"HI";
+	windowCreationData._bgColor.set(0.4f, 0.6f, 1.0f);
+
+	WindowsWindow window;
+	if (window.create(windowCreationData) == false)
+	{
+		CreationError error = window.getCreationError();
+		return false;
+	}
+
+	while (window.isRunning() == true)
+	{
+		if (window.hasEvent() == true)
+		{
+			EventData event = window.popEvent();
+			if (event._type == EventType::KeyDown)
+			{
+				if (event._data._keyCode == EventData::KeyCode::Escape)
+				{
+					window.destroy();
+				}
+				else if (event._data._keyCode == EventData::KeyCode::Left)
+				{
+					const Int2 pos = window.position();
+					window.position(pos - Int2(5, 0));
+				}
+				else if (event._data._keyCode == EventData::KeyCode::Right)
+				{
+					const Int2 pos = window.position();
+					window.position(pos + Int2(5, 0));
+				}
+			}
+		}
+	}
 	return true;
 }
 

@@ -8,7 +8,6 @@
 #include <CommonDefinitions.h>
 #include <Math/Int2.h>
 #include <Math/Float3.h>
-#include <queue>
 
 
 namespace fs

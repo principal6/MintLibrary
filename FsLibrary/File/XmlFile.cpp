@@ -1,4 +1,5 @@
-﻿#include "XmlFile.h"
+﻿#include <stdafx.h>
+#include "XmlFile.h"
 
 #include <fstream>
 #include <sstream>

@@ -5,14 +5,12 @@
 #define FS_COMMON_DEFINITIONS_H
 
 
-#include <cstdio>
-#include <cstdint>
-#include <Windows.h>
-
-
 #if defined DEBUG || _DEBUG
-#define FS_DEBUG
+	#define FS_DEBUG
 #endif
+
+
+#define FS_INLINE __forceinline
 
 
 #pragma region Integer definitions
@@ -51,22 +49,14 @@
 #pragma endregion
 
 
-#pragma region Assertion
-#if defined FS_DEBUG
-	#define FS_ASSERT(author, expression, content) if (!(expression)) { static char staticBuffer[300]{}; sprintf_s(staticBuffer, "[%s] %s\n%s: %d", author, content, __FILE__, __LINE__); MessageBoxA(nullptr, staticBuffer, "FS ASSERT", MB_OK); DebugBreak(); }
-#else
-	#define FS_ASSERT(author, expression, content)
-#endif
-#pragma endregion
-
-
 #ifdef FS_CHECK_HEAP_ALLOCATION
-
+	__noop;
 #else
 	#define FS_NEW(type) new type{}
 	#define FS_NEW_ARRAY(type, size) new type[size]{}
 	#define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
 	#define FS_DELETE_ARRAY(obj) if (obj != nullptr) { delete[] obj; obj = nullptr; }
 #endif
+
 
 #endif // !FS_COMMON_DEFINITIONS_H

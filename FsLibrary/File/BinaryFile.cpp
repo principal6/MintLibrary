@@ -1,4 +1,5 @@
-﻿#include "BinaryFile.h"
+﻿#include <stdafx.h>
+#include "BinaryFile.h"
 
 #include <fstream>
 

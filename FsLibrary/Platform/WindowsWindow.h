@@ -6,9 +6,6 @@
 
 
 #include <Platform/IWindow.h>
-#include <Windows.h>
-#include <vector>
-#include <unordered_map>
 
 
 namespace fs

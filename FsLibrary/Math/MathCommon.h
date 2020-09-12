@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+
 #ifndef FS_MATH_COMMON_H
 #define FS_MATH_COMMON_H
 
@@ -7,9 +8,15 @@
 #include <cmath>
 
 
-inline uint32 pow2_ui32(const uint32 exponent)
+namespace fs
 {
-	return static_cast<uint32>(1 << exponent);
+	namespace Math
+	{
+		inline uint32 pow2_ui32(const uint32 exponent)
+		{
+			return static_cast<uint32>(1 << exponent);
+		}
+	}
 }
 
 

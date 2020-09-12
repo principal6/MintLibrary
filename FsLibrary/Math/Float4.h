@@ -14,135 +14,67 @@ namespace fs
 	class Float4 final
 	{
 	public:
-						Float4() : _f{} { __noop; }
-		explicit		Float4(const float s) : _f{ s, s, s, s } { __noop; }
-						Float4(const float x, const float y, const float z, const float w) : _f{ x, y, z, w } { __noop; }
-						Float4(const Float4& rhs) = default;
-						Float4(Float4&& rhs) = default;
-						~Float4() { __noop; }
+								Float4();
+		explicit				Float4(const float s);
+		explicit				Float4(const float x, const float y, const float z, const float w);
+								Float4(const Float4& rhs)											= default;
+								Float4(Float4&& rhs)												= default;
+								~Float4()															= default;
 
 	public:
-		Float4&			operator=(const Float4& rhs) = default;
-		Float4&			operator=(Float4&& rhs) = default;
-		Float4&			operator+=(const Float4& rhs)
-		{
-			_f[0] += rhs._f[0];
-			_f[1] += rhs._f[1];
-			_f[2] += rhs._f[2];
-			_f[3] += rhs._f[3];
-			return *this;
-		}
-		Float4&			operator-=(const Float4& rhs)
-		{
-			_f[0] -= rhs._f[0];
-			_f[1] -= rhs._f[1];
-			_f[2] -= rhs._f[2];
-			_f[3] -= rhs._f[3];
-			return *this;
-		}
-		Float4&			operator*=(const float s)
-		{
-			_f[0] *= s;
-			_f[1] *= s;
-			_f[2] *= s;
-			_f[3] *= s;
-			return *this;
-		}
-		Float4&			operator/=(const float s)
-		{
-			_f[0] /= s;
-			_f[1] /= s;
-			_f[2] /= s;
-			_f[3] /= s;
-			return *this;
-		}
+		Float4&					operator=(const Float4& rhs)										= default;
+		Float4&					operator=(Float4&& rhs)												= default;
 
 	public:
-		Float4			operator+(const Float4& rhs) const
-		{
-			return Float4(_f[0] + rhs._f[0], _f[1] + rhs._f[1], _f[2] + rhs._f[2], _f[3] + rhs._f[3]);
-		}
-		Float4			operator-(const Float4& rhs) const
-		{
-			return Float4(_f[0] - rhs._f[0], _f[1] - rhs._f[1], _f[2] - rhs._f[2], _f[3] - rhs._f[3]);
-		}
-		Float4			operator*(const float s) const
-		{
-			return Float4(_f[0] * s, _f[1] * s, _f[2] * s, _f[3] * s);
-		}
-		Float4			operator/(const float s) const
-		{
-			return Float4(_f[0] / s, _f[1] / s, _f[2] / s, _f[3] / s);
-		}
+		Float4&					operator+=(const Float4& rhs);
+		Float4&					operator-=(const Float4& rhs);
+		Float4&					operator*=(const float s);
+		Float4&					operator/=(const float s);
 
 	public:
-		float&			operator[](const uint32 index) noexcept
-		{
-			FS_ASSERT("김장원", index < 4, "범위를 벗어난 접근입니다.");
-			return _f[index];
-		}
-		const float&	operator[](const uint32 index) const noexcept
-		{
-			FS_ASSERT("김장원", index < 4, "범위를 벗어난 접근입니다.");
-			return _f[index];
-		}
+		const Float4			operator+(const Float4& rhs) const;
+		const Float4			operator-(const Float4& rhs) const;
+		const Float4			operator*(const float s) const;
+		const Float4			operator/(const float s) const;
 
 	public:
-		bool			operator==(const Float4& rhs) const noexcept
-		{
-			return (_f[0] == rhs._f[0] && _f[1] == rhs._f[1] && _f[2] == rhs._f[2] && _f[3] == rhs._f[3]);
-		}
-		bool			operator!=(const Float4& rhs) const noexcept
-		{
-			return !(*this == rhs);
-		}
+		float&					operator[](const uint32 index) noexcept;
+		const float&			operator[](const uint32 index) const noexcept;
 
 	public:
-		static float	dot(const Float4& lhs, const Float4& rhs) noexcept
-		{
-			return lhs._f[0] * rhs._f[0] + lhs._f[1] * rhs._f[1] + lhs._f[2] * rhs._f[2];
-		}
-
-		static Float4	cross(const Float4& lhs, const Float4& rhs) noexcept
-		{
-			return Float4
-			(
-				lhs._f[1] * rhs._f[2] - lhs._f[2] * rhs._f[1],
-				lhs._f[2] * rhs._f[0] - lhs._f[0] * rhs._f[2],
-				lhs._f[0] * rhs._f[1] - lhs._f[1] * rhs._f[0],
-				0.0f
-			);
-		}
-
-		static Float4	normalize(const Float4& float4) noexcept
-		{
-			return (float4 / float4.length());
-		}
+		const bool				operator==(const Float4& rhs) const noexcept;
+		const bool				operator!=(const Float4& rhs) const noexcept;
 
 	public:
-		inline float	lengthSqaure() const noexcept
-		{
-			return dot(*this, *this);
-		}
+		static const float		dotProductRaw(const float (&a)[4], const float (&b)[4]);
 
-		inline float	length() const noexcept
-		{
-			return sqrt(lengthSqaure());
-		}
+		// for matrix multiplication
+		static const float		dotProductRaw(const float (&a)[4], const float bX, const float bY, const float bZ, const float bW);
 
 	public:
-		inline void		set(const float x, const float y, const float z, const float w) { _f[0] = x; _f[1] = y; _f[2] = z; _f[3] = w; }
-		inline void		x(const float newX) noexcept { _f[0] = newX; }
-		inline void		y(const float newY) noexcept { _f[1] = newY; }
-		inline void		z(const float newZ) noexcept { _f[2] = newZ; }
-		inline void		w(const float newW) noexcept { _f[3] = newW; }
-		inline float	x() const noexcept { return _f[0]; }
-		inline float	y() const noexcept { return _f[1]; }
-		inline float	z() const noexcept { return _f[2]; }
-		inline float	w() const noexcept { return _f[3]; }
+		static const float		dot(const Float4& lhs, const Float4& rhs) noexcept;
+
+		// in 3D affine space
+		static const Float4		cross(const Float4& lhs, const Float4& rhs) noexcept;
+		static const Float4		normalize(const Float4& float4) noexcept;
 
 	public:
-		float			_f[4];
+		const float				lengthSqaure() const noexcept;
+		const float				length() const noexcept;
+
+	public:
+		void					set(const float x, const float y, const float z, const float w) noexcept;
+		void					x(const float newX) noexcept;
+		const float				x() const noexcept;
+		void					y(const float newY) noexcept;
+		const float				y() const noexcept;
+		void					z(const float newZ) noexcept;
+		const float				z() const noexcept;
+		void					w(const float newW) noexcept;
+		const float				w() const noexcept;
+
+	private:
+		float					_f[4];
 	};
 }
 

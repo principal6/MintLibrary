@@ -19,9 +19,11 @@ namespace fs
 		constexpr				StaticArray() = default;
 		constexpr				StaticArray(const std::initializer_list<T>& il)
 		{
-			for (size_t index = 0; index < il.size(); ++index)
+			const size_t	count = il.size();
+			const T* const	first = il.begin();
+			for (size_t index = 0; index < count; ++index)
 			{
-				_data[index] = *(il.begin() + index);
+				_data[index] = *(first + index);
 			}
 		}
 		constexpr				StaticArray(T value)

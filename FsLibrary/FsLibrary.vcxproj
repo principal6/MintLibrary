@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assert.h" />
     <ClInclude Include="CommonDefinitions.h" />
     <ClInclude Include="Container\BitVector.h" />
     <ClInclude Include="Container\BitVector.hpp" />
@@ -36,10 +37,21 @@
     <ClInclude Include="File\IFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="Math\Float2.h" />
+    <ClInclude Include="Math\Float2.hpp" />
+    <ClInclude Include="Math\Float2x2.h" />
+    <ClInclude Include="Math\Float2x2.hpp" />
     <ClInclude Include="Math\Float3.h" />
+    <ClInclude Include="Math\Float3.hpp" />
+    <ClInclude Include="Math\Float3x3.h" />
+    <ClInclude Include="Math\Float3x3.hpp" />
     <ClInclude Include="Math\Float4.h" />
+    <ClInclude Include="Math\Float4.hpp" />
+    <ClInclude Include="Math\Float4x4.h" />
+    <ClInclude Include="Math\Float4x4.hpp" />
     <ClInclude Include="Math\Int2.h" />
+    <ClInclude Include="Math\Int2.hpp" />
     <ClInclude Include="Math\MathCommon.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
@@ -132,6 +144,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +160,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +176,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,6 +192,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -1,4 +1,8 @@
-﻿#include "WindowsWindow.h"
+﻿#include <stdafx.h>
+#include "WindowsWindow.h"
+
+#include <Math/Int2.hpp>
+#include <Math/Float3.hpp>
 #include <mutex>
 
 
