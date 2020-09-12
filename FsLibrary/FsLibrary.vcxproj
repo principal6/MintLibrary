@@ -51,6 +51,8 @@
     <ClInclude Include="Math\Int2.h" />
     <ClInclude Include="Math\Int2.hpp" />
     <ClInclude Include="Math\MathCommon.h" />
+    <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
