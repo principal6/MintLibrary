@@ -13,6 +13,9 @@
     <Filter Include="Container">
       <UniqueIdentifier>{f4749e69-78fc-4420-b618-690bcce7fb83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{35fdc505-7235-4632-8c87-c1b9459b0074}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -120,6 +123,25 @@
     <ClInclude Include="Math\Quaternion.hpp">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Logger\Logger.h">
+      <Filter>Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\Logger.hpp">
+      <Filter>Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Math.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Platform.h">
+      <Filter>Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Container\Container.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="File\File.h">
+      <Filter>File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -131,6 +153,5 @@
     <ClCompile Include="Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
     </ClCompile>
-    <ClCompile Include="test.cpp" />
   </ItemGroup>
 </Project>

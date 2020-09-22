@@ -53,15 +53,15 @@ namespace fs
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline void StackHolder<UnitByteSize, MaxUnitCount>::deregisterSpace(const byte* ptr)
+	inline void StackHolder<UnitByteSize, MaxUnitCount>::deregisterSpace(byte*& ptr)
 	{
-		if (ptr == nullptr)
+		if (isInsider(ptr) == false)
 		{
-			FS_ASSERT("김장원", false, "!!! nullptr 을 지울 수 없습니다 !!!");
+			FS_ASSERT("김장원", false, "!!! Insider 가 아닙니다 !!!");
 			return;
 		}
 
-		const uint32 rawByteOffset = ptr - &_rawByteArray[0];
+		const int32 rawByteOffset = static_cast<int32>(ptr - &_rawByteArray[0]);
 		const CountMetaDataType allocSizeDataIndex = rawByteOffset / UnitByteSize;
 		CountMetaDataType& unitCount = _allocCountDataArray[allocSizeDataIndex];
 		if (unitCount == 0)
@@ -83,10 +83,11 @@ namespace fs
 
 		_allocMetaDataArray[allocMetaDataIndex] ^= bitMaskAligned;
 		unitCount = 0;
+		ptr = nullptr;
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
+	inline const bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
 	{
 		const BitMaskType bitMaskRightAligned = static_cast<BitMaskType>(fs::Math::pow2_ui32(unitCount) - 1);
 		const BitMaskType bitMaskLeftAligned = bitMaskRightAligned << (kBitMaskByteCount - unitCount);
@@ -111,21 +112,38 @@ namespace fs
 	}
 
 	template<uint32 UnitByteSize, uint32 MaxUnitCount>
-	inline bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept
+	inline const bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept
 	{
+		if (isInsider(ptr) == false)
+		{
+			return false;
+		}
+
+		const uint32 unitByteCount = static_cast<uint32>(unitCount * UnitByteSize);
+		const uint32 rawByteOffset = static_cast<uint32>(ptr - &_rawByteArray[0]);
+		if (kRawByteCount < rawByteOffset + unitByteCount)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	template<uint32 UnitByteSize, uint32 MaxUnitCount>
+	inline const bool StackHolder<UnitByteSize, MaxUnitCount>::isInsider(const byte* const ptr) const noexcept
+	{
+		if (ptr == nullptr)
+		{
+			return false;
+		}
+
 		if (ptr < &_rawByteArray[0])
 		{
 			return false;
 		}
 
-		const uint32 rawByteOffset = ptr - &_rawByteArray[0];
+		const uint32 rawByteOffset = static_cast<uint32>(ptr - &_rawByteArray[0]);
 		if (kRawByteCount <= rawByteOffset)
-		{
-			return false;
-		}
-
-		const uint32 unitByteCount = unitCount * UnitByteSize;
-		if (kRawByteCount < rawByteOffset + unitByteCount)
 		{
 			return false;
 		}

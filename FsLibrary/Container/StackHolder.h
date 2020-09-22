@@ -29,11 +29,12 @@ namespace fs
 
 	public:
 		byte*											registerSpace(const CountMetaDataType unitCount);
-		void											deregisterSpace(const byte* ptr);
+		void											deregisterSpace(byte*& ptr);
 
 	private:
-		bool											canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
-		bool											canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
+		const bool										canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
+		const bool										canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
+		const bool										isInsider(const byte* const ptr) const noexcept;
 
 	private:
 		static constexpr uint32							kBitMaskByteCount = sizeof(BitMaskType) * kBitsPerByte;

@@ -40,7 +40,7 @@ namespace fs
 
 		const uint32 newIndex = _count;
 		_offsetArray[newIndex] = _totalLength;
-		const uint32 lengthNullIncluded = strlen(rawString) + 1;
+		const uint32 lengthNullIncluded = static_cast<uint32>(strlen(rawString) + 1);
 		if (Capacity < _totalLength + lengthNullIncluded)
 		{
 			FS_ASSERT("김장원", false, "String 등록에 실패했습니다. Holder 의 capacity 를 더 늘려주세요!");

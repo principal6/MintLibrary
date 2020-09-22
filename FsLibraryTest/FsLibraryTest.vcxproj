@@ -18,86 +18,35 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Assert.h" />
-    <ClInclude Include="CommonDefinitions.h" />
-    <ClInclude Include="Container\BitVector.h" />
-    <ClInclude Include="Container\BitVector.hpp" />
-    <ClInclude Include="Container\Container.h" />
-    <ClInclude Include="Container\ScopeString.h" />
-    <ClInclude Include="Container\ScopeString.hpp" />
-    <ClInclude Include="Container\StackHolder.h" />
-    <ClInclude Include="Container\StackHolder.hpp" />
-    <ClInclude Include="Container\StaticArray.h" />
-    <ClInclude Include="Container\StringUtil.h" />
-    <ClInclude Include="Container\UniqueString.h" />
-    <ClInclude Include="Container\UniqueString.hpp" />
-    <ClInclude Include="File\BinaryFile.h" />
-    <ClInclude Include="File\FileUtil.h" />
-    <ClInclude Include="File\FileUtil.hpp" />
-    <ClInclude Include="File\File.h" />
-    <ClInclude Include="File\IFile.h" />
-    <ClInclude Include="File\XmlFile.h" />
-    <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Logger\Logger.h" />
-    <ClInclude Include="Logger\Logger.hpp" />
-    <ClInclude Include="Math\Float2.h" />
-    <ClInclude Include="Math\Float2.hpp" />
-    <ClInclude Include="Math\Float2x2.h" />
-    <ClInclude Include="Math\Float2x2.hpp" />
-    <ClInclude Include="Math\Float3.h" />
-    <ClInclude Include="Math\Float3.hpp" />
-    <ClInclude Include="Math\Float3x3.h" />
-    <ClInclude Include="Math\Float3x3.hpp" />
-    <ClInclude Include="Math\Float4.h" />
-    <ClInclude Include="Math\Float4.hpp" />
-    <ClInclude Include="Math\Float4x4.h" />
-    <ClInclude Include="Math\Float4x4.hpp" />
-    <ClInclude Include="Math\Int2.h" />
-    <ClInclude Include="Math\Int2.hpp" />
-    <ClInclude Include="Math\MathCommon.h" />
-    <ClInclude Include="Math\Quaternion.h" />
-    <ClInclude Include="Math\Quaternion.hpp" />
-    <ClInclude Include="Math\Math.h" />
-    <ClInclude Include="Platform\Platform.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Platform\IWindow.h" />
-    <ClInclude Include="Platform\WindowsWindow.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="File\BinaryFile.cpp" />
-    <ClCompile Include="File\XmlFile.cpp" />
-    <ClCompile Include="Platform\WindowsWindow.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{eb56a391-e5f8-4065-8f48-60333641a232}</ProjectGuid>
-    <RootNamespace>FsLibrary</RootNamespace>
+    <ProjectGuid>{b3a90135-d496-4c03-a8c8-74dd1a35f9e2}</ProjectGuid>
+    <RootNamespace>FsLibraryTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -123,27 +72,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)FsLibrary\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)_output\$(Configuration)\FsLibrary;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)FsLibrary\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)_output\$(Configuration)\FsLibrary;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)FsLibrary\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)_output\$(Configuration)\FsLibrary;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)FsLibrary\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)_output\$(Configuration)\FsLibrary;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -152,7 +105,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,7 +120,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -184,7 +135,6 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -200,7 +150,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,6 +158,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

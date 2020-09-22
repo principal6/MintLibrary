@@ -252,7 +252,7 @@ namespace fs
 	void BinaryFileWriter::writeString(const std::string& in) noexcept
 	{
 		const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
-		const uint32 deltaSize{ in.size() };
+		const uint32 deltaSize{ static_cast<uint32>(in.size()) };
 		_byteArray.resize(currentSize + deltaSize);
 		memcpy(&_byteArray[currentSize], &in, deltaSize);
 	}

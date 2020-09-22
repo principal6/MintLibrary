@@ -1,14 +1,7 @@
-﻿#include <stdafx.h>
-#include <Container/StaticArray.h>
-#include <Platform/WindowsWindow.h>
-#include <Container/StackHolder.hpp>
-#include <Container/ScopeString.hpp>
-#include <Container/BitVector.hpp>
-#include <Container/UniqueString.hpp>
-#include <Math/Int2.hpp>
-#include <Math/Float2.hpp>
-#include <Math/Float3.hpp>
-#include <Math/Float4.hpp>
+﻿#include <FsLibrary.h>
+
+
+#pragma comment(lib, "FsLibrary.lib")
 
 
 //#define FS_TEST_FAILURES
@@ -59,36 +52,36 @@ void testStackHolder()
 		StackHolder<16, 6> sh;
 
 		byte* shTestA = sh.registerSpace(2);
-		memcpy((char*)(shTestA + 16 * 0), "1__abcdefghijk__", 16);
-		memcpy((char*)(shTestA + 16 * 1), "2__lmnopqrstuv__", 16);
+		memcpy(shTestA + (16 * 0), "1__abcdefghijk__", 16);
+		memcpy(shTestA + (16 * 1), "2__lmnopqrstuv__", 16);
 
 		byte* shTestB = sh.registerSpace(1);
-		memcpy((char*)(shTestB + 16 * 0), "3__wxyzabcdefg__", 16);
+		memcpy(shTestB + (16 * 0), "3__wxyzabcdefg__", 16);
 
 		byte* shTestC = sh.registerSpace(1);
-		memcpy((char*)(shTestC + 16 * 0), "4__helloMyFrie__", 16);
+		memcpy(shTestC + (16 * 0), "4__helloMyFrie__", 16);
 
 		sh.deregisterSpace(shTestB);
 
 		byte* shTestD = sh.registerSpace(2);
-		memcpy((char*)(shTestD + 16 * 0), "5__nd!!IAmLege__", 16);
+		memcpy(shTestD + (16 * 0), "5__nd!!IAmLege__", 16);
 	}
 	{
 		StackHolder<8, 12> sh;
 
 		byte* shTestA = sh.registerSpace(7);
-		memcpy((char*)(shTestA + 8 * 0), "01_abcd_", 8);
-		memcpy((char*)(shTestA + 8 * 1), "02_efgh_", 8);
-		memcpy((char*)(shTestA + 8 * 2), "03_ijkl_", 8);
-		memcpy((char*)(shTestA + 8 * 3), "04_mnop_", 8);
-		memcpy((char*)(shTestA + 8 * 4), "05_qrst_", 8);
-		memcpy((char*)(shTestA + 8 * 5), "06_uvwx_", 8);
-		memcpy((char*)(shTestA + 8 * 6), "07_yzab_", 8);
+		memcpy(shTestA + (8 * 0), "01_abcd_", 8);
+		memcpy(shTestA + (8 * 1), "02_efgh_", 8);
+		memcpy(shTestA + (8 * 2), "03_ijkl_", 8);
+		memcpy(shTestA + (8 * 3), "04_mnop_", 8);
+		memcpy(shTestA + (8 * 4), "05_qrst_", 8);
+		memcpy(shTestA + (8 * 5), "06_uvwx_", 8);
+		memcpy(shTestA + (8 * 6), "07_yzab_", 8);
 
 		byte* shTestB = sh.registerSpace(3);
-		memcpy((char*)(shTestB + 8 * 7), "08_cdef_", 8);
-		memcpy((char*)(shTestB + 8 * 8), "09_ghij_", 8);
-		memcpy((char*)(shTestB + 8 * 9), "10_klmn_", 8);
+		memcpy(shTestB + (8 * 0), "08_cdef_", 8);
+		memcpy(shTestB + (8 * 1), "09_ghij_", 8);
+		memcpy(shTestB + (8 * 2), "10_klmn_", 8);
 
 		sh.deregisterSpace(shTestB);
 	}
@@ -254,9 +247,10 @@ int main()
 
 	testBitVector();
 
-	// ===
+	FS_LOG("김장원", "Log Test");
 
 	testWindow();
+	
 
 	return 0;
 }
