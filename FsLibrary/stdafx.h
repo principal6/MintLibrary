@@ -12,12 +12,17 @@
 #include <queue>
 #include <unordered_map>
 
-// === FsLibrary ===
+#pragma region FsLibrary
 #include <CommonDefinitions.h>
 #include <Assert.h>
 #include <Logger/Logger.h>
 #include <Logger/Logger.hpp>
-// ===
+#pragma endregion
+
+#pragma region DirectX
+#include <d3d11.h>
+#include <wrl.h>
+#pragma endregion
 
 
 #undef max

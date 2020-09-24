@@ -10,6 +10,7 @@
 #include <File/File.h>
 #include <Math/Math.h>
 #include <Platform/Platform.h>
+#include <SimpleRendering/GraphicDevice.h>
 
 
 #endif // !FS_LIBRARY_H

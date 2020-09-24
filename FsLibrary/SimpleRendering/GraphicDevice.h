@@ -1,0 +1,138 @@
+﻿#pragma once
+
+
+#ifndef FS_GRAPHIC_DEVICE_H
+#define FS_GRAPHIC_DEVICE_H
+
+
+#include <CommonDefinitions.h>
+#include <Math/Float4.h>
+#include <Math/Float3.h>
+#include <Math/Float2.h>
+#include <Container/StaticArray.h>
+
+
+namespace fs
+{
+	namespace Window
+	{
+		class IWindow;
+	}
+	using Microsoft::WRL::ComPtr;
+
+	struct VertexData
+	{
+		VertexData()
+			: _flag{ 0 }
+		{
+			__noop;
+		}
+		VertexData(const fs::Float3& position, const fs::Float4& color)
+			: _position{ position }
+			, _flag{ 0 }
+			, _color{ color }
+		{
+			__noop;
+		}
+		VertexData(const fs::Float3& position, const fs::Float2& texCoord)
+			: _position{ position }
+			, _flag{ 1 }
+			, _texCoord{ texCoord }
+		{
+			__noop;
+		}
+		VertexData(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
+			: _position{ position }
+			, _flag{ 2 }
+			, _color{ color }
+			, _texCoord{ texCoord }
+		{
+			__noop;
+		}
+
+		fs::Float3	_position;
+		uint32		_flag;
+		fs::Float4	_color;
+		fs::Float2	_texCoord;
+		fs::Float2	___reserved___;
+	};
+
+	class GraphicDevice final
+	{
+	public:
+														GraphicDevice();
+														~GraphicDevice() = default;
+
+	public:
+		void											initialize(const fs::Window::IWindow* const window);
+
+	private:
+		void											createDxDevice();
+
+	private:
+		void											createFontTextureFromMemory();
+
+	public:
+		void											beginRendering();
+		void											endRendering();
+
+	private:
+		void											prepareTriangleDataBuffer();
+
+	public:
+		// Current coordinate system
+		// (0.0f, 0.0f) = Top Left
+		// (1.0f, 1.0f) = Bottom Right
+		void											drawRectangle(const fs::Float2& positionTopLeft, const fs::Float2& size);
+
+	private:
+		const fs::Window::IWindow*						_window;
+
+	private:
+		float											_clearColor[4];
+
+#pragma region DirectX
+	private:
+		ComPtr<IDXGISwapChain>							_swapChain;
+		ComPtr<ID3D11Device>							_device;
+		ComPtr<ID3D11DeviceContext>						_deviceContext;
+
+	private:
+		ComPtr<ID3D11Texture2D>							_backBuffer;
+		ComPtr<ID3D11RenderTargetView>					_backBufferRtv;
+
+	private:
+		ComPtr<ID3D10Blob>								_vertexShaderBlob;
+		ComPtr<ID3D11VertexShader>						_vertexShader;
+		ComPtr<ID3D11InputLayout>						_inputLayout;
+		ComPtr<ID3D10Blob>								_pixelShaderBlob;
+		ComPtr<ID3D11PixelShader>						_pixelShader;
+		ComPtr<ID3D11SamplerState>						_samplerState;
+		ComPtr<ID3D11BlendState>						_blendState;
+
+	private:
+		static constexpr uint32							kFontTextureWidth		= 16 * kBitsPerByte;
+		static constexpr uint32							kFontTextureHeight		= 60;
+		static constexpr uint32							kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
+		StaticArray<uint8, kFontTexturePixelCount * 4>	_fontTextureRaw;
+		ComPtr<ID3D11ShaderResourceView>				_fontTextureSrv;
+
+	private:
+		using TriangleIndexType							= uint16;
+
+		uint32											_cachedTriangleVertexCount;
+		ComPtr<ID3D11Buffer>							_triangleVertexBuffer;
+		std::vector<VertexData>							_triangleVertexArray;
+		uint32											_triangleVertexStride;
+		uint32											_triangleVertexOffset;
+
+		uint32											_cachedTriangleIndexCount;
+		std::vector<TriangleIndexType>					_triangleIndexArray;
+		ComPtr<ID3D11Buffer>							_triangleIndexBuffer;
+		uint32											_triangleIndexOffset;
+#pragma endregion
+	};
+}
+
+
+#endif // !FS_GRAPHIC_DEVICE_H

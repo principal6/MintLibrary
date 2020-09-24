@@ -205,6 +205,9 @@ bool testWindow()
 		return false;
 	}
 
+	GraphicDevice graphicDevice;
+	graphicDevice.initialize(&window);
+
 	while (window.isRunning() == true)
 	{
 		if (window.hasEvent() == true)
@@ -228,6 +231,12 @@ bool testWindow()
 				}
 			}
 		}
+
+		graphicDevice.beginRendering();
+		{
+			graphicDevice.drawRectangle(fs::Float2(0, 0), fs::Float2(1, 1));
+		}
+		graphicDevice.endRendering();
 	}
 	return true;
 }

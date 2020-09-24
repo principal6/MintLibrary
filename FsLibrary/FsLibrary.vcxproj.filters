@@ -16,6 +16,9 @@
     <Filter Include="Logger">
       <UniqueIdentifier>{35fdc505-7235-4632-8c87-c1b9459b0074}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SimpleRendering">
+      <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -142,6 +145,9 @@
     <ClInclude Include="File\File.h">
       <Filter>File</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\GraphicDevice.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -152,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="Platform\WindowsWindow.cpp">
       <Filter>Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\GraphicDevice.cpp">
+      <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

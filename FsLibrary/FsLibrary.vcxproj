@@ -60,6 +60,7 @@
     <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Platform\Platform.h" />
+    <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
+    <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
