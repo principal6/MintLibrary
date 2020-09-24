@@ -366,13 +366,13 @@ namespace fs
 
 					int32 nameLength{ equal - begin };
 					FS_ASSERT("김장원", nameLength > 0, "이름의 길이가 0 이하일 수 없습니다.");
-					name.reserve(nameLength + 1);
-					strncpy_s(&name[0], nameLength + 1, &tag[begin], nameLength);
+					name.reserve(static_cast<uint64>(nameLength) + 1);
+					strncpy_s(&name[0], static_cast<uint64>(nameLength) + 1, &tag[begin], nameLength);
 
 					int32 valueLength{ beforeQuoteClose - afterQuoteOpen + 1 };
 					FS_ASSERT("김장원", valueLength > 0, "값의 길이가 0 이하일 수 없습니다.");
-					value.reserve(valueLength + 1);
-					strncpy_s(&value[0], valueLength + 1, &tag[afterQuoteOpen], valueLength);
+					value.reserve(static_cast<uint64>(valueLength) + 1);
+					strncpy_s(&value[0], static_cast<uint64>(valueLength) + 1, &tag[afterQuoteOpen], valueLength);
 
 					attributeArray.emplace_back(name.c_str(), value.c_str());
 
@@ -789,7 +789,7 @@ namespace fs
 			{
 				if (parentChildren[i] == this)
 				{
-					return (i + 1 < parentChildrenCount) ? parentChildren[i + 1] : nullptr;
+					return (i + 1 < parentChildrenCount) ? parentChildren[static_cast<uint64>(i) + 1] : nullptr;
 				}
 			}
 		}

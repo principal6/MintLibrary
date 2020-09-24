@@ -18,8 +18,8 @@ namespace fs
 
 		if ((MaxUnitCount % kBitMaskByteCount) != 0)
 		{
-			const uint32 deleteBitCount = kBitMaskByteCount - (MaxUnitCount % kBitMaskByteCount);
-			const BitMaskType deleteBitMask = static_cast<BitMaskType>(fs::Math::pow2_ui32(deleteBitCount) - 1);
+			constexpr uint32 deleteBitCount = kBitMaskByteCount - (MaxUnitCount % kBitMaskByteCount);
+			constexpr BitMaskType deleteBitMask = static_cast<BitMaskType>(fs::Math::pow2_ui32(deleteBitCount) - 1);
 			_allocMetaDataArray[kAllocMetaDataCount - 1] |= deleteBitMask;
 		}
 	}
