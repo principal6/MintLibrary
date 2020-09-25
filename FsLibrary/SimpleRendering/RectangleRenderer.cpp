@@ -19,11 +19,6 @@ namespace fs
 		return fs::Float2(normalizedPosition.x() + (index & 1) * normalizedSize.x(), normalizedPosition.y() + ((index & 2) >> 1) * normalizedSize.y());
 	}
 
-	FS_INLINE const fs::Float4& getColor(const uint32 index)
-	{
-
-	}
-
 	void RectangleRenderer::drawColored()
 	{
 		const fs::Float3 normalizedPosition	= normalizePosition(_position);
