@@ -7,6 +7,9 @@
 #include <Math/Float2.hpp>
 #include <Math/Float3.hpp>
 #include <Math/Float4.hpp>
+#include <SimpleRendering/DxShaderHeaderMemory.h>
+#include <Container/ScopeString.hpp>
+#include <typeinfo>
 
 
 #pragma comment(lib, "d3d11.lib")
@@ -15,6 +18,28 @@
 
 namespace fs
 {
+	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const type_info& typeInfo)
+	{
+		if (typeInfo == typeid(fs::Float2))
+		{
+			return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
+		}
+		else if (typeInfo == typeid(fs::Float3))
+		{
+			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
+		}
+		else if (typeInfo == typeid(fs::Float4))
+		{
+			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
+		}
+		else if (typeInfo == typeid(uint32))
+		{
+			return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+		}
+		return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+	}
+
+
 	GraphicDevice::GraphicDevice()
 		: _window{ nullptr }
 		, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
@@ -73,49 +98,59 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
+		DxShaderHeaderMemory shaderHeaderMemory;
+		shaderHeaderMemory.pushHeader("ShaderStructDefinitions",
+			R"(
+				struct VS_INPUT
+				{
+					float3 pos	: POSITION0;
+					uint   flag	: FLAG0;
+					float4 col	: COLOR0;
+					float2 uv	: TEXCOORD0;
+				};
+				
+				struct VS_OUTPUT
+				{
+					float4 pos	: SV_POSITION;
+					float4 col	: COLOR0;
+					float2 uv	: TEXCOORD0;
+					uint   flag	: FLAG0;
+				};
+				typedef	VS_OUTPUT PS_INPUT;
+				)"
+		);
+
 		// Compile vertex shader
 		{
+			
+
 			static constexpr const char kVertexShaderContent[]
 			{
-				"\
-				struct VS_INPUT\
-				{\
-					float3 pos	: POSITION0;\
-					uint   flag	: FLAG0;\
-					float4 col	: COLOR0;\
-					float2 uv	: TEXCOORD0;\
-				};\
-				\
-				struct VS_OUTPUT\
-				{\
-					float4 pos	: SV_POSITION;\
-					float4 col	: COLOR0;\
-					float2 uv	: TEXCOORD0;\
-					uint   flag	: FLAG0;\
-				};\
-				\
-				VS_OUTPUT main(VS_INPUT input)\
-				{\
-					VS_OUTPUT result;\
-					result.pos	= float4(input.pos.xyz, 1.0);\
-					result.col	= input.col;\
-					result.uv	= input.uv;\
-					result.flag	= input.flag;\
-					return result;\
-				}\
-				"
-			};
-			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, nullptr, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
+				R"(
+				#include <ShaderStructDefinitions>
 
+				VS_OUTPUT main(VS_INPUT input)
+				{
+					VS_OUTPUT result;
+					result.pos	= float4(input.pos.xyz, 1.0);
+					result.col	= input.col;
+					result.uv	= input.uv;
+					result.flag	= input.flag;
+					return result;
+				}
+				)"
+			};
+
+			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
 			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
 			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
-
+			
 			const D3D11_INPUT_ELEMENT_DESC kInputLayout[] =
 			{
-				{ "POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT   , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_position), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "FLAG"    , 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT          , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_flag)    , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "COLOR"   , 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_color)   , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT      , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_texCoord), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "POSITION", 0, convertToDxgiFormat(typeid(decltype(VertexData::_position))), 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_position), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "FLAG"    , 0, convertToDxgiFormat(typeid(decltype(VertexData::_flag)))    , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_flag)    , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "COLOR"   , 0, convertToDxgiFormat(typeid(decltype(VertexData::_color)))   , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_color)   , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				{ "TEXCOORD", 0, convertToDxgiFormat(typeid(decltype(VertexData::_texCoord))), 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_texCoord), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			};
 			_device->CreateInputLayout(kInputLayout, ARRAYSIZE(kInputLayout), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), &_inputLayout);
 			_deviceContext->IASetInputLayout(_inputLayout.Get());
@@ -125,35 +160,28 @@ namespace fs
 		{
 			static constexpr const char kPixelShaderContent[]
 			{
-				"\
-				struct PS_INPUT\
-				{\
-					float4 pos	: SV_POSITION;\
-					float4 col	: COLOR0;\
-					float2 uv	: TEXCOORD0;\
-					uint   flag	: FLAG0;\
-				};\
-				\
-				sampler		sampler0;\
-				Texture2D	texture0;\
-				\
-				float4 main(PS_INPUT input) : SV_Target\
-				{\
-					float4 result = input.col;\
-					if (input.flag == 1)\
-					{\
-						result = texture0.Sample(sampler0, input.uv);\
-					}\
-					else if (input.flag == 2)\
-					{\
-						result *= texture0.Sample(sampler0, input.uv);\
-					}\
-					return result;\
-				}\
-				"
-			};
-			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, nullptr, "main", "ps_4_0", 0, 0, &_pixelShaderBlob, nullptr);
+				R"(
+				#include <ShaderStructDefinitions>
 
+				sampler		sampler0;
+				Texture2D	texture0;
+				
+				float4 main(PS_INPUT input) : SV_Target
+				{
+					float4 result = input.col;
+					if (input.flag == 1)
+					{
+						result = texture0.Sample(sampler0, input.uv);
+					}
+					else if (input.flag == 2)
+					{
+						result *= texture0.Sample(sampler0, input.uv);
+					}
+					return result;
+				}
+				)"
+			};
+			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &shaderHeaderMemory, "main", "ps_4_0", 0, 0, &_pixelShaderBlob, nullptr);
 			_device->CreatePixelShader(_pixelShaderBlob->GetBufferPointer(), _pixelShaderBlob->GetBufferSize(), NULL, &_pixelShader);
 			_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 		}

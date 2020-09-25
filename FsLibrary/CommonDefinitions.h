@@ -49,6 +49,11 @@
 #pragma endregion
 
 
+#pragma region File
+	static constexpr	uint32		kMaxPath		= 260;
+#pragma endregion
+
+
 #ifdef FS_CHECK_HEAP_ALLOCATION
 	__noop;
 #else

@@ -154,6 +154,9 @@
     <ClInclude Include="SimpleRendering\RectangleRenderer.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -172,6 +175,9 @@
       <Filter>SimpleRendering</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRendering\IRenderer.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>

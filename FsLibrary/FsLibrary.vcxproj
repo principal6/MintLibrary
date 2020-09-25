@@ -60,6 +60,7 @@
     <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Platform\Platform.h" />
+    <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="SimpleRendering\IRenderer.h" />
     <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
@@ -71,6 +72,7 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
+    <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
     <ClCompile Include="SimpleRendering\IRenderer.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
