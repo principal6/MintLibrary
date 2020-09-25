@@ -171,5 +171,8 @@
     <ClCompile Include="SimpleRendering\RectangleRenderer.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleRendering\IRenderer.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

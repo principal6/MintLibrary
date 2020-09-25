@@ -5,6 +5,7 @@
 #define FS_RECTANGLE_DRAW_H
 
 
+#include <CommonDefinitions.h>
 #include <SimpleRendering/IRenderer.h>
 
 
@@ -20,9 +21,9 @@ namespace fs
 		FS_INLINE void			setSize(const fs::Float2& size) { _size = size; }
 
 	public:
-		virtual void			drawColored(const fs::Float4& color) override final;
+		virtual void			drawColored() override final;
 		virtual void			drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
-		virtual void			drawColoredTextured(const fs::Float4& color, const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
+		virtual void			drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
 
 	private:
 		void					prepareIndexArray();

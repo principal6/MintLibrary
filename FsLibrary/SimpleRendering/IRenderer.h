@@ -19,10 +19,7 @@ namespace fs
 	{
 	public:
 									IRenderer() = default;
-									IRenderer(fs::GraphicDevice* const graphicDevice) : _graphicDevice{ graphicDevice }
-									{
-										FS_ASSERT("김장원", nullptr != _graphicDevice, "GraphicDevice 가 nullptr 이면 안 됩니다!");
-									}
+									IRenderer(fs::GraphicDevice* const graphicDevice);
 		virtual						~IRenderer() = default;
 
 	public:
@@ -32,10 +29,13 @@ namespace fs
 		// z value is depth
 		FS_INLINE void				setPosition(const fs::Float3& position) { _position = position; }
 
+		void						setColor(const fs::Float4& color);
+		void						setColor(const std::vector<fs::Float4>& colorArray);
+
 	public:
-		virtual void				drawColored(const fs::Float4& color) abstract;
+		virtual void				drawColored() abstract;
 		virtual void				drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
-		virtual void				drawColoredTextured(const fs::Float4& color, const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
+		virtual void				drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
 
 	protected:
 		FS_INLINE const fs::Float3	normalizePosition(const fs::Float3& position) 
@@ -48,9 +48,17 @@ namespace fs
 			return fs::Float2(size.x() * 2.0f, size.y() * -2.0f);
 		}
 
+		FS_INLINE const fs::Float4& getColorInternal(const uint32 index)
+		{
+			const uint32 colorCount = static_cast<uint32>(_colorArray.size());
+			return (colorCount <= index) ? _defaultColor : _colorArray[index];
+		}
+
 	protected:
-		fs::GraphicDevice*	_graphicDevice;
-		fs::Float3			_position;
+		fs::GraphicDevice*		_graphicDevice;
+		fs::Float3				_position;
+		std::vector<fs::Float4>	_colorArray;
+		fs::Float4				_defaultColor;
 	};
 }
 

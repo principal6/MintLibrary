@@ -238,11 +238,13 @@ bool testWindow()
 
 			rectangleRenderer.setPosition(fs::Float3(0, 0, 0));
 			rectangleRenderer.setSize(fs::Float2(0.5f, 0.5f));
-			rectangleRenderer.drawColored(fs::Float4(0.5f, 0.5f, 0.5f, 1.0f));
+			rectangleRenderer.setColor({ fs::Float4(0.5f, 0.5f, 0.5f, 1.0f), fs::Float4(0.5f, 1.0f, 0.5f, 1.0f) });
+			rectangleRenderer.drawColored();
 
 			rectangleRenderer.setPosition(fs::Float3(0.5f, 0.5f, 0));
 			rectangleRenderer.setSize(fs::Float2(0.5f, 0.5f));
-			rectangleRenderer.drawColoredTextured(fs::Float4(1, 0, 0, 1), fs::Float2(0, 0), fs::Float2(1, 1));
+			rectangleRenderer.setColor(fs::Float4(1, 0, 0, 1));
+			rectangleRenderer.drawColoredTextured(fs::Float2(0, 0), fs::Float2(1, 1));
 		}
 		graphicDevice.endRendering();
 	}
