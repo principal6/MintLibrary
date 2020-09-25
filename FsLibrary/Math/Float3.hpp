@@ -5,6 +5,7 @@
 #include <Math/Float3.h>
 
 #include <Math/MathCommon.h>
+#include <Math/Float2.hpp>
 
 
 namespace fs
@@ -23,6 +24,12 @@ namespace fs
 
 	inline Float3::Float3(const float x, const float y, const float z)
 		: _f{ x, y, z } 
+	{
+		__noop;
+	}
+
+	inline Float3::Float3(const Float2& rhs)
+		: _f{ rhs.x(), rhs.y(), 0.0f }
 	{
 		__noop;
 	}

@@ -6,10 +6,8 @@
 
 
 #include <CommonDefinitions.h>
-#include <Math/Float4.h>
-#include <Math/Float3.h>
-#include <Math/Float2.h>
 #include <Container/StaticArray.h>
+#include <SimpleRendering/RectangleRenderer.h>
 
 
 namespace fs
@@ -57,8 +55,11 @@ namespace fs
 		fs::Float2	___reserved___;
 	};
 
+	
 	class GraphicDevice final
 	{
+		friend RectangleRenderer;
+
 	public:
 														GraphicDevice();
 														~GraphicDevice() = default;
@@ -80,10 +81,7 @@ namespace fs
 		void											prepareTriangleDataBuffer();
 
 	public:
-		// Current coordinate system
-		// (0.0f, 0.0f) = Top Left
-		// (1.0f, 1.0f) = Bottom Right
-		void											drawRectangle(const fs::Float2& positionTopLeft, const fs::Float2& size);
+		FS_INLINE fs::RectangleRenderer&				getRectangleRenderer() noexcept { return _rectangleRenderer; }
 
 	private:
 		const fs::Window::IWindow*						_window;
@@ -131,6 +129,9 @@ namespace fs
 		ComPtr<ID3D11Buffer>							_triangleIndexBuffer;
 		uint32											_triangleIndexOffset;
 #pragma endregion
+
+	private:
+		fs::RectangleRenderer							_rectangleRenderer;
 	};
 }
 

@@ -61,6 +61,8 @@
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
+    <ClInclude Include="SimpleRendering\IRenderer.h" />
+    <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
@@ -70,6 +72,7 @@
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
+    <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

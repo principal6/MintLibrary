@@ -23,6 +23,7 @@ namespace fs
 		, _triangleVertexOffset{ 0 }
 		, _cachedTriangleIndexCount{ 0 }
 		, _triangleIndexOffset{ 0 }
+		, _rectangleRenderer{ this }
 	{
 		__noop;
 	}
@@ -389,6 +390,7 @@ namespace fs
 
 #pragma region Render triangles
 		prepareTriangleDataBuffer();
+
 		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		_deviceContext->IASetVertexBuffers(0, 1, _triangleVertexBuffer.GetAddressOf(), &_triangleVertexStride, &_triangleVertexOffset);
 		_deviceContext->IASetIndexBuffer(_triangleIndexBuffer.Get(), DXGI_FORMAT::DXGI_FORMAT_R16_UINT, _triangleIndexOffset);
@@ -451,26 +453,4 @@ namespace fs
 		}
 	}
 
-	void GraphicDevice::drawRectangle(const fs::Float2& positionTopLeft, const fs::Float2& size)
-	{
-		using fs::Float2;
-		using fs::Float3;
-		using fs::Float4;
-		using fs::VertexData;
-
-		const Float2 normalizedPosition	= Float2(positionTopLeft.x() * 2.0f - 1.0f, positionTopLeft.y() * -2.0f + 1.0f);
-		const Float2 normalizedSize		= Float2(size.x() * 2.0f, size.y() * -2.0f);
-		_triangleVertexArray.push_back(VertexData(Float3(normalizedPosition.x()                     , normalizedPosition.y()                     , 0), Float4(1, 0, 0, 1), Float2(0, 0)));
-		_triangleVertexArray.push_back(VertexData(Float3(normalizedPosition.x() + normalizedSize.x(), normalizedPosition.y()                     , 0), Float4(0, 1, 0, 1), Float2(1, 0)));
-		_triangleVertexArray.push_back(VertexData(Float3(normalizedPosition.x()                     , normalizedPosition.y() + normalizedSize.y(), 0), Float4(0, 0, 1, 1), Float2(0, 1)));
-		_triangleVertexArray.push_back(VertexData(Float3(normalizedPosition.x() + normalizedSize.x(), normalizedPosition.y() + normalizedSize.y(), 0), Float4(1, 1, 0, 1), Float2(1, 1)));
-
-		const uint32 totalTriangleVertexCount = static_cast<uint32>(_triangleVertexArray.size());
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 0);
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 1);
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 2);
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 1);
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 3);
-		_triangleIndexArray.push_back((totalTriangleVertexCount - 4) + 2);
-	}
 }

@@ -6,6 +6,7 @@
 
 
 #include <CommonDefinitions.h>
+#include <Math/Float2.h>
 
 
 namespace fs
@@ -16,6 +17,7 @@ namespace fs
 								Float3();
 		explicit				Float3(const float s);
 		explicit				Float3(const float x, const float y, const float z);
+		explicit				Float3(const Float2& rhs);
 								Float3(const Float3& rhs)								= default;
 								Float3(Float3&& rhs)									= default;
 								~Float3()												= default;

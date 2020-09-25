@@ -148,6 +148,12 @@
     <ClInclude Include="SimpleRendering\GraphicDevice.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\IRenderer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\RectangleRenderer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -160,6 +166,9 @@
       <Filter>Platform</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\RectangleRenderer.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>
