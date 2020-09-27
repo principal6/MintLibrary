@@ -7,7 +7,6 @@
 #include <Math/Float2.hpp>
 #include <Math/Float3.hpp>
 #include <Math/Float4.hpp>
-#include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <Container/ScopeString.hpp>
 #include <typeinfo>
 
@@ -18,26 +17,33 @@
 
 namespace fs
 {
-	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const type_info& typeInfo)
+#pragma region Static function definitions
+	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const ReflectionTypeData& typeData)
 	{
-		if (typeInfo == typeid(fs::Float2))
+		if (typeData._type == typeid(fs::Float2))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
 		}
-		else if (typeInfo == typeid(fs::Float3))
+		else if (typeData._type == typeid(fs::Float3))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
 		}
-		else if (typeInfo == typeid(fs::Float4))
+		else if (typeData._type == typeid(fs::Float4))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
 		}
-		else if (typeInfo == typeid(uint32))
+		else if (typeData._type == typeid(uint32))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
 		}
 		return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
 	}
+
+	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const type_info& typeInfo)
+	{
+		return convertToDxgiFormat(ReflectionTypeData(typeInfo));
+	}
+#pragma endregion
 
 
 	GraphicDevice::GraphicDevice()
@@ -58,6 +64,13 @@ namespace fs
 		FS_ASSERT("김장원", window != nullptr, "window 에 대한 포인터가 nullptr 이면 안 됩니다!");
 		
 		_window = window;
+
+		VertexData a;
+		const uint32 memberCount = a.getMemberCount();
+		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+		{
+			const ReflectionTypeData& m = a.getMemberType(memberIndex);
+		}
 
 		createDxDevice();
 		createFontTextureFromMemory();
@@ -98,8 +111,7 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
-		DxShaderHeaderMemory shaderHeaderMemory;
-		shaderHeaderMemory.pushHeader("ShaderStructDefinitions",
+		_shaderHeaderMemory.pushHeader("ShaderStructDefinitions",
 			R"(
 				struct VS_INPUT
 				{
@@ -122,8 +134,6 @@ namespace fs
 
 		// Compile vertex shader
 		{
-			
-
 			static constexpr const char kVertexShaderContent[]
 			{
 				R"(
@@ -141,10 +151,15 @@ namespace fs
 				)"
 			};
 
-			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
+			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
 			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
 			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
 			
+			DxInputElement inputElement;
+			FS_DECLARE_REFLECTIVE(VertexData, vertexData);
+			const ReflectionTypeData& aa = vertexData.getType();
+			const ReflectionTypeData& ab = vertexData.getMemberType(0);
+			const ReflectionTypeData& ac = vertexData.getMemberType(1);
 			const D3D11_INPUT_ELEMENT_DESC kInputLayout[] =
 			{
 				{ "POSITION", 0, convertToDxgiFormat(typeid(decltype(VertexData::_position))), 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_position), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -181,7 +196,7 @@ namespace fs
 				}
 				)"
 			};
-			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &shaderHeaderMemory, "main", "ps_4_0", 0, 0, &_pixelShaderBlob, nullptr);
+			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "ps_4_0", 0, 0, &_pixelShaderBlob, nullptr);
 			_device->CreatePixelShader(_pixelShaderBlob->GetBufferPointer(), _pixelShaderBlob->GetBufferSize(), NULL, &_pixelShader);
 			_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 		}

@@ -7,7 +7,10 @@
 
 #include <CommonDefinitions.h>
 #include <Container/StaticArray.h>
+#include <Container/ScopeString.h>
 #include <SimpleRendering/RectangleRenderer.h>
+#include <SimpleRendering/DxShaderHeaderMemory.h>
+#include <Reflection/IReflective.h>
 
 
 namespace fs
@@ -18,29 +21,29 @@ namespace fs
 	}
 	using Microsoft::WRL::ComPtr;
 
-	struct VertexData
+	class VertexData : public IReflective
 	{
-		VertexData()
-			: _flag{ 0 }
-		{
-			__noop;
-		}
+		FS_REFLECTIVE_CTOR_INIT(VertexData, _flag{ 0 })
+
 		VertexData(const fs::Float3& position, const fs::Float4& color)
-			: _position{ position }
+			: IReflective()
+			, _position{ position }
 			, _flag{ 0 }
 			, _color{ color }
 		{
 			__noop;
 		}
 		VertexData(const fs::Float3& position, const fs::Float2& texCoord)
-			: _position{ position }
+			: IReflective()
+			, _position{ position }
 			, _flag{ 1 }
 			, _texCoord{ texCoord }
 		{
 			__noop;
 		}
 		VertexData(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
-			: _position{ position }
+			: IReflective()
+			, _position{ position }
 			, _flag{ 2 }
 			, _color{ color }
 			, _texCoord{ texCoord }
@@ -48,14 +51,28 @@ namespace fs
 			__noop;
 		}
 
-		fs::Float3	_position;
-		uint32		_flag;
-		fs::Float4	_color;
-		fs::Float2	_texCoord;
-		fs::Float2	___reserved___;
+		FS_DECLARE_MEMBER(fs::Float3, _position);
+		FS_DECLARE_MEMBER(uint32	, _flag);
+		FS_DECLARE_MEMBER(fs::Float4, _color);
+		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
+		FS_DECLARE_MEMBER(fs::Float2, ___reserved___);
+
+		FS_REGISTER_BEGIN()
+			FS_REGISTER_MEMBER(_position);
+			FS_REGISTER_MEMBER(_flag);
+			FS_REGISTER_MEMBER(_color);
+			FS_REGISTER_MEMBER(_texCoord);
+			FS_REGISTER_MEMBER(___reserved___);
+		FS_REGISTER_END()
 	};
 
+	struct DxInputElement
+	{
+		D3D11_INPUT_ELEMENT_DESC	_inputElementDescriptor;
+		fs::ScopeStringA<40>		_semanticName;
+	};
 	
+
 	class GraphicDevice final
 	{
 		friend RectangleRenderer;
@@ -100,9 +117,11 @@ namespace fs
 		ComPtr<ID3D11RenderTargetView>					_backBufferRtv;
 
 	private:
+		DxShaderHeaderMemory							_shaderHeaderMemory;
+		std::vector<DxInputElement>						_inputElementArray;
+		ComPtr<ID3D11InputLayout>						_inputLayout;
 		ComPtr<ID3D10Blob>								_vertexShaderBlob;
 		ComPtr<ID3D11VertexShader>						_vertexShader;
-		ComPtr<ID3D11InputLayout>						_inputLayout;
 		ComPtr<ID3D10Blob>								_pixelShaderBlob;
 		ComPtr<ID3D11PixelShader>						_pixelShader;
 		ComPtr<ID3D11SamplerState>						_samplerState;

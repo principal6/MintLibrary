@@ -19,6 +19,9 @@
     <Filter Include="SimpleRendering">
       <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Reflection">
+      <UniqueIdentifier>{5e1fe207-38fe-46a7-ac1d-36c9dba68bf1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -157,6 +160,9 @@
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="Reflection\IReflective.h">
+      <Filter>Reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -179,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp">
       <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Reflection\IReflective.cpp">
+      <Filter>Reflection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
