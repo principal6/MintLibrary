@@ -13,41 +13,39 @@ namespace fs
 	class ReflectionPool;
 
 
-	struct ReflectionTypeId
+	struct ReflectionTypeData
 	{
-		ReflectionTypeId() : _typeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }{}
-		ReflectionTypeId(const std::type_info& type)
-			: ReflectionTypeId()
+		friend ReflectionPool;
+
+	public:
+		ReflectionTypeData() : _byteOffset{ 0 }, _typeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }, _isRegisterDone{ false } {}
+		explicit ReflectionTypeData(const std::type_info& type) : ReflectionTypeData()
 		{
-			_typeName	= type.name();
-			_hashCode	= type.hash_code();
+			_typeName = type.name();
+			_hashCode = type.hash_code();
 		}
 
+	public:
 		const bool operator==(const std::type_info& type) const noexcept
 		{
 			return _hashCode == type.hash_code();
 		}
 
-		std::string		_typeName;
-		size_t			_typeSize;
-		size_t			_hashCode;
-		bool			_isReflective;
-	};
-
-	struct ReflectionTypeData
-	{
-		friend ReflectionPool;
-
-		ReflectionTypeData() : _isRegisterDone{ false } {}
-		explicit ReflectionTypeData(const std::type_info& type) : ReflectionTypeData() { _type = type; }
-
-		ReflectionTypeId				_type;
-		std::string						_declarationName;
-		std::vector<ReflectionTypeData>	_memberArray;
+	public:
+		size_t							_byteOffset;
+		size_t							_typeSize;
+		size_t							_hashCode;
 
 	private:
+		bool							_isReflective; // 멤버 중엔 Reflective 하지 않은 자료형이 있을 수 있다.
 		bool							_isRegisterDone;
+
+	public:
+		std::string						_typeName;
+		std::string						_declarationName;
+		std::vector<ReflectionTypeData>	_memberArray;
 	};
+
 
 	class IReflective;
 	class ReflectionPool final
@@ -59,7 +57,7 @@ namespace fs
 											~ReflectionPool() = default;
 
 	private:
-		static uint32						registerType(const std::type_info& type, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize);
+		static uint32						registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize);
 		static void							registerTypeDone(const uint32 typeIndex);
 		static const ReflectionTypeData&	getTypeData(const uint32 typeIndex);
 
@@ -70,6 +68,7 @@ namespace fs
 		std::vector<ReflectionTypeData>		_typeArray;
 	};
 
+
 #define FS_DECLARE_REFLECTIVE(type, name)			type name; name.setDeclarationName(#name);
 
 #define FS_REFLECTIVE_CTOR(className)				public: className() { registerTypeInfoXXX(); }
@@ -78,8 +77,9 @@ namespace fs
 #define FS_DECLARE_MEMBER(type, name)				public: type name;
 
 #define FS_REGISTER_BEGIN()							protected: virtual void registerTypeInfoXXX() override {
-#define FS_REGISTER_MEMBER(name)						__super::registerType(typeid(*this), sizeof(*this), typeid(name), #name, sizeof(name));
+#define FS_REGISTER_MEMBER(name)						__super::registerType(typeid(*this), reinterpret_cast<size_t>(&(reinterpret_cast<decltype(this)>(0))->name), sizeof(*this), typeid(name), #name, sizeof(name));
 #define FS_REGISTER_END()							registerTypeDone(); }
+
 
 	class IReflective abstract
 	{
@@ -109,9 +109,9 @@ namespace fs
 		}
 
 	protected:
-		void						registerType(const std::type_info& type, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize)
+		void						registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize)
 		{
-			_myTypeIndex = fs::ReflectionPool::registerType(type, typeSize, memberType, memberName, memberSize);
+			_myTypeIndex = fs::ReflectionPool::registerType(type, byteOffset, typeSize, memberType, memberName, memberSize);
 			++_memberCount;
 		}
 

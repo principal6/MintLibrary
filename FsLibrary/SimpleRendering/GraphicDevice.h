@@ -8,6 +8,7 @@
 #include <CommonDefinitions.h>
 #include <Container/StaticArray.h>
 #include <Container/ScopeString.h>
+#include <Container/UniqueString.h>
 #include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <Reflection/IReflective.h>
@@ -55,21 +56,21 @@ namespace fs
 		FS_DECLARE_MEMBER(uint32	, _flag);
 		FS_DECLARE_MEMBER(fs::Float4, _color);
 		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
-		FS_DECLARE_MEMBER(fs::Float2, ___reserved___);
+		//FS_DECLARE_MEMBER(fs::Float2, ___reserved___);
 
 		FS_REGISTER_BEGIN()
 			FS_REGISTER_MEMBER(_position);
 			FS_REGISTER_MEMBER(_flag);
 			FS_REGISTER_MEMBER(_color);
 			FS_REGISTER_MEMBER(_texCoord);
-			FS_REGISTER_MEMBER(___reserved___);
+			//FS_REGISTER_MEMBER(___reserved___);
 		FS_REGISTER_END()
 	};
 
-	struct DxInputElement
+	struct DxInputElementSet
 	{
-		D3D11_INPUT_ELEMENT_DESC	_inputElementDescriptor;
-		fs::ScopeStringA<40>		_semanticName;
+		std::vector<std::string>				_semanticNameArray;
+		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray{};
 	};
 	
 
@@ -118,7 +119,7 @@ namespace fs
 
 	private:
 		DxShaderHeaderMemory							_shaderHeaderMemory;
-		std::vector<DxInputElement>						_inputElementArray;
+		DxInputElementSet								_inputElementSet;
 		ComPtr<ID3D11InputLayout>						_inputLayout;
 		ComPtr<ID3D10Blob>								_vertexShaderBlob;
 		ComPtr<ID3D11VertexShader>						_vertexShader;

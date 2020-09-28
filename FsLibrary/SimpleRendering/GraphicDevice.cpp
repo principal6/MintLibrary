@@ -8,6 +8,7 @@
 #include <Math/Float3.hpp>
 #include <Math/Float4.hpp>
 #include <Container/ScopeString.hpp>
+#include <Container/UniqueString.hpp>
 #include <typeinfo>
 
 
@@ -20,19 +21,19 @@ namespace fs
 #pragma region Static function definitions
 	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const ReflectionTypeData& typeData)
 	{
-		if (typeData._type == typeid(fs::Float2))
+		if (typeData == typeid(fs::Float2))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
 		}
-		else if (typeData._type == typeid(fs::Float3))
+		else if (typeData == typeid(fs::Float3))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
 		}
-		else if (typeData._type == typeid(fs::Float4))
+		else if (typeData == typeid(fs::Float4))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
 		}
-		else if (typeData._type == typeid(uint32))
+		else if (typeData == typeid(uint32))
 		{
 			return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
 		}
@@ -155,19 +156,39 @@ namespace fs
 			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
 			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
 			
-			DxInputElement inputElement;
+			DxInputElementSet inputElement;
 			FS_DECLARE_REFLECTIVE(VertexData, vertexData);
-			const ReflectionTypeData& aa = vertexData.getType();
-			const ReflectionTypeData& ab = vertexData.getMemberType(0);
-			const ReflectionTypeData& ac = vertexData.getMemberType(1);
-			const D3D11_INPUT_ELEMENT_DESC kInputLayout[] =
+			std::string semanticName;
+			const uint32 memberCount = vertexData.getMemberCount();
+			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 			{
-				{ "POSITION", 0, convertToDxgiFormat(typeid(decltype(VertexData::_position))), 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_position), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "FLAG"    , 0, convertToDxgiFormat(typeid(decltype(VertexData::_flag)))    , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_flag)    , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "COLOR"   , 0, convertToDxgiFormat(typeid(decltype(VertexData::_color)))   , 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_color)   , D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-				{ "TEXCOORD", 0, convertToDxgiFormat(typeid(decltype(VertexData::_texCoord))), 0, reinterpret_cast<size_t>(&(reinterpret_cast<VertexData*>(0))->_texCoord), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			};
-			_device->CreateInputLayout(kInputLayout, ARRAYSIZE(kInputLayout), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), &_inputLayout);
+				const fs::ReflectionTypeData& memberType = vertexData.getMemberType(memberIndex);
+
+				semanticName = memberType._declarationName.substr(1);
+				const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
+				for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; semanticNameIter++)
+				{
+					semanticName[semanticNameIter] = ::toupper(semanticName[semanticNameIter]);
+				}
+
+				_inputElementSet._semanticNameArray.emplace_back(semanticName);
+			}
+
+			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+			{
+				const fs::ReflectionTypeData& memberType = vertexData.getMemberType(memberIndex);
+
+				D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
+				inputElementDescriptor.SemanticName = _inputElementSet._semanticNameArray[memberIndex].c_str();
+				inputElementDescriptor.SemanticIndex = 0;
+				inputElementDescriptor.Format = convertToDxgiFormat(memberType);
+				inputElementDescriptor.InputSlot = 0;
+				inputElementDescriptor.AlignedByteOffset = static_cast<UINT>(memberType._byteOffset);
+				inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
+				inputElementDescriptor.InstanceDataStepRate = 0;
+				_inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
+			}
+			_device->CreateInputLayout(&_inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(_inputElementSet._inputElementDescriptorArray.size()), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), &_inputLayout);
 			_deviceContext->IASetInputLayout(_inputLayout.Get());
 		}
 
