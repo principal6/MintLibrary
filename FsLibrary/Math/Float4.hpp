@@ -4,6 +4,7 @@
 #include <stdafx.h>
 #include <Math/Float4.h>
 #include <Math/MathCommon.h>
+#include <Math/Float3.hpp>
 
 
 namespace fs
@@ -22,6 +23,12 @@ namespace fs
 
 	inline Float4::Float4(const float x, const float y, const float z, const float w)
 		: _f{ x, y, z, w } 
+	{
+		__noop;
+	}
+
+	inline Float4::Float4(const Float3& rhs)
+		: _f{ rhs.x(), rhs.y(), rhs.z() }
 	{
 		__noop;
 	}

@@ -10,7 +10,7 @@
 #include <Container/ScopeString.hpp>
 #include <Container/UniqueString.hpp>
 #include <typeinfo>
-
+#include <unordered_map>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -51,7 +51,7 @@ namespace fs
 		: _window{ nullptr }
 		, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
 		, _cachedTriangleVertexCount{ 0 }
-		, _triangleVertexStride{ sizeof(VertexData) }
+		, _triangleVertexStride{ sizeof(VS_INPUT) }
 		, _triangleVertexOffset{ 0 }
 		, _cachedTriangleIndexCount{ 0 }
 		, _triangleIndexOffset{ 0 }
@@ -65,13 +65,6 @@ namespace fs
 		FS_ASSERT("김장원", window != nullptr, "window 에 대한 포인터가 nullptr 이면 안 됩니다!");
 		
 		_window = window;
-
-		VertexData a;
-		const uint32 memberCount = a.getMemberCount();
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-		{
-			const ReflectionTypeData& m = a.getMemberType(memberIndex);
-		}
 
 		createDxDevice();
 		createFontTextureFromMemory();
@@ -112,57 +105,13 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
-		_shaderHeaderMemory.pushHeader("ShaderStructDefinitions",
-			R"(
-				struct VS_INPUT
-				{
-					float3 pos	: POSITION0;
-					uint   flag	: FLAG0;
-					float4 col	: COLOR0;
-					float2 uv	: TEXCOORD0;
-				};
-				
-				struct VS_OUTPUT
-				{
-					float4 pos	: SV_POSITION;
-					float4 col	: COLOR0;
-					float2 uv	: TEXCOORD0;
-					uint   flag	: FLAG0;
-				};
-				typedef	VS_OUTPUT PS_INPUT;
-				)"
-		);
-
-		// Compile vertex shader
 		{
-			static constexpr const char kVertexShaderContent[]
-			{
-				R"(
-				#include <ShaderStructDefinitions>
-
-				VS_OUTPUT main(VS_INPUT input)
-				{
-					VS_OUTPUT result;
-					result.pos	= float4(input.pos.xyz, 1.0);
-					result.col	= input.col;
-					result.uv	= input.uv;
-					result.flag	= input.flag;
-					return result;
-				}
-				)"
-			};
-
-			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
-			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
-			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
-			
-			DxInputElementSet inputElement;
-			FS_DECLARE_REFLECTIVE(VertexData, vertexData);
+			VS_INPUT vsInput;
 			std::string semanticName;
-			const uint32 memberCount = vertexData.getMemberCount();
+			const uint32 memberCount = vsInput.getMemberCount();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 			{
-				const fs::ReflectionTypeData& memberType = vertexData.getMemberType(memberIndex);
+				const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
 
 				semanticName = memberType._declarationName.substr(1);
 				const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
@@ -176,7 +125,7 @@ namespace fs
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 			{
-				const fs::ReflectionTypeData& memberType = vertexData.getMemberType(memberIndex);
+				const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
 
 				D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
 				inputElementDescriptor.SemanticName = _inputElementSet._semanticNameArray[memberIndex].c_str();
@@ -188,6 +137,120 @@ namespace fs
 				inputElementDescriptor.InstanceDataStepRate = 0;
 				_inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
 			}
+		}
+
+		static constexpr const char* const kHlslTypeMatchingTable[][2]
+		{
+			{ "Float2"           , "float2"      },
+			{ "Float3"           , "float3"      },
+			{ "Float4"           , "float4"      },
+			{ "unsigned int"     , "uint"        },
+		};
+		static constexpr const char* const kHlslSemanticMatchingTable[][2]
+		{
+			{ "POSITION"         , "SV_POSITION" },
+		};
+
+		std::string headerContent;
+		{
+			std::unordered_map<std::string, std::string> hlslTypeMap;
+			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < ARRAYSIZE(kHlslTypeMatchingTable); typeMapElementIndex++)
+			{
+				hlslTypeMap.insert(std::make_pair(kHlslTypeMatchingTable[typeMapElementIndex][0], kHlslTypeMatchingTable[typeMapElementIndex][1]));
+			}
+
+			VS_INPUT vsInput;
+			{
+				headerContent.append("struct ");
+				headerContent.append(vsInput.getType()._simpleTypeName);
+				headerContent.append("\n{\n");
+				const uint32 memberCount = vsInput.getMemberCount();
+				for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+				{
+					const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
+					auto found = hlslTypeMap.find(memberType._simpleTypeName);
+					headerContent.push_back('\t');
+					if (found != hlslTypeMap.end())
+					{
+						headerContent.append(found->second);
+					}
+					else
+					{
+						headerContent.append(memberType._simpleTypeName);
+					}
+					headerContent.append(" ");
+					headerContent.append(memberType._declarationName);
+					headerContent.append(" : ");
+					headerContent.append(_inputElementSet._semanticNameArray[memberIndex]);
+					headerContent.append(";\n");
+				}
+				headerContent.append("};\n\n");
+			}
+			
+
+			std::unordered_map<std::string, std::string> hlslSemanticMap;
+			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < ARRAYSIZE(kHlslSemanticMatchingTable); semanticMapElementIndex++)
+			{
+				hlslSemanticMap.insert(std::make_pair(kHlslSemanticMatchingTable[semanticMapElementIndex][0], kHlslSemanticMatchingTable[semanticMapElementIndex][1]));
+			}
+
+			VS_OUTPUT vsOutput;
+			{
+				headerContent.append("struct ");
+				headerContent.append(vsOutput.getType()._simpleTypeName);
+				headerContent.append("\n{\n");
+				const uint32 memberCount = vsOutput.getMemberCount();
+				for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+				{
+					const fs::ReflectionTypeData& memberType = vsOutput.getMemberType(memberIndex);
+					auto found = hlslTypeMap.find(memberType._simpleTypeName);
+					if (hlslTypeMap.end() != found)
+					{
+						headerContent.push_back('\t');
+						headerContent.append(found->second);
+						headerContent.append(" ");
+						headerContent.append(memberType._declarationName);
+						headerContent.append(" : ");
+						auto found = hlslSemanticMap.find(_inputElementSet._semanticNameArray[memberIndex]);
+						if (found != hlslSemanticMap.end())
+						{
+							headerContent.append(found->second);
+						}
+						else
+						{
+							headerContent.append(_inputElementSet._semanticNameArray[memberIndex]);
+						}
+						headerContent.append(";\n");
+					}
+				}
+				headerContent.append("};\n\n");
+			}
+		}
+		_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", headerContent.c_str());
+
+		// Compile vertex shader
+		{
+			static constexpr const char kVertexShaderContent[]
+			{
+				R"(
+				#include <ShaderStructDefinitions>
+
+				VS_OUTPUT main(VS_INPUT input)
+				{
+					VS_OUTPUT result;
+					result._position	= float4(input._position.xyz, 1.0);
+					result._color		= input._color;
+					result._texCoord	= input._texCoord;
+					result._flag		= input._flag;
+					return result;
+				}
+				)"
+			};
+
+			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
+			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
+			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
+
 			_device->CreateInputLayout(&_inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(_inputElementSet._inputElementDescriptorArray.size()), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), &_inputLayout);
 			_deviceContext->IASetInputLayout(_inputLayout.Get());
 		}
@@ -202,16 +265,16 @@ namespace fs
 				sampler		sampler0;
 				Texture2D	texture0;
 				
-				float4 main(PS_INPUT input) : SV_Target
+				float4 main(VS_OUTPUT input) : SV_Target
 				{
-					float4 result = input.col;
-					if (input.flag == 1)
+					float4 result = input._color;
+					if (input._flag == 1)
 					{
-						result = texture0.Sample(sampler0, input.uv);
+						result = texture0.Sample(sampler0, input._texCoord);
 					}
-					else if (input.flag == 2)
+					else if (input._flag == 2)
 					{
-						result *= texture0.Sample(sampler0, input.uv);
+						result *= texture0.Sample(sampler0, input._texCoord);
 					}
 					return result;
 				}

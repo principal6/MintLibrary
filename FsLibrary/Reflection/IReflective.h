@@ -21,7 +21,14 @@ namespace fs
 		ReflectionTypeData() : _byteOffset{ 0 }, _typeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }, _isRegisterDone{ false } {}
 		explicit ReflectionTypeData(const std::type_info& type) : ReflectionTypeData()
 		{
-			_typeName = type.name();
+			_simpleTypeName = _typeName = type.name();
+
+			size_t found = _simpleTypeName.rfind("::");
+			if (std::string::npos != found)
+			{
+				_simpleTypeName = _simpleTypeName.substr(found + 2);
+			}
+
 			_hashCode = type.hash_code();
 		}
 
@@ -42,6 +49,7 @@ namespace fs
 
 	public:
 		std::string						_typeName;
+		std::string						_simpleTypeName;
 		std::string						_declarationName;
 		std::vector<ReflectionTypeData>	_memberArray;
 	};

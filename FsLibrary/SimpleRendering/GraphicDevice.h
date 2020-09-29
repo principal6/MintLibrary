@@ -22,48 +22,63 @@ namespace fs
 	}
 	using Microsoft::WRL::ComPtr;
 
-	class VertexData : public IReflective
+	class VS_INPUT : public IReflective
 	{
-		FS_REFLECTIVE_CTOR_INIT(VertexData, _flag{ 0 })
+		FS_REFLECTIVE_CTOR_INIT(VS_INPUT, _flag{ 0 })
 
-		VertexData(const fs::Float3& position, const fs::Float4& color)
+		VS_INPUT(const fs::Float3& position, const fs::Float4& color)
 			: IReflective()
 			, _position{ position }
+			, _color{ color }
 			, _flag{ 0 }
-			, _color{ color }
 		{
 			__noop;
 		}
-		VertexData(const fs::Float3& position, const fs::Float2& texCoord)
+		VS_INPUT(const fs::Float3& position, const fs::Float2& texCoord)
 			: IReflective()
 			, _position{ position }
+			, _texCoord{ texCoord }
 			, _flag{ 1 }
-			, _texCoord{ texCoord }
 		{
 			__noop;
 		}
-		VertexData(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
+		VS_INPUT(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
 			: IReflective()
 			, _position{ position }
-			, _flag{ 2 }
 			, _color{ color }
 			, _texCoord{ texCoord }
+			, _flag{ 2 }
 		{
 			__noop;
 		}
 
-		FS_DECLARE_MEMBER(fs::Float3, _position);
-		FS_DECLARE_MEMBER(uint32	, _flag);
+		FS_DECLARE_MEMBER(fs::Float4, _position);
 		FS_DECLARE_MEMBER(fs::Float4, _color);
 		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
-		//FS_DECLARE_MEMBER(fs::Float2, ___reserved___);
+		FS_DECLARE_MEMBER(uint32	, _flag);
 
 		FS_REGISTER_BEGIN()
 			FS_REGISTER_MEMBER(_position);
-			FS_REGISTER_MEMBER(_flag);
 			FS_REGISTER_MEMBER(_color);
 			FS_REGISTER_MEMBER(_texCoord);
-			//FS_REGISTER_MEMBER(___reserved___);
+			FS_REGISTER_MEMBER(_flag);
+		FS_REGISTER_END()
+	};
+
+	class VS_OUTPUT : public IReflective
+	{
+		FS_REFLECTIVE_CTOR_INIT(VS_OUTPUT, _flag{ 0 })
+
+		FS_DECLARE_MEMBER(fs::Float4, _position);
+		FS_DECLARE_MEMBER(fs::Float4, _color);
+		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
+		FS_DECLARE_MEMBER(uint32	, _flag);
+
+		FS_REGISTER_BEGIN()
+			FS_REGISTER_MEMBER(_position);
+			FS_REGISTER_MEMBER(_color);
+			FS_REGISTER_MEMBER(_texCoord);
+			FS_REGISTER_MEMBER(_flag);
 		FS_REGISTER_END()
 	};
 
@@ -140,7 +155,7 @@ namespace fs
 
 		uint32											_cachedTriangleVertexCount;
 		ComPtr<ID3D11Buffer>							_triangleVertexBuffer;
-		std::vector<VertexData>							_triangleVertexArray;
+		std::vector<VS_INPUT>							_triangleVertexArray;
 		uint32											_triangleVertexStride;
 		uint32											_triangleVertexOffset;
 

@@ -7,6 +7,7 @@
 
 #include <CommonDefinitions.h>
 #include <Math/MathCommon.h>
+#include <Math/Float3.h>
 
 
 namespace fs
@@ -17,6 +18,7 @@ namespace fs
 								Float4();
 		explicit				Float4(const float s);
 		explicit				Float4(const float x, const float y, const float z, const float w);
+		explicit				Float4(const Float3& rhs);
 								Float4(const Float4& rhs)											= default;
 								Float4(Float4&& rhs)												= default;
 								~Float4()															= default;
