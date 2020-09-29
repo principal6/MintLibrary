@@ -44,6 +44,93 @@ namespace fs
 	{
 		return convertToDxgiFormat(ReflectionTypeData(typeInfo));
 	}
+
+	static std::string convertDeclarationNameToHlslSemanticName(const std::string& declarationName)
+	{
+		std::string semanticName = declarationName.substr(1);
+		const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
+		for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; semanticNameIter++)
+		{
+			semanticName[semanticNameIter] = ::toupper(semanticName[semanticNameIter]);
+		}
+		return semanticName;
+	}
+	static constexpr const char* const kHlslTypeMatchingTable[][2]
+	{
+		{ "Float2"           , "float2"      },
+		{ "Float3"           , "float3"      },
+		{ "Float4"           , "float4"      },
+		{ "unsigned int"     , "uint"        },
+	};
+	static constexpr const char* const kHlslSemanticMatchingTable[][2]
+	{
+		{ "POSITION"         , "SV_POSITION" },
+	};
+	static std::string convertReflectiveClassToHlslStruct(const fs::IReflective* const reflective, bool mapSemanticNames)
+	{
+		static std::unordered_map<std::string, std::string> hlslTypeMap;
+		if (hlslTypeMap.empty() == true)
+		{
+			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < ARRAYSIZE(kHlslTypeMatchingTable); typeMapElementIndex++)
+			{
+				hlslTypeMap.insert(std::make_pair(kHlslTypeMatchingTable[typeMapElementIndex][0], kHlslTypeMatchingTable[typeMapElementIndex][1]));
+			}
+		}
+
+		static std::unordered_map<std::string, std::string> hlslSemanticMap;
+		if (hlslSemanticMap.empty() == true)
+		{
+			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < ARRAYSIZE(kHlslSemanticMatchingTable); semanticMapElementIndex++)
+			{
+				hlslSemanticMap.insert(std::make_pair(kHlslSemanticMatchingTable[semanticMapElementIndex][0], kHlslSemanticMatchingTable[semanticMapElementIndex][1]));
+			}
+		}
+
+		std::string result;
+		result.append("struct ");
+		result.append(reflective->getType()._typeName);
+		result.append("\n{\n");
+		std::string semanticName;
+		const uint32 memberCount = reflective->getMemberCount();
+		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+		{
+			const fs::ReflectionTypeData& memberType = reflective->getMemberType(memberIndex);
+			auto found = hlslTypeMap.find(memberType._typeName);
+			result.push_back('\t');
+			if (found != hlslTypeMap.end())
+			{
+				result.append(found->second);
+			}
+			else
+			{
+				result.append(memberType._typeName);
+			}
+			result.append(" ");
+			result.append(memberType._declarationName);
+			result.append(" : ");
+			
+			semanticName = convertDeclarationNameToHlslSemanticName(memberType._declarationName);
+			if (true == mapSemanticNames)
+			{
+				auto found = hlslSemanticMap.find(semanticName);
+				if (found != hlslSemanticMap.end())
+				{
+					result.append(found->second);
+				}
+				else
+				{
+					result.append(semanticName);
+				}
+			}
+			else
+			{
+				result.append(semanticName);
+			}
+			result.append(";\n");
+		}
+		result.append("};\n\n");
+		return result;
+	}
 #pragma endregion
 
 
@@ -105,27 +192,16 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
+		// Input elements
 		{
 			VS_INPUT vsInput;
-			std::string semanticName;
 			const uint32 memberCount = vsInput.getMemberCount();
+			_inputElementSet._semanticNameArray.reserve(memberCount);
+			_inputElementSet._inputElementDescriptorArray.reserve(memberCount);
 			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
 			{
 				const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
-
-				semanticName = memberType._declarationName.substr(1);
-				const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
-				for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; semanticNameIter++)
-				{
-					semanticName[semanticNameIter] = ::toupper(semanticName[semanticNameIter]);
-				}
-
-				_inputElementSet._semanticNameArray.emplace_back(semanticName);
-			}
-
-			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-			{
-				const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
+				_inputElementSet._semanticNameArray.emplace_back(convertDeclarationNameToHlslSemanticName(memberType._declarationName));
 
 				D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
 				inputElementDescriptor.SemanticName = _inputElementSet._semanticNameArray[memberIndex].c_str();
@@ -139,96 +215,19 @@ namespace fs
 			}
 		}
 
-		static constexpr const char* const kHlslTypeMatchingTable[][2]
+		// Shader header
+		std::string shaderHeaderContent;
 		{
-			{ "Float2"           , "float2"      },
-			{ "Float3"           , "float3"      },
-			{ "Float4"           , "float4"      },
-			{ "unsigned int"     , "uint"        },
-		};
-		static constexpr const char* const kHlslSemanticMatchingTable[][2]
-		{
-			{ "POSITION"         , "SV_POSITION" },
-		};
-
-		std::string headerContent;
-		{
-			std::unordered_map<std::string, std::string> hlslTypeMap;
-			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < ARRAYSIZE(kHlslTypeMatchingTable); typeMapElementIndex++)
-			{
-				hlslTypeMap.insert(std::make_pair(kHlslTypeMatchingTable[typeMapElementIndex][0], kHlslTypeMatchingTable[typeMapElementIndex][1]));
-			}
-
 			VS_INPUT vsInput;
-			{
-				headerContent.append("struct ");
-				headerContent.append(vsInput.getType()._simpleTypeName);
-				headerContent.append("\n{\n");
-				const uint32 memberCount = vsInput.getMemberCount();
-				for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-				{
-					const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
-					auto found = hlslTypeMap.find(memberType._simpleTypeName);
-					headerContent.push_back('\t');
-					if (found != hlslTypeMap.end())
-					{
-						headerContent.append(found->second);
-					}
-					else
-					{
-						headerContent.append(memberType._simpleTypeName);
-					}
-					headerContent.append(" ");
-					headerContent.append(memberType._declarationName);
-					headerContent.append(" : ");
-					headerContent.append(_inputElementSet._semanticNameArray[memberIndex]);
-					headerContent.append(";\n");
-				}
-				headerContent.append("};\n\n");
-			}
-			
-
-			std::unordered_map<std::string, std::string> hlslSemanticMap;
-			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < ARRAYSIZE(kHlslSemanticMatchingTable); semanticMapElementIndex++)
-			{
-				hlslSemanticMap.insert(std::make_pair(kHlslSemanticMatchingTable[semanticMapElementIndex][0], kHlslSemanticMatchingTable[semanticMapElementIndex][1]));
-			}
-
 			VS_OUTPUT vsOutput;
 			{
-				headerContent.append("struct ");
-				headerContent.append(vsOutput.getType()._simpleTypeName);
-				headerContent.append("\n{\n");
-				const uint32 memberCount = vsOutput.getMemberCount();
-				for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-				{
-					const fs::ReflectionTypeData& memberType = vsOutput.getMemberType(memberIndex);
-					auto found = hlslTypeMap.find(memberType._simpleTypeName);
-					if (hlslTypeMap.end() != found)
-					{
-						headerContent.push_back('\t');
-						headerContent.append(found->second);
-						headerContent.append(" ");
-						headerContent.append(memberType._declarationName);
-						headerContent.append(" : ");
-						auto found = hlslSemanticMap.find(_inputElementSet._semanticNameArray[memberIndex]);
-						if (found != hlslSemanticMap.end())
-						{
-							headerContent.append(found->second);
-						}
-						else
-						{
-							headerContent.append(_inputElementSet._semanticNameArray[memberIndex]);
-						}
-						headerContent.append(";\n");
-					}
-				}
-				headerContent.append("};\n\n");
+				shaderHeaderContent.append(convertReflectiveClassToHlslStruct(&vsInput, false));
+				shaderHeaderContent.append(convertReflectiveClassToHlslStruct(&vsOutput, true));
 			}
 		}
-		_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", headerContent.c_str());
+		_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", shaderHeaderContent.c_str());
 
-		// Compile vertex shader
+		// Compile vertex shader and create input layer
 		{
 			static constexpr const char kVertexShaderContent[]
 			{
@@ -318,6 +317,7 @@ namespace fs
 			_deviceContext->OMSetBlendState(_blendState.Get(), kBlendFactor, 0xFFFFFFFF);
 		}
 
+		// Viewport
 		{
 			D3D11_VIEWPORT viewport{};
 			viewport.Width = static_cast<FLOAT>(windowSize.x());

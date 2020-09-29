@@ -21,12 +21,12 @@ namespace fs
 		ReflectionTypeData() : _byteOffset{ 0 }, _typeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }, _isRegisterDone{ false } {}
 		explicit ReflectionTypeData(const std::type_info& type) : ReflectionTypeData()
 		{
-			_simpleTypeName = _typeName = type.name();
+			_typeName = _fullTypeName = type.name();
 
-			size_t found = _simpleTypeName.rfind("::");
+			size_t found = _typeName.rfind("::");
 			if (std::string::npos != found)
 			{
-				_simpleTypeName = _simpleTypeName.substr(found + 2);
+				_typeName = _typeName.substr(found + 2);
 			}
 
 			_hashCode = type.hash_code();
@@ -46,10 +46,10 @@ namespace fs
 	private:
 		bool							_isReflective; // 멤버 중엔 Reflective 하지 않은 자료형이 있을 수 있다.
 		bool							_isRegisterDone;
+		std::string						_fullTypeName;
 
 	public:
 		std::string						_typeName;
-		std::string						_simpleTypeName;
 		std::string						_declarationName;
 		std::vector<ReflectionTypeData>	_memberArray;
 	};
@@ -101,7 +101,7 @@ namespace fs
 			_declarationName = declarationName;
 		}
 
-		const ReflectionTypeData&	getType()
+		const ReflectionTypeData&	getType() const noexcept
 		{
 			return fs::ReflectionPool::getTypeData(_myTypeIndex);
 		}
@@ -111,7 +111,7 @@ namespace fs
 			return _memberCount;
 		}
 
-		const ReflectionTypeData&	getMemberType(const uint32 memberIndex)
+		const ReflectionTypeData&	getMemberType(const uint32 memberIndex) const noexcept
 		{
 			return fs::ReflectionPool::getTypeData(_myTypeIndex)._memberArray[memberIndex];
 		}
