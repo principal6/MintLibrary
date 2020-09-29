@@ -38,14 +38,16 @@ namespace fs
 		virtual void				drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
 
 	protected:
-		FS_INLINE const fs::Float3	normalizePosition(const fs::Float3& position) 
+		FS_INLINE const fs::Float3&	normalizePosition(const fs::Float3& position) 
 		{
-			return fs::Float3(position.x() * 2.0f - 1.0f, position.y() * -2.0f + 1.0f, position.z()); 
+			//return fs::Float3(position.x() * 2.0f - 1.0f, position.y() * -2.0f + 1.0f, position.z()); 
+			return position;
 		}
 
-		FS_INLINE const fs::Float2	normalizeSize(const fs::Float2& size)
+		FS_INLINE const fs::Float2&	normalizeSize(const fs::Float2& size)
 		{
-			return fs::Float2(size.x() * 2.0f, size.y() * -2.0f);
+			//return fs::Float2(size.x() * 2.0f, size.y() * -2.0f);
+			return size;
 		}
 
 		FS_INLINE const fs::Float4& getColorInternal(const uint32 index)

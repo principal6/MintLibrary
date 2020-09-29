@@ -110,6 +110,17 @@ namespace fs
 		);
 	}
 
+	inline const Float4x4 Float4x4::projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
+	{
+		return Float4x4
+		(
+			+2.0f / pixelWidth,  0.0f              , 0.0f, -1.0f,
+			 0.0f             , -2.0f / pixelHeight, 0.0f, +1.0f,
+			 0.0f             ,  0.0f              , 1.0f,  0.0f,
+			 0.0f             ,  0.0f              , 0.0f,  1.0f
+		);
+	}
+
 	inline Float4x4::Float4x4()
 		: Float4x4(
 			1.0f, 0.0f, 0.0f, 0.0f,

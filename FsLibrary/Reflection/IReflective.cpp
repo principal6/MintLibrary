@@ -9,25 +9,34 @@ namespace fs
 		const uint32 typeCount = static_cast<uint32>(getInstance()._typeArray.size());
 		for (uint32 typeIndex = 0; typeIndex < typeCount; typeIndex++)
 		{
-			if (getInstance()._typeArray[typeIndex]._isRegisterDone == false && getInstance()._typeArray[typeIndex] == type)
+			if (getInstance()._typeArray[typeIndex] == type)
 			{
-				getInstance()._typeArray[typeIndex]._memberArray.emplace_back(member);
-				getInstance()._typeArray[typeIndex]._memberArray.back()._byteOffset = byteOffset;
-				getInstance()._typeArray[typeIndex]._memberArray.back()._typeSize = memberSize;
-				getInstance()._typeArray[typeIndex]._memberArray.back()._declarationName = memberName;
-				return typeIndex;
+				if (getInstance()._typeArray[typeIndex]._isRegisterDone == false)
+				{
+					getInstance()._typeArray[typeIndex]._memberArray.emplace_back(member);
+					getInstance()._typeArray[typeIndex]._memberArray.back()._byteOffset = static_cast<uint32>(byteOffset);
+					getInstance()._typeArray[typeIndex]._memberArray.back()._typeSize = static_cast<uint32>(memberSize);
+					getInstance()._typeArray[typeIndex]._memberArray.back()._declarationName = memberName;
+					getInstance()._typeArray[typeIndex]._compactTypeSize += static_cast<uint32>(memberSize);
+					return typeIndex;
+				}
+				else
+				{
+					return typeIndex;
+				}
 			}
 		}
 
 		// New type added
 		getInstance()._typeArray.emplace_back(type);
 		getInstance()._typeArray.back()._isReflective = true;
-		getInstance()._typeArray.back()._typeSize = typeSize;
+		getInstance()._typeArray.back()._typeSize = static_cast<uint32>(typeSize);
 		getInstance()._typeArray.back()._memberArray.emplace_back(member);
-		getInstance()._typeArray.back()._memberArray.back()._byteOffset = byteOffset;
-		getInstance()._typeArray.back()._memberArray.back()._typeSize = memberSize;
+		getInstance()._typeArray.back()._memberArray.back()._byteOffset = static_cast<uint32>(byteOffset);
+		getInstance()._typeArray.back()._memberArray.back()._typeSize = static_cast<uint32>(memberSize);
 		getInstance()._typeArray.back()._memberArray.back()._declarationName = memberName;
-		return static_cast<uint32>(getInstance()._typeArray.size());
+		getInstance()._typeArray.back()._compactTypeSize += static_cast<uint32>(memberSize);
+		return typeCount;
 	}
 
 	void ReflectionPool::registerTypeDone(const uint32 typeIndex)

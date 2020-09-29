@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <Windows.h>
+#include <string>
 #include <vector>
 #include <queue>
 #include <unordered_map>

@@ -21,8 +21,8 @@ namespace fs
 
 	void RectangleRenderer::drawColored()
 	{
-		const fs::Float3 normalizedPosition	= normalizePosition(_position);
-		const fs::Float2 normalizedSize		= normalizeSize(_size);
+		const fs::Float3& normalizedPosition	= normalizePosition(_position);
+		const fs::Float2& normalizedSize		= normalizeSize(_size);
 
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(0, normalizedPosition, normalizedSize), getColorInternal(0)));
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(1, normalizedPosition, normalizedSize), getColorInternal(1)));
@@ -34,8 +34,8 @@ namespace fs
 
 	void RectangleRenderer::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 	{
-		const fs::Float3 normalizedPosition	= normalizePosition(_position);
-		const fs::Float2 normalizedSize		= normalizeSize(_size);
+		const fs::Float3& normalizedPosition	= normalizePosition(_position);
+		const fs::Float2& normalizedSize		= normalizeSize(_size);
 		
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(0, normalizedPosition, normalizedSize), getFinalTexturePosition(0, texturePosition, textureSize)));
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(1, normalizedPosition, normalizedSize), getFinalTexturePosition(1, texturePosition, textureSize)));
@@ -47,8 +47,8 @@ namespace fs
 
 	void RectangleRenderer::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 	{
-		const fs::Float3 normalizedPosition = normalizePosition(_position);
-		const fs::Float2 normalizedSize = normalizeSize(_size);
+		const fs::Float3& normalizedPosition	= normalizePosition(_position);
+		const fs::Float2& normalizedSize		= normalizeSize(_size);
 
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(0, normalizedPosition, normalizedSize), getColorInternal(0), getFinalTexturePosition(0, texturePosition, textureSize)));
 		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getFinalPosition(1, normalizedPosition, normalizedSize), getColorInternal(1), getFinalTexturePosition(1, texturePosition, textureSize)));

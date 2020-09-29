@@ -12,6 +12,10 @@
 #include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <Reflection/IReflective.h>
+#include <Math/Float4x4.h>
+
+
+#define FS_HLSL_CLASS class alignas(16)
 
 
 namespace fs
@@ -22,7 +26,7 @@ namespace fs
 	}
 	using Microsoft::WRL::ComPtr;
 
-	class VS_INPUT : public IReflective
+	FS_HLSL_CLASS VS_INPUT : public IReflective
 	{
 		FS_REFLECTIVE_CTOR_INIT(VS_INPUT, _flag{ 0 })
 
@@ -65,7 +69,7 @@ namespace fs
 		FS_REGISTER_END()
 	};
 
-	class VS_OUTPUT : public IReflective
+	FS_HLSL_CLASS VS_OUTPUT : public IReflective
 	{
 		FS_REFLECTIVE_CTOR_INIT(VS_OUTPUT, _flag{ 0 })
 
@@ -79,6 +83,17 @@ namespace fs
 			FS_REGISTER_MEMBER(_color);
 			FS_REGISTER_MEMBER(_texCoord);
 			FS_REGISTER_MEMBER(_flag);
+		FS_REGISTER_END()
+	};
+
+	FS_HLSL_CLASS VSCB_Transforms : public IReflective
+	{
+		FS_REFLECTIVE_CTOR(VSCB_Transforms)
+
+		FS_DECLARE_MEMBER(fs::Float4x4, _cbProjectionMatrix);
+
+		FS_REGISTER_BEGIN()
+			FS_REGISTER_MEMBER(_cbProjectionMatrix);
 		FS_REGISTER_END()
 	};
 
@@ -138,6 +153,7 @@ namespace fs
 		ComPtr<ID3D11InputLayout>						_inputLayout;
 		ComPtr<ID3D10Blob>								_vertexShaderBlob;
 		ComPtr<ID3D11VertexShader>						_vertexShader;
+		ComPtr<ID3D11Buffer>							_vertexShaderCb;
 		ComPtr<ID3D10Blob>								_pixelShaderBlob;
 		ComPtr<ID3D11PixelShader>						_pixelShader;
 		ComPtr<ID3D11SamplerState>						_samplerState;

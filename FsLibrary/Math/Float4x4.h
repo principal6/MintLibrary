@@ -33,6 +33,7 @@ namespace fs
 		// Rodrigues' rotation formula
 		static const Float4x4	rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept;
 		static const Float4x4	projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
+		static const Float4x4	projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
 #pragma endregion
 
 	public:

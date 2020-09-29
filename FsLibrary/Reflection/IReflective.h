@@ -18,8 +18,8 @@ namespace fs
 		friend ReflectionPool;
 
 	public:
-		ReflectionTypeData() : _byteOffset{ 0 }, _typeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }, _isRegisterDone{ false } {}
-		explicit ReflectionTypeData(const std::type_info& type) : ReflectionTypeData()
+												ReflectionTypeData() : _byteOffset{ 0 }, _typeSize{ 0 }, _compactTypeSize{ 0 }, _hashCode{ 0 }, _isReflective{ false }, _isRegisterDone{ false } {}
+		explicit								ReflectionTypeData(const std::type_info& type) : ReflectionTypeData()
 		{
 			_typeName = _fullTypeName = type.name();
 
@@ -33,25 +33,35 @@ namespace fs
 		}
 
 	public:
-		const bool operator==(const std::type_info& type) const noexcept
+		const bool								operator==(const std::type_info& type) const noexcept
 		{
-			return _hashCode == type.hash_code();
+			return _fullTypeName == type.name();
 		}
 
 	public:
-		size_t							_byteOffset;
-		size_t							_typeSize;
-		size_t							_hashCode;
+		FS_INLINE const uint32					byteOffset() const noexcept { return _byteOffset; }
+		FS_INLINE const uint32					typeSize() const noexcept { return _typeSize; }
+		FS_INLINE const uint32					compactTypeSize() const noexcept { return _compactTypeSize; }
+		FS_INLINE const size_t					hashCode() const noexcept { return _hashCode; }
+		FS_INLINE const std::string&			typeName() const noexcept { return _typeName; }
+		FS_INLINE const std::string&			declarationName() const noexcept { return _declarationName; }
+		FS_INLINE const ReflectionTypeData&		member(const uint32 index) const noexcept { return _memberArray[index]; }
 
 	private:
-		bool							_isReflective; // 멤버 중엔 Reflective 하지 않은 자료형이 있을 수 있다.
-		bool							_isRegisterDone;
-		std::string						_fullTypeName;
+		uint32									_byteOffset;
+		uint32									_typeSize;
+		uint32									_compactTypeSize;
+		size_t									_hashCode;
 
-	public:
-		std::string						_typeName;
-		std::string						_declarationName;
-		std::vector<ReflectionTypeData>	_memberArray;
+	private:
+		bool									_isReflective; // 멤버 중엔 Reflective 하지 않은 자료형이 있을 수 있다.
+		bool									_isRegisterDone;
+		std::string								_fullTypeName;
+
+	private:
+		std::string								_typeName;
+		std::string								_declarationName;
+		std::vector<ReflectionTypeData>			_memberArray;
 	};
 
 
@@ -61,19 +71,19 @@ namespace fs
 		friend IReflective;
 
 	private:
-											ReflectionPool() = default;
-											~ReflectionPool() = default;
+												ReflectionPool() = default;
+												~ReflectionPool() = default;
 
 	private:
-		static uint32						registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize);
-		static void							registerTypeDone(const uint32 typeIndex);
-		static const ReflectionTypeData&	getTypeData(const uint32 typeIndex);
+		static uint32							registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize);
+		static void								registerTypeDone(const uint32 typeIndex);
+		static const ReflectionTypeData&		getTypeData(const uint32 typeIndex);
 
 	private:
-		static ReflectionPool&				getInstance();
+		static ReflectionPool&					getInstance();
 
 	private:
-		std::vector<ReflectionTypeData>		_typeArray;
+		std::vector<ReflectionTypeData>			_typeArray;
 	};
 
 
@@ -106,6 +116,21 @@ namespace fs
 			return fs::ReflectionPool::getTypeData(_myTypeIndex);
 		}
 
+		char*						compactOffsetPtr() noexcept
+		{
+			return (reinterpret_cast<char*>(this) + compactOffset());
+		}
+
+		const uint32				compactOffset() const noexcept
+		{
+			return fs::ReflectionPool::getTypeData(_myTypeIndex).member(0).byteOffset();
+		}
+
+		const uint32				compactSize() const noexcept
+		{
+			return fs::ReflectionPool::getTypeData(_myTypeIndex).compactTypeSize();
+		}
+
 		const uint32				getMemberCount() const noexcept
 		{
 			return _memberCount;
@@ -113,7 +138,7 @@ namespace fs
 
 		const ReflectionTypeData&	getMemberType(const uint32 memberIndex) const noexcept
 		{
-			return fs::ReflectionPool::getTypeData(_myTypeIndex)._memberArray[memberIndex];
+			return fs::ReflectionPool::getTypeData(_myTypeIndex).member(memberIndex);
 		}
 
 	protected:
