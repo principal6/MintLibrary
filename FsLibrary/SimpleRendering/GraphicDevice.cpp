@@ -246,11 +246,11 @@ namespace fs
 				)"
 			};
 
-			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, &_vertexShaderBlob, nullptr);
-			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, &_vertexShader);
+			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, _vertexShaderBlob.ReleaseAndGetAddressOf(), nullptr);
+			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, _vertexShader.ReleaseAndGetAddressOf());
 			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
 
-			_device->CreateInputLayout(&_inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(_inputElementSet._inputElementDescriptorArray.size()), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), &_inputLayout);
+			_device->CreateInputLayout(&_inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(_inputElementSet._inputElementDescriptorArray.size()), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), _inputLayout.ReleaseAndGetAddressOf());
 			_deviceContext->IASetInputLayout(_inputLayout.Get());
 		}
 
@@ -279,8 +279,8 @@ namespace fs
 				}
 				)"
 			};
-			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "ps_4_0", 0, 0, &_pixelShaderBlob, nullptr);
-			_device->CreatePixelShader(_pixelShaderBlob->GetBufferPointer(), _pixelShaderBlob->GetBufferSize(), NULL, &_pixelShader);
+			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "ps_4_0", 0, 0, _pixelShaderBlob.ReleaseAndGetAddressOf(), nullptr);
+			_device->CreatePixelShader(_pixelShaderBlob->GetBufferPointer(), _pixelShaderBlob->GetBufferSize(), NULL, _pixelShader.ReleaseAndGetAddressOf());
 			_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 		}
 
@@ -295,7 +295,7 @@ namespace fs
 			samplerDescriptor.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
 			samplerDescriptor.MinLOD = 0.0f;
 			samplerDescriptor.MaxLOD = 0.0f;
-			_device->CreateSamplerState(&samplerDescriptor, &_samplerState);
+			_device->CreateSamplerState(&samplerDescriptor, _samplerState.ReleaseAndGetAddressOf());
 			_deviceContext->PSSetSamplers(0, 1, _samplerState.GetAddressOf());
 		}
 
@@ -311,7 +311,7 @@ namespace fs
 			blendDescriptor.RenderTarget[0].DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
 			blendDescriptor.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
 			blendDescriptor.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
-			_device->CreateBlendState(&blendDescriptor, &_blendState);
+			_device->CreateBlendState(&blendDescriptor, _blendState.ReleaseAndGetAddressOf());
 
 			const float kBlendFactor[4]{ 0, 0, 0, 0 };
 			_deviceContext->OMSetBlendState(_blendState.Get(), kBlendFactor, 0xFFFFFFFF);
@@ -491,14 +491,14 @@ namespace fs
 		subResource.SysMemSlicePitch = 0;
 
 		ComPtr<ID3D11Texture2D> fontTexture;
-		_device->CreateTexture2D(&texture2DDescriptor, &subResource, &fontTexture);
+		_device->CreateTexture2D(&texture2DDescriptor, &subResource, fontTexture.ReleaseAndGetAddressOf());
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 		srvDesc.Format = texture2DDescriptor.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = texture2DDescriptor.MipLevels;
 		srvDesc.Texture2D.MostDetailedMip = 0;
-		_device->CreateShaderResourceView(fontTexture.Get(), &srvDesc, &_fontTextureSrv);
+		_device->CreateShaderResourceView(fontTexture.Get(), &srvDesc, _fontTextureSrv.ReleaseAndGetAddressOf());
 	}
 
 	void GraphicDevice::beginRendering()
@@ -538,7 +538,7 @@ namespace fs
 			bufferDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
 			bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 			bufferDescriptor.MiscFlags = 0;
-			_device->CreateBuffer(&bufferDescriptor, nullptr, &_triangleVertexBuffer);
+			_device->CreateBuffer(&bufferDescriptor, nullptr, _triangleVertexBuffer.ReleaseAndGetAddressOf());
 
 			_cachedTriangleVertexCount = triangleVertexCount;
 		}
@@ -563,7 +563,7 @@ namespace fs
 			bufferDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
 			bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 			bufferDescriptor.MiscFlags = 0;
-			_device->CreateBuffer(&bufferDescriptor, nullptr, &_triangleIndexBuffer);
+			_device->CreateBuffer(&bufferDescriptor, nullptr, _triangleIndexBuffer.ReleaseAndGetAddressOf());
 
 			_cachedTriangleIndexCount = triangleIndexCount;
 		}
