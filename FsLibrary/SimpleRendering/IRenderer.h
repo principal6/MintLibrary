@@ -23,10 +23,6 @@ namespace fs
 		virtual						~IRenderer() = default;
 
 	public:
-		// Current coordinate system
-		// (0.0f, 0.0f, z) = Top Left
-		// (1.0f, 1.0f, z) = Bottom Right
-		// z value is depth
 		FS_INLINE void				setPosition(const fs::Float3& position) { _position = position; }
 
 		void						setColor(const fs::Float4& color);
@@ -38,18 +34,6 @@ namespace fs
 		virtual void				drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
 
 	protected:
-		FS_INLINE const fs::Float3&	normalizePosition(const fs::Float3& position) 
-		{
-			//return fs::Float3(position.x() * 2.0f - 1.0f, position.y() * -2.0f + 1.0f, position.z()); 
-			return position;
-		}
-
-		FS_INLINE const fs::Float2&	normalizeSize(const fs::Float2& size)
-		{
-			//return fs::Float2(size.x() * 2.0f, size.y() * -2.0f);
-			return size;
-		}
-
 		FS_INLINE const fs::Float4& getColorInternal(const uint32 index)
 		{
 			const uint32 colorCount = static_cast<uint32>(_colorArray.size());
