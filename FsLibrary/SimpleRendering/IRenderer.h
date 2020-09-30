@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_IDRAW_H
-#define FS_IDRAW_H
+#ifndef FS_IRENDERER_H
+#define FS_IRENDERER_H
 
 
 #include <Math/Float2.h>
@@ -34,19 +34,19 @@ namespace fs
 		virtual void				drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
 
 	protected:
-		FS_INLINE const fs::Float4& getColorInternal(const uint32 index)
+		FS_INLINE const fs::Float4&	getColorInternal(const uint32 index)
 		{
 			const uint32 colorCount = static_cast<uint32>(_colorArray.size());
 			return (colorCount <= index) ? _defaultColor : _colorArray[index];
 		}
 
 	protected:
-		fs::GraphicDevice*		_graphicDevice;
-		fs::Float3				_position;
-		std::vector<fs::Float4>	_colorArray;
-		fs::Float4				_defaultColor;
+		fs::GraphicDevice*			_graphicDevice;
+		fs::Float3					_position;
+		std::vector<fs::Float4>		_colorArray;
+		fs::Float4					_defaultColor;
 	};
 }
 
 
-#endif // !FS_IDRAW_H
+#endif // !FS_IRENDERER_H
