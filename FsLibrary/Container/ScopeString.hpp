@@ -153,6 +153,13 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
+	inline void ScopeStringA<BufferSize>::clear() noexcept
+	{
+		_length = 0;
+		_raw[0] = 0; // NULL
+	}
+
+	template<uint32 BufferSize>
 	inline ScopeStringA<BufferSize>& ScopeStringA<BufferSize>::append(const char* const rawString) noexcept
 	{
 		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));

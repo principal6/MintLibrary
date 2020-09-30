@@ -52,6 +52,7 @@ namespace fs
 		bool								canInsert(const uint32 insertLength) const noexcept;
 
 	public:
+		void								clear() noexcept;
 		ScopeStringA&						append(const char* const rawString) noexcept;
 		ScopeStringA&						append(const ScopeStringA& rhs) noexcept;
 		ScopeStringA&						assign(const char* const rawString) noexcept;
