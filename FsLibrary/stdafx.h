@@ -12,6 +12,7 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <atomic>
 
 #pragma region FsLibrary
 #include <CommonDefinitions.h>
