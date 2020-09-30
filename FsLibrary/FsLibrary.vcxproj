@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="Assert.h" />
     <ClInclude Include="CommonDefinitions.h" />
     <ClInclude Include="Container\BitVector.h" />
@@ -61,6 +63,11 @@
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
+    <ClInclude Include="SimpleRendering\DxBuffer.h" />
+    <ClInclude Include="SimpleRendering\DxHelper.hpp" />
+    <ClInclude Include="SimpleRendering\IDxObject.h" />
+    <ClInclude Include="SimpleRendering\DxHelper.h" />
+    <ClInclude Include="SimpleRendering\DxShader.h" />
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="SimpleRendering\IRenderer.h" />
@@ -74,8 +81,12 @@
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />
+    <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
+    <ClCompile Include="SimpleRendering\DxHelper.cpp" />
+    <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
+    <ClCompile Include="SimpleRendering\IDxObject.cpp" />
     <ClCompile Include="SimpleRendering\IRenderer.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
   </ItemGroup>

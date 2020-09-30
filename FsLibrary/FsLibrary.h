@@ -6,6 +6,7 @@
 
 
 #include <stdafx.h>
+#include <Algorithm.hpp>
 #include <Container/Container.h>
 #include <File/File.h>
 #include <Math/Math.h>

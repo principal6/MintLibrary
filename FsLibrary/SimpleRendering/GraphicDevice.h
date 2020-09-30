@@ -11,6 +11,8 @@
 #include <Container/UniqueString.h>
 #include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
+#include <SimpleRendering/DxShader.h>
+#include <SimpleRendering/DxBuffer.h>
 #include <Reflection/IReflective.h>
 #include <Math/Float4x4.h>
 
@@ -86,9 +88,9 @@ namespace fs
 		FS_REGISTER_END()
 	};
 
-	FS_HLSL_CLASS VSCB_Transforms : public IReflective
+	FS_HLSL_CLASS CB_Transforms : public IReflective
 	{
-		FS_REFLECTIVE_CTOR(VSCB_Transforms)
+		FS_REFLECTIVE_CTOR(CB_Transforms)
 
 		FS_DECLARE_MEMBER(fs::Float4x4, _cbProjectionMatrix);
 
@@ -97,12 +99,6 @@ namespace fs
 		FS_REGISTER_END()
 	};
 
-	struct DxInputElementSet
-	{
-		std::vector<std::string>				_semanticNameArray;
-		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray{};
-	};
-	
 
 	class GraphicDevice final
 	{
@@ -131,6 +127,10 @@ namespace fs
 	public:
 		FS_INLINE fs::RectangleRenderer&				getRectangleRenderer() noexcept { return _rectangleRenderer; }
 
+	public:
+		FS_INLINE ID3D11Device*							getDxDevice() noexcept { return _device.Get(); }
+		FS_INLINE ID3D11DeviceContext*					getDxDeviceContext() noexcept { return _deviceContext.Get(); }
+
 	private:
 		const fs::Window::IWindow*						_window;
 
@@ -149,13 +149,9 @@ namespace fs
 
 	private:
 		DxShaderHeaderMemory							_shaderHeaderMemory;
-		DxInputElementSet								_inputElementSet;
-		ComPtr<ID3D11InputLayout>						_inputLayout;
-		ComPtr<ID3D10Blob>								_vertexShaderBlob;
-		ComPtr<ID3D11VertexShader>						_vertexShader;
-		ComPtr<ID3D11Buffer>							_vertexShaderCb;
-		ComPtr<ID3D10Blob>								_pixelShaderBlob;
-		ComPtr<ID3D11PixelShader>						_pixelShader;
+		DxShaderPool									_shaderPool;
+		DxBufferPool									_bufferPool;
+
 		ComPtr<ID3D11SamplerState>						_samplerState;
 		ComPtr<ID3D11BlendState>						_blendState;
 

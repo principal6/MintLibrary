@@ -163,6 +163,23 @@
     <ClInclude Include="Reflection\IReflective.h">
       <Filter>Reflection</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\DxShader.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\DxHelper.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\DxBuffer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\IDxObject.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="Algorithm.hpp" />
+    <ClInclude Include="SimpleRendering\DxHelper.hpp">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -188,6 +205,18 @@
     </ClCompile>
     <ClCompile Include="Reflection\IReflective.cpp">
       <Filter>Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\DxShader.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\DxHelper.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\DxBuffer.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\IDxObject.cpp">
+      <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

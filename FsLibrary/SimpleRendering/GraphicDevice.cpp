@@ -1,6 +1,7 @@
 ﻿#include <stdafx.h>
 #include <SimpleRendering/GraphicDevice.h>
 
+#include <Algorithm.hpp>
 #include <d3dcompiler.h>
 #include <Platform/IWindow.h>
 #include <Platform/WindowsWindow.h>
@@ -12,6 +13,8 @@
 #include <Container/UniqueString.hpp>
 #include <typeinfo>
 #include <unordered_map>
+#include <SimpleRendering\DxHelper.h>
+
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -19,160 +22,11 @@
 
 namespace fs
 {
-#pragma region Static function definitions
-	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const ReflectionTypeData& typeData)
-	{
-		if (typeData == typeid(fs::Float2))
-		{
-			return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
-		}
-		else if (typeData == typeid(fs::Float3))
-		{
-			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
-		}
-		else if (typeData == typeid(fs::Float4))
-		{
-			return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
-		}
-		else if (typeData == typeid(uint32))
-		{
-			return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
-		}
-		return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
-	}
-
-	FS_INLINE DXGI_FORMAT convertToDxgiFormat(const type_info& typeInfo)
-	{
-		return convertToDxgiFormat(ReflectionTypeData(typeInfo));
-	}
-
-	static std::string convertDeclarationNameToHlslSemanticName(const std::string& declarationName)
-	{
-		std::string semanticName = declarationName.substr(1);
-		const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
-		for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; semanticNameIter++)
-		{
-			semanticName[semanticNameIter] = ::toupper(semanticName[semanticNameIter]);
-		}
-		return semanticName;
-	}
-	static constexpr fs::StaticArray<fs::StaticArray<const char*, 2>, 5> kHlslTypeMatchingTable
-	{
-		{ "Float2"           , "float2"      },
-		{ "Float3"           , "float3"      },
-		{ "Float4"           , "float4"      },
-		{ "Float4x4"         , "float4x4"    },
-		{ "unsigned int"     , "uint"        },
-	};
-	static std::unordered_map<std::string, std::string> sHlslTypeMap;
-	static constexpr fs::StaticArray<fs::StaticArray<const char*, 2>, 1> kHlslSemanticMatchingTable
-	{
-		{ "POSITION"         , "SV_POSITION" },
-	};
-	static std::unordered_map<std::string, std::string> sHlslSemanticMap;
-	static void prepareStaticMaps()
-	{
-		if (sHlslTypeMap.empty() == true)
-		{
-			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < kHlslTypeMatchingTable.size(); typeMapElementIndex++)
-			{
-				sHlslTypeMap.insert(std::make_pair(kHlslTypeMatchingTable[typeMapElementIndex][0], kHlslTypeMatchingTable[typeMapElementIndex][1]));
-			}
-		}
-		if (sHlslSemanticMap.empty() == true)
-		{
-			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < kHlslSemanticMatchingTable.size(); semanticMapElementIndex++)
-			{
-				sHlslSemanticMap.insert(std::make_pair(kHlslSemanticMatchingTable[semanticMapElementIndex][0], kHlslSemanticMatchingTable[semanticMapElementIndex][1]));
-			}
-		}
-	}
-	static std::string convertReflectiveClassToHlslStruct(const fs::IReflective* const reflective, bool mapSemanticNames)
-	{
-		prepareStaticMaps();
-
-		std::string result;
-		result.append("struct ");
-		result.append(reflective->getType().typeName());
-		result.append("\n{\n");
-		std::string semanticName;
-		const uint32 memberCount = reflective->getMemberCount();
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-		{
-			const fs::ReflectionTypeData& memberType = reflective->getMemberType(memberIndex);
-			auto found = sHlslTypeMap.find(memberType.typeName());
-			result.push_back('\t');
-			if (found != sHlslTypeMap.end())
-			{
-				result.append(found->second);
-			}
-			else
-			{
-				result.append(memberType.typeName());
-			}
-			result.append(" ");
-			result.append(memberType.declarationName());
-			result.append(" : ");
-			
-			semanticName = convertDeclarationNameToHlslSemanticName(memberType.declarationName());
-			if (true == mapSemanticNames)
-			{
-				auto found = sHlslSemanticMap.find(semanticName);
-				if (found != sHlslSemanticMap.end())
-				{
-					result.append(found->second);
-				}
-				else
-				{
-					result.append(semanticName);
-				}
-			}
-			else
-			{
-				result.append(semanticName);
-			}
-			result.append(";\n");
-		}
-		result.append("};\n\n");
-		return result;
-	}
-	static std::string convertReflectiveClassToHlslConstantBuffer(const fs::IReflective* const reflective, const uint32 registerIndex)
-	{
-		prepareStaticMaps();
-
-		std::string result;
-		result.append("cbuffer ");
-		result.append(reflective->getType().typeName());
-		result.append(" : register(");
-		result.append("b" + std::to_string(registerIndex));
-		result.append(")\n{\n");
-		const uint32 memberCount = reflective->getMemberCount();
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-		{
-			const fs::ReflectionTypeData& memberType = reflective->getMemberType(memberIndex);
-			auto found = sHlslTypeMap.find(memberType.typeName());
-			result.push_back('\t');
-			if (found != sHlslTypeMap.end())
-			{
-				result.append(found->second);
-			}
-			else
-			{
-				result.append(memberType.typeName());
-			}
-			result.append(" ");
-			result.append(memberType.declarationName());
-			result.append(";\n");
-		}
-		result.append("};\n\n");
-		return result;
-	}
-#pragma endregion
-
-
 	GraphicDevice::GraphicDevice()
 		: _window{ nullptr }
 		, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
+		, _shaderPool{ this, &_shaderHeaderMemory }
+		, _bufferPool{ this }
 		, _cachedTriangleVertexCount{ 0 }
 		, _triangleVertexStride{ sizeof(VS_INPUT) }
 		, _triangleVertexOffset{ 0 }
@@ -228,61 +82,29 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
-		// Input elements
-		{
-			VS_INPUT vsInput;
-			const uint32 memberCount = vsInput.getMemberCount();
-			_inputElementSet._semanticNameArray.reserve(memberCount);
-			_inputElementSet._inputElementDescriptorArray.reserve(memberCount);
-			for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
-			{
-				const fs::ReflectionTypeData& memberType = vsInput.getMemberType(memberIndex);
-				_inputElementSet._semanticNameArray.emplace_back(convertDeclarationNameToHlslSemanticName(memberType.declarationName()));
-
-				D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-				inputElementDescriptor.SemanticName = _inputElementSet._semanticNameArray[memberIndex].c_str();
-				inputElementDescriptor.SemanticIndex = 0;
-				inputElementDescriptor.Format = convertToDxgiFormat(memberType);
-				inputElementDescriptor.InputSlot = 0;
-				inputElementDescriptor.AlignedByteOffset = static_cast<UINT>(memberType.byteOffset());
-				inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-				inputElementDescriptor.InstanceDataStepRate = 0;
-				_inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
-			}
-		}
-
 		// Shader header
 		{
 			VS_INPUT vsInput;
 			VS_OUTPUT vsOutput;
 			{
 				std::string shaderHeaderContent;
-				shaderHeaderContent.append(convertReflectiveClassToHlslStruct(&vsInput, false));
-				shaderHeaderContent.append(convertReflectiveClassToHlslStruct(&vsOutput, true));
+				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsInput, false));
+				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsOutput, true));
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", shaderHeaderContent.c_str());
 			}
+		}
 
-			VSCB_Transforms vsCbTransforms;
-			vsCbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize.x()), static_cast<float>(windowSize.y()));
+		// Constant buffers
+		{
+			CB_Transforms cbTransforms;
+			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize.x()), static_cast<float>(windowSize.y()));
 			{
 				std::string shaderHeaderContent;
-				shaderHeaderContent.append(convertReflectiveClassToHlslConstantBuffer(&vsCbTransforms, 0));
+				shaderHeaderContent.append(fs::convertReflectiveClassToHlslConstantBuffer(&cbTransforms, 0));
 				_shaderHeaderMemory.pushHeader("VsConstantBuffers", shaderHeaderContent.c_str());
 
-				if (_vertexShaderCb.Get() == nullptr)
-				{
-					D3D11_BUFFER_DESC bufferDescriptor{};
-					bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-					bufferDescriptor.ByteWidth = static_cast<UINT>(vsCbTransforms.compactSize());
-					bufferDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
-					bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
-					bufferDescriptor.MiscFlags = 0;
-
-					D3D11_SUBRESOURCE_DATA subresourceData{};
-					subresourceData.pSysMem = vsCbTransforms.compactOffsetPtr();
-					_device->CreateBuffer(&bufferDescriptor, &subresourceData, _vertexShaderCb.ReleaseAndGetAddressOf());
-					_deviceContext->VSSetConstantBuffers(0, 1, _vertexShaderCb.GetAddressOf());
-				}
+				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, cbTransforms.compactOffsetPtr(), cbTransforms.compactSize());
+				_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, 0);
 			}
 		}
 
@@ -305,13 +127,8 @@ namespace fs
 				}
 				)"
 			};
-
-			D3DCompile(kVertexShaderContent, strlen(kVertexShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "vs_4_0", 0, 0, _vertexShaderBlob.ReleaseAndGetAddressOf(), nullptr);
-			_device->CreateVertexShader(_vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), NULL, _vertexShader.ReleaseAndGetAddressOf());
-			_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
-
-			_device->CreateInputLayout(&_inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(_inputElementSet._inputElementDescriptorArray.size()), _vertexShaderBlob->GetBufferPointer(), _vertexShaderBlob->GetBufferSize(), _inputLayout.ReleaseAndGetAddressOf());
-			_deviceContext->IASetInputLayout(_inputLayout.Get());
+			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &VS_INPUT());
+			_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
 		}
 
 		// Compile pixel shader
@@ -339,9 +156,8 @@ namespace fs
 				}
 				)"
 			};
-			D3DCompile(kPixelShaderContent, strlen(kPixelShaderContent), nullptr, nullptr, &_shaderHeaderMemory, "main", "ps_4_0", 0, 0, _pixelShaderBlob.ReleaseAndGetAddressOf(), nullptr);
-			_device->CreatePixelShader(_pixelShaderBlob->GetBufferPointer(), _pixelShaderBlob->GetBufferSize(), NULL, _pixelShader.ReleaseAndGetAddressOf());
-			_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
+			DxObjectId id = _shaderPool.pushNonVertexShader(kPixelShaderContent, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+			_shaderPool.getShader(DxShaderType::PixelShader, id).bind();
 		}
 
 		// Create texture sampler state
