@@ -106,43 +106,43 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	inline char& ScopeStringA<BufferSize>::operator[](const uint32 at) noexcept
+	FS_INLINE char& ScopeStringA<BufferSize>::operator[](const uint32 at) noexcept
 	{
 		return _raw[at];
 	}
 
 	template<uint32 BufferSize>
-	inline const char& ScopeStringA<BufferSize>::operator[](const uint32 at) const noexcept
+	FS_INLINE const char& ScopeStringA<BufferSize>::operator[](const uint32 at) const noexcept
 	{
 		return _raw[at];
 	}
 
 	template<uint32 BufferSize>
-	inline uint32 ScopeStringA<BufferSize>::capacity() const noexcept
+	FS_INLINE uint32 ScopeStringA<BufferSize>::capacity() const noexcept
 	{
 		return BufferSize;
 	}
 
 	template<uint32 BufferSize>
-	inline uint32 ScopeStringA<BufferSize>::length() const noexcept
+	FS_INLINE uint32 ScopeStringA<BufferSize>::length() const noexcept
 	{
 		return _length;
 	}
 
 	template<uint32 BufferSize>
-	inline const char* ScopeStringA<BufferSize>::c_str() const noexcept
+	FS_INLINE const char* ScopeStringA<BufferSize>::c_str() const noexcept
 	{
 		return &_raw[0];
 	}
 
 	template<uint32 BufferSize>
-	inline char* ScopeStringA<BufferSize>::data() noexcept
+	FS_INLINE char* ScopeStringA<BufferSize>::data() noexcept
 	{
 		return &_raw[0];
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::canInsert(const uint32 insertLength) const noexcept
+	FS_INLINE bool ScopeStringA<BufferSize>::canInsert(const uint32 insertLength) const noexcept
 	{
 		if (BufferSize <= _length + insertLength)
 		{
@@ -153,7 +153,7 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	inline void ScopeStringA<BufferSize>::clear() noexcept
+	FS_INLINE void ScopeStringA<BufferSize>::clear() noexcept
 	{
 		_length = 0;
 		_raw[0] = 0; // NULL
@@ -176,7 +176,14 @@ namespace fs
 	template<uint32 BufferSize>
 	inline ScopeStringA<BufferSize>& ScopeStringA<BufferSize>::append(const ScopeStringA& rhs) noexcept
 	{
-		return append(rhs.c_str());
+		if (true == canInsert(rhs._length))
+		{
+			memcpy(&_raw[_length], rhs._raw, rhs._length);
+			_length += rhs._length;
+			_raw[_length] = 0; // NULL
+			return *this;
+		}
+		return *this;
 	}
 
 	template<uint32 BufferSize>
@@ -238,6 +245,7 @@ namespace fs
 		}
 		return kStringNPos;
 	}
+
 	template<uint32 BufferSize>
 	inline uint32 ScopeStringA<BufferSize>::rfind(const char* const rawString, const uint32 offset) const noexcept
 	{
