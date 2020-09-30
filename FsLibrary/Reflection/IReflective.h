@@ -116,9 +116,9 @@ namespace fs
 			return fs::ReflectionPool::getTypeData(_myTypeIndex);
 		}
 
-		char*						compactOffsetPtr() noexcept
+		byte*						compactOffsetPtr() noexcept
 		{
-			return (reinterpret_cast<char*>(this) + compactOffset());
+			return (reinterpret_cast<byte*>(this) + compactOffset());
 		}
 
 		const uint32				compactOffset() const noexcept
