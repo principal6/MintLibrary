@@ -178,7 +178,7 @@ namespace fs
 	{
 		if (true == canInsert(rhs._length))
 		{
-			memcpy(&_raw[_length], rhs._raw, rhs._length);
+			memcpy(&_raw[_length], &rhs._raw[0], rhs._length);
 			_length += rhs._length;
 			_raw[_length] = 0; // NULL
 			return *this;
