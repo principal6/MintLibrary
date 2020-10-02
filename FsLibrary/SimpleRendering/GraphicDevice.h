@@ -159,7 +159,7 @@ namespace fs
 		static constexpr uint32							kFontTextureWidth		= 16 * kBitsPerByte;
 		static constexpr uint32							kFontTextureHeight		= 60;
 		static constexpr uint32							kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
-		StaticArray<uint8, kFontTexturePixelCount * 4>	_fontTextureRaw;
+		std::vector<uint8>								_fontTextureRaw;
 		ComPtr<ID3D11ShaderResourceView>				_fontTextureSrv;
 
 	private:

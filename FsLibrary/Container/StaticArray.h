@@ -92,6 +92,7 @@ namespace fs
 		constexpr uint32		size() const noexcept { return maxSize; }
 
 	private:
+		static_assert((sizeof(T) * maxSize) < kStackSizeLimit, "Stack size is too large!!! Consider using heap allocationn.");
 		T						_data[maxSize]{};
 	};
 }

@@ -337,6 +337,7 @@ namespace fs
 			0b01000000, 0b00000100, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01110000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
 		};
 
+		_fontTextureRaw.resize(kFontTexturePixelCount * 4);
 		for (uint32 pixelIndex = 0; pixelIndex < kFontTexturePixelCount; ++pixelIndex)
 		{
 			const uint32 byteOffset = pixelIndex / kBitsPerByte;

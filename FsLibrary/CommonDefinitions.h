@@ -40,7 +40,9 @@
 	static constexpr	uint64		kUint64Max		= (uint64) 0xFFFFFFFFFFFFFFFF;
 
 	static constexpr	uint32		kBitsPerByte	= 8;
-	static_assert(kBitsPerByte == 8, "!!! Bit per Byte 는 반드시 8이어야 합니다 !!!");
+	static_assert(kBitsPerByte == 8, "Number of Bits per Byte must be 8!!!");
+
+	static constexpr	uint32		kStackSizeLimit	= 1 << 14;
 #pragma endregion
 
 
