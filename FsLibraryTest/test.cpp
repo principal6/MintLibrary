@@ -186,6 +186,46 @@ bool testBitVector()
 	return true;
 }
 
+
+bool testMemoryAllocator()
+{
+	struct AccessorHolder
+	{
+		fs::MemoryAccessor _accesor;
+	};
+
+	fs::MemoryAllocator allocator;
+	{
+		AccessorHolder holder;
+		{
+			fs::MemoryAccessor accessor = allocator.allocate(4);
+			accessor = holder._accesor;
+			holder._accesor = accessor;
+			auto bs = accessor.getByteSize();
+			accessor.setMemory((byte*)"abcdef");
+			auto m = accessor.getMemory();
+			{
+				fs::MemoryAccessor accessor1 = accessor;
+				fs::MemoryAccessor accessor2 = accessor1;
+			}
+			allocator.deallocate(accessor);
+			const bool isValid = holder._accesor.isValid();
+			if (isValid == false)
+			{
+				printf("normal!");
+			}
+		}
+
+		{
+			fs::MemoryAccessor accessor = allocator.allocate(16);
+			allocator.deallocate(accessor);
+		}
+	}
+
+	return true;
+}
+
+
 bool testWindow()
 {
 	using namespace fs;
@@ -268,8 +308,9 @@ int main()
 
 	FS_LOG("김장원", "Log Test");
 
+	testMemoryAllocator();
+
 	testWindow();
-	
 
 	return 0;
 }

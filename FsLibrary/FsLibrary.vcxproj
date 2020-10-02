@@ -61,6 +61,7 @@
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Memory\MemoryAllocator.h" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
@@ -79,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Memory\MemoryAllocator.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />
     <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
