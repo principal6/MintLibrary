@@ -344,10 +344,10 @@ namespace fs
 
 			const uint8 bitMask = static_cast<uint8>(fs::Math::pow2_ui32(bitShiftToLeft));
 			const uint8 color = (kFontTextureRawBitData[byteOffset] & bitMask) ? 255 : 0;
-			_fontTextureRaw[pixelIndex * 4 + 0] = color;
-			_fontTextureRaw[pixelIndex * 4 + 1] = color;
-			_fontTextureRaw[pixelIndex * 4 + 2] = color;
-			_fontTextureRaw[pixelIndex * 4 + 3] = color;
+			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 0] = color;
+			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 1] = color;
+			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 2] = color;
+			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 3] = color;
 		}
 
 		D3D11_TEXTURE2D_DESC texture2DDescriptor{};
