@@ -118,9 +118,9 @@ namespace fs
 
 		private:
 			MemoryBucketId	_id;
-			uint32			_byteSize;
-			uint32			_blockOffset;
-			uint32			_blockCount;
+			uint32			_byteSize{};
+			uint32			_blockOffset{};
+			uint32			_blockCount{};
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
 			struct
 			{
@@ -128,7 +128,7 @@ namespace fs
 				uint32		_isShared : 1;
 			};
 #else
-			uint32			_referenceCount;
+			uint32			_referenceCount{};
 #endif
 		};
 
