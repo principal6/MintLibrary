@@ -14,7 +14,6 @@
 #include <Container/StaticArray.h>
 #include <Container/StringUtil.h>
 #include <Container/UniqueString.h>
-#include <Container/UniqueString.hpp>
 
 
 #endif // !FS_CONTAINER_H

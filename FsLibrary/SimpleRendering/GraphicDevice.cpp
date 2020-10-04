@@ -10,7 +10,6 @@
 #include <Math/Float4.hpp>
 #include <Math/Float4x4.hpp>
 #include <Container/ScopeString.hpp>
-#include <Container/UniqueString.hpp>
 #include <typeinfo>
 #include <unordered_map>
 #include <SimpleRendering\DxHelper.h>

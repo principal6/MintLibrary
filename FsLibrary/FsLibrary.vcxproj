@@ -33,7 +33,6 @@
     <ClInclude Include="Container\StaticArray.h" />
     <ClInclude Include="Container\StringUtil.h" />
     <ClInclude Include="Container\UniqueString.h" />
-    <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
     <ClInclude Include="File\FileUtil.h" />
     <ClInclude Include="File\FileUtil.hpp" />
