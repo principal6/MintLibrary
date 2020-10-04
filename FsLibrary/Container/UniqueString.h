@@ -10,72 +10,75 @@
 
 namespace fs
 {
-	static constexpr uint32							kUniqueStringInvalidIndex = kUint32Max;
-
-	template<uint32 Capacity>
-	class UniqueStringAHolder
-	{
-	public:
-													UniqueStringAHolder();
-													~UniqueStringAHolder();
-
-	public:
-		static UniqueStringAHolder*					getInstance()
-		{
-			static UniqueStringAHolder instance;
-			return &instance;
-		}
-
-	public:
-		const uint32								registerString(const char* const rawString) noexcept;
-		const char*									getString(const uint32 index) const noexcept;
-
-	private:
-		char										_raw[Capacity];
-		uint32										_offsetArray[Capacity];
-		uint32										_totalLength;
-		uint32										_count;
-	};
+	class UniqueStringPoolA;
 
 
-	template<uint32 HolderCapacity>
 	class UniqueStringA
 	{
-	public:
-													UniqueStringA();
-													UniqueStringA(const char* const rawString);
-													UniqueStringA(const UniqueStringA& rhs);
-													UniqueStringA(UniqueStringA&& rhs) noexcept;
-													~UniqueStringA();
+		friend UniqueStringPoolA;
 
 	public:
-		UniqueStringA&								operator=(const UniqueStringA& rhs);
-		UniqueStringA&								operator=(UniqueStringA&& rhs) noexcept;
+		static constexpr uint32						kInvalidIndex = kUint32Max;
+
+	private:
+													UniqueStringA(const UniqueStringPoolA* const pool, const uint32 index);
+	
+	public:
+													UniqueStringA(const UniqueStringA& rhs) = default;
+													UniqueStringA(UniqueStringA&& rhs) noexcept = default;
+													~UniqueStringA() = default;
 
 	public:
-		const bool									operator==(const UniqueStringA& rhs);
-		const bool									operator!=(const UniqueStringA& rhs);
+		UniqueStringA&								operator=(const UniqueStringA& rhs) = default;
+		UniqueStringA&								operator=(UniqueStringA&& rhs) noexcept = default;
 
 	public:
-		bool										isValid() const noexcept;
-		bool										assign(const char* const rawString) noexcept;
+		const bool									operator==(const UniqueStringA& rhs) const noexcept;
+		const bool									operator!=(const UniqueStringA& rhs) const noexcept;
+
+	public:
 		const char*									c_str() const noexcept;
 
-#if defined FS_DEBUG
 	private:
-		void										setDebugString() noexcept;
-#endif
-	
-	private:
-		UniqueStringAHolder<HolderCapacity>* const	_holder;
+		const UniqueStringPoolA*					_pool;
 		uint32										_index;
 
 #if defined FS_DEBUG
 	private:
-		const char*									_str;
+		const char*									_str{};
 #endif
+
+	public:
+		static const UniqueStringA					kInvalidUniqueString;
 	};
 	
+
+	class UniqueStringPoolA final
+	{
+		static constexpr uint32						kDefaultRawCapacity = 1024;
+
+	public:
+		UniqueStringPoolA();
+		~UniqueStringPoolA();
+
+	public:
+		const UniqueStringA							registerString(const char* const rawString) noexcept;
+		const UniqueStringA							getString(const uint32 uniqueStringIndex) const noexcept;
+		const char*									getRawString(const UniqueStringA& uniqueString) const noexcept;
+
+	public:
+		void										reserve(const uint32 rawCapacity);
+
+	private:
+		std::mutex									_mutex;
+
+	private:
+		std::vector<uint32>							_offsetArray;
+		char*										_rawMemory;
+		uint32										_rawCapacity;
+		uint32										_totalLength;
+		uint32										_count;
+	};
 }
 
 

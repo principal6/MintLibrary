@@ -78,6 +78,7 @@
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Container\UniqueString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Memory\MemoryAllocator.cpp" />

@@ -6,190 +6,118 @@
 
 namespace fs
 {
-	template<uint32 Capacity>
-	inline UniqueStringAHolder<Capacity>::UniqueStringAHolder()
-		: _totalLength{ 0 }
-		, _count{ 0 }
-	{
-		memset(_raw, 0, Capacity);
-		memset(_offsetArray, 0, Capacity);
-	}
-
-	template<uint32 Capacity>
-	inline UniqueStringAHolder<Capacity>::~UniqueStringAHolder()
-	{
-		__noop;
-	}
-
-	template<uint32 Capacity>
-	inline const uint32 UniqueStringAHolder<Capacity>::registerString(const char* const rawString) noexcept
-	{
-		if (nullptr == rawString)
-		{
-			return kUniqueStringInvalidIndex;
-		}
-
-		for (uint32 i = 0; i < _count; ++i)
-		{
-			const uint32 offset = _offsetArray[i];
-			if (0 == strcmp(&_raw[offset], rawString))
-			{
-				return i;
-			}
-		}
-
-		const uint32 newIndex = _count;
-		_offsetArray[newIndex] = _totalLength;
-		const uint32 lengthNullIncluded = static_cast<uint32>(strlen(rawString) + 1);
-		if (Capacity < _totalLength + lengthNullIncluded)
-		{
-			FS_ASSERT("김장원", false, "String 등록에 실패했습니다. Holder 의 capacity 를 더 늘려주세요!");
-			return kUniqueStringInvalidIndex;
-		}
-
-		memcpy(&_raw[_offsetArray[newIndex]], rawString, lengthNullIncluded - 1);
-
-		_totalLength += lengthNullIncluded;
-		++_count;
-		return newIndex;
-	}
-
-	template<uint32 Capacity>
-	inline const char* UniqueStringAHolder<Capacity>::getString(const uint32 index) const noexcept
-	{
-		if (_count <= index)
-		{
-			return nullptr;
-		}
-		return &_raw[_offsetArray[index]];
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>::UniqueStringA()
-		: _holder{ UniqueStringAHolder<HolderCapacity>::getInstance() }
-		, _index{ kUniqueStringInvalidIndex }
+	inline UniqueStringA::UniqueStringA(const UniqueStringPoolA* const pool, const uint32 index)
+		: _pool{ pool }
+		, _index{ index }
 	{
 #if defined FS_DEBUG
-		_str = nullptr;
+		_str = _pool->getRawString(*this);
 #endif
 	}
 
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>::UniqueStringA(const char* const rawString)
-		: _holder{ UniqueStringAHolder<HolderCapacity>::getInstance() }
-		, _index{ _holder->registerString(rawString) }
-	{
-#if defined FS_DEBUG
-		setDebugString();
-#endif
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>::UniqueStringA(const UniqueStringA& rhs)
-		: _holder{ rhs._holder }
-		, _index{ rhs._index }
-	{
-#if defined FS_DEBUG
-		setDebugString();
-#endif
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>::UniqueStringA(UniqueStringA&& rhs) noexcept
-		: _holder{ rhs._holder }
-		, _index{ rhs._index }
-	{
-#if defined FS_DEBUG
-		setDebugString();
-#endif
-
-		rhs._index = kUniqueStringInvalidIndex;
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>::~UniqueStringA()
-	{
-		__noop;
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>& UniqueStringA<HolderCapacity>::operator=(const UniqueStringA& rhs)
-	{
-		if (this != &rhs)
-		{
-			_index = rhs._index;
-
-#if defined FS_DEBUG
-			setDebugString();
-#endif
-		}
-		return *this;
-	}
-
-	template<uint32 HolderCapacity>
-	inline UniqueStringA<HolderCapacity>& UniqueStringA<HolderCapacity>::operator=(UniqueStringA&& rhs) noexcept
-	{
-		if (this != &rhs)
-		{
-			_index = rhs._index;
-
-#if defined FS_DEBUG
-			setDebugString();
-#endif
-
-			rhs._index = kUniqueStringInvalidIndex;
-		}
-		return *this;
-	}
-
-	template<uint32 HolderCapacity>
-	inline const bool UniqueStringA<HolderCapacity>::operator==(const UniqueStringA& rhs)
+	FS_INLINE const bool UniqueStringA::operator==(const UniqueStringA& rhs) const noexcept
 	{
 		return (_index == rhs._index);
 	}
 
-	template<uint32 HolderCapacity>
-	inline const bool UniqueStringA<HolderCapacity>::operator!=(const UniqueStringA& rhs)
+	FS_INLINE const bool UniqueStringA::operator!=(const UniqueStringA& rhs) const noexcept
 	{
-		return (_index != rhs._index);
+		return !(*this == rhs);
 	}
 
-	template<uint32 HolderCapacity>
-	inline bool UniqueStringA<HolderCapacity>::isValid() const noexcept
+	FS_INLINE const char* UniqueStringA::c_str() const noexcept
 	{
-		return (_index != kUniqueStringInvalidIndex);
+		return _pool->getRawString(*this);
 	}
 
-	template<uint32 HolderCapacity>
-	inline bool UniqueStringA<HolderCapacity>::assign(const char* const rawString) noexcept
+
+	inline UniqueStringPoolA::UniqueStringPoolA()
+		: _rawMemory{ nullptr }
+		, _rawCapacity{ 0 }
+		, _totalLength{ 0 }
+		, _count{ 0 }
 	{
-		if (_index != kUniqueStringInvalidIndex)
+		reserve(kDefaultRawCapacity);
+	}
+
+	inline UniqueStringPoolA::~UniqueStringPoolA()
+	{
+		FS_DELETE_ARRAY(_rawMemory);
+	}
+
+	inline const UniqueStringA UniqueStringPoolA::registerString(const char* const rawString) noexcept
+	{
+		if (nullptr == rawString)
 		{
-			// 이미 _index 가 지정된 UniqueString 에 assign() 을 하면
-			// 이 문자열을 영영 잃을 수도 있다는 뜻이다...
-			return false;
+			return UniqueStringA::kInvalidUniqueString;
 		}
 
-		_index = _holder->registerString(rawString);
-
 #if defined FS_DEBUG
-		setDebugString();
+		{
+			bool isCollided = false;
+			for (uint32 i = 0; i < _count; ++i)
+			{
+				const uint32 offset = _offsetArray[i];
+				if (strcmp(&_rawMemory[offset], rawString) == 0)
+				{
+					isCollided = true;
+					break;
+				}
+			}
+			FS_ASSERT("김장원", isCollided == false, "이미 등록된 String 을 또 등록하고 있습니다!");
+		}
 #endif
 
-		return isValid();
+		const uint32 lengthNullIncluded = static_cast<uint32>(strlen(rawString) + 1);
+		if (_rawCapacity < _totalLength + lengthNullIncluded)
+		{
+			reserve(_rawCapacity * 2);
+		}
+
+		const uint32 newIndex = _count;
+		_offsetArray[newIndex] = _totalLength;
+		memcpy(&_rawMemory[_offsetArray[newIndex]], rawString, lengthNullIncluded - 1);
+
+		_totalLength += lengthNullIncluded;
+		++_count;
+
+		return UniqueStringA(this, newIndex);
 	}
 
-	template<uint32 HolderCapacity>
-	inline const char* UniqueStringA<HolderCapacity>::c_str() const noexcept
+	FS_INLINE const UniqueStringA UniqueStringPoolA::getString(const uint32 index) const noexcept
 	{
-		return _holder->getString(_index);
+		if (_count <= index)
+		{
+			return UniqueStringA::kInvalidUniqueString;
+		}
+		return UniqueStringA(this, index);
 	}
 
-#if defined FS_DEBUG
-	template<uint32 HolderCapacity>
-	inline void UniqueStringA<HolderCapacity>::setDebugString() noexcept
+	FS_INLINE const char* UniqueStringPoolA::getRawString(const UniqueStringA& uniqueString) const noexcept
 	{
-		_str = _holder->getString(_index);
+		if (uniqueString == UniqueStringA::kInvalidUniqueString)
+		{
+			return nullptr;
+		}
+		return &_rawMemory[_offsetArray[uniqueString._index]];;
 	}
-#endif
+
+	inline void UniqueStringPoolA::reserve(const uint32 rawCapacity)
+	{
+		if (_rawCapacity < rawCapacity)
+		{
+			std::scoped_lock<std::mutex> scopedLock(_mutex);
+
+			char* temp = FS_NEW_ARRAY(char, _rawCapacity);
+			memcpy(temp, _rawMemory, sizeof(char) * _rawCapacity);
+			FS_DELETE_ARRAY(_rawMemory);
+
+			_rawMemory = FS_NEW_ARRAY(char, rawCapacity);
+			memcpy(_rawMemory, temp, sizeof(char) * _rawCapacity);
+			FS_DELETE_ARRAY(temp);
+
+			_rawCapacity = rawCapacity;
+			_offsetArray.resize(_rawCapacity);
+		}
+	}
 }

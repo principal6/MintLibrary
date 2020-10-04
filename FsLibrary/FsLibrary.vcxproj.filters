@@ -227,5 +227,8 @@
     <ClCompile Include="Memory\MemoryAllocator.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
+    <ClCompile Include="Container\UniqueString.cpp">
+      <Filter>Container</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

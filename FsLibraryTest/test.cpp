@@ -106,6 +106,7 @@ void testStackHolder()
 bool testStringTypes()
 {
 	using fs::ScopeStringA;
+	using fs::UniqueStringPoolA;
 	using fs::UniqueStringA;
 
 #pragma region ScopeString
@@ -136,19 +137,17 @@ bool testStringTypes()
 
 #pragma region UniqueString
 	{
-		static constexpr uint32 kUniqueStringHolderCapacity = 256;
-
-		UniqueStringA<kUniqueStringHolderCapacity> a{ "ab" };
-		UniqueStringA<kUniqueStringHolderCapacity> b{ "cdef" };
-		UniqueStringA<kUniqueStringHolderCapacity> c{ "ab" };
-		UniqueStringA<kUniqueStringHolderCapacity> d;
-		UniqueStringA<kUniqueStringHolderCapacity> e{ "" };
-		UniqueStringA<kUniqueStringHolderCapacity> f{};
-		d = b;
-		d.assign("haha!");
+		UniqueStringPoolA pool;
+		UniqueStringA a = pool.registerString("ab");
+		UniqueStringA b = pool.registerString("cdef");
+#ifdef FS_TEST_FAILURES
+		UniqueStringA c = pool.registerString("ab");
+		UniqueStringA d = pool.registerString(nullptr);
+		UniqueStringA e = pool.registerString("");
+		UniqueStringA f = pool.registerString("");
+#endif
+		b = a;
 		const bool cmp0 = (a == b);
-		const bool cmp1 = (a == c);
-		const bool cmp2 = (e == f);
 	}
 #pragma endregion
 
