@@ -14,7 +14,7 @@ namespace fs
 			return (nullptr == rawString || '\0' == rawString[0]);
 		}
 
-        uint64 hashRawString64(const char* rawString)
+        static uint64 hashRawString64(const char* rawString)
         {
             // Hashing algorithm: FNV1a
 
