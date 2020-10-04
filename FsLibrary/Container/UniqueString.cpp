@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <Container/UniqueString.h>
+#include <Container\StringUtil.h>
 
 
 namespace fs
@@ -52,18 +53,10 @@ namespace fs
 		}
 
 #if defined FS_DEBUG
+		const uint64 hash = StringUtil::hashRawString64(rawString);
 		{
-			bool isCollided = false;
-			for (uint32 i = 0; i < _count; ++i)
-			{
-				const uint32 offset = _offsetArray[i];
-				if (strcmp(&_rawMemory[offset], rawString) == 0)
-				{
-					isCollided = true;
-					break;
-				}
-			}
-			FS_ASSERT("김장원", isCollided == false, "이미 등록된 String 을 또 등록하고 있습니다!");
+			auto found = _registrationMap.find(hash);
+			FS_ASSERT("김장원", found == _registrationMap.end(), "이미 등록된 String 을 또 등록하고 있습니다!");
 		}
 #endif
 
@@ -79,6 +72,12 @@ namespace fs
 
 		_totalLength += lengthNullIncluded;
 		++_count;
+
+#if defined FS_DEBUG
+		{
+			_registrationMap.insert(std::make_pair(hash, newIndex));
+		}
+#endif
 
 		return UniqueStringA(this, newIndex);
 	}

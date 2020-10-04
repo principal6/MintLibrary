@@ -71,6 +71,7 @@ namespace fs
 
 	private:
 		std::mutex									_mutex;
+		std::unordered_map<uint64, uint64>			_registrationMap;
 
 	private:
 		std::vector<uint32>							_offsetArray;
