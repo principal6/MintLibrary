@@ -40,10 +40,10 @@ namespace fs
 		void						swap(const uint32 aBitAt, const uint32 bBitAt) noexcept;
 
 		// bit count
-		const uint32				size() const noexcept;
+		const uint32				bitCount() const noexcept;
 
 		// byte capacity
-		const uint32				capacity() const noexcept;
+		const uint32				byteCapacity() const noexcept;
 
 	private:
 		const uint32				getByteAtByBitAt(const uint32 bitAt) const noexcept;

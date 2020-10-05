@@ -175,12 +175,12 @@ namespace fs
 		set(bBitAt, a);
 	}
 
-	inline const uint32 BitVector::size() const noexcept
+	inline const uint32 BitVector::bitCount() const noexcept
 	{
 		return _bitSize;
 	}
 
-	inline const uint32 BitVector::capacity() const noexcept
+	inline const uint32 BitVector::byteCapacity() const noexcept
 	{
 		return _byteCapacity;
 	}
