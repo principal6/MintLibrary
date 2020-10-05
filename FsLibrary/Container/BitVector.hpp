@@ -83,6 +83,7 @@ namespace fs
 			}
 
 			_bitSize = newSize;
+			_byteCapacity = newByteCapacity;
 		}
 	}
 
