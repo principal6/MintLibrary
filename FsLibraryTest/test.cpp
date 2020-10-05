@@ -105,11 +105,9 @@ void testStackHolder()
 
 bool testStringTypes()
 {
-	using fs::ScopeStringA;
-	using fs::UniqueStringPoolA;
-	using fs::UniqueStringA;
 
 #pragma region ScopeString
+	using fs::ScopeStringA;
 	{
 		ScopeStringA<256> a{ "abcd" };
 		ScopeStringA<256> b = a;
@@ -136,6 +134,8 @@ bool testStringTypes()
 #pragma endregion
 
 #pragma region UniqueString
+	using fs::UniqueStringPoolA;
+	using fs::UniqueStringA;
 	{
 		UniqueStringPoolA pool;
 		UniqueStringA a = pool.registerString("ab");
@@ -151,6 +151,41 @@ bool testStringTypes()
 	}
 #pragma endregion
 
+#pragma region DynamicString
+	using fs::DynamicStringA;
+	{
+		DynamicStringA a;
+		a.append("abcdefg hijklmnopqrst");
+		a.append("HELLO!!!!?");
+
+		DynamicStringA b = "ABCDEFG!";
+		b.assign("haha..");
+		a = b;
+		const bool cmp0 = (a == b);
+		a = a.substr(0, 5);
+		const bool cmp1 = (a == b);
+		a.assign("AGAIN");
+		b.clear();
+		b.append("Hello World!");
+		DynamicStringA c = b.substr(100);
+		const bool cEmpty = c.empty();
+		const uint32 foundO0 = b.find("o", 6);
+		const uint32 foundO1 = b.find("o", 20);
+		const uint32 foundO2 = b.rfind("o", 6);
+		const uint32 foundH0 = b.find("H", 3);
+		const uint32 foundH1 = b.rfind("H", 11);
+		const uint32 foundD0 = b.find("d");
+		const uint32 foundD1 = b.rfind("d");
+		const uint64 hashA = a.hash();
+		const uint64 hashB = b.hash();
+		const uint64 hashC = c.hash();
+		c.assign("wow");
+		c.setChar(0, 'k');
+		c.setChar(1, 'j');
+		const char getChar = c.getChar(10);
+	}
+#pragma endregion
+
 	return true;
 }
 
@@ -159,7 +194,7 @@ bool testBitVector()
 	using fs::BitVector;
 
 	BitVector a;
-	a.reserve(4);
+	a.reserveByteCapacity(4);
 	a.push_back(true);
 	a.push_back(false);
 	a.push_back(true);
@@ -200,12 +235,16 @@ bool testMemoryAllocator()
 			fs::MemoryAccessor accessor = allocator.allocate(4);
 			accessor = holder._accesor;
 			holder._accesor = accessor;
-			auto bs = accessor.getByteSize();
-			accessor.setMemory((byte*)"abcdef");
+			auto capacity = accessor.getByteCapacity();
+			accessor.setMemory(nullptr);
+			accessor.setMemory("ab");
+			accessor.setMemory("cdefgh", 4);
+			accessor.setMemory<int32>(0x12345678);
 			auto m = accessor.getMemory();
 			{
 				fs::MemoryAccessor accessor1 = accessor;
 				fs::MemoryAccessor accessor2 = accessor1;
+				allocator.reallocate(accessor, 8, true);
 			}
 			allocator.deallocate(accessor);
 			const bool isValid = holder._accesor.isValid();

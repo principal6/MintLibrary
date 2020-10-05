@@ -1,12 +1,11 @@
 #pragma once
 
 
-#ifndef FS_ALLOCATOR_H
-#define FS_ALLOCATOR_H
+#ifndef FS_MEMORY_ALLOCATOR_H
+#define FS_MEMORY_ALLOCATOR_H
 
 
 #include <CommonDefinitions.h>
-#include <Math\MathCommon.h>
 #include <Container\BitVector.h>
 
 
@@ -81,7 +80,7 @@ namespace fs
 	public:
 									MemoryAccessor();
 									MemoryAccessor(const MemoryAccessor& rhs);
-									MemoryAccessor(MemoryAccessor&& rhs) = default;
+									MemoryAccessor(MemoryAccessor&& rhs) noexcept;
 									~MemoryAccessor();
 
 	private:
@@ -89,13 +88,18 @@ namespace fs
 
 	public:
 		MemoryAccessor&				operator=(const MemoryAccessor& rhs);
-		MemoryAccessor&				operator=(MemoryAccessor&& rhs) = default;
+		MemoryAccessor&				operator=(MemoryAccessor&& rhs) noexcept;
 
 	public:
 		const bool					isValid() const noexcept;
-		void						setMemory(const byte* const content);
+
+		template <class T>
+		void						setMemory(const typename std::enable_if<std::is_literal_type<T>::value, T>::type value, const uint32 byteOffset = 0);
+		void						setMemory(const char* const source, const uint32 byteOffset = 0);
+		void						setMemory(const byte* const source, const uint32 byteCount, const uint32 byteOffset = 0);
+
 		const byte*					getMemory() const noexcept;
-		const uint32				getByteSize() const noexcept;
+		const uint32				getByteCapacity() const noexcept;
 
 	private:
 		MemoryBucketId				_bucketId;
@@ -103,6 +107,7 @@ namespace fs
 	};
 	
 
+	// Thread-safe memory allocator
 	class MemoryAllocator final
 	{
 		friend MemoryAccessor;
@@ -118,7 +123,6 @@ namespace fs
 
 		private:
 			MemoryBucketId	_id;
-			uint32			_byteSize{};
 			uint32			_blockOffset{};
 			uint32			_blockCount{};
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
@@ -154,27 +158,27 @@ namespace fs
 
 	public:
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
-		MemoryAccessor												allocate(const uint32 byteSize, const bool isShared = false);
+		MemoryAccessor												allocate(const uint32 newByteSize, const bool isShared = false);
 #else
-		MemoryAccessor												allocate(const uint32 byteSize);
+		MemoryAccessor												allocate(const uint32 newByteSize);
 #endif
+		MemoryAccessor&												reallocate(MemoryAccessor& memoryAccessor, const uint32 newByteSize, const bool keepData);
 		void														deallocate(MemoryAccessor& memoryAccessor);
 
 	private:
-		const bool													canAllocate(const uint32 blockCount) const noexcept;
+		const uint32												getAvailableBlockOffsetXXX(const uint32 blockCount) const noexcept;
 		void														reserve(const uint32 blockCapacity);
-
-	private:
 		void														cleanUpRawMemory();
 
 	private:
-		const size_t												convertBlockUnitToByteUnit(const uint32 blockUnit) const noexcept;
+		const uint32												convertBlockUnitToByteUnit(const uint32 blockUnit) const noexcept;
+		const uint32												calculateBlockCount(const uint32 byteSize) const noexcept;
 
 	private:
 		const bool													isValid(const MemoryBucketId bucketId) const noexcept;
-		void														setMemoryXXX(const MemoryBucketId bucketId, const byte* const content);
+		void														setMemoryXXX(const MemoryBucketId bucketId, const byte* const source, const uint32 byteCount, const uint32 byteOffset);
 		const byte*													getMemoryXXX(const MemoryBucketId bucketId) const;
-		const uint32												getByteSize(const MemoryBucketId bucketId) const;
+		const uint32												getByteCapacity(const MemoryBucketId bucketId) const;
 		void														increaseReferenceXXX(const MemoryBucketId bucketId);
 		void														decreaseReferenceXXX(const MemoryBucketId bucketId, MemoryAccessor& memoryAccessor);
 
@@ -187,7 +191,6 @@ namespace fs
 		byte*														_rawMemory;
 		
 	private:
-		uint32														_nextAvailableBlockIndex;
 		BitVector													_blockInUseArray;
 
 	private:
@@ -196,4 +199,4 @@ namespace fs
 }
 
 
-#endif // !FS_ALLOCATOR_H
+#endif // !FS_MEMORY_ALLOCATOR_H

@@ -10,16 +10,16 @@ namespace fs
 {
 	inline BitVector::BitVector()
 		: _byteCapacity{ kMinByteCapacity }
-		, _bitSize{ 0 }
+		, _bitCount{ 0 }
 	{
 		_byteArray = FS_NEW_ARRAY(uint8, kMinByteCapacity);
 	}
 
 	inline BitVector::BitVector(const uint32 byteCapacity)
 		: _byteCapacity{ 0 }
-		, _bitSize{ 0 }
+		, _bitCount{ 0 }
 	{
-		reserve(max(byteCapacity, kMinByteCapacity));
+		reserveByteCapacity(max(byteCapacity, kMinByteCapacity));
 	}
 
 	inline BitVector::~BitVector()
@@ -31,36 +31,36 @@ namespace fs
 	{
 		if (true == isFull())
 		{
-			reserve(_byteCapacity * 2);
+			reserveByteCapacity(_byteCapacity * 2);
 		}
 		
-		++_bitSize;
-		set(_bitSize - 1, value);
+		++_bitCount;
+		set(_bitCount - 1, value);
 	}
 
 	inline const bool BitVector::pop_back()
 	{
-		if (0 < _bitSize)
+		if (0 < _bitCount)
 		{
 			const bool result = last();
 			if (true == result)
 			{
-				set(_bitSize - 1, false);
+				set(_bitCount - 1, false);
 			}
-			--_bitSize;
+			--_bitCount;
 			return result;
 		}
 		return false;
 	}
 
-	inline void BitVector::resize(const uint32 newSize)
+	inline void BitVector::resizeBitCount(const uint32 newBitCount)
 	{
-		if (_bitSize == newSize)
+		if (_bitCount == newBitCount)
 		{
 			return;
 		}
 
-		const uint32 newByteCapacity = getByteAtByBitAt(newSize);
+		const uint32 newByteCapacity = getByteAtByBitAt(newBitCount);
 		if (_byteCapacity != newByteCapacity)
 		{
 			uint8* temp = nullptr;
@@ -82,12 +82,12 @@ namespace fs
 				FS_DELETE_ARRAY(temp);
 			}
 
-			_bitSize = newSize;
+			_bitCount = newBitCount;
 			_byteCapacity = newByteCapacity;
 		}
 	}
 
-	inline void BitVector::reserve(const uint32 newByteCapacity)
+	inline void BitVector::reserveByteCapacity(const uint32 newByteCapacity)
 	{
 		if (newByteCapacity <= _byteCapacity)
 		{
@@ -118,17 +118,17 @@ namespace fs
 
 	inline const bool BitVector::isEmpty() const noexcept
 	{
-		return (0 == _bitSize);
+		return (0 == _bitCount);
 	}
 
 	inline const bool BitVector::isFull() const noexcept
 	{
-		return (_byteCapacity < getByteAtByBitAt(_bitSize) + 1);
+		return (_byteCapacity < getByteAtByBitAt(_bitCount) + 1);
 	}
 
 	inline const bool BitVector::isInSizeBoundary(const uint32 bitAt) const noexcept
 	{
-		return (bitAt < _bitSize);
+		return (bitAt < _bitCount);
 	}
 
 	inline const bool BitVector::get(const uint32 bitAt) const noexcept
@@ -149,7 +149,7 @@ namespace fs
 
 	inline const bool BitVector::last() const noexcept
 	{
-		return get(_bitSize - 1);
+		return get(_bitCount - 1);
 	}
 
 	inline void BitVector::set(const uint32 bitAt, const bool value) noexcept
@@ -178,7 +178,7 @@ namespace fs
 
 	inline const uint32 BitVector::bitCount() const noexcept
 	{
-		return _bitSize;
+		return _bitCount;
 	}
 
 	inline const uint32 BitVector::byteCapacity() const noexcept

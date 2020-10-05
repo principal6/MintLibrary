@@ -1,7 +1,9 @@
 #include <stdafx.h>
 #include <Memory\MemoryAllocator.h>
+#include <Memory\MemoryAllocator.hpp>
 
 #include <Container\BitVector.hpp>
+#include <Container\StringUtil.h>
 
 
 namespace fs
@@ -20,6 +22,13 @@ namespace fs
 		: _bucketId{ rhs._bucketId }, _memoryAllocator{ rhs._memoryAllocator }
 	{
 		_memoryAllocator->increaseReferenceXXX(_bucketId);
+	}
+
+	MemoryAccessor::MemoryAccessor(MemoryAccessor&& rhs) noexcept
+		: _bucketId{ rhs._bucketId }, _memoryAllocator{ rhs._memoryAllocator }
+	{
+		rhs._bucketId = MemoryBucketId::kInvalidMemoryBucketId;
+		rhs._memoryAllocator = nullptr;
 	}
 
 	MemoryAccessor::~MemoryAccessor()
@@ -56,16 +65,42 @@ namespace fs
 		return *this;
 	}
 
+	MemoryAccessor& MemoryAccessor::operator=(MemoryAccessor&& rhs) noexcept
+	{
+		if (&rhs != this)
+		{
+			if (rhs._memoryAllocator != nullptr)
+			{
+				if (_memoryAllocator != nullptr)
+				{
+					_memoryAllocator->decreaseReferenceXXX(_bucketId, *this);
+				}
+
+				_bucketId = rhs._bucketId;
+				_memoryAllocator = rhs._memoryAllocator;
+
+				rhs._bucketId = MemoryBucketId::kInvalidMemoryBucketId;
+				rhs._memoryAllocator = nullptr;
+			}
+		}
+		return *this;
+	}
+
 	const bool MemoryAccessor::isValid() const noexcept
 	{
 		return (_memoryAllocator != nullptr) ? _memoryAllocator->isValid(_bucketId) : false;
 	}
 
-	void MemoryAccessor::setMemory(const byte* const content)
+	void MemoryAccessor::setMemory(const char* const source, const uint32 byteOffset)
+	{
+		setMemory(reinterpret_cast<const byte*>(source), fs::StringUtil::strlen(source), byteOffset);
+	}
+
+	void MemoryAccessor::setMemory(const byte* const source, const uint32 byteCount, const uint32 byteOffset)
 	{
 		if (_memoryAllocator != nullptr)
 		{
-			_memoryAllocator->setMemoryXXX(_bucketId, content);
+			_memoryAllocator->setMemoryXXX(_bucketId, source, byteCount, byteOffset);
 		}
 	}
 
@@ -74,9 +109,9 @@ namespace fs
 		return (_memoryAllocator != nullptr) ? _memoryAllocator->getMemoryXXX(_bucketId) : nullptr;
 	}
 
-	const uint32 MemoryAccessor::getByteSize() const noexcept
+	const uint32 MemoryAccessor::getByteCapacity() const noexcept
 	{
-		return (_memoryAllocator != nullptr) ? _memoryAllocator->getByteSize(_bucketId) : 0;
+		return (_memoryAllocator != nullptr) ? _memoryAllocator->getByteCapacity(_bucketId) : 0;
 	}
 
 
@@ -84,7 +119,6 @@ namespace fs
 		: kBlockSize{ kDefaultBlockSize }
 		, _rawCapacity{ 0 }
 		, _rawMemory{ nullptr }
-		, _nextAvailableBlockIndex{ 0 }
 	{
 		reserve(kDefaultInitialBlockCapacity);
 	}
@@ -95,23 +129,24 @@ namespace fs
 	}
 
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
-	MemoryAccessor MemoryAllocator::allocate(const uint32 byteSize, const bool isShared)
+	MemoryAccessor MemoryAllocator::allocate(const uint32 newByteSize, const bool isShared)
 #else
-	MemoryAccessor MemoryAllocator::allocate(const uint32 byteSize)
+	MemoryAccessor MemoryAllocator::allocate(const uint32 newByteSize)
 #endif
 	{
-		const uint32 newBlockCount = byteSize / kBlockSize;
-		if (canAllocate(newBlockCount) == false)
+		const uint32 newBlockCount = calculateBlockCount(newByteSize);
+		uint32 availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
+		if (availableBlockOffset == kUint32Max)
 		{
 			reserve(_rawCapacity * 2);
+			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		}
 
 		std::scoped_lock<std::mutex> scopedLock(_mutex);
 
 		MemoryBucket newBucket;
 		newBucket._id.assignIdXXX();
-		newBucket._byteSize = byteSize;
-		newBucket._blockOffset = _nextAvailableBlockIndex;
+		newBucket._blockOffset = availableBlockOffset;
 		newBucket._blockCount = newBlockCount;
 		newBucket._referenceCount = 1;
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
@@ -119,15 +154,55 @@ namespace fs
 #endif
 		_bucketMap.insert(std::make_pair(newBucket._id.getRawIdXXX(), newBucket)); // 절대 실패하면 안 된다.
 
-		// ===
-		_nextAvailableBlockIndex = newBucket._blockOffset + newBucket._blockCount;
 		for (uint32 blockIter = 0; blockIter < newBucket._blockCount; blockIter++)
 		{
 			_blockInUseArray.set(newBucket._blockOffset + blockIter, true);
 		}
-		// ===
 
 		return MemoryAccessor(newBucket._id, this);
+	}
+
+	MemoryAccessor& MemoryAllocator::reallocate(MemoryAccessor& memoryAccessor, const uint32 newByteSize, const bool keepData)
+	{
+		const uint32 newBlockCount = calculateBlockCount(newByteSize);
+		uint32 availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
+		if (availableBlockOffset == kUint32Max)
+		{
+			reserve(_rawCapacity * 2);
+			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
+		}
+
+		auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
+		if (found != _bucketMap.end())
+		{
+			std::scoped_lock<std::mutex> scopedLock(_mutex);
+
+			MemoryBucket& memoryBucket = found->second;
+			const uint32 oldBlockOffset = memoryBucket._blockOffset;
+			const uint32 oldBlockCount = memoryBucket._blockCount;
+			memoryBucket._blockOffset = availableBlockOffset;
+			memoryBucket._blockCount = newBlockCount;
+
+			for (uint32 blockIter = 0; blockIter < oldBlockCount; blockIter++)
+			{
+				_blockInUseArray.set(oldBlockOffset + blockIter, false);
+			}
+
+			for (uint32 blockIter = 0; blockIter < memoryBucket._blockCount; blockIter++)
+			{
+				_blockInUseArray.set(memoryBucket._blockOffset + blockIter, true);
+			}
+
+			if (keepData == true)
+			{
+				memcpy(_rawMemory + convertBlockUnitToByteUnit(memoryBucket._blockOffset), _rawMemory + convertBlockUnitToByteUnit(oldBlockOffset), sizeof(byte) * convertBlockUnitToByteUnit(oldBlockCount));
+			}
+		}
+		else
+		{
+			memoryAccessor = allocate(newByteSize);
+		}
+		return memoryAccessor;
 	}
 
 	void MemoryAllocator::deallocate(MemoryAccessor& memoryAccessor)
@@ -135,13 +210,13 @@ namespace fs
 		auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
 		if (found != _bucketMap.end())
 		{
-			// ===
-			MemoryBucket& bucket = found->second;
-			for (uint32 blockIter = 0; blockIter < bucket._blockCount; blockIter++)
 			{
-				_blockInUseArray.set(bucket._blockOffset + blockIter, false);
+				const MemoryBucket& bucket = found->second;
+				for (uint32 blockIter = 0; blockIter < bucket._blockCount; blockIter++)
+				{
+					_blockInUseArray.set(bucket._blockOffset + blockIter, false);
+				}
 			}
-			// ===
 
 			_bucketMap.erase(found->first); // 절대 실패하면 안 된다.
 
@@ -150,9 +225,26 @@ namespace fs
 		}
 	}
 
-	FS_INLINE const bool MemoryAllocator::canAllocate(const uint32 blockCount) const noexcept
+	const uint32 MemoryAllocator::getAvailableBlockOffsetXXX(const uint32 blockCount) const noexcept
 	{
-		return (_nextAvailableBlockIndex + blockCount <= _blockInUseArray.size());
+		const uint32 bitCount = _blockInUseArray.bitCount();
+		uint32 successiveBitCount = 0;
+		for (uint32 bitAt = 0; bitAt < bitCount; bitAt++)
+		{
+			if (_blockInUseArray.get(bitAt) == false)
+			{
+				++successiveBitCount;
+				if (successiveBitCount == blockCount)
+				{
+					return (bitAt + 1) - successiveBitCount;
+				}
+			}
+			else
+			{
+				successiveBitCount = 0;
+			}
+		}
+		return kUint32Max;
 	}
 
 	void MemoryAllocator::reserve(const uint32 blockCapacity)
@@ -174,7 +266,7 @@ namespace fs
 			}
 
 			_rawCapacity = rawCapacity;
-			_blockInUseArray.resize(blockCapacity);
+			_blockInUseArray.resizeBitCount(blockCapacity);
 		}
 	}
 
@@ -183,20 +275,15 @@ namespace fs
 		FS_DELETE_ARRAY(_rawMemory);
 	}
 
-	FS_INLINE const size_t MemoryAllocator::convertBlockUnitToByteUnit(const uint32 blockUnit) const noexcept
-	{
-		return static_cast<size_t>(blockUnit) * kBlockSize;
-	}
-
 	const bool MemoryAllocator::isValid(const MemoryBucketId bucketId) const noexcept
 	{
 		auto found = _bucketMap.find(bucketId.getRawIdXXX());
 		return (found != _bucketMap.end());
 	}
 
-	void MemoryAllocator::setMemoryXXX(const MemoryBucketId bucketId, const byte* const content)
+	void MemoryAllocator::setMemoryXXX(const MemoryBucketId bucketId, const byte* const source, const uint32 byteCount, const uint32 byteOffset)
 	{
-		if (content == nullptr)
+		if (source == nullptr)
 		{
 			return;
 		}
@@ -206,7 +293,21 @@ namespace fs
 		auto found = _bucketMap.find(bucketId.getRawIdXXX());
 		if (found != _bucketMap.end())
 		{
-			memcpy(_rawMemory + convertBlockUnitToByteUnit(found->second._blockOffset), content, sizeof(byte) * convertBlockUnitToByteUnit(found->second._blockCount));
+			MemoryBucket& memoryBucket = found->second;
+			const uint32 destinationByteOffset = convertBlockUnitToByteUnit(memoryBucket._blockOffset);
+			const uint32 blockByteCapacity = static_cast<uint32>(sizeof(byte) * convertBlockUnitToByteUnit(memoryBucket._blockCount));
+			if (blockByteCapacity <= byteOffset)
+			{
+				return;
+			}
+
+			const uint32 copyByteSize = fs::min(blockByteCapacity - byteOffset, byteCount);
+			if (copyByteSize == 0)
+			{
+				return;
+			}
+
+			memcpy(_rawMemory + destinationByteOffset + byteOffset, source, copyByteSize);
 		}
 	}
 
@@ -219,13 +320,13 @@ namespace fs
 		}
 		return nullptr;
 	}
-	
-	const uint32 MemoryAllocator::getByteSize(const MemoryBucketId bucketId) const
+
+	const uint32 MemoryAllocator::getByteCapacity(const MemoryBucketId bucketId) const
 	{
 		auto found = _bucketMap.find(bucketId.getRawIdXXX());
 		if (found != _bucketMap.end())
 		{
-			return found->second._byteSize;
+			return convertBlockUnitToByteUnit(found->second._blockCount);
 		}
 		return 0;
 	}

@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <Container/UniqueString.h>
-#include <Container\StringUtil.h>
+#include <Container/UniqueString.hpp>
+
+#include <Container/StringUtil.h>
 
 
 namespace fs
@@ -12,20 +14,12 @@ namespace fs
 	{
 #if defined FS_DEBUG
 		_str = _pool->getRawString(*this);
+#else
+		__noop;
 #endif
 	}
 
-	FS_INLINE const bool UniqueStringA::operator==(const UniqueStringA& rhs) const noexcept
-	{
-		return (_index == rhs._index);
-	}
-
-	FS_INLINE const bool UniqueStringA::operator!=(const UniqueStringA& rhs) const noexcept
-	{
-		return !(*this == rhs);
-	}
-
-	FS_INLINE const char* UniqueStringA::c_str() const noexcept
+	const char* UniqueStringA::c_str() const noexcept
 	{
 		return _pool->getRawString(*this);
 	}
@@ -80,24 +74,6 @@ namespace fs
 #endif
 
 		return UniqueStringA(this, newIndex);
-	}
-
-	FS_INLINE const UniqueStringA UniqueStringPoolA::getString(const uint32 index) const noexcept
-	{
-		if (_count <= index)
-		{
-			return UniqueStringA::kInvalidUniqueString;
-		}
-		return UniqueStringA(this, index);
-	}
-
-	FS_INLINE const char* UniqueStringPoolA::getRawString(const UniqueStringA& uniqueString) const noexcept
-	{
-		if (uniqueString == UniqueStringA::kInvalidUniqueString)
-		{
-			return nullptr;
-		}
-		return &_rawMemory[_offsetArray[uniqueString._index]];;
 	}
 
 	void UniqueStringPoolA::reserve(const uint32 rawCapacity)

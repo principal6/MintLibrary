@@ -27,10 +27,10 @@ namespace fs
 		ScopeStringA&						operator=(const char* const rawString) noexcept;
 
 	public:
-		bool								operator==(const char* const rawString) const noexcept;
-		bool								operator==(const ScopeStringA& rhs) const noexcept;
-		bool								operator!=(const char* const rawString) const noexcept;
-		bool								operator!=(const ScopeStringA& rhs) const noexcept;
+		const bool							operator==(const char* const rawString) const noexcept;
+		const bool							operator==(const ScopeStringA& rhs) const noexcept;
+		const bool							operator!=(const char* const rawString) const noexcept;
+		const bool							operator!=(const ScopeStringA& rhs) const noexcept;
 
 	public:
 		ScopeStringA&						operator+=(const char* const rawString) noexcept;
@@ -49,7 +49,7 @@ namespace fs
 		char*								data() noexcept;
 
 	private:
-		bool								canInsert(const uint32 insertLength) const noexcept;
+		const bool							canInsert(const uint32 insertLength) const noexcept;
 
 	public:
 		void								clear() noexcept;
@@ -60,10 +60,10 @@ namespace fs
 
 	public:
 		ScopeStringA						substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
-		uint32								find(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
-		uint32								rfind(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
-		bool								compare(const char* const rawString) const noexcept;
-		bool								compare(const ScopeStringA& rhs) const noexcept;
+		const uint32						find(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
+		const uint32						rfind(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
+		const bool							compare(const char* const rawString) const noexcept;
+		const bool							compare(const ScopeStringA& rhs) const noexcept;
 
 	private:
 		uint32								_length;

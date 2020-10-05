@@ -13,6 +13,7 @@
 #include <queue>
 #include <unordered_map>
 #include <atomic>
+#include <type_traits>
 
 #pragma region FsLibrary
 #include <CommonDefinitions.h>

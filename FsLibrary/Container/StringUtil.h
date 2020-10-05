@@ -9,7 +9,7 @@ namespace fs
 {
 	namespace StringUtil
 	{
-		inline bool isNullOrEmpty(const char* const rawString)
+        FS_INLINE bool isNullOrEmpty(const char* const rawString)
 		{
 			return (nullptr == rawString || '\0' == rawString[0]);
 		}
@@ -17,6 +17,11 @@ namespace fs
         static uint64 hashRawString64(const char* rawString)
         {
             // Hashing algorithm: FNV1a
+
+            if (isNullOrEmpty(rawString) == true)
+            {
+                return kUint64Max;
+            }
 
             static constexpr uint64 kOffset = 0xcbf29ce484222325;
             static constexpr uint64 kPrime  = 0x00000100000001B3;
@@ -29,6 +34,15 @@ namespace fs
                 hash *= kPrime;
             }
             return hash;
+        }
+
+        FS_INLINE uint32 strlen(const char* const rawString)
+        {
+            if (isNullOrEmpty(rawString) == true)
+            {
+                return 0;
+            }
+            return static_cast<uint32>(::strlen(rawString));
         }
 	}
 }

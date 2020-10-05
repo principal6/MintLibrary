@@ -11,6 +11,7 @@
 #include <File/File.h>
 #include <Math/Math.h>
 #include <Memory\MemoryAllocator.h>
+#include <Memory\MemoryAllocator.hpp>
 #include <Platform/Platform.h>
 #include <SimpleRendering/GraphicDevice.h>
 

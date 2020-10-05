@@ -22,12 +22,8 @@ namespace fs
 	public:
 		void						push_back(const bool value);
 		const bool					pop_back();
-		
-		// bit count
-		void						resize(const uint32 newSize);
-
-		// byte capacity
-		void						reserve(const uint32 newByteCapacity);
+		void						resizeBitCount(const uint32 newBitCount);
+		void						reserveByteCapacity(const uint32 newByteCapacity);
 
 	public:
 		const bool					isEmpty() const noexcept;
@@ -39,10 +35,8 @@ namespace fs
 		void						set(const uint32 bitAt, const bool value) noexcept;
 		void						swap(const uint32 aBitAt, const uint32 bBitAt) noexcept;
 
-		// bit count
+	public:
 		const uint32				bitCount() const noexcept;
-
-		// byte capacity
 		const uint32				byteCapacity() const noexcept;
 
 	private:
@@ -53,7 +47,7 @@ namespace fs
 	private:
 		uint8*						_byteArray;
 		uint32						_byteCapacity;
-		uint32						_bitSize;
+		uint32						_bitCount;
 	};
 }
 

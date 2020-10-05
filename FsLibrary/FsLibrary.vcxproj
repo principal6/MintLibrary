@@ -26,6 +26,7 @@
     <ClInclude Include="Container\BitVector.h" />
     <ClInclude Include="Container\BitVector.hpp" />
     <ClInclude Include="Container\Container.h" />
+    <ClInclude Include="Container\DynamicString.h" />
     <ClInclude Include="Container\ScopeString.h" />
     <ClInclude Include="Container\ScopeString.hpp" />
     <ClInclude Include="Container\StackHolder.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="Container\StaticArray.h" />
     <ClInclude Include="Container\StringUtil.h" />
     <ClInclude Include="Container\UniqueString.h" />
+    <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
     <ClInclude Include="File\FileUtil.h" />
     <ClInclude Include="File\FileUtil.hpp" />
@@ -61,6 +63,7 @@
     <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Memory\MemoryAllocator.h" />
+    <ClInclude Include="Memory\MemoryAllocator.hpp" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
@@ -77,6 +80,7 @@
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Container\DynamicString.cpp" />
     <ClCompile Include="Container\UniqueString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />

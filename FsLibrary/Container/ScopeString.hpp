@@ -70,25 +70,25 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::operator==(const char* const rawString) const noexcept
+	inline const bool ScopeStringA<BufferSize>::operator==(const char* const rawString) const noexcept
 	{
 		return compare(rawString);
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::operator==(const ScopeStringA& rhs) const noexcept
+	inline const bool ScopeStringA<BufferSize>::operator==(const ScopeStringA& rhs) const noexcept
 	{
 		return compare(rhs);
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::operator!=(const char* const rawString) const noexcept
+	inline const bool ScopeStringA<BufferSize>::operator!=(const char* const rawString) const noexcept
 	{
 		return !compare(rawString);
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::operator!=(const ScopeStringA& rhs) const noexcept
+	inline const bool ScopeStringA<BufferSize>::operator!=(const ScopeStringA& rhs) const noexcept
 	{
 		return !compare(rhs);
 	}
@@ -142,7 +142,7 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	FS_INLINE bool ScopeStringA<BufferSize>::canInsert(const uint32 insertLength) const noexcept
+	FS_INLINE const bool ScopeStringA<BufferSize>::canInsert(const uint32 insertLength) const noexcept
 	{
 		if (BufferSize <= _length + insertLength)
 		{
@@ -204,7 +204,10 @@ namespace fs
 	template<uint32 BufferSize>
 	inline ScopeStringA<BufferSize>& ScopeStringA<BufferSize>::assign(const ScopeStringA& rhs) noexcept
 	{
-		*this = rhs;
+		if (this != &rhs)
+		{
+			return assign(rhs.c_str());
+		}
 		return *this;
 	}
 
@@ -218,7 +221,7 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	inline uint32 ScopeStringA<BufferSize>::find(const char* const rawString, const uint32 offset) const noexcept
+	inline const uint32 ScopeStringA<BufferSize>::find(const char* const rawString, const uint32 offset) const noexcept
 	{
 		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
 		if (_length < rawStringLength)
@@ -226,12 +229,12 @@ namespace fs
 			return kStringNPos;
 		}
 		
-		for (uint32 at = 0; at < _length; ++at)
+		for (uint32 myAt = offset; myAt < _length; ++myAt)
 		{
 			uint32 rawStringAt = 0;
 			while (rawStringAt < rawStringLength)
 			{
-				if (_raw[at + rawStringAt] != rawString[rawStringAt])
+				if (_raw[myAt + rawStringAt] != rawString[rawStringAt])
 				{
 					break;
 				}
@@ -240,14 +243,14 @@ namespace fs
 
 			if (rawStringAt == rawStringLength)
 			{
-				return at;
+				return myAt;
 			}
 		}
 		return kStringNPos;
 	}
 
 	template<uint32 BufferSize>
-	inline uint32 ScopeStringA<BufferSize>::rfind(const char* const rawString, const uint32 offset) const noexcept
+	inline const uint32 ScopeStringA<BufferSize>::rfind(const char* const rawString, const uint32 offset) const noexcept
 	{
 		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
 		if (_length < rawStringLength)
@@ -255,12 +258,17 @@ namespace fs
 			return kStringNPos;
 		}
 
-		for (uint32 at = _length - rawStringLength; at != kUint32Max; --at)
+		const uint32 myAtStart = _length - rawStringLength;
+		if (myAtStart < offset)
+		{
+			return kStringNPos;
+		}
+		for (uint32 myAt = myAtStart - offset; myAt != kUint32Max; --myAt)
 		{
 			uint32 rawStringAt = 0;
 			while (rawStringAt < rawStringLength)
 			{
-				if (_raw[at + rawStringAt] != rawString[rawStringAt])
+				if (_raw[myAt + rawStringAt] != rawString[rawStringAt])
 				{
 					break;
 				}
@@ -269,14 +277,14 @@ namespace fs
 
 			if (rawStringAt == rawStringLength)
 			{
-				return at;
+				return myAt;
 			}
 		}
 		return kStringNPos;
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::compare(const char* const rawString) const noexcept
+	inline const bool ScopeStringA<BufferSize>::compare(const char* const rawString) const noexcept
 	{
 		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
 		if (_length != rawStringLength)
@@ -295,7 +303,7 @@ namespace fs
 	}
 
 	template<uint32 BufferSize>
-	inline bool ScopeStringA<BufferSize>::compare(const ScopeStringA& rhs) const noexcept
+	inline const bool ScopeStringA<BufferSize>::compare(const ScopeStringA& rhs) const noexcept
 	{
 		if (_length != rhs._length)
 		{
