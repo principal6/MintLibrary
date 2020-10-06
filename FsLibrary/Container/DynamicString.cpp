@@ -138,7 +138,7 @@ namespace fs
 		const uint32 newCapacity = _length + 1;
 		if (_memoryAccessor.isValid() == true)
 		{
-			if (_length < _memoryAccessor.getByteCapacity())
+			if (_length < _cachedByteCapacity)
 			{
 				setMemoryInternal(rawString, _length, 0);
 			}
@@ -173,12 +173,11 @@ namespace fs
 			return;
 		}
 
-		const uint32 capacity = _memoryAccessor.getByteCapacity();
 		const uint32 deltaLength =fs::StringUtil::strlen(rawString);
 		const uint32 capacityCandidate = _length + deltaLength + 1;
-		if (capacity <= capacityCandidate)
+		if (_cachedByteCapacity <= capacityCandidate)
 		{
-			_memoryAllocator.reallocate(_memoryAccessor, fs::max(capacity * 2, capacityCandidate), true);
+			_memoryAllocator.reallocate(_memoryAccessor, fs::max(_cachedByteCapacity * 2, capacityCandidate), true);
 		}
 		
 		const uint32 offset = _length;
@@ -208,6 +207,43 @@ namespace fs
 		setMemoryInternal(str, 1, at, true);
 	}
 
+	void DynamicStringA::reserve(const uint32 newCapacity)
+	{
+		if (_cachedByteCapacity < newCapacity)
+		{
+			_memoryAllocator.reallocate(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
+			cacheRawMemoryInternal();
+		}
+	}
+
+	void DynamicStringA::resize(const uint32 newSize)
+	{
+		if (_cachedByteCapacity <= newSize)
+		{
+			_memoryAllocator.reallocate(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
+		}
+		setChar(newSize, 0);
+	}
+
+	void DynamicStringA::push_back(const char ch)
+	{
+		if (_cachedByteCapacity == _length + 1)
+		{
+			reserve(_cachedByteCapacity * 2);
+		}
+		setChar(_length, ch);
+		++_length;
+	}
+
+	void DynamicStringA::pop_back()
+	{
+		if (0 < _length)
+		{
+			setChar(_length - 1, 0);
+			--_length;
+		}
+	}
+
 	const bool DynamicStringA::empty() const noexcept
 	{
 		return (_length == 0);
@@ -230,6 +266,16 @@ namespace fs
 			return 0;
 		}
 		return c_str()[at];
+	}
+
+	const char DynamicStringA::front() const noexcept
+	{
+		return getChar(0);
+	}
+
+	const char DynamicStringA::back() const noexcept
+	{
+		return getChar(_length - 1);
 	}
 
 	const uint32 DynamicStringA::find(const char* const rawString, const uint32 offset) const noexcept

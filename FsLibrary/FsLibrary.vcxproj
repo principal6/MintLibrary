@@ -27,6 +27,7 @@
     <ClInclude Include="Container\BitVector.hpp" />
     <ClInclude Include="Container\Container.h" />
     <ClInclude Include="Container\DynamicString.h" />
+    <ClInclude Include="Container\DynamicString.hpp" />
     <ClInclude Include="Container\ScopeString.h" />
     <ClInclude Include="Container\ScopeString.hpp" />
     <ClInclude Include="Container\StackHolder.h" />

@@ -184,6 +184,10 @@ bool testStringTypes()
 		c.setChar(0, 'k');
 		c.setChar(1, 'j');
 		const char getChar = c.getChar(10);
+
+		DynamicStringA from_value0 = DynamicStringA::from_value<float>(1.23f);
+		DynamicStringA from_value1 = DynamicStringA::from_value<bool>(true);
+		DynamicStringA from_value2 = DynamicStringA::from_value<uint32>(123);
 	}
 #pragma endregion
 
