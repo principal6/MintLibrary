@@ -462,7 +462,7 @@ namespace fs
 
 	bool XmlFile::isWhiteSpace(char ch) noexcept
 	{
-		return (ch == ' ' || ch == '\t' || ch == '\n');
+		return (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n');
 	}
 
 	bool XmlFile::isQuote(char ch) noexcept
