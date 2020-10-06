@@ -10,10 +10,9 @@ namespace fs
 	MemoryAllocator DynamicStringA::_memoryAllocator;
 	DynamicStringA::DynamicStringA()
 		: _length{ 0 }
-#if defined FS_DEBUG
-		, _debugRawString{ nullptr }
-#endif
+		, _cachedRawMemoryPtr{ nullptr }
 		, _cachedHash{ 0 }
+		, _cachedByteCapacity{ 0 }
 	{
 		__noop;
 	}
@@ -22,6 +21,7 @@ namespace fs
 		: DynamicStringA()
 	{
 		_memoryAccessor = _memoryAllocator.allocate(fs::max(capacity, kMinCapacity));
+		cacheRawMemoryInternal();
 	}
 
 	DynamicStringA::DynamicStringA(const char* const rawString)
@@ -220,7 +220,7 @@ namespace fs
 
 	const char* const DynamicStringA::c_str() const noexcept
 	{
-		return reinterpret_cast<const char*>(_memoryAccessor.getMemory());
+		return _cachedRawMemoryPtr;
 	}
 
 	const char DynamicStringA::getChar(const uint32 at) const noexcept
@@ -357,11 +357,18 @@ namespace fs
 			}
 		}
 
-#if defined FS_DEBUG
-		_debugRawString = reinterpret_cast<const char*>(_memoryAccessor.getMemory());
-#endif
+		cacheRawMemoryInternal();
 
 		_cachedHash = 0;
 	}
 
+	void DynamicStringA::cacheRawMemoryInternal()
+	{
+		const uint32 byteCapacity = _memoryAccessor.getByteCapacity();
+		if (_cachedByteCapacity != byteCapacity)
+		{
+			_cachedRawMemoryPtr = reinterpret_cast<const char*>(_memoryAccessor.getMemory());
+			_cachedByteCapacity = byteCapacity;
+		}
+	}
 }

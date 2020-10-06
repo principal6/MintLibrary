@@ -48,6 +48,8 @@ namespace fs
 		void						append(const DynamicStringA& rhs);
 		DynamicStringA				substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
 		void						setChar(const uint32 at, const char ch);
+		void						reserve(const uint32 newCapacity);
+		void						resize(const uint32 newSize);
 
 	public:
 		const bool					empty() const noexcept;
@@ -64,6 +66,7 @@ namespace fs
 
 	private:
 		void						setMemoryInternal(const char* const rawString, const uint32 rawStringLength, const uint32 offset, const bool isOneChar = false);
+		void						cacheRawMemoryInternal();
 
 	private:
 		static MemoryAllocator		_memoryAllocator;
@@ -71,10 +74,9 @@ namespace fs
 	private:
 		MemoryAccessor				_memoryAccessor;
 		uint32						_length;
-#if defined FS_DEBUG
-		const char*					_debugRawString;
-#endif
+		const char*					_cachedRawMemoryPtr;
 		mutable uint64				_cachedHash;
+		uint32						_cachedByteCapacity;
 	};
 }
 
