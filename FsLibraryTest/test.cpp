@@ -14,6 +14,8 @@ void testIntTypes()
 	Int2 a{ 1, 2 };
 	Int2 b{ 3, 4 };
 	Int2 c = a + b;
+	Int2 d;
+	d = a;
 }
 
 void testFloatTypes()
