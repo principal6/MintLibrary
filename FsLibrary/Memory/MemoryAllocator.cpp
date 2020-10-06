@@ -172,36 +172,38 @@ namespace fs
 			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		}
 
-		auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
 		{
 			std::scoped_lock<std::mutex> scopedLock(_mutex);
-
-			MemoryBucket& memoryBucket = found->second;
-			const uint32 oldBlockOffset = memoryBucket._blockOffset;
-			const uint32 oldBlockCount = memoryBucket._blockCount;
-			memoryBucket._blockOffset = availableBlockOffset;
-			memoryBucket._blockCount = newBlockCount;
-
-			for (uint32 blockIter = 0; blockIter < oldBlockCount; blockIter++)
+			auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
+			if (found != _bucketMap.end())
 			{
-				_blockInUseArray.set(oldBlockOffset + blockIter, false);
-			}
 
-			for (uint32 blockIter = 0; blockIter < memoryBucket._blockCount; blockIter++)
-			{
-				_blockInUseArray.set(memoryBucket._blockOffset + blockIter, true);
-			}
+				MemoryBucket& memoryBucket = found->second;
+				const uint32 oldBlockOffset = memoryBucket._blockOffset;
+				const uint32 oldBlockCount = memoryBucket._blockCount;
+				memoryBucket._blockOffset = availableBlockOffset;
+				memoryBucket._blockCount = newBlockCount;
 
-			if (keepData == true)
-			{
-				memcpy(_rawMemory + convertBlockUnitToByteUnit(memoryBucket._blockOffset), _rawMemory + convertBlockUnitToByteUnit(oldBlockOffset), sizeof(byte) * convertBlockUnitToByteUnit(oldBlockCount));
+				for (uint32 blockIter = 0; blockIter < oldBlockCount; blockIter++)
+				{
+					_blockInUseArray.set(oldBlockOffset + blockIter, false);
+				}
+
+				for (uint32 blockIter = 0; blockIter < memoryBucket._blockCount; blockIter++)
+				{
+					_blockInUseArray.set(memoryBucket._blockOffset + blockIter, true);
+				}
+
+				if (keepData == true)
+				{
+					memcpy(_rawMemory + convertBlockUnitToByteUnit(memoryBucket._blockOffset), _rawMemory + convertBlockUnitToByteUnit(oldBlockOffset), sizeof(byte) * convertBlockUnitToByteUnit(oldBlockCount));
+				}
+
+				return memoryAccessor;
 			}
 		}
-		else
-		{
-			memoryAccessor = allocate(newByteSize);
-		}
+		
+		memoryAccessor = allocate(newByteSize);
 		return memoryAccessor;
 	}
 
@@ -251,10 +253,10 @@ namespace fs
 	{
 		const uint32 rawCapacity = blockCapacity * kBlockSize;
 
+		std::scoped_lock<std::mutex> scopedLock(_mutex);
+		
 		if (_rawCapacity < rawCapacity)
 		{
-			std::scoped_lock<std::mutex> scopedLock(_mutex);
-
 			{
 				byte* temp = FS_NEW_ARRAY(byte, _rawCapacity);
 				memcpy(temp, _rawMemory, sizeof(byte) * _rawCapacity);

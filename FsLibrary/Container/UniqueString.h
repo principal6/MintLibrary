@@ -8,22 +8,69 @@
 #include <CommonDefinitions.h>
 
 
+//#define FS_UNIQUE_STRING_EXPOSE_ID
+
+
 namespace fs
 {
+	class UniqueStringAId;
+	class UniqueStringA;
 	class UniqueStringPoolA;
+
+
+	class UniqueStringAId
+	{
+		friend UniqueStringA;
+		friend UniqueStringPoolA;
+
+	private:
+		static constexpr uint32		kInvalidRawId = kUint32Max;
+	
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+	public:
+#else
+	private:
+#endif
+									UniqueStringAId();
+									UniqueStringAId(const uint32 newRawId);
+
+	public:
+									UniqueStringAId(const UniqueStringAId& rhs) = default;
+									UniqueStringAId(UniqueStringAId&& rhs) noexcept = default;
+									~UniqueStringAId() = default;
+
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+	public:
+#else
+	private:
+#endif
+		UniqueStringAId&			operator=(const UniqueStringAId& rhs) = default;
+		UniqueStringAId&			operator=(UniqueStringAId && rhs) noexcept = default;
+		
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+	public:
+#else
+	private:
+#endif
+		const bool					operator==(const UniqueStringAId& rhs) const noexcept;
+		const bool					operator!=(const UniqueStringAId& rhs) const noexcept;
+
+	private:
+		uint32						_rawId;
+	};
 
 
 	class UniqueStringA
 	{
-		friend UniqueStringPoolA;
+	public:
+		static const UniqueStringAId				kInvalidId;
 
 	public:
-		static constexpr uint32						kInvalidIndex = kUint32Max;
-
-	private:
-													UniqueStringA(const UniqueStringPoolA* const pool, const uint32 index);
-	
-	public:
+													UniqueStringA();
+	explicit										UniqueStringA(const char* const rawString);
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+	explicit										UniqueStringA(const UniqueStringAId id);
+#endif
 													UniqueStringA(const UniqueStringA& rhs) = default;
 													UniqueStringA(UniqueStringA&& rhs) noexcept = default;
 													~UniqueStringA() = default;
@@ -38,47 +85,51 @@ namespace fs
 
 	public:
 		const char*									c_str() const noexcept;
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+		const UniqueStringAId						getId() const noexcept;
+#endif
 
 	private:
-		const UniqueStringPoolA*					_pool;
-		uint32										_index;
+		static UniqueStringPoolA					_pool;
+
+	private:
+		UniqueStringAId								_id;
 
 #if defined FS_DEBUG
 	private:
-		const char*									_str{};
+		const char*									_str;
 #endif
-
-	public:
-		static const UniqueStringA					kInvalidUniqueString;
 	};
 	
 
 	class UniqueStringPoolA final
 	{
+		friend UniqueStringA;
+
 		static constexpr uint32						kDefaultRawCapacity = 1024;
 
-	public:
-		UniqueStringPoolA();
-		~UniqueStringPoolA();
+	private:
+													UniqueStringPoolA();
+													~UniqueStringPoolA();
 
 	public:
-		const UniqueStringA							registerString(const char* const rawString) noexcept;
-		const UniqueStringA							getString(const uint32 uniqueStringIndex) const noexcept;
-		const char*									getRawString(const UniqueStringA& uniqueString) const noexcept;
+		const UniqueStringAId						registerString(const char* const rawString) noexcept;
+		const bool									isValid(const UniqueStringAId id) const noexcept;
+		const char*									getRawString(const UniqueStringAId id) const noexcept;
 
 	public:
 		void										reserve(const uint32 rawCapacity);
 
 	private:
 		std::mutex									_mutex;
-		std::unordered_map<uint64, uint64>			_registrationMap;
+		std::unordered_map<uint64, UniqueStringAId>	_registrationMap;
 
 	private:
 		std::vector<uint32>							_offsetArray;
 		char*										_rawMemory;
 		uint32										_rawCapacity;
 		uint32										_totalLength;
-		uint32										_count;
+		uint32										_uniqueStringCount;
 	};
 }
 

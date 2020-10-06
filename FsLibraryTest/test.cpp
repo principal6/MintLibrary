@@ -105,7 +105,6 @@ void testStackHolder()
 
 bool testStringTypes()
 {
-
 #pragma region ScopeString
 	using fs::ScopeStringA;
 	{
@@ -134,19 +133,19 @@ bool testStringTypes()
 #pragma endregion
 
 #pragma region UniqueString
-	using fs::UniqueStringPoolA;
 	using fs::UniqueStringA;
+	using fs::UniqueStringAId;
 	{
-		UniqueStringPoolA pool;
-		UniqueStringA a = pool.registerString("ab");
-		UniqueStringA b = pool.registerString("cdef");
-#ifdef FS_TEST_FAILURES
-		UniqueStringA c = pool.registerString("ab");
-		UniqueStringA d = pool.registerString(nullptr);
-		UniqueStringA e = pool.registerString("");
-		UniqueStringA f = pool.registerString("");
-#endif
-		b = a;
+		UniqueStringA a{ "ab" };
+		UniqueStringA b{ "cdef" };
+		UniqueStringA c{ "ab" };
+		UniqueStringA d{ "" };
+		UniqueStringA e{ nullptr };
+		UniqueStringA f;
+		UniqueStringA g = d;
+		UniqueStringA h{ b };
+		g = a;
+		a = b;
 		const bool cmp0 = (a == b);
 	}
 #pragma endregion

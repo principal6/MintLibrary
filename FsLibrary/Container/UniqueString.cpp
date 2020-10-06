@@ -7,29 +7,43 @@
 
 namespace fs
 {
-	const UniqueStringA UniqueStringA::kInvalidUniqueString(nullptr, UniqueStringA::kInvalidIndex);
-	UniqueStringA::UniqueStringA(const UniqueStringPoolA* const pool, const uint32 index)
-		: _pool{ pool }
-		, _index{ index }
-	{
+	const UniqueStringAId UniqueStringA::kInvalidId;
+	UniqueStringPoolA UniqueStringA::_pool;
+	UniqueStringA::UniqueStringA()
+		: _id{ UniqueStringA::kInvalidId }
 #if defined FS_DEBUG
-		_str = _pool->getRawString(*this);
-#else
-		__noop;
+		, _str{}
 #endif
+	{
+		__noop;
 	}
 
-	const char* UniqueStringA::c_str() const noexcept
+	UniqueStringA::UniqueStringA(const char* const rawString)
+		: _id{ _pool.registerString(rawString) }
+#if defined FS_DEBUG
+		, _str{ _pool.getRawString(_id) }
+#endif
 	{
-		return _pool->getRawString(*this);
+		__noop;
 	}
+
+#if defined FS_UNIQUE_STRING_EXPOSE_ID
+	UniqueStringA::UniqueStringA(const UniqueStringAId id)
+		: _id{ (true == _pool.isValid(id)) ? id : UniqueStringA::kInvalidId }
+#if defined FS_DEBUG
+		, _str{ _pool.getRawString(_id) }
+#endif
+	{
+		__noop;
+	}
+#endif
 
 
 	UniqueStringPoolA::UniqueStringPoolA()
 		: _rawMemory{ nullptr }
 		, _rawCapacity{ 0 }
 		, _totalLength{ 0 }
-		, _count{ 0 }
+		, _uniqueStringCount{ 0 }
 	{
 		reserve(kDefaultRawCapacity);
 	}
@@ -39,20 +53,21 @@ namespace fs
 		FS_DELETE_ARRAY(_rawMemory);
 	}
 
-	const UniqueStringA UniqueStringPoolA::registerString(const char* const rawString) noexcept
+	const UniqueStringAId UniqueStringPoolA::registerString(const char* const rawString) noexcept
 	{
 		if (nullptr == rawString)
 		{
-			return UniqueStringA::kInvalidUniqueString;
+			return UniqueStringA::kInvalidId;
 		}
 
-#if defined FS_DEBUG
 		const uint64 hash = StringUtil::hashRawString64(rawString);
 		{
 			auto found = _registrationMap.find(hash);
-			FS_ASSERT("김장원", found == _registrationMap.end(), "이미 등록된 String 을 또 등록하고 있습니다!");
+			if (found != _registrationMap.end())
+			{
+				return found->second;
+			}
 		}
-#endif
 
 		const uint32 lengthNullIncluded = static_cast<uint32>(strlen(rawString) + 1);
 		if (_rawCapacity < _totalLength + lengthNullIncluded)
@@ -60,28 +75,23 @@ namespace fs
 			reserve(_rawCapacity * 2);
 		}
 
-		const uint32 newIndex = _count;
-		_offsetArray[newIndex] = _totalLength;
-		memcpy(&_rawMemory[_offsetArray[newIndex]], rawString, lengthNullIncluded - 1);
+		UniqueStringAId newId(_uniqueStringCount);
+		_offsetArray[newId._rawId] = _totalLength;
+		memcpy(&_rawMemory[_offsetArray[newId._rawId]], rawString, lengthNullIncluded - 1);
 
 		_totalLength += lengthNullIncluded;
-		++_count;
+		++_uniqueStringCount;
+		_registrationMap.insert(std::make_pair(hash, newId));
 
-#if defined FS_DEBUG
-		{
-			_registrationMap.insert(std::make_pair(hash, newIndex));
-		}
-#endif
-
-		return UniqueStringA(this, newIndex);
+		return newId;
 	}
 
 	void UniqueStringPoolA::reserve(const uint32 rawCapacity)
 	{
+		std::scoped_lock<std::mutex> scopedLock(_mutex);
+
 		if (_rawCapacity < rawCapacity)
 		{
-			std::scoped_lock<std::mutex> scopedLock(_mutex);
-
 			char* temp = FS_NEW_ARRAY(char, _rawCapacity);
 			memcpy(temp, _rawMemory, sizeof(char) * _rawCapacity);
 			FS_DELETE_ARRAY(_rawMemory);
