@@ -21,6 +21,13 @@ namespace fs
 	};
 
 
+	enum class DxObjectType
+	{
+		Buffer,
+		Shader,
+	};
+
+
 	class DxObjectId final
 	{
 		friend IDxObject;
@@ -95,7 +102,7 @@ namespace fs
 		}
 
 	public:
-		const DxObjectId&			getId() const noexcept
+		FS_INLINE const DxObjectId&	getId() const noexcept
 		{
 			return _objectId;
 		}
