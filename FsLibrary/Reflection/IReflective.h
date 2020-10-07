@@ -23,8 +23,8 @@ namespace fs
 		{
 			_typeName = _fullTypeName = type.name();
 
-			size_t found = _typeName.rfind("::");
-			if (std::string::npos != found)
+			const uint32 found = _typeName.rfind("::");
+			if (kStringNPos != found)
 			{
 				_typeName = _typeName.substr(found + 2);
 			}
@@ -43,8 +43,8 @@ namespace fs
 		FS_INLINE const uint32					typeSize() const noexcept { return _typeSize; }
 		FS_INLINE const uint32					compactTypeSize() const noexcept { return _compactTypeSize; }
 		FS_INLINE const size_t					hashCode() const noexcept { return _hashCode; }
-		FS_INLINE const std::string&			typeName() const noexcept { return _typeName; }
-		FS_INLINE const std::string&			declarationName() const noexcept { return _declarationName; }
+		FS_INLINE const fs::DynamicStringA&		typeName() const noexcept { return _typeName; }
+		FS_INLINE const fs::DynamicStringA&		declarationName() const noexcept { return _declarationName; }
 		FS_INLINE const ReflectionTypeData&		member(const uint32 index) const noexcept { return _memberArray[index]; }
 
 	private:
@@ -56,11 +56,11 @@ namespace fs
 	private:
 		bool									_isReflective; // 멤버 중엔 Reflective 하지 않은 자료형이 있을 수 있다.
 		bool									_isRegisterDone;
-		std::string								_fullTypeName;
+		fs::DynamicStringA						_fullTypeName;
 
 	private:
-		std::string								_typeName;
-		std::string								_declarationName;
+		fs::DynamicStringA						_typeName;
+		fs::DynamicStringA						_declarationName;
 		std::vector<ReflectionTypeData>			_memberArray;
 	};
 
@@ -75,7 +75,7 @@ namespace fs
 												~ReflectionPool() = default;
 
 	private:
-		static uint32							registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize);
+		static uint32							registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const fs::DynamicStringA& memberName, const size_t memberSize);
 		static void								registerTypeDone(const uint32 typeIndex);
 		static const ReflectionTypeData&		getTypeData(const uint32 typeIndex);
 
@@ -142,7 +142,7 @@ namespace fs
 		}
 
 	protected:
-		void						registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const std::string memberName, const size_t memberSize)
+		void						registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& memberType, const fs::DynamicStringA& memberName, const size_t memberSize)
 		{
 			_myTypeIndex = fs::ReflectionPool::registerType(type, byteOffset, typeSize, memberType, memberName, memberSize);
 			++_memberCount;

@@ -86,7 +86,7 @@ namespace fs
 			VS_INPUT vsInput;
 			VS_OUTPUT vsOutput;
 			{
-				std::string shaderHeaderContent;
+				fs::DynamicStringA shaderHeaderContent;
 				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsInput, false));
 				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsOutput, true));
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", shaderHeaderContent.c_str());
@@ -98,7 +98,7 @@ namespace fs
 			CB_Transforms cbTransforms;
 			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize.x()), static_cast<float>(windowSize.y()));
 			{
-				std::string shaderHeaderContent;
+				fs::DynamicStringA shaderHeaderContent;
 				shaderHeaderContent.append(fs::convertReflectiveClassToHlslConstantBuffer(&cbTransforms, 0));
 				_shaderHeaderMemory.pushHeader("VsConstantBuffers", shaderHeaderContent.c_str());
 

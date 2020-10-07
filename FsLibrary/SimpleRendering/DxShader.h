@@ -22,7 +22,7 @@ namespace fs
 
 	struct DxInputElementSet
 	{
-		std::vector<std::string>				_semanticNameArray;
+		std::vector<fs::DynamicStringA>			_semanticNameArray;
 		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray{};
 	};
 

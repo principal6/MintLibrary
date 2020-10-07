@@ -14,9 +14,9 @@ namespace fs
 	DXGI_FORMAT convertToDxgiFormat(const ReflectionTypeData& typeData);
 	DXGI_FORMAT convertToDxgiFormat(const type_info& typeInfo);
 
-	std::string convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
-	std::string convertReflectiveClassToHlslStruct(const fs::IReflective* const reflective, bool mapSemanticNames);
-	std::string convertReflectiveClassToHlslConstantBuffer(const fs::IReflective* const reflective, const uint32 registerIndex);
+	fs::DynamicStringA convertDeclarationNameToHlslSemanticName(const fs::DynamicStringA& declarationName);
+	fs::DynamicStringA convertReflectiveClassToHlslStruct(const fs::IReflective* const reflective, bool mapSemanticNames);
+	fs::DynamicStringA convertReflectiveClassToHlslConstantBuffer(const fs::IReflective* const reflective, const uint32 registerIndex);
 
 	template <typename T>
 	const bool isNullInstance(const T& instance)

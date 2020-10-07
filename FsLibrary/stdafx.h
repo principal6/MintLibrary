@@ -20,6 +20,7 @@
 #include <Assert.h>
 #include <Logger/Logger.h>
 #include <Logger/Logger.hpp>
+#include <Container/DynamicString.hpp>
 #pragma endregion
 
 #pragma region DirectX
