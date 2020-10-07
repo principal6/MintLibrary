@@ -11,7 +11,6 @@
 #include <Math/Float4x4.hpp>
 #include <Container/ScopeString.hpp>
 #include <typeinfo>
-#include <unordered_map>
 #include <SimpleRendering\DxHelper.h>
 
 

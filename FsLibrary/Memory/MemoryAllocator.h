@@ -191,7 +191,6 @@ namespace fs
 	private:
 		BitVector													_bucketInUseArray;
 		std::vector<MemoryBucket>									_bucketArray;
-		//std::unordered_map<MemoryBucketRawIdType, MemoryBucket>		_bucketMap;
 	};
 }
 
