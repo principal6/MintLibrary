@@ -21,17 +21,21 @@ namespace fs
 										DynamicStringA(const char* const rawString);
 										DynamicStringA(const char* const rawString, const uint32 rawStringLength);
 										DynamicStringA(const DynamicStringA& rhs);
-										DynamicStringA(DynamicStringA&& rhs) noexcept = default;
+										DynamicStringA(DynamicStringA&& rhs) noexcept;
 										~DynamicStringA();
 
 	public:
 		DynamicStringA&					operator=(const char* const rawString);
 		DynamicStringA&					operator=(const DynamicStringA& rhs);
-		DynamicStringA&					operator=(DynamicStringA&& rhs) noexcept = default;
+		DynamicStringA&					operator=(DynamicStringA&& rhs) noexcept;
 
 	public:
 		DynamicStringA&					operator+=(const char* const rawString) noexcept;
 		DynamicStringA&					operator+=(const DynamicStringA& rhs) noexcept;
+
+	public:
+		const DynamicStringA			operator+(const char* const rawString) const noexcept;
+		const DynamicStringA			operator+(const DynamicStringA& rhs) const noexcept;
 
 	public:
 		const bool						operator==(const char* const rawString) const noexcept;
@@ -65,25 +69,22 @@ namespace fs
 		const char						back() const noexcept;
 
 	public:
-		const uint32					find(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
-		const uint32					rfind(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
+		const uint32					find(const char* const rawString, const uint32 offset = 0) const noexcept;
+		const uint32					rfind(const char* const rawString, const uint32 offset = 0) const noexcept;
 		const bool						compare(const char* const rawString) const noexcept;
 		const bool						compare(const DynamicStringA& rhs) const noexcept;
 		const uint64					hash() const noexcept;
 
 	private:
-		void							setMemoryInternal(const char* const rawString, const uint32 rawStringLength, const uint32 offset, const bool isOneChar = false);
-		void							cacheRawMemoryInternal();
-
+		void							setMemoryInternal(const char* const rawString, const uint32 rawStringLength, const uint32 offset);
+		
 	private:
 		static MemoryAllocator			_memoryAllocator;
 
 	private:
 		MemoryAccessor					_memoryAccessor;
 		uint32							_length;
-		const char*						_cachedRawMemoryPtr;
 		mutable uint64					_cachedHash;
-		uint32							_cachedByteCapacity;
 	};
 }
 
