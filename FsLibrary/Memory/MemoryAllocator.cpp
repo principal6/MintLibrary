@@ -138,7 +138,7 @@ namespace fs
 		uint32 availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		if (availableBlockOffset == kUint32Max)
 		{
-			reserve(_rawCapacity * 2);
+			reserve(calculateBlockCount(_rawCapacity) * 2);
 			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		}
 
@@ -168,7 +168,7 @@ namespace fs
 		uint32 availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		if (availableBlockOffset == kUint32Max)
 		{
-			reserve(_rawCapacity * 2);
+			reserve(calculateBlockCount(_rawCapacity) * 2);
 			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		}
 

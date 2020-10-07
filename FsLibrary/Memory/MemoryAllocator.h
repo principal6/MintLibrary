@@ -103,6 +103,8 @@ namespace fs
 
 	private:
 		MemoryBucketId				_bucketId;
+
+	private:
 		MemoryAllocator*			_memoryAllocator;
 	};
 	
