@@ -76,7 +76,7 @@ namespace fs
 		const uint64					hash() const noexcept;
 
 	private:
-		void							setMemoryInternal(const char* const rawString, const uint32 rawStringLength, const uint32 offset);
+		void							setMemoryInternal(const char* const rawString, const uint32 offset = 0);
 		
 	private:
 		static MemoryAllocator			_memoryAllocator;
