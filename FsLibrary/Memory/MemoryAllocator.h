@@ -25,6 +25,7 @@ namespace fs
 		friend MemoryAllocator;
 
 		static constexpr MemoryBucketRawIdType		kInvalidMemoryBucketRawId{ kUint32Max };
+		static constexpr uint32						kInvalidMemoryBucketIndex{ kUint32Max };
 
 	private:
 													MemoryBucketId() = default;
@@ -48,7 +49,7 @@ namespace fs
 		
 	private:
 		MemoryBucketRawIdType						_rawId{ kInvalidMemoryBucketRawId };
-		uint32										_bucketIndex{ 0 };
+		uint32										_bucketIndex{ kInvalidMemoryBucketIndex };
 
 	private:
 		static std::atomic<MemoryBucketRawIdType>	_lastRawId;
@@ -91,6 +92,10 @@ namespace fs
 
 	private:
 		MemoryAllocator*			_memoryAllocator;
+
+#if defined FS_DEBUG
+		const byte*					_rawMemoryView;
+#endif
 	};
 	
 

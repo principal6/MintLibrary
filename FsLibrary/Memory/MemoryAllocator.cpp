@@ -13,22 +13,35 @@ namespace fs
 
 
 	MemoryAccessor::MemoryAccessor()
-		: _bucketId{ MemoryBucketId::kInvalidMemoryBucketId }, _memoryAllocator{ nullptr }
+		: _bucketId{ MemoryBucketId::kInvalidMemoryBucketId }
+		, _memoryAllocator{ nullptr }
+		, _rawMemoryView{ nullptr }
 	{
 		__noop;
 	}
 
 	MemoryAccessor::MemoryAccessor(const MemoryAccessor& rhs)
-		: _bucketId{ rhs._bucketId }, _memoryAllocator{ rhs._memoryAllocator }
+		: _bucketId{ rhs._bucketId }
+		, _memoryAllocator{ rhs._memoryAllocator }
+#if defined FS_DEBUG
+		, _rawMemoryView{ nullptr }
+#endif
 	{
 		_memoryAllocator->increaseReferenceXXX(_bucketId);
 	}
 
 	MemoryAccessor::MemoryAccessor(MemoryAccessor&& rhs) noexcept
-		: _bucketId{ rhs._bucketId }, _memoryAllocator{ rhs._memoryAllocator }
+		: _bucketId{ rhs._bucketId }
+		, _memoryAllocator{ rhs._memoryAllocator }
+#if defined FS_DEBUG
+		, _rawMemoryView{ rhs._rawMemoryView }
+#endif
 	{
 		rhs._bucketId = MemoryBucketId::kInvalidMemoryBucketId;
 		rhs._memoryAllocator = nullptr;
+#if defined FS_DEBUG
+		rhs._rawMemoryView = nullptr;
+#endif
 	}
 
 	MemoryAccessor::~MemoryAccessor()
@@ -58,6 +71,9 @@ namespace fs
 
 				_bucketId = rhs._bucketId;
 				_memoryAllocator = rhs._memoryAllocator;
+#if defined FS_DEBUG
+				_rawMemoryView = rhs._rawMemoryView;
+#endif
 
 				_memoryAllocator->increaseReferenceXXX(_bucketId);
 			}
@@ -78,9 +94,15 @@ namespace fs
 
 				_bucketId = rhs._bucketId;
 				_memoryAllocator = rhs._memoryAllocator;
+#if defined FS_DEBUG
+				_rawMemoryView = rhs._rawMemoryView;
+#endif
 
 				rhs._bucketId = MemoryBucketId::kInvalidMemoryBucketId;
 				rhs._memoryAllocator = nullptr;
+#if defined FS_DEBUG
+				rhs._rawMemoryView = nullptr;
+#endif
 			}
 		}
 		return *this;
@@ -96,6 +118,9 @@ namespace fs
 		if (_memoryAllocator != nullptr)
 		{
 			_memoryAllocator->setMemoryXXX(_bucketId, source, byteCount, byteOffset);
+#if defined FS_DEBUG
+			_rawMemoryView = _memoryAllocator->getMemoryXXX(_bucketId);
+#endif
 		}
 	}
 
