@@ -23,6 +23,8 @@ namespace fs
 
 	enum class DxObjectType
 	{
+		None,
+		Pool,
 		Buffer,
 		Shader,
 	};
@@ -31,58 +33,69 @@ namespace fs
 	class DxObjectId final
 	{
 		friend IDxObject;
-		static constexpr uint32		kDxInvalidObjectRawId{ kUint32Max };
+		static constexpr uint32			kDxInvalidObjectRawId{ kUint32Max };
 
 	public:
-									DxObjectId() = default;
-									DxObjectId(const DxObjectId& rhs) = default;
-									DxObjectId(DxObjectId&& rhs) = default;
-									~DxObjectId() = default;
+										DxObjectId() = default;
+										DxObjectId(const DxObjectId& rhs) = default;
+										DxObjectId(DxObjectId&& rhs) = default;
+										~DxObjectId() = default;
 
 	public:
-		FS_INLINE const bool		operator==(const DxObjectId& rhs) const noexcept
+		FS_INLINE const bool			operator==(const DxObjectId& rhs) const noexcept
 		{
 			return _rawId == rhs._rawId;
 		}
 
-		FS_INLINE const bool		operator<(const DxObjectId& rhs) const noexcept
+		FS_INLINE const bool			operator<(const DxObjectId& rhs) const noexcept
 		{
 			return _rawId < rhs._rawId;
 		}
 
-		FS_INLINE const bool		operator>(const DxObjectId& rhs) const noexcept
+		FS_INLINE const bool			operator>(const DxObjectId& rhs) const noexcept
 		{
 			return _rawId > rhs._rawId;
 		}
 
 	public:
-		FS_INLINE const bool		isValid() const noexcept
+		FS_INLINE const bool			isValid() const noexcept
 		{
 			return _rawId != kDxInvalidObjectRawId;
 		}
 
+		FS_INLINE const DxObjectType	getObjectStype() const noexcept
+		{
+			return _objectType;
+		}
+
 	private:
-		FS_INLINE void				assignIdXXX() noexcept
+		FS_INLINE void					assignIdXXX() noexcept
 		{
 			++_lastRawId;
 			_rawId = _lastRawId;
 		}
 
-	private:
-		uint32						_rawId{ kDxInvalidObjectRawId };
+		FS_INLINE void					setObjectTypeXXX(const DxObjectType objectType) noexcept
+		{
+			_objectType = objectType;
+		}
 
 	private:
-		static std::atomic<uint32>	_lastRawId;
+		uint32							_rawId{ kDxInvalidObjectRawId };
+		DxObjectType					_objectType{ DxObjectType::None };
+
+	private:
+		static std::atomic<uint32>		_lastRawId;
 	
 	public:
-		static const DxObjectId		kInvalidObjectId;
+		static const DxObjectId			kInvalidObjectId;
 	};
 
 
 	class IDxObject abstract
 	{
 	public:
-									IDxObject(GraphicDevice* const graphicDevice) : _graphicDevice{ graphicDevice} {}
+									IDxObject(GraphicDevice* const graphicDevice, const DxObjectType objectType) : _graphicDevice{ graphicDevice} { _objectId.setObjectTypeXXX(objectType); }
 		virtual						~IDxObject() = default;
 
 	public:

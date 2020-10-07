@@ -40,7 +40,7 @@ namespace fs
 
 	const DxShader DxShader::kNullInstance(nullptr, DxShaderType::VertexShader);
 	DxShader::DxShader(GraphicDevice* const graphicDevice, const DxShaderType shaderType)
-		: IDxObject(graphicDevice), _shaderType{ shaderType }
+		: IDxObject(graphicDevice, DxObjectType::Shader), _shaderType{ shaderType }
 	{
 		__noop;
 	}
@@ -60,7 +60,7 @@ namespace fs
 
 
 	DxShaderPool::DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory)
-		: IDxObject(graphicDevice), _shaderHeaderMemory{ shaderHeaderMemory }
+		: IDxObject(graphicDevice, DxObjectType::Pool), _shaderHeaderMemory{ shaderHeaderMemory }
 	{
 		__noop;
 	}
@@ -139,6 +139,8 @@ namespace fs
 
 	const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectId& objectId)
 	{
+		FS_ASSERT("±èÀå¿ø", objectId.getObjectStype() == DxObjectType::Shader, "Invalid parameter - ObjectType !!");
+
 		if (shaderType == DxShaderType::VertexShader)
 		{
 			const uint32 index = fs::binarySearch(_vertexShaderArray, objectId);

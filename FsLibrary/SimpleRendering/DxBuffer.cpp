@@ -29,7 +29,7 @@ namespace fs
 
 	const DxBuffer DxBuffer::kNullInstance(nullptr);
 	DxBuffer::DxBuffer(GraphicDevice* const graphicDevice)
-		: IDxObject(graphicDevice)
+		: IDxObject(graphicDevice, DxObjectType::Buffer)
 	{
 		__noop;
 	}
@@ -97,7 +97,7 @@ namespace fs
 
 
 	DxBufferPool::DxBufferPool(GraphicDevice* const graphicDevice)
-		: IDxObject(graphicDevice)
+		: IDxObject(graphicDevice, DxObjectType::Pool)
 	{
 	}
 
@@ -130,6 +130,8 @@ namespace fs
 
 	const DxBuffer& DxBufferPool::getBuffer(const DxObjectId& objectId)
 	{
+		FS_ASSERT("±èÀå¿ø", objectId.getObjectStype() == DxObjectType::Buffer, "Invalid parameter - ObjectType !!");
+
 		const uint32 index = fs::binarySearch(_bufferArray, objectId);
 		if (index != kUint32Max)
 		{
