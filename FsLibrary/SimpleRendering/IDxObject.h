@@ -63,9 +63,14 @@ namespace fs
 			return _rawId != kDxInvalidObjectRawId;
 		}
 
-		FS_INLINE const DxObjectType	getObjectStype() const noexcept
+		FS_INLINE const DxObjectType	getObjectType() const noexcept
 		{
 			return _objectType;
+		}
+
+		FS_INLINE const bool			isObjectType(const DxObjectType objectType) const noexcept
+		{
+			return _objectType == objectType;
 		}
 
 	private:

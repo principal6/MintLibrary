@@ -139,7 +139,7 @@ namespace fs
 
 	const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectId& objectId)
 	{
-		FS_ASSERT("±èÀå¿ø", objectId.getObjectStype() == DxObjectType::Shader, "Invalid parameter - ObjectType !!");
+		FS_ASSERT("±èÀå¿ø", objectId.isObjectType(DxObjectType::Shader) == true, "Invalid parameter - ObjectType !!");
 
 		if (shaderType == DxShaderType::VertexShader)
 		{

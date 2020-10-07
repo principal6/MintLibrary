@@ -130,7 +130,7 @@ namespace fs
 
 	const DxBuffer& DxBufferPool::getBuffer(const DxObjectId& objectId)
 	{
-		FS_ASSERT("±èÀå¿ø", objectId.getObjectStype() == DxObjectType::Buffer, "Invalid parameter - ObjectType !!");
+		FS_ASSERT("±èÀå¿ø", objectId.isObjectType(DxObjectType::Buffer) == true, "Invalid parameter - ObjectType !!");
 
 		const uint32 index = fs::binarySearch(_bufferArray, objectId);
 		if (index != kUint32Max)
