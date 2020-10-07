@@ -15,7 +15,9 @@ namespace fs
 	MemoryAccessor::MemoryAccessor()
 		: _bucketId{ MemoryBucketId::kInvalidMemoryBucketId }
 		, _memoryAllocator{ nullptr }
+#if defined FS_DEBUG
 		, _rawMemoryView{ nullptr }
+#endif
 	{
 		__noop;
 	}
