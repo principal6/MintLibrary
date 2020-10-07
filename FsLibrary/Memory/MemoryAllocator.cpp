@@ -86,11 +86,6 @@ namespace fs
 		return *this;
 	}
 
-	const bool MemoryAccessor::isValid() const noexcept
-	{
-		return (_memoryAllocator != nullptr) ? _memoryAllocator->isValid(_bucketId) : false;
-	}
-
 	void MemoryAccessor::setMemory(const char* const source, const uint32 byteOffset)
 	{
 		setMemory(reinterpret_cast<const byte*>(source), fs::StringUtil::strlen(source), byteOffset);
@@ -102,16 +97,6 @@ namespace fs
 		{
 			_memoryAllocator->setMemoryXXX(_bucketId, source, byteCount, byteOffset);
 		}
-	}
-
-	const byte* MemoryAccessor::getMemory() const noexcept
-	{
-		return (_memoryAllocator != nullptr) ? _memoryAllocator->getMemoryXXX(_bucketId) : nullptr;
-	}
-
-	const uint32 MemoryAccessor::getByteCapacity() const noexcept
-	{
-		return (_memoryAllocator != nullptr) ? _memoryAllocator->getByteCapacity(_bucketId) : 0;
 	}
 
 
@@ -142,17 +127,33 @@ namespace fs
 			availableBlockOffset = getAvailableBlockOffsetXXX(newBlockCount);
 		}
 
+		uint32 availableBucketIndex = getAvailableBucketIndexXXX();
+		if (availableBucketIndex == kUint32Max)
+		{
+			availableBucketIndex = static_cast<uint32>(_bucketArray.size());
+		}
+
 		std::scoped_lock<std::mutex> scopedLock(_mutex);
 
 		MemoryBucket newBucket;
 		newBucket._id.assignIdXXX();
+		newBucket._id.assignBucketIndexXXX(availableBucketIndex);
 		newBucket._blockOffset = availableBlockOffset;
 		newBucket._blockCount = newBlockCount;
 		newBucket._referenceCount = 1;
 #if defined FS_MEMORY_USE_IS_SHARED_FLAG
 		newBucket._isShared = isShared;
 #endif
-		_bucketMap.insert(std::make_pair(newBucket._id.getRawIdXXX(), newBucket)); // 절대 실패하면 안 된다.
+		if (availableBucketIndex == static_cast<uint32>(_bucketArray.size()))
+		{
+			_bucketArray.emplace_back(newBucket);
+			_bucketInUseArray.push_back(true);
+		}
+		else
+		{
+			_bucketArray[availableBucketIndex] = newBucket;
+			_bucketInUseArray.set(availableBucketIndex, true);
+		}
 
 		for (uint32 blockIter = 0; blockIter < newBucket._blockCount; blockIter++)
 		{
@@ -174,11 +175,10 @@ namespace fs
 
 		{
 			std::scoped_lock<std::mutex> scopedLock(_mutex);
-			auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
-			if (found != _bucketMap.end())
+			
+			if (memoryAccessor.isValid() == true)
 			{
-
-				MemoryBucket& memoryBucket = found->second;
+				MemoryBucket& memoryBucket = getMemoryBucketXXX(memoryAccessor._bucketId);
 				const uint32 oldBlockOffset = memoryBucket._blockOffset;
 				const uint32 oldBlockCount = memoryBucket._blockCount;
 				memoryBucket._blockOffset = availableBlockOffset;
@@ -209,18 +209,18 @@ namespace fs
 
 	void MemoryAllocator::deallocate(MemoryAccessor& memoryAccessor)
 	{
-		auto found = _bucketMap.find(memoryAccessor._bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
+		MemoryBucket& memoryBucket = getMemoryBucketXXX(memoryAccessor._bucketId);
+		if (memoryBucket._id == memoryAccessor._bucketId)
 		{
 			{
-				const MemoryBucket& bucket = found->second;
-				for (uint32 blockIter = 0; blockIter < bucket._blockCount; blockIter++)
+				for (uint32 blockIter = 0; blockIter < memoryBucket._blockCount; blockIter++)
 				{
-					_blockInUseArray.set(bucket._blockOffset + blockIter, false);
+					_blockInUseArray.set(memoryBucket._blockOffset + blockIter, false);
 				}
 			}
 
-			_bucketMap.erase(found->first); // 절대 실패하면 안 된다.
+			_bucketInUseArray.set(memoryBucket._id.getBucketIndexXXX(), false);
+			memoryBucket._id = MemoryBucketId::kInvalidMemoryBucketId;
 
 			memoryAccessor._bucketId = MemoryBucketId::kInvalidMemoryBucketId;
 			memoryAccessor._memoryAllocator = nullptr;
@@ -244,6 +244,19 @@ namespace fs
 			else
 			{
 				successiveBitCount = 0;
+			}
+		}
+		return kUint32Max;
+	}
+
+	const uint32 MemoryAllocator::getAvailableBucketIndexXXX() const noexcept
+	{
+		const uint32 bitCount = _bucketInUseArray.bitCount();
+		for (uint32 bitAt = 0; bitAt < bitCount; bitAt++)
+		{
+			if (_bucketInUseArray.get(bitAt) == false)
+			{
+				return bitAt;
 			}
 		}
 		return kUint32Max;
@@ -277,12 +290,6 @@ namespace fs
 		FS_DELETE_ARRAY(_rawMemory);
 	}
 
-	const bool MemoryAllocator::isValid(const MemoryBucketId bucketId) const noexcept
-	{
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		return (found != _bucketMap.end());
-	}
-
 	void MemoryAllocator::setMemoryXXX(const MemoryBucketId bucketId, const byte* const source, const uint32 byteCount, const uint32 byteOffset)
 	{
 		if (source == nullptr)
@@ -292,10 +299,9 @@ namespace fs
 
 		std::scoped_lock<std::mutex> scopedLock(_mutex);
 
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
+		const MemoryBucket& memoryBucket = getMemoryBucketXXX(bucketId);
+		if (memoryBucket._id == bucketId)
 		{
-			MemoryBucket& memoryBucket = found->second;
 			const uint32 destinationByteOffset = convertBlockUnitToByteUnit(memoryBucket._blockOffset);
 			const uint32 blockByteCapacity = static_cast<uint32>(sizeof(byte) * convertBlockUnitToByteUnit(memoryBucket._blockCount));
 			if (blockByteCapacity <= byteOffset)
@@ -313,34 +319,14 @@ namespace fs
 		}
 	}
 
-	const byte* MemoryAllocator::getMemoryXXX(const MemoryBucketId bucketId) const
-	{
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
-		{
-			return _rawMemory + convertBlockUnitToByteUnit(found->second._blockOffset);
-		}
-		return nullptr;
-	}
-
-	const uint32 MemoryAllocator::getByteCapacity(const MemoryBucketId bucketId) const
-	{
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
-		{
-			return convertBlockUnitToByteUnit(found->second._blockCount);
-		}
-		return 0;
-	}
-
 	void MemoryAllocator::increaseReferenceXXX(const MemoryBucketId bucketId)
 	{
 		std::scoped_lock<std::mutex> scopedLock(_mutex);
 
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
+		MemoryBucket& memoryBucket = getMemoryBucketXXX(bucketId);
+		if (memoryBucket._id == bucketId)
 		{
-			++found->second._referenceCount;
+			++memoryBucket._referenceCount;
 		}
 	}
 	
@@ -348,12 +334,12 @@ namespace fs
 	{
 		std::scoped_lock<std::mutex> scopedLock(_mutex);
 		
-		auto found = _bucketMap.find(bucketId.getRawIdXXX());
-		if (found != _bucketMap.end())
+		MemoryBucket& memoryBucket = getMemoryBucketXXX(bucketId);
+		if (memoryBucket._id == bucketId)
 		{
-			--found->second._referenceCount;
+			--memoryBucket._referenceCount;
 
-			if (found->second._referenceCount == 0)
+			if (memoryBucket._referenceCount == 0)
 			{
 				deallocate(memoryAccessor);
 			}

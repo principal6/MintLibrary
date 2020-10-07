@@ -243,7 +243,7 @@ bool testMemoryAllocator()
 			auto capacity = accessor.getByteCapacity();
 			accessor.setMemory(nullptr);
 			accessor.setMemory("ab");
-			accessor.setMemory("cdefgh", 4);
+			accessor.setMemory("cdefgh", 4); // This will NOT change anything!
 			accessor.setMemory<int32>(0x12345678);
 			auto m = accessor.getMemory();
 			{

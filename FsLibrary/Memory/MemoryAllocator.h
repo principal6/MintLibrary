@@ -39,31 +39,16 @@ namespace fs
 		MemoryBucketId&								operator=(MemoryBucketId&& rhs) = default;
 
 	public:
-		FS_INLINE const bool						operator==(const MemoryBucketId& rhs) const noexcept
-		{
-			return _rawId == rhs._rawId;			
-		}
-
-	public:
-		FS_INLINE const bool						isValid() const noexcept
-		{
-			return _rawId != kInvalidMemoryBucketRawId;
-		}
-
+		const bool									operator==(const MemoryBucketId& rhs) const noexcept;
+		
 	private:
-		FS_INLINE void								assignIdXXX() noexcept
-		{
-			++_lastRawId;
-			_rawId = _lastRawId;
-		}
-
-		FS_INLINE const MemoryBucketRawIdType		getRawIdXXX() const noexcept
-		{
-			return _rawId;
-		}
-
+		void										assignIdXXX() noexcept;
+		void										assignBucketIndexXXX(const uint32 bucketIndex) noexcept;
+		const uint32								getBucketIndexXXX() const noexcept;
+		
 	private:
 		MemoryBucketRawIdType						_rawId{ kInvalidMemoryBucketRawId };
+		uint32										_bucketIndex{ 0 };
 
 	private:
 		static std::atomic<MemoryBucketRawIdType>	_lastRawId;
@@ -122,7 +107,7 @@ namespace fs
 		class MemoryBucket final
 		{
 			friend MemoryAllocator;
-
+			
 		private:
 			MemoryBucketId	_id;
 			uint32			_blockOffset{};
@@ -169,6 +154,7 @@ namespace fs
 
 	private:
 		const uint32												getAvailableBlockOffsetXXX(const uint32 blockCount) const noexcept;
+		const uint32												getAvailableBucketIndexXXX() const noexcept;
 		void														reserve(const uint32 blockCapacity);
 		void														cleanUpRawMemory();
 
@@ -181,6 +167,8 @@ namespace fs
 		void														setMemoryXXX(const MemoryBucketId bucketId, const byte* const source, const uint32 byteCount, const uint32 byteOffset);
 		const byte*													getMemoryXXX(const MemoryBucketId bucketId) const;
 		const uint32												getByteCapacity(const MemoryBucketId bucketId) const;
+		const MemoryBucket&											getMemoryBucket(const MemoryBucketId bucketId) const;
+		MemoryBucket&												getMemoryBucketXXX(const MemoryBucketId bucketId);
 		void														increaseReferenceXXX(const MemoryBucketId bucketId);
 		void														decreaseReferenceXXX(const MemoryBucketId bucketId, MemoryAccessor& memoryAccessor);
 
@@ -196,7 +184,9 @@ namespace fs
 		BitVector													_blockInUseArray;
 
 	private:
-		std::unordered_map<MemoryBucketRawIdType, MemoryBucket>		_bucketMap;
+		BitVector													_bucketInUseArray;
+		std::vector<MemoryBucket>									_bucketArray;
+		//std::unordered_map<MemoryBucketRawIdType, MemoryBucket>		_bucketMap;
 	};
 }
 
