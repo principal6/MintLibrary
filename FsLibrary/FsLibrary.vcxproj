@@ -37,6 +37,7 @@
     <ClInclude Include="Container\UniqueString.h" />
     <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
+    <ClInclude Include="File\BinaryFile.hpp" />
     <ClInclude Include="File\FileUtil.h" />
     <ClInclude Include="File\FileUtil.hpp" />
     <ClInclude Include="File\File.h" />

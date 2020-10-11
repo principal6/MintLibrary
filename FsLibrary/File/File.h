@@ -7,6 +7,7 @@
 
 #include <File/IFile.h>
 #include <File/BinaryFile.h>
+#include <File/BinaryFile.hpp>
 #include <File/FileUtil.h>
 #include <File/FileUtil.hpp>
 #include <File/XmlFile.h>

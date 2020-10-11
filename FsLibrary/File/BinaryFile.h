@@ -7,69 +7,61 @@
 
 #include <CommonDefinitions.h>
 #include <File/IFile.h>
-#include <vector>
-#include <string>
 
 
 namespace fs
 {
-	class BinaryFileReader : public IFileReader
+	class BinaryFileReader final : public IFileReader
 	{
 	public:
-								BinaryFileReader();
-								BinaryFileReader(const char* const fileName);
-		virtual					~BinaryFileReader();
+								BinaryFileReader() = default;
+		virtual					~BinaryFileReader() = default;
 
 	public:
-		virtual bool			load(const char* const fileName) override;
+		virtual const bool		open(const char* const fileName) override;
+		virtual const bool		isOpen() const noexcept override;
+		virtual const uint32	getFileSize() const noexcept override;
 
 	public:
-		virtual void			skip(const uint32 byteCount) const noexcept;
+		template <typename T>
+		const T* const			read() const noexcept;
 
-	public:
-		virtual bool			readBool(bool& out) const noexcept;
-		virtual bool			readInt8(int8& out) const noexcept;
-		virtual bool			readInt16(int16& out) const noexcept;
-		virtual bool			readInt32(int32& out) const noexcept;
-		virtual bool			readUint8(uint8& out) const noexcept;
-		virtual bool			readUint16(uint16& out) const noexcept;
-		virtual bool			readUint32(uint32& out) const noexcept;
-		virtual bool			readFloat(float& out) const noexcept;
-		virtual bool			readString(const uint32 byteCount, std::string& out) const noexcept;
+		template <typename T>
+		const T* const			read(const uint32 count) const noexcept;
 
-	protected:
-		bool					canRead(const uint32 byteCount) const noexcept;
+		void					skip(const uint32 byteCount) const noexcept;
 
-	protected:
+	private:
+		const bool				canRead(const uint32 byteCount) const noexcept;
+
+	private:
 		std::vector<byte>		_byteArray;
-		mutable uint32			_at;
+		mutable uint32			_at{ 0 };
 	};
 
 
-	class BinaryFileWriter : public IFileWriter
+	class BinaryFileWriter final : public IFileWriter
 	{
 	public:
-								BinaryFileWriter();
-		virtual					~BinaryFileWriter();
+								BinaryFileWriter() = default;
+		virtual					~BinaryFileWriter() = default;
 
 	public:
-		virtual bool			save(const char* const fileName) override;
+		virtual const bool		save(const char* const fileName) override;
 
 	public:
-		virtual void			clear();
+		void					clear();
 
 	public:
-		virtual void			writeBool(bool in) noexcept;
-		virtual void			writeInt8(int8 in) noexcept;
-		virtual void			writeInt16(int16 in) noexcept;
-		virtual void			writeInt32(int32 in) noexcept;
-		virtual void			writeUint8(uint8 in) noexcept;
-		virtual void			writeUint16(uint16 in) noexcept;
-		virtual void			writeUint32(uint32 in) noexcept;
-		virtual void			writeFloat(float in) noexcept;
-		virtual void			writeString(const std::string& in) noexcept;
+		template <typename T>
+		void					write(const T& in) noexcept;
+		
+		template <typename T>
+		void					write(T&& in) noexcept;
 
-	protected:
+		void					write(const char* const in) noexcept;
+
+	private:
 		std::vector<byte>		_byteArray;
 	};
 }

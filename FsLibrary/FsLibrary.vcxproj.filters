@@ -195,6 +195,9 @@
     <ClInclude Include="Container\DynamicString.hpp">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="File\BinaryFile.hpp">
+      <Filter>File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

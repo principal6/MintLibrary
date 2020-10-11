@@ -105,7 +105,7 @@ void testStackHolder()
 #endif
 }
 
-bool testStringTypes()
+const bool testStringTypes()
 {
 #pragma region ScopeString
 	using fs::ScopeStringA;
@@ -194,7 +194,7 @@ bool testStringTypes()
 	return true;
 }
 
-bool testBitVector()
+const bool testBitVector()
 {
 	using fs::BitVector;
 
@@ -225,8 +225,7 @@ bool testBitVector()
 	return true;
 }
 
-
-bool testMemoryAllocator()
+const bool testMemoryAllocator()
 {
 	struct AccessorHolder
 	{
@@ -255,7 +254,7 @@ bool testMemoryAllocator()
 			const bool isValid = holder._accesor.isValid();
 			if (isValid == false)
 			{
-				printf("normal!");
+				printf("normal!\n");
 			}
 		}
 
@@ -268,8 +267,34 @@ bool testMemoryAllocator()
 	return true;
 }
 
+const bool testFiles()
+{
+	static constexpr const char* const kFileName = "test.bin";
+	static constexpr const char* const kRawString = "abc";
+	fs::BinaryFileWriter bfw;
+	bfw.write(3.14f);
+	bfw.write(true);
+	bfw.write(static_cast<uint16>(0xABCD));
+	bfw.write("hello");
+	bfw.write(kRawString);
+	bfw.save(kFileName);
 
-bool testWindow()
+	fs::BinaryFileReader bfr;
+	bfr.open(kFileName);
+	if (bfr.isOpen() == true)
+	{
+		auto a = bfr.read<float>();
+		auto b = bfr.read<bool>();
+		auto c = bfr.read<uint16>();
+		auto d = bfr.read<char>(6);
+		auto e = bfr.read<char>(4);
+		printf("File[%s] %s %s\n", kFileName, d, e);
+	}
+
+	return true;
+}
+
+const bool testWindow()
 {
 	using namespace fs;
 	using namespace fs::Window;
@@ -352,6 +377,8 @@ int main()
 	FS_LOG("김장원", "Log Test");
 
 	testMemoryAllocator();
+
+	testFiles();
 
 	testWindow();
 
