@@ -9,18 +9,17 @@ namespace fs
 {
 	namespace FileUtil
 	{
-		inline bool exists(const char* const fileName) noexcept
+		const bool isFile(const char* const fileName) noexcept
 		{
-			auto status{ std::filesystem::status(fileName) };
-			auto type{ status.type() };
-			if (type == std::filesystem::file_type::not_found)
-			{
-				return false;
-			}
-			return true;
+			return std::filesystem::is_regular_file(fileName);
 		}
 
-		inline bool isReadOnly(const char* const fileName) noexcept
+		const bool isDirectory(const char* const fileName) noexcept
+		{
+			return std::filesystem::is_directory(fileName);
+		}
+
+		inline const bool isReadOnly(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -32,12 +31,21 @@ namespace fs
 			}
 			if (permissions == std::filesystem::perms::_File_attribute_readonly)
 			{
-				return true;
 				// readonly file
-				// make writable?
-				//std::filesystem::permissions(fileName, permissions | std::filesystem::perms::_All_write);
+				return true;
 			}
 			return false;
+		}
+
+		inline const bool exists(const char* const fileName) noexcept
+		{
+			auto status{ std::filesystem::status(fileName) };
+			auto type{ status.type() };
+			if (type == std::filesystem::file_type::not_found)
+			{
+				return false;
+			}
+			return true;
 		}
 
 		inline void unsetReadOnly(const char* const fileName) noexcept
@@ -50,6 +58,15 @@ namespace fs
 				// make writable
 				std::filesystem::permissions(fileName, permissions | std::filesystem::perms::_All_write);
 			}
+		}
+
+		const bool deleteFile(const char* const fileName) noexcept
+		{
+			if (exists(fileName) == true)
+			{
+				return std::filesystem::remove(fileName);
+			}
+			return true;
 		}
 	}
 }
