@@ -65,12 +65,14 @@ namespace fs
 
 	public:
 									MemoryAccessor();
-									MemoryAccessor(const MemoryAccessor& rhs);
-									MemoryAccessor(MemoryAccessor&& rhs) noexcept;
-									~MemoryAccessor();
 
 	private:
 									MemoryAccessor(const MemoryBucketId bucketId, MemoryAllocator* const memoryAllocator);
+
+	public:
+									MemoryAccessor(const MemoryAccessor& rhs);
+									MemoryAccessor(MemoryAccessor&& rhs) noexcept;
+									~MemoryAccessor();
 
 	public:
 		MemoryAccessor&				operator=(const MemoryAccessor& rhs);

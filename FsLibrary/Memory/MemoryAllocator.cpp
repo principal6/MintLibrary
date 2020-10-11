@@ -22,6 +22,16 @@ namespace fs
 		__noop;
 	}
 
+	MemoryAccessor::MemoryAccessor(const MemoryBucketId bucketId, MemoryAllocator* const memoryAllocator)
+		: _bucketId{ bucketId }
+		, _memoryAllocator{ memoryAllocator }
+#if defined FS_DEBUG
+		, _rawMemoryView{ _memoryAllocator->getMemoryXXX(_bucketId) }
+#endif
+	{
+		__noop;
+	}
+
 	MemoryAccessor::MemoryAccessor(const MemoryAccessor& rhs)
 		: _bucketId{ rhs._bucketId }
 		, _memoryAllocator{ rhs._memoryAllocator }
@@ -52,12 +62,6 @@ namespace fs
 		{
 			_memoryAllocator->decreaseReferenceXXX(_bucketId, *this);
 		}
-	}
-
-	MemoryAccessor::MemoryAccessor(const MemoryBucketId bucketId, MemoryAllocator* const memoryAllocator)
-		: _bucketId{ bucketId }, _memoryAllocator{ memoryAllocator }
-	{
-		__noop;
 	}
 
 	MemoryAccessor& MemoryAccessor::operator=(const MemoryAccessor& rhs)
