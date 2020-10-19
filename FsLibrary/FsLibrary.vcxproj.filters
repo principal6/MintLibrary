@@ -198,6 +198,12 @@
     <ClInclude Include="File\BinaryFile.hpp">
       <Filter>File</Filter>
     </ClInclude>
+    <ClInclude Include="Memory\MemoryAllocator2.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryAllocator2.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

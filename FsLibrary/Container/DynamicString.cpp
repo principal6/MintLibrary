@@ -78,7 +78,7 @@ namespace fs
 
 	DynamicStringA::~DynamicStringA()
 	{
-		_memoryAllocator.deallocate(_memoryAccessor);
+		//_memoryAllocator.deallocate(_memoryAccessor);
 	}
 
 	DynamicStringA& DynamicStringA::operator=(const char* const rawString)

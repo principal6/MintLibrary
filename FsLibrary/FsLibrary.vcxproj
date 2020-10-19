@@ -66,6 +66,8 @@
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Memory\MemoryAllocator.h" />
     <ClInclude Include="Memory\MemoryAllocator.hpp" />
+    <ClInclude Include="Memory\MemoryAllocator2.h" />
+    <ClInclude Include="Memory\MemoryAllocator2.hpp" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />

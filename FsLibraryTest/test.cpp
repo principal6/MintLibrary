@@ -264,6 +264,32 @@ const bool testMemoryAllocator()
 		}
 	}
 
+	{
+		struct ForTest
+		{
+			ForTest(const char name, const int16 value) :_name{ name }, _value{ value } { printf("ForTest[%c] ctor\n", _name); }
+			~ForTest() { printf("ForTest[%c] dtor\n", _name); }
+			char	_name;
+			int16	_value;
+		};
+
+		fs::MemoryAllocator2<ForTest> memoryAllocator2;
+		fs::MemoryAccessor2 maa = memoryAllocator2.allocate('a', 1);
+		const bool isMaaValid0 = maa.isValid();
+		fs::MemoryAccessor2 mab = memoryAllocator2.allocate('b', 2);
+		{
+			const fs::MemoryAccessor2 mab1 = mab;
+			auto mab1raw = mab1.getMemory();
+			maa.setMemory(mab1raw);
+		}
+		memoryAllocator2.deallocate(maa);
+		memoryAllocator2.deallocate(mab);
+		const bool isMaaValid1 = maa.isValid();
+		fs::MemoryAccessor2 mac = memoryAllocator2.allocate('c', 3);
+		fs::MemoryAccessor2 mad = memoryAllocator2.allocateArray(5, 'd', 4);
+
+	}
+	
 	return true;
 }
 
