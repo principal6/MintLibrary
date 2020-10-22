@@ -227,43 +227,6 @@ const bool testBitVector()
 
 const bool testMemoryAllocator()
 {
-	struct AccessorHolder
-	{
-		fs::MemoryAccessor _accesor;
-	};
-
-	fs::MemoryAllocator allocator;
-	{
-		AccessorHolder holder;
-		{
-			fs::MemoryAccessor accessor = allocator.allocate(4);
-			accessor = holder._accesor;
-			holder._accesor = accessor;
-			auto capacity = accessor.getByteCapacity();
-			accessor.setMemory(nullptr);
-			accessor.setMemory("ab");
-			accessor.setMemory("cdefgh", 4); // This will NOT change anything!
-			accessor.setMemory<int32>(0x12345678);
-			auto m = accessor.getMemory();
-			{
-				fs::MemoryAccessor accessor1 = accessor;
-				fs::MemoryAccessor accessor2 = accessor1;
-				allocator.reallocate(accessor, 8, true);
-			}
-			allocator.deallocate(accessor);
-			const bool isValid = holder._accesor.isValid();
-			if (isValid == false)
-			{
-				printf("normal!\n");
-			}
-		}
-
-		{
-			fs::MemoryAccessor accessor = allocator.allocate(16);
-			allocator.deallocate(accessor);
-		}
-	}
-
 	{
 		struct ForTest
 		{
@@ -288,6 +251,12 @@ const bool testMemoryAllocator()
 		fs::MemoryAccessor2 mac = memoryAllocator2.allocate('c', 3);
 		fs::MemoryAccessor2 mad = memoryAllocator2.allocateArray(5, 'd', 4);
 
+	}
+
+	{
+		fs::MemoryAllocator2<char> memoryAllocator2;
+		fs::MemoryAccessor2 a = memoryAllocator2.allocateArray(5);
+		a.setMemory("abcd", 5);
 	}
 	
 	return true;
@@ -396,13 +365,13 @@ int main()
 
 	testStackHolder();
 
+	testMemoryAllocator();
+
 	testStringTypes();
 
 	testBitVector();
 
 	FS_LOG("김장원", "Log Test");
-
-	testMemoryAllocator();
 
 	testFiles();
 

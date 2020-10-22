@@ -2,14 +2,15 @@
 #include <Container/DynamicString.h>
 
 #include <Container/StringUtil.h>
-#include <Memory/MemoryAllocator.hpp>
+#include <Memory/MemoryAllocator2.hpp>
 
 
 namespace fs
 {
-	MemoryAllocator DynamicStringA::_memoryAllocator;
+	MemoryAllocator2<char> DynamicStringA::_memoryAllocator;
 	DynamicStringA::DynamicStringA()
-		: _length{ 0 }
+		: _memoryAccessor{ &_memoryAllocator }
+		, _length{ 0 }
 		, _cachedHash{ 0 }
 	{
 		__noop;
@@ -18,7 +19,7 @@ namespace fs
 	DynamicStringA::DynamicStringA(const uint32 capacity)
 		: DynamicStringA()
 	{
-		_memoryAccessor = _memoryAllocator.allocate(fs::max(capacity, kMinCapacity));
+		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(capacity, kMinCapacity));
 	}
 
 	DynamicStringA::DynamicStringA(const char* const rawString)
@@ -31,7 +32,7 @@ namespace fs
 
 		_length = fs::StringUtil::strlen(rawString);
 		const uint32 newCapacity = _length + 1;
-		_memoryAccessor = _memoryAllocator.allocate(fs::max(newCapacity, kMinCapacity));
+		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
 		setMemoryInternal(rawString);
 	}
 
@@ -45,7 +46,7 @@ namespace fs
 
 		_length = rawStringLength;
 		const uint32 newCapacity = _length + 1;
-		_memoryAccessor = _memoryAllocator.allocate(fs::max(newCapacity, kMinCapacity));
+		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
 		setMemoryInternal(rawString);
 	}
 
@@ -60,7 +61,7 @@ namespace fs
 		_length = rhs._length;
 
 		const uint32 newCapacity = _length + 1;
-		_memoryAccessor = _memoryAllocator.allocate(fs::max(newCapacity, kMinCapacity));
+		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
 		setMemoryInternal(rhs.c_str());
 	}
 
@@ -73,12 +74,12 @@ namespace fs
 		setMemoryInternal(rhs.c_str());
 
 		rhs._length = 0;
-		rhs._memoryAccessor = MemoryAccessor();
+		rhs._memoryAccessor = MemoryAccessor2<char>(&_memoryAllocator);
 	}
 
 	DynamicStringA::~DynamicStringA()
 	{
-		//_memoryAllocator.deallocate(_memoryAccessor);
+		_memoryAllocator.deallocate(_memoryAccessor);
 	}
 
 	DynamicStringA& DynamicStringA::operator=(const char* const rawString)
@@ -103,7 +104,7 @@ namespace fs
 			assign(rhs);
 
 			rhs._length = 0;
-			rhs._memoryAccessor = MemoryAccessor();
+			rhs._memoryAccessor = MemoryAccessor2<char>(&_memoryAllocator);
 		}
 		return *this;
 	}
@@ -179,20 +180,20 @@ namespace fs
 		const uint32 newCapacity = _length + 1;
 		if (_memoryAccessor.isValid() == true)
 		{
-			if (_length < _memoryAccessor.getByteCapacity())
+			if (_length < _memoryAccessor.getArraySize())
 			{
 				setMemoryInternal(rawString);
 			}
 			else
 			{
-				_memoryAllocator.reallocate(_memoryAccessor, newCapacity, false);
+				_memoryAllocator.reallocateArray(_memoryAccessor, newCapacity, false);
 
 				setMemoryInternal(rawString);
 			}
 			return;
 		}
 
-		_memoryAccessor = _memoryAllocator.allocate(fs::max(newCapacity, kMinCapacity));
+		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
 		setMemoryInternal(rawString);
 	}
 
@@ -203,7 +204,7 @@ namespace fs
 			_length = rhs._length;
 
 			const uint32 newCapacity = _length + 1;
-			_memoryAccessor = _memoryAllocator.allocate(fs::max(newCapacity, kMinCapacity));
+			_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
 			
 			setMemoryInternal(rhs.c_str());
 		}
@@ -218,9 +219,9 @@ namespace fs
 
 		const uint32 deltaLength = fs::StringUtil::strlen(rawString);
 		const uint32 capacityCandidate = _length + deltaLength + 1;
-		if (_memoryAccessor.getByteCapacity() <= capacityCandidate)
+		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAllocator.reallocate(_memoryAccessor, fs::max(_memoryAccessor.getByteCapacity() * 2, capacityCandidate), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 		
 		const uint32 offset = _length;
@@ -231,9 +232,9 @@ namespace fs
 	void DynamicStringA::append(const DynamicStringA& rhs)
 	{
 		const uint32 capacityCandidate = _length + rhs._length + 1;
-		if (_memoryAccessor.getByteCapacity() <= capacityCandidate)
+		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAllocator.reallocate(_memoryAccessor, fs::max(_memoryAccessor.getByteCapacity() * 2, capacityCandidate), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 
 		const uint32 offset = _length;
@@ -263,26 +264,26 @@ namespace fs
 
 	void DynamicStringA::reserve(const uint32 newCapacity)
 	{
-		if (_memoryAccessor.getByteCapacity() < newCapacity)
+		if (_memoryAccessor.getArraySize() < newCapacity)
 		{
-			_memoryAllocator.reallocate(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
 		}
 	}
 
 	void DynamicStringA::resize(const uint32 newSize)
 	{
-		if (_memoryAccessor.getByteCapacity() <= newSize)
+		if (_memoryAccessor.getArraySize() <= newSize)
 		{
-			_memoryAllocator.reallocate(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
 		}
 		setChar(newSize, 0);
 	}
 
 	void DynamicStringA::push_back(const char ch)
 	{
-		if (_memoryAccessor.getByteCapacity() == _length + 1)
+		if (_memoryAccessor.getArraySize() == _length + 1)
 		{
-			reserve(_memoryAccessor.getByteCapacity() * 2);
+			reserve(_memoryAccessor.getArraySize() * 2);
 		}
 		++_length;
 		setChar(_length - 1, ch);
@@ -443,14 +444,17 @@ namespace fs
 
 	void DynamicStringA::setMemoryInternal(const char* const rawString, const uint32 offset)
 	{
+		static const char nullChar = 0;
+
 		if (rawString == nullptr)
 		{
-			_memoryAccessor.setMemory<uint8>(0);
+			_memoryAccessor.setMemory(&nullChar);
 		}
 		else
 		{
-			_memoryAccessor.setMemory(rawString, offset);
-			_memoryAccessor.setMemory<uint8>(0, _length);
+			const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
+			_memoryAccessor.setMemory(rawString, offset, rawStringLength);
+			_memoryAccessor.setMemory(&nullChar, _length, 1);
 		}
 
 		_cachedHash = 0;

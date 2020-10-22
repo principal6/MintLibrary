@@ -21,9 +21,9 @@ namespace fs
 	using MemoryBlockId				= uint32;
 
 
-	static constexpr MemoryBlockId	kMemoryBlockIdInvalid = kUint32Max;
-	static constexpr MemoryBlockId	kMemoryBlockIdArrayBody = kMemoryBlockIdInvalid - 1;
-	static constexpr MemoryBlockId	kMemoryBlockIdReserved = kMemoryBlockIdInvalid - 8;
+	static constexpr MemoryBlockId	kMemoryBlockIdInvalid	= kUint32Max;
+	static constexpr MemoryBlockId	kMemoryBlockIdArrayBody	= kMemoryBlockIdInvalid - 1;
+	static constexpr MemoryBlockId	kMemoryBlockIdReserved	= kMemoryBlockIdInvalid - 8;
 
 
 	template <typename T>
@@ -31,15 +31,35 @@ namespace fs
 	{
 		friend MemoryAllocator2<T>;
 
-	private:
 #if defined FS_DEBUG
-										MemoryAccessor2(MemoryAllocator2<T>* memoryAllocator, const MemoryBlockId id, const uint32 blockOffset, T* const rawPointerForDebug)
+	public:
+										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator)
+											: _memoryAllocator{ memoryAllocator }
+											, _id{ kMemoryBlockIdInvalid }
+											, _blockOffset{ 0 }
+											, _rawPointerForDebug{ nullptr }
+										{
+											__noop;
+										}
+
+	private:
+										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset, T* const rawPointerForDebug)
 											: _memoryAllocator{ memoryAllocator }
 											, _id{ id }
 											, _blockOffset{ blockOffset }
 											, _rawPointerForDebug{ rawPointerForDebug }
 #else
-										MemoryAccessor2(MemoryAllocator2<T>* memoryAllocator, const MemoryBlockId id, const uint32 blockOffset)
+	public:
+										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator)
+											: _memoryAllocator{ memoryAllocator }
+											, _id{ kMemoryBlockIdInvalid }
+											, _blockOffset{ 0 }
+										{
+											__noop;
+										}
+
+	private:
+										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset)
 											: _memoryAllocator{ memoryAllocator }
 											, _id{ id }
 											, _blockOffset{ blockOffset }
@@ -63,8 +83,11 @@ namespace fs
 		const bool						isValid() const noexcept;
 
 	public:
-		void							setMemory(const T* const data);
+		void							setMemory(const T* const data, const uint32 count = 1);
+		void							setMemory(const T* const data, const uint32 offset, const uint32 count);
 		const T* const					getMemory() const noexcept;
+		const uint32					getArraySize() const noexcept;
+		const uint32					getByteSize() const noexcept;
 
 	private:
 		MemoryAllocator2<T>*			_memoryAllocator;
@@ -103,6 +126,9 @@ namespace fs
 		template <typename ...Args>
 		const MemoryAccessor2<T>		allocateArray(const uint32 arraySize, Args&&... args);
 
+		template <typename ...Args>
+		const MemoryAccessor2<T>		reallocateArray(MemoryAccessor2<T>& memoryAccessor, const uint32 newArraySize, const bool keepData);
+
 		void							deallocate(const MemoryAccessor2<T>& memoryAccessor);
 
 	private:
@@ -114,6 +140,7 @@ namespace fs
 
 	public:
 		const bool						isValid(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+		const uint32					getArraySize(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
 
 	private:
 		T* const						getRawPointerXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
@@ -124,12 +151,12 @@ namespace fs
 	private:
 		const uint32					getNextAvailableBlockOffset() const noexcept;
 		const uint32					getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept;
-		const uint32					convertBlockUnitToByteUnit(const uint32 blockUnit) const noexcept;
+		static const uint32				convertBlockUnitToByteUnit(const uint32 blockUnit) noexcept;
 
 	private:
+		static constexpr uint32			kTypeAlignment	= alignof(T);
+		static constexpr uint32			kTypeSize		= sizeof(T);
 		DestructorFunction				_destructor;
-		uint32							_typeAlignment;
-		uint32							_typeSize;
 
 	private:
 		byte*							_rawMemory;

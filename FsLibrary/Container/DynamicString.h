@@ -6,7 +6,7 @@
 
 
 #include <CommonDefinitions.h>
-#include <Memory\MemoryAllocator.h>
+#include <Memory\MemoryAllocator2.h>
 
 
 namespace fs
@@ -79,10 +79,10 @@ namespace fs
 		void							setMemoryInternal(const char* const rawString, const uint32 offset = 0);
 		
 	private:
-		static MemoryAllocator			_memoryAllocator;
+		static MemoryAllocator2<char>	_memoryAllocator;
 
 	private:
-		MemoryAccessor					_memoryAccessor;
+		MemoryAccessor2<char>			_memoryAccessor;
 		uint32							_length;
 		mutable uint64					_cachedHash;
 	};

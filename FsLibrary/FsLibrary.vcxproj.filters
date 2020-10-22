@@ -180,14 +180,8 @@
     <ClInclude Include="SimpleRendering\DxHelper.hpp">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Container\DynamicString.h">
       <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator.hpp">
-      <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="Container\UniqueString.hpp">
       <Filter>Container</Filter>
@@ -241,9 +235,6 @@
     </ClCompile>
     <ClCompile Include="SimpleRendering\IDxObject.cpp">
       <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory\MemoryAllocator.cpp">
-      <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="Container\UniqueString.cpp">
       <Filter>Container</Filter>
