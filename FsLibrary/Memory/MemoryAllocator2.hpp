@@ -271,7 +271,7 @@ namespace fs
 			return memoryAccessor;
 		}
 
-		uint32 oldArraySize = fs::max(memoryAccessor.getArraySize(), static_cast<uint32>(1));
+		const uint32 oldArraySize = fs::max(memoryAccessor.getArraySize(), static_cast<uint32>(1));
 		if (oldArraySize == newArraySize)
 		{
 			return memoryAccessor;
