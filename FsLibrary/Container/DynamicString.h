@@ -29,7 +29,7 @@ namespace fs
 										DynamicStringA();
 		explicit						DynamicStringA(const uint32 capacity);
 										DynamicStringA(const char* const rawString);
-										DynamicStringA(const char* const rawString, const uint32 rawStringLength);
+		explicit						DynamicStringA(const char* const rawString, const uint32 rawStringLength);
 										DynamicStringA(const DynamicStringA& rhs);
 										DynamicStringA(DynamicStringA&& rhs) noexcept;
 										~DynamicStringA();
