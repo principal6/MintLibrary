@@ -7,6 +7,34 @@
 
 namespace fs
 {
+#pragma region Static functions
+	const bool DynamicStringA::to_bool(const DynamicStringA& dynamicString) noexcept
+	{
+		return dynamicString == "true";
+	}
+
+	const int32 DynamicStringA::to_int32(const DynamicStringA& dynamicString) noexcept
+	{
+		return atoi(dynamicString.c_str());
+	}
+
+	const uint32 DynamicStringA::to_uint32(const DynamicStringA& dynamicString) noexcept
+	{
+		return static_cast<uint32>(atoll(dynamicString.c_str()));
+	}
+	
+	const float DynamicStringA::to_float(const DynamicStringA& dynamicString) noexcept
+	{
+		return static_cast<float>(atof(dynamicString.c_str()));
+	}
+	
+	const double DynamicStringA::to_double(const DynamicStringA& dynamicString) noexcept
+	{
+		return atof(dynamicString.c_str());
+	}
+#pragma endregion
+
+
 	MemoryAllocator2<char> DynamicStringA::_memoryAllocator;
 	DynamicStringA::DynamicStringA()
 		: _memoryAccessor{ &_memoryAllocator }

@@ -14,6 +14,16 @@ namespace fs
 	class DynamicStringA
 	{
 		static constexpr uint32			kMinCapacity{ 16 };
+		
+	public:
+		template <class T>
+		static const DynamicStringA		from_value(const typename std::enable_if<std::is_literal_type<T>::value, T>::type value) noexcept;
+
+		static const bool				to_bool(const DynamicStringA& dynamicString) noexcept;
+		static const int32				to_int32(const DynamicStringA& dynamicString) noexcept;
+		static const uint32				to_uint32(const DynamicStringA& dynamicString) noexcept;
+		static const float				to_float(const DynamicStringA& dynamicString) noexcept;
+		static const double				to_double(const DynamicStringA& dynamicString) noexcept;
 
 	public:
 										DynamicStringA();
@@ -56,9 +66,6 @@ namespace fs
 		void							resize(const uint32 newSize);
 		void							push_back(const char ch);
 		void							pop_back();
-
-		template <class T>
-		static const DynamicStringA		from_value(const typename std::enable_if<std::is_literal_type<T>::value, T>::type value) noexcept;
 
 	public:
 		const bool						empty() const noexcept;

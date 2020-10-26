@@ -187,7 +187,11 @@ const bool testStringTypes()
 
 		DynamicStringA from_value0 = DynamicStringA::from_value<float>(1.23f);
 		DynamicStringA from_value1 = DynamicStringA::from_value<bool>(true);
-		DynamicStringA from_value2 = DynamicStringA::from_value<uint32>(123);
+		DynamicStringA from_value2 = DynamicStringA::from_value<uint32>(3294967295);
+		
+		const float to_value0 = DynamicStringA::to_float(from_value0);
+		const bool to_value1 = DynamicStringA::to_bool(from_value1);
+		const uint32 to_value2 = DynamicStringA::to_uint32(from_value2);
 	}
 #pragma endregion
 
