@@ -17,6 +17,8 @@
 #include <Container/UniqueString.hpp>
 #include <Container/DynamicString.h>
 #include <Container/DynamicString.hpp>
+#include <Container/Vector.h>
+#include <Container/Vector.hpp>
 
 
 #endif // !FS_CONTAINER_H

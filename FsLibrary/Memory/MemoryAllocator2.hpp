@@ -102,25 +102,70 @@ namespace fs
 	template<typename T>
 	inline void MemoryAccessor2<T>::setMemory(const T* const data, const uint32 count)
 	{
+		if (data == nullptr)
+		{
+			return;
+		}
+
+		if (_memoryAllocator->isValid(*this) == false)
+		{
+			return;
+		}
+
 		auto rawPointer = _memoryAllocator->getRawPointerXXX(*this);
 		if (rawPointer != nullptr)
 		{
-			memcpy(rawPointer, data, sizeof(T) * count);
+			const uint32 arraySize = _memoryAllocator->getArraySize(*this);
+			if (arraySize == 0)
+			{
+				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
+			}
+			else
+			{
+				const uint32 clampedCount = min(count, arraySize);
+				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(clampedCount));
+			}
 		}
 	}
 
 	template<typename T>
 	inline void MemoryAccessor2<T>::setMemory(const T* const data, const uint32 offset, const uint32 count)
 	{
+		if (data == nullptr)
+		{
+			return;
+		}
+
+		if (_memoryAllocator->isValid(*this) == false)
+		{
+			return;
+		}
+
 		auto rawPointer = _memoryAllocator->getRawPointerXXX(*this);
 		if (rawPointer != nullptr)
 		{
-			memcpy(rawPointer + offset, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(count));
+			const uint32 arraySize = _memoryAllocator->getArraySize(*this);
+			if (arraySize == 0)
+			{
+				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
+			}
+			else
+			{
+				const uint32 clampedOffset = min(offset, arraySize - 1);
+				const uint32 clampedCount = min(count, arraySize - clampedOffset);
+				memcpy(rawPointer + clampedOffset, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(clampedCount));
+			}
 		}
 	}
 
 	template<typename T>
 	inline const T* const MemoryAccessor2<T>::getMemory() const noexcept
+	{
+		return _memoryAllocator->getRawPointerXXX(*this);
+	}
+
+	template<typename T>
+	inline T* const MemoryAccessor2<T>::getMemoryXXX() const noexcept
 	{
 		return _memoryAllocator->getRawPointerXXX(*this);
 	}

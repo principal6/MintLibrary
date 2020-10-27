@@ -1,6 +1,13 @@
 ﻿#include <FsLibrary.h>
 
 
+#ifdef FS_DEBUG
+	#define _CRTDBG_MAP_ALLOC
+	#include <stdlib.h>
+	#include <crtdbg.h>
+#endif
+
+
 #pragma comment(lib, "FsLibrary.lib")
 
 
@@ -229,6 +236,20 @@ const bool testBitVector()
 	return true;
 }
 
+const bool testVector()
+{
+	fs::Vector<uint32> a(5);
+	a.push_back(1);
+	a.push_back(2);
+	a.push_back(3);
+	a.set(12, 3);
+	a.insert(2, 5);
+	a.erase(1);
+	fs::Vector<uint32> b(20);
+
+	return true;
+}
+
 const bool testMemoryAllocator()
 {
 	{
@@ -361,6 +382,11 @@ const bool testWindow()
 
 int main()
 {
+#ifdef FS_DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+
 	testIntTypes();
 
 	testFloatTypes();
@@ -374,6 +400,8 @@ int main()
 	testStringTypes();
 
 	testBitVector();
+
+	testVector();
 
 	FS_LOG("김장원", "Log Test");
 

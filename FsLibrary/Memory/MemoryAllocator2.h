@@ -86,6 +86,7 @@ namespace fs
 		void							setMemory(const T* const data, const uint32 count = 1);
 		void							setMemory(const T* const data, const uint32 offset, const uint32 count);
 		const T* const					getMemory() const noexcept;
+		T* const						getMemoryXXX() const noexcept;
 		const uint32					getArraySize() const noexcept;
 		const uint32					getByteSize() const noexcept;
 
