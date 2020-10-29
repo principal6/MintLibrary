@@ -106,68 +106,76 @@ namespace fs
 		friend class MemoryAccessor2<T>;
 
 		typedef void(*DestructorFunction)(const byte* const);
-		static constexpr uint32		kDefaultBlockCapacity = 16;
+		static constexpr uint32					kDefaultBlockCapacity = 16;
 
 		class MemoryBlock final
 		{
 		public:
-			MemoryBlockId				_id{ kMemoryBlockIdInvalid };
-			uint32						_referenceCount{ 0 };
-			uint32						_arraySize{ 0 };
+			MemoryBlockId						_id{ kMemoryBlockIdInvalid };
+			uint32								_referenceCount{ 0 };
+			uint32								_arraySize{ 0 };
 		};
 
 	public:
-										MemoryAllocator2();
-										~MemoryAllocator2();
+												MemoryAllocator2();
+												~MemoryAllocator2();
 
 	public:
 		template <typename ...Args>
-		const MemoryAccessor2<T>		allocate(Args&&... args);
+		const MemoryAccessor2<T> [[nodiscard]]	allocate(Args&&... args);
 
 		template <typename ...Args>
-		const MemoryAccessor2<T>		allocateArray(const uint32 arraySize, Args&&... args);
+		const MemoryAccessor2<T> [[nodiscard]]	allocateArray(const uint32 arraySize, Args&&... args);
 
 		template <typename ...Args>
-		const MemoryAccessor2<T>		reallocateArray(MemoryAccessor2<T>& memoryAccessor, const uint32 newArraySize, const bool keepData);
+		const MemoryAccessor2<T> [[nodiscard]]	reallocateArray(const MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData);
 
-		void							deallocate(const MemoryAccessor2<T>& memoryAccessor);
-
-	private:
-		void							deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
+		void									deallocate(const MemoryAccessor2<T> memoryAccessor);
 
 	private:
-		void							increaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
-		void							decreaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
+		void									deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
+
+	private:
+		void									increaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
+		void									decreaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
 
 	public:
-		const bool						isValid(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
-		const uint32					getArraySize(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+		const bool								isValid(const MemoryAccessor2<T> memoryAccessor) const noexcept;
 
 	private:
-		T* const						getRawPointerXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+		const bool								isValidInternalXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
 
 	public:
-		void							reserve(const uint32 blockCapacity);
+		const bool								isResident(const T* const rawPointer) const noexcept;
+
+	public:
+		const uint32							getArraySize(const MemoryAccessor2<T> memoryAccessor) const noexcept;
 
 	private:
-		const uint32					getNextAvailableBlockOffset() const noexcept;
-		const uint32					getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept;
-		static const uint32				convertBlockUnitToByteUnit(const uint32 blockUnit) noexcept;
+		T* const								getRawPointerXXX(const MemoryAccessor2<T> memoryAccessor) const noexcept;
+
+	public:
+		void									reserve(const uint32 blockCapacity);
 
 	private:
-		static constexpr uint32			kTypeAlignment	= alignof(T);
-		static constexpr uint32			kTypeSize		= sizeof(T);
-		DestructorFunction				_destructor;
+		const uint32							getNextAvailableBlockOffset() const noexcept;
+		const uint32							getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept;
+		static const uint32						convertBlockUnitToByteUnit(const uint32 blockUnit) noexcept;
 
 	private:
-		byte*							_rawMemory;
-		uint32							_memoryBlockCapacity;
+		static constexpr uint32					kTypeAlignment	= alignof(T);
+		static constexpr uint32					kTypeSize		= sizeof(T);
+		DestructorFunction						_destructor;
 
-		MemoryBlock*					_memoryBlockArray;
-		uint32							_memoryBlockCount;
-		BitVector						_isMemoryBlockInUse;
+	private:
+		byte*									_rawMemory;
+		uint32									_memoryBlockCapacity;
 
-		MemoryBlockId					_nextMemoryBlockId;
+		MemoryBlock*							_memoryBlockArray;
+		uint32									_memoryBlockCount;
+		BitVector								_isMemoryBlockInUse;
+
+		MemoryBlockId							_nextMemoryBlockId;
 	};
 }
 

@@ -107,7 +107,7 @@ namespace fs
 			return;
 		}
 
-		if (_memoryAllocator->isValid(*this) == false)
+		if (isValid() == false)
 		{
 			return;
 		}
@@ -136,7 +136,7 @@ namespace fs
 			return;
 		}
 
-		if (_memoryAllocator->isValid(*this) == false)
+		if (isValid() == false)
 		{
 			return;
 		}
@@ -303,17 +303,17 @@ namespace fs
 
 	template<typename T>
 	template<typename ...Args>
-	inline const MemoryAccessor2<T> MemoryAllocator2<T>::reallocateArray(MemoryAccessor2<T>& memoryAccessor, const uint32 newArraySize, const bool keepData)
+	inline const MemoryAccessor2<T> MemoryAllocator2<T>::reallocateArray(const MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData)
 	{
 		if (newArraySize == 0)
 		{
 			return memoryAccessor;
 		}
 
-		if (isValid(memoryAccessor) == false)
+		if (isValidInternalXXX(memoryAccessor) == false)
 		{
-			memoryAccessor = allocateArray(newArraySize);
-			return memoryAccessor;
+			MemoryAccessor2<T> allocated = allocateArray(newArraySize);
+			return allocated;
 		}
 
 		const uint32 oldArraySize = fs::max(memoryAccessor.getArraySize(), static_cast<uint32>(1));
@@ -388,10 +388,11 @@ namespace fs
 			}
 		}
 
-		memoryAccessor._id = _nextMemoryBlockId;
-		memoryAccessor._blockOffset = newFirstBlockOffset;
+		MemoryAccessor2<T> reallocated{ this };
+		reallocated._id = _nextMemoryBlockId;
+		reallocated._blockOffset = newFirstBlockOffset;
 #if defined FS_DEBUG
-		memoryAccessor._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
+		reallocated._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
 #endif
 
 		++_nextMemoryBlockId;
@@ -401,13 +402,13 @@ namespace fs
 			_nextMemoryBlockId = 0;
 		}
 
-		return memoryAccessor;
+		return reallocated;
 	}
 
 	template<typename T>
-	inline void MemoryAllocator2<T>::deallocate(const MemoryAccessor2<T>& memoryAccessor)
+	inline void MemoryAllocator2<T>::deallocate(const MemoryAccessor2<T> memoryAccessor)
 	{
-		if (memoryAccessor.isValid() == true)
+		if (isValidInternalXXX(memoryAccessor))
 		{
 			deallocateInternal(memoryAccessor._blockOffset);
 		}
@@ -439,7 +440,7 @@ namespace fs
 	template<typename T>
 	inline void MemoryAllocator2<T>::increaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor)
 	{
-		if (isValid(memoryAccessor) == true)
+		if (isValidInternalXXX(memoryAccessor) == true)
 		{
 			++_memoryBlockArray[memoryAccessor._blockOffset]._referenceCount;
 		}
@@ -448,14 +449,20 @@ namespace fs
 	template<typename T>
 	inline void MemoryAllocator2<T>::decreaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor)
 	{
-		if (isValid(memoryAccessor) == true)
+		if (isValidInternalXXX(memoryAccessor) == true)
 		{
 			--_memoryBlockArray[memoryAccessor._blockOffset]._referenceCount;
 		}
 	}
 
 	template<typename T>
-	inline const bool MemoryAllocator2<T>::isValid(const MemoryAccessor2<T>& memoryAccessor) const noexcept
+	inline const bool MemoryAllocator2<T>::isValid(const MemoryAccessor2<T> memoryAccessor) const noexcept
+	{
+		return isValidInternalXXX(memoryAccessor);
+	}
+
+	template<typename T>
+	inline const bool MemoryAllocator2<T>::isValidInternalXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
 	{
 		if (_memoryBlockCapacity <= memoryAccessor._blockOffset)
 		{
@@ -474,9 +481,17 @@ namespace fs
 	}
 
 	template<typename T>
-	inline const uint32 MemoryAllocator2<T>::getArraySize(const MemoryAccessor2<T>& memoryAccessor) const noexcept
+	FS_INLINE const bool MemoryAllocator2<T>::isResident(const T* const rawPointer) const noexcept
 	{
-		if (false == isValid(memoryAccessor))
+		const byte* const rawPointerByte = reinterpret_cast<const byte*>(rawPointer);
+		const uint32 byteCapacity = convertBlockUnitToByteUnit(_memoryBlockCapacity);
+		return (_rawMemory <= rawPointerByte && (rawPointerByte - _rawMemory) < byteCapacity);
+	}
+
+	template<typename T>
+	inline const uint32 MemoryAllocator2<T>::getArraySize(const MemoryAccessor2<T> memoryAccessor) const noexcept
+	{
+		if (false == isValidInternalXXX(memoryAccessor))
 		{
 			return 0;
 		}
@@ -486,7 +501,7 @@ namespace fs
 	}
 
 	template<typename T>
-	inline T* const MemoryAllocator2<T>::getRawPointerXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
+	inline T* const MemoryAllocator2<T>::getRawPointerXXX(const MemoryAccessor2<T> memoryAccessor) const noexcept
 	{
 		const uint32 blockByteOffset = convertBlockUnitToByteUnit(memoryAccessor._blockOffset);
 		return (_memoryBlockCapacity <= memoryAccessor._blockOffset) ? nullptr : reinterpret_cast<T*>(&_rawMemory[blockByteOffset]);

@@ -53,29 +53,13 @@ namespace fs
 	DynamicStringA::DynamicStringA(const char* const rawString)
 		: DynamicStringA()
 	{
-		if (fs::StringUtil::isNullOrEmpty(rawString) == true)
-		{
-			return;
-		}
-
-		_length = fs::StringUtil::strlen(rawString);
-		const uint32 newCapacity = _length + 1;
-		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
-		setMemoryInternal(rawString);
+		assign(rawString);
 	}
 
 	DynamicStringA::DynamicStringA(const char* const rawString, const uint32 rawStringLength)
 		: DynamicStringA()
 	{
-		if (fs::StringUtil::isNullOrEmpty(rawString) == true)
-		{
-			return;
-		}
-
-		_length = rawStringLength;
-		const uint32 newCapacity = _length + 1;
-		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
-		setMemoryInternal(rawString);
+		assign(rawString);
 	}
 
 	DynamicStringA::DynamicStringA(const DynamicStringA& rhs)
@@ -206,23 +190,36 @@ namespace fs
 
 		_length = rawStringLength;
 		const uint32 newCapacity = _length + 1;
+
+		char* rawStringCopy{ nullptr };
+		if (_memoryAllocator.isResident(rawString) == true)
+		{
+			rawStringCopy = FS_NEW_ARRAY(char, newCapacity);
+			memcpy(rawStringCopy, rawString, newCapacity);
+		}
+		
 		if (_memoryAccessor.isValid() == true)
 		{
 			if (_length < _memoryAccessor.getArraySize())
 			{
-				setMemoryInternal(rawString);
+				setMemoryInternal((rawStringCopy == nullptr) ? rawString : rawStringCopy);
 			}
 			else
 			{
-				_memoryAllocator.reallocateArray(_memoryAccessor, newCapacity, false);
+				_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, newCapacity, false);
 
-				setMemoryInternal(rawString);
+				setMemoryInternal((rawStringCopy == nullptr) ? rawString : rawStringCopy);
 			}
 			return;
 		}
 
 		_memoryAccessor = _memoryAllocator.allocateArray(fs::max(newCapacity, kMinCapacity));
-		setMemoryInternal(rawString);
+		setMemoryInternal((rawStringCopy == nullptr) ? rawString : rawStringCopy);
+
+		if (rawStringCopy != nullptr)
+		{
+			FS_DELETE_ARRAY(rawStringCopy);
+		}
 	}
 
 	void DynamicStringA::assign(const DynamicStringA& rhs)
@@ -249,7 +246,7 @@ namespace fs
 		const uint32 capacityCandidate = _length + deltaLength + 1;
 		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 		
 		const uint32 offset = _length;
@@ -262,7 +259,7 @@ namespace fs
 		const uint32 capacityCandidate = _length + rhs._length + 1;
 		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 
 		const uint32 offset = _length;
@@ -294,7 +291,7 @@ namespace fs
 	{
 		if (_memoryAccessor.getArraySize() < newCapacity)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
 		}
 	}
 
@@ -302,7 +299,7 @@ namespace fs
 	{
 		if (_memoryAccessor.getArraySize() <= newSize)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
 		}
 		setChar(newSize, 0);
 	}

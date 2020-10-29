@@ -41,7 +41,7 @@ namespace fs
 	{
 		if (_capacity < capacity)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, capacity, true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, capacity, true);
 
 			_capacity = capacity;
 		}
@@ -50,7 +50,7 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::resize(const uint32 size)
 	{
-		_memoryAllocator.reallocateArray(_memoryAccessor, size, true);
+		_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, size, true);
 
 		_capacity = _size = size;
 	}
