@@ -112,10 +112,10 @@ namespace fs
 			return;
 		}
 
-		auto rawPointer = _memoryAllocator->getRawPointerXXX(*this);
+		auto rawPointer = getMemoryXXX();
 		if (rawPointer != nullptr)
 		{
-			const uint32 arraySize = _memoryAllocator->getArraySize(*this);
+			const uint32 arraySize = getArraySize();
 			if (arraySize == 0)
 			{
 				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
@@ -141,10 +141,10 @@ namespace fs
 			return;
 		}
 
-		auto rawPointer = _memoryAllocator->getRawPointerXXX(*this);
+		auto rawPointer = getMemoryXXX();
 		if (rawPointer != nullptr)
 		{
-			const uint32 arraySize = _memoryAllocator->getArraySize(*this);
+			const uint32 arraySize = getArraySize();
 			if (arraySize == 0)
 			{
 				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
@@ -187,7 +187,7 @@ namespace fs
 	template<typename T>
 	inline const uint32 MemoryAccessor2<T>::getByteSize() const noexcept
 	{
-		const uint32 arraySize = _memoryAllocator->getArraySize(*this);
+		const uint32 arraySize = getArraySize();
 		return (arraySize == 0) ? sizeof(T) : ((arraySize == kUint32Max) ? 0 : MemoryAllocator2<T>::convertBlockUnitToByteUnit(arraySize));
 	}
 
