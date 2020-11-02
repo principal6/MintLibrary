@@ -202,7 +202,7 @@ namespace fs
 	template<typename T>
 	inline MemoryAllocator2<T>::~MemoryAllocator2()
 	{
-		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; blockOffset++)
+		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
 		{
 			if (_isMemoryBlockInUse.get(blockOffset) == true)
 			{
@@ -271,7 +271,7 @@ namespace fs
 		}
 		const uint32 firstBlockByteOffset = convertBlockUnitToByteUnit(firstBlockOffset);
 
-		for (uint32 iter = 0; iter < arraySize; iter++)
+		for (uint32 iter = 0; iter < arraySize; ++iter)
 		{
 			const uint32 currentBlockOffset = static_cast<uint64>(firstBlockOffset) + iter;
 			const uint32 currentBlockByteOffset = convertBlockUnitToByteUnit(currentBlockOffset);
@@ -336,12 +336,15 @@ namespace fs
 		const uint32 oldFirstBlockByteOffset = convertBlockUnitToByteUnit(oldFirstBlockOffset);
 		if (keepData == true)
 		{
-			memmove_s(&_rawMemory[newFirstBlockByteOffset], convertBlockUnitToByteUnit(newArraySize), &_rawMemory[oldFirstBlockByteOffset], convertBlockUnitToByteUnit(oldArraySize));
+			const uint32 oldArrayByteSize = convertBlockUnitToByteUnit(oldArraySize);
+			const uint32 newArrayByteSize = convertBlockUnitToByteUnit(newArraySize);
+			const uint32 moveByteSize = min(oldArrayByteSize, newArrayByteSize);
+			memmove_s(&_rawMemory[newFirstBlockByteOffset], moveByteSize, &_rawMemory[oldFirstBlockByteOffset], moveByteSize);
 		}
 
 		if (oldArraySize < newArraySize)
 		{
-			for (uint32 iter = 0; iter < newArraySize; iter++)
+			for (uint32 iter = 0; iter < newArraySize; ++iter)
 			{
 				if (iter < oldArraySize)
 				{
@@ -365,7 +368,7 @@ namespace fs
 		}
 		else
 		{
-			for (uint32 iter = 0; iter < oldArraySize; iter++)
+			for (uint32 iter = 0; iter < oldArraySize; ++iter)
 			{
 				{
 					const uint32 currentOldBlockOffset = static_cast<uint64>(oldFirstBlockOffset) + iter;
@@ -423,7 +426,7 @@ namespace fs
 		if (forceDeallocation == true || memoryBlock._referenceCount == 0)
 		{
 			// Destructor
-			for (uint32 iter = 0; iter < fs::max(memoryBlock._arraySize, static_cast<uint32>(1)); iter++)
+			for (uint32 iter = 0; iter < fs::max(memoryBlock._arraySize, static_cast<uint32>(1)); ++iter)
 			{
 				const uint32 currentBlockOffset = static_cast<uint64>(blockOffset) + iter;
 				const uint32 currentBlockByteOffset = convertBlockUnitToByteUnit(currentBlockOffset);
@@ -558,7 +561,7 @@ namespace fs
 	template<typename T>
 	inline const uint32 MemoryAllocator2<T>::getNextAvailableBlockOffset() const noexcept
 	{
-		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; blockOffset++)
+		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
 		{
 			if (_isMemoryBlockInUse.get(blockOffset) == false)
 			{
@@ -573,7 +576,7 @@ namespace fs
 	{
 		uint32 successiveAvailableBlockFirstOffset = kMemoryBlockIdInvalid;
 		uint32 successiveAvailableBlockCount = 0;
-		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; blockOffset++)
+		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
 		{
 			if (_isMemoryBlockInUse.get(blockOffset) == false)
 			{
