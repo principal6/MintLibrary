@@ -50,9 +50,12 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::resize(const uint32 size)
 	{
-		_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, size, true);
+		if (_capacity < size)
+		{
+			reserve(size);
+		}
 
-		_capacity = _size = size;
+		_size = size;
 	}
 
 	template<typename T>
