@@ -7,7 +7,7 @@
       <Item Name="[capacity]" ExcludeView="simple">_capacity</Item>
       <ArrayItems>
         <Size>_size</Size>
-        <ValuePointer>($T1*)_memoryAccessor._memoryAllocator->_rawMemory</ValuePointer>
+        <ValuePointer>($T1*)(_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset))</ValuePointer>
       </ArrayItems>
     </Expand>
   </Type>
