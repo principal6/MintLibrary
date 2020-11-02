@@ -161,13 +161,21 @@ namespace fs
 	template<typename T>
 	inline const T* const MemoryAccessor2<T>::getMemory() const noexcept
 	{
-		return _memoryAllocator->getRawPointerXXX(*this);
+		return 
+#if defined FS_DEBUG
+			_rawPointerForDebug =
+#endif
+			_memoryAllocator->getRawPointerXXX(*this);
 	}
 
 	template<typename T>
 	inline T* const MemoryAccessor2<T>::getMemoryXXX() const noexcept
 	{
-		return _memoryAllocator->getRawPointerXXX(*this);
+		return
+#if defined FS_DEBUG
+			_rawPointerForDebug =
+#endif
+			_memoryAllocator->getRawPointerXXX(*this);
 	}
 
 	template<typename T>

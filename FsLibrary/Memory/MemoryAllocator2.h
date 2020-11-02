@@ -95,7 +95,7 @@ namespace fs
 		MemoryBlockId					_id;
 		uint32							_blockOffset;
 #if defined FS_DEBUG
-		T*								_rawPointerForDebug;
+		mutable T*						_rawPointerForDebug;
 #endif
 	};
 
