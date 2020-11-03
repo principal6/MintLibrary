@@ -38,6 +38,7 @@ namespace fs
 		void							set(const uint32 index, const T& value);
 		void							set(const uint32 index, T&& value);
 		const T&						get(const uint32 index) const;
+		T&								get(const uint32 index);
 		void							swap(const uint32 indexA, const uint32 indexB);
 
 	private:

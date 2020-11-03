@@ -41,7 +41,7 @@ namespace fs
 	{
 		if (_capacity < capacity)
 		{
-			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, capacity, true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, capacity, true);
 
 			_capacity = capacity;
 		}
@@ -195,6 +195,14 @@ namespace fs
 		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
 
 		return _memoryAccessor.getMemory()[min(index, _size - 1)];
+	}
+
+	template<typename T>
+	inline T& Vector<T>::get(const uint32 index)
+	{
+		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
+
+		return _memoryAccessor.getMemoryXXX()[min(index, _size - 1)];
 	}
 
 	template<typename T>

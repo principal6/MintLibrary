@@ -206,7 +206,7 @@ namespace fs
 			}
 			else
 			{
-				_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, newCapacity, false);
+				_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, newCapacity, false);
 
 				setMemoryInternal((rawStringCopy == nullptr) ? rawString : rawStringCopy);
 			}
@@ -246,7 +246,7 @@ namespace fs
 		const uint32 capacityCandidate = _length + deltaLength + 1;
 		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 		
 		const uint32 offset = _length;
@@ -259,7 +259,7 @@ namespace fs
 		const uint32 capacityCandidate = _length + rhs._length + 1;
 		if (_memoryAccessor.getArraySize() <= capacityCandidate)
 		{
-			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, fs::max(_memoryAccessor.getArraySize() * 2, capacityCandidate), true);
 		}
 
 		const uint32 offset = _length;
@@ -291,7 +291,7 @@ namespace fs
 	{
 		if (_memoryAccessor.getArraySize() < newCapacity)
 		{
-			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, fs::max(newCapacity, kMinCapacity), true);
 		}
 	}
 
@@ -299,7 +299,7 @@ namespace fs
 	{
 		if (_memoryAccessor.getArraySize() <= newSize)
 		{
-			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
+			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, fs::max(newSize + 1, kMinCapacity), true);
 		}
 		setChar(newSize, 0);
 	}

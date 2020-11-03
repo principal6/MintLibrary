@@ -11,13 +11,6 @@
 
 namespace fs
 {
-	template <typename T>
-	class MemoryAllocator2;
-
-	template <typename T>
-	class MemoryAccessor2;
-
-
 	using MemoryBlockId				= uint32;
 
 
@@ -29,7 +22,8 @@ namespace fs
 	template <typename T>
 	class MemoryAccessor2 final
 	{
-		friend MemoryAllocator2<T>;
+		template <typename T>
+		friend class MemoryAllocator2;
 
 #if defined FS_DEBUG
 	public:
@@ -70,14 +64,17 @@ namespace fs
 
 	public:
 										MemoryAccessor2(const MemoryAccessor2& rhs);
-										MemoryAccessor2(MemoryAccessor2&& rhs);
+										MemoryAccessor2(MemoryAccessor2&& rhs) noexcept;
 
 	public:
 										~MemoryAccessor2();
 
 	public:
 		MemoryAccessor2&				operator=(const MemoryAccessor2& rhs);
-		MemoryAccessor2&				operator=(MemoryAccessor2&& rhs);
+		MemoryAccessor2&				operator=(MemoryAccessor2&& rhs) noexcept;
+
+	public:
+		void							moveFromXXX(MemoryAccessor2& rhs);
 
 	public:
 		const bool						isValid() const noexcept;
@@ -103,7 +100,8 @@ namespace fs
 	template <typename T>
 	class MemoryAllocator2 final
 	{
-		friend class MemoryAccessor2<T>;
+		template <typename T>
+		friend class MemoryAccessor2;
 
 		typedef void(*DestructorFunction)(const byte* const);
 		static constexpr uint32					kDefaultBlockCapacity = 16;
@@ -128,7 +126,7 @@ namespace fs
 		const MemoryAccessor2<T> [[nodiscard]]	allocateArray(const uint32 arraySize, Args&&... args);
 
 		template <typename ...Args>
-		const MemoryAccessor2<T> [[nodiscard]]	reallocateArray(const MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData);
+		void									reallocateArray(MemoryAccessor2<T> inMemoryAccessor, MemoryAccessor2<T>& outMemoryAccessor, const uint32 newArraySize, const bool keepData);
 
 		void									deallocate(const MemoryAccessor2<T> memoryAccessor);
 

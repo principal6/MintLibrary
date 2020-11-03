@@ -21,7 +21,7 @@ namespace fs
 	}
 
 	template<typename T>
-	inline MemoryAccessor2<T>::MemoryAccessor2(MemoryAccessor2&& rhs)
+	inline MemoryAccessor2<T>::MemoryAccessor2(MemoryAccessor2&& rhs) noexcept
 		: _memoryAllocator{ rhs._memoryAllocator }
 		, _id{ rhs._id }
 		, _blockOffset{ rhs._blockOffset }
@@ -67,7 +67,7 @@ namespace fs
 	}
 
 	template<typename T>
-	inline MemoryAccessor2<T>& MemoryAccessor2<T>::operator=(MemoryAccessor2&& rhs)
+	inline MemoryAccessor2<T>& MemoryAccessor2<T>::operator=(MemoryAccessor2&& rhs) noexcept
 	{
 		if (this != &rhs)
 		{
@@ -91,6 +91,32 @@ namespace fs
 #endif
 		}
 		return *this;
+	}
+
+	template<typename T>
+	inline void MemoryAccessor2<T>::moveFromXXX(MemoryAccessor2& rhs)
+	{
+		if (this != &rhs)
+		{
+			if (_memoryAllocator != nullptr)
+			{
+				_memoryAllocator->decreaseReferenceXXX(*this);
+			}
+
+			_memoryAllocator = rhs._memoryAllocator;
+			_id = rhs._id;
+			_blockOffset = rhs._blockOffset;
+#if defined FS_DEBUG
+			_rawPointerForDebug = rhs._rawPointerForDebug;
+#endif
+
+			rhs._memoryAllocator = nullptr;
+			rhs._id = kMemoryBlockIdInvalid;
+			rhs._blockOffset = 0;
+#if defined FS_DEBUG
+			rhs._rawPointerForDebug = nullptr;
+#endif
+		}
 	}
 
 	template<typename T>
@@ -234,10 +260,6 @@ namespace fs
 			blockOffset = getNextAvailableBlockOffset();
 		}
 
-		// Constructor
-		const uint32 blockByteOffset = convertBlockUnitToByteUnit(blockOffset);
-		new(&_rawMemory[blockByteOffset])T(std::forward<Args>(args)...);
-
 		_memoryBlockArray[blockOffset]._id = _nextMemoryBlockId;
 		_memoryBlockArray[blockOffset]._referenceCount = 1;
 		_memoryBlockArray[blockOffset]._arraySize = 0;
@@ -246,11 +268,18 @@ namespace fs
 
 		++_memoryBlockCount;
 		++_nextMemoryBlockId;
+
 		if (kMemoryBlockIdReserved <= _nextMemoryBlockId)
 		{
 			FS_LOG("김장원", "이제부터는 Id 중복이 발생할 수 있습니다...!!!");
 			_nextMemoryBlockId = 0;
 		}
+
+		// Constructor
+		// T 의 멤버 중에 같은 T 에 대해 MemoryAllocator 로 allocate 하는 멤버가 있다면 재귀적으로 들어올 것이므로
+		// 이게 마지막에 실행되어야 합니다!!!
+		const uint32 blockByteOffset = convertBlockUnitToByteUnit(blockOffset);
+		new(&_rawMemory[blockByteOffset])T(std::forward<Args>(args)...);
 
 #if defined FS_DEBUG
 		return MemoryAccessor2(this, _memoryBlockArray[blockOffset]._id, blockOffset, reinterpret_cast<T*>(&_rawMemory[blockByteOffset]));
@@ -279,27 +308,32 @@ namespace fs
 		}
 		const uint32 firstBlockByteOffset = convertBlockUnitToByteUnit(firstBlockOffset);
 
+		++_memoryBlockCount;
+
+		const uint32 memoryBlockId = _nextMemoryBlockId;
+		++_nextMemoryBlockId;
+
+		if (kMemoryBlockIdReserved <= _nextMemoryBlockId)
+		{
+			FS_LOG("김장원", "이제부터는 Id 중복이 발생할 수 있습니다...!!!");
+			_nextMemoryBlockId = 0;
+		}
+
 		for (uint32 iter = 0; iter < arraySize; ++iter)
 		{
 			const uint32 currentBlockOffset = static_cast<uint64>(firstBlockOffset) + iter;
 			const uint32 currentBlockByteOffset = convertBlockUnitToByteUnit(currentBlockOffset);
 
-			// Constructor
-			new(&_rawMemory[currentBlockByteOffset])T(std::forward<Args>(args)...);
-
-			_memoryBlockArray[currentBlockOffset]._id = (0 == iter) ? _nextMemoryBlockId : kMemoryBlockIdArrayBody;
+			_memoryBlockArray[currentBlockOffset]._id = (0 == iter) ? memoryBlockId : kMemoryBlockIdArrayBody;
 			_memoryBlockArray[currentBlockOffset]._referenceCount = (0 == iter) ? 1 : 0;
 			_memoryBlockArray[currentBlockOffset]._arraySize = (0 == iter) ? arraySize : 0;
 
 			_isMemoryBlockInUse.set(currentBlockOffset, true);
-		}
 
-		++_memoryBlockCount;
-		++_nextMemoryBlockId;
-		if (kMemoryBlockIdReserved <= _nextMemoryBlockId)
-		{
-			FS_LOG("김장원", "이제부터는 Id 중복이 발생할 수 있습니다...!!!");
-			_nextMemoryBlockId = 0;
+			// Constructor
+			// T 의 멤버 중에 같은 T 에 대해 MemoryAllocator 로 allocate 하는 멤버가 있다면 재귀적으로 들어올 것이므로
+			// 이게 마지막에 실행되어야 합니다!!!
+			new(&_rawMemory[currentBlockByteOffset])T(std::forward<Args>(args)...);
 		}
 
 #if defined FS_DEBUG
@@ -311,23 +345,25 @@ namespace fs
 
 	template<typename T>
 	template<typename ...Args>
-	inline const MemoryAccessor2<T> MemoryAllocator2<T>::reallocateArray(const MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData)
+	inline void MemoryAllocator2<T>::reallocateArray(MemoryAccessor2<T> inMemoryAccessor, MemoryAccessor2<T>& outMemoryAccessor, const uint32 newArraySize, const bool keepData)
 	{
 		if (newArraySize == 0)
 		{
-			return memoryAccessor;
+			return;
 		}
 
-		if (isValidInternalXXX(memoryAccessor) == false)
+		if (isValidInternalXXX(inMemoryAccessor) == false)
 		{
 			MemoryAccessor2<T> allocated = allocateArray(newArraySize);
-			return allocated;
+			outMemoryAccessor.moveFromXXX(allocated);
+			return;
 		}
 
-		const uint32 oldArraySize = fs::max(memoryAccessor.getArraySize(), static_cast<uint32>(1));
+		const uint32 oldArraySize = fs::max(inMemoryAccessor.getArraySize(), static_cast<uint32>(1));
 		if (oldArraySize == newArraySize)
 		{
-			return memoryAccessor;
+			outMemoryAccessor.moveFromXXX(inMemoryAccessor);
+			return;
 		}
 
 		// TODO: arraySize 가 너무 커서 reserve 실패 시 처리
@@ -340,7 +376,7 @@ namespace fs
 		}
 		const uint32 newFirstBlockByteOffset = convertBlockUnitToByteUnit(newFirstBlockOffset);
 
-		const uint32 oldFirstBlockOffset = memoryAccessor._blockOffset;
+		const uint32 oldFirstBlockOffset = inMemoryAccessor._blockOffset;
 		const uint32 oldFirstBlockByteOffset = convertBlockUnitToByteUnit(oldFirstBlockOffset);
 		if (keepData == true)
 		{
@@ -399,11 +435,10 @@ namespace fs
 			}
 		}
 
-		MemoryAccessor2<T> reallocated{ this };
-		reallocated._id = _nextMemoryBlockId;
-		reallocated._blockOffset = newFirstBlockOffset;
+		inMemoryAccessor._id = _nextMemoryBlockId;
+		inMemoryAccessor._blockOffset = newFirstBlockOffset;
 #if defined FS_DEBUG
-		reallocated._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
+		inMemoryAccessor._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
 #endif
 
 		++_nextMemoryBlockId;
@@ -413,7 +448,8 @@ namespace fs
 			_nextMemoryBlockId = 0;
 		}
 
-		return reallocated;
+		outMemoryAccessor.moveFromXXX(inMemoryAccessor);
+		return;
 	}
 
 	template<typename T>
@@ -547,11 +583,11 @@ namespace fs
 			if (_memoryBlockArray != nullptr)
 			{
 				MemoryBlock* temp = FS_NEW_ARRAY(MemoryBlock, _memoryBlockCapacity);
-				memcpy(temp, _memoryBlockArray, _memoryBlockCapacity);
+				memcpy(temp, _memoryBlockArray, sizeof(MemoryBlock) * _memoryBlockCapacity);
 
 				FS_DELETE_ARRAY(_memoryBlockArray);
 				_memoryBlockArray = FS_NEW_ARRAY(MemoryBlock, blockCapacity);
-				memcpy(_memoryBlockArray, temp, _memoryBlockCapacity);
+				memcpy(_memoryBlockArray, temp, sizeof(MemoryBlock) * _memoryBlockCapacity);
 
 				FS_DELETE_ARRAY(temp);
 			}
