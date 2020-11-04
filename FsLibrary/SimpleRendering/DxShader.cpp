@@ -85,7 +85,7 @@ namespace fs
 		const uint32 memberCount = inputElementClass->getMemberCount();
 		shader._inputElementSet._semanticNameArray.reserve(memberCount);
 		shader._inputElementSet._inputElementDescriptorArray.reserve(memberCount);
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+		for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 		{
 			const fs::ReflectionTypeData& memberType = inputElementClass->getMemberType(memberIndex);
 			shader._inputElementSet._semanticNameArray.emplace_back(fs::convertDeclarationNameToHlslSemanticName(memberType.declarationName()));

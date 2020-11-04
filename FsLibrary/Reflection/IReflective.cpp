@@ -7,7 +7,7 @@ namespace fs
 	uint32 ReflectionPool::registerType(const std::type_info& type, const size_t byteOffset, const size_t typeSize, const std::type_info& member, const fs::DynamicStringA& memberName, const size_t memberSize)
 	{
 		const uint32 typeCount = static_cast<uint32>(getInstance()._typeArray.size());
-		for (uint32 typeIndex = 0; typeIndex < typeCount; typeIndex++)
+		for (uint32 typeIndex = 0; typeIndex < typeCount; ++typeIndex)
 		{
 			if (getInstance()._typeArray[typeIndex] == type)
 			{

@@ -11,7 +11,7 @@ namespace fs
 	{
 		fs::DynamicStringA semanticName = declarationName.substr(1);
 		const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
-		for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; semanticNameIter++)
+		for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; ++semanticNameIter)
 		{
 			semanticName.setChar(semanticNameIter, ::toupper(semanticName.getChar(semanticNameIter)));
 		}
@@ -35,14 +35,14 @@ namespace fs
 	{
 		if (sHlslTypeMap.empty() == true)
 		{
-			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < kHlslTypeMatchingTable.size(); typeMapElementIndex++)
+			for (uint32 typeMapElementIndex = 0; typeMapElementIndex < kHlslTypeMatchingTable.size(); ++typeMapElementIndex)
 			{
 				sHlslTypeMap.insert(std::make_pair(fs::StringUtil::hashRawString64(kHlslTypeMatchingTable[typeMapElementIndex][0]), kHlslTypeMatchingTable[typeMapElementIndex][1]));
 			}
 		}
 		if (sHlslSemanticMap.empty() == true)
 		{
-			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < kHlslSemanticMatchingTable.size(); semanticMapElementIndex++)
+			for (uint32 semanticMapElementIndex = 0; semanticMapElementIndex < kHlslSemanticMatchingTable.size(); ++semanticMapElementIndex)
 			{
 				sHlslSemanticMap.insert(std::make_pair(fs::StringUtil::hashRawString64(kHlslSemanticMatchingTable[semanticMapElementIndex][0]), kHlslSemanticMatchingTable[semanticMapElementIndex][1]));
 			}
@@ -59,7 +59,7 @@ namespace fs
 		result.append("\n{\n");
 		fs::DynamicStringA semanticName;
 		const uint32 memberCount = reflective->getMemberCount();
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+		for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 		{
 			const fs::ReflectionTypeData& memberType = reflective->getMemberType(memberIndex);
 			auto found = sHlslTypeMap.find(memberType.typeName().hash());
@@ -110,7 +110,7 @@ namespace fs
 		result.append(fs::DynamicStringA("b") + fs::DynamicStringA::from_value<uint32>(registerIndex));
 		result.append(")\n{\n");
 		const uint32 memberCount = reflective->getMemberCount();
-		for (uint32 memberIndex = 0; memberIndex < memberCount; memberIndex++)
+		for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 		{
 			const fs::ReflectionTypeData& memberType = reflective->getMemberType(memberIndex);
 			auto found = sHlslTypeMap.find(memberType.typeName().hash());

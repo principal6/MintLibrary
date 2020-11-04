@@ -14,7 +14,7 @@ namespace fs
 	HRESULT DxShaderHeaderMemory::Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes)
 	{
 		const uint32 fileCount = static_cast<uint32>(_fileNameArray.size());
-		for (uint32 fileIndex = 0; fileIndex < fileCount; fileIndex++)
+		for (uint32 fileIndex = 0; fileIndex < fileCount; ++fileIndex)
 		{
 			if (_fileNameArray[fileIndex] == pFileName)
 			{
