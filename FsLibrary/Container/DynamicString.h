@@ -58,6 +58,7 @@ namespace fs
 		void							assign(const char* const rawString);
 		void							assign(const char* const rawString, const uint32 rawStringLength);
 		void							assign(const DynamicStringA& rhs);
+		void							assign(DynamicStringA&& rhs);
 		void							append(const char* const rawString);
 		void							append(const DynamicStringA& rhs);
 		DynamicStringA					substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;

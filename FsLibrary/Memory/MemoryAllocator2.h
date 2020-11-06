@@ -11,6 +11,13 @@
 
 namespace fs
 {
+	template <typename T>
+	class MemoryAccessor2;
+
+	template <typename T>
+	class MemoryAllocator2;
+
+
 	using MemoryBlockId				= uint32;
 
 
@@ -22,8 +29,7 @@ namespace fs
 	template <typename T>
 	class MemoryAccessor2 final
 	{
-		template <typename T>
-		friend class MemoryAllocator2;
+		friend MemoryAllocator2;
 
 #if defined FS_DEBUG
 	public:
@@ -74,10 +80,10 @@ namespace fs
 		MemoryAccessor2&				operator=(MemoryAccessor2&& rhs) noexcept;
 
 	public:
-		void							moveFromXXX(MemoryAccessor2& rhs);
-
-	public:
 		const bool						isValid() const noexcept;
+
+	private:
+		void							invalidateXXX();
 
 	public:
 		void							setMemory(const T* const data, const uint32 count = 1);
@@ -100,8 +106,7 @@ namespace fs
 	template <typename T>
 	class MemoryAllocator2 final
 	{
-		template <typename T>
-		friend class MemoryAccessor2;
+		friend MemoryAccessor2;
 
 		typedef void(*DestructorFunction)(const byte* const);
 		static constexpr uint32					kDefaultBlockCapacity = 16;
@@ -120,15 +125,15 @@ namespace fs
 
 	public:
 		template <typename ...Args>
-		const MemoryAccessor2<T> [[nodiscard]]	allocate(Args&&... args);
+		MemoryAccessor2<T>						allocate(Args&&... args);
 
 		template <typename ...Args>
-		const MemoryAccessor2<T> [[nodiscard]]	allocateArray(const uint32 arraySize, Args&&... args);
+		MemoryAccessor2<T>						allocateArray(const uint32 arraySize, Args&&... args);
 
 		template <typename ...Args>
-		void									reallocateArray(MemoryAccessor2<T> inMemoryAccessor, MemoryAccessor2<T>& outMemoryAccessor, const uint32 newArraySize, const bool keepData);
+		MemoryAccessor2<T>						reallocateArray(MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData);
 
-		void									deallocate(const MemoryAccessor2<T> memoryAccessor);
+		void									deallocate(MemoryAccessor2<T>& memoryAccessor);
 
 	private:
 		void									deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
@@ -141,7 +146,8 @@ namespace fs
 		const bool								isValid(const MemoryAccessor2<T> memoryAccessor) const noexcept;
 
 	private:
-		const bool								isValidInternalXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+		const bool								isValidXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+		const bool								isResidentXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
 
 	public:
 		const bool								isResident(const T* const rawPointer) const noexcept;

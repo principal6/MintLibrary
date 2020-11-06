@@ -33,7 +33,7 @@ namespace fs
 	template<typename T>
 	inline Vector<T>::~Vector()
 	{
-		_memoryAllocator.deallocate(_memoryAccessor);
+		__noop;
 	}
 
 	template<typename T>
@@ -41,7 +41,7 @@ namespace fs
 	{
 		if (_capacity < capacity)
 		{
-			_memoryAllocator.reallocateArray(_memoryAccessor, _memoryAccessor, capacity, true);
+			_memoryAccessor = _memoryAllocator.reallocateArray(_memoryAccessor, capacity, true);
 
 			_capacity = capacity;
 		}

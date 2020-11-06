@@ -12,6 +12,9 @@
 
 namespace fs
 {
+	class XmlFile;
+
+
 	// <startTag attributeName="value">content</endTag> == element
 	// <emptyElementTag attributeName="value"/>
 
@@ -52,7 +55,7 @@ namespace fs
 
 		class Tag final
 		{
-			friend class XmlFile;
+			friend XmlFile;
 
 		public:
 			enum class Type
@@ -121,7 +124,7 @@ namespace fs
 
 		class Node
 		{
-			friend class XmlFile;
+			friend XmlFile;
 
 		public:
 											Node();

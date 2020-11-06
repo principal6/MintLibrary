@@ -17,7 +17,10 @@ namespace fs
 		, _rawPointerForDebug{ rhs._rawPointerForDebug }
 #endif
 	{
-		_memoryAllocator->increaseReferenceXXX(*this);
+		if (_memoryAllocator->isValidXXX(*this) == true)
+		{
+			_memoryAllocator->increaseReferenceXXX(*this);
+		}
 	}
 
 	template<typename T>
@@ -29,12 +32,7 @@ namespace fs
 		, _rawPointerForDebug{ rhs._rawPointerForDebug }
 #endif
 	{
-		rhs._memoryAllocator = nullptr;
-		rhs._id = kMemoryBlockIdInvalid;
-		rhs._blockOffset = 0;
-#if defined FS_DEBUG
-		rhs._rawPointerForDebug = nullptr;
-#endif
+		rhs.invalidateXXX();
 	}
 
 	template<typename T>
@@ -83,46 +81,27 @@ namespace fs
 			_rawPointerForDebug = rhs._rawPointerForDebug;
 #endif
 
-			rhs._memoryAllocator = nullptr;
-			rhs._id = kMemoryBlockIdInvalid;
-			rhs._blockOffset = 0;
-#if defined FS_DEBUG
-			rhs._rawPointerForDebug = nullptr;
-#endif
+			rhs.invalidateXXX();
 		}
 		return *this;
 	}
 
 	template<typename T>
-	inline void MemoryAccessor2<T>::moveFromXXX(MemoryAccessor2& rhs)
+	inline const bool MemoryAccessor2<T>::isValid() const noexcept
 	{
-		if (this != &rhs)
-		{
-			if (_memoryAllocator != nullptr)
-			{
-				_memoryAllocator->decreaseReferenceXXX(*this);
-			}
-
-			_memoryAllocator = rhs._memoryAllocator;
-			_id = rhs._id;
-			_blockOffset = rhs._blockOffset;
-#if defined FS_DEBUG
-			_rawPointerForDebug = rhs._rawPointerForDebug;
-#endif
-
-			rhs._memoryAllocator = nullptr;
-			rhs._id = kMemoryBlockIdInvalid;
-			rhs._blockOffset = 0;
-#if defined FS_DEBUG
-			rhs._rawPointerForDebug = nullptr;
-#endif
-		}
+		return (nullptr == _memoryAllocator) ? false : _memoryAllocator->isValid(*this);
 	}
 
 	template<typename T>
-	inline const bool MemoryAccessor2<T>::isValid() const noexcept
+	inline void MemoryAccessor2<T>::invalidateXXX()
 	{
-		return _memoryAllocator->isValid(*this);
+		_memoryAllocator = nullptr;
+		_id = kMemoryBlockIdInvalid;
+		_blockOffset = 0;
+
+#if defined FS_DEBUG
+		_rawPointerForDebug = nullptr;
+#endif
 	}
 
 	template<typename T>
@@ -226,6 +205,7 @@ namespace fs
 		: _destructor{ [](const byte* const ptr) {return reinterpret_cast<const T*>(ptr)->~T(); } }
 		, _rawMemory{ nullptr }
 		, _memoryBlockCapacity{ 0 }
+		, _memoryBlockArray{ nullptr }
 		, _memoryBlockCount{ 0 }
 		, _nextMemoryBlockId{ 0 }
 	{
@@ -250,7 +230,7 @@ namespace fs
 
 	template<typename T>
 	template<typename ...Args>
-	inline const MemoryAccessor2<T> MemoryAllocator2<T>::allocate(Args&&... args)
+	inline MemoryAccessor2<T> MemoryAllocator2<T>::allocate(Args&&... args)
 	{
 		uint32 blockOffset = getNextAvailableBlockOffset();
 		if (blockOffset == kMemoryBlockIdInvalid)
@@ -290,7 +270,7 @@ namespace fs
 
 	template<typename T>
 	template<typename ...Args>
-	inline const MemoryAccessor2<T> MemoryAllocator2<T>::allocateArray(const uint32 arraySize, Args && ...args)
+	inline MemoryAccessor2<T> MemoryAllocator2<T>::allocateArray(const uint32 arraySize, Args && ...args)
 	{
 		if (arraySize == 0)
 		{
@@ -345,25 +325,22 @@ namespace fs
 
 	template<typename T>
 	template<typename ...Args>
-	inline void MemoryAllocator2<T>::reallocateArray(MemoryAccessor2<T> inMemoryAccessor, MemoryAccessor2<T>& outMemoryAccessor, const uint32 newArraySize, const bool keepData)
+	inline MemoryAccessor2<T> MemoryAllocator2<T>::reallocateArray(MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData)
 	{
 		if (newArraySize == 0)
 		{
-			return;
+			return memoryAccessor;
 		}
 
-		if (isValidInternalXXX(inMemoryAccessor) == false)
+		if (isValidXXX(memoryAccessor) == false)
 		{
-			MemoryAccessor2<T> allocated = allocateArray(newArraySize);
-			outMemoryAccessor.moveFromXXX(allocated);
-			return;
+			return allocateArray(newArraySize);
 		}
 
-		const uint32 oldArraySize = fs::max(inMemoryAccessor.getArraySize(), static_cast<uint32>(1));
+		const uint32 oldArraySize = fs::max(memoryAccessor.getArraySize(), static_cast<uint32>(1));
 		if (oldArraySize == newArraySize)
 		{
-			outMemoryAccessor.moveFromXXX(inMemoryAccessor);
-			return;
+			return memoryAccessor;
 		}
 
 		// TODO: arraySize 가 너무 커서 reserve 실패 시 처리
@@ -376,7 +353,7 @@ namespace fs
 		}
 		const uint32 newFirstBlockByteOffset = convertBlockUnitToByteUnit(newFirstBlockOffset);
 
-		const uint32 oldFirstBlockOffset = inMemoryAccessor._blockOffset;
+		const uint32 oldFirstBlockOffset = memoryAccessor._blockOffset;
 		const uint32 oldFirstBlockByteOffset = convertBlockUnitToByteUnit(oldFirstBlockOffset);
 		if (keepData == true)
 		{
@@ -435,10 +412,10 @@ namespace fs
 			}
 		}
 
-		inMemoryAccessor._id = _nextMemoryBlockId;
-		inMemoryAccessor._blockOffset = newFirstBlockOffset;
+		memoryAccessor._id = _nextMemoryBlockId;
+		memoryAccessor._blockOffset = newFirstBlockOffset;
 #if defined FS_DEBUG
-		inMemoryAccessor._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
+		memoryAccessor._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
 #endif
 
 		++_nextMemoryBlockId;
@@ -448,27 +425,35 @@ namespace fs
 			_nextMemoryBlockId = 0;
 		}
 
-		outMemoryAccessor.moveFromXXX(inMemoryAccessor);
-		return;
+		return memoryAccessor;
 	}
 
 	template<typename T>
-	inline void MemoryAllocator2<T>::deallocate(const MemoryAccessor2<T> memoryAccessor)
+	inline void MemoryAllocator2<T>::deallocate(MemoryAccessor2<T>& memoryAccessor)
 	{
-		if (isValidInternalXXX(memoryAccessor))
+		if (isValidXXX(memoryAccessor) == true)
 		{
-			deallocateInternal(memoryAccessor._blockOffset);
+			deallocateInternal(memoryAccessor._blockOffset, true);
 		}
+		else
+		{
+			FS_ASSERT("김장원", false, "Invalid 한 MemoryAccessor 를 deallocate 하려고 시도합니다!!!");
+		}
+
+		memoryAccessor.invalidateXXX();
 	}
 
 	template<typename T>
 	inline void MemoryAllocator2<T>::deallocateInternal(const uint32 blockOffset, const bool forceDeallocation)
 	{
-		MemoryBlock& memoryBlock = _memoryBlockArray[blockOffset];
-		--memoryBlock._referenceCount;
-
+		const MemoryBlock& memoryBlock = _memoryBlockArray[blockOffset];
 		if (forceDeallocation == true || memoryBlock._referenceCount == 0)
 		{
+			if (1 < memoryBlock._referenceCount)
+			{
+				FS_ASSERT("김장원", false, "발생하면 안 되는 상황!!!");
+			}
+
 			// Destructor
 			for (uint32 iter = 0; iter < fs::max(memoryBlock._arraySize, static_cast<uint32>(1)); ++iter)
 			{
@@ -482,34 +467,58 @@ namespace fs
 
 			--_memoryBlockCount;
 		}
+		else
+		{
+			FS_ASSERT("김장원", false, "ReferenceCount 가 잘못된 MemoryBlock 이 있습니다!!!");
+		}
 	}
 
 	template<typename T>
 	inline void MemoryAllocator2<T>::increaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor)
 	{
-		if (isValidInternalXXX(memoryAccessor) == true)
+		if (isValidXXX(memoryAccessor) == true)
 		{
 			++_memoryBlockArray[memoryAccessor._blockOffset]._referenceCount;
+		}
+		else
+		{
+			FS_ASSERT("김장원", false, "발생하면 안 되는 상황!!!");
 		}
 	}
 
 	template<typename T>
 	inline void MemoryAllocator2<T>::decreaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor)
 	{
-		if (isValidInternalXXX(memoryAccessor) == true)
+		if (isValidXXX(memoryAccessor) == true)
 		{
+			if (0 == _memoryBlockArray[memoryAccessor._blockOffset]._referenceCount)
+			{
+				FS_ASSERT("김장원", false, "발생하면 안 되는 상황!!!");
+			}
+
 			--_memoryBlockArray[memoryAccessor._blockOffset]._referenceCount;
+
+			if (_memoryBlockArray[memoryAccessor._blockOffset]._referenceCount == 0)
+			{
+				deallocateInternal(memoryAccessor._blockOffset);
+			}
 		}
 	}
 
 	template<typename T>
 	inline const bool MemoryAllocator2<T>::isValid(const MemoryAccessor2<T> memoryAccessor) const noexcept
 	{
-		return isValidInternalXXX(memoryAccessor);
+		return isValidXXX(memoryAccessor);
 	}
 
 	template<typename T>
-	inline const bool MemoryAllocator2<T>::isValidInternalXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
+	inline const bool MemoryAllocator2<T>::isValidXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
+	{
+		return isResidentXXX(memoryAccessor) && (0 < _memoryBlockArray[memoryAccessor._blockOffset]._referenceCount);
+	}
+
+	template<typename T>
+	inline const bool MemoryAllocator2<T>::isResidentXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
 	{
 		if (_memoryBlockCapacity <= memoryAccessor._blockOffset)
 		{
@@ -538,7 +547,7 @@ namespace fs
 	template<typename T>
 	inline const uint32 MemoryAllocator2<T>::getArraySize(const MemoryAccessor2<T> memoryAccessor) const noexcept
 	{
-		if (false == isValidInternalXXX(memoryAccessor))
+		if (false == isValidXXX(memoryAccessor))
 		{
 			return 0;
 		}
