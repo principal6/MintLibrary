@@ -9,17 +9,32 @@ namespace fs
 {
 #pragma region memoryAccessor
 	template<typename T>
+	inline MemoryAccessor2<T>::MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator)
+		: _memoryAllocator{ memoryAllocator }
+		, _id{ kMemoryBlockIdInvalid }
+		, _blockOffset{ 0 }
+	{
+		__noop;
+	}
+
+	template<typename T>
+	inline MemoryAccessor2<T>::MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset)
+		: _memoryAllocator{ memoryAllocator }
+		, _id{ id }
+		, _blockOffset{ blockOffset }
+	{
+		__noop;
+	}
+
+	template<typename T>
 	inline MemoryAccessor2<T>::MemoryAccessor2(const MemoryAccessor2& rhs)
 		: _memoryAllocator{ rhs._memoryAllocator }
 		, _id{ rhs._id }
 		, _blockOffset{ rhs._blockOffset }
-#if defined FS_DEBUG
-		, _rawPointerForDebug{ rhs._rawPointerForDebug }
-#endif
 	{
 		if (_memoryAllocator->isValidXXX(*this) == true)
 		{
-			_memoryAllocator->increaseReferenceXXX(*this);
+			_memoryAllocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
 		}
 	}
 
@@ -28,9 +43,6 @@ namespace fs
 		: _memoryAllocator{ rhs._memoryAllocator }
 		, _id{ rhs._id }
 		, _blockOffset{ rhs._blockOffset }
-#if defined FS_DEBUG
-		, _rawPointerForDebug{ rhs._rawPointerForDebug }
-#endif
 	{
 		rhs.invalidateXXX();
 	}
@@ -51,15 +63,17 @@ namespace fs
 		{
 			if (_memoryAllocator != nullptr)
 			{
-				_memoryAllocator->decreaseReferenceXXX(*this);
+				_memoryAllocator->decreaseReferenceXXX(*this); // 사라질 기존 데이터의 ReferenceCount 를 낮춘다!!!
 			}
 
 			_memoryAllocator = rhs._memoryAllocator;
 			_id = rhs._id;
 			_blockOffset = rhs._blockOffset;
-#if defined FS_DEBUG
-			_rawPointerForDebug = rhs._rawPointerForDebug;
-#endif
+
+			if (_memoryAllocator != nullptr)
+			{
+				_memoryAllocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
+			}
 		}
 		return *this;
 	}
@@ -77,9 +91,6 @@ namespace fs
 			_memoryAllocator = rhs._memoryAllocator;
 			_id = rhs._id;
 			_blockOffset = rhs._blockOffset;
-#if defined FS_DEBUG
-			_rawPointerForDebug = rhs._rawPointerForDebug;
-#endif
 
 			rhs.invalidateXXX();
 		}
@@ -98,10 +109,6 @@ namespace fs
 		_memoryAllocator = nullptr;
 		_id = kMemoryBlockIdInvalid;
 		_blockOffset = 0;
-
-#if defined FS_DEBUG
-		_rawPointerForDebug = nullptr;
-#endif
 	}
 
 	template<typename T>
@@ -117,18 +124,22 @@ namespace fs
 			return;
 		}
 
-		auto rawPointer = getMemoryXXX();
+		T* const rawPointer = getMemoryXXX();
 		if (rawPointer != nullptr)
 		{
 			const uint32 arraySize = getArraySize();
 			if (arraySize == 0)
 			{
-				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
+				rawPointer[0] = data[0];
 			}
 			else
 			{
 				const uint32 clampedCount = min(count, arraySize);
-				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(clampedCount));
+
+				for (uint32 iter = 0; iter < clampedCount; ++iter)
+				{
+					rawPointer[iter] = data[iter];
+				}
 			}
 		}
 	}
@@ -146,19 +157,23 @@ namespace fs
 			return;
 		}
 
-		auto rawPointer = getMemoryXXX();
+		T* const rawPointer = getMemoryXXX();
 		if (rawPointer != nullptr)
 		{
 			const uint32 arraySize = getArraySize();
+			const uint32 clampedOffset = min(offset, arraySize - 1);
 			if (arraySize == 0)
 			{
-				memcpy(rawPointer, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(1));
+				rawPointer[clampedOffset] = data[0];
 			}
 			else
 			{
-				const uint32 clampedOffset = min(offset, arraySize - 1);
 				const uint32 clampedCount = min(count, arraySize - clampedOffset);
-				memcpy(rawPointer + clampedOffset, data, MemoryAllocator2<T>::convertBlockUnitToByteUnit(clampedCount));
+
+				for (uint32 iter = 0; iter < clampedCount; ++iter)
+				{
+					rawPointer[clampedOffset + iter] = data[iter];
+				}
 			}
 		}
 	}
@@ -166,34 +181,19 @@ namespace fs
 	template<typename T>
 	inline const T* const MemoryAccessor2<T>::getMemory() const noexcept
 	{
-		return 
-#if defined FS_DEBUG
-			_rawPointerForDebug =
-#endif
-			_memoryAllocator->getRawPointerXXX(*this);
+		return _memoryAllocator->getRawPointerXXX(*this);
 	}
 
 	template<typename T>
 	inline T* const MemoryAccessor2<T>::getMemoryXXX() const noexcept
 	{
-		return
-#if defined FS_DEBUG
-			_rawPointerForDebug =
-#endif
-			_memoryAllocator->getRawPointerXXX(*this);
+		return _memoryAllocator->getRawPointerXXX(*this);
 	}
 
 	template<typename T>
 	inline const uint32 MemoryAccessor2<T>::getArraySize() const noexcept
 	{
 		return _memoryAllocator->getArraySize(*this);
-	}
-
-	template<typename T>
-	inline const uint32 MemoryAccessor2<T>::getByteSize() const noexcept
-	{
-		const uint32 arraySize = getArraySize();
-		return (arraySize == 0) ? sizeof(T) : ((arraySize == kUint32Max) ? 0 : MemoryAllocator2<T>::convertBlockUnitToByteUnit(arraySize));
 	}
 
 #pragma endregion
@@ -261,11 +261,7 @@ namespace fs
 		const uint32 blockByteOffset = convertBlockUnitToByteUnit(blockOffset);
 		new(&_rawMemory[blockByteOffset])T(std::forward<Args>(args)...);
 
-#if defined FS_DEBUG
-		return MemoryAccessor2(this, _memoryBlockArray[blockOffset]._id, blockOffset, reinterpret_cast<T*>(&_rawMemory[blockByteOffset]));
-#else
 		return MemoryAccessor2(this, _memoryBlockArray[blockOffset]._id, blockOffset);
-#endif
 	}
 
 	template<typename T>
@@ -316,11 +312,7 @@ namespace fs
 			new(&_rawMemory[currentBlockByteOffset])T(std::forward<Args>(args)...);
 		}
 
-#if defined FS_DEBUG
-		return MemoryAccessor2(this, _memoryBlockArray[firstBlockOffset]._id, firstBlockOffset, reinterpret_cast<T*>(&_rawMemory[firstBlockByteOffset]));
-#else
 		return MemoryAccessor2(this, _memoryBlockArray[firstBlockOffset]._id, firstBlockOffset);
-#endif
 	}
 
 	template<typename T>
@@ -414,9 +406,6 @@ namespace fs
 
 		memoryAccessor._id = _nextMemoryBlockId;
 		memoryAccessor._blockOffset = newFirstBlockOffset;
-#if defined FS_DEBUG
-		memoryAccessor._rawPointerForDebug = reinterpret_cast<T*>(&_rawMemory[newFirstBlockByteOffset]);
-#endif
 
 		++_nextMemoryBlockId;
 		if (kMemoryBlockIdReserved <= _nextMemoryBlockId)

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="fs::Vector&lt;*&gt;">
+    <DisplayString>{{ size = {_size} }}</DisplayString>
+    <Expand>
+      <Item Name="[Size]" ExcludeView="simple">_size</Item>
+      <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
+      <Item Name="[MemoryAccessor]">_memoryAccessor</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>($T1*)(_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset))</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="fs::MemoryAccessor2&lt;*&gt;">
+    <DisplayString>{{ ID = {_id} }}</DisplayString>
+    <Expand>
+      <Item Name="[ID]" ExcludeView="simple">_id</Item>
+      <Item Name="[BlockOffset]" ExcludeView="simple">_blockOffset</Item>
+      <Item Name="[Value]">(_memoryAllocator->_rawMemory + (_memoryAllocator->kTypeSize * _blockOffset))</Item>
+      <Item Name="[MemoryAllocator]">_memoryAllocator</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>
