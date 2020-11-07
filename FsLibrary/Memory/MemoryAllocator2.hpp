@@ -335,10 +335,10 @@ namespace fs
 			return memoryAccessor;
 		}
 
-		// TODO: arraySize 가 너무 커서 reserve 실패 시 처리
 		uint32 newFirstBlockOffset = getNextAvailableBlockOffsetForArray(newArraySize);
 		while (newFirstBlockOffset == kMemoryBlockIdInvalid)
 		{
+			// TODO: arraySize 가 너무 커서 reserve 실패 시 처리
 			reserve(_memoryBlockCapacity * 2);
 
 			newFirstBlockOffset = getNextAvailableBlockOffsetForArray(newArraySize);
@@ -568,6 +568,7 @@ namespace fs
 
 				FS_DELETE_ARRAY(_rawMemory);
 				_rawMemory = FS_NEW_ARRAY(byte, newByteCapacity);
+
 				memcpy(_rawMemory, temp, oldByteCapacity);
 
 				FS_DELETE_ARRAY(temp);
@@ -581,11 +582,18 @@ namespace fs
 			if (_memoryBlockArray != nullptr)
 			{
 				MemoryBlock* temp = FS_NEW_ARRAY(MemoryBlock, _memoryBlockCapacity);
-				memcpy(temp, _memoryBlockArray, sizeof(MemoryBlock) * _memoryBlockCapacity);
+				for (uint32 iter = 0; iter < _memoryBlockCapacity; ++iter)
+				{
+					temp[iter] = _memoryBlockArray[iter];
+				}
 
 				FS_DELETE_ARRAY(_memoryBlockArray);
 				_memoryBlockArray = FS_NEW_ARRAY(MemoryBlock, blockCapacity);
-				memcpy(_memoryBlockArray, temp, sizeof(MemoryBlock) * _memoryBlockCapacity);
+				
+				for (uint32 iter = 0; iter < _memoryBlockCapacity; ++iter)
+				{
+					_memoryBlockArray[iter] = temp[iter];
+				}
 
 				FS_DELETE_ARRAY(temp);
 			}
@@ -610,13 +618,13 @@ namespace fs
 				return blockOffset;
 			}
 		}
-		return kMemoryBlockIdInvalid;
+		return kUint32Max;
 	}
 
 	template<typename T>
 	inline const uint32 MemoryAllocator2<T>::getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept
 	{
-		uint32 successiveAvailableBlockFirstOffset = kMemoryBlockIdInvalid;
+		uint32 successiveAvailableBlockFirstOffset = kUint32Max;
 		uint32 successiveAvailableBlockCount = 0;
 		for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
 		{
@@ -636,13 +644,13 @@ namespace fs
 			else
 			{
 				successiveAvailableBlockCount = 0;
-				successiveAvailableBlockFirstOffset = kMemoryBlockIdInvalid;
+				successiveAvailableBlockFirstOffset = kUint32Max;
 			}
 		}
 
 		if (successiveAvailableBlockCount < arraySize)
 		{
-			successiveAvailableBlockFirstOffset = kMemoryBlockIdInvalid;
+			successiveAvailableBlockFirstOffset = kUint32Max;
 		}
 		return successiveAvailableBlockFirstOffset;
 	}
