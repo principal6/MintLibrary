@@ -58,7 +58,7 @@ namespace fs
 	DynamicStringA::DynamicStringA(const char* const rawString, const uint32 rawStringLength)
 		: DynamicStringA()
 	{
-		assign(rawString);
+		assign(rawString, rawStringLength);
 	}
 
 	DynamicStringA::DynamicStringA(const DynamicStringA& rhs)
