@@ -67,7 +67,7 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::push_back(const T& value)
 	{
-		if (hasEmptySlot() == false)
+		if (isFull() == true)
 		{
 			reserve(_capacity * 2);
 		}
@@ -79,7 +79,7 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::push_back(T&& value)
 	{
-		if (hasEmptySlot() == false)
+		if (isFull() == true)
 		{
 			reserve(_capacity * 2);
 		}
@@ -106,7 +106,7 @@ namespace fs
 			return push_back(value);
 		}
 
-		if (hasEmptySlot() == false)
+		if (isFull() == true)
 		{
 			reserve(_capacity * 2);
 		}
@@ -131,7 +131,7 @@ namespace fs
 			return push_back(value);
 		}
 
-		if (hasEmptySlot() == false)
+		if (isFull() == true)
 		{
 			reserve(_capacity * 2);
 		}
@@ -170,6 +170,8 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::set(const uint32 index, const T& value)
 	{
+		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
+
 		if (empty() == true)
 		{
 			return;
@@ -181,6 +183,8 @@ namespace fs
 	template<typename T>
 	inline void Vector<T>::set(const uint32 index, T&& value)
 	{
+		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
+
 		if (empty() == true)
 		{
 			return;
@@ -224,9 +228,9 @@ namespace fs
 	}
 
 	template<typename T>
-	FS_INLINE const bool Vector<T>::hasEmptySlot() const noexcept
+	FS_INLINE const bool Vector<T>::isFull() const noexcept
 	{
-		return _size < _capacity;
+		return _size == _capacity;
 	}
 
 	template<typename T>

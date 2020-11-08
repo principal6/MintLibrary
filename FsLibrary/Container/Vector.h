@@ -41,11 +41,9 @@ namespace fs
 		T&								get(const uint32 index);
 		void							swap(const uint32 indexA, const uint32 indexB);
 
-	private:
-		const bool						hasEmptySlot() const noexcept;
-
 	public:
 		const bool						empty() const noexcept;
+		const bool						isFull() const noexcept;
 		const uint32					capacity() const noexcept;
 		const uint32					size() const noexcept;
 		const T&						front() const;
