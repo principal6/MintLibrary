@@ -503,7 +503,7 @@ namespace fs
 	template<typename T>
 	inline const bool MemoryAllocator2<T>::isValidXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept
 	{
-		return isResidentXXX(memoryAccessor) && (0 < _memoryBlockArray[memoryAccessor._blockOffset]._referenceCount);
+		return memoryAccessor._id != kMemoryBlockIdInvalid && isResidentXXX(memoryAccessor) && (0 < _memoryBlockArray[memoryAccessor._blockOffset]._referenceCount);
 	}
 
 	template<typename T>
