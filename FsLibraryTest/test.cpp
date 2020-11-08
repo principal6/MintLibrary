@@ -294,7 +294,7 @@ const bool testVector()
 
 const bool testStringUtil()
 {
-	fs::DynamicStringA test{ "ab c def g" };
+	fs::DynamicStringA test{ "ab c   def g" };
 	fs::Vector<fs::DynamicStringA> testArray;
 	fs::StringUtil::tokenize(test, ' ', testArray);
 

@@ -23,7 +23,10 @@ namespace fs
 			{
 				if (inputString.getChar(at) == delimiter)
 				{
-					outArray.push_back(inputString.substr(prevAt, at - prevAt));
+					if (prevAt < at)
+					{
+						outArray.push_back(inputString.substr(prevAt, at - prevAt));
+					}
 
 					prevAt = at + 1;
 				}
