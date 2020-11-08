@@ -7,6 +7,7 @@
 
 #include <CommonDefinitions.h>
 #include <Memory\MemoryAllocator2.h>
+#include <initializer_list>
 
 
 namespace fs
@@ -18,6 +19,7 @@ namespace fs
 
 	public:
 										Vector();
+										Vector(const std::initializer_list<T>& il);
 		explicit						Vector(const uint32 capacity);
 										~Vector();
 

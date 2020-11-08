@@ -22,6 +22,22 @@ namespace fs
 	}
 
 	template<typename T>
+	inline Vector<T>::Vector(const std::initializer_list<T>& il)
+		: _memoryAccessor{ &_memoryAllocator }
+		, _capacity{ 0 }
+		, _size{ 0 }
+	{
+		const uint32	count = static_cast<uint32>(il.size());
+		resize(count);
+
+		const T* const	first = il.begin();
+		for (uint32 index = 0; index < count; ++index)
+		{
+			set(index, *(first + index));
+		}
+	}
+
+	template<typename T>
 	inline Vector<T>::Vector(const uint32 capacity)
 		: _memoryAccessor{ &_memoryAllocator }
 		, _capacity{ 0 }
