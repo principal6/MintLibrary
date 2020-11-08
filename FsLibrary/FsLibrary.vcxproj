@@ -34,6 +34,8 @@
     <ClInclude Include="Container\StackHolder.hpp" />
     <ClInclude Include="Container\StaticArray.h" />
     <ClInclude Include="Container\StringUtil.h" />
+    <ClInclude Include="Container\Tree.h" />
+    <ClInclude Include="Container\Tree.hpp" />
     <ClInclude Include="Container\UniqueString.h" />
     <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="Container\Vector.h" />
@@ -98,6 +100,9 @@
     <ClCompile Include="SimpleRendering\IDxObject.cpp" />
     <ClCompile Include="SimpleRendering\IRenderer.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Container\FsLibrary.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

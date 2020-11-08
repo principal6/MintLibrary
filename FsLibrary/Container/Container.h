@@ -19,6 +19,8 @@
 #include <Container/DynamicString.hpp>
 #include <Container/Vector.h>
 #include <Container/Vector.hpp>
+#include <Container/Tree.h>
+#include <Container/Tree.hpp>
 
 
 #endif // !FS_CONTAINER_H

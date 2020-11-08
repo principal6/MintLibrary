@@ -112,6 +112,75 @@ void testStackHolder()
 #endif
 }
 
+const bool testBitVector()
+{
+	using fs::BitVector;
+
+	BitVector a;
+	a.reserveByteCapacity(4);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(true);
+	a.push_back(false);
+	a.push_back(true);
+	a.set(1, true);
+	a.set(7, true);
+#ifdef FS_TEST_FAILURES
+	a.set(10, true);
+	a.set(16, true);
+#endif
+	const bool popped = a.pop_back();
+	const bool valueAt2 = a.get(2);
+	const bool valueAt3 = a.get(3);
+	const bool valueAt4 = a.get(4);
+#ifdef FS_TEST_FAILURES
+	const bool valueAt5 = a.get(5);
+#endif
+	return true;
+}
+
+const bool testMemoryAllocator()
+{
+	{
+		struct ForTest
+		{
+			ForTest() : _name{ '\0' }, _value{ 0 } { __noop; }
+			ForTest(const char name, const int16 value) :_name{ name }, _value{ value } { printf("ForTest[%c] ctor\n", _name); }
+			~ForTest() { printf("ForTest[%c] dtor\n", _name); }
+			char	_name;
+			int16	_value;
+		};
+
+		fs::MemoryAllocator2<ForTest> memoryAllocator2;
+		fs::MemoryAccessor2 maa = memoryAllocator2.allocate('a', 1);
+		const bool isMaaValid0 = maa.isValid();
+		fs::MemoryAccessor2 mab = memoryAllocator2.allocate('b', 2);
+		{
+			const fs::MemoryAccessor2 mab1 = mab;
+			auto mab1raw = mab1.getMemory();
+			maa.setMemory(mab1raw);
+		}
+		memoryAllocator2.deallocate(maa);
+		memoryAllocator2.deallocate(mab);
+		const bool isMaaValid1 = maa.isValid();
+		fs::MemoryAccessor2 mac = memoryAllocator2.allocate('c', 3);
+		fs::MemoryAccessor2 mad = memoryAllocator2.allocateArray(5, 'd', 4);
+		memoryAllocator2.reallocateArray(mad, 5, true);
+	}
+
+	{
+		fs::MemoryAllocator2<char> memoryAllocator2;
+		fs::MemoryAccessor2 a = memoryAllocator2.allocateArray(5);
+		a.setMemory("abcd", 5);
+	}
+
+	return true;
+}
+
 const bool testStringTypes()
 {
 #pragma region ScopeString
@@ -195,7 +264,7 @@ const bool testStringTypes()
 		DynamicStringA from_value0 = DynamicStringA::from_value<float>(1.23f);
 		DynamicStringA from_value1 = DynamicStringA::from_value<bool>(true);
 		DynamicStringA from_value2 = DynamicStringA::from_value<uint32>(3294967295);
-		
+
 		const float to_value0 = DynamicStringA::to_float(from_value0);
 		const bool to_value1 = DynamicStringA::to_bool(from_value1);
 		const uint32 to_value2 = DynamicStringA::to_uint32(from_value2);
@@ -205,85 +274,72 @@ const bool testStringTypes()
 	return true;
 }
 
-const bool testBitVector()
-{
-	using fs::BitVector;
-
-	BitVector a;
-	a.reserveByteCapacity(4);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.push_back(true);
-	a.push_back(true);
-	a.push_back(false);
-	a.push_back(true);
-	a.set(1, true);
-	a.set(7, true);
-#ifdef FS_TEST_FAILURES
-	a.set(10, true);
-	a.set(16, true);
-#endif
-	const bool popped = a.pop_back();
-	const bool valueAt2 = a.get(2);
-	const bool valueAt3 = a.get(3);
-	const bool valueAt4 = a.get(4);
-#ifdef FS_TEST_FAILURES
-	const bool valueAt5 = a.get(5);
-#endif
-	return true;
-}
-
 const bool testVector()
 {
 	fs::Vector<uint32> a(5);
 	a.push_back(1);
 	a.push_back(2);
 	a.push_back(3);
+
+#if defined FS_TEST_FAILURES
 	a.set(12, 3);
+#endif
+
 	a.insert(2, 5);
 	a.erase(1);
 	fs::Vector<uint32> b(20);
+	b.push_back(9);
+	return true;
+}
+
+const bool testTree()
+{
+	fs::Tree<fs::DynamicStringA> stringTree;
+	fs::TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
+	
+	fs::TreeNodeAccessor a = rootNode.insertChildNode("A");
+	const fs::DynamicStringA& aData = a.getNodeData();
+	
+	fs::TreeNodeAccessor b = a.insertChildNode("b");
+	fs::TreeNodeAccessor c = a.insertChildNode("c");
+
+	fs::TreeNodeAccessor d = rootNode.insertChildNode("D");
+
+	//stringTree.swapNodeData(a, b);
+	b.moveToParent(rootNode);
+	fs::TreeNodeAccessor bParent = b.getParentNode();
+	const uint32 aChildCount = a.getChildNodeCount();
+	a.clearChildNodes();
+#if defined FS_TEST_FAILURES
+	fs::TreeNodeAccessor aInvalidChild = a.getChildNode(10);
+#endif
+
+	fs::TreeNodeAccessor found = stringTree.findNode(rootNode, "A");
+
+	//stringTree.eraseChildNode(rootNode, a);
+	//stringTree.clearChildren(rootNode);
+	stringTree.destroyRootNode();
+
+#if defined FS_TEST_FAILURES
+	stringTree.moveToParent(rootNode, d);
+#endif
 
 	return true;
 }
 
-const bool testMemoryAllocator()
+const bool testMemoryAllocator2()
 {
 	{
-		struct ForTest
+		struct TestStruct
 		{
-			ForTest(const char name, const int16 value) :_name{ name }, _value{ value } { printf("ForTest[%c] ctor\n", _name); }
-			~ForTest() { printf("ForTest[%c] dtor\n", _name); }
-			char	_name;
-			int16	_value;
+			int32				_id = 0;
+			fs::Vector<float>	_vec;
 		};
 
-		fs::MemoryAllocator2<ForTest> memoryAllocator2;
-		fs::MemoryAccessor2 maa = memoryAllocator2.allocate('a', 1);
-		const bool isMaaValid0 = maa.isValid();
-		fs::MemoryAccessor2 mab = memoryAllocator2.allocate('b', 2);
-		{
-			const fs::MemoryAccessor2 mab1 = mab;
-			auto mab1raw = mab1.getMemory();
-			maa.setMemory(mab1raw);
-		}
-		memoryAllocator2.deallocate(maa);
-		memoryAllocator2.deallocate(mab);
-		const bool isMaaValid1 = maa.isValid();
-		fs::MemoryAccessor2 mac = memoryAllocator2.allocate('c', 3);
-		fs::MemoryAccessor2 mad = memoryAllocator2.allocateArray(5, 'd', 4);
-
+		fs::Vector<TestStruct> a;
+		a.resize(10);
 	}
 
-	{
-		fs::MemoryAllocator2<char> memoryAllocator2;
-		fs::MemoryAccessor2 a = memoryAllocator2.allocateArray(5);
-		a.setMemory("abcd", 5);
-	}
-	
 	return true;
 }
 
@@ -386,7 +442,8 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-
+	/*
+	*/
 	testIntTypes();
 
 	testFloatTypes();
@@ -394,17 +451,25 @@ int main()
 	testStaticArray();
 
 	testStackHolder();
+	
+	testBitVector();
 
 	testMemoryAllocator();
 
+	/*
+	*/
 	testStringTypes();
-
-	testBitVector();
 
 	testVector();
 
+	testTree();
+
+	testMemoryAllocator2();
+	
 	FS_LOG("김장원", "Log Test");
 
+	/*
+	*/
 	testFiles();
 
 	testWindow();

@@ -192,17 +192,23 @@
     <ClInclude Include="File\BinaryFile.hpp">
       <Filter>File</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator2.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator2.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Container\Vector.h">
       <Filter>Container</Filter>
     </ClInclude>
     <ClInclude Include="Container\Vector.hpp">
       <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\Tree.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\Tree.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryAllocator2.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryAllocator2.hpp">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -248,5 +254,8 @@
     <ClCompile Include="Container\DynamicString.cpp">
       <Filter>Container</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Container\FsLibrary.natvis" />
   </ItemGroup>
 </Project>
