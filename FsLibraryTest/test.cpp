@@ -294,9 +294,29 @@ const bool testVector()
 
 const bool testStringUtil()
 {
-	fs::DynamicStringA test{ "ab c   def g" };
-	fs::Vector<fs::DynamicStringA> testArray;
-	fs::StringUtil::tokenize(test, ' ', testArray);
+	const fs::DynamicStringA testA{ "ab c   def g" };
+	fs::Vector<fs::DynamicStringA> testATokenized;
+	fs::StringUtil::tokenize(testA, ' ', testATokenized);
+	
+	const fs::DynamicStringA testB{
+		R"(
+			#include <ShaderStructDefinitions>
+			#include <VsConstantBuffers>
+
+			VS_OUTPUT main(VS_INPUT input)
+			{
+				VS_OUTPUT result;
+				result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+				result._color		= input._color;
+				result._texCoord	= input._texCoord;
+				result._flag		= input._flag;
+				return result;
+			}
+		)"
+	};
+	const fs::Vector<char> delimiterArray{ ' ', '\t', '\n' };
+	fs::Vector<fs::DynamicStringA> testBTokenized;
+	fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
 	return true;
 }
