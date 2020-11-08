@@ -29,7 +29,7 @@ namespace fs
 
 	inline void BitVector::push_back(const bool value)
 	{
-		if (true == isFull())
+		if (isFull() == true)
 		{
 			reserveByteCapacity(_byteCapacity * 2);
 		}
