@@ -5,6 +5,10 @@
 #define FS_STRING_UTIL_H
 
 
+#include <Container\Vector.h>
+#include <Container\DynamicString.h>
+
+
 namespace fs
 {
 	namespace StringUtil
@@ -44,6 +48,8 @@ namespace fs
             }
             return static_cast<uint32>(::strlen(rawString));
         }
+
+        static void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray);
 	}
 }
 

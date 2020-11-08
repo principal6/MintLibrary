@@ -292,6 +292,15 @@ const bool testVector()
 	return true;
 }
 
+const bool testStringUtil()
+{
+	fs::DynamicStringA test{ "ab c def g" };
+	fs::Vector<fs::DynamicStringA> testArray;
+	fs::StringUtil::tokenize(test, ' ', testArray);
+
+	return true;
+}
+
 const bool testTree()
 {
 	fs::Tree<fs::DynamicStringA> stringTree;
@@ -461,6 +470,8 @@ int main()
 	testStringTypes();
 
 	testVector();
+
+	testStringUtil();
 
 	testTree();
 

@@ -210,6 +210,9 @@
     <ClInclude Include="Memory\MemoryAllocator2.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Container\StringUtil.hpp">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

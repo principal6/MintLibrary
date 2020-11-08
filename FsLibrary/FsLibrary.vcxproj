@@ -34,6 +34,7 @@
     <ClInclude Include="Container\StackHolder.hpp" />
     <ClInclude Include="Container\StaticArray.h" />
     <ClInclude Include="Container\StringUtil.h" />
+    <ClInclude Include="Container\StringUtil.hpp" />
     <ClInclude Include="Container\Tree.h" />
     <ClInclude Include="Container\Tree.hpp" />
     <ClInclude Include="Container\UniqueString.h" />
