@@ -47,6 +47,7 @@
     <ClInclude Include="File\FileUtil.hpp" />
     <ClInclude Include="File\File.h" />
     <ClInclude Include="File\IFile.h" />
+    <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
     <ClInclude Include="Logger\Logger.h" />
@@ -90,6 +91,7 @@
     <ClCompile Include="Container\DynamicString.cpp" />
     <ClCompile Include="Container\UniqueString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
+    <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />

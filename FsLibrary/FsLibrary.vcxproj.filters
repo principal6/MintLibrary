@@ -213,6 +213,9 @@
     <ClInclude Include="Container\StringUtil.hpp">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="File\TextFile.h">
+      <Filter>File</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -256,6 +259,9 @@
     </ClCompile>
     <ClCompile Include="Container\DynamicString.cpp">
       <Filter>Container</Filter>
+    </ClCompile>
+    <ClCompile Include="File\TextFile.cpp">
+      <Filter>File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -396,6 +396,9 @@ const bool testFiles()
 		printf("File[%s] %s %s\n", kFileName, d, e);
 	}
 
+	fs::TextFileReader tfr;
+	tfr.open("test.cpp");
+
 	return true;
 }
 
