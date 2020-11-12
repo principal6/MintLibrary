@@ -371,7 +371,7 @@ namespace fs
 
 	const uint32 DynamicStringA::find(const char* const rawString, const uint32 offset) const noexcept
 	{
-		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
+		const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
 		if (_length < rawStringLength)
 		{
 			return kStringNPos;
@@ -400,7 +400,7 @@ namespace fs
 
 	const uint32 DynamicStringA::rfind(const char* const rawString, const uint32 offset) const noexcept
 	{
-		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
+		const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
 		if (_length < rawStringLength)
 		{
 			return kStringNPos;
@@ -434,7 +434,7 @@ namespace fs
 
 	const bool DynamicStringA::compare(const char* const rawString) const noexcept
 	{
-		const uint32 rawStringLength = static_cast<uint32>(strlen(rawString));
+		const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
 		if (_length != rawStringLength)
 		{
 			return false;
@@ -444,6 +444,45 @@ namespace fs
 		for (uint32 myAt = 0; myAt < _length; ++myAt)
 		{
 			if (myRaw[myAt] != rawString[myAt])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	const bool DynamicStringA::compare(const char* const rawString, const uint32 offset) const noexcept
+	{
+		if (_length <= offset)
+		{
+			return false;
+		}
+
+		const uint32 compareLength = _length - offset;
+		const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
+		const char* const myRawString = c_str();
+		for (uint32 iter = 0; iter < compareLength; ++iter)
+		{
+			if (myRawString[offset + iter] != rawString[iter])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	const bool DynamicStringA::compare(const char* const rawString, const uint32 offset, const uint32 length) const noexcept
+	{
+		if (_length < offset + length)
+		{
+			return false;
+		}
+
+		const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
+		const char* const myRawString = c_str();
+		for (uint32 iter = 0; iter < length; ++iter)
+		{
+			if (myRawString[offset + iter] != rawString[iter])
 			{
 				return false;
 			}
@@ -463,6 +502,45 @@ namespace fs
 		for (uint32 myAt = 0; myAt < _length; ++myAt)
 		{
 			if (myRaw[myAt] != rhsRaw[myAt])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	const bool DynamicStringA::compare(const DynamicStringA& rhs, const uint32 offset) const noexcept
+	{
+		if (_length <= offset)
+		{
+			return false;
+		}
+
+		const uint32 compareLength = _length - offset;
+		const char* const myRaw = c_str();
+		const char* const rhsRaw = rhs.c_str();
+		for (uint32 myAt = 0; myAt < compareLength; ++myAt)
+		{
+			if (myRaw[offset + myAt] != rhsRaw[myAt])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	const bool DynamicStringA::compare(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept
+	{
+		if (_length < offset + length)
+		{
+			return false;
+		}
+
+		const char* const myRaw = c_str();
+		const char* const rhsRaw = rhs.c_str();
+		for (uint32 myAt = 0; myAt < length; ++myAt)
+		{
+			if (myRaw[offset + myAt] != rhsRaw[myAt])
 			{
 				return false;
 			}

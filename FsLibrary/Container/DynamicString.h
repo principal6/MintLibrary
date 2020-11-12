@@ -79,8 +79,16 @@ namespace fs
 	public:
 		const uint32					find(const char* const rawString, const uint32 offset = 0) const noexcept;
 		const uint32					rfind(const char* const rawString, const uint32 offset = 0) const noexcept;
+
+	public:
 		const bool						compare(const char* const rawString) const noexcept;
+		const bool						compare(const char* const rawString, const uint32 offset) const noexcept;
+		const bool						compare(const char* const rawString, const uint32 offset, const uint32 length) const noexcept;
 		const bool						compare(const DynamicStringA& rhs) const noexcept;
+		const bool						compare(const DynamicStringA& rhs, const uint32 offset) const noexcept;
+		const bool						compare(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept;
+
+	public:
 		const uint64					hash() const noexcept;
 
 	private:
