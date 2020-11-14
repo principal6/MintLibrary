@@ -474,6 +474,8 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+	//fs::Logger::setOutputFileName("LOG.txt");
+
 	/*
 	*/
 	testIntTypes();
@@ -502,7 +504,7 @@ int main()
 	testMemoryAllocator2();
 	
 	FS_LOG("김장원", "Log Test");
-
+	//FS_LOG_ERROR("김장원", "WOW");
 
 	/*
 	*/

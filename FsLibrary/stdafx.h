@@ -12,6 +12,7 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <mutex>
 #include <atomic>
 #include <type_traits>
 
