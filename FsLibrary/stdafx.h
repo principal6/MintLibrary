@@ -18,7 +18,6 @@
 
 #pragma region FsLibrary
 #include <CommonDefinitions.h>
-#include <Assert.h>
 #include <Logger/Logger.h>
 #include <Logger/Logger.hpp>
 #include <Container/DynamicString.hpp>

@@ -38,21 +38,21 @@ namespace fs
 			logger._outputFileName = fileName;
 		}
 	}
-	inline void Logger::log(const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber)
+	inline void Logger::log(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber)
 	{
 		static char finalBuffer[kFinalBufferSize]{};
 
-		logInternal(" LOG ", author, content, functionName, fileName, lineNumber, finalBuffer);
+		logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
 		printf(finalBuffer);
 	}
 
-	inline void Logger::logError(const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber)
+	inline void Logger::logError(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber)
 	{
 		static constexpr int32 kErrorExitCode = -1;
 		static char finalBuffer[kFinalBufferSize]{};
 
-		logInternal(" ERR ", author, content, functionName, fileName, lineNumber, finalBuffer);
+		logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
 		printf(finalBuffer);
 		::MessageBoxA(nullptr, finalBuffer, "LOG ERROR", MB_ICONERROR);

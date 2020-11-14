@@ -503,8 +503,9 @@ int main()
 
 	testMemoryAllocator2();
 	
-	FS_LOG("김장원", "Log Test");
-	//FS_LOG_ERROR("김장원", "WOW");
+	FS_LOG("김장원", "LOG");
+	//FS_ASSERT("김장원", false, "ASSERTION");
+	//FS_LOG_ERROR("김장원", "ERROR");
 
 	/*
 	*/
