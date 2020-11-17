@@ -11,6 +11,41 @@
 
 namespace fs
 {
+	struct StringRange
+	{
+		StringRange()
+			: _offset{ 0 }
+			, _length{ kUint32Max }
+		{
+			__noop;
+		}
+
+		StringRange(const uint32 offset)
+			: _offset{ offset }
+			, _length{ kUint32Max }
+		{
+			__noop;
+		}
+
+		StringRange(const uint32 offset, const uint32 length)
+			: _offset{ offset }
+			, _length{ length }
+		{
+			__noop;
+		}
+
+	public:
+		FS_INLINE const bool isLengthSet() const noexcept
+		{
+			return _length;
+		}
+
+	public:
+		uint32	_offset;
+		uint32	_length;
+	};
+
+
 	class DynamicStringA
 	{
 		static constexpr uint32			kMinCapacity{ 16 };
@@ -82,11 +117,15 @@ namespace fs
 
 	public:
 		const bool						compare(const char* const rawString) const noexcept;
-		const bool						compare(const char* const rawString, const uint32 offset) const noexcept;
-		const bool						compare(const char* const rawString, const uint32 offset, const uint32 length) const noexcept;
+		const bool						compare(const char* const rawString, const StringRange& stringRange) const noexcept;
 		const bool						compare(const DynamicStringA& rhs) const noexcept;
-		const bool						compare(const DynamicStringA& rhs, const uint32 offset) const noexcept;
-		const bool						compare(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept;
+		const bool						compare(const DynamicStringA& rhs, const StringRange& stringRange) const noexcept;
+
+	private:
+		const bool						compareInternal(const char* const rawString, const uint32 offset) const noexcept;
+		const bool						compareInternal(const char* const rawString, const uint32 offset, const uint32 length) const noexcept;
+		const bool						compareInternal(const DynamicStringA& rhs, const uint32 offset) const noexcept;
+		const bool						compareInternal(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept;
 
 	public:
 		const uint64					hash() const noexcept;

@@ -244,6 +244,8 @@ const bool testStringTypes()
 		a.assign("AGAIN");
 		b.clear();
 		b.append("Hello World!");
+		const bool cmp2 = b.compare("llo", fs::StringRange(2, 3));
+
 		DynamicStringA c = b.substr(100);
 		const bool cEmpty = c.empty();
 		const uint32 foundO0 = b.find("o", 6);

@@ -451,7 +451,16 @@ namespace fs
 		return true;
 	}
 
-	const bool DynamicStringA::compare(const char* const rawString, const uint32 offset) const noexcept
+	const bool DynamicStringA::compare(const char* const rawString, const StringRange& stringRange) const noexcept
+	{
+		if (stringRange.isLengthSet() == true)
+		{
+			return compareInternal(rawString, stringRange._offset, stringRange._length);
+		}
+		return compareInternal(rawString, stringRange._offset);
+	}
+
+	const bool DynamicStringA::compareInternal(const char* const rawString, const uint32 offset) const noexcept
 	{
 		if (_length <= offset)
 		{
@@ -471,7 +480,7 @@ namespace fs
 		return true;
 	}
 
-	const bool DynamicStringA::compare(const char* const rawString, const uint32 offset, const uint32 length) const noexcept
+	const bool DynamicStringA::compareInternal(const char* const rawString, const uint32 offset, const uint32 length) const noexcept
 	{
 		if (_length < offset + length)
 		{
@@ -509,7 +518,16 @@ namespace fs
 		return true;
 	}
 
-	const bool DynamicStringA::compare(const DynamicStringA& rhs, const uint32 offset) const noexcept
+	const bool DynamicStringA::compare(const DynamicStringA& rhs, const StringRange& stringRange) const noexcept
+	{
+		if (stringRange.isLengthSet() == true)
+		{
+			return compareInternal(rhs, stringRange._offset, stringRange._length);
+		}
+		return compareInternal(rhs, stringRange._offset);
+	}
+
+	const bool DynamicStringA::compareInternal(const DynamicStringA& rhs, const uint32 offset) const noexcept
 	{
 		if (_length <= offset)
 		{
@@ -529,7 +547,7 @@ namespace fs
 		return true;
 	}
 
-	const bool DynamicStringA::compare(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept
+	const bool DynamicStringA::compareInternal(const DynamicStringA& rhs, const uint32 offset, const uint32 length) const noexcept
 	{
 		if (_length < offset + length)
 		{
