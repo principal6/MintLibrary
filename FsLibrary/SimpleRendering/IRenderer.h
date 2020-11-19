@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_IRENDERER_H
-#define FS_IRENDERER_H
+#ifndef FS_I_RENDERER_H
+#define FS_I_RENDERER_H
 
 
 #include <Math/Float2.h>
@@ -49,4 +49,4 @@ namespace fs
 }
 
 
-#endif // !FS_IRENDERER_H
+#endif // !FS_I_RENDERER_H

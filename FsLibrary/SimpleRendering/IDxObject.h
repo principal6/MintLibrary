@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef FS_IDX_BASE_H
-#define FS_IDX_BASE_H
+#ifndef FS_I_DX_BASE_H
+#define FS_I_DX_BASE_H
 
 
 #include <CommonDefinitions.h>
@@ -138,4 +138,4 @@ namespace fs
 }
 
 
-#endif // !FS_IDX_BASE_H
+#endif // !FS_I_DX_BASE_H

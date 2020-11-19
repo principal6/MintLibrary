@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_IREFLECTIVE_H
-#define FS_IREFLECTIVE_H
+#ifndef FS_I_REFLECTIVE_H
+#define FS_I_REFLECTIVE_H
 
 
 #include <CommonDefinitions.h>
@@ -164,4 +164,4 @@ namespace fs
 }
 
 
-#endif // !FS_IREFLECTIVE_H
+#endif // !FS_I_REFLECTIVE_H

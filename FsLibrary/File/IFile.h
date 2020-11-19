@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_IFILE_H
-#define FS_IFILE_H
+#ifndef FS_I_FILE_H
+#define FS_I_FILE_H
 
 
 namespace fs

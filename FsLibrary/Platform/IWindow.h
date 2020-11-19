@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_IWINDOW_H
-#define FS_IWINDOW_H
+#ifndef FS_I_WINDOW_H
+#define FS_I_WINDOW_H
 
 
 #include <CommonDefinitions.h>
@@ -122,4 +122,4 @@ namespace fs
 }
 
 
-#endif // !FS_IWINDOW_H
+#endif // !FS_I_WINDOW_H
