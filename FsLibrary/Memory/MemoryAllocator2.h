@@ -64,7 +64,7 @@ namespace fs
 			const uint32					getArraySize() const noexcept;
 
 		private:
-			Allocator<T>*					_allocator;
+			Allocator<T>*					_memoryAllocator;
 			MemoryBlockId					_id;
 			uint32							_blockOffset;
 		};

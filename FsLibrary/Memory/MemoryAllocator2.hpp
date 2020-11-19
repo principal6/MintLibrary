@@ -12,7 +12,7 @@ namespace fs
 #pragma region memoryAccessor
 		template<typename T>
 		inline Accessor<T>::Accessor(Allocator<T>* const memoryAllocator)
-			: _allocator{ memoryAllocator }
+			: _memoryAllocator{ memoryAllocator }
 			, _id{ kMemoryBlockIdInvalid }
 			, _blockOffset{ 0 }
 		{
@@ -21,7 +21,7 @@ namespace fs
 
 		template<typename T>
 		inline Accessor<T>::Accessor(Allocator<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset)
-			: _allocator{ memoryAllocator }
+			: _memoryAllocator{ memoryAllocator }
 			, _id{ id }
 			, _blockOffset{ blockOffset }
 		{
@@ -30,19 +30,19 @@ namespace fs
 
 		template<typename T>
 		inline Accessor<T>::Accessor(const Accessor& rhs)
-			: _allocator{ rhs._allocator }
+			: _memoryAllocator{ rhs._memoryAllocator }
 			, _id{ rhs._id }
 			, _blockOffset{ rhs._blockOffset }
 		{
-			if (_allocator->isValidXXX(*this) == true)
+			if (_memoryAllocator->isValidXXX(*this) == true)
 			{
-				_allocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
+				_memoryAllocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
 			}
 		}
 
 		template<typename T>
 		inline Accessor<T>::Accessor(Accessor&& rhs) noexcept
-			: _allocator{ rhs._allocator }
+			: _memoryAllocator{ rhs._memoryAllocator }
 			, _id{ rhs._id }
 			, _blockOffset{ rhs._blockOffset }
 		{
@@ -52,9 +52,9 @@ namespace fs
 		template<typename T>
 		inline Accessor<T>::~Accessor()
 		{
-			if (_allocator != nullptr)
+			if (_memoryAllocator != nullptr)
 			{
-				_allocator->decreaseReferenceXXX(*this);
+				_memoryAllocator->decreaseReferenceXXX(*this);
 			}
 		}
 
@@ -63,18 +63,18 @@ namespace fs
 		{
 			if (this != &rhs)
 			{
-				if (_allocator != nullptr)
+				if (_memoryAllocator != nullptr)
 				{
-					_allocator->decreaseReferenceXXX(*this); // 사라질 기존 데이터의 ReferenceCount 를 낮춘다!!!
+					_memoryAllocator->decreaseReferenceXXX(*this); // 사라질 기존 데이터의 ReferenceCount 를 낮춘다!!!
 				}
 
-				_allocator = rhs._allocator;
+				_memoryAllocator = rhs._memoryAllocator;
 				_id = rhs._id;
 				_blockOffset = rhs._blockOffset;
 
-				if (_allocator != nullptr)
+				if (_memoryAllocator != nullptr)
 				{
-					_allocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
+					_memoryAllocator->increaseReferenceXXX(*this); // 복사가 일어났으므로 ReferenceCount 가 증가해야 한다!!!
 				}
 			}
 			return *this;
@@ -85,12 +85,12 @@ namespace fs
 		{
 			if (this != &rhs)
 			{
-				if (_allocator != nullptr)
+				if (_memoryAllocator != nullptr)
 				{
-					_allocator->decreaseReferenceXXX(*this);
+					_memoryAllocator->decreaseReferenceXXX(*this);
 				}
 
-				_allocator = rhs._allocator;
+				_memoryAllocator = rhs._memoryAllocator;
 				_id = rhs._id;
 				_blockOffset = rhs._blockOffset;
 
@@ -102,13 +102,13 @@ namespace fs
 		template<typename T>
 		inline const bool Accessor<T>::isValid() const noexcept
 		{
-			return (nullptr == _allocator) ? false : _allocator->isValid(*this);
+			return (nullptr == _memoryAllocator) ? false : _memoryAllocator->isValid(*this);
 		}
 
 		template<typename T>
 		inline void Accessor<T>::invalidateXXX()
 		{
-			_allocator = nullptr;
+			_memoryAllocator = nullptr;
 			_id = kMemoryBlockIdInvalid;
 			_blockOffset = 0;
 		}
@@ -183,19 +183,19 @@ namespace fs
 		template<typename T>
 		inline const T* const Accessor<T>::getMemory() const noexcept
 		{
-			return _allocator->getRawPointerXXX(*this);
+			return _memoryAllocator->getRawPointerXXX(*this);
 		}
 
 		template<typename T>
 		inline T* const Accessor<T>::getMemoryXXX() const noexcept
 		{
-			return _allocator->getRawPointerXXX(*this);
+			return _memoryAllocator->getRawPointerXXX(*this);
 		}
 
 		template<typename T>
 		inline const uint32 Accessor<T>::getArraySize() const noexcept
 		{
-			return _allocator->getArraySize(*this);
+			return _memoryAllocator->getArraySize(*this);
 		}
 
 #pragma endregion
