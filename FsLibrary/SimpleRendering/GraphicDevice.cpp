@@ -125,7 +125,8 @@ namespace fs
 				}
 				)"
 			};
-			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &VS_INPUT());
+			VS_INPUT vsInput;
+			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &vsInput);
 			_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
 		}
 

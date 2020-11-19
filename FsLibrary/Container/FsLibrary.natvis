@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="fs::MemoryAccessor2&lt;*&gt;">
+  <Type Name="fs::Memory::Accessor&lt;*&gt;">
     <DisplayString>{{ ID = {_id} }}</DisplayString>
     <Expand>
       <Item Name="[ID]" ExcludeView="simple">_id</Item>
       <Item Name="[BlockOffset]" ExcludeView="simple">_blockOffset</Item>
-      <Item Name="[Value]">(_memoryAllocator->_rawMemory + (_memoryAllocator->kTypeSize * _blockOffset))</Item>
+      <Item Name="[Value]" Condition="0 &lt; _memoryAllocator->_memoryBlockArray[_blockOffset]._referenceCount">(_memoryAllocator->_rawMemory + (_memoryAllocator->kTypeSize * _blockOffset))</Item>
+      <Item Name="[MemoryBlock]">(_memoryAllocator->_memoryBlockArray[_blockOffset])</Item>
       <Item Name="[MemoryAllocator]">_memoryAllocator</Item>
     </Expand>
   </Type>
@@ -24,12 +25,12 @@
   </Type>
 
   <Type Name="fs::DynamicStringA">
-    <DisplayString Condition="_length == 0">NULL</DisplayString>
+    <DisplayString Condition="_length == 0 || _memoryAccessor._memoryAllocator->_memoryBlockArray[_memoryAccessor._blockOffset]._referenceCount == 0">NULL</DisplayString>
     <DisplayString>{{ Value = {_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset)} }}</DisplayString>
     <Expand>
       <Item Name="[Length]" ExcludeView="simple">_length</Item>
       <Item Name="[Hash]" ExcludeView="simple">_cachedHash</Item>
-      <Item Name="[Value]" Condition="0 &lt; _length">_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset)</Item>
+      <Item Name="[Value]" Condition="0 &lt; _length &amp;&amp; 0 &lt; _memoryAccessor._memoryAllocator->_memoryBlockArray[_memoryAccessor._blockOffset]._referenceCount">_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset)</Item>
     </Expand>
   </Type>
   

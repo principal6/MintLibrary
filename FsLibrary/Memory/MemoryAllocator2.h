@@ -11,143 +11,146 @@
 
 namespace fs
 {
-	template <typename T>
-	class MemoryAccessor2;
-
-	template <typename T>
-	class MemoryAllocator2;
-
-
-	using MemoryBlockId										= uint32;
-
-
-	static constexpr MemoryBlockId kMemoryBlockIdInvalid	= kUint32Max;
-	static constexpr MemoryBlockId kMemoryBlockIdArrayBody	= kMemoryBlockIdInvalid - 1;
-	static constexpr MemoryBlockId kMemoryBlockIdReserved	= kMemoryBlockIdInvalid - 8;
-
-
-	template <typename T>
-	class MemoryAccessor2 final
+	namespace Memory
 	{
-		friend MemoryAllocator2;
+		template <typename T>
+		class Accessor;
 
-	public:
-										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator);
-
-	private:
-										MemoryAccessor2(MemoryAllocator2<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset);
-
-	public:
-										MemoryAccessor2(const MemoryAccessor2& rhs);
-										MemoryAccessor2(MemoryAccessor2&& rhs) noexcept;
-
-	public:
-										~MemoryAccessor2();
-
-	public:
-		MemoryAccessor2&				operator=(const MemoryAccessor2& rhs);
-		MemoryAccessor2&				operator=(MemoryAccessor2&& rhs) noexcept;
-
-	public:
-		const bool						isValid() const noexcept;
-
-	private:
-		void							invalidateXXX();
-
-	public:
-		void							setMemory(const T* const data, const uint32 count = 1);
-		void							setMemory(const T* const data, const uint32 offset, const uint32 count);
-		const T* const					getMemory() const noexcept;
-		T* const						getMemoryXXX() const noexcept;
-		const uint32					getArraySize() const noexcept;
-
-	private:
-		MemoryAllocator2<T>*			_memoryAllocator;
-		MemoryBlockId					_id;
-		uint32							_blockOffset;
-	};
+		template <typename T>
+		class Allocator;
 
 
-	template <typename T>
-	class MemoryAllocator2 final
-	{
-		friend MemoryAccessor2;
+		using MemoryBlockId										= uint32;
 
-		typedef									void (*DestructorFunction)(const byte* const);
 
-		static constexpr uint32					kDefaultBlockCapacity = 16;
+		static constexpr MemoryBlockId kMemoryBlockIdInvalid	= kUint32Max;
+		static constexpr MemoryBlockId kMemoryBlockIdArrayBody	= kMemoryBlockIdInvalid - 1;
+		static constexpr MemoryBlockId kMemoryBlockIdReserved	= kMemoryBlockIdInvalid - 8;
 
-		class MemoryBlock final
+
+		template <typename T>
+		class Accessor final
 		{
+			friend Allocator;
+
 		public:
-			MemoryBlockId						_id{ kMemoryBlockIdInvalid };
-			uint32								_referenceCount{ 0 };
-			uint32								_arraySize{ 0 };
+											Accessor(Allocator<T>* const memoryAllocator);
+
+		private:
+											Accessor(Allocator<T>* const memoryAllocator, const MemoryBlockId id, const uint32 blockOffset);
+
+		public:
+											Accessor(const Accessor& rhs);
+											Accessor(Accessor&& rhs) noexcept;
+
+		public:
+											~Accessor();
+
+		public:
+			Accessor&						operator=(const Accessor& rhs);
+			Accessor&						operator=(Accessor&& rhs) noexcept;
+
+		public:
+			const bool						isValid() const noexcept;
+
+		private:
+			void							invalidateXXX();
+
+		public:
+			void							setMemory(const T* const data, const uint32 count = 1);
+			void							setMemory(const T* const data, const uint32 offset, const uint32 count);
+			const T* const					getMemory() const noexcept;
+			T* const						getMemoryXXX() const noexcept;
+			const uint32					getArraySize() const noexcept;
+
+		private:
+			Allocator<T>*					_allocator;
+			MemoryBlockId					_id;
+			uint32							_blockOffset;
 		};
 
-	public:
-												MemoryAllocator2();
-												~MemoryAllocator2();
 
-	public:
-		template <typename ...Args>
-		MemoryAccessor2<T>						allocate(Args&&... args);
+		template <typename T>
+		class Allocator final
+		{
+			friend Accessor;
 
-		template <typename ...Args>
-		MemoryAccessor2<T>						allocateArray(const uint32 arraySize, Args&&... args);
+			typedef									void (*DestructorFunction)(const byte* const);
 
-		template <typename ...Args>
-		MemoryAccessor2<T>						reallocateArray(MemoryAccessor2<T> memoryAccessor, const uint32 newArraySize, const bool keepData);
+			static constexpr uint32					kDefaultBlockCapacity = 16;
 
-		void									deallocate(MemoryAccessor2<T>& memoryAccessor);
+			class MemoryBlock final
+			{
+			public:
+				MemoryBlockId						_id{ kMemoryBlockIdInvalid };
+				uint32								_referenceCount{ 0 };
+				uint32								_arraySize{ 0 };
+			};
 
-	private:
-		void									deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
+		public:
+													Allocator();
+													~Allocator();
 
-	private:
-		void									increaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
-		void									decreaseReferenceXXX(const MemoryAccessor2<T>& memoryAccessor);
+		public:
+			template <typename ...Args>
+			Accessor<T>								allocate(Args&&... args);
 
-	public:
-		const bool								isValid(const MemoryAccessor2<T> memoryAccessor) const noexcept;
+			template <typename ...Args>
+			Accessor<T>								allocateArray(const uint32 arraySize, Args&&... args);
 
-	private:
-		const bool								isValidXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
-		const bool								isResidentXXX(const MemoryAccessor2<T>& memoryAccessor) const noexcept;
+			template <typename ...Args>
+			Accessor<T>								reallocateArray(Accessor<T> memoryAccessor, const uint32 newArraySize, const bool keepData);
 
-	public:
-		const bool								isResident(const T* const rawPointer) const noexcept;
+			void									deallocate(Accessor<T>& memoryAccessor);
 
-	public:
-		const uint32							getArraySize(const MemoryAccessor2<T> memoryAccessor) const noexcept;
+		private:
+			void									deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
 
-	private:
-		T* const								getRawPointerXXX(const MemoryAccessor2<T> memoryAccessor) const noexcept;
+		private:
+			void									increaseReferenceXXX(const Accessor<T>& memoryAccessor);
+			void									decreaseReferenceXXX(const Accessor<T>& memoryAccessor);
 
-	public:
-		void									reserve(const uint32 blockCapacity);
+		public:
+			const bool								isValid(const Accessor<T> memoryAccessor) const noexcept;
 
-	private:
-		const uint32							getNextAvailableBlockOffset() const noexcept;
-		const uint32							getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept;
-		static const uint32						convertBlockUnitToByteUnit(const uint32 blockUnit) noexcept;
+		private:
+			const bool								isValidXXX(const Accessor<T>& memoryAccessor) const noexcept;
+			const bool								isResidentXXX(const Accessor<T>& memoryAccessor) const noexcept;
 
-	private:
-		static constexpr uint32					kTypeAlignment	= alignof(T);
-		static constexpr uint32					kTypeSize		= sizeof(T);
+		public:
+			const bool								isResident(const T* const rawPointer) const noexcept;
 
-	private:
-		DestructorFunction						_destructor;
+		public:
+			const uint32							getArraySize(const Accessor<T> memoryAccessor) const noexcept;
 
-	private:
-		byte*									_rawMemory;
+		private:
+			T* const								getRawPointerXXX(const Accessor<T> memoryAccessor) const noexcept;
 
-		MemoryBlock*							_memoryBlockArray;
-		uint32									_memoryBlockCapacity;
-		uint32									_memoryBlockCount;
-		BitVector								_isMemoryBlockInUse;
-		MemoryBlockId							_nextMemoryBlockId;
-	};
+		public:
+			void									reserve(const uint32 blockCapacity);
+
+		private:
+			const uint32							getNextAvailableBlockOffset() const noexcept;
+			const uint32							getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept;
+			static const uint32						convertBlockUnitToByteUnit(const uint32 blockUnit) noexcept;
+
+		private:
+			static constexpr uint32					kTypeAlignment	= alignof(T);
+			static constexpr uint32					kTypeSize		= sizeof(T);
+
+		private:
+			DestructorFunction						_destructor;
+
+		private:
+			byte*									_rawMemory;
+
+			MemoryBlock*							_memoryBlockArray;
+			uint32									_memoryBlockCapacity;
+			uint32									_memoryBlockCount;
+			BitVector								_isMemoryBlockInUse;
+			MemoryBlockId							_nextMemoryBlockId;
+		};
+	}
 }
 
 

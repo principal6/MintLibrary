@@ -10,7 +10,7 @@
 namespace fs
 {
 	template<typename T>
-	MemoryAllocator2<T> Vector<T>::_memoryAllocator;
+	fs::Memory::Allocator<T> Vector<T>::_memoryAllocator;
 
 	template<typename T>
 	inline Vector<T>::Vector()

@@ -155,26 +155,26 @@ const bool testMemoryAllocator()
 			int16	_value;
 		};
 
-		fs::MemoryAllocator2<ForTest> memoryAllocator2;
-		fs::MemoryAccessor2 maa = memoryAllocator2.allocate('a', 1);
+		fs::Memory::Allocator<ForTest> memoryAllocator2;
+		fs::Memory::Accessor maa = memoryAllocator2.allocate('a', 1);
 		const bool isMaaValid0 = maa.isValid();
-		fs::MemoryAccessor2 mab = memoryAllocator2.allocate('b', 2);
+		fs::Memory::Accessor mab = memoryAllocator2.allocate('b', 2);
 		{
-			const fs::MemoryAccessor2 mab1 = mab;
+			const fs::Memory::Accessor mab1 = mab;
 			auto mab1raw = mab1.getMemory();
 			maa.setMemory(mab1raw);
 		}
 		memoryAllocator2.deallocate(maa);
 		memoryAllocator2.deallocate(mab);
 		const bool isMaaValid1 = maa.isValid();
-		fs::MemoryAccessor2 mac = memoryAllocator2.allocate('c', 3);
-		fs::MemoryAccessor2 mad = memoryAllocator2.allocateArray(5, 'd', 4);
+		fs::Memory::Accessor mac = memoryAllocator2.allocate('c', 3);
+		fs::Memory::Accessor mad = memoryAllocator2.allocateArray(5, 'd', 4);
 		memoryAllocator2.reallocateArray(mad, 5, true);
 	}
 
 	{
-		fs::MemoryAllocator2<char> memoryAllocator2;
-		fs::MemoryAccessor2 a = memoryAllocator2.allocateArray(5);
+		fs::Memory::Allocator<char> memoryAllocator2;
+		fs::Memory::Accessor a = memoryAllocator2.allocateArray(5);
 		a.setMemory("abcd", 5);
 	}
 
@@ -300,7 +300,7 @@ const bool testStringUtil()
 	fs::Vector<fs::DynamicStringA> testATokenized;
 	fs::StringUtil::tokenize(testA, ' ', testATokenized);
 	
-	const fs::DynamicStringA testB{
+	fs::DynamicStringA testB{
 		R"(
 			#include <ShaderStructDefinitions>
 			#include <VsConstantBuffers>
