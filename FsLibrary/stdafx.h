@@ -12,9 +12,12 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <type_traits>
+
+#pragma region Thread
 #include <mutex>
 #include <atomic>
-#include <type_traits>
+#pragma endregion
 
 #pragma region FsLibrary
 #include <CommonDefinitions.h>

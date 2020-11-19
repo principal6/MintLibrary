@@ -320,6 +320,33 @@ const bool testStringUtil()
 	fs::Vector<fs::DynamicStringA> testBTokenized;
 	fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
+	{
+		fs::Memory::Viewer<fs::DynamicStringA> tracker;
+		fs::Memory::Viewer<fs::DynamicStringA> tracker1;
+		{
+			fs::DynamicStringA abc{ "ABC" };
+			tracker = abc;
+			auto refData = tracker.viewData();
+
+			const bool trackerAlive = tracker.isAlive();
+
+			tracker1 = tracker;
+			fs::Memory::Viewer<fs::DynamicStringA> tracker2 = tracker;
+		}
+		const bool trackerAlive = tracker.isAlive();
+	}
+	
+	{
+		fs::DynamicStringA abc = "ABC";
+
+		fs::Memory::Viewer<fs::DynamicStringA> tracker;
+		{
+			tracker = abc;
+
+			fs::Memory::Viewer<fs::DynamicStringA> tracker1 = tracker;
+		}
+	}
+
 	return true;
 }
 

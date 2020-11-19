@@ -10,8 +10,7 @@
 #include <Container/Container.h>
 #include <File/File.h>
 #include <Math/Math.h>
-#include <Memory/Allocator.h>
-#include <Memory/Allocator.hpp>
+#include <Memory/Memory.h>
 #include <Platform/Platform.h>
 #include <SimpleRendering/GraphicDevice.h>
 
