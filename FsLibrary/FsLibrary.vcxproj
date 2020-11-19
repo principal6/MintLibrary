@@ -69,8 +69,8 @@
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Quaternion.hpp" />
     <ClInclude Include="Math\Math.h" />
-    <ClInclude Include="Memory\MemoryAllocator2.h" />
-    <ClInclude Include="Memory\MemoryAllocator2.hpp" />
+    <ClInclude Include="Memory\Allocator.h" />
+    <ClInclude Include="Memory\Allocator.hpp" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />

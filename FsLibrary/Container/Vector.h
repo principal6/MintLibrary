@@ -6,7 +6,7 @@
 
 
 #include <CommonDefinitions.h>
-#include <Memory\MemoryAllocator2.h>
+#include <Memory\Allocator.h>
 #include <initializer_list>
 
 

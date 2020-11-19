@@ -2,7 +2,7 @@
 #include <Container/DynamicString.h>
 
 #include <Container/StringUtil.h>
-#include <Memory/MemoryAllocator2.hpp>
+#include <Memory/Allocator.hpp>
 
 
 namespace fs

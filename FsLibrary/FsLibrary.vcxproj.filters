@@ -203,17 +203,17 @@
     <ClInclude Include="Container\Tree.hpp">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator2.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator2.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Container\StringUtil.hpp">
       <Filter>Container</Filter>
     </ClInclude>
     <ClInclude Include="File\TextFile.h">
       <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Allocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Allocator.hpp">
+      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
