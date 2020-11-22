@@ -155,7 +155,7 @@ const bool testMemoryAllocator()
 			int16	_value;
 		};
 
-		fs::Memory::Allocator<ForTest> memoryAllocator2;
+		fs::Memory::Allocator<ForTest>& memoryAllocator2 = fs::Memory::Allocator<ForTest>::getInstance();
 		fs::Memory::Accessor maa = memoryAllocator2.allocate('a', 1);
 		const bool isMaaValid0 = maa.isValid();
 		fs::Memory::Accessor mab = memoryAllocator2.allocate('b', 2);
@@ -173,7 +173,7 @@ const bool testMemoryAllocator()
 	}
 
 	{
-		fs::Memory::Allocator<char> memoryAllocator2;
+		fs::Memory::Allocator<char>& memoryAllocator2 = fs::Memory::Allocator<char>::getInstance();
 		fs::Memory::Accessor a = memoryAllocator2.allocateArray(5);
 		a.setMemory("abcd", 5);
 	}

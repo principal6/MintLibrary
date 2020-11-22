@@ -134,7 +134,7 @@ namespace fs
 		void								setMemoryInternal(const char* const rawString, const uint32 offset = 0);
 		
 	private:
-		static fs::Memory::Allocator<char>	_memoryAllocator;
+		fs::Memory::Allocator<char>&		_memoryAllocator;
 
 	private:
 		fs::Memory::Accessor<char>			_memoryAccessor;

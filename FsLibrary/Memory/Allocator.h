@@ -88,8 +88,19 @@ namespace fs
 			};
 
 		public:
+			static Allocator&						getInstance();
+
+		private:
 													Allocator();
+													Allocator(const Allocator& rhs) = delete;
+													Allocator(Allocator&& rhs) noexcept = delete;
+
+		public:
 													~Allocator();
+
+		public:
+			Allocator&								operator=(const Allocator& rhs) = delete;
+			Allocator&								operator=(Allocator&& rhs) noexcept = delete;
 
 		public:
 			template <typename ...Args>

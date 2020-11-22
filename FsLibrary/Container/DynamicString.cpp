@@ -34,9 +34,9 @@ namespace fs
 	}
 #pragma endregion
 
-	fs::Memory::Allocator<char> DynamicStringA::_memoryAllocator;
 	DynamicStringA::DynamicStringA()
-		: _memoryAccessor{ &_memoryAllocator }
+		: _memoryAllocator{ fs::Memory::Allocator<char>::getInstance() }
+		, _memoryAccessor{ &_memoryAllocator }
 		, _length{ 0 }
 		, _cachedHash{ 0 }
 	{

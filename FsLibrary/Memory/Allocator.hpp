@@ -216,6 +216,13 @@ namespace fs
 		}
 
 		template<typename T>
+		inline Allocator<T>& Allocator<T>::getInstance()
+		{
+			static Allocator<T> allocator;
+			return allocator;
+		}
+
+		template<typename T>
 		inline Allocator<T>::~Allocator()
 		{
 			for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
@@ -361,8 +368,19 @@ namespace fs
 			{
 				for (uint32 iter = 0; iter < newArraySize; ++iter)
 				{
+					const uint32 currentNewBlockOffset = static_cast<uint64>(newFirstBlockOffset) + iter;
+					{
+						_memoryBlockArray[currentNewBlockOffset]._id = (0 == iter) ? _nextMemoryBlockId : kMemoryBlockIdArrayBody;
+						_memoryBlockArray[currentNewBlockOffset]._referenceCount = (0 == iter) ? 1 : 0;
+						_memoryBlockArray[currentNewBlockOffset]._arraySize = (0 == iter) ? newArraySize : 0;
+
+						_isMemoryBlockInUse.set(currentNewBlockOffset, true);
+					}
+
 					if (iter < oldArraySize)
 					{
+						// Old Array 제거
+
 						const uint32 currentOldBlockOffset = static_cast<uint64>(oldFirstBlockOffset) + iter;
 						_memoryBlockArray[currentOldBlockOffset]._id = kMemoryBlockIdInvalid;
 						_memoryBlockArray[currentOldBlockOffset]._referenceCount = 0;
@@ -370,19 +388,21 @@ namespace fs
 
 						_isMemoryBlockInUse.set(currentOldBlockOffset, false);
 					}
-
+					else
 					{
-						const uint32 currentNewBlockOffset = static_cast<uint64>(newFirstBlockOffset) + iter;
-						_memoryBlockArray[currentNewBlockOffset]._id = (0 == iter) ? _nextMemoryBlockId : kMemoryBlockIdArrayBody;
-						_memoryBlockArray[currentNewBlockOffset]._referenceCount = (0 == iter) ? 1 : 0;
-						_memoryBlockArray[currentNewBlockOffset]._arraySize = (0 == iter) ? newArraySize : 0;
+						// Old Array 에서 없었지만 New Array 에 추가된 항목들 생성자 호출!!!
 
-						_isMemoryBlockInUse.set(currentNewBlockOffset, true);
+						// Constructor
+						const uint32 currentNewBlockByteOffset = convertBlockUnitToByteUnit(currentNewBlockOffset);
+						new(&_rawMemory[currentNewBlockByteOffset])T();
 					}
 				}
 			}
 			else
 			{
+				// New Array 는 Old Array 보다 크기가 줄었으므로
+				// 생성자 호출 불필요.
+
 				for (uint32 iter = 0; iter < oldArraySize; ++iter)
 				{
 					{

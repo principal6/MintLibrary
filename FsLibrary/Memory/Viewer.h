@@ -18,31 +18,28 @@ namespace fs
 		class Viewer
 		{
 		public:
-									Viewer();
-									
-									Viewer(const T& instance);
-									Viewer(T&& instance) = delete;
-									Viewer(const Viewer& rhs);
-									Viewer(Viewer&& rhs) noexcept;
-									
-									~Viewer() = default;
+												Viewer();
+												Viewer(const T& instance);
+												Viewer(T&& instance) = delete;
+												Viewer(const Viewer& rhs);
+												Viewer(Viewer&& rhs) noexcept;
+												
+												~Viewer() = default;
 
 		public:
-			Viewer&					operator=(const T& rhs);
-			Viewer&					operator=(T&& rhs) noexcept = delete;
+			Viewer&								operator=(const T& rhs);
+			Viewer&								operator=(T&& rhs) noexcept = delete;
 
-			Viewer&					operator=(const Viewer& rhs);
-			Viewer&					operator=(Viewer&& rhs) noexcept;
+			Viewer&								operator=(const Viewer& rhs);
+			Viewer&								operator=(Viewer&& rhs) noexcept;
 
 		public:
-			const T*				viewData() const noexcept;
-			const bool				isAlive() const noexcept;
+			const T*							viewData() const noexcept;
+			const bool							isAlive() const noexcept;
 
 		private:
-			static Allocator<T>		_memoryAllocator;
-
-		private:
-			Accessor<T>				_memoryAccesor;
+			fs::Memory::Allocator<T>* const		_memoryAllocator;
+			fs::Memory::Accessor<T>				_memoryAccesor;
 		};
 	}
 }

@@ -17,11 +17,20 @@ namespace fs
 	{
 		static constexpr uint32				kDefaultCapacity = 8;
 
+	private:
+											Vector(fs::Memory::Allocator<T>& memoryAllocator, const uint32 capacity, const uint32 size);
+
 	public:
 											Vector();
 											Vector(const std::initializer_list<T>& il);
 		explicit							Vector(const uint32 capacity);
+											Vector(const Vector& rhs);
+											Vector(Vector&& rhs) noexcept;
 											~Vector();
+
+	public:
+		Vector&								operator=(const Vector& rhs);
+		Vector&								operator=(Vector&& rhs) noexcept;
 
 	public:
 		void								reserve(const uint32 capacity);
@@ -52,9 +61,7 @@ namespace fs
 		const T&							back() const;
 
 	private:
-		static fs::Memory::Allocator<T>		_memoryAllocator;
-
-	private:
+		fs::Memory::Allocator<T>&			_memoryAllocator;
 		fs::Memory::Accessor<T>				_memoryAccessor;
 		uint32								_capacity;
 		uint32								_size;

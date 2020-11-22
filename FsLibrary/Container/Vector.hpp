@@ -10,27 +10,30 @@
 namespace fs
 {
 	template<typename T>
-	fs::Memory::Allocator<T> Vector<T>::_memoryAllocator;
+	inline Vector<T>::Vector(fs::Memory::Allocator<T>& memoryAllocator, const uint32 capacity, const uint32 size)
+		: _memoryAllocator{ memoryAllocator }
+		, _memoryAccessor{ &_memoryAllocator }
+		, _capacity{ capacity }
+		, _size{ size }
+	{
+		__noop;
+	}
 
 	template<typename T>
 	inline Vector<T>::Vector()
-		: _memoryAccessor{ &_memoryAllocator }
-		, _capacity{ 0 }
-		, _size{ 0 }
+		: Vector(fs::Memory::Allocator<T>::getInstance(), 0, 0)
 	{
 		reserve(kDefaultCapacity);
 	}
 
 	template<typename T>
 	inline Vector<T>::Vector(const std::initializer_list<T>& il)
-		: _memoryAccessor{ &_memoryAllocator }
-		, _capacity{ 0 }
-		, _size{ 0 }
+		: Vector()
 	{
-		const uint32	count = static_cast<uint32>(il.size());
+		const uint32 count = static_cast<uint32>(il.size());
 		resize(count);
 
-		const T* const	first = il.begin();
+		const T* const first = il.begin();
 		for (uint32 index = 0; index < count; ++index)
 		{
 			set(index, *(first + index));
@@ -39,17 +42,59 @@ namespace fs
 
 	template<typename T>
 	inline Vector<T>::Vector(const uint32 capacity)
-		: _memoryAccessor{ &_memoryAllocator }
-		, _capacity{ 0 }
-		, _size{ 0 }
+		: Vector()
 	{
 		reserve(capacity);
+	}
+
+	template<typename T>
+	inline Vector<T>::Vector(const Vector& rhs)
+		: Vector(fs::Memory::Allocator<T>::getInstance(), rhs._capacity, rhs._size)
+	{
+		_memoryAccessor = rhs._memoryAccessor;
+	}
+
+	template<typename T>
+	inline Vector<T>::Vector(Vector&& rhs) noexcept
+		: Vector(fs::Memory::Allocator<T>::getInstance(), rhs._capacity, rhs._size)
+	{
+		_memoryAccessor = std::move(rhs._memoryAccessor);
+
+		rhs._capacity = 0;
+		rhs._size = 0;
 	}
 
 	template<typename T>
 	inline Vector<T>::~Vector()
 	{
 		__noop;
+	}
+
+	template<typename T>
+	inline Vector<T>& Vector<T>::operator=(const Vector& rhs)
+	{
+		if (this != &rhs)
+		{
+			_memoryAccessor = rhs._memoryAccessor;
+			_capacity = rhs._capacity;
+			_size = rhs._size;
+		}
+		return *this;
+	}
+
+	template<typename T>
+	inline Vector<T>& Vector<T>::operator=(Vector&& rhs) noexcept
+	{
+		if (this != &rhs)
+		{
+			_memoryAccessor = std::move(rhs._memoryAccessor);
+			_capacity = rhs._capacity;
+			_size = rhs._size;
+
+			rhs._capacity = 0;
+			rhs._size = 0;
+		}
+		return *this;
 	}
 
 	template<typename T>
