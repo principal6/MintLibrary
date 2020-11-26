@@ -76,7 +76,9 @@ namespace fs
 			localtime_s(&localNow, &now);
 			strftime(timeBuffer, kTimeBufferSize, "%Y-%m-%d-%H:%M:%S", &localNow);
 
-			sprintf_s(outBuffer, kFinalBufferSize, "[%s] [%s] %s - %s %s[%d] %s()\n", logTag, author, content, timeBuffer, fileName + logger._basePathOffset, lineNumber, functionName);
+			sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s[%d] %s()\n", logTag, timeBuffer, author, content, fileName + logger._basePathOffset, lineNumber, functionName);
+
+			OutputDebugStringA(outBuffer);
 
 			logger._history.append(outBuffer);
 		}
