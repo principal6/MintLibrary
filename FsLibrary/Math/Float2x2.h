@@ -36,11 +36,11 @@ namespace fs
 		Float2x2&					operator=(const Float2x2& rhs)				= default;
 		Float2x2&					operator=(Float2x2&& rhs) noexcept			= default;
 	public:
-		const Float2x2				operator*(const float s) const noexcept;
-		const Float2x2				operator/(const float s) const noexcept;
+		Float2x2					operator*(const float s) const noexcept;
+		Float2x2					operator/(const float s) const noexcept;
 
 	public:
-		const Float2x2				operator*(const Float2x2& rhs) const noexcept;
+		Float2x2					operator*(const Float2x2& rhs) const noexcept;
 
 	public:
 		void						set(const uint32 row, const uint32 col, const float newValue) noexcept;
@@ -50,7 +50,7 @@ namespace fs
 
 	public:
 		const float					determinant() const noexcept;
-		const Float2x2				inverse() const noexcept;
+		Float2x2					inverse() const noexcept;
 
 	private:
 		float						_m[2][2]{};
