@@ -20,12 +20,12 @@ namespace fs
 		explicit				Float4(const float x, const float y, const float z, const float w);
 		explicit				Float4(const Float3& rhs);
 								Float4(const Float4& rhs)											= default;
-								Float4(Float4&& rhs)												= default;
+								Float4(Float4&& rhs) noexcept										= default;
 								~Float4()															= default;
 
 	public:
 		Float4&					operator=(const Float4& rhs)										= default;
-		Float4&					operator=(Float4&& rhs)												= default;
+		Float4&					operator=(Float4&& rhs) noexcept									= default;
 
 	public:
 		Float4&					operator+=(const Float4& rhs);
