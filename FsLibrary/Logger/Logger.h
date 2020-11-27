@@ -16,15 +16,15 @@ namespace std
 namespace fs
 {
 #pragma region Logging
-	#define FS_LOG(author, content) fs::Logger::log(" _LOG_ ", author, content, __func__, __FILE__, __LINE__)
-	#define FS_LOG_ERROR(author, content) fs::Logger::logError(" ERROR ", author, content, __func__, __FILE__, __LINE__)
+	#define FS_LOG(author, format, ...) fs::Logger::log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+	#define FS_LOG_ERROR(author, format, ...) fs::Logger::logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
 #pragma endregion
 
 #pragma region Assertion
 	#if defined FS_DEBUG
-		#define FS_ASSERT(author, expression, content) if (!(expression)) { fs::Logger::logError(" ASSRT ", author, content, __func__, __FILE__, __LINE__); }
+		#define FS_ASSERT(author, expression, format, ...) if (!(expression)) { fs::Logger::logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); }
 	#else
-		#define FS_ASSERT(author, expression, content)
+		#define FS_ASSERT(author, expression, format, ...)
 	#endif
 #pragma endregion
 
@@ -44,8 +44,8 @@ namespace fs
 		static void		setOutputFileName(const char* const fileName);
 
 	public:
-		static void		log(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber);
-		static void		logError(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber);
+		static void		log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
+		static void		logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
 
 	private:
 		static void		logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char (&outBuffer)[kFinalBufferSize]);

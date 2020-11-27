@@ -567,8 +567,8 @@ int main()
 	testTree();
 
 	testMemoryAllocator2();
-	
-	FS_LOG("김장원", "LOG");
+
+	FS_LOG("김장원", "LOG %d", 1234);
 	//FS_ASSERT("김장원", false, "ASSERTION");
 	//FS_LOG_ERROR("김장원", "ERROR");
 
