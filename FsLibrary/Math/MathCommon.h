@@ -16,6 +16,12 @@ namespace fs
 		{
 			return static_cast<uint32>(1 << exponent);
 		}
+
+		template<typename T>
+		FS_INLINE constexpr T clamp(const T value, const T min_, const T max_)
+		{
+			return max(min(value, max_), min_);
+		}
 	}
 }
 
