@@ -7,24 +7,24 @@
 
 namespace fs
 {
-	inline const Quaternion Quaternion::conjugate(const Quaternion& q) noexcept
+	FS_INLINE Quaternion Quaternion::conjugate(const Quaternion& q) noexcept
 	{
 		return Quaternion(q.a(), -q.b(), -q.c(), -q.d());
 	}
 
-	inline const float Quaternion::norm(const Quaternion& q) noexcept
+	FS_INLINE const float Quaternion::norm(const Quaternion& q) noexcept
 	{
 		return q._data.length();
 	}
 
-	inline const Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
+	FS_INLINE Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
 	{
 		const Quaternion	conjugate	= Quaternion::conjugate(q);
 		const float			norm		= Quaternion::norm(q);
 		return Quaternion(conjugate / (norm * norm));
 	}
 
-	inline const Quaternion Quaternion::rotationQuaternion(const Float4& axis, float angle) noexcept
+	FS_INLINE Quaternion Quaternion::rotationQuaternion(const Float4& axis, float angle) noexcept
 	{
 		const Float4	r			= Float4::normalize(axis);
 		const float		half_angle	= angle * 0.5f;
@@ -34,24 +34,24 @@ namespace fs
 	}
 
 
-	inline Quaternion::Quaternion()
+	FS_INLINE Quaternion::Quaternion()
 		: Quaternion(1.0f, 0.0f, 0.0f, 0.0f)
 	{
 		__noop;
 	}
 
-	inline Quaternion::Quaternion(const float a, const float b, const float c, const float d)
+	FS_INLINE Quaternion::Quaternion(const float a, const float b, const float c, const float d)
 		: _data{ Float4(b, c, d, a) }
 	{
 		__noop;
 	}
 
-	inline Quaternion::Quaternion(const Float4& v) : _data{ v._x, v._y, v._z, 0 }
+	FS_INLINE Quaternion::Quaternion(const Float4& v) : _data{ v._x, v._y, v._z, 0 }
 	{
 		__noop;
 	}
 
-	inline const Quaternion Quaternion::operator*(const Quaternion& q) const noexcept
+	FS_INLINE Quaternion Quaternion::operator*(const Quaternion& q) const noexcept
 	{
 		const float a1 = a();
 		const float b1 = b();
@@ -72,12 +72,12 @@ namespace fs
 		);
 	}
 
-	inline const Quaternion Quaternion::operator/(const float s) const noexcept
+	FS_INLINE Quaternion Quaternion::operator/(const float s) const noexcept
 	{
 		return Quaternion(a() / s, b() / s, c() / s, d() / s);
 	}
 
-	inline const Quaternion Quaternion::reciprocal() const noexcept
+	FS_INLINE Quaternion Quaternion::reciprocal() const noexcept
 	{
 		return Quaternion::reciprocal(*this);
 	}

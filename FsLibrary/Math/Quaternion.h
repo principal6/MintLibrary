@@ -17,16 +17,16 @@ namespace fs
 #pragma region Static functions
 	private:
 		// q*
-		static const Quaternion		conjugate(const Quaternion& q) noexcept;
+		static Quaternion			conjugate(const Quaternion& q) noexcept;
 
 		// ||q||
 		static const float			norm(const Quaternion& q) noexcept;
 
 	public:
-		static const Quaternion		rotationQuaternion(const Float4& axis, float angle) noexcept;
+		static Quaternion			rotationQuaternion(const Float4& axis, float angle) noexcept;
 
 		// q^(-1)
-		static const Quaternion		reciprocal(const Quaternion& q) noexcept;
+		static Quaternion			reciprocal(const Quaternion& q) noexcept;
 #pragma endregion
 
 	public:
@@ -43,11 +43,11 @@ namespace fs
 
 	public:
 		// Hamilton product
-		const Quaternion			operator*(const Quaternion& q) const noexcept;
-		const Quaternion			operator/(const float s) const noexcept;
+		Quaternion					operator*(const Quaternion& q) const noexcept;
+		Quaternion					operator/(const float s) const noexcept;
 
 	public:
-		const Quaternion			reciprocal() const noexcept;
+		Quaternion					reciprocal() const noexcept;
 
 	private:
 		const float					a() const noexcept;
