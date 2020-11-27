@@ -6,6 +6,7 @@
 
 
 #include <CommonDefinitions.h>
+
 #include <Math/MathCommon.h>
 #include <Math/Float3.h>
 
