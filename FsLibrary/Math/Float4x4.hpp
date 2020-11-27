@@ -8,17 +8,17 @@
 
 namespace fs
 {
-	inline const Float4 Float4x4::mul(const Float4x4& m, const Float4& v) noexcept
+	inline Float4 Float4x4::mul(const Float4x4& m, const Float4& v) noexcept
 	{
 		return m.mul(v);
 	}
 
-	inline const Float4x4 Float4x4::mul(const Float4x4& l, const Float4x4& r) noexcept
+	inline Float4x4 Float4x4::mul(const Float4x4& l, const Float4x4& r) noexcept
 	{
 		return l.mul(r);
 	}
 
-	inline const Float4x4 Float4x4::translationMatrix(const float x, const float y, const float z) noexcept
+	inline Float4x4 Float4x4::translationMatrix(const float x, const float y, const float z) noexcept
 	{
 		return Float4x4
 		(
@@ -29,7 +29,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::scalingMatrix(const float x, const float y, const float z) noexcept
+	inline Float4x4 Float4x4::scalingMatrix(const float x, const float y, const float z) noexcept
 	{
 		return Float4x4
 		(
@@ -40,7 +40,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::rotationMatrixX(const float angle) noexcept
+	inline Float4x4 Float4x4::rotationMatrixX(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -51,7 +51,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::rotationMatrixY(const float angle) noexcept
+	inline Float4x4 Float4x4::rotationMatrixY(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -62,7 +62,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::rotationMatrixZ(const float angle) noexcept
+	inline Float4x4 Float4x4::rotationMatrixZ(const float angle) noexcept
 	{
 		return Float4x4
 		(
@@ -73,7 +73,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept
+	inline Float4x4 Float4x4::rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept
 	{
 		// (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
 
@@ -94,7 +94,7 @@ namespace fs
 		return result;
 	}
 
-	inline const Float4x4 Float4x4::projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept
+	inline Float4x4 Float4x4::projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept
 	{
 		const float a = 1.0f / (tanf(Fov) * ratio);
 		const float b = 1.0f / (tanf(Fov));
@@ -110,7 +110,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
+	inline Float4x4 Float4x4::projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept
 	{
 		return Float4x4
 		(
@@ -158,7 +158,7 @@ namespace fs
 		__noop;
 	}
 
-	inline const Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
+	inline Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
 	{
 		return Float4x4(
 			_m[0][0] + rhs._m[0][0], _m[0][1] + rhs._m[0][1], _m[0][2] + rhs._m[0][2], _m[0][3] + rhs._m[0][3],
@@ -168,7 +168,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::operator-(const Float4x4& rhs) const noexcept
+	inline Float4x4 Float4x4::operator-(const Float4x4& rhs) const noexcept
 	{
 		return Float4x4(
 			_m[0][0] - rhs._m[0][0], _m[0][1] - rhs._m[0][1], _m[0][2] - rhs._m[0][2], _m[0][3] - rhs._m[0][3],
@@ -178,7 +178,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::operator*(const float s) const noexcept
+	inline Float4x4 Float4x4::operator*(const float s) const noexcept
 	{
 		return Float4x4(
 			_m[0][0] * s, _m[0][1] * s, _m[0][2] * s, _m[0][3] * s,
@@ -188,7 +188,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::operator/(const float s) const noexcept
+	inline Float4x4 Float4x4::operator/(const float s) const noexcept
 	{
 		return Float4x4(
 			_m[0][0] / s, _m[0][1] / s, _m[0][2] / s, _m[0][3] / s,
@@ -198,12 +198,12 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::operator*(const Float4x4& rhs) const noexcept
+	inline Float4x4 Float4x4::operator*(const Float4x4& rhs) const noexcept
 	{
 		return mul(*this, rhs);
 	}
 
-	inline const Float4 Float4x4::operator*(const Float4& v) const noexcept
+	inline Float4 Float4x4::operator*(const Float4& v) const noexcept
 	{
 		return mul(*this, v);
 	}
@@ -252,7 +252,7 @@ namespace fs
 			= _m[2][0] = _m[2][1] = _m[2][3] = _m[3][0] = _m[3][1] = _m[3][2] = 0.0f;
 	}
 
-	inline const Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
+	inline Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
 	{
 		Float3x3 result;
 
@@ -286,7 +286,7 @@ namespace fs
 		return a * minor(0, 0).determinant() - b * minor(0, 1).determinant() + c * minor(0, 2).determinant() - d * minor(0, 3).determinant();
 	}
 
-	inline const Float4x4 Float4x4::transpose() const noexcept
+	inline Float4x4 Float4x4::transpose() const noexcept
 	{
 		return Float4x4
 		(
@@ -297,7 +297,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::cofactor() const noexcept
+	inline Float4x4 Float4x4::cofactor() const noexcept
 	{
 		return Float4x4
 		(
@@ -308,17 +308,17 @@ namespace fs
 		);
 	}
 
-	inline const Float4x4 Float4x4::adjugate() const noexcept
+	inline Float4x4 Float4x4::adjugate() const noexcept
 	{
 		return cofactor().transpose();
 	}
 
-	inline const Float4x4 Float4x4::inverse() const noexcept
+	inline Float4x4 Float4x4::inverse() const noexcept
 	{
 		return adjugate() / determinant();
 	}
 
-	inline const Float4x4 Float4x4::mul(const Float4x4& rhs) const noexcept
+	inline Float4x4 Float4x4::mul(const Float4x4& rhs) const noexcept
 	{
 		return Float4x4
 		(
@@ -348,7 +348,7 @@ namespace fs
 		);
 	}
 
-	inline const Float4 Float4x4::mul(const Float4& v) const noexcept
+	inline Float4 Float4x4::mul(const Float4& v) const noexcept
 	{
 		return Float4
 		(
