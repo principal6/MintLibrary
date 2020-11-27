@@ -216,7 +216,7 @@ namespace fs
 		}
 
 		template<typename T>
-		inline Allocator<T>& Allocator<T>::getInstance()
+		FS_INLINE Allocator<T>& Allocator<T>::getInstance()
 		{
 			static Allocator<T> allocator;
 			return allocator;
