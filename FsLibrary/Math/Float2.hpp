@@ -22,74 +22,75 @@ namespace fs
 	}
 
 	inline Float2::Float2(const float x, const float y)
-		: _f{ x, y } 
+		: _x{ x }
+		, _y{ y }
 	{
 		__noop;
 	}
 
 	inline Float2& Float2::operator+=(const Float2& rhs)
 	{
-		_f[0] += rhs._f[0];
-		_f[1] += rhs._f[1];
+		_x += rhs._x;
+		_y += rhs._y;
 		return *this;
 	}
 
 	inline Float2& Float2::operator-=(const Float2& rhs)
 	{
-		_f[0] -= rhs._f[0];
-		_f[1] -= rhs._f[1];
+		_x -= rhs._x;
+		_y -= rhs._y;
 		return *this;
 	}
 
 	inline Float2& Float2::operator*=(const float s)
 	{
-		_f[0] *= s;
-		_f[1] *= s;
+		_x *= s;
+		_y *= s;
 		return *this;
 	}
 
 	inline Float2& Float2::operator/=(const float s)
 	{
-		_f[0] /= s;
-		_f[1] /= s;
+		_x /= s;
+		_y /= s;
 		return *this;
 	}
 
-	inline const Float2 Float2::operator+(const Float2& rhs) const
+	inline Float2 Float2::operator+(const Float2& rhs) const noexcept
 	{
-		return Float2(_f[0] + rhs._f[0], _f[1] + rhs._f[1]);
+		return Float2(_x + rhs._x, _y + rhs._y);
 	}
 
-	inline const Float2 Float2::operator-(const Float2& rhs) const
+	inline Float2 Float2::operator-(const Float2& rhs) const noexcept
 	{
-		return Float2(_f[0] - rhs._f[0], _f[1] - rhs._f[1]);
+		return Float2(_x - rhs._x, _y - rhs._y);
 	}
 
-	inline const Float2 Float2::operator*(const float s) const
+	inline Float2 Float2::operator*(const float s) const noexcept
 	{
-		return Float2(_f[0] * s, _f[1] * s);
+		return Float2(_x * s, _y * s);
 	}
 
-	inline const Float2 Float2::operator/(const float s) const
+	inline Float2 Float2::operator/(const float s) const noexcept
 	{
-		return Float2(_f[0] / s, _f[1] / s);
+		return Float2(_x / s, _y / s);
 	}
 
 	inline float& Float2::operator[](const uint32 index) noexcept
 	{
 		FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
-		return _f[index];
+		return (&_x)[index];
 	}
 
 	inline const float& Float2::operator[](const uint32 index) const noexcept
 	{
 		FS_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
-		return _f[index];
+		return (&_x)[index];
 	}
 
 	inline const bool Float2::operator==(const Float2& rhs) const noexcept
 	{
-		return (_f[0] == rhs._f[0] && _f[1] == rhs._f[1]);
+		return (_x == rhs._x && _y == rhs._y);
 	}
 
 	inline const bool Float2::operator!=(const Float2& rhs) const noexcept
@@ -99,12 +100,12 @@ namespace fs
 
 	inline const float Float2::dot(const Float2& lhs, const Float2& rhs) noexcept
 	{
-		return lhs._f[0] * rhs._f[0] + lhs._f[1] * rhs._f[1];
+		return lhs._x * rhs._x + lhs._y * rhs._y;
 	}
 
-	inline const Float2 Float2::normalize(const Float2& float2) noexcept
+	inline Float2 Float2::normalize(const Float2& float2) noexcept
 	{
-		return (float2 / float2.length());
+		return Float2(float2 / float2.length());
 	}
 
 	inline const float Float2::lengthSqaure() const noexcept
@@ -119,28 +120,28 @@ namespace fs
 
 	FS_INLINE void Float2::set(const float x, const float y)
 	{
-		_f[0] = x;
-		_f[1] = y;
+		_x = x;
+		_y = y;
 	}
 
 	FS_INLINE void Float2::x(const float newX) noexcept
 	{
-		_f[0] = newX;
+		_x = newX;
 	}
 
 	FS_INLINE const float Float2::x() const noexcept
 	{
-		return _f[0];
+		return _x;
 	}
 
 	FS_INLINE void Float2::y(const float newY) noexcept
 	{
-		_f[1] = newY;
+		_y = newY;
 	}
 
 	FS_INLINE const float Float2::y() const noexcept
 	{
-		return _f[1];
+		return _y;
 	}
 
 }

@@ -10,6 +10,7 @@
 
 namespace fs
 {
+	// No SIMD
 	class Float2 final
 	{
 	public:
@@ -17,12 +18,12 @@ namespace fs
 		explicit				Float2(const float s);
 		explicit				Float2(const float x, const float y);
 								Float2(const Float2& rhs)				= default;
-								Float2(Float2&& rhs)					= default;
+								Float2(Float2&& rhs) noexcept			= default;
 								~Float2()								= default;
 
 	public:
 		Float2&					operator=(const Float2& rhs)			= default;
-		Float2&					operator=(Float2&& rhs)					= default;
+		Float2&					operator=(Float2&& rhs) noexcept		= default;
 
 	public:
 		Float2&					operator+=(const Float2& rhs);		
@@ -31,10 +32,10 @@ namespace fs
 		Float2&					operator/=(const float s);
 
 	public:
-		const Float2			operator+(const Float2& rhs) const;
-		const Float2			operator-(const Float2& rhs) const;
-		const Float2			operator*(const float s) const;
-		const Float2			operator/(const float s) const;
+		Float2					operator+(const Float2& rhs) const noexcept;
+		Float2					operator-(const Float2& rhs) const noexcept;
+		Float2					operator*(const float s) const noexcept;
+		Float2					operator/(const float s) const noexcept;
 
 	public:
 		float&					operator[](const uint32 index) noexcept;
@@ -46,7 +47,7 @@ namespace fs
 
 	public:
 		static const float		dot(const Float2& lhs, const Float2& rhs) noexcept;
-		static const Float2		normalize(const Float2& float2) noexcept;
+		static Float2			normalize(const Float2& float2) noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;
@@ -59,8 +60,9 @@ namespace fs
 		void					y(const float newY) noexcept;
 		const float				y() const noexcept;
 
-	private:
-		float					_f[2];
+	public:
+		float					_x;
+		float					_y;
 	};
 }
 
