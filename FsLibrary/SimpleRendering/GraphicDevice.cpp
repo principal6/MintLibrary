@@ -319,20 +319,75 @@ namespace fs
 			0b01000000, 0b00000100, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01110000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
 		};
 
-		std::function<bool(const fs::Int2)> samplePixel = [&](const fs::Int2 pos)
+		std::function<fs::Int2(const fs::Int2)> samplePixel = [&](const fs::Int2& pos)
 		{
 			const uint32 pixelIndex = static_cast<uint32>(static_cast<uint64>(pos.y()) * kFontTextureWidth + pos.x());
 			if (kFontTexturePixelCount <= pixelIndex)
 			{
-				return false;
+				return fs::Int2(0, 0);
 			}
 
 			const uint32 byteOffset = pixelIndex / kBitsPerByte;
 			const uint32 bitShiftToLeft = kBitsPerByte - (pixelIndex % kBitsPerByte + 1);
 			const uint8 bitMask = static_cast<uint8>(fs::Math::pow2_ui32(bitShiftToLeft));
-			return (kFontTextureRawBitData[byteOffset] & bitMask) ? true : false;
+			return (kFontTextureRawBitData[byteOffset] & bitMask) ? fs::Int2(1, 1) : fs::Int2(1, 0);
 		};
 		
+		std::function<uint8(const fs::Int2)> samplePixelAlpha = [&](const fs::Int2& pos)
+		{
+			fs::Int2 sample = samplePixel(pos);
+			return (1 == sample._y) ? 255 : 0;
+		};
+
+		std::function<uint8(const fs::Int2)> sampleKernelPixelAlpha = [&](const fs::Int2& pos)
+		{
+			static constexpr uint32 kKernelSize = 9;
+			static constexpr float kKernel[9] = // Gaussian approximation
+			{
+				0.0625f, 0.125f, 0.0625f,
+				 0.125f,  0.25f,  0.125f,
+				0.0625f, 0.125f, 0.0625f,
+			};
+
+			fs::Int2 sampleArray[kKernelSize];
+			{
+				sampleArray[0] = samplePixel(fs::Int2(pos._x - 1, pos._y - 1));
+				sampleArray[1] = samplePixel(fs::Int2(pos._x    , pos._y - 1)); // u
+				sampleArray[2] = samplePixel(fs::Int2(pos._x + 1, pos._y - 1));
+
+				sampleArray[3] = samplePixel(fs::Int2(pos._x - 1, pos._y    )); // l
+				sampleArray[4] = samplePixel(fs::Int2(pos._x    , pos._y    )); // c
+				if (sampleArray[4]._y == 1)
+				{
+					return static_cast <uint8>(255);
+				}
+				sampleArray[5] = samplePixel(fs::Int2(pos._x + 1, pos._y    )); // r
+
+				sampleArray[6] = samplePixel(fs::Int2(pos._x - 1, pos._y + 1));
+				sampleArray[7] = samplePixel(fs::Int2(pos._x    , pos._y + 1)); // d
+				sampleArray[8] = samplePixel(fs::Int2(pos._x + 1, pos._y + 1));
+			}
+
+			float normalized = 0.0f;
+			{
+				float weightSum = 0.0f;
+				for (uint32 i = 0; i < kKernelSize; ++i)
+				{
+					if (sampleArray[i]._x == 1)
+					{
+						normalized += kKernel[i] * sampleArray[i]._y;
+						weightSum += kKernel[i];
+					}
+				}
+				normalized /= weightSum;
+			}
+			
+			// 외곽선 블러 줄이기
+			normalized *= normalized;
+
+			return static_cast<uint8>(normalized * 255);
+		};
+
 		std::function<fs::Int2(const uint32)> pixelIndexToPos = [&](const uint32 pixelIndex)
 		{
 			const int32 x = pixelIndex % kFontTextureWidth;
@@ -342,16 +397,18 @@ namespace fs
 
 		_fontTextureRaw.resize(kFontTexturePixelCount * 4);
 		fs::Int2 pixelPos;
+		fs::Int2 sample;
 		for (uint32 pixelIndex = 0; pixelIndex < kFontTexturePixelCount; ++pixelIndex)
 		{
 			pixelPos = pixelIndexToPos(pixelIndex);
-
-			const uint8 color = (true == samplePixel(pixelPos)) ? 255 : 0;
+			//const uint8 alpha = samplePixelAlpha(pixelPos);
+			const uint8 alpha = sampleKernelPixelAlpha(pixelPos);
+			const uint8 color = (0 != alpha) ? 255 : 0;
 
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 0] = color;
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 1] = color;
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 2] = color;
-			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 3] = color;
+			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 3] = alpha;
 		}
 
 		D3D11_TEXTURE2D_DESC texture2DDescriptor{};
