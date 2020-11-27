@@ -34,10 +34,10 @@ namespace fs
 		Float4&					operator/=(const float s);
 
 	public:
-		const Float4			operator+(const Float4& rhs) const;
-		const Float4			operator-(const Float4& rhs) const;
-		const Float4			operator*(const float s) const;
-		const Float4			operator/(const float s) const;
+		Float4					operator+(const Float4& rhs) const noexcept;
+		Float4					operator-(const Float4& rhs) const noexcept;
+		Float4					operator*(const float s) const noexcept;
+		Float4					operator/(const float s) const noexcept;
 
 	public:
 		float&					operator[](const uint32 index) noexcept;
@@ -48,7 +48,7 @@ namespace fs
 		const bool				operator!=(const Float4& rhs) const noexcept;
 
 	public:
-		static const float		dotProductRaw(const float (&a)[4], const float (&b)[4]);
+		static const float		dotProductRaw(const float* const a, const float* const b);
 
 		// for matrix multiplication
 		static const float		dotProductRaw(const float (&a)[4], const float bX, const float bY, const float bZ, const float bW);
@@ -57,8 +57,8 @@ namespace fs
 		static const float		dot(const Float4& lhs, const Float4& rhs) noexcept;
 
 		// in 3D affine space
-		static const Float4		cross(const Float4& lhs, const Float4& rhs) noexcept;
-		static const Float4		normalize(const Float4& float4) noexcept;
+		static Float4			cross(const Float4& lhs, const Float4& rhs) noexcept;
+		static Float4			normalize(const Float4& float4) noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;
@@ -66,6 +66,7 @@ namespace fs
 
 	public:
 		void					set(const float x, const float y, const float z, const float w) noexcept;
+		/*
 		void					x(const float newX) noexcept;
 		const float				x() const noexcept;
 		void					y(const float newY) noexcept;
@@ -74,9 +75,14 @@ namespace fs
 		const float				z() const noexcept;
 		void					w(const float newW) noexcept;
 		const float				w() const noexcept;
+		*/
 
-	private:
-		float					_f[4];
+	//private:
+	public:
+		float					_x;
+		float					_y;
+		float					_z;
+		float					_w;
 	};
 }
 

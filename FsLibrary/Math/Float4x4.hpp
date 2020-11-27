@@ -77,13 +77,13 @@ namespace fs
 	{
 		// (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
 
-		const Float4 r = Float4::normalize(Float4(axis.x(), axis.y(), axis.z(), 0.0f));
+		const Float4 r = Float4::normalize(Float4(axis._x, axis._y, axis._z, 0.0f));
 		const float c = cosf(angle);
 		const float s = sinf(angle);
 
-		const float rx = r.x();
-		const float ry = r.y();
-		const float rz = r.z();
+		const float rx = r._x;
+		const float ry = r._y;
+		const float rz = r._z;
 		Float4x4 result
 		(
 			(1 - c) * rx * rx  + c            , (1 - c) * ry * rx       - (rz * s), (1 - c) * rz * rx       + (ry * s), 0,

@@ -30,7 +30,7 @@ namespace fs
 		const float		half_angle	= angle * 0.5f;
 		const float		cos_half	= cosf(half_angle);
 		const float		sin_half	= sinf(half_angle);
-		return Quaternion(sin_half * r.x(), sin_half * r.y(), sin_half * r.z(), cos_half);
+		return Quaternion(sin_half * r._x, sin_half * r._y, sin_half * r._z, cos_half);
 	}
 
 
@@ -46,7 +46,7 @@ namespace fs
 		__noop;
 	}
 
-	inline Quaternion::Quaternion(const Float4& v) : _data{ v.x(), v.y(), v.z(), 0 }
+	inline Quaternion::Quaternion(const Float4& v) : _data{ v._x, v._y, v._z, 0 }
 	{
 		__noop;
 	}
@@ -84,22 +84,22 @@ namespace fs
 
 	FS_INLINE const float Quaternion::a() const noexcept
 	{
-		return _data.w();
+		return _data._w;
 	}
 
 	FS_INLINE const float Quaternion::b() const noexcept
 	{
-		return _data.x();
+		return _data._x;
 	}
 
 	FS_INLINE const float Quaternion::c() const noexcept
 	{
-		return _data.y();
+		return _data._y;
 	}
 
 	FS_INLINE const float Quaternion::d() const noexcept
 	{
-		return _data.z();
+		return _data._z;
 	}
 }
 
