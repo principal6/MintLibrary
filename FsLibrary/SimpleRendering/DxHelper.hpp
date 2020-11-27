@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdafx.h>
-#include <SimpleRendering\DxHelper.h>
+#include <SimpleRendering/DxHelper.h>
 
 #include <Math/Float2.hpp>
 #include <Math/Float3.hpp>

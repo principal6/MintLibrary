@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include <File/TextFile.h>
 
-#include <Container\Vector.hpp>
-#include <Container\StringUtil.hpp>
+#include <Container/Vector.hpp>
+#include <Container/StringUtil.hpp>
 
 #include <fstream>
 

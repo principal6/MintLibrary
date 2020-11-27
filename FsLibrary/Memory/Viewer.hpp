@@ -3,9 +3,9 @@
 
 #include <stdafx.h>
 
-#include <Memory\Viewer.h>
-#include <Memory\Allocator.hpp>
-#include <Memory\Owner.hpp>
+#include <Memory/Viewer.h>
+#include <Memory/Allocator.hpp>
+#include <Memory/Owner.hpp>
 
 
 namespace fs

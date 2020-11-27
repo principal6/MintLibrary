@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 #include <Reflection/IReflective.h>
-#include <SimpleRendering\IDxObject.h>
+#include <SimpleRendering/IDxObject.h>
 
 
 namespace fs

@@ -1,8 +1,8 @@
 #include <stdafx.h>
-#include <SimpleRendering\DxHelper.h>
+#include <SimpleRendering/DxHelper.h>
 
-#include <Container\StaticArray.h>
-#include <Container\StringUtil.h>
+#include <Container/StaticArray.h>
+#include <Container/StringUtil.h>
 
 
 namespace fs

@@ -2,7 +2,7 @@
 
 
 #include <stdafx.h>
-#include <Container\DynamicString.h>
+#include <Container/DynamicString.h>
 
 
 namespace fs

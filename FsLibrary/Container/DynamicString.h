@@ -6,43 +6,43 @@
 
 
 #include <CommonDefinitions.h>
-#include <Memory\Allocator.h>
+#include <Memory/Allocator.h>
 
 
 namespace fs
 {
-	struct StringRange
+	struct StringRange final
 	{
-		StringRange()
-			: _offset{ 0 }
-			, _length{ kUint32Max }
-		{
-			__noop;
-		}
+								StringRange()
+									: _offset{ 0 }
+									, _length{ kUint32Max }
+								{
+									__noop;
+								}
 
-		StringRange(const uint32 offset)
-			: _offset{ offset }
-			, _length{ kUint32Max }
-		{
-			__noop;
-		}
+								StringRange(const uint32 offset)
+									: _offset{ offset }
+									, _length{ kUint32Max }
+								{
+									__noop;
+								}
 
-		StringRange(const uint32 offset, const uint32 length)
-			: _offset{ offset }
-			, _length{ length }
-		{
-			__noop;
-		}
+								StringRange(const uint32 offset, const uint32 length)
+									: _offset{ offset }
+									, _length{ length }
+								{
+									__noop;
+								}
 
 	public:
-		FS_INLINE const bool isLengthSet() const noexcept
+		FS_INLINE const bool	isLengthSet() const noexcept
 		{
 			return _length;
 		}
 
 	public:
-		uint32	_offset;
-		uint32	_length;
+		uint32					_offset;
+		uint32					_length;
 	};
 
 

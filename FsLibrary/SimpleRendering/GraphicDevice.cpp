@@ -11,7 +11,7 @@
 #include <Math/Float4x4.hpp>
 #include <Container/ScopeString.hpp>
 #include <typeinfo>
-#include <SimpleRendering\DxHelper.h>
+#include <SimpleRendering/DxHelper.h>
 
 #include <functional>
 

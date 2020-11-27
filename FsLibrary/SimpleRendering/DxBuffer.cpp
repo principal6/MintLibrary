@@ -2,7 +2,7 @@
 #include <SimpleRendering/DxBuffer.h>
 
 #include <Algorithm.hpp>
-#include <SimpleRendering\GraphicDevice.h>
+#include <SimpleRendering/GraphicDevice.h>
 
 
 namespace fs

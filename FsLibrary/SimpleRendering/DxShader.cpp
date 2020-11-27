@@ -1,12 +1,12 @@
 #include <stdafx.h>
-#include <SimpleRendering\DxShader.h>
+#include <SimpleRendering/DxShader.h>
 
 #include <Algorithm.hpp>
-#include <Container\ScopeString.hpp>
-#include <SimpleRendering\DxHelper.h>
-#include <SimpleRendering\DxHelper.hpp>
-#include <SimpleRendering\GraphicDevice.h>
-#include <SimpleRendering\DxShaderHeaderMemory.h>
+#include <Container/ScopeString.hpp>
+#include <SimpleRendering/DxHelper.h>
+#include <SimpleRendering/DxHelper.hpp>
+#include <SimpleRendering/GraphicDevice.h>
+#include <SimpleRendering/DxShaderHeaderMemory.h>
 
 #include <d3dcompiler.h>
 
