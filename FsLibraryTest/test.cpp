@@ -477,6 +477,7 @@ const bool testLanguage()
 	tokenizer.insertDelimiter('\t');
 	tokenizer.insertDelimiter('\r');
 	tokenizer.insertDelimiter('\n');
+	tokenizer.insertDelimiter('\n');
 
 	tokenizer.insertTokenIdentifier(',');
 	tokenizer.insertTokenIdentifier('.');

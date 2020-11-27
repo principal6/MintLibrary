@@ -11,37 +11,17 @@ namespace fs
 	{
 		void Tokenizer::insertDelimiter(const char delimiter)
 		{
-			const uint32 delimiterCount = _delimiterArray.size();
-			for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
-			{
-				if (_delimiterArray.get(delimiterIndex) == delimiter)
-				{
-					return;
-				}
-			}
-
-			_delimiterArray.push_back(delimiter);
 			_delimiterUmap.insert(std::make_pair(delimiter, 1));
 		}
 
 		void Tokenizer::insertTokenIdentifier(const char tokenIdentifier)
 		{
-			const uint32 tokenIdentifierCount = _tokenIdentifierArray.size();
-			for (uint32 tokenIdentifierIndex = 0; tokenIdentifierIndex < tokenIdentifierCount; ++tokenIdentifierIndex)
-			{
-				if (_tokenIdentifierArray.get(tokenIdentifierIndex) == tokenIdentifier)
-				{
-					return;
-				}
-			}
-
-			_tokenIdentifierArray.push_back(tokenIdentifier);
 			_tokenIdentifierUmap.insert(std::make_pair(tokenIdentifier, 1));
 		}
 
 		const uint32 Tokenizer::getDelimiterCount() const noexcept
 		{
-			return _delimiterArray.size();
+			return static_cast<uint32>(_delimiterUmap.size());
 		}
 
 		void Tokenizer::tokenize()
@@ -62,8 +42,6 @@ namespace fs
 #endif
 
 			uint32 sourcePrevAt = 0;
-			const uint32 tokenIdentifierCount = _tokenIdentifierArray.size();
-			const uint32 delimiterCount = _delimiterArray.size();
 			const uint32 sourceLength = static_cast<uint32>(_source.length());
 			for (uint32 sourceAt = 0; sourceAt < sourceLength; ++sourceAt)
 			{

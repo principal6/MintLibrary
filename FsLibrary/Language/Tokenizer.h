@@ -49,9 +49,7 @@ namespace fs
 			uint64							_totalTimeMs;
 
 		private:
-			fs::Vector<char>				_delimiterArray;
 			std::unordered_map<char, int8>	_delimiterUmap;
-			fs::Vector<char>				_tokenIdentifierArray;
 			std::unordered_map<char, int8>	_tokenIdentifierUmap;
 		
 		private:
