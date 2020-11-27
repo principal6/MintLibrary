@@ -82,6 +82,28 @@ namespace fs
 			return false;
 		}
 
+		if (_encoding == TextFileEncoding::UTF8_BOM)
+		{
+			bool writeBom = true;
+			if (3 <= _byteArray.size())
+			{
+				if (_byteArray.get(0) == 0xEF &&
+					_byteArray.get(1) == 0xBB &&
+					_byteArray.get(2) == 0xBF)
+				{
+					writeBom = false;
+				}
+			}
+
+			// BOM
+			if (writeBom == true)
+			{
+				ofs.put(static_cast<char>(0xEF));
+				ofs.put(static_cast<char>(0xBB));
+				ofs.put(static_cast<char>(0xBF));
+			}
+		}
+
 		ofs.write(reinterpret_cast<const char*>(&_byteArray.front()), _byteArray.size());
 		return false;
 	}

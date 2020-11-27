@@ -45,6 +45,7 @@ namespace fs
 	{
 	public:
 								TextFileWriter() = default;
+								TextFileWriter(TextFileEncoding encoding) : _encoding{ encoding } { __noop; }
 		virtual					~TextFileWriter() = default;
 
 	public:
@@ -59,6 +60,7 @@ namespace fs
 
 	private:
 		fs::Vector<byte>		_byteArray;
+		TextFileEncoding		_encoding = TextFileEncoding::ASCII;
 	};
 }
 
