@@ -96,10 +96,10 @@ namespace fs
 				break;
 			}
 
-			const int32 x = (creationData._position.x() == kInt32Min) ? CW_USEDEFAULT : creationData._position.x();
-			const int32 y = (creationData._position.y() == kInt32Min) ? CW_USEDEFAULT : creationData._position.y();
+			const int32 x = (creationData._position._x == kInt32Min) ? CW_USEDEFAULT : creationData._position._x;
+			const int32 y = (creationData._position._y == kInt32Min) ? CW_USEDEFAULT : creationData._position._y;
 			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, creationData._title, windowStyle, x, y,
-				creationData._size.x(), creationData._size.y(), nullptr, nullptr, _hInstance, nullptr);
+				creationData._size._x, creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
 			if (_hWnd == nullptr)
 			{
 				RETURN_FAIL(CreationError::FailedToCreateWindow);
@@ -144,8 +144,8 @@ namespace fs
 		{
 			_creationData._size = newSize;
 		
-			SetWindowPos(_hWnd, nullptr, _creationData._position.x(), _creationData._position.y(),
-				_creationData._size.x(), _creationData._size.y(), 0);
+			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y,
+				_creationData._size._x, _creationData._size._y, 0);
 		}
 
 		const Int2& WindowsWindow::size() const noexcept
@@ -157,8 +157,8 @@ namespace fs
 		{
 			_creationData._position = newPosition;
 
-			SetWindowPos(_hWnd, nullptr, _creationData._position.x(), _creationData._position.y(),
-				_creationData._size.x(), _creationData._size.y(), 0);
+			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y,
+				_creationData._size._x, _creationData._size._y, 0);
 		}
 
 		const Int2& WindowsWindow::position() const noexcept

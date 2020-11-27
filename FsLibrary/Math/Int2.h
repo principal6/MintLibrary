@@ -47,10 +47,12 @@ namespace fs
 
 	public:
 		void			set(const int32 x, const int32 y) noexcept;
+		/*
 		void			x(const int32 newX) noexcept;
 		const int32		x() const noexcept;
 		void			y(const int32 newY) noexcept;
 		const int32		y() const noexcept;
+		*/
 
 	//private:
 	public:

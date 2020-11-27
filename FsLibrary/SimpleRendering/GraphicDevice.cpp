@@ -57,8 +57,8 @@ namespace fs
 			DXGI_SWAP_CHAIN_DESC SwapChainDesc{};
 			SwapChainDesc.BufferCount = 1;
 			SwapChainDesc.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-			SwapChainDesc.BufferDesc.Width = static_cast<UINT>(windowSize.x());
-			SwapChainDesc.BufferDesc.Height = static_cast<UINT>(windowSize.y());
+			SwapChainDesc.BufferDesc.Width = static_cast<UINT>(windowSize._x);
+			SwapChainDesc.BufferDesc.Height = static_cast<UINT>(windowSize._y);
 			SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 			SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 			SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
@@ -97,7 +97,7 @@ namespace fs
 		// Constant buffers
 		{
 			CB_Transforms cbTransforms;
-			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize.x()), static_cast<float>(windowSize.y()));
+			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 			{
 				fs::DynamicStringA shaderHeaderContent;
 				shaderHeaderContent.append(fs::convertReflectiveClassToHlslConstantBuffer(&cbTransforms, 0));
@@ -240,8 +240,8 @@ namespace fs
 		// Viewport
 		{
 			D3D11_VIEWPORT viewport{};
-			viewport.Width = static_cast<FLOAT>(windowSize.x());
-			viewport.Height = static_cast<FLOAT>(windowSize.y());
+			viewport.Width = static_cast<FLOAT>(windowSize._x);
+			viewport.Height = static_cast<FLOAT>(windowSize._y);
 			viewport.MinDepth = 0.0f;
 			viewport.MaxDepth = 1.0f;
 			viewport.TopLeftX = viewport.TopLeftY = 0.0f;
@@ -321,7 +321,7 @@ namespace fs
 
 		std::function<fs::Int2(const fs::Int2)> samplePixel = [&](const fs::Int2& pos)
 		{
-			const uint32 pixelIndex = static_cast<uint32>(static_cast<uint64>(pos.y()) * kFontTextureWidth + pos.x());
+			const uint32 pixelIndex = static_cast<uint32>(static_cast<uint64>(pos._y) * kFontTextureWidth + pos._x);
 			if (kFontTexturePixelCount <= pixelIndex)
 			{
 				return fs::Int2(0, 0);

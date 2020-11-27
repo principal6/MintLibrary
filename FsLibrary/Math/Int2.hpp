@@ -102,6 +102,7 @@ namespace fs
 		_y = y;
 	}
 
+	/*
 	FS_INLINE void Int2::x(const int32 newX) noexcept
 	{
 		_x = newX;
@@ -121,4 +122,5 @@ namespace fs
 	{
 		return _y;
 	}
+	*/
 }
