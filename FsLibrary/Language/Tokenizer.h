@@ -36,8 +36,16 @@ namespace fs
 
 		public:
 			void							tokenize();
+
 			const uint32					getTokenCount() const noexcept;
-			const StringRange&				getToken(const uint32 tokenIndex) const noexcept;
+			const StringRange&				getTokenData(const uint32 tokenIndex) const noexcept;
+
+		public:
+#if defined FS_TEST_USE_STD_STRING
+			const std::string				getSource() const noexcept;
+#else
+			const fs::DynamicStringA		getSource() const noexcept;
+#endif
 
 		private:
 #if defined FS_TEST_USE_STD_STRING

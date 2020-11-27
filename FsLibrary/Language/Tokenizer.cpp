@@ -104,9 +104,21 @@ namespace fs
 			return _tokenArray.size();
 		}
 
-		const StringRange& Tokenizer::getToken(const uint32 tokenIndex) const noexcept
+		const StringRange& Tokenizer::getTokenData(const uint32 tokenIndex) const noexcept
 		{
 			return _tokenArray.get(tokenIndex);
 		}
+
+#if defined FS_TEST_USE_STD_STRING
+		const std::string Tokenizer::getSource() const noexcept
+		{
+			return _source;
+		}
+#else
+		const fs::DynamicStringA Tokenizer::getSource() const noexcept
+		{
+			return _source;
+		}
+#endif
 	}
 }
