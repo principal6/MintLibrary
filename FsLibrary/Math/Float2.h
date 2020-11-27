@@ -55,10 +55,12 @@ namespace fs
 		
 	public:
 		void					set(const float x, const float y);
+		/*
 		void					x(const float newX) noexcept;
 		const float				x() const noexcept;
 		void					y(const float newY) noexcept;
 		const float				y() const noexcept;
+		*/
 
 	//private:
 	public:

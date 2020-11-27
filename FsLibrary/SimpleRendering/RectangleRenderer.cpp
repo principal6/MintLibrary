@@ -11,12 +11,12 @@ namespace fs
 {
 	FS_INLINE fs::Float3 getVertexPosition(const uint32 vertexIndex, const fs::Float3& position, const fs::Float2& size)
 	{
-		return fs::Float3(position._x + (vertexIndex & 1) * size.x(), position._y + ((vertexIndex & 2) >> 1) * size.y(), position._z);
+		return fs::Float3(position._x + (vertexIndex & 1) * size._x, position._y + ((vertexIndex & 2) >> 1) * size._y, position._z);
 	}
 
 	FS_INLINE fs::Float2 getVertexTexturePosition(const uint32 vertexIndex, const fs::Float2& position, const fs::Float2& size)
 	{
-		return fs::Float2(position.x() + (vertexIndex & 1) * size.x(), position.y() + ((vertexIndex & 2) >> 1) * size.y());
+		return fs::Float2(position._x + (vertexIndex & 1) * size._x, position._y + ((vertexIndex & 2) >> 1) * size._y);
 	}
 
 	void RectangleRenderer::drawColored()

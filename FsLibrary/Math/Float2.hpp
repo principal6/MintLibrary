@@ -124,6 +124,7 @@ namespace fs
 		_y = y;
 	}
 
+	/*
 	FS_INLINE void Float2::x(const float newX) noexcept
 	{
 		_x = newX;
@@ -143,5 +144,5 @@ namespace fs
 	{
 		return _y;
 	}
-
+	*/
 }
