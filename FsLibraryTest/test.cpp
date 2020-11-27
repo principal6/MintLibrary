@@ -467,6 +467,48 @@ const bool testFiles()
 	return true;
 }
 
+const bool testLanguage()
+{
+	fs::TextFileReader textFileReader;
+	textFileReader.open("test.cpp");
+	
+	fs::Language::Tokenizer tokenizer{ textFileReader.get() };
+	tokenizer.insertDelimiter(' ');
+	tokenizer.insertDelimiter('\t');
+	tokenizer.insertDelimiter('\r');
+	tokenizer.insertDelimiter('\n');
+
+	tokenizer.insertTokenIdentifier(',');
+	tokenizer.insertTokenIdentifier('.');
+	tokenizer.insertTokenIdentifier(';');
+	tokenizer.insertTokenIdentifier(':');
+	tokenizer.insertTokenIdentifier('<');
+	tokenizer.insertTokenIdentifier('>');
+	tokenizer.insertTokenIdentifier('(');
+	tokenizer.insertTokenIdentifier(')');
+	tokenizer.insertTokenIdentifier('{');
+	tokenizer.insertTokenIdentifier('}');
+	tokenizer.insertTokenIdentifier('[');
+	tokenizer.insertTokenIdentifier(']');
+	tokenizer.insertTokenIdentifier('+');
+	tokenizer.insertTokenIdentifier('-');
+	tokenizer.insertTokenIdentifier('*');
+	tokenizer.insertTokenIdentifier('/');
+	tokenizer.insertTokenIdentifier('%');
+	tokenizer.insertTokenIdentifier('&');
+	tokenizer.insertTokenIdentifier('|');
+	tokenizer.insertTokenIdentifier('!');
+	tokenizer.insertTokenIdentifier('~');
+	tokenizer.insertTokenIdentifier('=');
+	tokenizer.insertTokenIdentifier('?');
+	tokenizer.insertTokenIdentifier('\'');
+	tokenizer.insertTokenIdentifier('\"');
+
+	tokenizer.tokenize();
+
+	return true;
+}
+
 const bool testWindow()
 {
 	using namespace fs;
@@ -575,6 +617,8 @@ int main()
 	/*
 	*/
 	testFiles();
+
+	testLanguage();
 
 	testWindow();
 

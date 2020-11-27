@@ -25,6 +25,9 @@
     <Filter Include="Memory">
       <UniqueIdentifier>{e8e4d94d-4313-4154-ae01-e1430ba1caa5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Language">
+      <UniqueIdentifier>{65183733-0f5f-4535-85c7-ec6d65fdd22c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -230,6 +233,9 @@
     <ClInclude Include="Memory\Owner.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Language\Tokenizer.h">
+      <Filter>Language</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -276,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="File\TextFile.cpp">
       <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\Tokenizer.cpp">
+      <Filter>Language</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

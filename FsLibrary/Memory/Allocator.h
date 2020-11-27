@@ -164,6 +164,9 @@ namespace fs
 			uint32									_memoryBlockCount;
 			BitVector								_isMemoryBlockInUse;
 			MemoryBlockId							_nextMemoryBlockId;
+
+		private:
+			uint32									_leastDeletedMemoryBlockIndex;
 		};
 	}
 }

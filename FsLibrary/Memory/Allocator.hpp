@@ -4,6 +4,8 @@
 #include <stdafx.h>
 #include <Memory/Allocator.h>
 
+#include <Container/BitVector.hpp>
+
 
 namespace fs
 {
@@ -210,6 +212,7 @@ namespace fs
 			, _memoryBlockArray{ nullptr }
 			, _memoryBlockCount{ 0 }
 			, _nextMemoryBlockId{ 0 }
+			, _leastDeletedMemoryBlockIndex{ 0 }
 		{
 			FS_ASSERT("김장원", (kTypeSize % kTypeAlignment) == 0, "Type Size 는 반드시 Type Alignment 의 배수여야 합니다.");
 			reserve(kDefaultBlockCapacity);
@@ -477,6 +480,8 @@ namespace fs
 				}
 
 				--_memoryBlockCount;
+
+				_leastDeletedMemoryBlockIndex = fs::min(_leastDeletedMemoryBlockIndex, blockOffset);
 			}
 			else
 			{
@@ -633,7 +638,7 @@ namespace fs
 		template<typename T>
 		inline const uint32 Allocator<T>::getNextAvailableBlockOffset() const noexcept
 		{
-			for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
+			for (uint32 blockOffset = _leastDeletedMemoryBlockIndex; blockOffset < _memoryBlockCapacity; ++blockOffset)
 			{
 				if (_isMemoryBlockInUse.get(blockOffset) == false)
 				{
@@ -646,29 +651,82 @@ namespace fs
 		template<typename T>
 		inline const uint32 Allocator<T>::getNextAvailableBlockOffsetForArray(const uint32 arraySize) const noexcept
 		{
-			uint32 successiveAvailableBlockFirstOffset = kUint32Max;
 			uint32 successiveAvailableBlockCount = 0;
-			for (uint32 blockOffset = 0; blockOffset < _memoryBlockCapacity; ++blockOffset)
-			{
-				if (_isMemoryBlockInUse.get(blockOffset) == false)
-				{
-					if (successiveAvailableBlockCount == 0)
-					{
-						successiveAvailableBlockFirstOffset = blockOffset;
-					}
+			uint32 successiveAvailableBlockFirstOffset = kUint32Max;
+			
 
-					++successiveAvailableBlockCount;
-					if (successiveAvailableBlockCount == arraySize)
-					{
-						break;
-					}
+			uint32 bitAt = _leastDeletedMemoryBlockIndex;
+			while (true)
+			{
+				const uint32 bitAlignmentStride = kBitsPerByte - (bitAt % kBitsPerByte);
+				const uint32 byteIndex = bitAt / kBitsPerByte;
+				if (_memoryBlockCapacity <= bitAt)
+				{
+					break;
 				}
-				else
+
+				const byte bits = _isMemoryBlockInUse.getByte(byteIndex);
+				if (bits == 255)
 				{
 					successiveAvailableBlockCount = 0;
 					successiveAvailableBlockFirstOffset = kUint32Max;
+
+					bitAt += bitAlignmentStride;
+					continue;
 				}
+				else if (bits == 0)
+				{
+					if (successiveAvailableBlockCount == 0)
+					{
+						successiveAvailableBlockFirstOffset = bitAt;
+					}
+
+					successiveAvailableBlockCount += kBitsPerByte;
+					if (arraySize <= successiveAvailableBlockCount)
+					{
+						return successiveAvailableBlockFirstOffset;
+					}
+
+					bitAt += bitAlignmentStride;
+					continue;
+				}
+				else
+				{
+					const uint32 bitOffset = (bitAt % kBitsPerByte);
+					for (uint32 iter = bitOffset; iter < kBitsPerByte; ++iter)
+					{
+						const uint8 bitMaskOneAt = fs::BitVector::getBitMaskOneAt(iter);
+						const bool isInUse = (bits & bitMaskOneAt);
+						if (isInUse == false)
+						{
+							if (successiveAvailableBlockCount == 0)
+							{
+								successiveAvailableBlockFirstOffset = bitAt + iter - bitOffset;
+							}
+
+							++successiveAvailableBlockCount;
+						}
+						else
+						{
+							successiveAvailableBlockCount = 0;
+							successiveAvailableBlockFirstOffset = kUint32Max;
+						}
+
+						if (arraySize <= successiveAvailableBlockCount)
+						{
+							return successiveAvailableBlockFirstOffset;
+						}
+					}
+					
+					if (arraySize <= successiveAvailableBlockCount)
+					{
+						return successiveAvailableBlockFirstOffset;
+					}
+				}
+
+				bitAt += bitAlignmentStride;
 			}
+			
 
 			if (successiveAvailableBlockCount < arraySize)
 			{

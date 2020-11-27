@@ -30,7 +30,7 @@ namespace fs
 		}
 	}
 
-	inline void Logger::setOutputFileName(const char* const fileName)
+	FS_INLINE void Logger::setOutputFileName(const char* const fileName)
 	{
 		Logger& logger = getInstance();
 		{
@@ -40,7 +40,7 @@ namespace fs
 		}
 	}
 
-	inline void Logger::log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+	FS_INLINE void Logger::log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
 	{
 		static char finalBuffer[kFinalBufferSize]{};
 		static char content[kFinalBufferSize]{};
@@ -58,7 +58,7 @@ namespace fs
 		printf(finalBuffer);
 	}
 
-	inline void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+	FS_INLINE void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
 	{
 		static constexpr int32 kErrorExitCode = -1;
 		static char finalBuffer[kFinalBufferSize]{};
@@ -84,7 +84,7 @@ namespace fs
 #endif
 	}
 
-	inline void Logger::logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char (&outBuffer)[kFinalBufferSize])
+	FS_INLINE void Logger::logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char (&outBuffer)[kFinalBufferSize])
 	{
 		static char timeBuffer[kTimeBufferSize]{};
 		Logger& logger = getInstance();
@@ -104,7 +104,7 @@ namespace fs
 		}
 	}
 
-	inline Logger& Logger::getInstance() noexcept
+	FS_INLINE Logger& Logger::getInstance() noexcept
 	{
 		static bool isFirstTime = true;
 		static Logger logger = Logger();

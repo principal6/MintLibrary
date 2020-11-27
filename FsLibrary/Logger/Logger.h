@@ -16,13 +16,13 @@ namespace std
 namespace fs
 {
 #pragma region Logging
-	#define FS_LOG(author, format, ...) fs::Logger::log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-	#define FS_LOG_ERROR(author, format, ...) fs::Logger::logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+	#define FS_LOG(author, format, ...)						fs::Logger::log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+	#define FS_LOG_ERROR(author, format, ...)				fs::Logger::logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
 #pragma endregion
 
 #pragma region Assertion
 	#if defined FS_DEBUG
-		#define FS_ASSERT(author, expression, format, ...) if (!(expression)) { fs::Logger::logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); }
+		#define FS_ASSERT(author, expression, format, ...)	if (!(expression)) { fs::Logger::logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); }
 	#else
 		#define FS_ASSERT(author, expression, format, ...)
 	#endif

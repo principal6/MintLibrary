@@ -9,26 +9,26 @@
 
 namespace fs
 {
-	inline BitVector::BitVector()
+	FS_INLINE BitVector::BitVector()
 		: _byteCapacity{ kMinByteCapacity }
 		, _bitCount{ 0 }
 	{
 		_byteArray = FS_NEW_ARRAY(uint8, kMinByteCapacity);
 	}
 
-	inline BitVector::BitVector(const uint32 byteCapacity)
+	FS_INLINE BitVector::BitVector(const uint32 byteCapacity)
 		: _byteCapacity{ 0 }
 		, _bitCount{ 0 }
 	{
 		reserveByteCapacity(max(byteCapacity, kMinByteCapacity));
 	}
 
-	inline BitVector::~BitVector()
+	FS_INLINE BitVector::~BitVector()
 	{
 		FS_DELETE_ARRAY(_byteArray);
 	}
 
-	inline void BitVector::push_back(const bool value)
+	FS_INLINE void BitVector::push_back(const bool value)
 	{
 		if (isFull() == true)
 		{
@@ -39,7 +39,7 @@ namespace fs
 		set(_bitCount - 1, value);
 	}
 
-	inline const bool BitVector::pop_back()
+	FS_INLINE const bool BitVector::pop_back()
 	{
 		if (0 < _bitCount)
 		{
@@ -54,7 +54,7 @@ namespace fs
 		return false;
 	}
 
-	inline void BitVector::resizeBitCount(const uint32 newBitCount)
+	FS_INLINE void BitVector::resizeBitCount(const uint32 newBitCount)
 	{
 		if (_bitCount == newBitCount)
 		{
@@ -88,7 +88,7 @@ namespace fs
 		}
 	}
 
-	inline void BitVector::reserveByteCapacity(const uint32 newByteCapacity)
+	FS_INLINE void BitVector::reserveByteCapacity(const uint32 newByteCapacity)
 	{
 		if (newByteCapacity <= _byteCapacity)
 		{
@@ -143,6 +143,12 @@ namespace fs
 		return (_byteArray[byteAt] & bitMaskOneAt);
 	}
 
+	FS_INLINE const uint8 BitVector::getByte(const uint32 byteIndex) const noexcept
+	{
+		FS_ASSERT("김장원", byteIndex < _byteCapacity, "범위를 벗어난 접근입니다.");
+		return _byteArray[byteIndex];
+	}
+
 	FS_INLINE const bool BitVector::first() const noexcept
 	{
 		return get(0);
@@ -187,17 +193,17 @@ namespace fs
 		return _byteCapacity;
 	}
 
-	FS_INLINE const uint32 BitVector::getByteAtByBitAt(const uint32 bitAt) const noexcept
+	FS_INLINE const uint32 BitVector::getByteAtByBitAt(const uint32 bitAt) noexcept
 	{
 		return bitAt / kBitsPerByte;
 	}
 
-	FS_INLINE const uint32 BitVector::getByteBitOffsetByBitAt(const uint32 bitAt) const noexcept
+	FS_INLINE const uint32 BitVector::getByteBitOffsetByBitAt(const uint32 bitAt) noexcept
 	{
 		return bitAt % kBitsPerByte;
 	}
 
-	FS_INLINE const uint8 BitVector::getBitMaskOneAt(const uint32 bitOffsetFromLeft) const noexcept
+	FS_INLINE const uint8 BitVector::getBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
 	{
 		return (1 << (kBitsPerByte - bitOffsetFromLeft - 1));
 	}
