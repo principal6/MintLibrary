@@ -224,6 +224,12 @@
     <ClInclude Include="Memory\Viewer.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Memory\Owner.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Owner.hpp">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

@@ -320,33 +320,6 @@ const bool testStringUtil()
 	fs::Vector<fs::DynamicStringA> testBTokenized;
 	fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
-	{
-		fs::Memory::Viewer<fs::DynamicStringA> tracker;
-		fs::Memory::Viewer<fs::DynamicStringA> tracker1;
-		{
-			fs::DynamicStringA abc{ "ABC" };
-			tracker = abc;
-			auto refData = tracker.viewData();
-
-			const bool trackerAlive = tracker.isAlive();
-
-			tracker1 = tracker;
-			fs::Memory::Viewer<fs::DynamicStringA> tracker2 = tracker;
-		}
-		const bool trackerAlive = tracker.isAlive();
-	}
-	
-	{
-		fs::DynamicStringA abc = "ABC";
-
-		fs::Memory::Viewer<fs::DynamicStringA> tracker;
-		{
-			tracker = abc;
-
-			fs::Memory::Viewer<fs::DynamicStringA> tracker1 = tracker;
-		}
-	}
-
 	return true;
 }
 
@@ -396,6 +369,69 @@ const bool testMemoryAllocator2()
 
 		fs::Vector<TestStruct> a;
 		a.resize(10);
+	}
+
+	{
+		fs::Memory::Viewer<fs::DynamicStringA> viewer;
+		fs::Memory::Viewer<fs::DynamicStringA> viewer1;
+		{
+			fs::Memory::Owner<fs::DynamicStringA> abc{ "ABC" };
+			viewer = abc;
+			
+			fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
+			const fs::DynamicStringA& viewerData = *scopedViewer;
+
+			const bool viewerAlive = viewer.isAlive();
+			FS_LOG("김장원", (true == viewerAlive) ? "true" : "false");
+
+			viewer1 = viewer;
+			fs::Memory::Viewer<fs::DynamicStringA> viewer2 = viewer1;
+		}
+		const bool viewerAlive1 = viewer.isAlive();
+		FS_LOG("김장원", (true == viewerAlive1) ? "true" : "false");
+	}
+
+	{
+		fs::Memory::Owner<fs::DynamicStringA> abc = fs::DynamicStringA("ABC");
+
+		fs::Memory::Viewer<fs::DynamicStringA> viewer;
+		{
+			viewer = abc;
+			const fs::DynamicStringA& viewerData = viewer.viewData();
+
+			fs::Memory::Viewer<fs::DynamicStringA> viewer1 = viewer;
+		}
+	}
+
+	{
+		fs::Memory::Owner<int32> a;
+#if defined FS_TEST_FAILURES
+		a.accessData() = 5;
+#else
+		if (a.isValid() == false)
+		{
+			a = fs::Memory::Owner<int32>(5);
+			int32 aData = a.viewData();
+			int32& aData1 = a.accessData();
+			aData1 = 7;
+		}
+#endif
+
+		fs::Memory::Owner<int32> b = 11;
+	}
+
+	{
+		fs::Memory::Viewer<fs::DynamicStringA> viewer;
+		fs::Memory::Owner<fs::DynamicStringA> ownerCopy;
+		{
+			fs::Memory::Owner<fs::DynamicStringA> owner{ "ABC" };
+			viewer = owner;
+
+			fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
+			owner.~Owner();
+
+			ownerCopy = fs::DynamicStringA(scopedViewer.viewData());
+		}
 	}
 
 	return true;

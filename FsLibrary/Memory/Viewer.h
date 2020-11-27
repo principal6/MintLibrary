@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef FS_REF_PTR_H
-#define FS_REF_PTR_H
+#ifndef FS_VIEWER_H
+#define FS_VIEWER_H
 
 
 #include <CommonDefinitions.h>
@@ -15,34 +15,68 @@ namespace fs
 	namespace Memory
 	{
 		template <typename T>
+		class Owner;
+
+
+		template <typename T>
+		class Viewer;
+
+
+		template <typename T>
+		class ScopedViewer
+		{
+			friend Viewer;
+
+		private:
+												ScopedViewer(const fs::Memory::Accessor<T> memoryAccessor) : _memoryAccesor{ memoryAccessor } { __noop; }
+												ScopedViewer(const ScopedViewer& rhs) = delete;
+												ScopedViewer(ScopedViewer&& rhs) noexcept = delete;
+		public:
+												~ScopedViewer() = default;
+		
+		private:
+			ScopedViewer&						operator=(const ScopedViewer& rhs) = delete;
+			ScopedViewer&						operator=(ScopedViewer&& rhs) noexcept = delete;
+		
+		public:
+			const T&							operator*() const noexcept;
+			
+		public:
+			const T&							viewData() const noexcept;
+		
+		private:
+			fs::Memory::Accessor<T>				_memoryAccesor;
+		};
+
+
+		// Viewer can delay deallocation of T
+		template <typename T>
 		class Viewer
 		{
 		public:
 												Viewer();
-												Viewer(const T& instance);
-												Viewer(T&& instance) = delete;
-												Viewer(const Viewer& rhs);
-												Viewer(Viewer&& rhs) noexcept;
-												
+												Viewer(const Owner<T>& owner);
+												Viewer(const Viewer& rhs) = default;
+												Viewer(Viewer&& rhs) noexcept = default;
 												~Viewer() = default;
 
 		public:
-			Viewer&								operator=(const T& rhs);
-			Viewer&								operator=(T&& rhs) noexcept = delete;
-
-			Viewer&								operator=(const Viewer& rhs);
-			Viewer&								operator=(Viewer&& rhs) noexcept;
+			Viewer&								operator=(const Owner<T>& owner);
+			Viewer&								operator=(const Viewer& rhs) = default;
+			Viewer&								operator=(Viewer&& rhs) noexcept = default;
 
 		public:
-			const T*							viewData() const noexcept;
 			const bool							isAlive() const noexcept;
+		
+		public:
+			ScopedViewer<T>						viewDataSafe() const noexcept;
+			const T&							viewData() const noexcept;
 
 		private:
-			fs::Memory::Allocator<T>* const		_memoryAllocator;
-			fs::Memory::Accessor<T>				_memoryAccesor;
+			const Owner<T>*						_owner;
 		};
 	}
 }
 
 
-#endif // !FS_REF_PTR_H
+#endif // !FS_VIEWER_H

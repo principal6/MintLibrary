@@ -98,10 +98,11 @@ namespace fs
 		public:
 													~Allocator();
 
-		public:
+		private:
 			Allocator&								operator=(const Allocator& rhs) = delete;
 			Allocator&								operator=(Allocator&& rhs) noexcept = delete;
 
+		// TODO: these functions must be thread-safe!!!
 		public:
 			template <typename ...Args>
 			Accessor<T>								allocate(Args&&... args);
@@ -114,9 +115,11 @@ namespace fs
 
 			void									deallocate(Accessor<T>& memoryAccessor);
 
+		// TODO: this function must be thread-safe!!!
 		private:
 			void									deallocateInternal(const uint32 blockOffset, const bool forceDeallocation = false);
 
+		// TODO: these functions must be thread-safe!!!
 		private:
 			void									increaseReferenceXXX(const Accessor<T>& memoryAccessor);
 			void									decreaseReferenceXXX(const Accessor<T>& memoryAccessor);
@@ -136,7 +139,8 @@ namespace fs
 
 		private:
 			T* const								getRawPointerXXX(const Accessor<T> memoryAccessor) const noexcept;
-
+			
+		// TODO: this function must be thread-safe!!!
 		public:
 			void									reserve(const uint32 blockCapacity);
 
