@@ -13,6 +13,8 @@
 #include <typeinfo>
 #include <SimpleRendering\DxHelper.h>
 
+#include <functional>
+
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -155,6 +157,49 @@ namespace fs
 				}
 				)"
 			};
+			static constexpr const char kPixelShaderContentTest[]
+			{
+				R"(
+				#include <ShaderStructDefinitions>
+
+				sampler		sampler0;
+				Texture2D	texture0;
+				
+				float4 main(VS_OUTPUT input) : SV_Target
+				{
+					float4 result = input._color;
+					if (input._flag == 1)
+					{
+						result = texture0.Sample(sampler0, input._texCoord);
+					}
+					else if (input._flag == 2)
+					{
+						float ddx_ = ddx(input._texCoord.x);
+						float ddy_ = ddy(input._texCoord.y);
+						
+						float4 sample  = texture0.Sample(sampler0, input._texCoord);
+						float4 sample0 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, -ddy_));
+						float4 sample1 = texture0.Sample(sampler0, input._texCoord + float2(0    , -ddy_)); // u
+						float4 sample2 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, -ddy_));
+						float4 sample3 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, 0    )); // l
+						float4 sample4 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, 0    )); // r
+						float4 sample5 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, +ddy_));
+						float4 sample6 = texture0.Sample(sampler0, input._texCoord + float2(0    , +ddy_)); // d
+						float4 sample7 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, +ddy_));
+
+						float4 blended = sample * 0.25;
+						blended += ((sample1 + sample3 + sample4 + sample6) / 4.0) * 0.5;
+						blended += ((sample0 + sample2 + sample5 + sample7) / 4.0) * 0.5;
+						if (0 < blended.r)
+						{
+							blended.r = 1;
+						}
+						result *= blended;
+					}
+					return result;
+				}
+				)"
+			};
 			DxObjectId id = _shaderPool.pushNonVertexShader(kPixelShaderContent, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
 			_shaderPool.getShader(DxShaderType::PixelShader, id).bind();
 		}
@@ -206,68 +251,6 @@ namespace fs
 
 	void GraphicDevice::createFontTextureFromMemory()
 	{
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.   1    _.  1 1   _.   1  1 _.   1    _.        _.        _.   1    _.    1   _.  1     _.        _.        _.        _.        _.        _.      1 ,
-		//.        _.   1    _.  1 1   _.  1  1  _.  1111  _. 11   1 _.  11    _.   1    _.   1    _.   1    _. 1   1  _.   1    _.        _.        _.        _.     1  ,
-		//.        _.   1    _.        _. 111111 _. 1 1    _.1 1  1  _. 1  1   _.        _.  1     _.    1   _.  1 1   _.   1    _.        _.        _.        _.    1   ,
-		//.        _.   1    _.        _.  1  1  _.  1111  _. 11 1   _.  11  1 _.        _.  1     _.    1   _.1111111 _.1111111 _.        _.1111111 _.        _.   1    ,
-		//.        _.   1    _.        _. 111111 _.   1 1  _.   1 11 _. 1  11  _.        _.  1     _.    1   _.  1 1   _.   1    _.        _.        _.        _.  1     ,
-		//.        _.        _.        _.  1  1  _. 1111   _.  1 1 1 _.1   11  _.        _.   1    _.   1    _. 1   1  _.   1    _.    1   _.        _.   11   _. 1      ,
-		//.        _.   1    _.        _. 1  1   _.   1    _. 1  11  _. 111  1 _.        _.    1   _.  1     _.        _.        _.   1    _.        _.        _.1       ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//. 11111  _.   1    _. 11111  _. 11111  _.    1   _.1111111 _. 11111  _.1111111 _. 11111  _. 11111  _.        _.        _.    1   _.        _. 1      _. 11111  ,
-		//.1    11 _.  11    _.1     1 _.1     1 _.   11   _.1       _.1     1 _.     1  _.1     1 _.1     1 _.   1    _.   1    _.   1    _.1111111 _.  1     _.1     1 ,
-		//.1   1 1 _.   1    _.      1 _.      1 _.  1 1   _.1 1111  _.1       _.    1   _.1     1 _.1     1 _.        _.        _.  1     _.        _.   1    _.      1 ,
-		//.1  1  1 _.   1    _.     1  _. 11111  _. 1  1   _.11    1 _.1 1111  _.   1    _. 11111  _. 111111 _.        _.        _. 1      _.        _.    1   _.   111  ,
-		//.1 1   1 _.   1    _.   11   _.      1 _.1111111 _.      1 _.11    1 _.  1     _.1     1 _.      1 _.   1    _.   1    _.  1     _.1111111 _.   1    _.   1    ,
-		//.11    1 _.   1    _. 1      _.1     1 _.    1   _.1     1 _.1     1 _.  1     _.1     1 _.1     1 _.        _.  1     _.   1    _.        _.  1     _.        ,
-		//. 11111  _.  111   _.1111111 _. 11111  _.   111  _. 11111  _. 11111  _.  1     _. 11111  _. 11111  _.        _.        _.    1   _.        _. 1      _.   1    ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.  111   _.   1    _.111111  _. 111111 _.111111  _.1111111 _.1111111 _. 11111  _.1     1 _.  111   _.   111  _. 1   1  _.1       _.11   11 _.11    1 _. 11111  ,
-		//. 1   1  _.  1 1   _.1     1 _.1       _.1     1 _.1       _.1       _.1       _.1     1 _.   1    _.    1   _. 1  1   _.1       _.1 1 1 1 _.1 1   1 _.1     1 ,
-		//.1 111 1 _. 1   1  _.1     1 _.1       _.1     1 _.1       _.1       _.1       _.1     1 _.   1    _.    1   _. 1 1    _.1       _.1  1  1 _.1 1   1 _.1     1 ,
-		//.1 1 1 1 _. 11111  _.111111  _.1       _.1     1 _.1111111 _.1111111 _.1    11 _.1111111 _.   1    _.    1   _. 111    _.1       _.1  1  1 _.1  1  1 _.1     1 ,
-		//.1 1 111 _.1     1 _.1     1 _.1       _.1     1 _.1       _.1       _.1     1 _.1     1 _.   1    _. 1  1   _. 1 1    _.1       _.1     1 _.1  1  1 _.1     1 ,
-		//. 1 1 1  _.1     1 _.1     1 _.1       _.1     1 _.1       _.1       _.1     1 _.1     1 _.   1    _. 1  1   _. 1  1   _.1       _.1     1 _.1   1 1 _.1     1 ,
-		//.  111 1 _.1     1 _.111111  _. 111111 _.111111  _.1111111 _.1       _. 11111  _.1     1 _.  111   _.  11    _. 1   1  _.1111111 _.1     1 _.1    11 _. 11111  ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.111111  _. 11111  _.111111  _. 11111  _.1111111 _.1     1 _.1     1 _.1  1  1 _.1     1 _.1     1 _.1111111 _.  111   _.1       _.  111   _.   1    _.        ,
-		//.1     1 _.1     1 _.1     1 _.1     1 _.   1    _.1     1 _.1     1 _.1  1  1 _. 1   1  _. 1   1  _.     1  _.  1     _. 1      _.    1   _.  1 1   _.        ,
-		//.1     1 _.1     1 _.1     1 _.1       _.   1    _.1     1 _.1     1 _.1  1  1 _.  1 1   _.  1 1   _.    1   _.  1     _.  1     _.    1   _. 1   1  _.        ,
-		//.111111  _.1     1 _.111111  _.111111  _.   1    _.1     1 _.1     1 _.1  1  1 _.   1    _.   1    _.   1    _.  1     _.   1    _.    1   _.        _.        ,
-		//.1       _.1   1 1 _.1    1  _.      1 _.   1    _.1     1 _. 1   1  _.1  1  1 _.  1 1   _.   1    _.  1     _.  1     _.    1   _.    1   _.        _.        ,
-		//.1       _.1    1  _.1     1 _.1     1 _.   1    _.1     1 _.  1 1   _.1  1  1 _. 1   1  _.   1    _. 1      _.  1     _.     1  _.    1   _.        _.        ,
-		//.1       _. 1111 1 _.1     1 _. 11111  _.   1    _. 11111  _.   1    _. 11 11  _.1     1 _.   1    _.1111111 _.  111   _.      1 _.  111   _.        _. 11111  ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.  1     _.        _. 1      _.        _.      1 _.        _.    11  _.        _. 1      _.   1    _.    1   _.        _.        _.        _.        _.        ,
-		//.   1    _.        _. 1      _.        _.      1 _.        _.   1    _.  11 1  _. 1      _.        _.        _. 1   1  _.   1    _.        _.        _.        ,
-		//.    1   _. 111 1  _. 1 11   _.  111   _.  111 1 _.  111   _.   1    _. 1  11  _. 1      _.   1    _.    1   _. 1  1   _.   1    _.1 1 1   _.1 111   _.  111   ,
-		//.        _.1   11  _. 11  1  _. 1   1  _. 1   11 _. 1   1  _. 11111  _. 1   1  _. 1 1    _.   1    _.    1   _. 1 1    _.   1    _. 1 1 1  _. 1   1  _. 1   1  ,
-		//.        _.1    1  _. 1   1  _. 1      _. 1   11 _. 11111  _.   1    _.  1111  _. 11 1   _.   1    _.    1   _. 111    _.   1    _. 1 1 1  _. 1   1  _. 1   1  ,
-		//.        _.1   11  _. 1   1  _. 1   1  _. 1   11 _. 1      _.   1    _.     1  _. 1  1   _.   1    _.    1   _. 1  1   _.   1    _. 1 1 1  _. 1   1  _. 1   1  ,
-		//.        _. 111  1 _. 1111   _.  111   _.  111 1 _.  111   _.   1    _. 1   1  _. 1  11  _.   11   _.  1 1   _. 1   1  _.  1 11  _. 1 1 1  _. 1   1  _.  111   ,
-		//.        _.        _.        _.        _.        _.        _.  11    _.  111   _.        _.        _.   1    _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        ,
-		//.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.        _.   11   _.   1    _.  11    _.        _.        ,
-		//.        _.        _.        _.        _.   1    _.        _.        _.        _.        _.        _.        _.  1     _.   1    _.    1   _.        _.        ,
-		//. 1 11   _.  11 1  _. 1 11   _.  1111  _. 11111  _. 1   1  _. 1   1  _. 1   1  _. 1   1  _.1   1   _.11111   _.  1     _.   1    _.    1   _. 11     _.        ,
-		//. 11  1  _. 1  11  _. 11  1  _. 1    1 _.   1    _. 1   1  _. 1   1  _. 1 1 1  _.  1 1   _.1   1   _.   1    _. 11     _.   1    _.    11  _.1  1  1 _.        ,
-		//. 11  1  _. 1  11  _. 1      _.  111   _.   1    _. 1   1  _. 1   1  _. 1 1 1  _.   1    _.1   1   _.  1     _.  1     _.   1    _.    1   _.    11  _.        ,
-		//. 11  1  _. 1  11  _. 1      _.     11 _.   1 1  _. 1   1  _.  1 1   _. 1 1 1  _.  1 1   _. 1111   _. 1      _.  1     _.   1    _.    1   _.        _.        ,
-		//. 1 11   _.  11 1  _. 1      _. 11111  _.    1   _.  111 1 _.   1    _.  1 1   _. 1   1  _.    1   _.11111   _.   11   _.   1    _.  11    _.        _.        ,
-		//. 1      _.     1  _.        _.        _.        _.        _.        _.        _.        _.1   1   _.        _.        _.        _.        _.        _.        ,
-		//. 1      _.     1  _.        _.        _.        _.        _.        _.        _.        _. 111    _.        _.        _.        _.        _.        _.        ,
-
-
 		// ### Copy and paste to see this better ###
 		// Replace ', ' with '_'
 		// Replace '0b' with '.'
@@ -336,14 +319,35 @@ namespace fs
 			0b01000000, 0b00000100, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b01110000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
 		};
 
-		_fontTextureRaw.resize(kFontTexturePixelCount * 4);
-		for (uint32 pixelIndex = 0; pixelIndex < kFontTexturePixelCount; ++pixelIndex)
+		std::function<bool(const fs::Int2)> samplePixel = [&](const fs::Int2 pos)
 		{
+			const uint32 pixelIndex = static_cast<uint32>(static_cast<uint64>(pos.y()) * kFontTextureWidth + pos.x());
+			if (kFontTexturePixelCount <= pixelIndex)
+			{
+				return false;
+			}
+
 			const uint32 byteOffset = pixelIndex / kBitsPerByte;
 			const uint32 bitShiftToLeft = kBitsPerByte - (pixelIndex % kBitsPerByte + 1);
-
 			const uint8 bitMask = static_cast<uint8>(fs::Math::pow2_ui32(bitShiftToLeft));
-			const uint8 color = (kFontTextureRawBitData[byteOffset] & bitMask) ? 255 : 0;
+			return (kFontTextureRawBitData[byteOffset] & bitMask) ? true : false;
+		};
+		
+		std::function<fs::Int2(const uint32)> pixelIndexToPos = [&](const uint32 pixelIndex)
+		{
+			const int32 x = pixelIndex % kFontTextureWidth;
+			const int32 y = pixelIndex / kFontTextureWidth;
+			return fs::Int2(x, y);
+		};
+
+		_fontTextureRaw.resize(kFontTexturePixelCount * 4);
+		fs::Int2 pixelPos;
+		for (uint32 pixelIndex = 0; pixelIndex < kFontTexturePixelCount; ++pixelIndex)
+		{
+			pixelPos = pixelIndexToPos(pixelIndex);
+
+			const uint8 color = (true == samplePixel(pixelPos)) ? 255 : 0;
+
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 0] = color;
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 1] = color;
 			_fontTextureRaw[static_cast<uint64>(pixelIndex) * 4 + 2] = color;
