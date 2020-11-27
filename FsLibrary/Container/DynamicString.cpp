@@ -290,6 +290,11 @@ namespace fs
 		return DynamicStringA(myRaw + offset, subStringLength);
 	}
 
+	DynamicStringA DynamicStringA::substr(const StringRange& stringRange) const noexcept
+	{
+		return substr(stringRange._offset, stringRange._length);
+	}
+
 	void DynamicStringA::setChar(const uint32 at, const char ch)
 	{
 		if (at < _length)

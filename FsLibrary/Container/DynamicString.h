@@ -97,6 +97,7 @@ namespace fs
 		void								append(const char* const rawString);
 		void								append(const DynamicStringA& rhs);
 		DynamicStringA						substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
+		DynamicStringA						substr(const StringRange& stringRange) const noexcept;
 		void								setChar(const uint32 at, const char ch);
 		void								reserve(const uint32 newCapacity);
 		void								resize(const uint32 newSize);
