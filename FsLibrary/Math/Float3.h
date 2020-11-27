@@ -11,6 +11,7 @@
 
 namespace fs
 {
+	// No SIMD
 	class Float3 final
 	{
 	public:
@@ -19,12 +20,12 @@ namespace fs
 		explicit				Float3(const float x, const float y, const float z);
 		explicit				Float3(const Float2& rhs);
 								Float3(const Float3& rhs)								= default;
-								Float3(Float3&& rhs)									= default;
+								Float3(Float3&& rhs) noexcept							= default;
 								~Float3()												= default;
 
 	public:
 		Float3&					operator=(const Float3& rhs)							= default;
-		Float3&					operator=(Float3&& rhs)									= default;
+		Float3&					operator=(Float3&& rhs) noexcept						= default;
 
 	public:
 		Float3&					operator+=(const Float3& rhs);
@@ -33,10 +34,10 @@ namespace fs
 		Float3&					operator/=(const float s);
 
 	public:
-		const Float3			operator+(const Float3& rhs) const;
-		const Float3			operator-(const Float3& rhs) const;
-		const Float3			operator*(const float s) const;
-		const Float3			operator/(const float s) const;
+		Float3					operator+(const Float3& rhs) const noexcept;
+		Float3					operator-(const Float3& rhs) const noexcept;
+		Float3					operator*(const float s) const noexcept;
+		Float3					operator/(const float s) const noexcept;
 
 	public:
 		float&					operator[](const uint32 index) noexcept;
@@ -47,15 +48,15 @@ namespace fs
 		const bool				operator!=(const Float3& rhs) const noexcept;
 
 	public:
-		static const float		dotProductRaw(const float (&a)[3], const float (&b)[3]) noexcept;
+		static const float		dotProductRaw(const float* const a, const float* const b) noexcept;
 
 		// for matrix multiplication
 		static const float		dotProductRaw(const float (&a)[3], const float bX, const float bY, const float bZ) noexcept;
 
 	public:
 		static const float		dot(const Float3& lhs, const Float3& rhs) noexcept;
-		static const Float3		cross(const Float3& lhs, const Float3& rhs) noexcept;
-		static const Float3		normalize(const Float3& float3) noexcept;
+		static Float3			cross(const Float3& lhs, const Float3& rhs) noexcept;
+		static Float3			normalize(const Float3& float3) noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;
@@ -63,15 +64,20 @@ namespace fs
 
 	public:
 		void					set(const float x, const float y, const float z) noexcept;
+		/*
 		void					x(const float newX) noexcept;
 		const float				x() const noexcept;
 		void					y(const float newY) noexcept;
 		const float				y() const noexcept;
 		void					z(const float newZ) noexcept;
 		const float				z() const noexcept;
+		*/
 
-	private:
-		float					_f[3];
+	//private:
+	public:
+		float					_x;
+		float					_y;
+		float					_z;
 	};
 }
 

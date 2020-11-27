@@ -28,7 +28,7 @@ namespace fs
 	}
 
 	inline Float4::Float4(const Float3& rhs)
-		: _f{ rhs.x(), rhs.y(), rhs.z() }
+		: Float4(rhs._x, rhs._y, rhs._z, 1.0f)
 	{
 		__noop;
 	}
