@@ -36,7 +36,7 @@ namespace fs
 		__noop;
 	}
 
-	inline const Float3x3 Float3x3::operator*(const Float3x3& rhs) const noexcept
+	inline Float3x3 Float3x3::operator*(const Float3x3& rhs) const noexcept
 	{
 		return Float3x3
 		(
@@ -57,7 +57,7 @@ namespace fs
 		);
 	}
 
-	inline const Float3x3 Float3x3::operator*(const float s) const noexcept
+	inline Float3x3 Float3x3::operator*(const float s) const noexcept
 	{
 		return Float3x3(
 			_m[0][0] * s, _m[0][1] * s, _m[0][2] * s,
@@ -66,7 +66,7 @@ namespace fs
 		);
 	}
 
-	inline const Float3x3 Float3x3::operator/(const float s) const noexcept
+	inline Float3x3 Float3x3::operator/(const float s) const noexcept
 	{
 		return Float3x3(
 			_m[0][0] / s, _m[0][1] / s, _m[0][2] / s,
@@ -86,7 +86,7 @@ namespace fs
 		_m[0][0] = _m[1][1] = _m[2][2] = 1.0f;
 	}
 
-	inline const Float2x2 Float3x3::minor(const uint32 row, const uint32 col) const noexcept
+	inline Float2x2 Float3x3::minor(const uint32 row, const uint32 col) const noexcept
 	{
 		static constexpr uint32 kSize = 3;
 
@@ -121,7 +121,7 @@ namespace fs
 		return a * minor(0, 0).determinant() - b * minor(0, 1).determinant() + c * minor(0, 2).determinant();
 	}
 
-	inline const Float3x3 Float3x3::transpose() const noexcept
+	inline Float3x3 Float3x3::transpose() const noexcept
 	{
 		return Float3x3
 		(
@@ -131,7 +131,7 @@ namespace fs
 		);
 	}
 
-	inline const Float3x3 Float3x3::cofactor() const noexcept
+	inline Float3x3 Float3x3::cofactor() const noexcept
 	{
 		return Float3x3
 		(
@@ -141,14 +141,13 @@ namespace fs
 		);
 	}
 
-	inline const Float3x3 Float3x3::adjugate() const noexcept
+	inline Float3x3 Float3x3::adjugate() const noexcept
 	{
 		return cofactor().transpose();
 	}
 
-	inline const Float3x3 Float3x3::inverse() const noexcept
+	inline Float3x3 Float3x3::inverse() const noexcept
 	{
 		return adjugate() / determinant();
 	}
-
 }

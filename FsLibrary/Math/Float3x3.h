@@ -37,21 +37,21 @@ namespace fs
 		Float3x3&			operator=(Float3x3&& rhs) noexcept							= default;
 
 	public:
-		const Float3x3		operator*(const Float3x3& rhs) const noexcept;
-		const Float3x3		operator*(const float s) const noexcept;
-		const Float3x3		operator/(const float s) const noexcept;
+		Float3x3			operator*(const Float3x3& rhs) const noexcept;
+		Float3x3			operator*(const float s) const noexcept;
+		Float3x3			operator/(const float s) const noexcept;
 		
 	public:
 		void				setZero() noexcept;
 		void				setIdentity() noexcept;
 
 	public:
-		const Float2x2		minor(const uint32 row, const uint32 col) const noexcept;
+		Float2x2			minor(const uint32 row, const uint32 col) const noexcept;
 		const float			determinant() const noexcept;
-		const Float3x3		transpose() const noexcept;
-		const Float3x3		cofactor() const noexcept;
-		const Float3x3		adjugate() const noexcept;
-		const Float3x3		inverse() const noexcept;
+		Float3x3			transpose() const noexcept;
+		Float3x3			cofactor() const noexcept;
+		Float3x3			adjugate() const noexcept;
+		Float3x3			inverse() const noexcept;
 
 	private:
 		float				_m[3][3]{};
