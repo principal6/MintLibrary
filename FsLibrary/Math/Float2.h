@@ -60,6 +60,7 @@ namespace fs
 		void					y(const float newY) noexcept;
 		const float				y() const noexcept;
 
+	//private:
 	public:
 		float					_x;
 		float					_y;
