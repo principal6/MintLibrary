@@ -52,6 +52,7 @@ namespace fs
 		TreeNodeAccessor<T>				getParentNode() const noexcept;
 		const uint32					getChildNodeCount() const noexcept;
 		TreeNodeAccessor<T>				getChildNode(const uint32 childNodeIndex) const noexcept;
+		TreeNodeAccessor<T>				getNextSiblingNode() const noexcept;
 
 	public:
 		TreeNodeAccessor				insertChildNode(const T& data);
@@ -138,6 +139,7 @@ namespace fs
 		TreeNodeAccessor<T>						getParentNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 		const uint32							getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 		TreeNodeAccessor<T>						getChildNode(const TreeNodeAccessor<T>& nodeAccessor, const uint32 childNodeIndex) const noexcept;
+		TreeNodeAccessor<T>						getNextSiblingNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 
 	public:
 		const bool								isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;

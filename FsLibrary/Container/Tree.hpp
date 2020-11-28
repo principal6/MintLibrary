@@ -99,6 +99,16 @@ namespace fs
 	}
 
 	template<typename T>
+	inline TreeNodeAccessor<T> TreeNodeAccessor<T>::getNextSiblingNode() const noexcept
+	{
+		if (_tree != nullptr)
+		{
+			return _tree->getNextSiblingNode(*this);
+		}
+		return TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
+	}
+
+	template<typename T>
 	TreeNodeAccessor<T> TreeNodeAccessor<T>::insertChildNode(const T& data)
 	{
 		if (isValid() == true)
@@ -259,6 +269,35 @@ namespace fs
 
 		const TreeNode<T>& node = getNodeXXX(nodeAccessor);
 		return node._childNodeAccessorArray.get(childNodeIndex);
+	}
+
+	template<typename T>
+	inline TreeNodeAccessor<T> Tree<T>::getNextSiblingNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
+	{
+		if (isValidNode(nodeAccessor) == false)
+		{
+			return TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
+		}
+
+		const TreeNode<T>& node = getNodeXXX(nodeAccessor);
+		const TreeNode<T>& parentNode = getNodeXXX(nodeAccessor.getParentNode());
+		
+		uint32 thisAt = 0;
+		const uint32 parentChildCount = parentNode._childNodeAccessorArray.size();
+		for (uint32 parentChildIndex = 0; parentChildIndex < parentChildCount; ++parentChildIndex)
+		{
+			if (parentNode._childNodeAccessorArray.get(parentChildIndex)._nodeId == nodeAccessor._nodeId) 
+			{
+				thisAt = parentChildIndex;
+				break;
+			}
+		}
+
+		if (thisAt + 1 == parentChildCount)
+		{
+			return TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
+		}
+		return parentNode._childNodeAccessorArray.get(thisAt + 1);
 	}
 
 	template<typename T>
