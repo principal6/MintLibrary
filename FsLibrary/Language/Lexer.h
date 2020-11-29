@@ -55,6 +55,8 @@ namespace fs
 
 			SymbolClassifier_StatementTerminator,		// ;
 
+			SymbolClassifier_Punctuator,				// ,
+
 			SymbolClassifier_OPERATOR_BEGINS,			// 두 개짜리 operator 의 첫 문자도 반드시 operator 다!!!
 			//
 			SymbolClassifier_AssignmentOperator,
@@ -73,11 +75,10 @@ namespace fs
 		static_assert(SymbolClassifier::SymbolClassifier_NumberLiteral		< SymbolClassifier::SymbolClassifier_Keyword			);
 		static_assert(SymbolClassifier::SymbolClassifier_Keyword			< SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		);
 		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		< SymbolClassifier::SymbolClassifier_GROUPER_ENDS		);
-		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_ENDS		< SymbolClassifier::SymbolClassifier_StringQuote		);
-		static_assert(SymbolClassifier::SymbolClassifier_StringQuote		< SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS	);
 		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS	< SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		);
 		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		< SymbolClassifier::SymbolClassifier_Identifier			);
 		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_ENDS - (SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS + 1) == OperatorClassifier::OperatorClassifier_COUNT);
+		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_ENDS - (SymbolClassifier::SymbolClassifier_GROUPER_BEGINS + 1) == GrouperClassifier::GrouperClassifier_COUNT);
 		FS_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier)
 		{
 			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS + 1 + operatorClassifier);
