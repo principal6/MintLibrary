@@ -15,12 +15,12 @@ namespace fs
 {
 	namespace Language
 	{
-		enum ScoperClassifier
+		enum GrouperClassifier
 		{
-			ScoperClassifier_Open,						// ( [ {
-			ScoperClassifier_Close,						// ) ] }
+			GrouperClassifier_Open,						// ( [ {
+			GrouperClassifier_Close,					// ) ] }
 
-			ScoperClassifier_COUNT
+			GrouperClassifier_COUNT
 		};
 
 		enum OperatorClassifier
@@ -44,16 +44,16 @@ namespace fs
 
 			SymbolClassifier_Keyword,					// if, else, class, ...
 
-			SymbolClassifier_SCOPER_BEGINS,
+			SymbolClassifier_GROUPER_BEGINS,
 			//
-			SymbolClassifier_Scoper_Open,				// () {} []   단 <> 는 제외!!!
-			SymbolClassifier_Scoper_Close,				// () {} []   단 <> 는 제외!!!
+			SymbolClassifier_Grouper_Open,				// () {} []   단 <> 는 제외!!!
+			SymbolClassifier_Grouper_Close,				// () {} []   단 <> 는 제외!!!
 			//
-			SymbolClassifier_SCOPER_ENDS,
+			SymbolClassifier_GROUPER_ENDS,
 
 			SymbolClassifier_StringQuote,				// ' "
 
-			SymbolClassifier_StateMarker,				// ;
+			SymbolClassifier_StatementTerminator,		// ;
 
 			SymbolClassifier_OPERATOR_BEGINS,			// 두 개짜리 operator 의 첫 문자도 반드시 operator 다!!!
 			//
@@ -71,9 +71,9 @@ namespace fs
 		};
 		static_assert(SymbolClassifier::SymbolClassifier_Delimiter			< SymbolClassifier::SymbolClassifier_NumberLiteral		);
 		static_assert(SymbolClassifier::SymbolClassifier_NumberLiteral		< SymbolClassifier::SymbolClassifier_Keyword			);
-		static_assert(SymbolClassifier::SymbolClassifier_Keyword			< SymbolClassifier::SymbolClassifier_SCOPER_BEGINS		);
-		static_assert(SymbolClassifier::SymbolClassifier_SCOPER_BEGINS		< SymbolClassifier::SymbolClassifier_SCOPER_ENDS		);
-		static_assert(SymbolClassifier::SymbolClassifier_SCOPER_ENDS		< SymbolClassifier::SymbolClassifier_StringQuote		);
+		static_assert(SymbolClassifier::SymbolClassifier_Keyword			< SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		);
+		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		< SymbolClassifier::SymbolClassifier_GROUPER_ENDS		);
+		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_ENDS		< SymbolClassifier::SymbolClassifier_StringQuote		);
 		static_assert(SymbolClassifier::SymbolClassifier_StringQuote		< SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS	);
 		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS	< SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		);
 		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		< SymbolClassifier::SymbolClassifier_Identifier			);
@@ -82,28 +82,28 @@ namespace fs
 		{
 			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS + 1 + operatorClassifier);
 		}
-		FS_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromScoperClassifier(const ScoperClassifier scoperClassifier)
+		FS_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromGrouperClassifier(const GrouperClassifier grouperClassifier)
 		{
-			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_SCOPER_BEGINS + 1 + scoperClassifier);
+			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_GROUPER_BEGINS + 1 + grouperClassifier);
 		}
 
-		struct ScoperTableItem
+		struct GrouperTableItem
 		{
-								ScoperTableItem()
+								GrouperTableItem()
 									: _input{ '\0' }
-									, _scoperClassifier{ ScoperClassifier::ScoperClassifier_COUNT }
+									, _grouperClassifier{ GrouperClassifier::GrouperClassifier_COUNT }
 								{
 									__noop;
 								}
-								ScoperTableItem(const char input, const ScoperClassifier scoperClassifier)
+								GrouperTableItem(const char input, const GrouperClassifier grouperClassifier)
 									: _input{ input }
-									, _scoperClassifier { scoperClassifier }
+									, _grouperClassifier { grouperClassifier }
 								{
 									__noop;
 								}
 
 			char				_input;
-			ScoperClassifier	_scoperClassifier;
+			GrouperClassifier	_grouperClassifier;
 		};
 
 		struct OperatorTableItem
@@ -175,10 +175,10 @@ namespace fs
 
 		public:
 			void									setEscaper(const char escaper);
-			void									setStateMarker(const char stateMarker);
+			void									setStatementTerminator(const char statementTerminator);
 			void									registerDelimiter(const char delimiter);
 			void									registerKeyword(const char* const keyword);
-			void									registerScoper(const char scoper, const ScoperClassifier scoperClassifier);
+			void									registerGrouper(const char grouper, const GrouperClassifier grouperClassifier);
 			void									registerStringQuote(const char stringQuote);
 			void									registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
@@ -187,8 +187,8 @@ namespace fs
 
 		private:
 			const bool								isDelimiter(const char input) const noexcept;
-			const bool								isStateMarker(const char input) const noexcept;
-			const bool								isScoper(const char input, ScoperTableItem& out) const noexcept;
+			const bool								isStatementTerminator(const char input) const noexcept;
+			const bool								isGrouper(const char input, GrouperTableItem& out) const noexcept;
 			const bool								isStringQuote(const char input) const noexcept;
 			const bool								isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
 			const bool								isNumber(const std::string& input) const noexcept;
@@ -208,7 +208,7 @@ namespace fs
 
 		private:
 			char									_escaper;
-			char									_stateMarker;
+			char									_statementTerminator;
 
 		private:
 			std::unordered_map<char, int8>			_delimiterUmap;
@@ -218,8 +218,8 @@ namespace fs
 			std::unordered_map<uint64, uint64>		_keywordUmap;
 
 		private:
-			std::vector<ScoperTableItem>			_scoperTable;
-			std::unordered_map<char, uint64>		_scoperUmap;
+			std::vector<GrouperTableItem>			_grouperTable;
+			std::unordered_map<char, uint64>		_grouperUmap;
 
 		private:
 			std::unordered_map<char, int8>			_stringQuoteUmap;

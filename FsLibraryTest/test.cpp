@@ -492,7 +492,7 @@ const bool testLanguage()
 
 
 	fs::Language::Lexer lexer{ textFileReader.get() };
-	lexer.setStateMarker(';');
+	lexer.setStatementTerminator(';');
 	lexer.setEscaper('\\');
 
 	lexer.registerDelimiter(' ');
@@ -500,12 +500,12 @@ const bool testLanguage()
 	lexer.registerDelimiter('\r');
 	lexer.registerDelimiter('\n');
 
-	lexer.registerScoper('(', fs::Language::ScoperClassifier::ScoperClassifier_Open);
-	lexer.registerScoper('{', fs::Language::ScoperClassifier::ScoperClassifier_Open);
-	lexer.registerScoper('[', fs::Language::ScoperClassifier::ScoperClassifier_Open);
-	lexer.registerScoper(')', fs::Language::ScoperClassifier::ScoperClassifier_Close);
-	lexer.registerScoper('}', fs::Language::ScoperClassifier::ScoperClassifier_Close);
-	lexer.registerScoper(']', fs::Language::ScoperClassifier::ScoperClassifier_Close);
+	lexer.registerGrouper('(', fs::Language::GrouperClassifier::GrouperClassifier_Open);
+	lexer.registerGrouper('{', fs::Language::GrouperClassifier::GrouperClassifier_Open);
+	lexer.registerGrouper('[', fs::Language::GrouperClassifier::GrouperClassifier_Open);
+	lexer.registerGrouper(')', fs::Language::GrouperClassifier::GrouperClassifier_Close);
+	lexer.registerGrouper('}', fs::Language::GrouperClassifier::GrouperClassifier_Close);
+	lexer.registerGrouper(']', fs::Language::GrouperClassifier::GrouperClassifier_Close);
 
 	lexer.registerStringQuote('\'');
 	lexer.registerStringQuote('\"');

@@ -14,7 +14,7 @@ namespace fs
 			: _source{ source }
 			, _totalTimeMs{ 0 }
 			, _escaper{ '\\' }
-			, _stateMarker{ ';' }
+			, _statementTerminator{ ';' }
 		{
 			__noop;
 		}
@@ -24,9 +24,9 @@ namespace fs
 			_escaper = escaper;
 		}
 
-		void Lexer::setStateMarker(const char stateMarker)
+		void Lexer::setStatementTerminator(const char statementTerminator)
 		{
-			_stateMarker = stateMarker;
+			_statementTerminator = statementTerminator;
 		}
 
 		void Lexer::registerDelimiter(const char delimiter)
@@ -48,14 +48,14 @@ namespace fs
 			}
 		}
 
-		void Lexer::registerScoper(const char scoper, const ScoperClassifier scoperClassifier)
+		void Lexer::registerGrouper(const char grouper, const GrouperClassifier grouperClassifier)
 		{
-			if (_scoperUmap.find(scoper) == _scoperUmap.end())
+			if (_grouperUmap.find(grouper) == _grouperUmap.end())
 			{
-				_scoperTable.emplace_back(ScoperTableItem(scoper, scoperClassifier));
-				const uint64 scoperIndex = _scoperTable.size() - 1;
+				_grouperTable.emplace_back(GrouperTableItem(grouper, grouperClassifier));
+				const uint64 grouperIndex = _grouperTable.size() - 1;
 
-				_scoperUmap.insert(std::make_pair(scoper, scoperIndex));
+				_grouperUmap.insert(std::make_pair(grouper, grouperIndex));
 			}
 		}
 
@@ -103,15 +103,15 @@ namespace fs
 				SymbolClassifier symbolClassifier = SymbolClassifier::SymbolClassifier_Identifier;
 				uint64 advance = 0;
 				OperatorTableItem operatorTableItem;
-				ScoperTableItem scoperTableItem;
+				GrouperTableItem grouperTableItem;
 				if (isDelimiter(ch0) == true)
 				{
 					symbolClassifier = SymbolClassifier::SymbolClassifier_Delimiter;
 					advance = 1;
 				}
-				else if (isScoper(ch0, scoperTableItem) == true)
+				else if (isGrouper(ch0, grouperTableItem) == true)
 				{
-					symbolClassifier = getSymbolClassifierFromScoperClassifier(scoperTableItem._scoperClassifier);
+					symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem._grouperClassifier);
 					advance = 1;
 				}
 				else if (isStringQuote(ch0) == true)
@@ -119,9 +119,9 @@ namespace fs
 					symbolClassifier = SymbolClassifier::SymbolClassifier_StringQuote;
 					advance = 1;
 				}
-				else if (isStateMarker(ch0) == true)
+				else if (isStatementTerminator(ch0) == true)
 				{
-					symbolClassifier = SymbolClassifier::SymbolClassifier_StateMarker;
+					symbolClassifier = SymbolClassifier::SymbolClassifier_StatementTerminator;
 					advance = 1;
 				}
 				else if (isOperator(ch0, ch1, operatorTableItem) == true)
@@ -200,20 +200,20 @@ namespace fs
 			return _delimiterUmap.find(input) != _delimiterUmap.end();
 		}
 
-		const bool Lexer::isStateMarker(const char input) const noexcept
+		const bool Lexer::isStatementTerminator(const char input) const noexcept
 		{
-			return (0 == _stateMarker) ? false : (_stateMarker == input);
+			return (0 == _statementTerminator) ? false : (_statementTerminator == input);
 		}
 
-		const bool Lexer::isScoper(const char input, ScoperTableItem& out) const noexcept
+		const bool Lexer::isGrouper(const char input, GrouperTableItem& out) const noexcept
 		{
-			auto found = _scoperUmap.find(input);
-			if (found == _scoperUmap.end())
+			auto found = _grouperUmap.find(input);
+			if (found == _grouperUmap.end())
 			{
 				return false;
 			}
 
-			out = _scoperTable[found->second];
+			out = _grouperTable[found->second];
 			return true;
 		}
 
