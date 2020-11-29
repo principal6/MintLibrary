@@ -1,0 +1,40 @@
+class VS_INPUT
+{
+public:
+	VS_INPUT()
+		: _flag{ 0 }
+	{
+		__noop;
+	}
+	
+	VS_INPUT(const fs::Float3& position, const fs::Float4& color)
+		: _position{ position }
+		, _color{ color }
+		, _flag{ 0 }
+	{
+		__noop;
+	}
+	
+	VS_INPUT(const fs::Float3& position, const fs::Float2& texCoord)
+		: _position{ position }
+		, _texCoord{ texCoord }
+		, _flag{ 1 }
+	{
+		__noop;
+	}
+	
+	VS_INPUT(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
+		: _position{ position }
+		, _color{ color }
+		, _texCoord{ texCoord }
+		, _flag{ 2 }
+	{
+		__noop;
+	}
+
+public:
+	fs::Float4	_position;
+	fs::Float4	_color;
+	fs::Float2	_texCoord;
+	uint32		_flag;
+};

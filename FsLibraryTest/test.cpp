@@ -439,7 +439,7 @@ const bool testMemoryAllocator2()
 
 const bool testFiles()
 {
-	static constexpr const char* const kFileName = "test.bin";
+	static constexpr const char* const kFileName = "FsLibraryTest/test.bin";
 	static constexpr const char* const kRawString = "abc";
 	fs::BinaryFileWriter bfw;
 	bfw.write(3.14f);
@@ -462,7 +462,7 @@ const bool testFiles()
 	}
 
 	fs::TextFileReader tfr;
-	tfr.open("test.cpp");
+	tfr.open("FsLibraryTest/test.cpp");
 
 	return true;
 }
@@ -470,42 +470,93 @@ const bool testFiles()
 const bool testLanguage()
 {
 	fs::TextFileReader textFileReader;
-	textFileReader.open("test.cpp");
+	//textFileReader.open("FsLibraryTest/test.cpp");
+	textFileReader.open("test.txt");
 	
-	fs::Language::Tokenizer tokenizer{ textFileReader.get() };
-	tokenizer.insertDelimiter(' ');
-	tokenizer.insertDelimiter('\t');
-	tokenizer.insertDelimiter('\r');
-	tokenizer.insertDelimiter('\n');
-	tokenizer.insertDelimiter('\n');
+	fs::DynamicStringA testHlsl{
+		R"(
+			#include <ShaderStructDefinitions>
+			#include <VsConstantBuffers>
 
-	tokenizer.insertTokenIdentifier(',');
-	tokenizer.insertTokenIdentifier('.');
-	tokenizer.insertTokenIdentifier(';');
-	tokenizer.insertTokenIdentifier(':');
-	tokenizer.insertTokenIdentifier('<');
-	tokenizer.insertTokenIdentifier('>');
-	tokenizer.insertTokenIdentifier('(');
-	tokenizer.insertTokenIdentifier(')');
-	tokenizer.insertTokenIdentifier('{');
-	tokenizer.insertTokenIdentifier('}');
-	tokenizer.insertTokenIdentifier('[');
-	tokenizer.insertTokenIdentifier(']');
-	tokenizer.insertTokenIdentifier('+');
-	tokenizer.insertTokenIdentifier('-');
-	tokenizer.insertTokenIdentifier('*');
-	tokenizer.insertTokenIdentifier('/');
-	tokenizer.insertTokenIdentifier('%');
-	tokenizer.insertTokenIdentifier('&');
-	tokenizer.insertTokenIdentifier('|');
-	tokenizer.insertTokenIdentifier('!');
-	tokenizer.insertTokenIdentifier('~');
-	tokenizer.insertTokenIdentifier('=');
-	tokenizer.insertTokenIdentifier('?');
-	tokenizer.insertTokenIdentifier('\'');
-	tokenizer.insertTokenIdentifier('\"');
+			VS_OUTPUT main(VS_INPUT input)
+			{
+				VS_OUTPUT result;
+				result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+				result._color		= input._color;
+				result._texCoord	= input._texCoord;
+				result._flag		= input._flag;
+				return result;
+			}
+		)"
+	};
 
-	tokenizer.tokenize();
+
+	fs::Language::Lexer lexer{ textFileReader.get() };
+	lexer.setStateMarker(';');
+	lexer.setEscaper('\\');
+
+	lexer.registerDelimiter(' ');
+	lexer.registerDelimiter('\t');
+	lexer.registerDelimiter('\r');
+	lexer.registerDelimiter('\n');
+
+	lexer.registerScoper('(', fs::Language::ScoperClassifier::ScoperClassifier_Open);
+	lexer.registerScoper('{', fs::Language::ScoperClassifier::ScoperClassifier_Open);
+	lexer.registerScoper('[', fs::Language::ScoperClassifier::ScoperClassifier_Open);
+	lexer.registerScoper(')', fs::Language::ScoperClassifier::ScoperClassifier_Close);
+	lexer.registerScoper('}', fs::Language::ScoperClassifier::ScoperClassifier_Close);
+	lexer.registerScoper(']', fs::Language::ScoperClassifier::ScoperClassifier_Close);
+
+	lexer.registerStringQuote('\'');
+	lexer.registerStringQuote('\"');
+
+	lexer.registerOperator("=" , fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("+=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("-=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("*=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("/=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("%=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("&=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("|=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+	lexer.registerOperator("^=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
+
+	lexer.registerOperator("<" , fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	lexer.registerOperator("<=", fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	lexer.registerOperator(">" , fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	lexer.registerOperator(">=", fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	lexer.registerOperator("==", fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	lexer.registerOperator("!=", fs::Language::OperatorClassifier::OperatorClassifier_RelationalOperator);
+	
+	lexer.registerOperator("+" , fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("-" , fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("++", fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("--", fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("*" , fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("/" , fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	lexer.registerOperator("%" , fs::Language::OperatorClassifier::OperatorClassifier_ArithmeticOperator);
+	
+	lexer.registerOperator("&&", fs::Language::OperatorClassifier::OperatorClassifier_LogicalOperator);
+	lexer.registerOperator("||", fs::Language::OperatorClassifier::OperatorClassifier_LogicalOperator);
+	lexer.registerOperator("!" , fs::Language::OperatorClassifier::OperatorClassifier_LogicalOperator);
+
+	lexer.registerOperator("&", fs::Language::OperatorClassifier::OperatorClassifier_BitwiseOperator);
+	lexer.registerOperator("|", fs::Language::OperatorClassifier::OperatorClassifier_BitwiseOperator);
+	lexer.registerOperator("^", fs::Language::OperatorClassifier::OperatorClassifier_BitwiseOperator);
+	lexer.registerOperator("~", fs::Language::OperatorClassifier::OperatorClassifier_BitwiseOperator);
+
+	lexer.registerOperator(".", fs::Language::OperatorClassifier::OperatorClassifier_MemberAccessOperator);
+	
+	lexer.registerOperator("?", fs::Language::OperatorClassifier::OperatorClassifier_OperatorCandiate);
+	lexer.registerOperator(":", fs::Language::OperatorClassifier::OperatorClassifier_OperatorCandiate);
+
+	lexer.registerKeyword("class");
+	lexer.registerKeyword("public");
+	lexer.registerKeyword("protected");
+	lexer.registerKeyword("private");
+	lexer.registerKeyword("const");
+	lexer.registerKeyword("__noop");
+
+	lexer.execute();
 
 	return true;
 }

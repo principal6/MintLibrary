@@ -236,6 +236,12 @@
     <ClInclude Include="Language\Tokenizer.h">
       <Filter>Language</Filter>
     </ClInclude>
+    <ClInclude Include="Language\Lexer.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\Language.h">
+      <Filter>Language</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -284,6 +290,9 @@
       <Filter>File</Filter>
     </ClCompile>
     <ClCompile Include="Language\Tokenizer.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\Lexer.cpp">
       <Filter>Language</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,7 @@
 #include <Memory/Memory.h>
 #include <Platform/Platform.h>
 #include <SimpleRendering/GraphicDevice.h>
-#include <Language/Tokenizer.h>
+#include <Language/Language.h>
 
 
 #endif // !FS_LIBRARY_H

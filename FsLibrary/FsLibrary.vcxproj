@@ -49,6 +49,8 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Language\Language.h" />
+    <ClInclude Include="Language\Lexer.h" />
     <ClInclude Include="Language\Tokenizer.h" />
     <ClInclude Include="Logger\Logger.h" />
     <ClInclude Include="Logger\Logger.hpp" />
@@ -98,6 +100,7 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Language\Lexer.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />
@@ -233,7 +236,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
