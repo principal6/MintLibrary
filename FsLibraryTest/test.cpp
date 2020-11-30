@@ -510,6 +510,8 @@ const bool testLanguage()
 	lexer.registerStringQuote('\'');
 	lexer.registerStringQuote('\"');
 
+	lexer.registerPunctuator(',');
+
 	lexer.registerOperator("=" , fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
 	lexer.registerOperator("+=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);
 	lexer.registerOperator("-=", fs::Language::OperatorClassifier::OperatorClassifier_AssignmentOperator);

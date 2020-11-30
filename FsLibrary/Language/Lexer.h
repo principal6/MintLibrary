@@ -168,6 +168,7 @@ namespace fs
 		// Lexical Analyzer
 		// Tokens of lexeme
 		// Also known as Scanner
+		// Uses STL (vector, string, unordered_map)
 		class Lexer
 		{
 		public:
@@ -181,6 +182,7 @@ namespace fs
 			void									registerKeyword(const char* const keyword);
 			void									registerGrouper(const char grouper, const GrouperClassifier grouperClassifier);
 			void									registerStringQuote(const char stringQuote);
+			void									registerPunctuator(const char punctuator);
 			void									registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
 		public:
@@ -191,6 +193,7 @@ namespace fs
 			const bool								isStatementTerminator(const char input) const noexcept;
 			const bool								isGrouper(const char input, GrouperTableItem& out) const noexcept;
 			const bool								isStringQuote(const char input) const noexcept;
+			const bool								isPunctuator(const char input) const noexcept;
 			const bool								isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
 			const bool								isNumber(const std::string& input) const noexcept;
 			const bool								isKeyword(const std::string& input) const noexcept;
@@ -224,6 +227,9 @@ namespace fs
 
 		private:
 			std::unordered_map<char, int8>			_stringQuoteUmap;
+
+		private:
+			std::unordered_map<char, int8>			_punctuatorUmap;
 
 		private:
 			std::vector<OperatorTableItem>			_operatorTable;

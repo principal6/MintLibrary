@@ -67,6 +67,14 @@ namespace fs
 			}
 		}
 
+		void Lexer::registerPunctuator(const char punctuator)
+		{
+			if (_punctuatorUmap.find(punctuator) == _punctuatorUmap.end())
+			{
+				_punctuatorUmap.insert(std::make_pair(punctuator, 1));
+			}
+		}
+		
 		void Lexer::registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier)
 		{
 			const uint32 length = fs::StringUtil::strlen(operator_);
@@ -117,6 +125,11 @@ namespace fs
 				else if (isStringQuote(ch0) == true)
 				{
 					symbolClassifier = SymbolClassifier::SymbolClassifier_StringQuote;
+					advance = 1;
+				}
+				else if (isPunctuator(ch0) == true)
+				{
+					symbolClassifier = SymbolClassifier::SymbolClassifier_Punctuator;
 					advance = 1;
 				}
 				else if (isStatementTerminator(ch0) == true)
@@ -220,6 +233,11 @@ namespace fs
 		const bool Lexer::isStringQuote(const char input) const noexcept
 		{
 			return _stringQuoteUmap.find(input) != _stringQuoteUmap.end();
+		}
+
+		const bool Lexer::isPunctuator(const char input) const noexcept
+		{
+			return _punctuatorUmap.find(input) != _punctuatorUmap.end();
 		}
 
 		const bool Lexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
