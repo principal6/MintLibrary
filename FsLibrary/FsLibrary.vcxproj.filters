@@ -242,6 +242,15 @@
     <ClInclude Include="Language\Language.h">
       <Filter>Language</Filter>
     </ClInclude>
+    <ClInclude Include="Language\CppParser.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\LanguageCommon.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\IParser.h">
+      <Filter>Language</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -295,8 +304,19 @@
     <ClCompile Include="Language\Lexer.cpp">
       <Filter>Language</Filter>
     </ClCompile>
+    <ClCompile Include="Language\CppParser.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\IParser.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Language\Lexer.inl">
+      <Filter>Language</Filter>
+    </None>
   </ItemGroup>
 </Project>

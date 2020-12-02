@@ -49,7 +49,10 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Language\CppParser.h" />
+    <ClInclude Include="Language\IParser.h" />
     <ClInclude Include="Language\Language.h" />
+    <ClInclude Include="Language\LanguageCommon.h" />
     <ClInclude Include="Language\Lexer.h" />
     <ClInclude Include="Language\Tokenizer.h" />
     <ClInclude Include="Logger\Logger.h" />
@@ -100,6 +103,8 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Language\CppParser.cpp" />
+    <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Lexer.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
@@ -115,6 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Language\Lexer.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

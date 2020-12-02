@@ -22,10 +22,11 @@ namespace fs
 
 #pragma region Assertion
 	#if defined FS_DEBUG
-		#define FS_ASSERT(author, expression, format, ...)	if (!(expression)) { fs::Logger::logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); }
+		#define FS_ASSERT(author, expression, format, ...)	if (!(expression)) fs::Logger::logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__);
 	#else
 		#define FS_ASSERT(author, expression, format, ...)
 	#endif
+	#define FS_RETURN_FALSE_IF_NOT(expression) if (!(expression)) return false
 #pragma endregion
 
 

@@ -10,158 +10,123 @@
 #include <Container/Vector.h>
 #include <Container/DynamicString.h>
 
+#include <Language/LanguageCommon.h>
+
 
 namespace fs
 {
 	namespace Language
 	{
-		enum GrouperClassifier
-		{
-			GrouperClassifier_Open,						// ( [ {
-			GrouperClassifier_Close,					// ) ] }
+		class IParser;
 
-			GrouperClassifier_COUNT
+
+		enum class GrouperClassifier : uint8
+		{
+			Open,					// ( [ {
+			Close,					// ) ] }
+
+			COUNT
 		};
 
-		enum OperatorClassifier
+		enum class OperatorClassifier : uint8
 		{
-			OperatorClassifier_AssignmentOperator,		// = += -= *= /= %= &= |= ^=
-			OperatorClassifier_RelationalOperator,		// < <= > >= == !=
-			OperatorClassifier_ArithmeticOperator,		// + - * / % ++() ()++ --() ()--
-			OperatorClassifier_LogicalOperator,			// && || !
-			OperatorClassifier_BitwiseOperator,			// & | ^ ~
-			OperatorClassifier_MemberAccessOperator,	// .
-			OperatorClassifier_OperatorCandiate,		// ? :
+			AssignmentOperator,		// = += -= *= /= %= &= |= ^=
+			RelationalOperator,		// < <= > >= == !=
+			ArithmeticOperator,		// + - * / % ++() ()++ --() ()--
+			LogicalOperator,		// && || !
+			BitwiseOperator,		// & | ^ ~
+			MemberAccessOperator,	// .
+			OperatorCandiate,		// ? :
 
-			OperatorClassifier_COUNT
+			COUNT
 		};
 
-		enum SymbolClassifier
+		enum class CommentMarkerClassifier : uint8
 		{
-			SymbolClassifier_Delimiter,
-
-			SymbolClassifier_NumberLiteral,				// [0-9]+[.]*[0-9]*
-
-			SymbolClassifier_Keyword,					// if, else, class, ...
-
-			SymbolClassifier_GROUPER_BEGINS,
-			//
-			SymbolClassifier_Grouper_Open,				// () {} []   단 <> 는 제외!!!
-			SymbolClassifier_Grouper_Close,				// () {} []   단 <> 는 제외!!!
-			//
-			SymbolClassifier_GROUPER_ENDS,
-
-			SymbolClassifier_StringQuote,				// ' "
-
-			SymbolClassifier_StatementTerminator,		// ;
-
-			SymbolClassifier_Punctuator,				// ,
-
-			SymbolClassifier_OPERATOR_BEGINS,			// 두 개짜리 operator 의 첫 문자도 반드시 operator 다!!!
-			//
-			SymbolClassifier_AssignmentOperator,
-			SymbolClassifier_RelationalOperator,
-			SymbolClassifier_ArithmeticOperator,
-			SymbolClassifier_LogicalOperator,
-			SymbolClassifier_BitwiseOperator,
-			SymbolClassifier_MemberAccessOperator,
-			SymbolClassifier_OperatorCandiate,
-			//
-			SymbolClassifier_OPERATOR_ENDS,
-
-			SymbolClassifier_Identifier,				// [a-zA-Z_][a-zA-Z_0-9]+
+			SingleMarker,
+			OpenMarker,
+			CloseMarker,
+			OpenCloseMarker,
+			
+			COUNT,
 		};
-		static_assert(SymbolClassifier::SymbolClassifier_Delimiter			< SymbolClassifier::SymbolClassifier_NumberLiteral		);
-		static_assert(SymbolClassifier::SymbolClassifier_NumberLiteral		< SymbolClassifier::SymbolClassifier_Keyword			);
-		static_assert(SymbolClassifier::SymbolClassifier_Keyword			< SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		);
-		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_BEGINS		< SymbolClassifier::SymbolClassifier_GROUPER_ENDS		);
-		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS	< SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		);
-		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_ENDS		< SymbolClassifier::SymbolClassifier_Identifier			);
-		static_assert(SymbolClassifier::SymbolClassifier_OPERATOR_ENDS - (SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS + 1) == OperatorClassifier::OperatorClassifier_COUNT);
-		static_assert(SymbolClassifier::SymbolClassifier_GROUPER_ENDS - (SymbolClassifier::SymbolClassifier_GROUPER_BEGINS + 1) == GrouperClassifier::GrouperClassifier_COUNT);
-		FS_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier)
-		{
-			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_OPERATOR_BEGINS + 1 + operatorClassifier);
-		}
-		FS_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromGrouperClassifier(const GrouperClassifier grouperClassifier)
-		{
-			return static_cast<SymbolClassifier>(SymbolClassifier::SymbolClassifier_GROUPER_BEGINS + 1 + grouperClassifier);
-		}
+
+		static_assert(static_cast<uint32>(SymbolClassifier::OPERATOR_ENDS) - (static_cast<uint32>(SymbolClassifier::OPERATOR_BEGINS) + 1) == static_cast<uint32>(OperatorClassifier::COUNT));
+		static_assert(static_cast<uint32>(SymbolClassifier::GROUPER_ENDS ) - (static_cast<uint32>(SymbolClassifier::GROUPER_BEGINS ) + 1) == static_cast<uint32>(GrouperClassifier::COUNT));
+		static constexpr const SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier);
+		static constexpr const SymbolClassifier getSymbolClassifierFromGrouperClassifier(const GrouperClassifier grouperClassifier);
 
 		struct GrouperTableItem
 		{
-								GrouperTableItem()
-									: _input{ '\0' }
-									, _grouperClassifier{ GrouperClassifier::GrouperClassifier_COUNT }
-								{
-									__noop;
-								}
-								GrouperTableItem(const char input, const GrouperClassifier grouperClassifier)
-									: _input{ input }
-									, _grouperClassifier { grouperClassifier }
-								{
-									__noop;
-								}
+									GrouperTableItem()
+										: _input{ '\0' }
+										, _grouperClassifier{ GrouperClassifier::COUNT }
+									{
+										__noop;
+									}
+									GrouperTableItem(const char input, const GrouperClassifier grouperClassifier)
+										: _input{ input }
+										, _grouperClassifier { grouperClassifier }
+									{
+										__noop;
+									}
 
-			char				_input;
-			GrouperClassifier	_grouperClassifier;
+			char					_input;
+			GrouperClassifier		_grouperClassifier;
 		};
 
 		struct OperatorTableItem
 		{
-								OperatorTableItem()
-									: _length{ 0 }
-									, _operatorClassifier{ OperatorClassifier::OperatorClassifier_COUNT }
-								{
-									__noop;
-								}
-								OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier) 
-									: _string{ string }
-									, _operatorClassifier{ operatorClassifier }
-								{
-									_length = _string.length();
-								}
+									OperatorTableItem()
+										: _length{ 0 }
+										, _operatorClassifier{ OperatorClassifier::COUNT }
+									{
+										__noop;
+									}
+									OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier) 
+										: _string{ string }
+										, _operatorClassifier{ operatorClassifier }
+									{
+										_length = _string.length();
+									}
 
-			std::string			_string;
-			uint64				_length;
-			OperatorClassifier	_operatorClassifier;
+			std::string				_string;
+			uint64					_length;
+			OperatorClassifier		_operatorClassifier;
 		};
 
-		struct SymbolTableItem
+		struct CommentMarkerTableItem
 		{
-									SymbolTableItem()
-										: _stringIndex{ 0 }
-										, _sourceAt{ 0 }
-										, _symbolClassifier{ SymbolClassifier::SymbolClassifier_Identifier }
+									CommentMarkerTableItem()
+										: _length{ 0 }
+										, _commentMarkerGroupId{ kUint16Max }
+										, _commentMarkerClassifier{ CommentMarkerClassifier::COUNT }
 									{
 										__noop;
 									}
 
-#if defined FS_DEBUG
-									SymbolTableItem(const uint64 stringIndex, const std::string& stringForDebug, const uint64 sourceAt, const SymbolClassifier symbolClassifier)
-										: _stringIndex{ stringIndex }
-										, _stringForDebug{ stringForDebug }
-										, _sourceAt{ sourceAt }
-										, _symbolClassifier{ symbolClassifier }
+									CommentMarkerTableItem(const char* const string, const CommentMarkerClassifier commentMarkerClassifier, const uint16 commentMarkerGroupId)
+										: _string{ string }
+										, _commentMarkerGroupId{ commentMarkerGroupId }
+										, _commentMarkerClassifier{ commentMarkerClassifier }
 									{
-										__noop;
+										_length = _string.length();
 									}
-#else
-									SymbolTableItem(const uint64 stringIndex, const uint64 sourceAt, const SymbolClassifier symbolClassifier)
-										: _stringIndex{ stringIndex }
-										, _sourceAt{ sourceAt }
-										, _symbolClassifier{ symbolClassifier }
-									{
-										__noop;
-									}
-#endif
 
-			uint64					_stringIndex;
-#if defined FS_DEBUG
-			std::string				_stringForDebug;
-#endif
-			uint64					_sourceAt;
-			SymbolClassifier		_symbolClassifier;
+			static const uint16		getNextGroupId()
+			{
+				const uint16 result = _commentMarkerNextGroupId;
+				++_commentMarkerNextGroupId;
+				return result;
+			}
+
+			std::string				_string;
+			uint64					_length;
+			uint16					_commentMarkerGroupId;
+			CommentMarkerClassifier	_commentMarkerClassifier;
+
+		private:
+			static uint16			_commentMarkerNextGroupId;
 		};
 
 
@@ -171,6 +136,8 @@ namespace fs
 		// Uses STL (vector, string, unordered_map)
 		class Lexer
 		{
+			friend IParser;
+
 		public:
 													Lexer(const std::string& source);
 													~Lexer() = default;
@@ -178,6 +145,8 @@ namespace fs
 		public:
 			void									setEscaper(const char escaper);
 			void									setStatementTerminator(const char statementTerminator);
+			void									registerCommentMarker(const char* const commentMarker);
+			void									registerCommentMarker(const char* const commentMarkerOpen, const char* const commentMarkerClose);
 			void									registerDelimiter(const char delimiter);
 			void									registerKeyword(const char* const keyword);
 			void									registerGrouper(const char grouper, const GrouperClassifier grouperClassifier);
@@ -186,9 +155,10 @@ namespace fs
 			void									registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
 		public:
-			void									execute();
+			const bool								execute();
 
 		private:
+			const bool								isCommentMarker(const char ch0, const char ch1, CommentMarkerTableItem& out) const noexcept;
 			const bool								isDelimiter(const char input) const noexcept;
 			const bool								isStatementTerminator(const char input) const noexcept;
 			const bool								isGrouper(const char input, GrouperTableItem& out) const noexcept;
@@ -198,11 +168,8 @@ namespace fs
 			const bool								isNumber(const std::string& input) const noexcept;
 			const bool								isKeyword(const std::string& input) const noexcept;
 
-		private:
-			const uint64							getStringIndex(const char ch0, const char ch1) noexcept;
-			const uint64							getStringIndex(const std::string& input) noexcept;
-
 		public:
+			const std::vector<SymbolTableItem>&		getSymbolTable() const noexcept;
 			const uint32							getSymbolCount() const noexcept;
 			const SymbolTableItem&					getSymbol(const uint32 symbolIndex) const noexcept;
 
@@ -216,6 +183,10 @@ namespace fs
 
 		private:
 			std::unordered_map<char, int8>			_delimiterUmap;
+
+		private:
+			std::vector<CommentMarkerTableItem>		_commentMarkerTable;
+			std::unordered_map<uint64, uint64>		_commentMarkerUmap;
 
 		private:
 			std::vector<std::string>				_keywordTable;
@@ -236,14 +207,13 @@ namespace fs
 			std::unordered_map<uint64, uint64>		_operatorUmap;
 
 		private:
-			std::vector<std::string>				_stringTable;
-			std::unordered_map<uint64, uint64>		_stringTableUmap;
-
-		private:
 			std::vector<SymbolTableItem>			_symbolTable;
 		};
 	}
 }
+
+
+#include <Language/Lexer.inl>
 
 
 #endif // !FS_LEXER_H

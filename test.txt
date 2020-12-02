@@ -1,3 +1,13 @@
+#include <iostream>
+#include <anyheader.h>
+
+// Comment
+/* This is
+Also a
+Comment
+*/
+
+class ForwardDeclarated;
 class VS_INPUT
 {
 public:

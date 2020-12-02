@@ -49,6 +49,11 @@ namespace fs
             return static_cast<uint32>(::strlen(rawString));
         }
 
+        FS_INLINE const bool strcmp(const char* const a, const char* const b)
+        {
+            return (0 == ::strcmp(a, b));
+        }
+
         static void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray);
         static void tokenize(const fs::DynamicStringA& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<fs::DynamicStringA>& outArray);
 	}
