@@ -17,7 +17,7 @@
     <Expand>
       <Item Name="[Size]" ExcludeView="simple">_size</Item>
       <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
-      <Item Name="[MemoryAccessor]">_memoryAccessor</Item>
+      <!--<Item Name="[MemoryAccessor]">_memoryAccessor</Item>-->
       <ArrayItems>
         <Size>_size</Size>
         <ValuePointer>($T1*)(_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset))</ValuePointer>
@@ -36,24 +36,23 @@
   </Type>
   
 <!-- @@@ Tree BEGINS @@@ -->
-  <!--
   <Type Name="fs::TreeNode&lt;*&gt;">
     <DisplayString>{{ Node Data = { _data } }}</DisplayString>
     <Expand>
       <Item Name="[Node ID]">_nodeId</Item>
-      <Item Name="[Parent Node]">_parentNodeAccessor</Item>
-      <Item Name="[Child Nodes]">_childNodeAccessorArray</Item>
+      <ExpandedItem>_data</ExpandedItem>
+      <Item Name="[Parent Node]" Condition="_parentNodeAccessor._nodeId != kUint32Max">_parentNodeAccessor</Item>
+      <Item Name="[Child Nodes]" Condition="_childNodeAccessorArray._size > 0">_childNodeAccessorArray</Item>
     </Expand>
   </Type>
-  -->
   
   <Type Name="fs::TreeNodeAccessor&lt;*&gt;">
     <DisplayString>{{ Node ID [{ _nodeId }] { ((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data } }}</DisplayString>
     <Expand>
       <Item Name="[Node ID]">_nodeId</Item>
-      <Item Name="[Data]">((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data</Item>
+      <ExpandedItem>((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data</ExpandedItem>
       <Item Name="[Parent Node]" Condition="((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor</Item>
-      <Item Name="[Child Nodes]">((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray</Item>
+      <Item Name="[Child Nodes]" Condition="((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray._size > 0">((fs::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray</Item>
     </Expand>
   </Type>
 <!-- @@@ Tree ENDS @@@ -->
