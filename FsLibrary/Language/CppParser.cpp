@@ -25,7 +25,7 @@ namespace fs
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Private))
 		};
 		const SymbolTableItem CppParser::kInitializerListSymbol{ SymbolTableItem(SymbolClassifier::POST_GENERATED, "InitializerList") };
-		const SymbolTableItem CppParser::kMemberVariablesSymbol{ SymbolTableItem(SymbolClassifier::POST_GENERATED, "MemberVariables") };
+		const SymbolTableItem CppParser::kMemberVariableSymbol{ SymbolTableItem(SymbolClassifier::POST_GENERATED, "MemberVariable") };
 		CppParser::CppParser(Lexer& lexer)
 			: IParser(lexer)
 		{
@@ -439,7 +439,10 @@ namespace fs
 							}
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
-							TreeNodeAccessor functionNameNode = ancestorNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Name));
+							TreeNodeAccessor memberFunctionNode = ancestorNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Name));
+							{
+								TreeNodeAccessor accessModifierNode = memberFunctionNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
+							}
 
 							// function attribute
 							bool isConst	= false;
@@ -586,7 +589,7 @@ namespace fs
 								static_cast<int>(isDefault)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Default	|
 								static_cast<int>(isDelete)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Delete
 								);
-							functionNameNode.getNodeDataXXX().setAdditionalInfo(attributeFlags);
+							memberFunctionNode.getNodeDataXXX().setAdditionalInfo(attributeFlags);
 
 							const SymbolTableItem& postAttributeSymbol = getSymbol(postAttributePosition);
 							if (postAttributeSymbol._symbolString == ";")
@@ -596,10 +599,10 @@ namespace fs
 							}
 							else if (postAttributeSymbol._symbolString == "{")
 							{
-								FS_RETURN_FALSE_IF_NOT(parseFunctionParameters(false, openParenthesisPosition + 1, functionNameNode) == true);
+								FS_RETURN_FALSE_IF_NOT(parseFunctionParameters(false, openParenthesisPosition + 1, memberFunctionNode) == true);
 
 								uint64 postInstructionAdvance = 0;
-								FS_RETURN_FALSE_IF_NOT(parseFunctionInstructions(postAttributePosition + 1, functionNameNode, postInstructionAdvance) == true);
+								FS_RETURN_FALSE_IF_NOT(parseFunctionInstructions(postAttributePosition + 1, memberFunctionNode, postInstructionAdvance) == true);
 
 								outAdvanceCount = postAttributePosition + postInstructionAdvance - currentPosition + 1;
 								return true;
@@ -615,11 +618,14 @@ namespace fs
 						{
 							// TODO
 							// getTypeNode()
-							TreeNodeAccessor memberVariablesNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariablesSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariables));
+							TreeNodeAccessor memberVariableNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariableSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
+							{
+								TreeNodeAccessor accessModifierNode = memberVariableNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
+							}
 
 							uint64 postTypeNodeOffset = 0;
 							TreeNodeAccessor<SyntaxTreeItem> typeNode;
-							FS_RETURN_FALSE_IF_NOT(parseTypeNode(currentPosition, memberVariablesNode, typeNode, postTypeNodeOffset) == true);
+							FS_RETURN_FALSE_IF_NOT(parseTypeNode(currentPosition, memberVariableNode, typeNode, postTypeNodeOffset) == true);
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
@@ -724,7 +730,7 @@ namespace fs
 						return false;
 					}
 
-					TreeNodeAccessor memberNode = ancestorNode.insertChildNode(SyntaxTreeItem(memberSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariables));
+					TreeNodeAccessor memberNode = ancestorNode.insertChildNode(SyntaxTreeItem(memberSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
 					memberNode.insertChildNode(SyntaxTreeItem(valueSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Parameter));
 
 					const SymbolTableItem& postCloseSymbol = getSymbol(symbolPosition + 4);
@@ -767,7 +773,7 @@ namespace fs
 						return false;
 					}
 
-					TreeNodeAccessor memberNode = ancestorNode.insertChildNode(SyntaxTreeItem(memberSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariables));
+					TreeNodeAccessor memberNode = ancestorNode.insertChildNode(SyntaxTreeItem(memberSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
 					memberNode.insertChildNode(SyntaxTreeItem(valueSymbol, convertLiteralSymbolToSyntax(valueSymbol)));
 
 					const SymbolTableItem& postCloseSymbol = getSymbol(symbolPosition + 4);

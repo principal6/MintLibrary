@@ -33,7 +33,7 @@ namespace fs
 			CppSyntaxClassifier_ClassStruct_Constructor,
 			CppSyntaxClassifier_ClassStruct_Constructor_InitializerList,
 			CppSyntaxClassifier_ClassStruct_Destructor,
-			CppSyntaxClassifier_ClassStruct_MemberVariables,
+			CppSyntaxClassifier_ClassStruct_MemberVariable,
 			CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier,
 			CppSyntaxClassifier_Alignas,
 			
@@ -192,7 +192,7 @@ namespace fs
 		private:
 			static const SymbolTableItem				kClassStructAccessModifierSymbolArray[3];
 			static const SymbolTableItem				kInitializerListSymbol;
-			static const SymbolTableItem				kMemberVariablesSymbol;
+			static const SymbolTableItem				kMemberVariableSymbol;
 		};
 	}
 }
