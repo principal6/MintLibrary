@@ -151,11 +151,12 @@ namespace fs
 			void									registerKeyword(const char* const keyword);
 			void									registerGrouper(const char grouper, const GrouperClassifier grouperClassifier);
 			void									registerStringQuote(const char stringQuote);
-			void									registerPunctuator(const char punctuator);
+			void									registerPunctuator(const char* const punctuator);
 			void									registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
 		public:
 			const bool								execute();
+			void									updateSymbolIndex();
 
 		private:
 			const bool								isCommentMarker(const char ch0, const char ch1, CommentMarkerTableItem& out) const noexcept;
@@ -163,7 +164,7 @@ namespace fs
 			const bool								isStatementTerminator(const char input) const noexcept;
 			const bool								isGrouper(const char input, GrouperTableItem& out) const noexcept;
 			const bool								isStringQuote(const char input) const noexcept;
-			const bool								isPunctuator(const char input) const noexcept;
+			const bool								isPunctuator(const char ch0, const char ch1, const char ch2, uint64& outAdvance) const noexcept;
 			const bool								isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
 			const bool								isNumber(const std::string& input) const noexcept;
 			const bool								isKeyword(const std::string& input) const noexcept;
@@ -200,7 +201,8 @@ namespace fs
 			std::unordered_map<char, int8>			_stringQuoteUmap;
 
 		private:
-			std::unordered_map<char, int8>			_punctuatorUmap;
+			std::vector<std::string>				_punctuatorTable;
+			std::unordered_map<uint64, uint64>		_punctuatorUmap;
 
 		private:
 			std::vector<OperatorTableItem>			_operatorTable;

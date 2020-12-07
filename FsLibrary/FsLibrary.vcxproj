@@ -122,6 +122,9 @@
     <Natvis Include="Container\FsLibrary.natvis" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Language\CppParser.inl" />
+    <None Include="Language\IParser.inl" />
+    <None Include="Language\LanguageCommon.inl" />
     <None Include="Language\Lexer.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

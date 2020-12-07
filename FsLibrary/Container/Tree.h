@@ -47,6 +47,7 @@ namespace fs
 	public:
 		void							setNodeData(const T& data) noexcept;
 		const T&						getNodeData() const noexcept;
+		T&								getNodeDataXXX() noexcept;
 
 	public:
 		TreeNodeAccessor<T>				getParentNode() const noexcept;
@@ -72,6 +73,7 @@ namespace fs
 	public:
 		static const TreeNodeAccessor	kInvalidTreeNodeAccessor;
 		static const T					kInvalidData;
+		static T						nkInvalidData;
 	};
 
 
@@ -145,6 +147,7 @@ namespace fs
 		const bool								isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 		void									setNodeData(const TreeNodeAccessor<T>& nodeAccessor, const T& nodeData) noexcept;
 		const T&								getNodeData(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		T&										getNodeDataXXX(const TreeNodeAccessor<T>& nodeAccessor) noexcept;
 		void									swapNodeData(const TreeNodeAccessor<T>& nodeAccessorA, const TreeNodeAccessor<T>& nodeAccessorB) noexcept;
 
 	private:

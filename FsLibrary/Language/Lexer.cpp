@@ -131,11 +131,22 @@ namespace fs
 			}
 		}
 
-		void Lexer::registerPunctuator(const char punctuator)
+		void Lexer::registerPunctuator(const char* const punctuator)
 		{
-			if (_punctuatorUmap.find(punctuator) == _punctuatorUmap.end())
+			const uint32 length = fs::StringUtil::strlen(punctuator);
+			if (0 == length || 3 < length)
 			{
-				_punctuatorUmap.insert(std::make_pair(punctuator, 1));
+				FS_LOG_ERROR("김장원", "punctuator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
+				return;
+			}
+
+			const uint64 key = fs::StringUtil::hashRawString64(punctuator);
+			if (_punctuatorUmap.find(key) == _punctuatorUmap.end())
+			{
+				_punctuatorTable.emplace_back(punctuator);
+
+				const uint64 punctuatorIndex = _punctuatorTable.size() - 1;
+				_punctuatorUmap.insert(std::make_pair(key, punctuatorIndex));
 			}
 		}
 		
@@ -171,6 +182,7 @@ namespace fs
 			{
 				const char ch0 = _source.at(sourceAt);
 				const char ch1 = (sourceAt + 1 < sourceLength) ? _source.at(sourceAt + 1) : 0;
+				const char ch2 = (sourceAt + 2 < sourceLength) ? _source.at(sourceAt + 2) : 0;
 
 				SymbolClassifier symbolClassifier = SymbolClassifier::Identifier;
 				uint64 advance = 0;
@@ -249,33 +261,33 @@ namespace fs
 				}
 				else if (isDelimiter(ch0) == true)
 				{
-					symbolClassifier = SymbolClassifier::Delimiter;
-					advance = 1;
+				symbolClassifier = SymbolClassifier::Delimiter;
+				advance = 1;
 				}
 				else if (isGrouper(ch0, grouperTableItem) == true)
 				{
-					symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem._grouperClassifier);
-					advance = 1;
+				symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem._grouperClassifier);
+				advance = 1;
 				}
 				else if (isStringQuote(ch0) == true)
 				{
-					symbolClassifier = SymbolClassifier::StringQuote;
-					advance = 1;
+				symbolClassifier = SymbolClassifier::StringQuote;
+				advance = 1;
 				}
-				else if (isPunctuator(ch0) == true)
+				else if (isPunctuator(ch0, ch1, ch2, advance) == true)
 				{
-					symbolClassifier = SymbolClassifier::Punctuator;
-					advance = 1;
+				symbolClassifier = SymbolClassifier::Punctuator;
+				//advance = 1;
 				}
 				else if (isStatementTerminator(ch0) == true)
 				{
-					symbolClassifier = SymbolClassifier::StatementTerminator;
-					advance = 1;
+				symbolClassifier = SymbolClassifier::StatementTerminator;
+				advance = 1;
 				}
 				else if (isOperator(ch0, ch1, operatorTableItem) == true)
 				{
-					symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem._operatorClassifier);
-					advance = operatorTableItem._length;
+				symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem._operatorClassifier);
+				advance = operatorTableItem._length;
 				}
 
 				if (0 < advance)
@@ -313,17 +325,17 @@ namespace fs
 							tokenSymbolClassifier = SymbolClassifier::Keyword;
 						}
 
-						_symbolTable.emplace_back(SymbolTableItem(sourceAt, tokenSymbolClassifier, tokenString));
+						_symbolTable.emplace_back(SymbolTableItem(tokenSymbolClassifier, tokenString, sourceAt));
 					}
-					
+
 					// Delimiter 제외 자기 자신도 symbol 이다!!!
 					if (symbolClassifier != SymbolClassifier::Delimiter)
 					{
-						char symbolStringRaw[3] = { ch0, (2 == advance) ? ch1 : 0, 0 };
-						_symbolTable.emplace_back(SymbolTableItem(sourceAt, symbolClassifier, symbolStringRaw));
+						char symbolStringRaw[4] = { ch0, (2 == advance) ? ch1 : 0, (3 == advance) ? ch2 : 0, 0 };
+						_symbolTable.emplace_back(SymbolTableItem(symbolClassifier, symbolStringRaw, sourceAt));
 					}
 
-					prevSourceAt = sourceAt + 1;
+					prevSourceAt = sourceAt + advance;
 					sourceAt += advance;
 
 					continue;
@@ -332,13 +344,43 @@ namespace fs
 				++sourceAt;
 			}
 
+			// String Literal
+			{
+				uint64 symbolIndex = 0;
+				const uint64 symbolCount = _symbolTable.size();
+				while (symbolIndex < symbolCount)
+				{
+					if (_symbolTable[symbolIndex]._symbolClassifier == SymbolClassifier::StringQuote)
+					{
+						if (symbolIndex + 2 < symbolCount)
+						{
+							if (_symbolTable[symbolIndex + 2]._symbolClassifier == SymbolClassifier::StringQuote &&
+								_symbolTable[symbolIndex + 1]._symbolClassifier == SymbolClassifier::Identifier)
+							{
+								_symbolTable[symbolIndex + 1]._symbolClassifier = SymbolClassifier::StringLiteral;
+
+								symbolIndex += 3;
+								continue;
+							}
+						}
+					}
+
+					++symbolIndex;
+				}
+			}
+
+			updateSymbolIndex();
+
+			return true;
+		}
+
+		void Lexer::updateSymbolIndex()
+		{
 			const uint64 symbolCount = _symbolTable.size();
 			for (uint64 symbolIndex = 0; symbolIndex < symbolCount; ++symbolIndex)
 			{
 				_symbolTable[symbolIndex]._symbolIndex = symbolIndex;
 			}
-
-			return true;
 		}
 
 		const bool Lexer::isCommentMarker(const char ch0, const char ch1, CommentMarkerTableItem& out) const noexcept
@@ -390,9 +432,37 @@ namespace fs
 			return _stringQuoteUmap.find(input) != _stringQuoteUmap.end();
 		}
 
-		const bool Lexer::isPunctuator(const char input) const noexcept
+		const bool Lexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint64& outAdvance) const noexcept
 		{
-			return _punctuatorUmap.find(input) != _punctuatorUmap.end();
+			const char keyString3[4]{ ch0, ch1, ch2, '\0' };
+			const uint64 key3 = fs::StringUtil::hashRawString64(keyString3);
+			auto found3 = _punctuatorUmap.find(key3);
+			if (found3 != _punctuatorUmap.end())
+			{
+				outAdvance = 3;
+				return true;
+			}
+
+			const char keyString2[3]{ ch0, ch1, '\0' };
+			const uint64 key2 = fs::StringUtil::hashRawString64(keyString2);
+			auto found2 = _punctuatorUmap.find(key2);
+			if (found2 != _punctuatorUmap.end())
+			{
+				outAdvance = 2;
+				return true;
+			}
+
+			const char keyString1[2]{ ch0, '\0' };
+			const uint64 key1 = fs::StringUtil::hashRawString64(keyString1);
+			auto found1 = _punctuatorUmap.find(key1);
+			if (found1 != _punctuatorUmap.end())
+			{
+				outAdvance = 1;
+				return true;
+			}
+
+			outAdvance = 0;
+			return false;
 		}
 
 		const bool Lexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept

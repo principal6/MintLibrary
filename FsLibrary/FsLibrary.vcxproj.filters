@@ -318,5 +318,14 @@
     <None Include="Language\Lexer.inl">
       <Filter>Language</Filter>
     </None>
+    <None Include="Language\CppParser.inl">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="Language\IParser.inl">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="Language\LanguageCommon.inl">
+      <Filter>Language</Filter>
+    </None>
   </ItemGroup>
 </Project>

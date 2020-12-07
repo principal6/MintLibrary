@@ -8,9 +8,14 @@ Comment
 */
 
 class ForwardDeclarated;
+class Float2;
+class Float3;
+class Float4;
+class uint32;
 class VS_INPUT
 {
 public:
+	VS_INPUT(const int* const, short test, float);
 	VS_INPUT()
 		: _flag{ 0 }
 	{
@@ -40,6 +45,12 @@ public:
 		, _flag{ 2 }
 	{
 		__noop;
+	}
+
+	void aMemberFunction(void);
+	const bool anotherMemberFunction() const noexcept
+	{
+		return true;
 	}
 
 public:

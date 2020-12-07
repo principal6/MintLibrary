@@ -19,6 +19,8 @@ namespace fs
 		{
 			Delimiter,
 
+			// ==========
+
 			NumberLiteral,				// [0-9]+[.]*[0-9]*
 
 			Keyword,					// if, else, class, ...
@@ -49,6 +51,13 @@ namespace fs
 			OPERATOR_ENDS,
 
 			Identifier,					// [a-zA-Z_][a-zA-Z_0-9]+
+			
+			StringLiteral,
+
+			// ==========
+
+			POST_GENERATED,
+			POST_CLEARED,
 
 			RESERVED
 		};
@@ -65,81 +74,51 @@ namespace fs
 			friend Lexer;
 
 		public:
-									SymbolTableItem()
-										: _sourceAt{ 0 }
-										, _symbolClassifier{ SymbolClassifier::Identifier }
-										, _symbolIndex{ 0 }
-									{
-										__noop;
-									}
-
-									SymbolTableItem(const uint64 sourceAt, const SymbolClassifier symbolClassifier, const std::string& symbolString)
-										: _sourceAt{ sourceAt }
-										, _symbolClassifier{ symbolClassifier }
-										, _symbolString{ symbolString }
-										, _symbolIndex{ 0 }
-									{
-										__noop;
-									}
-
-									FS_INLINE void clearData()
-									{
-										// _sourceAt 은 그냥 남겨둔다.
-										_symbolClassifier = SymbolClassifier::Identifier;
-										_symbolString.clear();
-										_symbolIndex = 0;
-									}
-
-									FS_INLINE const uint64 index() const noexcept
-									{
-										return _symbolIndex;
-									}
+									SymbolTableItem();
+									SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint64 sourceAt);
+									SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
 
 		public:
-			uint64					_sourceAt;
+			void					clearData();
+			const uint64			index() const noexcept;
+
+		public:
 			SymbolClassifier		_symbolClassifier;
 			std::string				_symbolString;
 
 		private:
 			uint64					_symbolIndex;
+		
+		public:
+			uint64					_sourceAt;
 		};
 
 
 		using SyntaxClassifierEnumType = uint32;
+		using SyntaxAdditionalInfoType = uint8;
 		class SyntaxTreeItem
 		{
 		public:
-			SyntaxTreeItem()
-				: _syntaxClassifier{ kUint32Max }
-				, _symbolTableItemIndex{ 0 }
-				, _symbolTableItem{ nullptr }
-			{
-				__noop;
-			}
+										SyntaxTreeItem();
+										SyntaxTreeItem(const SymbolTableItem& symbolTableItem);
+										SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier);
+										SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo);
 
-			SyntaxTreeItem(const SymbolTableItem& symbolTableItem)
-				: _syntaxClassifier{ kUint32Max }
-				, _symbolTableItemIndex{ symbolTableItem.index() }
-				, _symbolTableItem{ &symbolTableItem }
-			{
-				__noop;
-			}
-
-			SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier)
-				: _syntaxClassifier{ syntaxClassifier }
-				, _symbolTableItemIndex{ symbolTableItem.index() }
-				, _symbolTableItem{ &symbolTableItem }
-			{
-				__noop;
-			}
+		public:
+			void						setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo);
 
 		private:
 			SyntaxClassifierEnumType	_syntaxClassifier;
-			uint64					_symbolTableItemIndex;
+			SyntaxAdditionalInfoType	_syntaxAdditionalInfo;
 
 		public:
-			const SymbolTableItem*	_symbolTableItem;
+			const SymbolTableItem*		_symbolTableItem;
 		};
 	}
 }
+
+
+#include <Language/LanguageCommon.inl>
+
+
 #endif // !FS_LANGUAGE_COMMON_H

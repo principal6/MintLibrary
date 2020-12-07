@@ -14,6 +14,8 @@ namespace fs
 	
 	template<typename T>
 	const T TreeNodeAccessor<T>::kInvalidData;
+	template<typename T>
+	T TreeNodeAccessor<T>::nkInvalidData;
 
 	template<typename T>
 	TreeNodeAccessor<T>::TreeNodeAccessor()
@@ -66,6 +68,16 @@ namespace fs
 			return _tree->getNodeData(*this);
 		}
 		return kInvalidData;
+	}
+
+	template<typename T>
+	inline T& TreeNodeAccessor<T>::getNodeDataXXX() noexcept
+	{
+		if (_tree != nullptr)
+		{
+			return _tree->getNodeDataXXX(*this);
+		}
+		return nkInvalidData;
 	}
 
 	template<typename T>
@@ -325,6 +337,17 @@ namespace fs
 		}
 
 		return TreeNodeAccessor<T>::kInvalidData;
+	}
+
+	template<typename T>
+	inline T& Tree<T>::getNodeDataXXX(const TreeNodeAccessor<T>& nodeAccessor) noexcept
+	{
+		if (isValidNode(nodeAccessor) == true)
+		{
+			return getNodeXXX(nodeAccessor)._data;
+		}
+
+		return TreeNodeAccessor<T>::nkInvalidData;
 	}
 
 	template<typename T>

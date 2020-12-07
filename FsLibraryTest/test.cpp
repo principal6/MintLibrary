@@ -514,8 +514,10 @@ const bool testLanguage()
 	lexer.registerStringQuote('\'');
 	lexer.registerStringQuote('\"');
 
-	lexer.registerPunctuator(',');
-	lexer.registerPunctuator('#');
+	lexer.registerPunctuator(",");
+	lexer.registerPunctuator("#");
+	lexer.registerPunctuator("::");
+	lexer.registerPunctuator("...");
 
 	lexer.registerOperator("=" , fs::Language::OperatorClassifier::AssignmentOperator);
 	lexer.registerOperator("+=", fs::Language::OperatorClassifier::AssignmentOperator);
@@ -619,6 +621,7 @@ const bool testLanguage()
 	
 	fs::Language::CppParser cppParser{ lexer };
 	cppParser.execute();
+
 	return true;
 }
 
