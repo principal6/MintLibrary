@@ -56,7 +56,7 @@ namespace fs
 	{
 		if (_tree != nullptr)
 		{
-			_tree->setNodeData(*this);
+			_tree->setNodeData(*this, data);
 		}
 	}
 
@@ -324,7 +324,8 @@ namespace fs
 	{
 		if (isValidNode(nodeAccessor) == true)
 		{
-			_nodeArray.set(nodeAccessor._slotIndex, nodeData);
+			TreeNode<T>& node = getNodeXXX(nodeAccessor);
+			node._data = nodeData;
 		}
 	}
 
