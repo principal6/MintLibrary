@@ -31,6 +31,7 @@ namespace fs
 				LackOfCode,
 				RepetitionOfCode,
 				SymbolNotFound,
+				WrongScope,
 
 				COUNT
 			};
@@ -45,6 +46,7 @@ namespace fs
 				{ "Lack of code"                       ,  "더 있어야 할 코드가 없습니다."                                                  },
 				{ "Repetition of code"                 ,  "코드가 중복됩니다."													           },
 				{ "Symbol not found"				   ,  "해당 심볼을 찾을 수 없습니다."												   },
+				{ "Wrong scope"				           ,  "이곳에 사용할 수 없습니다."												       },
 			};
 
 		protected:

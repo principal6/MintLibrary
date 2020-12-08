@@ -56,7 +56,7 @@ namespace fs
 
 			// ==========
 
-			POST_GENERATED,
+			SPECIAL_USE,
 			POST_CLEARED,
 
 			RESERVED
@@ -95,7 +95,7 @@ namespace fs
 
 
 		using SyntaxClassifierEnumType = uint32;
-		using SyntaxAdditionalInfoType = uint8;
+		using SyntaxAdditionalInfoType = uint16;
 		class SyntaxTreeItem
 		{
 		public:

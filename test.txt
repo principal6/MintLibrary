@@ -15,7 +15,7 @@ class uint32;
 class VS_INPUT
 {
 public:
-	VS_INPUT(const int* const, short test, float);
+	VS_INPUT(const int* const, double long a, short test, float);
 	VS_INPUT()
 		: _flag{ 0 }
 	{

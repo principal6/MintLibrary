@@ -27,8 +27,8 @@ namespace fs
 			CppSyntaxClassifier_Literal_TrueFalse,
 			CppSyntaxClassifier_Literal_Nullptr,
 
-			CppSyntaxClassifier_ClassStruct_Definition,
-			CppSyntaxClassifier_ClassStruct_Declaration,
+			CppSyntaxClassifier_ClassStruct_Keyword,
+			CppSyntaxClassifier_ClassStruct_Identifier,
 			CppSyntaxClassifier_ClassStruct_AccessModifier,
 			CppSyntaxClassifier_ClassStruct_Constructor,
 			CppSyntaxClassifier_ClassStruct_Constructor_InitializerList,
@@ -45,6 +45,7 @@ namespace fs
 			CppSyntaxClassifier_Type_Value,
 			
 			CppSyntaxClassifier_Function_Name,
+			CppSyntaxClassifier_Function_Instructions,
 			CppSyntaxClassifier_Function_Parameter,
 			CppSyntaxClassifier_Function_Return,
 			CppSyntaxClassifier_Function_Return_Value,
@@ -67,19 +68,32 @@ namespace fs
 			UserDefinedType,
 		};
 
+		enum class CppTypeNodeParsingMethod : uint8
+		{
+			Expression,
+			ClassStructMember,
+			FunctionParameter,
+		};
+
 		enum CppAdditionalInfo_TypeFlags : SyntaxAdditionalInfoType
 		{
 			CppAdditionalInfo_TypeFlags_NONE			= 0,
+
 			CppAdditionalInfo_TypeFlags_Const			= 1 <<  0,
 			CppAdditionalInfo_TypeFlags_Constexpr		= 1 <<  1,
 			CppAdditionalInfo_TypeFlags_Mutable			= 1 <<  2,
 			CppAdditionalInfo_TypeFlags_Static			= 1 <<  3,
 			CppAdditionalInfo_TypeFlags_ThreadLocal		= 1 <<  4,
+			CppAdditionalInfo_TypeFlags_Short			= 1 <<  5,
+			CppAdditionalInfo_TypeFlags_Long			= 1 <<  6,
+			CppAdditionalInfo_TypeFlags_LongLong		= 1 <<  7,
+			CppAdditionalInfo_TypeFlags_Unsigned		= 1 <<  8,
 		};
 
 		enum CppAdditionalInfo_FunctionAttributeFlags : SyntaxAdditionalInfoType
 		{
 			CppAdditionalInfo_FunctionAttributeFlags_NONE		= 0,
+
 			CppAdditionalInfo_FunctionAttributeFlags_Const		= 1 << 0,
 			CppAdditionalInfo_FunctionAttributeFlags_Noexcept	= 1 << 1,
 			CppAdditionalInfo_FunctionAttributeFlags_Override	= 1 << 2,
@@ -156,7 +170,7 @@ namespace fs
 		
 		private:
 			const bool									parseFunctionParameters(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
-			const bool									parseFunctionArguments_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+			const bool									parseFunctionParameters_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 			//const bool									parseVariableDeclaration(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
 			const bool									parseFunctionInstructions(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 		
@@ -165,7 +179,9 @@ namespace fs
 		
 		private:
 			const bool									isTypeChunk(const uint64 symbolPosition, uint64& outPostTypeChunkPosition);
-			const bool									parseTypeNode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
+			
+			// Identifier Àü±îÁö ÆÄ½Ì
+			const bool									parseTypeNode(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
 
 		private:
 			const bool									parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
@@ -193,6 +209,9 @@ namespace fs
 			static const SymbolTableItem				kClassStructAccessModifierSymbolArray[3];
 			static const SymbolTableItem				kInitializerListSymbol;
 			static const SymbolTableItem				kMemberVariableSymbol;
+			static const SymbolTableItem				kImplicitIntTypeSymbol;
+			static const SymbolTableItem				kParameterListSymbol;
+			static const SymbolTableItem				kInstructionListSymbol;
 		};
 	}
 }

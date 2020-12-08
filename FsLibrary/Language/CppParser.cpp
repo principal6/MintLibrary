@@ -24,8 +24,11 @@ namespace fs
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Protected)),
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Private))
 		};
-		const SymbolTableItem CppParser::kInitializerListSymbol{ SymbolTableItem(SymbolClassifier::POST_GENERATED, "InitializerList") };
-		const SymbolTableItem CppParser::kMemberVariableSymbol{ SymbolTableItem(SymbolClassifier::POST_GENERATED, "MemberVariable") };
+		const SymbolTableItem CppParser::kInitializerListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InitializerList") };
+		const SymbolTableItem CppParser::kMemberVariableSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "MemberVariable") };
+		const SymbolTableItem CppParser::kParameterListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ParameterList") };
+		const SymbolTableItem CppParser::kInstructionListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InstructionList") };
+		const SymbolTableItem CppParser::kImplicitIntTypeSymbol{ SymbolTableItem(SymbolClassifier::Keyword, "int") };
 		CppParser::CppParser(Lexer& lexer)
 			: IParser(lexer)
 		{
@@ -181,7 +184,7 @@ namespace fs
 				return false;
 			}
 
-			TreeNodeAccessor classStructNode = ancestorNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Definition));
+			TreeNodeAccessor classStructNode = ancestorNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Keyword));
 
 			uint64 identifierOffset = 1;
 			{
@@ -213,6 +216,8 @@ namespace fs
 				const SymbolTableItem& classIdentifierSymbol = getSymbol(identifierSymbolPosition);
 
 				registerUserDefinedType(CppTypeTableItem(classIdentifierSymbol._symbolString));
+				
+				classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Identifier));
 
 				// TODO: final, abstract 등의 postfix 키워드...
 				const SymbolTableItem& postIdentifierSymbol = getSymbol(identifierSymbolPosition + 1);
@@ -220,7 +225,6 @@ namespace fs
 				{
 					// Declaration
 
-					classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Declaration));
 					outAdvanceCount = identifierOffset + 2;
 
 					registerUserDefinedType(CppTypeTableItem(classIdentifierSymbol._symbolString));
@@ -625,7 +629,7 @@ namespace fs
 
 							uint64 postTypeNodeOffset = 0;
 							TreeNodeAccessor<SyntaxTreeItem> typeNode;
-							FS_RETURN_FALSE_IF_NOT(parseTypeNode(currentPosition, memberVariableNode, typeNode, postTypeNodeOffset) == true);
+							FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableNode, typeNode, postTypeNodeOffset) == true);
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
@@ -712,15 +716,25 @@ namespace fs
 					uint32 parameterIndex = kUint32Max;
 					static constexpr uint32 kAccessModifierNodeCount = 1;
 					const uint32 childNodeCount = classStructCtorNode.getChildNodeCount();
-					for (uint32 childNodeIndex = kAccessModifierNodeCount; childNodeIndex < childNodeCount; ++childNodeIndex)
 					{
-						TreeNodeAccessor parameterNode = classStructCtorNode.getChildNode(childNodeIndex);
-						const uint32 parameterNodeChildCount = parameterNode.getChildNodeCount();
-						TreeNodeAccessor parameterIdentifierNode = parameterNode.getChildNode(parameterNodeChildCount - 1);
-						if (parameterIdentifierNode.getNodeData()._symbolTableItem->_symbolString == valueSymbol._symbolString)
+						TreeNodeAccessor parameterListNode = classStructCtorNode.getChildNode(kAccessModifierNodeCount);
+						if (parameterListNode.getNodeData()._symbolTableItem != &kParameterListSymbol)
 						{
-							parameterIndex = childNodeIndex - kAccessModifierNodeCount;
-							break;
+							reportError(valueSymbol, ErrorType::SymbolNotFound, "Parameter 가 없는 함수인데 parameter 를 이용해 초기화하고 있습니다");
+							return false;
+						}
+
+						const uint32 parameterCount = parameterListNode.getChildNodeCount();
+						for (uint32 parameterIter = 0; parameterIter < parameterCount; ++parameterIter)
+						{
+							TreeNodeAccessor parameterNode = parameterListNode.getChildNode(parameterIter);
+							const uint32 parameterNodeChildNodeCount = parameterNode.getChildNodeCount();
+							TreeNodeAccessor parameterIdentifierNode = parameterNode.getChildNode(parameterNodeChildNodeCount - 1);
+							if (parameterIdentifierNode.getNodeData()._symbolTableItem->_symbolString == valueSymbol._symbolString)
+							{
+								parameterIndex = parameterIter;
+								break;
+							}
 						}
 					}
 
@@ -812,156 +826,28 @@ namespace fs
 				return false;
 			}
 
+			TreeNodeAccessor<SyntaxTreeItem> parameterListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kParameterListSymbol, CppSyntaxClassifier_Function_Parameter));
+
 			uint64 currentItemOffset = 0;
 			uint64 advanceCount = 0;
 			do
 			{
-				FS_RETURN_FALSE_IF_NOT(parseFunctionArguments_Item(isDeclaration, symbolPosition + currentItemOffset, ancestorNode, advanceCount) == true);
+				FS_RETURN_FALSE_IF_NOT(parseFunctionParameters_Item(isDeclaration, symbolPosition + currentItemOffset, parameterListNode, advanceCount) == true);
 				currentItemOffset += advanceCount;
 			} while (0 < advanceCount);
 
 			return true;
 		}
 
-		const bool CppParser::parseFunctionArguments_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+		const bool CppParser::parseFunctionParameters_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
 		{
-			/*
-			
-			int a = 0;
-			int* pa = &a;
-			const int const* cpa = &a;
-			int** ppa = &pa;
-			int*** pppa = &ppa;
-			int& ra = a;
-			int const& ra0 = a;
-			int& const ra1 = a;
-	
-			*/
-
-
 			outAdvanceCount = 0;
 
-			// Prefix const
-			uint64 postPrefixConstSymbolOffset = 0;
-			bool isConst = false;
-			const SymbolTableItem& firstSymbol = getSymbol(symbolPosition);
-			if (isSymbolType(firstSymbol) == false)
-			{
-				if (firstSymbol._symbolString == "const")
-				{
-					isConst = true;
-					postPrefixConstSymbolOffset = 1;
-				}
-				else
-				{
-					reportError(firstSymbol, ErrorType::WrongPredecessor, "const 가 와야합니다!");
-					return false;
-				}
-			}
+			TreeNodeAccessor<SyntaxTreeItem> typeNode;
+			uint64 postTypeNodeOffset = 0;
+			FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::FunctionParameter, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
 
-			// (namespace::)Type
-			uint64 typeSymbolOffset = postPrefixConstSymbolOffset;
-			{
-				std::string namespaceString;
-
-				while (true)
-				{
-					const SymbolTableItem& symbol = getSymbol(symbolPosition + typeSymbolOffset);
-					if (isSymbolType(symbol) == false)
-					{
-						const SymbolTableItem& nextSymbol = getSymbol(symbolPosition + typeSymbolOffset + 1);
-						if (nextSymbol._symbolString == "::")
-						{
-							namespaceString += symbol._symbolString;
-							typeSymbolOffset += 2;
-						}
-						else
-						{
-							reportError(symbol, ErrorType::WrongSuccessor, "type 이 와야합니다!");
-							return false;
-						}
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			
-			// Postfix const
-			uint64 postTypeOffset = typeSymbolOffset + 1;
-			{
-				const SymbolTableItem& postTypeSymbol = getSymbol(symbolPosition + typeSymbolOffset + 1);
-				if (postTypeSymbol._symbolString == "const")
-				{
-					isConst = true;
-					++postTypeOffset;
-				}
-			}
-			
-			const SymbolTableItem& typeSymbol = getSymbol(symbolPosition + typeSymbolOffset);
-			TreeNodeAccessor typeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type,
-				(isConst == true) ? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const : CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-			
-			// Postfix part
-			// *, **, ...
-			// &, && (뒤에 * 는 못 옴)
-			// const
-			uint64 postfixOffset = postTypeOffset;
-			{
-				uint8 ampersandCount = 0; // [0, 2]
-				TreeNodeAccessor<SyntaxTreeItem> previousNode;
-				while (true)
-				{
-					const uint64 currentPosition = symbolPosition + postfixOffset;
-					if (hasSymbol(currentPosition) == false)
-					{
-						break;
-					}
-
-					const SymbolTableItem& currentSymbol = getSymbol(currentPosition);
-					if (currentSymbol._symbolString == "&")
-					{
-						++ampersandCount;
-						if (ampersandCount == 1)
-						{
-							previousNode = typeNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_ReferenceType));
-						}
-						else if (ampersandCount == 2)
-						{
-							previousNode = typeNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_RvalueReferenceType));
-						}
-						else
-						{
-							reportError(currentSymbol, ErrorType::WrongSuccessor, "참조에 대한 참조는 사용할 수 없습니다.");
-							return false;
-						}
-					}
-					else if (currentSymbol._symbolString == "const")
-					{
-						previousNode.getNodeDataXXX().setAdditionalInfo(CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const);
-					}
-					else if (currentSymbol._symbolString == "*")
-					{
-						// Asterisk
-
-						if (0 < ampersandCount)
-						{
-							reportError(currentSymbol, ErrorType::WrongSuccessor, "참조에 대한 포인터는 사용할 수 없습니다.");
-							return false;
-						}
-
-						previousNode = typeNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_PointerType));
-					}
-					else
-					{
-						break;
-					}
-
-					++postfixOffset;
-				}
-			}
-
+			const uint64 postfixOffset = postTypeNodeOffset;
 			{
 				const SymbolTableItem& symbol = getSymbol(symbolPosition + postfixOffset);
 				if (symbol._symbolString == ",")
@@ -1008,7 +894,9 @@ namespace fs
 
 			// parseStatement (;)
 			// parseExpression...?
-			FS_RETURN_FALSE_IF_NOT(parseExpression(symbolPosition, ancestorNode, outAdvanceCount));
+
+			TreeNodeAccessor<SyntaxTreeItem> instructionListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kInstructionListSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Instructions));
+			FS_RETURN_FALSE_IF_NOT(parseExpression(symbolPosition, instructionListNode, outAdvanceCount));
 			++outAdvanceCount;
 
 			return true;
@@ -1025,7 +913,7 @@ namespace fs
 			{
 				uint64 postTypeNodeOffset = 0;
 				TreeNodeAccessor<SyntaxTreeItem> typeNode;
-				FS_RETURN_FALSE_IF_NOT(parseTypeNode(symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
+				FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::Expression, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
 
 				// 4) identifier
 				{
@@ -1165,29 +1053,55 @@ namespace fs
 			return foundTypeSymbol;
 		}
 
-		const bool CppParser::parseTypeNode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount)
+		const bool CppParser::parseTypeNode(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount)
 		{
 			outAdvanceCount = 0;
 
+			/*
+			int a = 0;
+			int* pa = &a;
+			const int const* cpa = &a;
+			int** ppa = &pa;
+			int*** pppa = &ppa;
+			int& ra = a;
+			int const& ra0 = a;
+			int& const ra1 = a;
+			*/
+
+			// int signed a = 0;
+			// long signed a = 0;
+			// signed signed int a = 0;
+			// short a = 0;
+			// short int a = 0;
+			// long a = 0;
+			// long int a = 0;
+			// long long a = 0;
+			// long long int a = 0;
+			// float long a = 0;
+			// long double a = 0;
+
 			// modifier: static constexpr const mutable thread_local
+			//           signed unsigned long
 			// 1) Premodifier
 			// 2) (namespace::) Type(T) and postmodifier
 			// 3) * (const) or & &&
 			// 4) identifier
 
-			bool isConst = false;	// const 는 중복 가능!!
-			bool isConstexpr = false;
-			bool isMutable = false;	// For ClassStruct
-			bool isStatic = false;
-			bool isThreadLocal = false;	// For non-ClassStruct
-
-			static std::function<const uint64(const uint64, bool&)> modifierChecker =
+			bool isConst = false;		// const 는 중복 가능!!
+			bool isConstexpr = false;	// For non-Parameter
+			bool isMutable = false;		// For ClassStruct
+			bool isStatic = false;		// For non-Parameter
+			bool isThreadLocal = false;	// For Expression
+			bool isShort = false;
+			uint8 longState = 0;		// 0: none, 1: long, 2: long long
+			uint8 signState = 0;		// 0: default signed, 1: explicit signed, 2: explicit unsgined (signed, unsigned 는 중복 가능하나 교차는 불가!)
+			static std::function<const uint64(const uint64, bool&)> fnModifierChecker =
 				[&](const uint64 symbolPosition, bool& errorOccured)->const uint64
 			{
-				uint64 premodifierOffset = 0;
+				uint64 resultOffset = 0;
 				while (true)
 				{
-					const SymbolTableItem& symbol = getSymbol(symbolPosition + premodifierOffset);
+					const SymbolTableItem& symbol = getSymbol(symbolPosition + resultOffset);
 					if (symbol._symbolClassifier != SymbolClassifier::Keyword)
 					{
 						break;
@@ -1198,6 +1112,13 @@ namespace fs
 						if (isStatic == true)
 						{
 							reportError(symbol, ErrorType::RepetitionOfCode, "'static' 이 중복됩니다.");
+							errorOccured = true;
+							break;
+						}
+						if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
+						{
+							reportError(symbol, ErrorType::WrongScope, "'static' 을 여기에 사용할 수 없습니다.");
+							errorOccured = true;
 							break;
 						}
 						isStatic = true;
@@ -1207,6 +1128,13 @@ namespace fs
 						if (isConstexpr == true)
 						{
 							reportError(symbol, ErrorType::RepetitionOfCode, "'constexpr' 이 중복됩니다.");
+							errorOccured = true;
+							break;
+						}
+						if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
+						{
+							reportError(symbol, ErrorType::WrongScope, "'constexpr' 을 여기에 사용할 수 없습니다.");
+							errorOccured = true;
 							break;
 						}
 						isConstexpr = true;
@@ -1220,6 +1148,13 @@ namespace fs
 						if (isMutable == true)
 						{
 							reportError(symbol, ErrorType::RepetitionOfCode, "'mutable' 이 중복됩니다.");
+							errorOccured = true;
+							break;
+						}
+						if (parsingMethod != CppTypeNodeParsingMethod::ClassStructMember)
+						{
+							reportError(symbol, ErrorType::WrongScope, "'mutable' 을 여기에 사용할 수 없습니다.");
+							errorOccured = true;
 							break;
 						}
 						isMutable = true;
@@ -1229,43 +1164,112 @@ namespace fs
 						if (isThreadLocal == true)
 						{
 							reportError(symbol, ErrorType::RepetitionOfCode, "'thread_local' 이 중복됩니다.");
+							errorOccured = true;
+							break;
+						}
+						if (parsingMethod != CppTypeNodeParsingMethod::Expression)
+						{
+							reportError(symbol, ErrorType::WrongScope, "'thread_local' 을 여기에 사용할 수 없습니다.");
+							errorOccured = true;
 							break;
 						}
 						isThreadLocal = true;
+					}
+					else if (symbol._symbolString == "short")
+					{
+						if (isShort == true)
+						{
+							reportError(symbol, ErrorType::RepetitionOfCode, "'short' 가 중복됩니다.");
+							errorOccured = true;
+							break;
+						}
+						else if (0 < longState)
+						{
+							reportError(symbol, ErrorType::WrongSuccessor, "'long' 에 'short' 를 붙일 수 없습니다.");
+							errorOccured = true;
+							break;
+						}
+						isShort = true;
+					}
+					else if (symbol._symbolString == "long")
+					{
+						if (isShort == true)
+						{
+							reportError(symbol, ErrorType::WrongSuccessor, "'short' 에 'long' 을 붙일 수 없습니다.");
+							errorOccured = true;
+							break;
+						}
+						if (2 <= longState)
+						{
+							reportError(symbol, ErrorType::RepetitionOfCode, "'long' 을 더 붙일 수 없습니다.");
+							errorOccured = true;
+							break;
+						}
+						++longState;
+					}
+					else if (symbol._symbolString == "signed")
+					{
+						if (signState == 2)
+						{
+							reportError(symbol, ErrorType::WrongSuccessor, "'unsigned' 에 'signed' 를 붙일 수 없습니다.");
+							errorOccured = true;
+							break;
+						}
+
+						signState = 1;
+					}
+					else if (symbol._symbolString == "unsigned")
+					{
+						if (signState == 1)
+						{
+							reportError(symbol, ErrorType::WrongSuccessor, "'signed' 에 'unsigned' 를 붙일 수 없습니다.");
+							errorOccured = true;
+							break;
+						}
+
+						signState = 2;
 					}
 					else
 					{
 						break;
 					}
 
-					++premodifierOffset;
+					++resultOffset;
 				}
-				return premodifierOffset;
+				return resultOffset;
 			};
 
 			// 1) Premodifier
 			bool checkerGotError = false;
-			const uint64 postPremodifierOffset = modifierChecker(symbolPosition, checkerGotError);
+			const uint64 postPremodifierOffset = fnModifierChecker(symbolPosition, checkerGotError);
 			if (checkerGotError == true)
 			{
 				return false;
 			}
 
-			// 2) (namespace::) Type and postmodifier
+			// 2) namespace::
 			// TODO: namespace data
-			uint64 postPostmodifierOffset = postPremodifierOffset;
+			bool isImplicitIntType = false;
+			uint64 postNamespaceOffset = postPremodifierOffset;
 			while (true)
 			{
-				const SymbolTableItem symbol = getSymbol(symbolPosition + postPostmodifierOffset);
+				const SymbolTableItem symbol = getSymbol(symbolPosition + postNamespaceOffset);
 				if (isSymbolType(symbol) == false)
 				{
-					const SymbolTableItem postSymbol = getSymbol(symbolPosition + postPostmodifierOffset + 1);
+					const SymbolTableItem postSymbol = getSymbol(symbolPosition + postNamespaceOffset + 1);
 					if (postSymbol._symbolString == "::")
 					{
-						postPostmodifierOffset += 2;
+						postNamespaceOffset += 2;
 					}
 					else
 					{
+						if (isShort == true || 0 != longState)
+						{
+							// implicit int type
+							isImplicitIntType = true;
+							break;
+						}
+
 						reportError(symbol, ErrorType::WrongSuccessor, "namespace 뒤에는 '::' 가 와야 합니다.");
 						return false;
 					}
@@ -1276,28 +1280,34 @@ namespace fs
 				}
 			}
 
-			const SymbolTableItem typeSymbol = getSymbol(symbolPosition + postPostmodifierOffset);
-			if (0 < postPostmodifierOffset)
+			// Type
+			const SymbolTableItem& typeSymbol = (isImplicitIntType == true) ? kImplicitIntTypeSymbol : getSymbol(symbolPosition + postNamespaceOffset);
+			if (isSymbolType(typeSymbol) == false)
 			{
-				if (isSymbolType(typeSymbol) == false)
-				{
-					reportError(typeSymbol, ErrorType::WrongSuccessor, "Type 이 와야 합니다.");
-					return false;
-				}
-
-				postPostmodifierOffset += modifierChecker(symbolPosition + postPostmodifierOffset + 1, checkerGotError);
-				if (checkerGotError == true)
-				{
-					return false;
-				}
+				reportError(typeSymbol, ErrorType::WrongSuccessor, "Type 이 와야 합니다.");
+				return false;
 			}
 
+			// Postmodifier
+			uint64 postPostmodifierOffset = (isImplicitIntType == true) ? postNamespaceOffset : postNamespaceOffset + 1;
+			postPostmodifierOffset += fnModifierChecker(symbolPosition + postPostmodifierOffset, checkerGotError);
+			if (checkerGotError == true)
+			{
+				return false;
+			}
+
+			const CppAdditionalInfo_TypeFlags longFlags = (0 == longState) ? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE : 
+				(1 == longState) ? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Long : CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_LongLong;
+			const CppAdditionalInfo_TypeFlags signFlags = static_cast<CppAdditionalInfo_TypeFlags>(
+				static_cast<int>(signState / 2) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Unsigned);
 			const CppAdditionalInfo_TypeFlags typeFlags = static_cast<CppAdditionalInfo_TypeFlags>(
-				static_cast<int>(isConst) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const |
-				static_cast<int>(isConstexpr) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Constexpr |
-				static_cast<int>(isMutable) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Mutable |
-				static_cast<int>(isStatic) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Static |
-				static_cast<int>(isThreadLocal) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_ThreadLocal
+				static_cast<int>(isConst)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const		|
+				static_cast<int>(isConstexpr)	* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Constexpr	|
+				static_cast<int>(isMutable)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Mutable		|
+				static_cast<int>(isStatic)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Static		|
+				static_cast<int>(isThreadLocal)	* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_ThreadLocal	|
+				static_cast<int>(isShort)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Short		|
+				longFlags | signFlags
 				);
 			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type, typeFlags));
 
