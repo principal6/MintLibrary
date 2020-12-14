@@ -435,6 +435,20 @@ const bool testMemoryAllocator2()
 		}
 	}
 
+	if (false)
+	{
+		std::chrono::steady_clock clock;
+		const uint64 startTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
+		fs::Vector<fs::DynamicStringA> dsv;
+		for (uint32 i = 0; i < 10'000; ++i)
+		{
+			dsv.push_back(fs::DynamicStringA("abcd"));
+		}
+		const uint64 endTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
+		const uint64 duration = endTime - startTime;
+		FS_LOG("김장원", "fs::Vector<fs::DynamicString>::push_back() X 10,000 times - duration: %llu ms", duration);
+	}
+
 	return true;
 }
 
