@@ -73,6 +73,13 @@ namespace fs
 		public:
 			virtual const bool						execute() abstract;
 
+		public:
+			const fs::Tree<SyntaxTreeItem>&			getSyntaxTree() const noexcept;
+			const std::string						getSyntaxTreeString() noexcept;
+
+		private:
+			void									getSyntaxTreeStringInternal(const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept;
+
 		protected:
 			void									reset();
 
@@ -114,6 +121,7 @@ namespace fs
 		private:
 			uint64									_symbolAt;
 			std::vector<ErrorMessage>				_errorMessageArray;
+			static const SymbolTableItem			kRootSymbol;
 		};
 	}
 }

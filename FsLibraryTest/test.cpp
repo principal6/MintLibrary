@@ -621,7 +621,8 @@ const bool testLanguage()
 	
 	fs::Language::CppParser cppParser{ lexer };
 	cppParser.execute();
-
+	
+	std::string syntaxTreeString = cppParser.getSyntaxTreeString();
 	return true;
 }
 

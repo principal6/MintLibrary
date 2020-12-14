@@ -1,3 +1,4 @@
+#include "LanguageCommon.h"
 #pragma once
 
 
@@ -31,6 +32,16 @@ namespace fs
 			__noop;
 		}
 
+		FS_INLINE const bool SymbolTableItem::operator==(const SymbolTableItem& rhs) const noexcept
+		{
+			return _symbolIndex == rhs._symbolIndex;
+		}
+
+		FS_INLINE const bool SymbolTableItem::operator!=(const SymbolTableItem& rhs) const noexcept
+		{
+			return _symbolIndex != rhs._symbolIndex;
+		}
+
 		FS_INLINE void SymbolTableItem::clearData()
 		{
 			_symbolClassifier = SymbolClassifier::POST_CLEARED;
@@ -48,7 +59,6 @@ namespace fs
 		inline SyntaxTreeItem::SyntaxTreeItem()
 			: _syntaxClassifier{ kUint32Max }
 			, _syntaxAdditionalInfo{ 0 }
-			, _symbolTableItem{ nullptr }
 		{
 			__noop;
 		}
@@ -56,7 +66,7 @@ namespace fs
 		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem)
 			: _syntaxClassifier{ kUint32Max }
 			, _syntaxAdditionalInfo{ 0 }
-			, _symbolTableItem{ &symbolTableItem }
+			, _symbolTableItem{ symbolTableItem }
 		{
 			__noop;
 		}
@@ -64,7 +74,7 @@ namespace fs
 		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier)
 			: _syntaxClassifier{ syntaxClassifier }
 			, _syntaxAdditionalInfo{ 0 }
-			, _symbolTableItem{ &symbolTableItem }
+			, _symbolTableItem{ symbolTableItem }
 		{
 			__noop;
 		}
@@ -72,7 +82,7 @@ namespace fs
 		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo)
 			: _syntaxClassifier{ syntaxClassifier }
 			, _syntaxAdditionalInfo{ syntaxAdditionalInfo }
-			, _symbolTableItem{ &symbolTableItem }
+			, _symbolTableItem{ symbolTableItem }
 		{
 			__noop;
 		}
@@ -80,6 +90,16 @@ namespace fs
 		FS_INLINE void SyntaxTreeItem::setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo)
 		{
 			_syntaxAdditionalInfo = syntaxAdditionalInfo;
+		}
+		
+		FS_INLINE const SyntaxClassifierEnumType SyntaxTreeItem::getSyntaxClassifier() const noexcept
+		{
+			return _syntaxClassifier;
+		}
+		
+		FS_INLINE const SyntaxAdditionalInfoType SyntaxTreeItem::getAdditionalInfo() const noexcept
+		{
+			return _syntaxAdditionalInfo;
 		}
 	}
 }

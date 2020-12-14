@@ -11,7 +11,7 @@ class ForwardDeclarated;
 class Float2;
 class Float3;
 class Float4;
-class uint32;
+using uint32 = unsigned int;
 class VS_INPUT
 {
 public:

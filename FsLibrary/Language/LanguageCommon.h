@@ -79,6 +79,10 @@ namespace fs
 									SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
 
 		public:
+			const bool				operator==(const SymbolTableItem& rhs) const noexcept;
+			const bool				operator!=(const SymbolTableItem& rhs) const noexcept;
+
+		public:
 			void					clearData();
 			const uint64			index() const noexcept;
 
@@ -99,20 +103,22 @@ namespace fs
 		class SyntaxTreeItem
 		{
 		public:
-										SyntaxTreeItem();
-										SyntaxTreeItem(const SymbolTableItem& symbolTableItem);
-										SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier);
-										SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo);
+											SyntaxTreeItem();
+											SyntaxTreeItem(const SymbolTableItem& symbolTableItem);
+											SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier);
+											SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo);
 
 		public:
-			void						setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo);
+			const SyntaxClassifierEnumType	getSyntaxClassifier() const noexcept;
+			void							setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo);
+			const SyntaxAdditionalInfoType	getAdditionalInfo() const noexcept;
 
 		private:
-			SyntaxClassifierEnumType	_syntaxClassifier;
-			SyntaxAdditionalInfoType	_syntaxAdditionalInfo;
+			SyntaxClassifierEnumType		_syntaxClassifier;
+			SyntaxAdditionalInfoType		_syntaxAdditionalInfo;
 
 		public:
-			const SymbolTableItem*		_symbolTableItem;
+			SymbolTableItem					_symbolTableItem;
 		};
 	}
 }

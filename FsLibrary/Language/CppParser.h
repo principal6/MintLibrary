@@ -17,6 +17,7 @@ namespace fs
 	{
 		class Lexer;
 
+
 		enum CppSyntaxClassifier : SyntaxClassifierEnumType
 		{
 			CppSyntaxClassifier_Preprocessor,
@@ -43,6 +44,7 @@ namespace fs
 			CppSyntaxClassifier_Type_ReferenceType,
 			CppSyntaxClassifier_Type_RvalueReferenceType,
 			CppSyntaxClassifier_Type_Value,
+			CppSyntaxClassifier_Type_Alias,
 			
 			CppSyntaxClassifier_Function_Name,
 			CppSyntaxClassifier_Function_Instructions,
@@ -75,6 +77,14 @@ namespace fs
 			FunctionParameter,
 		};
 
+		enum class CppUserDefinedTypeInfo : uint8
+		{
+			Default,
+			Abstract,
+			Derived,
+			DerivedFinal,
+		};
+
 		enum CppAdditionalInfo_TypeFlags : SyntaxAdditionalInfoType
 		{
 			CppAdditionalInfo_TypeFlags_NONE			= 0,
@@ -103,52 +113,46 @@ namespace fs
 			CppAdditionalInfo_FunctionAttributeFlags_Delete		= 1 << 6,
 		};
 
+
 		static const CppClassStructAccessModifier		convertStringToCppClassStructAccessModifier(const std::string& input);
 		static const std::string&						convertCppClassStructAccessModifierToString(const CppClassStructAccessModifier input);
 
-		/*
-		enum class CppTypeClassifier
-		{
-			BuiltIn_Void,
-
-			BuiltIn_Char,
-			BuiltIn_SignedChar_,		// =?= BuiltIn_Char
-			BuiltIn_UnsignedChar,
-			BuiltIn_Bool,
-			BuiltIn_WCharT,
-			BuiltIn_SignedShort,		// short, short int, signed short, signed short int
-			BuiltIn_UnsignedShort,		// unsigned short, unsigned short int
-			BuiltIn_SignedInt,			// int, signed, signed int
-			BuiltIn_UnsignedInt,		// unsigned, unsigned int
-			BuiltIn_SignedLong,			// long, long int, signed long, signed long int
-			BuiltIn_UnsignedLong,		// unsigned long, unsigned long int
-			BuiltIn_SignedLongLong,		// long long, long long int, signed long long, signed long long int
-			BuiltIn_UnsignedLongLong,	// unsigned long long, unsigned long long int
-			BuiltIn_Float,
-			BuiltIn_Double,
-			BuiltIn_LongDouble_,		// =?= BuiltIn_Double
-
-			// nullptr_t
-
-			UserDefined,
-
-			INVALID
-		};
-		*/
 
 		class CppTypeTableItem final
 		{
 		public:
-										CppTypeTableItem()	= default;
-										CppTypeTableItem(const std::string& typeName);
-										~CppTypeTableItem()	= default;
+											CppTypeTableItem()	= default;
+											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags);
+											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo);
+											CppTypeTableItem(const SyntaxTreeItem& typeSyntax);
+											~CppTypeTableItem()	= default;
 
 		public:
-			const std::string&			getTypeName() const noexcept;
+			const std::string&				getTypeName() const noexcept;
 
 		private:
-			std::string					_typeName;
+			SymbolTableItem					_typeSymbol;
+			CppAdditionalInfo_TypeFlags		_typeFlags;
+			CppUserDefinedTypeInfo			_userDefinedTypeInfo;
 		};
+
+
+		struct CppTypeModifierSet
+		{
+		public:
+			bool	_isConst		= false;	// const 는 중복 가능!!
+			bool	_isConstexpr	= false;	// For non-Parameter
+			bool	_isMutable		= false;	// For ClassStruct
+			bool	_isStatic		= false;	// For non-Parameter
+			bool	_isThreadLocal	= false;	// For Expression
+			bool	_isShort		= false;
+			uint8	_longState		= 0;		// 0: none, 1: long, 2: long long
+			uint8	_signState		= 0;		// 0: default signed, 1: explicit signed, 2: explicit unsgined (signed, unsigned 는 중복 가능하나 교차는 불가!)
+
+		public:
+			const CppAdditionalInfo_TypeFlags			getTypeFlags() const noexcept;
+		};
+
 
 		class CppParser final : public IParser
 		{
@@ -171,7 +175,6 @@ namespace fs
 		private:
 			const bool									parseFunctionParameters(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
 			const bool									parseFunctionParameters_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
-			//const bool									parseVariableDeclaration(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
 			const bool									parseFunctionInstructions(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 		
 		private:
@@ -182,9 +185,12 @@ namespace fs
 			
 			// Identifier 전까지 파싱
 			const bool									parseTypeNode(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
-
+			const bool									parseTypeNode_CheckModifiers(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount);
 		private:
 			const bool									parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+			
+			// TODO
+			const bool									parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 
 		private:
 			static const CppSyntaxClassifier			convertSymbolToAccessModifierSyntax(const SymbolTableItem& symbol) noexcept;
@@ -192,15 +198,19 @@ namespace fs
 			static const SymbolTableItem&				getClassStructAccessModifierSymbol(const CppClassStructAccessModifier cppClassStructAccessModifier) noexcept;
 		
 		private:
-			void										registerUserDefinedType(const CppTypeTableItem& userDefinedType);
+			const uint64								registerType(const CppTypeTableItem& type);
+			const bool									registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex);
 			const bool									isSymbolType(const SymbolTableItem& symbol) const noexcept;
-			const bool									isBuiltInType(const std::string& symbolString) const noexcept;
-			const bool									isUserDefinedType(const std::string& symbolString) const noexcept;
+			const bool									isBuiltInTypeXXX(const std::string& symbolString) const noexcept;
+			const bool									isUserDefinedTypeXXX(const std::string& symbolString) const noexcept;
+			const std::string&							getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept;
 			const CppTypeOf								getTypeOf(const SymbolTableItem& symbol) const noexcept;
 
 		private:
 			std::vector<CppTypeTableItem>				_typeTable;
 			std::unordered_map<std::string, uint64>		_typeTableUmap;
+
+			std::unordered_map<std::string, uint64>		_typeAliasTableUmap;
 		
 		private:
 			std::unordered_map<std::string, int8>		_builtInTypeUmap;
@@ -209,9 +219,10 @@ namespace fs
 			static const SymbolTableItem				kClassStructAccessModifierSymbolArray[3];
 			static const SymbolTableItem				kInitializerListSymbol;
 			static const SymbolTableItem				kMemberVariableSymbol;
-			static const SymbolTableItem				kImplicitIntTypeSymbol;
 			static const SymbolTableItem				kParameterListSymbol;
 			static const SymbolTableItem				kInstructionListSymbol;
+			static const SymbolTableItem				kInvalidGrammarSymbol;
+			static const SymbolTableItem				kImplicitIntTypeSymbol;
 		};
 	}
 }

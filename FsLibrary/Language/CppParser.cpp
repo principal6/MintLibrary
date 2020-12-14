@@ -13,11 +13,27 @@ namespace fs
 {
 	namespace Language
 	{
-		CppTypeTableItem::CppTypeTableItem(const std::string& typeName)
-			: _typeName{ typeName }
+		CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags)
+			: _typeSymbol{ typeSymbol }
+			, _typeFlags{ typeFlags }
 		{
 			__noop;
 		}
+
+		CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo)
+			: _typeSymbol{ typeSymbol }
+			, _userDefinedTypeInfo{ userDefinedTypeInfo }
+		{
+			__noop;
+		}
+
+		CppTypeTableItem::CppTypeTableItem(const SyntaxTreeItem& typeSyntax)
+			: _typeSymbol{ typeSyntax._symbolTableItem }
+			, _typeFlags{ typeSyntax.getAdditionalInfo() }
+		{
+			__noop;
+		}
+
 
 		const SymbolTableItem CppParser::kClassStructAccessModifierSymbolArray[3]{
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Public)),
@@ -28,6 +44,7 @@ namespace fs
 		const SymbolTableItem CppParser::kMemberVariableSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "MemberVariable") };
 		const SymbolTableItem CppParser::kParameterListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ParameterList") };
 		const SymbolTableItem CppParser::kInstructionListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InstructionList") };
+		const SymbolTableItem CppParser::kInvalidGrammarSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InvalidGrammar") };
 		const SymbolTableItem CppParser::kImplicitIntTypeSymbol{ SymbolTableItem(SymbolClassifier::Keyword, "int") };
 		CppParser::CppParser(Lexer& lexer)
 			: IParser(lexer)
@@ -73,6 +90,12 @@ namespace fs
 				{
 					FS_RETURN_FALSE_IF_NOT(parseClassStruct(true, getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
 					
+					advanceSymbolPosition(advanceCount);
+				}
+				else if (statementBeginningSymbol._symbolString == "using")
+				{
+					FS_RETURN_FALSE_IF_NOT(parseUsing(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
+
 					advanceSymbolPosition(advanceCount);
 				}
 			}
@@ -215,7 +238,7 @@ namespace fs
 				const uint64 identifierSymbolPosition = symbolPosition + identifierOffset;
 				const SymbolTableItem& classIdentifierSymbol = getSymbol(identifierSymbolPosition);
 
-				registerUserDefinedType(CppTypeTableItem(classIdentifierSymbol._symbolString));
+				const uint64 typeIndex = registerType(CppTypeTableItem(classIdentifierSymbol, CppUserDefinedTypeInfo::Default));
 				
 				classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Identifier));
 
@@ -226,8 +249,6 @@ namespace fs
 					// Declaration
 
 					outAdvanceCount = identifierOffset + 2;
-
-					registerUserDefinedType(CppTypeTableItem(classIdentifierSymbol._symbolString));
 
 					return true;
 				}
@@ -718,7 +739,7 @@ namespace fs
 					const uint32 childNodeCount = classStructCtorNode.getChildNodeCount();
 					{
 						TreeNodeAccessor parameterListNode = classStructCtorNode.getChildNode(kAccessModifierNodeCount);
-						if (parameterListNode.getNodeData()._symbolTableItem != &kParameterListSymbol)
+						if (parameterListNode.getNodeData()._symbolTableItem != kParameterListSymbol)
 						{
 							reportError(valueSymbol, ErrorType::SymbolNotFound, "Parameter 가 없는 함수인데 parameter 를 이용해 초기화하고 있습니다");
 							return false;
@@ -730,7 +751,7 @@ namespace fs
 							TreeNodeAccessor parameterNode = parameterListNode.getChildNode(parameterIter);
 							const uint32 parameterNodeChildNodeCount = parameterNode.getChildNodeCount();
 							TreeNodeAccessor parameterIdentifierNode = parameterNode.getChildNode(parameterNodeChildNodeCount - 1);
-							if (parameterIdentifierNode.getNodeData()._symbolTableItem->_symbolString == valueSymbol._symbolString)
+							if (parameterIdentifierNode.getNodeData()._symbolTableItem._symbolString == valueSymbol._symbolString)
 							{
 								parameterIndex = parameterIter;
 								break;
@@ -988,6 +1009,14 @@ namespace fs
 						return true;
 					}
 				}
+				else if (symbol._symbolString == "using")
+				{
+					uint64 postUsingNodeOffset = 0;
+					FS_RETURN_FALSE_IF_NOT(parseUsing(symbolPosition, ancestorNode, postUsingNodeOffset) == true);
+
+					outAdvanceCount = postUsingNodeOffset;
+					return true;
+				}
 
 				// TODO
 				// ...
@@ -1087,166 +1116,12 @@ namespace fs
 			// 3) * (const) or & &&
 			// 4) identifier
 
-			bool isConst = false;		// const 는 중복 가능!!
-			bool isConstexpr = false;	// For non-Parameter
-			bool isMutable = false;		// For ClassStruct
-			bool isStatic = false;		// For non-Parameter
-			bool isThreadLocal = false;	// For Expression
-			bool isShort = false;
-			uint8 longState = 0;		// 0: none, 1: long, 2: long long
-			uint8 signState = 0;		// 0: default signed, 1: explicit signed, 2: explicit unsgined (signed, unsigned 는 중복 가능하나 교차는 불가!)
-			static std::function<const uint64(const uint64, bool&)> fnModifierChecker =
-				[&](const uint64 symbolPosition, bool& errorOccured)->const uint64
-			{
-				uint64 resultOffset = 0;
-				while (true)
-				{
-					const SymbolTableItem& symbol = getSymbol(symbolPosition + resultOffset);
-					if (symbol._symbolClassifier != SymbolClassifier::Keyword)
-					{
-						break;
-					}
-
-					if (symbol._symbolString == "static")
-					{
-						if (isStatic == true)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'static' 이 중복됩니다.");
-							errorOccured = true;
-							break;
-						}
-						if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
-						{
-							reportError(symbol, ErrorType::WrongScope, "'static' 을 여기에 사용할 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						isStatic = true;
-					}
-					else if (symbol._symbolString == "constexpr")
-					{
-						if (isConstexpr == true)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'constexpr' 이 중복됩니다.");
-							errorOccured = true;
-							break;
-						}
-						if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
-						{
-							reportError(symbol, ErrorType::WrongScope, "'constexpr' 을 여기에 사용할 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						isConstexpr = true;
-					}
-					else if (symbol._symbolString == "const")
-					{
-						isConst = true; // const 는 중복 가능!!
-					}
-					else if (symbol._symbolString == "mutable")
-					{
-						if (isMutable == true)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'mutable' 이 중복됩니다.");
-							errorOccured = true;
-							break;
-						}
-						if (parsingMethod != CppTypeNodeParsingMethod::ClassStructMember)
-						{
-							reportError(symbol, ErrorType::WrongScope, "'mutable' 을 여기에 사용할 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						isMutable = true;
-					}
-					else if (symbol._symbolString == "thread_local")
-					{
-						if (isThreadLocal == true)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'thread_local' 이 중복됩니다.");
-							errorOccured = true;
-							break;
-						}
-						if (parsingMethod != CppTypeNodeParsingMethod::Expression)
-						{
-							reportError(symbol, ErrorType::WrongScope, "'thread_local' 을 여기에 사용할 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						isThreadLocal = true;
-					}
-					else if (symbol._symbolString == "short")
-					{
-						if (isShort == true)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'short' 가 중복됩니다.");
-							errorOccured = true;
-							break;
-						}
-						else if (0 < longState)
-						{
-							reportError(symbol, ErrorType::WrongSuccessor, "'long' 에 'short' 를 붙일 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						isShort = true;
-					}
-					else if (symbol._symbolString == "long")
-					{
-						if (isShort == true)
-						{
-							reportError(symbol, ErrorType::WrongSuccessor, "'short' 에 'long' 을 붙일 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						if (2 <= longState)
-						{
-							reportError(symbol, ErrorType::RepetitionOfCode, "'long' 을 더 붙일 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-						++longState;
-					}
-					else if (symbol._symbolString == "signed")
-					{
-						if (signState == 2)
-						{
-							reportError(symbol, ErrorType::WrongSuccessor, "'unsigned' 에 'signed' 를 붙일 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-
-						signState = 1;
-					}
-					else if (symbol._symbolString == "unsigned")
-					{
-						if (signState == 1)
-						{
-							reportError(symbol, ErrorType::WrongSuccessor, "'signed' 에 'unsigned' 를 붙일 수 없습니다.");
-							errorOccured = true;
-							break;
-						}
-
-						signState = 2;
-					}
-					else
-					{
-						break;
-					}
-
-					++resultOffset;
-				}
-				return resultOffset;
-			};
+			CppTypeModifierSet typeModifierSet;
 
 			// 1) Premodifier
-			bool checkerGotError = false;
-			const uint64 postPremodifierOffset = fnModifierChecker(symbolPosition, checkerGotError);
-			if (checkerGotError == true)
-			{
-				return false;
-			}
-
+			uint64 postPremodifierOffset = 0;
+			FS_RETURN_FALSE_IF_NOT(parseTypeNode_CheckModifiers(parsingMethod, symbolPosition, typeModifierSet, postPremodifierOffset));
+			
 			// 2) namespace::
 			// TODO: namespace data
 			bool isImplicitIntType = false;
@@ -1263,7 +1138,7 @@ namespace fs
 					}
 					else
 					{
-						if (isShort == true || 0 != longState)
+						if (typeModifierSet._isShort == true || 0 != typeModifierSet._longState)
 						{
 							// implicit int type
 							isImplicitIntType = true;
@@ -1290,26 +1165,13 @@ namespace fs
 
 			// Postmodifier
 			uint64 postPostmodifierOffset = (isImplicitIntType == true) ? postNamespaceOffset : postNamespaceOffset + 1;
-			postPostmodifierOffset += fnModifierChecker(symbolPosition + postPostmodifierOffset, checkerGotError);
-			if (checkerGotError == true)
 			{
-				return false;
+				uint64 advanceCount = 0;
+				FS_RETURN_FALSE_IF_NOT(parseTypeNode_CheckModifiers(parsingMethod, symbolPosition + postPostmodifierOffset, typeModifierSet, advanceCount));
+				postPostmodifierOffset += advanceCount;
 			}
-
-			const CppAdditionalInfo_TypeFlags longFlags = (0 == longState) ? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE : 
-				(1 == longState) ? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Long : CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_LongLong;
-			const CppAdditionalInfo_TypeFlags signFlags = static_cast<CppAdditionalInfo_TypeFlags>(
-				static_cast<int>(signState / 2) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Unsigned);
-			const CppAdditionalInfo_TypeFlags typeFlags = static_cast<CppAdditionalInfo_TypeFlags>(
-				static_cast<int>(isConst)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const		|
-				static_cast<int>(isConstexpr)	* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Constexpr	|
-				static_cast<int>(isMutable)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Mutable		|
-				static_cast<int>(isStatic)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Static		|
-				static_cast<int>(isThreadLocal)	* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_ThreadLocal	|
-				static_cast<int>(isShort)		* CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Short		|
-				longFlags | signFlags
-				);
-			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type, typeFlags));
+			
+			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type, typeModifierSet.getTypeFlags()));
 
 			// 3) * (const) or & &&
 			uint64 postPointerReferenceOffset = postPostmodifierOffset;
@@ -1369,6 +1231,137 @@ namespace fs
 			return true;
 		}
 
+		const bool CppParser::parseTypeNode_CheckModifiers(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount)
+		{
+			outAdvanceCount = 0;
+			
+			while (true)
+			{
+				const SymbolTableItem& symbol = getSymbol(symbolPosition + outAdvanceCount);
+				if (symbol._symbolClassifier != SymbolClassifier::Keyword)
+				{
+					break;
+				}
+
+				if (symbol._symbolString == "static")
+				{
+					if (outTypeModifierSet._isStatic == true)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'static' 이 중복됩니다.");
+						return false;
+					}
+					if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
+					{
+						reportError(symbol, ErrorType::WrongScope, "'static' 을 여기에 사용할 수 없습니다.");
+						return false;
+					}
+					outTypeModifierSet._isStatic = true;
+				}
+				else if (symbol._symbolString == "constexpr")
+				{
+					if (outTypeModifierSet._isConstexpr == true)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'constexpr' 이 중복됩니다.");
+						return false;
+					}
+					if (parsingMethod == CppTypeNodeParsingMethod::FunctionParameter)
+					{
+						reportError(symbol, ErrorType::WrongScope, "'constexpr' 을 여기에 사용할 수 없습니다.");
+						return false;
+					}
+					outTypeModifierSet._isConstexpr = true;
+				}
+				else if (symbol._symbolString == "const")
+				{
+					outTypeModifierSet._isConst = true; // const 는 중복 가능!!
+				}
+				else if (symbol._symbolString == "mutable")
+				{
+					if (outTypeModifierSet._isMutable == true)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'mutable' 이 중복됩니다.");
+						return false;
+					}
+					if (parsingMethod != CppTypeNodeParsingMethod::ClassStructMember)
+					{
+						reportError(symbol, ErrorType::WrongScope, "'mutable' 을 여기에 사용할 수 없습니다.");
+						return false;
+					}
+					outTypeModifierSet._isMutable = true;
+				}
+				else if (symbol._symbolString == "thread_local")
+				{
+					if (outTypeModifierSet._isThreadLocal == true)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'thread_local' 이 중복됩니다.");
+						return false;
+					}
+					if (parsingMethod != CppTypeNodeParsingMethod::Expression)
+					{
+						reportError(symbol, ErrorType::WrongScope, "'thread_local' 을 여기에 사용할 수 없습니다.");
+						return false;
+					}
+					outTypeModifierSet._isThreadLocal = true;
+				}
+				else if (symbol._symbolString == "short")
+				{
+					if (outTypeModifierSet._isShort == true)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'short' 가 중복됩니다.");
+						return false;
+					}
+					else if (0 < outTypeModifierSet._longState)
+					{
+						reportError(symbol, ErrorType::WrongSuccessor, "'long' 에 'short' 를 붙일 수 없습니다.");
+						return false;
+					}
+					outTypeModifierSet._isShort = true;
+				}
+				else if (symbol._symbolString == "long")
+				{
+					if (outTypeModifierSet._isShort == true)
+					{
+						reportError(symbol, ErrorType::WrongSuccessor, "'short' 에 'long' 을 붙일 수 없습니다.");
+						return false;
+					}
+					if (2 <= outTypeModifierSet._longState)
+					{
+						reportError(symbol, ErrorType::RepetitionOfCode, "'long' 을 더 붙일 수 없습니다.");
+						return false;
+					}
+					++outTypeModifierSet._longState;
+				}
+				else if (symbol._symbolString == "signed")
+				{
+					if (outTypeModifierSet._signState == 2)
+					{
+						reportError(symbol, ErrorType::WrongSuccessor, "'unsigned' 에 'signed' 를 붙일 수 없습니다.");
+						return false;
+					}
+
+					outTypeModifierSet._signState = 1;
+				}
+				else if (symbol._symbolString == "unsigned")
+				{
+					if (outTypeModifierSet._signState == 1)
+					{
+						reportError(symbol, ErrorType::WrongSuccessor, "'signed' 에 'unsigned' 를 붙일 수 없습니다.");
+						return false;
+					}
+
+					outTypeModifierSet._signState = 2;
+				}
+				else
+				{
+					break;
+				}
+
+				++outAdvanceCount;
+			}
+			
+			return true;
+		}
+
 		const bool CppParser::parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
 		{
 			outAdvanceCount = 0;
@@ -1390,42 +1383,104 @@ namespace fs
 			return false;
 		}
 
-		void CppParser::registerUserDefinedType(const CppTypeTableItem& userDefinedType)
+		const bool CppParser::parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+		{
+			FS_RETURN_FALSE_IF_NOT(hasSymbol(symbolPosition + 4) == true);
+
+			outAdvanceCount = 0;
+
+			const SymbolTableItem& usingSymbol = getSymbol(symbolPosition);
+			if (usingSymbol._symbolString != "using")
+			{
+				// using 이 아니다!
+				return false;
+			}
+
+			const SymbolTableItem& aliasSymbol = getSymbol(symbolPosition + 1);
+			if (aliasSymbol._symbolClassifier != SymbolClassifier::Identifier)
+			{
+				reportError(aliasSymbol, ErrorType::WrongSuccessor, "'using' 뒤에는 이름이 와야 합니다.");
+				return false;
+			}
+
+			const SymbolTableItem& equalSymbol = getSymbol(symbolPosition + 2);
+			if (equalSymbol._symbolString != "=")
+			{
+				reportError(equalSymbol, ErrorType::WrongSuccessor, "'=' 가 와야 합니다.");
+				return false;
+			}
+
+			TreeNodeAccessor<SyntaxTreeItem> usingNode = ancestorNode.insertChildNode(SyntaxTreeItem(usingSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_Alias));
+			TreeNodeAccessor<SyntaxTreeItem> aliasNode = usingNode.insertChildNode(SyntaxTreeItem(aliasSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_Alias));
+			
+			TreeNodeAccessor<SyntaxTreeItem> typeNode;
+			uint64 postTypeNodeOffset = 0;
+			FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::FunctionParameter, symbolPosition + 3, usingNode, typeNode, postTypeNodeOffset) == true);
+
+			const uint64 typeIndex = registerType(CppTypeTableItem(typeNode.getNodeData()));
+			FS_RETURN_FALSE_IF_NOT(registerTypeAlias(aliasSymbol._symbolString, typeIndex) == true);
+
+			outAdvanceCount = postTypeNodeOffset + 4;
+			return true;
+		}
+
+		const uint64 CppParser::registerType(const CppTypeTableItem& type)
 		{
 			// TODO
 			// namespace
 
-			if (isBuiltInType(userDefinedType.getTypeName()) == true)
+			auto found = _typeTableUmap.find(type.getTypeName());
+			if (found == _typeTableUmap.end())
 			{
-				return;
-			}
-
-			if (_typeTableUmap.find(userDefinedType.getTypeName()) == _typeTableUmap.end())
-			{
-				_typeTable.emplace_back(userDefinedType);
+				_typeTable.emplace_back(type);
 				const uint64 typeTableIndex = _typeTable.size() - 1;
-				_typeTableUmap.insert(std::make_pair(userDefinedType.getTypeName(), typeTableIndex));
+				_typeTableUmap.insert(std::make_pair(type.getTypeName(), typeTableIndex));
+				return typeTableIndex;
 			}
+			return found->second;
+		}
+
+		const bool CppParser::registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex)
+		{
+			auto found = _typeAliasTableUmap.find(typeAlias);
+			if (found != _typeAliasTableUmap.end())
+			{
+				reportError(kInvalidGrammarSymbol, ErrorType::RepetitionOfCode, (typeAlias + "는 이미 alias 가 등록되어 있습니다!").c_str());
+				return false;
+			}
+			_typeAliasTableUmap.insert(std::make_pair(typeAlias, typeIndex));
+			return true;
 		}
 
 		const bool CppParser::isSymbolType(const SymbolTableItem& symbol) const noexcept
 		{
-			if (isBuiltInType(symbol._symbolString) == true)
+			const std::string& unaliasedSymbolString = getUnaliasedSymbolStringXXX(symbol);
+			if (isBuiltInTypeXXX(unaliasedSymbolString) == true)
 			{
 				return true;
 			}
 
-			return isUserDefinedType(symbol._symbolString);
+			return isUserDefinedTypeXXX(unaliasedSymbolString);
 		}
 
-		const bool CppParser::isBuiltInType(const std::string& symbolString) const noexcept
+		const bool CppParser::isBuiltInTypeXXX(const std::string& symbolString) const noexcept
 		{
 			return (_builtInTypeUmap.find(symbolString) != _builtInTypeUmap.end());
 		}
 
-		const bool CppParser::isUserDefinedType(const std::string& symbolString) const noexcept
+		const bool CppParser::isUserDefinedTypeXXX(const std::string& symbolString) const noexcept
 		{
-			return _typeTableUmap.find(symbolString) != _typeTableUmap.end();
+			return (_typeTableUmap.find(symbolString) != _typeTableUmap.end());
+		}
+
+		const std::string& CppParser::getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept
+		{
+			auto found = _typeAliasTableUmap.find(symbol._symbolString);
+			if (found != _typeAliasTableUmap.end())
+			{
+				return _typeTable[found->second].getTypeName();
+			}
+			return symbol._symbolString;
 		}
 
 		const CppTypeOf CppParser::getTypeOf(const SymbolTableItem& symbol) const noexcept
@@ -1436,12 +1491,13 @@ namespace fs
 				return CppTypeOf::LiteralType;
 			}
 
-			if (isBuiltInType(symbol._symbolString) == true)
+			const std::string& unaliasedSymbolString = getUnaliasedSymbolStringXXX(symbol);
+			if (isBuiltInTypeXXX(unaliasedSymbolString) == true)
 			{
 				return CppTypeOf::BuiltInType;
 			}
 
-			if (isUserDefinedType(symbol._symbolString) == true)
+			if (isUserDefinedTypeXXX(unaliasedSymbolString) == true)
 			{
 				return CppTypeOf::UserDefinedType;
 			}

@@ -9,6 +9,7 @@ namespace fs
 {
 	namespace Language
 	{
+		const SymbolTableItem IParser::kRootSymbol = SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ROOT");
 		IParser::IParser(Lexer& lexer)
 			: _lexer{ lexer }
 			, _symbolTable{ lexer._symbolTable }
@@ -17,10 +18,68 @@ namespace fs
 			__noop;
 		}
 
+		const fs::Tree<SyntaxTreeItem>& IParser::getSyntaxTree() const noexcept
+		{
+			return _syntaxTree;
+		}
+
+		const std::string IParser::getSyntaxTreeString() noexcept
+		{
+			fs::TreeNodeAccessor<SyntaxTreeItem> rootNode = _syntaxTree.getRootNode();
+
+			std::string result;
+			getSyntaxTreeStringInternal(rootNode, 0, result);
+			return result;
+		}
+
+		void IParser::getSyntaxTreeStringInternal(const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept
+		{
+			if (node.isValid() == true)
+			{
+				const SyntaxTreeItem& syntaxTreeItem = node.getNodeData();
+				const SyntaxClassifierEnumType syntaxClassifier = syntaxTreeItem.getSyntaxClassifier();
+				const SyntaxAdditionalInfoType additionalInfo = syntaxTreeItem.getAdditionalInfo();
+				
+				const SymbolTableItem& symbolTableItem = syntaxTreeItem._symbolTableItem;
+
+				for (uint64 i = 0; i < depth; ++i)
+				{
+					outResult.append(">");
+				}
+
+				outResult.append(symbolTableItem._symbolString);
+
+				outResult.append("    At[");
+				outResult.append(std::to_string(symbolTableItem._sourceAt));
+				outResult.append("] ");
+
+				outResult.append(" SymbolClassifier[");
+				outResult.append(std::to_string(static_cast<uint32>(symbolTableItem._symbolClassifier)));
+				outResult.append("] ");
+
+				outResult.append(" SyntaxClassifier[");
+				outResult.append(std::to_string(syntaxClassifier));
+				outResult.append("] ");
+
+				outResult.append(" SyntaxAdditionalInfo[");
+				outResult.append(std::to_string(additionalInfo));
+				outResult.append("]");
+
+				outResult.append("\n");
+
+				const uint32 childNodeCount = node.getChildNodeCount();
+				for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
+				{
+					const TreeNodeAccessor<SyntaxTreeItem>& childNode = node.getChildNode(childNodeIndex);
+					getSyntaxTreeStringInternal(childNode, depth + 1, outResult);
+				}
+			}
+		}
+
 		void IParser::reset()
 		{
 			_symbolAt = 0;
-			_syntaxTreeCurrentParentNode = _syntaxTree.createRootNode(SyntaxTreeItem());
+			_syntaxTreeCurrentParentNode = _syntaxTree.createRootNode(kRootSymbol);
 		}
 
 		const bool IParser::needToContinueParsing() const noexcept

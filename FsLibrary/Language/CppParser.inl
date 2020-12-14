@@ -38,7 +38,31 @@ namespace fs
 
 		FS_INLINE const std::string& CppTypeTableItem::getTypeName() const noexcept
 		{
-			return _typeName;
+			return _typeSymbol._symbolString;
+		}
+
+
+		FS_INLINE const CppAdditionalInfo_TypeFlags CppTypeModifierSet::getTypeFlags() const noexcept
+		{
+			const CppAdditionalInfo_TypeFlags longFlags =
+				(0 == _longState)
+				? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE
+				: (1 == _longState)
+				? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Long
+				: CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_LongLong;
+
+			const CppAdditionalInfo_TypeFlags signFlags
+				= static_cast<CppAdditionalInfo_TypeFlags>(static_cast<int>(_signState / 2) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Unsigned);
+
+			return static_cast<CppAdditionalInfo_TypeFlags>(
+				static_cast<int>(_isConst) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const |
+				static_cast<int>(_isConstexpr) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Constexpr |
+				static_cast<int>(_isMutable) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Mutable |
+				static_cast<int>(_isStatic) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Static |
+				static_cast<int>(_isThreadLocal) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_ThreadLocal |
+				static_cast<int>(_isShort) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Short |
+				longFlags | signFlags
+				);
 		}
 
 

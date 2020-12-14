@@ -3,6 +3,8 @@
 #include <stdafx.h>
 #include <Container/StringUtil.h>
 
+#include <Container/Tree.hpp>
+
 
 namespace fs
 {
@@ -71,6 +73,5 @@ namespace fs
 				outArray.push_back(inputString.substr(prevAt, length - prevAt));
 			}
 		}
-
 	}
 }
