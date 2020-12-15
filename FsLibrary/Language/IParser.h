@@ -51,77 +51,78 @@ namespace fs
 
 		protected:
 			static_assert(static_cast<uint32>(ErrorType::COUNT) == ARRAYSIZE(kErrorTypeStringArray));
-			static constexpr const char*			convertErrorTypeToTypeString(const ErrorType errorType);
-			static constexpr const char*			convertErrorTypeToContentString(const ErrorType errorType);
+			static constexpr const char*					convertErrorTypeToTypeString(const ErrorType errorType);
+			static constexpr const char*					convertErrorTypeToContentString(const ErrorType errorType);
 
 			class ErrorMessage
 			{
 			public:
-													ErrorMessage();
-													ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
-													ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
+															ErrorMessage();
+															ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
+															ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
 
 			private:
-				const uint64						_sourceAt;
-				std::string							_message;
+				const uint64								_sourceAt;
+				std::string									_message;
 			};
 
 		public:
-													IParser(Lexer& lexer);
-			virtual									~IParser() = default;
+															IParser(Lexer& lexer);
+			virtual											~IParser() = default;
 
 		public:
-			virtual const bool						execute() abstract;
+			virtual const bool								execute() abstract;
 
 		public:
-			const fs::Tree<SyntaxTreeItem>&			getSyntaxTree() const noexcept;
-			const std::string						getSyntaxTreeString() noexcept;
+			const fs::Tree<SyntaxTreeItem>&					getSyntaxTree() const noexcept;
+			const std::string								getSyntaxTreeString() noexcept;
 
 		private:
-			void									getSyntaxTreeStringInternal(const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept;
+			void											getSyntaxTreeStringInternal(const uint64 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept;
 
 		protected:
-			void									reset();
+			void											reset();
 
 		protected:
-			const bool								needToContinueParsing() const noexcept;
+			const bool										needToContinueParsing() const noexcept;
 
 		protected:
-			void									advanceSymbolPosition(const uint64 advanceCount);
+			void											advanceSymbolPositionXXX(const uint64 advanceCount);
 
 		protected:
-			const bool								hasSymbol(const uint64 symbolPosition) const noexcept;
-			const uint64							getSymbolPosition() const noexcept;
-			SymbolTableItem&						getSymbol(const uint64 symbolPosition) const noexcept;
+			const bool										hasSymbol(const uint64 symbolPosition) const noexcept;
+			const uint64									getSymbolPosition() const noexcept;
+			SymbolTableItem&								getSymbol(const uint64 symbolPosition) const noexcept;
 
 		protected:
-			const bool								findNextSymbol(const uint64 symbolPosition, const char* const cmp, uint64& outSymbolPosition) const noexcept;
-			const bool								findNextSymbol(const uint64 symbolPosition, const SymbolClassifier symbolClassifier, uint64& outSymbolPosition) const noexcept;
-			const bool								findNextSymbolEither(const uint64 symbolPosition, const char* const cmp0, const char* const cmp1, uint64& outSymbolPosition) const noexcept;
-			const bool								findNextDepthMatchingCloseSymbol(const uint64 symbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept;
+			const bool										findNextSymbol(const uint64 symbolPosition, const char* const cmp, uint64& outSymbolPosition) const noexcept;
+			const bool										findNextSymbol(const uint64 symbolPosition, const SymbolClassifier symbolClassifier, uint64& outSymbolPosition) const noexcept;
+			const bool										findNextSymbolEither(const uint64 symbolPosition, const char* const cmp0, const char* const cmp1, uint64& outSymbolPosition) const noexcept;
+			const bool										findNextDepthMatchingCloseSymbol(const uint64 openSymbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept;
 		
 		protected:
-			void									reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
-			void									reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
-			const bool								hasReportedErrors() const noexcept;
+			void											reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
+			void											reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
+			const bool										hasReportedErrors() const noexcept;
 
 		protected:
-			fs::TreeNodeAccessor<SyntaxTreeItem>	getSyntaxTreeRootNode() noexcept;
+			fs::TreeNodeAccessor<SyntaxTreeItem>			getSyntaxTreeRootNode() noexcept;
 			
 		protected:
-			Lexer&									_lexer;
-			std::vector<SymbolTableItem>&			_symbolTable;
+			Lexer&											_lexer;
+			std::vector<SymbolTableItem>&					_symbolTable;
 
 		private:
-			fs::Tree<SyntaxTreeItem>				_syntaxTree;
+			fs::Tree<SyntaxTreeItem>						_syntaxTree;
 		
 		protected:
-			fs::TreeNodeAccessor<SyntaxTreeItem>	_syntaxTreeCurrentParentNode;
+			fs::TreeNodeAccessor<SyntaxTreeItem>			_syntaxTreeCurrentParentNode;
+			static const TreeNodeAccessor<SyntaxTreeItem>	kInvalidTreeNode;
 
 		private:
-			uint64									_symbolAt;
-			std::vector<ErrorMessage>				_errorMessageArray;
-			static const SymbolTableItem			kRootSymbol;
+			uint64											_symbolAt;
+			std::vector<ErrorMessage>						_errorMessageArray;
+			static const SymbolTableItem					kRootSymbol;
 		};
 	}
 }

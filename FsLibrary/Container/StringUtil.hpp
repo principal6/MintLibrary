@@ -73,5 +73,42 @@ namespace fs
 				outArray.push_back(inputString.substr(prevAt, length - prevAt));
 			}
 		}
+
+		void tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray)
+		{
+			if (inputString.empty() == true || delimiterString.empty() == true)
+			{
+				return;
+			}
+
+			outArray.clear();
+
+			const uint64 length = inputString.length();
+			const uint64 delimiterLength = delimiterString.length();
+			uint64 at = 0;
+			uint64 prevAt = 0;
+			while (at < length)
+			{
+				if (0 == inputString.compare(at, delimiterLength, delimiterString))
+				{
+					if (prevAt < at)
+					{
+						outArray.push_back(inputString.substr(prevAt, at - prevAt));
+					}
+
+					at += delimiterLength;
+					prevAt = at;
+				}
+				else
+				{
+					++at;
+				}
+			}
+
+			if (prevAt < length)
+			{
+				outArray.push_back(inputString.substr(prevAt, length - prevAt));
+			}
+		}
 	}
 }

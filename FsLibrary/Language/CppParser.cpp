@@ -45,7 +45,9 @@ namespace fs
 		const SymbolTableItem CppParser::kParameterListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ParameterList") };
 		const SymbolTableItem CppParser::kInstructionListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InstructionList") };
 		const SymbolTableItem CppParser::kInvalidGrammarSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InvalidGrammar") };
+		const SymbolTableItem CppParser::kPreprocessorListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "PreprocessorList") };
 		const SymbolTableItem CppParser::kImplicitIntTypeSymbol{ SymbolTableItem(SymbolClassifier::Keyword, "int") };
+		const SymbolTableItem CppParser::kGlobalNamespaceSymbol{ SymbolTableItem(SymbolClassifier::Identifier, "GlobalNamespace") };
 		CppParser::CppParser(Lexer& lexer)
 			: IParser(lexer)
 		{
@@ -70,33 +72,23 @@ namespace fs
 			reset();
 
 			uint64 advanceCount = 0;
-			TreeNodeAccessor syntaxTreeRootNode = getSyntaxTreeRootNode();
+			TreeNodeAccessor<SyntaxTreeItem> syntaxTreeRootNode = getSyntaxTreeRootNode();
+			_preprocessorListNode = syntaxTreeRootNode.insertChildNode(SyntaxTreeItem(kPreprocessorListSymbol, CppSyntaxClassifier::CppSyntaxClassifier_PreprocessorList));
+			_globalNamespaceNode = syntaxTreeRootNode.insertChildNode(SyntaxTreeItem(kGlobalNamespaceSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Namespace));
 			while (needToContinueParsing() == true)
 			{
-				const SymbolTableItem& statementBeginningSymbol = getSymbol(getSymbolPosition());
-				if (statementBeginningSymbol._symbolString == "#")
+				const SymbolTableItem& currentSymbol = getSymbol(getSymbolPosition());
+				if (currentSymbol._symbolString == "#")
 				{
-					FS_RETURN_FALSE_IF_NOT(parsePreprocessor(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
+					FS_RETURN_FALSE_IF_NOT(parsePreprocessor(getSymbolPosition(), _preprocessorListNode, advanceCount) == true);
 
-					advanceSymbolPosition(advanceCount);
+					advanceSymbolPositionXXX(advanceCount);
 				}
-				else if (statementBeginningSymbol._symbolString == "class")
+				else
 				{
-					FS_RETURN_FALSE_IF_NOT(parseClassStruct(false, getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
+					FS_RETURN_FALSE_IF_NOT(parseCode(getSymbolPosition(), _globalNamespaceNode, advanceCount) == true);
 					
-					advanceSymbolPosition(advanceCount);
-				}
-				else if (statementBeginningSymbol._symbolString == "struct")
-				{
-					FS_RETURN_FALSE_IF_NOT(parseClassStruct(true, getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
-					
-					advanceSymbolPosition(advanceCount);
-				}
-				else if (statementBeginningSymbol._symbolString == "using")
-				{
-					FS_RETURN_FALSE_IF_NOT(parseUsing(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == true);
-
-					advanceSymbolPosition(advanceCount);
+					advanceSymbolPositionXXX(advanceCount);
 				}
 			}
 
@@ -121,8 +113,6 @@ namespace fs
 				return false;
 			}
 
-			TreeNodeAccessor preprocessorNode = ancestorNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Preprocessor));
-
 			const SymbolTableItem& directive = getSymbol(symbolPosition + 1);
 			if (directive._symbolString == "include")
 			{
@@ -132,7 +122,7 @@ namespace fs
 					return false;
 				}
 
-				TreeNodeAccessor directiveNode = preprocessorNode.insertChildNode(SyntaxTreeItem(directive, CppSyntaxClassifier::CppSyntaxClassifier_Preprocessor_Include));
+				TreeNodeAccessor directiveNode = ancestorNode.insertChildNode(SyntaxTreeItem(directive, CppSyntaxClassifier::CppSyntaxClassifier_Preprocessor_Include));
 
 				const SymbolTableItem& openSymbol = getSymbol(symbolPosition + 2);
 				if ((openSymbol._symbolString == "<" || openSymbol._symbolString == "\""))
@@ -193,7 +183,41 @@ namespace fs
 			return false;
 		}
 
-		const bool CppParser::parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+		const bool CppParser::parseCode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
+		{
+			_currentNamespaceNode = namespaceNode;
+
+			const SymbolTableItem& fisrtSymbol = getSymbol(symbolPosition);
+			if (fisrtSymbol._symbolString == "class")
+			{
+				FS_RETURN_FALSE_IF_NOT(parseClassStruct(false, symbolPosition, namespaceNode, outAdvanceCount) == true);
+				return true;
+			}
+			else if (fisrtSymbol._symbolString == "struct")
+			{
+				FS_RETURN_FALSE_IF_NOT(parseClassStruct(true, symbolPosition, namespaceNode, outAdvanceCount) == true);
+				return true;
+			}
+			else if (fisrtSymbol._symbolString == "using")
+			{
+				FS_RETURN_FALSE_IF_NOT(parseUsing(symbolPosition, namespaceNode, outAdvanceCount) == true);
+				return true;
+			}
+			else if (fisrtSymbol._symbolString == "namespace")
+			{
+				FS_RETURN_FALSE_IF_NOT(parseNamespace(symbolPosition, namespaceNode, outAdvanceCount) == true);
+				return true;
+			}
+			else
+			{
+				// expression
+
+
+			}
+			return false;
+		}
+
+		const bool CppParser::parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
 		{
 			// class A;
 			// class alignas(4) A;
@@ -207,7 +231,7 @@ namespace fs
 				return false;
 			}
 
-			TreeNodeAccessor classStructNode = ancestorNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Keyword));
+			TreeNodeAccessor classStructNode = namespaceNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Keyword));
 
 			uint64 identifierOffset = 1;
 			{
@@ -238,7 +262,7 @@ namespace fs
 				const uint64 identifierSymbolPosition = symbolPosition + identifierOffset;
 				const SymbolTableItem& classIdentifierSymbol = getSymbol(identifierSymbolPosition);
 
-				const uint64 typeIndex = registerType(CppTypeTableItem(classIdentifierSymbol, CppUserDefinedTypeInfo::Default));
+				const uint64 typeIndex = registerType(namespaceNode, CppTypeTableItem(classIdentifierSymbol, CppUserDefinedTypeInfo::Default));
 				
 				classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Identifier));
 
@@ -641,8 +665,6 @@ namespace fs
 
 						// Variable
 						{
-							// TODO
-							// getTypeNode()
 							TreeNodeAccessor memberVariableNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariableSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
 							{
 								TreeNodeAccessor accessModifierNode = memberVariableNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
@@ -927,104 +949,118 @@ namespace fs
 		{
 			outAdvanceCount = 0;
 
-			// TODO: parenthesis
-
-			uint64 postTypeChunkPosition = 0;
-			if (isTypeChunk(symbolPosition, postTypeChunkPosition) == true)
+			const SymbolTableItem firstSymbol = getSymbol(symbolPosition);
+			if (firstSymbol._symbolString == "(")
 			{
-				uint64 postTypeNodeOffset = 0;
-				TreeNodeAccessor<SyntaxTreeItem> typeNode;
-				FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::Expression, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
-
-				// 4) identifier
+				uint64 closeSymbolPosition = 0;
+				if (findNextDepthMatchingCloseSymbol(symbolPosition, ")", closeSymbolPosition) == false)
 				{
-					const SymbolTableItem identifierSymbol = getSymbol(symbolPosition + postTypeNodeOffset);
-					if (identifierSymbol._symbolClassifier != SymbolClassifier::Identifier)
-					{
-						reportError(identifierSymbol, ErrorType::WrongSuccessor, "변수 이름이 와야 합니다!");
-						return false;
-					}
+					reportError(firstSymbol, ErrorType::NoMatchingGrouper, "')' 를 찾을 수 없었습니다.");
+					return false;
 				}
 
-				// TODO
-				// Statement terminator check ';'
+				uint64 symbolIter = symbolPosition + 1;
+				while (symbolIter < closeSymbolPosition)
 				{
-					const SymbolTableItem symbol = getSymbol(symbolPosition + postTypeNodeOffset);
-					if (symbol._symbolString == ";")
-					{
-						outAdvanceCount = postTypeNodeOffset + 1;
-						return true;
-					}
+					uint64 advanceCount = 0;
+					FS_RETURN_FALSE_IF_NOT(parseExpression(symbolIter, ancestorNode, advanceCount) == true);
+					symbolIter += advanceCount;
 				}
 			}
-
-			// TODO
-			// Non-declaration ??
+			else
 			{
-				const SymbolTableItem symbol = getSymbol(symbolPosition);
-				if (symbol._symbolString == "__noop")
+				uint64 postTypeChunkPosition = 0;
+				if (isTypeChunk(symbolPosition, postTypeChunkPosition) == true)
 				{
-					const SymbolTableItem nextSymbol = getSymbol(symbolPosition + 1);
-					if (nextSymbol._symbolString != ";")
-					{
-						reportError(nextSymbol, ErrorType::WrongSuccessor, "';' 가 와야 합니다.");
-						return false;
-					}
+					// Declaration
 
-					outAdvanceCount = 2;
-					return true;
-				}
-				else if (symbol._symbolString == "return")
-				{
-					const SymbolTableItem nextSymbol = getSymbol(symbolPosition + 1);
-					if (nextSymbol._symbolString == ";")
-					{
-						// 'return;'
+					uint64 postTypeNodeOffset = 0;
+					TreeNodeAccessor<SyntaxTreeItem> typeNode;
+					FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::Expression, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
 
-						ancestorNode.insertChildNode(SyntaxTreeItem(symbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return));
-
-						outAdvanceCount = 2;
-						return true;
-					}
-					else
+					// 4) identifier
 					{
-						TreeNodeAccessor returnNode = ancestorNode.insertChildNode(SyntaxTreeItem(symbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return));
-						const CppTypeOf cppTypeOf = getTypeOf(nextSymbol);
-						if (cppTypeOf == CppTypeOf::INVALID)
+						const SymbolTableItem identifierSymbol = getSymbol(symbolPosition + postTypeNodeOffset);
+						if (identifierSymbol._symbolClassifier != SymbolClassifier::Identifier)
 						{
-							reportError(nextSymbol, ErrorType::WrongSuccessor, "type 이 와야 합니다.");
+							reportError(identifierSymbol, ErrorType::WrongSuccessor, "변수 이름이 와야 합니다!");
 							return false;
 						}
+					}
 
-						TreeNodeAccessor valueNode = returnNode.insertChildNode(SyntaxTreeItem(nextSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return_Value));
-						
-						const SymbolTableItem postNextSymbol = getSymbol(symbolPosition + 2);
-						if (postNextSymbol._symbolString != ";")
+					// TODO
+					// , ...
+					// array
+					// initialization
+					// Statement terminator check ';'
+					{
+						const SymbolTableItem symbol = getSymbol(symbolPosition + postTypeNodeOffset);
+						if (symbol._symbolString == ";")
+						{
+							outAdvanceCount = postTypeNodeOffset + 1;
+							return true;
+						}
+					}
+				}
+				else
+				{
+					// Non-declaration
+
+					const SymbolTableItem symbol = getSymbol(symbolPosition);
+					if (symbol._symbolString == "__noop")
+					{
+						const SymbolTableItem nextSymbol = getSymbol(symbolPosition + 1);
+						if (nextSymbol._symbolString != ";")
 						{
 							reportError(nextSymbol, ErrorType::WrongSuccessor, "';' 가 와야 합니다.");
 							return false;
 						}
 
-						outAdvanceCount = 3;
+						outAdvanceCount = 2;
 						return true;
 					}
-				}
-				else if (symbol._symbolString == "using")
-				{
-					uint64 postUsingNodeOffset = 0;
-					FS_RETURN_FALSE_IF_NOT(parseUsing(symbolPosition, ancestorNode, postUsingNodeOffset) == true);
+					else if (symbol._symbolString == "return")
+					{
+						const SymbolTableItem nextSymbol = getSymbol(symbolPosition + 1);
+						if (nextSymbol._symbolString == ";")
+						{
+							// 'return;'
 
-					outAdvanceCount = postUsingNodeOffset;
-					return true;
-				}
+							ancestorNode.insertChildNode(SyntaxTreeItem(symbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return));
 
-				// TODO
-				// ...
-				DebugBreak();
-				return false;
+							outAdvanceCount = 2;
+							return true;
+						}
+						else
+						{
+							TreeNodeAccessor returnNode = ancestorNode.insertChildNode(SyntaxTreeItem(symbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return));
+							const CppTypeOf cppTypeOf = getTypeOfSymbol(_currentNamespaceNode, nextSymbol);
+							if (cppTypeOf == CppTypeOf::INVALID)
+							{
+								reportError(nextSymbol, ErrorType::WrongSuccessor, "type 이 와야 합니다.");
+								return false;
+							}
+
+							TreeNodeAccessor valueNode = returnNode.insertChildNode(SyntaxTreeItem(nextSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Return_Value));
+
+							const SymbolTableItem postNextSymbol = getSymbol(symbolPosition + 2);
+							if (postNextSymbol._symbolString != ";")
+							{
+								reportError(nextSymbol, ErrorType::WrongSuccessor, "';' 가 와야 합니다.");
+								return false;
+							}
+
+							outAdvanceCount = 3;
+							return true;
+						}
+					}
+
+					// TODO
+					// ...
+					DebugBreak();
+					return false;
+				}
 			}
-
-			
 			
 			// (binary) operator 다음에 (unary) identifier (unary)
 			// a++, a-- == rvalue
@@ -1042,7 +1078,7 @@ namespace fs
 			while (true)
 			{
 				const SymbolTableItem& symbol = getSymbol(symbolPosition + offset);
-				if (isSymbolType(symbol) == true)
+				if (isSymbolType(_currentNamespaceNode, symbol) == true)
 				{
 					foundTypeSymbol = true;
 					++offset;
@@ -1123,13 +1159,12 @@ namespace fs
 			FS_RETURN_FALSE_IF_NOT(parseTypeNode_CheckModifiers(parsingMethod, symbolPosition, typeModifierSet, postPremodifierOffset));
 			
 			// 2) namespace::
-			// TODO: namespace data
 			bool isImplicitIntType = false;
 			uint64 postNamespaceOffset = postPremodifierOffset;
 			while (true)
 			{
 				const SymbolTableItem symbol = getSymbol(symbolPosition + postNamespaceOffset);
-				if (isSymbolType(symbol) == false)
+				if (isSymbolType(_currentNamespaceNode, symbol) == false)
 				{
 					const SymbolTableItem postSymbol = getSymbol(symbolPosition + postNamespaceOffset + 1);
 					if (postSymbol._symbolString == "::")
@@ -1157,7 +1192,7 @@ namespace fs
 
 			// Type
 			const SymbolTableItem& typeSymbol = (isImplicitIntType == true) ? kImplicitIntTypeSymbol : getSymbol(symbolPosition + postNamespaceOffset);
-			if (isSymbolType(typeSymbol) == false)
+			if (isSymbolType(_currentNamespaceNode, typeSymbol) == false)
 			{
 				reportError(typeSymbol, ErrorType::WrongSuccessor, "Type 이 와야 합니다.");
 				return false;
@@ -1383,7 +1418,7 @@ namespace fs
 			return false;
 		}
 
-		const bool CppParser::parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+		const bool CppParser::parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
 		{
 			FS_RETURN_FALSE_IF_NOT(hasSymbol(symbolPosition + 4) == true);
 
@@ -1410,34 +1445,175 @@ namespace fs
 				return false;
 			}
 
-			TreeNodeAccessor<SyntaxTreeItem> usingNode = ancestorNode.insertChildNode(SyntaxTreeItem(usingSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_Alias));
+			TreeNodeAccessor<SyntaxTreeItem> usingNode = namespaceNode.insertChildNode(SyntaxTreeItem(usingSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_Alias));
 			TreeNodeAccessor<SyntaxTreeItem> aliasNode = usingNode.insertChildNode(SyntaxTreeItem(aliasSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type_Alias));
 			
 			TreeNodeAccessor<SyntaxTreeItem> typeNode;
 			uint64 postTypeNodeOffset = 0;
 			FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::FunctionParameter, symbolPosition + 3, usingNode, typeNode, postTypeNodeOffset) == true);
 
-			const uint64 typeIndex = registerType(CppTypeTableItem(typeNode.getNodeData()));
+			const uint64 typeIndex = registerType(namespaceNode, CppTypeTableItem(typeNode.getNodeData()));
 			FS_RETURN_FALSE_IF_NOT(registerTypeAlias(aliasSymbol._symbolString, typeIndex) == true);
 
 			outAdvanceCount = postTypeNodeOffset + 4;
 			return true;
 		}
 
-		const uint64 CppParser::registerType(const CppTypeTableItem& type)
+		const bool CppParser::parseNamespace(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
 		{
-			// TODO
-			// namespace
+			// Non-statement
 
-			auto found = _typeTableUmap.find(type.getTypeName());
+			FS_RETURN_FALSE_IF_NOT(hasSymbol(symbolPosition + 3) == true);
+
+			outAdvanceCount = 0;
+
+			const SymbolTableItem& namespaceSymbol = getSymbol(symbolPosition);
+			if (namespaceSymbol._symbolString != "namespace")
+			{
+				// namespace 가 아니다!
+				return false;
+			}
+
+			const SymbolTableItem& identifierSymbol = getSymbol(symbolPosition + 1);
+			if (identifierSymbol._symbolClassifier != SymbolClassifier::Identifier)
+			{
+				reportError(identifierSymbol, ErrorType::WrongSuccessor, "namespace 뒤에는 identifier 가 와야 합니다!");
+				return false;
+			}
+
+			const SymbolTableItem& openSymbol = getSymbol(symbolPosition + 2);
+			if (openSymbol._symbolString != "{")
+			{
+				reportError(openSymbol, ErrorType::WrongSuccessor, "'{' 가 와야 합니다!");
+				return false;
+			}
+
+			uint64 closeSymbolPosition = 0;
+			if (findNextDepthMatchingCloseSymbol(symbolPosition + 2, "}", closeSymbolPosition) == false)
+			{
+				reportError(openSymbol, ErrorType::NoMatchingGrouper, "'}' 를 찾지 못했습니다!");
+				return false;
+			}
+
+			TreeNodeAccessor newNamespaceNode = findNamespaceNodeInternal(namespaceNode, identifierSymbol._symbolString);
+			if (newNamespaceNode.isValid() == false)
+			{
+				newNamespaceNode = namespaceNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Namespace));
+			}
+
+			uint64 symbolIter = symbolPosition + 3;
+			while (symbolIter < closeSymbolPosition)
+			{
+				uint64 advanceCount = 0;
+				FS_RETURN_FALSE_IF_NOT(parseCode(symbolIter, newNamespaceNode, advanceCount) == true);
+				symbolIter += advanceCount;
+			}
+
+			outAdvanceCount = symbolIter - symbolPosition + 1;
+			return true;
+		}
+
+		TreeNodeAccessor<SyntaxTreeItem> CppParser::findNamespaceNode(const std::string& namespaceFullIdentifier) const noexcept
+		{
+			std::vector<std::string> namespaceStack;
+			fs::StringUtil::tokenize(namespaceFullIdentifier, "::", namespaceStack);
+
+			TreeNodeAccessor<SyntaxTreeItem> result = _globalNamespaceNode;
+			const uint64 namespaceStackDepth = namespaceStack.size();
+			for (uint64 iter = 1; iter < namespaceStackDepth; ++iter)
+			{
+				result = findNamespaceNodeInternal(result, namespaceStack[iter]);
+			}
+			return result;
+		}
+
+		std::string CppParser::getNamespaceNodeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept
+		{
+			std::string result;
+
+			TreeNodeAccessor<SyntaxTreeItem> currentNamespaceNode = namespaceNode;
+			std::vector<std::string> revStack;
+			while (true)
+			{
+				if (isNamespaceNode(currentNamespaceNode) == false)
+				{
+					break;
+				}
+				revStack.emplace_back(currentNamespaceNode.getNodeData()._symbolTableItem._symbolString);
+				currentNamespaceNode = currentNamespaceNode.getParentNode();
+			}
+
+			const uint64 stackDepth = revStack.size();
+			if (0 < stackDepth)
+			{
+				std::vector<std::string> stack;
+				for (uint64 iter = 0; iter < stackDepth; ++iter)
+				{
+					stack.emplace_back(revStack.back());
+					revStack.pop_back();
+				}
+
+				result = stack.back();
+				stack.pop_back();
+				for (uint64 iter = 0; iter < stackDepth - 1; ++iter)
+				{
+					result += "::";
+					result += stack.back();
+					stack.pop_back();
+				}
+			}
+			return result;
+		}
+
+		std::string CppParser::getNamespaceNodeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& subNamespaceIdentifier) const noexcept
+		{
+			std::string result = getNamespaceNodeFullIdentifier(namespaceNode);
+			result += "::";
+			result += subNamespaceIdentifier;
+			return result;
+		}
+
+		TreeNodeAccessor<SyntaxTreeItem> CppParser::findNamespaceNodeInternal(const TreeNodeAccessor<SyntaxTreeItem>& parentNamespaceNode, const std::string& namespaceIdentifier) const noexcept
+		{
+			const uint32 childNamespaceNodeCount = parentNamespaceNode.getChildNodeCount();
+			for (uint32 childIndex = 0; childIndex < childNamespaceNodeCount; ++childIndex)
+			{
+				TreeNodeAccessor childNode = parentNamespaceNode.getChildNode(childIndex);
+				if (isNamespaceNode(childNode) == true && childNode.getNodeData()._symbolTableItem._symbolString == namespaceIdentifier)
+				{
+					return parentNamespaceNode.getChildNode(childIndex);
+				}
+			}
+			return kInvalidTreeNode;
+		}
+
+		const bool CppParser::isNamespaceNode(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept
+		{
+			return (namespaceNode.isValid() == true) && (namespaceNode.getNodeData().getSyntaxClassifier() == CppSyntaxClassifier::CppSyntaxClassifier_Namespace);
+		}
+
+		const uint64 CppParser::registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppTypeTableItem& type)
+		{
+			FS_ASSERT("김장원", isNamespaceNode(namespaceNode) == true, "namespaceNode 가 잘못됐습니다!");
+
+			const std::string typeFullIdentifier = getTypeFullIdentifier(namespaceNode, type.getTypeName());
+			auto found = _typeTableUmap.find(typeFullIdentifier);
 			if (found == _typeTableUmap.end())
 			{
 				_typeTable.emplace_back(type);
 				const uint64 typeTableIndex = _typeTable.size() - 1;
-				_typeTableUmap.insert(std::make_pair(type.getTypeName(), typeTableIndex));
+				_typeTableUmap.insert(std::make_pair(typeFullIdentifier, typeTableIndex));
 				return typeTableIndex;
 			}
 			return found->second;
+		}
+
+		std::string CppParser::getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept
+		{
+			std::string result = getNamespaceNodeFullIdentifier(namespaceNode);
+			result += "::";
+			result += typeIdentifier;
+			return result;
 		}
 
 		const bool CppParser::registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex)
@@ -1452,15 +1628,9 @@ namespace fs
 			return true;
 		}
 
-		const bool CppParser::isSymbolType(const SymbolTableItem& symbol) const noexcept
+		const bool CppParser::isSymbolType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept
 		{
-			const std::string& unaliasedSymbolString = getUnaliasedSymbolStringXXX(symbol);
-			if (isBuiltInTypeXXX(unaliasedSymbolString) == true)
-			{
-				return true;
-			}
-
-			return isUserDefinedTypeXXX(unaliasedSymbolString);
+			return getTypeOfSymbol(namespaceNode, symbol) != CppTypeOf::INVALID;
 		}
 
 		const bool CppParser::isBuiltInTypeXXX(const std::string& symbolString) const noexcept
@@ -1468,9 +1638,10 @@ namespace fs
 			return (_builtInTypeUmap.find(symbolString) != _builtInTypeUmap.end());
 		}
 
-		const bool CppParser::isUserDefinedTypeXXX(const std::string& symbolString) const noexcept
+		const bool CppParser::isUserDefinedTypeXXX(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& symbolString) const noexcept
 		{
-			return (_typeTableUmap.find(symbolString) != _typeTableUmap.end());
+			const std::string typeFullIdentifier = getTypeFullIdentifier(namespaceNode, symbolString);
+			return (_typeTableUmap.find(typeFullIdentifier) != _typeTableUmap.end());
 		}
 
 		const std::string& CppParser::getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept
@@ -1483,7 +1654,7 @@ namespace fs
 			return symbol._symbolString;
 		}
 
-		const CppTypeOf CppParser::getTypeOf(const SymbolTableItem& symbol) const noexcept
+		const CppTypeOf CppParser::getTypeOfSymbol(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept
 		{
 			const CppSyntaxClassifier literalSyntaxClassifier = convertLiteralSymbolToSyntax(symbol);
 			if (literalSyntaxClassifier != CppSyntaxClassifier::CppSyntaxClassifier_INVALID)
@@ -1497,7 +1668,7 @@ namespace fs
 				return CppTypeOf::BuiltInType;
 			}
 
-			if (isUserDefinedTypeXXX(unaliasedSymbolString) == true)
+			if (isUserDefinedTypeXXX(namespaceNode, unaliasedSymbolString) == true)
 			{
 				return CppTypeOf::UserDefinedType;
 			}

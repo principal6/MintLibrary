@@ -633,8 +633,22 @@ const bool testLanguage()
 	
 	lexer.execute();
 	
-	fs::Language::CppParser cppParser{ lexer };
-	cppParser.execute();
+	using namespace fs;
+	Language::CppParser cppParser{ lexer };
+	/*
+	TreeNodeAccessor namespaceNode = cppParser.findNamespaceNode("GlobalNamespace");
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float4x4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
+	*/
+	FS_ASSERT("김장원", cppParser.execute() == true, "파싱에 실패했습니다!");
 	
 	std::string syntaxTreeString = cppParser.getSyntaxTreeString();
 	return true;

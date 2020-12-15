@@ -9,6 +9,7 @@ namespace fs
 {
 	namespace Language
 	{
+		const TreeNodeAccessor<SyntaxTreeItem> IParser::kInvalidTreeNode;
 		const SymbolTableItem IParser::kRootSymbol = SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ROOT");
 		IParser::IParser(Lexer& lexer)
 			: _lexer{ lexer }
@@ -28,14 +29,16 @@ namespace fs
 			fs::TreeNodeAccessor<SyntaxTreeItem> rootNode = _syntaxTree.getRootNode();
 
 			std::string result;
-			getSyntaxTreeStringInternal(rootNode, 0, result);
+			getSyntaxTreeStringInternal(32, rootNode, 0, result);
 			return result;
 		}
 
-		void IParser::getSyntaxTreeStringInternal(const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept
+		void IParser::getSyntaxTreeStringInternal(const uint64 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept
 		{
 			if (node.isValid() == true)
 			{
+				std::string line;
+
 				const SyntaxTreeItem& syntaxTreeItem = node.getNodeData();
 				const SyntaxClassifierEnumType syntaxClassifier = syntaxTreeItem.getSyntaxClassifier();
 				const SyntaxAdditionalInfoType additionalInfo = syntaxTreeItem.getAdditionalInfo();
@@ -44,34 +47,56 @@ namespace fs
 
 				for (uint64 i = 0; i < depth; ++i)
 				{
-					outResult.append(">");
+					line.append(">");
 				}
 
-				outResult.append(symbolTableItem._symbolString);
+				line.append(symbolTableItem._symbolString);
 
-				outResult.append("    At[");
-				outResult.append(std::to_string(symbolTableItem._sourceAt));
-				outResult.append("] ");
+				const uint64 headLength = line.length();
+				if (headLength < headSpace)
+				{
+					const uint64 remnant = headSpace - headLength;
+					for (uint64 i = 0; i < remnant; ++i)
+					{
+						line.append(" ");
+					}
+				}
 
-				outResult.append(" SymbolClassifier[");
-				outResult.append(std::to_string(static_cast<uint32>(symbolTableItem._symbolClassifier)));
-				outResult.append("] ");
+				/*
+				line.append("SymbolClassifier[");
+				line.append(std::to_string(static_cast<uint32>(symbolTableItem._symbolClassifier)));
+				line.append("] ");
+				*/
 
-				outResult.append(" SyntaxClassifier[");
-				outResult.append(std::to_string(syntaxClassifier));
-				outResult.append("] ");
+				if (syntaxClassifier != kUint32Max)
+				{
+					line.append(" SyntaxClassifier[");
+					line.append(std::to_string(syntaxClassifier));
+					line.append("] ");
+				}
+				
+				if (additionalInfo != 0)
+				{
+					line.append(" SyntaxAdditionalInfo[");
+					line.append(std::to_string(additionalInfo));
+					line.append("]");
+				}
+				
+				if (symbolTableItem._sourceAt != kUint64Max)
+				{
+					line.append(" At[#");
+					line.append(std::to_string(symbolTableItem._sourceAt));
+					line.append("] ");
+				}
 
-				outResult.append(" SyntaxAdditionalInfo[");
-				outResult.append(std::to_string(additionalInfo));
-				outResult.append("]");
-
-				outResult.append("\n");
+				line.append("\n");
+				outResult.append(line);
 
 				const uint32 childNodeCount = node.getChildNodeCount();
 				for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
 				{
 					const TreeNodeAccessor<SyntaxTreeItem>& childNode = node.getChildNode(childNodeIndex);
-					getSyntaxTreeStringInternal(childNode, depth + 1, outResult);
+					getSyntaxTreeStringInternal(headSpace, childNode, depth + 1, outResult);
 				}
 			}
 		}
@@ -87,7 +112,7 @@ namespace fs
 			return _symbolAt < _symbolTable.size();
 		}
 
-		void IParser::advanceSymbolPosition(const uint64 advanceCount)
+		void IParser::advanceSymbolPositionXXX(const uint64 advanceCount)
 		{
 			_symbolAt += max(advanceCount, static_cast<uint64>(1));
 		}
@@ -149,9 +174,9 @@ namespace fs
 			return false;
 		}
 
-		const bool IParser::findNextDepthMatchingCloseSymbol(const uint64 symbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept
+		const bool IParser::findNextDepthMatchingCloseSymbol(const uint64 openSymbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept
 		{
-			const SymbolTableItem& openSymbol = getSymbol(symbolPosition);
+			const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
 			if (openSymbol._symbolClassifier != SymbolClassifier::Grouper_Open)
 			{
 				FS_ASSERT("김장원", false, "symbolPosition 에 있는 Symbol 은 Grouper_Open 이어야 합니다!!!");
@@ -159,7 +184,7 @@ namespace fs
 			}
 
 			int32 depth = 0;
-			for (uint64 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
+			for (uint64 symbolIter = openSymbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
 			{
 				const SymbolTableItem& symbol = _symbolTable[symbolIter];
 				if (symbol._symbolString == openSymbol._symbolString)

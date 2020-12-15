@@ -20,7 +20,7 @@ namespace fs
 
 		enum CppSyntaxClassifier : SyntaxClassifierEnumType
 		{
-			CppSyntaxClassifier_Preprocessor,
+			CppSyntaxClassifier_PreprocessorList,
 			CppSyntaxClassifier_Preprocessor_Include,
 
 			CppSyntaxClassifier_Literal_Number,
@@ -51,6 +51,8 @@ namespace fs
 			CppSyntaxClassifier_Function_Parameter,
 			CppSyntaxClassifier_Function_Return,
 			CppSyntaxClassifier_Function_Return_Value,
+
+			CppSyntaxClassifier_Namespace,
 
 			CppSyntaxClassifier_INVALID,
 		};
@@ -165,9 +167,10 @@ namespace fs
 
 		private:
 			const bool									parsePreprocessor(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+			const bool									parseCode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
 		
 		private:
-			const bool									parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+			const bool									parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
 			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppClassStructAccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
 			const bool									parseClassStructInitializerList(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 			const bool									parseClassStructInitializerList_Item(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount, bool& outContinueParsing);
@@ -186,25 +189,44 @@ namespace fs
 			// Identifier Àü±îÁö ÆÄ½Ì
 			const bool									parseTypeNode(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
 			const bool									parseTypeNode_CheckModifiers(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount);
+		
 		private:
 			const bool									parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
-			
-			// TODO
-			const bool									parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+			const bool									parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
+		
+		private:
+			const bool									parseNamespace(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
+
+		public:
+			TreeNodeAccessor<SyntaxTreeItem>			findNamespaceNode(const std::string& namespaceFullIdentifier) const noexcept;
+			std::string									getNamespaceNodeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept;
+			std::string									getNamespaceNodeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& subNamespaceIdentifier) const noexcept;
+
+		private:
+			TreeNodeAccessor<SyntaxTreeItem>			findNamespaceNodeInternal(const TreeNodeAccessor<SyntaxTreeItem>& parentnamespaceNode, const std::string& namespaceIdentifier) const noexcept;
+			const bool									isNamespaceNode(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept;
 
 		private:
 			static const CppSyntaxClassifier			convertSymbolToAccessModifierSyntax(const SymbolTableItem& symbol) noexcept;
 			static const CppSyntaxClassifier			convertLiteralSymbolToSyntax(const SymbolTableItem& symbol) noexcept;
 			static const SymbolTableItem&				getClassStructAccessModifierSymbol(const CppClassStructAccessModifier cppClassStructAccessModifier) noexcept;
 		
+		public:
+			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppTypeTableItem& type);
+			std::string									getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept;
+
 		private:
-			const uint64								registerType(const CppTypeTableItem& type);
 			const bool									registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex);
-			const bool									isSymbolType(const SymbolTableItem& symbol) const noexcept;
+			const bool									isSymbolType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept;
 			const bool									isBuiltInTypeXXX(const std::string& symbolString) const noexcept;
-			const bool									isUserDefinedTypeXXX(const std::string& symbolString) const noexcept;
+			const bool									isUserDefinedTypeXXX(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& symbolString) const noexcept;
 			const std::string&							getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept;
-			const CppTypeOf								getTypeOf(const SymbolTableItem& symbol) const noexcept;
+			const CppTypeOf								getTypeOfSymbol(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept;
+
+		private:
+			TreeNodeAccessor<SyntaxTreeItem>			_preprocessorListNode;
+			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;
+			TreeNodeAccessor<SyntaxTreeItem>			_currentNamespaceNode;
 
 		private:
 			std::vector<CppTypeTableItem>				_typeTable;
@@ -222,7 +244,9 @@ namespace fs
 			static const SymbolTableItem				kParameterListSymbol;
 			static const SymbolTableItem				kInstructionListSymbol;
 			static const SymbolTableItem				kInvalidGrammarSymbol;
+			static const SymbolTableItem				kPreprocessorListSymbol;
 			static const SymbolTableItem				kImplicitIntTypeSymbol;
+			static const SymbolTableItem				kGlobalNamespaceSymbol;
 		};
 	}
 }
