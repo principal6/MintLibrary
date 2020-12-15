@@ -84,6 +84,8 @@
     <ClInclude Include="Memory\Viewer.h" />
     <ClInclude Include="Memory\Viewer.hpp" />
     <ClInclude Include="Platform\Platform.h" />
+    <ClInclude Include="Profiler\Profiler.h" />
+    <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\CppHlsl.h" />
     <ClInclude Include="SimpleRendering\CppHlslTypes.h" />
@@ -112,6 +114,7 @@
     <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
+    <ClCompile Include="Profiler\ScopedCpuProfiler.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />
     <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
     <ClCompile Include="SimpleRendering\DxHelper.cpp" />

@@ -28,6 +28,9 @@
     <Filter Include="Language">
       <UniqueIdentifier>{65183733-0f5f-4535-85c7-ec6d65fdd22c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Profiler">
+      <UniqueIdentifier>{9babe998-8a61-4c57-a47e-d9b5edd5624b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -256,6 +259,12 @@
     <ClInclude Include="SimpleRendering\CppHlslTypes.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="Profiler\ScopedCpuProfiler.h">
+      <Filter>Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler\Profiler.h">
+      <Filter>Profiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -314,6 +323,9 @@
     </ClCompile>
     <ClCompile Include="Language\CppHlslLexer.cpp" />
     <ClCompile Include="Language\CppHlslParser.cpp" />
+    <ClCompile Include="Profiler\ScopedCpuProfiler.cpp">
+      <Filter>Profiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />

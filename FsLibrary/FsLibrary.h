@@ -14,6 +14,7 @@
 #include <Platform/Platform.h>
 #include <SimpleRendering/GraphicDevice.h>
 #include <Language/Language.h>
+#include <Profiler/Profiler.h>
 
 
 #endif // !FS_LIBRARY_H

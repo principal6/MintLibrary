@@ -142,6 +142,35 @@ const bool testBitVector()
 #ifdef FS_TEST_FAILURES
 	const bool valueAt5 = a.get(5);
 #endif
+
+	{
+
+		static constexpr uint32 kCount = 100'000'000;
+		std::vector<uint8> byteVector;
+		byteVector.resize(kCount);
+		BitVector bitVector;
+		bitVector.resizeBitCount(kCount);
+		
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "byte vector" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				byteVector[i] = i % 2;
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				bitVector.set(i, i % 2);
+			}
+		}
+
+		std::vector<fs::Profiler::ScopedCpuProfiler::Log> logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
+		const bool isEmpty = logArray.empty();
+	}
+
 	return true;
 }
 
