@@ -137,16 +137,17 @@ namespace fs
 		FS_ASSERT("김장원", true == isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
 		const uint32 byteAt = getByteAtByBitAt(bitAt);
-		const uint32 byteBitOffsetFromLeft = getByteBitOffsetByBitAt(bitAt);
+		const uint32 byteBitOffsetFromLeft = getBitOffsetByBitAt(bitAt);
 
 		const uint8 bitMaskOneAt = getBitMaskOneAt(byteBitOffsetFromLeft);
 		return (_byteArray[byteAt] & bitMaskOneAt);
 	}
 
-	FS_INLINE const uint8 BitVector::getByte(const uint32 byteIndex) const noexcept
+	FS_INLINE const uint8 BitVector::getByte(const uint32 byteAt) const noexcept
 	{
-		FS_ASSERT("김장원", byteIndex < _byteCapacity, "범위를 벗어난 접근입니다.");
-		return _byteArray[byteIndex];
+		FS_ASSERT("김장원", byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
+
+		return _byteArray[byteAt];
 	}
 
 	FS_INLINE const bool BitVector::first() const noexcept
@@ -164,13 +165,22 @@ namespace fs
 		FS_ASSERT("김장원", true == isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
 		const uint32 byteAt = getByteAtByBitAt(bitAt);
-		const uint32 byteBitOffsetFromLeft = getByteBitOffsetByBitAt(bitAt);
-		
-		const uint8 bitMaskOneAt = getBitMaskOneAt(byteBitOffsetFromLeft);
-		const uint8 bitMaskCull = ~bitMaskOneAt;
-		const uint8 bitValueAt = static_cast<uint8>((true == value) ? bitMaskOneAt : 0);
+		const uint32 bitOffsetFromLeft = getBitOffsetByBitAt(bitAt);
+		setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
+	}
 
-		_byteArray[byteAt] = (_byteArray[byteAt] & bitMaskCull) | bitValueAt;
+	FS_INLINE void BitVector::set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept
+	{
+		FS_ASSERT("김장원", true == isInSizeBoundary(byteAt * kBitsPerByte + bitOffsetFromLeft), "범위를 벗어난 접근입니다.");
+		
+		setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
+	}
+
+	FS_INLINE void BitVector::setByte(const uint32 byteAt, const uint8 byte) noexcept
+	{
+		FS_ASSERT("김장원", byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
+		
+		_byteArray[byteAt] = byte;
 	}
 
 	FS_INLINE void BitVector::swap(const uint32 aBitAt, const uint32 bBitAt) noexcept
@@ -193,12 +203,20 @@ namespace fs
 		return _byteCapacity;
 	}
 
+	FS_INLINE void BitVector::setBit(uint8& byte, const uint32 bitOffsetFromLeft, const bool value) noexcept
+	{
+		const uint8 bitMaskOneAt = getBitMaskOneAt(bitOffsetFromLeft);
+		const uint8 bitMaskCull = ~bitMaskOneAt;
+		const uint8 bitValueAt = static_cast<uint8>(value) * bitMaskOneAt;
+		byte = (byte & bitMaskCull) | bitValueAt;
+	}
+
 	FS_INLINE const uint32 BitVector::getByteAtByBitAt(const uint32 bitAt) noexcept
 	{
 		return bitAt / kBitsPerByte;
 	}
 
-	FS_INLINE const uint32 BitVector::getByteBitOffsetByBitAt(const uint32 bitAt) noexcept
+	FS_INLINE const uint32 BitVector::getBitOffsetByBitAt(const uint32 bitAt) noexcept
 	{
 		return bitAt % kBitsPerByte;
 	}

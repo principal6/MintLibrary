@@ -144,26 +144,88 @@ const bool testBitVector()
 #endif
 
 	{
+#if defined FS_DEBUG
+		static constexpr uint32 kCount = 10'000'000;
+#else
+		static constexpr uint32 kCount = 200'000'000;
+#endif
 
-		static constexpr uint32 kCount = 100'000'000;
+		std::vector<uint8> sourceData;
+		sourceData.resize(kCount);
+
 		std::vector<uint8> byteVector;
 		byteVector.resize(kCount);
+
+		std::vector<bool> boolVector;
+		boolVector.resize(kCount);
+
 		BitVector bitVector;
 		bitVector.resizeBitCount(kCount);
+
+		{
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				sourceData[i] = i % 2;
+			}
+		}
 		
 		{
 			fs::Profiler::ScopedCpuProfiler profiler{ "byte vector" };
 			for (uint32 i = 0; i < kCount; ++i)
 			{
-				byteVector[i] = i % 2;
+				byteVector[i] = sourceData[i];
+			}
+		}
+		
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "bool vector" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				boolVector[i] = sourceData[i];
 			}
 		}
 
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector" };
+			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector raw" };
 			for (uint32 i = 0; i < kCount; ++i)
 			{
-				bitVector.set(i, i % 2);
+				bitVector.set(i, sourceData[i]);
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector per byte - 1" };
+			const uint32 kByteCount = kCount / kBitsPerByte;
+			
+			uint32 byteAt = 0;
+			while (byteAt < kByteCount)
+			{
+				const uint32 sourceAt = byteAt * kBitsPerByte;
+				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
+				{
+					bitVector.set(byteAt, bitOffset, sourceData[sourceAt + bitOffset]);
+				}
+
+				++byteAt;
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector per byte - 2" };
+			const uint32 kByteCount = kCount / kBitsPerByte;
+
+			uint32 byteAt = 0;
+			while (byteAt < kByteCount)
+			{
+				const uint32 sourceAt = byteAt * kBitsPerByte;
+				uint8 byteData = bitVector.getByte(byteAt);
+				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
+				{
+					BitVector::setBit(byteData, bitOffset, sourceData[sourceAt + bitOffset]);
+				}
+				bitVector.setByte(byteAt, byteData);
+
+				++byteAt;
 			}
 		}
 

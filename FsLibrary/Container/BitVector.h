@@ -30,10 +30,12 @@ namespace fs
 		const bool					isFull() const noexcept;
 		const bool					isInSizeBoundary(const uint32 bitAt) const noexcept;
 		const bool					get(const uint32 bitAt) const noexcept;
-		const uint8					getByte(const uint32 byteIndex) const noexcept;
+		const uint8					getByte(const uint32 byteAt) const noexcept;
 		const bool					first() const noexcept;
 		const bool					last() const noexcept;
 		void						set(const uint32 bitAt, const bool value) noexcept;
+		void						set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept;
+		void						setByte(const uint32 byteAt, const uint8 byte) noexcept;
 		void						swap(const uint32 aBitAt, const uint32 bBitAt) noexcept;
 
 	public:
@@ -41,8 +43,9 @@ namespace fs
 		const uint32				byteCapacity() const noexcept;
 
 	public:
+		static void					setBit(uint8& byte, const uint32 bitOffsetFromLeft, const bool value) noexcept;
 		static const uint32			getByteAtByBitAt(const uint32 bitAt) noexcept;
-		static const uint32			getByteBitOffsetByBitAt(const uint32 bitAt) noexcept;
+		static const uint32			getBitOffsetByBitAt(const uint32 bitAt) noexcept;
 		static const uint8			getBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept;
 
 	private:
