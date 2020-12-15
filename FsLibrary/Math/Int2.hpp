@@ -101,26 +101,4 @@ namespace fs
 		_x = x;
 		_y = y;
 	}
-
-	/*
-	FS_INLINE void Int2::x(const int32 newX) noexcept
-	{
-		_x = newX;
-	}
-
-	FS_INLINE const int32 Int2::x() const noexcept
-	{
-		return _x;
-	}
-
-	FS_INLINE void Int2::y(const int32 newY) noexcept
-	{
-		_y = newY;
-	}
-
-	FS_INLINE const int32 Int2::y() const noexcept
-	{
-		return _y;
-	}
-	*/
 }
