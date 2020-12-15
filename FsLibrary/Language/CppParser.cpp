@@ -80,13 +80,19 @@ namespace fs
 				const SymbolTableItem& currentSymbol = getSymbol(getSymbolPosition());
 				if (currentSymbol._symbolString == "#")
 				{
-					FS_RETURN_FALSE_IF_NOT(parsePreprocessor(getSymbolPosition(), _preprocessorListNode, advanceCount) == true);
+					if (parsePreprocessor(getSymbolPosition(), _preprocessorListNode, advanceCount) == false)
+					{
+						break;
+					}
 
 					advanceSymbolPositionXXX(advanceCount);
 				}
 				else
 				{
-					FS_RETURN_FALSE_IF_NOT(parseCode(getSymbolPosition(), _globalNamespaceNode, advanceCount) == true);
+					if (parseCode(getSymbolPosition(), _globalNamespaceNode, advanceCount) == false)
+					{
+						break;
+					}
 					
 					advanceSymbolPositionXXX(advanceCount);
 				}
