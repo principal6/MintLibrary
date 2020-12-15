@@ -16,7 +16,7 @@ namespace fs
 {
 	namespace Language
 	{
-		class Lexer;
+		class ILexer;
 
 
 		class IParser abstract
@@ -67,7 +67,7 @@ namespace fs
 			};
 
 		public:
-															IParser(Lexer& lexer);
+															IParser(ILexer& lexer);
 			virtual											~IParser() = default;
 
 		public:
@@ -109,7 +109,7 @@ namespace fs
 			fs::TreeNodeAccessor<SyntaxTreeItem>			getSyntaxTreeRootNode() noexcept;
 			
 		protected:
-			Lexer&											_lexer;
+			ILexer&											_lexer;
 			std::vector<SymbolTableItem>&					_symbolTable;
 
 		private:

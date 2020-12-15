@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <Language/IParser.h>
 
-#include <Language/Lexer.h>
+#include <Language/ILexer.h>
 #include <Container/Tree.hpp>
 
 
@@ -11,7 +11,7 @@ namespace fs
 	{
 		const TreeNodeAccessor<SyntaxTreeItem> IParser::kInvalidTreeNode;
 		const SymbolTableItem IParser::kRootSymbol = SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ROOT");
-		IParser::IParser(Lexer& lexer)
+		IParser::IParser(ILexer& lexer)
 			: _lexer{ lexer }
 			, _symbolTable{ lexer._symbolTable }
 			, _symbolAt{ 0 }

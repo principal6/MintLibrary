@@ -1,5 +1,6 @@
 ﻿#include <FsLibrary.h>
-#include <Language/CppParser.h>
+#include <Language/CppHlslParser.h>
+#include <Language/CppHlslLexer.h>
 
 
 #ifdef FS_DEBUG
@@ -484,173 +485,26 @@ const bool testFiles()
 
 const bool testLanguage()
 {
-	fs::TextFileReader textFileReader;
-	//textFileReader.open("FsLibraryTest/test.cpp");
-	textFileReader.open("test.txt");
-	
-	fs::DynamicStringA testHlsl{
-		R"(
-			#include <ShaderStructDefinitions>
-			#include <VsConstantBuffers>
-
-			VS_OUTPUT main(VS_INPUT input)
-			{
-				VS_OUTPUT result;
-				result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
-				result._color		= input._color;
-				result._texCoord	= input._texCoord;
-				result._flag		= input._flag;
-				return result;
-			}
-		)"
-	};
-
-
-	fs::Language::Lexer lexer{ textFileReader.get() };
-	lexer.setStatementTerminator(';');
-	lexer.setEscaper('\\');
-
-	lexer.registerDelimiter(' ');
-	lexer.registerDelimiter('\t');
-	lexer.registerDelimiter('\r');
-	lexer.registerDelimiter('\n');
-
-	lexer.registerCommentMarker("//");
-	lexer.registerCommentMarker("/*", "*/");
-
-	lexer.registerGrouper('(', fs::Language::GrouperClassifier::Open);
-	lexer.registerGrouper('{', fs::Language::GrouperClassifier::Open);
-	lexer.registerGrouper('[', fs::Language::GrouperClassifier::Open);
-	lexer.registerGrouper(')', fs::Language::GrouperClassifier::Close);
-	lexer.registerGrouper('}', fs::Language::GrouperClassifier::Close);
-	lexer.registerGrouper(']', fs::Language::GrouperClassifier::Close);
-
-	lexer.registerStringQuote('\'');
-	lexer.registerStringQuote('\"');
-
-	lexer.registerPunctuator(",");
-	lexer.registerPunctuator("#");
-	lexer.registerPunctuator("::");
-	lexer.registerPunctuator("...");
-
-	lexer.registerOperator("=" , fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("+=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("-=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("*=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("/=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("%=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("&=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("|=", fs::Language::OperatorClassifier::AssignmentOperator);
-	lexer.registerOperator("^=", fs::Language::OperatorClassifier::AssignmentOperator);
-
-	lexer.registerOperator("<" , fs::Language::OperatorClassifier::RelationalOperator);
-	lexer.registerOperator("<=", fs::Language::OperatorClassifier::RelationalOperator);
-	lexer.registerOperator(">" , fs::Language::OperatorClassifier::RelationalOperator);
-	lexer.registerOperator(">=", fs::Language::OperatorClassifier::RelationalOperator);
-	lexer.registerOperator("==", fs::Language::OperatorClassifier::RelationalOperator);
-	lexer.registerOperator("!=", fs::Language::OperatorClassifier::RelationalOperator);
-	
-	lexer.registerOperator("+" , fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("-" , fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("++", fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("--", fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("*" , fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("/" , fs::Language::OperatorClassifier::ArithmeticOperator);
-	lexer.registerOperator("%" , fs::Language::OperatorClassifier::ArithmeticOperator);
-	
-	lexer.registerOperator("&&", fs::Language::OperatorClassifier::LogicalOperator);
-	lexer.registerOperator("||", fs::Language::OperatorClassifier::LogicalOperator);
-	lexer.registerOperator("!" , fs::Language::OperatorClassifier::LogicalOperator);
-
-	lexer.registerOperator("&", fs::Language::OperatorClassifier::BitwiseOperator);
-	lexer.registerOperator("|", fs::Language::OperatorClassifier::BitwiseOperator);
-	lexer.registerOperator("^", fs::Language::OperatorClassifier::BitwiseOperator);
-	lexer.registerOperator("~", fs::Language::OperatorClassifier::BitwiseOperator);
-
-	lexer.registerOperator(".", fs::Language::OperatorClassifier::MemberAccessOperator);
-	
-	lexer.registerOperator("?", fs::Language::OperatorClassifier::OperatorCandiate);
-	lexer.registerOperator(":", fs::Language::OperatorClassifier::OperatorCandiate);
-
-	lexer.registerKeyword("class");
-	lexer.registerKeyword("struct");
-	lexer.registerKeyword("public");
-	lexer.registerKeyword("protected");
-	lexer.registerKeyword("private");
-	lexer.registerKeyword("const");
-	lexer.registerKeyword("constexpr");
-	lexer.registerKeyword("static");
-	lexer.registerKeyword("static_assert");
-	lexer.registerKeyword("inline");
-	lexer.registerKeyword("__forceinline");
-	lexer.registerKeyword("__noop");
-	lexer.registerKeyword("noexcept");
-	lexer.registerKeyword("virtual");
-	lexer.registerKeyword("override");
-	lexer.registerKeyword("final");
-	lexer.registerKeyword("using");
-	lexer.registerKeyword("namespace");
-	lexer.registerKeyword("friend");
-	lexer.registerKeyword("enum");
-	lexer.registerKeyword("sizeof");
-	lexer.registerKeyword("nullptr");
-	lexer.registerKeyword("signed");
-	lexer.registerKeyword("unsigned");
-	lexer.registerKeyword("void");
-	lexer.registerKeyword("bool");
-	lexer.registerKeyword("true");
-	lexer.registerKeyword("false");
-	lexer.registerKeyword("char");
-	lexer.registerKeyword("wchar_t");
-	lexer.registerKeyword("short");
-	lexer.registerKeyword("int");
-	lexer.registerKeyword("long");
-	lexer.registerKeyword("float");
-	lexer.registerKeyword("double");
-	lexer.registerKeyword("auto");
-	lexer.registerKeyword("return");
-	lexer.registerKeyword("if");
-	lexer.registerKeyword("else");
-	lexer.registerKeyword("switch");
-	lexer.registerKeyword("case");
-	lexer.registerKeyword("default");
-	lexer.registerKeyword("delete");
-	lexer.registerKeyword("abstract");
-	lexer.registerKeyword("for");
-	lexer.registerKeyword("continue");
-	lexer.registerKeyword("break");
-	lexer.registerKeyword("while");
-	lexer.registerKeyword("do");
-	lexer.registerKeyword("static_cast");
-	lexer.registerKeyword("dynamic_cast");
-	lexer.registerKeyword("const_cast");
-	lexer.registerKeyword("reinterpret_cast");
-	lexer.registerKeyword("template");
-	lexer.registerKeyword("typename");
-	lexer.registerKeyword("decltype");
-	lexer.registerKeyword("alignas");
-	lexer.registerKeyword("alignof");
-	
-	lexer.execute();
-	
 	using namespace fs;
-	Language::CppParser cppParser{ lexer };
-	/*
-	TreeNodeAccessor namespaceNode = cppParser.findNamespaceNode("GlobalNamespace");
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "float4x4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "int4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint2"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint3"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	cppParser.registerType(namespaceNode, Language::CppTypeTableItem(Language::SymbolTableItem(Language::SymbolClassifier::Identifier, "uint4"), Language::CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE));
-	*/
-	FS_ASSERT("김장원", cppParser.execute() == true, "파싱에 실패했습니다!");
 	
-	std::string syntaxTreeString = cppParser.getSyntaxTreeString();
+	TextFileReader textFileReader;
+	textFileReader.open("FsLibrary/SimpleRendering/CppHlsl.h");
+	
+	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
+	cppHlslLexer.execute();
+	
+	Language::CppHlslParser cppHlslParser{ cppHlslLexer };
+	cppHlslParser.preExecute();
+
+	cppHlslParser.registerTypeTemplate("uint");
+	cppHlslParser.registerTypeTemplate("float2");
+	cppHlslParser.registerTypeTemplate("float3");
+	cppHlslParser.registerTypeTemplate("float4");
+	cppHlslParser.registerTypeTemplate("float4x4");
+	
+	cppHlslParser.execute();
+
+	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
 	return true;
 }
 

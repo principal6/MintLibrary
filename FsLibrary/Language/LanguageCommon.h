@@ -12,7 +12,7 @@ namespace fs
 {
 	namespace Language
 	{
-		class Lexer;
+		class ILexer;
 
 
 		enum class SymbolClassifier : uint32
@@ -71,7 +71,7 @@ namespace fs
 
 		class SymbolTableItem
 		{
-			friend Lexer;
+			friend ILexer;
 
 		public:
 									SymbolTableItem();

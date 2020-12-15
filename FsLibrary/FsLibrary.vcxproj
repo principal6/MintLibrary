@@ -49,11 +49,12 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Language\CppParser.h" />
+    <ClInclude Include="Language\CppHlslLexer.h" />
+    <ClInclude Include="Language\CppHlslParser.h" />
+    <ClInclude Include="Language\ILexer.h" />
     <ClInclude Include="Language\IParser.h" />
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageCommon.h" />
-    <ClInclude Include="Language\Lexer.h" />
     <ClInclude Include="Language\Tokenizer.h" />
     <ClInclude Include="Logger\Logger.h" />
     <ClInclude Include="Logger\Logger.hpp" />
@@ -84,6 +85,8 @@
     <ClInclude Include="Memory\Viewer.hpp" />
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Reflection\IReflective.h" />
+    <ClInclude Include="SimpleRendering\CppHlsl.h" />
+    <ClInclude Include="SimpleRendering\CppHlslTypes.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
     <ClInclude Include="SimpleRendering\DxHelper.hpp" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
@@ -103,9 +106,10 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
-    <ClCompile Include="Language\CppParser.cpp" />
+    <ClCompile Include="Language\CppHlslLexer.cpp" />
+    <ClCompile Include="Language\CppHlslParser.cpp" />
+    <ClCompile Include="Language\ILexer.cpp" />
     <ClCompile Include="Language\IParser.cpp" />
-    <ClCompile Include="Language\Lexer.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Reflection\IReflective.cpp" />
@@ -122,10 +126,10 @@
     <Natvis Include="Container\FsLibrary.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Language\CppParser.inl" />
+    <None Include="Language\CppHlslParser.inl" />
+    <None Include="Language\ILexer.inl" />
     <None Include="Language\IParser.inl" />
     <None Include="Language\LanguageCommon.inl" />
-    <None Include="Language\Lexer.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -248,6 +252,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

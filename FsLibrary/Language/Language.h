@@ -5,7 +5,8 @@
 #define FS_LANGUAGE_H
 
 
-#include <Language/Lexer.h>
+#include <Language/ILexer.h>
+#include <Language/IParser.h>
 #include <Language/Tokenizer.h>
 
 

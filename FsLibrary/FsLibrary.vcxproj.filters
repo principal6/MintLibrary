@@ -236,13 +236,7 @@
     <ClInclude Include="Language\Tokenizer.h">
       <Filter>Language</Filter>
     </ClInclude>
-    <ClInclude Include="Language\Lexer.h">
-      <Filter>Language</Filter>
-    </ClInclude>
     <ClInclude Include="Language\Language.h">
-      <Filter>Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\CppParser.h">
       <Filter>Language</Filter>
     </ClInclude>
     <ClInclude Include="Language\LanguageCommon.h">
@@ -250,6 +244,17 @@
     </ClInclude>
     <ClInclude Include="Language\IParser.h">
       <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\CppHlsl.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\ILexer.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\CppHlslLexer.h" />
+    <ClInclude Include="Language\CppHlslParser.h" />
+    <ClInclude Include="SimpleRendering\CppHlslTypes.h">
+      <Filter>SimpleRendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -301,31 +306,28 @@
     <ClCompile Include="Language\Tokenizer.cpp">
       <Filter>Language</Filter>
     </ClCompile>
-    <ClCompile Include="Language\Lexer.cpp">
-      <Filter>Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\CppParser.cpp">
-      <Filter>Language</Filter>
-    </ClCompile>
     <ClCompile Include="Language\IParser.cpp">
       <Filter>Language</Filter>
     </ClCompile>
+    <ClCompile Include="Language\ILexer.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\CppHlslLexer.cpp" />
+    <ClCompile Include="Language\CppHlslParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Language\Lexer.inl">
-      <Filter>Language</Filter>
-    </None>
-    <None Include="Language\CppParser.inl">
-      <Filter>Language</Filter>
-    </None>
     <None Include="Language\IParser.inl">
       <Filter>Language</Filter>
     </None>
     <None Include="Language\LanguageCommon.inl">
       <Filter>Language</Filter>
     </None>
+    <None Include="Language\ILexer.inl">
+      <Filter>Language</Filter>
+    </None>
+    <None Include="Language\CppHlslParser.inl" />
   </ItemGroup>
 </Project>
