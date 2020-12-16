@@ -590,11 +590,11 @@ const bool testLanguage()
 	Language::CppHlslParser cppHlslParser{ cppHlslLexer };
 	cppHlslParser.preExecute();
 
-	cppHlslParser.registerTypeTemplate("uint", 4);
-	cppHlslParser.registerTypeTemplate("float2", 8);
-	cppHlslParser.registerTypeTemplate("float3", 12);
-	cppHlslParser.registerTypeTemplate("float4", 16);
-	cppHlslParser.registerTypeTemplate("float4x4", 64);
+	cppHlslParser.registerTypeTemplate("uint"		,  4);
+	cppHlslParser.registerTypeTemplate("float2"		,  8);
+	cppHlslParser.registerTypeTemplate("float3"		, 12);
+	cppHlslParser.registerTypeTemplate("float4"		, 16);
+	cppHlslParser.registerTypeTemplate("float4x4"	, 64);
 	
 	cppHlslParser.execute();
 
