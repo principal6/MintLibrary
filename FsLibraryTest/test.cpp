@@ -14,6 +14,7 @@
 
 
 //#define FS_TEST_FAILURES
+//#define FS_TEST_PERFORMANCE
 
 
 void testIntTypes()
@@ -142,7 +143,8 @@ const bool testBitVector()
 #ifdef FS_TEST_FAILURES
 	const bool valueAt5 = a.get(5);
 #endif
-
+	
+#if defined FS_TEST_PERFORMANCE
 	{
 #if defined FS_DEBUG
 		static constexpr uint32 kCount = 10'000'000;
@@ -232,6 +234,7 @@ const bool testBitVector()
 		std::vector<fs::Profiler::ScopedCpuProfiler::Log> logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
 		const bool isEmpty = logArray.empty();
 	}
+#endif
 
 	return true;
 }
@@ -587,11 +590,11 @@ const bool testLanguage()
 	Language::CppHlslParser cppHlslParser{ cppHlslLexer };
 	cppHlslParser.preExecute();
 
-	cppHlslParser.registerTypeTemplate("uint");
-	cppHlslParser.registerTypeTemplate("float2");
-	cppHlslParser.registerTypeTemplate("float3");
-	cppHlslParser.registerTypeTemplate("float4");
-	cppHlslParser.registerTypeTemplate("float4x4");
+	cppHlslParser.registerTypeTemplate("uint", 4);
+	cppHlslParser.registerTypeTemplate("float2", 8);
+	cppHlslParser.registerTypeTemplate("float3", 12);
+	cppHlslParser.registerTypeTemplate("float4", 16);
+	cppHlslParser.registerTypeTemplate("float4x4", 64);
 	
 	cppHlslParser.execute();
 

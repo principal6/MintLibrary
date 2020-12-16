@@ -13,35 +13,13 @@ namespace fs
 {
 	namespace Language
 	{
-		CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags)
-			: _typeSymbol{ typeSymbol }
-			, _typeFlags{ typeFlags }
-		{
-			__noop;
-		}
-
-		CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo)
-			: _typeSymbol{ typeSymbol }
-			, _userDefinedTypeInfo{ userDefinedTypeInfo }
-		{
-			__noop;
-		}
-
-		CppTypeTableItem::CppTypeTableItem(const SyntaxTreeItem& typeSyntax)
-			: _typeSymbol{ typeSyntax._symbolTableItem }
-			, _typeFlags{ typeSyntax.getAdditionalInfo() }
-		{
-			__noop;
-		}
-
-
 		const SymbolTableItem CppHlslParser::kClassStructAccessModifierSymbolArray[3]{
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Public)),
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Protected)),
 			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Private))
 		};
 		const SymbolTableItem CppHlslParser::kInitializerListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InitializerList") };
-		const SymbolTableItem CppHlslParser::kMemberVariableSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "MemberVariable") };
+		const SymbolTableItem CppHlslParser::kMemberVariableListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "MemberVariableList") };
 		const SymbolTableItem CppHlslParser::kParameterListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ParameterList") };
 		const SymbolTableItem CppHlslParser::kInstructionListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InstructionList") };
 		const SymbolTableItem CppHlslParser::kInvalidGrammarSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InvalidGrammar") };
@@ -582,17 +560,29 @@ namespace fs
 						{
 							// Member variable
 
-							TreeNodeAccessor memberVariableNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariableSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
+							TreeNodeAccessor<SyntaxTreeItem> memberVariableListNode;
+							const uint32 childNodeCount = ancestorNode.getChildNodeCount();
+							for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
 							{
-								TreeNodeAccessor accessModifierNode = memberVariableNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
+								TreeNodeAccessor childNode = ancestorNode.getChildNode(childNodeIndex);
+								if (ancestorNode.getChildNode(childNodeIndex).getNodeData()._symbolTableItem == kMemberVariableListSymbol)
+								{
+									memberVariableListNode = childNode;
+									break;
+								}
+							}
+							if (memberVariableListNode.isValid() == false)
+							{
+								memberVariableListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariableListSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariable));
 							}
 
 							uint64 postTypeNodeOffset = 0;
 							TreeNodeAccessor<SyntaxTreeItem> typeNode;
-							FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableNode, typeNode, postTypeNodeOffset) == true);
+							FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableListNode, typeNode, postTypeNodeOffset) == true);
 
+							const TreeNodeAccessor accessModifierNode = typeNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
-							TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
+							const TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
 
 							const uint64 postIdentifierSymbolPosition = postTypeChunkPosition + 1;
 							const SymbolTableItem& postIdentifierSymbol = getSymbol(postTypeChunkPosition + 1);
@@ -1533,7 +1523,7 @@ namespace fs
 			return (namespaceNode.isValid() == true) && (namespaceNode.getNodeData().getSyntaxClassifier() == CppSyntaxClassifier::CppSyntaxClassifier_Namespace);
 		}
 
-		void CppHlslParser::registerTypeTemplate(const std::string& typeFullIdentifier)
+		void CppHlslParser::registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize)
 		{
 			std::vector<std::string> typeStack;
 			fs::StringUtil::tokenize(typeFullIdentifier, "::", typeStack);
@@ -1549,6 +1539,8 @@ namespace fs
 			if (found == _typeTableUmap.end())
 			{
 				_typeTable.emplace_back(CppTypeTableItem(SymbolTableItem(SymbolClassifier::Identifier, typeStack.back()), CppUserDefinedTypeInfo::Default));
+				_typeTable.back().setTypeSize(typeSize);
+
 				const uint64 typeTableIndex = _typeTable.size() - 1;
 				_typeTableUmap.insert(std::make_pair(typeFullIdentifier_, typeTableIndex));
 			}

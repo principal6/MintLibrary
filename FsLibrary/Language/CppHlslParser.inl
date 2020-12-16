@@ -36,9 +36,41 @@ namespace fs
 		}
 
 
+		inline CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags)
+			: _typeSymbol{ typeSymbol }
+			, _typeFlags{ typeFlags }
+			, _typeSize{ 0 }
+		{
+			__noop;
+		}
+
+		inline CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo)
+			: _typeSymbol{ typeSymbol }
+			, _userDefinedTypeInfo{ userDefinedTypeInfo }
+			, _typeSize{ 0 }
+		{
+			__noop;
+		}
+
+		inline CppTypeTableItem::CppTypeTableItem(const SyntaxTreeItem& typeSyntax)
+			: CppTypeTableItem(typeSyntax._symbolTableItem, static_cast<CppAdditionalInfo_TypeFlags>(typeSyntax.getAdditionalInfo()))
+		{
+			__noop;
+		}
+
 		FS_INLINE const std::string& CppTypeTableItem::getTypeName() const noexcept
 		{
 			return _typeSymbol._symbolString;
+		}
+
+		FS_INLINE void CppTypeTableItem::setTypeSize(const uint32 typeSize) noexcept
+		{
+			_typeSize = typeSize;
+		}
+
+		FS_INLINE const uint32 CppTypeTableItem::getTypeSize() const noexcept
+		{
+			return _typeSize;
 		}
 
 

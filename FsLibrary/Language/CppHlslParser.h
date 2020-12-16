@@ -132,10 +132,17 @@ namespace fs
 		public:
 			const std::string&				getTypeName() const noexcept;
 
+		public:
+			void							setTypeSize(const uint32 typeSize) noexcept;
+			const uint32					getTypeSize() const noexcept;
+
 		private:
 			SymbolTableItem					_typeSymbol;
 			CppAdditionalInfo_TypeFlags		_typeFlags;
 			CppUserDefinedTypeInfo			_userDefinedTypeInfo;
+
+		private:
+			uint32							_typeSize;
 		};
 
 
@@ -212,7 +219,7 @@ namespace fs
 			static const SymbolTableItem&				getClassStructAccessModifierSymbol(const CppClassStructAccessModifier cppClassStructAccessModifier) noexcept;
 		
 		public:
-			void										registerTypeTemplate(const std::string& typeFullIdentifier);
+			void										registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize);
 		
 		private:
 			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppTypeTableItem& type);
@@ -246,7 +253,7 @@ namespace fs
 		private:
 			static const SymbolTableItem				kClassStructAccessModifierSymbolArray[3];
 			static const SymbolTableItem				kInitializerListSymbol;
-			static const SymbolTableItem				kMemberVariableSymbol;
+			static const SymbolTableItem				kMemberVariableListSymbol;
 			static const SymbolTableItem				kParameterListSymbol;
 			static const SymbolTableItem				kInstructionListSymbol;
 			static const SymbolTableItem				kInvalidGrammarSymbol;
