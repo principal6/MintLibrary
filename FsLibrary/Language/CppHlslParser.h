@@ -57,12 +57,45 @@ namespace fs
 			CppSyntaxClassifier_INVALID,
 		};
 		
-		enum class CppClassStructAccessModifier : uint8
+
+		enum CppMainInfo_TypeFlags : SyntaxMainInfoType
 		{
-			Public,
-			Protected,
-			Private,
+			CppMainInfo_TypeFlags_NONE						= 0,
+
+			CppMainInfo_TypeFlags_Const						= 1 <<  0,
+			CppMainInfo_TypeFlags_Constexpr					= 1 <<  1,
+			CppMainInfo_TypeFlags_Mutable					= 1 <<  2,
+			CppMainInfo_TypeFlags_Static					= 1 <<  3,
+			CppMainInfo_TypeFlags_ThreadLocal				= 1 <<  4,
+			CppMainInfo_TypeFlags_Short						= 1 <<  5,
+			CppMainInfo_TypeFlags_Long						= 1 <<  6,
+			CppMainInfo_TypeFlags_LongLong					= 1 <<  7,
+			CppMainInfo_TypeFlags_Unsigned					= 1 <<  8,
 		};
+
+		enum CppMainInfo_FunctionAttributeFlags : SyntaxMainInfoType
+		{
+			CppMainInfo_FunctionAttributeFlags_NONE			= 0,
+
+			CppMainInfo_FunctionAttributeFlags_Const		= 1 << 0,
+			CppMainInfo_FunctionAttributeFlags_Noexcept		= 1 << 1,
+			CppMainInfo_FunctionAttributeFlags_Override		= 1 << 2,
+			CppMainInfo_FunctionAttributeFlags_Final		= 1 << 3,
+			CppMainInfo_FunctionAttributeFlags_Abstract		= 1 << 4,
+			CppMainInfo_FunctionAttributeFlags_Default		= 1 << 5,
+			CppMainInfo_FunctionAttributeFlags_Delete		= 1 << 6,
+		};
+
+
+		enum CppSubInfo_AccessModifier : SyntaxSubInfoType
+		{
+			CppSubInfo_AccessModifier_NONE			= 0,
+			
+			CppSubInfo_AccessModifier_Public		= 1,
+			CppSubInfo_AccessModifier_Protected		= 2,
+			CppSubInfo_AccessModifier_Private		= 3,
+		};
+
 
 		enum class CppTypeOf : uint8
 		{
@@ -87,44 +120,15 @@ namespace fs
 			DerivedFinal,
 		};
 
-		enum CppAdditionalInfo_TypeFlags : SyntaxAdditionalInfoType
-		{
-			CppAdditionalInfo_TypeFlags_NONE			= 0,
 
-			CppAdditionalInfo_TypeFlags_Const			= 1 <<  0,
-			CppAdditionalInfo_TypeFlags_Constexpr		= 1 <<  1,
-			CppAdditionalInfo_TypeFlags_Mutable			= 1 <<  2,
-			CppAdditionalInfo_TypeFlags_Static			= 1 <<  3,
-			CppAdditionalInfo_TypeFlags_ThreadLocal		= 1 <<  4,
-			CppAdditionalInfo_TypeFlags_Short			= 1 <<  5,
-			CppAdditionalInfo_TypeFlags_Long			= 1 <<  6,
-			CppAdditionalInfo_TypeFlags_LongLong		= 1 <<  7,
-			CppAdditionalInfo_TypeFlags_Unsigned		= 1 <<  8,
-		};
-
-		enum CppAdditionalInfo_FunctionAttributeFlags : SyntaxAdditionalInfoType
-		{
-			CppAdditionalInfo_FunctionAttributeFlags_NONE		= 0,
-
-			CppAdditionalInfo_FunctionAttributeFlags_Const		= 1 << 0,
-			CppAdditionalInfo_FunctionAttributeFlags_Noexcept	= 1 << 1,
-			CppAdditionalInfo_FunctionAttributeFlags_Override	= 1 << 2,
-			CppAdditionalInfo_FunctionAttributeFlags_Final		= 1 << 3,
-			CppAdditionalInfo_FunctionAttributeFlags_Abstract	= 1 << 4,
-			CppAdditionalInfo_FunctionAttributeFlags_Default	= 1 << 5,
-			CppAdditionalInfo_FunctionAttributeFlags_Delete		= 1 << 6,
-		};
-
-
-		static const CppClassStructAccessModifier		convertStringToCppClassStructAccessModifier(const std::string& input);
-		static const std::string&						convertCppClassStructAccessModifierToString(const CppClassStructAccessModifier input);
+		static const CppSubInfo_AccessModifier	convertStringToCppClassStructAccessModifier(const std::string& input);
 
 
 		class CppTypeTableItem final
 		{
 		public:
 											CppTypeTableItem()	= default;
-											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags);
+											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppMainInfo_TypeFlags& typeFlags);
 											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo);
 											CppTypeTableItem(const SyntaxTreeItem& typeSyntax);
 											~CppTypeTableItem()	= default;
@@ -138,7 +142,7 @@ namespace fs
 
 		private:
 			SymbolTableItem					_typeSymbol;
-			CppAdditionalInfo_TypeFlags		_typeFlags;
+			CppMainInfo_TypeFlags			_typeFlags;
 			CppUserDefinedTypeInfo			_userDefinedTypeInfo;
 
 		private:
@@ -159,7 +163,7 @@ namespace fs
 			uint8	_signState		= 0;		// 0: default signed, 1: explicit signed, 2: explicit unsgined (signed, unsigned 는 중복 가능하나 교차는 불가!)
 
 		public:
-			const CppAdditionalInfo_TypeFlags			getTypeFlags() const noexcept;
+			const CppMainInfo_TypeFlags			getTypeFlags() const noexcept;
 		};
 
 
@@ -178,7 +182,7 @@ namespace fs
 		
 		private:
 			const bool									parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
-			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppClassStructAccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
+			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
 			const bool									parseClassStructInitializerList(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 			const bool									parseClassStructInitializerList_Item(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount, bool& outContinueParsing);
 		
@@ -216,7 +220,6 @@ namespace fs
 		private:
 			static const CppSyntaxClassifier			convertSymbolToAccessModifierSyntax(const SymbolTableItem& symbol) noexcept;
 			static const CppSyntaxClassifier			convertLiteralSymbolToSyntax(const SymbolTableItem& symbol) noexcept;
-			static const SymbolTableItem&				getClassStructAccessModifierSymbol(const CppClassStructAccessModifier cppClassStructAccessModifier) noexcept;
 		
 		public:
 			void										registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize);
@@ -251,7 +254,6 @@ namespace fs
 			std::unordered_map<std::string, int8>		_builtInTypeUmap;
 		
 		private:
-			static const SymbolTableItem				kClassStructAccessModifierSymbolArray[3];
 			static const SymbolTableItem				kInitializerListSymbol;
 			static const SymbolTableItem				kMemberVariableListSymbol;
 			static const SymbolTableItem				kParameterListSymbol;

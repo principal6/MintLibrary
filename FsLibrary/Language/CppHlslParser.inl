@@ -6,37 +6,21 @@ namespace fs
 {
 	namespace Language
 	{
-		FS_INLINE static const CppClassStructAccessModifier convertStringToCppClassStructAccessModifier(const std::string& input)
+		FS_INLINE const CppSubInfo_AccessModifier convertStringToCppClassStructAccessModifier(const std::string& input)
 		{
 			if (input == "public")
 			{
-				return CppClassStructAccessModifier::Public;
+				return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Public;
 			}
 			else if (input == "protected")
 			{
-				return CppClassStructAccessModifier::Protected;
+				return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Protected;
 			}
-			return CppClassStructAccessModifier::Private;
-		}
-
-		FS_INLINE static const std::string& convertCppClassStructAccessModifierToString(const CppClassStructAccessModifier input)
-		{
-			static const std::string kPublic		= "public";
-			static const std::string kProtected		= "protected";
-			static const std::string kPrivate		= "private";
-			if (input == CppClassStructAccessModifier::Public)
-			{
-				return kPublic;
-			}
-			else if (input == CppClassStructAccessModifier::Protected)
-			{
-				return kProtected;
-			}
-			return kPrivate;
+			return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Private;
 		}
 
 
-		inline CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppAdditionalInfo_TypeFlags& typeFlags)
+		inline CppTypeTableItem::CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppMainInfo_TypeFlags& typeFlags)
 			: _typeSymbol{ typeSymbol }
 			, _typeFlags{ typeFlags }
 			, _typeSize{ 0 }
@@ -53,7 +37,7 @@ namespace fs
 		}
 
 		inline CppTypeTableItem::CppTypeTableItem(const SyntaxTreeItem& typeSyntax)
-			: CppTypeTableItem(typeSyntax._symbolTableItem, static_cast<CppAdditionalInfo_TypeFlags>(typeSyntax.getAdditionalInfo()))
+			: CppTypeTableItem(typeSyntax._symbolTableItem, static_cast<CppMainInfo_TypeFlags>(typeSyntax.getMainInfo()))
 		{
 			__noop;
 		}
@@ -74,25 +58,25 @@ namespace fs
 		}
 
 
-		FS_INLINE const CppAdditionalInfo_TypeFlags CppTypeModifierSet::getTypeFlags() const noexcept
+		FS_INLINE const CppMainInfo_TypeFlags CppTypeModifierSet::getTypeFlags() const noexcept
 		{
-			const CppAdditionalInfo_TypeFlags longFlags =
+			const CppMainInfo_TypeFlags longFlags =
 				(0 == _longState)
-				? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_NONE
+				? CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_NONE
 				: (1 == _longState)
-				? CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Long
-				: CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_LongLong;
+				? CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Long
+				: CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_LongLong;
 
-			const CppAdditionalInfo_TypeFlags signFlags
-				= static_cast<CppAdditionalInfo_TypeFlags>(static_cast<int>(_signState / 2) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Unsigned);
+			const CppMainInfo_TypeFlags signFlags
+				= static_cast<CppMainInfo_TypeFlags>(static_cast<int>(_signState / 2) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Unsigned);
 
-			return static_cast<CppAdditionalInfo_TypeFlags>(
-				static_cast<int>(_isConst) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const |
-				static_cast<int>(_isConstexpr) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Constexpr |
-				static_cast<int>(_isMutable) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Mutable |
-				static_cast<int>(_isStatic) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Static |
-				static_cast<int>(_isThreadLocal) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_ThreadLocal |
-				static_cast<int>(_isShort) * CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Short |
+			return static_cast<CppMainInfo_TypeFlags>(
+				static_cast<int>(_isConst) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Const |
+				static_cast<int>(_isConstexpr) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Constexpr |
+				static_cast<int>(_isMutable) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Mutable |
+				static_cast<int>(_isStatic) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Static |
+				static_cast<int>(_isThreadLocal) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_ThreadLocal |
+				static_cast<int>(_isShort) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Short |
 				longFlags | signFlags
 				);
 		}
@@ -131,11 +115,6 @@ namespace fs
 			}
 
 			return CppSyntaxClassifier::CppSyntaxClassifier_INVALID;
-		}
-
-		FS_INLINE const SymbolTableItem& CppHlslParser::getClassStructAccessModifierSymbol(const CppClassStructAccessModifier cppClassStructAccessModifier) noexcept
-		{
-			return kClassStructAccessModifierSymbolArray[static_cast<uint8>(cppClassStructAccessModifier)];
 		}
 	}
 }

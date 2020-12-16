@@ -58,48 +58,48 @@ namespace fs
 
 		inline SyntaxTreeItem::SyntaxTreeItem()
 			: _syntaxClassifier{ kUint32Max }
-			, _syntaxAdditionalInfo{ 0 }
+			, _syntaxMainInfo{ 0 }
+			, _syntaxSubInfo{ 0 }
 		{
 			__noop;
 		}
 
 		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem)
-			: _syntaxClassifier{ kUint32Max }
-			, _syntaxAdditionalInfo{ 0 }
-			, _symbolTableItem{ symbolTableItem }
+			: SyntaxTreeItem()
 		{
-			__noop;
+			_symbolTableItem = symbolTableItem;
 		}
 
 		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier)
-			: _syntaxClassifier{ syntaxClassifier }
-			, _syntaxAdditionalInfo{ 0 }
-			, _symbolTableItem{ symbolTableItem }
+			: SyntaxTreeItem()
 		{
-			__noop;
+			_syntaxClassifier = syntaxClassifier;
+			_symbolTableItem = symbolTableItem;
 		}
 
-		inline SyntaxTreeItem::SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo)
-			: _syntaxClassifier{ syntaxClassifier }
-			, _syntaxAdditionalInfo{ syntaxAdditionalInfo }
-			, _symbolTableItem{ symbolTableItem }
-		{
-			__noop;
-		}
-
-		FS_INLINE void SyntaxTreeItem::setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo)
-		{
-			_syntaxAdditionalInfo = syntaxAdditionalInfo;
-		}
-		
 		FS_INLINE const SyntaxClassifierEnumType SyntaxTreeItem::getSyntaxClassifier() const noexcept
 		{
 			return _syntaxClassifier;
 		}
-		
-		FS_INLINE const SyntaxAdditionalInfoType SyntaxTreeItem::getAdditionalInfo() const noexcept
+
+		FS_INLINE void SyntaxTreeItem::setMainInfo(const SyntaxMainInfoType syntaxMainInfo)
 		{
-			return _syntaxAdditionalInfo;
+			_syntaxMainInfo = syntaxMainInfo;
+		}
+
+		FS_INLINE void SyntaxTreeItem::setSubInfo(const SyntaxSubInfoType syntaxSubInfo)
+		{
+			_syntaxSubInfo = syntaxSubInfo;
+		}
+		
+		FS_INLINE const SyntaxMainInfoType SyntaxTreeItem::getMainInfo() const noexcept
+		{
+			return _syntaxMainInfo;
+		}
+
+		FS_INLINE const SyntaxSubInfoType SyntaxTreeItem::getSubInfo() const noexcept
+		{
+			return _syntaxSubInfo;
 		}
 	}
 }

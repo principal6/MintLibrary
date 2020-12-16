@@ -115,10 +115,6 @@ namespace fs
 		private:
 			fs::Tree<SyntaxTreeItem>						_syntaxTree;
 		
-		protected:
-			fs::TreeNodeAccessor<SyntaxTreeItem>			_syntaxTreeCurrentParentNode;
-			static const TreeNodeAccessor<SyntaxTreeItem>	kInvalidTreeNode;
-
 		private:
 			uint64											_symbolAt;
 			std::vector<ErrorMessage>						_errorMessageArray;

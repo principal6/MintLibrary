@@ -98,27 +98,34 @@ namespace fs
 		};
 
 
-		using SyntaxClassifierEnumType = uint32;
-		using SyntaxAdditionalInfoType = uint16;
+		using SyntaxClassifierEnumType	= uint32;
+		using SyntaxMainInfoType		= uint16;
+		using SyntaxSubInfoType			= uint8;
 		class SyntaxTreeItem
 		{
 		public:
-											SyntaxTreeItem();
-											SyntaxTreeItem(const SymbolTableItem& symbolTableItem);
-											SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier);
-											SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier, const SyntaxAdditionalInfoType syntaxAdditionalInfo);
+												SyntaxTreeItem();
+												SyntaxTreeItem(const SymbolTableItem& symbolTableItem);
+												SyntaxTreeItem(const SymbolTableItem& symbolTableItem, const SyntaxClassifierEnumType syntaxClassifier);
 
 		public:
-			const SyntaxClassifierEnumType	getSyntaxClassifier() const noexcept;
-			void							setAdditionalInfo(const SyntaxAdditionalInfoType syntaxAdditionalInfo);
-			const SyntaxAdditionalInfoType	getAdditionalInfo() const noexcept;
+			const SyntaxClassifierEnumType		getSyntaxClassifier() const noexcept;
+
+		public:
+			void								setMainInfo(const SyntaxMainInfoType syntaxMainInfo);
+			void								setSubInfo(const SyntaxSubInfoType syntaxSubInfo);
+			
+		public:
+			const SyntaxMainInfoType			getMainInfo() const noexcept;
+			const SyntaxSubInfoType				getSubInfo() const noexcept;
 
 		private:
-			SyntaxClassifierEnumType		_syntaxClassifier;
-			SyntaxAdditionalInfoType		_syntaxAdditionalInfo;
+			SyntaxClassifierEnumType			_syntaxClassifier;
+			SyntaxMainInfoType					_syntaxMainInfo;
+			SyntaxSubInfoType					_syntaxSubInfo;
 
 		public:
-			SymbolTableItem					_symbolTableItem;
+			SymbolTableItem						_symbolTableItem;
 		};
 	}
 }

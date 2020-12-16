@@ -13,11 +13,6 @@ namespace fs
 {
 	namespace Language
 	{
-		const SymbolTableItem CppHlslParser::kClassStructAccessModifierSymbolArray[3]{
-			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Public)),
-			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Protected)),
-			   SymbolTableItem(SymbolClassifier::Keyword, convertCppClassStructAccessModifierToString(CppClassStructAccessModifier::Private))
-		};
 		const SymbolTableItem CppHlslParser::kInitializerListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InitializerList") };
 		const SymbolTableItem CppHlslParser::kMemberVariableListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "MemberVariableList") };
 		const SymbolTableItem CppHlslParser::kParameterListSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ParameterList") };
@@ -193,7 +188,7 @@ namespace fs
 					}
 
 					uint64 currentPosition = identifierSymbolPosition + 2;
-					CppClassStructAccessModifier currentAccessModifier = (true == isStruct) ? CppClassStructAccessModifier::Public : CppClassStructAccessModifier::Private;
+					CppSubInfo_AccessModifier currentAccessModifier = (true == isStruct) ? CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Public : CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Private;
 					bool continueParsingMember = false;
 					while (true)
 					{
@@ -220,7 +215,7 @@ namespace fs
 			return false;
 		}
 
-		const bool CppHlslParser::parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppClassStructAccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing)
+		const bool CppHlslParser::parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing)
 		{
 			outContinueParsing = true;
 			outAdvanceCount = 0;
@@ -278,9 +273,7 @@ namespace fs
 					const SymbolTableItem& postSymbol = getSymbol(currentPosition + 1);
 
 					TreeNodeAccessor ctorOrDtorNode = ancestorNode.insertChildNode(SyntaxTreeItem((isDestructor == true) ? postSymbol : symbol, (isDestructor == true) ? CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Destructor : CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Constructor));
-					{
-						TreeNodeAccessor accessModifierNode = ctorOrDtorNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
-					}
+					ctorOrDtorNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
 
 					const uint64 openParenthesisPosition = (isDestructor == true) ? currentPosition + 2 : currentPosition + 1;
 					const SymbolTableItem& openParenthesisSymbol = getSymbol(openParenthesisPosition);
@@ -383,9 +376,7 @@ namespace fs
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							TreeNodeAccessor memberFunctionNode = ancestorNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Name));
-							{
-								TreeNodeAccessor accessModifierNode = memberFunctionNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
-							}
+							memberFunctionNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
 
 							// function attribute
 							bool isConst	= false;
@@ -523,16 +514,16 @@ namespace fs
 								}
 							}
 
-							const CppAdditionalInfo_FunctionAttributeFlags attributeFlags = static_cast<CppAdditionalInfo_FunctionAttributeFlags>(
-								static_cast<int>(isConst)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Const		|
-								static_cast<int>(isNoexcept)	* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Noexcept	|
-								static_cast<int>(isOverride)	* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Override	|
-								static_cast<int>(isFinal)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Final		|
-								static_cast<int>(isAbstract)	* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Abstract	|
-								static_cast<int>(isDefault)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Default	|
-								static_cast<int>(isDelete)		* CppAdditionalInfo_FunctionAttributeFlags::CppAdditionalInfo_FunctionAttributeFlags_Delete
+							const CppMainInfo_FunctionAttributeFlags attributeFlags = static_cast<CppMainInfo_FunctionAttributeFlags>(
+								static_cast<int>(isConst)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Const		|
+								static_cast<int>(isNoexcept)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Noexcept	|
+								static_cast<int>(isOverride)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Override	|
+								static_cast<int>(isFinal)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Final		|
+								static_cast<int>(isAbstract)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Abstract	|
+								static_cast<int>(isDefault)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Default	|
+								static_cast<int>(isDelete)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Delete
 								);
-							memberFunctionNode.getNodeDataXXX().setAdditionalInfo(attributeFlags);
+							memberFunctionNode.getNodeDataXXX().setMainInfo(attributeFlags);
 
 							const SymbolTableItem& postAttributeSymbol = getSymbol(postAttributePosition);
 							if (postAttributeSymbol._symbolString == ";")
@@ -579,8 +570,8 @@ namespace fs
 							uint64 postTypeNodeOffset = 0;
 							TreeNodeAccessor<SyntaxTreeItem> typeNode;
 							FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableListNode, typeNode, postTypeNodeOffset) == true);
+							typeNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
 
-							const TreeNodeAccessor accessModifierNode = typeNode.insertChildNode(SyntaxTreeItem(getClassStructAccessModifierSymbol(inOutAccessModifier), CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_AccessModifier));
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							const TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
 
@@ -672,10 +663,9 @@ namespace fs
 
 					TreeNodeAccessor classStructCtorNode = ancestorNode.getParentNode();
 					uint32 parameterIndex = kUint32Max;
-					static constexpr uint32 kAccessModifierNodeCount = 1;
 					const uint32 childNodeCount = classStructCtorNode.getChildNodeCount();
 					{
-						TreeNodeAccessor parameterListNode = classStructCtorNode.getChildNode(kAccessModifierNodeCount);
+						TreeNodeAccessor parameterListNode = classStructCtorNode.getChildNode(0);
 						if (parameterListNode.getNodeData()._symbolTableItem != kParameterListSymbol)
 						{
 							reportError(valueSymbol, ErrorType::SymbolNotFound, "Parameter 가 없는 함수인데 parameter 를 이용해 초기화하고 있습니다");
@@ -1132,7 +1122,8 @@ namespace fs
 				postPostmodifierOffset += advanceCount;
 			}
 			
-			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type, typeModifierSet.getTypeFlags()));
+			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type));
+			outTypeNode.getNodeDataXXX().setMainInfo(typeModifierSet.getTypeFlags());
 
 			// 3) * (const) or & &&
 			uint64 postPointerReferenceOffset = postPostmodifierOffset;
@@ -1167,7 +1158,7 @@ namespace fs
 					}
 					else if (currentSymbol._symbolString == "const")
 					{
-						previousNode.getNodeDataXXX().setAdditionalInfo(CppAdditionalInfo_TypeFlags::CppAdditionalInfo_TypeFlags_Const);
+						previousNode.getNodeDataXXX().setMainInfo(CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Const);
 					}
 					else if (currentSymbol._symbolString == "*")
 					{
@@ -1515,7 +1506,7 @@ namespace fs
 					return parentNamespaceNode.getChildNode(childIndex);
 				}
 			}
-			return kInvalidTreeNode;
+			return TreeNodeAccessor<SyntaxTreeItem>();
 		}
 
 		const bool CppHlslParser::isNamespaceNode(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept

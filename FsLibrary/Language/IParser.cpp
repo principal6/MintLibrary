@@ -9,7 +9,6 @@ namespace fs
 {
 	namespace Language
 	{
-		const TreeNodeAccessor<SyntaxTreeItem> IParser::kInvalidTreeNode;
 		const SymbolTableItem IParser::kRootSymbol = SymbolTableItem(SymbolClassifier::SPECIAL_USE, "ROOT");
 		IParser::IParser(ILexer& lexer)
 			: _lexer{ lexer }
@@ -41,7 +40,8 @@ namespace fs
 
 				const SyntaxTreeItem& syntaxTreeItem = node.getNodeData();
 				const SyntaxClassifierEnumType syntaxClassifier = syntaxTreeItem.getSyntaxClassifier();
-				const SyntaxAdditionalInfoType additionalInfo = syntaxTreeItem.getAdditionalInfo();
+				const SyntaxMainInfoType mainInfo = syntaxTreeItem.getMainInfo();
+				const SyntaxSubInfoType subInfo = syntaxTreeItem.getSubInfo();
 				
 				const SymbolTableItem& symbolTableItem = syntaxTreeItem._symbolTableItem;
 
@@ -75,13 +75,20 @@ namespace fs
 					line.append("] ");
 				}
 				
-				if (additionalInfo != 0)
+				if (mainInfo != 0)
 				{
-					line.append(" SyntaxAdditionalInfo[");
-					line.append(std::to_string(additionalInfo));
+					line.append(" MainInfo[");
+					line.append(std::to_string(mainInfo));
 					line.append("]");
 				}
-				
+
+				if (subInfo != 0)
+				{
+					line.append(" SubInfo[");
+					line.append(std::to_string(subInfo));
+					line.append("]");
+				}
+
 				if (symbolTableItem._sourceAt != kUint64Max)
 				{
 					line.append(" At[#");
@@ -104,7 +111,7 @@ namespace fs
 		void IParser::reset()
 		{
 			_symbolAt = 0;
-			_syntaxTreeCurrentParentNode = _syntaxTree.createRootNode(kRootSymbol);
+			_syntaxTree.createRootNode(kRootSymbol);
 		}
 
 		const bool IParser::needToContinueParsing() const noexcept
