@@ -10,13 +10,13 @@ namespace fs
 		{
 			if (input == "public")
 			{
-				return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Public;
+				return CppSubInfo_AccessModifier::Public;
 			}
 			else if (input == "protected")
 			{
-				return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Protected;
+				return CppSubInfo_AccessModifier::Protected;
 			}
-			return CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Private;
+			return CppSubInfo_AccessModifier::Private;
 		}
 
 
@@ -62,22 +62,22 @@ namespace fs
 		{
 			const CppMainInfo_TypeFlags longFlags =
 				(0 == _longState)
-				? CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_NONE
+				? CppMainInfo_TypeFlags::NONE
 				: (1 == _longState)
-				? CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Long
-				: CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_LongLong;
+				  ? CppMainInfo_TypeFlags::Long
+				  : CppMainInfo_TypeFlags::LongLong;
 
 			const CppMainInfo_TypeFlags signFlags
-				= static_cast<CppMainInfo_TypeFlags>(static_cast<int>(_signState / 2) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Unsigned);
+				= static_cast<CppMainInfo_TypeFlags>(static_cast<int32>(_signState / 2) * static_cast<int32>(CppMainInfo_TypeFlags::Unsigned));
 
 			return static_cast<CppMainInfo_TypeFlags>(
-				static_cast<int>(_isConst) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Const |
-				static_cast<int>(_isConstexpr) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Constexpr |
-				static_cast<int>(_isMutable) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Mutable |
-				static_cast<int>(_isStatic) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Static |
-				static_cast<int>(_isThreadLocal) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_ThreadLocal |
-				static_cast<int>(_isShort) * CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Short |
-				longFlags | signFlags
+				static_cast<int>(_isConst)			* static_cast<int32>(CppMainInfo_TypeFlags::Const		) |
+				static_cast<int>(_isConstexpr)		* static_cast<int32>(CppMainInfo_TypeFlags::Constexpr	) |
+				static_cast<int>(_isMutable)		* static_cast<int32>(CppMainInfo_TypeFlags::Mutable		) |
+				static_cast<int>(_isStatic)			* static_cast<int32>(CppMainInfo_TypeFlags::Static		) |
+				static_cast<int>(_isThreadLocal)	* static_cast<int32>(CppMainInfo_TypeFlags::ThreadLocal	) |
+				static_cast<int>(_isShort)			* static_cast<int32>(CppMainInfo_TypeFlags::Short		) |
+				static_cast<int32>(longFlags) | static_cast<int32>(signFlags)
 				);
 		}
 

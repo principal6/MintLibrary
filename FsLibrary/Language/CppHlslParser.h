@@ -58,42 +58,42 @@ namespace fs
 		};
 		
 
-		enum CppMainInfo_TypeFlags : SyntaxMainInfoType
+		enum class CppMainInfo_TypeFlags : SyntaxMainInfoType
 		{
-			CppMainInfo_TypeFlags_NONE						= 0,
+			NONE			= 0,
 
-			CppMainInfo_TypeFlags_Const						= 1 <<  0,
-			CppMainInfo_TypeFlags_Constexpr					= 1 <<  1,
-			CppMainInfo_TypeFlags_Mutable					= 1 <<  2,
-			CppMainInfo_TypeFlags_Static					= 1 <<  3,
-			CppMainInfo_TypeFlags_ThreadLocal				= 1 <<  4,
-			CppMainInfo_TypeFlags_Short						= 1 <<  5,
-			CppMainInfo_TypeFlags_Long						= 1 <<  6,
-			CppMainInfo_TypeFlags_LongLong					= 1 <<  7,
-			CppMainInfo_TypeFlags_Unsigned					= 1 <<  8,
+			Const			= 1 <<  0,
+			Constexpr		= 1 <<  1,
+			Mutable			= 1 <<  2,
+			Static			= 1 <<  3,
+			ThreadLocal		= 1 <<  4,
+			Short			= 1 <<  5,
+			Long			= 1 <<  6,
+			LongLong		= 1 <<  7,
+			Unsigned		= 1 <<  8,
 		};
 
-		enum CppMainInfo_FunctionAttributeFlags : SyntaxMainInfoType
+		enum class CppMainInfo_FunctionAttributeFlags : SyntaxMainInfoType
 		{
-			CppMainInfo_FunctionAttributeFlags_NONE			= 0,
+			NONE			= 0,
 
-			CppMainInfo_FunctionAttributeFlags_Const		= 1 << 0,
-			CppMainInfo_FunctionAttributeFlags_Noexcept		= 1 << 1,
-			CppMainInfo_FunctionAttributeFlags_Override		= 1 << 2,
-			CppMainInfo_FunctionAttributeFlags_Final		= 1 << 3,
-			CppMainInfo_FunctionAttributeFlags_Abstract		= 1 << 4,
-			CppMainInfo_FunctionAttributeFlags_Default		= 1 << 5,
-			CppMainInfo_FunctionAttributeFlags_Delete		= 1 << 6,
+			Const			= 1 << 0,
+			Noexcept		= 1 << 1,
+			Override		= 1 << 2,
+			Final			= 1 << 3,
+			Abstract		= 1 << 4,
+			Default			= 1 << 5,
+			Delete			= 1 << 6,
 		};
 
 
-		enum CppSubInfo_AccessModifier : SyntaxSubInfoType
+		enum class CppSubInfo_AccessModifier : SyntaxSubInfoType
 		{
-			CppSubInfo_AccessModifier_NONE			= 0,
+			NONE		= 0,
 			
-			CppSubInfo_AccessModifier_Public		= 1,
-			CppSubInfo_AccessModifier_Protected		= 2,
-			CppSubInfo_AccessModifier_Private		= 3,
+			Public		= 1,
+			Protected	= 2,
+			Private		= 3,
 		};
 
 

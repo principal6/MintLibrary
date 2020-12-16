@@ -188,7 +188,7 @@ namespace fs
 					}
 
 					uint64 currentPosition = identifierSymbolPosition + 2;
-					CppSubInfo_AccessModifier currentAccessModifier = (true == isStruct) ? CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Public : CppSubInfo_AccessModifier::CppSubInfo_AccessModifier_Private;
+					CppSubInfo_AccessModifier currentAccessModifier = (true == isStruct) ? CppSubInfo_AccessModifier::Public : CppSubInfo_AccessModifier::Private;
 					bool continueParsingMember = false;
 					while (true)
 					{
@@ -273,7 +273,7 @@ namespace fs
 					const SymbolTableItem& postSymbol = getSymbol(currentPosition + 1);
 
 					TreeNodeAccessor ctorOrDtorNode = ancestorNode.insertChildNode(SyntaxTreeItem((isDestructor == true) ? postSymbol : symbol, (isDestructor == true) ? CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Destructor : CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_Constructor));
-					ctorOrDtorNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
+					ctorOrDtorNode.getNodeDataXXX().setSubInfo(static_cast<SyntaxSubInfoType>(inOutAccessModifier));
 
 					const uint64 openParenthesisPosition = (isDestructor == true) ? currentPosition + 2 : currentPosition + 1;
 					const SymbolTableItem& openParenthesisSymbol = getSymbol(openParenthesisPosition);
@@ -376,7 +376,7 @@ namespace fs
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							TreeNodeAccessor memberFunctionNode = ancestorNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Function_Name));
-							memberFunctionNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
+							memberFunctionNode.getNodeDataXXX().setSubInfo(static_cast<SyntaxSubInfoType>(inOutAccessModifier));
 
 							// function attribute
 							bool isConst	= false;
@@ -515,15 +515,15 @@ namespace fs
 							}
 
 							const CppMainInfo_FunctionAttributeFlags attributeFlags = static_cast<CppMainInfo_FunctionAttributeFlags>(
-								static_cast<int>(isConst)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Const		|
-								static_cast<int>(isNoexcept)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Noexcept	|
-								static_cast<int>(isOverride)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Override	|
-								static_cast<int>(isFinal)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Final		|
-								static_cast<int>(isAbstract)	* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Abstract	|
-								static_cast<int>(isDefault)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Default	|
-								static_cast<int>(isDelete)		* CppMainInfo_FunctionAttributeFlags::CppMainInfo_FunctionAttributeFlags_Delete
+								static_cast<int32>(isConst)		* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Const		) |
+								static_cast<int32>(isNoexcept)	* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Noexcept	) |
+								static_cast<int32>(isOverride)	* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Override	) |
+								static_cast<int32>(isFinal)		* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Final		) |
+								static_cast<int32>(isAbstract)	* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Abstract	) |
+								static_cast<int32>(isDefault)	* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Default	) |
+								static_cast<int32>(isDelete)	* static_cast<int32>(CppMainInfo_FunctionAttributeFlags::Delete		)
 								);
-							memberFunctionNode.getNodeDataXXX().setMainInfo(attributeFlags);
+							memberFunctionNode.getNodeDataXXX().setMainInfo(static_cast<SyntaxMainInfoType>(attributeFlags));
 
 							const SymbolTableItem& postAttributeSymbol = getSymbol(postAttributePosition);
 							if (postAttributeSymbol._symbolString == ";")
@@ -570,7 +570,7 @@ namespace fs
 							uint64 postTypeNodeOffset = 0;
 							TreeNodeAccessor<SyntaxTreeItem> typeNode;
 							FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableListNode, typeNode, postTypeNodeOffset) == true);
-							typeNode.getNodeDataXXX().setSubInfo(inOutAccessModifier);
+							typeNode.getNodeDataXXX().setSubInfo(static_cast<SyntaxSubInfoType>(inOutAccessModifier));
 
 							const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
 							const TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppSyntaxClassifier::CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
@@ -1123,7 +1123,7 @@ namespace fs
 			}
 			
 			outTypeNode = ancestorNode.insertChildNode(SyntaxTreeItem(typeSymbol, CppSyntaxClassifier::CppSyntaxClassifier_Type));
-			outTypeNode.getNodeDataXXX().setMainInfo(typeModifierSet.getTypeFlags());
+			outTypeNode.getNodeDataXXX().setMainInfo(static_cast<SyntaxMainInfoType>(typeModifierSet.getTypeFlags()));
 
 			// 3) * (const) or & &&
 			uint64 postPointerReferenceOffset = postPostmodifierOffset;
@@ -1158,7 +1158,7 @@ namespace fs
 					}
 					else if (currentSymbol._symbolString == "const")
 					{
-						previousNode.getNodeDataXXX().setMainInfo(CppMainInfo_TypeFlags::CppMainInfo_TypeFlags_Const);
+						previousNode.getNodeDataXXX().setMainInfo(static_cast<SyntaxMainInfoType>(CppMainInfo_TypeFlags::Const));
 					}
 					else if (currentSymbol._symbolString == "*")
 					{
