@@ -18,47 +18,47 @@ namespace fs
 		class ILexer;
 
 
-		enum CppSyntaxClassifier : SyntaxClassifierEnumType
+		enum CppHlslSyntaxClassifier : SyntaxClassifierEnumType
 		{
-			CppSyntaxClassifier_Preprocessor_Include,
+			CppHlslSyntaxClassifier_Preprocessor_Include,
 
-			CppSyntaxClassifier_Literal_Number,
-			CppSyntaxClassifier_Literal_String,
-			CppSyntaxClassifier_Literal_TrueFalse,
-			CppSyntaxClassifier_Literal_Nullptr,
+			CppHlslSyntaxClassifier_Literal_Number,
+			CppHlslSyntaxClassifier_Literal_String,
+			CppHlslSyntaxClassifier_Literal_TrueFalse,
+			CppHlslSyntaxClassifier_Literal_Nullptr,
 
-			CppSyntaxClassifier_ClassStruct_Keyword,
-			CppSyntaxClassifier_ClassStruct_Identifier,
-			CppSyntaxClassifier_ClassStruct_AccessModifier,
-			CppSyntaxClassifier_ClassStruct_Constructor,
-			CppSyntaxClassifier_ClassStruct_Constructor_InitializerList,
-			CppSyntaxClassifier_ClassStruct_Destructor,
-			CppSyntaxClassifier_ClassStruct_MemberVariable,
-			CppSyntaxClassifier_ClassStruct_MemberVariableIdentifier,
-			CppSyntaxClassifier_Alignas,
-			CppSyntaxClassifier_Alignas_Alignment,
+			CppHlslSyntaxClassifier_ClassStruct_Keyword,
+			CppHlslSyntaxClassifier_ClassStruct_Identifier,
+			CppHlslSyntaxClassifier_ClassStruct_AccessModifier,
+			CppHlslSyntaxClassifier_ClassStruct_Constructor,
+			CppHlslSyntaxClassifier_ClassStruct_Constructor_InitializerList,
+			CppHlslSyntaxClassifier_ClassStruct_Destructor,
+			CppHlslSyntaxClassifier_ClassStruct_MemberVariable,
+			CppHlslSyntaxClassifier_ClassStruct_MemberVariableIdentifier,
+			CppHlslSyntaxClassifier_Alignas,
+			CppHlslSyntaxClassifier_Alignas_Alignment,
 			
-			CppSyntaxClassifier_Type,
-			CppSyntaxClassifier_Type_Specification,
-			CppSyntaxClassifier_Type_PointerType,
-			CppSyntaxClassifier_Type_ReferenceType,
-			CppSyntaxClassifier_Type_RvalueReferenceType,
-			CppSyntaxClassifier_Type_Value,
-			CppSyntaxClassifier_Type_Alias,
+			CppHlslSyntaxClassifier_Type,
+			CppHlslSyntaxClassifier_Type_Specification,
+			CppHlslSyntaxClassifier_Type_PointerType,
+			CppHlslSyntaxClassifier_Type_ReferenceType,
+			CppHlslSyntaxClassifier_Type_RvalueReferenceType,
+			CppHlslSyntaxClassifier_Type_Value,
+			CppHlslSyntaxClassifier_Type_Alias,
 			
-			CppSyntaxClassifier_Function_Name,
-			CppSyntaxClassifier_Function_Instructions,
-			CppSyntaxClassifier_Function_Parameter,
-			CppSyntaxClassifier_Function_Return,
-			CppSyntaxClassifier_Function_Return_Value,
+			CppHlslSyntaxClassifier_Function_Name,
+			CppHlslSyntaxClassifier_Function_Instructions,
+			CppHlslSyntaxClassifier_Function_Parameter,
+			CppHlslSyntaxClassifier_Function_Return,
+			CppHlslSyntaxClassifier_Function_Return_Value,
 
-			CppSyntaxClassifier_Namespace,
+			CppHlslSyntaxClassifier_Namespace,
 
-			CppSyntaxClassifier_INVALID,
+			CppHlslSyntaxClassifier_INVALID,
 		};
 		
 
-		enum class CppMainInfo_TypeFlags : SyntaxMainInfoType
+		enum class CppHlslMainInfo_TypeModifierFlags : SyntaxMainInfoType
 		{
 			NONE			= 0,
 
@@ -73,7 +73,7 @@ namespace fs
 			Unsigned		= 1 <<  8,
 		};
 
-		enum class CppMainInfo_FunctionAttributeFlags : SyntaxMainInfoType
+		enum class CppHlslMainInfo_FunctionAttributeFlags : SyntaxMainInfoType
 		{
 			NONE			= 0,
 
@@ -87,7 +87,7 @@ namespace fs
 		};
 
 
-		enum class CppSubInfo_AccessModifier : SyntaxSubInfoType
+		enum class CppHlslSubInfo_AccessModifier : SyntaxSubInfoType
 		{
 			NONE		= 0,
 			
@@ -97,7 +97,7 @@ namespace fs
 		};
 
 
-		enum class CppTypeOf : uint8
+		enum class CppHlslTypeOf : uint8
 		{
 			INVALID,
 			BuiltInType,
@@ -105,14 +105,14 @@ namespace fs
 			UserDefinedType,
 		};
 
-		enum class CppTypeNodeParsingMethod : uint8
+		enum class CppHlslTypeNodeParsingMethod : uint8
 		{
 			Expression,
 			ClassStructMember,
 			FunctionParameter,
 		};
 
-		enum class CppUserDefinedTypeInfo : uint8
+		enum class CppHlslUserDefinedTypeInfo : uint8
 		{
 			Default,
 			Abstract,
@@ -121,50 +121,57 @@ namespace fs
 		};
 
 
+		static const CppHlslSubInfo_AccessModifier	convertStringToCppClassStructAccessModifier(const std::string& input);
+
+
 		class CppHlslTypeInfo final
 		{
 		public:
-											CppHlslTypeInfo();
+												CppHlslTypeInfo();
+												CppHlslTypeInfo(const bool isBuiltIn, const std::string& fullName, const uint32 size);
+		
+		public:
+			const uint32						getMemberCount() const noexcept;
+			const CppHlslTypeInfo&				getMember(const uint32 memberIndex) const noexcept;
 						
 		private:
-			bool							_isBuiltIn;
-			std::string						_namespace;
-			std::string						_name;
-			uint32							_size;			// Byte count
-			std::vector<CppHlslTypeInfo>	_memberArray;	// Member variables
+			static const CppHlslTypeInfo		kInvalidTypeInfo;
+
+		private:
+			bool								_isBuiltIn;
+			std::string							_fullName;		// namespace + name
+			uint32								_size;			// Byte count
+			std::vector<CppHlslTypeInfo>		_memberArray;	// Member variables
 		};
 
 
-		static const CppSubInfo_AccessModifier	convertStringToCppClassStructAccessModifier(const std::string& input);
-
-
-		class CppTypeTableItem final
+		class CppHlslTypeTableItem final
 		{
 		public:
-											CppTypeTableItem()	= default;
-											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppMainInfo_TypeFlags& typeFlags);
-											CppTypeTableItem(const SymbolTableItem& typeSymbol, const CppUserDefinedTypeInfo& userDefinedTypeInfo);
-											CppTypeTableItem(const SyntaxTreeItem& typeSyntax);
-											~CppTypeTableItem()	= default;
+												CppHlslTypeTableItem()	= default;
+												CppHlslTypeTableItem(const SymbolTableItem& typeSymbol, const CppHlslMainInfo_TypeModifierFlags& typeModifierFlags);	// Built-in
+												CppHlslTypeTableItem(const SymbolTableItem& typeSymbol, const CppHlslUserDefinedTypeInfo& userDefinedTypeInfo);			// User-defined
+												CppHlslTypeTableItem(const SyntaxTreeItem& typeSyntax);
+												~CppHlslTypeTableItem()	= default;
 
 		public:
-			const std::string&				getTypeName() const noexcept;
+			const std::string&					getTypeName() const noexcept;
 
 		public:
-			void							setTypeSize(const uint32 typeSize) noexcept;
-			const uint32					getTypeSize() const noexcept;
+			void								setTypeSize(const uint32 typeSize) noexcept;
+			const uint32						getTypeSize() const noexcept;
 
 		private:
-			SymbolTableItem					_typeSymbol;
-			CppMainInfo_TypeFlags			_typeFlags;
-			CppUserDefinedTypeInfo			_userDefinedTypeInfo;
+			SymbolTableItem						_typeSymbol;
+			CppHlslMainInfo_TypeModifierFlags	_typeModifierFlags;
+			CppHlslUserDefinedTypeInfo			_userDefinedTypeInfo;
 
 		private:
-			uint32							_typeSize;
+			uint32								_typeSize;
 		};
 
 
-		struct CppTypeModifierSet
+		struct CppHlslTypeModifierSet
 		{
 		public:
 			bool	_isConst		= false;	// const 는 중복 가능!!
@@ -177,7 +184,7 @@ namespace fs
 			uint8	_signState		= 0;		// 0: default signed, 1: explicit signed, 2: explicit unsgined (signed, unsigned 는 중복 가능하나 교차는 불가!)
 
 		public:
-			const CppMainInfo_TypeFlags			getTypeFlags() const noexcept;
+			const CppHlslMainInfo_TypeModifierFlags		getTypeModifierFlags() const noexcept;
 		};
 
 
@@ -196,7 +203,7 @@ namespace fs
 		
 		private:
 			const bool									parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
-			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
+			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
 			const bool									parseClassStructInitializerList(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
 			const bool									parseClassStructInitializerList_Item(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount, bool& outContinueParsing);
 		
@@ -212,8 +219,8 @@ namespace fs
 			const bool									isTypeChunk(const uint64 symbolPosition, uint64& outPostTypeChunkPosition);
 			
 			// Identifier 전까지 파싱
-			const bool									parseTypeNode(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
-			const bool									parseTypeNode_CheckModifiers(const CppTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount);
+			const bool									parseTypeNode(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
+			const bool									parseTypeNode_CheckModifiers(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppHlslTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount);
 		
 		private:
 			const bool									parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
@@ -232,14 +239,14 @@ namespace fs
 			const bool									isNamespaceNode(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode) const noexcept;
 
 		private:
-			static const CppSyntaxClassifier			convertSymbolToAccessModifierSyntax(const SymbolTableItem& symbol) noexcept;
-			static const CppSyntaxClassifier			convertLiteralSymbolToSyntax(const SymbolTableItem& symbol) noexcept;
+			static const CppHlslSyntaxClassifier		convertSymbolToAccessModifierSyntax(const SymbolTableItem& symbol) noexcept;
+			static const CppHlslSyntaxClassifier		convertLiteralSymbolToSyntax(const SymbolTableItem& symbol) noexcept;
 		
 		public:
 			void										registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize);
 		
 		private:
-			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppTypeTableItem& type);
+			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type);
 			std::string									getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept;
 
 		private:
@@ -252,15 +259,16 @@ namespace fs
 			const bool									isBuiltInTypeXXX(const std::string& symbolString) const noexcept;
 			const bool									isUserDefinedTypeXXX(const std::string& typeFullIdentifier) const noexcept;
 			const std::string&							getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept;
-			const CppTypeOf								getTypeOfSymbol(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept;
+			const CppHlslTypeOf							getTypeOfSymbol(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept;
 
 		private:
 			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;
 			TreeNodeAccessor<SyntaxTreeItem>			_currentScopeNamespaceNode;
 
 		private:
-			std::vector<CppTypeTableItem>				_typeTable;
+			std::vector<CppHlslTypeTableItem>			_typeTable;
 			std::unordered_map<std::string, uint64>		_typeTableUmap;
+			std::vector<CppHlslTypeInfo>				_typeInfoArray;
 
 			std::unordered_map<std::string, uint64>		_typeAliasTableUmap;
 		
