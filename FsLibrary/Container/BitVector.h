@@ -43,7 +43,13 @@ namespace fs
 		const uint32				byteCapacity() const noexcept;
 
 	public:
-		static void					setBit(uint8& byte, const uint32 bitOffsetFromLeft, const bool value) noexcept;
+		// 여러 비트를 set, get 할 때는 아래 함수들을 이용하는 게 성능에 훨씬 좋다!
+		static void					setBit(uint8& inOutByte, const uint32 bitOffsetFromLeft, const bool value) noexcept;
+		static const uint8			getByteFromArray(const bool (&valueArray)[8]) noexcept;
+		static const bool			getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept;
+		static const uint32			getByteCountFromBitCount(const uint32 bitCount) noexcept;
+	
+	public:
 		static const uint32			getByteAtByBitAt(const uint32 bitAt) noexcept;
 		static const uint32			getBitOffsetByBitAt(const uint32 bitAt) noexcept;
 		static const uint8			getBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept;

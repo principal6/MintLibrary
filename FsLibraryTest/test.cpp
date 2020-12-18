@@ -12,7 +12,7 @@
 
 
 //#define FS_TEST_FAILURES
-//#define FS_TEST_PERFORMANCE
+#define FS_TEST_PERFORMANCE
 
 
 void testIntTypes()
@@ -154,13 +154,19 @@ const bool testBitVector()
 		sourceData.resize(kCount);
 
 		std::vector<uint8> byteVector;
+		std::vector<uint8> byteVectorCopy;
 		byteVector.resize(kCount);
+		byteVectorCopy.resize(kCount);
 
 		std::vector<bool> boolVector;
+		std::vector<bool> boolVectorCopy;
 		boolVector.resize(kCount);
+		boolVectorCopy.resize(kCount);
 
 		BitVector bitVector;
+		BitVector bitVectorCopy;
 		bitVector.resizeBitCount(kCount);
+		bitVectorCopy.resizeBitCount(kCount);
 
 		{
 			for (uint32 i = 0; i < kCount; ++i)
@@ -170,15 +176,23 @@ const bool testBitVector()
 		}
 		
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "byte vector" };
+			fs::Profiler::ScopedCpuProfiler profiler{ "1) byte vector" };
 			for (uint32 i = 0; i < kCount; ++i)
 			{
 				byteVector[i] = sourceData[i];
 			}
 		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "1) byte vector copy" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				byteVectorCopy[i] = byteVector[i];
+			}
+		}
 		
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "bool vector" };
+			fs::Profiler::ScopedCpuProfiler profiler{ "2) bool vector" };
 			for (uint32 i = 0; i < kCount; ++i)
 			{
 				boolVector[i] = sourceData[i];
@@ -186,7 +200,15 @@ const bool testBitVector()
 		}
 
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector raw" };
+			fs::Profiler::ScopedCpuProfiler profiler{ "2) bool vector copy" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				boolVectorCopy[i] = boolVector[i];
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw" };
 			for (uint32 i = 0; i < kCount; ++i)
 			{
 				bitVector.set(i, sourceData[i]);
@@ -194,38 +216,76 @@ const bool testBitVector()
 		}
 
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector per byte - 1" };
-			const uint32 kByteCount = kCount / kBitsPerByte;
-			
-			uint32 byteAt = 0;
-			while (byteAt < kByteCount)
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw copy" };
+			for (uint32 i = 0; i < kCount; ++i)
+			{
+				bitVectorCopy.set(i, bitVector.get(i));
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1" };
+			const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+			for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
 			{
 				const uint32 sourceAt = byteAt * kBitsPerByte;
 				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
 				{
 					bitVector.set(byteAt, bitOffset, sourceData[sourceAt + bitOffset]);
 				}
-
-				++byteAt;
 			}
 		}
 
 		{
-			fs::Profiler::ScopedCpuProfiler profiler{ "bit vector per byte - 2" };
-			const uint32 kByteCount = kCount / kBitsPerByte;
-
-			uint32 byteAt = 0;
-			while (byteAt < kByteCount)
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1 copy" };
+			const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+			for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
 			{
 				const uint32 sourceAt = byteAt * kBitsPerByte;
-				uint8 byteData = bitVector.getByte(byteAt);
 				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
 				{
-					BitVector::setBit(byteData, bitOffset, sourceData[sourceAt + bitOffset]);
+					bitVectorCopy.set(byteAt, bitOffset, bitVector.get(sourceAt + bitOffset));
 				}
-				bitVector.setByte(byteAt, byteData);
+			}
+		}
 
-				++byteAt;
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2" };
+			const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+			for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
+			{
+				const uint32 sourceAt = byteAt * kBitsPerByte;
+				uint8 destByteData = bitVector.getByte(byteAt);
+				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
+				{
+					BitVector::setBit(destByteData, bitOffset, sourceData[sourceAt + bitOffset]);
+				}
+				bitVector.setByte(byteAt, destByteData);
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
+			const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+			for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
+			{
+				const uint8 srcByteData = bitVector.getByte(byteAt);
+				uint8 destByteData = bitVectorCopy.getByte(byteAt);
+				for (uint32 bitOffset = 0; bitOffset < kBitsPerByte; ++bitOffset)
+				{
+					BitVector::setBit(destByteData, bitOffset, BitVector::getBit(srcByteData, bitOffset));
+				}
+				bitVectorCopy.setByte(byteAt, srcByteData);
+			}
+		}
+
+		{
+			fs::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
+			const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+			for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
+			{
+				const uint8 byteData = bitVector.getByte(byteAt);
+				bitVectorCopy.setByte(byteAt, byteData);
 			}
 		}
 
@@ -271,6 +331,25 @@ const bool testMemoryAllocator()
 		fs::Memory::Accessor a = memoryAllocator2.allocateArray(5);
 		a.setMemory("abcd", 5);
 	}
+
+#if defined FS_TEST_PERFORMANCE
+	{
+#if defined FS_DEBUG
+		static constexpr uint32 kCount = 10'000;
+#else
+		static constexpr uint32 kCount = 30'000;
+#endif
+		fs::Profiler::ScopedCpuProfiler profiler{ "Vector of DynamicStringA" };
+		
+		fs::Vector<fs::DynamicStringA> vec;
+		for (uint32 i = 0; i < kCount; ++i)
+		{
+			vec.push_back("abcd");
+		}
+	}
+	auto logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
+	const bool isEmpty = logArray.empty();
+#endif
 
 	return true;
 }
@@ -675,17 +754,12 @@ const bool testWindow()
 	return true;
 }
 
-
-int main()
+const bool testAll()
 {
-#ifdef FS_DEBUG
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
 	//fs::Logger::setOutputFileName("LOG.txt");
 
-	/*
-	*/
+/*
+*/
 	testIntTypes();
 
 	testFloatTypes();
@@ -693,7 +767,7 @@ int main()
 	testStaticArray();
 
 	testStackHolder();
-	
+
 	testBitVector();
 
 	testMemoryAllocator();
@@ -721,6 +795,19 @@ int main()
 
 	testLanguage();
 
+	return true;
+}
+
+int main()
+{
+#ifdef FS_DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+	//testAll();
+
+	testMemoryAllocator();
+	
 	testWindow();
 
 	return 0;

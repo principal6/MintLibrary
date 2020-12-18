@@ -64,4 +64,7 @@ namespace fs
 }
 
 
+#include <Profiler/ScopedCpuProfiler.inl>
+
+
 #endif // !FS_SCOPED_CPU_PROFILER_H

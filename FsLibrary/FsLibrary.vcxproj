@@ -112,7 +112,6 @@
     <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
-    <ClCompile Include="Profiler\ScopedCpuProfiler.cpp" />
     <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
@@ -129,6 +128,7 @@
     <None Include="Language\ILexer.inl" />
     <None Include="Language\IParser.inl" />
     <None Include="Language\LanguageCommon.inl" />
+    <None Include="Profiler\ScopedCpuProfiler.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -203,12 +203,34 @@ namespace fs
 		return _byteCapacity;
 	}
 
-	FS_INLINE void BitVector::setBit(uint8& byte, const uint32 bitOffsetFromLeft, const bool value) noexcept
+	FS_INLINE void BitVector::setBit(uint8& inOutByte, const uint32 bitOffsetFromLeft, const bool value) noexcept
 	{
 		const uint8 bitMaskOneAt = getBitMaskOneAt(bitOffsetFromLeft);
 		const uint8 bitMaskCull = ~bitMaskOneAt;
 		const uint8 bitValueAt = static_cast<uint8>(value) * bitMaskOneAt;
-		byte = (byte & bitMaskCull) | bitValueAt;
+		inOutByte = (inOutByte & bitMaskCull) | bitValueAt;
+	}
+
+	FS_INLINE const uint8 BitVector::getByteFromArray(const bool(&valueArray)[8]) noexcept
+	{
+		return static_cast<uint8>((static_cast<int32>(valueArray[0]) << 7) &
+			(static_cast<int32>(valueArray[1]) << 6) &
+			(static_cast<int32>(valueArray[2]) << 5) &
+			(static_cast<int32>(valueArray[3]) << 4) &
+			(static_cast<int32>(valueArray[4]) << 3) &
+			(static_cast<int32>(valueArray[5]) << 2) &
+			(static_cast<int32>(valueArray[6]) << 1) &
+			static_cast<int32>(valueArray[7]));
+	}
+
+	FS_INLINE const bool BitVector::getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
+	{
+		return (byte & getBitMaskOneAt(bitOffsetFromLeft));
+	}
+
+	FS_INLINE const uint32 BitVector::getByteCountFromBitCount(const uint32 bitCount) noexcept
+	{
+		return ((bitCount - 1) / kBitsPerByte + 1);
 	}
 
 	FS_INLINE const uint32 BitVector::getByteAtByBitAt(const uint32 bitAt) noexcept

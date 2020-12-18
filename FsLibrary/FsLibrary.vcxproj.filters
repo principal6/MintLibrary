@@ -308,9 +308,6 @@
     </ClCompile>
     <ClCompile Include="Language\CppHlslLexer.cpp" />
     <ClCompile Include="Language\CppHlslParser.cpp" />
-    <ClCompile Include="Profiler\ScopedCpuProfiler.cpp">
-      <Filter>Profiler</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
@@ -326,5 +323,8 @@
       <Filter>Language</Filter>
     </None>
     <None Include="Language\CppHlslParser.inl" />
+    <None Include="Profiler\ScopedCpuProfiler.inl">
+      <Filter>Profiler</Filter>
+    </None>
   </ItemGroup>
 </Project>
