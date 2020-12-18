@@ -5,14 +5,14 @@
 #define FS_HLSL_STRUCTS_H
 
 
-#include <SimpleRendering/CppHlslTypes.h>
+#include <Language/CppHlslTypes.h>
 
 
 namespace fs
 {
 	namespace CppHlsl
 	{
-		class alignas(4) VS_INPUT
+		class VS_INPUT
 		{
 		public:
 								VS_INPUT()
@@ -50,7 +50,7 @@ namespace fs
 			uint				_flag;
 		};
 
-		class alignas(4) VS_OUTPUT
+		class VS_OUTPUT
 		{
 		public:
 			float4				_position;
@@ -59,7 +59,7 @@ namespace fs
 			uint				_flag{ 0 };
 		};
 
-		class alignas(4) CB_Transforms
+		class CB_Transforms
 		{
 		public:
 			float4x4			_cbProjectionMatrix;

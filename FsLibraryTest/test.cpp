@@ -1,6 +1,7 @@
 ﻿#include <FsLibrary.h>
 #include <Language/CppHlslParser.h>
 #include <Language/CppHlslLexer.h>
+#include <SimpleRendering/CppHlsl.h>
 
 
 #ifdef FS_DEBUG
@@ -591,12 +592,28 @@ const bool testLanguage()
 	cppHlslParser.preExecute();
 
 	cppHlslParser.registerTypeTemplate("uint"		,  4);
+	cppHlslParser.registerTypeTemplate("float1"		,  4);
 	cppHlslParser.registerTypeTemplate("float2"		,  8);
 	cppHlslParser.registerTypeTemplate("float3"		, 12);
 	cppHlslParser.registerTypeTemplate("float4"		, 16);
 	cppHlslParser.registerTypeTemplate("float4x4"	, 64);
 	
 	cppHlslParser.execute();
+
+	struct TestStruct
+	{
+		fs::float1 _a			= 1.0f;								// v[0]
+		fs::float1 _b			= 2.0f;
+		fs::float2 _padding0	= fs::float2(4.0f, 8.0f);
+		fs::float3 _c			= fs::float3(16.0f, 32.0f, 64.0f);	// v[1]
+		fs::float1 _padding1	= 128.0f;
+	};
+	fs::CppHlsl::VS_INPUT vsInput;
+	uint64 a = sizeof(fs::CppHlsl::VS_INPUT);
+	uint64 b = sizeof(fs::CppHlsl::VS_OUTPUT);
+	uint64 c = sizeof(fs::CppHlsl::CB_Transforms);
+	TestStruct ts;
+	uint64 tss = sizeof(TestStruct);
 
 	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
 	return true;

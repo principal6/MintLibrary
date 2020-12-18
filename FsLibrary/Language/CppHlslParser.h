@@ -121,6 +121,20 @@ namespace fs
 		};
 
 
+		class CppHlslTypeInfo final
+		{
+		public:
+											CppHlslTypeInfo();
+						
+		private:
+			bool							_isBuiltIn;
+			std::string						_namespace;
+			std::string						_name;
+			uint32							_size;			// Byte count
+			std::vector<CppHlslTypeInfo>	_memberArray;	// Member variables
+		};
+
+
 		static const CppSubInfo_AccessModifier	convertStringToCppClassStructAccessModifier(const std::string& input);
 
 
@@ -251,6 +265,7 @@ namespace fs
 			std::unordered_map<std::string, uint64>		_typeAliasTableUmap;
 		
 		private:
+			std::vector<std::string>					_builtInTypeArray;
 			std::unordered_map<std::string, int8>		_builtInTypeUmap;
 		
 		private:

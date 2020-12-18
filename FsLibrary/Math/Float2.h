@@ -11,7 +11,7 @@
 namespace fs
 {
 	// No SIMD
-	class Float2 final
+	class alignas(8) Float2 final
 	{
 	public:
 								Float2();

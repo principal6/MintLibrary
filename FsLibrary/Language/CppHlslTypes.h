@@ -12,6 +12,7 @@
 namespace fs
 {
 	using uint				= uint32;
+	using float1			= float;
 	using float2			= fs::Float2;
 	using float3			= fs::Float3;
 	using float4			= fs::Float4;

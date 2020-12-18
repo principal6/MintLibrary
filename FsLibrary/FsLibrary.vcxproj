@@ -51,6 +51,7 @@
     <ClInclude Include="FsLibrary.h" />
     <ClInclude Include="Language\CppHlslLexer.h" />
     <ClInclude Include="Language\CppHlslParser.h" />
+    <ClInclude Include="Language\CppHlslTypes.h" />
     <ClInclude Include="Language\ILexer.h" />
     <ClInclude Include="Language\IParser.h" />
     <ClInclude Include="Language\Language.h" />
@@ -88,7 +89,6 @@
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
     <ClInclude Include="Reflection\IReflective.h" />
     <ClInclude Include="SimpleRendering\CppHlsl.h" />
-    <ClInclude Include="SimpleRendering\CppHlslTypes.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
     <ClInclude Include="SimpleRendering\DxHelper.hpp" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />

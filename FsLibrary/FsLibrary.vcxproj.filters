@@ -256,14 +256,14 @@
     </ClInclude>
     <ClInclude Include="Language\CppHlslLexer.h" />
     <ClInclude Include="Language\CppHlslParser.h" />
-    <ClInclude Include="SimpleRendering\CppHlslTypes.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Profiler\ScopedCpuProfiler.h">
       <Filter>Profiler</Filter>
     </ClInclude>
     <ClInclude Include="Profiler\Profiler.h">
       <Filter>Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\CppHlslTypes.h">
+      <Filter>Language</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

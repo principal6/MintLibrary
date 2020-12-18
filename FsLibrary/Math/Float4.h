@@ -13,7 +13,7 @@
 
 namespace fs
 {
-	class Float4 final
+	class alignas(16) Float4 final
 	{
 	public:
 								Float4();
