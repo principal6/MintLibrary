@@ -12,7 +12,7 @@
 
 
 //#define FS_TEST_FAILURES
-#define FS_TEST_PERFORMANCE
+//#define FS_TEST_PERFORMANCE
 
 
 void testIntTypes()
@@ -145,7 +145,7 @@ const bool testBitVector()
 #if defined FS_TEST_PERFORMANCE
 	{
 #if defined FS_DEBUG
-		static constexpr uint32 kCount = 10'000'000;
+		static constexpr uint32 kCount = 20'000'000;
 #else
 		static constexpr uint32 kCount = 200'000'000;
 #endif
@@ -804,9 +804,12 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	//testAll();
+	testAll();
 
-	testMemoryAllocator();
+	{
+		//testMemoryAllocator();
+		//testBitVector();
+	}
 	
 	testWindow();
 

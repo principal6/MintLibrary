@@ -205,10 +205,17 @@ namespace fs
 
 	FS_INLINE void BitVector::setBit(uint8& inOutByte, const uint32 bitOffsetFromLeft, const bool value) noexcept
 	{
-		const uint8 bitMaskOneAt = getBitMaskOneAt(bitOffsetFromLeft);
-		const uint8 bitMaskCull = ~bitMaskOneAt;
-		const uint8 bitValueAt = static_cast<uint8>(value) * bitMaskOneAt;
-		inOutByte = (inOutByte & bitMaskCull) | bitValueAt;
+		// EUREKA
+		// 이 경우 만큼은... 분기를 타는 게 더 빠르구나!!!
+
+		if (value == true)
+		{
+			inOutByte |= getBitMaskOneAt(bitOffsetFromLeft);
+		}
+		else
+		{
+			inOutByte &= ~getBitMaskOneAt(bitOffsetFromLeft);
+		}
 	}
 
 	FS_INLINE const uint8 BitVector::getByteFromArray(const bool(&valueArray)[8]) noexcept

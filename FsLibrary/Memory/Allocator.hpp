@@ -658,8 +658,8 @@ namespace fs
 			uint32 bitAt = _leastDeletedMemoryBlockIndex;
 			while (true)
 			{
-				const uint32 bitAlignmentStride = kBitsPerByte - (bitAt % kBitsPerByte);
-				const uint32 byteIndex = bitAt / kBitsPerByte;
+				const uint32 bitAlignmentStride = kBitsPerByte - BitVector::getBitOffsetByBitAt(bitAt);
+				const uint32 byteIndex = BitVector::getByteAtByBitAt(bitAt);
 				if (_memoryBlockCapacity <= bitAt)
 				{
 					break;
@@ -692,10 +692,10 @@ namespace fs
 				}
 				else
 				{
-					const uint32 bitOffset = (bitAt % kBitsPerByte);
+					const uint32 bitOffset = BitVector::getBitOffsetByBitAt(bitAt);
 					for (uint32 iter = bitOffset; iter < kBitsPerByte; ++iter)
 					{
-						const uint8 bitMaskOneAt = fs::BitVector::getBitMaskOneAt(iter);
+						const uint8 bitMaskOneAt = BitVector::getBitMaskOneAt(iter);
 						const bool isInUse = (bits & bitMaskOneAt);
 						if (isInUse == false)
 						{

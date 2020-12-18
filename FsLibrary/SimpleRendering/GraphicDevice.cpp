@@ -10,6 +10,7 @@
 #include <Platform/IWindow.h>
 #include <Platform/WindowsWindow.h>
 
+#include <Math/Int2.hpp>
 #include <Math/Float2.hpp>
 #include <Math/Float3.hpp>
 #include <Math/Float4.hpp>
