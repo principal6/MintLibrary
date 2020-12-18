@@ -34,12 +34,12 @@ namespace fs
 
 		FS_INLINE const bool SymbolTableItem::operator==(const SymbolTableItem& rhs) const noexcept
 		{
-			return _symbolIndex == rhs._symbolIndex;
+			return (_symbolIndex == rhs._symbolIndex) && (_symbolString == rhs._symbolString);
 		}
 
 		FS_INLINE const bool SymbolTableItem::operator!=(const SymbolTableItem& rhs) const noexcept
 		{
-			return _symbolIndex != rhs._symbolIndex;
+			return !(*this == rhs);
 		}
 
 		FS_INLINE void SymbolTableItem::clearData()
