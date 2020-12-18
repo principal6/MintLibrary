@@ -139,10 +139,13 @@ namespace fs
 			friend IParser;
 
 		public:
-													ILexer(const std::string& source);
+													ILexer();
 			virtual									~ILexer() = default;
 
 		public:
+			void									setSource(const std::string& source);
+
+		protected:
 			void									setEscaper(const char escaper);
 			void									setStatementTerminator(const char statementTerminator);
 			void									registerDelimiter(const char delimiter);

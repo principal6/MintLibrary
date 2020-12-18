@@ -161,6 +161,8 @@ namespace fs
 						memberTypeInfo.setDefaultInfoXXX(isMemberBuiltInType, getTypeInfoIdentifierXXX(memberTypeFullIdentifier));
 						memberTypeInfo.setDeclNameXXX(memberDeclNameNode.getNodeData()._symbolTableItem._symbolString);
 						memberTypeInfo.setSizeXXX(typeTableItem.getTypeSize());
+						memberTypeInfo.setByteOffsetXXX(typeSize);
+
 						typeInfo.pushMemberXXX(memberTypeInfo);
 
 						typeSize += typeTableItem.getTypeSize();
@@ -1654,6 +1656,16 @@ namespace fs
 			return typeFullIdentifier.substr(kGlobalNamespaceSymbol._symbolString.length() + 2);
 		}
 
+		std::string CppHlslParser::extractPureTypeName(const std::string& typeFullIdentifier) noexcept
+		{
+			const uint64 lastColonPosition = typeFullIdentifier.find_last_of(':');
+			if (lastColonPosition != std::string::npos)
+			{
+				return typeFullIdentifier.substr(lastColonPosition + 1);
+			}
+			return typeFullIdentifier;
+		}
+
 		const bool CppHlslParser::registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex)
 		{
 			auto found = _typeAliasTableUmap.find(typeAlias);
@@ -1773,6 +1785,120 @@ namespace fs
 				return CppHlslTypeInfo::kInvalidTypeInfo;
 			}
 			return _typeInfoArray[found->second];
+		}
+
+		std::string CppHlslParser::convertDeclarationNameToHlslSemanticName(const std::string& declarationName)
+		{
+			std::string semanticName = declarationName.substr(1);
+			const uint32 semanticNameLength = static_cast<uint32>(semanticName.length());
+			for (uint32 semanticNameIter = 0; semanticNameIter < semanticNameLength; ++semanticNameIter)
+			{
+				semanticName[semanticNameIter] = ::toupper(semanticName[semanticNameIter]);
+			}
+			return semanticName;
+		}
+
+		const DXGI_FORMAT CppHlslParser::convertCppHlslTypeToDxgiFormat(const CppHlslTypeInfo& typeInfo)
+		{
+			const std::string& typeName = typeInfo.getTypeName();
+			if (typeName == "float" || typeName == "float1")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+			}
+			else if (typeName == "float2")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT;
+			}
+			else if (typeName == "float3")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
+			}
+			else if (typeName == "float4")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT;
+			}
+			else if (typeName == "uint" || typeName == "uint1")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32_UINT;
+			}
+			else if (typeName == "uint2")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32_UINT;
+			}
+			else if (typeName == "uint3")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32B32_UINT;
+			}
+			else if (typeName == "uint4")
+			{
+				return DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_UINT;
+			}
+
+			return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+		}
+
+		std::string CppHlslParser::serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo, const bool isPixelShader)
+		{
+			std::string result;
+
+			result.append("struct ");
+			std::string typeName = extractPureTypeName(typeInfo.getTypeName());
+			result.append(typeName);
+			result.append("\n{\n");
+
+			std::string semanticName;
+			const uint32 memberCount = typeInfo.getMemberCount();
+			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+			{
+				const CppHlslTypeInfo& memberType = typeInfo.getMember(memberIndex);
+				result.append("\t");
+				result.append(memberType.getTypeName());
+				result.append(" ");
+				result.append(memberType.getDeclName());
+				result.append(" : ");
+
+				semanticName = convertDeclarationNameToHlslSemanticName(memberType.getDeclName());
+				if (isPixelShader == true)
+				{
+					static constexpr const char* const kPosition = "POSITION";
+					static const uint32 kPositionLength = fs::StringUtil::strlen(kPosition);
+					if (semanticName.compare(0, kPositionLength, kPosition) == 0)
+					{
+						std::string remnant = semanticName.substr(kPositionLength);
+						semanticName = "SV_POSITION" + remnant;
+					}
+				}
+				result.append(semanticName);
+				result.append(";\n");
+			}
+			result.append("};\n\n");
+			return result;
+		}
+
+		std::string CppHlslParser::serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 registerIndex)
+		{
+			std::string result;
+
+			result.append("cbuffer ");
+			std::string typeName = extractPureTypeName(typeInfo.getTypeName());
+			result.append(typeName);
+			result.append(" : register(");
+			result.append("b" + std::to_string(registerIndex));
+			result.append(")\n{\n");
+
+			std::string semanticName;
+			const uint32 memberCount = typeInfo.getMemberCount();
+			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+			{
+				const CppHlslTypeInfo& memberType = typeInfo.getMember(memberIndex);
+				result.append("\t");
+				result.append(memberType.getTypeName());
+				result.append(" ");
+				result.append(memberType.getDeclName());
+				result.append(";\n");
+			}
+			result.append("};\n\n");
+			return result;
 		}
 	}
 }

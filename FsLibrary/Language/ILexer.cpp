@@ -10,13 +10,17 @@ namespace fs
 {
 	namespace Language
 	{
-		ILexer::ILexer(const std::string& source)
-			: _source{ source }
-			, _totalTimeMs{ 0 }
+		ILexer::ILexer()
+			: _totalTimeMs{ 0 }
 			, _escaper{ '\\' }
 			, _statementTerminator{ ';' }
 		{
 			__noop;
+		}
+
+		void ILexer::setSource(const std::string& source)
+		{
+			_source = source;
 		}
 
 		void ILexer::setEscaper(const char escaper)

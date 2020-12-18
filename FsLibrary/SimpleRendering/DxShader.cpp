@@ -1,14 +1,17 @@
 #include <stdafx.h>
 #include <SimpleRendering/DxShader.h>
 
+#include <d3dcompiler.h>
+
 #include <Algorithm.hpp>
+
 #include <Container/ScopeString.hpp>
-#include <SimpleRendering/DxHelper.h>
-#include <SimpleRendering/DxHelper.hpp>
+
 #include <SimpleRendering/GraphicDevice.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 
-#include <d3dcompiler.h>
+#include <Language/CppHlslParser.h>
+
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -65,7 +68,7 @@ namespace fs
 		__noop;
 	}
 
-	const DxObjectId& DxShaderPool::pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, fs::IReflective* const inputElementClass)
+	const DxObjectId& DxShaderPool::pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
 	{
 		DxShader shader(_graphicDevice, DxShaderType::VertexShader);
 
@@ -82,20 +85,20 @@ namespace fs
 		}
 
 		// Input Layer
-		const uint32 memberCount = inputElementClass->getMemberCount();
+		const uint32 memberCount = inputElementTypeInfo->getMemberCount();
 		shader._inputElementSet._semanticNameArray.reserve(memberCount);
 		shader._inputElementSet._inputElementDescriptorArray.reserve(memberCount);
 		for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 		{
-			const fs::ReflectionTypeData& memberType = inputElementClass->getMemberType(memberIndex);
-			shader._inputElementSet._semanticNameArray.emplace_back(fs::convertDeclarationNameToHlslSemanticName(memberType.declarationName()));
+			const Language::CppHlslTypeInfo& memberType = inputElementTypeInfo->getMember(memberIndex);
+			shader._inputElementSet._semanticNameArray.emplace_back(Language::CppHlslParser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
 
 			D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
 			inputElementDescriptor.SemanticName = shader._inputElementSet._semanticNameArray[memberIndex].c_str();
 			inputElementDescriptor.SemanticIndex = 0;
-			inputElementDescriptor.Format = fs::convertToDxgiFormat(memberType);
+			inputElementDescriptor.Format = Language::CppHlslParser::convertCppHlslTypeToDxgiFormat(memberType);
 			inputElementDescriptor.InputSlot = 0;
-			inputElementDescriptor.AlignedByteOffset = memberType.byteOffset();
+			inputElementDescriptor.AlignedByteOffset = memberType.getByteOffset();
 			inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
 			inputElementDescriptor.InstanceDataStepRate = 0;
 			shader._inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);

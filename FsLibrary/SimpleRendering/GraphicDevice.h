@@ -15,13 +15,13 @@
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <SimpleRendering/DxShader.h>
 #include <SimpleRendering/DxBuffer.h>
+#include <SimpleRendering/CppHlslStructs.h>
+#include <SimpleRendering/CppHlslCbuffers.h>
 
-#include <Reflection/IReflective.h>
+#include <Language/CppHlslLexer.h>
+#include <Language/CppHlslParser.h>
 
 #include <Math/Float4x4.h>
-
-
-#define FS_HLSL_CLASS class alignas(16)
 
 
 namespace fs
@@ -31,77 +31,6 @@ namespace fs
 		class IWindow;
 	}
 	using Microsoft::WRL::ComPtr;
-
-	FS_HLSL_CLASS VS_INPUT : public IReflective
-	{
-		FS_REFLECTIVE_CTOR_INIT(VS_INPUT, _flag{ 0 })
-
-		VS_INPUT(const fs::Float3& position, const fs::Float4& color)
-			: IReflective()
-			, _position{ position }
-			, _color{ color }
-			, _flag{ 0 }
-		{
-			__noop;
-		}
-		VS_INPUT(const fs::Float3& position, const fs::Float2& texCoord)
-			: IReflective()
-			, _position{ position }
-			, _texCoord{ texCoord }
-			, _flag{ 1 }
-		{
-			__noop;
-		}
-		VS_INPUT(const fs::Float3& position, const fs::Float4& color, const fs::Float2& texCoord)
-			: IReflective()
-			, _position{ position }
-			, _color{ color }
-			, _texCoord{ texCoord }
-			, _flag{ 2 }
-		{
-			__noop;
-		}
-
-		FS_DECLARE_MEMBER(fs::Float4, _position);
-		FS_DECLARE_MEMBER(fs::Float4, _color);
-		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
-		FS_DECLARE_MEMBER(uint32	, _flag);
-
-		FS_REGISTER_BEGIN()
-			FS_REGISTER_MEMBER(_position);
-			FS_REGISTER_MEMBER(_color);
-			FS_REGISTER_MEMBER(_texCoord);
-			FS_REGISTER_MEMBER(_flag);
-		FS_REGISTER_END()
-	};
-
-	FS_HLSL_CLASS VS_OUTPUT : public IReflective
-	{
-		FS_REFLECTIVE_CTOR_INIT(VS_OUTPUT, _flag{ 0 })
-
-		FS_DECLARE_MEMBER(fs::Float4, _position);
-		FS_DECLARE_MEMBER(fs::Float4, _color);
-		FS_DECLARE_MEMBER(fs::Float2, _texCoord);
-		FS_DECLARE_MEMBER(uint32	, _flag);
-
-		FS_REGISTER_BEGIN()
-			FS_REGISTER_MEMBER(_position);
-			FS_REGISTER_MEMBER(_color);
-			FS_REGISTER_MEMBER(_texCoord);
-			FS_REGISTER_MEMBER(_flag);
-		FS_REGISTER_END()
-	};
-
-	FS_HLSL_CLASS CB_Transforms : public IReflective
-	{
-		FS_REFLECTIVE_CTOR(CB_Transforms)
-
-		FS_DECLARE_MEMBER(fs::Float4x4, _cbProjectionMatrix);
-
-		FS_REGISTER_BEGIN()
-			FS_REGISTER_MEMBER(_cbProjectionMatrix);
-		FS_REGISTER_END()
-	};
 
 
 	class GraphicDevice final
@@ -171,7 +100,7 @@ namespace fs
 
 		uint32											_cachedTriangleVertexCount;
 		ComPtr<ID3D11Buffer>							_triangleVertexBuffer;
-		std::vector<VS_INPUT>							_triangleVertexArray;
+		std::vector<fs::CppHlsl::VS_INPUT>				_triangleVertexArray;
 		uint32											_triangleVertexStride;
 		uint32											_triangleVertexOffset;
 
@@ -180,6 +109,10 @@ namespace fs
 		ComPtr<ID3D11Buffer>							_triangleIndexBuffer;
 		uint32											_triangleIndexOffset;
 #pragma endregion
+
+	private:
+		fs::Language::CppHlslLexer						_cppHlslLexerStructs;
+		fs::Language::CppHlslParser						_cppHlslParserStructs;
 
 	private:
 		fs::RectangleRenderer							_rectangleRenderer;

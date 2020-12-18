@@ -87,12 +87,10 @@
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
-    <ClInclude Include="Reflection\IReflective.h" />
-    <ClInclude Include="SimpleRendering\CppHlsl.h" />
+    <ClInclude Include="SimpleRendering\CppHlslStructs.h" />
+    <ClInclude Include="SimpleRendering\CppHlslCbuffers.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
-    <ClInclude Include="SimpleRendering\DxHelper.hpp" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
-    <ClInclude Include="SimpleRendering\DxHelper.h" />
     <ClInclude Include="SimpleRendering\DxShader.h" />
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
@@ -115,9 +113,7 @@
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="Profiler\ScopedCpuProfiler.cpp" />
-    <ClCompile Include="Reflection\IReflective.cpp" />
     <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
-    <ClCompile Include="SimpleRendering\DxHelper.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />

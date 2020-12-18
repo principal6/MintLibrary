@@ -19,9 +19,6 @@
     <Filter Include="SimpleRendering">
       <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Reflection">
-      <UniqueIdentifier>{5e1fe207-38fe-46a7-ac1d-36c9dba68bf1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Memory">
       <UniqueIdentifier>{e8e4d94d-4313-4154-ae01-e1430ba1caa5}</UniqueIdentifier>
     </Filter>
@@ -165,13 +162,7 @@
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
-    <ClInclude Include="Reflection\IReflective.h">
-      <Filter>Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleRendering\DxShader.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\DxHelper.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
     <ClInclude Include="SimpleRendering\DxBuffer.h">
@@ -182,9 +173,6 @@
     </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="SimpleRendering\DxHelper.hpp">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Container\DynamicString.h">
       <Filter>Container</Filter>
     </ClInclude>
@@ -248,9 +236,6 @@
     <ClInclude Include="Language\IParser.h">
       <Filter>Language</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRendering\CppHlsl.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Language\ILexer.h">
       <Filter>Language</Filter>
     </ClInclude>
@@ -264,6 +249,12 @@
     </ClInclude>
     <ClInclude Include="Language\CppHlslTypes.h">
       <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\CppHlslCbuffers.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\CppHlslStructs.h">
+      <Filter>SimpleRendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -288,13 +279,7 @@
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
-    <ClCompile Include="Reflection\IReflective.cpp">
-      <Filter>Reflection</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleRendering\DxShader.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\DxHelper.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRendering\DxBuffer.cpp">

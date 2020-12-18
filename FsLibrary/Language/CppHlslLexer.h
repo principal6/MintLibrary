@@ -17,6 +17,7 @@ namespace fs
 		class CppHlslLexer final : public ILexer
 		{
 		public:
+													CppHlslLexer();
 													CppHlslLexer(const std::string& source);
 			virtual									~CppHlslLexer() = default;
 

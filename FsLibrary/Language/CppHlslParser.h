@@ -134,10 +134,12 @@ namespace fs
 			void								setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName);
 			void								setDeclNameXXX(const std::string& declName);
 			void								setSizeXXX(const uint32 size);
+			void								setByteOffsetXXX(const uint32 byteOffset);
 			void								pushMemberXXX(const CppHlslTypeInfo& member);
 
 		public:
 			const uint32						getSize() const noexcept;
+			const uint32						getByteOffset() const noexcept;
 			const std::string&					getTypeName() const noexcept;
 			const std::string&					getDeclName() const noexcept;
 			const uint32						getMemberCount() const noexcept;
@@ -151,6 +153,7 @@ namespace fs
 			std::string							_typeName;		// namespace + name
 			std::string							_declName;
 			uint32								_size;			// Byte count
+			uint32								_byteOffset;
 			std::vector<CppHlslTypeInfo>		_memberArray;	// Member variables
 		};
 
@@ -264,6 +267,7 @@ namespace fs
 			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type);
 			std::string									getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept;
 			std::string									getTypeInfoIdentifierXXX(const std::string& typeFullIdentifier) const noexcept;
+			static std::string							extractPureTypeName(const std::string& typeFullIdentifier) noexcept;
 
 		private:
 			const bool									registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex);
@@ -281,6 +285,12 @@ namespace fs
 		public:
 			const CppHlslTypeInfo&						getTypeInfo(const uint64 typeIndex) const noexcept;
 			const CppHlslTypeInfo&						getTypeInfo(const std::string& typeName) const noexcept;
+
+		public:
+			static const DXGI_FORMAT					convertCppHlslTypeToDxgiFormat(const CppHlslTypeInfo& typeInfo);
+			static std::string							convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
+			static std::string							serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo, const bool isPixelShader);
+			static std::string							serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 registerIndex);
 
 		private:
 			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;

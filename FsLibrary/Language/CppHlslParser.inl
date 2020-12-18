@@ -23,6 +23,7 @@ namespace fs
 		inline CppHlslTypeInfo::CppHlslTypeInfo()
 			: _isBuiltIn{ false }
 			, _size{ 0 }
+			, _byteOffset{ 0 }
 		{
 			__noop;
 		}
@@ -43,6 +44,11 @@ namespace fs
 			_size = size;
 		}
 
+		FS_INLINE void CppHlslTypeInfo::setByteOffsetXXX(const uint32 byteOffset)
+		{
+			_byteOffset = byteOffset;
+		}
+
 		FS_INLINE void CppHlslTypeInfo::pushMemberXXX(const CppHlslTypeInfo& member)
 		{
 			_memberArray.emplace_back(member);
@@ -51,6 +57,11 @@ namespace fs
 		FS_INLINE const uint32 CppHlslTypeInfo::getSize() const noexcept
 		{
 			return _size;
+		}
+
+		inline const uint32 CppHlslTypeInfo::getByteOffset() const noexcept
+		{
+			return _byteOffset;
 		}
 
 		FS_INLINE const std::string& CppHlslTypeInfo::getTypeName() const noexcept
@@ -77,6 +88,7 @@ namespace fs
 		inline CppHlslTypeTableItem::CppHlslTypeTableItem(const SymbolTableItem& typeSymbol, const CppHlslMainInfo_TypeModifierFlags& typeModifierFlags)
 			: _typeSymbol{ typeSymbol }
 			, _typeModifierFlags{ typeModifierFlags }
+			, _userDefinedTypeInfo{ 0 }
 			, _typeSize{ 0 }
 		{
 			__noop;
@@ -84,6 +96,7 @@ namespace fs
 
 		inline CppHlslTypeTableItem::CppHlslTypeTableItem(const SymbolTableItem& typeSymbol, const CppHlslUserDefinedTypeInfo& userDefinedTypeInfo)
 			: _typeSymbol{ typeSymbol }
+			, _typeModifierFlags{ 0 }
 			, _userDefinedTypeInfo{ userDefinedTypeInfo }
 			, _typeSize{ 0 }
 		{

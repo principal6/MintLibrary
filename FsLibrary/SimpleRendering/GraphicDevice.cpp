@@ -1,19 +1,21 @@
 ﻿#include <stdafx.h>
 #include <SimpleRendering/GraphicDevice.h>
 
-#include <Algorithm.hpp>
 #include <d3dcompiler.h>
+#include <functional>
+#include <typeinfo>
+
+#include <Algorithm.hpp>
+
 #include <Platform/IWindow.h>
 #include <Platform/WindowsWindow.h>
+
 #include <Math/Float2.hpp>
 #include <Math/Float3.hpp>
 #include <Math/Float4.hpp>
 #include <Math/Float4x4.hpp>
-#include <Container/ScopeString.hpp>
-#include <typeinfo>
-#include <SimpleRendering/DxHelper.h>
 
-#include <functional>
+#include <Container/ScopeString.hpp>
 
 
 #pragma comment(lib, "d3d11.lib")
@@ -28,10 +30,11 @@ namespace fs
 		, _shaderPool{ this, &_shaderHeaderMemory }
 		, _bufferPool{ this }
 		, _cachedTriangleVertexCount{ 0 }
-		, _triangleVertexStride{ sizeof(VS_INPUT) }
+		, _triangleVertexStride{ sizeof(fs::CppHlsl::VS_INPUT) }
 		, _triangleVertexOffset{ 0 }
 		, _cachedTriangleIndexCount{ 0 }
 		, _triangleIndexOffset{ 0 }
+		, _cppHlslParserStructs{ _cppHlslLexerStructs }
 		, _rectangleRenderer{ this }
 	{
 		__noop;
@@ -82,28 +85,45 @@ namespace fs
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 		}
 
+
 		// Shader header
 		{
-			VS_INPUT vsInput;
-			VS_OUTPUT vsOutput;
+			TextFileReader textFileReader;
+			textFileReader.open("FsLibrary/SimpleRendering/CppHlslStructs.h");
+			_cppHlslLexerStructs.setSource(textFileReader.get());
+			_cppHlslLexerStructs.execute();
+			_cppHlslParserStructs.execute();
+
+
+			CppHlsl::VS_INPUT vsInput;
+			CppHlsl::VS_OUTPUT vsOutput;
 			{
-				fs::DynamicStringA shaderHeaderContent;
-				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsInput, false));
-				shaderHeaderContent.append(fs::convertReflectiveClassToHlslStruct(&vsOutput, true));
+				std::string shaderHeaderContent;
+				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStruct(_cppHlslParserStructs.getTypeInfo("VS_INPUT"), false));
+				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStruct(_cppHlslParserStructs.getTypeInfo("VS_OUTPUT"), true));
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", shaderHeaderContent.c_str());
 			}
 		}
 
 		// Constant buffers
 		{
-			CB_Transforms cbTransforms;
+			TextFileReader textFileReader;
+			textFileReader.open("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
+			Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
+			cppHlslLexer.execute();
+			Language::CppHlslParser cppHlslParser{ cppHlslLexer };
+			cppHlslParser.execute();
+
+
+			fs::CppHlsl::CB_Transforms cbTransforms;
 			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 			{
-				fs::DynamicStringA shaderHeaderContent;
-				shaderHeaderContent.append(fs::convertReflectiveClassToHlslConstantBuffer(&cbTransforms, 0));
+				std::string shaderHeaderContent;
+				const Language::CppHlslTypeInfo& typeInfo = cppHlslParser.getTypeInfo("CB_Transforms");
+				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslCbuffer(typeInfo, 0));
 				_shaderHeaderMemory.pushHeader("VsConstantBuffers", shaderHeaderContent.c_str());
 
-				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, cbTransforms.compactOffsetPtr(), cbTransforms.compactSize());
+				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), typeInfo.getSize());
 				_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, 0);
 			}
 		}
@@ -127,8 +147,9 @@ namespace fs
 				}
 				)"
 			};
-			VS_INPUT vsInput;
-			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &vsInput);
+			fs::CppHlsl::VS_INPUT vsInput;
+			const Language::CppHlslTypeInfo& typeInfo = _cppHlslParserStructs.getTypeInfo("VS_INPUT");
+			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &typeInfo);
 			_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
 		}
 

@@ -6,7 +6,7 @@
 
 
 #include <CommonDefinitions.h>
-#include <Reflection/IReflective.h>
+
 #include <SimpleRendering/IDxObject.h>
 
 
@@ -19,11 +19,16 @@ namespace fs
 	class GraphicDevice;
 	class DxShaderPool;
 
+	namespace Language
+	{
+		class CppHlslTypeInfo;
+	}
+
 
 	struct DxInputElementSet
 	{
-		std::vector<fs::DynamicStringA>			_semanticNameArray;
-		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray{};
+		std::vector<std::string>				_semanticNameArray;
+		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray;
 	};
 
 	enum class DxShaderVersion
@@ -64,7 +69,7 @@ namespace fs
 		virtual						~DxShaderPool() = default;
 
 	public:
-		const DxObjectId&			pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, fs::IReflective* const inputElementClass);
+		const DxObjectId&			pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
 		const DxObjectId&			pushNonVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
 
 	public:

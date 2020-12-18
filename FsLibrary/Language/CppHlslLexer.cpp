@@ -9,8 +9,8 @@ namespace fs
 	namespace Language
 	{
 		uint16 LineSkipperTableItem::_lineSkipperNextGroupId = 0;
-		CppHlslLexer::CppHlslLexer(const std::string& source)
-			: ILexer(source)
+		CppHlslLexer::CppHlslLexer()
+			: ILexer()
 		{
 			setStatementTerminator(';');
 			setEscaper('\\');
@@ -136,6 +136,12 @@ namespace fs
 			registerKeyword("decltype");
 			registerKeyword("alignas");
 			registerKeyword("alignof");
+		}
+
+		CppHlslLexer::CppHlslLexer(const std::string& source)
+			: CppHlslLexer()
+		{
+			setSource(source);
 		}
 
 		const bool CppHlslLexer::execute()

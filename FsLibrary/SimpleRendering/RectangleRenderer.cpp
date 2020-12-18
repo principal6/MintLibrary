@@ -21,30 +21,30 @@ namespace fs
 
 	void RectangleRenderer::drawColored()
 	{
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3)));
 
 		prepareIndexArray();
 	}
 
 	void RectangleRenderer::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 	{
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(3, _position, _size), getVertexTexturePosition(3, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getVertexTexturePosition(3, texturePosition, textureSize)));
 
 		prepareIndexArray();
 	}
 
 	void RectangleRenderer::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 	{
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
-		_graphicDevice->_triangleVertexArray.emplace_back(fs::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3), getVertexTexturePosition(3, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
+		_graphicDevice->_triangleVertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3), getVertexTexturePosition(3, texturePosition, textureSize)));
 
 		prepareIndexArray();
 	}
@@ -60,7 +60,4 @@ namespace fs
 		_graphicDevice->_triangleIndexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
 		_graphicDevice->_triangleIndexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
 	}
-
 }
-
-

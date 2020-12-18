@@ -1,7 +1,4 @@
 ﻿#include <FsLibrary.h>
-#include <Language/CppHlslParser.h>
-#include <Language/CppHlslLexer.h>
-#include <SimpleRendering/CppHlsl.h>
 
 
 #ifdef FS_DEBUG
@@ -583,7 +580,7 @@ const bool testLanguage()
 	using namespace fs;
 	
 	TextFileReader textFileReader;
-	textFileReader.open("FsLibrary/SimpleRendering/CppHlsl.h");
+	textFileReader.open("FsLibrary/SimpleRendering/CppHlslStructs.h");
 	
 	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
 	cppHlslLexer.execute();
@@ -609,6 +606,7 @@ const bool testLanguage()
 	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
 	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT");
 	const fs::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
+	const fs::Language::CppHlslTypeInfo& typeInfo2 = cppHlslParser.getTypeInfo(2);
 	return true;
 }
 

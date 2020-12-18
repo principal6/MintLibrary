@@ -6,6 +6,7 @@
 
 
 #include <CommonDefinitions.h>
+
 #include <SimpleRendering/IRenderer.h>
 
 
