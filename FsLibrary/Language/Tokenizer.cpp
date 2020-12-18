@@ -1,9 +1,6 @@
 #include <stdafx.h>
 #include <Language/Tokenizer.h>
 
-#include <Container/Vector.hpp>
-#include <Container/DynamicString.hpp>
-
 
 namespace fs
 {
@@ -45,11 +42,7 @@ namespace fs
 			const uint32 sourceLength = static_cast<uint32>(_source.length());
 			for (uint32 sourceAt = 0; sourceAt < sourceLength; ++sourceAt)
 			{
-#if defined FS_TEST_USE_STD_STRING
 				const char sourceChar = _source[sourceAt];
-#else
-				const char sourceChar = _source.getChar(sourceAt);
-#endif
 
 				auto tokenIdentifierFound = _tokenIdentifierUmap.find(sourceChar);
 				if (tokenIdentifierFound != _tokenIdentifierUmap.end())
@@ -86,11 +79,11 @@ namespace fs
 			}
 
 #if defined FS_DEBUG || defined FS_USE_TOKEN_STRING_IN_RELEASE
-			const uint32 tokenCount = _tokenArray.size();
+			const uint32 tokenCount = static_cast<uint32>(_tokenArray.size());
 			_tokenStringArray.reserve(tokenCount);
 			for (uint32 tokenIndex = 0; tokenIndex < tokenCount; ++tokenIndex)
 			{
-				const StringRange& token = _tokenArray.get(tokenIndex);
+				const StringRange& token = _tokenArray[tokenIndex];
 				_tokenStringArray.push_back(_source.substr(token._offset, token._length));
 			}
 #endif
@@ -101,24 +94,17 @@ namespace fs
 
 		const uint32 Tokenizer::getTokenCount() const noexcept
 		{
-			return _tokenArray.size();
+			return static_cast<uint32>(_tokenArray.size());
 		}
 
 		const StringRange& Tokenizer::getTokenData(const uint32 tokenIndex) const noexcept
 		{
-			return _tokenArray.get(tokenIndex);
+			return _tokenArray[tokenIndex];
 		}
 
-#if defined FS_TEST_USE_STD_STRING
-		const std::string Tokenizer::getSource() const noexcept
+		const std::string& Tokenizer::getSource() const noexcept
 		{
 			return _source;
 		}
-#else
-		const fs::DynamicStringA Tokenizer::getSource() const noexcept
-		{
-			return _source;
-		}
-#endif
 	}
 }

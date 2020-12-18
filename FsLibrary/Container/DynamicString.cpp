@@ -2,38 +2,12 @@
 #include <Container/DynamicString.h>
 
 #include <Container/StringUtil.h>
+
 #include <Memory/Allocator.hpp>
 
 
 namespace fs
 {
-#pragma region Static functions
-	const bool DynamicStringA::to_bool(const DynamicStringA& dynamicString) noexcept
-	{
-		return dynamicString == "true";
-	}
-
-	const int32 DynamicStringA::to_int32(const DynamicStringA& dynamicString) noexcept
-	{
-		return atoi(dynamicString.c_str());
-	}
-
-	const uint32 DynamicStringA::to_uint32(const DynamicStringA& dynamicString) noexcept
-	{
-		return static_cast<uint32>(atoll(dynamicString.c_str()));
-	}
-	
-	const float DynamicStringA::to_float(const DynamicStringA& dynamicString) noexcept
-	{
-		return static_cast<float>(atof(dynamicString.c_str()));
-	}
-	
-	const double DynamicStringA::to_double(const DynamicStringA& dynamicString) noexcept
-	{
-		return atof(dynamicString.c_str());
-	}
-#pragma endregion
-
 	DynamicStringA::DynamicStringA()
 		: _memoryAllocator{ fs::Memory::Allocator<char>::getInstance() }
 		, _memoryAccessor{ &_memoryAllocator }
@@ -95,89 +69,10 @@ namespace fs
 		__noop;
 	}
 
-	DynamicStringA& DynamicStringA::operator=(const char* const rawString)
-	{
-		assign(rawString);
-
-		return *this;
-	}
-
-	DynamicStringA& DynamicStringA::operator=(const DynamicStringA& rhs)
-	{
-		if (this != &rhs)
-		{
-			assign(rhs);
-		}
-		return *this;
-	}
-
-	DynamicStringA& DynamicStringA::operator=(DynamicStringA&& rhs) noexcept
-	{
-		if (this != &rhs)
-		{
-			assign(std::forward<DynamicStringA>(rhs));
-		}
-		return *this;
-	}
-
-	DynamicStringA& DynamicStringA::operator+=(const char* const rawString) noexcept
-	{
-		append(rawString);
-		return *this;
-	}
-
-	DynamicStringA& DynamicStringA::operator+=(const DynamicStringA& rhs) noexcept
-	{
-		append(rhs);
-		return *this;
-	}
-
-	const DynamicStringA DynamicStringA::operator+(const char* const rawString) const noexcept
-	{
-		DynamicStringA result(*this);
-		if (fs::StringUtil::isNullOrEmpty(rawString) == false)
-		{
-			result.append(rawString);
-		}
-		return result;
-	}
-
-	const DynamicStringA DynamicStringA::operator+(const DynamicStringA& rhs) const noexcept
-	{
-		DynamicStringA result(*this);
-		result.append(rhs);
-		return result;
-	}
-
-	const bool DynamicStringA::operator==(const char* const rawString) const noexcept
-	{
-		return compare(rawString);
-	}
-
-	const bool DynamicStringA::operator==(const DynamicStringA& rhs) const noexcept
-	{
-		return compare(rhs);
-	}
-
-	const bool DynamicStringA::operator!=(const char* const rawString) const noexcept
-	{
-		return !compare(rawString);
-	}
-
-	const bool DynamicStringA::operator!=(const DynamicStringA& rhs) const noexcept
-	{
-		return !compare(rhs);
-	}
-
 	void DynamicStringA::clear()
 	{
 		_length = 0;
 		setMemoryInternal(nullptr);
-	}
-
-	void DynamicStringA::assign(const char* const rawString)
-	{
-		assign(rawString, fs::StringUtil::strlen(rawString));
 	}
 
 	void DynamicStringA::assign(const char* const rawString, const uint32 rawStringLength)
@@ -290,11 +185,6 @@ namespace fs
 		return DynamicStringA(myRaw + offset, subStringLength);
 	}
 
-	DynamicStringA DynamicStringA::substr(const StringRange& stringRange) const noexcept
-	{
-		return substr(stringRange._offset, stringRange._length);
-	}
-
 	void DynamicStringA::setChar(const uint32 at, const char ch)
 	{
 		if (at < _length)
@@ -329,49 +219,6 @@ namespace fs
 		}
 		++_length;
 		setChar(_length - 1, ch);
-	}
-
-	void DynamicStringA::pop_back()
-	{
-		if (0 < _length)
-		{
-			setChar(_length - 1, 0);
-			--_length;
-		}
-	}
-
-	const bool DynamicStringA::empty() const noexcept
-	{
-		return (_length == 0);
-	}
-
-	const uint32 DynamicStringA::length() const noexcept
-	{
-		return _length;
-	}
-
-	const char* const DynamicStringA::c_str() const noexcept
-	{
-		return reinterpret_cast<const char*>(_memoryAccessor.getMemory());
-	}
-
-	const char DynamicStringA::getChar(const uint32 at) const noexcept
-	{
-		if (_length <= at)
-		{
-			return 0;
-		}
-		return c_str()[at];
-	}
-
-	const char DynamicStringA::front() const noexcept
-	{
-		return getChar(0);
-	}
-
-	const char DynamicStringA::back() const noexcept
-	{
-		return getChar(_length - 1);
 	}
 
 	const uint32 DynamicStringA::find(const char* const rawString, const uint32 offset) const noexcept
@@ -569,32 +416,5 @@ namespace fs
 			}
 		}
 		return true;
-	}
-
-	const uint64 DynamicStringA::hash() const noexcept
-	{
-		if (_cachedHash == 0)
-		{
-			_cachedHash = fs::StringUtil::hashRawString64(c_str());
-		}
-		return _cachedHash;
-	}
-
-	void DynamicStringA::setMemoryInternal(const char* const rawString, const uint32 offset)
-	{
-		static const char nullChar = 0;
-
-		if (rawString == nullptr)
-		{
-			_memoryAccessor.setMemory(&nullChar);
-		}
-		else
-		{
-			const uint32 rawStringLength = fs::StringUtil::strlen(rawString);
-			_memoryAccessor.setMemory(rawString, offset, rawStringLength);
-			_memoryAccessor.setMemory(&nullChar, _length, 1);
-		}
-
-		_cachedHash = 0;
 	}
 }

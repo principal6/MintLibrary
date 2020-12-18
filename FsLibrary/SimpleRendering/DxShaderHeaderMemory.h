@@ -21,7 +21,7 @@ namespace fs
         HRESULT                             Close(LPCVOID pData) override final;
 
     private:
-        std::vector<fs::DynamicStringA>    _fileNameArray;
-        std::vector<fs::DynamicStringA>    _fileContentArray;
+        std::vector<std::string>            _fileNameArray;
+        std::vector<std::string>            _fileContentArray;
     };
 }

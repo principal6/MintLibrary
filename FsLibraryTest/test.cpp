@@ -347,6 +347,7 @@ const bool testMemoryAllocator()
 			vec.push_back("abcd");
 		}
 	}
+
 	auto logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
 	const bool isEmpty = logArray.empty();
 #endif
@@ -444,6 +445,56 @@ const bool testStringTypes()
 		const bool to_value1 = DynamicStringA::to_bool(from_value1);
 		const uint32 to_value2 = DynamicStringA::to_uint32(from_value2);
 	}
+
+#if defined FS_TEST_PERFORMANCE
+	static constexpr uint32 kCount = 20'000;
+	{
+		fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<fs::DynamicStringA>" };
+
+		fs::Vector<fs::DynamicStringA> dnsArray;
+		dnsArray.resize(kCount);
+		for (uint32 i = 0; i < kCount; ++i)
+		{
+			dnsArray.set(i, "abcdefg");
+		}
+	}
+
+	{
+		fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<fs::DynamicStringA>" };
+
+		std::vector<fs::DynamicStringA> dnsArray;
+		dnsArray.resize(kCount);
+		for (uint32 i = 0; i < kCount; ++i)
+		{
+			dnsArray[i] = "abcdefg";
+		}
+	}
+
+	{
+		fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
+
+		fs::Vector<std::string> dnsArray;
+		dnsArray.resize(kCount);
+		for (uint32 i = 0; i < kCount; ++i)
+		{
+			dnsArray.set(i, "abcdefg");
+		}
+	}
+
+	{
+		fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
+
+		std::vector<std::string> sArray;
+		sArray.resize(kCount);
+		for (uint32 i = 0; i < kCount; ++i)
+		{
+			sArray[i] = "abcdefg";
+		}
+	}
+
+	auto logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
+	const bool isEmpty = logArray.empty();
+#endif
 #pragma endregion
 
 	return true;
@@ -804,12 +855,13 @@ int main()
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+#if defined FS_TEST_PERFORMANCE
+	//testMemoryAllocator();
+	//testBitVector();
+	testStringTypes();
+#else
 	testAll();
-
-	{
-		//testMemoryAllocator();
-		//testBitVector();
-	}
+#endif
 	
 	testWindow();
 
