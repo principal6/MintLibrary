@@ -128,18 +128,28 @@ namespace fs
 		{
 		public:
 												CppHlslTypeInfo();
-												CppHlslTypeInfo(const bool isBuiltIn, const std::string& fullName, const uint32 size);
+												~CppHlslTypeInfo() = default;
 		
 		public:
+			void								setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName);
+			void								setDeclNameXXX(const std::string& declName);
+			void								setSizeXXX(const uint32 size);
+			void								pushMemberXXX(const CppHlslTypeInfo& member);
+
+		public:
+			const uint32						getSize() const noexcept;
+			const std::string&					getTypeName() const noexcept;
+			const std::string&					getDeclName() const noexcept;
 			const uint32						getMemberCount() const noexcept;
 			const CppHlslTypeInfo&				getMember(const uint32 memberIndex) const noexcept;
-						
-		private:
+		
+		public:
 			static const CppHlslTypeInfo		kInvalidTypeInfo;
 
 		private:
 			bool								_isBuiltIn;
-			std::string							_fullName;		// namespace + name
+			std::string							_typeName;		// namespace + name
+			std::string							_declName;
 			uint32								_size;			// Byte count
 			std::vector<CppHlslTypeInfo>		_memberArray;	// Member variables
 		};
@@ -195,12 +205,14 @@ namespace fs
 			virtual										~CppHlslParser();
 
 		public:
-			void										preExecute();
 			virtual const bool							execute() override final;
 
 		private:
 			const bool									parseCode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
-		
+
+		private:
+			void										generateTypeInfo(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const TreeNodeAccessor<SyntaxTreeItem>& classStructNode);
+
 		private:
 			const bool									parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
 			const bool									parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
@@ -244,10 +256,14 @@ namespace fs
 		
 		public:
 			void										registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize);
+			
+		private:
+			void										registerTypeTemplateInternal(const bool isBuiltIn, const std::string& typeFullIdentifier, const uint32 typeSize);
 		
 		private:
 			const uint64								registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type);
 			std::string									getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept;
+			std::string									getTypeInfoIdentifierXXX(const std::string& typeFullIdentifier) const noexcept;
 
 		private:
 			const bool									registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex);
@@ -260,6 +276,11 @@ namespace fs
 			const bool									isUserDefinedTypeXXX(const std::string& typeFullIdentifier) const noexcept;
 			const std::string&							getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept;
 			const CppHlslTypeOf							getTypeOfSymbol(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const SymbolTableItem& symbol) const noexcept;
+			const CppHlslTypeTableItem&					getType(const std::string& typeFullIdentifier) const noexcept;
+
+		public:
+			const CppHlslTypeInfo&						getTypeInfo(const uint64 typeIndex) const noexcept;
+			const CppHlslTypeInfo&						getTypeInfo(const std::string& typeName) const noexcept;
 
 		private:
 			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;
@@ -268,13 +289,15 @@ namespace fs
 		private:
 			std::vector<CppHlslTypeTableItem>			_typeTable;
 			std::unordered_map<std::string, uint64>		_typeTableUmap;
-			std::vector<CppHlslTypeInfo>				_typeInfoArray;
 
 			std::unordered_map<std::string, uint64>		_typeAliasTableUmap;
+			
+		private:
+			std::vector<CppHlslTypeInfo>				_typeInfoArray;
+			std::unordered_map<std::string, uint64>		_typeInfoUmap;
 		
 		private:
-			std::vector<std::string>					_builtInTypeArray;
-			std::unordered_map<std::string, int8>		_builtInTypeUmap;
+			std::unordered_map<std::string, uint64>		_builtInTypeUmap;
 		
 		private:
 			static const SymbolTableItem				kInitializerListSymbol;

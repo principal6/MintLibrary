@@ -589,15 +589,6 @@ const bool testLanguage()
 	cppHlslLexer.execute();
 	
 	Language::CppHlslParser cppHlslParser{ cppHlslLexer };
-	cppHlslParser.preExecute();
-
-	cppHlslParser.registerTypeTemplate("uint"		,  4);
-	cppHlslParser.registerTypeTemplate("float1"		,  4);
-	cppHlslParser.registerTypeTemplate("float2"		,  8);
-	cppHlslParser.registerTypeTemplate("float3"		, 12);
-	cppHlslParser.registerTypeTemplate("float4"		, 16);
-	cppHlslParser.registerTypeTemplate("float4x4"	, 64);
-	
 	cppHlslParser.execute();
 
 	struct TestStruct
@@ -616,6 +607,8 @@ const bool testLanguage()
 	uint64 tss = sizeof(TestStruct);
 
 	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
+	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT");
+	const fs::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
 	return true;
 }
 

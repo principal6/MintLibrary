@@ -27,12 +27,40 @@ namespace fs
 			__noop;
 		}
 
-		inline CppHlslTypeInfo::CppHlslTypeInfo(const bool isBuiltIn, const std::string& fullName, const uint32 size)
-			: _isBuiltIn{ isBuiltIn }
-			, _fullName{ fullName }
-			, _size{ size }
+		FS_INLINE void CppHlslTypeInfo::setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName)
 		{
-			__noop;
+			_isBuiltIn = isBuiltIn;
+			_typeName = typeName;
+		}
+
+		FS_INLINE void CppHlslTypeInfo::setDeclNameXXX(const std::string& declName)
+		{
+			_declName = declName;
+		}
+
+		FS_INLINE void CppHlslTypeInfo::setSizeXXX(const uint32 size)
+		{
+			_size = size;
+		}
+
+		FS_INLINE void CppHlslTypeInfo::pushMemberXXX(const CppHlslTypeInfo& member)
+		{
+			_memberArray.emplace_back(member);
+		}
+
+		FS_INLINE const uint32 CppHlslTypeInfo::getSize() const noexcept
+		{
+			return _size;
+		}
+
+		FS_INLINE const std::string& CppHlslTypeInfo::getTypeName() const noexcept
+		{
+			return _typeName;
+		}
+
+		FS_INLINE const std::string& CppHlslTypeInfo::getDeclName() const noexcept
+		{
+			return _declName;
 		}
 
 		FS_INLINE const uint32 CppHlslTypeInfo::getMemberCount() const noexcept

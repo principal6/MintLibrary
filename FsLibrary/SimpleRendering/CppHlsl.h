@@ -12,7 +12,7 @@ namespace fs
 {
 	namespace CppHlsl
 	{
-		class VS_INPUT
+		struct VS_INPUT
 		{
 		public:
 								VS_INPUT()
@@ -50,18 +50,18 @@ namespace fs
 			uint				_flag;
 		};
 
-		class VS_OUTPUT
+
+		struct VS_OUTPUT
 		{
-		public:
 			float4				_position;
 			float4				_color;
 			float2				_texCoord;
 			uint				_flag{ 0 };
 		};
 
-		class CB_Transforms
+
+		struct CB_Transforms
 		{
-		public:
 			float4x4			_cbProjectionMatrix;
 		};
 	}

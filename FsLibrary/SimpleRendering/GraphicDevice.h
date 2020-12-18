@@ -6,14 +6,18 @@
 
 
 #include <CommonDefinitions.h>
+
 #include <Container/StaticArray.h>
 #include <Container/ScopeString.h>
 #include <Container/UniqueString.h>
+
 #include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <SimpleRendering/DxShader.h>
 #include <SimpleRendering/DxBuffer.h>
+
 #include <Reflection/IReflective.h>
+
 #include <Math/Float4x4.h>
 
 

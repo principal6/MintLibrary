@@ -24,15 +24,24 @@ namespace fs
 		CppHlslParser::CppHlslParser(ILexer& lexer)
 			: IParser(lexer)
 		{
-			_builtInTypeUmap.insert(std::make_pair("void", 1));
-			_builtInTypeUmap.insert(std::make_pair("bool", 1));
-			_builtInTypeUmap.insert(std::make_pair("char", 1));
-			_builtInTypeUmap.insert(std::make_pair("wchar_t", 1));
-			_builtInTypeUmap.insert(std::make_pair("short", 1));
-			_builtInTypeUmap.insert(std::make_pair("int", 1));
-			_builtInTypeUmap.insert(std::make_pair("long", 1));
-			_builtInTypeUmap.insert(std::make_pair("float", 1));
-			_builtInTypeUmap.insert(std::make_pair("double", 1));
+			registerTypeTemplateInternal(true, "void"		, 0);
+			registerTypeTemplateInternal(true, "bool"		, 4); // 주의!!!
+			registerTypeTemplateInternal(true, "int"		, 4);
+			registerTypeTemplateInternal(true, "int1"		, 4);
+			registerTypeTemplateInternal(true, "int2"		, 8);
+			registerTypeTemplateInternal(true, "int3"		, 12);
+			registerTypeTemplateInternal(true, "int4"		, 16);
+			registerTypeTemplateInternal(true, "uint"		, 4);
+			registerTypeTemplateInternal(true, "uint1"		, 4);
+			registerTypeTemplateInternal(true, "uint2"		, 8);
+			registerTypeTemplateInternal(true, "uint3"		, 12);
+			registerTypeTemplateInternal(true, "uint4"		, 16);
+			registerTypeTemplateInternal(true, "float"		, 4);
+			registerTypeTemplateInternal(true, "float1"		, 4);
+			registerTypeTemplateInternal(true, "float2"		, 8);
+			registerTypeTemplateInternal(true, "float3"		, 12);
+			registerTypeTemplateInternal(true, "float4"		, 16);
+			registerTypeTemplateInternal(true, "float4x4"	, 64);
 		}
 
 		CppHlslParser::~CppHlslParser()
@@ -40,16 +49,13 @@ namespace fs
 			__noop;
 		}
 
-		void CppHlslParser::preExecute()
+		const bool CppHlslParser::execute()
 		{
 			reset();
 
 			TreeNodeAccessor<SyntaxTreeItem> syntaxTreeRootNode = getSyntaxTreeRootNode();
 			_globalNamespaceNode = syntaxTreeRootNode.insertChildNode(SyntaxTreeItem(kGlobalNamespaceSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_Namespace));
-		}
 
-		const bool CppHlslParser::execute()
-		{
 			uint64 advanceCount = 0;
 			while (needToContinueParsing() == true)
 			{
@@ -79,11 +85,19 @@ namespace fs
 			if (fisrtSymbol._symbolString == "class")
 			{
 				FS_RETURN_FALSE_IF_NOT(parseClassStruct(false, symbolPosition, namespaceNode, outAdvanceCount) == true);
+				
+				const uint32 childNodeCount = namespaceNode.getChildNodeCount();
+				const TreeNodeAccessor classStructNode = namespaceNode.getChildNode(childNodeCount - 1);
+				generateTypeInfo(namespaceNode, classStructNode);
 				return true;
 			}
 			else if (fisrtSymbol._symbolString == "struct")
 			{
 				FS_RETURN_FALSE_IF_NOT(parseClassStruct(true, symbolPosition, namespaceNode, outAdvanceCount) == true);
+
+				const uint32 childNodeCount = namespaceNode.getChildNodeCount();
+				const TreeNodeAccessor classStructNode = namespaceNode.getChildNode(childNodeCount - 1);
+				generateTypeInfo(namespaceNode, classStructNode);
 				return true;
 			}
 			else if (fisrtSymbol._symbolString == "using")
@@ -103,6 +117,70 @@ namespace fs
 
 			}
 			return false;
+		}
+
+		void CppHlslParser::generateTypeInfo(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const TreeNodeAccessor<SyntaxTreeItem>& classStructNode)
+		{
+			CppHlslTypeInfo typeInfo;
+			
+			bool isTypeNameSet = false;
+			uint32 typeSize = 0;
+			const uint32 childNodeCount = classStructNode.getChildNodeCount();
+			for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
+			{
+				const TreeNodeAccessor childNode = classStructNode.getChildNode(childNodeIndex);
+				if (childNode.getNodeData()._symbolTableItem._symbolString == "alignas")
+				{
+					continue;
+				}
+
+				if (isTypeNameSet == false)
+				{
+					const std::string typeFullIdentifier = getTypeFullIdentifier(namespaceNode, childNode.getNodeData()._symbolTableItem._symbolString);
+					typeInfo.setDefaultInfoXXX(false, getTypeInfoIdentifierXXX(typeFullIdentifier));
+					isTypeNameSet = true;
+					continue;
+				}
+
+				if (childNode.getNodeData()._symbolTableItem == kMemberVariableListSymbol)
+				{
+					const uint32 memberCount = childNode.getChildNodeCount();
+					for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+					{
+						const TreeNodeAccessor memberNode = childNode.getChildNode(memberIndex);
+						
+						const std::string& memberTypeName = memberNode.getNodeData()._symbolTableItem._symbolString;
+						const bool isMemberBuiltInType = isBuiltInTypeXXX(memberTypeName);
+						const std::string memberTypeFullIdentifier = (isMemberBuiltInType == true) ? getTypeFullIdentifier(_globalNamespaceNode, memberTypeName) : getTypeFullIdentifier(namespaceNode, memberNode.getNodeData()._symbolTableItem._symbolString);
+						const CppHlslTypeTableItem& typeTableItem = getType(memberTypeFullIdentifier);
+
+						const uint32 memberNodeChildCount = memberNode.getChildNodeCount();
+						const TreeNodeAccessor memberDeclNameNode = memberNode.getChildNode(memberNodeChildCount - 1);
+
+						CppHlslTypeInfo memberTypeInfo;
+						memberTypeInfo.setDefaultInfoXXX(isMemberBuiltInType, getTypeInfoIdentifierXXX(memberTypeFullIdentifier));
+						memberTypeInfo.setDeclNameXXX(memberDeclNameNode.getNodeData()._symbolTableItem._symbolString);
+						memberTypeInfo.setSizeXXX(typeTableItem.getTypeSize());
+						typeInfo.pushMemberXXX(memberTypeInfo);
+
+						typeSize += typeTableItem.getTypeSize();
+					}
+				}
+			}
+
+			if (typeSize == 0)
+			{
+				FS_LOG_ERROR("김장원", "typeSize 가 0 입니다!!!");
+				return;
+			}
+
+			// Apply HLSL packing
+			const uint32 correctedTypeSize = (((typeSize - 1) / 16) + 1) * 16;
+			typeInfo.setSizeXXX(correctedTypeSize);
+
+			_typeInfoArray.emplace_back(typeInfo);
+			const uint64 typeInfoIndex = _typeInfoArray.size() - 1;
+			_typeInfoUmap.insert(std::make_pair(typeInfo.getTypeName(), typeInfoIndex));
 		}
 
 		const bool CppHlslParser::parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
@@ -1517,6 +1595,11 @@ namespace fs
 
 		void CppHlslParser::registerTypeTemplate(const std::string& typeFullIdentifier, const uint32 typeSize)
 		{
+			registerTypeTemplateInternal(false, typeFullIdentifier, typeSize);
+		}
+
+		void CppHlslParser::registerTypeTemplateInternal(const bool isBuiltIn, const std::string& typeFullIdentifier, const uint32 typeSize)
+		{
 			std::vector<std::string> typeStack;
 			fs::StringUtil::tokenize(typeFullIdentifier, "::", typeStack);
 
@@ -1534,6 +1617,10 @@ namespace fs
 				_typeTable.back().setTypeSize(typeSize);
 
 				const uint64 typeTableIndex = _typeTable.size() - 1;
+				if (isBuiltIn == true)
+				{
+					_builtInTypeUmap.insert(std::make_pair(typeStack.back(), typeTableIndex));
+				}
 				_typeTableUmap.insert(std::make_pair(typeFullIdentifier_, typeTableIndex));
 			}
 		}
@@ -1560,6 +1647,11 @@ namespace fs
 			result += "::";
 			result += typeIdentifier;
 			return result;
+		}
+
+		std::string CppHlslParser::getTypeInfoIdentifierXXX(const std::string& typeFullIdentifier) const noexcept
+		{
+			return typeFullIdentifier.substr(kGlobalNamespaceSymbol._symbolString.length() + 2);
 		}
 
 		const bool CppHlslParser::registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex)
@@ -1654,6 +1746,33 @@ namespace fs
 			}
 
 			return CppHlslTypeOf::INVALID;
+		}
+
+		const CppHlslTypeTableItem& CppHlslParser::getType(const std::string& typeFullIdentifier) const noexcept
+		{
+			return _typeTable[_typeTableUmap.at(typeFullIdentifier)];
+		}
+
+		const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const uint64 typeIndex) const noexcept
+		{
+			if (typeIndex < _typeInfoArray.size())
+			{
+				return _typeInfoArray[typeIndex];
+			}
+			return CppHlslTypeInfo::kInvalidTypeInfo;
+		}
+
+		const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const std::string& typeName) const noexcept
+		{
+			std::string fullName = "fs::CppHlsl::";
+			fullName += typeName;
+
+			auto found = _typeInfoUmap.find(fullName);
+			if (found == _typeInfoUmap.end())
+			{
+				return CppHlslTypeInfo::kInvalidTypeInfo;
+			}
+			return _typeInfoArray[found->second];
 		}
 	}
 }
