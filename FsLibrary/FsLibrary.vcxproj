@@ -49,6 +49,7 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Language\CppHlsl.h" />
     <ClInclude Include="Language\CppHlslLexer.h" />
     <ClInclude Include="Language\CppHlslParser.h" />
     <ClInclude Include="Language\CppHlslTypes.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Language\CppHlsl.cpp" />
     <ClCompile Include="Language\CppHlslLexer.cpp" />
     <ClCompile Include="Language\CppHlslParser.cpp" />
     <ClCompile Include="Language\ILexer.cpp" />

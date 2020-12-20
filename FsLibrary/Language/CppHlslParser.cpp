@@ -1787,6 +1787,11 @@ namespace fs
 			return _typeInfoArray[found->second];
 		}
 
+		const uint32 CppHlslParser::getTypeInfoCount() const noexcept
+		{
+			return static_cast<uint32>(_typeInfoArray.size());
+		}
+
 		std::string CppHlslParser::convertDeclarationNameToHlslSemanticName(const std::string& declarationName)
 		{
 			std::string semanticName = declarationName.substr(1);
@@ -1837,7 +1842,7 @@ namespace fs
 			return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
 		}
 
-		std::string CppHlslParser::serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo, const bool isPixelShader)
+		std::string CppHlslParser::serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo)
 		{
 			std::string result;
 
@@ -1858,16 +1863,6 @@ namespace fs
 				result.append(" : ");
 
 				semanticName = convertDeclarationNameToHlslSemanticName(memberType.getDeclName());
-				if (isPixelShader == true)
-				{
-					static constexpr const char* const kPosition = "POSITION";
-					static const uint32 kPositionLength = fs::StringUtil::strlen(kPosition);
-					if (semanticName.compare(0, kPositionLength, kPosition) == 0)
-					{
-						std::string remnant = semanticName.substr(kPositionLength);
-						semanticName = "SV_POSITION" + remnant;
-					}
-				}
 				result.append(semanticName);
 				result.append(";\n");
 			}

@@ -285,11 +285,12 @@ namespace fs
 		public:
 			const CppHlslTypeInfo&						getTypeInfo(const uint64 typeIndex) const noexcept;
 			const CppHlslTypeInfo&						getTypeInfo(const std::string& typeName) const noexcept;
+			const uint32								getTypeInfoCount() const noexcept;
 
 		public:
 			static const DXGI_FORMAT					convertCppHlslTypeToDxgiFormat(const CppHlslTypeInfo& typeInfo);
 			static std::string							convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
-			static std::string							serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo, const bool isPixelShader);
+			static std::string							serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo);
 			static std::string							serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 registerIndex);
 
 		private:

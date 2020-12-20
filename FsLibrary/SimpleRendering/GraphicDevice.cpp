@@ -35,7 +35,6 @@ namespace fs
 		, _triangleVertexOffset{ 0 }
 		, _cachedTriangleIndexCount{ 0 }
 		, _triangleIndexOffset{ 0 }
-		, _cppHlslParserStructs{ _cppHlslLexerStructs }
 		, _rectangleRenderer{ this }
 	{
 		__noop;
@@ -89,42 +88,21 @@ namespace fs
 
 		// Shader header
 		{
-			TextFileReader textFileReader;
-			textFileReader.open("FsLibrary/SimpleRendering/CppHlslStructs.h");
-			_cppHlslLexerStructs.setSource(textFileReader.get());
-			_cppHlslLexerStructs.execute();
-			_cppHlslParserStructs.execute();
-
-
-			CppHlsl::VS_INPUT vsInput;
-			CppHlsl::VS_OUTPUT vsOutput;
-			{
-				std::string shaderHeaderContent;
-				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStruct(_cppHlslParserStructs.getTypeInfo("VS_INPUT"), false));
-				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStruct(_cppHlslParserStructs.getTypeInfo("VS_OUTPUT"), true));
-				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", shaderHeaderContent.c_str());
-			}
+			_cppHlslStructs.parseCppFile("FsLibrary/SimpleRendering/CppHlslStructs.h");
+			_cppHlslStructs.generateHlslStringDefault(fs::Language::CppHlslFileType::Structs);
+			_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStructs.getHlslString());
 		}
 
 		// Constant buffers
 		{
-			TextFileReader textFileReader;
-			textFileReader.open("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
-			Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
-			cppHlslLexer.execute();
-			Language::CppHlslParser cppHlslParser{ cppHlslLexer };
-			cppHlslParser.execute();
-
-
 			fs::CppHlsl::CB_Transforms cbTransforms;
 			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 			{
-				std::string shaderHeaderContent;
-				const Language::CppHlslTypeInfo& typeInfo = cppHlslParser.getTypeInfo("CB_Transforms");
-				shaderHeaderContent.append(Language::CppHlslParser::serializeCppHlslTypeToHlslCbuffer(typeInfo, 0));
-				_shaderHeaderMemory.pushHeader("VsConstantBuffers", shaderHeaderContent.c_str());
+				_cppHlslCbuffers.parseCppFile("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
+				_cppHlslCbuffers.generateHlslStringDefault(fs::Language::CppHlslFileType::Cbuffers);
+				_shaderHeaderMemory.pushHeader("VsConstantBuffers", _cppHlslCbuffers.getHlslString());
 
-				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), typeInfo.getSize());
+				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
 				_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, 0);
 			}
 		}
@@ -140,7 +118,7 @@ namespace fs
 				VS_OUTPUT main(VS_INPUT input)
 				{
 					VS_OUTPUT result;
-					result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+					result._sv_position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 					result._color		= input._color;
 					result._texCoord	= input._texCoord;
 					result._flag		= input._flag;
@@ -148,8 +126,7 @@ namespace fs
 				}
 				)"
 			};
-			fs::CppHlsl::VS_INPUT vsInput;
-			const Language::CppHlslTypeInfo& typeInfo = _cppHlslParserStructs.getTypeInfo("VS_INPUT");
+			const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo("VS_INPUT");
 			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &typeInfo);
 			_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
 		}

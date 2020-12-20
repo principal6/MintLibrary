@@ -28,6 +28,9 @@
     <Filter Include="Profiler">
       <UniqueIdentifier>{9babe998-8a61-4c57-a47e-d9b5edd5624b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Language\CppHlsl">
+      <UniqueIdentifier>{0ad96984-e29f-43ac-8ebe-7c6370cbbcb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Float2.h">
@@ -245,20 +248,23 @@
     <ClInclude Include="Profiler\Profiler.h">
       <Filter>Profiler</Filter>
     </ClInclude>
-    <ClInclude Include="Language\CppHlslTypes.h">
-      <Filter>Language</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleRendering\CppHlslCbuffers.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
     <ClInclude Include="SimpleRendering\CppHlslStructs.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="Language\CppHlsl.h">
+      <Filter>Language\CppHlsl</Filter>
+    </ClInclude>
     <ClInclude Include="Language\CppHlslLexer.h">
-      <Filter>Language</Filter>
+      <Filter>Language\CppHlsl</Filter>
     </ClInclude>
     <ClInclude Include="Language\CppHlslParser.h">
-      <Filter>Language</Filter>
+      <Filter>Language\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\CppHlslTypes.h">
+      <Filter>Language\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -311,10 +317,13 @@
       <Filter>Language</Filter>
     </ClCompile>
     <ClCompile Include="Language\CppHlslLexer.cpp">
-      <Filter>Language</Filter>
+      <Filter>Language\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Language\CppHlslParser.cpp">
-      <Filter>Language</Filter>
+      <Filter>Language\CppHlsl</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\CppHlsl.cpp">
+      <Filter>Language\CppHlsl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,7 +343,7 @@
       <Filter>Profiler</Filter>
     </None>
     <None Include="Language\CppHlslParser.inl">
-      <Filter>Language</Filter>
+      <Filter>Language\CppHlsl</Filter>
     </None>
   </ItemGroup>
 </Project>

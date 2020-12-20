@@ -18,8 +18,7 @@
 #include <SimpleRendering/CppHlslStructs.h>
 #include <SimpleRendering/CppHlslCbuffers.h>
 
-#include <Language/CppHlslLexer.h>
-#include <Language/CppHlslParser.h>
+#include <Language/CppHlsl.h>
 
 #include <Math/Float4x4.h>
 
@@ -111,8 +110,8 @@ namespace fs
 #pragma endregion
 
 	private:
-		fs::Language::CppHlslLexer						_cppHlslLexerStructs;
-		fs::Language::CppHlslParser						_cppHlslParserStructs;
+		fs::Language::CppHlsl							_cppHlslStructs;
+		fs::Language::CppHlsl							_cppHlslCbuffers;
 
 	private:
 		fs::RectangleRenderer							_rectangleRenderer;
