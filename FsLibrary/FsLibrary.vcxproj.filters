@@ -239,8 +239,6 @@
     <ClInclude Include="Language\ILexer.h">
       <Filter>Language</Filter>
     </ClInclude>
-    <ClInclude Include="Language\CppHlslLexer.h" />
-    <ClInclude Include="Language\CppHlslParser.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h">
       <Filter>Profiler</Filter>
     </ClInclude>
@@ -255,6 +253,12 @@
     </ClInclude>
     <ClInclude Include="SimpleRendering\CppHlslStructs.h">
       <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\CppHlslLexer.h">
+      <Filter>Language</Filter>
+    </ClInclude>
+    <ClInclude Include="Language\CppHlslParser.h">
+      <Filter>Language</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -306,8 +310,12 @@
     <ClCompile Include="Language\ILexer.cpp">
       <Filter>Language</Filter>
     </ClCompile>
-    <ClCompile Include="Language\CppHlslLexer.cpp" />
-    <ClCompile Include="Language\CppHlslParser.cpp" />
+    <ClCompile Include="Language\CppHlslLexer.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Language\CppHlslParser.cpp">
+      <Filter>Language</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
@@ -322,9 +330,11 @@
     <None Include="Language\ILexer.inl">
       <Filter>Language</Filter>
     </None>
-    <None Include="Language\CppHlslParser.inl" />
     <None Include="Profiler\ScopedCpuProfiler.inl">
       <Filter>Profiler</Filter>
+    </None>
+    <None Include="Language\CppHlslParser.inl">
+      <Filter>Language</Filter>
     </None>
   </ItemGroup>
 </Project>
