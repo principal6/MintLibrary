@@ -54,6 +54,8 @@ namespace fs
 
 			CppHlslSyntaxClassifier_Namespace,
 
+			CppHlslSyntaxClassifier_SemanticName,
+
 			CppHlslSyntaxClassifier_INVALID,
 		};
 		
@@ -133,6 +135,7 @@ namespace fs
 		public:
 			void								setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName);
 			void								setDeclNameXXX(const std::string& declName);
+			void								setSemanticNameXXX(const std::string& semanticName);
 			void								setSizeXXX(const uint32 size);
 			void								setByteOffsetXXX(const uint32 byteOffset);
 			void								pushMemberXXX(const CppHlslTypeInfo& member);
@@ -142,6 +145,7 @@ namespace fs
 			const uint32						getByteOffset() const noexcept;
 			const std::string&					getTypeName() const noexcept;
 			const std::string&					getDeclName() const noexcept;
+			const std::string&					getSemanticName() const noexcept;
 			const uint32						getMemberCount() const noexcept;
 			const CppHlslTypeInfo&				getMember(const uint32 memberIndex) const noexcept;
 		
@@ -152,6 +156,7 @@ namespace fs
 			bool								_isBuiltIn;
 			std::string							_typeName;		// namespace + name
 			std::string							_declName;
+			std::string							_semanticName;
 			uint32								_size;			// Byte count
 			uint32								_byteOffset;
 			std::vector<CppHlslTypeInfo>		_memberArray;	// Member variables

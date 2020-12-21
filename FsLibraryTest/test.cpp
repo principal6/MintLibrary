@@ -857,8 +857,8 @@ int main()
 
 #if defined FS_TEST_PERFORMANCE
 	//testMemoryAllocator();
-	//testBitVector();
-	testStringTypes();
+	testBitVector();
+	//testStringTypes();
 #else
 	testAll();
 #endif

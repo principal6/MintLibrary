@@ -11,6 +11,9 @@
 
 namespace fs
 {
+#define CPP_HLSL_SEMANTIC_NAME(SemanticName)
+
+
 	using uint				= uint32;
 	using float1			= float;
 	using float2			= fs::Float2;

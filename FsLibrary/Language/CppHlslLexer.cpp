@@ -146,104 +146,154 @@ namespace fs
 
 		const bool CppHlslLexer::execute()
 		{
-			const uint64 sourceLength = _source.length();
-			
-			uint64 prevSourceAt = 0;
-			uint64 sourceAt = 0;
-			while (continueExecution(sourceAt) == true)
+			// Preprocessor
+			// line 단위 parsing
+			// comment 도 거르기!
 			{
-				const char ch0 = getCh0(sourceAt);
-				const char ch1 = getCh1(sourceAt);
+				std::string preprocessedSource;
 
-				LineSkipperTableItem lineSkipperTableItem;
-				if (isLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
+				uint64 prevSourceAt = 0;
+				uint64 sourceAt = 0;
+
+				while (continueExecution(sourceAt) == true)
 				{
-					// Comment 는 SymbolTable 에 포함되지 않는다!
+					const char ch0 = getCh0(sourceAt);
+					const char ch1 = getCh1(sourceAt);
 
-					bool isSuccess = false;
-					if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::SingleMarker)
+					LineSkipperTableItem lineSkipperTableItem;
+					if (isLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
 					{
-						std::string line;
-						for (uint64 sourceIter = sourceAt + 2; sourceIter < sourceLength; ++sourceIter)
+						bool isSuccess = false;
+						if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::SingleMarker)
 						{
-							if (_source.at(sourceIter) == '\n')
+							std::string prev = _source.substr(prevSourceAt, sourceAt - prevSourceAt);
+
+							// Trim
 							{
-								line = _source.substr(prevSourceAt, sourceIter - prevSourceAt);
-								if (line.back() == '\r')
+								// Front
+								uint64 trimFront = 0;
+								while (trimFront < prev.size())
 								{
-									line.pop_back();
+									if (prev[trimFront] == '\r' || prev[trimFront] == '\n')
+									{
+										++trimFront;
+									}
+									else
+									{
+										break;
+									}
 								}
+								prev = prev.substr(trimFront);
 
-								isSuccess = true;
-								prevSourceAt = sourceAt = sourceIter + 1;
-								break;
+								// Back
+								while (0 < prev.size())
+								{
+									if (prev.back() == '\r' || prev.back() == '\n')
+									{
+										prev.pop_back();
+									}
+									else
+									{
+										break;
+									}
+								}
 							}
-						}
-
-						if (line.front() == '#')
-						{
-							// preprocessor
-
 							
-						}
-					}
-					else
-					{
-						LineSkipperTableItem closeLineSkipperTableItem;
-						if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenCloseMarker)
-						{
-							uint64 sourceIter = sourceAt + 2;
-							while (sourceIter + 1 < sourceLength)
+							preprocessedSource.append(prev);
+
+							std::string line;
+							for (uint64 sourceIter = sourceAt + 2; continueExecution(sourceIter) == true; ++sourceIter)
 							{
-								if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
+								if (_source.at(sourceIter) == '\n')
 								{
-									if (closeLineSkipperTableItem._string == lineSkipperTableItem._string)
+									line = _source.substr(prevSourceAt, sourceIter - prevSourceAt);
+									if (line.back() == '\r')
 									{
-										isSuccess = true;
-										prevSourceAt = sourceAt = sourceIter + 2;
-										break;
+										line.pop_back();
 									}
+
+									isSuccess = true;
+									prevSourceAt = sourceAt = sourceIter;
+									break;
 								}
-								++sourceIter;
+							}
+
+							if (ch0 == '#')
+							{
+								// Preprocessor
+
+								//line;
+							}
+							else
+							{
+								// Comment
+								preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
 							}
 						}
-						else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenMarker)
+						else
 						{
-							uint64 sourceIter = sourceAt + 2;
-							while (sourceIter + 1 < sourceLength)
+							LineSkipperTableItem closeLineSkipperTableItem;
+							if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenCloseMarker)
 							{
-								if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
+								uint64 sourceIter = sourceAt + 2;
+								while (continueExecution(sourceIter + 1) == true)
 								{
-									if (closeLineSkipperTableItem._lineSkipperGroupId == lineSkipperTableItem._lineSkipperGroupId)
+									if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
 									{
-										isSuccess = true;
-										prevSourceAt = sourceAt = sourceIter + 2;
-										break;
+										if (closeLineSkipperTableItem._string == lineSkipperTableItem._string)
+										{
+											isSuccess = true;
+											prevSourceAt = sourceAt = sourceIter + 2;
+											break;
+										}
 									}
+									++sourceIter;
 								}
-								++sourceIter;
+							}
+							else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenMarker)
+							{
+								uint64 sourceIter = sourceAt + 2;
+								while (continueExecution(sourceIter + 1) == true)
+								{
+									if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
+									{
+										if (closeLineSkipperTableItem._lineSkipperGroupId == lineSkipperTableItem._lineSkipperGroupId)
+										{
+											isSuccess = true;
+											prevSourceAt = sourceAt = sourceIter + 2;
+											break;
+										}
+									}
+									++sourceIter;
+								}
+							}
+							else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::CloseMarker)
+							{
+								FS_LOG_ERROR("김장원", "Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
+								return false;
 							}
 						}
-						else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::CloseMarker)
+
+						if (isSuccess == false)
 						{
-							FS_LOG_ERROR("김장원", "Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
 							return false;
 						}
 					}
 
-					if (isSuccess == false)
-					{
-						return false;
-					}
-					else
-					{
-						continue;
-					}
+					++sourceAt;
 				}
-				else
-				{
-					executeDefault(prevSourceAt, sourceAt);
-				}
+
+				preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
+
+				std::swap(_source, preprocessedSource);
+			}
+
+
+			uint64 prevSourceAt = 0;
+			uint64 sourceAt = 0;
+			while (continueExecution(sourceAt) == true)
+			{
+				executeDefault(prevSourceAt, sourceAt);
 			}
 
 			endExecution();

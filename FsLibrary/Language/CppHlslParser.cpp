@@ -155,11 +155,15 @@ namespace fs
 						const CppHlslTypeTableItem& typeTableItem = getType(memberTypeFullIdentifier);
 
 						const uint32 memberNodeChildCount = memberNode.getChildNodeCount();
-						const TreeNodeAccessor memberDeclNameNode = memberNode.getChildNode(memberNodeChildCount - 1);
-
+						const TreeNodeAccessor memberDeclNameNode = memberNode.getChildNode(0);
 						CppHlslTypeInfo memberTypeInfo;
 						memberTypeInfo.setDefaultInfoXXX(isMemberBuiltInType, getTypeInfoIdentifierXXX(memberTypeFullIdentifier));
 						memberTypeInfo.setDeclNameXXX(memberDeclNameNode.getNodeData()._symbolTableItem._symbolString);
+						if (1 < memberNodeChildCount)
+						{
+							// Has semantic name
+							memberTypeInfo.setSemanticNameXXX(memberNode.getChildNode(1).getNodeDataXXX()._symbolTableItem._symbolString);
+						}
 						memberTypeInfo.setSizeXXX(typeTableItem.getTypeSize());
 						memberTypeInfo.setByteOffsetXXX(typeSize);
 
@@ -682,6 +686,16 @@ namespace fs
 							}
 							else
 							{
+								if (postIdentifierSymbol._symbolString == "CPP_HLSL_SEMANTIC_NAME")
+								{
+									const SymbolTableItem& semanticNameSymbol = getSymbol(postTypeChunkPosition + 3);
+									const TreeNodeAccessor semanticNameNode = typeNode.insertChildNode(SyntaxTreeItem(semanticNameSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_SemanticName));
+
+									outAdvanceCount = postTypeChunkPosition + 6 - symbolPosition;
+									return true;
+								}
+
+								// TODO ??
 								reportError(postIdentifierSymbol, ErrorType::WrongSuccessor, "';' 나 '=' 나 '{' 가 와야 합니다.");
 								return false;
 							}
@@ -1861,9 +1875,14 @@ namespace fs
 				result.append(" ");
 				result.append(memberType.getDeclName());
 				result.append(" : ");
-
-				semanticName = convertDeclarationNameToHlslSemanticName(memberType.getDeclName());
-				result.append(semanticName);
+				if (memberType.getSemanticName().empty() == true)
+				{
+					result.append(convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
+				}
+				else
+				{
+					result.append(memberType.getSemanticName());
+				}
 				result.append(";\n");
 			}
 			result.append("};\n\n");

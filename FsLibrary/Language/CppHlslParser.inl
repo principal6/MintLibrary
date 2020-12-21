@@ -39,6 +39,11 @@ namespace fs
 			_declName = declName;
 		}
 
+		FS_INLINE void CppHlslTypeInfo::setSemanticNameXXX(const std::string& semanticName)
+		{
+			_semanticName = semanticName;
+		}
+
 		FS_INLINE void CppHlslTypeInfo::setSizeXXX(const uint32 size)
 		{
 			_size = size;
@@ -72,6 +77,11 @@ namespace fs
 		FS_INLINE const std::string& CppHlslTypeInfo::getDeclName() const noexcept
 		{
 			return _declName;
+		}
+
+		FS_INLINE const std::string& CppHlslTypeInfo::getSemanticName() const noexcept
+		{
+			return _semanticName;
 		}
 
 		FS_INLINE const uint32 CppHlslTypeInfo::getMemberCount() const noexcept

@@ -53,7 +53,7 @@ namespace fs
 
 		struct VS_OUTPUT
 		{
-			float4				_sv_position;
+			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
 			float4				_color;
 			float2				_texCoord;
 			uint				_flag{ 0 };

@@ -118,7 +118,7 @@ namespace fs
 				VS_OUTPUT main(VS_INPUT input)
 				{
 					VS_OUTPUT result;
-					result._sv_position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+					result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 					result._color		= input._color;
 					result._texCoord	= input._texCoord;
 					result._flag		= input._flag;
