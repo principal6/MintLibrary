@@ -8,21 +8,21 @@
 namespace fs
 {
 	template <typename T>
-	const uint32 binarySearchInternal(const std::vector<T>& vec, const T& value, const uint32 indexBegin, const uint32 indexEnd)
+	const int32 binarySearchInternal(const std::vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
 	{
-		if (indexBegin == indexEnd)
+		if (indexEnd <= indexBegin)
 		{
 			return indexBegin;
 		}
 
-		const uint32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
+		const int32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
 		if (value == vec[indexMiddle])
 		{
 			return indexMiddle;
 		}
 		else if (value < vec[indexMiddle])
 		{
-			return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1);
+			return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
 		}
 		else
 		{
@@ -31,32 +31,32 @@ namespace fs
 	}
 
 	template <typename T>
-	const uint32 binarySearch(const std::vector<T>& vec, const T& value)
+	const int32 binarySearch(const std::vector<T>& vec, const T& value)
 	{
 		if (vec.empty() == true)
 		{
-			return kUint32Max;
+			return kInt32Max;
 		}
-		return binarySearchInternal(vec, value, 0, static_cast<uint32>(vec.size() - 1));
+		return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
 	}
 
 
 	template <typename T, typename CompT>
-	const uint32 binarySearchInternal(const std::vector<T>& vec, const CompT& value, const uint32 indexBegin, const uint32 indexEnd)
+	const int32 binarySearchInternal(const std::vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
 	{
-		if (indexBegin == indexEnd)
+		if (indexEnd <= indexBegin)
 		{
 			return indexBegin;
 		}
 
-		const uint32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
+		const int32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
 		if (vec[indexMiddle] == value)
 		{
 			return indexMiddle;
 		}
 		else if (vec[indexMiddle] > value)
 		{
-			return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1);
+			return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
 		}
 		else
 		{
@@ -65,13 +65,13 @@ namespace fs
 	}
 
 	template<typename T, typename CompT>
-	const uint32 binarySearch(const std::vector<T>& vec, const CompT& value)
+	const int32 binarySearch(const std::vector<T>& vec, const CompT& value)
 	{
 		if (vec.empty() == true)
 		{
-			return kUint32Max;
+			return kInt32Max;
 		}
-		return binarySearchInternal(vec, value, 0, static_cast<uint32>(vec.size() - 1));
+		return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
 	}
 
 	template <typename T>

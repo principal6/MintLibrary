@@ -146,16 +146,16 @@ namespace fs
 
 		if (shaderType == DxShaderType::VertexShader)
 		{
-			const uint32 index = fs::binarySearch(_vertexShaderArray, objectId);
-			if (index != kUint32Max)
+			const int32 index = fs::binarySearch(_vertexShaderArray, objectId);
+			if (0 <= index)
 			{
 				return _vertexShaderArray[index];
 			}
 		}
 		else if (shaderType == DxShaderType::PixelShader)
 		{
-			const uint32 index = fs::binarySearch(_pixelShaderArray, objectId);
-			if (index != kUint32Max)
+			const int32 index = fs::binarySearch(_pixelShaderArray, objectId);
+			if (0 <= index)
 			{
 				return _pixelShaderArray[index];
 			}
