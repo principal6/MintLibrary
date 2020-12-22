@@ -40,6 +40,7 @@ namespace fs
 			const uint32				getTypeInfoCount() const noexcept;
 			const CppHlslTypeInfo&		getTypeInfo(const uint64 typeIndex) const noexcept;
 			const CppHlslTypeInfo&		getTypeInfo(const std::string& typeName) const noexcept;
+			const CppHlslTypeInfo&		getTypeInfo(const std::type_info& stdTypeInfo) const noexcept;
 		
 		private:
 			CppHlslLexer				_lexer;

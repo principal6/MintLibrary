@@ -50,6 +50,13 @@ namespace fs
 			uint				_flag;
 		};
 
+		struct VS_INPUT_SHAPE
+		{
+			float4				_position;
+			float4				_info;
+			float4				_color;
+		};
+
 
 		struct VS_OUTPUT
 		{
@@ -57,6 +64,13 @@ namespace fs
 			float4				_color;
 			float2				_texCoord;
 			uint				_flag{ 0 };
+		};
+
+		struct VS_OUTPUT_SHAPE
+		{
+			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
+			float4				_info;
+			float4				_color;
 		};
 	}
 }

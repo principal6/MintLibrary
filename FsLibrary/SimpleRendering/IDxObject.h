@@ -42,6 +42,10 @@ namespace fs
 										~DxObjectId() = default;
 
 	public:
+		DxObjectId&						operator=(const DxObjectId& rhs) noexcept = default;
+		DxObjectId&						operator=(DxObjectId&& rhs) noexcept = default;
+	
+	public:
 		FS_INLINE const bool			operator==(const DxObjectId& rhs) const noexcept
 		{
 			return _rawId == rhs._rawId;

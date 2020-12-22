@@ -82,6 +82,7 @@ namespace fs
 	private:
 		DxShaderHeaderMemory							_shaderHeaderMemory;
 		DxShaderPool									_shaderPool;
+		std::unordered_map<std::string, DxObjectId>		_shaderIdMap;
 		DxBufferPool									_bufferPool;
 
 		ComPtr<ID3D11SamplerState>						_samplerState;

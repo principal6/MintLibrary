@@ -109,7 +109,7 @@ namespace fs
 
 		// Compile vertex shader and create input layer
 		{
-			static constexpr const char kVertexShaderContent[]
+			static constexpr const char kShaderString[]
 			{
 				R"(
 				#include <ShaderStructDefinitions>
@@ -126,14 +126,37 @@ namespace fs
 				}
 				)"
 			};
-			const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo("VS_INPUT");
-			DxObjectId id = _shaderPool.pushVertexShader(kVertexShaderContent, "main", DxShaderVersion::v_4_0, &typeInfo);
+			const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
+			DxObjectId id = _shaderPool.pushVertexShader(kShaderString, "main", DxShaderVersion::v_4_0, &typeInfo);
+			_shaderIdMap["VSDefault"] = id;
 			_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
+		}
+		{
+			static constexpr const char kShaderString[]
+			{
+				R"(
+				#include <ShaderStructDefinitions>
+				#include <VsConstantBuffers>
+
+				VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
+				{
+					VS_OUTPUT_SHAPE result;
+					result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+					result._info		= input._info;
+					result._color		= input._color;
+					return result;
+				}
+				)"
+			};
+			const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
+			DxObjectId id = _shaderPool.pushVertexShader(kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
+			_shaderIdMap["VSShape"] = id;
+			//_shaderPool.getShader(DxShaderType::VertexShader, id).bind();
 		}
 
 		// Compile pixel shader
 		{
-			static constexpr const char kPixelShaderContent[]
+			static constexpr const char kShaderString[]
 			{
 				R"(
 				#include <ShaderStructDefinitions>
@@ -156,50 +179,8 @@ namespace fs
 				}
 				)"
 			};
-			static constexpr const char kPixelShaderContentTest[]
-			{
-				R"(
-				#include <ShaderStructDefinitions>
-
-				sampler		sampler0;
-				Texture2D	texture0;
-				
-				float4 main(VS_OUTPUT input) : SV_Target
-				{
-					float4 result = input._color;
-					if (input._flag == 1)
-					{
-						result = texture0.Sample(sampler0, input._texCoord);
-					}
-					else if (input._flag == 2)
-					{
-						float ddx_ = ddx(input._texCoord.x);
-						float ddy_ = ddy(input._texCoord.y);
-						
-						float4 sample  = texture0.Sample(sampler0, input._texCoord);
-						float4 sample0 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, -ddy_));
-						float4 sample1 = texture0.Sample(sampler0, input._texCoord + float2(0    , -ddy_)); // u
-						float4 sample2 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, -ddy_));
-						float4 sample3 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, 0    )); // l
-						float4 sample4 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, 0    )); // r
-						float4 sample5 = texture0.Sample(sampler0, input._texCoord + float2(-ddx_, +ddy_));
-						float4 sample6 = texture0.Sample(sampler0, input._texCoord + float2(0    , +ddy_)); // d
-						float4 sample7 = texture0.Sample(sampler0, input._texCoord + float2(+ddx_, +ddy_));
-
-						float4 blended = sample * 0.25;
-						blended += ((sample1 + sample3 + sample4 + sample6) / 4.0) * 0.5;
-						blended += ((sample0 + sample2 + sample5 + sample7) / 4.0) * 0.5;
-						if (0 < blended.r)
-						{
-							blended.r = 1;
-						}
-						result *= blended;
-					}
-					return result;
-				}
-				)"
-			};
-			DxObjectId id = _shaderPool.pushNonVertexShader(kPixelShaderContent, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+			DxObjectId id = _shaderPool.pushNonVertexShader(kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+			_shaderIdMap["PSDefault"] = id;
 			_shaderPool.getShader(DxShaderType::PixelShader, id).bind();
 		}
 

@@ -3,6 +3,8 @@
 
 #include <File/TextFile.h>
 
+#include <typeindex>
+
 
 namespace fs
 {
@@ -66,6 +68,17 @@ namespace fs
 		const CppHlslTypeInfo& CppHlsl::getTypeInfo(const std::string& typeName) const noexcept
 		{
 			return _parser.getTypeInfo(typeName);
+		}
+
+		const CppHlslTypeInfo& CppHlsl::getTypeInfo(const std::type_info& stdTypeInfo) const noexcept
+		{
+			std::string stdTypeName = stdTypeInfo.name();
+			const uint64 lastColonPosition = stdTypeName.find_last_of(':');
+			if (lastColonPosition != std::string::npos)
+			{
+				stdTypeName = stdTypeName.substr(lastColonPosition + 1);
+			}
+			return getTypeInfo(stdTypeName);
 		}
 
 	}
