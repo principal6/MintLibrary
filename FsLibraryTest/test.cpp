@@ -759,7 +759,7 @@ const bool testWindow()
 		return false;
 	}
 
-	GraphicDevice graphicDevice;
+	SimpleRendering::GraphicDevice graphicDevice;
 	graphicDevice.initialize(&window);
 
 	while (window.isRunning() == true)
@@ -788,7 +788,7 @@ const bool testWindow()
 
 		graphicDevice.beginRendering();
 		{
-			fs::RectangleRenderer& rectangleRenderer = graphicDevice.getRectangleRenderer();
+			fs::SimpleRendering::RectangleRenderer& rectangleRenderer = graphicDevice.getRectangleRenderer();
 
 			rectangleRenderer.setPosition(fs::Float3(0, 0, 0));
 			rectangleRenderer.setSize(fs::Float2(400.0f, 300.0f));

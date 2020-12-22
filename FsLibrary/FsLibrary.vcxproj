@@ -97,6 +97,8 @@
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="SimpleRendering\IRenderer.h" />
     <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
+    <ClInclude Include="SimpleRendering\TriangleBuffer.h" />
+    <ClInclude Include="SimpleRendering\TriangleBuffer.hpp" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />

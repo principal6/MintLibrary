@@ -17,6 +17,7 @@
 #include <SimpleRendering/DxBuffer.h>
 #include <SimpleRendering/CppHlslStructs.h>
 #include <SimpleRendering/CppHlslCbuffers.h>
+#include <SimpleRendering/TriangleBuffer.h>
 
 #include <Language/CppHlsl.h>
 
@@ -29,94 +30,86 @@ namespace fs
 	{
 		class IWindow;
 	}
-	using Microsoft::WRL::ComPtr;
 
-
-	class GraphicDevice final
+	namespace SimpleRendering
 	{
-		friend RectangleRenderer;
+		using Microsoft::WRL::ComPtr;
 
-	public:
-														GraphicDevice();
-														~GraphicDevice() = default;
 
-	public:
-		void											initialize(const fs::Window::IWindow* const window);
+		class GraphicDevice final
+		{
+			friend RectangleRenderer;
 
-	private:
-		void											createDxDevice();
+		public:
+																		GraphicDevice();
+																		~GraphicDevice() = default;
 
-	private:
-		void											createFontTextureFromMemory();
+		public:
+			void														initialize(const fs::Window::IWindow* const window);
 
-	public:
-		void											beginRendering();
-		void											endRendering();
+		private:
+			void														createDxDevice();
 
-	private:
-		void											prepareTriangleDataBuffer();
+		private:
+			void														createFontTextureFromMemory();
 
-	public:
-		FS_INLINE fs::RectangleRenderer&				getRectangleRenderer() noexcept { return _rectangleRenderer; }
+		public:
+			void														beginRendering();
+			void														endRendering();
 
-	public:
-		FS_INLINE ID3D11Device*							getDxDevice() noexcept { return _device.Get(); }
-		FS_INLINE ID3D11DeviceContext*					getDxDeviceContext() noexcept { return _deviceContext.Get(); }
+		public:
+			FS_INLINE fs::SimpleRendering::RectangleRenderer&			getRectangleRenderer() noexcept { return _rectangleRenderer; }
 
-	private:
-		const fs::Window::IWindow*						_window;
+		public:
+			FS_INLINE ID3D11Device*										getDxDevice() noexcept { return _device.Get(); }
+			FS_INLINE ID3D11DeviceContext*								getDxDeviceContext() noexcept { return _deviceContext.Get(); }
 
-	private:
-		float											_clearColor[4];
+		private:
+			const fs::Window::IWindow*									_window;
 
-#pragma region DirectX
-	private:
-		ComPtr<IDXGISwapChain>							_swapChain;
-		ComPtr<ID3D11Device>							_device;
-		ComPtr<ID3D11DeviceContext>						_deviceContext;
+		private:
+			float														_clearColor[4];
 
-	private:
-		ComPtr<ID3D11Texture2D>							_backBuffer;
-		ComPtr<ID3D11RenderTargetView>					_backBufferRtv;
+	#pragma region DirectX
+		private:
+			ComPtr<IDXGISwapChain>										_swapChain;
+			ComPtr<ID3D11Device>										_device;
+			ComPtr<ID3D11DeviceContext>									_deviceContext;
 
-	private:
-		DxShaderHeaderMemory							_shaderHeaderMemory;
-		DxShaderPool									_shaderPool;
-		std::unordered_map<std::string, DxObjectId>		_shaderIdMap;
-		DxBufferPool									_bufferPool;
+		private:
+			ComPtr<ID3D11Texture2D>										_backBuffer;
+			ComPtr<ID3D11RenderTargetView>								_backBufferRtv;
 
-		ComPtr<ID3D11SamplerState>						_samplerState;
-		ComPtr<ID3D11BlendState>						_blendState;
+		private:
+			static constexpr const char* const							kDefaultVSId{ "VSDefault" };
+			static constexpr const char* const							kDefaultPSId{ "PSDefault" };
 
-	private:
-		static constexpr uint32							kFontTextureWidth		= 16 * kBitsPerByte;
-		static constexpr uint32							kFontTextureHeight		= 60;
-		static constexpr uint32							kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
-		std::vector<uint8>								_fontTextureRaw;
-		ComPtr<ID3D11ShaderResourceView>				_fontTextureSrv;
+			DxShaderHeaderMemory										_shaderHeaderMemory;
+			DxShaderPool												_shaderPool;
+			std::unordered_map<std::string, DxObjectId>					_shaderIdMap;
+			DxBufferPool												_bufferPool;
 
-	private:
-		using TriangleIndexType							= uint16;
+		private:
+			ComPtr<ID3D11SamplerState>									_samplerState;
+			ComPtr<ID3D11BlendState>									_blendState;
 
-		uint32											_cachedTriangleVertexCount;
-		ComPtr<ID3D11Buffer>							_triangleVertexBuffer;
-		std::vector<fs::CppHlsl::VS_INPUT>				_triangleVertexArray;
-		uint32											_triangleVertexStride;
-		uint32											_triangleVertexOffset;
+		private:
+			static constexpr uint32										kFontTextureWidth		= 16 * kBitsPerByte;
+			static constexpr uint32										kFontTextureHeight		= 60;
+			static constexpr uint32										kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
+			std::vector<uint8>											_fontTextureRaw;
+			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
+	#pragma endregion
 
-		uint32											_cachedTriangleIndexCount;
-		std::vector<TriangleIndexType>					_triangleIndexArray;
-		ComPtr<ID3D11Buffer>							_triangleIndexBuffer;
-		uint32											_triangleIndexOffset;
-#pragma endregion
+		private:
+			fs::Language::CppHlsl										_cppHlslStructs;
+			fs::Language::CppHlsl										_cppHlslCbuffers;
 
-	private:
-		fs::Language::CppHlsl							_cppHlslStructs;
-		fs::Language::CppHlsl							_cppHlslCbuffers;
-
-	private:
-		fs::RectangleRenderer							_rectangleRenderer;
-	};
+		private:
+			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT>			_rectangleRendererBuffer;
+			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;
+		};
+	}
 }
 
 

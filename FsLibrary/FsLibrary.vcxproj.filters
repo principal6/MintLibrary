@@ -266,6 +266,12 @@
     <ClInclude Include="Language\CppHlslTypes.h">
       <Filter>Language\CppHlsl</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\TriangleBuffer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\TriangleBuffer.hpp">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

@@ -12,26 +12,29 @@
 
 namespace fs
 {
-	class RectangleRenderer final : public IRenderer
+	namespace SimpleRendering
 	{
-	public:
-								RectangleRenderer(fs::GraphicDevice* const graphicDevice) : IRenderer(graphicDevice) {}
-		virtual					~RectangleRenderer() = default;
+		class RectangleRenderer final : public IRenderer
+		{
+		public:
+									RectangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice) : IRenderer(graphicDevice) {}
+			virtual					~RectangleRenderer() = default;
 
-	public:
-		FS_INLINE void			setSize(const fs::Float2& size) { _size = size; }
+		public:
+			FS_INLINE void			setSize(const fs::Float2& size) { _size = size; }
 
-	public:
-		virtual void			drawColored() override final;
-		virtual void			drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
-		virtual void			drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
+		public:
+			virtual void			drawColored() override final;
+			virtual void			drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
+			virtual void			drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
 
-	private:
-		void					prepareIndexArray();
+		private:
+			void					prepareIndexArray();
 
-	private:
-		fs::Float2				_size;
-	};
+		private:
+			fs::Float2				_size;
+		};
+	}
 }
 
 

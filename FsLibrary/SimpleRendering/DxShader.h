@@ -12,76 +12,85 @@
 
 namespace fs
 {
-	using Microsoft::WRL::ComPtr;
-
-
-	class DxShaderHeaderMemory;
-	class GraphicDevice;
-	class DxShaderPool;
-
 	namespace Language
 	{
 		class CppHlslTypeInfo;
 	}
 
-
-	struct DxInputElementSet
+	namespace SimpleRendering
 	{
-		std::vector<std::string>				_semanticNameArray;
-		std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray;
-	};
-
-	enum class DxShaderVersion
-	{
-		v_4_0,
-	};
+		class DxShaderHeaderMemory;
+		class GraphicDevice;
+		class DxShaderPool;
 
 
-	class DxShader final : public IDxObject
-	{
-		friend DxShaderPool;
+		using Microsoft::WRL::ComPtr;
 
-	private:
-									DxShader(GraphicDevice* const graphicDevice, const DxShaderType shaderType);
 
-	public:
-		virtual						~DxShader() = default;
+		struct DxInputElementSet
+		{
+			std::vector<std::string>				_semanticNameArray;
+			std::vector<D3D11_INPUT_ELEMENT_DESC>	_inputElementDescriptorArray;
+		};
 
-	public:
-		void						bind() const noexcept;
+		enum class DxShaderVersion
+		{
+			v_4_0,
+		};
 
-	private:
-		DxInputElementSet			_inputElementSet;
-		ComPtr<ID3D11InputLayout>	_inputLayout;
-		ComPtr<ID3D10Blob>			_shaderBlob;
-		ComPtr<ID3D11DeviceChild>	_shader;
-		DxShaderType				_shaderType;
 
-	public:
-		static const DxShader		kNullInstance;
-	};
+		class DxShader final : public IDxObject
+		{
+			friend DxShaderPool;
+
+		private:
+										DxShader(GraphicDevice* const graphicDevice, const DxShaderType shaderType);
+
+		public:
+			virtual						~DxShader() = default;
+
+		public:
+			void						bind() const noexcept;
+
+		private:
+			DxInputElementSet			_inputElementSet;
+			ComPtr<ID3D11InputLayout>	_inputLayout;
+			ComPtr<ID3D10Blob>			_shaderBlob;
+			ComPtr<ID3D11DeviceChild>	_shader;
+			DxShaderType				_shaderType;
+
+		public:
+			static const DxShader		kNullInstance;
+		};
 
 	
-	class DxShaderPool final : public IDxObject
-	{
-	public:
-									DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory);
-		virtual						~DxShaderPool() = default;
+		class DxShaderPool final : public IDxObject
+		{
+		public:
+										DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory);
+			virtual						~DxShaderPool() = default;
 
-	public:
-		const DxObjectId&			pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
-		const DxObjectId&			pushNonVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
+		public:
+			const DxObjectId&			pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
+			const DxObjectId&			pushNonVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
 
-	public:
-		const DxShader&				getShader(const DxShaderType shaderType, const DxObjectId& objectId);
+		public:
+			void						bindShader(const DxShaderType shaderType, const DxObjectId& objectId);
+			
+		private:
+			const DxShader&				getShader(const DxShaderType shaderType, const DxObjectId& objectId);
 
-	private:
-		DxShaderHeaderMemory*		_shaderHeaderMemory;
+		private:
+			DxShaderHeaderMemory*		_shaderHeaderMemory;
 
-	public:
-		std::vector<DxShader>		_vertexShaderArray;
-		std::vector<DxShader>		_pixelShaderArray;
-	};
+		private:
+			std::vector<DxShader>		_vertexShaderArray;
+			std::vector<DxShader>		_pixelShaderArray;
+
+		private:
+			DxObjectId					_boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];
+		};
+	}
 }
 
 
