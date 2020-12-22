@@ -14,7 +14,7 @@ namespace fs
 			__noop;
 		}
 
-		void CppHlsl::parseCppFile(const char* const fileName)
+		void CppHlsl::parseCppHlslFile(const char* const fileName)
 		{
 			TextFileReader textFileReader;
 			textFileReader.open(fileName);
@@ -25,11 +25,13 @@ namespace fs
 			_parser.execute();
 		}
 
-		void CppHlsl::generateHlslStringDefault(const CppHlslFileType fileType)
+		void CppHlsl::generateHlslString(const CppHlslFileType fileType)
 		{
 			_fileType = fileType;
 
 			_hlslString.clear();
+
+			uint32 cbufferIndex = 0;
 			const uint32 typeInfoCount = _parser.getTypeInfoCount();
 			for (uint32 typeInfoIndex = 0; typeInfoIndex < typeInfoCount; ++typeInfoIndex)
 			{
@@ -39,7 +41,9 @@ namespace fs
 				}
 				else if (_fileType == CppHlslFileType::Cbuffers)
 				{
-					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslCbuffer(_parser.getTypeInfo(typeInfoIndex), typeInfoIndex));
+					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslCbuffer(_parser.getTypeInfo(typeInfoIndex), cbufferIndex));
+
+					++cbufferIndex;
 				}
 			}
 		}

@@ -12,6 +12,7 @@
 namespace fs
 {
 #define CPP_HLSL_SEMANTIC_NAME(SemanticName)
+#define CPP_HLSL_REGISTER_INDEX(Index)
 
 
 	using uint				= uint32;

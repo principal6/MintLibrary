@@ -12,7 +12,7 @@ namespace fs
 {
 	namespace CppHlsl
 	{
-		struct CB_Transforms
+		struct CB_Transforms CPP_HLSL_REGISTER_INDEX(0)
 		{
 			float4x4			_cbProjectionMatrix;
 		};

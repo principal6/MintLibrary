@@ -21,6 +21,7 @@ namespace fs
 		const SymbolTableItem CppHlslParser::kInvalidGrammarSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, "InvalidGrammar") };
 		const SymbolTableItem CppHlslParser::kImplicitIntTypeSymbol{ SymbolTableItem(SymbolClassifier::Keyword, "int") };
 		const SymbolTableItem CppHlslParser::kGlobalNamespaceSymbol{ SymbolTableItem(SymbolClassifier::Identifier, "GlobalNamespace") };
+		const SymbolTableItem CppHlslParser::kRegisterIndexSymbol{ SymbolTableItem(SymbolClassifier::SPECIAL_USE, getCppHlslDefinition(CppHlslDefinitionEnum::RegisterIndex)) };
 		CppHlslParser::CppHlslParser(ILexer& lexer)
 			: IParser(lexer)
 		{
@@ -137,12 +138,17 @@ namespace fs
 				if (isTypeNameSet == false)
 				{
 					const std::string typeFullIdentifier = getTypeFullIdentifier(namespaceNode, childNode.getNodeData()._symbolTableItem._symbolString);
-					typeInfo.setDefaultInfoXXX(false, getTypeInfoIdentifierXXX(typeFullIdentifier));
+					typeInfo.setDefaultInfo(false, getTypeInfoIdentifierXXX(typeFullIdentifier));
 					isTypeNameSet = true;
 					continue;
 				}
 
-				if (childNode.getNodeData()._symbolTableItem == kMemberVariableListSymbol)
+				if (isCppHlslDefinition(CppHlslDefinitionEnum::RegisterIndex, childNode.getNodeData()._symbolTableItem._symbolString) == true)
+				{
+					const int32 registerIndex = std::stoi(childNode.getChildNode(0).getNodeDataXXX()._symbolTableItem._symbolString);
+					typeInfo.setRegisterIndex(registerIndex);
+				}
+				else if (childNode.getNodeData()._symbolTableItem == kMemberVariableListSymbol)
 				{
 					const uint32 memberCount = childNode.getChildNodeCount();
 					for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
@@ -157,17 +163,17 @@ namespace fs
 						const uint32 memberNodeChildCount = memberNode.getChildNodeCount();
 						const TreeNodeAccessor memberDeclNameNode = memberNode.getChildNode(0);
 						CppHlslTypeInfo memberTypeInfo;
-						memberTypeInfo.setDefaultInfoXXX(isMemberBuiltInType, getTypeInfoIdentifierXXX(memberTypeFullIdentifier));
-						memberTypeInfo.setDeclNameXXX(memberDeclNameNode.getNodeData()._symbolTableItem._symbolString);
+						memberTypeInfo.setDefaultInfo(isMemberBuiltInType, getTypeInfoIdentifierXXX(memberTypeFullIdentifier));
+						memberTypeInfo.setDeclName(memberDeclNameNode.getNodeData()._symbolTableItem._symbolString);
 						if (1 < memberNodeChildCount)
 						{
 							// Has semantic name
-							memberTypeInfo.setSemanticNameXXX(memberNode.getChildNode(1).getNodeDataXXX()._symbolTableItem._symbolString);
+							memberTypeInfo.setSemanticName(memberNode.getChildNode(1).getNodeDataXXX()._symbolTableItem._symbolString);
 						}
-						memberTypeInfo.setSizeXXX(typeTableItem.getTypeSize());
-						memberTypeInfo.setByteOffsetXXX(typeSize);
+						memberTypeInfo.setSize(typeTableItem.getTypeSize());
+						memberTypeInfo.setByteOffset(typeSize);
 
-						typeInfo.pushMemberXXX(memberTypeInfo);
+						typeInfo.pushMember(memberTypeInfo);
 
 						typeSize += typeTableItem.getTypeSize();
 					}
@@ -182,7 +188,7 @@ namespace fs
 
 			// Apply HLSL packing
 			const uint32 correctedTypeSize = (((typeSize - 1) / 16) + 1) * 16;
-			typeInfo.setSizeXXX(correctedTypeSize);
+			typeInfo.setSize(correctedTypeSize);
 
 			_typeInfoArray.emplace_back(typeInfo);
 			const uint64 typeInfoIndex = _typeInfoArray.size() - 1;
@@ -239,8 +245,20 @@ namespace fs
 				classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Identifier));
 
 				// TODO: final, abstract 등의 postfix 키워드...
-				const SymbolTableItem& postIdentifierSymbol = getSymbol(identifierSymbolPosition + 1);
-				if (postIdentifierSymbol._symbolClassifier == SymbolClassifier::StatementTerminator)
+				const uint64 postIdentifierSymbolPosition = identifierSymbolPosition + 1;
+				const SymbolTableItem& postIdentifierSymbol = getSymbol(postIdentifierSymbolPosition);
+				uint64 openSymbolPosition = postIdentifierSymbolPosition;
+				if (isCppHlslDefinition(CppHlslDefinitionEnum::RegisterIndex, postIdentifierSymbol._symbolString) == true)
+				{
+					const SymbolTableItem& registerIndexSymbol = getSymbol(postIdentifierSymbolPosition + 2);
+					TreeNodeAccessor registerIndexNode = classStructNode.insertChildNode(SyntaxTreeItem(kRegisterIndexSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_RegisterIndex));
+					const TreeNodeAccessor registerIndexIndexNode = registerIndexNode.insertChildNode(SyntaxTreeItem(registerIndexSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_RegisterIndex_Index));
+
+					openSymbolPosition = postIdentifierSymbolPosition + 4;
+				}
+
+				const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
+				if (openSymbol._symbolClassifier == SymbolClassifier::StatementTerminator)
 				{
 					// Declaration
 
@@ -248,18 +266,18 @@ namespace fs
 
 					return true;
 				}
-				else if (postIdentifierSymbol._symbolClassifier == SymbolClassifier::Grouper_Open)
+				else if (openSymbol._symbolClassifier == SymbolClassifier::Grouper_Open)
 				{
 					// Definition
 
-					if (postIdentifierSymbol._symbolString != "{")
+					if (openSymbol._symbolString != "{")
 					{
-						reportError(postIdentifierSymbol, ErrorType::WrongSuccessor, "'{' 가 와야 합니다.");
+						reportError(openSymbol, ErrorType::WrongSuccessor, "'{' 가 와야 합니다.");
 						return false;
 					}
 
 					uint64 depthMathcingCloseSymbolPosition = 0;
-					if (findNextDepthMatchingCloseSymbol(identifierSymbolPosition + 1, "}", depthMathcingCloseSymbolPosition) == false)
+					if (findNextDepthMatchingCloseSymbol(openSymbolPosition, "}", depthMathcingCloseSymbolPosition) == false)
 					{
 						reportError(postIdentifierSymbol, ErrorType::NoMatchingGrouper, "'}' 를 찾지 못했습니다.");
 						return false;
@@ -272,7 +290,7 @@ namespace fs
 						return false;
 					}
 
-					uint64 currentPosition = identifierSymbolPosition + 2;
+					uint64 currentPosition = openSymbolPosition + 1;
 					CppHlslSubInfo_AccessModifier currentAccessModifier = (true == isStruct) ? CppHlslSubInfo_AccessModifier::Public : CppHlslSubInfo_AccessModifier::Private;
 					bool continueParsingMember = false;
 					while (true)
@@ -686,7 +704,7 @@ namespace fs
 							}
 							else
 							{
-								if (postIdentifierSymbol._symbolString == "CPP_HLSL_SEMANTIC_NAME")
+								if (isCppHlslDefinition(CppHlslDefinitionEnum::SemanticName, postIdentifierSymbol._symbolString) == true)
 								{
 									const SymbolTableItem& semanticNameSymbol = getSymbol(postTypeChunkPosition + 3);
 									const TreeNodeAccessor semanticNameNode = typeNode.insertChildNode(SyntaxTreeItem(semanticNameSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_SemanticName));
@@ -1889,7 +1907,7 @@ namespace fs
 			return result;
 		}
 
-		std::string CppHlslParser::serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 registerIndex)
+		std::string CppHlslParser::serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 cbufferIndex)
 		{
 			std::string result;
 
@@ -1897,7 +1915,7 @@ namespace fs
 			std::string typeName = extractPureTypeName(typeInfo.getTypeName());
 			result.append(typeName);
 			result.append(" : register(");
-			result.append("b" + std::to_string(registerIndex));
+			result.append("b" + std::to_string((typeInfo.isRegisterIndexValid() == true) ? typeInfo.getRegisterIndex() : cbufferIndex));
 			result.append(")\n{\n");
 
 			std::string semanticName;

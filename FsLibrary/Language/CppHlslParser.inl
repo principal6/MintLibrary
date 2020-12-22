@@ -22,51 +22,52 @@ namespace fs
 
 		inline CppHlslTypeInfo::CppHlslTypeInfo()
 			: _isBuiltIn{ false }
+			, _registerIndex{ kInvalidRegisterIndex }
 			, _size{ 0 }
 			, _byteOffset{ 0 }
 		{
 			__noop;
 		}
 
-		FS_INLINE void CppHlslTypeInfo::setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName)
+		FS_INLINE void CppHlslTypeInfo::setDefaultInfo(const bool isBuiltIn, const std::string& typeName)
 		{
 			_isBuiltIn = isBuiltIn;
 			_typeName = typeName;
 		}
 
-		FS_INLINE void CppHlslTypeInfo::setDeclNameXXX(const std::string& declName)
+		FS_INLINE void CppHlslTypeInfo::setDeclName(const std::string& declName)
 		{
 			_declName = declName;
 		}
 
-		FS_INLINE void CppHlslTypeInfo::setSemanticNameXXX(const std::string& semanticName)
-		{
-			_semanticName = semanticName;
-		}
-
-		FS_INLINE void CppHlslTypeInfo::setSizeXXX(const uint32 size)
+		FS_INLINE void CppHlslTypeInfo::setSize(const uint32 size)
 		{
 			_size = size;
 		}
 
-		FS_INLINE void CppHlslTypeInfo::setByteOffsetXXX(const uint32 byteOffset)
+		FS_INLINE void CppHlslTypeInfo::setByteOffset(const uint32 byteOffset)
 		{
 			_byteOffset = byteOffset;
 		}
 
-		FS_INLINE void CppHlslTypeInfo::pushMemberXXX(const CppHlslTypeInfo& member)
+		FS_INLINE void CppHlslTypeInfo::setSemanticName(const std::string& semanticName)
+		{
+			_semanticName = semanticName;
+		}
+
+		FS_INLINE void CppHlslTypeInfo::setRegisterIndex(const uint32 registerIndex)
+		{
+			_registerIndex = registerIndex;
+		}
+
+		FS_INLINE void CppHlslTypeInfo::pushMember(const CppHlslTypeInfo& member)
 		{
 			_memberArray.emplace_back(member);
 		}
 
-		FS_INLINE const uint32 CppHlslTypeInfo::getSize() const noexcept
+		FS_INLINE const bool CppHlslTypeInfo::isRegisterIndexValid() const noexcept
 		{
-			return _size;
-		}
-
-		inline const uint32 CppHlslTypeInfo::getByteOffset() const noexcept
-		{
-			return _byteOffset;
+			return (_registerIndex != kInvalidRegisterIndex);
 		}
 
 		FS_INLINE const std::string& CppHlslTypeInfo::getTypeName() const noexcept
@@ -79,9 +80,24 @@ namespace fs
 			return _declName;
 		}
 
+		FS_INLINE const uint32 CppHlslTypeInfo::getSize() const noexcept
+		{
+			return _size;
+		}
+
+		inline const uint32 CppHlslTypeInfo::getByteOffset() const noexcept
+		{
+			return _byteOffset;
+		}
+
 		FS_INLINE const std::string& CppHlslTypeInfo::getSemanticName() const noexcept
 		{
 			return _semanticName;
+		}
+
+		FS_INLINE const uint32 CppHlslTypeInfo::getRegisterIndex() const noexcept
+		{
+			return _registerIndex;
 		}
 
 		FS_INLINE const uint32 CppHlslTypeInfo::getMemberCount() const noexcept

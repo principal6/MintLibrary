@@ -28,10 +28,10 @@ namespace fs
 										~CppHlsl() = default;
 
 		public:
-			void						parseCppFile(const char* const fileName);
+			void						parseCppHlslFile(const char* const fileName);
 		
 		public:
-			void						generateHlslStringDefault(const CppHlslFileType fileType);
+			void						generateHlslString(const CppHlslFileType fileType);
 		
 		public:
 			const char*					getHlslString() const noexcept;

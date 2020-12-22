@@ -88,8 +88,8 @@ namespace fs
 
 		// Shader header
 		{
-			_cppHlslStructs.parseCppFile("FsLibrary/SimpleRendering/CppHlslStructs.h");
-			_cppHlslStructs.generateHlslStringDefault(fs::Language::CppHlslFileType::Structs);
+			_cppHlslStructs.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslStructs.h");
+			_cppHlslStructs.generateHlslString(fs::Language::CppHlslFileType::Structs);
 			_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStructs.getHlslString());
 		}
 
@@ -98,8 +98,8 @@ namespace fs
 			fs::CppHlsl::CB_Transforms cbTransforms;
 			cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 			{
-				_cppHlslCbuffers.parseCppFile("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
-				_cppHlslCbuffers.generateHlslStringDefault(fs::Language::CppHlslFileType::Cbuffers);
+				_cppHlslCbuffers.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
+				_cppHlslCbuffers.generateHlslString(fs::Language::CppHlslFileType::Cbuffers);
 				_shaderHeaderMemory.pushHeader("VsConstantBuffers", _cppHlslCbuffers.getHlslString());
 
 				DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));

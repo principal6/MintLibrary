@@ -18,6 +18,28 @@ namespace fs
 		class ILexer;
 
 
+		static constexpr const char* const kCppHlslDefinitionArray[]
+		{
+			{ "CPP_HLSL_SEMANTIC_NAME" },
+			{ "CPP_HLSL_REGISTER_INDEX" },
+		};
+		enum class CppHlslDefinitionEnum
+		{
+			SemanticName,
+			RegisterIndex,
+			
+			COUNT
+		};
+		FS_INLINE static constexpr const char* const getCppHlslDefinition(const CppHlslDefinitionEnum cppHlslDefinitionEnum)
+		{
+			return kCppHlslDefinitionArray[static_cast<uint32>(cppHlslDefinitionEnum)];
+		}
+		FS_INLINE static const bool isCppHlslDefinition(const CppHlslDefinitionEnum cppHlslDefinitionEnum, const std::string& cmpString)
+		{
+			return cmpString.compare(getCppHlslDefinition(cppHlslDefinitionEnum)) == 0;
+		}
+		
+
 		enum CppHlslSyntaxClassifier : SyntaxClassifierEnumType
 		{
 			CppHlslSyntaxClassifier_Preprocessor_Include,
@@ -55,6 +77,8 @@ namespace fs
 			CppHlslSyntaxClassifier_Namespace,
 
 			CppHlslSyntaxClassifier_SemanticName,
+			CppHlslSyntaxClassifier_RegisterIndex,
+			CppHlslSyntaxClassifier_RegisterIndex_Index,
 
 			CppHlslSyntaxClassifier_INVALID,
 		};
@@ -133,19 +157,24 @@ namespace fs
 												~CppHlslTypeInfo() = default;
 		
 		public:
-			void								setDefaultInfoXXX(const bool isBuiltIn, const std::string& typeName);
-			void								setDeclNameXXX(const std::string& declName);
-			void								setSemanticNameXXX(const std::string& semanticName);
-			void								setSizeXXX(const uint32 size);
-			void								setByteOffsetXXX(const uint32 byteOffset);
-			void								pushMemberXXX(const CppHlslTypeInfo& member);
+			void								setDefaultInfo(const bool isBuiltIn, const std::string& typeName);
+			void								setDeclName(const std::string& declName);
+			void								setSize(const uint32 size);
+			void								setByteOffset(const uint32 byteOffset);
+			void								setSemanticName(const std::string& semanticName);
+			void								setRegisterIndex(const uint32 registerIndex);
+			void								pushMember(const CppHlslTypeInfo& member);
 
 		public:
-			const uint32						getSize() const noexcept;
-			const uint32						getByteOffset() const noexcept;
+			const bool							isRegisterIndexValid() const noexcept;
+
+		public:
 			const std::string&					getTypeName() const noexcept;
 			const std::string&					getDeclName() const noexcept;
+			const uint32						getSize() const noexcept;
+			const uint32						getByteOffset() const noexcept;
 			const std::string&					getSemanticName() const noexcept;
+			const uint32						getRegisterIndex() const noexcept;
 			const uint32						getMemberCount() const noexcept;
 			const CppHlslTypeInfo&				getMember(const uint32 memberIndex) const noexcept;
 		
@@ -153,10 +182,14 @@ namespace fs
 			static const CppHlslTypeInfo		kInvalidTypeInfo;
 
 		private:
+			static constexpr uint32				kInvalidRegisterIndex = kUint32Max;
+
+		private:
 			bool								_isBuiltIn;
 			std::string							_typeName;		// namespace + name
 			std::string							_declName;
 			std::string							_semanticName;
+			uint32								_registerIndex;
 			uint32								_size;			// Byte count
 			uint32								_byteOffset;
 			std::vector<CppHlslTypeInfo>		_memberArray;	// Member variables
@@ -295,8 +328,10 @@ namespace fs
 		public:
 			static const DXGI_FORMAT					convertCppHlslTypeToDxgiFormat(const CppHlslTypeInfo& typeInfo);
 			static std::string							convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
+		
+		public:
 			static std::string							serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo);
-			static std::string							serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 registerIndex);
+			static std::string							serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 cbufferIndex);
 
 		private:
 			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;
@@ -323,6 +358,7 @@ namespace fs
 			static const SymbolTableItem				kInvalidGrammarSymbol;
 			static const SymbolTableItem				kImplicitIntTypeSymbol;
 			static const SymbolTableItem				kGlobalNamespaceSymbol;
+			static const SymbolTableItem				kRegisterIndexSymbol;
 		};
 	}
 }
