@@ -119,17 +119,17 @@ namespace fs
 		public:
 			FS_INLINE const bool		operator==(const DxObjectId& objectId) const noexcept
 			{
-				return objectId == _objectId;
+				return _objectId == objectId;
 			}
 
 			FS_INLINE const bool		operator<(const DxObjectId& objectId) const noexcept
 			{
-				return objectId < _objectId;
+				return _objectId < objectId;
 			}
 
 			FS_INLINE const bool		operator>(const DxObjectId& objectId) const noexcept
 			{
-				return objectId > _objectId;
+				return _objectId > objectId;
 			}
 
 		public:
