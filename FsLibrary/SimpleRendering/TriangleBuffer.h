@@ -34,6 +34,7 @@ namespace fs
 
 		public:
 			void											flush();
+			const bool										isReady() const noexcept;
 			void											render();
 
 		private:

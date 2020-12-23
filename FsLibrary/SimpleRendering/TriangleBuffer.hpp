@@ -41,10 +41,16 @@ namespace fs
 			_indexArray.clear();
 		}
 
+		template<typename T>
+		FS_INLINE const bool TriangleBuffer<T>::isReady() const noexcept
+		{
+			return _vertexArray.empty() == false;
+		}
+
 		template <typename T>
 		inline void TriangleBuffer<T>::render()
 		{
-			if (_vertexArray.empty() == true)
+			if (isReady() == false)
 			{
 				return;
 			}
@@ -60,18 +66,18 @@ namespace fs
 		template <typename T>
 		inline void TriangleBuffer<T>::prepareBuffer()
 		{
-			const uint32 triangleVertexCount = static_cast<uint32>(_vertexArray.size());
-			if (_vertexBuffer.Get() == nullptr || _cachedVertexCount < triangleVertexCount)
+			const uint32 vertexCount = static_cast<uint32>(_vertexArray.size());
+			if (_vertexBuffer.Get() == nullptr || _cachedVertexCount < vertexCount)
 			{
 				D3D11_BUFFER_DESC bufferDescriptor{};
 				bufferDescriptor.Usage			= D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-				bufferDescriptor.ByteWidth		= static_cast<UINT>(triangleVertexCount * _vertexStride);
+				bufferDescriptor.ByteWidth		= static_cast<UINT>(vertexCount * _vertexStride);
 				bufferDescriptor.BindFlags		= D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
 				bufferDescriptor.CPUAccessFlags	= D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 				bufferDescriptor.MiscFlags		= 0;
 				_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, nullptr, _vertexBuffer.ReleaseAndGetAddressOf());
 
-				_cachedVertexCount = triangleVertexCount;
+				_cachedVertexCount = vertexCount;
 			}
 
 			if (false == _vertexArray.empty())
@@ -79,24 +85,24 @@ namespace fs
 				D3D11_MAPPED_SUBRESOURCE mappedVertexResource{};
 				if (_graphicDevice->getDxDeviceContext()->Map(_vertexBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexResource) == S_OK)
 				{
-					memcpy(mappedVertexResource.pData, &_vertexArray[0], static_cast<size_t>(triangleVertexCount) * _vertexStride);
+					memcpy(mappedVertexResource.pData, &_vertexArray[0], static_cast<size_t>(vertexCount) * _vertexStride);
 
 					_graphicDevice->getDxDeviceContext()->Unmap(_vertexBuffer.Get(), 0);
 				}
 			}
 
-			const uint32 triangleIndexCount = static_cast<uint32>(_indexArray.size());
-			if (_indexBuffer.Get() == nullptr || _cachedIndexCount < triangleIndexCount)
+			const uint32 indexCount = static_cast<uint32>(_indexArray.size());
+			if (_indexBuffer.Get() == nullptr || _cachedIndexCount < indexCount)
 			{
 				D3D11_BUFFER_DESC bufferDescriptor{};
 				bufferDescriptor.Usage			= D3D11_USAGE::D3D11_USAGE_DYNAMIC;
-				bufferDescriptor.ByteWidth		= static_cast<UINT>(triangleIndexCount * sizeof(TriangleIndexType));
+				bufferDescriptor.ByteWidth		= static_cast<UINT>(indexCount * sizeof(TriangleIndexType));
 				bufferDescriptor.BindFlags		= D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
 				bufferDescriptor.CPUAccessFlags	= D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 				bufferDescriptor.MiscFlags		= 0;
 				_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, nullptr, _indexBuffer.ReleaseAndGetAddressOf());
 
-				_cachedIndexCount = triangleIndexCount;
+				_cachedIndexCount = indexCount;
 			}
 
 			if (false == _indexArray.empty())
@@ -104,7 +110,7 @@ namespace fs
 				D3D11_MAPPED_SUBRESOURCE mappedIndexResource{};
 				if (_graphicDevice->getDxDeviceContext()->Map(_indexBuffer.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexResource) == S_OK)
 				{
-					memcpy(mappedIndexResource.pData, &_indexArray[0], static_cast<size_t>(triangleIndexCount) * sizeof(TriangleIndexType));
+					memcpy(mappedIndexResource.pData, &_indexArray[0], static_cast<size_t>(indexCount) * sizeof(TriangleIndexType));
 
 					_graphicDevice->getDxDeviceContext()->Unmap(_indexBuffer.Get(), 0);
 				}
