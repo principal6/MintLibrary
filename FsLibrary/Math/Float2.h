@@ -10,6 +10,8 @@
 
 namespace fs
 {
+	class Int2;
+
 	// No SIMD
 	class alignas(8) Float2 final
 	{
@@ -17,6 +19,7 @@ namespace fs
 								Float2();
 		explicit				Float2(const float s);
 		explicit				Float2(const float x, const float y);
+		explicit				Float2(const Int2& rhs);
 								Float2(const Float2& rhs)				= default;
 								Float2(Float2&& rhs) noexcept			= default;
 								~Float2()								= default;

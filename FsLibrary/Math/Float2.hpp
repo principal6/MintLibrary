@@ -5,25 +5,32 @@
 #include <Math/Float2.h>
 
 #include <Math/MathCommon.h>
+#include <Math/Int2.hpp>
 
 
 namespace fs
 {
-	FS_INLINE Float2::Float2()
+	inline Float2::Float2()
 		: Float2(0.0f)
 	{
 		__noop;
 	}
 
-	FS_INLINE Float2::Float2(const float s)
+	inline Float2::Float2(const float s)
 		: Float2(s, s)
 	{
 		__noop;
 	}
 
-	FS_INLINE Float2::Float2(const float x, const float y)
+	inline Float2::Float2(const float x, const float y)
 		: _x{ x }
 		, _y{ y }
+	{
+		__noop;
+	}
+
+	inline Float2::Float2(const Int2& rhs)
+		: Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
 	{
 		__noop;
 	}
