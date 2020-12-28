@@ -10,8 +10,8 @@ namespace fs
 {
 	namespace Window
 	{
-#define RETURN_OK _creationError = CreationError::None; return true
-#define RETURN_FAIL(error) _creationError = error; return false
+#define FS_WINDOW_RETURN_OK _creationError = CreationError::None; return true
+#define FS_WINDOW_RETURN_FAIL(error) _creationError = error; return false
 
 
 #pragma region Windows Window Pool
@@ -53,12 +53,12 @@ namespace fs
 			_hInstance = GetModuleHandleW(nullptr);
 			if (_hInstance == nullptr)
 			{
-				RETURN_FAIL(CreationError::FailedToGetInstanceHandle);
+				FS_WINDOW_RETURN_FAIL(CreationError::FailedToGetInstanceHandle);
 			}
 
 			if (creationData._title == nullptr)
 			{
-				RETURN_FAIL(CreationError::NullptrString);
+				FS_WINDOW_RETURN_FAIL(CreationError::NullptrString);
 			}
 
 			const COLORREF backgroundColor = RGB(
@@ -102,12 +102,15 @@ namespace fs
 				creationData._size._x, creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
 			if (_hWnd == nullptr)
 			{
-				RETURN_FAIL(CreationError::FailedToCreateWindow);
+				FS_WINDOW_RETURN_FAIL(CreationError::FailedToCreateWindow);
 			}
 
-			RECT rect;
-			GetWindowRect(_hWnd, &rect);
-			_creationData._position.set(rect.left, rect.top);
+			RECT windowRect;
+			GetWindowRect(_hWnd, &windowRect);
+			AdjustWindowRect(&windowRect, windowStyle, FALSE);
+			
+			const Int2 adjustedSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+			MoveWindow(_hWnd, _creationData._position._x, _creationData._position._y, adjustedSize._x, adjustedSize._y, TRUE);
 
 			ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -115,7 +118,7 @@ namespace fs
 
 			windowsWindowPool.insertWindow(_hWnd, this);
 
-			RETURN_OK;
+			FS_WINDOW_RETURN_OK;
 		}
 
 		void WindowsWindow::destroy() noexcept
