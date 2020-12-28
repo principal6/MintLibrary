@@ -46,6 +46,15 @@ namespace fs
 			return windowsWindowPool.redirectMessage(hWnd, Msg, wParam, lParam);
 		}
 
+		WindowsWindow::WindowsWindow()
+			: _windowStyle{}
+			, _hWnd{}
+			, _hInstance{}
+			, _msg{}
+		{
+			__noop;
+		}
+
 		bool WindowsWindow::create(const CreationData& creationData) noexcept
 		{
 			_creationData = creationData;
@@ -80,17 +89,17 @@ namespace fs
 			windowClass.style = CS_VREDRAW | CS_HREDRAW;
 			RegisterClassExW(&windowClass);
 
-			uint32 windowStyle = WS_OVERLAPPED;
+			_windowStyle = WS_OVERLAPPED;
 			switch (creationData._style)
 			{
 			case Style::Default:
-				windowStyle = WS_OVERLAPPEDWINDOW;
+				_windowStyle = WS_OVERLAPPEDWINDOW;
 				break;
 			case Style::Clean:
-				windowStyle = WS_POPUP;
+				_windowStyle = WS_POPUP;
 				break;
 			case Style::Resizable:
-				windowStyle = WS_THICKFRAME;
+				_windowStyle = WS_THICKFRAME;
 				break;
 			default:
 				break;
@@ -98,19 +107,14 @@ namespace fs
 
 			const int32 x = (creationData._position._x == kInt32Min) ? CW_USEDEFAULT : creationData._position._x;
 			const int32 y = (creationData._position._y == kInt32Min) ? CW_USEDEFAULT : creationData._position._y;
-			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, creationData._title, windowStyle, x, y,
+			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, creationData._title, _windowStyle, x, y,
 				creationData._size._x, creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
 			if (_hWnd == nullptr)
 			{
 				FS_WINDOW_RETURN_FAIL(CreationError::FailedToCreateWindow);
 			}
 
-			RECT windowRect;
-			GetWindowRect(_hWnd, &windowRect);
-			AdjustWindowRect(&windowRect, windowStyle, FALSE);
-			
-			const Int2 adjustedSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
-			MoveWindow(_hWnd, _creationData._position._x, _creationData._position._y, adjustedSize._x, adjustedSize._y, TRUE);
+			size(creationData._size);
 
 			ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -145,8 +149,15 @@ namespace fs
 
 		void WindowsWindow::size(const Int2& newSize)
 		{
-			_creationData._size = newSize;
-		
+			RECT windowRect;
+			windowRect.left = _creationData._position._x;
+			windowRect.top = _creationData._position._y;
+			windowRect.bottom = windowRect.top + newSize._y;
+			windowRect.right = windowRect.left +newSize._x;
+			AdjustWindowRect(&windowRect, _windowStyle, FALSE);
+
+			_creationData._size = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+
 			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y,
 				_creationData._size._x, _creationData._size._y, 0);
 		}

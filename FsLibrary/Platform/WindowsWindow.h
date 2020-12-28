@@ -37,7 +37,7 @@ namespace fs
 			friend WindowsWindowPool;
 
 		public:
-												WindowsWindow() = default;
+												WindowsWindow();
 			virtual								~WindowsWindow() = default;
 
 		public:
@@ -58,9 +58,10 @@ namespace fs
 			LRESULT								processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
 		protected:
-			HWND								_hWnd{};
-			HINSTANCE							_hInstance{};
-			MSG									_msg{};
+			uint32								_windowStyle;
+			HWND								_hWnd;
+			HINSTANCE							_hInstance;
+			MSG									_msg;
 		};
 #pragma endregion
 	}
