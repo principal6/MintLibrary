@@ -9,6 +9,8 @@
 #include <Math/Float3.h>
 #include <Math/Float4.h>
 
+#include <SimpleRendering/IDxObject.h>
+
 
 namespace fs
 {
@@ -25,23 +27,18 @@ namespace fs
 			virtual									~IRenderer() = default;
 
 		public:
-			FS_INLINE void							setPosition(const fs::Float3& position) { _position = position; }
-
-			void									setColor(const fs::Float4& color);
-			void									setColor(const std::vector<fs::Float4>& colorArray);
+			virtual void							initializeShaders() noexcept abstract;
+			virtual void							flushData() noexcept abstract;
+			virtual void							render() noexcept abstract;
 
 		public:
-			virtual void							drawColored() abstract;
-			virtual void							drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
-			virtual void							drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) abstract;
+			void									setPosition(const fs::Float3& position) noexcept;
+			void									setColor(const fs::Float4& color) noexcept;
+			void									setColor(const std::vector<fs::Float4>& colorArray) noexcept;
 
 		protected:
-			FS_INLINE const fs::Float4&				getColorInternal(const uint32 index)
-			{
-				const uint32 colorCount = static_cast<uint32>(_colorArray.size());
-				return (colorCount <= index) ? _defaultColor : _colorArray[index];
-			}
-
+			const fs::Float4&						getColorInternal(const uint32 index) const noexcept;
+		
 		protected:
 			fs::SimpleRendering::GraphicDevice*		_graphicDevice;
 			fs::Float3								_position;
@@ -50,6 +47,9 @@ namespace fs
 		};
 	}
 }
+
+
+#include <SimpleRendering/IRenderer.inl>
 
 
 #endif // !FS_I_RENDERER_H

@@ -34,8 +34,8 @@ namespace fs
 			, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
 			, _shaderPool{ this, &_shaderHeaderMemory }
 			, _bufferPool{ this }
-			, _rectangleRendererBuffer{ this }
 			, _rectangleRenderer{ this }
+			, _shapeRenderer{ this }
 		{
 			__noop;
 		}
@@ -53,7 +53,7 @@ namespace fs
 		void GraphicDevice::createDxDevice()
 		{
 			const fs::Window::WindowsWindow* const windowsWindow = static_cast<const fs::Window::WindowsWindow*>(_window);
-			const Int2 windowSize = windowsWindow->size();
+			const Int2 windowSize = _window->size();
 
 			// Create SwapChain
 			{
@@ -85,8 +85,28 @@ namespace fs
 				_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 			}
 
+			initializeShaderHeaderMemory();
+			initializeShaders();
+			initializeSamplerStates();
+			initializeBlendStates();
 
-			// Shader header
+			// Viewport
+			{
+				D3D11_VIEWPORT viewport{};
+				viewport.Width = static_cast<FLOAT>(windowSize._x);
+				viewport.Height = static_cast<FLOAT>(windowSize._y);
+				viewport.MinDepth = 0.0f;
+				viewport.MaxDepth = 1.0f;
+				viewport.TopLeftX = viewport.TopLeftY = 0.0f;
+				_deviceContext->RSSetViewports(1, &viewport);
+			}
+		}
+
+		void GraphicDevice::initializeShaderHeaderMemory()
+		{
+			const Int2 windowSize = _window->size();
+
+			// Structs
 			{
 				_cppHlslStructs.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslStructs.h");
 				_cppHlslStructs.generateHlslString(fs::Language::CppHlslFileType::Structs);
@@ -100,85 +120,23 @@ namespace fs
 				{
 					_cppHlslCbuffers.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
 					_cppHlslCbuffers.generateHlslString(fs::Language::CppHlslFileType::Cbuffers);
-					_shaderHeaderMemory.pushHeader("VsConstantBuffers", _cppHlslCbuffers.getHlslString());
+					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslCbuffers.getHlslString());
 
 					DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
 					_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, 0);
+					_bufferPool.getBuffer(id).bindToShader(DxShaderType::PixelShader, 0);
 				}
 			}
+		}
 
-			// Compile vertex shader and create input layer
-			{
-				static constexpr const char kShaderString[]
-				{
-					R"(
-					#include <ShaderStructDefinitions>
-					#include <VsConstantBuffers>
+		void GraphicDevice::initializeShaders()
+		{
+			_rectangleRenderer.initializeShaders();
+			_shapeRenderer.initializeShaders();
+		}
 
-					VS_OUTPUT main(VS_INPUT input)
-					{
-						VS_OUTPUT result;
-						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
-						result._color		= input._color;
-						result._texCoord	= input._texCoord;
-						result._flag		= input._flag;
-						return result;
-					}
-					)"
-				};
-				const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
-				_shaderIdMap[kDefaultVSId] = _shaderPool.pushVertexShader(kShaderString, "main", DxShaderVersion::v_4_0, &typeInfo);
-			}
-			{
-				static constexpr const char kShaderString[]
-				{
-					R"(
-					#include <ShaderStructDefinitions>
-					#include <VsConstantBuffers>
-
-					VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
-					{
-						VS_OUTPUT_SHAPE result;
-						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
-						result._info		= input._info;
-						result._color		= input._color;
-						return result;
-					}
-					)"
-				};
-				const Language::CppHlslTypeInfo& typeInfo = _cppHlslStructs.getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
-				_shaderIdMap["VSShape"] = _shaderPool.pushVertexShader(kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
-			}
-
-			// Compile pixel shader
-			{
-				static constexpr const char kShaderString[]
-				{
-					R"(
-					#include <ShaderStructDefinitions>
-
-					sampler		sampler0;
-					Texture2D	texture0;
-				
-					float4 main(VS_OUTPUT input) : SV_Target
-					{
-						float4 result = input._color;
-						if (input._flag == 1)
-						{
-							result = texture0.Sample(sampler0, input._texCoord);
-						}
-						else if (input._flag == 2)
-						{
-							result *= texture0.Sample(sampler0, input._texCoord);
-						}
-						return result;
-					}
-					)"
-				};
-				_shaderIdMap[kDefaultPSId] = _shaderPool.pushNonVertexShader(kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
-			}
-
-			// Create texture sampler state
+		void GraphicDevice::initializeSamplerStates()
+		{
 			{
 				D3D11_SAMPLER_DESC samplerDescriptor{};
 				samplerDescriptor.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -192,8 +150,10 @@ namespace fs
 				_device->CreateSamplerState(&samplerDescriptor, _samplerState.ReleaseAndGetAddressOf());
 				_deviceContext->PSSetSamplers(0, 1, _samplerState.GetAddressOf());
 			}
+		}
 
-			// Blend state
+		void GraphicDevice::initializeBlendStates()
+		{
 			{
 				D3D11_BLEND_DESC blendDescriptor{};
 				blendDescriptor.AlphaToCoverageEnable = false;
@@ -209,17 +169,6 @@ namespace fs
 
 				const float kBlendFactor[4]{ 0, 0, 0, 0 };
 				_deviceContext->OMSetBlendState(_blendState.Get(), kBlendFactor, 0xFFFFFFFF);
-			}
-
-			// Viewport
-			{
-				D3D11_VIEWPORT viewport{};
-				viewport.Width = static_cast<FLOAT>(windowSize._x);
-				viewport.Height = static_cast<FLOAT>(windowSize._y);
-				viewport.MinDepth = 0.0f;
-				viewport.MaxDepth = 1.0f;
-				viewport.TopLeftX = viewport.TopLeftY = 0.0f;
-				_deviceContext->RSSetViewports(1, &viewport);
 			}
 		}
 
@@ -416,23 +365,27 @@ namespace fs
 		{
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 		
-			_rectangleRendererBuffer.flush();
+			_rectangleRenderer.flushData();
+			_shapeRenderer.flushData();
 		}
 
 		void GraphicDevice::endRendering()
 		{
-	#pragma region TODO: Render font
+#pragma region TODO: Render font
 			_deviceContext->PSSetShaderResources(0, 1, _fontTextureSrv.GetAddressOf());
-	#pragma endregion
+#pragma endregion
 
-	#pragma region Render RectangleRendererBuffer
-			_shaderPool.bindShader(DxShaderType::VertexShader, _shaderIdMap.at(kDefaultVSId));
-			_shaderPool.bindShader(DxShaderType::PixelShader, _shaderIdMap.at(kDefaultPSId));
-			
-			_rectangleRendererBuffer.render();
-	#pragma endregion
+#pragma region Renderers
+			_rectangleRenderer.render();
+			_shapeRenderer.render();
+#pragma endregion
 
 			_swapChain->Present(0, 0);
+		}
+		
+		const fs::Int2& GraphicDevice::getWindowSize() const noexcept
+		{
+			return _window->size();
 		}
 	}
 }

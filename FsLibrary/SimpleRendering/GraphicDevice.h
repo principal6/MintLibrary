@@ -11,13 +11,14 @@
 #include <Container/ScopeString.h>
 #include <Container/UniqueString.h>
 
-#include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/DxShaderHeaderMemory.h>
 #include <SimpleRendering/DxShader.h>
 #include <SimpleRendering/DxBuffer.h>
 #include <SimpleRendering/CppHlslStructs.h>
 #include <SimpleRendering/CppHlslCbuffers.h>
 #include <SimpleRendering/TriangleBuffer.h>
+#include <SimpleRendering/RectangleRenderer.h>
+#include <SimpleRendering/ShapeRenderer.h>
 
 #include <Language/CppHlsl.h>
 
@@ -38,8 +39,6 @@ namespace fs
 
 		class GraphicDevice final
 		{
-			friend RectangleRenderer;
-
 		public:
 																		GraphicDevice();
 																		~GraphicDevice() = default;
@@ -51,6 +50,10 @@ namespace fs
 			void														createDxDevice();
 
 		private:
+			void														initializeShaderHeaderMemory();
+			void														initializeShaders();
+			void														initializeSamplerStates();
+			void														initializeBlendStates();
 			void														createFontTextureFromMemory();
 
 		public:
@@ -58,11 +61,15 @@ namespace fs
 			void														endRendering();
 
 		public:
-			FS_INLINE fs::SimpleRendering::RectangleRenderer&			getRectangleRenderer() noexcept { return _rectangleRenderer; }
+			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
+			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
+			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
+			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
 
 		public:
-			FS_INLINE ID3D11Device*										getDxDevice() noexcept { return _device.Get(); }
-			FS_INLINE ID3D11DeviceContext*								getDxDeviceContext() noexcept { return _deviceContext.Get(); }
+			ID3D11Device*												getDxDevice() noexcept;
+			ID3D11DeviceContext*										getDxDeviceContext() noexcept;
+			const fs::Int2&												getWindowSize() const noexcept;
 
 		private:
 			const fs::Window::IWindow*									_window;
@@ -81,12 +88,8 @@ namespace fs
 			ComPtr<ID3D11RenderTargetView>								_backBufferRtv;
 
 		private:
-			static constexpr const char* const							kDefaultVSId{ "VSDefault" };
-			static constexpr const char* const							kDefaultPSId{ "PSDefault" };
-
 			DxShaderHeaderMemory										_shaderHeaderMemory;
 			DxShaderPool												_shaderPool;
-			std::unordered_map<std::string, DxObjectId>					_shaderIdMap;
 			DxBufferPool												_bufferPool;
 
 		private:
@@ -106,11 +109,14 @@ namespace fs
 			fs::Language::CppHlsl										_cppHlslCbuffers;
 
 		private:
-			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT>			_rectangleRendererBuffer;
 			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;
+			fs::SimpleRendering::ShapeRenderer							_shapeRenderer;
 		};
 	}
 }
+
+
+#include <SimpleRendering/GraphicDevice.inl>
 
 
 #endif // !FS_GRAPHIC_DEVICE_H

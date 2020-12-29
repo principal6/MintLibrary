@@ -272,6 +272,12 @@
     <ClInclude Include="SimpleRendering\TriangleBuffer.hpp">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\ShapeRenderer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\GraphicDevice.inl">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -331,6 +337,9 @@
     <ClCompile Include="Language\CppHlsl.cpp">
       <Filter>Language\CppHlsl</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleRendering\ShapeRenderer.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
@@ -350,6 +359,9 @@
     </None>
     <None Include="Language\CppHlslParser.inl">
       <Filter>Language\CppHlsl</Filter>
+    </None>
+    <None Include="SimpleRendering\IRenderer.inl">
+      <Filter>SimpleRendering</Filter>
     </None>
   </ItemGroup>
 </Project>

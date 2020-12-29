@@ -800,6 +800,17 @@ const bool testWindow()
 			rectangleRenderer.setColor(fs::Float4(1, 0, 0, 1));
 			rectangleRenderer.drawColoredTextured(fs::Float2(0, 0), fs::Float2(1, 1));
 		}
+		{
+			fs::SimpleRendering::ShapeRenderer& shapeRenderer = graphicDevice.getShapeRenderer();
+			
+			shapeRenderer.setPosition(fs::Float3(400.0f, 300.0f, 0.0f));
+			
+			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.5f, 1.0f));
+			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), 0.5f);
+
+			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
+			shapeRenderer.drawRoundedRectangle(fs::Int2(200, 100), 0.5f);
+		}
 		graphicDevice.endRendering();
 	}
 	return true;

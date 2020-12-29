@@ -91,12 +91,14 @@
     <ClInclude Include="SimpleRendering\CppHlslStructs.h" />
     <ClInclude Include="SimpleRendering\CppHlslCbuffers.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
+    <ClInclude Include="SimpleRendering\GraphicDevice.inl" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
     <ClInclude Include="SimpleRendering\DxShader.h" />
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="SimpleRendering\IRenderer.h" />
     <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
+    <ClInclude Include="SimpleRendering\ShapeRenderer.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.hpp" />
     <ClInclude Include="stdafx.h" />
@@ -123,6 +125,7 @@
     <ClCompile Include="SimpleRendering\IDxObject.cpp" />
     <ClCompile Include="SimpleRendering\IRenderer.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
+    <ClCompile Include="SimpleRendering\ShapeRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Container\FsLibrary.natvis" />
@@ -133,6 +136,7 @@
     <None Include="Language\IParser.inl" />
     <None Include="Language\LanguageCommon.inl" />
     <None Include="Profiler\ScopedCpuProfiler.inl" />
+    <None Include="SimpleRendering\IRenderer.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

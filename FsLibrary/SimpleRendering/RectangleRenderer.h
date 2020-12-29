@@ -8,6 +8,7 @@
 #include <CommonDefinitions.h>
 
 #include <SimpleRendering/IRenderer.h>
+#include <SimpleRendering/TriangleBuffer.h>
 
 
 namespace fs
@@ -17,22 +18,32 @@ namespace fs
 		class RectangleRenderer final : public IRenderer
 		{
 		public:
-									RectangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice) : IRenderer(graphicDevice) {}
-			virtual					~RectangleRenderer() = default;
+																	RectangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+			virtual													~RectangleRenderer() = default;
 
 		public:
-			FS_INLINE void			setSize(const fs::Float2& size) { _size = size; }
+			virtual void											initializeShaders() noexcept override final;
+			virtual void											flushData() noexcept override final;
+			virtual void											render() noexcept final;
 
 		public:
-			virtual void			drawColored() override final;
-			virtual void			drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
-			virtual void			drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize) override final;
+			FS_INLINE void											setSize(const fs::Float2& size) { _size = size; }
+
+		public:
+			void													drawColored();
+			void													drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize);
+			void													drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize);
 
 		private:
-			void					prepareIndexArray();
+			void													prepareIndexArray();
 
 		private:
-			fs::Float2				_size;
+			fs::Float2												_size;
+		
+		private:
+			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT>		_rectangleRendererBuffer;
+			DxObjectId												_vertexShader;
+			DxObjectId												_pixelShader;
 		};
 	}
 }
