@@ -29,9 +29,11 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawRoundedRectangle(const fs::Int2& size, const float r);
+			void														drawRoundedRectangle(const fs::Int2& size, const float roundness);
+			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias);
 
 		private:
+			void														prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize);
 			void														prepareIndexArray();
 
 		private:
