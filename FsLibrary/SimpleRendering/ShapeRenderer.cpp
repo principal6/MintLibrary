@@ -56,10 +56,10 @@ namespace fs
 					static const float2 kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
 					static const float4 kTransparentColor = float4(0, 0, 0, 0);
 					
-					bool roundedRectangle(in float2 p, in float2 c, in float2 s, in float r)
+					bool roundedRectangle(in float2 p, in float2 s, in float r)
 					{
 						float2 hs = s / 2.0;
-						float2 offset = p - c + hs;
+						float2 offset = p + hs;
 						if (0.0 < offset.x && offset.x < s.x &&
 							0.0 < offset.y && offset.y < s.y)
 						{
@@ -91,10 +91,10 @@ namespace fs
 						return false;
 					}
 					
-					bool taperedRectangle(in float2 p, in float2 c, in float2 s, in float t, in float b)
+					bool taperedRectangle(in float2 p, in float2 s, in float t, in float b)
 					{
 						float2 hs = s / 2.0;
-						float2 offset = p - c + hs;
+						float2 offset = p + hs;
 						if (0.0 < offset.x && offset.x < s.x &&
 							0.0 < offset.y && offset.y < s.y)
 						{
@@ -126,14 +126,18 @@ namespace fs
 
 					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
-						const float2 p = normalizePosition(input._position);
-						const float2 c = input._infoA.xy * kScreenRatio;
+						float angle = input._infoB.z;
+						float cosAngle = cos(angle);
+						float sinAngle = sin(angle);
+						float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+						const float2 c = input._infoA.xy;
+						const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
 						const float2 s = input._infoA.zw * kScreenRatio;
 						
 						if (input._infoB.w == 1.0)
 						{						
 							const float r = input._infoB.x;
-							if (roundedRectangle(p, c, s, r) == true)
+							if (roundedRectangle(p, s, r) == true)
 							{
 								return input._color;
 							}
@@ -142,7 +146,7 @@ namespace fs
 						{
 							const float t = input._infoB.x;
 							const float b = input._infoB.y;
-							if (taperedRectangle(p, c, s, t, b) == true)
+							if (taperedRectangle(p, s, t, b) == true)
 							{
 								return input._color;
 							}
@@ -172,42 +176,46 @@ namespace fs
 			}
 		}
 
-		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness)
+		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle)
 		{
 			const fs::Float2 positionF = fs::Float2(_position._x, _position._y);
-			const fs::Float2 halfSizeF = fs::Float2(size) * 0.5f;
+			const fs::Float2 sizeF = fs::Float2(size);
+			const fs::Float2 halfSizeF = sizeF * 0.5f;
 			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
 			
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
 			v._infoA._x = (positionF._x / windowSizeF._x) * 2.0f - 1.0f;
 			v._infoA._y = (1.0f - (positionF._y / windowSizeF._y)) * 2.0f - 1.0f;
-			v._infoA._z = (size._x / windowSizeF._x) * 2.0f;
-			v._infoA._w = (size._y / windowSizeF._y) * 2.0f;
+			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
+			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
 			v._infoB._x = roundness;
+			v._infoB._z = angle;
 			v._infoB._w = 1.0f;
 
-			prepareVertexArray(v, positionF, halfSizeF);
+			prepareVertexArray(v, positionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
 		}
 
-		void ShapeRenderer::drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias)
+		void ShapeRenderer::drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle)
 		{
 			const fs::Float2 positionF = fs::Float2(_position._x, _position._y);
-			const fs::Float2 halfSizeF = fs::Float2(size) * 0.5f;
+			const fs::Float2 sizeF = fs::Float2(size);
+			const fs::Float2 halfSizeF = sizeF * 0.5f;
 			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
 			v._infoA._x = (positionF._x / windowSizeF._x) * 2.0f - 1.0f;
 			v._infoA._y = (1.0f - (positionF._y / windowSizeF._y)) * 2.0f - 1.0f;
-			v._infoA._z = (size._x / windowSizeF._x) * 2.0f;
-			v._infoA._w = (size._y / windowSizeF._y) * 2.0f;
+			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
+			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
 			v._infoB._x = tapering;
 			v._infoB._y = bias;
+			v._infoB._z = angle;
 			v._infoB._w = 2.0f;
 
-			prepareVertexArray(v, positionF, halfSizeF);
+			prepareVertexArray(v, positionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
 		}
 

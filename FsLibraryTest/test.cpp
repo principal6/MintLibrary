@@ -805,14 +805,14 @@ const bool testWindow()
 			
 			shapeRenderer.setPosition(fs::Float3(400.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), 0.5f);
+			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), 0.5f, 0.25f);
 
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(200, 100), 0.5f);
+			shapeRenderer.drawRoundedRectangle(fs::Int2(200, 100), 0.5f, 0.25f);
 
-			shapeRenderer.setPosition(fs::Float3(400.0f, 500.0f, 0.0f));
+			shapeRenderer.setPosition(fs::Float3(400.0f, 450.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f);
+			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 0.7854f);
 		}
 		graphicDevice.endRendering();
 	}
