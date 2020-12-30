@@ -115,6 +115,11 @@ namespace fs
 		return Float2(float2 / float2.length());
 	}
 
+	FS_INLINE Float2 Float2::abs(const Float2& rhs) noexcept
+	{
+		return Float2(::abs(rhs._x), ::abs(rhs._y));
+	}
+
 	FS_INLINE const float Float2::lengthSqaure() const noexcept
 	{
 		return dot(*this, *this);
@@ -130,26 +135,4 @@ namespace fs
 		_x = x;
 		_y = y;
 	}
-
-	/*
-	FS_INLINE void Float2::x(const float newX) noexcept
-	{
-		_x = newX;
-	}
-
-	FS_INLINE const float Float2::x() const noexcept
-	{
-		return _x;
-	}
-
-	FS_INLINE void Float2::y(const float newY) noexcept
-	{
-		_y = newY;
-	}
-
-	FS_INLINE const float Float2::y() const noexcept
-	{
-		return _y;
-	}
-	*/
 }

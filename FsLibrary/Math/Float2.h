@@ -51,6 +51,7 @@ namespace fs
 	public:
 		static const float		dot(const Float2& lhs, const Float2& rhs) noexcept;
 		static Float2			normalize(const Float2& float2) noexcept;
+		static Float2			abs(const Float2& rhs) noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;
@@ -58,14 +59,7 @@ namespace fs
 		
 	public:
 		void					set(const float x, const float y);
-		/*
-		void					x(const float newX) noexcept;
-		const float				x() const noexcept;
-		void					y(const float newY) noexcept;
-		const float				y() const noexcept;
-		*/
 
-	//private:
 	public:
 		float					_x;
 		float					_y;
