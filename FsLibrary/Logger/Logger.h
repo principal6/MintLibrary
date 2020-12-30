@@ -33,7 +33,7 @@ namespace fs
 	class Logger final
 	{
 		static constexpr uint32 kTimeBufferSize = 100;
-		static constexpr uint32 kFinalBufferSize = 500;
+		static constexpr uint32 kFinalBufferSize = 1024;
 
 	public:
 		~Logger();
