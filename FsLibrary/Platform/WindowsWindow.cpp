@@ -149,6 +149,8 @@ namespace fs
 
 		void WindowsWindow::size(const Int2& newSize)
 		{
+			_creationData._size = newSize;
+
 			RECT windowRect;
 			windowRect.left = _creationData._position._x;
 			windowRect.top = _creationData._position._y;
@@ -156,10 +158,8 @@ namespace fs
 			windowRect.right = windowRect.left +newSize._x;
 			AdjustWindowRect(&windowRect, _windowStyle, FALSE);
 
-			_creationData._size = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
-
-			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y,
-				_creationData._size._x, _creationData._size._y, 0);
+			_entireSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
 		}
 
 		const Int2& WindowsWindow::size() const noexcept
@@ -171,8 +171,7 @@ namespace fs
 		{
 			_creationData._position = newPosition;
 
-			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y,
-				_creationData._size._x, _creationData._size._y, 0);
+			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
 		}
 
 		const Int2& WindowsWindow::position() const noexcept

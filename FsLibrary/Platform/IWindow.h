@@ -108,6 +108,8 @@ namespace fs
 		public:
 			virtual void					size(const Int2& newSize) abstract;
 			virtual const Int2&				size() const noexcept { return _creationData._size; }
+			
+			virtual const Int2&				entireSize() const noexcept { return _entireSize; }
 
 			virtual void					position(const Int2& newPosition) abstract;
 			virtual const Int2&				position() const noexcept { return _creationData._position; }
@@ -115,6 +117,7 @@ namespace fs
 		protected:
 			bool							_isRunning{ false };
 			CreationData					_creationData{};
+			fs::Int2						_entireSize{};
 			CreationError					_creationError{};
 			std::queue<EventData>			_eventQueue{};
 		};
