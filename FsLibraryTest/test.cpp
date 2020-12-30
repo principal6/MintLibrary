@@ -813,6 +813,9 @@ const bool testWindow()
 			shapeRenderer.setPosition(fs::Float3(400.0f, 450.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.5f, 1.0f));
 			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 0.7854f);
+
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
+			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 10.0f);
 		}
 		graphicDevice.endRendering();
 	}

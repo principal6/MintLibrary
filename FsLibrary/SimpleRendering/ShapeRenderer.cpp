@@ -43,7 +43,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
-				_vertexShader = shaderPool.pushVertexShader(kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
+				_vertexShader = shaderPool.pushVertexShader("ShapeRendererVS", kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
 			}
 
 			{
@@ -118,6 +118,34 @@ namespace fs
 						}
 						return false;
 					}
+
+					static const float kLineThicknessFactor = 0.002;
+					bool bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
+					{
+						float factoredThickness = kLineThicknessFactor * thickness;
+						float2 segment = l1 - l0;
+						float2 direction = normalize(segment);
+						float2 p0 = pixelPosition - l0;
+						float t = dot(p0, direction);
+						float2 lp = l0 + direction * t;
+    
+						float lsl = length(segment);
+						if ((t < 0.0) || (lsl < t))
+						{
+							float d0 = distance(pixelPosition, (t < 0.0) ? l0 : l1);
+							if (factoredThickness <= d0)
+							{
+								return false;
+							}
+						}
+    
+						float dist = distance(lp, pixelPosition);
+						if (dist < factoredThickness)
+						{
+							return true;
+						}
+						return false;
+					}
 					
 					float2 normalizePosition(in float4 position)
 					{
@@ -126,16 +154,17 @@ namespace fs
 
 					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
-						float angle = input._infoB.z;
-						float cosAngle = cos(angle);
-						float sinAngle = sin(angle);
-						float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
-						const float2 c = input._infoA.xy;
-						const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
-						const float2 s = input._infoA.zw * kScreenRatio;
+						const float angle = input._infoB.z;
 						
 						if (input._infoB.w == 1.0)
-						{						
+						{
+							const float cosAngle = cos(angle);
+							const float sinAngle = sin(angle);
+							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2 c = input._infoA.xy;
+							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							
+							const float2 s = input._infoA.zw * kScreenRatio;
 							const float r = input._infoB.x;
 							if (roundedRectangle(p, s, r) == true)
 							{
@@ -144,9 +173,28 @@ namespace fs
 						}
 						else if (input._infoB.w == 2.0)
 						{
+							const float cosAngle = cos(angle);
+							const float sinAngle = sin(angle);
+							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2 c = input._infoA.xy;
+							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							
+							const float2 s = input._infoA.zw * kScreenRatio;
 							const float t = input._infoB.x;
 							const float b = input._infoB.y;
 							if (taperedRectangle(p, s, t, b) == true)
+							{
+								return input._color;
+							}
+						}
+						else if (input._infoB.w == 3.0)
+						{
+							const float2 p = normalizePosition(input._position);
+							
+							const float2 l0 = input._infoA.xy * kScreenRatio;
+							const float2 l1 = input._infoA.zw * kScreenRatio;
+							const float2 thickness = input._infoB.x;
+							if (bluntLine(p, l0, l1, thickness) == true)
 							{
 								return input._color;
 							}
@@ -155,7 +203,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader(kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+				_pixelShader = shaderPool.pushNonVertexShader("ShapeRendererPS", kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
 			}
 		}
 
@@ -178,36 +226,38 @@ namespace fs
 
 		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle)
 		{
-			const fs::Float2 positionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
+			const fs::Float2 normalizedCenterPosition = normalizePosition(centerPositionF, windowSizeF);
 			const fs::Float2 sizeF = fs::Float2(size);
 			const fs::Float2 halfSizeF = sizeF * 0.5f;
-			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
 			
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
-			v._infoA._x = (positionF._x / windowSizeF._x) * 2.0f - 1.0f;
-			v._infoA._y = (1.0f - (positionF._y / windowSizeF._y)) * 2.0f - 1.0f;
+			v._infoA._x = normalizedCenterPosition._x;
+			v._infoA._y = normalizedCenterPosition._y;
 			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
 			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
 			v._infoB._x = roundness;
 			v._infoB._z = angle;
 			v._infoB._w = 1.0f;
 
-			prepareVertexArray(v, positionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
 		}
 
 		void ShapeRenderer::drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle)
 		{
-			const fs::Float2 positionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
+			const fs::Float2 normalizedCenterPosition = normalizePosition(centerPositionF, windowSizeF);
 			const fs::Float2 sizeF = fs::Float2(size);
 			const fs::Float2 halfSizeF = sizeF * 0.5f;
-			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
-			v._infoA._x = (positionF._x / windowSizeF._x) * 2.0f - 1.0f;
-			v._infoA._y = (1.0f - (positionF._y / windowSizeF._y)) * 2.0f - 1.0f;
+			v._infoA._x = normalizedCenterPosition._x;
+			v._infoA._y = normalizedCenterPosition._y;
 			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
 			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
 			v._infoB._x = tapering;
@@ -215,8 +265,37 @@ namespace fs
 			v._infoB._z = angle;
 			v._infoB._w = 2.0f;
 
-			prepareVertexArray(v, positionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
+		}
+
+		void ShapeRenderer::drawLine(const fs::Int2& p0, const fs::Int2& p1, const float thickness)
+		{
+			const fs::Float2 p0F = fs::Float2(p0);
+			const fs::Float2 p1F = fs::Float2(p1);
+			const fs::Float2 centerPositionF = (p0F + p1F) * 0.5f;
+			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
+			const fs::Float2 normalizedP0 = normalizePosition(p0F, windowSizeF);
+			const fs::Float2 normalizedP1 = normalizePosition(p1F, windowSizeF);
+			const fs::Float2 sizeF = fs::Float2::abs(fs::Float2(p0 - p1));
+			const fs::Float2 halfSizeF = sizeF * 0.5f;
+
+			CppHlsl::VS_INPUT_SHAPE v;
+			v._color = _defaultColor;
+			v._infoA._x = normalizedP0._x;
+			v._infoA._y = normalizedP0._y;
+			v._infoB._z = normalizedP1._x;
+			v._infoB._w = normalizedP1._y;
+			v._infoB._x = thickness;
+			v._infoB._w = 3.0f;
+
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
+			prepareIndexArray();
+		}
+
+		fs::Float2 ShapeRenderer::normalizePosition(const fs::Float2& position, const fs::Float2& screenSize)
+		{
+			return fs::Float2((position._x / screenSize._x) * 2.0f - 1.0f, (1.0f - (position._y / screenSize._y)) * 2.0f - 1.0f);
 		}
 
 		void ShapeRenderer::prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize)

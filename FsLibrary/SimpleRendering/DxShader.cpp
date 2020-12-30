@@ -70,15 +70,15 @@ namespace fs
 			__noop;
 		}
 
-		const DxObjectId& DxShaderPool::pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
+		const DxObjectId& DxShaderPool::pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
 		{
 			DxShader shader(_graphicDevice, DxShaderType::VertexShader);
 
 			fs::ScopeStringA<20> version;
 			makeShaderVersion(version, DxShaderType::VertexShader, shaderVersion);
-			if (FAILED(D3DCompile(content, strlen(content), nullptr, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), nullptr)))
+			if (FAILED(D3DCompile(content, strlen(content), shaderIdentifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
-				return DxObjectId::kInvalidObjectId;
+				return reportCompileError();
 			}
 
 			if (FAILED(_graphicDevice->getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
@@ -116,15 +116,15 @@ namespace fs
 			return _vertexShaderArray.back().getId();
 		}
 
-		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType)
+		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType)
 		{
 			DxShader shader(_graphicDevice, shaderType);
 
 			fs::ScopeStringA<20> version;
 			makeShaderVersion(version, shaderType, shaderVersion);
-			if (FAILED(D3DCompile(content, strlen(content), nullptr, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), nullptr)))
+			if (FAILED(D3DCompile(content, strlen(content), shaderIdentifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
-				return DxObjectId::kInvalidObjectId;
+				return reportCompileError();
 			}
 		
 			if (shaderType == DxShaderType::PixelShader)
@@ -138,6 +138,18 @@ namespace fs
 				_pixelShaderArray.emplace_back(std::move(shader));
 				return _pixelShaderArray.back().getId();
 			}
+
+			return DxObjectId::kInvalidObjectId;
+		}
+
+		const DxObjectId& DxShaderPool::reportCompileError()
+		{
+			std::string errorMessages(reinterpret_cast<char*>(_errorMessageBlob->GetBufferPointer()));
+			
+			const size_t firstNewLinePos = errorMessages.find('\n');
+			const size_t secondNewLinePos = errorMessages.find('\n', firstNewLinePos + 1);
+			errorMessages = errorMessages.substr(0, secondNewLinePos);
+			FS_LOG_ERROR("±èÀå¿ø", "Shader Compile Error\n\n%s", errorMessages.c_str());
 
 			return DxObjectId::kInvalidObjectId;
 		}

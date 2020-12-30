@@ -71,8 +71,11 @@ namespace fs
 			virtual						~DxShaderPool() = default;
 
 		public:
-			const DxObjectId&			pushVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
-			const DxObjectId&			pushNonVertexShader(const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
+			const DxObjectId&			pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
+			const DxObjectId&			pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
+			
+		private:
+			const DxObjectId&			reportCompileError();
 
 		public:
 			void						bindShader(const DxShaderType shaderType, const DxObjectId& objectId);
@@ -80,6 +83,9 @@ namespace fs
 		private:
 			const DxShader&				getShader(const DxShaderType shaderType, const DxObjectId& objectId);
 
+		private:
+			ComPtr<ID3DBlob>			_errorMessageBlob;
+		
 		private:
 			DxShaderHeaderMemory*		_shaderHeaderMemory;
 

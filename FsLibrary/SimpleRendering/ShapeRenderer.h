@@ -31,8 +31,10 @@ namespace fs
 		public:
 			void														drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle);
 			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle);
+			void														drawLine(const fs::Int2& p0, const fs::Int2& p1, const float thickness);
 
 		private:
+			fs::Float2													normalizePosition(const fs::Float2& position, const fs::Float2& screenSize);
 			void														prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize);
 			void														prepareIndexArray();
 
