@@ -10,6 +10,21 @@ namespace fs
 {
 	namespace StringUtil
 	{
+		FS_INLINE void convertWideStringToString(const std::wstring& source, std::string& destination)
+		{
+			destination.resize(source.length());
+			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
+		}
+
+		FS_INLINE void excludeExtension(std::string& inoutText)
+		{
+			const size_t found = inoutText.find('.');
+			if (found != std::string::npos)
+			{
+				inoutText = inoutText.substr(0, found);
+			}
+		}
+
 		void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray)
 		{
 			if (inputString.empty() == true)

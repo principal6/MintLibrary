@@ -817,6 +817,11 @@ const bool testWindow()
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
 			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 10.0f);
 		}
+		{
+			fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
+			fontRenderer.setColor(fs::Float4(0.25f, 0.25f, 1.0f, 1.0f));
+			fontRenderer.drawDynamicText(L"abcd가나다라", fs::Int2(0, 20));
+		}
 		graphicDevice.endRendering();
 	}
 	return true;

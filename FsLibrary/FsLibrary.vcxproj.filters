@@ -278,6 +278,9 @@
     <ClInclude Include="SimpleRendering\GraphicDevice.inl">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\FontRenderer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -338,6 +341,9 @@
       <Filter>Language\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRendering\ShapeRenderer.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\FontRenderer.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>

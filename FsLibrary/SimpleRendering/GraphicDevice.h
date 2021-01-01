@@ -19,6 +19,7 @@
 #include <SimpleRendering/TriangleBuffer.h>
 #include <SimpleRendering/RectangleRenderer.h>
 #include <SimpleRendering/ShapeRenderer.h>
+#include <SimpleRendering/FontRenderer.h>
 
 #include <Language/CppHlsl.h>
 
@@ -64,6 +65,7 @@ namespace fs
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
 			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
 			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
+			fs::SimpleRendering::FontRenderer&							getFontRenderer() noexcept;
 			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
 
 		public:
@@ -95,6 +97,7 @@ namespace fs
 		private:
 			ComPtr<ID3D11SamplerState>									_samplerState;
 			ComPtr<ID3D11BlendState>									_blendState;
+	#pragma endregion
 
 		private:
 			static constexpr uint32										kFontTextureWidth		= 16 * kBitsPerByte;
@@ -102,7 +105,6 @@ namespace fs
 			static constexpr uint32										kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
 			std::vector<uint8>											_fontTextureRaw;
 			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
-	#pragma endregion
 
 		private:
 			fs::Language::CppHlsl										_cppHlslStructs;
@@ -111,6 +113,7 @@ namespace fs
 		private:
 			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;
 			fs::SimpleRendering::ShapeRenderer							_shapeRenderer;
+			fs::SimpleRendering::FontRenderer							_fontRenderer;
 		};
 	}
 }

@@ -18,6 +18,11 @@ namespace fs
 			return _shapeRenderer;
 		}
 
+		FS_INLINE fs::SimpleRendering::FontRenderer& GraphicDevice::getFontRenderer() noexcept
+		{
+			return _fontRenderer;
+		}
+
 		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslStructs() const noexcept
 		{
 			return _cppHlslStructs;

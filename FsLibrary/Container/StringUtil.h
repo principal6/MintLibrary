@@ -7,17 +7,21 @@
 
 #include <Container/Vector.h>
 #include <Container/DynamicString.h>
-#include <Container/Tree.h>
 
 
 namespace fs
 {
 	namespace StringUtil
 	{
-        FS_INLINE bool isNullOrEmpty(const char* const rawString)
+        FS_INLINE const bool isNullOrEmpty(const char* const rawString)
 		{
 			return (nullptr == rawString || '\0' == rawString[0]);
 		}
+
+        FS_INLINE const bool isNullOrEmpty(const wchar_t* const rawWideString)
+        {
+            return (nullptr == rawWideString || L'\0' == rawWideString[0]);
+        }
 
         static uint64 hashRawString64(const char* rawString)
         {
@@ -50,10 +54,22 @@ namespace fs
             return static_cast<uint32>(::strlen(rawString));
         }
 
+        FS_INLINE uint32 wcslen(const wchar_t* const rawWideString)
+        {
+            if (isNullOrEmpty(rawWideString) == true)
+            {
+                return 0;
+            }
+            return static_cast<uint32>(::wcslen(rawWideString));
+        }
+
         FS_INLINE const bool strcmp(const char* const a, const char* const b)
         {
             return (0 == ::strcmp(a, b));
         }
+
+        void convertWideStringToString(const std::wstring& source, std::string& destination);
+        void excludeExtension(std::string& inoutText);
 
         static void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray);
         static void tokenize(const fs::DynamicStringA& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<fs::DynamicStringA>& outArray);

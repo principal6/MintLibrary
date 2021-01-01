@@ -17,6 +17,11 @@ namespace fs
 		}
 
 		_byteArray.clear();
+
+		ifs.seekg(0, ifs.end);
+		const uint64 legth = ifs.tellg();
+		ifs.seekg(0, ifs.beg);
+		_byteArray.reserve(legth);
 		while (ifs.eof() == false)
 		{
 			byte readByte{ static_cast<byte>(ifs.get()) };

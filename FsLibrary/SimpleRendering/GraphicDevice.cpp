@@ -36,6 +36,7 @@ namespace fs
 			, _bufferPool{ this }
 			, _rectangleRenderer{ this }
 			, _shapeRenderer{ this }
+			, _fontRenderer{ this }
 		{
 			__noop;
 		}
@@ -48,6 +49,14 @@ namespace fs
 
 			createDxDevice();
 			createFontTextureFromMemory();
+
+			if (_fontRenderer.loadFont("FsLibrary/Assets/d2coding.fnt") == false)
+			{
+				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
+				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
+				_fontRenderer.bakeFont("FsLibrary/Assets/d2coding.ttf", 16, "FsLibrary/Assets/d2coding.fnt", 2048, 1, 1);
+				_fontRenderer.loadFont("FsLibrary/Assets/d2coding.fnt");
+			}
 		}
 
 		void GraphicDevice::createDxDevice()
@@ -133,6 +142,7 @@ namespace fs
 		{
 			_rectangleRenderer.initializeShaders();
 			_shapeRenderer.initializeShaders();
+			_fontRenderer.initializeShaders();
 		}
 
 		void GraphicDevice::initializeSamplerStates()
@@ -367,6 +377,7 @@ namespace fs
 		
 			_rectangleRenderer.flushData();
 			_shapeRenderer.flushData();
+			_fontRenderer.flushData();
 		}
 
 		void GraphicDevice::endRendering()
@@ -378,6 +389,7 @@ namespace fs
 #pragma region Renderers
 			_rectangleRenderer.render();
 			_shapeRenderer.render();
+			_fontRenderer.render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);

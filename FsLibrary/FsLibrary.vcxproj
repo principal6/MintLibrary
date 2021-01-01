@@ -88,6 +88,7 @@
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
+    <ClInclude Include="SimpleRendering\FontRenderer.h" />
     <ClInclude Include="SimpleRendering\CppHlslStructs.h" />
     <ClInclude Include="SimpleRendering\CppHlslCbuffers.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
@@ -118,6 +119,7 @@
     <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
+    <ClCompile Include="SimpleRendering\FontRenderer.cpp" />
     <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
@@ -206,13 +208,15 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Externals\freetype_2_10_4\include;$(ProjectDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Externals\freetype_2_10_4\include;$(ProjectDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -265,6 +269,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -286,6 +293,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

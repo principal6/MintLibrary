@@ -9,17 +9,17 @@ namespace fs
 {
 	namespace FileUtil
 	{
-		const bool isFile(const char* const fileName) noexcept
+		FS_INLINE const bool isFile(const char* const fileName) noexcept
 		{
 			return std::filesystem::is_regular_file(fileName);
 		}
 
-		const bool isDirectory(const char* const fileName) noexcept
+		FS_INLINE const bool isDirectory(const char* const fileName) noexcept
 		{
 			return std::filesystem::is_directory(fileName);
 		}
 
-		inline const bool isReadOnly(const char* const fileName) noexcept
+		FS_INLINE const bool isReadOnly(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -37,7 +37,7 @@ namespace fs
 			return false;
 		}
 
-		inline const bool exists(const char* const fileName) noexcept
+		FS_INLINE const bool exists(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -48,7 +48,7 @@ namespace fs
 			return true;
 		}
 
-		inline void unsetReadOnly(const char* const fileName) noexcept
+		FS_INLINE void unsetReadOnly(const char* const fileName) noexcept
 		{
 			auto status{ std::filesystem::status(fileName) };
 			auto type{ status.type() };
@@ -60,7 +60,7 @@ namespace fs
 			}
 		}
 
-		const bool deleteFile(const char* const fileName) noexcept
+		FS_INLINE const bool deleteFile(const char* const fileName) noexcept
 		{
 			if (exists(fileName) == true)
 			{
