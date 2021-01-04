@@ -55,7 +55,20 @@ namespace fs
 					
 					static const float2 kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
 					static const float4 kTransparentColor = float4(0, 0, 0, 0);
-					
+					static const float	kRoundnessAbsoluteBase = 2.0;
+
+					bool rectangle(in float2 p, in float2 s)
+					{
+						float2 hs = s / 2.0;
+						float2 offset = p + hs;
+						if (0.0 < offset.x && offset.x < s.x &&
+							0.0 < offset.y && offset.y < s.y)
+						{
+							return true;
+						}
+						return false;
+					}
+
 					bool roundedRectangle(in float2 p, in float2 s, in float r)
 					{
 						float2 hs = s / 2.0;
@@ -63,7 +76,7 @@ namespace fs
 						if (0.0 < offset.x && offset.x < s.x &&
 							0.0 < offset.y && offset.y < s.y)
 						{
-							float a = (min(s.x, s.y) / 2.0) * r;
+							float a = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
 							bool isBottom = offset.y < a;
 							bool isTop = s.y - a < offset.y;
 							
@@ -156,7 +169,21 @@ namespace fs
 					{
 						const float angle = input._infoB.z;
 						
-						if (input._infoB.w == 1.0)
+						if (input._infoB.w == 0.0)
+						{
+							const float cosAngle = cos(angle);
+							const float sinAngle = sin(angle);
+							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2 c = input._infoA.xy;
+							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							
+							const float2 s = input._infoA.zw * kScreenRatio;
+							if (rectangle(p, s) == true)
+							{
+								return input._color;
+							}
+						}
+						else if (input._infoB.w == 1.0)
 						{
 							const float cosAngle = cos(angle);
 							const float sinAngle = sin(angle);
@@ -222,6 +249,27 @@ namespace fs
 
 				_shapeBuffer.render();
 			}
+		}
+
+		void ShapeRenderer::drawRectangle(const fs::Int2& size, const float angle)
+		{
+			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
+			const fs::Float2 normalizedCenterPosition = normalizePosition(centerPositionF, windowSizeF);
+			const fs::Float2 sizeF = fs::Float2(size);
+			const fs::Float2 halfSizeF = sizeF * 0.5f;
+
+			CppHlsl::VS_INPUT_SHAPE v;
+			v._color = _defaultColor;
+			v._infoA._x = normalizedCenterPosition._x;
+			v._infoA._y = normalizedCenterPosition._y;
+			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
+			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
+			v._infoB._z = angle;
+			v._infoB._w = 0.0f;
+
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
+			prepareIndexArray();
 		}
 
 		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle)

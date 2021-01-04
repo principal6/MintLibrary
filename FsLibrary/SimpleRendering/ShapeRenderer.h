@@ -20,6 +20,9 @@ namespace fs
 		class ShapeRenderer final : public IRenderer
 		{
 		public:
+			static constexpr float										kRoundnessAbsoluteBase = 2.0f;
+
+		public:
 																		ShapeRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice);
 																		~ShapeRenderer() = default;
 
@@ -29,6 +32,7 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
+			void														drawRectangle(const fs::Int2& size, const float angle);
 			void														drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle);
 			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle);
 			void														drawLine(const fs::Int2& p0, const fs::Int2& p1, const float thickness);
