@@ -12,8 +12,28 @@ namespace fs
 {
 	namespace Profiler
 	{
+		static const uint64 getCurrentTimeMs() noexcept;
+		static const uint64 getCurrentTimeUs() noexcept;
+
+
+		class FpsCounter
+		{
+		public:
+			static void				count() noexcept;
+			static const uint64		getFps() noexcept;
+			
+		private:
+			static uint64			_frameTimeUs;
+			static uint64			_frameCounter;
+			static uint64			_fps;
+		};
+
+
 		class ScopedCpuProfiler
 		{
+			friend const uint64 getCurrentTimeMs() noexcept;
+			friend const uint64 getCurrentTimeUs() noexcept;
+
 		public:
 			struct Log
 			{
@@ -31,8 +51,6 @@ namespace fs
 		private:
 			class ScopedCpuProfilerLogger
 			{
-				
-
 			private:
 												ScopedCpuProfilerLogger() = default;
 												~ScopedCpuProfilerLogger() = default;
@@ -40,6 +58,7 @@ namespace fs
 			public:
 				static ScopedCpuProfilerLogger&	getInstance() noexcept;
 				static const uint64				getCurrentTimeMs() noexcept;
+				static const uint64				getCurrentTimeUs() noexcept;
 
 			public:
 				void							log(const ScopedCpuProfiler& profiler, const uint64 durationMs) noexcept;

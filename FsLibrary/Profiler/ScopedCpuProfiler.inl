@@ -1,3 +1,4 @@
+#include "ScopedCpuProfiler.h"
 #pragma once
 
 
@@ -5,6 +6,38 @@ namespace fs
 {
 	namespace Profiler
 	{
+		FS_INLINE const uint64 getCurrentTimeMs() noexcept
+		{
+			return ScopedCpuProfiler::ScopedCpuProfilerLogger::getCurrentTimeMs();
+		}
+
+		FS_INLINE const uint64 getCurrentTimeUs() noexcept
+		{
+			return ScopedCpuProfiler::ScopedCpuProfilerLogger::getCurrentTimeUs();
+		}
+
+
+		uint64 FpsCounter::_frameTimeUs		= 0;
+		uint64 FpsCounter::_frameCounter	= 0;
+		uint64 FpsCounter::_fps				= 0;
+		FS_INLINE void FpsCounter::count() noexcept
+		{
+			++_frameCounter;
+
+			if (1'000'000 <= fs::Profiler::getCurrentTimeUs() - _frameTimeUs)
+			{
+				_fps = _frameCounter;
+				_frameCounter = 0;
+				_frameTimeUs = fs::Profiler::getCurrentTimeUs();
+			}
+		}
+
+		FS_INLINE const uint64 FpsCounter::getFps() noexcept
+		{
+			return _fps;
+		}
+
+
 		inline ScopedCpuProfiler::Log::Log(const std::string& content, const uint64 startTimepointMs, const uint64 durationMs)
 			: _content{ content }
 			, _startTimepointMs{ startTimepointMs }
@@ -41,6 +74,12 @@ namespace fs
 		{
 			static std::chrono::steady_clock steadyClock;
 			return std::chrono::duration_cast<std::chrono::milliseconds>(steadyClock.now().time_since_epoch()).count();
+		}
+
+		FS_INLINE const uint64 ScopedCpuProfiler::ScopedCpuProfilerLogger::getCurrentTimeUs() noexcept
+		{
+			static std::chrono::steady_clock steadyClock;
+			return std::chrono::duration_cast<std::chrono::microseconds>(steadyClock.now().time_since_epoch()).count();
 		}
 
 		FS_INLINE void ScopedCpuProfiler::ScopedCpuProfilerLogger::log(const ScopedCpuProfiler& profiler, const uint64 durationMs) noexcept

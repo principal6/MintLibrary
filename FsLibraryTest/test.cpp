@@ -762,8 +762,11 @@ const bool testWindow()
 	SimpleRendering::GraphicDevice graphicDevice;
 	graphicDevice.initialize(&window);
 
+	uint64 previousFrameTimeMs = 0;
 	while (window.isRunning() == true)
 	{
+		const uint64 loopStartTimeMs = fs::Profiler::getCurrentTimeMs();
+		
 		if (window.hasEvent() == true)
 		{
 			EventData event = window.popEvent();
@@ -817,12 +820,21 @@ const bool testWindow()
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
 			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 10.0f);
 		}
+
 		{
 			fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
-			fontRenderer.setColor(fs::Float4(0.25f, 0.25f, 1.0f, 1.0f));
-			fontRenderer.drawDynamicText(L"abcd가나다라", fs::Int2(0, 20));
+
+			fontRenderer.setColor(fs::Float4(0.125f, 0.125f, 0.5f, 1.0f));
+			fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Int2(10, 20));
+			fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Int2(100, 20));
 		}
+
+		const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
+		previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
+
 		graphicDevice.endRendering();
+		
+		fs::Profiler::FpsCounter::count();
 	}
 	return true;
 }
