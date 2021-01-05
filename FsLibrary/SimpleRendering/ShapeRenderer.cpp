@@ -137,13 +137,14 @@ namespace fs
 					{
 						float factoredThickness = kLineThicknessFactor * thickness;
 						float2 segment = l1 - l0;
-						float2 direction = normalize(segment);
+						float segmentLength = length(segment);
+						float2 direction = segment / segmentLength;
+						
 						float2 p0 = pixelPosition - l0;
 						float t = dot(p0, direction);
 						float2 lp = l0 + direction * t;
     
-						float lsl = length(segment);
-						if ((t < 0.0) || (lsl < t))
+						if ((t < 0.0) || (segmentLength < t))
 						{
 							float d0 = distance(pixelPosition, (t < 0.0) ? l0 : l1);
 							if (factoredThickness <= d0)
@@ -174,7 +175,7 @@ namespace fs
 							const float cosAngle = cos(angle);
 							const float sinAngle = sin(angle);
 							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
-							const float2 c = input._infoA.xy;
+							const float2 c = input._infoA.xy * kScreenRatio;
 							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
@@ -188,7 +189,7 @@ namespace fs
 							const float cosAngle = cos(angle);
 							const float sinAngle = sin(angle);
 							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
-							const float2 c = input._infoA.xy;
+							const float2 c = input._infoA.xy * kScreenRatio;
 							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
@@ -203,7 +204,7 @@ namespace fs
 							const float cosAngle = cos(angle);
 							const float sinAngle = sin(angle);
 							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
-							const float2 c = input._infoA.xy;
+							const float2 c = input._infoA.xy * kScreenRatio;
 							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
@@ -332,18 +333,18 @@ namespace fs
 			v._color = _defaultColor;
 			v._infoA._x = normalizedP0._x;
 			v._infoA._y = normalizedP0._y;
-			v._infoB._z = normalizedP1._x;
-			v._infoB._w = normalizedP1._y;
+			v._infoA._z = normalizedP1._x;
+			v._infoA._w = normalizedP1._y;
 			v._infoB._x = thickness;
 			v._infoB._w = 3.0f;
 
-			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) + thickness * 1.25f));
 			prepareIndexArray();
 		}
 
 		fs::Float2 ShapeRenderer::normalizePosition(const fs::Float2& position, const fs::Float2& screenSize)
 		{
-			return fs::Float2((position._x / screenSize._x) * 2.0f - 1.0f, (1.0f - (position._y / screenSize._y)) * 2.0f - 1.0f);
+			return fs::Float2((position._x / screenSize._x) * 2.0f - 1.0f, -((position._y / screenSize._y) * 2.0f - 1.0f));
 		}
 
 		void ShapeRenderer::prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize)
