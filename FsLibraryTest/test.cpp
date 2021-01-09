@@ -798,10 +798,10 @@ const bool testWindow()
 			rectangleRenderer.setColor({ fs::Float4(0.5f, 0.5f, 0.5f, 1.0f), fs::Float4(0.5f, 1.0f, 0.5f, 1.0f) });
 			rectangleRenderer.drawColored();
 
-			rectangleRenderer.setPosition(fs::Float3(400.f, 300.f, 0));
-			rectangleRenderer.setSize(fs::Float2(400.f, 300.f));
-			rectangleRenderer.setColor(fs::Float4(1, 0, 0, 1));
-			rectangleRenderer.drawColoredTextured(fs::Float2(0, 0), fs::Float2(1, 1));
+			//rectangleRenderer.setPosition(fs::Float3(400.f, 300.f, 0));
+			//rectangleRenderer.setSize(fs::Float2(400.f, 300.f));
+			//rectangleRenderer.setColor(fs::Float4(1, 0, 0, 1));
+			//rectangleRenderer.drawColoredTextured(fs::Float2(0, 0), fs::Float2(1, 1));
 		}
 		{
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = graphicDevice.getShapeRenderer();
@@ -823,7 +823,7 @@ const bool testWindow()
 			shapeRenderer.drawRectangle(fs::Int2(210, 110), 0.0f);
 
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
-			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 10.0f);
+			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 20.0f);
 		}
 
 		{

@@ -26,6 +26,9 @@
 #include <Math/Float4x4.h>
 
 
+//#define FS_TEST_MEMORY_FONT_TEXTURE
+
+
 namespace fs
 {
 	namespace Window
@@ -55,7 +58,10 @@ namespace fs
 			void														initializeShaders();
 			void														initializeSamplerStates();
 			void														initializeBlendStates();
+
+#if defined FS_TEST_MEMORY_FONT_TEXTURE
 			void														createFontTextureFromMemory();
+#endif
 
 		public:
 			void														beginRendering();
@@ -99,12 +105,14 @@ namespace fs
 			ComPtr<ID3D11BlendState>									_blendState;
 	#pragma endregion
 
+#if defined FS_TEST_MEMORY_FONT_TEXTURE
 		private:
 			static constexpr uint32										kFontTextureWidth		= 16 * kBitsPerByte;
 			static constexpr uint32										kFontTextureHeight		= 60;
 			static constexpr uint32										kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
 			std::vector<uint8>											_fontTextureRaw;
 			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
+#endif
 
 		private:
 			fs::Language::CppHlsl										_cppHlslStructs;

@@ -53,6 +53,8 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 					
+					static const float	kDeltaTwoPixel = _cbProjectionMatrix[0][0];
+					static const float	kDeltaPixel = kDeltaTwoPixel / 2.0;
 					static const float2 kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
 					static const float4 kTransparentColor = float4(0, 0, 0, 0);
 					static const float	kRoundnessAbsoluteBase = 2.0;
@@ -69,39 +71,37 @@ namespace fs
 						return false;
 					}
 
-					bool roundedRectangle(in float2 p, in float2 s, in float r)
+					float roundedRectangle(in float2 p, in float2 s, in float r)
 					{
 						float2 hs = s / 2.0;
 						float2 offset = p + hs;
 						if (0.0 < offset.x && offset.x < s.x &&
 							0.0 < offset.y && offset.y < s.y)
 						{
-							float a = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
-							bool isBottom = offset.y < a;
-							bool isTop = s.y - a < offset.y;
+							float radius = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
+							bool isBottom = offset.y < radius;
+							bool isTop = s.y - radius < offset.y;
 							
 							// left
-							if (offset.x < a && (isBottom == true || isTop == true))
+							if (offset.x < radius && (isBottom == true || isTop == true))
 							{
-								float d = distance(float2(a, (isTop) ? s.y - a : a), offset);
-								if (a < d)
-								{
-									return false;
-								}
+								float dist = distance(float2(radius, (isTop) ? s.y - radius : radius), offset);
+								float displacement = dist - radius; // In noramlized pixel units
+								return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaTwoPixel));
 							}
 							
 							// right
-							if (s.x - a < offset.x && (isBottom == true || isTop == true))
+							if (s.x - radius < offset.x && (isBottom == true || isTop == true))
 							{
-								float d = distance(float2(s.x - a, (isTop) ? s.y - a : a), offset);
-								if (a < d)
-								{
-									return false;
-								}
+								float dist = distance(float2(s.x - radius, (isTop) ? s.y - radius : radius), offset);
+								float displacement = dist - radius; // In noramlized pixel units
+								return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaTwoPixel));
 							}
-							return true;
+							
+							return 1.0;
 						}
-						return false;
+						
+						return 0.0;
 					}
 					
 					bool taperedRectangle(in float2 p, in float2 s, in float t, in float b)
@@ -132,10 +132,9 @@ namespace fs
 						return false;
 					}
 
-					static const float kLineThicknessFactor = 0.002;
 					bool bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
 					{
-						float factoredThickness = kLineThicknessFactor * thickness;
+						float thicknessInPixels = kDeltaPixel * thickness;
 						float2 segment = l1 - l0;
 						float segmentLength = length(segment);
 						float2 direction = segment / segmentLength;
@@ -147,14 +146,14 @@ namespace fs
 						if ((t < 0.0) || (segmentLength < t))
 						{
 							float d0 = distance(pixelPosition, (t < 0.0) ? l0 : l1);
-							if (factoredThickness <= d0)
+							if (thicknessInPixels <= d0)
 							{
 								return false;
 							}
 						}
     
 						float dist = distance(lp, pixelPosition);
-						if (dist < factoredThickness)
+						if (dist < thicknessInPixels)
 						{
 							return true;
 						}
@@ -194,10 +193,8 @@ namespace fs
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float r = input._infoB.x;
-							if (roundedRectangle(p, s, r) == true)
-							{
-								return input._color;
-							}
+							const float ratio = roundedRectangle(p, s, r);
+							return float4(input._color.xyz, input._color.w * ratio);
 						}
 						else if (input._infoB.w == 2.0)
 						{

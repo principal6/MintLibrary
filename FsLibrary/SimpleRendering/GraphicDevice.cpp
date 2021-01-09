@@ -48,7 +48,10 @@ namespace fs
 			_window = window;
 
 			createDxDevice();
+
+#if defined FS_TEST_MEMORY_FONT_TEXTURE
 			createFontTextureFromMemory();
+#endif
 
 			if (_fontRenderer.loadFont("FsLibrary/Assets/d2coding.fnt") == false)
 			{
@@ -182,6 +185,7 @@ namespace fs
 			}
 		}
 
+#if defined FS_TEST_MEMORY_FONT_TEXTURE
 		void GraphicDevice::createFontTextureFromMemory()
 		{
 			// ### Copy and paste to see this better ###
@@ -370,6 +374,7 @@ namespace fs
 			srvDesc.Texture2D.MostDetailedMip = 0;
 			_device->CreateShaderResourceView(fontTexture.Get(), &srvDesc, _fontTextureSrv.ReleaseAndGetAddressOf());
 		}
+#endif
 
 		void GraphicDevice::beginRendering()
 		{
@@ -382,9 +387,9 @@ namespace fs
 
 		void GraphicDevice::endRendering()
 		{
-#pragma region TODO: Render font
+#if defined FS_TEST_MEMORY_FONT_TEXTURE
 			_deviceContext->PSSetShaderResources(0, 1, _fontTextureSrv.GetAddressOf());
-#pragma endregion
+#endif
 
 #pragma region Renderers
 			_rectangleRenderer.render();
