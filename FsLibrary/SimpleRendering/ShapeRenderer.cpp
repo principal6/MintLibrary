@@ -58,7 +58,24 @@ namespace fs
 					static const float2 kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
 					static const float4 kTransparentColor = float4(0, 0, 0, 0);
 					static const float	kRoundnessAbsoluteBase = 2.0;
-
+					
+					float2 normalizePosition(in float4 position)
+					{
+						return mul(float4(position.xy, 0.0, 1.0), _cbProjectionMatrix).xy * kScreenRatio;
+					}
+					
+					float calculateAlphaForAntiAliasing(in float dist, in float radius)
+					{
+						const float displacement = dist - radius; // In noramlized pixel units
+						
+						// Ver 1
+						//return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaPixel));
+						
+						// Ver 2
+						return (displacement < -kDeltaTwoPixel) ? 1.0 : saturate(1.0 - saturate((displacement + kDeltaPixel) / kDeltaTwoPixel));
+					}
+					
+					
 					bool rectangle(in float2 p, in float2 s)
 					{
 						float2 hs = s / 2.0;
@@ -86,16 +103,14 @@ namespace fs
 							if (offset.x < radius && (isBottom == true || isTop == true))
 							{
 								float dist = distance(float2(radius, (isTop) ? s.y - radius : radius), offset);
-								float displacement = dist - radius; // In noramlized pixel units
-								return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaTwoPixel));
+								return calculateAlphaForAntiAliasing(dist, radius);
 							}
 							
 							// right
 							if (s.x - radius < offset.x && (isBottom == true || isTop == true))
 							{
 								float dist = distance(float2(s.x - radius, (isTop) ? s.y - radius : radius), offset);
-								float displacement = dist - radius; // In noramlized pixel units
-								return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaTwoPixel));
+								return calculateAlphaForAntiAliasing(dist, radius);
 							}
 							
 							return 1.0;
@@ -132,7 +147,7 @@ namespace fs
 						return false;
 					}
 
-					bool bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
+					float bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
 					{
 						float thicknessInPixels = kDeltaPixel * thickness;
 						float2 segment = l1 - l0;
@@ -145,26 +160,22 @@ namespace fs
     
 						if ((t < 0.0) || (segmentLength < t))
 						{
-							float d0 = distance(pixelPosition, (t < 0.0) ? l0 : l1);
-							if (thicknessInPixels <= d0)
-							{
-								return false;
-							}
+							float distToBorder = distance(pixelPosition, (t < 0.0) ? l0 : l1);
+							//if (thicknessInPixels < distToBorder)
+							//{
+							//	return 0.0;
+							//}
+							return calculateAlphaForAntiAliasing(distToBorder, thicknessInPixels);
 						}
     
 						float dist = distance(lp, pixelPosition);
 						if (dist < thicknessInPixels)
 						{
-							return true;
+							return 1.0;
 						}
-						return false;
+						return 0.0;
 					}
 					
-					float2 normalizePosition(in float4 position)
-					{
-						return mul(float4(position.xy, 0.0, 1.0), _cbProjectionMatrix).xy * kScreenRatio;
-					}
-
 					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
 						const float angle = input._infoB.z;
@@ -193,8 +204,8 @@ namespace fs
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float r = input._infoB.x;
-							const float ratio = roundedRectangle(p, s, r);
-							return float4(input._color.xyz, input._color.w * ratio);
+							const float alphaFactor = roundedRectangle(p, s, r);
+							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
 						}
 						else if (input._infoB.w == 2.0)
 						{
@@ -219,10 +230,8 @@ namespace fs
 							const float2 l0 = input._infoA.xy * kScreenRatio;
 							const float2 l1 = input._infoA.zw * kScreenRatio;
 							const float2 thickness = input._infoB.x;
-							if (bluntLine(p, l0, l1, thickness) == true)
-							{
-								return input._color;
-							}
+							const float alphaFactor = bluntLine(p, l0, l1, thickness);
+							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
 						}
 						return kTransparentColor;
 					}

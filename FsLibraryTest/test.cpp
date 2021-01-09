@@ -823,7 +823,7 @@ const bool testWindow()
 			shapeRenderer.drawRectangle(fs::Int2(210, 110), 0.0f);
 
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
-			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 20.0f);
+			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 40.0f);
 		}
 
 		{
