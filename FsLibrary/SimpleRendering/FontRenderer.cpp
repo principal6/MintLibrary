@@ -486,16 +486,42 @@ namespace fs
 			}
 		}
 
-		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position)
+		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment)
 		{
 			auto& vertexArray = _rendererBuffer.vertexArray();
 
-			fs::Int2 currentPosition = position;
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
+			const float textWidth = calculateTextWidth(wideText, textLength);
+			
+			fs::Int2 currentPosition = position;
+			if (textHorzAlignment != TextHorzAlignment::Left)
+			{
+				currentPosition._x -= static_cast<int32>((textHorzAlignment == TextHorzAlignment::Center) ? textWidth * 0.5f : textWidth);
+			}
 			for (uint32 at = 0; at < textLength; ++at)
 			{
 				drawGlyph(wideText[at], currentPosition);
 			}
+		}
+
+		const float FontRenderer::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+		{
+			int32 totalWidth = 0;
+			for (uint32 textAt = 0; textAt < textLength; ++textAt)
+			{
+				const wchar_t& wideChar = wideText[textAt];
+				
+				uint64 glyphIndex = 0;
+				auto found = _glyphMap.find(wideChar);
+				if (found != _glyphMap.end())
+				{
+					glyphIndex = _glyphMap.at(wideChar);
+				}
+
+				const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+				totalWidth += glyphInfo._horiAdvance;
+			}
+			return static_cast<float>(totalWidth);
 		}
 
 		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Int2& position)
@@ -507,13 +533,14 @@ namespace fs
 				glyphIndex = _glyphMap.at(wideChar);
 			}
 
+			const float fontHeight = static_cast<float>(_fontSize);
 			const fs::Float2 positionF = fs::Float2(position);
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 			auto& vertexArray = _rendererBuffer.vertexArray();
 			
 			fs::CppHlsl::VS_INPUT v;
 			v._position._x = positionF._x + static_cast<float>(glyphInfo._horiBearingX);
-			v._position._y = positionF._y - static_cast<float>(glyphInfo._horiBearingY);
+			v._position._y = positionF._y + fontHeight - static_cast<float>(glyphInfo._horiBearingY);
 			v._color = _defaultColor;
 			v._texCoord = glyphInfo._uv0;
 			vertexArray.emplace_back(v);

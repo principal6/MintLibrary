@@ -64,6 +64,12 @@ namespace fs
 			wchar_t					_endWchar;
 		};
 
+		enum class TextHorzAlignment
+		{
+			Left,
+			Center,
+			Right
+		};
 
 		class FontRenderer final : public IRenderer
 		{
@@ -95,9 +101,10 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position);
+			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment = TextHorzAlignment::Left);
 		
 		private:
+			const float													calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
 			void														drawGlyph(const wchar_t wideChar, fs::Int2& position);
 
 		private:
