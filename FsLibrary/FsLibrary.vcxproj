@@ -100,6 +100,7 @@
     <ClInclude Include="SimpleRendering\IRenderer.h" />
     <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
     <ClInclude Include="SimpleRendering\ShapeRenderer.h" />
+    <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.hpp" />
     <ClInclude Include="stdafx.h" />

@@ -281,6 +281,9 @@
     <ClInclude Include="SimpleRendering\FontRenderer.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">

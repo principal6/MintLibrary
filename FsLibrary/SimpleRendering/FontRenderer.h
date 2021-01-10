@@ -9,6 +9,7 @@
 
 #include <Math/Float2.h>
 
+#include <SimpleRendering/SimpleRenderingCommon.h>
 #include <SimpleRendering/IRenderer.h>
 #include <SimpleRendering/TriangleBuffer.h>
 
@@ -62,13 +63,6 @@ namespace fs
 		private:
 			wchar_t					_startWchar;
 			wchar_t					_endWchar;
-		};
-
-		enum class TextHorzAlignment
-		{
-			Left,
-			Center,
-			Right
 		};
 
 		class FontRenderer final : public IRenderer
