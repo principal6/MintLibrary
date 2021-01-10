@@ -53,98 +53,253 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 					
-					static const float	kDeltaTwoPixel = _cbProjectionMatrix[0][0];
-					static const float	kDeltaPixel = kDeltaTwoPixel / 2.0;
-					static const float2 kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
-					static const float4 kTransparentColor = float4(0, 0, 0, 0);
-					static const float	kRoundnessAbsoluteBase = 2.0;
+					static float2x2 getRotationMatrix(in float angle)
+					{
+						const float cosAngle = cos(angle);
+						const float sinAngle = sin(angle);
+						return float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+					}
+					
+					static const float		kPi = 3.1415926535;
+					static const float		kPiOverTwo = kPi * 0.5;
+					static const float		kPiOverFour = kPiOverTwo * 0.5;
+					static const float		kDeltaTwoPixel = _cbProjectionMatrix[0][0];
+					static const float		kDeltaPixel = kDeltaTwoPixel / 2.0;
+					static const float		kAntiAliasingFactor = kDeltaTwoPixel;
+					static const float2		kScreenRatio = float2(1.0, -_cbProjectionMatrix[0][0] / _cbProjectionMatrix[1][1]);
+					static const float4		kTransparentColor = float4(0, 0, 0, 0);
+					static const float		kRoundnessAbsoluteBase = 2.0;
+					static const float2x2	kRotationMatrixRightAngle = getRotationMatrix(kPiOverTwo);
 					
 					float2 normalizePosition(in float4 position)
 					{
 						return mul(float4(position.xy, 0.0, 1.0), _cbProjectionMatrix).xy * kScreenRatio;
 					}
 					
-					float calculateAlphaForAntiAliasing(in float dist, in float radius)
+					float calculateRoundAlphaForAntiAliasing(in float dist, in float radius)
 					{
 						const float displacement = dist - radius; // In noramlized pixel units
-						
-						// Ver 1
-						//return (displacement < 0.0) ? 1.0 : saturate(1.0 - saturate(displacement / kDeltaPixel));
-						
-						// Ver 2
-						return (displacement < -kDeltaTwoPixel) ? 1.0 : saturate(1.0 - saturate((displacement + kDeltaPixel) / kDeltaTwoPixel));
+						return (displacement < -kAntiAliasingFactor) ? 1.0 : saturate(1.0 - saturate((displacement + kAntiAliasingFactor) / kAntiAliasingFactor));
 					}
 					
 					
-					bool rectangle(in float2 p, in float2 s)
+					float rectangle(in float2 p, in float2 s, in float2x2 rotationMatrix)
 					{
-						float2 hs = s / 2.0;
-						float2 offset = p + hs;
-						if (0.0 < offset.x && offset.x < s.x &&
-							0.0 < offset.y && offset.y < s.y)
+						// Half-size
+						const float2 hs = s / 2.0;
+						
+						// Rotated edge vectors
+						const float3 vL = float3(mul(rotationMatrix, float2(0.0, -s.y)), 0.0);
+						const float3 vT = float3(mul(rotationMatrix, float2(+s.x, 0.0)), 0.0);
+						
+						// Rotated position (offset from corners)
+						const float2 toLt = mul(rotationMatrix, float2(-hs.x, +hs.y));
+						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
+						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
+						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
+						
+						const float3 crossL = cross(vL, lt);
+						const float3 crossT = cross(lt, vT);
+						const float3 crossR = cross(-vL, rb);
+						const float3 crossB = cross(rb, -vT);
+						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
 						{
-							return true;
+							// Inside
+							const float2 nL = normalize(vT);
+							const float2 nT = normalize(vL);
+							
+							const float dotL = dot(lt, nL);
+							const float dotT = dot(lt, nT);
+							const float dotR = dot(rb, -nL);
+							const float dotB = dot(rb, -nT);
+							
+							// Close to left border
+							if (dotL <= kAntiAliasingFactor)
+							{
+								return dotL / kAntiAliasingFactor;
+							}
+							
+							// Close to top border
+							if (dotT <= kAntiAliasingFactor)
+							{
+								return dotT / kAntiAliasingFactor;
+							}
+							
+							// Close to right border
+							if (dotR <= kAntiAliasingFactor)
+							{
+								return dotR / kAntiAliasingFactor;
+							}
+							
+							// Close to bottom border
+							if (dotB <= kAntiAliasingFactor)
+							{
+								return dotB / kAntiAliasingFactor;
+							}
+							
+							// Body
+							return 1.0;
 						}
-						return false;
+						
+						// Outside
+						return 0.0;
 					}
 
-					float roundedRectangle(in float2 p, in float2 s, in float r)
+					float roundedRectangle(in float2 p, in float2 s, in float r, in float2x2 rotationMatrix)
 					{
-						float2 hs = s / 2.0;
-						float2 offset = p + hs;
-						if (0.0 < offset.x && offset.x < s.x &&
-							0.0 < offset.y && offset.y < s.y)
+						// Half-size
+						const float2 hs = s / 2.0;
+						
+						// Rotated edge vectors
+						const float3 vL = float3(mul(rotationMatrix, float2(0.0, -s.y)), 0.0);
+						const float3 vT = float3(mul(rotationMatrix, float2(+s.x, 0.0)), 0.0);
+						
+						// Rotated position (offset from corners)
+						const float2 toLt = mul(rotationMatrix, float2(-hs.x, +hs.y));
+						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
+						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
+						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
+						
+						const float3 crossL = cross(vL, lt);
+						const float3 crossT = cross(lt, vT);
+						const float3 crossR = cross(-vL, rb);
+						const float3 crossB = cross(rb, -vT);
+						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
 						{
-							float radius = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
-							bool isBottom = offset.y < radius;
-							bool isTop = s.y - radius < offset.y;
+							// Inside
+							const float radius = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
+							const float2 nL = normalize(vT);
+							const float2 nT = normalize(vL);
 							
-							// left
-							if (offset.x < radius && (isBottom == true || isTop == true))
+							const float dotL = dot(lt, nL);
+							const float dotT = dot(lt, nT);
+							const float dotR = dot(rb, -nL);
+							const float dotB = dot(rb, -nT);
+							
+							const bool isTop = dotT < radius;
+							const bool isBottom = dotB < radius;
+							
+							// Left corners
+							if (dotL < radius && (isTop == true || isBottom == true))
 							{
-								float dist = distance(float2(radius, (isTop) ? s.y - radius : radius), offset);
-								return calculateAlphaForAntiAliasing(dist, radius);
+								float dist = distance(float2(dotL, (isTop == true) ? dotT : dotB), float2(radius, radius));
+								return calculateRoundAlphaForAntiAliasing(dist, radius);
 							}
 							
-							// right
-							if (s.x - radius < offset.x && (isBottom == true || isTop == true))
+							// Right corners
+							if (dotR < radius && (isTop == true || isBottom == true))
 							{
-								float dist = distance(float2(s.x - radius, (isTop) ? s.y - radius : radius), offset);
-								return calculateAlphaForAntiAliasing(dist, radius);
+								float dist = distance(float2(dotR, (isTop == true) ? dotT : dotB), float2(radius, radius));
+								return calculateRoundAlphaForAntiAliasing(dist, radius);
 							}
 							
+							// Close to left border
+							if (dotL <= kAntiAliasingFactor)
+							{
+								return dotL / kAntiAliasingFactor;
+							}
+							
+							// Close to top border
+							if (dotT <= kAntiAliasingFactor)
+							{
+								return dotT / kAntiAliasingFactor;
+							}
+							
+							// Close to right border
+							if (dotR <= kAntiAliasingFactor)
+							{
+								return dotR / kAntiAliasingFactor;
+							}
+							
+							// Close to bottom border
+							if (dotB <= kAntiAliasingFactor)
+							{
+								return dotB / kAntiAliasingFactor;
+							}
+							
+							// Body
 							return 1.0;
 						}
 						
 						return 0.0;
 					}
 					
-					bool taperedRectangle(in float2 p, in float2 s, in float t, in float b)
+					float taperedRectangle(in float2 p, in float2 s, in float t, in float b, in float2x2 rotationMatrix)
 					{
-						float2 hs = s / 2.0;
-						float2 offset = p + hs;
-						if (0.0 < offset.x && offset.x < s.x &&
-							0.0 < offset.y && offset.y < s.y)
+						// Process inputs
+						t = clamp(t, 0.0, 1.0);
+						b = clamp(b, 0.0, 1.0);
+						const float spaceLength = s.x * (1.0 - t);
+						const float leftOffset = spaceLength * b;
+						const float rightOffset = spaceLength * (1.0 - b);
+						
+						// Half-size
+						const float2 hs = s / 2.0;
+						
+						// Original edge vectors
+						const float2 ovL = float2(-leftOffset, -s.y);
+						const float2 ovT = float2(+s.x, 0.0);
+						const float2 ovR = float2(-rightOffset, +s.y); 
+						const float2 ovB = float2(-s.x, 0.0);
+						
+						// Rotated edge vectors
+						const float3 vL = float3(mul(rotationMatrix, ovL), 0.0);
+						const float3 vT = float3(mul(rotationMatrix, ovT), 0.0);
+						const float3 vR = float3(mul(rotationMatrix, ovR), 0.0);
+						const float3 vB = float3(mul(rotationMatrix, ovB), 0.0);
+						
+						// Rotated position (offset from corners)
+						const float2 toLt = mul(rotationMatrix, float2(-hs.x + leftOffset, +hs.y));
+						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
+						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
+						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
+						
+						const float3 crossL = cross(vL, lt);
+						const float3 crossT = cross(lt, vT);
+						const float3 crossR = cross(vR, rb);
+						const float3 crossB = cross(rb, vB);
+						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
 						{
-							t = clamp(t, 0.0, 1.0);
-							b = clamp(b, 0.0, 1.0);
+							// Inside
+							const float2 nL = normalize(mul(kRotationMatrixRightAngle,  vL));
+							const float2 nT = normalize(mul(kRotationMatrixRightAngle, -vT));
+							const float2 nR = normalize(mul(kRotationMatrixRightAngle,  vR));
+							const float2 nB = normalize(mul(kRotationMatrixRightAngle, -vB));
 							
-							float Msw = s.x * (1.0 - t); // max space width
-							float Mtx = Msw * b;         // max tapering x offset
+							const float dotL = dot(lt, nL);
+							const float dotT = dot(lt, nT);
+							const float dotR = dot(rb, nR);
+							const float dotB = dot(rb, nB);
 							
-							float hr = (offset.y / s.y); // height ratio = [0.0, 1.0]
-							float lt = t * hr;           // lerped t = [0.0, t]
-							float lMtx = Mtx * hr;       // lerped tapering x offset
-							float ltw = s.x * lt;        // lerped tapered width
-							
-							if ((lMtx < offset.x) && (offset.x + ltw - lMtx < s.x))
+							// Close to left border
+							if (dotL <= kAntiAliasingFactor)
 							{
-								return true;
+								return dotL / kAntiAliasingFactor;
 							}
 							
-							return false;
+							// Close to top border
+							if (dotT <= kAntiAliasingFactor)
+							{
+								return dotT / kAntiAliasingFactor;
+							}
+							
+							// Close to right border
+							if (dotR <= kAntiAliasingFactor)
+							{
+								return dotR / kAntiAliasingFactor;
+							}
+							
+							// Close to bottom border
+							if (dotB <= kAntiAliasingFactor)
+							{
+								return dotB / kAntiAliasingFactor;
+							}
+							
+							// Body
+							return 1.0;
 						}
-						return false;
+						
+						return 0.0;
 					}
 
 					float bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
@@ -161,18 +316,15 @@ namespace fs
 						if ((t < 0.0) || (segmentLength < t))
 						{
 							float distToBorder = distance(pixelPosition, (t < 0.0) ? l0 : l1);
-							//if (thicknessInPixels < distToBorder)
-							//{
-							//	return 0.0;
-							//}
-							return calculateAlphaForAntiAliasing(distToBorder, thicknessInPixels);
+							return calculateRoundAlphaForAntiAliasing(distToBorder, thicknessInPixels);
 						}
     
 						float dist = distance(lp, pixelPosition);
 						if (dist < thicknessInPixels)
 						{
-							return 1.0;
+							return calculateRoundAlphaForAntiAliasing(dist, thicknessInPixels);
 						}
+						
 						return 0.0;
 					}
 					
@@ -182,46 +334,36 @@ namespace fs
 						
 						if (input._infoB.w == 0.0)
 						{
-							const float cosAngle = cos(angle);
-							const float sinAngle = sin(angle);
-							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2x2 rotationMatrix = getRotationMatrix(angle);
 							const float2 c = input._infoA.xy * kScreenRatio;
-							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							const float2 p = normalizePosition(input._position) - c;
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
-							if (rectangle(p, s) == true)
-							{
-								return input._color;
-							}
+							const float alphaFactor = rectangle(p, s, rotationMatrix);
+							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
 						}
 						else if (input._infoB.w == 1.0)
 						{
-							const float cosAngle = cos(angle);
-							const float sinAngle = sin(angle);
-							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2x2 rotationMatrix = getRotationMatrix(angle);
 							const float2 c = input._infoA.xy * kScreenRatio;
-							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							const float2 p = normalizePosition(input._position) - c;
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float r = input._infoB.x;
-							const float alphaFactor = roundedRectangle(p, s, r);
+							const float alphaFactor = roundedRectangle(p, s, r, rotationMatrix);
 							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
 						}
 						else if (input._infoB.w == 2.0)
 						{
-							const float cosAngle = cos(angle);
-							const float sinAngle = sin(angle);
-							const float2x2 rotationMatrix = float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+							const float2x2 rotationMatrix = getRotationMatrix(angle);
 							const float2 c = input._infoA.xy * kScreenRatio;
-							const float2 p = mul(rotationMatrix, normalizePosition(input._position) - c);
+							const float2 p = normalizePosition(input._position) - c;
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float t = input._infoB.x;
 							const float b = input._infoB.y;
-							if (taperedRectangle(p, s, t, b) == true)
-							{
-								return input._color;
-							}
+							const float alphaFactor = taperedRectangle(p, s, t, b, rotationMatrix);
+							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);							
 						}
 						else if (input._infoB.w == 3.0)
 						{

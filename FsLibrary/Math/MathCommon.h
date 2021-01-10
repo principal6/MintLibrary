@@ -12,6 +12,10 @@ namespace fs
 {
 	namespace Math
 	{
+		static constexpr float kPi = 3.1415926535f;
+		static constexpr float kPiOverTwo = kPi * 0.5f;
+		static constexpr float kPiOverFour = kPiOverTwo * 0.5f;
+
 		FS_INLINE constexpr uint32 pow2_ui32(const uint32 exponent)
 		{
 			return static_cast<uint32>(1 << exponent);
