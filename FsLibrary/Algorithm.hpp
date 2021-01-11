@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <stdafx.h>
-#include <Algorithm.h>
+#include "stdafx.h"
+#include <FsLibrary/Algorithm.h>
 
 
 namespace fs

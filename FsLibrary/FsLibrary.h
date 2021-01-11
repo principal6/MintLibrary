@@ -5,17 +5,17 @@
 #define FS_LIBRARY_H
 
 
-#include <stdafx.h>
-#include <Algorithm.hpp>
-#include <Container/Container.h>
-#include <ContiguousContainer/ContiguousContainer.h>
-#include <File/File.h>
-#include <Math/Math.h>
-#include <Memory/Memory.h>
-#include <Platform/Platform.h>
-#include <SimpleRendering/GraphicDevice.h>
-#include <Language/Language.h>
-#include <Profiler/Profiler.h>
+#include "stdafx.h"
+#include <FsLibrary/Algorithm.hpp>
+#include <FsLibrary/Container/Container.h>
+#include <FsLibrary/ContiguousContainer/ContiguousContainer.h>
+#include <FsLibrary/File/File.h>
+#include <FsMath/Include/Math.h>
+#include <FsLibrary/Memory/Memory.h>
+#include <FsLibrary/Platform/Platform.h>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/Language/Language.h>
+#include <FsLibrary/Profiler/Profiler.h>
 
 
 #endif // !FS_LIBRARY_H

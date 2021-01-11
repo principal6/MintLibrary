@@ -5,7 +5,7 @@
 #define FS_CPP_HLSL_CBUFFERS_H
 
 
-#include <Language/CppHlslTypes.h>
+#include <FsLibrary/Language/CppHlslTypes.h>
 
 
 namespace fs

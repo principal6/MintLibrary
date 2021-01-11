@@ -5,10 +5,10 @@
 #define FS_CONTIGUOUS_CONTAINER_H
 
 
-#include <ContiguousContainer/DynamicString.h>
-#include <ContiguousContainer/DynamicString.hpp>
-#include <ContiguousContainer/Vector.h>
-#include <ContiguousContainer/Vector.hpp>
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/DynamicString.hpp>
+#include <FsLibrary/ContiguousContainer/Vector.h>
+#include <FsLibrary/ContiguousContainer/Vector.hpp>
 
 
 #endif // !FS_CONTIGUOUS_CONTAINER_H

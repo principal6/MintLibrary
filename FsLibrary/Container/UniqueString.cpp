@@ -1,8 +1,8 @@
-#include <stdafx.h>
-#include <Container/UniqueString.h>
-#include <Container/UniqueString.hpp>
+#include "stdafx.h"
+#include <FsLibrary/Container/UniqueString.h>
+#include <FsLibrary/Container/UniqueString.hpp>
 
-#include <Container/StringUtil.h>
+#include <FsLibrary/Container/StringUtil.h>
 
 
 namespace fs

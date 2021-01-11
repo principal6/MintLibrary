@@ -5,7 +5,7 @@
 #define FS_SCOPED_CPU_PROFILER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
 
 namespace fs
@@ -83,7 +83,7 @@ namespace fs
 }
 
 
-#include <Profiler/ScopedCpuProfiler.inl>
+#include <FsLibrary/Profiler/ScopedCpuProfiler.inl>
 
 
 #endif // !FS_SCOPED_CPU_PROFILER_H

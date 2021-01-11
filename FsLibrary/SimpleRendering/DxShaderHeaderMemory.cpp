@@ -1,7 +1,7 @@
-﻿#include <stdafx.h>
-#include <SimpleRendering/DxShaderHeaderMemory.h>
+﻿#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 
-#include <Container/ScopeString.hpp>
+#include <FsLibrary/Container/ScopeString.hpp>
 
 
 namespace fs

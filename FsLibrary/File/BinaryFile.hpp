@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdafx.h>
-#include <File/BinaryFile.h>
 
-#include <Container/StringUtil.h>
+#include "stdafx.h"
+#include <FsLibrary/File/BinaryFile.h>
+
+#include <FsLibrary/Container/StringUtil.h>
 
 
 namespace fs

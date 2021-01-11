@@ -1,7 +1,5 @@
-﻿#include <stdafx.h>
-#include <SimpleRendering/IRenderer.h>
-
-#include <Math/Float4.hpp>
+﻿#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/IRenderer.h>
 
 
 namespace fs

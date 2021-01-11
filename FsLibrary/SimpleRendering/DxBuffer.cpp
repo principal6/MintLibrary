@@ -1,8 +1,8 @@
-#include <stdafx.h>
-#include <SimpleRendering/DxBuffer.h>
+#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/DxBuffer.h>
 
-#include <Algorithm.hpp>
-#include <SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/Algorithm.hpp>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
 
 
 namespace fs

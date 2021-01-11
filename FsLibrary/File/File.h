@@ -5,13 +5,13 @@
 #define FS_FILE_H
 
 
-#include <File/IFile.h>
-#include <File/BinaryFile.h>
-#include <File/BinaryFile.hpp>
-#include <File/TextFile.h>
-#include <File/FileUtil.h>
-#include <File/FileUtil.hpp>
-#include <File/XmlFile.h>
+#include <FsLibrary/File/IFile.h>
+#include <FsLibrary/File/BinaryFile.h>
+#include <FsLibrary/File/BinaryFile.hpp>
+#include <FsLibrary/File/TextFile.h>
+#include <FsLibrary/File/FileUtil.h>
+#include <FsLibrary/File/FileUtil.hpp>
+#include <FsLibrary/File/XmlFile.h>
 
 
 #endif // !FS_FILE_H

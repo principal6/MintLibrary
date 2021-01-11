@@ -1,10 +1,10 @@
-#include <stdafx.h>
-#include <ContiguousContainer/DynamicString.h>
-#include <ContiguousContainer/DynamicString.hpp>
+#include "stdafx.h"
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/DynamicString.hpp>
 
-#include <Container/StringUtil.h>
+#include <FsLibrary/Container/StringUtil.h>
 
-#include <Memory/Allocator.hpp>
+#include <FsLibrary/Memory/Allocator.hpp>
 
 
 namespace fs

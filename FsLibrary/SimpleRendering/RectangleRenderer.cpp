@@ -1,12 +1,8 @@
-﻿#include <stdafx.h>
-#include <SimpleRendering/RectangleRenderer.h>
+﻿#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/RectangleRenderer.h>
 
-#include <SimpleRendering/GraphicDevice.h>
-#include <SimpleRendering/TriangleBuffer.hpp>
-
-#include <Math/Float2.hpp>
-#include <Math/Float3.hpp>
-#include <Math/Float4.hpp>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
 
 
 namespace fs

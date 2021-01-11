@@ -5,25 +5,25 @@
 #define FS_GRAPHIC_DEVICE_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Container/StaticArray.h>
-#include <Container/ScopeString.h>
-#include <Container/UniqueString.h>
+#include <FsLibrary/Container/StaticArray.h>
+#include <FsLibrary/Container/ScopeString.h>
+#include <FsLibrary/Container/UniqueString.h>
 
-#include <SimpleRendering/DxShaderHeaderMemory.h>
-#include <SimpleRendering/DxShader.h>
-#include <SimpleRendering/DxBuffer.h>
-#include <SimpleRendering/CppHlslStructs.h>
-#include <SimpleRendering/CppHlslCbuffers.h>
-#include <SimpleRendering/TriangleBuffer.h>
-#include <SimpleRendering/RectangleRenderer.h>
-#include <SimpleRendering/ShapeRenderer.h>
-#include <SimpleRendering/FontRenderer.h>
+#include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
+#include <FsLibrary/SimpleRendering/DxShader.h>
+#include <FsLibrary/SimpleRendering/DxBuffer.h>
+#include <FsLibrary/SimpleRendering/CppHlslStructs.h>
+#include <FsLibrary/SimpleRendering/CppHlslCbuffers.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/RectangleRenderer.h>
+#include <FsLibrary/SimpleRendering/ShapeRenderer.h>
+#include <FsLibrary/SimpleRendering/FontRenderer.h>
 
-#include <Language/CppHlsl.h>
+#include <FsLibrary/Language/CppHlsl.h>
 
-#include <Math/Float4x4.h>
+#include <FsMath/Include/Float4x4.h>
 
 
 //#define FS_TEST_MEMORY_FONT_TEXTURE
@@ -127,7 +127,7 @@ namespace fs
 }
 
 
-#include <SimpleRendering/GraphicDevice.inl>
+#include <FsLibrary/SimpleRendering/GraphicDevice.inl>
 
 
 #endif // !FS_GRAPHIC_DEVICE_H

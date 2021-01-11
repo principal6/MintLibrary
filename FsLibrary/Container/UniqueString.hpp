@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdafx.h>
-#include <Container/UniqueString.h>
+#include "stdafx.h"
+#include <FsLibrary/Container/UniqueString.h>
 
-#include <Container/StringUtil.h>
+#include <FsLibrary/Container/StringUtil.h>
 
 
 namespace fs

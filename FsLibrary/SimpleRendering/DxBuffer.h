@@ -5,8 +5,9 @@
 #define FS_DX_BUFFER_H
 
 
-#include <CommonDefinitions.h>
-#include <SimpleRendering/IDxObject.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsLibrary/SimpleRendering/IDxObject.h>
 
 
 namespace fs

@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include <SimpleRendering/IDxObject.h>
+#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/IDxObject.h>
 
 
 namespace fs

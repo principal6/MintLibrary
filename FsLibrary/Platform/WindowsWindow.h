@@ -5,7 +5,7 @@
 #define FS_WINDOWS_WINDOW_H
 
 
-#include <Platform/IWindow.h>
+#include <FsLibrary/Platform/IWindow.h>
 
 
 namespace fs

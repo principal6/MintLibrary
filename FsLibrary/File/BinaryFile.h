@@ -5,8 +5,9 @@
 #define FS_BINARY_FILE_H
 
 
-#include <CommonDefinitions.h>
-#include <File/IFile.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsLibrary/File/IFile.h>
 
 
 namespace fs

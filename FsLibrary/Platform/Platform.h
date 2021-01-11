@@ -5,8 +5,8 @@
 #define FS_PLATFORM_H
 
 
-#include <Platform/IWindow.h>
-#include <Platform/WindowsWindow.h>
+#include <FsLibrary/Platform/IWindow.h>
+#include <FsLibrary/Platform/WindowsWindow.h>
 
 
 #endif // !FS_PLATFORM_H

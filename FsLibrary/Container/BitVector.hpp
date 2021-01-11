@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 
-#include <stdafx.h>
+#include "stdafx.h"
+#include <FsLibrary/Container/BitVector.h>
 
-#include <Container/BitVector.h>
-#include <Math/MathCommon.h>
+#include <FsMath/Include/MathCommon.h>
 
 
 namespace fs

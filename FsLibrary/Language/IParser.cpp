@@ -1,8 +1,8 @@
-#include <stdafx.h>
-#include <Language/IParser.h>
+#include "stdafx.h"
+#include <FsLibrary/Language/IParser.h>
 
-#include <Language/ILexer.h>
-#include <Container/Tree.hpp>
+#include <FsLibrary/Language/ILexer.h>
+#include <FsLibrary/Container/Tree.hpp>
 
 
 namespace fs

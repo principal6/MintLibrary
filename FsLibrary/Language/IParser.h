@@ -5,11 +5,11 @@
 #define FS_I_PARSER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Container/Tree.h>
+#include <FsLibrary/Container/Tree.h>
 
-#include <Language/LanguageCommon.h>
+#include <FsLibrary/Language/LanguageCommon.h>
 
 
 namespace fs
@@ -124,7 +124,7 @@ namespace fs
 }
 
 
-#include <Language/IParser.inl>
+#include <FsLibrary/Language/IParser.inl>
 
 
 #endif // !FS_I_PARSER_H

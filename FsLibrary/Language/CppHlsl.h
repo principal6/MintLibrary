@@ -5,10 +5,10 @@
 #define FS_CPP_HLSL_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Language/CppHlslLexer.h>
-#include <Language/CppHlslParser.h>
+#include <FsLibrary/Language/CppHlslLexer.h>
+#include <FsLibrary/Language/CppHlslParser.h>
 
 
 namespace fs

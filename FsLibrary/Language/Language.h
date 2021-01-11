@@ -5,13 +5,13 @@
 #define FS_LANGUAGE_H
 
 
-#include <Language/ILexer.h>
-#include <Language/IParser.h>
+#include <FsLibrary/Language/ILexer.h>
+#include <FsLibrary/Language/IParser.h>
 
-#include <Language/Tokenizer.h>
+#include <FsLibrary/Language/Tokenizer.h>
 
-#include <Language/CppHlslLexer.h>
-#include <Language/CppHlslParser.h>
+#include <FsLibrary/Language/CppHlslLexer.h>
+#include <FsLibrary/Language/CppHlslParser.h>
 
 
 #endif // !FS_LANGUAGE_H

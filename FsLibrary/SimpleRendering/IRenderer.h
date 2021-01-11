@@ -5,11 +5,13 @@
 #define FS_I_RENDERER_H
 
 
-#include <Math/Float2.h>
-#include <Math/Float3.h>
-#include <Math/Float4.h>
+#include <FsLibrary/SimpleRendering/SimpleRenderingCommon.h>
 
-#include <SimpleRendering/IDxObject.h>
+#include <FsMath/Include/Float2.h>
+#include <FsMath/Include/Float3.h>
+#include <FsMath/Include/Float4.h>
+
+#include <FsLibrary/SimpleRendering/IDxObject.h>
 
 
 namespace fs
@@ -49,7 +51,7 @@ namespace fs
 }
 
 
-#include <SimpleRendering/IRenderer.inl>
+#include <FsLibrary/SimpleRendering/IRenderer.inl>
 
 
 #endif // !FS_I_RENDERER_H

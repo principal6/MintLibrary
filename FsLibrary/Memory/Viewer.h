@@ -5,9 +5,9 @@
 #define FS_VIEWER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Memory/Allocator.h>
+#include <FsLibrary/Memory/Allocator.h>
 
 
 namespace fs

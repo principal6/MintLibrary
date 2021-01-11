@@ -5,9 +5,9 @@
 #define FS_TOKENIZER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
 
 
 //#define FS_USE_TOKEN_STRING_IN_RELEASE

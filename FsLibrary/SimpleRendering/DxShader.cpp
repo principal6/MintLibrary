@@ -1,16 +1,16 @@
-#include <stdafx.h>
-#include <SimpleRendering/DxShader.h>
+#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/DxShader.h>
 
 #include <d3dcompiler.h>
 
 #include <Algorithm.hpp>
 
-#include <Container/ScopeString.hpp>
+#include <FsLibrary/Container/ScopeString.hpp>
 
-#include <SimpleRendering/GraphicDevice.h>
-#include <SimpleRendering/DxShaderHeaderMemory.h>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 
-#include <Language/CppHlslParser.h>
+#include <FsLibrary/Language/CppHlslParser.h>
 
 
 #pragma comment(lib, "d3dcompiler.lib")

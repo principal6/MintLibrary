@@ -1,8 +1,9 @@
 ﻿#pragma once
 
 
-#include <Container/StackHolder.h>
-#include <Math/MathCommon.h>
+#include <FsLibrary/Container/StackHolder.h>
+
+#include <FsMath/Include/MathCommon.h>
 
 
 namespace fs

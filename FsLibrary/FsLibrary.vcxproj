@@ -59,26 +59,6 @@
     <ClInclude Include="Language\Language.h" />
     <ClInclude Include="Language\LanguageCommon.h" />
     <ClInclude Include="Language\Tokenizer.h" />
-    <ClInclude Include="Logger\Logger.h" />
-    <ClInclude Include="Logger\Logger.hpp" />
-    <ClInclude Include="Math\Float2.h" />
-    <ClInclude Include="Math\Float2.hpp" />
-    <ClInclude Include="Math\Float2x2.h" />
-    <ClInclude Include="Math\Float2x2.hpp" />
-    <ClInclude Include="Math\Float3.h" />
-    <ClInclude Include="Math\Float3.hpp" />
-    <ClInclude Include="Math\Float3x3.h" />
-    <ClInclude Include="Math\Float3x3.hpp" />
-    <ClInclude Include="Math\Float4.h" />
-    <ClInclude Include="Math\Float4.hpp" />
-    <ClInclude Include="Math\Float4x4.h" />
-    <ClInclude Include="Math\Float4x4.hpp" />
-    <ClInclude Include="Math\Int2.h" />
-    <ClInclude Include="Math\Int2.hpp" />
-    <ClInclude Include="Math\MathCommon.h" />
-    <ClInclude Include="Math\Quaternion.h" />
-    <ClInclude Include="Math\Quaternion.hpp" />
-    <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Memory\Allocator.h" />
     <ClInclude Include="Memory\Allocator.hpp" />
     <ClInclude Include="Memory\Memory.h" />
@@ -208,17 +188,17 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Externals\freetype_2_10_4\include;$(ProjectDir)Externals\stb_image;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Externals\freetype_2_10_4\include;$(ProjectDir)Externals\stb_image;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -272,7 +252,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -296,7 +277,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

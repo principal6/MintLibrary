@@ -5,9 +5,9 @@
 #define FS_CPP_LEXER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Language/ILexer.h>
+#include <FsLibrary/Language/ILexer.h>
 
 
 namespace fs

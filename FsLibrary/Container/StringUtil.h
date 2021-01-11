@@ -5,8 +5,8 @@
 #define FS_STRING_UTIL_H
 
 
-#include <ContiguousContainer/Vector.h>
-#include <ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/Vector.h>
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
 
 
 namespace fs

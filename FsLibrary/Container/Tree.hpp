@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <stdafx.h>
-#include <Container/Tree.h>
+#include "stdafx.h"
+#include <FsLibrary/Container/Tree.h>
 
-#include <ContiguousContainer/Vector.hpp>
+#include <FsLibrary/ContiguousContainer/Vector.hpp>
 
 
 namespace fs

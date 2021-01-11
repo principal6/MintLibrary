@@ -5,8 +5,9 @@
 #define FS_TREE_H
 
 
-#include <CommonDefinitions.h>
-#include <ContiguousContainer/Vector.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsLibrary/ContiguousContainer/Vector.h>
 
 
 namespace fs

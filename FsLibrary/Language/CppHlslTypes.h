@@ -5,8 +5,9 @@
 #define FS_CPP_HLSL_TYPES_H
 
 
-#include <CommonDefinitions.h>
-#include <Math/Float4x4.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsMath/Include/Float4x4.h>
 
 
 namespace fs

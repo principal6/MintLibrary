@@ -5,12 +5,12 @@
 #define FS_I_LEXER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <ContiguousContainer/Vector.h>
-#include <ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/Vector.h>
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
 
-#include <Language/LanguageCommon.h>
+#include <FsLibrary/Language/LanguageCommon.h>
 
 
 namespace fs
@@ -233,7 +233,7 @@ namespace fs
 }
 
 
-#include <Language/ILexer.inl>
+#include <FsLibrary/Language/ILexer.inl>
 
 
 #endif // !FS_I_LEXER_H

@@ -1,4 +1,4 @@
-﻿#include <FsLibrary.h>
+﻿#include <FsLibrary/FsLibrary.h>
 
 
 #ifdef FS_DEBUG
@@ -47,6 +47,11 @@ void testFloatTypes()
 	Float3 p{ 1, 0, 0 };
 	Float3 q{ 0, 1, 0 };
 	Float3 r = Float3::cross(p, q);
+	
+#if defined FS_TEST_FAILURES
+	Float2 t;
+	t[3] = 1.0f;
+#endif
 }
 
 void testStaticArray()

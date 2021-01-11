@@ -1,9 +1,9 @@
-#include <stdafx.h>
-#include <Language/ILexer.h>
+#include "stdafx.h"
+#include <FsLibrary/Language/ILexer.h>
 
-#include <ContiguousContainer/Vector.hpp>
-#include <ContiguousContainer/DynamicString.hpp>
-#include <Container/StringUtil.hpp>
+#include <FsLibrary/ContiguousContainer/Vector.hpp>
+#include <FsLibrary/ContiguousContainer/DynamicString.hpp>
+#include <FsLibrary/Container/StringUtil.hpp>
 
 
 namespace fs

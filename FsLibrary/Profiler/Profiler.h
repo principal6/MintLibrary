@@ -5,7 +5,7 @@
 #define FS_PROFILER_H
 
 
-#include <Profiler/ScopedCpuProfiler.h>
+#include <FsLibrary/Profiler/ScopedCpuProfiler.h>
 
 
 #endif // !FS_PROFILER_H

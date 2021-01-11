@@ -5,10 +5,10 @@
 #define FS_CPP_PARSER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Language/IParser.h>
-#include <Language/LanguageCommon.h>
+#include <FsLibrary/Language/IParser.h>
+#include <FsLibrary/Language/LanguageCommon.h>
 
 
 namespace fs
@@ -364,7 +364,7 @@ namespace fs
 }
 
 
-#include <Language/CppHlslParser.inl>
+#include <FsLibrary/Language/CppHlslParser.inl>
 
 
 #endif // !FS_CPP_PARSER_H

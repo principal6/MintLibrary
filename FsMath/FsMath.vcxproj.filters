@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{6c977326-3e31-4f48-9336-802ef0dd1443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{e385fb3f-ca1a-43ae-af8e-0d1de9575c3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{c9321483-2b5c-47fd-88ae-f52e5f64dae4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Float2.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Float2x2.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Float3.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Float3x3.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Float4.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Float4x4.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Int2.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\MathCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Quaternion.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float2.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float2x2.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float3.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float3x3.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float4.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Float4x4.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Int2.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Quaternion.cpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\CommonDefinitions.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\stdafx.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

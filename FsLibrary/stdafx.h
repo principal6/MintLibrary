@@ -5,7 +5,6 @@
 #define FS_STDAFX_H
 
 
-#include <cstdint>
 #include <cstdio>
 #include <Windows.h>
 #include <string>
@@ -14,16 +13,17 @@
 #include <unordered_map>
 #include <type_traits>
 
+
 #pragma region Thread
 #include <mutex>
 #include <atomic>
 #pragma endregion
 
-#pragma region FsLibrary
-#include <CommonDefinitions.h>
-#include <Logger/Logger.h>
-#include <Logger/Logger.hpp>
+
+#pragma region FS Library
+#include <FsLogger/Include/Logger.h>
 #pragma endregion
+
 
 #pragma region DirectX
 #include <d3d11.h>

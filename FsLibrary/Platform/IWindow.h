@@ -5,9 +5,10 @@
 #define FS_I_WINDOW_H
 
 
-#include <CommonDefinitions.h>
-#include <Math/Int2.h>
-#include <Math/Float3.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsMath/Include/Int2.h>
+#include <FsMath/Include/Float3.h>
 
 
 namespace fs

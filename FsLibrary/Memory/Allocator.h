@@ -5,8 +5,9 @@
 #define FS_MEMORY_ALLOCATOR_2_H
 
 
-#include <CommonDefinitions.h>
-#include <Container/BitVector.h>
+#include <FsLibrary/CommonDefinitions.h>
+
+#include <FsLibrary/Container/BitVector.h>
 
 
 namespace fs

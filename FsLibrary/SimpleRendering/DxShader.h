@@ -5,9 +5,9 @@
 #define FS_DX_SHADER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <SimpleRendering/IDxObject.h>
+#include <FsLibrary/SimpleRendering/IDxObject.h>
 
 
 namespace fs

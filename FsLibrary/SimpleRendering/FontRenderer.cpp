@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include <SimpleRendering/FontRenderer.h>
+#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/FontRenderer.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -11,15 +11,13 @@
 
 #include <algorithm>
 
-#include <Math/Float2.hpp>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
 
-#include <SimpleRendering/GraphicDevice.h>
-#include <SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/Container/StringUtil.hpp>
 
-#include <Container/StringUtil.hpp>
-
-#include <File/BinaryFile.hpp>
-#include <File/FileUtil.hpp>
+#include <FsLibrary/File/BinaryFile.hpp>
+#include <FsLibrary/File/FileUtil.hpp>
 
 
 //#define FS_FONT_RENDERER_SAVE_PNG_FOR_TEST

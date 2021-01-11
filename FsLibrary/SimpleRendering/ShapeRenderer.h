@@ -5,12 +5,12 @@
 #define FS_SHAPE_RENDERER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <SimpleRendering/IRenderer.h>
-#include <SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/IRenderer.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
 
-#include <Math/Int2.h>
+#include <FsMath/Include/Int2.h>
 
 
 namespace fs

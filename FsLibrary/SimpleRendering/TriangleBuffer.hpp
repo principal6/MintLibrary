@@ -1,9 +1,9 @@
 #pragma once
 
-#include <stdafx.h>
-#include <SimpleRendering/TriangleBuffer.h>
+#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
 
-#include <SimpleRendering/GraphicDevice.h>
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
 
 
 namespace fs

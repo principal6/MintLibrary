@@ -5,10 +5,10 @@
 #define FS_RECTANGLE_DRAW_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <SimpleRendering/IRenderer.h>
-#include <SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/IRenderer.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
 
 
 namespace fs

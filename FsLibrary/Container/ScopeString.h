@@ -5,8 +5,8 @@
 #define FS_SCOPE_STRING_H
 
 
-#include <CommonDefinitions.h>
-#include <Container/StaticArray.h>
+#include <FsLibrary/CommonDefinitions.h>
+#include <FsLibrary/Container/StaticArray.h>
 
 
 namespace fs

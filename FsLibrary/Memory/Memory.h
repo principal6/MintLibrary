@@ -5,11 +5,11 @@
 #define FS_MEMORY_H
 
 
-#include <Memory/Allocator.h>
-#include <Memory/Allocator.hpp>
+#include <FsLibrary/Memory/Allocator.h>
+#include <FsLibrary/Memory/Allocator.hpp>
 
-#include <Memory/Viewer.h>
-#include <Memory/Viewer.hpp>
+#include <FsLibrary/Memory/Viewer.h>
+#include <FsLibrary/Memory/Viewer.hpp>
 
 
 #endif // !FS_MEMORY_H

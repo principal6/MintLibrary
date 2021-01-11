@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <stdafx.h>
-#include <Memory/Allocator.h>
+#include "stdafx.h"
+#include <FsLibrary/Memory/Allocator.h>
 
-#include <Container/BitVector.hpp>
+#include <FsLibrary/Container/BitVector.hpp>
 
 
 namespace fs

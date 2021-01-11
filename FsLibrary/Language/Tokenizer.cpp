@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include <Language/Tokenizer.h>
+#include "stdafx.h"
+#include <FsLibrary/Language/Tokenizer.h>
 
 
 namespace fs

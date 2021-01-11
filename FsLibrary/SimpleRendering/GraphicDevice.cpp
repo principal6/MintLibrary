@@ -1,5 +1,5 @@
-﻿#include <stdafx.h>
-#include <SimpleRendering/GraphicDevice.h>
+﻿#include "stdafx.h"
+#include <FsLibrary/SimpleRendering/GraphicDevice.h>
 
 #include <d3dcompiler.h>
 #include <functional>
@@ -7,18 +7,12 @@
 
 #include <Algorithm.hpp>
 
-#include <Platform/IWindow.h>
-#include <Platform/WindowsWindow.h>
+#include <FsLibrary/Platform/IWindow.h>
+#include <FsLibrary/Platform/WindowsWindow.h>
 
-#include <Math/Int2.hpp>
-#include <Math/Float2.hpp>
-#include <Math/Float3.hpp>
-#include <Math/Float4.hpp>
-#include <Math/Float4x4.hpp>
+#include <FsLibrary/Container/ScopeString.hpp>
 
-#include <Container/ScopeString.hpp>
-
-#include <SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
 
 
 #pragma comment(lib, "d3d11.lib")

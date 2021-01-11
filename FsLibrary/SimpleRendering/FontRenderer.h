@@ -5,15 +5,15 @@
 #define FS_BITMAP_FONT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
-#include <Math/Float2.h>
+#include <FsMath/Include/Float2.h>
 
-#include <SimpleRendering/SimpleRenderingCommon.h>
-#include <SimpleRendering/IRenderer.h>
-#include <SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/SimpleRenderingCommon.h>
+#include <FsLibrary/SimpleRendering/IRenderer.h>
+#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
 
-#include <File/BinaryFile.h>
+#include <FsLibrary/File/BinaryFile.h>
 
 
 typedef struct FT_Glyph_Metrics_	FT_Glyph_Metrics;

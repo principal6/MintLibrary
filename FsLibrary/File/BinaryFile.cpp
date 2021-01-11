@@ -1,5 +1,5 @@
-﻿#include <stdafx.h>
-#include <File/BinaryFile.h>
+﻿#include "stdafx.h"
+#include <FsLibrary/File/BinaryFile.h>
 
 #include <fstream>
 

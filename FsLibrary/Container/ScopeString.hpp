@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <Container/ScopeString.h>
+#include <FsLibrary/Container/ScopeString.h>
 
 
 namespace fs

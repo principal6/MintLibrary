@@ -1,6 +1,10 @@
 #pragma once
 
 
+#ifndef FS_SIMPLE_RENDERING_COMMON_H
+#define FS_SIMPLE_RENDERING_COMMON_H
+
+
 namespace fs
 {
 	namespace SimpleRendering
@@ -13,3 +17,6 @@ namespace fs
 		};
 	}
 }
+
+
+#endif // !FS_SIMPLE_RENDERING_COMMON_H

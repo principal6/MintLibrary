@@ -5,7 +5,7 @@
 #define FS_LANGUAGE_COMMON_H
 
 
-#include <CommonDefinitions.h>
+#include <FsLibrary/CommonDefinitions.h>
 
 
 namespace fs
@@ -131,7 +131,7 @@ namespace fs
 }
 
 
-#include <Language/LanguageCommon.inl>
+#include <FsLibrary/Language/LanguageCommon.inl>
 
 
 #endif // !FS_LANGUAGE_COMMON_H

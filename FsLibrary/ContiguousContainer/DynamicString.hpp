@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <stdafx.h>
-#include <ContiguousContainer/DynamicString.h>
+#include "stdafx.h"
+#include <FsLibrary/ContiguousContainer/DynamicString.h>
 
-#include <Container/StringUtil.h>
+#include <FsLibrary/Container/StringUtil.h>
 
 
 namespace fs

@@ -5,9 +5,9 @@
 #define FS_TEXT_FILE_H
 
 
-#include <CommonDefinitions.h>
-#include <File/IFile.h>
-#include <ContiguousContainer/Vector.h>
+#include <FsLibrary/CommonDefinitions.h>
+#include <FsLibrary/File/IFile.h>
+#include <FsLibrary/ContiguousContainer/Vector.h>
 
 
 namespace fs

@@ -1,10 +1,10 @@
-#include <stdafx.h>
-#include <Language/CppHlslParser.h>
+#include "stdafx.h"
+#include <FsLibrary/Language/CppHlslParser.h>
 
-#include <Language/ILexer.h>
+#include <FsLibrary/Language/ILexer.h>
 
-#include <Container/StringUtil.hpp>
-#include <Container/Tree.hpp>
+#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsLibrary/Container/Tree.hpp>
 
 #include <functional>
 

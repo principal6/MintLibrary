@@ -1,10 +1,10 @@
 #pragma once
 
 
-#include <stdafx.h>
+#include "stdafx.h"
 
-#include <Memory/Owner.h>
-#include <Memory/Allocator.hpp>
+#include <FsLibrary/Memory/Owner.h>
+#include <FsLibrary/Memory/Allocator.hpp>
 
 
 namespace fs
