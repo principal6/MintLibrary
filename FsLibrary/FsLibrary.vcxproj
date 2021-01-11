@@ -25,8 +25,6 @@
     <ClInclude Include="Container\BitVector.h" />
     <ClInclude Include="Container\BitVector.hpp" />
     <ClInclude Include="Container\Container.h" />
-    <ClInclude Include="Container\DynamicString.h" />
-    <ClInclude Include="Container\DynamicString.hpp" />
     <ClInclude Include="Container\ScopeString.h" />
     <ClInclude Include="Container\ScopeString.hpp" />
     <ClInclude Include="Container\StackHolder.h" />
@@ -38,8 +36,11 @@
     <ClInclude Include="Container\Tree.hpp" />
     <ClInclude Include="Container\UniqueString.h" />
     <ClInclude Include="Container\UniqueString.hpp" />
-    <ClInclude Include="Container\Vector.h" />
-    <ClInclude Include="Container\Vector.hpp" />
+    <ClInclude Include="ContiguousContainer\ContiguousContainer.h" />
+    <ClInclude Include="ContiguousContainer\DynamicString.h" />
+    <ClInclude Include="ContiguousContainer\DynamicString.hpp" />
+    <ClInclude Include="ContiguousContainer\Vector.h" />
+    <ClInclude Include="ContiguousContainer\Vector.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
     <ClInclude Include="File\BinaryFile.hpp" />
     <ClInclude Include="File\FileUtil.h" />
@@ -108,8 +109,8 @@
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Container\DynamicString.cpp" />
     <ClCompile Include="Container\UniqueString.cpp" />
+    <ClCompile Include="ContiguousContainer\DynamicString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
@@ -131,15 +132,15 @@
     <ClCompile Include="SimpleRendering\ShapeRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="Container\FsLibrary.natvis" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Language\CppHlslParser.inl" />
     <None Include="Language\ILexer.inl" />
     <None Include="Language\IParser.inl" />
     <None Include="Language\LanguageCommon.inl" />
     <None Include="Profiler\ScopedCpuProfiler.inl" />
     <None Include="SimpleRendering\IRenderer.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="FsLibrary.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

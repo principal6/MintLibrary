@@ -14,10 +14,6 @@
 #include <Container/StaticArray.h>
 #include <Container/UniqueString.h>
 #include <Container/UniqueString.hpp>
-#include <Container/DynamicString.h>
-#include <Container/DynamicString.hpp>
-#include <Container/Vector.h>
-#include <Container/Vector.hpp>
 #include <Container/StringUtil.h>
 #include <Container/StringUtil.hpp>
 #include <Container/Tree.h>

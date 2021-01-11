@@ -7,8 +7,8 @@
 
 #include <CommonDefinitions.h>
 
-#include <Container/Vector.h>
-#include <Container/DynamicString.h>
+#include <ContiguousContainer/Vector.h>
+#include <ContiguousContainer/DynamicString.h>
 
 #include <Language/LanguageCommon.h>
 

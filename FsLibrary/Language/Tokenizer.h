@@ -7,6 +7,8 @@
 
 #include <CommonDefinitions.h>
 
+#include <ContiguousContainer/DynamicString.h>
+
 
 //#define FS_USE_TOKEN_STRING_IN_RELEASE
 

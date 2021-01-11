@@ -1,8 +1,8 @@
 #include <stdafx.h>
 #include <Language/ILexer.h>
 
-#include <Container/Vector.hpp>
-#include <Container/DynamicString.hpp>
+#include <ContiguousContainer/Vector.hpp>
+#include <ContiguousContainer/DynamicString.hpp>
 #include <Container/StringUtil.hpp>
 
 
