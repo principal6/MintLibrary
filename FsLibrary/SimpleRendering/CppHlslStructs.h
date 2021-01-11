@@ -55,6 +55,8 @@ namespace fs
 			float4				_position;
 			float4				_infoA;
 			float4				_infoB;
+			float4				_infoC;
+			float4				_borderColor;
 			float4				_color;
 		};
 
@@ -72,6 +74,8 @@ namespace fs
 			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
 			float4				_infoA;
 			float4				_infoB;
+			float4				_infoC;
+			float4				_borderColor;
 			float4				_color;
 		};
 	}

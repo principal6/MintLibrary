@@ -808,19 +808,19 @@ const bool testWindow()
 			
 			shapeRenderer.setPosition(fs::Float3(400.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0.0f);
+			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
 
 			shapeRenderer.setPosition(fs::Float3(450.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(100, 100), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0.0f);
+			shapeRenderer.drawRoundedRectangle(fs::Int2(100, 100), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
 
 			shapeRenderer.setPosition(fs::Float3(400.0f, 450.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 0.7854f);
+			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 2, 0.7854f);
 
 			shapeRenderer.setPosition(fs::Float3(400.0f, 150.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRectangle(fs::Int2(210, 110), 0.0f);
+			shapeRenderer.drawRectangle(fs::Int2(210, 110), 4, 0.0f);
 
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
 			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 40.0f);

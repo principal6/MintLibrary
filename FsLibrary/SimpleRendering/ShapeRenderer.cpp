@@ -14,6 +14,7 @@ namespace fs
 		ShapeRenderer::ShapeRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: IRenderer(graphicDevice)
 			, _shapeBuffer{ graphicDevice }
+			, _borderColor{ fs::Float4(1.0f, 1.0f, 1.0f, 1.0f) }
 		{
 			__noop;
 		}
@@ -34,9 +35,10 @@ namespace fs
 						VS_OUTPUT_SHAPE result;
 						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 						result._position.w  = 1.0;
-						result._infoA.xy	= input._infoA.xy;
-						result._infoA.zw	= input._infoA.zw;
+						result._infoA		= input._infoA;
 						result._infoB		= input._infoB;
+						result._infoC		= input._infoC;
+						result._borderColor	= input._borderColor;
 						result._color		= input._color;
 						return result;
 					}
@@ -82,6 +84,10 @@ namespace fs
 						return (displacement < -kAntiAliasingFactor) ? 1.0 : saturate(1.0 - saturate((displacement + kAntiAliasingFactor) / kAntiAliasingFactor));
 					}
 					
+					float getClosestSignedDistanceFromEdges(in float2 lt, in float2 rb, in float2 nL, in float2 nT, in float2 nR, in float2 nB)
+					{
+						return min(dot(lt, nL), min(dot(lt, nT), min(dot(rb, nR), dot(rb, nB))));
+					}
 					
 					float rectangle(in float2 p, in float2 s, in float2x2 rotationMatrix)
 					{
@@ -92,57 +98,18 @@ namespace fs
 						const float3 vL = float3(mul(rotationMatrix, float2(0.0, -s.y)), 0.0);
 						const float3 vT = float3(mul(rotationMatrix, float2(+s.x, 0.0)), 0.0);
 						
+						// Edge normals
+						const float2 nL = normalize(vT);
+						const float2 nT = normalize(vL);
+						
 						// Rotated position (offset from corners)
 						const float2 toLt = mul(rotationMatrix, float2(-hs.x, +hs.y));
 						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
 						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
 						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
 						
-						const float3 crossL = cross(vL, lt);
-						const float3 crossT = cross(lt, vT);
-						const float3 crossR = cross(-vL, rb);
-						const float3 crossB = cross(rb, -vT);
-						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
-						{
-							// Inside
-							const float2 nL = normalize(vT);
-							const float2 nT = normalize(vL);
-							
-							const float dotL = dot(lt, nL);
-							const float dotT = dot(lt, nT);
-							const float dotR = dot(rb, -nL);
-							const float dotB = dot(rb, -nT);
-							
-							// Close to left border
-							if (dotL <= kAntiAliasingFactor)
-							{
-								return dotL / kAntiAliasingFactor;
-							}
-							
-							// Close to top border
-							if (dotT <= kAntiAliasingFactor)
-							{
-								return dotT / kAntiAliasingFactor;
-							}
-							
-							// Close to right border
-							if (dotR <= kAntiAliasingFactor)
-							{
-								return dotR / kAntiAliasingFactor;
-							}
-							
-							// Close to bottom border
-							if (dotB <= kAntiAliasingFactor)
-							{
-								return dotB / kAntiAliasingFactor;
-							}
-							
-							// Body
-							return 1.0;
-						}
-						
-						// Outside
-						return 0.0;
+						// Get closest signed distance
+						return getClosestSignedDistanceFromEdges(lt, rb, nL, nT, -nL, -nT);
 					}
 
 					float roundedRectangle(in float2 p, in float2 s, in float r, in float2x2 rotationMatrix)
@@ -154,74 +121,37 @@ namespace fs
 						const float3 vL = float3(mul(rotationMatrix, float2(0.0, -s.y)), 0.0);
 						const float3 vT = float3(mul(rotationMatrix, float2(+s.x, 0.0)), 0.0);
 						
+						// Edge normals
+						const float2 nL = normalize(vT);
+						const float2 nT = normalize(vL);
+						
 						// Rotated position (offset from corners)
 						const float2 toLt = mul(rotationMatrix, float2(-hs.x, +hs.y));
 						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
 						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
 						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
 						
-						const float3 crossL = cross(vL, lt);
-						const float3 crossT = cross(lt, vT);
-						const float3 crossR = cross(-vL, rb);
-						const float3 crossB = cross(rb, -vT);
-						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
+						// Corner radius
+						const float radius = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
+						
+						// If at corner, calculate distance
+						const bool isTop = -lt.y <= radius;
+						const bool isBottom = (s.y + lt.y) <= radius;
+						if (lt.x <= radius && (isTop == true || isBottom == true))
 						{
-							// Inside
-							const float radius = (kRoundnessAbsoluteBase <= r) ? r - kRoundnessAbsoluteBase : (min(s.x, s.y) / 2.0) * r;
-							const float2 nL = normalize(vT);
-							const float2 nT = normalize(vL);
-							
-							const float dotL = dot(lt, nL);
-							const float dotT = dot(lt, nT);
-							const float dotR = dot(rb, -nL);
-							const float dotB = dot(rb, -nT);
-							
-							const bool isTop = dotT < radius;
-							const bool isBottom = dotB < radius;
-							
-							// Left corners
-							if (dotL < radius && (isTop == true || isBottom == true))
-							{
-								float dist = distance(float2(dotL, (isTop == true) ? dotT : dotB), float2(radius, radius));
-								return calculateRoundAlphaForAntiAliasing(dist, radius);
-							}
-							
-							// Right corners
-							if (dotR < radius && (isTop == true || isBottom == true))
-							{
-								float dist = distance(float2(dotR, (isTop == true) ? dotT : dotB), float2(radius, radius));
-								return calculateRoundAlphaForAntiAliasing(dist, radius);
-							}
-							
-							// Close to left border
-							if (dotL <= kAntiAliasingFactor)
-							{
-								return dotL / kAntiAliasingFactor;
-							}
-							
-							// Close to top border
-							if (dotT <= kAntiAliasingFactor)
-							{
-								return dotT / kAntiAliasingFactor;
-							}
-							
-							// Close to right border
-							if (dotR <= kAntiAliasingFactor)
-							{
-								return dotR / kAntiAliasingFactor;
-							}
-							
-							// Close to bottom border
-							if (dotB <= kAntiAliasingFactor)
-							{
-								return dotB / kAntiAliasingFactor;
-							}
-							
-							// Body
-							return 1.0;
+							// Vector pointing to the left corner
+							float2 vC = (float2(lt.x, -lt.y) - float2(radius, (isTop == true) ? radius : s.y - radius));
+							return radius - length(vC);
+						}
+						else if (-rb.x <= radius && (isTop == true || isBottom == true))
+						{
+							// Vector pointing to the right corner
+							float2 vC = (float2(-rb.x, rb.y) - float2(radius, (isTop == true) ? s.y - radius : radius));
+							return radius - length(vC);
 						}
 						
-						return 0.0;
+						// Get closest signed distance
+						return getClosestSignedDistanceFromEdges(lt, rb, nL, nT, -nL, -nT);
 					}
 					
 					float taperedRectangle(in float2 p, in float2 s, in float t, in float b, in float2x2 rotationMatrix)
@@ -248,58 +178,20 @@ namespace fs
 						const float3 vR = float3(mul(rotationMatrix, ovR), 0.0);
 						const float3 vB = float3(mul(rotationMatrix, ovB), 0.0);
 						
+						// Edge normals
+						const float2 nL = normalize(mul(kRotationMatrixRightAngle,  vL));
+						const float2 nT = normalize(mul(kRotationMatrixRightAngle, -vT));
+						const float2 nR = normalize(mul(kRotationMatrixRightAngle,  vR));
+						const float2 nB = normalize(mul(kRotationMatrixRightAngle, -vB));
+
 						// Rotated position (offset from corners)
 						const float2 toLt = mul(rotationMatrix, float2(-hs.x + leftOffset, +hs.y));
 						const float2 toRb = mul(rotationMatrix, float2(+hs.x, -hs.y));
 						const float3 lt = float3(p - toLt, 0.0); // Offset from left-top corner
 						const float3 rb = float3(p - toRb, 0.0); // Offset from right-bottom corner
 						
-						const float3 crossL = cross(vL, lt);
-						const float3 crossT = cross(lt, vT);
-						const float3 crossR = cross(vR, rb);
-						const float3 crossB = cross(rb, vB);
-						if (0.0 <= crossL.z && 0.0 <= crossT.z && 0.0 <= crossR.z && 0.0 <= crossB.z)
-						{
-							// Inside
-							const float2 nL = normalize(mul(kRotationMatrixRightAngle,  vL));
-							const float2 nT = normalize(mul(kRotationMatrixRightAngle, -vT));
-							const float2 nR = normalize(mul(kRotationMatrixRightAngle,  vR));
-							const float2 nB = normalize(mul(kRotationMatrixRightAngle, -vB));
-							
-							const float dotL = dot(lt, nL);
-							const float dotT = dot(lt, nT);
-							const float dotR = dot(rb, nR);
-							const float dotB = dot(rb, nB);
-							
-							// Close to left border
-							if (dotL <= kAntiAliasingFactor)
-							{
-								return dotL / kAntiAliasingFactor;
-							}
-							
-							// Close to top border
-							if (dotT <= kAntiAliasingFactor)
-							{
-								return dotT / kAntiAliasingFactor;
-							}
-							
-							// Close to right border
-							if (dotR <= kAntiAliasingFactor)
-							{
-								return dotR / kAntiAliasingFactor;
-							}
-							
-							// Close to bottom border
-							if (dotB <= kAntiAliasingFactor)
-							{
-								return dotB / kAntiAliasingFactor;
-							}
-							
-							// Body
-							return 1.0;
-						}
-						
-						return 0.0;
+						// Get closest signed distance
+						return getClosestSignedDistanceFromEdges(lt, rb, nL, nT, nR, nB);
 					}
 
 					float bluntLine(in float2 pixelPosition, in float2 l0, in float2 l1, in float thickness)
@@ -328,9 +220,37 @@ namespace fs
 						return 0.0;
 					}
 					
+					float4 calculateFinalColor(in float signedDistance, in float borderThickness, in float4 backgroundColor, in float4 borderColor)
+					{
+						if (0.0 < signedDistance)
+						{
+							if (0.0 < borderThickness)
+							{
+								// Blend background and border color
+								const float backgroundRatio = saturate(signedDistance / kAntiAliasingFactor);
+								return backgroundColor * backgroundRatio + borderColor * (1.0 - backgroundRatio);
+							}
+							
+							// No border
+							return backgroundColor;
+						}
+						
+						if (0.0 < borderThickness)
+						{
+							// Border color
+							const float alpha = saturate((borderThickness + kAntiAliasingFactor - abs(signedDistance)) / kAntiAliasingFactor);
+							return borderColor * float4(1.0, 1.0, 1.0, alpha);
+						}
+						
+						// No border
+						const float alpha = 1.0 - saturate(abs(signedDistance) / kAntiAliasingFactor);
+						return backgroundColor * float4(1.0, 1.0, 1.0, alpha);
+					}
+					
 					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
 						const float angle = input._infoB.z;
+						const float borderThickness = kDeltaTwoPixel * input._infoC.x;
 						
 						if (input._infoB.w == 0.0)
 						{
@@ -339,8 +259,7 @@ namespace fs
 							const float2 p = normalizePosition(input._position) - c;
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
-							const float alphaFactor = rectangle(p, s, rotationMatrix);
-							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
+							return calculateFinalColor(rectangle(p, s, rotationMatrix), borderThickness, input._color, input._borderColor);
 						}
 						else if (input._infoB.w == 1.0)
 						{
@@ -350,8 +269,7 @@ namespace fs
 							
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float r = input._infoB.x;
-							const float alphaFactor = roundedRectangle(p, s, r, rotationMatrix);
-							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
+							return calculateFinalColor(roundedRectangle(p, s, r, rotationMatrix), borderThickness, input._color, input._borderColor);
 						}
 						else if (input._infoB.w == 2.0)
 						{
@@ -362,8 +280,7 @@ namespace fs
 							const float2 s = input._infoA.zw * kScreenRatio;
 							const float t = input._infoB.x;
 							const float b = input._infoB.y;
-							const float alphaFactor = taperedRectangle(p, s, t, b, rotationMatrix);
-							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);							
+							return calculateFinalColor(taperedRectangle(p, s, t, b, rotationMatrix), borderThickness, input._color, input._borderColor);
 						}
 						else if (input._infoB.w == 3.0)
 						{
@@ -400,7 +317,12 @@ namespace fs
 			}
 		}
 
-		void ShapeRenderer::drawRectangle(const fs::Int2& size, const float angle)
+		void ShapeRenderer::setBorderColor(const fs::Float4& borderColor) noexcept
+		{
+			_borderColor = borderColor;
+		}
+
+		void ShapeRenderer::drawRectangle(const fs::Int2& size, const uint32 borderThickness, const float angle)
 		{
 			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
 			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
@@ -410,18 +332,20 @@ namespace fs
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
+			v._borderColor = _borderColor;
 			v._infoA._x = normalizedCenterPosition._x;
 			v._infoA._y = normalizedCenterPosition._y;
 			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
 			v._infoA._w = (sizeF._y / windowSizeF._y) * 2.0f;
 			v._infoB._z = angle;
 			v._infoB._w = 0.0f;
+			v._infoC._x = static_cast<float>(borderThickness);
 
 			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
 		}
 
-		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle)
+		void ShapeRenderer::drawRoundedRectangle(const fs::Int2& size, const float roundness, const uint32 borderThickness, const float angle)
 		{
 			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
 			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
@@ -431,6 +355,7 @@ namespace fs
 			
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
+			v._borderColor = _borderColor;
 			v._infoA._x = normalizedCenterPosition._x;
 			v._infoA._y = normalizedCenterPosition._y;
 			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
@@ -438,12 +363,13 @@ namespace fs
 			v._infoB._x = roundness;
 			v._infoB._z = angle;
 			v._infoB._w = 1.0f;
+			v._infoC._x = static_cast<float>(borderThickness);
 
 			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();
 		}
 
-		void ShapeRenderer::drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle)
+		void ShapeRenderer::drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const uint32 borderThickness, const float angle)
 		{
 			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
 			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
@@ -453,6 +379,7 @@ namespace fs
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
+			v._borderColor = _borderColor;
 			v._infoA._x = normalizedCenterPosition._x;
 			v._infoA._y = normalizedCenterPosition._y;
 			v._infoA._z = (sizeF._x / windowSizeF._x) * 2.0f;
@@ -461,6 +388,7 @@ namespace fs
 			v._infoB._y = bias;
 			v._infoB._z = angle;
 			v._infoB._w = 2.0f;
+			v._infoC._x = static_cast<float>(borderThickness);
 
 			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) * 1.5f));
 			prepareIndexArray();

@@ -32,9 +32,12 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawRectangle(const fs::Int2& size, const float angle);
-			void														drawRoundedRectangle(const fs::Int2& size, const float roundness, const float angle);
-			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const float angle);
+			void														setBorderColor(const fs::Float4& borderColor) noexcept;
+
+		public:
+			void														drawRectangle(const fs::Int2& size, const uint32 borderThickness, const float angle);
+			void														drawRoundedRectangle(const fs::Int2& size, const float roundness, const uint32 borderThickness, const float angle);
+			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const uint32 borderThickness, const float angle);
 			void														drawLine(const fs::Int2& p0, const fs::Int2& p1, const float thickness);
 
 		private:
@@ -46,6 +49,9 @@ namespace fs
 			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT_SHAPE>	_shapeBuffer;
 			DxObjectId													_vertexShader;
 			DxObjectId													_pixelShader;
+		
+		private:
+			fs::Float4													_borderColor;
 		};
 	}
 }
