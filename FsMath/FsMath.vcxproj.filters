@@ -7,9 +7,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{e385fb3f-ca1a-43ae-af8e-0d1de9575c3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared">
-      <UniqueIdentifier>{c9321483-2b5c-47fd-88ae-f52e5f64dae4}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Float2.h">
@@ -65,12 +62,6 @@
     </ClInclude>
     <ClInclude Include="Source\Quaternion.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Shared\CommonDefinitions.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="Shared\stdafx.h">
-      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

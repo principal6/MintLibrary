@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/Language/CppHlslParser.h>
 
 #include <FsLibrary/Language/ILexer.h>

@@ -5,7 +5,7 @@
 #define FS_DYNAMIC_STRING_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/Memory/Allocator.h>
 

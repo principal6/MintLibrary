@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/SimpleRendering/DxShader.h>
 
 #include <d3dcompiler.h>

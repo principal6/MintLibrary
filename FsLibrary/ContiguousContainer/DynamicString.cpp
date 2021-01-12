@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/ContiguousContainer/DynamicString.h>
 #include <FsLibrary/ContiguousContainer/DynamicString.hpp>
 

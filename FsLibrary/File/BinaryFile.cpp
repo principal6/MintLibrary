@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include <stdafx.h>
 #include <FsLibrary/File/BinaryFile.h>
 
 #include <fstream>

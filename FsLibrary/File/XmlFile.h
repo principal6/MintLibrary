@@ -5,7 +5,7 @@
 #define FS_XML_FILE_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 
 namespace fs

@@ -5,7 +5,7 @@
 #define FS_BITMAP_FONT_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsMath/Include/Float2.h>
 

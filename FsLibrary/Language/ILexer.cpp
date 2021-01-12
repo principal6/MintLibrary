@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/Language/ILexer.h>
 
 #include <FsLibrary/ContiguousContainer/Vector.hpp>

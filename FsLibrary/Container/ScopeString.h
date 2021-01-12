@@ -5,7 +5,7 @@
 #define FS_SCOPE_STRING_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 #include <FsLibrary/Container/StaticArray.h>
 
 

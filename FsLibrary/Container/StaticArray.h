@@ -5,7 +5,7 @@
 #define FS_STATIC_ARRAY_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <initializer_list>
 #include <utility>

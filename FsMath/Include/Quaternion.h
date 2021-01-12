@@ -5,7 +5,7 @@
 #define FS_QUATERNION_H
 
 
-#include <FsMath/Shared/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 #include <FsMath/Include/Float4.h>
 
 

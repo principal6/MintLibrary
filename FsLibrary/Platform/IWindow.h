@@ -5,7 +5,7 @@
 #define FS_I_WINDOW_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsMath/Include/Int2.h>
 #include <FsMath/Include/Float3.h>

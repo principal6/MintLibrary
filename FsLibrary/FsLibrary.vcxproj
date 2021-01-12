@@ -19,9 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslCbuffers.h" />
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructs.h" />
+    <ClInclude Include="..\CommonDefinitions.h" />
+    <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="CommonDefinitions.h" />
     <ClInclude Include="Container\BitVector.h" />
     <ClInclude Include="Container\BitVector.hpp" />
     <ClInclude Include="Container\Container.h" />
@@ -70,8 +73,6 @@
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
     <ClInclude Include="SimpleRendering\FontRenderer.h" />
-    <ClInclude Include="SimpleRendering\CppHlslStructs.h" />
-    <ClInclude Include="SimpleRendering\CppHlslCbuffers.h" />
     <ClInclude Include="SimpleRendering\DxBuffer.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.inl" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
@@ -84,7 +85,6 @@
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.h" />
     <ClInclude Include="SimpleRendering\TriangleBuffer.hpp" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
@@ -159,8 +159,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -190,14 +189,14 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName)\;$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName)\;$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

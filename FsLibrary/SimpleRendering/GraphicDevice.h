@@ -5,7 +5,7 @@
 #define FS_GRAPHIC_DEVICE_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/Container/StaticArray.h>
 #include <FsLibrary/Container/ScopeString.h>
@@ -14,8 +14,6 @@
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 #include <FsLibrary/SimpleRendering/DxShader.h>
 #include <FsLibrary/SimpleRendering/DxBuffer.h>
-#include <FsLibrary/SimpleRendering/CppHlslStructs.h>
-#include <FsLibrary/SimpleRendering/CppHlslCbuffers.h>
 #include <FsLibrary/SimpleRendering/TriangleBuffer.h>
 #include <FsLibrary/SimpleRendering/RectangleRenderer.h>
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
@@ -24,6 +22,9 @@
 #include <FsLibrary/Language/CppHlsl.h>
 
 #include <FsMath/Include/Float4x4.h>
+
+#include <Assets/CppHlsl/CppHlslStructs.h>
+#include <Assets/CppHlsl/CppHlslCbuffers.h>
 
 
 //#define FS_TEST_MEMORY_FONT_TEXTURE

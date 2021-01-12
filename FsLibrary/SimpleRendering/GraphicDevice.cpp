@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include <stdafx.h>
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 
 #include <d3dcompiler.h>
@@ -47,12 +47,12 @@ namespace fs
 			createFontTextureFromMemory();
 #endif
 
-			if (_fontRenderer.loadFont("FsLibrary/Assets/d2coding.fnt") == false)
+			if (_fontRenderer.loadFont("Assets/d2coding.fnt") == false)
 			{
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
-				_fontRenderer.bakeFont("FsLibrary/Assets/d2coding.ttf", 16, "FsLibrary/Assets/d2coding.fnt", 2048, 1, 1);
-				_fontRenderer.loadFont("FsLibrary/Assets/d2coding.fnt");
+				_fontRenderer.bakeFont("Assets/d2coding.ttf", 16, "Assets/d2coding.fnt", 2048, 1, 1);
+				_fontRenderer.loadFont("Assets/d2coding.fnt");
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace fs
 
 			// Structs
 			{
-				_cppHlslStructs.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslStructs.h");
+				_cppHlslStructs.parseCppHlslFile("Assets/CppHlsl/CppHlslStructs.h");
 				_cppHlslStructs.generateHlslString(fs::Language::CppHlslFileType::Structs);
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStructs.getHlslString());
 			}
@@ -124,7 +124,7 @@ namespace fs
 				fs::CppHlsl::CB_Transforms cbTransforms;
 				cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 				{
-					_cppHlslCbuffers.parseCppHlslFile("FsLibrary/SimpleRendering/CppHlslCbuffers.h");
+					_cppHlslCbuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslCbuffers.h");
 					_cppHlslCbuffers.generateHlslString(fs::Language::CppHlslFileType::Cbuffers);
 					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslCbuffers.getHlslString());
 

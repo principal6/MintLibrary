@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/SimpleRendering/FontRenderer.h>
 
 #include <ft2build.h>

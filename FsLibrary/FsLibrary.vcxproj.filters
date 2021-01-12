@@ -28,6 +28,12 @@
     <Filter Include="ContiguousContainer">
       <UniqueIdentifier>{9089e893-c77c-46ee-858c-3ea3ee6563d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{0fa2eb07-4611-40c3-9524-0b59bc3e7bbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\CppHlsl">
+      <UniqueIdentifier>{20444c3a-73ad-4d90-acda-8ed853f51d74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="File\BinaryFile.h">
@@ -54,7 +60,6 @@
     <ClInclude Include="Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
-    <ClInclude Include="CommonDefinitions.h" />
     <ClInclude Include="Container\StackHolder.h">
       <Filter>Container</Filter>
     </ClInclude>
@@ -79,7 +84,6 @@
     <ClInclude Include="Container\StringUtil.h">
       <Filter>Container</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
@@ -173,12 +177,6 @@
     <ClInclude Include="Profiler\Profiler.h">
       <Filter>Profiler</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRendering\CppHlslCbuffers.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\CppHlslStructs.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Language\CppHlsl.h">
       <Filter>Language\CppHlsl</Filter>
     </ClInclude>
@@ -223,6 +221,14 @@
     </ClInclude>
     <ClInclude Include="ContiguousContainer\ContiguousContainer.h">
       <Filter>ContiguousContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CommonDefinitions.h" />
+    <ClInclude Include="..\stdafx.h" />
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslCbuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructs.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@
 #define FS_SHAPE_RENDERER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/SimpleRendering/IRenderer.h>
 #include <FsLibrary/SimpleRendering/TriangleBuffer.h>

@@ -7,9 +7,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{316c8b90-b051-41de-b9e4-ccba448e026d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shared">
-      <UniqueIdentifier>{59668087-944a-4b9a-952b-f12754bfe855}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Logger.h">
@@ -17,9 +14,6 @@
     </ClInclude>
     <ClInclude Include="Source\Logger.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Shared\CommonDefinitions.h">
-      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

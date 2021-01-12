@@ -5,9 +5,9 @@
 #define FS_TRIANGLE_BUFFER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
-#include <FsLibrary/SimpleRendering/CppHlslStructs.h>
+#include <Assets/CppHlsl/CppHlslStructs.h>
 
 
 namespace fs

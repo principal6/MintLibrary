@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <FsMath/Shared/stdafx.h>
+#include <stdafx.h>
 #include <FsMath/Include/Float2.h>
 
 #include <FsMath/Include/MathCommon.h>

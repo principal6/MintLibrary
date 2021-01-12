@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+﻿#include <stdafx.h>
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 
 #include <FsLibrary/Container/ScopeString.hpp>

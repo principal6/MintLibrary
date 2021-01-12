@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <d3dcommon.h>
 

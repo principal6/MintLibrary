@@ -5,7 +5,7 @@
 #define FS_FLOAT2_H
 
 
-#include <FsMath/Shared/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 
 namespace fs

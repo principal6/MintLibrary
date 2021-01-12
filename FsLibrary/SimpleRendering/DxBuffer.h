@@ -5,7 +5,7 @@
 #define FS_DX_BUFFER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/SimpleRendering/IDxObject.h>
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/SimpleRendering/DxBuffer.h>
 
 #include <FsLibrary/Algorithm.hpp>

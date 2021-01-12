@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/ContiguousContainer/DynamicString.h>
 
 #include <FsLibrary/Container/StringUtil.h>

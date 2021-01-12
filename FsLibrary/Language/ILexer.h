@@ -5,7 +5,7 @@
 #define FS_I_LEXER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/ContiguousContainer/Vector.h>
 #include <FsLibrary/ContiguousContainer/DynamicString.h>

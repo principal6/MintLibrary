@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include <FsLibrary/Language/CppHlsl.h>
 
 #include <FsLibrary/File/TextFile.h>

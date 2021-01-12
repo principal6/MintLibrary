@@ -5,7 +5,7 @@
 #define FS_TEXT_FILE_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 #include <FsLibrary/File/IFile.h>
 #include <FsLibrary/ContiguousContainer/Vector.h>
 

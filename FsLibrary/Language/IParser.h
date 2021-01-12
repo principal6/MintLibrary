@@ -5,7 +5,7 @@
 #define FS_I_PARSER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/Container/Tree.h>
 

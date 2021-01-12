@@ -5,7 +5,7 @@
 #define FS_FLOAT3X3_H
 
 
-#include <FsMath/Shared/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 
 namespace fs

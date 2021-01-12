@@ -5,7 +5,7 @@
 #define FS_TOKENIZER_H
 
 
-#include <FsLibrary/CommonDefinitions.h>
+#include <CommonDefinitions.h>
 
 #include <FsLibrary/ContiguousContainer/DynamicString.h>
 
