@@ -7,8 +7,8 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsLibrary/ContiguousContainer/Vector.h>
-#include <FsLibrary/ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/ContiguousVector.h>
+#include <FsLibrary/ContiguousContainer/ContiguousString.h>
 
 #include <FsLibrary/Language/LanguageCommon.h>
 

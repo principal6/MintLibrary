@@ -25,7 +25,7 @@ namespace fs
 			}
 		}
 
-		void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray)
+		void tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray)
 		{
 			if (inputString.empty() == true)
 			{
@@ -55,7 +55,7 @@ namespace fs
 			}
 		}
 
-		void tokenize(const fs::DynamicStringA& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<fs::DynamicStringA>& outArray)
+		void tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray)
 		{
 			if (inputString.empty() == true)
 			{

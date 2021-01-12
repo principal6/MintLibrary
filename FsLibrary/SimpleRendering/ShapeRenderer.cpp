@@ -137,13 +137,13 @@ namespace fs
 						const bool isBottom = (s.y + lt.y) <= radius;
 						if (lt.x <= radius && (isTop == true || isBottom == true))
 						{
-							// Vector pointing to the left corner
+							// ContiguousVector pointing to the left corner
 							float2 vC = (float2(lt.x, -lt.y) - float2(radius, (isTop == true) ? radius : s.y - radius));
 							return radius - length(vC);
 						}
 						else if (-rb.x <= radius && (isTop == true || isBottom == true))
 						{
-							// Vector pointing to the right corner
+							// ContiguousVector pointing to the right corner
 							float2 vC = (float2(-rb.x, rb.y) - float2(radius, (isTop == true) ? s.y - radius : radius));
 							return radius - length(vC);
 						}

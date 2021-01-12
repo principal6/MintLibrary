@@ -4,7 +4,7 @@
 #include <stdafx.h>
 #include <FsLibrary/Container/Tree.h>
 
-#include <FsLibrary/ContiguousContainer/Vector.hpp>
+#include <FsLibrary/ContiguousContainer/ContiguousVector.hpp>
 
 
 namespace fs

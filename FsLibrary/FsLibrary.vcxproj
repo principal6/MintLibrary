@@ -40,10 +40,10 @@
     <ClInclude Include="Container\UniqueString.h" />
     <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="ContiguousContainer\ContiguousContainer.h" />
-    <ClInclude Include="ContiguousContainer\DynamicString.h" />
-    <ClInclude Include="ContiguousContainer\DynamicString.hpp" />
-    <ClInclude Include="ContiguousContainer\Vector.h" />
-    <ClInclude Include="ContiguousContainer\Vector.hpp" />
+    <ClInclude Include="ContiguousContainer\ContiguousString.h" />
+    <ClInclude Include="ContiguousContainer\ContiguousString.hpp" />
+    <ClInclude Include="ContiguousContainer\ContiguousVector.h" />
+    <ClInclude Include="ContiguousContainer\ContiguousVector.hpp" />
     <ClInclude Include="File\BinaryFile.h" />
     <ClInclude Include="File\BinaryFile.hpp" />
     <ClInclude Include="File\FileUtil.h" />
@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Container\UniqueString.cpp" />
-    <ClCompile Include="ContiguousContainer\DynamicString.cpp" />
+    <ClCompile Include="ContiguousContainer\ContiguousString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />

@@ -207,18 +207,6 @@
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
-    <ClInclude Include="ContiguousContainer\DynamicString.h">
-      <Filter>ContiguousContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="ContiguousContainer\DynamicString.hpp">
-      <Filter>ContiguousContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="ContiguousContainer\Vector.h">
-      <Filter>ContiguousContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="ContiguousContainer\Vector.hpp">
-      <Filter>ContiguousContainer</Filter>
-    </ClInclude>
     <ClInclude Include="ContiguousContainer\ContiguousContainer.h">
       <Filter>ContiguousContainer</Filter>
     </ClInclude>
@@ -229,6 +217,18 @@
     </ClInclude>
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStructs.h">
       <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="ContiguousContainer\ContiguousString.h">
+      <Filter>ContiguousContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="ContiguousContainer\ContiguousString.hpp">
+      <Filter>ContiguousContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="ContiguousContainer\ContiguousVector.h">
+      <Filter>ContiguousContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="ContiguousContainer\ContiguousVector.hpp">
+      <Filter>ContiguousContainer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -292,7 +292,7 @@
     <ClCompile Include="SimpleRendering\FontRenderer.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
-    <ClCompile Include="ContiguousContainer\DynamicString.cpp">
+    <ClCompile Include="ContiguousContainer\ContiguousString.cpp">
       <Filter>ContiguousContainer</Filter>
     </ClCompile>
   </ItemGroup>

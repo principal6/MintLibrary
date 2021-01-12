@@ -5,8 +5,8 @@
 #define FS_STRING_UTIL_H
 
 
-#include <FsLibrary/ContiguousContainer/Vector.h>
-#include <FsLibrary/ContiguousContainer/DynamicString.h>
+#include <FsLibrary/ContiguousContainer/ContiguousVector.h>
+#include <FsLibrary/ContiguousContainer/ContiguousString.h>
 
 
 namespace fs
@@ -71,8 +71,8 @@ namespace fs
         void convertWideStringToString(const std::wstring& source, std::string& destination);
         void excludeExtension(std::string& inoutText);
 
-        static void tokenize(const fs::DynamicStringA& inputString, const char delimiter, fs::Vector<fs::DynamicStringA>& outArray);
-        static void tokenize(const fs::DynamicStringA& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<fs::DynamicStringA>& outArray);
+        static void tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
+        static void tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
         static void tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray);
     }
 }

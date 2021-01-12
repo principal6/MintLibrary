@@ -344,9 +344,9 @@ const bool testMemoryAllocator()
 #else
 		static constexpr uint32 kCount = 30'000;
 #endif
-		fs::Profiler::ScopedCpuProfiler profiler{ "Vector of DynamicStringA" };
+		fs::Profiler::ScopedCpuProfiler profiler{ "ContiguousVector of ContiguousStringA" };
 		
-		fs::Vector<fs::DynamicStringA> vec;
+		fs::ContiguousVector<fs::ContiguousStringA> vec;
 		for (uint32 i = 0; i < kCount; ++i)
 		{
 			vec.push_back("abcd");
@@ -408,13 +408,13 @@ const bool testStringTypes()
 #pragma endregion
 
 #pragma region DynamicString
-	using fs::DynamicStringA;
+	using fs::ContiguousStringA;
 	{
-		DynamicStringA a;
+		ContiguousStringA a;
 		a.append("abcdefg hijklmnopqrst");
 		a.append("HELLO!!!!?");
 
-		DynamicStringA b = "ABCDEFG!";
+		ContiguousStringA b = "ABCDEFG!";
 		b.assign("haha..");
 		a = b;
 		const bool cmp0 = (a == b);
@@ -425,7 +425,7 @@ const bool testStringTypes()
 		b.append("Hello World!");
 		const bool cmp2 = b.compare("llo", fs::StringRange(2, 3));
 
-		DynamicStringA c = b.substr(100);
+		ContiguousStringA c = b.substr(100);
 		const bool cEmpty = c.empty();
 		const uint32 foundO0 = b.find("o", 6);
 		const uint32 foundO1 = b.find("o", 20);
@@ -442,21 +442,21 @@ const bool testStringTypes()
 		c.setChar(1, 'j');
 		const char getChar = c.getChar(10);
 
-		DynamicStringA from_value0 = DynamicStringA::from_value<float>(1.23f);
-		DynamicStringA from_value1 = DynamicStringA::from_value<bool>(true);
-		DynamicStringA from_value2 = DynamicStringA::from_value<uint32>(3294967295);
+		ContiguousStringA from_value0 = ContiguousStringA::from_value<float>(1.23f);
+		ContiguousStringA from_value1 = ContiguousStringA::from_value<bool>(true);
+		ContiguousStringA from_value2 = ContiguousStringA::from_value<uint32>(3294967295);
 
-		const float to_value0 = DynamicStringA::to_float(from_value0);
-		const bool to_value1 = DynamicStringA::to_bool(from_value1);
-		const uint32 to_value2 = DynamicStringA::to_uint32(from_value2);
+		const float to_value0 = ContiguousStringA::to_float(from_value0);
+		const bool to_value1 = ContiguousStringA::to_bool(from_value1);
+		const uint32 to_value2 = ContiguousStringA::to_uint32(from_value2);
 	}
 
 #if defined FS_TEST_PERFORMANCE
 	static constexpr uint32 kCount = 20'000;
 	{
-		fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<fs::DynamicStringA>" };
+		fs::Profiler::ScopedCpuProfiler profiler{ "fs::ContiguousVector<fs::ContiguousStringA>" };
 
-		fs::Vector<fs::DynamicStringA> dnsArray;
+		fs::ContiguousVector<fs::ContiguousStringA> dnsArray;
 		dnsArray.resize(kCount);
 		for (uint32 i = 0; i < kCount; ++i)
 		{
@@ -465,9 +465,9 @@ const bool testStringTypes()
 	}
 
 	{
-		fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<fs::DynamicStringA>" };
+		fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<fs::ContiguousStringA>" };
 
-		std::vector<fs::DynamicStringA> dnsArray;
+		std::vector<fs::ContiguousStringA> dnsArray;
 		dnsArray.resize(kCount);
 		for (uint32 i = 0; i < kCount; ++i)
 		{
@@ -476,9 +476,9 @@ const bool testStringTypes()
 	}
 
 	{
-		fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
+		fs::Profiler::ScopedCpuProfiler profiler{ "fs::ContiguousVector<std::string>" };
 
-		fs::Vector<std::string> dnsArray;
+		fs::ContiguousVector<std::string> dnsArray;
 		dnsArray.resize(kCount);
 		for (uint32 i = 0; i < kCount; ++i)
 		{
@@ -507,7 +507,7 @@ const bool testStringTypes()
 
 const bool testVector()
 {
-	fs::Vector<uint32> a(5);
+	fs::ContiguousVector<uint32> a(5);
 	a.push_back(1);
 	a.push_back(2);
 	a.push_back(3);
@@ -518,18 +518,18 @@ const bool testVector()
 
 	a.insert(2, 5);
 	a.erase(1);
-	fs::Vector<uint32> b(20);
+	fs::ContiguousVector<uint32> b(20);
 	b.push_back(9);
 	return true;
 }
 
 const bool testStringUtil()
 {
-	const fs::DynamicStringA testA{ "ab c   def g" };
-	fs::Vector<fs::DynamicStringA> testATokenized;
+	const fs::ContiguousStringA testA{ "ab c   def g" };
+	fs::ContiguousVector<fs::ContiguousStringA> testATokenized;
 	fs::StringUtil::tokenize(testA, ' ', testATokenized);
 	
-	fs::DynamicStringA testB{
+	fs::ContiguousStringA testB{
 		R"(
 			#include <ShaderStructDefinitions>
 			#include <VsConstantBuffers>
@@ -545,8 +545,8 @@ const bool testStringUtil()
 			}
 		)"
 	};
-	const fs::Vector<char> delimiterArray{ ' ', '\t', '\n' };
-	fs::Vector<fs::DynamicStringA> testBTokenized;
+	const fs::ContiguousVector<char> delimiterArray{ ' ', '\t', '\n' };
+	fs::ContiguousVector<fs::ContiguousStringA> testBTokenized;
 	fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
 	return true;
@@ -554,11 +554,11 @@ const bool testStringUtil()
 
 const bool testTree()
 {
-	fs::Tree<fs::DynamicStringA> stringTree;
+	fs::Tree<fs::ContiguousStringA> stringTree;
 	fs::TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
 	
 	fs::TreeNodeAccessor a = rootNode.insertChildNode("A");
-	const fs::DynamicStringA& aData = a.getNodeData();
+	const fs::ContiguousStringA& aData = a.getNodeData();
 	
 	fs::TreeNodeAccessor b = a.insertChildNode("b");
 	fs::TreeNodeAccessor c = a.insertChildNode("c");
@@ -593,42 +593,42 @@ const bool testMemoryAllocator2()
 		struct TestStruct
 		{
 			int32				_id = 0;
-			fs::Vector<float>	_vec;
+			fs::ContiguousVector<float>	_vec;
 		};
 
-		fs::Vector<TestStruct> a;
+		fs::ContiguousVector<TestStruct> a;
 		a.resize(10);
 	}
 
 	{
-		fs::Memory::Viewer<fs::DynamicStringA> viewer;
-		fs::Memory::Viewer<fs::DynamicStringA> viewer1;
+		fs::Memory::Viewer<fs::ContiguousStringA> viewer;
+		fs::Memory::Viewer<fs::ContiguousStringA> viewer1;
 		{
-			fs::Memory::Owner<fs::DynamicStringA> abc{ "ABC" };
+			fs::Memory::Owner<fs::ContiguousStringA> abc{ "ABC" };
 			viewer = abc;
 			
 			fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
-			const fs::DynamicStringA& viewerData = *scopedViewer;
+			const fs::ContiguousStringA& viewerData = *scopedViewer;
 
 			const bool viewerAlive = viewer.isAlive();
 			FS_LOG("김장원", (true == viewerAlive) ? "true" : "false");
 
 			viewer1 = viewer;
-			fs::Memory::Viewer<fs::DynamicStringA> viewer2 = viewer1;
+			fs::Memory::Viewer<fs::ContiguousStringA> viewer2 = viewer1;
 		}
 		const bool viewerAlive1 = viewer.isAlive();
 		FS_LOG("김장원", (true == viewerAlive1) ? "true" : "false");
 	}
 
 	{
-		fs::Memory::Owner<fs::DynamicStringA> abc = fs::DynamicStringA("ABC");
+		fs::Memory::Owner<fs::ContiguousStringA> abc = fs::ContiguousStringA("ABC");
 
-		fs::Memory::Viewer<fs::DynamicStringA> viewer;
+		fs::Memory::Viewer<fs::ContiguousStringA> viewer;
 		{
 			viewer = abc;
-			const fs::DynamicStringA& viewerData = viewer.viewData();
+			const fs::ContiguousStringA& viewerData = viewer.viewData();
 
-			fs::Memory::Viewer<fs::DynamicStringA> viewer1 = viewer;
+			fs::Memory::Viewer<fs::ContiguousStringA> viewer1 = viewer;
 		}
 	}
 
@@ -650,16 +650,16 @@ const bool testMemoryAllocator2()
 	}
 
 	{
-		fs::Memory::Viewer<fs::DynamicStringA> viewer;
-		fs::Memory::Owner<fs::DynamicStringA> ownerCopy;
+		fs::Memory::Viewer<fs::ContiguousStringA> viewer;
+		fs::Memory::Owner<fs::ContiguousStringA> ownerCopy;
 		{
-			fs::Memory::Owner<fs::DynamicStringA> owner{ "ABC" };
+			fs::Memory::Owner<fs::ContiguousStringA> owner{ "ABC" };
 			viewer = owner;
 
 			fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
 			owner.~Owner();
 
-			ownerCopy = fs::DynamicStringA(scopedViewer.viewData());
+			ownerCopy = fs::ContiguousStringA(scopedViewer.viewData());
 		}
 	}
 
@@ -667,14 +667,14 @@ const bool testMemoryAllocator2()
 	{
 		std::chrono::steady_clock clock;
 		const uint64 startTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
-		fs::Vector<fs::DynamicStringA> dsv;
+		fs::ContiguousVector<fs::ContiguousStringA> dsv;
 		for (uint32 i = 0; i < 10'000; ++i)
 		{
-			dsv.push_back(fs::DynamicStringA("abcd"));
+			dsv.push_back(fs::ContiguousStringA("abcd"));
 		}
 		const uint64 endTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
 		const uint64 duration = endTime - startTime;
-		FS_LOG("김장원", "fs::Vector<fs::DynamicString>::push_back() X 10,000 times - duration: %llu ms", duration);
+		FS_LOG("김장원", "fs::ContiguousVector<fs::DynamicString>::push_back() X 10,000 times - duration: %llu ms", duration);
 	}
 
 	return true;
