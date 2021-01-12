@@ -71,6 +71,8 @@ namespace fs
 					static const float4		kTransparentColor = float4(0, 0, 0, 0);
 					static const float		kRoundnessAbsoluteBase = 2.0;
 					static const float2x2	kRotationMatrixRightAngle = getRotationMatrix(kPiOverTwo);
+					static const float		kDeltaAngle = kPi / 180.0; // == 1 degree
+					static const float		kDeltaDoubleAngle = kDeltaAngle * 2.0;
 					
 					float2 normalizePosition(in float4 position)
 					{
@@ -219,32 +221,57 @@ namespace fs
 						return 0.0;
 					}
 					
+					float normalizeAngle(in float angle)
+					{
+						if (kTwoPi < angle)
+						{
+							return -kTwoPi + (angle % kTwoPi);
+						}
+						else if (angle < -kTwoPi)
+						{
+							return kTwoPi - (angle % kTwoPi);
+						}
+						return angle;
+					}
+					
+					float getSignedDistanceToBetweenAngles(in float angle, in float normalizedAngleA, in float normalizedAngleB)
+					{
+						if (angle < normalizedAngleA)
+						{
+							const float angleDiff = normalizedAngleA - angle;
+							return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
+						}
+						else if (normalizedAngleB < angle)
+						{
+							const float angleDiff = angle - normalizedAngleB;
+							return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
+						}
+						return 1.0f;
+					}
+					
 					float circularArc(in float2 p, in float2 center, in float radius, in float arcAngleA, in float arcAngleB, in float innerRadius)
 					{
-						const float kDeltaAngle = kPi / 180.0; // == 1 degree
-						const float kDeltaDoubleAngle = kDeltaAngle * 2.0;
-						
 						const float dist = length(p);
 						const float dotDir = dot(float2(0, 1), p / dist);
 						const float angle = ((p.x < 0.0) ? -acos(dotDir) : acos(dotDir)); // [-pi, +pi]
+						
+						const float angleL = angle - kPi; // [-2pi, 0]
+						const float angleR = angle + kPi; // [0, 2pi]
 						
 						// Between angles
 						const float signedDistance = radius - dist - kDeltaTwoPixel;
 						if (-kAntiAliasingFactor < signedDistance && innerRadius - kAntiAliasingFactor < dist)
 						{
-							// [-pi, +pi]
-							const float normalizedAngleA = (arcAngleA % kPi);
-							const float normalizedAngleB = (arcAngleB % kPi);
-							if (angle < normalizedAngleA)
+							// [-2pi, +2pi]
+							const float normalizedAngleA = normalizeAngle(arcAngleA);
+							const float normalizedAngleB = normalizeAngle(arcAngleB);
+							
+							const float resultL = getSignedDistanceToBetweenAngles(angleL, normalizedAngleA, normalizedAngleB);
+							if (1.0f != resultL)
 							{
-								const float angleDiff = normalizedAngleA - angle;
-								return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
+								return getSignedDistanceToBetweenAngles(angleR, normalizedAngleA, normalizedAngleB);
 							}
-							else if (normalizedAngleB < angle)
-							{
-								const float angleDiff = angle - normalizedAngleB;
-								return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
-							}
+							return resultL;
 						}
 						
 						// Inner
@@ -487,6 +514,77 @@ namespace fs
 
 			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y)));
 			prepareIndexArray();
+		}
+
+		void ShapeRenderer::drawColorPallete(const float radius)
+		{
+			static constexpr uint32 colorCount = 12;
+			static const fs::Float4 colorArray[colorCount] = {
+				// Red => Green
+				fs::Float4(1.0f, 0.0f, 0.0f, 1.0f),
+				fs::Float4(1.0f, 0.25f, 0.0f, 1.0f),
+				fs::Float4(1.0f, 0.5f, 0.0f, 1.0f),
+				fs::Float4(1.0f, 0.75f, 0.0f, 1.0f),
+				fs::Float4(1.0f, 1.0f, 0.0f, 1.0f),
+				fs::Float4(0.5f, 1.0f, 0.0f, 1.0f),
+
+				// Gren => Blue
+				fs::Float4(0.0f, 0.875f, 0.125f, 1.0f),
+				fs::Float4(0.0f, 0.666f, 1.0f, 1.0f),
+				fs::Float4(0.0f, 0.333f, 1.0f, 1.0f),
+				fs::Float4(0.0f, 0.0f, 1.0f, 1.0f),
+
+				// Blue => Red
+				fs::Float4(0.5f, 0.0f, 1.0f, 1.0f),
+				fs::Float4(1.0f, 0.0f, 0.5f, 1.0f),
+			};
+
+			static constexpr uint32 outerStepSmoothingOffset = 4;
+			static constexpr uint32 innerStepSmoothingOffset = 0;
+			const uint32 outerStepCount = 5;
+			const uint32 innerStepCount = 4;
+			const float stepHeight = radius / (innerStepCount + outerStepCount);
+			
+			const float deltaAngle = fs::Math::kTwoPi / colorCount;
+			const float halfDeltaAngle = deltaAngle * 0.5f;
+			for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
+			{
+				const float rgbDenom = (colorCount / 3.0f);
+				const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
+				
+				int32 colorIndexCorrected = colorIndex - colorCount / 2;
+				if (colorIndexCorrected < 0)
+				{
+					colorIndexCorrected = colorCount + colorIndexCorrected;
+				}
+				colorIndexCorrected = colorCount - colorIndexCorrected;
+				if (colorIndexCorrected == colorCount)
+				{
+					colorIndexCorrected = 0;
+				}
+				const fs::Float4& stepsColor = colorArray[colorIndexCorrected];
+
+				const float angleA = -(fs::Math::kPi / colorCount) + deltaAngle * colorIndex;
+				const float angleB = angleA + deltaAngle;
+
+				// Outer steps
+				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
+				{
+					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
+					setColor(stepsColor * outerStepRatio + fs::Float4(0.0f, 0.0f, 0.0f, 1.0f));
+
+					drawCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, angleA, angleB, stepHeight * (innerStepCount + outerStepIndex));
+				}
+
+				// Inner steps
+				const fs::Float4 deltaColor = fs::Float4(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
+				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
+				{
+					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
+
+					drawCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, angleA, angleB, stepHeight * innerStepIndex);
+				}
+			}
 		}
 
 		fs::Float2 ShapeRenderer::normalizePosition(const fs::Float2& position, const fs::Float2& screenSize)

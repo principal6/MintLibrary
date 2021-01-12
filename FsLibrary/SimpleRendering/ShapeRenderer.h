@@ -44,6 +44,10 @@ namespace fs
 			// A < B
 			void														drawCircularArc(const float radius, const float arcAngleA = -fs::Math::kPi, const float arcAngleB = +fs::Math::kPi, const float innerRadius = 0.0f);
 
+		public:
+			// This function is slow...!!!
+			void														drawColorPallete(const float radius);
+
 		private:
 			fs::Float2													normalizePosition(const fs::Float2& position, const fs::Float2& screenSize);
 			void														prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize);
