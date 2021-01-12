@@ -39,6 +39,10 @@ namespace fs
 			void														drawRoundedRectangle(const fs::Int2& size, const float roundness, const uint32 borderThickness, const float angle);
 			void														drawTaperedRectangle(const fs::Int2& size, const float tapering, const float bias, const uint32 borderThickness, const float angle);
 			void														drawLine(const fs::Int2& p0, const fs::Int2& p1, const float thickness);
+			
+			// Arc Angle A & B = [-pi, pi]
+			// A < B
+			void														drawCircularArc(const float radius, const float arcAngleA = -fs::Math::kPi, const float arcAngleB = +fs::Math::kPi, const float innerRadius = 0.0f);
 
 		private:
 			fs::Float2													normalizePosition(const fs::Float2& position, const fs::Float2& screenSize);

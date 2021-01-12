@@ -15,6 +15,7 @@ namespace fs
 		static constexpr float kPi = 3.1415926535f;
 		static constexpr float kPiOverTwo = kPi * 0.5f;
 		static constexpr float kPiOverFour = kPiOverTwo * 0.5f;
+		static constexpr float kPiOverEight = kPiOverFour * 0.5f;
 
 		constexpr uint32 pow2_ui32(const uint32 exponent)
 		{

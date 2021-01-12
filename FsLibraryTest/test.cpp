@@ -814,21 +814,38 @@ const bool testWindow()
 			shapeRenderer.setPosition(fs::Float3(400.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
-
+			
 			shapeRenderer.setPosition(fs::Float3(450.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
 			shapeRenderer.drawRoundedRectangle(fs::Int2(100, 100), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
-
+			
 			shapeRenderer.setPosition(fs::Float3(400.0f, 450.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.5f, 1.0f));
 			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 2, 0.7854f);
-
+			
 			shapeRenderer.setPosition(fs::Float3(400.0f, 150.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.drawRectangle(fs::Int2(210, 110), 4, 0.0f);
-
+			
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
 			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 40.0f);
+
+			shapeRenderer.setPosition(fs::Float3(600.0f, 300.0f, 0.0f));
+			
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.0f, 0.0f, 1.0f));
+			shapeRenderer.drawCircularArc(101.0f, -fs::Math::kPi / 12.0f, +fs::Math::kPi / 12.0f, 80.0f);
+
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.25f, 1.0f));
+			shapeRenderer.drawCircularArc(81.0f, -fs::Math::kPi / 12.0f, +fs::Math::kPi / 12.0f, 60.0f);
+
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.5f, 1.0f));
+			shapeRenderer.drawCircularArc(61.0f, -fs::Math::kPi / 12.0f, +fs::Math::kPi / 12.0f, 40.0f);
+
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.75f, 0.75f, 1.0f));
+			shapeRenderer.drawCircularArc(41.0f, -fs::Math::kPi / 12.0f, +fs::Math::kPi / 12.0f, 20.0f);
+
+			shapeRenderer.setColor(fs::Float4(1.0f, 1.0f, 1.0f, 1.0f));
+			shapeRenderer.drawCircularArc(21.0f, -fs::Math::kPi / 12.0f, +fs::Math::kPi / 12.0f);
 		}
 
 		{

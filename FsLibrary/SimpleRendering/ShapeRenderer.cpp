@@ -63,6 +63,7 @@ namespace fs
 					static const float		kPi = 3.1415926535;
 					static const float		kPiOverTwo = kPi * 0.5;
 					static const float		kPiOverFour = kPiOverTwo * 0.5;
+					static const float		kTwoPi = kPi * 2.0;
 					static const float		kDeltaTwoPixel = _cbProjectionMatrix[0][0];
 					static const float		kDeltaPixel = kDeltaTwoPixel / 2.0;
 					static const float		kAntiAliasingFactor = kDeltaTwoPixel;
@@ -218,6 +219,44 @@ namespace fs
 						return 0.0;
 					}
 					
+					float circularArc(in float2 p, in float2 center, in float radius, in float arcAngleA, in float arcAngleB, in float innerRadius)
+					{
+						const float kDeltaAngle = kPi / 180.0; // == 1 degree
+						const float kDeltaDoubleAngle = kDeltaAngle * 2.0;
+						
+						const float dist = length(p);
+						const float dotDir = dot(float2(0, 1), p / dist);
+						const float angle = ((p.x < 0.0) ? -acos(dotDir) : acos(dotDir)); // [-pi, +pi]
+						
+						// Between angles
+						const float signedDistance = radius - dist - kDeltaTwoPixel;
+						if (-kAntiAliasingFactor < signedDistance && innerRadius - kAntiAliasingFactor < dist)
+						{
+							// [-pi, +pi]
+							const float normalizedAngleA = (arcAngleA % kPi);
+							const float normalizedAngleB = (arcAngleB % kPi);
+							if (angle < normalizedAngleA)
+							{
+								const float angleDiff = normalizedAngleA - angle;
+								return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
+							}
+							else if (normalizedAngleB < angle)
+							{
+								const float angleDiff = angle - normalizedAngleB;
+								return -(angleDiff / kDeltaAngle) * kAntiAliasingFactor; // Convert to pixel units
+							}
+						}
+						
+						// Inner
+						if (dist < innerRadius)
+						{
+							return (dist - innerRadius);
+						}
+						
+						// Outer
+						return signedDistance;
+					}
+					
 					float4 calculateFinalColor(in float signedDistance, in float borderThickness, in float4 backgroundColor, in float4 borderColor)
 					{
 						if (0.0 < signedDistance)
@@ -289,6 +328,17 @@ namespace fs
 							const float2 thickness = input._infoB.x;
 							const float alphaFactor = bluntLine(p, l0, l1, thickness);
 							return input._color * float4(1.0, 1.0, 1.0, alphaFactor);
+						}
+						else if (input._infoB.w == 4.0)
+						{
+							const float2 c = input._infoA.xy * kScreenRatio;
+							const float2 p = normalizePosition(input._position) - c;
+							
+							const float radius = input._infoA.z;
+							const float arcAngleA = input._infoA.w;
+							const float arcAngleB = input._infoB.x;
+							const float innerRadius = input._infoB.y;
+							return calculateFinalColor(circularArc(p, c, radius, arcAngleA, arcAngleB, innerRadius), 0.0, input._color, kTransparentColor);
 						}
 						return kTransparentColor;
 					}
@@ -413,6 +463,29 @@ namespace fs
 			v._infoB._w = 3.0f;
 
 			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y) + thickness * 1.25f));
+			prepareIndexArray();
+		}
+
+		void ShapeRenderer::drawCircularArc(const float radius, const float arcAngleA, const float arcAngleB, const float innerRadius)
+		{
+			const fs::Float2 centerPositionF = fs::Float2(_position._x, _position._y);
+			const fs::Float2 windowSizeF = fs::Float2(_graphicDevice->getWindowSize());
+			const fs::Float2 normalizedCenterPosition = normalizePosition(centerPositionF, windowSizeF);
+			const fs::Float2 sizeF = fs::Float2(radius * 2.0f);
+			const fs::Float2 halfSizeF = sizeF * 0.5f;
+
+			CppHlsl::VS_INPUT_SHAPE v;
+			v._color = _defaultColor;
+			v._borderColor = _borderColor;
+			v._infoA._x = normalizedCenterPosition._x;
+			v._infoA._y = normalizedCenterPosition._y;
+			v._infoA._z = (radius / windowSizeF._x) * 2.0f;
+			v._infoA._w = arcAngleA;
+			v._infoB._x = arcAngleB;
+			v._infoB._y = (innerRadius / windowSizeF._x) * 2.0f;
+			v._infoB._w = 4.0f;
+
+			prepareVertexArray(v, centerPositionF, fs::Float2(fs::max(halfSizeF._x, halfSizeF._y)));
 			prepareIndexArray();
 		}
 
