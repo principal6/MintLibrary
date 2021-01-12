@@ -258,7 +258,10 @@ namespace fs
 			completeGlyphInfoArray(textureWidth, textureHeight);
 
 #if defined FS_FONT_RENDERER_SAVE_PNG_FOR_TEST
-			stbi_write_png(outputFileName, textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
+			std::string pngFileName = outputFileName;
+			fs::StringUtil::excludeExtension(pngFileName);
+			pngFileName.append(".png");
+			stbi_write_png(pngFileName.c_str(), textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
 #endif
 
 			fs::BinaryFileWriter binaryFileWriter;
@@ -348,7 +351,7 @@ namespace fs
 			const int16 cols = static_cast<int16>(_ftFace->glyph->bitmap.width);
 
 			const int16 spacedWidth = spaceLeft + cols;
-			const int16 spacedHeight = spaceTop + _fontSize;
+			const int16 spacedHeight = spaceTop + _fontSize + kSpaceBottom;
 			if (width <= pixelPositionX + spacedWidth)
 			{
 				pixelPositionX = 0;
@@ -391,7 +394,7 @@ namespace fs
 				glyphInfo._uv0._x = static_cast<float>(static_cast<double>(glyphInfo._uv0._x) / textureWidthF);
 				glyphInfo._uv0._y = static_cast<float>(static_cast<double>(glyphInfo._uv0._y) / textureHeightF);
 				glyphInfo._uv1._x = glyphInfo._uv0._x + static_cast<float>(static_cast<double>(glyphInfo._width) / textureWidthF);
-				glyphInfo._uv1._y = glyphInfo._uv0._y + static_cast<float>(static_cast<double>(glyphInfo._height) / textureHeightF);
+				glyphInfo._uv1._y = glyphInfo._uv0._y + static_cast<float>(static_cast<double>(glyphInfo._height + kSpaceBottomForVisibility) / textureHeightF);
 			}
 		}
 
@@ -451,14 +454,25 @@ namespace fs
 					R"(
 					#include <ShaderStructDefinitions>
 
-					sampler				sampler0;
-					Texture2D<float>	texture0;
+					sampler					sampler0;
+					Texture2D<float>		texture0;
 				
 					float4 main(VS_OUTPUT input) : SV_Target
 					{
 						const float sampled = texture0.Sample(sampler0, input._texCoord);
-						float4 result = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled);
-						return result;
+						float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled);
+						
+						if (input._flag == 1)
+						{
+							const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
+							const float rbSampled = texture0.Sample(sampler0, rbCoord);
+							if (0.0 < rbSampled)
+							{
+								const float3 rbColor = lerp(sampledColor.xyz * 0.25 * max(rbSampled, 0.25), sampledColor.xyz, sampled);
+								return float4(rbColor, saturate(sampled + rbSampled));
+							}
+						}
+						return sampledColor;
 					}
 					)"
 				};
@@ -484,7 +498,7 @@ namespace fs
 			}
 		}
 
-		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment)
+		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment, const bool drawShade)
 		{
 			auto& vertexArray = _rendererBuffer.vertexArray();
 
@@ -498,7 +512,7 @@ namespace fs
 			}
 			for (uint32 at = 0; at < textLength; ++at)
 			{
-				drawGlyph(wideText[at], currentPosition);
+				drawGlyph(wideText[at], currentPosition, drawShade);
 			}
 		}
 
@@ -522,7 +536,7 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
-		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Int2& position)
+		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Int2& position, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
 			auto found = _glyphMap.find(wideChar);
@@ -541,6 +555,7 @@ namespace fs
 			v._position._y = positionF._y + fontHeight - static_cast<float>(glyphInfo._horiBearingY);
 			v._color = _defaultColor;
 			v._texCoord = glyphInfo._uv0;
+			v._flag = (drawShade == true) ? 1 : 0;
 			vertexArray.emplace_back(v);
 			
 			v._position._x += static_cast<float>(glyphInfo._width);
@@ -560,7 +575,7 @@ namespace fs
 
 			prepareIndexArray();
 
-			position._x += glyphInfo._horiAdvance;
+			position._x += static_cast<int32>(glyphInfo._horiAdvance);
 		}
 
 		void FontRenderer::prepareIndexArray()

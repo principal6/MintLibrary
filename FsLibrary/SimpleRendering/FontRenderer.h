@@ -67,6 +67,10 @@ namespace fs
 
 		class FontRenderer final : public IRenderer
 		{
+			static constexpr int16										kSpaceBottomForVisibility = 1;
+			static_assert(kSpaceBottomForVisibility == 1, "kSpaceBottomForVisibility must be 1");
+			static constexpr int16										kSpaceBottom = 1;
+			static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
 			static constexpr const char* const							kFontFileExtension = ".fnt";
 
 		public:
@@ -95,11 +99,11 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment = TextHorzAlignment::Left);
+			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment = TextHorzAlignment::Left, const bool drawShade = false);
 		
 		private:
 			const float													calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-			void														drawGlyph(const wchar_t wideChar, fs::Int2& position);
+			void														drawGlyph(const wchar_t wideChar, fs::Int2& position, const bool drawShade);
 
 		private:
 			void														prepareIndexArray();
