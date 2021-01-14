@@ -21,6 +21,7 @@
 
 
 #pragma region FS Library
+#include <CommonDefinitions.h>
 #include <FsLogger/Include/Logger.h>
 #pragma endregion
 
@@ -38,27 +39,49 @@
 namespace fs
 {
 	template<typename T>
-	const T& max(const T& a, const T& b)
+	FS_INLINE const T& max(const T& a, const T& b)
 	{
 		return (a < b) ? b : a;
 	}
 
 	template<typename T>
-	const T& max(T&& a, T&& b)
+	FS_INLINE const T& max(T&& a, T&& b)
 	{
 		return (a < b) ? b : a;
 	}
 
 	template<typename T>
-	const T& min(const T& a, const T& b)
+	FS_INLINE const T& min(const T& a, const T& b)
 	{
 		return (a > b) ? b : a;
 	}
 
 	template<typename T>
-	const T& min(T&& a, T&& b)
+	FS_INLINE const T& min(T&& a, T&& b)
 	{
 		return (a > b) ? b : a;
+	}
+
+	template<typename T>
+	FS_INLINE const T& clamp(const T& value, const T& limitMin, const T& limitMax)
+	{
+		return max(min(value, limitMax), limitMin);
+	}
+
+	template<typename T>
+	FS_INLINE const T& clamp(const T& value, T&& limitMin, T&& limitMax)
+	{
+		return max(min(value, limitMax), limitMin);
+	}
+
+	FS_INLINE float saturate(const float value)
+	{
+		return max(min(value, 1.0f), 0.1f);
+	}
+
+	FS_INLINE double saturate(const double value)
+	{
+		return max(min(value, 1.0), 0.1);
 	}
 }
 

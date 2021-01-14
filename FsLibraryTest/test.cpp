@@ -798,10 +798,13 @@ const bool testWindow()
 		{
 			fs::SimpleRendering::RectangleRenderer& rectangleRenderer = graphicDevice.getRectangleRenderer();
 
-			rectangleRenderer.setPosition(fs::Float3(0, 0, 0));
-			rectangleRenderer.setSize(fs::Float2(400.0f, 300.0f));
-			rectangleRenderer.setColor({ fs::Float4(0.5f, 0.5f, 0.5f, 1.0f), fs::Float4(0.5f, 1.0f, 0.5f, 1.0f) });
-			rectangleRenderer.drawColored();
+			//rectangleRenderer.setPosition(fs::Float3(0, 0, 0));
+			//rectangleRenderer.setSize(fs::Float2(100.0f, 100.0f));
+			//rectangleRenderer.setColor({ fs::Float4(0.5f, 0.5f, 0.5f, 1.0f), fs::Float4(0.5f, 1.0f, 0.5f, 1.0f) });
+			//for (uint32 i = 0; i < 100; ++i)
+			//{
+			//	rectangleRenderer.drawColored();
+			//}
 
 			//rectangleRenderer.setPosition(fs::Float3(400.f, 300.f, 0));
 			//rectangleRenderer.setSize(fs::Float2(400.f, 300.f));
@@ -811,10 +814,35 @@ const bool testWindow()
 		{
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = graphicDevice.getShapeRenderer();
 			
-			shapeRenderer.setPosition(fs::Float3(400.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(210, 110), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
+			shapeRenderer.setPosition(fs::Float3(200.0f, 250.0f, 0.0f));
+			shapeRenderer.drawTaperedRectangleFast(fs::Float2(100, 50), 0.25f, 1.5f, 0.0f, 0.0f);
 
+			shapeRenderer.setPosition(fs::Float3(200.0f, 350.0f, 0.0f));
+			shapeRenderer.drawQuarterCircle(100.0f, 0.0f);
+
+			shapeRenderer.setPosition(fs::Float3(200.0f, 50.0f, 0.0f));
+			shapeRenderer.drawQuadraticBezier(fs::Float2(200, 200), fs::Float2(400, 100), fs::Float2(200, 0));
+			
+			shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
+			shapeRenderer.drawRoundedRectangleFast(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
+
+			shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
+			for (uint32 i = 0; i < 100; ++i)
+			{
+				shapeRenderer.drawRoundedRectangleFast(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
+			}
+
+			//shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
+			//shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
+			//for (uint32 i = 0; i < 100; ++i)
+			//{
+			//	shapeRenderer.drawRoundedRectangle(fs::Int2(200, 100), 0.25f, 0, 0.0f);
+			//}
+
+			/*
 			shapeRenderer.setPosition(fs::Float3(450.0f, 300.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
 			shapeRenderer.drawRoundedRectangle(fs::Int2(100, 100), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
@@ -832,6 +860,7 @@ const bool testWindow()
 
 			//shapeRenderer.setPosition(fs::Float3(600.0f, 300.0f, 0.0f));
 			//shapeRenderer.drawColorPallete(120.0f);
+			*/
 		}
 
 		{

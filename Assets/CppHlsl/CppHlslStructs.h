@@ -60,6 +60,13 @@ namespace fs
 			float4				_color;
 		};
 
+		struct VS_INPUT_SHAPE_FAST
+		{
+			float4				_position;
+			float4				_color;
+			float4				_texCoord;
+		};
+
 
 		struct VS_OUTPUT
 		{
@@ -77,6 +84,14 @@ namespace fs
 			float4				_infoC;
 			float4				_borderColor;
 			float4				_color;
+		};
+
+		struct VS_OUTPUT_SHAPE_FAST
+		{
+			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
+			float4				_color;
+			float4				_texCoord;
+			float4				_info;
 		};
 	}
 }
