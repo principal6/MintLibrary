@@ -31,8 +31,8 @@ namespace fs
 											~ContiguousVector();
 
 	public:
-		ContiguousVector&								operator=(const ContiguousVector& rhs);
-		ContiguousVector&								operator=(ContiguousVector&& rhs) noexcept;
+		ContiguousVector&					operator=(const ContiguousVector& rhs);
+		ContiguousVector&					operator=(ContiguousVector&& rhs) noexcept;
 
 	public:
 		void								reserve(const uint32 capacity);
@@ -48,10 +48,9 @@ namespace fs
 		void								erase(const uint32 at);
 
 	public:
-		void								set(const uint32 index, const T& value);
-		void								set(const uint32 index, T&& value);
-		const T&							get(const uint32 index) const;
-		T&									get(const uint32 index);
+		const T&							operator[](const uint32 index) const noexcept;
+		T&									operator[](const uint32 index) noexcept;
+		const T&							at(const uint32 index) const noexcept;
 		void								swap(const uint32 indexA, const uint32 indexB);
 
 	public:

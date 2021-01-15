@@ -11,10 +11,6 @@
 #define FS_INLINE __forceinline
 
 
-#undef max
-#undef min
-
-
 namespace fs
 {
 	template<typename T>

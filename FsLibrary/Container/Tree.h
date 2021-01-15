@@ -110,15 +110,15 @@ namespace fs
 		}
 
 	public:
-		const bool							isValid() const noexcept;
-		void								invalidate() noexcept;
+		const bool									isValid() const noexcept;
+		void										invalidate() noexcept;
 
 	private:
-		uint32								_nodeId;
-		T									_data;
+		uint32										_nodeId;
+		T											_data;
 
-		TreeNodeAccessor<T>					_parentNodeAccessor;
-		fs::ContiguousVector<TreeNodeAccessor<T>>		_childNodeAccessorArray;
+		TreeNodeAccessor<T>							_parentNodeAccessor;
+		fs::ContiguousVector<TreeNodeAccessor<T>>	_childNodeAccessorArray;
 	};
 
 
@@ -126,6 +126,8 @@ namespace fs
 	class Tree
 	{
 		static constexpr uint32					kDefaultNodeArraySize = 16;
+		static_assert(0 < kDefaultNodeArraySize, "kDefaultNodeArraySize must not be 0");
+
 	public:
 												Tree();
 												~Tree();
@@ -167,7 +169,7 @@ namespace fs
 		const uint32							getAvailableNodeSlot();
 
 	private:
-		fs::ContiguousVector<TreeNode<T>>					_nodeArray;
+		fs::ContiguousVector<TreeNode<T>>		_nodeArray;
 		uint32									_nextNodeId;
 		uint32									_nodeCount;
 	};

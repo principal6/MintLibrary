@@ -36,7 +36,7 @@ namespace fs
 		const T* const first = il.begin();
 		for (uint32 index = 0; index < count; ++index)
 		{
-			set(index, *(first + index));
+			this->operator[](index) = *(first + index);
 		}
 	}
 
@@ -229,45 +229,27 @@ namespace fs
 	}
 
 	template<typename T>
-	inline void ContiguousVector<T>::set(const uint32 index, const T& value)
+	inline const T& ContiguousVector<T>::operator[](const uint32 index) const noexcept
 	{
-		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
-
-		if (empty() == true)
-		{
-			return;
-		}
-
-		_memoryAccessor.setMemory(&value, min(index, _size - 1), 1);
+		//FS_ASSERT("김장원", index < _size, "index 가 size 를 벗어납니다!!!");
+		//return _memoryAccessor.getMemory()[min(index, _size - 1)];
+		return _memoryAccessor.getMemory()[index];
 	}
 
 	template<typename T>
-	inline void ContiguousVector<T>::set(const uint32 index, T&& value)
+	inline T& ContiguousVector<T>::operator[](const uint32 index) noexcept
 	{
-		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
-
-		if (empty() == true)
-		{
-			return;
-		}
-
-		_memoryAccessor.setMemory(&value, min(index, _size - 1), 1);
+		//FS_ASSERT("김장원", index < _size, "index 가 size 를 벗어납니다!!!");
+		//return _memoryAccessor.getMemoryXXX()[min(index, _size - 1)];
+		return _memoryAccessor.getMemoryXXX()[index];
 	}
 
 	template<typename T>
-	inline const T& ContiguousVector<T>::get(const uint32 index) const
+	inline const T& ContiguousVector<T>::at(const uint32 index) const noexcept
 	{
-		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
+		FS_ASSERT("김장원", index < _size, "index 가 size 를 벗어납니다!!!");
 
-		return _memoryAccessor.getMemory()[min(index, _size - 1)];
-	}
-
-	template<typename T>
-	inline T& ContiguousVector<T>::get(const uint32 index)
-	{
-		FS_ASSERT("김장원", index < _size, "잘못된 index 입니다!");
-
-		return _memoryAccessor.getMemoryXXX()[min(index, _size - 1)];
+		return this->operator[](min(index, _size - 1));
 	}
 
 	template<typename T>

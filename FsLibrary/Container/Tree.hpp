@@ -197,7 +197,7 @@ namespace fs
 			++_nextNodeId;
 			++_nodeCount;
 
-			_nodeArray.set(0, rootNode);
+			_nodeArray[0] = rootNode;
 		}
 
 		return getRootNode();
@@ -237,7 +237,7 @@ namespace fs
 		const uint32 childCount = startNode._childNodeAccessorArray.size();
 		for (uint32 childIndex = 0; childIndex < childCount; ++childIndex)
 		{
-			TreeNodeAccessor<T> foundNodeAccessor = findNode(startNode._childNodeAccessorArray.get(childIndex), nodeData);
+			TreeNodeAccessor<T> foundNodeAccessor = findNode(startNode._childNodeAccessorArray[childIndex], nodeData);
 			if (getNodeData(foundNodeAccessor) == nodeData)
 			{
 				return foundNodeAccessor;
@@ -280,7 +280,7 @@ namespace fs
 		}
 
 		const TreeNode<T>& node = getNodeXXX(nodeAccessor);
-		return node._childNodeAccessorArray.get(childNodeIndex);
+		return node._childNodeAccessorArray[childNodeIndex];
 	}
 
 	template<typename T>
@@ -298,7 +298,7 @@ namespace fs
 		const uint32 parentChildCount = parentNode._childNodeAccessorArray.size();
 		for (uint32 parentChildIndex = 0; parentChildIndex < parentChildCount; ++parentChildIndex)
 		{
-			if (parentNode._childNodeAccessorArray.get(parentChildIndex)._nodeId == nodeAccessor._nodeId) 
+			if (parentNode._childNodeAccessorArray[parentChildIndex]._nodeId == nodeAccessor._nodeId) 
 			{
 				thisAt = parentChildIndex;
 				break;
@@ -309,13 +309,13 @@ namespace fs
 		{
 			return TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
 		}
-		return parentNode._childNodeAccessorArray.get(thisAt + 1);
+		return parentNode._childNodeAccessorArray[thisAt + 1];
 	}
 
 	template<typename T>
 	const bool Tree<T>::isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
 	{
-		const TreeNode<T>& node = _nodeArray.get(nodeAccessor._slotIndex);
+		const TreeNode<T>& node = _nodeArray.at(nodeAccessor._slotIndex);
 		return node._nodeId == nodeAccessor._nodeId;
 	}
 
@@ -366,14 +366,14 @@ namespace fs
 	template<typename T>
 	const TreeNode<T>& Tree<T>::getNodeXXX(const TreeNodeAccessor<T>& nodeAccessor) const
 	{
-		const TreeNode<T>& node = _nodeArray.get(nodeAccessor._slotIndex);
+		const TreeNode<T>& node = _nodeArray[nodeAccessor._slotIndex];
 		return node;
 	}
 
 	template<typename T>
 	TreeNode<T>& Tree<T>::getNodeXXX(const TreeNodeAccessor<T>& nodeAccessor)
 	{
-		TreeNode<T>& node = _nodeArray.get(nodeAccessor._slotIndex);
+		TreeNode<T>& node = _nodeArray[nodeAccessor._slotIndex];
 		return node;
 	}
 
@@ -390,7 +390,7 @@ namespace fs
 
 		const TreeNode<T> childNode{ nodeId, nodeAccessor, childNodeData };
 		TreeNodeAccessor<T> childNodeAccessor{ this, nodeId, slotIndex };
-		_nodeArray.set(slotIndex, childNode);
+		_nodeArray[slotIndex] = childNode;
 
 		TreeNode<T>& node = getNodeXXX(nodeAccessor);
 		node._childNodeAccessorArray.push_back(childNodeAccessor);
@@ -412,7 +412,7 @@ namespace fs
 			const uint32 childCount = node._childNodeAccessorArray.size();
 			for (uint32 childIndex = 0; childIndex < childCount; ++childIndex)
 			{
-				const TreeNodeAccessor<T>& currentChildNodeAccessor = node._childNodeAccessorArray.get(childIndex);
+				const TreeNodeAccessor<T>& currentChildNodeAccessor = node._childNodeAccessorArray[childIndex];
 				if (currentChildNodeAccessor == childNodeAccessor)
 				{
 					childAt = childIndex;
@@ -431,7 +431,7 @@ namespace fs
 				const uint32 grandChildCount = childNode._childNodeAccessorArray.size();
 				for (uint32 grandChildIndex = 0; grandChildIndex < grandChildCount; ++grandChildIndex)
 				{
-					TreeNodeAccessor<T>& grandChildNodeAccessor = childNode._childNodeAccessorArray.get(grandChildIndex);
+					TreeNodeAccessor<T>& grandChildNodeAccessor = childNode._childNodeAccessorArray[grandChildIndex];
 					eraseChildNode(childNodeAccessor, grandChildNodeAccessor);
 				}
 			}
@@ -459,7 +459,7 @@ namespace fs
 			{
 				for (uint32 childIndex = childCount - 1; childIndex != kUint32Max; --childIndex)
 				{
-					TreeNodeAccessor<T>& childNodeAccessor = node._childNodeAccessorArray.get(childIndex);
+					TreeNodeAccessor<T>& childNodeAccessor = node._childNodeAccessorArray[childIndex];
 
 					clearChildNodes(childNodeAccessor);
 
@@ -490,14 +490,14 @@ namespace fs
 			return;
 		}
 
-		const TreeNodeAccessor<T>& oldParentNodeAccessor = _nodeArray.get(nodeAccessor._slotIndex)._parentNodeAccessor;
-		TreeNode<T>& oldParnetNode = _nodeArray.get(oldParentNodeAccessor._slotIndex);
+		const TreeNodeAccessor<T>& oldParentNodeAccessor = _nodeArray[nodeAccessor._slotIndex]._parentNodeAccessor;
+		TreeNode<T>& oldParnetNode = _nodeArray[oldParentNodeAccessor._slotIndex];
 		{
 			uint32 childAt = kUint32Max;
 			const uint32 oldParentNodeChildCount = oldParnetNode._childNodeAccessorArray.size();
 			for (uint32 childIndex = 0; childIndex < oldParentNodeChildCount; ++childIndex)
 			{
-				const TreeNodeAccessor<T>& childNodeAccessor = oldParnetNode._childNodeAccessorArray.get(childIndex);
+				const TreeNodeAccessor<T>& childNodeAccessor = oldParnetNode._childNodeAccessorArray[childIndex];
 				if (childNodeAccessor == nodeAccessor)
 				{
 					childAt = childIndex;
@@ -510,10 +510,10 @@ namespace fs
 			oldParnetNode._childNodeAccessorArray.erase(childAt);
 		}
 
-		TreeNode<T>& node = _nodeArray.get(nodeAccessor._slotIndex);
+		TreeNode<T>& node = _nodeArray[nodeAccessor._slotIndex];
 		node._parentNodeAccessor = newParentNodeAccessor;
 		
-		TreeNode<T>& newParnetNode = _nodeArray.get(newParentNodeAccessor._slotIndex);
+		TreeNode<T>& newParnetNode = _nodeArray[newParentNodeAccessor._slotIndex];
 		newParnetNode._childNodeAccessorArray.push_back(nodeAccessor);
 	}
 
@@ -525,7 +525,7 @@ namespace fs
 			const uint32 slotCount = _nodeArray.size();
 			for (uint32 slotIndex = 0; slotIndex < slotCount; ++slotIndex)
 			{
-				TreeNode<T>& node = _nodeArray.get(slotIndex);
+				TreeNode<T>& node = _nodeArray[slotIndex];
 				if (node.isValid() == false)
 				{
 					return slotIndex;

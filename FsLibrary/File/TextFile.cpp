@@ -28,9 +28,9 @@ namespace fs
 			// BOM »Æ¿Œ
 			if (_byteArray.size() == 3)
 			{
-				if (_byteArray.get(0) == 0xEF &&
-					_byteArray.get(1) == 0xBB &&
-					_byteArray.get(2) == 0xBF)
+				if (_byteArray.at(0) == 0xEF &&
+					_byteArray.at(1) == 0xBB &&
+					_byteArray.at(2) == 0xBF)
 				{
 					// UTF-8 (BOM)
 					_encoding = TextFileEncoding::UTF8_BOM;
@@ -62,7 +62,7 @@ namespace fs
 
 	const char TextFileReader::get(const uint32 at) const noexcept
 	{
-		return static_cast<char>(_byteArray.get(at));
+		return static_cast<char>(_byteArray.at(at));
 	}
 
 	const char* TextFileReader::get() const noexcept
@@ -87,9 +87,9 @@ namespace fs
 			bool writeBom = true;
 			if (3 <= _byteArray.size())
 			{
-				if (_byteArray.get(0) == 0xEF &&
-					_byteArray.get(1) == 0xBB &&
-					_byteArray.get(2) == 0xBF)
+				if (_byteArray.at(0) == 0xEF &&
+					_byteArray.at(1) == 0xBB &&
+					_byteArray.at(2) == 0xBF)
 				{
 					writeBom = false;
 				}

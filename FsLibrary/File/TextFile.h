@@ -22,21 +22,21 @@ namespace fs
 	class TextFileReader final : public IFileReader
 	{
 	public:
-								TextFileReader() = default;
-		virtual					~TextFileReader() = default;
+									TextFileReader() = default;
+		virtual						~TextFileReader() = default;
 
 	public:
-		virtual const bool		open(const char* const fileName) override;
-		virtual const bool		isOpen() const noexcept override;
-		virtual const uint32	getFileSize() const noexcept override;
+		virtual const bool			open(const char* const fileName) override;
+		virtual const bool			isOpen() const noexcept override;
+		virtual const uint32		getFileSize() const noexcept override;
 
 	public:
-		const char				get(const uint32 at) const noexcept;
-		const char*				get() const noexcept;
+		const char					get(const uint32 at) const noexcept;
+		const char*					get() const noexcept;
 		
 	private:
-		fs::ContiguousVector<byte>		_byteArray;
-		TextFileEncoding		_encoding = TextFileEncoding::ASCII;
+		fs::ContiguousVector<byte>	_byteArray;
+		TextFileEncoding			_encoding = TextFileEncoding::ASCII;
 	};
 
 
@@ -44,23 +44,23 @@ namespace fs
 	class TextFileWriter final : public IFileWriter
 	{
 	public:
-								TextFileWriter() = default;
-								TextFileWriter(TextFileEncoding encoding) : _encoding{ encoding } { __noop; }
-		virtual					~TextFileWriter() = default;
+									TextFileWriter() = default;
+									TextFileWriter(TextFileEncoding encoding) : _encoding{ encoding } { __noop; }
+		virtual						~TextFileWriter() = default;
 
 	public:
-		virtual const bool		save(const char* const fileName) override;
+		virtual const bool			save(const char* const fileName) override;
 
 	public:
-		void					clear();
+		void						clear();
 
 	public:
-		void					write(const char ch) noexcept;
-		void					write(const char* const text) noexcept;
+		void						write(const char ch) noexcept;
+		void						write(const char* const text) noexcept;
 
 	private:
-		fs::ContiguousVector<byte>		_byteArray;
-		TextFileEncoding		_encoding = TextFileEncoding::ASCII;
+		fs::ContiguousVector<byte>	_byteArray;
+		TextFileEncoding			_encoding = TextFileEncoding::ASCII;
 	};
 }
 

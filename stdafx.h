@@ -6,12 +6,18 @@
 
 
 #include <cstdio>
-#include <Windows.h>
 #include <string>
 #include <vector>
 #include <queue>
 #include <unordered_map>
 #include <type_traits>
+
+
+#pragma region Platform
+#include <Windows.h>
+#undef max
+#undef min
+#pragma endregion
 
 
 #pragma region Thread

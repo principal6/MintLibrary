@@ -71,7 +71,7 @@ namespace fs
 			{
 				for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
 				{
-					if (inputString.getChar(at) == delimiterArray.get(delimiterIndex))
+					if (inputString.getChar(at) == delimiterArray.at(delimiterIndex))
 					{
 						if (prevAt < at)
 						{
