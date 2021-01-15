@@ -11,6 +11,38 @@
 #define FS_INLINE __forceinline
 
 
+#undef max
+#undef min
+
+
+namespace fs
+{
+	template<typename T>
+	FS_INLINE constexpr const T& max(const T& a, const T& b)
+	{
+		return (a < b) ? b : a;
+	}
+
+	template<typename T>
+	FS_INLINE constexpr const T& max(T&& a, T&& b)
+	{
+		return (a < b) ? b : a;
+	}
+
+	template<typename T>
+	FS_INLINE constexpr const T& min(const T& a, const T& b)
+	{
+		return (a > b) ? b : a;
+	}
+
+	template<typename T>
+	FS_INLINE constexpr const T& min(T&& a, T&& b)
+	{
+		return (a > b) ? b : a;
+	}
+}
+
+
 #pragma region Integer definitions
 	using				  int8						=   int8_t;
 	using				 int16						=  int16_t;

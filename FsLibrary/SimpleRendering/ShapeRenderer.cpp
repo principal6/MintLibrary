@@ -710,7 +710,7 @@ namespace fs
 		void ShapeRenderer::drawRoundedRectangleFast(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
 		{
 			const fs::Float2 halfSize = size * 0.5f;
-			const float radius = fs::min(size._x, size._y) * fs::saturate(roundness);
+			const float radius = fs::min(size._x, size._y) * fs::Math::saturate(roundness);
 			const float doubleRadius = radius * 2.0f;
 			const float middleWidth = size._x - doubleRadius;
 			const float middleHeight = size._y - doubleRadius;

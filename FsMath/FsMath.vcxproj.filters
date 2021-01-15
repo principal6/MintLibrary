@@ -39,29 +39,31 @@
     <ClInclude Include="Include\Quaternion.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Float2.cpp">
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Float2.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Float2x2.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Float2x2.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Float3.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Float3.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Float3x3.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Float3x3.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Float4.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Float4.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Float4x4.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Float4x4.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Int2.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Int2.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Quaternion.cpp">
+    </ClCompile>
+    <ClCompile Include="Source\Quaternion.cpp">
       <Filter>Source</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>

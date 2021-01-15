@@ -5,7 +5,6 @@
 #define FS_FLOAT4X4_H
 
 
-#include <CommonDefinitions.h>
 #include <FsMath/Include/Float4.h>
 
 
