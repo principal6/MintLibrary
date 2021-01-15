@@ -14,7 +14,7 @@
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 #include <FsLibrary/SimpleRendering/DxShader.h>
 #include <FsLibrary/SimpleRendering/DxBuffer.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 #include <FsLibrary/SimpleRendering/RectangleRenderer.h>
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
 #include <FsLibrary/SimpleRendering/FontRenderer.h>
@@ -70,6 +70,7 @@ namespace fs
 
 		public:
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
+			fs::SimpleRendering::DxBufferPool&							getBufferPool() noexcept;
 			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
 			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
 			fs::SimpleRendering::FontRenderer&							getFontRenderer() noexcept;

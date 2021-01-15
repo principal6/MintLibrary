@@ -8,7 +8,7 @@
 #include <CommonDefinitions.h>
 
 #include <FsLibrary/SimpleRendering/IRenderer.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 
 
 namespace fs
@@ -41,7 +41,7 @@ namespace fs
 			fs::Float2												_size;
 		
 		private:
-			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT>		_rectangleRendererBuffer;
+			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
 			DxObjectId												_vertexShader;
 			DxObjectId												_pixelShader;
 		};

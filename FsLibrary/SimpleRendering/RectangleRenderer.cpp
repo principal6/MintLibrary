@@ -2,7 +2,7 @@
 #include <FsLibrary/SimpleRendering/RectangleRenderer.h>
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
 
 namespace fs
@@ -21,7 +21,7 @@ namespace fs
 
 		RectangleRenderer::RectangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: IRenderer(graphicDevice)
-			, _rectangleRendererBuffer{ graphicDevice }
+			, _triangleRenderer{ graphicDevice }
 		{
 			__noop;
 		}
@@ -84,23 +84,23 @@ namespace fs
 
 		void RectangleRenderer::flushData() noexcept
 		{
-			_rectangleRendererBuffer.flush();
+			_triangleRenderer.flush();
 		}
 
 		void RectangleRenderer::render() noexcept
 		{
-			if (_rectangleRendererBuffer.isReady() == true)
+			if (_triangleRenderer.isRenderable() == true)
 			{
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
-				_rectangleRendererBuffer.render();
+				_triangleRenderer.render();
 			}
 		}
 
 		void RectangleRenderer::drawColored()
 		{
-			auto& vertexArray = _rectangleRendererBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2)));
@@ -111,7 +111,7 @@ namespace fs
 
 		void RectangleRenderer::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
-			auto& vertexArray = _rectangleRendererBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
@@ -122,7 +122,7 @@ namespace fs
 
 		void RectangleRenderer::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
-			auto& vertexArray = _rectangleRendererBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
 			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
@@ -133,10 +133,10 @@ namespace fs
 
 		void RectangleRenderer::prepareIndexArray()
 		{
-			const auto& vertexArray = _rectangleRendererBuffer.vertexArray();
+			const auto& vertexArray = _triangleRenderer.vertexArray();
 			const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-			auto& indexArray = _rectangleRendererBuffer.indexArray();
+			auto& indexArray = _triangleRenderer.indexArray();
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

@@ -11,7 +11,7 @@
 
 #include <FsLibrary/SimpleRendering/SimpleRenderingCommon.h>
 #include <FsLibrary/SimpleRendering/IRenderer.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 
 #include <FsLibrary/File/BinaryFile.h>
 
@@ -120,7 +120,7 @@ namespace fs
 			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
 
 		private:
-			fs::SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT>		_rendererBuffer;
+			fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
 			DxObjectId													_vertexShader;
 			DxObjectId													_pixelShader;
 		};

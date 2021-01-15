@@ -8,6 +8,11 @@ namespace fs
 			return _shaderPool;
 		}
 
+		FS_INLINE fs::SimpleRendering::DxBufferPool& GraphicDevice::getBufferPool() noexcept
+		{
+			return _bufferPool;
+		}
+
 		FS_INLINE fs::SimpleRendering::RectangleRenderer& GraphicDevice::getRectangleRenderer() noexcept
 		{
 			return _rectangleRenderer; 

@@ -8,7 +8,7 @@
 #include <CommonDefinitions.h>
 
 #include <FsLibrary/SimpleRendering/IRenderer.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.h>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 
 #include <FsMath/Include/Int2.h>
 
@@ -74,12 +74,12 @@ namespace fs
 			void															prepareIndexArray();
 
 		private:
-			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT_SHAPE>		_shapeBuffer;
+			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>		_triangleRenderer;
 			DxObjectId														_vertexShader;
 			DxObjectId														_pixelShader;
 
 		private:
-			SimpleRendering::TriangleBuffer<CppHlsl::VS_INPUT_SHAPE_FAST>	_shapeBufferFast;
+			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE_FAST>	_triangleRendererFast;
 			DxObjectId														_vertexShaderFast;
 			DxObjectId														_pixelShaderFast;
 		

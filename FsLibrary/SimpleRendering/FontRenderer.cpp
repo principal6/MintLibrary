@@ -12,7 +12,7 @@
 #include <algorithm>
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
 #include <FsLibrary/Container/StringUtil.hpp>
 
@@ -76,7 +76,7 @@ namespace fs
 			, _ftLibrary{ nullptr }
 			, _ftFace{ nullptr }
 			, _fontSize{ 16 }
-			, _rendererBuffer{ graphicDevice }
+			, _triangleRenderer{ graphicDevice }
 		{
 			__noop;
 		}
@@ -482,25 +482,26 @@ namespace fs
 
 		void FontRenderer::flushData() noexcept
 		{
-			_rendererBuffer.flush();
+			_triangleRenderer.flush();
 		}
 
 		void FontRenderer::render() noexcept
 		{
-			if (_rendererBuffer.isReady() == true)
+			if (_triangleRenderer.isRenderable() == true)
 			{
 				_graphicDevice->getDxDeviceContext()->PSSetShaderResources(0, 1, _fontTextureSrv.GetAddressOf());
 
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
-				_rendererBuffer.render();
+
+				_triangleRenderer.render();
 			}
 		}
 
 		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment, const bool drawShade)
 		{
-			auto& vertexArray = _rendererBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
 			const float textWidth = calculateTextWidth(wideText, textLength);
@@ -548,7 +549,7 @@ namespace fs
 			const float fontHeight = static_cast<float>(_fontSize);
 			const fs::Float2 positionF = fs::Float2(position);
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
-			auto& vertexArray = _rendererBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 			
 			fs::CppHlsl::VS_INPUT v;
 			v._position._x = positionF._x + static_cast<float>(glyphInfo._horiBearingX);
@@ -580,13 +581,14 @@ namespace fs
 
 		void FontRenderer::prepareIndexArray()
 		{
-			const auto& vertexArray = _rendererBuffer.vertexArray();
+			const auto& vertexArray = _triangleRenderer.vertexArray();
 			const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-			auto& indexArray = _rendererBuffer.indexArray();
+			auto& indexArray = _triangleRenderer.indexArray();
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
+
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

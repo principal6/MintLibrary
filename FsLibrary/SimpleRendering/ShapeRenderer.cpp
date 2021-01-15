@@ -2,7 +2,7 @@
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
-#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
 
 namespace fs
@@ -11,8 +11,8 @@ namespace fs
 	{
 		ShapeRenderer::ShapeRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: IRenderer(graphicDevice)
-			, _shapeBuffer{ graphicDevice }
-			, _shapeBufferFast{ graphicDevice }
+			, _triangleRenderer{ graphicDevice }
+			, _triangleRendererFast{ graphicDevice }
 			, _borderColor{ fs::Float4(1.0f, 1.0f, 1.0f, 1.0f) }
 		{
 			__noop;
@@ -447,28 +447,28 @@ namespace fs
 
 		void ShapeRenderer::flushData() noexcept
 		{
-			_shapeBuffer.flush();
-			_shapeBufferFast.flush();
+			_triangleRenderer.flush();
+			_triangleRendererFast.flush();
 		}
 
 		void ShapeRenderer::render() noexcept
 		{
-			if (_shapeBuffer.isReady() == true)
+			if (_triangleRenderer.isRenderable() == true)
 			{
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
 
-				_shapeBuffer.render();
+				_triangleRenderer.render();
 			}
 
-			if (_shapeBufferFast.isReady() == true)
+			if (_triangleRendererFast.isRenderable() == true)
 			{
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderFast);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderFast);
 
-				_shapeBufferFast.render();
+				_triangleRendererFast.render();
 			}
 		}
 
@@ -480,7 +480,7 @@ namespace fs
 		void ShapeRenderer::drawQuadraticBezier(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate)
 		{
 			const fs::Float2(&pointArray)[2] = { pointA, pointB };
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			uint8 flip = 0;
 			if (validate == true)
@@ -513,7 +513,7 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 3;
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -521,7 +521,7 @@ namespace fs
 
 		void ShapeRenderer::drawSolidTriangle(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC)
 		{
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
@@ -539,7 +539,7 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 3;
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -550,7 +550,7 @@ namespace fs
 			static constexpr uint32 kDeltaVertexCount = 3;
 			const float halfRadius = radius * 0.5f;
 
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 			
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
@@ -575,7 +575,7 @@ namespace fs
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -586,7 +586,7 @@ namespace fs
 			static constexpr uint32 kDeltaVertexCount = 4;
 			const float halfRadius = radius * 0.5f;
 			
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
@@ -616,7 +616,7 @@ namespace fs
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
 			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -631,7 +631,7 @@ namespace fs
 			static constexpr uint32 kDeltaVertexCount = 4;
 			const fs::Float2 halfSize = size * 0.5f;
 
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
@@ -656,7 +656,7 @@ namespace fs
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -674,7 +674,7 @@ namespace fs
 			const float horizontalOffsetL = horizontalSpace * bias;
 			const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
 
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
@@ -698,7 +698,7 @@ namespace fs
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
-			auto& indexArray = _shapeBufferFast.indexArray();
+			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
@@ -824,7 +824,7 @@ namespace fs
 		{
 			const fs::Float4x4& rotationMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
 
-			auto& vertexArray = _shapeBufferFast.vertexArray();
+			auto& vertexArray = _triangleRendererFast.vertexArray();
 			for (uint32 vertexIter = 0; vertexIter < targetVertexCount; ++vertexIter)
 			{
 				CppHlsl::VS_INPUT_SHAPE_FAST& vertex = vertexArray[vertexOffset + vertexIter];
@@ -1032,7 +1032,7 @@ namespace fs
 
 		void ShapeRenderer::prepareVertexArray(fs::CppHlsl::VS_INPUT_SHAPE& data, const fs::Float2& position, const fs::Float2& halfSize)
 		{
-			auto& vertexArray = _shapeBuffer.vertexArray();
+			auto& vertexArray = _triangleRenderer.vertexArray();
 			data._position._x = position._x - halfSize._x;
 			data._position._y = position._y - halfSize._y;
 			vertexArray.emplace_back(data);
@@ -1052,10 +1052,10 @@ namespace fs
 
 		void ShapeRenderer::prepareIndexArray()
 		{
-			const auto& vertexArray = _shapeBuffer.vertexArray();
+			const auto& vertexArray = _triangleRenderer.vertexArray();
 			const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-			auto& indexArray = _shapeBuffer.indexArray();
+			auto& indexArray = _triangleRenderer.indexArray();
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

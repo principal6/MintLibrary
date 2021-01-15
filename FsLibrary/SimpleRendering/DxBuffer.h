@@ -9,7 +9,6 @@
 
 #include <FsLibrary/SimpleRendering/IDxObject.h>
 
-
 namespace fs
 {
 	namespace SimpleRendering
@@ -22,52 +21,75 @@ namespace fs
 
 		enum class DxBufferType
 		{
+			INVALID,
+
+			ConstantBuffer,
 			VertexBuffer,
 			IndexBuffer,
-			ConstantBuffer,
+			StructuredBuffer,
 		};
 
+		using IndexElementType = uint16;
 		class DxBuffer final : public IDxObject
 		{
 			friend DxBufferPool;
 
-		private:
-									DxBuffer(GraphicDevice* const graphicDevice);
-
-		public:
-			virtual					~DxBuffer() = default;
-
-		public:
-			void					update();
-			void					reset(const byte* const bufferContent, const uint32 bufferSize);
-			void					bind() const noexcept;
-			void					bindToShader(const DxShaderType shaderType, const uint32 bindSlot) const noexcept;
+			static constexpr uint32			kIndexBufferElementStride = sizeof(IndexElementType);
+			static constexpr DXGI_FORMAT	kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
 
 		private:
-			ComPtr<ID3D11Buffer>	_buffer;
-			DxBufferType			_bufferType{};
-			const byte*				_bufferContent{};
-			uint32					_bufferSize{};
+											DxBuffer(GraphicDevice* const graphicDevice);
 
 		public:
-			static const DxBuffer	kNullInstance;
+			virtual							~DxBuffer() = default;
+
+		public:
+			const bool						create(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
+			const bool						isValid() const noexcept;
+		
+		public:
+			void							updateContent(const byte* const bufferContent);
+			void							updateContent(const byte* const bufferContent, const uint32 elementCount);
+			void							updateContent(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
+			void							setOffset(const uint32 elementOffset);
+		
+		public:
+			void							bind() const noexcept;
+			void							bindToShader(const DxShaderType shaderType, const uint32 bindSlot) const noexcept;
+
+		private:
+			ComPtr<ID3D11Buffer>			_internalBuffer;
+			ComPtr<ID3D11View>				_view;
+
+		private:
+			DxBufferType					_bufferType;
+			uint32							_bufferSize;
+			uint32							_elementStride;
+			uint32							_elementCount;
+			uint32							_elementOffset;
+
+		private:
+			static DxBuffer					s_invalidInstance;
 		};
 
 
 		class DxBufferPool final : public IDxObject
 		{
 		public:
-									DxBufferPool(GraphicDevice* const graphicDevice);
-			virtual					~DxBufferPool() = default;
+											DxBufferPool(GraphicDevice* const graphicDevice);
+			virtual							~DxBufferPool() = default;
 
 		public:
-			const DxObjectId&		pushBuffer(const DxBufferType bufferType, const byte* const bufferContent, const uint32 bufferSize);
+			const DxObjectId&				pushConstantBuffer(const byte* const bufferContent, const uint32 bufferSize);
+			const DxObjectId&				pushVertexBuffer(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
+			const DxObjectId&				pushIndexBuffer(const byte* const bufferContent, const uint32 elementCount);
+			const DxObjectId&				pushStructuredBuffer(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
 
 		public:
-			const DxBuffer&			getBuffer(const DxObjectId& objectId);
+			DxBuffer&						getBuffer(const DxObjectId& objectId);
 
 		private:
-			std::vector<DxBuffer>	_bufferArray{};
+			std::vector<DxBuffer>			_bufferArray{};
 		};
 	}
 }

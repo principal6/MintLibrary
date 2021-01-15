@@ -83,8 +83,8 @@
     <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
     <ClInclude Include="SimpleRendering\ShapeRenderer.h" />
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
-    <ClInclude Include="SimpleRendering\TriangleBuffer.h" />
-    <ClInclude Include="SimpleRendering\TriangleBuffer.hpp" />
+    <ClInclude Include="SimpleRendering\TriangleRenderer.h" />
+    <ClInclude Include="SimpleRendering\TriangleRenderer.hpp" />
     <ClInclude Include="Platform\IWindow.h" />
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>

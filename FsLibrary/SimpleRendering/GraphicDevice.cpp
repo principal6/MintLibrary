@@ -12,7 +12,7 @@
 
 #include <FsLibrary/Container/ScopeString.hpp>
 
-#include <FsLibrary/SimpleRendering/TriangleBuffer.hpp>
+#include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
 
 #pragma comment(lib, "d3d11.lib")
@@ -128,9 +128,10 @@ namespace fs
 					_cppHlslCbuffers.generateHlslString(fs::Language::CppHlslFileType::Cbuffers);
 					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslCbuffers.getHlslString());
 
-					DxObjectId id = _bufferPool.pushBuffer(DxBufferType::ConstantBuffer, reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
-					_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, 0);
-					_bufferPool.getBuffer(id).bindToShader(DxShaderType::PixelShader, 0);
+					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslCbuffers.getTypeInfo(typeid(cbTransforms));
+					DxObjectId id = _bufferPool.pushConstantBuffer(reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
+					_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, cppHlslTypeInfo.getRegisterIndex());
+					_bufferPool.getBuffer(id).bindToShader(DxShaderType::PixelShader, cppHlslTypeInfo.getRegisterIndex());
 				}
 			}
 		}

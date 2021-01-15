@@ -189,12 +189,6 @@
     <ClInclude Include="Language\CppHlslTypes.h">
       <Filter>Language\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRendering\TriangleBuffer.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\TriangleBuffer.hpp">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleRendering\ShapeRenderer.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
@@ -229,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="ContiguousContainer\ContiguousVector.hpp">
       <Filter>ContiguousContainer</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\TriangleRenderer.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleRendering\TriangleRenderer.hpp">
+      <Filter>SimpleRendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
