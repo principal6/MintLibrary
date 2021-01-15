@@ -36,6 +36,7 @@ namespace fs
 		enum class DxShaderVersion
 		{
 			v_4_0,
+			v_5_0,
 		};
 
 
@@ -67,12 +68,12 @@ namespace fs
 		class DxShaderPool final : public IDxObject
 		{
 		public:
-										DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory);
+										DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
 			virtual						~DxShaderPool() = default;
 
 		public:
-			const DxObjectId&			pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
-			const DxObjectId&			pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType);
+			const DxObjectId&			pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
+			const DxObjectId&			pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderType shaderType);
 			
 		private:
 			const DxObjectId&			reportCompileError();
@@ -90,6 +91,7 @@ namespace fs
 			DxShaderHeaderMemory*		_shaderHeaderMemory;
 
 		private:
+			DxShaderVersion				_shaderVersion;
 			std::vector<DxShader>		_vertexShaderArray;
 			std::vector<DxShader>		_pixelShaderArray;
 

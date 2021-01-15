@@ -39,6 +39,10 @@ namespace fs
 			{
 				out.append("4_0");
 			}
+			else if (shaderVersion == DxShaderVersion::v_5_0)
+			{
+				out.append("5_0");
+			}
 		}
 #pragma endregion
 
@@ -64,18 +68,20 @@ namespace fs
 		}
 
 
-		DxShaderPool::DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory)
-			: IDxObject(graphicDevice, DxObjectType::Pool), _shaderHeaderMemory{ shaderHeaderMemory }
+		DxShaderPool::DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
+			: IDxObject(graphicDevice, DxObjectType::Pool)
+			, _shaderHeaderMemory{ shaderHeaderMemory }
+			, _shaderVersion{ shaderVersion }
 		{
 			__noop;
 		}
 
-		const DxObjectId& DxShaderPool::pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
+		const DxObjectId& DxShaderPool::pushVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
 		{
 			DxShader shader(_graphicDevice, DxShaderType::VertexShader);
 
 			fs::ScopeStringA<20> version;
-			makeShaderVersion(version, DxShaderType::VertexShader, shaderVersion);
+			makeShaderVersion(version, DxShaderType::VertexShader, _shaderVersion);
 			if (FAILED(D3DCompile(content, strlen(content), shaderIdentifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
 				return reportCompileError();
@@ -117,12 +123,12 @@ namespace fs
 			return _vertexShaderArray.back().getId();
 		}
 
-		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderVersion shaderVersion, const DxShaderType shaderType)
+		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const shaderIdentifier, const char* const content, const char* const entryPoint, const DxShaderType shaderType)
 		{
 			DxShader shader(_graphicDevice, shaderType);
 
 			fs::ScopeStringA<20> version;
-			makeShaderVersion(version, shaderType, shaderVersion);
+			makeShaderVersion(version, shaderType, _shaderVersion);
 			if (FAILED(D3DCompile(content, strlen(content), shaderIdentifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, shader._shaderBlob.ReleaseAndGetAddressOf(), _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
 				return reportCompileError();

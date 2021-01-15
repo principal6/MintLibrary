@@ -444,7 +444,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
-				_vertexShader = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", DxShaderVersion::v_4_0, &typeInfo);
+				_vertexShader = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", &typeInfo);
 			}
 
 			// Compile pixel shader
@@ -476,7 +476,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader("FontRendererPS", kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+				_pixelShader = shaderPool.pushNonVertexShader("FontRendererPS", kShaderString, "main", DxShaderType::PixelShader);
 			}
 		}
 

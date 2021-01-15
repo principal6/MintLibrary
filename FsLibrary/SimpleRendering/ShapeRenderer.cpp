@@ -44,7 +44,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
-				_vertexShader = shaderPool.pushVertexShader("ShapeRendererVS", kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
+				_vertexShader = shaderPool.pushVertexShader("ShapeRendererVS", kShaderString, "main_shape", &typeInfo);
 			}
 
 			{
@@ -66,7 +66,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE_FAST));
-				_vertexShaderFast = shaderPool.pushVertexShader("ShapeRendererVSFast", kShaderString, "main_shape", DxShaderVersion::v_4_0, &typeInfo);
+				_vertexShaderFast = shaderPool.pushVertexShader("ShapeRendererVSFast", kShaderString, "main_shape", &typeInfo);
 			}
 
 			{
@@ -394,7 +394,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader("ShapeRendererPS", kShaderString, "main", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+				_pixelShader = shaderPool.pushNonVertexShader("ShapeRendererPS", kShaderString, "main", DxShaderType::PixelShader);
 			}
 
 			{
@@ -441,7 +441,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShaderFast = shaderPool.pushNonVertexShader("ShapeRendererPSFast", kShaderString, "main_shape", DxShaderVersion::v_4_0, DxShaderType::PixelShader);
+				_pixelShaderFast = shaderPool.pushNonVertexShader("ShapeRendererPSFast", kShaderString, "main_shape", DxShaderType::PixelShader);
 			}
 		}
 

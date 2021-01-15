@@ -26,7 +26,7 @@ namespace fs
 		GraphicDevice::GraphicDevice()
 			: _window{ nullptr }
 			, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
-			, _shaderPool{ this, &_shaderHeaderMemory }
+			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
 			, _bufferPool{ this }
 			, _rectangleRenderer{ this }
 			, _shapeRenderer{ this }
