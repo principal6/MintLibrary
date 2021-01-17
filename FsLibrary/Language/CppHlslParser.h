@@ -330,8 +330,9 @@ namespace fs
 			static std::string							convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
 		
 		public:
-			static std::string							serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo);
-			static std::string							serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 cbufferIndex);
+			static std::string							serializeCppHlslTypeToHlslStreamDatum(const CppHlslTypeInfo& typeInfo);
+			static std::string							serializeCppHlslTypeToHlslConstantBuffer(const CppHlslTypeInfo& typeInfo, const uint32 bufferIndex);
+			static std::string							serializeCppHlslTypeToHlslStructuredBufferDefinition(const CppHlslTypeInfo& typeInfo);
 
 		private:
 			TreeNodeAccessor<SyntaxTreeItem>			_globalNamespaceNode;

@@ -44,7 +44,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
-				_vertexShader = shaderPool.pushVertexShader("ShapeRendererVS", kShaderString, "main_shape", &typeInfo);
+				_vertexShaderId = shaderPool.pushVertexShader("ShapeRendererVS", kShaderString, "main_shape", &typeInfo);
 			}
 
 			{
@@ -53,20 +53,28 @@ namespace fs
 					R"(
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
-
+					#include <ShaderStructuredBufferDefinitions>
+					
+					StructuredBuffer<SB_Transform> sbTransform : register(t0);
+					
 					VS_OUTPUT_SHAPE_FAST main_shape(VS_INPUT_SHAPE_FAST input)
 					{
+						const uint shapeIndex = (uint)input._position.w;
+						float4 transformedPosition = float4(input._position.xy, 0.0, 1.0);
+						transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
+						
 						VS_OUTPUT_SHAPE_FAST result;
-						result._position	= float4(mul(float4(input._position.xy, 0.0, 1.0), _cbProjectionMatrix).xy, 0.0, 1.0);
+						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xy, 0.0, 1.0);
 						result._color		= input._color;
 						result._texCoord	= input._texCoord;
 						result._info.xy		= input._position.zw;
+						
 						return result;
 					}
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE_FAST));
-				_vertexShaderFast = shaderPool.pushVertexShader("ShapeRendererVSFast", kShaderString, "main_shape", &typeInfo);
+				_vertexShaderFastId = shaderPool.pushVertexShader("ShapeRendererVSFast", kShaderString, "main_shape", &typeInfo);
 			}
 
 			{
@@ -394,7 +402,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader("ShapeRendererPS", kShaderString, "main", DxShaderType::PixelShader);
+				_pixelShaderId = shaderPool.pushNonVertexShader("ShapeRendererPS", kShaderString, "main", DxShaderType::PixelShader);
 			}
 
 			{
@@ -420,14 +428,8 @@ namespace fs
 						}
 						else if (2.0 == input._info.x)
 						{
-							if (v < u)
-							{
-								return input._color;
-							}
-							
 							// Circular section
-							const float x = (1.0 - u);
-							signedDistance = sqrt(1.0 - x * x) - v;
+							signedDistance = input._texCoord.z * (1.0 -  sqrt(u * u + v * v));
 						}
 						else
 						{
@@ -441,7 +443,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShaderFast = shaderPool.pushNonVertexShader("ShapeRendererPSFast", kShaderString, "main_shape", DxShaderType::PixelShader);
+				_pixelShaderFastId = shaderPool.pushNonVertexShader("ShapeRendererPSFast", kShaderString, "main_shape", DxShaderType::PixelShader);
 			}
 		}
 
@@ -449,6 +451,8 @@ namespace fs
 		{
 			_triangleRenderer.flush();
 			_triangleRendererFast.flush();
+
+			flushShapeTransform();
 		}
 
 		void ShapeRenderer::render() noexcept
@@ -456,17 +460,22 @@ namespace fs
 			if (_triangleRenderer.isRenderable() == true)
 			{
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
+				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
+				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 
 				_triangleRenderer.render();
 			}
 
 			if (_triangleRendererFast.isRenderable() == true)
 			{
+				prepareStructuredBuffer();
+
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderFast);
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderFast);
+				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderFastId);
+				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderFastId);
+
+				fs::SimpleRendering::DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
+				bufferPool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
 
 				_triangleRendererFast.render();
 			}
@@ -479,6 +488,14 @@ namespace fs
 
 		void ShapeRenderer::drawQuadraticBezier(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate)
 		{
+			drawQuadraticBezierInternal(pointA, pointB, controlPoint, validate);
+
+			pushShapeTransform(0.0f);
+		}
+
+		void ShapeRenderer::drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate)
+		{
+			static constexpr uint32 kDeltaVertexCount = 3;
 			const fs::Float2(&pointArray)[2] = { pointA, pointB };
 			auto& vertexArray = _triangleRendererFast.vertexArray();
 
@@ -491,11 +508,12 @@ namespace fs
 				const fs::Float3& cross = fs::Float3::cross(ab, ac);
 				flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
 			}
-			
+
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
 			v._position._x = pointArray[0 ^ flip]._x;
 			v._position._y = pointArray[0 ^ flip]._y;
+			v._position._w = getShapeTransformIndexAsFloat();
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			vertexArray.emplace_back(v);
@@ -512,7 +530,7 @@ namespace fs
 			v._texCoord._y = 1.0f;
 			vertexArray.emplace_back(v);
 
-			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 3;
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
@@ -521,6 +539,14 @@ namespace fs
 
 		void ShapeRenderer::drawSolidTriangle(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC)
 		{
+			drawSolidTriangleInternal(pointA, pointB, pointC);
+
+			pushShapeTransform(0.0f);
+		}
+
+		void ShapeRenderer::drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC)
+		{
+			static constexpr uint32 kDeltaVertexCount = 3;
 			auto& vertexArray = _triangleRendererFast.vertexArray();
 
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
@@ -528,6 +554,7 @@ namespace fs
 			v._position._x = pointA._x;
 			v._position._y = pointA._y;
 			v._position._z = kInfoSolid;
+			v._position._w = getShapeTransformIndexAsFloat();
 			vertexArray.emplace_back(v);
 
 			v._position._x = pointB._x;
@@ -538,14 +565,14 @@ namespace fs
 			v._position._y = pointC._y;
 			vertexArray.emplace_back(v);
 
-			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 3;
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
 		}
 
-		void ShapeRenderer::drawCircularTriangle(const float radius, const float rotationAngle)
+		void ShapeRenderer::drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut)
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			const float halfRadius = radius * 0.5f;
@@ -557,8 +584,10 @@ namespace fs
 			v._position._x = -halfRadius;
 			v._position._y = -halfRadius;
 			v._position._z = kInfoCircular;
+			v._position._w = getShapeTransformIndexAsFloat();
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 1.0f;
+			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
 			vertexArray.emplace_back(v);
 
 			v._position._x += radius;
@@ -573,12 +602,13 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
+			
+			pushShapeTransform(rotationAngle);
 		}
 
 		void ShapeRenderer::drawQuarterCircle(const float radius, const float rotationAngle)
@@ -593,8 +623,10 @@ namespace fs
 			v._position._x = -halfRadius;
 			v._position._y = -halfRadius;
 			v._position._z = kInfoCircular;
+			v._position._w = getShapeTransformIndexAsFloat();
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 1.0f;
+			v._texCoord._z = 1.0f;
 			vertexArray.emplace_back(v);
 
 			v._position._x += radius;
@@ -602,28 +634,307 @@ namespace fs
 			v._texCoord._y = 1.0f;
 			vertexArray.emplace_back(v);
 
-			v._position._x = -halfRadius;
 			v._position._y += radius;
-			v._texCoord._x = 0.0f;
+			v._texCoord._x = 1.0f;
 			v._texCoord._y = 0.0f;
 			vertexArray.emplace_back(v);
 
-			v._position._x += radius;
+			v._position._x = -halfRadius;
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
-			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
 			
-			indexArray.push_back(vertexOffset + 1);
-			indexArray.push_back(vertexOffset + 3);
+			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 2);
+			indexArray.push_back(vertexOffset + 3);
+
+			pushShapeTransform(rotationAngle);
+		}
+
+		void ShapeRenderer::drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut)
+		{
+			static constexpr uint32 kDeltaVertexCount = 3;
+			const float scaledRadius = fs::Math::kSqrtOfTwo * radius;
+
+			auto& vertexArray = _triangleRendererFast.vertexArray();
+
+			CppHlsl::VS_INPUT_SHAPE_FAST v;
+			v._color = _defaultColor;
+			v._position._x = -scaledRadius;
+			v._position._z = kInfoCircular;
+			v._position._w = getShapeTransformIndexAsFloat();
+			v._texCoord._x = -fs::Math::kSqrtOfTwo;
+			v._texCoord._y = 0.0f;
+			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
+			vertexArray.emplace_back(v);
+
+			v._position._x = 0.0f;
+			v._position._y = -scaledRadius;
+			v._texCoord._x = 0.0f;
+			v._texCoord._y = +fs::Math::kSqrtOfTwo;
+			vertexArray.emplace_back(v);
+
+			v._position._x = +scaledRadius;
+			v._position._y = 0.0f;
+			v._texCoord._x = +fs::Math::kSqrtOfTwo;
+			v._texCoord._y = 0.0f;
+			vertexArray.emplace_back(v);
+
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+
+			auto& indexArray = _triangleRendererFast.indexArray();
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 1);
+			indexArray.push_back(vertexOffset + 2);
+
+			pushShapeTransform(rotationAngle);
+		}
+
+		void ShapeRenderer::drawCircularArcFast(const float radius, const float arcAngle, const float rotationAngle)
+		{
+			static constexpr uint32 kDeltaVertexCount = 6;
+			const float halfArcAngle = fs::Math::clamp(arcAngle, 0.0f, fs::Math::kPi) * 0.5f;
+			const float sinHalfArcAngle = sin(halfArcAngle);
+			const float cosHalfArcAngle = cos(halfArcAngle);
+
+			auto& vertexArray = _triangleRendererFast.vertexArray();
+
+			CppHlsl::VS_INPUT_SHAPE_FAST v;
+			
+			// Right arc section
+			{
+				v._color = _defaultColor;
+				v._position._x = 0.0f;
+				v._position._y = -radius;
+				v._position._z = kInfoCircular;
+				v._position._w = getShapeTransformIndexAsFloat();
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 1.0f;
+				v._texCoord._z = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = +radius * sinHalfArcAngle;
+				v._texCoord._x = +sinHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._y = -radius * cosHalfArcAngle;
+				v._texCoord._x = +sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+			
+			// Left arc section
+			{
+				v._position._x = -radius * sinHalfArcAngle;
+				v._position._y = -radius;
+				v._texCoord._x = -sinHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._y = -radius * cosHalfArcAngle;
+				v._texCoord._x = -sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+
+			// Center
+			{
+				v._position._x = 0.0f;
+				v._position._y = 0.0f;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 0.0f;
+				vertexArray.emplace_back(v);
+			}
+
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+
+			auto& indexArray = _triangleRendererFast.indexArray();
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 1);
+			indexArray.push_back(vertexOffset + 2);
+
+			indexArray.push_back(vertexOffset + 3);
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 4);
+
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 2);
+			indexArray.push_back(vertexOffset + 5);
+
+			indexArray.push_back(vertexOffset + 4);
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 5);
+
+			pushShapeTransform(rotationAngle);
+		}
+
+		void ShapeRenderer::drawDoubleCircularArcFast(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle)
+		{
+			static constexpr uint32 kDeltaVertexCount = 13;
+			const float halfArcAngle = fs::Math::clamp(arcAngle, 0.0f, fs::Math::kPi) * 0.5f;
+			const float sinHalfArcAngle = sin(halfArcAngle);
+			const float cosHalfArcAngle = cos(halfArcAngle);
+			const float tanHalfArcAngle = tan(halfArcAngle);
+
+			auto& vertexArray = _triangleRendererFast.vertexArray();
+
+			CppHlsl::VS_INPUT_SHAPE_FAST v;
+
+			// Right outer arc section
+			{
+				v._color = _defaultColor;
+				v._position._x = 0.0f;
+				v._position._y = -outerRadius;
+				v._position._z = kInfoCircular;
+				v._position._w = getShapeTransformIndexAsFloat();
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 1.0f;
+				v._texCoord._z = +1.0f; // @IMPORTANT
+				vertexArray.emplace_back(v);
+
+				v._position._x = +outerRadius * tanHalfArcAngle;
+				v._texCoord._x = +tanHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = +outerRadius * sinHalfArcAngle;
+				v._position._y = -outerRadius * cosHalfArcAngle;
+				v._texCoord._x = +sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+
+			// Left outer arc section
+			{
+				v._position._x = -outerRadius * tanHalfArcAngle;
+				v._position._y = -outerRadius;
+				v._texCoord._x = -tanHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = -outerRadius * sinHalfArcAngle;
+				v._position._y = -outerRadius * cosHalfArcAngle;
+				v._texCoord._x = -sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+
+			const float innerRatio = innerRadius / outerRadius;
+			// Middle
+			{
+				v._position._x = 0.0f;
+				v._position._y = -innerRadius;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = innerRatio;
+				vertexArray.emplace_back(v);
+			}
+
+			// Right inner arc section
+			{
+				v._position._x = 0.0f;
+				v._position._y = -innerRadius;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 1.0f;
+				v._texCoord._z = -1.0f; // @IMPORTANT
+				vertexArray.emplace_back(v);
+
+				v._position._x = +innerRadius * tanHalfArcAngle;
+				v._texCoord._x = +tanHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = +innerRadius * sinHalfArcAngle;
+				v._position._y = -innerRadius * cosHalfArcAngle;
+				v._texCoord._x = +sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+
+			// Left inner arc section
+			{
+				v._position._x = -innerRadius * tanHalfArcAngle;
+				v._position._y = -innerRadius;
+				v._texCoord._x = -tanHalfArcAngle;
+				v._texCoord._y = 1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = -innerRadius * sinHalfArcAngle;
+				v._position._y = -innerRadius * cosHalfArcAngle;
+				v._texCoord._x = -sinHalfArcAngle;
+				v._texCoord._y = +cosHalfArcAngle;
+				vertexArray.emplace_back(v);
+			}
+
+			// Right side
+			{
+				v._position._x = +innerRadius * tanHalfArcAngle;
+				v._position._y = -innerRadius;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 0.0f;
+				v._texCoord._z = +1.0f; // @IMPORTANT
+				vertexArray.emplace_back(v);
+			}
+
+			// Left side
+			{
+				v._position._x = -innerRadius * tanHalfArcAngle;
+				v._position._y = -innerRadius;
+				vertexArray.emplace_back(v);
+			}
+
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+
+			auto& indexArray = _triangleRendererFast.indexArray();
+			
+			// Right outer arc section
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 1);
+			indexArray.push_back(vertexOffset + 2);
+
+			// Left outer arc section
+			indexArray.push_back(vertexOffset + 3);
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 4);
+
+			// Middle-right
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 2);
+			indexArray.push_back(vertexOffset + 5);
+
+			// Middle-left
+			indexArray.push_back(vertexOffset + 4);
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 5);
+
+			// Right inner arc section
+			indexArray.push_back(vertexOffset + 6);
+			indexArray.push_back(vertexOffset + 7);
+			indexArray.push_back(vertexOffset + 8);
+
+			// Left inner arc section
+			indexArray.push_back(vertexOffset + 9);
+			indexArray.push_back(vertexOffset + 6);
+			indexArray.push_back(vertexOffset + 10);
+
+			// Right side
+			indexArray.push_back(vertexOffset + 5);
+			indexArray.push_back(vertexOffset + 2);
+			indexArray.push_back(vertexOffset + 11);
+
+			// Left side
+			indexArray.push_back(vertexOffset + 4);
+			indexArray.push_back(vertexOffset + 5);
+			indexArray.push_back(vertexOffset + 12);
+
+			pushShapeTransform(rotationAngle);
 		}
 
 		void ShapeRenderer::drawRectangleFast(const fs::Float2& size, const float borderThickness, const float rotationAngle)
@@ -638,7 +949,7 @@ namespace fs
 			v._position._x = -halfSize._x;
 			v._position._y = -halfSize._y;
 			v._position._z = kInfoSolid;
-			v._position._w = rotationAngle;
+			v._position._w = getShapeTransformIndexAsFloat();
 			vertexArray.emplace_back(v);
 
 			v._position._x += size._x;
@@ -654,7 +965,6 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
@@ -664,6 +974,8 @@ namespace fs
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 3);
 			indexArray.push_back(vertexOffset + 2);
+			
+			pushShapeTransform(rotationAngle);
 		}
 
 		void ShapeRenderer::drawTaperedRectangleFast(const fs::Float2& size, const float tapering, const float bias, const float borderThickness, const float rotationAngle)
@@ -681,6 +993,7 @@ namespace fs
 			v._position._x = -halfSize._x + horizontalOffsetL;
 			v._position._y = -halfSize._y;
 			v._position._z = kInfoSolid;
+			v._position._w = getShapeTransformIndexAsFloat();
 			vertexArray.emplace_back(v);
 
 			v._position._x = +halfSize._x - horizontalOffsetR;
@@ -696,7 +1009,6 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			transformVertices(vertexOffset, kDeltaVertexCount, rotationAngle);
 
 			auto& indexArray = _triangleRendererFast.indexArray();
 			indexArray.push_back(vertexOffset + 0);
@@ -705,6 +1017,8 @@ namespace fs
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 3);
 			indexArray.push_back(vertexOffset + 2);
+			
+			pushShapeTransform(rotationAngle);
 		}
 
 		void ShapeRenderer::drawRoundedRectangleFast(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
@@ -735,103 +1049,172 @@ namespace fs
 
 			// Left top corner
 			setPosition(originalPosition + fs::Float3(-(halfMiddleWidth + halfRadius), -(halfMiddleHeight + halfRadius), 0.0f));
-			drawQuarterCircle(radius, 0.0f);
+			drawQuarterCircle(radius, fs::Math::kPiOverTwo);
 
 			// Left bottom corner
 			setPosition(originalPosition + fs::Float3(-(halfMiddleWidth + halfRadius), +(halfMiddleHeight + halfRadius), 0.0f));
-			drawQuarterCircle(radius, fs::Math::kPiOverTwo);
+			drawQuarterCircle(radius, fs::Math::kPi);
 
 			// Right top corner
 			setPosition(originalPosition + fs::Float3(+(halfMiddleWidth + halfRadius), -(halfMiddleHeight + halfRadius), 0.0f));
-			drawQuarterCircle(radius, -fs::Math::kPiOverTwo);
+			drawQuarterCircle(radius, 0.0f);
 
 			// Right bottom corner
 			setPosition(originalPosition + fs::Float3(+(halfMiddleWidth + halfRadius), +(halfMiddleHeight + halfRadius), 0.0f));
-			drawQuarterCircle(radius, fs::Math::kPi);
+			drawQuarterCircle(radius, -fs::Math::kPiOverTwo);
 			
 			// Restore position
 			setPosition(originalPosition);
 #else
-			const fs::Float2 position2 = fs::Float2(_position._x, _position._y);
 			fs::Float2 pointA;
 			fs::Float2 pointB;
 			fs::Float2 pointC;
 
 			// Center box
 			{
-				pointA = position2 + fs::Float2(-halfMiddleWidth, -halfSize._y);
-				pointB = position2 + fs::Float2(+halfMiddleWidth, -halfSize._y);
-				pointC = position2 + fs::Float2(-halfMiddleWidth, +halfSize._y);
-				drawSolidTriangle(pointA, pointB, pointC);
+				pointA = fs::Float2(-halfMiddleWidth, -halfSize._y);
+				pointB = fs::Float2(+halfMiddleWidth, -halfSize._y);
+				pointC = fs::Float2(-halfMiddleWidth, +halfSize._y);
+				drawSolidTriangleInternal(pointA, pointB, pointC);
 
-				pointA = position2 + fs::Float2(+halfMiddleWidth, +halfSize._y);
-				drawSolidTriangle(pointC, pointB, pointA);
+				pointA = fs::Float2(+halfMiddleWidth, +halfSize._y);
+				drawSolidTriangleInternal(pointC, pointB, pointA);
 			}
 
 			// Left top corner
 			{
-				pointA = position2 + fs::Float2(-halfSize._x, -halfMiddleHeight);
-				pointB = position2 + fs::Float2(-halfMiddleWidth, -halfSize._y);
-				drawQuadraticBezier(pointA, pointB, position2 - halfSize, false);
+				pointA = fs::Float2(-halfSize._x, -halfMiddleHeight);
+				pointB = fs::Float2(-halfMiddleWidth, -halfSize._y);
+				drawQuadraticBezierInternal(pointA, pointB, -halfSize, false);
 			}
 
 			// Left side box
 			{
-				pointC = position2 + fs::Float2(-halfMiddleWidth, +halfMiddleHeight);
-				drawSolidTriangle(pointA, pointB, pointC);
+				pointC = fs::Float2(-halfMiddleWidth, +halfMiddleHeight);
+				drawSolidTriangleInternal(pointA, pointB, pointC);
 
-				pointA = position2 + fs::Float2(-halfSize._x, -halfMiddleHeight);
-				pointB = position2 + fs::Float2(-halfSize._x, +halfMiddleHeight);
-				drawSolidTriangle(pointC, pointB, pointA);
+				pointA = fs::Float2(-halfSize._x, -halfMiddleHeight);
+				pointB = fs::Float2(-halfSize._x, +halfMiddleHeight);
+				drawSolidTriangleInternal(pointC, pointB, pointA);
 			}
 
 			// Left bottom corner
 			{
-				pointA = position2 + fs::Float2(-halfSize._x, +halfMiddleHeight);
-				pointB = position2 + fs::Float2(-halfMiddleWidth, +halfSize._y);
-				drawQuadraticBezier(pointB, pointA, position2 + fs::Float2(-halfSize._x, +halfSize._y), false);
-				drawSolidTriangle(pointB, pointA, position2 + fs::Float2(-halfMiddleWidth, +halfMiddleHeight));
+				pointA = fs::Float2(-halfSize._x, +halfMiddleHeight);
+				pointB = fs::Float2(-halfMiddleWidth, +halfSize._y);
+				drawQuadraticBezierInternal(pointB, pointA, fs::Float2(-halfSize._x, +halfSize._y), false);
+				drawSolidTriangleInternal(pointB, pointA, fs::Float2(-halfMiddleWidth, +halfMiddleHeight));
 			}
 
 			// Right top corner
 			{
-				pointA = position2 + fs::Float2(+halfSize._x, -halfMiddleHeight);
-				pointB = position2 + fs::Float2(+halfMiddleWidth, -halfSize._y);
-				drawQuadraticBezier(pointB, pointA, position2 + fs::Float2(+halfSize._x, -halfSize._y), false);
+				pointA = fs::Float2(+halfSize._x, -halfMiddleHeight);
+				pointB = fs::Float2(+halfMiddleWidth, -halfSize._y);
+				drawQuadraticBezierInternal(pointB, pointA, fs::Float2(+halfSize._x, -halfSize._y), false);
 			}
 
 			// Right side box
 			{
-				pointC = position2 + fs::Float2(+halfMiddleWidth, +halfMiddleHeight);
-				drawSolidTriangle(pointC, pointB, pointA);
+				pointC = fs::Float2(+halfMiddleWidth, +halfMiddleHeight);
+				drawSolidTriangleInternal(pointC, pointB, pointA);
 				
-				pointA = position2 + fs::Float2(+halfSize._x, -halfMiddleHeight);
-				pointB = position2 + fs::Float2(+halfSize._x, +halfMiddleHeight);
-				drawSolidTriangle(pointA, pointB, pointC);
+				pointA = fs::Float2(+halfSize._x, -halfMiddleHeight);
+				pointB = fs::Float2(+halfSize._x, +halfMiddleHeight);
+				drawSolidTriangleInternal(pointA, pointB, pointC);
 			}
 
 			// Right bottom corner
 			{
-				pointA = position2 + fs::Float2(+halfSize._x, +halfMiddleHeight);
-				pointB = position2 + fs::Float2(+halfMiddleWidth, +halfSize._y);
-				drawQuadraticBezier(pointA, pointB, position2 + fs::Float2(+halfSize._x, +halfSize._y), false);
-				drawSolidTriangle(pointA, pointB, position2 + fs::Float2(+halfMiddleWidth, +halfMiddleHeight));
+				pointA = fs::Float2(+halfSize._x, +halfMiddleHeight);
+				pointB = fs::Float2(+halfMiddleWidth, +halfSize._y);
+				drawQuadraticBezierInternal(pointA, pointB, fs::Float2(+halfSize._x, +halfSize._y), false);
+				drawSolidTriangleInternal(pointA, pointB, fs::Float2(+halfMiddleWidth, +halfMiddleHeight));
 			}
 #endif
+
+			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::transformVertices(const uint32 vertexOffset, const uint32 targetVertexCount, const float rotationAngle)
+		void ShapeRenderer::drawLineFast(const fs::Float2& p0, const fs::Float2& p1, const float thickness)
 		{
-			const fs::Float4x4& rotationMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
+			static constexpr uint32 kDeltaVertexCount = 4;
+			const fs::Float2& dir = fs::Float2::normalize(p1 - p0);
+			const fs::Float2& normal = fs::Float2(-dir._y, dir._x);
+			const float halfThickness = thickness * 0.5f;
+
+			const fs::Float2 v0 = p0 - normal * halfThickness;
+			const fs::Float2 v1 = p1 - normal * halfThickness;
+			const fs::Float2 v2 = p0 + normal * halfThickness;
+			const fs::Float2 v3 = p1 + normal * halfThickness;
 
 			auto& vertexArray = _triangleRendererFast.vertexArray();
-			for (uint32 vertexIter = 0; vertexIter < targetVertexCount; ++vertexIter)
-			{
-				CppHlsl::VS_INPUT_SHAPE_FAST& vertex = vertexArray[vertexOffset + vertexIter];
-				vertex._position = rotationMatrix.mul(vertex._position);
 
-				vertex._position._x += _position._x;
-				vertex._position._y += _position._y;
+			CppHlsl::VS_INPUT_SHAPE_FAST v;
+			v._color = _defaultColor;
+			v._position._x = v0._x;
+			v._position._y = v0._y;
+			v._position._z = kInfoSolid;
+			v._position._w = getShapeTransformIndexAsFloat();
+			vertexArray.emplace_back(v);
+
+			v._position._x = v1._x;
+			v._position._y = v1._y;
+			vertexArray.emplace_back(v);
+
+			v._position._x = v2._x;
+			v._position._y = v2._y;
+			vertexArray.emplace_back(v);
+
+			v._position._x = v3._x;
+			v._position._y = v3._y;
+			vertexArray.emplace_back(v);
+
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+			auto& indexArray = _triangleRendererFast.indexArray();
+			indexArray.push_back(vertexOffset + 0);
+			indexArray.push_back(vertexOffset + 1);
+			indexArray.push_back(vertexOffset + 2);
+
+			indexArray.push_back(vertexOffset + 1);
+			indexArray.push_back(vertexOffset + 3);
+			indexArray.push_back(vertexOffset + 2);
+
+			pushShapeTransform(0.0f);
+		}
+
+		void ShapeRenderer::flushShapeTransform()
+		{
+			_sbTransformData.clear();
+		}
+
+		const float ShapeRenderer::getShapeTransformIndexAsFloat() const noexcept
+		{
+			return static_cast<float>(_sbTransformData.size());
+		}
+
+		void ShapeRenderer::pushShapeTransform(const float rotationAngle, const bool applyInternalPosition)
+		{
+			fs::CppHlsl::SB_Transform transform;
+			transform._transformMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
+			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
+			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
+			_sbTransformData.emplace_back(transform);
+		}
+
+		void ShapeRenderer::prepareStructuredBuffer()
+		{
+			fs::SimpleRendering::DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
+
+			const uint32 elementCount = static_cast<uint32>(_sbTransformData.size());
+			if (_sbTransformBufferId.isValid() == false && 0 < elementCount)
+			{
+				_sbTransformBufferId = bufferPool.pushStructuredBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), sizeof(_sbTransformData[0]), elementCount);
+			}
+			
+			if (_sbTransformBufferId.isValid() == true)
+			{
+				fs::SimpleRendering::DxBuffer& buffer = bufferPool.getBuffer(_sbTransformBufferId);
+				buffer.updateContent(reinterpret_cast<byte*>(&_sbTransformData[0]), elementCount);
 			}
 		}
 
@@ -990,20 +1373,8 @@ namespace fs
 				const float rgbDenom = (colorCount / 3.0f);
 				const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
 				
-				int32 colorIndexCorrected = colorIndex - colorCount / 2;
-				if (colorIndexCorrected < 0)
-				{
-					colorIndexCorrected = colorCount + colorIndexCorrected;
-				}
-				colorIndexCorrected = colorCount - colorIndexCorrected;
-				if (colorIndexCorrected == colorCount)
-				{
-					colorIndexCorrected = 0;
-				}
+				int32 colorIndexCorrected = colorIndex;
 				const fs::Float4& stepsColor = colorArray[colorIndexCorrected];
-
-				const float angleA = -(fs::Math::kPi / colorCount) + deltaAngle * colorIndex;
-				const float angleB = angleA + deltaAngle;
 
 				// Outer steps
 				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
@@ -1011,7 +1382,7 @@ namespace fs
 					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
 					setColor(stepsColor * outerStepRatio + fs::Float4(0.0f, 0.0f, 0.0f, 1.0f));
 
-					drawCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, angleA, angleB, stepHeight * (innerStepCount + outerStepIndex));
+					drawDoubleCircularArcFast(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
 				}
 
 				// Inner steps
@@ -1019,8 +1390,8 @@ namespace fs
 				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
 				{
 					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
-
-					drawCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, angleA, angleB, stepHeight * innerStepIndex);
+				
+					drawDoubleCircularArcFast(stepHeight * (innerStepIndex + 1) + 1.0f, stepHeight * innerStepIndex, deltaAngle, deltaAngle * colorIndex);
 				}
 			}
 		}

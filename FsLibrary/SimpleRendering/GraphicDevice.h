@@ -23,8 +23,8 @@
 
 #include <FsMath/Include/Float4x4.h>
 
-#include <Assets/CppHlsl/CppHlslStructs.h>
-#include <Assets/CppHlsl/CppHlslCbuffers.h>
+#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/CppHlsl/CppHlslConstantBuffers.h>
 
 
 //#define FS_TEST_MEMORY_FONT_TEXTURE
@@ -117,8 +117,9 @@ namespace fs
 #endif
 
 		private:
-			fs::Language::CppHlsl										_cppHlslStructs;
-			fs::Language::CppHlsl										_cppHlslCbuffers;
+			fs::Language::CppHlsl										_cppHlslStreamData;
+			fs::Language::CppHlsl										_cppHlslConstantBuffers;
+			fs::Language::CppHlsl										_cppHlslStructuredBuffers;
 
 		private:
 			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;

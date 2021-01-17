@@ -206,12 +206,6 @@
     </ClInclude>
     <ClInclude Include="..\CommonDefinitions.h" />
     <ClInclude Include="..\stdafx.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslCbuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructs.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
     <ClInclude Include="ContiguousContainer\ContiguousString.h">
       <Filter>ContiguousContainer</Filter>
     </ClInclude>
@@ -229,6 +223,15 @@
     </ClInclude>
     <ClInclude Include="SimpleRendering\TriangleRenderer.hpp">
       <Filter>SimpleRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -105,7 +105,7 @@ namespace fs
 				ComPtr<ID3D11Buffer> newInternalBuffer;
 
 				D3D11_BUFFER_DESC bufferDescriptor{};
-				bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+				bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
 				bufferDescriptor.ByteWidth = elementStride * elementCount;
 				bufferDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
 				bufferDescriptor.CPUAccessFlags = 0;
@@ -200,17 +200,32 @@ namespace fs
 			}
 		}
 
-		void DxBuffer::bindToShader(const DxShaderType shaderType, const uint32 bindSlot) const noexcept
+		void DxBuffer::bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept
 		{
 			if (_bufferType == DxBufferType::ConstantBuffer)
 			{
 				if (shaderType == DxShaderType::VertexShader)
 				{
-					_graphicDevice->getDxDeviceContext()->VSSetConstantBuffers(bindSlot, 1, _internalBuffer.GetAddressOf());
+					_graphicDevice->getDxDeviceContext()->VSSetConstantBuffers(bindingSlot, 1, _internalBuffer.GetAddressOf());
 				}
 				else if (shaderType == DxShaderType::PixelShader)
 				{
-					_graphicDevice->getDxDeviceContext()->PSSetConstantBuffers(bindSlot, 1, _internalBuffer.GetAddressOf());
+					_graphicDevice->getDxDeviceContext()->PSSetConstantBuffers(bindingSlot, 1, _internalBuffer.GetAddressOf());
+				}
+				else
+				{
+					FS_LOG_ERROR("김장원", "미지원 ShaderType 입니다!");
+				}
+			}
+			else if (_bufferType == DxBufferType::StructuredBuffer)
+			{
+				if (shaderType == DxShaderType::VertexShader)
+				{
+					_graphicDevice->getDxDeviceContext()->VSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const *>(_view.GetAddressOf()));
+				}
+				else if (shaderType == DxShaderType::PixelShader)
+				{
+					_graphicDevice->getDxDeviceContext()->PSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf()));
 				}
 				else
 				{
@@ -274,7 +289,7 @@ namespace fs
 		const DxObjectId& DxBufferPool::pushStructuredBuffer(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount)
 		{
 			DxBuffer buffer{ _graphicDevice };
-			buffer._bufferType = DxBufferType::IndexBuffer;
+			buffer._bufferType = DxBufferType::StructuredBuffer;
 			if (buffer.create(bufferContent, elementStride, elementCount) == true)
 			{
 				buffer.assignIdXXX();
@@ -284,6 +299,24 @@ namespace fs
 
 			FS_ASSERT("김장원", false, "pushStructuredBuffer 에 실패했습니다!");
 			return DxObjectId::kInvalidObjectId;
+		}
+
+		void DxBufferPool::bind(const DxObjectId& objectId) noexcept
+		{
+			DxBuffer& buffer = getBuffer(objectId);
+			if (buffer.isValid() == true)
+			{
+				buffer.bind();
+			}
+		}
+
+		void DxBufferPool::bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept
+		{
+			DxBuffer& buffer = getBuffer(objectId);
+			if (buffer.isValid() == true)
+			{
+				buffer.bindToShader(shaderType, bindingSlot);
+			}
 		}
 
 		DxBuffer& DxBufferPool::getBuffer(const DxObjectId& objectId)

@@ -715,7 +715,7 @@ const bool testLanguage()
 	using namespace fs;
 	
 	TextFileReader textFileReader;
-	textFileReader.open("FsLibrary/SimpleRendering/CppHlslStructs.h");
+	textFileReader.open("FsLibrary/SimpleRendering/CppHlslStreamData.h");
 	
 	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
 	cppHlslLexer.execute();
@@ -817,50 +817,33 @@ const bool testWindow()
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.setPosition(fs::Float3(200.0f, 250.0f, 0.0f));
 			shapeRenderer.drawTaperedRectangleFast(fs::Float2(100, 50), 0.25f, 1.5f, 0.0f, 0.0f);
-
+			
 			shapeRenderer.setPosition(fs::Float3(200.0f, 350.0f, 0.0f));
-			shapeRenderer.drawQuarterCircle(100.0f, 0.0f);
-
+			shapeRenderer.drawQuarterCircle(100.0f, 0.25f);
+			
 			shapeRenderer.setPosition(fs::Float3(200.0f, 50.0f, 0.0f));
 			shapeRenderer.drawQuadraticBezier(fs::Float2(200, 200), fs::Float2(400, 100), fs::Float2(200, 0));
 			
 			shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.drawRoundedRectangleFast(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
-
-			shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			for (uint32 i = 0; i < 100; ++i)
-			{
-				shapeRenderer.drawRoundedRectangleFast(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
-			}
-
-			//shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
+			
+			//shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
 			//shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
 			//for (uint32 i = 0; i < 100; ++i)
 			//{
-			//	shapeRenderer.drawRoundedRectangle(fs::Int2(200, 100), 0.25f, 0, 0.0f);
+			//	shapeRenderer.drawRoundedRectangleFast(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
 			//}
-
-			/*
-			shapeRenderer.setPosition(fs::Float3(450.0f, 300.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(0.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Int2(100, 100), fs::SimpleRendering::ShapeRenderer::kRoundnessAbsoluteBase + 0.03125f, 0, 0.0f);
-
-			shapeRenderer.setPosition(fs::Float3(400.0f, 450.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.25f, 0.5f, 1.0f));
-			shapeRenderer.drawTaperedRectangle(fs::Int2(200, 100), 0.5f, 0.5f, 2, 0.7854f);
-
-			shapeRenderer.setPosition(fs::Float3(400.0f, 150.0f, 0.0f));
+			
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRectangle(fs::Int2(210, 110), 4, 0.0f);
+			shapeRenderer.drawLineFast(fs::float2(50, 500), fs::Float2(250, 300), 20.0f);
 
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.25f, 1.0f));
-			shapeRenderer.drawLine(fs::Int2(200, 100), fs::Int2(400, 300), 40.0f);
+			shapeRenderer.setPosition(fs::Float3(800.0f, 200.0f, 0.0f));
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
+			shapeRenderer.drawDoubleCircularArcFast(81.0f, 66.0f, fs::Math::kPiOverFour, 0.0f);
 
 			//shapeRenderer.setPosition(fs::Float3(600.0f, 300.0f, 0.0f));
 			//shapeRenderer.drawColorPallete(120.0f);
-			*/
 		}
 
 		{

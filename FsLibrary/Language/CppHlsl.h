@@ -17,8 +17,9 @@ namespace fs
 	{
 		enum class CppHlslFileType
 		{
-			Structs,
-			Cbuffers
+			StreamData,
+			ConstantBuffers,
+			StructuredBuffers,
 		};
 
 		class CppHlsl

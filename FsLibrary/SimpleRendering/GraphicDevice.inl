@@ -30,7 +30,7 @@ namespace fs
 
 		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslStructs() const noexcept
 		{
-			return _cppHlslStructs;
+			return _cppHlslStreamData;
 		}
 
 		FS_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept

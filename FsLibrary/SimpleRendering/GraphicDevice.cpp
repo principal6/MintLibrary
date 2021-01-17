@@ -112,11 +112,11 @@ namespace fs
 		{
 			const Int2 windowSize = _window->size();
 
-			// Structs
+			// Stream data
 			{
-				_cppHlslStructs.parseCppHlslFile("Assets/CppHlsl/CppHlslStructs.h");
-				_cppHlslStructs.generateHlslString(fs::Language::CppHlslFileType::Structs);
-				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStructs.getHlslString());
+				_cppHlslStreamData.parseCppHlslFile("Assets/CppHlsl/CppHlslStreamData.h");
+				_cppHlslStreamData.generateHlslString(fs::Language::CppHlslFileType::StreamData);
+				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.getHlslString());
 			}
 
 			// Constant buffers
@@ -124,15 +124,22 @@ namespace fs
 				fs::CppHlsl::CB_Transforms cbTransforms;
 				cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 				{
-					_cppHlslCbuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslCbuffers.h");
-					_cppHlslCbuffers.generateHlslString(fs::Language::CppHlslFileType::Cbuffers);
-					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslCbuffers.getHlslString());
-
-					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslCbuffers.getTypeInfo(typeid(cbTransforms));
+					_cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
+					_cppHlslConstantBuffers.generateHlslString(fs::Language::CppHlslFileType::ConstantBuffers);
+					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
+					
+					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(cbTransforms));
 					DxObjectId id = _bufferPool.pushConstantBuffer(reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
 					_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, cppHlslTypeInfo.getRegisterIndex());
 					_bufferPool.getBuffer(id).bindToShader(DxShaderType::PixelShader, cppHlslTypeInfo.getRegisterIndex());
 				}
+			}
+
+			// Structured buffers
+			{
+				_cppHlslStructuredBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslStructuredBuffers.h");
+				_cppHlslStructuredBuffers.generateHlslString(fs::Language::CppHlslFileType::StructuredBuffers);
+				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
 			}
 		}
 

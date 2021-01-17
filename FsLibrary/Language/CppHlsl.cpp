@@ -33,19 +33,28 @@ namespace fs
 
 			_hlslString.clear();
 
-			uint32 cbufferIndex = 0;
 			const uint32 typeInfoCount = _parser.getTypeInfoCount();
+			if (_fileType == CppHlslFileType::StructuredBuffers)
+			{
+				for (uint32 typeInfoIndex = 0; typeInfoIndex < typeInfoCount; ++typeInfoIndex)
+				{
+					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStructuredBufferDefinition(_parser.getTypeInfo(typeInfoIndex)));
+				}
+			}
+
+			uint32 bufferIndex = 0;
+			uint32 structuredBufferIndex = 0;
 			for (uint32 typeInfoIndex = 0; typeInfoIndex < typeInfoCount; ++typeInfoIndex)
 			{
-				if (_fileType == CppHlslFileType::Structs)
+				if (_fileType == CppHlslFileType::StreamData)
 				{
-					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStruct(_parser.getTypeInfo(typeInfoIndex)));
+					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslStreamDatum(_parser.getTypeInfo(typeInfoIndex)));
 				}
-				else if (_fileType == CppHlslFileType::Cbuffers)
+				else if (_fileType == CppHlslFileType::ConstantBuffers)
 				{
-					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslCbuffer(_parser.getTypeInfo(typeInfoIndex), cbufferIndex));
+					_hlslString.append(Language::CppHlslParser::serializeCppHlslTypeToHlslConstantBuffer(_parser.getTypeInfo(typeInfoIndex), bufferIndex));
 
-					++cbufferIndex;
+					++bufferIndex;
 				}
 			}
 		}

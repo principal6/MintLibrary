@@ -12,6 +12,8 @@
 
 #include <FsMath/Include/Int2.h>
 
+#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
+
 
 namespace fs
 {
@@ -39,20 +41,45 @@ namespace fs
 			void															setBorderColor(const fs::Float4& borderColor) noexcept;
 
 		public:
+			// Independent from internal position set by setPosition() call
+			// No rotation allowed
 			void															drawQuadraticBezier(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate = true);
+
+		private:
+			void															drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate = true);
+			
+		public:
+			// Independent from internal position set by setPosition() call
+			// No rotation allowed
 			void															drawSolidTriangle(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC);
 
-			// Not fast enough
-			void															drawCircularTriangle(const float radius, const float rotationAngle);
-			// Not fast enough
+		private:
+			void															drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC);
+
+		public:
+			void															drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
 			void															drawQuarterCircle(const float radius, const float rotationAngle);
+			void															drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut = false);
+
+			// arcAngle = [0, +pi]
+			void															drawCircularArcFast(const float radius, const float arcAngle, const float rotationAngle);
+
+			// arcAngle = [0, +pi]
+			void															drawDoubleCircularArcFast(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
 
 			void															drawRectangleFast(const fs::Float2& size, const float borderThickness, const float rotationAngle);
 			void															drawTaperedRectangleFast(const fs::Float2& size, const float tapering, const float bias, const float borderThickness, const float rotationAngle);
 			void															drawRoundedRectangleFast(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
 
+			// Independent from internal position set by setPosition() call
+			// No rotation allowed
+			void															drawLineFast(const fs::Float2& p0, const fs::Float2& p1, const float thickness);
+
 		private:
-			void															transformVertices(const uint32 vertexOffset, const uint32 targetVertexCount, const float rotationAngle);
+			void															flushShapeTransform();
+			const float														getShapeTransformIndexAsFloat() const noexcept;
+			void															pushShapeTransform(const float rotationAngle, const bool applyInternalPosition = true);
+			void															prepareStructuredBuffer();
 
 		public:
 			void															drawRectangle(const fs::Int2& size, const uint32 borderThickness, const float angle);
@@ -75,13 +102,15 @@ namespace fs
 
 		private:
 			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>		_triangleRenderer;
-			DxObjectId														_vertexShader;
-			DxObjectId														_pixelShader;
+			DxObjectId														_vertexShaderId;
+			DxObjectId														_pixelShaderId;
 
 		private:
 			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE_FAST>	_triangleRendererFast;
-			DxObjectId														_vertexShaderFast;
-			DxObjectId														_pixelShaderFast;
+			DxObjectId														_vertexShaderFastId;
+			DxObjectId														_pixelShaderFastId;
+			std::vector<fs::CppHlsl::SB_Transform>							_sbTransformData;
+			DxObjectId														_sbTransformBufferId;
 		
 		private:
 			fs::Float4														_borderColor;

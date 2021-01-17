@@ -1874,7 +1874,7 @@ namespace fs
 			return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
 		}
 
-		std::string CppHlslParser::serializeCppHlslTypeToHlslStruct(const CppHlslTypeInfo& typeInfo)
+		std::string CppHlslParser::serializeCppHlslTypeToHlslStreamDatum(const CppHlslTypeInfo& typeInfo)
 		{
 			std::string result;
 
@@ -1883,7 +1883,6 @@ namespace fs
 			result.append(typeName);
 			result.append("\n{\n");
 
-			std::string semanticName;
 			const uint32 memberCount = typeInfo.getMemberCount();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
@@ -1907,7 +1906,7 @@ namespace fs
 			return result;
 		}
 
-		std::string CppHlslParser::serializeCppHlslTypeToHlslCbuffer(const CppHlslTypeInfo& typeInfo, const uint32 cbufferIndex)
+		std::string CppHlslParser::serializeCppHlslTypeToHlslConstantBuffer(const CppHlslTypeInfo& typeInfo, const uint32 bufferIndex)
 		{
 			std::string result;
 
@@ -1915,10 +1914,9 @@ namespace fs
 			std::string typeName = extractPureTypeName(typeInfo.getTypeName());
 			result.append(typeName);
 			result.append(" : register(");
-			result.append("b" + std::to_string((typeInfo.isRegisterIndexValid() == true) ? typeInfo.getRegisterIndex() : cbufferIndex));
+			result.append("b" + std::to_string((typeInfo.isRegisterIndexValid() == true) ? typeInfo.getRegisterIndex() : bufferIndex));
 			result.append(")\n{\n");
 
-			std::string semanticName;
 			const uint32 memberCount = typeInfo.getMemberCount();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
@@ -1929,6 +1927,29 @@ namespace fs
 				result.append(memberType.getDeclName());
 				result.append(";\n");
 			}
+			result.append("};\n\n");
+			return result;
+		}
+
+		std::string CppHlslParser::serializeCppHlslTypeToHlslStructuredBufferDefinition(const CppHlslTypeInfo& typeInfo)
+		{
+			std::string result;
+
+			std::string typeName = extractPureTypeName(typeInfo.getTypeName());
+			result.append("struct ");
+			result.append(typeName);
+			result.append("\n{\n");
+			const uint32 memberCount = typeInfo.getMemberCount();
+			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+			{
+				const CppHlslTypeInfo& memberType = typeInfo.getMember(memberIndex);
+				result.append("\t");
+				result.append(memberType.getTypeName());
+				result.append(" ");
+				result.append(memberType.getDeclName());
+				result.append(";\n");
+			}
+
 			result.append("};\n\n");
 			return result;
 		}

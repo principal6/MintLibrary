@@ -43,8 +43,10 @@ namespace fs
 		public:
 			virtual							~DxBuffer() = default;
 
-		public:
+		private:
 			const bool						create(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
+
+		public:
 			const bool						isValid() const noexcept;
 		
 		public:
@@ -55,7 +57,7 @@ namespace fs
 		
 		public:
 			void							bind() const noexcept;
-			void							bindToShader(const DxShaderType shaderType, const uint32 bindSlot) const noexcept;
+			void							bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
 
 		private:
 			ComPtr<ID3D11Buffer>			_internalBuffer;
@@ -84,6 +86,10 @@ namespace fs
 			const DxObjectId&				pushVertexBuffer(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
 			const DxObjectId&				pushIndexBuffer(const byte* const bufferContent, const uint32 elementCount);
 			const DxObjectId&				pushStructuredBuffer(const byte* const bufferContent, const uint32 elementStride, const uint32 elementCount);
+
+		public:
+			void							bind(const DxObjectId& objectId) noexcept;
+			void							bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
 
 		public:
 			DxBuffer&						getBuffer(const DxObjectId& objectId);
