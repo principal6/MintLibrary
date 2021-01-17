@@ -68,6 +68,16 @@ namespace fs
 		return *this;
 	}
 
+	const Float3& Float3::operator+() const noexcept
+	{
+		return *this;
+	}
+
+	Float3 Float3::operator-() const noexcept
+	{
+		return Float3(-_x, -_y, -_z);
+	}
+
 	Float3 Float3::operator+(const Float3& rhs) const noexcept
 	{
 		return Float3(_x + rhs._x, _y + rhs._y, _z + rhs._z);

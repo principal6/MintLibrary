@@ -38,6 +38,10 @@ namespace fs
 		Float2&					operator/=(const float s);
 
 	public:
+		const Float2&			operator+() const noexcept;
+		Float2					operator-() const noexcept;
+
+	public:
 		Float2					operator+(const Float2& rhs) const noexcept;
 		Float2					operator-(const Float2& rhs) const noexcept;
 		Float2					operator*(const float s) const noexcept;

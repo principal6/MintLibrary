@@ -83,7 +83,7 @@ namespace fs
 		Float4x4				mul(const Float4x4& rhs) const noexcept;
 		Float4					mul(const Float4& v) const noexcept;
 
-	private:
+	public:
 		float					_m[4][4];
 	};
 }

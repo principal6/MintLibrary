@@ -32,6 +32,10 @@ namespace fs
 		Float4&					operator/=(const float s);
 
 	public:
+		const Float4&			operator+() const noexcept;
+		Float4					operator-() const noexcept;
+
+	public:
 		Float4					operator+(const Float4& rhs) const noexcept;
 		Float4					operator-(const Float4& rhs) const noexcept;
 		Float4					operator*(const float s) const noexcept;

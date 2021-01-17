@@ -33,6 +33,10 @@ namespace fs
 		Float3&					operator/=(const float s);
 
 	public:
+		const Float3&			operator+() const noexcept;
+		Float3					operator-() const noexcept;
+
+	public:
 		Float3					operator+(const Float3& rhs) const noexcept;
 		Float3					operator-(const Float3& rhs) const noexcept;
 		Float3					operator*(const float s) const noexcept;

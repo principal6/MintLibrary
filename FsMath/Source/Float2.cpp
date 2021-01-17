@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#include "..\Include\Float2.h"
+#include "..\Include\Float2.h"
+#pragma once
 
 
 #include <stdafx.h>
@@ -61,6 +63,16 @@ namespace fs
 		_x /= s;
 		_y /= s;
 		return *this;
+	}
+
+	const Float2& Float2::operator+() const noexcept
+	{
+		return *this;
+	}
+
+	Float2 Float2::operator-() const noexcept
+	{
+		return Float2(-_x, -_y);
 	}
 
 	Float2 Float2::operator+(const Float2& rhs) const noexcept
