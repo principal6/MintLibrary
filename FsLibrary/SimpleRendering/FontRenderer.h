@@ -99,7 +99,7 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment = TextHorzAlignment::Left, const bool drawShade = false);
+			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Centered, const bool drawShade = false);
 		
 		private:
 			const float													calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;

@@ -9,11 +9,18 @@ namespace fs
 {
 	namespace SimpleRendering
 	{
-		enum class TextHorzAlignment
+		enum class TextRenderDirectionHorz
 		{
-			Left,
-			Center,
-			Right
+			Leftward,
+			Centered,
+			Rightward
+		};
+
+		enum class TextRenderDirectionVert
+		{
+			Upward,
+			Centered,
+			Downward
 		};
 	}
 }

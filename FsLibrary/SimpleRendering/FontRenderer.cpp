@@ -499,17 +499,21 @@ namespace fs
 			}
 		}
 
-		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextHorzAlignment textHorzAlignment, const bool drawShade)
+		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const bool drawShade)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
 			const float textWidth = calculateTextWidth(wideText, textLength);
 			
-			fs::Int2 currentPosition = position;
-			if (textHorzAlignment != TextHorzAlignment::Left)
+			fs::Int2 currentPosition = position + fs::Int2(0, static_cast<int32>(-_fontSize * 0.5f));
+			if (directionHorz != TextRenderDirectionHorz::Rightward)
 			{
-				currentPosition._x -= static_cast<int32>((textHorzAlignment == TextHorzAlignment::Center) ? textWidth * 0.5f : textWidth);
+				currentPosition._x -= static_cast<int32>((directionHorz == TextRenderDirectionHorz::Centered) ? textWidth * 0.5f : textWidth);
+			}
+			if (directionVert != TextRenderDirectionVert::Upward)
+			{
+				currentPosition._y += static_cast<int32>((directionVert == TextRenderDirectionVert::Centered) ? _fontSize * 0.5f : _fontSize);
 			}
 			for (uint32 at = 0; at < textLength; ++at)
 			{
