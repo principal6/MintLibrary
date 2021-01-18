@@ -696,26 +696,77 @@ namespace fs
 
 		void ShapeRenderer::drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
 		{
+			const float radius = fs::min(size._x, size._y) * fs::Math::saturate(roundness);
+			const fs::Float2& halfSize = size * 0.5f;
+			const fs::Float2& halfCoreSize = halfSize - fs::Float2(radius);
+
 			if (1.0f <= borderThickness)
 			{
-				// TODO: optimization ...
-				drawRoundedRectangleInternal(size + fs::Float2(borderThickness * 2.0f), roundness, _borderColor);
+				fs::Float2 pointA;
+				fs::Float2 pointB;
+				fs::Float2 pointC;
+				
+				// Left top
+				{
+					pointA = fs::Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
+					pointB = fs::Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
+					drawQuadraticBezierInternal(pointA, pointB, -halfSize - fs::Float2(borderThickness), _borderColor);
+
+					pointC = fs::Float2(-halfCoreSize._x, -halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+				}
+				
+				// Right top
+				{
+					pointA = fs::Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
+					pointB = fs::Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
+					drawQuadraticBezierInternal(pointA, pointB, fs::Float2(+halfSize._x, -halfSize._y) + fs::Float2(+borderThickness, -borderThickness), _borderColor);
+
+					pointC = fs::Float2(+halfCoreSize._x, -halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+				}
+
+				// Left bottom
+				{
+					pointA = fs::Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
+					pointB = fs::Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
+					drawQuadraticBezierInternal(pointA, pointB, fs::Float2(-halfSize._x, +halfSize._y) + fs::Float2(-borderThickness, +borderThickness), _borderColor);
+
+					pointC = fs::Float2(-halfCoreSize._x, +halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+				}
+
+				// Right bottom
+				{
+					pointA = fs::Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
+					pointB = fs::Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
+					drawQuadraticBezierInternal(pointA, pointB, halfSize + fs::Float2(borderThickness), _borderColor);
+
+					pointC = fs::Float2(+halfCoreSize._x, +halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+				}
+
+				// Top
+				drawRectangleInternal(fs::Float2(0.0f, -halfSize._y - borderThickness * 0.5f), fs::Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+
+				// Bottom
+				drawRectangleInternal(fs::Float2(0.0f, +halfSize._y + borderThickness * 0.5f), fs::Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+
+				// Left
+				drawRectangleInternal(fs::Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), fs::Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
+
+				// Right
+				drawRectangleInternal(fs::Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), fs::Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
 			}
 
-			drawRoundedRectangleInternal(size, roundness, _defaultColor);
+			drawRoundedRectangleInternal(radius, halfSize, roundness, _defaultColor);
 
 			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::drawRoundedRectangleInternal(const fs::Float2& size, const float roundness, const fs::Float4& color)
+		void ShapeRenderer::drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::Float4& color)
 		{
-			const fs::Float2 halfSize = size * 0.5f;
-			const float radius = fs::min(size._x, size._y) * fs::Math::saturate(roundness);
-			const float doubleRadius = radius * 2.0f;
-			const float middleWidth = size._x - doubleRadius;
-			const float middleHeight = size._y - doubleRadius;
-			const float halfMiddleWidth = middleWidth * 0.5f;
-			const float halfMiddleHeight = middleHeight * 0.5f;
+			const fs::Float2& halfCoreSize = halfSize - fs::Float2(radius);
 
 			fs::Float2 pointA;
 			fs::Float2 pointB;
@@ -723,63 +774,63 @@ namespace fs
 
 			// Center box
 			{
-				pointA = fs::Float2(-halfMiddleWidth, -halfSize._y);
-				pointB = fs::Float2(+halfMiddleWidth, -halfSize._y);
-				pointC = fs::Float2(-halfMiddleWidth, +halfSize._y);
+				pointA = fs::Float2(-halfCoreSize._x, -halfSize._y);
+				pointB = fs::Float2(+halfCoreSize._x, -halfSize._y);
+				pointC = fs::Float2(-halfCoreSize._x, +halfSize._y);
 				drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-				pointA = fs::Float2(+halfMiddleWidth, +halfSize._y);
+				pointA = fs::Float2(+halfCoreSize._x, +halfSize._y);
 				drawSolidTriangleInternal(pointC, pointB, pointA, color);
 			}
 
 			// Left top corner
 			{
-				pointA = fs::Float2(-halfSize._x, -halfMiddleHeight);
-				pointB = fs::Float2(-halfMiddleWidth, -halfSize._y);
+				pointA = fs::Float2(-halfSize._x, -halfCoreSize._y);
+				pointB = fs::Float2(-halfCoreSize._x, -halfSize._y);
 				drawQuadraticBezierInternal(pointA, pointB, -halfSize, color, false);
 			}
 
 			// Left side box
 			{
-				pointC = fs::Float2(-halfMiddleWidth, +halfMiddleHeight);
+				pointC = fs::Float2(-halfCoreSize._x, +halfCoreSize._y);
 				drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-				pointA = fs::Float2(-halfSize._x, -halfMiddleHeight);
-				pointB = fs::Float2(-halfSize._x, +halfMiddleHeight);
+				pointA = fs::Float2(-halfSize._x, -halfCoreSize._y);
+				pointB = fs::Float2(-halfSize._x, +halfCoreSize._y);
 				drawSolidTriangleInternal(pointC, pointB, pointA, color);
 			}
 
 			// Left bottom corner
 			{
-				pointA = fs::Float2(-halfSize._x, +halfMiddleHeight);
-				pointB = fs::Float2(-halfMiddleWidth, +halfSize._y);
+				pointA = fs::Float2(-halfSize._x, +halfCoreSize._y);
+				pointB = fs::Float2(-halfCoreSize._x, +halfSize._y);
 				drawQuadraticBezierInternal(pointB, pointA, fs::Float2(-halfSize._x, +halfSize._y), color, false);
-				drawSolidTriangleInternal(pointB, pointA, fs::Float2(-halfMiddleWidth, +halfMiddleHeight), color);
+				drawSolidTriangleInternal(pointB, pointA, fs::Float2(-halfCoreSize._x, +halfCoreSize._y), color);
 			}
 
 			// Right top corner
 			{
-				pointA = fs::Float2(+halfSize._x, -halfMiddleHeight);
-				pointB = fs::Float2(+halfMiddleWidth, -halfSize._y);
+				pointA = fs::Float2(+halfSize._x, -halfCoreSize._y);
+				pointB = fs::Float2(+halfCoreSize._x, -halfSize._y);
 				drawQuadraticBezierInternal(pointB, pointA, fs::Float2(+halfSize._x, -halfSize._y), color, false);
 			}
 
 			// Right side box
 			{
-				pointC = fs::Float2(+halfMiddleWidth, +halfMiddleHeight);
+				pointC = fs::Float2(+halfCoreSize._x, +halfCoreSize._y);
 				drawSolidTriangleInternal(pointC, pointB, pointA, color);
 
-				pointA = fs::Float2(+halfSize._x, -halfMiddleHeight);
-				pointB = fs::Float2(+halfSize._x, +halfMiddleHeight);
+				pointA = fs::Float2(+halfSize._x, -halfCoreSize._y);
+				pointB = fs::Float2(+halfSize._x, +halfCoreSize._y);
 				drawSolidTriangleInternal(pointA, pointB, pointC, color);
 			}
 
 			// Right bottom corner
 			{
-				pointA = fs::Float2(+halfSize._x, +halfMiddleHeight);
-				pointB = fs::Float2(+halfMiddleWidth, +halfSize._y);
+				pointA = fs::Float2(+halfSize._x, +halfCoreSize._y);
+				pointB = fs::Float2(+halfCoreSize._x, +halfSize._y);
 				drawQuadraticBezierInternal(pointA, pointB, fs::Float2(+halfSize._x, +halfSize._y), color, false);
-				drawSolidTriangleInternal(pointA, pointB, fs::Float2(+halfMiddleWidth, +halfMiddleHeight), color);
+				drawSolidTriangleInternal(pointA, pointB, fs::Float2(+halfCoreSize._x, +halfCoreSize._y), color);
 			}
 		}
 

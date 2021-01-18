@@ -83,7 +83,7 @@ namespace fs
 			void																drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
 
 		private:
-			void																drawRoundedRectangleInternal(const fs::Float2& size, const float roundness, const fs::Float4& color);
+			void																drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::Float4& color);
 
 		public:
 			// Independent from internal position set by setPosition() call
