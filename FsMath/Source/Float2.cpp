@@ -12,6 +12,9 @@
 
 namespace fs
 {
+	const Float2 Float2::kZero	= fs::Float2(0.0f);
+	const Float2 Float2::kOne	= fs::Float2(1.0f);
+
 	Float2::Float2()
 		: Float2(0.0f)
 	{

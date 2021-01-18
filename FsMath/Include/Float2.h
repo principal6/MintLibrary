@@ -19,6 +19,10 @@ namespace fs
 	class alignas(8) Float2 final
 	{
 	public:
+		static const Float2		kZero;
+		static const Float2		kOne;
+
+	public:
 								Float2();
 		explicit				Float2(const float s);
 		explicit				Float2(const float x, const float y);

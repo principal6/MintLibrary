@@ -46,7 +46,7 @@ namespace fs
 			void																drawQuadraticBezier(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate = true);
 
 		private:
-			void																drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate = true);
+			void																drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::Float4& color, const bool validate = true);
 			
 		public:
 			// Independent from internal position set by setPosition() call
@@ -54,11 +54,16 @@ namespace fs
 			void																drawSolidTriangle(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC);
 
 		private:
-			void																drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC);
+			void																drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::Float4& color);
 
 		public:
 			void																drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
 			void																drawQuarterCircle(const float radius, const float rotationAngle);
+		
+		private:
+			void																drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::Float4& color);
+
+		public:
 			void																drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut = false);
 
 			// arcAngle = [0, +pi]
@@ -67,10 +72,20 @@ namespace fs
 			// arcAngle = [0, +pi]
 			void																drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
 
+		public:
 			void																drawRectangle(const fs::Float2& size, const float borderThickness, const float rotationAngle);
-			void																drawTaperedRectangle(const fs::Float2& size, const float tapering, const float bias, const float borderThickness, const float rotationAngle);
+
+		private:
+			void																drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::Float4& color);
+
+		public:
+			void																drawTaperedRectangle(const fs::Float2& size, const float tapering, const float bias, const float rotationAngle);
 			void																drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
 
+		private:
+			void																drawRoundedRectangleInternal(const fs::Float2& size, const float roundness, const fs::Float4& color);
+
+		public:
 			// Independent from internal position set by setPosition() call
 			// No rotation allowed
 			void																drawLine(const fs::Float2& p0, const fs::Float2& p1, const float thickness);

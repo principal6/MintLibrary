@@ -813,10 +813,14 @@ const bool testWindow()
 		}
 		{
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = graphicDevice.getShapeRenderer();
+
+			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
+			shapeRenderer.setPosition(fs::Float3(200.0f, 450.0f, 0.0f));
+			shapeRenderer.drawRectangle(fs::Float2(100, 50), 5.0f, 0.0f);
 			
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.setPosition(fs::Float3(200.0f, 250.0f, 0.0f));
-			shapeRenderer.drawTaperedRectangle(fs::Float2(100, 50), 0.25f, 1.5f, 0.0f, 0.0f);
+			shapeRenderer.drawTaperedRectangle(fs::Float2(100, 50), 0.25f, 1.5f, 0.0f);
 			
 			shapeRenderer.setPosition(fs::Float3(200.0f, 350.0f, 0.0f));
 			shapeRenderer.drawQuarterCircle(100.0f, 0.25f);
@@ -826,14 +830,14 @@ const bool testWindow()
 			
 			shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
 			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
+			shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 5.0f, 0.0f);
 			
-			//shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
-			//shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			//for (uint32 i = 0; i < 100; ++i)
-			//{
-			//	shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 0.0f, 0.0f);
-			//}
+			shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
+			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
+			for (uint32 i = 0; i < 100; ++i)
+			{
+				shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 5.0f, 0.0f);
+			}
 			
 			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
 			shapeRenderer.drawLine(fs::float2(50, 500), fs::Float2(250, 300), 20.0f);
