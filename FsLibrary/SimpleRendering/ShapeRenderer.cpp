@@ -65,6 +65,7 @@ namespace fs
 					{
 						const float u = input._texCoord.x;
 						const float v = input._texCoord.y;
+						const float scale = input._texCoord.w;
 						
 						float signedDistance = 0.0;
 						if (1.0 == input._info.x)
@@ -82,9 +83,13 @@ namespace fs
 							// Quadratic Bezier
 							signedDistance = -(u * u - v);
 						}
-						clip(signedDistance + kDeltaDoublePixel);
 						
-						const float alpha = saturate(signedDistance / kDeltaDoublePixel);
+						if (0.0 < scale)
+						{
+							signedDistance *= (scale * kDeltaPixel);
+						}
+						clip(signedDistance + kDeltaPixel);
+						const float alpha = (0.0 < signedDistance) ? 1.0 : 1.0 - saturate(-signedDistance / kDeltaPixel);
 						return float4(input._color.xyz, input._color.w * alpha);
 					}
 					)"
@@ -152,6 +157,7 @@ namespace fs
 			v._position._w = getShapeTransformIndexAsFloat();
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
+			v._texCoord._w = abs(pointA._x - pointB._x);
 			vertexArray.emplace_back(v);
 
 			v._position._x = controlPoint._x;
@@ -275,6 +281,7 @@ namespace fs
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
+				v._texCoord._w = halfRadius * 2.0f;
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfRadius;
@@ -366,6 +373,7 @@ namespace fs
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
+				v._texCoord._w = radius;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +radius * sinHalfArcAngle;
@@ -446,6 +454,7 @@ namespace fs
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = +1.0f; // @IMPORTANT
+				v._texCoord._w = outerRadius;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +outerRadius * tanHalfArcAngle;
