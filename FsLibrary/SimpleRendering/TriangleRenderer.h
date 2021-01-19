@@ -9,7 +9,7 @@
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>
 
-#include <FsLibrary/SimpleRendering/DxBuffer.h>
+#include <FsLibrary/SimpleRendering/DxResource.h>
 
 
 namespace fs

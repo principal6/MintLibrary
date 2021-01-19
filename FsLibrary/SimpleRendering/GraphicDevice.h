@@ -13,7 +13,7 @@
 
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 #include <FsLibrary/SimpleRendering/DxShader.h>
-#include <FsLibrary/SimpleRendering/DxBuffer.h>
+#include <FsLibrary/SimpleRendering/DxResource.h>
 #include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 #include <FsLibrary/SimpleRendering/RectangleRenderer.h>
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
@@ -70,7 +70,7 @@ namespace fs
 
 		public:
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
-			fs::SimpleRendering::DxBufferPool&							getBufferPool() noexcept;
+			fs::SimpleRendering::DxResourcePool&							getResourcePool() noexcept;
 			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
 			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
 			fs::SimpleRendering::FontRenderer&							getFontRenderer() noexcept;
@@ -100,7 +100,7 @@ namespace fs
 		private:
 			DxShaderHeaderMemory										_shaderHeaderMemory;
 			DxShaderPool												_shaderPool;
-			DxBufferPool												_bufferPool;
+			DxResourcePool												_resourcePool;
 
 		private:
 			ComPtr<ID3D11SamplerState>									_samplerState;

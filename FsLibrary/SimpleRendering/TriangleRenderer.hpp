@@ -55,11 +55,11 @@ namespace fs
 
 			prepareBuffer();
 
-			DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
-			DxBuffer& vertexBuffer = bufferPool.getBuffer(_vertexBufferId);
-			DxBuffer& indexBuffer = bufferPool.getBuffer(_indexBufferId);
-			vertexBuffer.bind();
-			indexBuffer.bind();
+			DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+			DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
+			DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+			vertexBuffer.bindAsInput();
+			indexBuffer.bindAsInput();
 
 			const uint32 indexCount = static_cast<uint32>(_indexArray.size());
 			_graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -69,30 +69,30 @@ namespace fs
 		template <typename T>
 		inline void TriangleRenderer<T>::prepareBuffer()
 		{
-			DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
+			DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
 			
 			const uint32 vertexCount = static_cast<uint32>(_vertexArray.size());
 			if (_vertexBufferId.isValid() == false && 0 < vertexCount)
 			{
-				_vertexBufferId = bufferPool.pushVertexBuffer(reinterpret_cast<byte*>(&_vertexArray[0]), _vertexStride, vertexCount);
+				_vertexBufferId = resourcePool.pushVertexBuffer(reinterpret_cast<byte*>(&_vertexArray[0]), _vertexStride, vertexCount);
 			}
 
 			if (_vertexBufferId.isValid() == true)
 			{
-				DxBuffer& vertexBuffer = bufferPool.getBuffer(_vertexBufferId);
-				vertexBuffer.updateContent(reinterpret_cast<byte*>(&_vertexArray[0]), vertexCount);
+				DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
+				vertexBuffer.updateBuffer(reinterpret_cast<byte*>(&_vertexArray[0]), vertexCount);
 			}
 
 			const uint32 indexCount = static_cast<uint32>(_indexArray.size());
 			if (_indexBufferId.isValid() == false && 0 < indexCount)
 			{
-				_indexBufferId = bufferPool.pushIndexBuffer(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
+				_indexBufferId = resourcePool.pushIndexBuffer(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
 			}
 
 			if (_indexBufferId.isValid() == true)
 			{
-				DxBuffer& indexBuffer = bufferPool.getBuffer(_indexBufferId);
-				indexBuffer.updateContent(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
+				DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+				indexBuffer.updateBuffer(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
 			}
 		}
 	}

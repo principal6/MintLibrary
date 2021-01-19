@@ -201,32 +201,8 @@ namespace fs
 			}
 #endif
 			
-			D3D11_TEXTURE2D_DESC texture2DDescriptor{};
-			texture2DDescriptor.Width = textureWidth;
-			texture2DDescriptor.Height = textureHeight;
-			texture2DDescriptor.MipLevels = 1;
-			texture2DDescriptor.ArraySize = 1;
-			texture2DDescriptor.Format = DXGI_FORMAT::DXGI_FORMAT_R8_UNORM; //DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-			texture2DDescriptor.SampleDesc.Count = 1;
-			texture2DDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-			texture2DDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
-			texture2DDescriptor.CPUAccessFlags = 0;
-
-			D3D11_SUBRESOURCE_DATA subResource{};
-			subResource.pSysMem = &rawData[0];
-			subResource.SysMemPitch = texture2DDescriptor.Width; // *4;
-			subResource.SysMemSlicePitch = 0;
-
-			ComPtr<ID3D11Texture2D> fontTexture;
-			_graphicDevice->getDxDevice()->CreateTexture2D(&texture2DDescriptor, &subResource, fontTexture.ReleaseAndGetAddressOf());
-
-			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-			srvDesc.Format = texture2DDescriptor.Format;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2D;
-			srvDesc.Texture2D.MipLevels = texture2DDescriptor.MipLevels;
-			srvDesc.Texture2D.MostDetailedMip = 0;
-			_graphicDevice->getDxDevice()->CreateShaderResourceView(fontTexture.Get(), &srvDesc, _fontTextureSrv.ReleaseAndGetAddressOf());
-
+			fs::SimpleRendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+			_fontTextureId = resourcePool.pushTexture2D(fs::SimpleRendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
 			return true;
 		}
 
@@ -444,7 +420,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
-				_vertexShader = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", &typeInfo);
+				_vertexShaderId = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", &typeInfo);
 			}
 
 			// Compile pixel shader
@@ -476,7 +452,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader("FontRendererPS", kShaderString, "main", DxShaderType::PixelShader);
+				_pixelShaderId = shaderPool.pushNonVertexShader("FontRendererPS", kShaderString, "main", DxShaderType::PixelShader);
 			}
 		}
 
@@ -489,11 +465,11 @@ namespace fs
 		{
 			if (_triangleRenderer.isRenderable() == true)
 			{
-				_graphicDevice->getDxDeviceContext()->PSSetShaderResources(0, 1, _fontTextureSrv.GetAddressOf());
-
+				_graphicDevice->getResourcePool().bindToShader(_fontTextureId, fs::SimpleRendering::DxShaderType::PixelShader, 0);
+				
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
+				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
+				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 
 				_triangleRenderer.render();
 			}

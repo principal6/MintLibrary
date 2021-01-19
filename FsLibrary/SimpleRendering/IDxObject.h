@@ -31,7 +31,7 @@ namespace fs
 		{
 			None,
 			Pool,
-			Buffer,
+			Resource,
 			Shader,
 		};
 

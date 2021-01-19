@@ -27,7 +27,7 @@ namespace fs
 			: _window{ nullptr }
 			, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
 			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
-			, _bufferPool{ this }
+			, _resourcePool{ this }
 			, _rectangleRenderer{ this }
 			, _shapeRenderer{ this }
 			, _fontRenderer{ this }
@@ -129,9 +129,9 @@ namespace fs
 					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 					
 					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(cbTransforms));
-					DxObjectId id = _bufferPool.pushConstantBuffer(reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
-					_bufferPool.getBuffer(id).bindToShader(DxShaderType::VertexShader, cppHlslTypeInfo.getRegisterIndex());
-					_bufferPool.getBuffer(id).bindToShader(DxShaderType::PixelShader, cppHlslTypeInfo.getRegisterIndex());
+					DxObjectId id = _resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
+					_resourcePool.getResource(id).bindToShader(DxShaderType::VertexShader, cppHlslTypeInfo.getRegisterIndex());
+					_resourcePool.getResource(id).bindToShader(DxShaderType::PixelShader, cppHlslTypeInfo.getRegisterIndex());
 				}
 			}
 

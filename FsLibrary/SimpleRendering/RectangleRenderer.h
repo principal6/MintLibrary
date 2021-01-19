@@ -42,8 +42,8 @@ namespace fs
 		
 		private:
 			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
-			DxObjectId												_vertexShader;
-			DxObjectId												_pixelShader;
+			DxObjectId												_vertexShaderId;
+			DxObjectId												_pixelShaderId;
 		};
 	}
 }

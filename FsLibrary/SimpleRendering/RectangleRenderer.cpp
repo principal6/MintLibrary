@@ -50,7 +50,7 @@ namespace fs
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
-				_vertexShader = shaderPool.pushVertexShader("RectangleRendererVS", kShaderString, "main", &typeInfo);
+				_vertexShaderId = shaderPool.pushVertexShader("RectangleRendererVS", kShaderString, "main", &typeInfo);
 			}
 
 			// Compile pixel shader
@@ -78,7 +78,7 @@ namespace fs
 					}
 					)"
 				};
-				_pixelShader = shaderPool.pushNonVertexShader("RectangleRendererPS", kShaderString, "main", DxShaderType::PixelShader);
+				_pixelShaderId = shaderPool.pushNonVertexShader("RectangleRendererPS", kShaderString, "main", DxShaderType::PixelShader);
 			}
 		}
 
@@ -92,8 +92,8 @@ namespace fs
 			if (_triangleRenderer.isRenderable() == true)
 			{
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShader);
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShader);
+				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
+				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 				_triangleRenderer.render();
 			}
 		}

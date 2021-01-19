@@ -1,4 +1,3 @@
-#include "GraphicDevice.h"
 namespace fs
 {
 	namespace SimpleRendering
@@ -8,9 +7,9 @@ namespace fs
 			return _shaderPool;
 		}
 
-		FS_INLINE fs::SimpleRendering::DxBufferPool& GraphicDevice::getBufferPool() noexcept
+		FS_INLINE fs::SimpleRendering::DxResourcePool& GraphicDevice::getResourcePool() noexcept
 		{
-			return _bufferPool;
+			return _resourcePool;
 		}
 
 		FS_INLINE fs::SimpleRendering::RectangleRenderer& GraphicDevice::getRectangleRenderer() noexcept

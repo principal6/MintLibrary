@@ -115,8 +115,8 @@ namespace fs
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 
-				fs::SimpleRendering::DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
-				bufferPool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
+				fs::SimpleRendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+				resourcePool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
 
 				_triangleRenderer.render();
 			}
@@ -911,18 +911,18 @@ namespace fs
 
 		void ShapeRenderer::prepareStructuredBuffer()
 		{
-			fs::SimpleRendering::DxBufferPool& bufferPool = _graphicDevice->getBufferPool();
+			fs::SimpleRendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
 
 			const uint32 elementCount = static_cast<uint32>(_sbTransformData.size());
 			if (_sbTransformBufferId.isValid() == false && 0 < elementCount)
 			{
-				_sbTransformBufferId = bufferPool.pushStructuredBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), sizeof(_sbTransformData[0]), elementCount);
+				_sbTransformBufferId = resourcePool.pushStructuredBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), sizeof(_sbTransformData[0]), elementCount);
 			}
 			
 			if (_sbTransformBufferId.isValid() == true)
 			{
-				fs::SimpleRendering::DxBuffer& buffer = bufferPool.getBuffer(_sbTransformBufferId);
-				buffer.updateContent(reinterpret_cast<byte*>(&_sbTransformData[0]), elementCount);
+				fs::SimpleRendering::DxResource& structuredBuffer = resourcePool.getResource(_sbTransformBufferId);
+				structuredBuffer.updateBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), elementCount);
 			}
 		}
 

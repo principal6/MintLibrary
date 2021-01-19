@@ -74,7 +74,7 @@
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
     <ClInclude Include="SimpleRendering\FontRenderer.h" />
-    <ClInclude Include="SimpleRendering\DxBuffer.h" />
+    <ClInclude Include="SimpleRendering\DxResource.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.inl" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
     <ClInclude Include="SimpleRendering\DxShader.h" />
@@ -103,7 +103,7 @@
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="SimpleRendering\FontRenderer.cpp" />
-    <ClCompile Include="SimpleRendering\DxBuffer.cpp" />
+    <ClCompile Include="SimpleRendering\DxResource.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />

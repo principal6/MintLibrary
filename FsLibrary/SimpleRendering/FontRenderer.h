@@ -117,12 +117,12 @@ namespace fs
 		private:
 			std::vector<GlyphInfo>										_glyphInfoArray;
 			std::unordered_map<wchar_t, uint64>							_glyphMap;
-			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
 
 		private:
 			fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
-			DxObjectId													_vertexShader;
-			DxObjectId													_pixelShader;
+			DxObjectId													_vertexShaderId;
+			DxObjectId													_pixelShaderId;
+			DxObjectId													_fontTextureId;
 		};
 	}
 }
