@@ -68,15 +68,27 @@ namespace fs
 				}
 				Data(const Data& rhs)
 				{
-					_raw = rhs._raw;
+					_raw[0] = rhs._raw[0];
+					_raw[1] = rhs._raw[1];
 				}
 				~Data()
 				{
 					__noop;
 				}
-				uint64		_raw{};
-				Int2		_mousePosition;
-				KeyCode		_keyCode;
+				uint64		_raw[2]{};
+				//
+				struct
+				{
+					Int2		_mousePosition;
+					int32		_mouseInfo;
+					//int32		_reserved;
+				};
+				struct
+				{
+					KeyCode		_keyCode;
+					//int32		_reserved;
+					//int32		_reserved1;
+				};
 			};
 
 			EventType		_type{ EventType::None };
@@ -101,6 +113,10 @@ namespace fs
 				EventData event = _eventQueue.front();
 				_eventQueue.pop();
 				return event;
+			}
+			const EventData&				peekEvent()
+			{
+				return _eventQueue.front();
 			}
 
 		public:

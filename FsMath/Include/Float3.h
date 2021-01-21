@@ -67,6 +67,7 @@ namespace fs
 
 	public:
 		void					set(const float x, const float y, const float z) noexcept;
+		Float2					xy() const noexcept;
 		
 	public:
 		float					_x;

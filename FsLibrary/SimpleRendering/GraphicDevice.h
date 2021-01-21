@@ -19,6 +19,8 @@
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
 #include <FsLibrary/SimpleRendering/FontRenderer.h>
 
+#include <FsLibrary/Gui/GuiContext.h>
+
 #include <FsLibrary/Language/CppHlsl.h>
 
 #include <FsMath/Include/Float4x4.h>
@@ -44,6 +46,7 @@ namespace fs
 
 		class GraphicDevice final
 		{
+			static constexpr const char* const							kDefaultFont = "Assets/d2coding";
 		public:
 																		GraphicDevice();
 																		~GraphicDevice() = default;
@@ -70,10 +73,11 @@ namespace fs
 
 		public:
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
-			fs::SimpleRendering::DxResourcePool&							getResourcePool() noexcept;
+			fs::SimpleRendering::DxResourcePool&						getResourcePool() noexcept;
 			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
 			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
 			fs::SimpleRendering::FontRenderer&							getFontRenderer() noexcept;
+			fs::Gui::GuiContext&										getGuiContext() noexcept;
 			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
 
 		public:
@@ -125,6 +129,9 @@ namespace fs
 			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;
 			fs::SimpleRendering::ShapeRenderer							_shapeRenderer;
 			fs::SimpleRendering::FontRenderer							_fontRenderer;
+		
+		private:
+			fs::Gui::GuiContext											_guiContext;
 		};
 	}
 }

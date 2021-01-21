@@ -11,6 +11,11 @@
 #define FS_INLINE __forceinline
 
 
+#if defined DEBUG or defined _DEBUG
+#define FS_DEBUG
+#endif
+
+
 namespace fs
 {
 	template<typename T>

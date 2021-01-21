@@ -16,6 +16,12 @@ namespace fs
 			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
 		}
 
+		FS_INLINE const bool hasExtension(std::string& inoutText)
+		{
+			const size_t found = inoutText.find('.');
+			return (found != std::string::npos);
+		}
+
 		FS_INLINE void excludeExtension(std::string& inoutText)
 		{
 			const size_t found = inoutText.find('.');

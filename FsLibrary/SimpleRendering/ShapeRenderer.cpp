@@ -12,7 +12,7 @@ namespace fs
 		ShapeRenderer::ShapeRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: IRenderer(graphicDevice)
 			, _triangleRenderer{ graphicDevice }
-			, _borderColor{ fs::Float4(1.0f, 1.0f, 1.0f, 1.0f) }
+			, _borderColor{ fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f) }
 		{
 			__noop;
 		}
@@ -122,7 +122,7 @@ namespace fs
 			}
 		}
 
-		void ShapeRenderer::setBorderColor(const fs::Float4& borderColor) noexcept
+		void ShapeRenderer::setBorderColor(const fs::SimpleRendering::Color& borderColor) noexcept
 		{
 			_borderColor = borderColor;
 		}
@@ -134,7 +134,7 @@ namespace fs
 			pushShapeTransform(0.0f);
 		}
 
-		void ShapeRenderer::drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::Float4& color, const bool validate)
+		void ShapeRenderer::drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::SimpleRendering::Color& color, const bool validate)
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			const fs::Float2(&pointArray)[2] = { pointA, pointB };
@@ -186,7 +186,7 @@ namespace fs
 			pushShapeTransform(0.0f);
 		}
 
-		void ShapeRenderer::drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::Float4& color)
+		void ShapeRenderer::drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::SimpleRendering::Color& color)
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			
@@ -266,7 +266,7 @@ namespace fs
 			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::Float4& color)
+		void ShapeRenderer::drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::SimpleRendering::Color& color)
 		{
 			static constexpr uint32 kDeltaVertexCount = 4;
 
@@ -614,7 +614,7 @@ namespace fs
 			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::Float4& color)
+		void ShapeRenderer::drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::SimpleRendering::Color& color)
 		{
 			static constexpr uint32 kDeltaVertexCount = 4;
 
@@ -773,7 +773,7 @@ namespace fs
 			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::Float4& color)
+		void ShapeRenderer::drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::SimpleRendering::Color& color)
 		{
 			const fs::Float2& halfCoreSize = halfSize - fs::Float2(radius);
 
@@ -929,24 +929,24 @@ namespace fs
 		void ShapeRenderer::drawColorPallete(const float radius)
 		{
 			static constexpr uint32 colorCount = 12;
-			static const fs::Float4 colorArray[colorCount] = {
+			static const fs::SimpleRendering::Color colorArray[colorCount] = {
 				// Red => Green
-				fs::Float4(1.0f, 0.0f, 0.0f, 1.0f),
-				fs::Float4(1.0f, 0.25f, 0.0f, 1.0f),
-				fs::Float4(1.0f, 0.5f, 0.0f, 1.0f),
-				fs::Float4(1.0f, 0.75f, 0.0f, 1.0f),
-				fs::Float4(1.0f, 1.0f, 0.0f, 1.0f),
-				fs::Float4(0.5f, 1.0f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 0.0f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 0.25f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 0.5f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 0.75f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 1.0f, 0.0f, 1.0f),
+				fs::SimpleRendering::Color(0.5f, 1.0f, 0.0f, 1.0f),
 
 				// Gren => Blue
-				fs::Float4(0.0f, 0.875f, 0.125f, 1.0f),
-				fs::Float4(0.0f, 0.666f, 1.0f, 1.0f),
-				fs::Float4(0.0f, 0.333f, 1.0f, 1.0f),
-				fs::Float4(0.0f, 0.0f, 1.0f, 1.0f),
+				fs::SimpleRendering::Color(0.0f, 0.875f, 0.125f, 1.0f),
+				fs::SimpleRendering::Color(0.0f, 0.666f, 1.0f, 1.0f),
+				fs::SimpleRendering::Color(0.0f, 0.333f, 1.0f, 1.0f),
+				fs::SimpleRendering::Color(0.0f, 0.0f, 1.0f, 1.0f),
 
 				// Blue => Red
-				fs::Float4(0.5f, 0.0f, 1.0f, 1.0f),
-				fs::Float4(1.0f, 0.0f, 0.5f, 1.0f),
+				fs::SimpleRendering::Color(0.5f, 0.0f, 1.0f, 1.0f),
+				fs::SimpleRendering::Color(1.0f, 0.0f, 0.5f, 1.0f),
 			};
 
 			static constexpr uint32 outerStepSmoothingOffset = 4;
@@ -963,19 +963,19 @@ namespace fs
 				const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
 				
 				int32 colorIndexCorrected = colorIndex;
-				const fs::Float4& stepsColor = colorArray[colorIndexCorrected];
+				const fs::SimpleRendering::Color& stepsColor = colorArray[colorIndexCorrected];
 
 				// Outer steps
 				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
 				{
 					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
-					setColor(stepsColor * outerStepRatio + fs::Float4(0.0f, 0.0f, 0.0f, 1.0f));
+					setColor(stepsColor * outerStepRatio + fs::SimpleRendering::Color(0.0f, 0.0f, 0.0f, 1.0f));
 
 					drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
 				}
 
 				// Inner steps
-				const fs::Float4 deltaColor = fs::Float4(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
+				const fs::SimpleRendering::Color deltaColor = fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
 				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
 				{
 					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));

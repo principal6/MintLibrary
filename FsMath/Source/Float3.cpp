@@ -166,6 +166,11 @@ namespace fs
 		_y = y;
 		_z = z;
 	}
+
+	Float2 Float3::xy() const noexcept
+	{
+		return Float2(_x, _y);
+	}
 	
 	/*
 	void Float3::x(const float newX) noexcept

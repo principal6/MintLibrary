@@ -99,11 +99,11 @@ namespace fs
 			virtual void												render() noexcept final;
 
 		public:
-			void														drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Centered, const bool drawShade = false);
-		
-		private:
+			void														drawDynamicText(const wchar_t* const wideText, const fs::Float2& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const bool drawShade = false);
 			const float													calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-			void														drawGlyph(const wchar_t wideChar, fs::Int2& position, const bool drawShade);
+
+		private:
+			void														drawGlyph(const wchar_t wideChar, fs::Float2& position, const bool drawShade);
 
 		private:
 			void														prepareIndexArray();

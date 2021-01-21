@@ -5,9 +5,7 @@
 #define FS_LOGGER_H
 
 
-#include <cstdint>
-#include <mutex>
-#include <string>
+#include <CommonDefinitions.h>
 
 
 using int32 = int32_t;

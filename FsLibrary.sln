@@ -24,6 +24,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FsCommon.vcxitems*{08274c87-6720-46da-b1df-dba3a406ef4a}*SharedItemsImports = 9
 		FsCommon.vcxitems*{0869f124-8534-423e-8221-f15cb19c17dd}*SharedItemsImports = 4
+		FsCommon.vcxitems*{32e04223-7002-4bd9-844c-4ad386ad94a4}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

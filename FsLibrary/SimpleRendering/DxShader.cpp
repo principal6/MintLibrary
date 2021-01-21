@@ -3,7 +3,7 @@
 
 #include <d3dcompiler.h>
 
-#include <Algorithm.hpp>
+#include <FsLibrary/Algorithm.hpp>
 
 #include <FsLibrary/Container/ScopeString.hpp>
 

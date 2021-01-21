@@ -208,7 +208,12 @@ namespace fs
 
 		const bool FontRenderer::bakeFont(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
 		{
-			if (initializeFreeType(fontFaceFileName, fontSize) == false)
+			std::string fontFaceFileNameS = fontFaceFileName;
+			if (fs::StringUtil::hasExtension(fontFaceFileNameS) == false)
+			{
+				fontFaceFileNameS.append(".ttf");
+			}
+			if (initializeFreeType(fontFaceFileNameS.c_str(), fontSize) == false)
 			{
 				FS_LOG_ERROR("김장원", "FreeType - 초기화에 실패했습니다.");
 				return false;
@@ -475,21 +480,21 @@ namespace fs
 			}
 		}
 
-		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Int2& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const bool drawShade)
+		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Float2& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const bool drawShade)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
 			const float textWidth = calculateTextWidth(wideText, textLength);
 			
-			fs::Int2 currentPosition = position + fs::Int2(0, static_cast<int32>(-_fontSize * 0.5f));
+			fs::Float2 currentPosition = position + fs::Float2(0.0f, -_fontSize * 0.5f - 2.0f);
 			if (directionHorz != TextRenderDirectionHorz::Rightward)
 			{
-				currentPosition._x -= static_cast<int32>((directionHorz == TextRenderDirectionHorz::Centered) ? textWidth * 0.5f : textWidth);
+				currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? textWidth * 0.5f : textWidth;
 			}
-			if (directionVert != TextRenderDirectionVert::Upward)
+			if (directionVert != TextRenderDirectionVert::Centered)
 			{
-				currentPosition._y += static_cast<int32>((directionVert == TextRenderDirectionVert::Centered) ? _fontSize * 0.5f : _fontSize);
+				currentPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -_fontSize * 0.5f : +_fontSize * 0.5f;
 			}
 			for (uint32 at = 0; at < textLength; ++at)
 			{
@@ -517,7 +522,7 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
-		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Int2& position, const bool drawShade)
+		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Float2& position, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
 			auto found = _glyphMap.find(wideChar);
@@ -527,13 +532,12 @@ namespace fs
 			}
 
 			const float fontHeight = static_cast<float>(_fontSize);
-			const fs::Float2 positionF = fs::Float2(position);
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			
 			fs::CppHlsl::VS_INPUT v;
-			v._position._x = positionF._x + static_cast<float>(glyphInfo._horiBearingX);
-			v._position._y = positionF._y + fontHeight - static_cast<float>(glyphInfo._horiBearingY);
+			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX);
+			v._position._y = position._y + fontHeight - static_cast<float>(glyphInfo._horiBearingY);
 			v._color = _defaultColor;
 			v._texCoord = glyphInfo._uv0;
 			v._flag = (drawShade == true) ? 1 : 0;
@@ -544,7 +548,7 @@ namespace fs
 			v._texCoord._y = glyphInfo._uv0._y;
 			vertexArray.emplace_back(v);
 			
-			v._position._x = positionF._x + static_cast<float>(glyphInfo._horiBearingX);
+			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX);
 			v._position._y += static_cast<float>(glyphInfo._height);
 			v._texCoord._x = glyphInfo._uv0._x;
 			v._texCoord._y = glyphInfo._uv1._y;
@@ -556,7 +560,7 @@ namespace fs
 
 			prepareIndexArray();
 
-			position._x += static_cast<int32>(glyphInfo._horiAdvance);
+			position._x += static_cast<float>(glyphInfo._horiAdvance);
 		}
 
 		void FontRenderer::prepareIndexArray()

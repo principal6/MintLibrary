@@ -715,7 +715,7 @@ const bool testLanguage()
 	using namespace fs;
 	
 	TextFileReader textFileReader;
-	textFileReader.open("FsLibrary/SimpleRendering/CppHlslStreamData.h");
+	textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
 	
 	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
 	cppHlslLexer.execute();
@@ -772,96 +772,81 @@ const bool testWindow()
 	{
 		const uint64 loopStartTimeMs = fs::Profiler::getCurrentTimeMs();
 		
-		if (window.hasEvent() == true)
+		// Events
 		{
-			EventData event = window.popEvent();
-			if (event._type == EventType::KeyDown)
+			fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+			guiContext.handleEvents(&window);
+
+			if (window.hasEvent() == true)
 			{
-				if (event._data._keyCode == EventData::KeyCode::Escape)
+				EventData event = window.popEvent();
+				if (event._type == EventType::KeyDown)
 				{
-					window.destroy();
-				}
-				else if (event._data._keyCode == EventData::KeyCode::Left)
-				{
-					const Int2& pos = window.position();
-					window.position(pos - Int2(5, 0));
-				}
-				else if (event._data._keyCode == EventData::KeyCode::Right)
-				{
-					const Int2& pos = window.position();
-					window.position(pos + Int2(5, 0));
+					if (event._data._keyCode == EventData::KeyCode::Escape)
+					{
+						window.destroy();
+					}
+					else if (event._data._keyCode == EventData::KeyCode::Left)
+					{
+						const Int2& pos = window.position();
+						window.position(pos - Int2(5, 0));
+					}
+					else if (event._data._keyCode == EventData::KeyCode::Right)
+					{
+						const Int2& pos = window.position();
+						window.position(pos + Int2(5, 0));
+					}
 				}
 			}
 		}
 
-		graphicDevice.beginRendering();
+		// Rendering
 		{
-			fs::SimpleRendering::RectangleRenderer& rectangleRenderer = graphicDevice.getRectangleRenderer();
-
-			//rectangleRenderer.setPosition(fs::Float3(0, 0, 0));
-			//rectangleRenderer.setSize(fs::Float2(100.0f, 100.0f));
-			//rectangleRenderer.setColor({ fs::Float4(0.5f, 0.5f, 0.5f, 1.0f), fs::Float4(0.5f, 1.0f, 0.5f, 1.0f) });
-			//for (uint32 i = 0; i < 100; ++i)
-			//{
-			//	rectangleRenderer.drawColored();
-			//}
-
-			//rectangleRenderer.setPosition(fs::Float3(400.f, 300.f, 0));
-			//rectangleRenderer.setSize(fs::Float2(400.f, 300.f));
-			//rectangleRenderer.setColor(fs::Float4(1, 0, 0, 1));
-			//rectangleRenderer.drawColoredTextured(fs::Float2(0, 0), fs::Float2(1, 1));
-		}
-		{
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = graphicDevice.getShapeRenderer();
-
-			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.setPosition(fs::Float3(200.0f, 450.0f, 0.0f));
-			shapeRenderer.drawRectangle(fs::Float2(100, 50), 5.0f, 0.0f);
-			
-			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.setPosition(fs::Float3(200.0f, 250.0f, 0.0f));
-			shapeRenderer.drawTaperedRectangle(fs::Float2(100, 50), 0.25f, 1.5f, 0.0f);
-			
-			shapeRenderer.setPosition(fs::Float3(200.0f, 350.0f, 0.0f));
-			shapeRenderer.drawQuarterCircle(100.0f, 0.25f);
-			
-			shapeRenderer.setPosition(fs::Float3(200.0f, 50.0f, 0.0f));
-			shapeRenderer.drawQuadraticBezier(fs::Float2(200, 200), fs::Float2(400, 100), fs::Float2(200, 0));
-			
-			shapeRenderer.setPosition(fs::Float3(100.0f, 100.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 5.0f, 0.0f);
-			
-			shapeRenderer.setPosition(fs::Float3(500.0f, 100.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			for (uint32 i = 0; i < 100; ++i)
+			graphicDevice.beginRendering();
 			{
-				shapeRenderer.drawRoundedRectangle(fs::Float2(200, 100), 0.25f, 5.0f, 0.0f);
+				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+				guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
+				if (guiContext.beginButton("btnA", L"버튼이요") == true)
+				{
+					bool a = true;
+					guiContext.endButton();
+				}
+				
+				guiContext.nextSameLine();
+
+				if (guiContext.beginButton("btnB", L"Button B") == true)
+				{
+					guiContext.endButton();
+				}
+
+				//gui.nextSameLine();
+
+				if (guiContext.beginButton("btnC", L"Another") == true)
+				{
+					guiContext.endButton();
+				}
+				
+				//gui.nextSameLine();
+
+				if (guiContext.beginButton("btnD", L"Fourth") == true)
+				{
+					guiContext.endButton();
+				}
 			}
-			
-			shapeRenderer.setColor(fs::Float4(0.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawLine(fs::float2(50, 500), fs::Float2(250, 300), 20.0f);
 
-			shapeRenderer.setPosition(fs::Float3(800.0f, 200.0f, 0.0f));
-			shapeRenderer.setColor(fs::Float4(1.0f, 0.5f, 0.75f, 1.0f));
-			shapeRenderer.drawDoubleCircularArc(81.0f, 66.0f, fs::Math::kPiOverFour, 0.0f);
+			{
+				fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
 
-			//shapeRenderer.setPosition(fs::Float3(600.0f, 300.0f, 0.0f));
-			//shapeRenderer.drawColorPallete(120.0f);
+				fontRenderer.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
+				fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float2(10, 5));
+				fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float2(100, 5));
+			}
+
+			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
+			previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
+
+			graphicDevice.endRendering();
 		}
-
-		{
-			fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
-
-			fontRenderer.setColor(fs::Float4(0.125f, 0.125f, 0.5f, 1.0f));
-			fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Int2(10, 0));
-			fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Int2(100, 0));
-		}
-
-		const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
-		previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
-
-		graphicDevice.endRendering();
 		
 		fs::Profiler::FpsCounter::count();
 	}

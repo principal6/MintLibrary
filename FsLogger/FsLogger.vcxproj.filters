@@ -12,8 +12,8 @@
     <ClInclude Include="Include\Logger.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Logger.cpp">
-      <Filter>Source</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Logger.cpp" />
   </ItemGroup>
 </Project>

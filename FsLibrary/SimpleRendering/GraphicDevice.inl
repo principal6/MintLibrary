@@ -27,6 +27,11 @@ namespace fs
 			return _fontRenderer;
 		}
 
+		FS_INLINE fs::Gui::GuiContext& GraphicDevice::getGuiContext() noexcept
+		{
+			return _guiContext;
+		}
+
 		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslStructs() const noexcept
 		{
 			return _cppHlslStreamData;

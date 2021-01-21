@@ -1,5 +1,6 @@
 ﻿#include <stdafx.h>
 #include <FsLibrary/Platform/WindowsWindow.h>
+#include <windowsx.h>
 
 #include <mutex>
 
@@ -191,6 +192,7 @@ namespace fs
 				PostQuitMessage(0);
 				return 0;
 			case WM_KEYDOWN:
+			{
 				eventData._type = EventType::KeyDown;
 				if (wParam == VK_ESCAPE)
 				{
@@ -218,6 +220,39 @@ namespace fs
 				}
 				_eventQueue.push(eventData);
 				return 0;
+			}
+			case WM_MOUSEMOVE:
+			{
+				eventData._type = EventType::MouseMove;
+				int32 mouseInfo = 0;
+				if (wParam == MK_LBUTTON)
+				{
+					mouseInfo = 1;
+				}
+				eventData._data._mouseInfo = mouseInfo;
+				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
+				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_LBUTTONDOWN:
+			{
+				eventData._type = EventType::MouseDown;
+				eventData._data._mouseInfo = 1;
+				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
+				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_LBUTTONUP:
+			{
+				eventData._type = EventType::MouseUp;
+				eventData._data._mouseInfo = 1;
+				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
+				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				_eventQueue.push(eventData);
+				return 0;
+			}
 			default:
 				break;
 			}

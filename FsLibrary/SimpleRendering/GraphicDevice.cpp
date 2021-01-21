@@ -5,7 +5,7 @@
 #include <functional>
 #include <typeinfo>
 
-#include <Algorithm.hpp>
+#include <FsLibrary/Algorithm.hpp>
 
 #include <FsLibrary/Platform/IWindow.h>
 #include <FsLibrary/Platform/WindowsWindow.h>
@@ -31,6 +31,7 @@ namespace fs
 			, _rectangleRenderer{ this }
 			, _shapeRenderer{ this }
 			, _fontRenderer{ this }
+			, _guiContext{ this }
 		{
 			__noop;
 		}
@@ -47,13 +48,15 @@ namespace fs
 			createFontTextureFromMemory();
 #endif
 
-			if (_fontRenderer.loadFont("Assets/d2coding.fnt") == false)
+			if (_fontRenderer.loadFont(kDefaultFont) == false)
 			{
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
-				_fontRenderer.bakeFont("Assets/d2coding.ttf", 16, "Assets/d2coding.fnt", 2048, 1, 1);
-				_fontRenderer.loadFont("Assets/d2coding.fnt");
+				_fontRenderer.bakeFont(kDefaultFont, 16, kDefaultFont, 2048, 1, 1);
+				_fontRenderer.loadFont(kDefaultFont);
 			}
+
+			_guiContext.initialize(kDefaultFont);
 		}
 
 		void GraphicDevice::createDxDevice()
@@ -397,6 +400,7 @@ namespace fs
 			_rectangleRenderer.render();
 			_shapeRenderer.render();
 			_fontRenderer.render();
+			_guiContext.render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);

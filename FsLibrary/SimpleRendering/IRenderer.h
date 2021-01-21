@@ -21,6 +21,29 @@ namespace fs
 		class GraphicDevice;
 
 
+		struct Color
+		{
+		public:
+								Color() : Color(255, 255, 255) {}
+								Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } {}
+								Color(const int r, const int g, const int b, const int a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) {}
+								Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) {}
+								Color(const int r, const int g, const int b) : Color(r, g, b, 255) {}
+			explicit			Color(const fs::Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) {}
+
+		private:
+			fs::Float4			_raw;
+
+		public:
+								operator fs::Float4&() noexcept { return _raw; }
+								operator const fs::Float4&() const noexcept { return _raw; }
+			Color				operator*(const float s) const noexcept { return Color(_raw * s); }
+			Color				operator/(const float s) const { return Color(_raw / s); }
+			Color				operator+(const Color& rhs) const { return Color(_raw + rhs._raw); }
+			Color				operator-(const Color& rhs) const { return Color(_raw - rhs._raw); }
+		};
+
+
 		class IRenderer abstract
 		{
 		public:
@@ -35,8 +58,8 @@ namespace fs
 
 		public:
 			void									setPosition(const fs::Float3& position) noexcept;
-			void									setColor(const fs::Float4& color) noexcept;
-			void									setColor(const std::vector<fs::Float4>& colorArray) noexcept;
+			void									setColor(const fs::SimpleRendering::Color& color) noexcept;
+			void									setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept;
 
 		protected:
 			const fs::Float4&						getColorInternal(const uint32 index) const noexcept;
@@ -44,8 +67,8 @@ namespace fs
 		protected:
 			fs::SimpleRendering::GraphicDevice*		_graphicDevice;
 			fs::Float3								_position;
-			std::vector<fs::Float4>					_colorArray;
-			fs::Float4								_defaultColor;
+			std::vector<SimpleRendering::Color>		_colorArray;
+			fs::SimpleRendering::Color				_defaultColor;
 		};
 	}
 }

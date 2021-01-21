@@ -54,6 +54,7 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Gui\GuiContext.h" />
     <ClInclude Include="Language\CppHlsl.h" />
     <ClInclude Include="Language\CppHlslLexer.h" />
     <ClInclude Include="Language\CppHlslParser.h" />
@@ -95,6 +96,7 @@
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
     <ClCompile Include="File\XmlFile.cpp" />
+    <ClCompile Include="Gui\GuiContext.cpp" />
     <ClCompile Include="Language\CppHlsl.cpp" />
     <ClCompile Include="Language\CppHlslLexer.cpp" />
     <ClCompile Include="Language\CppHlslParser.cpp" />
@@ -190,14 +192,14 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName)\;$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)$(ProjectName)\;$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -244,7 +246,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>

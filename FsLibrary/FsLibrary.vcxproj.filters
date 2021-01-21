@@ -34,6 +34,9 @@
     <Filter Include="Assets\CppHlsl">
       <UniqueIdentifier>{20444c3a-73ad-4d90-acda-8ed853f51d74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{734eb805-99d4-41e1-9b5c-4bf89cd8138b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="File\BinaryFile.h">
@@ -233,6 +236,9 @@
     <ClInclude Include="SimpleRendering\DxResource.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="Gui\GuiContext.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -297,6 +303,9 @@
     </ClCompile>
     <ClCompile Include="SimpleRendering\DxResource.cpp">
       <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Gui\GuiContext.cpp">
+      <Filter>Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
