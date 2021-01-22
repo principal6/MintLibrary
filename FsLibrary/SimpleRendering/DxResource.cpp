@@ -116,10 +116,10 @@ namespace fs
 				ComPtr<ID3D11Resource> newResource;
 
 				D3D11_BUFFER_DESC bufferDescriptor{};
-				bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+				bufferDescriptor.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
 				bufferDescriptor.ByteWidth = elementStride * elementCount;
 				bufferDescriptor.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
-				bufferDescriptor.CPUAccessFlags = 0;
+				bufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 				bufferDescriptor.MiscFlags = D3D11_RESOURCE_MISC_FLAG::D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 				bufferDescriptor.StructureByteStride = elementStride;
 
