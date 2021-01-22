@@ -23,28 +23,6 @@ namespace fs
             return (nullptr == rawWideString || L'\0' == rawWideString[0]);
         }
 
-        static uint64 hashRawString64(const char* rawString)
-        {
-            // Hashing algorithm: FNV1a
-
-            if (isNullOrEmpty(rawString) == true)
-            {
-                return kUint64Max;
-            }
-
-            static constexpr uint64 kOffset = 0xcbf29ce484222325;
-            static constexpr uint64 kPrime  = 0x00000100000001B3;
-            const size_t rawStringLength = strlen(rawString);
-
-            uint64 hash = kOffset;
-            for (size_t rawStringAt = 0; rawStringAt < rawStringLength; ++rawStringAt)
-            {
-                hash ^= static_cast<uint8>(rawString[rawStringAt]);
-                hash *= kPrime;
-            }
-            return hash;
-        }
-
         FS_INLINE uint32 strlen(const char* const rawString)
         {
             if (isNullOrEmpty(rawString) == true)
@@ -66,6 +44,40 @@ namespace fs
         FS_INLINE const bool strcmp(const char* const a, const char* const b)
         {
             return (0 == ::strcmp(a, b));
+        }
+
+        static uint64 hashRawString64(const char* const rawString, const uint32 length)
+        {
+            // Hashing algorithm: FNV1a
+
+            if (isNullOrEmpty(rawString) == true)
+            {
+                return kUint64Max;
+            }
+
+            static constexpr uint64 kOffset = 0xcbf29ce484222325;
+            static constexpr uint64 kPrime = 0x00000100000001B3;
+
+            uint64 hash = kOffset;
+            for (uint32 rawStringAt = 0; rawStringAt < length; ++rawStringAt)
+            {
+                hash ^= static_cast<uint8>(rawString[rawStringAt]);
+                hash *= kPrime;
+            }
+            return hash;
+        }
+
+        static uint64 hashRawString64(const char* const rawString)
+        {
+            const uint32 rawStringLength = strlen(rawString);
+            return hashRawString64(rawString, rawStringLength);
+        }
+
+        static uint64 hashRawString64(const wchar_t* const rawString)
+        {
+            const uint32 rawStringLength = wcslen(rawString);
+            const char* const rawStringA = reinterpret_cast<const char*>(rawString);
+            return hashRawString64(rawStringA, rawStringLength * 2);
         }
 
         void convertWideStringToString(const std::wstring& source, std::string& destination);
