@@ -441,7 +441,7 @@ namespace fs
 					float4 main(VS_OUTPUT input) : SV_Target
 					{
 						const float sampled = texture0.Sample(sampler0, input._texCoord);
-						float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled);
+						float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
 						
 						if (input._flag == 1)
 						{
