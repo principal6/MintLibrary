@@ -145,6 +145,16 @@ namespace fs
 		return sqrt(lengthSqaure());
 	}
 
+	const float Float2::maxElement() const noexcept
+	{
+		return fs::max(_x, _y);
+	}
+
+	const float Float2::minElement() const noexcept
+	{
+		return fs::min(_x, _y);
+	}
+
 	void Float2::set(const float x, const float y)
 	{
 		_x = x;

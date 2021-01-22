@@ -13,6 +13,9 @@ namespace fs
 	class alignas(16) Float4 final
 	{
 	public:
+		static const Float4		kZero;
+
+	public:
 								Float4();
 		explicit				Float4(const float s);
 		explicit				Float4(const float x, const float y, const float z, const float w);

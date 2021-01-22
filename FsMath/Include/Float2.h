@@ -67,6 +67,8 @@ namespace fs
 	public:
 		const float				lengthSqaure() const noexcept;
 		const float				length() const noexcept;
+		const float				maxElement() const noexcept;
+		const float				minElement() const noexcept;
 		
 	public:
 		void					set(const float x, const float y);

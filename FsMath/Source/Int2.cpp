@@ -7,6 +7,8 @@
 
 namespace fs
 {
+	const Int2 Int2::kZero = Int2(0);
+
 	Int2::Int2()
 		: Int2(0)
 	{

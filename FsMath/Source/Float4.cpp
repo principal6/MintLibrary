@@ -10,6 +10,8 @@
 
 namespace fs
 {
+	const Float4 Float4::kZero = Float4(0.0f);
+
 	Float4::Float4()
 		: Float4(0.0f)
 	{
