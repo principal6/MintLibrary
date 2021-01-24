@@ -61,7 +61,7 @@ namespace fs
 			static constexpr float						kDefaultIntervalY = 5.0f;
 			static constexpr float						kDefaultRoundnessInPixel = 8.0f;
 			static constexpr float						kDefaultControlWidth = 150.0f;
-			static constexpr float						kDefaultFocusedAlpha = 0.9375f;
+			static constexpr float						kDefaultFocusedAlpha = 0.875f;
 			static constexpr float						kDefaultOutOfFocusAlpha = 0.5f;
 			static constexpr float						kDefaultRoundButtonRadius = 7.0f;
 
@@ -141,14 +141,15 @@ namespace fs
 
 #pragma region Controls
 			// 
-			// Button Label ToolTip
-			// RatioButton CheckBox
+			// Button Window
+			// Label ToolTip
+			// ScrollBar Slider
+			// Window docking system!!!
+			// RadioButton CheckBox
 			// ListView TreeView
 			// ComboBox SpinBox
-			// ScrollBar Slider
 			// TextEdit
 			// Splitter
-			// Window
 
 		public:
 			// [Button]
@@ -175,7 +176,7 @@ namespace fs
 			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
 			fs::Float3									getControlCenterPosition(const ControlData& controlData) const noexcept;
 			const uint64								generateControlHashKey(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&								getControlData(const wchar_t* const text, const fs::Float2& defaultSize, const ControlType controlType, const fs::Float2& desiredPosition = fs::Float2::kZero, const fs::Float4& innerPadding = fs::Float4::kZero) noexcept;
+			ControlData&								getControlData(const wchar_t* const text, const fs::Float2& defaultSize, const ControlType controlType, const fs::Float2& desiredPosition = fs::Float2::kZero, const fs::Float4& innerPadding = fs::Float4::kZero, const fs::Float2& desiredInteractionSize = fs::Float2::kZero) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
 #pragma endregion
 

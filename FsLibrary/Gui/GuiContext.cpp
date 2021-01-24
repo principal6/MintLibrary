@@ -210,7 +210,7 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::TitleBar;
 
 			const fs::Float2& titleBarSize = fs::Float2(width, fs::SimpleRendering::kDefaultFontSize + paddingTopBottom);
-			const ControlData& controlData = getControlData(windowTitle, titleBarSize, controlType);
+			const ControlData& controlData = getControlData(windowTitle, titleBarSize, controlType, fs::Float2::kZero, fs::Float4::kZero, fs::Float2(titleBarSize._x - paddingRight - kDefaultRoundButtonRadius * 2.0f, titleBarSize._y));
 
 			fs::SimpleRendering::Color titleBarColor;
 			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), titleBarColor);
@@ -286,7 +286,7 @@ namespace fs
 			return fs::StringUtil::hashRawString64(hashKeyWstring.c_str());
 		}
 
-		GuiContext::ControlData& GuiContext::getControlData(const wchar_t* const text, const fs::Float2& defaultSize, const ControlType controlType, const fs::Float2& desiredPosition, const fs::Float4& innerPadding) noexcept
+		GuiContext::ControlData& GuiContext::getControlData(const wchar_t* const text, const fs::Float2& defaultSize, const ControlType controlType, const fs::Float2& desiredPosition, const fs::Float4& innerPadding, const fs::Float2& desiredInteractionSize) noexcept
 		{
 			bool isNewData = false;
 			const uint64 hashKey = generateControlHashKey(text, controlType);
@@ -316,7 +316,8 @@ namespace fs
 			controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? defaultSize._y :
 				((_nextSizingForced == true) ? _nextControlSize._y : fs::max(defaultSize._y, _nextControlSize._y));
 
-			controlData._interactionSize = controlData._displaySize;
+			// Interaction size!!!
+			controlData._interactionSize = (desiredInteractionSize == fs::Float2::kZero) ? controlData._displaySize : desiredInteractionSize;
 
 			// Position, Parent offset, Parent cChild at
 			if (_nextNoAutoPositioned == false)
@@ -455,37 +456,34 @@ namespace fs
 			}
 			
 			// 새 focus 확인
-			if (isInControl(_mousePosition, controlData) == true)
+			if (controlData._isFocusable == true && isInControl(_mousePosition, controlData) == true)
 			{
-				if (controlData._isFocusable == true)
+				const bool isMouseDownIn = isInControl(_mouseDownPosition, controlData);
+				if (_mouseButtonDown == true && isMouseDownIn == true && _draggedControlHashKey == 0)
 				{
-					const bool isMouseDownIn = isInControl(_mouseDownPosition, controlData);
-					if (_mouseButtonDown == true && isMouseDownIn == true)
-					{
-						// Focus entered
+					// Focus entered
 
-						bool shouldBeFocused = false;
-						if (_focusedControlHashKey != 0)
-						{
-							if (isInControl(_mouseDownPosition, getControlData(_focusedControlHashKey)) == false)
-							{
-								shouldBeFocused = true;
-							}
-						}
-						else
+					bool shouldBeFocused = false;
+					if (_focusedControlHashKey != 0)
+					{
+						if (isInControl(_mouseDownPosition, getControlData(_focusedControlHashKey)) == false)
 						{
 							shouldBeFocused = true;
 						}
+					}
+					else
+					{
+						shouldBeFocused = true;
+					}
 
-						if (shouldBeFocused == true)
-						{
-							outBackgroundColor = focusedColor;
-							outBackgroundColor.a(kDefaultFocusedAlpha);
+					if (shouldBeFocused == true)
+					{
+						outBackgroundColor = focusedColor;
+						outBackgroundColor.a(kDefaultFocusedAlpha);
 
-							_focusedControlHashKey = controlData._hashKey;
+						_focusedControlHashKey = controlData._hashKey;
 
-							result = true;
-						}
+						result = true;
 					}
 				}
 			}
@@ -507,10 +505,21 @@ namespace fs
 		{
 			if (_draggedControlHashKey == 0)
 			{
+				if (_focusedControlHashKey != 0 && isMeOrAncestorFocusedXXX(controlData) == false)
+				{
+					// Focus 는 있지만 내가 Focus 가 아닌 경우
+					if (isInControl(_mousePosition, getControlData(_focusedControlHashKey)) == true)
+					{
+						return false;
+					}
+				}
+
 				if (isInControl(_mousePosition, controlData) == true)
 				{
 					if (isInControl(_mouseDownPosition, controlData) == true && _mouseButtonDown == true)
 					{
+						// Drag 시작
+
 						_dragStarted = true;
 						_draggedControlHashKey = controlData._hashKey;
 						return true;
