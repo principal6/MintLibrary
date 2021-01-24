@@ -18,6 +18,7 @@
 #include <FsLibrary/Container/StringUtil.hpp>
 #include <FsLibrary/Container/Tree.h>
 #include <FsLibrary/Container/Tree.hpp>
+#include <FsLibrary/Container/IId.h>
 
 
 #endif // !FS_CONTAINER_H

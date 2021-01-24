@@ -29,6 +29,7 @@
     <ClInclude Include="Container\BitVector.h" />
     <ClInclude Include="Container\BitVector.hpp" />
     <ClInclude Include="Container\Container.h" />
+    <ClInclude Include="Container\IId.h" />
     <ClInclude Include="Container\ScopeString.h" />
     <ClInclude Include="Container\ScopeString.hpp" />
     <ClInclude Include="Container\StackHolder.h" />
@@ -115,6 +116,8 @@
     <ClCompile Include="SimpleRendering\ShapeRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Container\IId.inl" />
+    <None Include="Gui\GuiContext.inl" />
     <None Include="Language\CppHlslParser.inl" />
     <None Include="Language\ILexer.inl" />
     <None Include="Language\IParser.inl" />
@@ -242,7 +245,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Create</PrecompiledHeader>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <IntrinsicFunctions>true</IntrinsicFunctions>

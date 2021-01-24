@@ -213,6 +213,13 @@ namespace fs
 			{
 				fontFaceFileNameS.append(".ttf");
 			}
+
+			if (fs::FileUtil::exists(fontFaceFileNameS.c_str()) == false)
+			{
+				fs::StringUtil::excludeExtension(fontFaceFileNameS);
+				fontFaceFileNameS.append(".otf");
+			}
+
 			if (initializeFreeType(fontFaceFileNameS.c_str(), fontSize) == false)
 			{
 				FS_LOG_ERROR("김장원", "FreeType - 초기화에 실패했습니다.");
@@ -480,25 +487,26 @@ namespace fs
 			}
 		}
 
-		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Float2& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const bool drawShade)
+		void FontRenderer::drawDynamicText(const wchar_t* const wideText, const fs::Float3& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
-			const float textWidth = calculateTextWidth(wideText, textLength);
+			const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
 			
-			fs::Float2 currentPosition = position + fs::Float2(0.0f, -_fontSize * 0.5f - 2.0f);
+			const float scaledFontSize = _fontSize * scale;
+			fs::Float3 currentPosition = position + fs::Float3(0.0f, -scaledFontSize * 0.5f - 2.0f, 0.0f);
 			if (directionHorz != TextRenderDirectionHorz::Rightward)
 			{
-				currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? textWidth * 0.5f : textWidth;
+				currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
 			}
 			if (directionVert != TextRenderDirectionVert::Centered)
 			{
-				currentPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -_fontSize * 0.5f : +_fontSize * 0.5f;
+				currentPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
 			}
 			for (uint32 at = 0; at < textLength; ++at)
 			{
-				drawGlyph(wideText[at], currentPosition, drawShade);
+				drawGlyph(wideText[at], currentPosition, scale, drawShade);
 			}
 		}
 
@@ -522,7 +530,7 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
-		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Float2& position, const bool drawShade)
+		void FontRenderer::drawGlyph(const wchar_t wideChar, fs::Float3& position, const float scale, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
 			auto found = _glyphMap.find(wideChar);
@@ -531,36 +539,37 @@ namespace fs
 				glyphIndex = _glyphMap.at(wideChar);
 			}
 
-			const float fontHeight = static_cast<float>(_fontSize);
+			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			
 			fs::CppHlsl::VS_INPUT v;
-			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX);
-			v._position._y = position._y + fontHeight - static_cast<float>(glyphInfo._horiBearingY);
+			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
+			v._position._y = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
+			v._position._z = position._z;
 			v._color = _defaultColor;
 			v._texCoord = glyphInfo._uv0;
 			v._flag = (drawShade == true) ? 1 : 0;
 			vertexArray.emplace_back(v);
 			
-			v._position._x += static_cast<float>(glyphInfo._width);
+			v._position._x += static_cast<float>(glyphInfo._width) * scale;
 			v._texCoord._x = glyphInfo._uv1._x;
 			v._texCoord._y = glyphInfo._uv0._y;
 			vertexArray.emplace_back(v);
 			
-			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX);
-			v._position._y += static_cast<float>(glyphInfo._height);
+			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
+			v._position._y += static_cast<float>(glyphInfo._height) * scale;
 			v._texCoord._x = glyphInfo._uv0._x;
 			v._texCoord._y = glyphInfo._uv1._y;
 			vertexArray.emplace_back(v);
 
-			v._position._x += static_cast<float>(glyphInfo._width);
+			v._position._x += static_cast<float>(glyphInfo._width) * scale;
 			v._texCoord = glyphInfo._uv1;
 			vertexArray.emplace_back(v);
 
 			prepareIndexArray();
 
-			position._x += static_cast<float>(glyphInfo._horiAdvance);
+			position._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
 
 		void FontRenderer::prepareIndexArray()

@@ -130,6 +130,8 @@ namespace fs
 
 			virtual void					position(const Int2& newPosition) abstract;
 			virtual const Int2&				position() const noexcept { return _creationData._position; }
+			
+			const fs::Float3&				backgroundColor() const noexcept { return _creationData._bgColor; }
 
 		protected:
 			bool							_isRunning{ false };

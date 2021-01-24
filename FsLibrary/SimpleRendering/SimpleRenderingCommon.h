@@ -22,6 +22,9 @@ namespace fs
 			Centered,
 			Downward
 		};
+
+		static constexpr const char* const		kDefaultFont = "Assets/noto_sans_kr_medium";
+		static constexpr int32					kDefaultFontSize = 18;
 	}
 }
 

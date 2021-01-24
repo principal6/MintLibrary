@@ -25,7 +25,7 @@ namespace fs
 	{
 		GraphicDevice::GraphicDevice()
 			: _window{ nullptr }
-			, _clearColor{ 0.0f, 0.75f, 1.0f, 1.0f }
+			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
 			, _resourcePool{ this }
 			, _rectangleRenderer{ this }
@@ -42,6 +42,11 @@ namespace fs
 		
 			_window = window;
 
+			const fs::Float3& backgroundColor = _window->backgroundColor();
+			_clearColor[0] = backgroundColor._x;
+			_clearColor[1] = backgroundColor._y;
+			_clearColor[2] = backgroundColor._z;
+			
 			createDxDevice();
 
 #if defined FS_TEST_MEMORY_FONT_TEXTURE
@@ -52,7 +57,7 @@ namespace fs
 			{
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
 				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
-				_fontRenderer.bakeFont(kDefaultFont, 16, kDefaultFont, 2048, 1, 1);
+				_fontRenderer.bakeFont(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
 				_fontRenderer.loadFont(kDefaultFont);
 			}
 
@@ -66,33 +71,62 @@ namespace fs
 
 			// Create SwapChain
 			{
-				DXGI_SWAP_CHAIN_DESC SwapChainDesc{};
-				SwapChainDesc.BufferCount = 1;
-				SwapChainDesc.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-				SwapChainDesc.BufferDesc.Width = static_cast<UINT>(windowSize._x);
-				SwapChainDesc.BufferDesc.Height = static_cast<UINT>(windowSize._y);
-				SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-				SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
-				SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
-				SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-				SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-				SwapChainDesc.Flags = 0;
-				SwapChainDesc.OutputWindow = windowsWindow->getHandle();
-				SwapChainDesc.SampleDesc.Count = 1;
-				SwapChainDesc.SampleDesc.Quality = 0;
-				SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
-				SwapChainDesc.Windowed = TRUE;
+				DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
+				swapChainDescriptor.BufferCount = 1;
+				swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+				swapChainDescriptor.BufferDesc.Width = static_cast<UINT>(windowSize._x);
+				swapChainDescriptor.BufferDesc.Height = static_cast<UINT>(windowSize._y);
+				swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
+				swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60;
+				swapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
+				swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+				swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+				swapChainDescriptor.Flags = 0;
+				swapChainDescriptor.OutputWindow = windowsWindow->getHandle();
+				swapChainDescriptor.SampleDesc.Count = 1;
+				swapChainDescriptor.SampleDesc.Quality = 0;
+				swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+				swapChainDescriptor.Windowed = TRUE;
 
 				D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION,
-					&SwapChainDesc, _swapChain.ReleaseAndGetAddressOf(), _device.ReleaseAndGetAddressOf(), nullptr, _deviceContext.ReleaseAndGetAddressOf());
+					&swapChainDescriptor, _swapChain.ReleaseAndGetAddressOf(), _device.ReleaseAndGetAddressOf(), nullptr, _deviceContext.ReleaseAndGetAddressOf());
 			}
 
 			// Create back-buffer RTV
 			{
 				_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(_backBuffer.ReleaseAndGetAddressOf()));
 				_device->CreateRenderTargetView(_backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf());
-				_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), nullptr);
 			}
+
+			// Create depth-stencil view
+			{
+				D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
+				depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
+				depthStencilBufferDescriptor.Height = static_cast<UINT>(windowSize._y);
+				depthStencilBufferDescriptor.MipLevels = 1;
+				depthStencilBufferDescriptor.ArraySize = 1;
+				depthStencilBufferDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+				depthStencilBufferDescriptor.SampleDesc.Count = 1;
+				depthStencilBufferDescriptor.SampleDesc.Quality = 0;
+				depthStencilBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+				depthStencilBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+				depthStencilBufferDescriptor.CPUAccessFlags = 0;
+				depthStencilBufferDescriptor.MiscFlags = 0;
+
+				_device->CreateTexture2D(&depthStencilBufferDescriptor, nullptr, _depthStencilBuffer.ReleaseAndGetAddressOf());
+				_device->CreateDepthStencilView(_depthStencilBuffer.Get(), nullptr, _depthStencilView.ReleaseAndGetAddressOf());
+
+				D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
+				depthStencilDescriptor.DepthEnable = TRUE;
+				depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+				depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+				depthStencilDescriptor.StencilEnable = FALSE;
+				_device->CreateDepthStencilState(&depthStencilDescriptor, _depthStencilStateLessEqual.ReleaseAndGetAddressOf());
+			}
+
+			// Set render targets
+			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), _depthStencilView.Get());
+			_deviceContext->OMSetDepthStencilState(_depthStencilStateLessEqual.Get(), 0);
 
 			initializeShaderHeaderMemory();
 			initializeShaders();
@@ -384,6 +418,7 @@ namespace fs
 		void GraphicDevice::beginRendering()
 		{
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
+			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
 			_rectangleRenderer.flushData();
 			_shapeRenderer.flushData();
@@ -399,8 +434,8 @@ namespace fs
 #pragma region Renderers
 			_rectangleRenderer.render();
 			_shapeRenderer.render();
-			_fontRenderer.render();
 			_guiContext.render();
+			_fontRenderer.render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);
@@ -408,7 +443,7 @@ namespace fs
 		
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept
 		{
-			return _window->size();
+			return (_window != nullptr) ? _window->size() : fs::Int2::kZero;
 		}
 	}
 }

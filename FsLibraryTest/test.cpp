@@ -755,7 +755,7 @@ const bool testWindow()
 	windowCreationData._position.set(200, 100);
 	windowCreationData._size.set(1024, 768);
 	windowCreationData._title = L"HI";
-	windowCreationData._bgColor.set(0.4f, 0.6f, 1.0f);
+	windowCreationData._bgColor.set(0.875f, 0.875f, 0.875f);
 
 	WindowsWindow window;
 	if (window.create(windowCreationData) == false)
@@ -805,32 +805,42 @@ const bool testWindow()
 			graphicDevice.beginRendering();
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-				guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
-				if (guiContext.beginButton("btnA", L"버튼이요") == true)
+				if (guiContext.beginWindow(L"응용 프로그램", fs::Float2(300.0f, 400.0f), fs::Float2(20.0f, 50.0f)) == true)
 				{
-					bool a = true;
-					guiContext.endButton();
+					//guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
+					if (guiContext.beginButton(L"버튼이요") == true)
+					{
+						bool a = true;
+						guiContext.endButton();
+					}
+
+					guiContext.nextSameLine();
+
+					if (guiContext.beginButton(L"Button B") == true)
+					{
+						guiContext.endButton();
+					}
+
+					//gui.nextSameLine();
+
+					if (guiContext.beginButton(L"Another") == true)
+					{
+						guiContext.endButton();
+					}
+
+					//gui.nextSameLine();
+
+					if (guiContext.beginButton(L"Fourth") == true)
+					{
+						guiContext.endButton();
+					}
+
+					guiContext.endWindow();
 				}
-				
-				guiContext.nextSameLine();
 
-				if (guiContext.beginButton("btnB", L"Button B") == true)
+				if (guiContext.beginWindow(L"def", fs::Float2(300.0f, 400.0f), fs::Float2(400.0f, 50.0f)) == true)
 				{
-					guiContext.endButton();
-				}
-
-				//gui.nextSameLine();
-
-				if (guiContext.beginButton("btnC", L"Another") == true)
-				{
-					guiContext.endButton();
-				}
-				
-				//gui.nextSameLine();
-
-				if (guiContext.beginButton("btnD", L"Fourth") == true)
-				{
-					guiContext.endButton();
+					guiContext.endWindow();
 				}
 			}
 
@@ -838,8 +848,8 @@ const bool testWindow()
 				fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
 
 				fontRenderer.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
-				fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float2(10, 5));
-				fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float2(100, 5));
+				fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float3(10, 5, 0));
+				fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float3(120, 5, 0));
 			}
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();

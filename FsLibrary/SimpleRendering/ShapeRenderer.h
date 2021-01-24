@@ -21,12 +21,19 @@ namespace fs
 	{
 		class ShapeRenderer final : public IRenderer
 		{
+			enum class ShapeType : uint8
+			{
+				None,
+				Solid,
+				Circular,
+			};
+
 		public:
-			static constexpr float												kRoundnessAbsoluteBase = 2.0f;
+			static constexpr float												kRoundnessAbsoluteBase	= 2.0f;
 
 		private:
-			static constexpr float												kInfoSolid = 1.0f;
-			static constexpr float												kInfoCircular = 2.0f;
+			static constexpr uint8												kInfoSolid				= 1;
+			static constexpr uint8												kInfoCircular			= 2;
 
 		public:
 																				ShapeRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice);
@@ -92,7 +99,7 @@ namespace fs
 
 		private:
 			void																flushShapeTransform();
-			const float															getShapeTransformIndexAsFloat() const noexcept;
+			const float															getShapeInfoAsFloat(const ShapeType shapeType) const noexcept;
 			void																pushShapeTransform(const float rotationAngle, const bool applyInternalPosition = true);
 			void																prepareStructuredBuffer();
 

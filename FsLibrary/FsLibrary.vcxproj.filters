@@ -239,6 +239,9 @@
     <ClInclude Include="Gui\GuiContext.h">
       <Filter>Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Container\IId.h">
+      <Filter>Container</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -326,6 +329,12 @@
     </None>
     <None Include="SimpleRendering\IRenderer.inl">
       <Filter>SimpleRendering</Filter>
+    </None>
+    <None Include="Gui\GuiContext.inl">
+      <Filter>Gui</Filter>
+    </None>
+    <None Include="Container\IId.inl">
+      <Filter>Container</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

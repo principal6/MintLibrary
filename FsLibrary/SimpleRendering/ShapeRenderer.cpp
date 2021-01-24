@@ -33,15 +33,19 @@ namespace fs
 					
 					VS_OUTPUT_SHAPE_FAST main_shape(VS_INPUT_SHAPE_FAST input)
 					{
-						const uint shapeIndex = (uint)input._position.w;
+						const uint shapeInfo = asuint(input._position.w);
+						const uint shapeType = (shapeInfo >> 30) & 3;
+						const uint shapeIndex = shapeInfo & 0x3FFFFFFF;
+						
 						float4 transformedPosition = float4(input._position.xy, 0.0, 1.0);
 						transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
 						
 						VS_OUTPUT_SHAPE_FAST result;
-						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xy, 0.0, 1.0);
+						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xy, input._position.z, 1.0);
 						result._color		= input._color;
 						result._texCoord	= input._texCoord;
-						result._info.xy		= input._position.zw;
+						result._info.x		= (float)shapeType;
+						result._info.y		= (float)shapeIndex;
 						
 						return result;
 					}
@@ -131,7 +135,7 @@ namespace fs
 		{
 			drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
 
-			pushShapeTransform(0.0f);
+			pushShapeTransform(0.0f, false);
 		}
 
 		void ShapeRenderer::drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::SimpleRendering::Color& color, const bool validate)
@@ -154,7 +158,8 @@ namespace fs
 			v._color = color;
 			v._position._x = pointArray[0 ^ flip]._x;
 			v._position._y = pointArray[0 ^ flip]._y;
-			v._position._w = getShapeTransformIndexAsFloat();
+			v._position._z = _position._z;
+			v._position._w = getShapeInfoAsFloat(ShapeType::None);
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			v._texCoord._w = abs(pointA._x - pointB._x);
@@ -183,7 +188,7 @@ namespace fs
 		{
 			drawSolidTriangleInternal(pointA, pointB, pointC, _defaultColor);
 
-			pushShapeTransform(0.0f);
+			pushShapeTransform(0.0f, false);
 		}
 
 		void ShapeRenderer::drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::SimpleRendering::Color& color)
@@ -196,8 +201,8 @@ namespace fs
 				v._color = color;
 				v._position._x = pointA._x;
 				v._position._y = pointA._y;
-				v._position._z = kInfoSolid;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
 				vertexArray.emplace_back(v);
 
 				v._position._x = pointB._x;
@@ -229,8 +234,8 @@ namespace fs
 			v._color = _defaultColor;
 			v._position._x = -halfRadius;
 			v._position._y = -halfRadius;
-			v._position._z = kInfoCircular;
-			v._position._w = getShapeTransformIndexAsFloat();
+			v._position._z = _position._z;
+			v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 1.0f;
 			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
@@ -276,8 +281,8 @@ namespace fs
 				v._color = color;
 				v._position._x = offset._x - halfRadius;
 				v._position._y = offset._y - halfRadius;
-				v._position._z = kInfoCircular;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
@@ -323,8 +328,8 @@ namespace fs
 			CppHlsl::VS_INPUT_SHAPE_FAST v;
 			v._color = _defaultColor;
 			v._position._x = -scaledRadius;
-			v._position._z = kInfoCircular;
-			v._position._w = getShapeTransformIndexAsFloat();
+			v._position._z = _position._z;
+			v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 			v._texCoord._x = -fs::Math::kSqrtOfTwo;
 			v._texCoord._y = 0.0f;
 			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
@@ -368,8 +373,8 @@ namespace fs
 				v._color = _defaultColor;
 				v._position._x = 0.0f;
 				v._position._y = -radius;
-				v._position._z = kInfoCircular;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
@@ -449,8 +454,8 @@ namespace fs
 				v._color = _defaultColor;
 				v._position._x = 0.0f;
 				v._position._y = -outerRadius;
-				v._position._z = kInfoCircular;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = +1.0f; // @IMPORTANT
@@ -625,8 +630,8 @@ namespace fs
 				v._color = color;
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y - halfSize._y;
-				v._position._z = kInfoSolid;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfSize._x;
@@ -671,8 +676,8 @@ namespace fs
 				v._color = _defaultColor;
 				v._position._x = -halfSize._x + horizontalOffsetL;
 				v._position._y = -halfSize._y;
-				v._position._z = kInfoSolid;
-				v._position._w = getShapeTransformIndexAsFloat();
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +halfSize._x - horizontalOffsetR;
@@ -705,7 +710,8 @@ namespace fs
 
 		void ShapeRenderer::drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
 		{
-			const float radius = fs::min(size._x, size._y) * fs::Math::saturate(roundness);
+			const float clampedRoundness = fs::Math::saturate(roundness);
+			const float radius = fs::min(size._x, size._y) * 0.5f * clampedRoundness;
 			const fs::Float2& halfSize = size * 0.5f;
 			const fs::Float2& halfCoreSize = halfSize - fs::Float2(radius);
 
@@ -768,7 +774,7 @@ namespace fs
 				drawRectangleInternal(fs::Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), fs::Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
 			}
 
-			drawRoundedRectangleInternal(radius, halfSize, roundness, _defaultColor);
+			drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
 			pushShapeTransform(rotationAngle);
 		}
@@ -861,8 +867,8 @@ namespace fs
 			v._color = _defaultColor;
 			v._position._x = v0._x;
 			v._position._y = v0._y;
-			v._position._z = kInfoSolid;
-			v._position._w = getShapeTransformIndexAsFloat();
+			v._position._z = _position._z;
+			v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
 			vertexArray.emplace_back(v);
 
 			v._position._x = v1._x;
@@ -887,7 +893,7 @@ namespace fs
 			indexArray.push_back(vertexOffset + 3);
 			indexArray.push_back(vertexOffset + 2);
 
-			pushShapeTransform(0.0f);
+			pushShapeTransform(0.0f, false);
 		}
 
 		void ShapeRenderer::flushShapeTransform()
@@ -895,9 +901,18 @@ namespace fs
 			_sbTransformData.clear();
 		}
 
-		const float ShapeRenderer::getShapeTransformIndexAsFloat() const noexcept
+		const float ShapeRenderer::getShapeInfoAsFloat(const ShapeType shapeType) const noexcept
 		{
-			return static_cast<float>(_sbTransformData.size());
+			union Conversion
+			{
+				float	_f;
+				uint32	_ui;
+			};
+
+			// 상위 2bit 로 ShapeType 식별
+			Conversion conversion;
+			conversion._ui = (static_cast<uint32>(shapeType) << 30) | static_cast<uint32>(_sbTransformData.size());
+			return conversion._f;
 		}
 
 		void ShapeRenderer::pushShapeTransform(const float rotationAngle, const bool applyInternalPosition)
@@ -906,6 +921,7 @@ namespace fs
 			transform._transformMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
 			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
 			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
+			transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
 			_sbTransformData.emplace_back(transform);
 		}
 

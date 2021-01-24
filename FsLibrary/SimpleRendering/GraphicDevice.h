@@ -46,7 +46,6 @@ namespace fs
 
 		class GraphicDevice final
 		{
-			static constexpr const char* const							kDefaultFont = "Assets/d2coding";
 		public:
 																		GraphicDevice();
 																		~GraphicDevice() = default;
@@ -100,6 +99,9 @@ namespace fs
 		private:
 			ComPtr<ID3D11Texture2D>										_backBuffer;
 			ComPtr<ID3D11RenderTargetView>								_backBufferRtv;
+			ComPtr<ID3D11Texture2D>										_depthStencilBuffer;
+			ComPtr<ID3D11DepthStencilView>								_depthStencilView;
+			ComPtr<ID3D11DepthStencilState>								_depthStencilStateLessEqual;
 
 		private:
 			DxShaderHeaderMemory										_shaderHeaderMemory;
