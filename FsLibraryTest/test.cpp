@@ -840,6 +840,11 @@ const bool testWindow()
 
 				if (guiContext.beginWindow(L"def", fs::Float2(300.0f, 400.0f), fs::Float2(400.0f, 50.0f)) == true)
 				{
+					if (guiContext.beginButton(L"테스트") == true)
+					{
+						guiContext.endButton();
+					}
+
 					guiContext.endWindow();
 				}
 			}

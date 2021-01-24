@@ -150,16 +150,16 @@ namespace fs
 		const bool GuiContext::beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position)
 		{
 			static constexpr ControlType controlType = ControlType::Window;
-			
+			const float innerPadding = 4.0f;
+
 			// 중요
 			nextNoAutoPositioned();
 
-			ControlData& windowControlData = getControlData(title, size, controlType, position, fs::Float4(4.0f));
+			ControlData& windowControlData = getControlData(title, size, controlType, position, fs::Float4(innerPadding));
 
 			fs::SimpleRendering::Color color;
 			const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), color);
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
-			//fs::SimpleRendering::FontRenderer& fontRenderer = (isFocused == true) ? _fontRendererForeground : _fontRenderer;
 
 			const bool isOpen = windowControlData._controlState == ControlState::VisibleOpen;
 			if (isOpen == true)
@@ -175,7 +175,7 @@ namespace fs
 			// 중요
 			nextNoAutoPositioned();
 
-			beginTitleBar(title, size._x);
+			const fs::Float2& titleBarSize = beginTitleBar(title, size._x);
 			{
 				const ControlData& titleBarControlData = getControlData(_controlStackPerFrame.back()._hashKey);
 				if (isDraggingControl(titleBarControlData) == true)
@@ -191,6 +191,8 @@ namespace fs
 			}
 			endTitleBar();
 
+			windowControlData._offset._y = titleBarSize._y + innerPadding;
+
 			return isOpen;
 		}
 
@@ -200,7 +202,7 @@ namespace fs
 			_controlStackPerFrame.pop_back();
 		}
 
-		void GuiContext::beginTitleBar(const wchar_t* const windowTitle, const float width)
+		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const float width)
 		{
 			const float paddingLeft = 12.0f;
 			const float paddingRight = 6.0f;
@@ -235,6 +237,8 @@ namespace fs
 				beginRoundButton(windowTitle, fs::SimpleRendering::Color(1.0f, 0.25f, 0.25f));
 				endRoundButton();
 			}
+
+			return titleBarSize;
 		}
 
 		void GuiContext::endTitleBar()
@@ -304,6 +308,7 @@ namespace fs
 			ControlData& parentControlData = getControlData(controlData._parentHashKey);
 
 			controlData._innerPadding = innerPadding;
+			controlData._offset = fs::Float2::kZero;
 
 			const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextNoAutoPositioned == false) ? (parentControlData._innerPadding._x * 2.0f) : 0.0f);
 			controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, defaultSize._x) :
@@ -313,50 +318,52 @@ namespace fs
 
 			controlData._interactionSize = controlData._displaySize;
 
-			if (_nextSameLine == true)
+			// Position, Parent offset, Parent cChild at
+			if (_nextNoAutoPositioned == false)
 			{
-				parentControlData._childAt._x += (parentControlData._offset._x + kDefaultIntervalX);
+				// Auto-positioned
 
-				parentControlData._offset._x = fs::max(parentControlData._offset._x, controlData._displaySize._x);
-				parentControlData._offset._y = fs::max(parentControlData._offset._y, controlData._displaySize._y);
-			}
-			else
-			{
-				parentControlData._childAt._x = parentControlData._position._x + parentControlData._innerPadding._x;
-				if (0.0f < parentControlData._offset._y)
+				if (_nextSameLine == true)
 				{
-					parentControlData._childAt._y += parentControlData._offset._y;
-				}
+					parentControlData._childAt._x += (parentControlData._offset._x + kDefaultIntervalX);
 
-				parentControlData._offset = controlData._displaySize;
-
-				if (_nextNoAutoPositioned == false)
-				{
-					parentControlData._offset._y += kDefaultIntervalY;
-				}
-			}
-
-			// Position
-			{
-				if (_nextNoAutoPositioned == true)
-				{
-					if (controlType != ControlType::Window || isNewData == true)
-					{
-						controlData._position = parentControlData._position; // +fs::Float2(parentControlData._innerPadding._x, parentControlData._innerPadding._z);
-						
-						if (desiredPosition == fs::Float2::kZero)
-						{
-							controlData._position += _nextControlPosition;
-						}
-						else
-						{
-							controlData._position += desiredPosition;
-						}
-					}
+					parentControlData._offset._x = fs::max(parentControlData._offset._x, controlData._displaySize._x);
+					parentControlData._offset._y = fs::max(parentControlData._offset._y, controlData._displaySize._y);
 				}
 				else
 				{
-					controlData._position = parentControlData._childAt;
+					parentControlData._childAt._x = parentControlData._position._x + parentControlData._innerPadding._x;
+					if (0.0f < parentControlData._offset._y)
+					{
+						parentControlData._childAt._y += parentControlData._offset._y;
+					}
+
+					parentControlData._offset = controlData._displaySize;
+
+					if (_nextNoAutoPositioned == false)
+					{
+						parentControlData._offset._y += kDefaultIntervalY;
+					}
+				}
+
+				controlData._position = parentControlData._childAt;
+			}
+			else
+			{
+				// NO Auto-positioned
+
+				if (controlType != ControlType::Window || isNewData == true)
+				{
+					controlData._position = parentControlData._position; // +fs::Float2(parentControlData._innerPadding._x, parentControlData._innerPadding._z);
+						
+					if (desiredPosition == fs::Float2::kZero)
+					{
+						controlData._position += _nextControlPosition;
+					}
+					else
+					{
+						controlData._position += desiredPosition;
+					}
 				}
 			}
 
@@ -385,7 +392,7 @@ namespace fs
 
 		void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
 		{
-			controlData._childAt = controlData._position + fs::Float2(controlData._innerPadding._x, controlData._innerPadding._z);
+			controlData._childAt = controlData._position + ((_nextNoAutoPositioned == false) ? fs::Float2(controlData._innerPadding._x, controlData._innerPadding._z) : fs::Float2::kZero);
 		}
 
 		const bool GuiContext::processClickControl(const ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept

@@ -162,7 +162,8 @@ namespace fs
 			void										endWindow();
 
 		private:
-			void										beginTitleBar(const wchar_t* const windowTitle, const float width);
+			// Returns size of titlebar
+			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const float width);
 			void										endTitleBar();
 
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
