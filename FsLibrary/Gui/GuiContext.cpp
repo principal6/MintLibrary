@@ -119,7 +119,7 @@ namespace fs
 			const ControlData& controlData = getControlData(text, fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12), controlType);
 			
 			fs::SimpleRendering::Color color;
-			const bool isClicked = processClickControl(controlData, color);
+			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
 		
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
@@ -200,12 +200,15 @@ namespace fs
 			_controlStackPerFrame.pop_back();
 		}
 
-		void GuiContext::beginTitleBar(const wchar_t* const title, const float width)
+		void GuiContext::beginTitleBar(const wchar_t* const windowTitle, const float width)
 		{
+			const float paddingLeft = 12.0f;
+			const float paddingRight = 6.0f;
+			const float paddingTopBottom = 12.0f;
 			static constexpr ControlType controlType = ControlType::TitleBar;
 
-			const fs::Float2& titleBarSize = fs::Float2(width, fs::SimpleRendering::kDefaultFontSize + 16);
-			const ControlData& controlData = getControlData(title, titleBarSize, controlType);
+			const fs::Float2& titleBarSize = fs::Float2(width, fs::SimpleRendering::kDefaultFontSize + paddingTopBottom);
+			const ControlData& controlData = getControlData(windowTitle, titleBarSize, controlType);
 
 			fs::SimpleRendering::Color titleBarColor;
 			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), titleBarColor);
@@ -217,16 +220,56 @@ namespace fs
 			shapeRenderer.setColor(fs::SimpleRendering::Color(127, 127, 127));
 			shapeRenderer.drawLine(controlData._position + fs::Float2(0.0f, titleBarSize._y), controlData._position + fs::Float2(controlData._displaySize._x, titleBarSize._y), 1.0f);
 
-			const fs::Float3& titleBarTextPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(12.0f, titleBarSize._y * 0.5f, 0.0f);
+			const fs::Float3& titleBarTextPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(paddingLeft, titleBarSize._y * 0.5f, 0.0f);
 			fontRenderer.setColor((isAncestorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
-			fontRenderer.drawDynamicText(title, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
+			fontRenderer.drawDynamicText(windowTitle, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
 
 			_controlStackPerFrame.emplace_back(ControlStackData(controlType, controlData._hashKey));
+
+			// Close button
+			{
+				// 중요
+				nextNoAutoPositioned();
+				nextControlPosition(fs::Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - paddingRight, (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
+
+				beginRoundButton(windowTitle, fs::SimpleRendering::Color(1.0f, 0.25f, 0.25f));
+				endRoundButton();
+			}
 		}
 
 		void GuiContext::endTitleBar()
 		{
 			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::TitleBar, "begin 과 end 의 ControlType 이 다릅니다!!!");
+			_controlStackPerFrame.pop_back();
+		}
+
+		const bool GuiContext::beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color)
+		{
+			static constexpr ControlType controlType = ControlType::RoundButton;
+
+			const float radius = kDefaultRoundButtonRadius;
+			const fs::Float2& controlSize = fs::Float2(radius * 2.0f);
+			const ControlData& controlData = getControlData(windowTitle, controlSize, controlType);
+
+			fs::SimpleRendering::Color controlColor;
+			const bool isClicked = processClickControl(controlData, color, color.scaleRgb(1.5f), color.scaleRgb(0.75f), controlColor);
+
+			const bool isAncestorFocused_ = isAncestorFocused(controlData);
+			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+
+			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeRenderer.setColor(controlColor);
+			shapeRenderer.setPosition(controlCenterPosition);
+			shapeRenderer.drawCircle(radius);
+
+			_controlStackPerFrame.emplace_back(ControlStackData(controlType, controlData._hashKey));
+
+			return isClicked;
+		}
+
+		void GuiContext::endRoundButton()
+		{
+			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::RoundButton, "begin 과 end 의 ControlType 이 다릅니다!!!");
 			_controlStackPerFrame.pop_back();
 		}
 
@@ -300,7 +343,15 @@ namespace fs
 					if (controlType != ControlType::Window || isNewData == true)
 					{
 						controlData._position = parentControlData._position; // +fs::Float2(parentControlData._innerPadding._x, parentControlData._innerPadding._z);
-						controlData._position += desiredPosition;
+						
+						if (desiredPosition == fs::Float2::kZero)
+						{
+							controlData._position += _nextControlPosition;
+						}
+						else
+						{
+							controlData._position += desiredPosition;
+						}
 					}
 				}
 				else
@@ -337,10 +388,10 @@ namespace fs
 			controlData._childAt = controlData._position + fs::Float2(controlData._innerPadding._x, controlData._innerPadding._z);
 		}
 
-		const bool GuiContext::processClickControl(const ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) const noexcept
+		const bool GuiContext::processClickControl(const ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept
 		{
 			bool result = false;
-			outBackgroundColor = getNamedColor(NamedColor::NormalState);
+			outBackgroundColor = normalColor;
 
 			bool changeMyState = true;
 			if (_focusedControlHashKey != 0 && isMeOrAncestorFocusedXXX(controlData) == false)
@@ -354,12 +405,12 @@ namespace fs
 
 			if (changeMyState == true && isInControl(_mousePosition, controlData) == true)
 			{
-				outBackgroundColor = getNamedColor(NamedColor::HoverState);
+				outBackgroundColor = hoverColor;
 
 				const bool isMouseDownIn = isInControl(_mouseDownPosition, controlData);
 				if (_mouseButtonDown == true && isMouseDownIn == true)
 				{
-					outBackgroundColor = getNamedColor(NamedColor::PressedState);
+					outBackgroundColor = pressedColor;
 				}
 
 				if (_mouseDownUp == true && isMouseDownIn == true)
@@ -489,7 +540,7 @@ namespace fs
 
 		const bool GuiContext::isAncestorFocused(const ControlData& controlData) const noexcept
 		{
-			return isAncestorFocusedRecursiveXXX(controlData._hashKey);
+			return isAncestorFocusedRecursiveXXX(controlData._parentHashKey);
 		}
 
 		const bool GuiContext::isAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept
@@ -499,18 +550,12 @@ namespace fs
 				return false;
 			}
 
-			const uint64 parentControlHashKey = getControlData(hashKey)._parentHashKey;
-			if (parentControlHashKey == 0)
-			{
-				return false;
-			}
-
-			if (parentControlHashKey == _focusedControlHashKey)
+			if (hashKey == _focusedControlHashKey)
 			{
 				return true;
 			}
 
-			return isAncestorFocusedRecursiveXXX(getControlData(parentControlHashKey)._parentHashKey);
+			return isAncestorFocusedRecursiveXXX(getControlData(hashKey)._parentHashKey);
 		}
 
 		const fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept

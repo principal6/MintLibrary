@@ -64,23 +64,30 @@ namespace fs
 
 					static const float kDeltaDoublePixel = _cbProjectionMatrix[0][0];
 					static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
+					static const float kDeltaHalfPixel = kDeltaPixel * 0.5;
 					
 					float4 main_shape(VS_OUTPUT_SHAPE_FAST input) : SV_Target
 					{
 						const float u = input._texCoord.x;
 						const float v = input._texCoord.y;
 						const float scale = input._texCoord.w;
+						const float flipped = input._texCoord.z;
 						
 						float signedDistance = 0.0;
 						if (1.0 == input._info.x)
 						{
-							// Solid
+							// Solid triangle
 							return input._color;
 						}
 						else if (2.0 == input._info.x)
 						{
 							// Circular section
-							signedDistance = input._texCoord.z * (1.0 -  sqrt(u * u + v * v));
+							signedDistance = flipped * (1.0 -  sqrt(u * u + v * v));
+						}
+						else if (3.0 == input._info.x)
+						{
+							// Circle
+							signedDistance = flipped * (1.0 - sqrt(input._texCoord.x * input._texCoord.x + input._texCoord.y * input._texCoord.y));
 						}
 						else
 						{
@@ -88,12 +95,13 @@ namespace fs
 							signedDistance = -(u * u - v);
 						}
 						
+						// Apply scale to the signed distance for more consistent anti-aliasing
 						if (0.0 < scale)
 						{
 							signedDistance *= (scale * kDeltaPixel);
 						}
-						clip(signedDistance + kDeltaPixel);
-						const float alpha = (0.0 < signedDistance) ? 1.0 : 1.0 - saturate(-signedDistance / kDeltaPixel);
+						
+						const float alpha = (kDeltaHalfPixel < signedDistance) ? 1.0 : 1.0 - saturate(abs(signedDistance - kDeltaHalfPixel) / kDeltaPixel);
 						return float4(input._color.xyz, input._color.w * alpha);
 					}
 					)"
@@ -159,7 +167,7 @@ namespace fs
 			v._position._x = pointArray[0 ^ flip]._x;
 			v._position._y = pointArray[0 ^ flip]._y;
 			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::None);
+			v._position._w = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			v._texCoord._w = abs(pointA._x - pointB._x);
@@ -202,7 +210,7 @@ namespace fs
 				v._position._x = pointA._x;
 				v._position._y = pointA._y;
 				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
+				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = pointB._x;
@@ -320,6 +328,12 @@ namespace fs
 
 		void ShapeRenderer::drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut)
 		{
+			drawHalfCircleInternal(radius, insideOut);
+			pushShapeTransform(rotationAngle);
+		}
+
+		void ShapeRenderer::drawHalfCircleInternal(const float radius, const bool insideOut)
+		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			const float scaledRadius = fs::Math::kSqrtOfTwo * radius;
 
@@ -353,8 +367,62 @@ namespace fs
 			indexArray.push_back(vertexOffset + 0);
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
+		}
 
-			pushShapeTransform(rotationAngle);
+		void ShapeRenderer::drawCircle(const float radius, const bool insideOut)
+		{
+			static constexpr uint32 kDeltaVertexCount = 4;
+
+			auto& vertexArray = _triangleRenderer.vertexArray();
+
+			CppHlsl::VS_INPUT_SHAPE_FAST v;
+			{
+				v._color = _defaultColor;
+				v._position._x = -radius;
+				v._position._y = -radius;
+				v._position._z = _position._z;
+				v._position._w = getShapeInfoAsFloat(ShapeType::Circle);
+				v._texCoord._x = -1.0f;
+				v._texCoord._y = +1.0f;
+				v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
+				v._texCoord._w = radius;
+				vertexArray.emplace_back(v);
+
+				v._position._x = +radius;
+				v._position._y = -radius;
+				v._texCoord._x = +1.0f;
+				v._texCoord._y = +1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = -radius;
+				v._position._y = +radius;
+				v._texCoord._x = -1.0f;
+				v._texCoord._y = -1.0f;
+				vertexArray.emplace_back(v);
+
+				v._position._x = +radius;
+				v._position._y = +radius;
+				v._texCoord._x = +1.0f;
+				v._texCoord._y = -1.0f;
+				vertexArray.emplace_back(v);
+			}
+
+			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+			
+			auto& indexArray = _triangleRenderer.indexArray();
+			{
+				// Body left upper
+				indexArray.push_back(vertexOffset + 0);
+				indexArray.push_back(vertexOffset + 1);
+				indexArray.push_back(vertexOffset + 2);
+
+				// Body right lower
+				indexArray.push_back(vertexOffset + 1);
+				indexArray.push_back(vertexOffset + 3);
+				indexArray.push_back(vertexOffset + 2);
+			}
+
+			pushShapeTransform(0.0f);
 		}
 
 		void ShapeRenderer::drawCircularArc(const float radius, const float arcAngle, const float rotationAngle)
@@ -631,7 +699,7 @@ namespace fs
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y - halfSize._y;
 				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
+				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfSize._x;
@@ -677,7 +745,7 @@ namespace fs
 				v._position._x = -halfSize._x + horizontalOffsetL;
 				v._position._y = -halfSize._y;
 				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
+				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +halfSize._x - horizontalOffsetR;
@@ -868,7 +936,7 @@ namespace fs
 			v._position._x = v0._x;
 			v._position._y = v0._y;
 			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::Solid);
+			v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 			vertexArray.emplace_back(v);
 
 			v._position._x = v1._x;

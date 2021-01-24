@@ -23,9 +23,10 @@ namespace fs
 		{
 			enum class ShapeType : uint8
 			{
-				None,
-				Solid,
+				QuadraticBezierTriangle,
+				SolidTriangle,
 				Circular,
+				Circle,
 			};
 
 		public:
@@ -72,6 +73,12 @@ namespace fs
 
 		public:
 			void																drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut = false);
+		
+		private:
+			void																drawHalfCircleInternal(const float radius, const bool insideOut);
+		
+		public:
+			void																drawCircle(const float radius, const bool insideOut = false);
 
 			// arcAngle = [0, +pi]
 			void																drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);

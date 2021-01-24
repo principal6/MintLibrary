@@ -37,7 +37,8 @@ namespace fs
 			ROOT,
 
 			Button,
-			TitleBar,
+			TitleBar, // PRIVATE
+			RoundButton, // PRIVATE
 			Window,
 
 			COUNT
@@ -58,10 +59,11 @@ namespace fs
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
 			static constexpr float						kDefaultIntervalY = 5.0f;
-			static constexpr float						kDefaultRoundnessInPixel = 10.0f;
+			static constexpr float						kDefaultRoundnessInPixel = 8.0f;
 			static constexpr float						kDefaultControlWidth = 150.0f;
 			static constexpr float						kDefaultFocusedAlpha = 0.9375f;
 			static constexpr float						kDefaultOutOfFocusAlpha = 0.5f;
+			static constexpr float						kDefaultRoundButtonRadius = 7.0f;
 
 			struct ControlData
 			{
@@ -129,6 +131,8 @@ namespace fs
 			void										nextSameLine();
 			void										nextControlSize(const fs::Float2& size, const bool force = false);
 			void										nextNoAutoPositioned();
+			// Only works if NoAutoPositioned!
+			void										nextControlPosition(const fs::Float2& position);
 
 		private:
 			void										resetNextStates();
@@ -158,8 +162,11 @@ namespace fs
 			void										endWindow();
 
 		private:
-			void										beginTitleBar(const wchar_t* const title, const float width);
+			void										beginTitleBar(const wchar_t* const windowTitle, const float width);
 			void										endTitleBar();
+
+			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
+			void										endRoundButton();
 
 		private:
 			const ControlData&							getStackTopControlData() noexcept;
@@ -174,7 +181,7 @@ namespace fs
 
 #pragma region Before drawing controls
 		private:
-			const bool									processClickControl(const ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) const noexcept;
+			const bool									processClickControl(const ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept;
 			const bool									processFocusControl(const ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept;
 			
 			const bool									isDraggingControl(const ControlData& controlData) const noexcept;
@@ -224,6 +231,7 @@ namespace fs
 			fs::Float2									_nextControlSize;
 			bool										_nextSizingForced;
 			bool										_nextNoAutoPositioned;
+			fs::Float2									_nextControlPosition;
 #pragma endregion
 
 

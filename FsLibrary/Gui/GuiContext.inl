@@ -49,12 +49,18 @@ namespace fs
 			_nextNoAutoPositioned = true;
 		}
 
+		FS_INLINE void GuiContext::nextControlPosition(const fs::Float2& position)
+		{
+			_nextControlPosition = position;
+		}
+
 		FS_INLINE void GuiContext::resetNextStates()
 		{
 			_nextSameLine = false;
-			_nextControlSize = fs::Float2(0.0f);
+			_nextControlSize = fs::Float2::kZero;
 			_nextSizingForced = false;
 			_nextNoAutoPositioned = false;
+			_nextControlPosition = fs::Float2::kZero;
 		}
 
 		FS_INLINE const GuiContext::ControlData& GuiContext::getStackTopControlData() noexcept

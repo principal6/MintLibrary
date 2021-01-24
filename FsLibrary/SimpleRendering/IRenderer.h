@@ -58,6 +58,9 @@ namespace fs
 			void				g(const float value) noexcept { _raw._y = value; }
 			void				b(const float value) noexcept { _raw._z = value; }
 			void				a(const float value) noexcept { _raw._w = value; }
+
+		public:
+			Color				scaleRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
 		};
 
 

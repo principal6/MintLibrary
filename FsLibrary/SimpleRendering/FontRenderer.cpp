@@ -495,7 +495,7 @@ namespace fs
 			const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
 			
 			const float scaledFontSize = _fontSize * scale;
-			fs::Float3 currentPosition = position + fs::Float3(0.0f, -scaledFontSize * 0.5f - 2.0f, 0.0f);
+			fs::Float3 currentPosition = position + fs::Float3(0.0f, -scaledFontSize * 0.5f - 1.0f, 0.0f);
 			if (directionHorz != TextRenderDirectionHorz::Rightward)
 			{
 				currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
