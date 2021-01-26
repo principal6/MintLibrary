@@ -48,11 +48,12 @@ namespace fs
 			virtual bool						isRunning() noexcept override;
 
 		public:
-			virtual void						size(const Int2& newSize) override;
-			virtual const Int2&					size() const noexcept override;
-			virtual void						position(const Int2& newPosition) override;
-			virtual const Int2&					position() const noexcept override;
+			virtual void						setSize(const Int2& newSize) override final;
+			virtual void						setPosition(const Int2& newPosition) override final;
 			HWND								getHandle() const noexcept;
+
+		public:
+			virtual void						setCursorType(const CursorType cursorType) noexcept override final;
 
 		protected:
 			LRESULT								processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
@@ -62,6 +63,9 @@ namespace fs
 			HWND								_hWnd;
 			HINSTANCE							_hInstance;
 			MSG									_msg;
+		
+		private:
+			HCURSOR								_cursorArray[static_cast<uint32>(CursorType::COUNT)];
 		};
 #pragma endregion
 	}

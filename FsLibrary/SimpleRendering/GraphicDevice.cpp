@@ -36,13 +36,13 @@ namespace fs
 			__noop;
 		}
 
-		void GraphicDevice::initialize(const fs::Window::IWindow* const window)
+		void GraphicDevice::initialize(fs::Window::IWindow* const window)
 		{
 			FS_ASSERT("김장원", window != nullptr, "window 에 대한 포인터가 nullptr 이면 안 됩니다!");
 		
 			_window = window;
 
-			const fs::Float3& backgroundColor = _window->backgroundColor();
+			const fs::Float3& backgroundColor = _window->getBackgroundColor();
 			_clearColor[0] = backgroundColor._x;
 			_clearColor[1] = backgroundColor._y;
 			_clearColor[2] = backgroundColor._z;
@@ -67,7 +67,7 @@ namespace fs
 		void GraphicDevice::createDxDevice()
 		{
 			const fs::Window::WindowsWindow* const windowsWindow = static_cast<const fs::Window::WindowsWindow*>(_window);
-			const Int2 windowSize = _window->size();
+			const Int2 windowSize = _window->getSize();
 
 			// Create SwapChain
 			{
@@ -147,7 +147,7 @@ namespace fs
 
 		void GraphicDevice::initializeShaderHeaderMemory()
 		{
-			const Int2 windowSize = _window->size();
+			const Int2 windowSize = _window->getSize();
 
 			// Stream data
 			{
@@ -443,7 +443,12 @@ namespace fs
 		
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept
 		{
-			return (_window != nullptr) ? _window->size() : fs::Int2::kZero;
+			return (_window != nullptr) ? _window->getSize() : fs::Int2::kZero;
+		}
+		
+		fs::Window::IWindow* GraphicDevice::getWindow() noexcept
+		{
+			return _window;
 		}
 	}
 }

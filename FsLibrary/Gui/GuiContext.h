@@ -9,7 +9,10 @@
 
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
 #include <FsLibrary/SimpleRendering/FontRenderer.h>
+
 #include <FsLibrary/Container/IId.h>
+
+#include <FsLibrary/Platform/IWindow.h>
 
 #include <FsMath/Include/Float2.h>
 
@@ -54,6 +57,14 @@ namespace fs
 			Invisible
 		};
 
+		enum class ResizeMethod
+		{
+			ResizeOnly,
+			RepositionHorz,
+			RepositionVert,
+			RepositionBoth,
+		};
+
 
 		class GuiContext final
 		{
@@ -64,33 +75,56 @@ namespace fs
 			static constexpr float						kDefaultFocusedAlpha = 0.875f;
 			static constexpr float						kDefaultOutOfFocusAlpha = 0.5f;
 			static constexpr float						kDefaultRoundButtonRadius = 7.0f;
+			static constexpr float						kControlDisplayMinWidth = 10.0f;
+			static constexpr float						kControlDisplayMinHeight = 10.0f;
 
-			struct ControlData
+			class ControlData
 			{
 			public:
-									ControlData();
-									ControlData(const fs::Float4& innerPadding);
+										ControlData();
+										ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType);
+										ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const fs::Float2& size);
+			
+			public:
+				const uint64			getHashKey() const noexcept;
+				const uint64			getParentHashKey() const noexcept;
+				const fs::Float4&		getInnerPadding() const noexcept;
+				const fs::Float2&		getDisplaySize() const noexcept;
+				const fs::Float2&		getChildAt() const noexcept;
+				const fs::Float2&		getOffset() const noexcept;
+				const ControlType		getControlType() const noexcept;
+				const bool				isControlState(const ControlState controlState) const noexcept;
 
 			public:
-				uint64				_hashKey;
-				uint64				_parentHashKey;
+				void					setControlState(const ControlState controlState) noexcept;
+			
+			public:
+				void					setOffsetY_XXX(const float offsetY) noexcept;
 
-				fs::Float4			_innerPadding; // L-R-T-B
-				fs::Float2			_displaySize;
-				fs::Float2			_interactionSize;
-				fs::Float2			_position; // In screen space, at left-top corner
-				fs::Float2			_childAt;
-				fs::Float2			_offset;
-				bool				_isFocusable;
-				ControlType			_controlTypeForDebug;
-				ControlState		_controlState;
+			public:
+				fs::Float2				_interactionSize;
+				fs::Float2				_position; // In screen space, at left-top corner
+				bool					_isFocusable;
+				bool					_isResizable;
+				bool					_isDraggable;
+				uint64					_dragTargetHashKey;
+
+			private:
+				uint64					_hashKey;
+				uint64					_parentHashKey;
+				fs::Float4				_innerPadding; // L-R-T-B
+				fs::Float2				_displaySize;
+				fs::Float2				_childAt;
+				fs::Float2				_offset;
+				ControlType				_controlType;
+				ControlState			_controlState;
 			};
 
 			struct ControlStackData
 			{
 			public:
 									ControlStackData() = default;
-									ControlStackData(const ControlType controlType, const uint64 hashKey);
+									ControlStackData(const ControlData& controlData);
 
 			public:
 				ControlType			_controlType;
@@ -123,7 +157,9 @@ namespace fs
 			void										handleEvents(fs::Window::IWindow* const window);
 
 		private:
-			const bool									isInControl(const fs::Float2& mousePosition, const ControlData& controlData) const noexcept;
+			const bool									isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept;
+			const bool									isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
+			const bool									isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizeMethod& outResizeMethod) const noexcept;
 
 
 #pragma region Next-states
@@ -164,7 +200,7 @@ namespace fs
 
 		private:
 			// Returns size of titlebar
-			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const float width);
+			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& parentWindowDisplaySize);
 			void										endTitleBar();
 
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
@@ -176,17 +212,21 @@ namespace fs
 			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
 			fs::Float3									getControlCenterPosition(const ControlData& controlData) const noexcept;
 			const uint64								generateControlHashKey(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&								getControlData(const wchar_t* const text, const fs::Float2& defaultSize, const ControlType controlType, const fs::Float2& desiredPosition = fs::Float2::kZero, const fs::Float4& innerPadding = fs::Float4::kZero, const fs::Float2& desiredInteractionSize = fs::Float2::kZero) noexcept;
+			ControlData&								getControlData(const wchar_t* const text, const fs::Float2& initialDisplaySize, const ControlType controlType, const fs::Float2& desiredPosition = fs::Float2::kZero, 
+				const fs::Float4& innerPadding = fs::Float4::kZero, const fs::Float2& deltaInteractionSize = fs::Float2::kZero, const bool resetDisplaySize = false) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
 #pragma endregion
 
 
 #pragma region Before drawing controls
 		private:
-			const bool									processClickControl(const ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept;
-			const bool									processFocusControl(const ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) const noexcept;
+			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			void										processControlCommonInternal(ControlData& controlData) noexcept;
+			const bool									shouldApplyChange(const ControlData& controlData) const noexcept;
 			
 			const bool									isDraggingControl(const ControlData& controlData) const noexcept;
+			const bool									isResizingControl(const ControlData& controlData) const noexcept;
 
 			const bool									isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept;
 			const bool									isAncestorFocused(const ControlData& controlData) const noexcept;
@@ -201,7 +241,7 @@ namespace fs
 			void										render();
 
 		private:
-			void										resetControlStatesPerFrame();
+			void										resetStatesPerFrame();
 
 		private:
 			fs::SimpleRendering::GraphicDevice* const	_graphicDevice;
@@ -221,9 +261,23 @@ namespace fs
 
 		private:
 			mutable uint64								_focusedControlHashKey;
+		
+
+#pragma region Mouse Capture States
+		private:
+			mutable bool								_isDragBegun;
 			mutable uint64								_draggedControlHashKey;
 			mutable fs::Float2							_draggedControlInitialPosition;
-			mutable bool								_dragStarted;
+		
+		private:
+			mutable bool								_isResizeBegun;
+			mutable uint64								_resizedControlHashKey;
+			mutable fs::Float2							_resizedControlInitialPosition;
+			mutable fs::Float2							_resizedControlInitialDisplaySize;
+			mutable ResizeMethod						_resizeMethod;
+#pragma endregion
+		
+		private:
 			std::unordered_map<uint64, ControlData>		_controlIdMap;
 
 
@@ -244,6 +298,7 @@ namespace fs
 			fs::Float2									_mouseUpPosition;
 			bool										_mouseButtonDown;
 			bool										_mouseDownUp;
+			mutable fs::Window::CursorType				_cursorType; // per frame
 #pragma endregion
 
 		private:

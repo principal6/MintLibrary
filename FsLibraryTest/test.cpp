@@ -788,13 +788,13 @@ const bool testWindow()
 					}
 					else if (event._data._keyCode == EventData::KeyCode::Left)
 					{
-						const Int2& pos = window.position();
-						window.position(pos - Int2(5, 0));
+						const Int2& pos = window.getPosition();
+						window.setPosition(pos - Int2(5, 0));
 					}
 					else if (event._data._keyCode == EventData::KeyCode::Right)
 					{
-						const Int2& pos = window.position();
-						window.position(pos + Int2(5, 0));
+						const Int2& pos = window.getPosition();
+						window.setPosition(pos + Int2(5, 0));
 					}
 				}
 			}

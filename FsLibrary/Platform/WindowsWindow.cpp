@@ -78,8 +78,8 @@ namespace fs
 			windowClass.cbClsExtra = 0;
 			windowClass.cbSize = sizeof(windowClass);
 			windowClass.cbWndExtra = 0;
-			windowClass.hbrBackground = CreateSolidBrush(backgroundColor); // 배경을 그리지 않게 한다
-			windowClass.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+			windowClass.hbrBackground = CreateSolidBrush(backgroundColor);
+			windowClass.hCursor = nullptr;
 			windowClass.hIconSm = windowClass.hIcon = LoadIconW(nullptr, IDI_SHIELD);
 			windowClass.hInstance = _hInstance;
 			windowClass.lpfnWndProc = WndProc;
@@ -113,7 +113,7 @@ namespace fs
 				FS_WINDOW_RETURN_FAIL(CreationError::FailedToCreateWindow);
 			}
 
-			size(creationData._size);
+			setSize(creationData._size);
 
 			ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -121,6 +121,15 @@ namespace fs
 
 			windowsWindowPool.insertWindow(_hWnd, this);
 
+			// Cursors
+			_cursorArray[static_cast<uint32>(CursorType::Arrow)]	= LoadCursorW(nullptr, IDC_ARROW);
+			_cursorArray[static_cast<uint32>(CursorType::SizeVert)]	= LoadCursorW(nullptr, IDC_SIZENS);
+			_cursorArray[static_cast<uint32>(CursorType::SizeHorz)]	= LoadCursorW(nullptr, IDC_SIZEWE);
+			_cursorArray[static_cast<uint32>(CursorType::SizeLeftTilted)]	= LoadCursorW(nullptr, IDC_SIZENWSE);
+			_cursorArray[static_cast<uint32>(CursorType::SizeRightTilted)]	= LoadCursorW(nullptr, IDC_SIZENESW);
+
+			setCursorType(CursorType::Arrow);
+			
 			FS_WINDOW_RETURN_OK;
 		}
 
@@ -146,7 +155,7 @@ namespace fs
 			return __super::isRunning();
 		}
 
-		void WindowsWindow::size(const Int2& newSize)
+		void WindowsWindow::setSize(const Int2& newSize)
 		{
 			_creationData._size = newSize;
 
@@ -161,26 +170,23 @@ namespace fs
 			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
 		}
 
-		const Int2& WindowsWindow::size() const noexcept
-		{
-			return _creationData._size;
-		}
-
-		void WindowsWindow::position(const Int2& newPosition)
+		void WindowsWindow::setPosition(const Int2& newPosition)
 		{
 			_creationData._position = newPosition;
 
 			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
 		}
 
-		const Int2& WindowsWindow::position() const noexcept
-		{
-			return _creationData._position;
-		}
-
 		HWND WindowsWindow::getHandle() const noexcept
 		{
 			return _hWnd;
+		}
+
+		void WindowsWindow::setCursorType(const CursorType cursorType) noexcept
+		{
+			__super::setCursorType(cursorType);
+
+			::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
 		}
 
 		LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)

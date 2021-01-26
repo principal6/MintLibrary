@@ -95,6 +95,17 @@ namespace fs
 			Data			_data{};
 		};
 
+		enum class CursorType
+		{
+			Arrow,
+			SizeVert,
+			SizeHorz,
+			SizeLeftTilted,
+			SizeRightTilted,
+
+			COUNT
+		};
+
 		class IWindow abstract
 		{
 		public:
@@ -123,15 +134,18 @@ namespace fs
 			CreationError					getCreationError() const noexcept { return _creationError; }
 
 		public:
-			virtual void					size(const Int2& newSize) abstract;
-			virtual const Int2&				size() const noexcept { return _creationData._size; }
+			virtual void					setSize(const Int2& newSize) abstract;
+			const Int2&						getSize() const noexcept { return _creationData._size; }
 			
-			virtual const Int2&				entireSize() const noexcept { return _entireSize; }
+			const Int2&						getEntireSize() const noexcept { return _entireSize; }
 
-			virtual void					position(const Int2& newPosition) abstract;
-			virtual const Int2&				position() const noexcept { return _creationData._position; }
+			virtual void					setPosition(const Int2& newPosition) abstract;
+			const Int2&						getPosition() const noexcept { return _creationData._position; }
 			
-			const fs::Float3&				backgroundColor() const noexcept { return _creationData._bgColor; }
+			const fs::Float3&				getBackgroundColor() const noexcept { return _creationData._bgColor; }
+
+			virtual void					setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
+			const CursorType				getCursorType() const noexcept { return _currentCursorType; }
 
 		protected:
 			bool							_isRunning{ false };
@@ -139,6 +153,9 @@ namespace fs
 			fs::Int2						_entireSize{};
 			CreationError					_creationError{};
 			std::queue<EventData>			_eventQueue{};
+		
+		protected:
+			CursorType						_currentCursorType;
 		};
 	}
 }

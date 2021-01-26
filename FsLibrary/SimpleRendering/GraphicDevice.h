@@ -51,7 +51,7 @@ namespace fs
 																		~GraphicDevice() = default;
 
 		public:
-			void														initialize(const fs::Window::IWindow* const window);
+			void														initialize(fs::Window::IWindow* const window);
 
 		private:
 			void														createDxDevice();
@@ -83,9 +83,10 @@ namespace fs
 			ID3D11Device*												getDxDevice() noexcept;
 			ID3D11DeviceContext*										getDxDeviceContext() noexcept;
 			const fs::Int2&												getWindowSize() const noexcept;
+			fs::Window::IWindow*										getWindow() noexcept;
 
 		private:
-			const fs::Window::IWindow*									_window;
+			fs::Window::IWindow*										_window;
 
 		private:
 			float														_clearColor[4];
