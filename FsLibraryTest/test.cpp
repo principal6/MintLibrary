@@ -805,6 +805,7 @@ const bool testWindow()
 			graphicDevice.beginRendering();
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+
 				if (guiContext.beginWindow(L"응용 프로그램", fs::Float2(300.0f, 400.0f), fs::Float2(20.0f, 50.0f)) == true)
 				{
 					//guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));

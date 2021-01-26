@@ -198,7 +198,8 @@ namespace fs
 			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
 			shapeRenderer.setColor(color);
 			shapeRenderer.setPosition(controlCenterPosition);
-			shapeRenderer.drawRoundedRectangle(controlData.getDisplaySize(), (kDefaultRoundnessInPixel * 2.0f / controlData.getDisplaySize().minElement()), 0.0f, 0.0f);
+			const fs::Float2& displaySize = controlData.getDisplaySize();
+			shapeRenderer.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
 
 			fontRenderer.setColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
 			fontRenderer.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.8888f);
@@ -235,7 +236,7 @@ namespace fs
 			controlDataParam._desiredPosition = position;
 			controlDataParam._innerPadding = InnerPadding(windowInnerPadding);
 			controlDataParam._displaySizeMin._x = titleWidth + titleBarInnerPadding.left() + titleBarInnerPadding.right() + kDefaultRoundButtonRadius * 2.0f;
-			controlDataParam._displaySizeMin._y = titleBarSize._y;
+			controlDataParam._displaySizeMin._y = titleBarSize._y + 12.0f;
 			ControlData& windowControlData = getControlData(title, controlType, controlDataParam);
 			
 			fs::SimpleRendering::Color color;
@@ -249,12 +250,20 @@ namespace fs
 
 				windowControlData.setViewportIndexXXX(static_cast<uint32>(viewportArray.size()));
 
-				D3D11_RECT scissorRectangle;
-				scissorRectangle.left = static_cast<LONG>(windowControlData._position._x);
-				scissorRectangle.top = static_cast<LONG>(windowControlData._position._y);
-				scissorRectangle.right = static_cast<LONG>(scissorRectangle.left + windowControlData.getDisplaySize()._x);
-				scissorRectangle.bottom = static_cast<LONG>(scissorRectangle.top + windowControlData.getDisplaySize()._y);
-				scissorRectangleArray.emplace_back(scissorRectangle);
+				D3D11_RECT scissorRectangleForMe;
+				scissorRectangleForMe.left = static_cast<LONG>(windowControlData._position._x);
+				scissorRectangleForMe.top = static_cast<LONG>(windowControlData._position._y);
+				scissorRectangleForMe.right = static_cast<LONG>(scissorRectangleForMe.left + windowControlData.getDisplaySize()._x);
+				scissorRectangleForMe.bottom = static_cast<LONG>(scissorRectangleForMe.top + windowControlData.getDisplaySize()._y);
+				scissorRectangleArray.emplace_back(scissorRectangleForMe);
+				viewportArray.emplace_back(_graphicDevice->getFullScreenViewport());
+
+				D3D11_RECT scissorRectangleForChild;
+				scissorRectangleForChild.left = static_cast<LONG>(windowControlData._position._x + controlDataParam._innerPadding.left());
+				scissorRectangleForChild.top = static_cast<LONG>(windowControlData._position._y + controlDataParam._innerPadding.top());
+				scissorRectangleForChild.right = static_cast<LONG>(windowControlData._position._x + windowControlData.getDisplaySize()._x - controlDataParam._innerPadding.right());
+				scissorRectangleForChild.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData.getDisplaySize()._y - controlDataParam._innerPadding.bottom());
+				scissorRectangleArray.emplace_back(scissorRectangleForChild);
 				viewportArray.emplace_back(_graphicDevice->getFullScreenViewport());
 			}
 
@@ -488,7 +497,10 @@ namespace fs
 
 			calculateControlChildAt(controlData);
 
-			controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
+			// Viewport index
+			{
+				controlData.setViewportIndexXXX((parentControlData.getControlType() == ControlType::Window) ? parentControlData.getViewportIndex() + 1 : parentControlData.getViewportIndex());
+			}
 
 			resetNextStates();
 
