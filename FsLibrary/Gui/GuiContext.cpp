@@ -626,7 +626,7 @@ namespace fs
 						changeTargetControlData._position._x = _resizedControlInitialPosition._x - mouseDeltaPosition._x * flipHorz;
 					}
 
-					changeTargetControlDisplaySize._x = fs::max(controlData.getDisplaySizeMin()._x, _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz);
+					changeTargetControlDisplaySize._x = fs::max(changeTargetControlData.getDisplaySizeMin()._x, _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz);
 				}
 				if (_cursorType != fs::Window::CursorType::SizeHorz)
 				{
@@ -635,7 +635,7 @@ namespace fs
 						changeTargetControlData._position._y = _resizedControlInitialPosition._y - mouseDeltaPosition._y * flipVert;
 					}
 
-					changeTargetControlDisplaySize._y = fs::max(controlData.getDisplaySizeMin()._y, _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert);
+					changeTargetControlDisplaySize._y = fs::max(changeTargetControlData.getDisplaySizeMin()._y, _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert);
 				}
 			}
 			else if (isDragging == true)
@@ -668,6 +668,12 @@ namespace fs
 
 		const bool GuiContext::isDraggingControl(const ControlData& controlData) const noexcept
 		{
+			if (_mouseButtonDown == false)
+			{
+				_draggedControlHashKey = 0;
+				return false;
+			}
+
 			if (_draggedControlHashKey == 0)
 			{
 				if (_resizedControlHashKey != 0 || controlData._isDraggable == false || shouldApplyChange(controlData) == false)
@@ -685,12 +691,6 @@ namespace fs
 			}
 			else
 			{
-				if (_mouseButtonDown == false)
-				{
-					_draggedControlHashKey = 0;
-					return false;
-				}
-				
 				if (controlData.getHashKey() == _draggedControlHashKey)
 				{
 					return true;
@@ -701,6 +701,12 @@ namespace fs
 
 		const bool GuiContext::isResizingControl(const ControlData& controlData) const noexcept
 		{
+			if (_mouseButtonDown == false)
+			{
+				_resizedControlHashKey = 0;
+				return false;
+			}
+
 			if (_resizedControlHashKey == 0)
 			{
 				if (_draggedControlHashKey != 0 || controlData._isResizable == false || shouldApplyChange(controlData) == false)
@@ -719,12 +725,6 @@ namespace fs
 			}
 			else
 			{
-				if (_mouseButtonDown == false)
-				{
-					_resizedControlHashKey = 0;
-					return false;
-				}
-
 				if (controlData.getHashKey() == _resizedControlHashKey)
 				{
 					return true;
