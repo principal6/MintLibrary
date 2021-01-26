@@ -1,7 +1,18 @@
+#include "IRenderer.h"
 namespace fs
 {
 	namespace SimpleRendering
 	{
+		FS_INLINE void IRenderer::setUseMultipleViewports() noexcept
+		{
+			_useMultipleViewports = true;
+		}
+
+		FS_INLINE const bool IRenderer::getUseMultipleViewports() const noexcept
+		{
+			return _useMultipleViewports;
+		}
+
 		FS_INLINE void IRenderer::setPosition(const fs::Float3& position) noexcept
 		{
 			_position = position;

@@ -423,16 +423,37 @@ namespace fs
 					VS_OUTPUT main(VS_INPUT input)
 					{
 						VS_OUTPUT result;
-						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
-						result._color		= input._color;
-						result._texCoord	= input._texCoord;
-						result._flag		= input._flag;
+						result._position		= mul(float4(input._position.xy, 0.0, 1.0), _cbProjectionMatrix);
+						result._color			= input._color;
+						result._texCoord		= input._texCoord;
+						result._flag			= input._flag;
+						result._viewportIndex	= (uint)input._position.z;
 						return result;
 					}
 					)"
 				};
 				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
 				_vertexShaderId = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", &typeInfo);
+			}
+
+			{
+				static constexpr const char kShaderString[]
+				{
+					R"(
+					#include <ShaderStructDefinitions>
+					
+					[maxvertexcount(3)]
+					void main(triangle VS_OUTPUT input[3], inout TriangleStream<VS_OUTPUT> OutputStream)
+					{
+						for (int i = 0; i < 3; ++i)
+						{
+							OutputStream.Append(input[i]);
+						}
+						OutputStream.RestartStrip();
+					}
+					)"
+				};
+				_geometryShaderId = shaderPool.pushNonVertexShader("FontRendererGS", kShaderString, "main", DxShaderType::GeometryShader);
 			}
 
 			// Compile pixel shader
@@ -481,9 +502,20 @@ namespace fs
 				
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
+
+				if (getUseMultipleViewports() == true)
+				{
+					shaderPool.bindShader(DxShaderType::GeometryShader, _geometryShaderId);
+				}
+
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 
 				_triangleRenderer.render();
+
+				if (getUseMultipleViewports() == true)
+				{
+					shaderPool.unbindShader(DxShaderType::GeometryShader);
+				}
 			}
 		}
 

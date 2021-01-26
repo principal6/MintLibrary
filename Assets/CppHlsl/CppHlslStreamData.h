@@ -53,16 +53,6 @@ namespace fs
 		struct VS_INPUT_SHAPE
 		{
 			float4				_position;
-			float4				_infoA;
-			float4				_infoB;
-			float4				_infoC;
-			float4				_borderColor;
-			float4				_color;
-		};
-
-		struct VS_INPUT_SHAPE_FAST
-		{
-			float4				_position;
 			float4				_color;
 			float4				_texCoord;
 		};
@@ -74,24 +64,16 @@ namespace fs
 			float4				_color;
 			float2				_texCoord;
 			uint				_flag{ 0 };
+			uint				_viewportIndex CPP_HLSL_SEMANTIC_NAME(SV_ViewportArrayIndex);
 		};
 
 		struct VS_OUTPUT_SHAPE
 		{
 			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
-			float4				_infoA;
-			float4				_infoB;
-			float4				_infoC;
-			float4				_borderColor;
-			float4				_color;
-		};
-
-		struct VS_OUTPUT_SHAPE_FAST
-		{
-			float4				_position CPP_HLSL_SEMANTIC_NAME(SV_POSITION);
 			float4				_color;
 			float4				_texCoord;
 			float4				_info;
+			uint				_viewportIndex CPP_HLSL_SEMANTIC_NAME(SV_ViewportArrayIndex);
 		};
 	}
 }

@@ -80,6 +80,7 @@ namespace fs
 
 		public:
 			void						bindShader(const DxShaderType shaderType, const DxObjectId& objectId);
+			void						unbindShader(const DxShaderType shaderType);
 			
 		private:
 			const DxShader&				getShader(const DxShaderType shaderType, const DxObjectId& objectId);
@@ -92,7 +93,10 @@ namespace fs
 
 		private:
 			DxShaderVersion				_shaderVersion;
+
+		private:
 			std::vector<DxShader>		_vertexShaderArray;
+			std::vector<DxShader>		_geometryShaderArray;
 			std::vector<DxShader>		_pixelShaderArray;
 
 		private:

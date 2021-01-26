@@ -121,6 +121,7 @@ namespace fs
 		private:
 			fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
 			DxObjectId													_vertexShaderId;
+			DxObjectId													_geometryShaderId;
 			DxObjectId													_pixelShaderId;
 			DxObjectId													_fontTextureId;
 		};

@@ -133,15 +133,33 @@ namespace fs
 			initializeSamplerStates();
 			initializeBlendStates();
 
-			// Viewport
+			// Rasterizer states and viewport
 			{
-				D3D11_VIEWPORT viewport{};
-				viewport.Width = static_cast<FLOAT>(windowSize._x);
-				viewport.Height = static_cast<FLOAT>(windowSize._y);
-				viewport.MinDepth = 0.0f;
-				viewport.MaxDepth = 1.0f;
-				viewport.TopLeftX = viewport.TopLeftY = 0.0f;
-				_deviceContext->RSSetViewports(1, &viewport);
+				D3D11_RASTERIZER_DESC rasterizerDescriptor;
+				rasterizerDescriptor.AntialiasedLineEnable = TRUE;
+				rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+				rasterizerDescriptor.DepthBias = 0;
+				rasterizerDescriptor.DepthBiasClamp = 0.0f;
+				rasterizerDescriptor.DepthClipEnable = TRUE;
+				rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				rasterizerDescriptor.FrontCounterClockwise = FALSE;
+				rasterizerDescriptor.MultisampleEnable = TRUE;
+				rasterizerDescriptor.ScissorEnable = FALSE;
+				rasterizerDescriptor.SlopeScaledDepthBias = 0.0f;
+				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateDefault.ReleaseAndGetAddressOf());
+
+				rasterizerDescriptor.ScissorEnable = TRUE;
+				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());
+
+				// Full-screen viewport
+				{
+					_fullScreenViewport.Width = static_cast<FLOAT>(windowSize._x);
+					_fullScreenViewport.Height = static_cast<FLOAT>(windowSize._y);
+					_fullScreenViewport.MinDepth = 0.0f;
+					_fullScreenViewport.MaxDepth = 1.0f;
+					_fullScreenViewport.TopLeftX = 0.0f;
+					_fullScreenViewport.TopLeftY = 0.0f;
+				}
 			}
 		}
 
@@ -432,6 +450,8 @@ namespace fs
 #endif
 
 #pragma region Renderers
+			useFullScreenViewport();
+
 			_rectangleRenderer.render();
 			_shapeRenderer.render();
 			_guiContext.render();
@@ -439,6 +459,22 @@ namespace fs
 #pragma endregion
 
 			_swapChain->Present(0, 0);
+		}
+
+		void GraphicDevice::useScissorRectanglesWithMultipleViewports() noexcept
+		{
+			_deviceContext->RSSetState(_rasterizerStateScissorRectangles.Get());
+		}
+
+		void GraphicDevice::useFullScreenViewport() noexcept
+		{
+			_deviceContext->RSSetState(_rasterizerStateDefault.Get());
+			_deviceContext->RSSetViewports(1, &_fullScreenViewport);
+		}
+
+		const D3D11_VIEWPORT& GraphicDevice::getFullScreenViewport() const noexcept
+		{
+			return _fullScreenViewport;
 		}
 		
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept

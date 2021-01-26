@@ -30,6 +30,10 @@ namespace fs
 			{
 				out.append("vs_");
 			}
+			else if (shaderType == DxShaderType::GeometryShader)
+			{
+				out.append("gs_");
+			}
 			else if (shaderType == DxShaderType::PixelShader)
 			{
 				out.append("ps_");
@@ -60,6 +64,10 @@ namespace fs
 			{
 				_graphicDevice->getDxDeviceContext()->VSSetShader(static_cast<ID3D11VertexShader*>(_shader.Get()), nullptr, 0);
 				_graphicDevice->getDxDeviceContext()->IASetInputLayout(_inputLayout.Get());
+			}
+			else if (_shaderType == DxShaderType::GeometryShader)
+			{
+				_graphicDevice->getDxDeviceContext()->GSSetShader(static_cast<ID3D11GeometryShader*>(_shader.Get()), nullptr, 0);
 			}
 			else if (_shaderType == DxShaderType::PixelShader)
 			{
@@ -134,7 +142,18 @@ namespace fs
 				return reportCompileError();
 			}
 		
-			if (shaderType == DxShaderType::PixelShader)
+			if (shaderType == DxShaderType::GeometryShader)
+			{
+				if (FAILED(_graphicDevice->getDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+				{
+					return DxObjectId::kInvalidObjectId;
+				}
+
+				shader.assignIdXXX();
+				_geometryShaderArray.emplace_back(std::move(shader));
+				return _geometryShaderArray.back().getId();
+			}
+			else if (shaderType == DxShaderType::PixelShader)
 			{
 				if (FAILED(_graphicDevice->getDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
@@ -172,6 +191,30 @@ namespace fs
 			}
 		}
 
+		void DxShaderPool::unbindShader(const DxShaderType shaderType)
+		{
+			switch (shaderType)
+			{
+			case fs::SimpleRendering::DxShaderType::VertexShader:
+				_graphicDevice->getDxDeviceContext()->VSSetShader(nullptr, nullptr, 0);
+				_graphicDevice->getDxDeviceContext()->IASetInputLayout(nullptr);
+				break;
+			case fs::SimpleRendering::DxShaderType::GeometryShader:
+				_graphicDevice->getDxDeviceContext()->GSSetShader(nullptr, nullptr, 0);
+				break;
+			case fs::SimpleRendering::DxShaderType::PixelShader:
+				_graphicDevice->getDxDeviceContext()->PSSetShader(nullptr, nullptr, 0);
+				break;
+			case fs::SimpleRendering::DxShaderType::COUNT:
+				break;
+			default:
+				break;
+			}
+
+			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
+			_boundShaderIdArray[shaderTypeIndex] = DxObjectId();
+		}
+
 		const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectId& objectId)
 		{
 			FS_ASSERT("±èÀå¿ø", objectId.isObjectType(DxObjectType::Shader) == true, "Invalid parameter - ObjectType !!");
@@ -182,6 +225,14 @@ namespace fs
 				if (0 <= index)
 				{
 					return _vertexShaderArray[index];
+				}
+			}
+			else if (shaderType == DxShaderType::GeometryShader)
+			{
+				const int32 index = fs::binarySearch(_geometryShaderArray, objectId);
+				if (0 <= index)
+				{
+					return _geometryShaderArray[index];
 				}
 			}
 			else if (shaderType == DxShaderType::PixelShader)

@@ -71,6 +71,11 @@ namespace fs
 			void														endRendering();
 
 		public:
+			void														useScissorRectanglesWithMultipleViewports() noexcept;
+			void														useFullScreenViewport() noexcept;
+			const D3D11_VIEWPORT&										getFullScreenViewport() const noexcept;
+
+		public:
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
 			fs::SimpleRendering::DxResourcePool&						getResourcePool() noexcept;
 			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
@@ -103,6 +108,11 @@ namespace fs
 			ComPtr<ID3D11Texture2D>										_depthStencilBuffer;
 			ComPtr<ID3D11DepthStencilView>								_depthStencilView;
 			ComPtr<ID3D11DepthStencilState>								_depthStencilStateLessEqual;
+		
+		private:
+			ComPtr<ID3D11RasterizerState>								_rasterizerStateDefault;
+			ComPtr<ID3D11RasterizerState>								_rasterizerStateScissorRectangles;
+			D3D11_VIEWPORT												_fullScreenViewport;
 
 		private:
 			DxShaderHeaderMemory										_shaderHeaderMemory;

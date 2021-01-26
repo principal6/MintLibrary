@@ -66,6 +66,30 @@ namespace fs
 		};
 
 
+		class InnerPadding
+		{
+		public:
+							InnerPadding();
+							InnerPadding(const float uniformPadding);
+							InnerPadding(const float left, const float right, const float top, const float bottom);
+							InnerPadding(const InnerPadding& rhs) = default;
+							InnerPadding(InnerPadding&& rhs) noexcept = default;
+
+		public:
+			InnerPadding&	operator=(const InnerPadding& rhs) = default;
+			InnerPadding&	operator=(InnerPadding && rhs) noexcept = default;
+
+		public:
+			const float		left() const noexcept;
+			const float		right() const noexcept;
+			const float		top() const noexcept;
+			const float		bottom() const noexcept;
+
+		private:
+			fs::Float4		_raw;
+		};
+
+
 		class GuiContext final
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
@@ -88,18 +112,21 @@ namespace fs
 			public:
 				const uint64			getHashKey() const noexcept;
 				const uint64			getParentHashKey() const noexcept;
-				const fs::Float4&		getInnerPadding() const noexcept;
+				const InnerPadding&		getInnerPadding() const noexcept;
 				const fs::Float2&		getDisplaySize() const noexcept;
+				const fs::Float2&		getDisplaySizeMin() const noexcept;
 				const fs::Float2&		getChildAt() const noexcept;
 				const fs::Float2&		getOffset() const noexcept;
 				const ControlType		getControlType() const noexcept;
 				const bool				isControlState(const ControlState controlState) const noexcept;
+				const uint32			getViewportIndex() const noexcept;
 
 			public:
 				void					setControlState(const ControlState controlState) noexcept;
 			
 			public:
 				void					setOffsetY_XXX(const float offsetY) noexcept;
+				void					setViewportIndexXXX(const uint32 viewportIndex) noexcept;
 
 			public:
 				fs::Float2				_interactionSize;
@@ -112,12 +139,24 @@ namespace fs
 			private:
 				uint64					_hashKey;
 				uint64					_parentHashKey;
-				fs::Float4				_innerPadding; // L-R-T-B
+				InnerPadding			_innerPadding;
 				fs::Float2				_displaySize;
+				fs::Float2				_displaySizeMin;
 				fs::Float2				_childAt;
 				fs::Float2				_offset;
 				ControlType				_controlType;
 				ControlState			_controlState;
+				uint32					_viewportIndex;
+			};
+
+			struct ControlDataParam
+			{
+				InnerPadding	_innerPadding;
+				fs::Float2		_initialDisplaySize;
+				fs::Float2		_desiredPosition		= fs::Float2::kZero;
+				fs::Float2		_deltaInteractionSize	= fs::Float2::kZero;
+				fs::Float2		_displaySizeMin			= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+				bool			_resetDisplaySize		= false;
 			};
 
 			struct ControlStackData
@@ -200,7 +239,7 @@ namespace fs
 
 		private:
 			// Returns size of titlebar
-			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& parentWindowDisplaySize);
+			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const InnerPadding& innerPadding);
 			void										endTitleBar();
 
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
@@ -212,8 +251,7 @@ namespace fs
 			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
 			fs::Float3									getControlCenterPosition(const ControlData& controlData) const noexcept;
 			const uint64								generateControlHashKey(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&								getControlData(const wchar_t* const text, const fs::Float2& initialDisplaySize, const ControlType controlType, const fs::Float2& desiredPosition = fs::Float2::kZero, 
-				const fs::Float4& innerPadding = fs::Float4::kZero, const fs::Float2& deltaInteractionSize = fs::Float2::kZero, const bool resetDisplaySize = false) noexcept;
+			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& getControlDataParam) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
 #pragma endregion
 
@@ -251,6 +289,12 @@ namespace fs
 
 			fs::SimpleRendering::ShapeRenderer			_shapeRendererForeground;
 			fs::SimpleRendering::FontRenderer			_fontRendererForeground;
+
+			std::vector<D3D11_VIEWPORT>					_viewportArrayBackgroundPerFrame;
+			std::vector<D3D11_RECT>						_scissorRectangleArrayBackgroundPerFrame;
+
+			std::vector<D3D11_VIEWPORT>					_viewportArrayForegroundPerFrame;
+			std::vector<D3D11_RECT>						_scissorRectangleArrayForegroundPerFrame;
 
 		private:
 			const ControlData							kNullControlData;

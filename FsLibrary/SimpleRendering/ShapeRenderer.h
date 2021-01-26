@@ -115,9 +115,12 @@ namespace fs
 			void																drawColorPallete(const float radius);
 
 		private:
-			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE_FAST>		_triangleRenderer;
+			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>			_triangleRenderer;
 			DxObjectId															_vertexShaderId;
+			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;
+
+		private:
 			std::vector<fs::CppHlsl::SB_Transform>								_sbTransformData;
 			DxObjectId															_sbTransformBufferId;
 		

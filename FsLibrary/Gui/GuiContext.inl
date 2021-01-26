@@ -6,6 +6,45 @@ namespace fs
 {
 	namespace Gui
 	{
+		inline InnerPadding::InnerPadding()
+			: InnerPadding(0.0f, 0.0f, 0.0f, 0.0f)
+		{
+			__noop;
+		}
+
+		inline InnerPadding::InnerPadding(const float uniformPadding)
+			: InnerPadding(uniformPadding, uniformPadding, uniformPadding, uniformPadding)
+		{
+			__noop;
+		}
+
+		inline InnerPadding::InnerPadding(const float left, const float right, const float top, const float bottom)
+			: _raw{ left, right, top, bottom }
+		{
+			__noop;
+		}
+
+		FS_INLINE const float InnerPadding::left() const noexcept
+		{
+			return _raw._x;
+		}
+
+		FS_INLINE const float InnerPadding::right() const noexcept
+		{
+			return _raw._y;
+		}
+
+		FS_INLINE const float InnerPadding::top() const noexcept
+		{
+			return _raw._z;
+		}
+
+		FS_INLINE const float InnerPadding::bottom() const noexcept
+		{
+			return _raw._w;
+		}
+
+
 		inline GuiContext::ControlData::ControlData()
 			: ControlData(0, 0, ControlType::ROOT)
 		{
@@ -26,10 +65,12 @@ namespace fs
 			, _hashKey{ hashKey }
 			, _parentHashKey{ parentHashKey }
 			, _displaySize{ size }
-			, _childAt{ _innerPadding._x, _innerPadding._z }
+			, _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
+			, _childAt{ _innerPadding.left(), _innerPadding.top() }
 			, _dragTargetHashKey{ 0 }
 			, _controlType{ controlType }
 			, _controlState{ ControlState::Visible }
+			, _viewportIndex{ 0 }
 		{
 			__noop;
 		}
@@ -44,7 +85,7 @@ namespace fs
 			return _parentHashKey;
 		}
 
-		FS_INLINE const fs::Float4& GuiContext::ControlData::getInnerPadding() const noexcept
+		FS_INLINE const InnerPadding& GuiContext::ControlData::getInnerPadding() const noexcept
 		{
 			return _innerPadding;
 		}
@@ -52,6 +93,11 @@ namespace fs
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySize() const noexcept
 		{
 			return _displaySize;
+		}
+
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
+		{
+			return _displaySizeMin;
 		}
 
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getChildAt() const noexcept
@@ -74,6 +120,11 @@ namespace fs
 			return controlState == _controlState;
 		}
 
+		FS_INLINE const uint32 GuiContext::ControlData::getViewportIndex() const noexcept
+		{
+			return _viewportIndex;
+		}
+
 		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
 		{
 			_controlState = controlState;
@@ -82,6 +133,11 @@ namespace fs
 		FS_INLINE void GuiContext::ControlData::setOffsetY_XXX(const float offsetY) noexcept
 		{
 			_offset._y = offsetY;
+		}
+
+		FS_INLINE void GuiContext::ControlData::setViewportIndexXXX(const uint32 viewportIndex) noexcept
+		{
+			_viewportIndex = viewportIndex;
 		}
 
 
@@ -160,7 +216,7 @@ namespace fs
 		
 		FS_INLINE fs::Float3 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
 		{
-			return fs::Float3(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, 0.0f);
+			return fs::Float3(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, static_cast<float>(controlData.getViewportIndex()));
 		}
 
 	}

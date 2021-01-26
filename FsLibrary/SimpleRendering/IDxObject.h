@@ -21,6 +21,7 @@ namespace fs
 		enum class DxShaderType
 		{
 			VertexShader,
+			GeometryShader,
 			PixelShader,
 
 			COUNT,

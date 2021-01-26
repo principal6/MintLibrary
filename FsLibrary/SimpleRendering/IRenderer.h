@@ -75,6 +75,8 @@ namespace fs
 			virtual void							initializeShaders() noexcept abstract;
 			virtual void							flushData() noexcept abstract;
 			virtual void							render() noexcept abstract;
+			void									setUseMultipleViewports() noexcept;
+			const bool								getUseMultipleViewports() const noexcept;
 
 		public:
 			void									setPosition(const fs::Float3& position) noexcept;
@@ -86,9 +88,14 @@ namespace fs
 		
 		protected:
 			fs::SimpleRendering::GraphicDevice*		_graphicDevice;
+		
+		protected:
 			fs::Float3								_position;
 			std::vector<SimpleRendering::Color>		_colorArray;
 			fs::SimpleRendering::Color				_defaultColor;
+		
+		private:
+			bool									_useMultipleViewports;
 		};
 	}
 }

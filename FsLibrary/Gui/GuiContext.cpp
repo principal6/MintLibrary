@@ -66,9 +66,14 @@ namespace fs
 			}
 
 			_shapeRendererBackground.initializeShaders();
+			_shapeRendererBackground.setUseMultipleViewports();
 			_fontRendererBackground.initializeShaders();
+			_fontRendererBackground.setUseMultipleViewports();
+
 			_shapeRendererForeground.initializeShaders();
+			_shapeRendererForeground.setUseMultipleViewports();
 			_fontRendererForeground.initializeShaders();
+			_fontRendererForeground.setUseMultipleViewports();
 
 			resetNextStates();
 			resetStatesPerFrame();
@@ -180,7 +185,9 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::Button;
 			
 			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
-			ControlData& controlData = getControlData(text, fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12), controlType);
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12);
+			ControlData& controlData = getControlData(text, controlType, controlDataParam);
 			
 			fs::SimpleRendering::Color color;
 			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
@@ -214,16 +221,42 @@ namespace fs
 		const bool GuiContext::beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position)
 		{
 			static constexpr ControlType controlType = ControlType::Window;
-			const float innerPadding = 4.0f;
+			const float windowInnerPadding = 4.0f;
+
+			static const InnerPadding& titleBarInnerPadding = InnerPadding(12.0f, 6.0f, 6.0f, 6.0f);
+			fs::Float2 titleBarSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + titleBarInnerPadding.top() + titleBarInnerPadding.bottom());
 
 			// 중요
 			nextNoAutoPositioned();
 
-			ControlData& windowControlData = getControlData(title, size, controlType, position, fs::Float4(innerPadding));
-
+			const float titleWidth = _fontRendererForeground.calculateTextWidth(title, fs::StringUtil::wcslen(title));
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = size;
+			controlDataParam._desiredPosition = position;
+			controlDataParam._innerPadding = InnerPadding(windowInnerPadding);
+			controlDataParam._displaySizeMin._x = titleWidth + titleBarInnerPadding.left() + titleBarInnerPadding.right() + kDefaultRoundButtonRadius * 2.0f;
+			controlDataParam._displaySizeMin._y = titleBarSize._y;
+			ControlData& windowControlData = getControlData(title, controlType, controlDataParam);
+			
 			fs::SimpleRendering::Color color;
 			const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), color);
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
+
+			// Viewport & Scissor rectangle
+			{
+				std::vector<D3D11_VIEWPORT>& viewportArray = (isFocused == true) ? _viewportArrayForegroundPerFrame : _viewportArrayBackgroundPerFrame;
+				std::vector<D3D11_RECT>& scissorRectangleArray = (isFocused == true) ? _scissorRectangleArrayForegroundPerFrame : _scissorRectangleArrayBackgroundPerFrame;
+
+				windowControlData.setViewportIndexXXX(static_cast<uint32>(viewportArray.size()));
+
+				D3D11_RECT scissorRectangle;
+				scissorRectangle.left = static_cast<LONG>(windowControlData._position._x);
+				scissorRectangle.top = static_cast<LONG>(windowControlData._position._y);
+				scissorRectangle.right = static_cast<LONG>(scissorRectangle.left + windowControlData.getDisplaySize()._x);
+				scissorRectangle.bottom = static_cast<LONG>(scissorRectangle.top + windowControlData.getDisplaySize()._y);
+				scissorRectangleArray.emplace_back(scissorRectangle);
+				viewportArray.emplace_back(_graphicDevice->getFullScreenViewport());
+			}
 
 			const bool isOpen = windowControlData.isControlState(ControlState::VisibleOpen);
 			if (isOpen == true)
@@ -239,7 +272,8 @@ namespace fs
 			// 중요
 			nextNoAutoPositioned();
 
-			beginTitleBar(title, windowControlData.getDisplaySize());
+			titleBarSize._x = windowControlData.getDisplaySize()._x;
+			beginTitleBar(title, titleBarSize, titleBarInnerPadding);
 			endTitleBar();
 
 			return isOpen;
@@ -251,15 +285,15 @@ namespace fs
 			_controlStackPerFrame.pop_back();
 		}
 
-		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& parentWindowDisplaySize)
+		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const InnerPadding& innerPadding)
 		{
-			const float paddingLeft = 12.0f;
-			const float paddingRight = 6.0f;
-			const float paddingTopBottom = 12.0f;
 			static constexpr ControlType controlType = ControlType::TitleBar;
 
-			const fs::Float2& titleBarSize = fs::Float2(parentWindowDisplaySize._x, fs::SimpleRendering::kDefaultFontSize + paddingTopBottom);
-			ControlData& controlData = getControlData(windowTitle, titleBarSize, controlType, fs::Float2::kZero, fs::Float4::kZero, fs::Float2(-paddingRight - kDefaultRoundButtonRadius * 2.0f, 0.0f), true);
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = titleBarSize;
+			controlDataParam._deltaInteractionSize = fs::Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
+			controlDataParam._resetDisplaySize = true;
+			ControlData& controlData = getControlData(windowTitle, controlType, controlDataParam);
 			controlData._dragTargetHashKey = controlData.getParentHashKey();
 
 			fs::SimpleRendering::Color titleBarColor;
@@ -272,7 +306,7 @@ namespace fs
 			shapeRenderer.setColor(fs::SimpleRendering::Color(127, 127, 127));
 			shapeRenderer.drawLine(controlData._position + fs::Float2(0.0f, titleBarSize._y), controlData._position + fs::Float2(controlData.getDisplaySize()._x, titleBarSize._y), 1.0f);
 
-			const fs::Float3& titleBarTextPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(paddingLeft, titleBarSize._y * 0.5f, 0.0f);
+			const fs::Float3& titleBarTextPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(innerPadding.left(), titleBarSize._y * 0.5f, static_cast<float>(controlData.getViewportIndex()));
 			fontRenderer.setColor((isAncestorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
 			fontRenderer.drawDynamicText(windowTitle, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
 
@@ -282,7 +316,7 @@ namespace fs
 			{
 				// 중요
 				nextNoAutoPositioned();
-				nextControlPosition(fs::Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - paddingRight, (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
+				nextControlPosition(fs::Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
 				beginRoundButton(windowTitle, fs::SimpleRendering::Color(1.0f, 0.25f, 0.25f));
 				endRoundButton();
@@ -290,7 +324,7 @@ namespace fs
 
 			// Window Offset 재조정!!
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-			parentControlData.setOffsetY_XXX(titleBarSize._y + parentControlData.getInnerPadding()._z);
+			parentControlData.setOffsetY_XXX(titleBarSize._y + parentControlData.getInnerPadding().top());
 
 			return titleBarSize;
 		}
@@ -306,8 +340,9 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::RoundButton;
 
 			const float radius = kDefaultRoundButtonRadius;
-			const fs::Float2& controlSize = fs::Float2(radius * 2.0f);
-			ControlData& controlData = getControlData(windowTitle, controlSize, controlType);
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = fs::Float2(radius * 2.0f);
+			ControlData& controlData = getControlData(windowTitle, controlType, controlDataParam);
 
 			fs::SimpleRendering::Color controlColor;
 			const bool isClicked = processClickControl(controlData, color, color.scaleRgb(1.5f), color.scaleRgb(0.75f), controlColor);
@@ -340,8 +375,7 @@ namespace fs
 			return fs::StringUtil::hashRawString64(hashKeyWstring.c_str());
 		}
 
-		GuiContext::ControlData& GuiContext::getControlData(const wchar_t* const text, const fs::Float2& initialDisplaySize, const ControlType controlType, const fs::Float2& desiredPosition, 
-			const fs::Float4& innerPadding, const fs::Float2& deltaInteractionSize, const bool resetDisplaySize) noexcept
+		GuiContext::ControlData& GuiContext::getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& getControlDataParam) noexcept
 		{
 			bool isNewData = false;
 			const uint64 hashKey = generateControlHashKey(text, controlType);
@@ -355,28 +389,31 @@ namespace fs
 				
 				isNewData = true;
 			}
-
+			
 			ControlData& controlData = _controlIdMap[hashKey];
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 
-			fs::Float4& controlInnerPadding = const_cast<fs::Float4&>(controlData.getInnerPadding());
+			InnerPadding& controlInnerPadding = const_cast<InnerPadding&>(controlData.getInnerPadding());
 			fs::Float2& controlDisplaySize = const_cast<fs::Float2&>(controlData.getDisplaySize());
 			fs::Float2& controlOffset = const_cast<fs::Float2&>(controlData.getOffset());
-			controlInnerPadding = innerPadding;
+			controlInnerPadding = getControlDataParam._innerPadding;
 			controlOffset = fs::Float2::kZero;
 
-			// Display size
-			if (isNewData == true || resetDisplaySize == true)
+			// Display size, Display size min
+			if (isNewData == true || getControlDataParam._resetDisplaySize == true)
 			{
-				const float maxDisplaySizeX = parentControlData.getDisplaySize()._x - ((_nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding()._x * 2.0f) : 0.0f);
-				controlDisplaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, initialDisplaySize._x) :
+				const float maxDisplaySizeX = parentControlData.getDisplaySize()._x - ((_nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+				controlDisplaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, getControlDataParam._initialDisplaySize._x) :
 					((_nextSizingForced == true) ? _nextControlSize._x : fs::min(maxDisplaySizeX, _nextControlSize._x));
-				controlDisplaySize._y = (_nextControlSize._y <= 0.0f) ? initialDisplaySize._y :
-					((_nextSizingForced == true) ? _nextControlSize._y : fs::max(initialDisplaySize._y, _nextControlSize._y));
+				controlDisplaySize._y = (_nextControlSize._y <= 0.0f) ? getControlDataParam._initialDisplaySize._y :
+					((_nextSizingForced == true) ? _nextControlSize._y : fs::max(getControlDataParam._initialDisplaySize._y, _nextControlSize._y));
+
+				fs::Float2& controlDisplaySizeMin = const_cast<fs::Float2&>(controlData.getDisplaySizeMin());
+				controlDisplaySizeMin = getControlDataParam._displaySizeMin;
 			}
 
 			// Interaction size!!!
-			controlData._interactionSize = controlDisplaySize + deltaInteractionSize;
+			controlData._interactionSize = controlDisplaySize + getControlDataParam._deltaInteractionSize;
 
 			// Position, Parent offset, Parent cChild at
 			if (_nextNoAutoPositioned == false)
@@ -394,7 +431,7 @@ namespace fs
 				}
 				else
 				{
-					parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding()._x;
+					parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left();
 					if (0.0f < parentControlOffset._y)
 					{
 						parentControlChildAt._y += parentControlOffset._y;
@@ -418,13 +455,13 @@ namespace fs
 				{
 					controlData._position = parentControlData._position; // +fs::Float2(parentControlData._innerPadding._x, parentControlData._innerPadding._z);
 						
-					if (desiredPosition == fs::Float2::kZero)
+					if (getControlDataParam._desiredPosition == fs::Float2::kZero)
 					{
 						controlData._position += _nextControlPosition;
 					}
 					else
 					{
-						controlData._position += desiredPosition;
+						controlData._position += getControlDataParam._desiredPosition;
 					}
 				}
 			}
@@ -451,6 +488,8 @@ namespace fs
 
 			calculateControlChildAt(controlData);
 
+			controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
+
 			resetNextStates();
 
 			return controlData;
@@ -459,7 +498,7 @@ namespace fs
 		void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
 		{
 			fs::Float2& controlChildAt = const_cast<fs::Float2&>(controlData.getChildAt());
-			controlChildAt = controlData._position + ((_nextNoAutoPositioned == false) ? fs::Float2(controlData.getInnerPadding()._x, controlData.getInnerPadding()._z) : fs::Float2::kZero);
+			controlChildAt = controlData._position + ((_nextNoAutoPositioned == false) ? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top()) : fs::Float2::kZero);
 		}
 
 		const bool GuiContext::processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept
@@ -523,15 +562,15 @@ namespace fs
 				{
 					// Focus entered
 
-if (shouldApplyChange(controlData) == true)
-{
-	outBackgroundColor = focusedColor;
-	outBackgroundColor.a(kDefaultFocusedAlpha);
+					if (shouldApplyChange(controlData) == true)
+					{
+						outBackgroundColor = focusedColor;
+						outBackgroundColor.a(kDefaultFocusedAlpha);
 
-	_focusedControlHashKey = controlData.getHashKey();
+						_focusedControlHashKey = controlData.getHashKey();
 
-	result = true;
-}
+						result = true;
+					}
 				}
 			}
 
@@ -587,7 +626,7 @@ if (shouldApplyChange(controlData) == true)
 						changeTargetControlData._position._x = _resizedControlInitialPosition._x - mouseDeltaPosition._x * flipHorz;
 					}
 
-					changeTargetControlDisplaySize._x = fs::max(kControlDisplayMinWidth, _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz);
+					changeTargetControlDisplaySize._x = fs::max(controlData.getDisplaySizeMin()._x, _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz);
 				}
 				if (_cursorType != fs::Window::CursorType::SizeHorz)
 				{
@@ -596,7 +635,7 @@ if (shouldApplyChange(controlData) == true)
 						changeTargetControlData._position._y = _resizedControlInitialPosition._y - mouseDeltaPosition._y * flipVert;
 					}
 
-					changeTargetControlDisplaySize._y = fs::max(kControlDisplayMinHeight, _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert);
+					changeTargetControlDisplaySize._y = fs::max(controlData.getDisplaySizeMin()._y, _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert);
 				}
 			}
 			else if (isDragging == true)
@@ -739,11 +778,44 @@ if (shouldApplyChange(controlData) == true)
 
 			_graphicDevice->getWindow()->setCursorType(_cursorType);
 
-			_shapeRendererBackground.render();
-			_fontRendererBackground.render();
+			const bool useBackgroundViewports = (0 < _viewportArrayBackgroundPerFrame.size());
+			const bool useForegroundViewports = (0 < _viewportArrayForegroundPerFrame.size());
+			const bool shouldSetViewports = (useBackgroundViewports || useForegroundViewports);
+			if (shouldSetViewports == true)
+			{
+				_graphicDevice->useScissorRectanglesWithMultipleViewports();
+			}
 
-			_shapeRendererForeground.render();
-			_fontRendererForeground.render();
+			// Background
+			{
+				if (useBackgroundViewports == true)
+				{
+					_graphicDevice->getDxDeviceContext()->RSSetViewports(static_cast<UINT>(_viewportArrayBackgroundPerFrame.size()), &_viewportArrayBackgroundPerFrame[0]);
+					_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayBackgroundPerFrame.size()), &_scissorRectangleArrayBackgroundPerFrame[0]);
+				}
+
+				_shapeRendererBackground.render();
+				_fontRendererBackground.render();
+			}
+		
+			// Foreground
+			{
+				if (useForegroundViewports == true)
+				{
+					_graphicDevice->useScissorRectanglesWithMultipleViewports();
+
+					_graphicDevice->getDxDeviceContext()->RSSetViewports(static_cast<UINT>(_viewportArrayForegroundPerFrame.size()), &_viewportArrayForegroundPerFrame[0]);
+					_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayForegroundPerFrame.size()), &_scissorRectangleArrayForegroundPerFrame[0]);
+				}
+
+				_shapeRendererForeground.render();
+				_fontRendererForeground.render();
+			}
+			
+			if (shouldSetViewports == true)
+			{
+				_graphicDevice->useFullScreenViewport();
+			}
 
 			_shapeRendererBackground.flushData();
 			_fontRendererBackground.flushData();
@@ -757,6 +829,12 @@ if (shouldApplyChange(controlData) == true)
 		void GuiContext::resetStatesPerFrame()
 		{
 			_controlStackPerFrame.clear();
+
+			_viewportArrayBackgroundPerFrame.clear();
+			_scissorRectangleArrayBackgroundPerFrame.clear();
+
+			_viewportArrayForegroundPerFrame.clear();
+			_scissorRectangleArrayForegroundPerFrame.clear();
 
 			const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
 			_rootControlData = ControlData(0, 0, fs::Gui::ControlType::ROOT, windowSize);
