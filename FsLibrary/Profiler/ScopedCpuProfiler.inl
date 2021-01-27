@@ -16,9 +16,9 @@ namespace fs
 		}
 
 
-		uint64 FpsCounter::_frameTimeUs		= 0;
-		uint64 FpsCounter::_frameCounter	= 0;
-		uint64 FpsCounter::_fps				= 0;
+		inline uint64 FpsCounter::_frameTimeUs		= 0;
+		inline uint64 FpsCounter::_frameCounter		= 0;
+		inline uint64 FpsCounter::_fps				= 0;
 		FS_INLINE void FpsCounter::count() noexcept
 		{
 			++_frameCounter;

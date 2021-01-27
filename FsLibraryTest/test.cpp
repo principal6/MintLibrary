@@ -817,6 +817,8 @@ const bool testWindow()
 
 					guiContext.nextSameLine();
 
+					guiContext.nextTooltip(L"Button B Toolip!!");
+
 					if (guiContext.beginButton(L"Button B") == true)
 					{
 						guiContext.endButton();
@@ -841,6 +843,8 @@ const bool testWindow()
 
 				if (guiContext.beginWindow(L"def", fs::Float2(300.0f, 400.0f), fs::Float2(400.0f, 50.0f)) == true)
 				{
+					guiContext.nextTooltip(L"툴팁 테스트!");
+
 					if (guiContext.beginButton(L"테스트") == true)
 					{
 						guiContext.endButton();

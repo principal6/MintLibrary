@@ -43,6 +43,7 @@ namespace fs
 			TitleBar, // PRIVATE
 			RoundButton, // PRIVATE
 			Window,
+			TooltipWindow,
 
 			COUNT
 		};
@@ -125,6 +126,7 @@ namespace fs
 				void					setControlState(const ControlState controlState) noexcept;
 			
 			public:
+				void					setParentHashKeyXXX(const uint64 parentHashKey) noexcept;
 				void					setOffsetY_XXX(const float offsetY) noexcept;
 				void					setViewportIndexXXX(const uint32 viewportIndex) noexcept;
 
@@ -139,7 +141,7 @@ namespace fs
 			private:
 				uint64					_hashKey;
 				uint64					_parentHashKey;
-				InnerPadding			_innerPadding;
+				InnerPadding			_innerPadding; // For child controls
 				fs::Float2				_displaySize;
 				fs::Float2				_displaySizeMin;
 				fs::Float2				_childAt;
@@ -153,10 +155,14 @@ namespace fs
 			{
 				InnerPadding	_innerPadding;
 				fs::Float2		_initialDisplaySize;
-				fs::Float2		_desiredPosition		= fs::Float2::kZero;
-				fs::Float2		_deltaInteractionSize	= fs::Float2::kZero;
-				fs::Float2		_displaySizeMin			= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-				bool			_resetDisplaySize		= false;
+				fs::Float2		_desiredPosition			= fs::Float2::kZero;
+				fs::Float2		_deltaInteractionSize		= fs::Float2::kZero;
+				fs::Float2		_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+				uint64			_parentHashKeyOverride		= 0;
+				bool			_alwaysResetDisplaySize		= false;
+				bool			_alwaysResetParent			= false;
+				bool			_alwaysResetPosition		= true;
+				const wchar_t*	_hashGenerationKeyOverride	= nullptr;
 			};
 
 			struct ControlStackData
@@ -175,10 +181,15 @@ namespace fs
 				NormalState,
 				HoverState,
 				PressedState,
+
 				WindowFocused,
 				WindowOutOfFocus,
+
 				TitleBarFocused,
 				TitleBarOutOfFocus,
+
+				TooltipBackground,
+
 				LightFont,
 				DarkFont,
 				
@@ -208,6 +219,7 @@ namespace fs
 			void										nextNoAutoPositioned();
 			// Only works if NoAutoPositioned!
 			void										nextControlPosition(const fs::Float2& position);
+			void										nextTooltip(const wchar_t* const tooltipText);
 
 		private:
 			void										resetNextStates();
@@ -245,6 +257,8 @@ namespace fs
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
 			void										endRoundButton();
 
+			void										pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position);
+
 		private:
 			const ControlData&							getStackTopControlData() noexcept;
 			ControlData&								getControlData(const uint64 hashKey) noexcept;
@@ -253,6 +267,8 @@ namespace fs
 			const uint64								generateControlHashKey(const wchar_t* const text, const ControlType controlType) const noexcept;
 			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& getControlDataParam) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
+			const ControlData&							getParentWindowControlData(const ControlData& controlData) const noexcept;
+			const ControlData&							getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
 
 
@@ -260,11 +276,13 @@ namespace fs
 		private:
 			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			void										processShowOnlyControl(ControlData& controlData) noexcept;
 			void										processControlCommonInternal(ControlData& controlData) noexcept;
 			const bool									shouldApplyChange(const ControlData& controlData) const noexcept;
 			
 			const bool									isDraggingControl(const ControlData& controlData) const noexcept;
 			const bool									isResizingControl(const ControlData& controlData) const noexcept;
+			const bool									isControlHovered(const ControlData& controlData) const noexcept;
 
 			const bool									isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept;
 			const bool									isAncestorFocused(const ControlData& controlData) const noexcept;
@@ -305,6 +323,9 @@ namespace fs
 
 		private:
 			mutable uint64								_focusedControlHashKey;
+			mutable uint64								_hoveredControlHashKey;
+			uint64										_hoverStartTimeMs;
+			bool										_hoverStarted;
 		
 
 #pragma region Mouse Capture States
@@ -332,6 +353,7 @@ namespace fs
 			bool										_nextSizingForced;
 			bool										_nextNoAutoPositioned;
 			fs::Float2									_nextControlPosition;
+			const wchar_t*								_nextTooltipText;
 #pragma endregion
 
 
@@ -344,6 +366,11 @@ namespace fs
 			bool										_mouseDownUp;
 			mutable fs::Window::CursorType				_cursorType; // per frame
 #pragma endregion
+
+		private:
+			fs::Float2									_tooltipPosition;
+			uint64										_tooltipParentWindowHashKey;
+			const wchar_t*								_tooltipTextFinal;
 
 		private:
 			fs::SimpleRendering::Color					_namedColors[static_cast<uint32>(NamedColor::COUNT)];

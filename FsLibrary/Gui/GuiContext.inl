@@ -130,6 +130,11 @@ namespace fs
 			_controlState = controlState;
 		}
 
+		FS_INLINE void GuiContext::ControlData::setParentHashKeyXXX(const uint64 parentHashKey) noexcept
+		{
+			_parentHashKey = parentHashKey;
+		}
+
 		FS_INLINE void GuiContext::ControlData::setOffsetY_XXX(const float offsetY) noexcept
 		{
 			_offset._y = offsetY;
@@ -170,6 +175,11 @@ namespace fs
 			_nextControlPosition = position;
 		}
 
+		FS_INLINE void GuiContext::nextTooltip(const wchar_t* const tooltipText)
+		{
+			_nextTooltipText = tooltipText;
+		}
+
 		FS_INLINE void GuiContext::resetNextStates()
 		{
 			_nextSameLine = false;
@@ -177,6 +187,7 @@ namespace fs
 			_nextSizingForced = false;
 			_nextNoAutoPositioned = false;
 			_nextControlPosition = fs::Float2::kZero;
+			_nextTooltipText = nullptr;
 		}
 
 		FS_INLINE const GuiContext::ControlData& GuiContext::getStackTopControlData() noexcept
@@ -210,7 +221,7 @@ namespace fs
 				return found->second;
 			}
 
-			FS_ASSERT("김장원", false, "hashKey 가 존재하지 않는 ControlData 입니다!!!");
+			//FS_ASSERT("김장원", false, "hashKey 가 존재하지 않는 ControlData 입니다!!!");
 			return _rootControlData;
 		}
 		
