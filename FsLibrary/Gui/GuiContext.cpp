@@ -188,44 +188,6 @@ namespace fs
 			return false;
 		}
 
-		const bool GuiContext::beginButton(const wchar_t* const text)
-		{
-			static constexpr ControlType controlType = ControlType::Button;
-			
-			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
-			ControlDataParam controlDataParam;
-			controlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12);
-			ControlData& controlData = getControlData(text, controlType, controlDataParam);
-			
-			fs::SimpleRendering::Color color;
-			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
-		
-			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
-			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
-			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
-			shapeRenderer.setColor(color);
-			shapeRenderer.setPosition(controlCenterPosition);
-			const fs::Float2& displaySize = controlData.getDisplaySize();
-			shapeRenderer.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
-
-			fontRenderer.setColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
-			fontRenderer.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.8888f);
-
-			if (isClicked == true)
-			{
-				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
-			}
-
-			return isClicked;
-		}
-
-		void GuiContext::endButton()
-		{
-			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::Button, "begin 과 end 의 ControlType 이 다릅니다!!!");
-			_controlStackPerFrame.pop_back();
-		}
-
 		const bool GuiContext::beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position)
 		{
 			static constexpr ControlType controlType = ControlType::Window;
@@ -300,6 +262,99 @@ namespace fs
 		{
 			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::Window, "begin 과 end 의 ControlType 이 다릅니다!!!");
 			_controlStackPerFrame.pop_back();
+		}
+		
+		const bool GuiContext::beginButton(const wchar_t* const text)
+		{
+			static constexpr ControlType controlType = ControlType::Button;
+			
+			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12);
+			ControlData& controlData = getControlData(text, controlType, controlDataParam);
+			
+			fs::SimpleRendering::Color color;
+			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
+		
+			const bool isAncestorFocused_ = isAncestorFocused(controlData);
+			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
+			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeRenderer.setColor(color);
+			shapeRenderer.setPosition(controlCenterPosition);
+			const fs::Float2& displaySize = controlData.getDisplaySize();
+			shapeRenderer.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
+
+			fontRenderer.setColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
+			fontRenderer.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
+
+			if (isClicked == true)
+			{
+				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
+			}
+
+			return isClicked;
+		}
+
+		void GuiContext::endButton()
+		{
+			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::Button, "begin 과 end 의 ControlType 이 다릅니다!!!");
+			_controlStackPerFrame.pop_back();
+		}
+
+		void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
+		{
+			static constexpr ControlType controlType = ControlType::Label;
+
+			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+			ControlDataParam controlDataParam;
+			controlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12) : labelParam._size;
+			ControlData& controlData = getControlData(text, controlType, controlDataParam);
+
+			fs::SimpleRendering::Color backgroundColorFinal = labelParam._backgroundColor;
+			processShowOnlyControl(controlData, backgroundColorFinal);
+
+			const bool isAncestorFocused_ = isAncestorFocused(controlData);
+			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
+			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeRenderer.setColor(labelParam._backgroundColor);
+			shapeRenderer.setPosition(controlCenterPosition);
+			const fs::Float2& displaySize = controlData.getDisplaySize();
+			shapeRenderer.drawRectangle(displaySize, 0.0f, 0.0f);
+
+			fontRenderer.setColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, backgroundColorFinal.a()) : labelParam._fontColor);
+
+			fs::Float3 textPosition = controlCenterPosition;
+			fs::SimpleRendering::TextRenderDirectionHorz textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Centered;
+			fs::SimpleRendering::TextRenderDirectionVert textRenderDirectionVert = fs::SimpleRendering::TextRenderDirectionVert::Centered;
+			if (labelParam._alignmentHorz != TextAlignmentHorz::Middle)
+			{
+				if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
+				{
+					textPosition._x = controlData._position._x;
+					textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Rightward;
+				}
+				else
+				{
+					textPosition._x = controlData._position._x + controlData.getDisplaySize()._x;
+					textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Leftward;
+				}
+			}
+			if (labelParam._alignmentVert != TextAlignmentVert::Center)
+			{
+				if (labelParam._alignmentVert == TextAlignmentVert::Top)
+				{
+					textPosition._y = controlData._position._y;
+					textRenderDirectionVert = fs::SimpleRendering::TextRenderDirectionVert::Downward;
+				}
+				else
+				{
+					textPosition._y = controlData._position._y + controlData.getDisplaySize()._y;
+					textRenderDirectionVert = fs::SimpleRendering::TextRenderDirectionVert::Upward;
+				}
+			}
+			fontRenderer.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
 
 		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const InnerPadding& innerPadding)
@@ -386,7 +441,7 @@ namespace fs
 		void GuiContext::pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position)
 		{
 			static constexpr ControlType controlType = ControlType::TooltipWindow;
-			static constexpr float kTooltipFontScale = 0.8125f;
+			static constexpr float kTooltipFontScale = kFontScaleC;
 			const float tooltipWindowPadding = 8.0f;
 
 			// 중요
@@ -403,7 +458,8 @@ namespace fs
 			controlDataParam._hashGenerationKeyOverride = L"TooltipWindow";
 			ControlData& controlData = getControlData(tooltipText, controlType, controlDataParam);
 
-			processShowOnlyControl(controlData);
+			fs::SimpleRendering::Color dummyColor;
+			processShowOnlyControl(controlData, dummyColor);
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
 			fs::SimpleRendering::ShapeRenderer& shapeRenderer = _shapeRendererForeground;
 			fs::SimpleRendering::FontRenderer& fontRenderer = _fontRendererForeground;
@@ -716,8 +772,18 @@ namespace fs
 			return result;
 		}
 
-		void GuiContext::processShowOnlyControl(ControlData& controlData) noexcept
+		void GuiContext::processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) noexcept
 		{
+			const bool isAncestorFocused_ = isAncestorFocused(controlData);
+			if (isAncestorFocused_ == true)
+			{
+				outBackgroundColor.a(kDefaultFocusedAlpha);
+			}
+			else if (_focusedControlHashKey != controlData.getHashKey())
+			{
+				outBackgroundColor.a(kDefaultOutOfFocusAlpha);
+			}
+
 			processControlCommonInternal(controlData);
 		}
 

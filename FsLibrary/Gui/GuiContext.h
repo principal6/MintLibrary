@@ -44,6 +44,7 @@ namespace fs
 			RoundButton, // PRIVATE
 			Window,
 			TooltipWindow,
+			Label,
 
 			COUNT
 		};
@@ -91,6 +92,31 @@ namespace fs
 		};
 
 
+		enum class TextAlignmentHorz
+		{
+			Left,
+			Middle,
+			Right
+		};
+
+		enum class TextAlignmentVert
+		{
+			Top,
+			Center,
+			Bottom
+		};
+
+		// If no value is set, default values will be used properly
+		struct LabelParam
+		{
+			fs::SimpleRendering::Color	_backgroundColor	= fs::SimpleRendering::Color::kTransparent;
+			fs::SimpleRendering::Color	_fontColor			= fs::SimpleRendering::Color::kTransparent;
+			fs::Float2					_size				= fs::Float2::kZero;
+			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Middle;
+			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Center;
+		};
+
+
 		class GuiContext final
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
@@ -102,6 +128,9 @@ namespace fs
 			static constexpr float						kDefaultRoundButtonRadius = 7.0f;
 			static constexpr float						kControlDisplayMinWidth = 10.0f;
 			static constexpr float						kControlDisplayMinHeight = 10.0f;
+			static constexpr float						kFontScaleA = 1.0f;
+			static constexpr float						kFontScaleB = 0.875f;
+			static constexpr float						kFontScaleC = 0.8125f;
 
 			class ControlData
 			{
@@ -196,6 +225,7 @@ namespace fs
 				COUNT
 			};
 
+
 		public:
 														GuiContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
 														~GuiContext();
@@ -229,25 +259,28 @@ namespace fs
 #pragma region Controls
 			// 
 			// Button Window
-			// Label ToolTip
+			// Tooltip Label
 			// ScrollBar Slider
 			// Window docking system!!!
 			// RadioButton CheckBox
 			// ListView TreeView
-			// ComboBox SpinBox
-			// TextEdit
+			// ComboBox
+			// TextEdit SpinBox
 			// Splitter
 
 		public:
+			// [Window | Control with ID]
+			// title is used as unique id for windows
+			const bool									beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position);
+			void										endWindow();
+
 			// [Button]
 			// Return 'true' if clicked
 			const bool									beginButton(const wchar_t* const text);
 			void										endButton();
 
-			// [Window | Control with ID]
-			// title is used as unique id for windows
-			const bool									beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position);
-			void										endWindow();
+			// [Label]
+			void										pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
 		private:
 			// Returns size of titlebar
@@ -276,7 +309,7 @@ namespace fs
 		private:
 			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			void										processShowOnlyControl(ControlData& controlData) noexcept;
+			void										processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			void										processControlCommonInternal(ControlData& controlData) noexcept;
 			const bool									shouldApplyChange(const ControlData& controlData) const noexcept;
 			

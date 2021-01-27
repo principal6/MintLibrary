@@ -824,14 +824,14 @@ const bool testWindow()
 						guiContext.endButton();
 					}
 
-					//gui.nextSameLine();
-
 					if (guiContext.beginButton(L"Another") == true)
 					{
 						guiContext.endButton();
 					}
 
-					//gui.nextSameLine();
+					guiContext.pushLabel(L"A label!");
+
+					guiContext.nextSameLine();
 
 					if (guiContext.beginButton(L"Fourth") == true)
 					{

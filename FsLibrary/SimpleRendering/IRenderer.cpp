@@ -6,6 +6,11 @@ namespace fs
 {
 	namespace SimpleRendering
 	{
+		const Color Color::kTransparent = Color(0, 0, 0, 0);
+		const Color Color::kWhite = Color(255, 255, 255, 255);
+		const Color Color::kBlack = Color(0, 0, 0, 255);
+
+
 		IRenderer::IRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: _graphicDevice{ graphicDevice }
 			, _defaultColor{ 1.0f, 1.0f, 1.0f, 1.0f }
@@ -27,6 +32,11 @@ namespace fs
 			{
 				_defaultColor = _colorArray.back();
 			}
+		}
+
+		const bool Color::isTransparent() const noexcept
+		{
+			return (_raw._w <= 0.0f);
 		}
 	}
 }

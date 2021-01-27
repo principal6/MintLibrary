@@ -812,6 +812,12 @@ namespace fs
 		void ShapeRenderer::drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
 		{
 			const float clampedRoundness = fs::Math::saturate(roundness);
+			if (clampedRoundness == 0.0f)
+			{
+				drawRectangle(size, borderThickness, rotationAngle);
+				return;
+			}
+
 			const float radius = fs::min(size._x, size._y) * 0.5f * clampedRoundness;
 			const fs::Float2& halfSize = size * 0.5f;
 			const fs::Float2& halfCoreSize = halfSize - fs::Float2(radius);
