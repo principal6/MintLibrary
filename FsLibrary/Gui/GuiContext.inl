@@ -100,6 +100,11 @@ namespace fs
 			return _displaySizeMin;
 		}
 
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getClientSize() const noexcept
+		{
+			return _clientSize;
+		}
+
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getChildAt() const noexcept
 		{
 			return _childAt;

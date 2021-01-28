@@ -145,6 +145,7 @@ namespace fs
 				const InnerPadding&		getInnerPadding() const noexcept;
 				const fs::Float2&		getDisplaySize() const noexcept;
 				const fs::Float2&		getDisplaySizeMin() const noexcept;
+				const fs::Float2&		getClientSize() const noexcept;
 				const fs::Float2&		getChildAt() const noexcept;
 				const fs::Float2&		getOffset() const noexcept;
 				const ControlType		getControlType() const noexcept;
@@ -173,8 +174,9 @@ namespace fs
 				InnerPadding			_innerPadding; // For child controls
 				fs::Float2				_displaySize;
 				fs::Float2				_displaySizeMin;
-				fs::Float2				_childAt;
-				fs::Float2				_offset;
+				fs::Float2				_clientSize; // Could be smaller or larger than _displaySize
+				fs::Float2				_childAt; // Next child control will be positioned according to this
+				fs::Float2				_offset; // Every new child sets this offset to calculate next _childAt
 				ControlType				_controlType;
 				ControlState			_controlState;
 				uint32					_viewportIndex;

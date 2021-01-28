@@ -547,7 +547,7 @@ namespace fs
 			// Interaction size!!!
 			controlData._interactionSize = controlDisplaySize + getControlDataParam._deltaInteractionSize;
 
-			// Position, Parent offset, Parent cChild at
+			// Position, Parent offset, Parent child at
 			if (_nextNoAutoPositioned == false)
 			{
 				// Auto-positioned
@@ -597,6 +597,10 @@ namespace fs
 					}
 				}
 			}
+
+			// Parent client size
+			fs::Float2& parentControlClientSize = const_cast<fs::Float2&>(parentControlData.getClientSize());
+			parentControlClientSize = parentControlData.getChildAt() + controlData.getDisplaySize();
 
 			// Focus, State
 			{
