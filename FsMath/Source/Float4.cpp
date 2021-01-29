@@ -148,4 +148,19 @@ namespace fs
 		_z = z;
 		_w = w;
 	}
+
+	void Float4::setZero() noexcept
+	{
+		_x = _y = _z = _w = 0.0f;
+	}
+
+	const bool Float4::isNan() const noexcept
+	{
+		return std::isnan(_x) || std::isnan(_y) || std::isnan(_z) || std::isnan(_w);
+	}
+
+	void Float4::setNan() noexcept
+	{
+		_x = _y = _z = _w = std::nanf("");
+	}
 }

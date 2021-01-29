@@ -242,6 +242,9 @@
     <ClInclude Include="Container\IId.h">
       <Filter>Container</Filter>
     </ClInclude>
+    <ClInclude Include="Gui\GuiCommon.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -335,6 +338,9 @@
     </None>
     <None Include="Container\IId.inl">
       <Filter>Container</Filter>
+    </None>
+    <None Include="Gui\GuiCommon.inl">
+      <Filter>Gui</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

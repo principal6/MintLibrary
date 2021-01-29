@@ -71,13 +71,17 @@ namespace fs
 		private:
 			void																drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::SimpleRendering::Color& color);
 
+		public:
+			// This function Interprets internal positon as the center of the entire circle (= center root of half circle)
+			void																drawHalfCircle(const float radius, const float rotationAngle);
+
 		/*
 		public:
 			// 오차가 좀 있다...
-			void																drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut = false);
+			void																drawHalfCircleDeprecated(const float radius, const float rotationAngle, const bool insideOut = false);
 		
 		private:
-			void																drawHalfCircleInternal(const float radius, const bool insideOut);
+			void																drawHalfCircleInternalDeprecated(const float radius, const bool insideOut);
 		*/
 
 		public:

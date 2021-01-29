@@ -30,12 +30,12 @@ namespace fs
 
 
 		public:
-									Color() : Color(255, 255, 255) {}
-									Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } {}
-									Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) {}
-									Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) {}
-									Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) {}
-			explicit				Color(const fs::Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) {}
+			constexpr				Color() : Color(255, 255, 255) { __noop; }
+			constexpr				Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } { __noop; }
+			constexpr				Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
+			constexpr				Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
+			constexpr				Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
+			constexpr explicit		Color(const fs::Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
 
 		public:
 									operator fs::Float4&() noexcept { return _raw; }
@@ -65,6 +65,11 @@ namespace fs
 
 		public:
 			Color					scaleRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+			void					scaleR(const float s) noexcept { _raw._x *= s; }
+			void					scaleG(const float s) noexcept { _raw._y *= s; }
+			void					scaleB(const float s) noexcept { _raw._z *= s; }
+			void					scaleA(const float s) noexcept { _raw._w *= s; }
+			Color					scaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
 			const bool				isTransparent() const noexcept;
 
 		private:

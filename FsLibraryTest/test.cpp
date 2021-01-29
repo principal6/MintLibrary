@@ -806,51 +806,72 @@ const bool testWindow()
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 
-				if (guiContext.beginWindow(L"응용 프로그램", fs::Float2(300.0f, 400.0f), fs::Float2(20.0f, 50.0f)) == true)
 				{
-					//guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
-					if (guiContext.beginButton(L"버튼이요") == true)
+					fs::Gui::WindowParam windowParam;
+					windowParam._size = fs::Float2(300.0f, 400.0f);
+					windowParam._position = fs::Float2(20.0f, 50.0f);
+					if (guiContext.beginWindow(L"응용 프로그램", windowParam) == true)
 					{
-						bool a = true;
-						guiContext.endButton();
+						//guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
+						if (guiContext.beginButton(L"버튼이요") == true)
+						{
+							bool a = true;
+							guiContext.endButton();
+						}
+
+						guiContext.nextSameLine();
+
+						guiContext.nextTooltip(L"Button B Toolip!!");
+
+						if (guiContext.beginButton(L"Button B") == true)
+						{
+							guiContext.endButton();
+						}
+
+						if (guiContext.beginButton(L"Another") == true)
+						{
+							guiContext.endButton();
+						}
+
+						guiContext.pushLabel(L"A label!");
+
+						guiContext.nextSameLine();
+
+						if (guiContext.beginButton(L"Fourth") == true)
+						{
+							guiContext.endButton();
+						}
+
+						guiContext.endWindow();
 					}
-
-					guiContext.nextSameLine();
-
-					guiContext.nextTooltip(L"Button B Toolip!!");
-
-					if (guiContext.beginButton(L"Button B") == true)
-					{
-						guiContext.endButton();
-					}
-
-					if (guiContext.beginButton(L"Another") == true)
-					{
-						guiContext.endButton();
-					}
-
-					guiContext.pushLabel(L"A label!");
-
-					guiContext.nextSameLine();
-
-					if (guiContext.beginButton(L"Fourth") == true)
-					{
-						guiContext.endButton();
-					}
-
-					guiContext.endWindow();
 				}
 
-				if (guiContext.beginWindow(L"def", fs::Float2(300.0f, 400.0f), fs::Float2(400.0f, 50.0f)) == true)
 				{
-					guiContext.nextTooltip(L"툴팁 테스트!");
-
-					if (guiContext.beginButton(L"테스트") == true)
+					fs::Gui::WindowParam windowParam;
+					windowParam._size = fs::Float2(300.0f, 400.0f);
+					windowParam._position = fs::Float2(400.0f, 50.0f);
+					windowParam._scrollBarType = fs::Gui::ScrollBarType::Vert;
+					if (guiContext.beginWindow(L"def", windowParam) == true)
 					{
-						guiContext.endButton();
-					}
+						guiContext.nextTooltip(L"툴팁 테스트!");
 
-					guiContext.endWindow();
+						if (guiContext.beginButton(L"테스트") == true)
+						{
+							guiContext.endButton();
+						}
+
+						if (guiContext.beginButton(L"테스트2") == true)
+						{
+							guiContext.endButton();
+						}
+
+						if (guiContext.beginButton(L"테스트3") == true)
+						{
+							guiContext.endButton();
+						}
+
+						guiContext.endWindow();
+					}
 				}
 			}
 

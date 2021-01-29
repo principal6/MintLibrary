@@ -55,6 +55,7 @@
     <ClInclude Include="File\TextFile.h" />
     <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
+    <ClInclude Include="Gui\GuiCommon.h" />
     <ClInclude Include="Gui\GuiContext.h" />
     <ClInclude Include="Language\CppHlsl.h" />
     <ClInclude Include="Language\CppHlslLexer.h" />
@@ -117,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Container\IId.inl" />
+    <None Include="Gui\GuiCommon.inl" />
     <None Include="Gui\GuiContext.inl" />
     <None Include="Language\CppHlslParser.inl" />
     <None Include="Language\ILexer.inl" />

@@ -71,6 +71,11 @@ namespace fs
 
 	public:
 		void					set(const float x, const float y, const float z, const float w) noexcept;
+		void					setZero() noexcept;
+		void					setNan() noexcept;
+
+	public:
+		const bool				isNan() const noexcept;
 		
 	public:
 		float					_x;

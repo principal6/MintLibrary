@@ -134,9 +134,14 @@ namespace fs
 		return fs::min(_x, _y);
 	}
 
-	void Float2::set(const float x, const float y)
+	void Float2::set(const float x, const float y) noexcept
 	{
 		_x = x;
 		_y = y;
+	}
+	
+	void Float2::setZero() noexcept
+	{
+		_x = _y = 0.0f;
 	}
 }

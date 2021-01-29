@@ -7,6 +7,8 @@
 
 #include <CommonDefinitions.h>
 
+#include <FsLibrary/Gui/GuiCommon.h>
+
 #include <FsLibrary/SimpleRendering/ShapeRenderer.h>
 #include <FsLibrary/SimpleRendering/FontRenderer.h>
 
@@ -15,6 +17,7 @@
 #include <FsLibrary/Platform/IWindow.h>
 
 #include <FsMath/Include/Float2.h>
+#include <FsMath/Include/Float4.h>
 
 
 namespace fs
@@ -35,77 +38,6 @@ namespace fs
 		class GuiContext;
 
 
-		enum class ControlType : uint16
-		{
-			ROOT,
-
-			Button,
-			TitleBar, // PRIVATE
-			RoundButton, // PRIVATE
-			Window,
-			TooltipWindow,
-			Label,
-
-			COUNT
-		};
-
-		enum class ControlState
-		{
-			Visible,
-
-			VisibleOpen,
-			VisibleClosed,
-
-			Invisible
-		};
-
-		enum class ResizeMethod
-		{
-			ResizeOnly,
-			RepositionHorz,
-			RepositionVert,
-			RepositionBoth,
-		};
-
-
-		class InnerPadding
-		{
-		public:
-							InnerPadding();
-							InnerPadding(const float uniformPadding);
-							InnerPadding(const float left, const float right, const float top, const float bottom);
-							InnerPadding(const InnerPadding& rhs) = default;
-							InnerPadding(InnerPadding&& rhs) noexcept = default;
-
-		public:
-			InnerPadding&	operator=(const InnerPadding& rhs) = default;
-			InnerPadding&	operator=(InnerPadding && rhs) noexcept = default;
-
-		public:
-			const float		left() const noexcept;
-			const float		right() const noexcept;
-			const float		top() const noexcept;
-			const float		bottom() const noexcept;
-
-		private:
-			fs::Float4		_raw;
-		};
-
-
-		enum class TextAlignmentHorz
-		{
-			Left,
-			Middle,
-			Right
-		};
-
-		enum class TextAlignmentVert
-		{
-			Top,
-			Center,
-			Bottom
-		};
-
 		// If no value is set, default values will be used properly
 		struct LabelParam
 		{
@@ -116,13 +48,24 @@ namespace fs
 			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Center;
 		};
 
+		struct WindowParam
+		{
+			fs::Float2			_size				= fs::Float2(180, 100);
+			fs::Float2			_position			= fs::Float2(100, 100);
+			ScrollBarType		_scrollBarType		= ScrollBarType::None;
+		};
+
+		union ControlValue
+		{
+			int32	_i{ 0 };
+			float	_f;
+		};
 
 		class GuiContext final
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
 			static constexpr float						kDefaultIntervalY = 5.0f;
 			static constexpr float						kDefaultRoundnessInPixel = 8.0f;
-			static constexpr float						kDefaultControlWidth = 150.0f;
 			static constexpr float						kDefaultFocusedAlpha = 0.875f;
 			static constexpr float						kDefaultOutOfFocusAlpha = 0.5f;
 			static constexpr float						kDefaultRoundButtonRadius = 7.0f;
@@ -131,6 +74,10 @@ namespace fs
 			static constexpr float						kFontScaleA = 1.0f;
 			static constexpr float						kFontScaleB = 0.875f;
 			static constexpr float						kFontScaleC = 0.8125f;
+			static constexpr float						kScrollBarVertWidth = 8.0f;
+			static constexpr Rect						kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
+			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
+			static constexpr float						kHalfBorderThickness = 5.0f;
 
 			class ControlData
 			{
@@ -142,15 +89,16 @@ namespace fs
 			public:
 				const uint64			getHashKey() const noexcept;
 				const uint64			getParentHashKey() const noexcept;
-				const InnerPadding&		getInnerPadding() const noexcept;
+				const Rect&				getInnerPadding() const noexcept;
 				const fs::Float2&		getDisplaySize() const noexcept;
 				const fs::Float2&		getDisplaySizeMin() const noexcept;
 				const fs::Float2&		getClientSize() const noexcept;
 				const fs::Float2&		getChildAt() const noexcept;
-				const fs::Float2&		getOffset() const noexcept;
+				const fs::Float2&		getNextChildOffset() const noexcept;
 				const ControlType		getControlType() const noexcept;
 				const bool				isControlState(const ControlState controlState) const noexcept;
 				const uint32			getViewportIndex() const noexcept;
+				const float				getViewportIndexAsFloat() const noexcept;
 
 			public:
 				void					setControlState(const ControlState controlState) noexcept;
@@ -163,39 +111,44 @@ namespace fs
 			public:
 				fs::Float2				_interactionSize;
 				fs::Float2				_position; // In screen space, at left-top corner
+				fs::Float2				_displayOffset; // Used for scrolling
 				bool					_isFocusable;
 				bool					_isResizable;
 				bool					_isDraggable;
-				uint64					_dragTargetHashKey;
+				Rect					_draggingConstraints; // MUST set all four values if want to limit dragging area
+				uint64					_delegateHashKey; // Used for drag, resize and focus
+				ControlValue			_value;
 
 			private:
 				uint64					_hashKey;
 				uint64					_parentHashKey;
-				InnerPadding			_innerPadding; // For child controls
+				Rect					_innerPadding; // For child controls
 				fs::Float2				_displaySize;
 				fs::Float2				_displaySizeMin;
 				fs::Float2				_clientSize; // Could be smaller or larger than _displaySize
-				fs::Float2				_childAt; // Next child control will be positioned according to this
-				fs::Float2				_offset; // Every new child sets this offset to calculate next _childAt
+				fs::Float2				_childAt; // In screen space, Next child control will be positioned according to this
+				fs::Float2				_nextChildOffset; // Every new child sets this offset to calculate next _childAt
 				ControlType				_controlType;
 				ControlState			_controlState;
 				uint32					_viewportIndex;
 			};
-
+			
 			struct ControlDataParam
 			{
-				InnerPadding	_innerPadding;
-				fs::Float2		_initialDisplaySize;
-				fs::Float2		_desiredPosition			= fs::Float2::kZero;
-				fs::Float2		_deltaInteractionSize		= fs::Float2::kZero;
-				fs::Float2		_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-				uint64			_parentHashKeyOverride		= 0;
-				bool			_alwaysResetDisplaySize		= false;
-				bool			_alwaysResetParent			= false;
-				bool			_alwaysResetPosition		= true;
-				const wchar_t*	_hashGenerationKeyOverride	= nullptr;
+				Rect				_innerPadding;
+				fs::Float2			_initialDisplaySize;
+				fs::Float2			_desiredPositionInParent	= fs::Float2::kZero;
+				fs::Float2			_deltaInteractionSize		= fs::Float2::kZero;
+				fs::Float2			_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+				uint64				_parentHashKeyOverride		= 0;
+				bool				_alwaysResetDisplaySize		= false;
+				bool				_alwaysResetParent			= false;
+				bool				_alwaysResetPosition		= true;
+				const wchar_t*		_hashGenerationKeyOverride	= nullptr;
+				bool				_ignoreForClientSize		= false;
+				bool				_useParentViewport			= false;
 			};
-
+			
 			struct ControlStackData
 			{
 			public:
@@ -205,6 +158,7 @@ namespace fs
 			public:
 				ControlType			_controlType;
 				uint64				_hashKey;
+				ScrollBarType		_scrollBarTypeForWindow;
 			};
 
 			enum class NamedColor
@@ -220,6 +174,9 @@ namespace fs
 				TitleBarOutOfFocus,
 
 				TooltipBackground,
+
+				ScrollBarTrack,
+				ScrollBarThumb,
 
 				LightFont,
 				DarkFont,
@@ -273,7 +230,7 @@ namespace fs
 		public:
 			// [Window | Control with ID]
 			// title is used as unique id for windows
-			const bool									beginWindow(const wchar_t* const title, const fs::Float2& size, const fs::Float2& position);
+			const bool									beginWindow(const wchar_t* const title, const WindowParam& windowParam);
 			void										endWindow();
 
 			// [Button]
@@ -286,21 +243,32 @@ namespace fs
 
 		private:
 			// Returns size of titlebar
-			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const InnerPadding& innerPadding);
+			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding);
 			void										endTitleBar();
 
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
 			void										endRoundButton();
 
+			// [Tooltip]
+			// Unique control
 			void										pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position);
 
+			// [ScrollBar - Vertical]
+			// Return 'true' if value was changed
+			const bool									pushScrollBarVert();
+
+			// [ScrollBar - Horizontal]
+			// Return 'true' if value was changed
+			const bool									pushScrollBarHorz();
+
 		private:
-			const ControlData&							getStackTopControlData() noexcept;
+			const ControlData&							getControlDataStackTop() noexcept;
 			ControlData&								getControlData(const uint64 hashKey) noexcept;
 			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
 			fs::Float3									getControlCenterPosition(const ControlData& controlData) const noexcept;
-			const uint64								generateControlHashKey(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& getControlDataParam) noexcept;
+			const wchar_t*								generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
+			const uint64								generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
+			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& controlDataParam) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
 			const ControlData&							getParentWindowControlData(const ControlData& controlData) const noexcept;
 			const ControlData&							getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
@@ -312,12 +280,18 @@ namespace fs
 			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			void										processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			void										processControlCommonInternal(ControlData& controlData) noexcept;
-			const bool									shouldApplyChange(const ControlData& controlData) const noexcept;
+			const bool									processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			
+			void										processControlInteractionInternal(ControlData& controlData) noexcept;
+			void										processControlCommonInternal(ControlData& controlData) noexcept;
+			const bool									isInteractingInternal(const ControlData& controlData) const noexcept;
+			
+			// These functions must be called after process- functions
 			const bool									isDraggingControl(const ControlData& controlData) const noexcept;
 			const bool									isResizingControl(const ControlData& controlData) const noexcept;
 			const bool									isControlHovered(const ControlData& controlData) const noexcept;
+			const bool									isControlPressed(const ControlData& controlData) const noexcept;
+			const bool									isControlClicked(const ControlData& controlData) const noexcept;
 
 			const bool									isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept;
 			const bool									isAncestorFocused(const ControlData& controlData) const noexcept;
@@ -359,6 +333,9 @@ namespace fs
 		private:
 			mutable uint64								_focusedControlHashKey;
 			mutable uint64								_hoveredControlHashKey;
+			mutable uint64								_pressedControlHashKey;
+			mutable fs::Float2							_pressedControlInitialPosition;
+			mutable uint64								_clickedControlHashKeyPerFrame;
 			uint64										_hoverStartTimeMs;
 			bool										_hoverStarted;
 		

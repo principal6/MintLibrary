@@ -4,6 +4,9 @@
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 #include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
+#include <FsMath/Include/Float2x2.h>
+#include <FsMath/Include/Float3x3.h>
+
 
 namespace fs
 {
@@ -359,14 +362,33 @@ namespace fs
 			}
 		}
 
-		/*
-		void ShapeRenderer::drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut)
+		void ShapeRenderer::drawHalfCircle(const float radius, const float rotationAngle)
 		{
-			drawHalfCircleInternal(radius, insideOut);
+			const fs::Float3 originalPosition = _position;
+			const float halfRadius = radius * 0.5f;
+
+			const fs::Float3& offset = fs::Float3(+halfRadius, -halfRadius, 0.0f);
+			const fs::Float3x3& rotationMatrixA = fs::Float3x3::rotationMatrixZ(-rotationAngle);
+			const fs::Float3& rotatedOffsetA = rotationMatrixA.mul(offset);
+			setPosition(originalPosition + rotatedOffsetA);
+			drawQuarterCircle(radius, rotationAngle);
+
+			const fs::Float3x3& rotationMatrixB = fs::Float3x3::rotationMatrixZ(-(rotationAngle + fs::Math::kPiOverTwo));
+			const fs::Float3& rotatedOffsetB = rotationMatrixB.mul(offset);
+			setPosition(originalPosition + rotatedOffsetB);
+			drawQuarterCircle(radius, rotationAngle + fs::Math::kPiOverTwo);
+
+			setPosition(originalPosition);
+		}
+
+		/*
+		void ShapeRenderer::drawHalfCircleDeprecated(const float radius, const float rotationAngle, const bool insideOut)
+		{
+			drawHalfCircleInternalDeprecated(radius, insideOut);
 			pushShapeTransform(rotationAngle);
 		}
 
-		void ShapeRenderer::drawHalfCircleInternal(const float radius, const bool insideOut)
+		void ShapeRenderer::drawHalfCircleInternalDeprecated(const float radius, const bool insideOut)
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			const float scaledRadius = fs::Math::kSqrtOfTwo * radius;

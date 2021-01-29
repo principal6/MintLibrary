@@ -71,7 +71,8 @@ namespace fs
 		const float				minElement() const noexcept;
 		
 	public:
-		void					set(const float x, const float y);
+		void					set(const float x, const float y) noexcept;
+		void					setZero() noexcept;
 
 	public:
 		float					_x;

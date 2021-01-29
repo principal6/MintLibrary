@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 #include <FsMath/Include/Quaternion.h>
 
 #include <FsMath/Include/Float4.h>
