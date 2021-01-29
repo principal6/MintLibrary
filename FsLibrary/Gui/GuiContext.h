@@ -74,7 +74,7 @@ namespace fs
 			static constexpr float						kFontScaleA = 1.0f;
 			static constexpr float						kFontScaleB = 0.875f;
 			static constexpr float						kFontScaleC = 0.8125f;
-			static constexpr float						kScrollBarVertWidth = 8.0f;
+			static constexpr float						kScrollBarThickness = 8.0f;
 			static constexpr Rect						kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
 			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
 			static constexpr float						kHalfBorderThickness = 5.0f;
@@ -255,11 +255,11 @@ namespace fs
 
 			// [ScrollBar - Vertical]
 			// Return 'true' if value was changed
-			const bool									pushScrollBarVert();
+			void										pushScrollBarVert();
 
 			// [ScrollBar - Horizontal]
 			// Return 'true' if value was changed
-			const bool									pushScrollBarHorz();
+			void										pushScrollBarHorz();
 
 		private:
 			const ControlData&							getControlDataStackTop() noexcept;

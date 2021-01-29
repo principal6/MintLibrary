@@ -372,27 +372,32 @@ namespace fs
 			fontRenderer.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
 
-		const bool GuiContext::pushScrollBarVert()
+		void GuiContext::pushScrollBarVert()
 		{
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
+			static std::function fnCalculatePureWindowHeight = [this](const ControlData& controlData)
+			{
+				return controlData.getDisplaySize()._y - kTitleBarBaseSize._y - controlData.getInnerPadding().top() - controlData.getInnerPadding().bottom();
+			};
 
 			const ControlData& controlDataStackTop = getControlDataStackTop();
 			if (controlDataStackTop.getControlType() != ControlType::Window)
 			{
 				FS_ASSERT("김장원", false, "ScrollBar 는 현재 Window 에만 장착 가능합니다...");
-				return false;
+				return;
 			}
 
 			// 중요!
 			nextNoAutoPositioned();
 
 			ControlDataParam trackControlDataParam;
-			trackControlDataParam._initialDisplaySize._x = kScrollBarVertWidth;
-			trackControlDataParam._initialDisplaySize._y = controlDataStackTop.getDisplaySize()._y - kTitleBarBaseSize._y - controlDataStackTop.getInnerPadding().bottom();
+			trackControlDataParam._initialDisplaySize._x = kScrollBarThickness;
+			trackControlDataParam._initialDisplaySize._y = fnCalculatePureWindowHeight(controlDataStackTop);
 			trackControlDataParam._parentHashKeyOverride = controlDataStackTop.getHashKey();
 			trackControlDataParam._desiredPositionInParent._x = controlDataStackTop.getDisplaySize()._x - trackControlDataParam._initialDisplaySize._x - kHalfBorderThickness * 0.5f;
 			trackControlDataParam._desiredPositionInParent._y = kTitleBarBaseSize._y + controlDataStackTop.getInnerPadding().top();
 			trackControlDataParam._alwaysResetDisplaySize = true;
+			trackControlDataParam._alwaysResetPosition = true;
 			trackControlDataParam._ignoreForClientSize = true;
 			ControlData& trackControlData = getControlData(generateControlKeyString(controlDataStackTop, L"ScrollBarVertTrack", trackControlType), trackControlType, trackControlDataParam);
 			ControlData& parentWindowControlData = getControlData(trackControlData.getParentHashKey());
@@ -400,7 +405,7 @@ namespace fs
 			fs::SimpleRendering::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 			processShowOnlyControl(trackControlData, trackColor);
 
-			const float parentWindowPureDisplayHeight = parentWindowControlData.getDisplaySize()._y - kTitleBarBaseSize._y - parentWindowControlData.getInnerPadding().top() - parentWindowControlData.getInnerPadding().bottom();
+			const float parentWindowPureDisplayHeight = fnCalculatePureWindowHeight(parentWindowControlData);
 			const float extraHeight = parentWindowControlData.getClientSize()._y - parentWindowPureDisplayHeight;
 			if (0.0f <= extraHeight)
 			{
@@ -421,17 +426,17 @@ namespace fs
 					nextNoAutoPositioned();
 
 					ControlDataParam thumbControlDataParam;
-					thumbControlDataParam._initialDisplaySize._x = kScrollBarVertWidth;
+					thumbControlDataParam._initialDisplaySize._x = kScrollBarThickness;
 					thumbControlDataParam._initialDisplaySize._y = thumbHeight;
 					thumbControlDataParam._parentHashKeyOverride = parentWindowControlData.getHashKey();
-					thumbControlDataParam._desiredPositionInParent._x = trackControlDataParam._desiredPositionInParent._x - kScrollBarVertWidth * 0.5f;
+					thumbControlDataParam._desiredPositionInParent._x = trackControlDataParam._desiredPositionInParent._x - kScrollBarThickness * 0.5f;
 					thumbControlDataParam._desiredPositionInParent._y = trackControlDataParam._desiredPositionInParent._y;
 					thumbControlDataParam._alwaysResetDisplaySize = true;
 					thumbControlDataParam._alwaysResetPosition = false; // 중요!
 					thumbControlDataParam._ignoreForClientSize = true;
 					ControlData& thumbControlData = getControlData(thumbControlKeyString, thumbControlType, thumbControlDataParam);
 					const float radius = thumbControlData.getDisplaySize()._x * 0.5f;
-					const float trackRemnantHeght = trackControlData.getDisplaySize()._y - thumbHeight - radius;
+					const float trackRemnantHeght = std::abs(trackControlData.getDisplaySize()._y - thumbHeight - radius);
 					thumbControlData._isDraggable = true;
 					thumbControlData._draggingConstraints.left(parentWindowControlData._position._x + thumbControlDataParam._desiredPositionInParent._x);
 					thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
@@ -474,8 +479,11 @@ namespace fs
 					}
 				}
 			}
+		}
 
-			return false;
+		void GuiContext::pushScrollBarHorz()
+		{
+			__noop;
 		}
 
 		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding)
