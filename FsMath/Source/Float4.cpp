@@ -12,33 +12,6 @@ namespace fs
 {
 	const Float4 Float4::kZero = Float4(0.0f);
 
-	Float4::Float4()
-		: Float4(0.0f)
-	{
-		__noop;
-	}
-
-	Float4::Float4(const float s)
-		: Float4(s, s, s, s)
-	{
-		__noop;
-	}
-
-	Float4::Float4(const float x, const float y, const float z, const float w)
-		: _x{ x }
-		, _y{ y }
-		, _z{ z }
-		, _w{ w }
-	{
-		__noop;
-	}
-
-	Float4::Float4(const Float3& rhs)
-		: Float4(rhs._x, rhs._y, rhs._z, 1.0f)
-	{
-		__noop;
-	}
-
 	Float4& Float4::operator+=(const Float4& rhs)
 	{
 		_x += rhs._x;
@@ -175,46 +148,4 @@ namespace fs
 		_z = z;
 		_w = w;
 	}
-
-	/*
-	void Float4::x(const float newX) noexcept
-	{
-		_x = newX;
-	}
-
-	const float Float4::x() const noexcept
-	{
-		return _x;
-	}
-
-	void Float4::y(const float newY) noexcept
-	{
-		_y = newY;
-	}
-
-	const float Float4::y() const noexcept
-	{
-		return _y;
-	}
-
-	void Float4::z(const float newZ) noexcept
-	{
-		_z = newZ;
-	}
-
-	const float Float4::z() const noexcept
-	{
-		return _z;
-	}
-
-	void Float4::w(const float newW) noexcept
-	{
-		_w = newW;
-	}
-
-	const float Float4::w() const noexcept
-	{
-		return _w;
-	}
-	*/
 }

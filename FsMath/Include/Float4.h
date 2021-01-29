@@ -16,12 +16,12 @@ namespace fs
 		static const Float4		kZero;
 
 	public:
-								Float4();
-		explicit				Float4(const float s);
-		explicit				Float4(const float x, const float y, const float z, const float w);
-		explicit				Float4(const Float3& rhs);
-								Float4(const Float4& rhs)											= default;
-								Float4(Float4&& rhs) noexcept										= default;
+		constexpr				Float4();
+		constexpr explicit		Float4(const float s);
+		constexpr explicit		Float4(const float x, const float y, const float z, const float w);
+		constexpr explicit		Float4(const Float3& rhs);
+		constexpr				Float4(const Float4& rhs)											= default;
+		constexpr				Float4(Float4&& rhs) noexcept										= default;
 								~Float4()															= default;
 
 	public:
@@ -79,6 +79,9 @@ namespace fs
 		float					_w;
 	};
 }
+
+
+#include <FsMath/Include/Float4.inl>
 
 
 #endif // !FS_FLOAT4_H

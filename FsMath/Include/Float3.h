@@ -14,12 +14,12 @@ namespace fs
 	class Float3 final
 	{
 	public:
-								Float3();
-		explicit				Float3(const float s);
-		explicit				Float3(const float x, const float y, const float z);
-		explicit				Float3(const Float2& rhs);
-								Float3(const Float3& rhs)								= default;
-								Float3(Float3&& rhs) noexcept							= default;
+		constexpr				Float3();
+		constexpr explicit		Float3(const float s);
+		constexpr explicit		Float3(const float x, const float y, const float z);
+		constexpr explicit		Float3(const Float2& rhs);
+		constexpr				Float3(const Float3& rhs)								= default;
+		constexpr				Float3(Float3&& rhs) noexcept							= default;
 								~Float3()												= default;
 
 	public:
@@ -75,6 +75,9 @@ namespace fs
 		float					_z;
 	};
 }
+
+
+#include <FsMath/Include/Float3.inl>
 
 
 #endif // !FS_FLOAT3_H

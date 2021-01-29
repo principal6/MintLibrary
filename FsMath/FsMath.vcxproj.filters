@@ -66,4 +66,15 @@
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\Float4.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Float2.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Float3.inl">
+      <Filter>Include</Filter>
+    </None>
+  </ItemGroup>
 </Project>

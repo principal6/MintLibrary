@@ -1,6 +1,4 @@
-﻿#include "..\Include\Float2.h"
-#include "..\Include\Float2.h"
-#pragma once
+﻿#pragma once
 
 
 #include <stdafx.h>
@@ -14,25 +12,6 @@ namespace fs
 {
 	const Float2 Float2::kZero	= fs::Float2(0.0f);
 	const Float2 Float2::kOne	= fs::Float2(1.0f);
-
-	Float2::Float2()
-		: Float2(0.0f)
-	{
-		__noop;
-	}
-
-	Float2::Float2(const float s)
-		: Float2(s, s)
-	{
-		__noop;
-	}
-
-	Float2::Float2(const float x, const float y)
-		: _x{ x }
-		, _y{ y }
-	{
-		__noop;
-	}
 
 	Float2::Float2(const Int2& rhs)
 		: Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
