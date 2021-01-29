@@ -71,12 +71,15 @@ namespace fs
 		private:
 			void																drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::SimpleRendering::Color& color);
 
+		/*
 		public:
+			// 오차가 좀 있다...
 			void																drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut = false);
 		
 		private:
 			void																drawHalfCircleInternal(const float radius, const bool insideOut);
-		
+		*/
+
 		public:
 			void																drawCircle(const float radius, const bool insideOut = false);
 

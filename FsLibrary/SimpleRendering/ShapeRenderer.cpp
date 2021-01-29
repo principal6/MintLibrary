@@ -359,6 +359,7 @@ namespace fs
 			}
 		}
 
+		/*
 		void ShapeRenderer::drawHalfCircle(const float radius, const float rotationAngle, const bool insideOut)
 		{
 			drawHalfCircleInternal(radius, insideOut);
@@ -379,6 +380,7 @@ namespace fs
 			v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 			v._texCoord._x = -fs::Math::kSqrtOfTwo;
 			v._texCoord._y = 0.0f;
+			v._texCoord._w = radius;
 			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
 			vertexArray.emplace_back(v);
 
@@ -388,7 +390,7 @@ namespace fs
 			v._texCoord._y = +fs::Math::kSqrtOfTwo;
 			vertexArray.emplace_back(v);
 
-			v._position._x = +scaledRadius;
+			v._position._x = +scaledRadius - 1.0f; // 오차 처리
 			v._position._y = 0.0f;
 			v._texCoord._x = +fs::Math::kSqrtOfTwo;
 			v._texCoord._y = 0.0f;
@@ -401,6 +403,7 @@ namespace fs
 			indexArray.push_back(vertexOffset + 1);
 			indexArray.push_back(vertexOffset + 2);
 		}
+		*/
 
 		void ShapeRenderer::drawCircle(const float radius, const bool insideOut)
 		{
@@ -904,7 +907,7 @@ namespace fs
 				pointA = fs::Float2(+halfCoreSize._x, +halfSize._y);
 				drawSolidTriangleInternal(pointC, pointB, pointA, color);
 			}
-
+			
 			// Left top corner
 			{
 				pointA = fs::Float2(-halfSize._x, -halfCoreSize._y);
