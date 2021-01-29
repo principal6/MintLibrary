@@ -8,6 +8,42 @@
 
 namespace fs
 {
+	Float3x3 Float3x3::rotationMatrixX(const float angle) noexcept
+	{
+		const float cosAngle = cos(angle);
+		const float sinAngle = sin(angle);
+		return Float3x3
+		(
+			    +1.0f,      0.0f,      0.0f,
+			     0.0f, +cosAngle, -sinAngle,
+			     0.0f, +sinAngle, +cosAngle
+		);
+	}
+
+	Float3x3 Float3x3::rotationMatrixY(const float angle) noexcept
+	{
+		const float cosAngle = cos(angle);
+		const float sinAngle = sin(angle);
+		return Float3x3
+		(
+			+cosAngle,      0.0f, +sinAngle,
+			     0.0f,     +1.0f,      0.0f,
+			-sinAngle,      0.0f, +cosAngle
+		);
+	}
+
+	Float3x3 Float3x3::rotationMatrixZ(const float angle) noexcept
+	{
+		const float cosAngle = cos(angle);
+		const float sinAngle = sin(angle);
+		return Float3x3
+		(
+			+cosAngle, -sinAngle,      0.0f,
+			+sinAngle, +cosAngle,      0.0f,
+			     0.0f,      0.0f,     +1.0f
+		);
+	}
+
 	Float3x3::Float3x3()
 		: Float3x3(
 			1.0f, 0.0f, 0.0f, 
@@ -148,5 +184,15 @@ namespace fs
 	Float3x3 Float3x3::inverse() const noexcept
 	{
 		return adjugate() / determinant();
+	}
+
+	Float3 Float3x3::mul(const Float3& v) const noexcept
+	{
+		return Float3
+		(
+			_m[0][0] * v._x + _m[0][1] * v._y + _m[0][2] * v._z,
+			_m[1][0] * v._x + _m[1][1] * v._y + _m[1][2] * v._z,
+			_m[2][0] * v._x + _m[2][1] * v._y + _m[2][2] * v._z
+		);
 	}
 }

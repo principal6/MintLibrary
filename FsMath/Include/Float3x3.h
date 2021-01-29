@@ -5,7 +5,7 @@
 #define FS_FLOAT3X3_H
 
 
-#include <FsMath/Include/MathCommon.h>
+#include <FsMath/Include/Float3.h>
 
 
 namespace fs
@@ -20,6 +20,13 @@ namespace fs
 	class Float3x3 final
 	{
 		friend Float4x4;
+
+#pragma region Static Functions
+	public:
+		static Float3x3		rotationMatrixX(const float angle) noexcept;
+		static Float3x3		rotationMatrixY(const float angle) noexcept;
+		static Float3x3		rotationMatrixZ(const float angle) noexcept;
+#pragma endregion
 
 	public:
 							Float3x3();
@@ -52,6 +59,9 @@ namespace fs
 		Float3x3			cofactor() const noexcept;
 		Float3x3			adjugate() const noexcept;
 		Float3x3			inverse() const noexcept;
+
+	public:
+		Float3				mul(const Float3& v) const noexcept;
 
 	private:
 		float				_m[3][3]{};

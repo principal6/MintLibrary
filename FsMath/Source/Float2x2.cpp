@@ -7,6 +7,13 @@
 
 namespace fs
 {
+	Float2x2 Float2x2::rotationMatrix(const float angle) noexcept
+	{
+		const float cosAngle = cos(angle);
+		const float sinAngle = sin(angle);
+		return Float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+	}
+
 	Float2x2::Float2x2()
 		: Float2x2(
 			1.0f, 0.0f, 
@@ -100,5 +107,10 @@ namespace fs
 			d, -b,
 			-c, a
 		) / determinant();
+	}
+
+	Float2 Float2x2::mul(const Float2& v) const noexcept
+	{
+		return Float2(_m[0][0] * v._x + _m[0][1] * v._y, _m[1][0] * v._x + _m[1][1] * v._y);
 	}
 }

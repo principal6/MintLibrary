@@ -5,7 +5,7 @@
 #define FS_FLOAT2X2_H
 
 
-#include <FsMath/Include/MathCommon.h>
+#include <FsMath/Include/Float2.h>
 
 
 namespace fs
@@ -22,12 +22,16 @@ namespace fs
 
 		static constexpr uint32		kMaxIndex = 1;
 
+#pragma region Static Functions
+	public:
+		static Float2x2				rotationMatrix(const float angle) noexcept;
+#pragma endregion
+
+
 	public:
 									Float2x2();
 		explicit					Float2x2(const float s);
-		explicit					Float2x2(
-										const float m00, const float m01, 
-										const float m10, const float m11);
+		explicit					Float2x2(const float m00, const float m01, const float m10, const float m11);
 									Float2x2(const Float2x2& rhs)				= default;
 									Float2x2(Float2x2&& rhs) noexcept			= default;
 									~Float2x2()									= default;
@@ -51,6 +55,9 @@ namespace fs
 	public:
 		const float					determinant() const noexcept;
 		Float2x2					inverse() const noexcept;
+
+	public:
+		Float2						mul(const Float2& v) const noexcept;
 
 	private:
 		float						_m[2][2]{};
