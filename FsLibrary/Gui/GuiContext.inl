@@ -120,7 +120,6 @@ namespace fs
 		inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
 			: _controlType{ controlData.getControlType() }
 			, _hashKey{ controlData.getHashKey() }
-			, _scrollBarTypeForWindow{ ScrollBarType::None }
 		{
 			__noop;
 		}
@@ -162,7 +161,20 @@ namespace fs
 			_nextTooltipText = nullptr;
 		}
 
-		FS_INLINE const GuiContext::ControlData& GuiContext::getControlDataStackTop() noexcept
+		FS_INLINE const GuiContext::ControlData& GuiContext::getControlDataStackTop() const noexcept
+		{
+			if (_controlStackPerFrame.empty() == false)
+			{
+				auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
+				if (found != _controlIdMap.end())
+				{
+					return found->second;
+				}
+			}
+			return _rootControlData;
+		}
+
+		FS_INLINE GuiContext::ControlData& GuiContext::getControlDataStackTop() noexcept
 		{
 			if (_controlStackPerFrame.empty() == false)
 			{

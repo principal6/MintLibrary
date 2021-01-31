@@ -18,6 +18,11 @@ namespace fs
 			_position = position;
 		}
 
+		FS_INLINE void IRenderer::setPositionZ(const float s) noexcept
+		{
+			_position._z = s;
+		}
+
 		FS_INLINE const fs::Float4& IRenderer::getColorInternal(const uint32 index) const noexcept
 		{
 			const uint32 colorCount = static_cast<uint32>(_colorArray.size());

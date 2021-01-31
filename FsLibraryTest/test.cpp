@@ -850,12 +850,24 @@ const bool testWindow()
 					fs::Gui::WindowParam windowParam;
 					windowParam._size = fs::Float2(300.0f, 400.0f);
 					windowParam._position = fs::Float2(400.0f, 50.0f);
-					windowParam._scrollBarType = fs::Gui::ScrollBarType::Vert;
+					windowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
 					if (guiContext.beginWindow(L"def", windowParam) == true)
 					{
 						guiContext.nextTooltip(L"툴팁 테스트!");
 
 						if (guiContext.beginButton(L"테스트") == true)
+						{
+							guiContext.endButton();
+						}
+
+						guiContext.nextSameLine();
+						if (guiContext.beginButton(L"테스트A") == true)
+						{
+							guiContext.endButton();
+						}
+
+						guiContext.nextSameLine();
+						if (guiContext.beginButton(L"테스트B") == true)
 						{
 							guiContext.endButton();
 						}

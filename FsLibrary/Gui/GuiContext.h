@@ -117,6 +117,8 @@ namespace fs
 				bool					_isDraggable;
 				Rect					_draggingConstraints; // MUST set all four values if want to limit dragging area
 				uint64					_delegateHashKey; // Used for drag, resize and focus
+				// [Window] ScrollBar type
+				// [ScrollBar] Thumb at [0, 1]
 				ControlValue			_value;
 
 			private:
@@ -158,7 +160,6 @@ namespace fs
 			public:
 				ControlType			_controlType;
 				uint64				_hashKey;
-				ScrollBarType		_scrollBarTypeForWindow;
 			};
 
 			enum class NamedColor
@@ -253,16 +254,13 @@ namespace fs
 			// Unique control
 			void										pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position);
 
-			// [ScrollBar - Vertical]
+			// [ScrollBar]
 			// Return 'true' if value was changed
-			void										pushScrollBarVert();
-
-			// [ScrollBar - Horizontal]
-			// Return 'true' if value was changed
-			void										pushScrollBarHorz();
+			void										pushScrollBar(const ScrollBarType scrollBarType);
 
 		private:
-			const ControlData&							getControlDataStackTop() noexcept;
+			const ControlData&							getControlDataStackTop() const noexcept;
+			ControlData&								getControlDataStackTop() noexcept;
 			ControlData&								getControlData(const uint64 hashKey) noexcept;
 			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
 			fs::Float3									getControlCenterPosition(const ControlData& controlData) const noexcept;
@@ -292,6 +290,7 @@ namespace fs
 			const bool									isControlHovered(const ControlData& controlData) const noexcept;
 			const bool									isControlPressed(const ControlData& controlData) const noexcept;
 			const bool									isControlClicked(const ControlData& controlData) const noexcept;
+			const bool									isControlFocused(const ControlData& controlData) const noexcept;
 
 			const bool									isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept;
 			const bool									isAncestorFocused(const ControlData& controlData) const noexcept;

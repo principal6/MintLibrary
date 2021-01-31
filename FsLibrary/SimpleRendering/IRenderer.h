@@ -93,6 +93,7 @@ namespace fs
 
 		public:
 			void									setPosition(const fs::Float3& position) noexcept;
+			void									setPositionZ(const float s) noexcept;
 			void									setColor(const fs::SimpleRendering::Color& color) noexcept;
 			void									setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept;
 
