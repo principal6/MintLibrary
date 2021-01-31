@@ -126,8 +126,8 @@ namespace fs
 		const bool GuiContext::isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept
 		{
 			const fs::Float2 max = controlPosition + interactionSize;
-			if (controlPosition._x < screenPosition._x && screenPosition._x < max._x &&
-				controlPosition._y < screenPosition._y && screenPosition._y < max._y)
+			if (controlPosition._x <= screenPosition._x && screenPosition._x <= max._x &&
+				controlPosition._y <= screenPosition._y && screenPosition._y <= max._y)
 			{
 				return true;
 			}
@@ -266,18 +266,18 @@ namespace fs
 			beginTitleBar(title, titleBarSize, kTitleBarInnerPadding);
 			endTitleBar();
 
+			const ScrollBarType scrollBarType = static_cast<ScrollBarType>(getControlData(_controlStackPerFrame.back()._hashKey)._value._i);
+			if (scrollBarType != ScrollBarType::None)
+			{
+				pushScrollBar(scrollBarType);
+			}
+
 			return isOpen;
 		}
 
 		void GuiContext::endWindow()
 		{
 			FS_ASSERT("김장원", _controlStackPerFrame.back()._controlType == ControlType::Window, "begin 과 end 의 ControlType 이 다릅니다!!!");
-
-			const ScrollBarType scrollBarType = static_cast<ScrollBarType>(getControlData(_controlStackPerFrame.back()._hashKey)._value._i);
-			if (scrollBarType != ScrollBarType::None)
-			{
-				pushScrollBar(scrollBarType);
-			}
 
 			_controlStackPerFrame.pop_back();
 		}
@@ -395,6 +395,7 @@ namespace fs
 			}
 
 			const bool isParentWindowFocused = isControlFocused(parentWindowControlData);
+			const fs::Float2& parentWindowPreviousClientSize = parentWindowControlData.getPreviousClientSize();
 
 			// Vertical Track
 			if (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both)
@@ -405,7 +406,7 @@ namespace fs
 				ControlDataParam trackControlDataParam;
 				trackControlDataParam._initialDisplaySize._x = kScrollBarThickness;
 				trackControlDataParam._initialDisplaySize._y = fnCalculatePureWindowHeight(parentWindowControlData);
-				trackControlDataParam._desiredPositionInParent._x = parentWindowControlData.getDisplaySize()._x - trackControlDataParam._initialDisplaySize._x - kHalfBorderThickness * 0.5f;
+				trackControlDataParam._desiredPositionInParent._x = parentWindowControlData.getDisplaySize()._x - kHalfBorderThickness * 2.0f;
 				trackControlDataParam._desiredPositionInParent._y = kTitleBarBaseSize._y + parentWindowControlData.getInnerPadding().top();
 				trackControlDataParam._parentHashKeyOverride = parentWindowControlData.getHashKey();
 				trackControlDataParam._alwaysResetDisplaySize = true;
@@ -415,21 +416,21 @@ namespace fs
 				ControlData& trackControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarVertTrack", trackControlType), trackControlType, trackControlDataParam);
 
 				fs::SimpleRendering::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
-				processShowOnlyControl(trackControlData, trackColor);
+				processShowOnlyControl(trackControlData, trackColor, true);
+
+				// Rendering track
+				fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
+				shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
+				shapeRenderer.setColor(trackColor);
+				shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData.getDisplaySize()._y), kScrollBarThickness);
 
 				const float parentWindowPureDisplayHeight = fnCalculatePureWindowHeight(parentWindowControlData);
-				const float extraSize = parentWindowControlData.getClientSize()._y - parentWindowPureDisplayHeight;
+				const float extraSize = parentWindowPreviousClientSize._y - parentWindowPureDisplayHeight;
 				if (0.0f <= extraSize)
 				{
-					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentWindowControlData.getClientSize()._y);
+					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentWindowPreviousClientSize._y);
 					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio;
-					fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
-
-					// Rendering track
-					shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
-					shapeRenderer.setColor(trackColor);
-					shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData.getDisplaySize()._y), kScrollBarThickness);
-
+					
 					// Thumb
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
@@ -464,7 +465,7 @@ namespace fs
 
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top()) / trackRemnantSize);
 						thumbControlData._value._f = thumbAtRatio;
-						parentWindowControlData._displayOffset._y = -thumbAtRatio * (parentWindowControlData.getClientSize()._y - trackControlData.getDisplaySize()._y); // Scrolling!
+						parentWindowControlData._displayOffset._y = -thumbAtRatio * (parentWindowPreviousClientSize._y - trackControlData.getDisplaySize()._y); // Scrolling!
 
 						// Rendering thumb
 						{
@@ -507,7 +508,7 @@ namespace fs
 				trackControlDataParam._initialDisplaySize._x = fnCalculatePureWindowWidth(parentWindowControlData);
 				trackControlDataParam._initialDisplaySize._y = kScrollBarThickness;
 				trackControlDataParam._desiredPositionInParent._x = parentWindowControlData.getInnerPadding().left();
-				trackControlDataParam._desiredPositionInParent._y = parentWindowControlData.getDisplaySize()._y - trackControlDataParam._initialDisplaySize._y - kHalfBorderThickness * 0.5f;
+				trackControlDataParam._desiredPositionInParent._y = parentWindowControlData.getDisplaySize()._y - kHalfBorderThickness * 2.0f;
 				trackControlDataParam._parentHashKeyOverride = parentWindowControlData.getHashKey();
 				trackControlDataParam._alwaysResetDisplaySize = true;
 				trackControlDataParam._alwaysResetPosition = true;
@@ -516,21 +517,21 @@ namespace fs
 				ControlData& trackControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarHorzTrack", trackControlType), trackControlType, trackControlDataParam);
 
 				fs::SimpleRendering::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
-				processShowOnlyControl(trackControlData, trackColor);
+				processShowOnlyControl(trackControlData, trackColor, true);
+
+				// Rendering track
+				fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
+				shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
+				shapeRenderer.setColor(trackColor);
+				shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData.getDisplaySize()._x, 0.0f), kScrollBarThickness);
 
 				const float parentWindowPureDisplayWidth = fnCalculatePureWindowWidth(parentWindowControlData);
-				const float extraSize = parentWindowControlData.getClientSize()._x - parentWindowPureDisplayWidth;
+				const float extraSize = parentWindowPreviousClientSize._x - parentWindowPureDisplayWidth;
 				if (0.0f <= extraSize)
 				{
-					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentWindowControlData.getClientSize()._x);
+					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentWindowPreviousClientSize._x);
 					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio;
-					fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
-
-					// Rendering track
-					shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
-					shapeRenderer.setColor(trackColor);
-					shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData.getDisplaySize()._x, 0.0f), kScrollBarThickness);
-
+					
 					// Thumb
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
@@ -566,7 +567,7 @@ namespace fs
 
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
 						thumbControlData._value._f = thumbAtRatio;
-						parentWindowControlData._displayOffset._x = -thumbAtRatio * (parentWindowControlData.getClientSize()._x - trackControlData.getDisplaySize()._x + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
+						parentWindowControlData._displayOffset._x = -thumbAtRatio * (parentWindowPreviousClientSize._x - trackControlData.getDisplaySize()._x + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
 						// Rendering thumb
 						{
@@ -657,10 +658,13 @@ namespace fs
 		{
 			static constexpr ControlType controlType = ControlType::RoundButton;
 
+			const ControlData& parentWindowData = getParentWindowControlData();
+
 			const float radius = kDefaultRoundButtonRadius;
 			ControlDataParam controlDataParam;
 			controlDataParam._initialDisplaySize = fs::Float2(radius * 2.0f);
 			controlDataParam._useParentViewport = true;
+			controlDataParam._parentHashKeyOverride = parentWindowData.getHashKey();
 			ControlData& controlData = getControlData(windowTitle, controlType, controlDataParam);
 
 			fs::SimpleRendering::Color controlColor;
@@ -786,8 +790,10 @@ namespace fs
 			fs::Float2& controlDisplaySize = const_cast<fs::Float2&>(controlData.getDisplaySize());
 			fs::Float2& controlNextChildOffset = const_cast<fs::Float2&>(controlData.getNextChildOffset());
 			fs::Float2& controlClientSize = const_cast<fs::Float2&>(controlData.getClientSize());
+			fs::Float2& controlPreviousClientSize = const_cast<fs::Float2&>(controlData.getPreviousClientSize());
 			controlInnerPadding = controlDataParam._innerPadding;
 			controlNextChildOffset.setZero();
+			controlPreviousClientSize = controlClientSize;
 			controlClientSize.setZero();
 
 			// Display size, Display size min
@@ -914,6 +920,13 @@ namespace fs
 			controlChildAt = controlData._position + ((_nextNoAutoPositioned == false) ? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top()) : fs::Float2::kZero) + controlData._displayOffset;
 		}
 
+		const GuiContext::ControlData& GuiContext::getParentWindowControlData() const noexcept
+		{
+			FS_ASSERT("김장원", _controlStackPerFrame.empty() == false, "Control 스택이 비어있을 때 호출되면 안 됩니다!!!");
+
+			return getParentWindowControlData(getControlData(_controlStackPerFrame.back()._hashKey));
+		}
+
 		const GuiContext::ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept
 		{
 			return getParentWindowControlDataInternal(controlData.getParentHashKey());
@@ -942,7 +955,6 @@ namespace fs
 			outBackgroundColor = normalColor;
 
 			const bool isClicked = isControlClicked(controlData);
-
 			if (isControlHovered(controlData) == true)
 			{
 				outBackgroundColor = hoverColor;
@@ -951,7 +963,7 @@ namespace fs
 			{
 				outBackgroundColor = pressedColor;
 			}
-			
+
 			if (isAncestorFocused(controlData) == false)
 			{
 				// Out-of-focus alpha
@@ -965,7 +977,7 @@ namespace fs
 
 		const bool GuiContext::processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept
 		{
-			processControlInteractionInternal(controlData);
+			processControlInteractionInternal(controlData, true);
 
 			const uint64 controlHashKey = (0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey();
 
@@ -999,12 +1011,11 @@ namespace fs
 			return isFocused;
 		}
 
-		void GuiContext::processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) noexcept
+		void GuiContext::processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone) noexcept
 		{
-			processControlInteractionInternal(controlData);
+			processControlInteractionInternal(controlData, doNotSetMouseInteractionDone);
 
-			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			if (isAncestorFocused_ == true)
+			if (isAncestorFocused(controlData) == true)
 			{
 				outBackgroundColor.scaleA(kDefaultFocusedAlpha);
 			}
@@ -1040,7 +1051,7 @@ namespace fs
 			return isPressed;
 		}
 		
-		void GuiContext::processControlInteractionInternal(ControlData& controlData) noexcept
+		void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone) noexcept
 		{
 			static std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 
 			{
@@ -1060,7 +1071,7 @@ namespace fs
 				{
 					_pressedControlHashKey = 0;
 					_pressedControlInitialPosition.setZero();
-				}	
+				}
 			};
 
 			const uint64 controlHashKey = controlData.getHashKey();
@@ -1071,13 +1082,22 @@ namespace fs
 				return;
 			}
 
-			
+			if (_isMouseInteractionDonePerFrame == true)
+			{
+				return;
+			}
+
 			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mousePosition, parentControlData);
 			const bool isMouseInInteractionArea = isInControlInteractionArea(_mousePosition, controlData);
 			if (isMouseInParentInteractionArea == true && isMouseInInteractionArea == true)
 			{
 				// Hovered
+
+				if (doNotSetMouseInteractionDone == false)
+				{
+					_isMouseInteractionDonePerFrame = true;
+				}
 
 				const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseDownPosition, controlData);
 				
@@ -1129,6 +1149,8 @@ namespace fs
 				if (controlData._isResizable == true && isInControlBorderArea(_mousePosition, controlData, newCursorType, _resizeMethod) == true)
 				{
 					_cursorType = newCursorType;
+
+					_isMouseInteractionDonePerFrame = true;
 				}
 			}
 
@@ -1180,6 +1202,8 @@ namespace fs
 
 					changeTargetControlDisplaySize._y = fs::max(changeTargetControlData.getDisplaySizeMin()._y, _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert);
 				}
+
+				_isMouseInteractionDonePerFrame = true;
 			}
 			else if (isDragging == true)
 			{
@@ -1200,6 +1224,8 @@ namespace fs
 					changeTargetControlData._position._x = fs::min(fs::max(changeTargetControlData._draggingConstraints.left(), naivePosition._x), changeTargetControlData._draggingConstraints.right());
 					changeTargetControlData._position._y = fs::min(fs::max(changeTargetControlData._draggingConstraints.top(), naivePosition._y), changeTargetControlData._draggingConstraints.bottom());
 				}
+
+				_isMouseInteractionDonePerFrame = true;
 			}
 
 			resetNextStates();
@@ -1410,6 +1436,7 @@ namespace fs
 
 		void GuiContext::resetStatesPerFrame()
 		{
+			_isMouseInteractionDonePerFrame = false;
 			_clickedControlHashKeyPerFrame = 0;
 
 			_controlStackPerFrame.clear();

@@ -66,6 +66,11 @@ namespace fs
 			return _clientSize;
 		}
 
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getPreviousClientSize() const noexcept
+		{
+			return _previousClientSize;
+		}
+
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getChildAt() const noexcept
 		{
 			return _childAt;

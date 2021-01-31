@@ -93,6 +93,7 @@ namespace fs
 				const fs::Float2&		getDisplaySize() const noexcept;
 				const fs::Float2&		getDisplaySizeMin() const noexcept;
 				const fs::Float2&		getClientSize() const noexcept;
+				const fs::Float2&		getPreviousClientSize() const noexcept;
 				const fs::Float2&		getChildAt() const noexcept;
 				const fs::Float2&		getNextChildOffset() const noexcept;
 				const ControlType		getControlType() const noexcept;
@@ -128,6 +129,7 @@ namespace fs
 				fs::Float2				_displaySize;
 				fs::Float2				_displaySizeMin;
 				fs::Float2				_clientSize; // Could be smaller or larger than _displaySize
+				fs::Float2				_previousClientSize;
 				fs::Float2				_childAt; // In screen space, Next child control will be positioned according to this
 				fs::Float2				_nextChildOffset; // Every new child sets this offset to calculate next _childAt
 				ControlType				_controlType;
@@ -268,6 +270,7 @@ namespace fs
 			const uint64								generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
 			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& controlDataParam) noexcept;
 			void										calculateControlChildAt(ControlData& controlData) noexcept;
+			const ControlData&							getParentWindowControlData() const noexcept;
 			const ControlData&							getParentWindowControlData(const ControlData& controlData) const noexcept;
 			const ControlData&							getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
@@ -277,10 +280,10 @@ namespace fs
 		private:
 			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			void										processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			void										processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
 			const bool									processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			
-			void										processControlInteractionInternal(ControlData& controlData) noexcept;
+			void										processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void										processControlCommonInternal(ControlData& controlData) noexcept;
 			const bool									isInteractingInternal(const ControlData& controlData) const noexcept;
 			
@@ -330,6 +333,7 @@ namespace fs
 			std::vector<ControlStackData>				_controlStackPerFrame;
 
 		private:
+			mutable bool								_isMouseInteractionDonePerFrame;
 			mutable uint64								_focusedControlHashKey;
 			mutable uint64								_hoveredControlHashKey;
 			mutable uint64								_pressedControlHashKey;
