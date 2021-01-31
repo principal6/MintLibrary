@@ -1002,7 +1002,7 @@ namespace fs
 			const uint64 controlHashKey = (0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey();
 
 			// Check new focus
-			if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true && isControlClicked(controlData) == true)
+			if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true))
 			{
 				// Focus entered
 				_focusedControlHashKey = controlHashKey;
@@ -1353,7 +1353,7 @@ namespace fs
 
 		const bool GuiContext::isControlFocused(const ControlData& controlData) const noexcept
 		{
-			return (_focusedControlHashKey == controlData.getHashKey());
+			return (_focusedControlHashKey == ((0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey()));
 		}
 
 		const bool GuiContext::isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept
