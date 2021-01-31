@@ -1,10 +1,6 @@
-﻿#pragma once
-
-
-#include <stdafx.h>
+﻿#include <stdafx.h>
 #include <FsMath/Include/Float2.h>
 
-#include <FsMath/Include/MathCommon.h>
 #include <FsMath/Include/Int2.h>
 
 

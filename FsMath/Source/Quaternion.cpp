@@ -1,8 +1,5 @@
-﻿#pragma once
-
+﻿#include <stdafx.h>
 #include <FsMath/Include/Quaternion.h>
-
-#include <FsMath/Include/Float4.h>
 
 
 namespace fs

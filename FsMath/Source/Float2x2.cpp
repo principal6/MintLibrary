@@ -1,7 +1,4 @@
-﻿#pragma once
-
-
-#include <stdafx.h>
+﻿#include <stdafx.h>
 #include <FsMath/Include/Float2x2.h>
 
 

@@ -253,6 +253,12 @@ namespace fs
 				}
 				else
 				{
+					if (width == 0)
+					{
+						FS_LOG_ERROR("김장원", "Texture 의 Width 가 0 이면 안 됩니다!!!");
+						return;
+					}
+
 					createTexture(_textureFormat, resourceContent, width, elementCount / width);
 				}
 			}

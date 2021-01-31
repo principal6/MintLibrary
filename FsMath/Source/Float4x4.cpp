@@ -1,11 +1,7 @@
-﻿#pragma once
-
-
-#include <stdafx.h>
+﻿#include <stdafx.h>
 #include <FsMath/Include/Float4x4.h>
 
 #include <FsMath/Include/Float3x3.h>
-#include <FsMath/Include/Float4.h>
 
 
 namespace fs

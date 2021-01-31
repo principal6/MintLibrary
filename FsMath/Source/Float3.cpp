@@ -1,11 +1,5 @@
-﻿#pragma once
-
-
-#include <stdafx.h>
+﻿#include <stdafx.h>
 #include <FsMath/Include/Float3.h>
-
-#include <FsMath/Include/MathCommon.h>
-#include <FsMath/Include/Float2.h>
 
 
 namespace fs

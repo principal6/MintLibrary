@@ -1,7 +1,4 @@
-﻿#pragma once
-
-#include <stdafx.h>
-#include <FsLogger/Include/Logger.h>
+﻿#include <FsLogger/Include/Logger.h>
 
 #include <Windows.h>
 #include <ctime>
