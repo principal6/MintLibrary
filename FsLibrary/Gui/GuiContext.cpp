@@ -444,7 +444,6 @@ namespace fs
 						thumbControlDataParam._desiredPositionInParent._y = trackControlDataParam._desiredPositionInParent._y;
 						thumbControlDataParam._parentHashKeyOverride = parentWindowControlData.getHashKey();
 						thumbControlDataParam._alwaysResetDisplaySize = true;
-						thumbControlDataParam._alwaysResetPosition = false; // 중요!
 						thumbControlDataParam._ignoreForClientSize = true;
 						thumbControlDataParam._useParentViewport = true;
 						ControlData& thumbControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType, thumbControlDataParam);
@@ -455,6 +454,10 @@ namespace fs
 						thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
 						thumbControlData._draggingConstraints.top(trackControlData._position._y);
 						thumbControlData._draggingConstraints.bottom(trackControlData._position._y + trackRemnantSize);
+
+						// @중요
+						// Calculate position from internal value
+						thumbControlData._position._y = parentWindowControlData._position._y + trackControlDataParam._desiredPositionInParent._y + (thumbControlData._value._f * trackRemnantSize);
 
 						fs::SimpleRendering::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaleRgb(1.25f), thumbColor);
@@ -553,6 +556,10 @@ namespace fs
 						thumbControlData._draggingConstraints.right(trackControlData._position._x + trackRemnantSize);
 						thumbControlData._draggingConstraints.top(parentWindowControlData._position._y + thumbControlDataParam._desiredPositionInParent._y);
 						thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
+
+						// @중요
+						// Calculate position from internal value
+						thumbControlData._position._x = parentWindowControlData._position._x + trackControlDataParam._desiredPositionInParent._x + (thumbControlData._value._f * trackRemnantSize);
 
 						fs::SimpleRendering::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaleRgb(1.25f), thumbColor);
