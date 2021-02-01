@@ -37,6 +37,12 @@ namespace fs
 	{
 		class GuiContext;
 
+		struct WindowParam
+		{
+			fs::Float2			_size				= fs::Float2(180, 100);
+			fs::Float2			_position			= fs::Float2(100, 100);
+			ScrollBarType		_scrollBarType		= ScrollBarType::None;
+		};
 
 		// If no value is set, default values will be used properly
 		struct LabelParam
@@ -48,11 +54,14 @@ namespace fs
 			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Center;
 		};
 
-		struct WindowParam
+		struct SliderParam
 		{
-			fs::Float2			_size				= fs::Float2(180, 100);
-			fs::Float2			_position			= fs::Float2(100, 100);
-			ScrollBarType		_scrollBarType		= ScrollBarType::None;
+			//uint32		_stepCount		= 0; // If stepcount is 0, the value is treated as real number
+			//float			_min			= 0.0f;
+			//float			_max			= 1.0f;
+			//float			_stride			= 0.1f; // Only applies when (_stepCount == 0)
+			//bool			_isVertical		= false; // Horizontal if false
+			fs::Float2		_size			= fs::Float2(128.0f, 0.0f);
 		};
 
 		union ControlValue
@@ -78,6 +87,8 @@ namespace fs
 			static constexpr Rect						kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
 			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
 			static constexpr float						kHalfBorderThickness = 5.0f;
+			static constexpr float						kSliderTrackThicknes = 6.0f;
+			static constexpr float						kSliderThumbRadius = 8.0f;
 
 			class ControlData
 			{
@@ -112,7 +123,7 @@ namespace fs
 			public:
 				fs::Float2				_interactionSize;
 				fs::Float2				_position; // In screen space, at left-top corner
-				fs::Float2				_displayOffset; // Used for scrolling
+				fs::Float2				_displayOffset; // Used for scrolling child controls (of Window control)
 				bool					_isFocusable;
 				bool					_isResizable;
 				bool					_isDraggable;
@@ -234,23 +245,28 @@ namespace fs
 			// [Window | Control with ID]
 			// title is used as unique id for windows
 			const bool									beginWindow(const wchar_t* const title, const WindowParam& windowParam);
-			void										endWindow();
+			void										endWindow() { endControlInternal(ControlType::Window); }
 
 			// [Button]
 			// Return 'true' if clicked
 			const bool									beginButton(const wchar_t* const text);
-			void										endButton();
+			void										endButton() { endControlInternal(ControlType::Button); }
 
 			// [Label]
 			void										pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
+			// [Slider]
+			// Return 'true' if value was changed
+			const bool									beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue);
+			void										endSlider() { endControlInternal(ControlType::Slider); }
+
 		private:
 			// Returns size of titlebar
 			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding);
-			void										endTitleBar();
+			void										endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
 			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
-			void										endRoundButton();
+			void										endRoundButton() { endControlInternal(ControlType::RoundButton); }
 
 			// [Tooltip]
 			// Unique control
@@ -259,6 +275,9 @@ namespace fs
 			// [ScrollBar]
 			// Return 'true' if value was changed
 			void										pushScrollBar(const ScrollBarType scrollBarType);
+
+		private:
+			void										endControlInternal(const ControlType controlType);
 
 		private:
 			const ControlData&							getControlDataStackTop() const noexcept;

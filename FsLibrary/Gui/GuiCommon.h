@@ -26,6 +26,8 @@ namespace fs
 			Label,
 			ScrollBar,
 			ScrollBarThumb, // PRIVATE
+			Slider,
+			SliderThumb, // PRIVATE
 
 			COUNT
 		};

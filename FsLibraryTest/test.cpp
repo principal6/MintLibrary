@@ -860,6 +860,17 @@ const bool testWindow()
 							guiContext.endButton();
 						}
 
+						{
+							fs::Gui::SliderParam sliderParam;
+							sliderParam._size._y = 32.0f;
+							float value = 0.0f;
+							if (guiContext.beginSlider(L"Slider0", sliderParam, value) == true)
+							{
+								guiContext.endSlider();
+							}
+						}
+						
+
 						guiContext.nextSameLine();
 						if (guiContext.beginButton(L"테스트A") == true)
 						{

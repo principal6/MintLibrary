@@ -276,13 +276,6 @@ namespace fs
 			return isOpen;
 		}
 
-		void GuiContext::endWindow()
-		{
-			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == ControlType::Window, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
-
-			_controlStackPerFrame.pop_back();
-		}
-		
 		const bool GuiContext::beginButton(const wchar_t* const text)
 		{
 			static constexpr ControlType controlType = ControlType::Button;
@@ -313,12 +306,6 @@ namespace fs
 			}
 
 			return isClicked;
-		}
-
-		void GuiContext::endButton()
-		{
-			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == ControlType::Button, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
-			_controlStackPerFrame.pop_back();
 		}
 
 		void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
@@ -374,6 +361,104 @@ namespace fs
 				}
 			}
 			fontRenderer.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
+		}
+
+		const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue)
+		{
+			static constexpr ControlType trackControlType = ControlType::Slider;
+
+			bool isChanged = false;
+			const float sliderValidLength = SliderParam._size._x - kSliderThumbRadius * 2.0f;
+			ControlDataParam trackControlDataParam;
+			trackControlDataParam._initialDisplaySize._x = SliderParam._size._x;
+			trackControlDataParam._initialDisplaySize._y = (0.0f == SliderParam._size._y) ? kSliderThumbRadius * 2.0f : SliderParam._size._y;
+			ControlData& trackControlData = getControlData(name, trackControlType, trackControlDataParam);
+			
+			fs::SimpleRendering::Color trackbColor = getNamedColor(NamedColor::HoverState);
+			processShowOnlyControl(trackControlData, trackbColor, true);
+
+			{
+				static constexpr ControlType thumbControlType = ControlType::SliderThumb;
+
+				const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
+
+				nextNoAutoPositioned();
+
+				ControlDataParam thumbControlDataParam;
+				thumbControlDataParam._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
+				thumbControlDataParam._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
+				thumbControlDataParam._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
+				ControlData& thumbControlData = getControlData(name, thumbControlType, thumbControlDataParam);
+				thumbControlData._isDraggable = true;
+				thumbControlData._position._x = trackControlData._position._x + trackControlData._value._f * sliderValidLength;
+				thumbControlData._position._y = trackControlData._position._y + trackControlData.getDisplaySize()._y * 0.5f - thumbControlData.getDisplaySize()._y * 0.5f;
+				thumbControlData._draggingConstraints.top(thumbControlData._position._y);
+				thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
+				thumbControlData._draggingConstraints.left(trackControlData._position._x);
+				thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + sliderValidLength);
+
+				static constexpr fs::SimpleRendering::Color kThumbBaseColor = fs::SimpleRendering::Color(120, 130, 200);
+				fs::SimpleRendering::Color thumbColor;
+				processScrollableControl(thumbControlData, kThumbBaseColor, kThumbBaseColor.scaleRgb(1.5f), thumbColor);
+
+				const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
+				if (trackControlData._value._f != thumbAt)
+				{
+					_controlStackPerFrame.emplace_back(ControlStackData(trackControlData));
+
+					isChanged = true;
+				}
+				trackControlData._value._f = thumbAt;
+				outValue = thumbAt;
+
+				const bool isAncestorFocused_ = isAncestorFocused(trackControlData);
+				fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+
+				// Draw track
+				{
+					const float trackRadius = kSliderTrackThicknes * 0.5f;
+					const float trackRectLength = SliderParam._size._x - trackRadius * 2.0f;
+					const float trackRectLeftLength = thumbAt * sliderValidLength;
+					const float trackRectRightLength = trackRectLength - trackRectLeftLength;
+
+					fs::Float3 trackCenterPosition = getControlCenterPosition(trackControlData);
+					fs::Float3 trackRenderPosition = trackCenterPosition - fs::Float3(trackRectLength * 0.5f, 0.0f, 0.0f);
+
+					// Left(or Upper) half circle
+					shapeRenderer.setColor(kThumbBaseColor);
+					shapeRenderer.setPosition(trackRenderPosition);
+					shapeRenderer.drawHalfCircle(trackRadius, +fs::Math::kPiOverTwo);
+
+					// Left rect
+					trackRenderPosition._x += trackRectLeftLength * 0.5f;
+					shapeRenderer.setPosition(trackRenderPosition);
+					shapeRenderer.drawRectangle(fs::Float2(trackRectLeftLength, kSliderTrackThicknes), 0.0f, 0.0f);
+					trackRenderPosition._x += trackRectLeftLength * 0.5f;
+
+					// Right rect
+					shapeRenderer.setColor(trackbColor);
+					trackRenderPosition._x += trackRectRightLength * 0.5f;
+					shapeRenderer.setPosition(trackRenderPosition);
+					shapeRenderer.drawRectangle(fs::Float2(trackRectRightLength, kSliderTrackThicknes), 0.0f, 0.0f);
+					trackRenderPosition._x += trackRectRightLength * 0.5f;
+
+					// Right(or Lower) half circle
+					shapeRenderer.setPosition(trackRenderPosition);
+					shapeRenderer.drawHalfCircle(trackRadius, -fs::Math::kPiOverTwo);
+				}
+
+				// Draw thumb
+				{
+					const fs::Float3& thumbCenterPosition = getControlCenterPosition(thumbControlData);
+					shapeRenderer.setPosition(thumbCenterPosition);
+					shapeRenderer.setColor(fs::SimpleRendering::Color::kWhite.scaleA(thumbColor.a()));
+					shapeRenderer.drawCircle(kSliderThumbRadius);
+					shapeRenderer.setColor(thumbColor);
+					shapeRenderer.drawCircle(kSliderThumbRadius - 2.0f);
+				}
+			}
+			
+			return isChanged;
 		}
 
 		void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
@@ -621,6 +706,12 @@ namespace fs
 			}
 		}
 
+		void GuiContext::endControlInternal(const ControlType controlType)
+		{
+			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == controlType, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
+			_controlStackPerFrame.pop_back();
+		}
+
 		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding)
 		{
 			static constexpr ControlType controlType = ControlType::TitleBar;
@@ -668,12 +759,6 @@ namespace fs
 			return titleBarSize;
 		}
 
-		void GuiContext::endTitleBar()
-		{
-			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == ControlType::TitleBar, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
-			_controlStackPerFrame.pop_back();
-		}
-
 		const bool GuiContext::beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color)
 		{
 			static constexpr ControlType controlType = ControlType::RoundButton;
@@ -701,12 +786,6 @@ namespace fs
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 
 			return isClicked;
-		}
-
-		void GuiContext::endRoundButton()
-		{
-			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == ControlType::RoundButton, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
-			_controlStackPerFrame.pop_back();
 		}
 
 		void GuiContext::pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position)
@@ -846,8 +925,9 @@ namespace fs
 					deltaX = (parentControlNextChildOffset._x + kDefaultIntervalX);
 					parentControlChildAt._x += deltaX;
 
-					parentControlNextChildOffset._x = fs::max(parentControlNextChildOffset._x, controlData.getDisplaySize()._x);
-					parentControlNextChildOffset._y = fs::max(parentControlNextChildOffset._y, controlData.getDisplaySize()._y);
+					//parentControlNextChildOffset._x = fs::max(parentControlNextChildOffset._x, controlData.getDisplaySize()._x);
+					//parentControlNextChildOffset._y = fs::max(parentControlNextChildOffset._y, controlData.getDisplaySize()._y);
+					parentControlNextChildOffset = controlData.getDisplaySize();
 				}
 				else
 				{
@@ -865,11 +945,11 @@ namespace fs
 					}
 
 					parentControlNextChildOffset = controlData.getDisplaySize();
+				}
 
-					if (_nextNoAutoPositioned == false)
-					{
-						parentControlNextChildOffset._y += kDefaultIntervalY;
-					}
+				if (_nextNoAutoPositioned == false)
+				{
+					parentControlNextChildOffset._y += kDefaultIntervalY;
 				}
 
 				// Parent client size
