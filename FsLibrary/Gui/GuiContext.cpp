@@ -381,11 +381,11 @@ namespace fs
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			static std::function fnCalculatePureWindowWidth = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return windowControlData.getDisplaySize()._x - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both) ? kScrollBarThickness * 2.0f : 0.0f);
+				return windowControlData.getDisplaySize()._x - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f);
 			};
 			static std::function fnCalculatePureWindowHeight = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return windowControlData.getDisplaySize()._y - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both) ? kScrollBarThickness * 2.0f : 0.0f);
+				return windowControlData.getDisplaySize()._y - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f);
 			};
 
 			ControlData& parentWindowControlData = getControlDataStackTop();
@@ -505,7 +505,7 @@ namespace fs
 				}
 				else
 				{
-					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Both) ? ScrollBarType::Horz : ScrollBarType::None;
+					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Vert || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Horz;
 				}
 			}
 
@@ -616,7 +616,7 @@ namespace fs
 				}
 				else
 				{
-					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Both) ? ScrollBarType::Vert : ScrollBarType::None;
+					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Horz || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Vert;
 				}
 			}
 		}
