@@ -229,6 +229,7 @@ namespace fs
 			if (isParentAlsoWindow == true)
 			{
 				windowControlData._position += parentControlData._deltaPosition;
+				windowControlData._deltaPosition = parentControlData._deltaPosition; // 계층 가장 아래 Window 까지 전파되도록
 			}
 
 			fs::SimpleRendering::Color color;
@@ -1009,7 +1010,7 @@ namespace fs
 				{
 					controlData._position = parentControlData._position;
 						
-					if (controlDataParam._desiredPositionInParent == fs::Float2::kZero)
+					if (controlDataParam._desiredPositionInParent.isNan() == true)
 					{
 						controlData._position += _nextControlPosition;
 					}

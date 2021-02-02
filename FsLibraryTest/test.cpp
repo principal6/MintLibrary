@@ -894,7 +894,7 @@ const bool testWindow()
 						}
 
 						fs::Gui::WindowParam testWindowParam;
-						testWindowParam._size = fs::Float2(100.0f, 200.0f);
+						testWindowParam._size = fs::Float2(200.0f, 240.0f);
 						testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
 						if (guiContext.beginWindow(L"TEST", testWindowParam))
 						{
@@ -903,11 +903,12 @@ const bool testWindow()
 								guiContext.endButton();
 							}
 
-							if (false)
 							{
 								fs::Gui::WindowParam testWindowParam2;
-								testWindowParam2._size = fs::Float2(60.0f, 100.0f);
-								if (guiContext.beginWindow(L"TEST?", testWindowParam))
+								testWindowParam2._size = fs::Float2(100.0f, 100.0f);
+								testWindowParam2._position._x = 10.0f;
+								testWindowParam2._position._y = 60.0f;
+								if (guiContext.beginWindow(L"TEST?", testWindowParam2))
 								{
 									if (guiContext.beginButton(L"테스트?") == true)
 									{

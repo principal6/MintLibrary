@@ -150,11 +150,11 @@ namespace fs
 
 	const bool Float4::isNan() const noexcept
 	{
-		return std::isnan(_x) || std::isnan(_y) || std::isnan(_z) || std::isnan(_w);
+		return (fs::Math::isNan(_x) || fs::Math::isNan(_y) || fs::Math::isNan(_z) || fs::Math::isNan(_w));
 	}
 
 	void Float4::setNan() noexcept
 	{
-		_x = _y = _z = _w = std::nanf("");
+		_x = _y = _z = _w = fs::Math::nan();
 	}
 }

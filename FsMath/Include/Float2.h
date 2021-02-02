@@ -21,6 +21,7 @@ namespace fs
 	public:
 		static const Float2		kZero;
 		static const Float2		kOne;
+		static const Float2		kNan;
 
 	public:
 		constexpr				Float2();
@@ -73,6 +74,10 @@ namespace fs
 	public:
 		void					set(const float x, const float y) noexcept;
 		void					setZero() noexcept;
+		void					setNan() noexcept;
+
+	public:
+		const bool				isNan() const noexcept;
 
 	public:
 		float					_x;

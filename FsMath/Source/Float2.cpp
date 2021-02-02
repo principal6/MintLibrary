@@ -8,6 +8,7 @@ namespace fs
 {
 	const Float2 Float2::kZero	= fs::Float2(0.0f);
 	const Float2 Float2::kOne	= fs::Float2(1.0f);
+	const Float2 Float2::kNan	= fs::Float2(fs::Math::nan());
 
 	Float2::Float2(const Int2& rhs)
 		: Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
@@ -135,9 +136,19 @@ namespace fs
 		_x = x;
 		_y = y;
 	}
-	
+
 	void Float2::setZero() noexcept
 	{
 		_x = _y = 0.0f;
+	}
+
+	void Float2::setNan() noexcept
+	{
+		_x = _y = fs::Math::nan();
+	}
+
+	const bool Float2::isNan() const noexcept
+	{
+		return (fs::Math::isNan(_x) || fs::Math::isNan(_y));
 	}
 }

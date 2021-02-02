@@ -177,7 +177,7 @@ namespace fs
 			{
 				Rect				_innerPadding;
 				fs::Float2			_initialDisplaySize;
-				fs::Float2			_desiredPositionInParent	= fs::Float2::kZero;
+				fs::Float2			_desiredPositionInParent	= fs::Float2::kNan;
 				fs::Float2			_deltaInteractionSize		= fs::Float2::kZero;
 				fs::Float2			_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
 				uint64				_parentHashKeyOverride		= 0;

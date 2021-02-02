@@ -47,6 +47,16 @@ namespace fs
 		{
 			return clamp(value, 0.0, 1.0);
 		}
+
+		FS_INLINE constexpr const float nan() noexcept
+		{
+			return static_cast<float>(1e+300 * 1e+300) * 0.0f;
+		}
+
+		FS_INLINE const bool isNan(const float value) noexcept
+		{
+			return (value != value);
+		}
 	}
 }
 
