@@ -12,19 +12,19 @@ namespace fs
 			return _resourcePool;
 		}
 
-		FS_INLINE fs::SimpleRendering::RectangleRenderer& GraphicDevice::getRectangleRenderer() noexcept
+		FS_INLINE fs::SimpleRendering::RectangleRendererContext& GraphicDevice::getRectangleRendererContext() noexcept
 		{
-			return _rectangleRenderer; 
+			return _rectangleRendererContext; 
 		}
 
-		FS_INLINE fs::SimpleRendering::ShapeRenderer& GraphicDevice::getShapeRenderer() noexcept
+		FS_INLINE fs::SimpleRendering::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
 		{
-			return _shapeRenderer;
+			return _shapeRendererContext;
 		}
 
-		FS_INLINE fs::SimpleRendering::FontRenderer& GraphicDevice::getFontRenderer() noexcept
+		FS_INLINE fs::SimpleRendering::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
 		{
-			return _fontRenderer;
+			return _fontRendererContext;
 		}
 
 		FS_INLINE fs::Gui::GuiContext& GraphicDevice::getGuiContext() noexcept

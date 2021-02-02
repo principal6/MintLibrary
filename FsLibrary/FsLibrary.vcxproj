@@ -76,16 +76,16 @@
     <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
-    <ClInclude Include="SimpleRendering\FontRenderer.h" />
+    <ClInclude Include="SimpleRendering\FontRendererContext.h" />
     <ClInclude Include="SimpleRendering\DxResource.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.inl" />
     <ClInclude Include="SimpleRendering\IDxObject.h" />
     <ClInclude Include="SimpleRendering\DxShader.h" />
     <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
-    <ClInclude Include="SimpleRendering\IRenderer.h" />
-    <ClInclude Include="SimpleRendering\RectangleRenderer.h" />
-    <ClInclude Include="SimpleRendering\ShapeRenderer.h" />
+    <ClInclude Include="SimpleRendering\IRendererContext.h" />
+    <ClInclude Include="SimpleRendering\RectangleRendererContext.h" />
+    <ClInclude Include="SimpleRendering\ShapeRendererContext.h" />
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
     <ClInclude Include="SimpleRendering\TriangleRenderer.h" />
     <ClInclude Include="SimpleRendering\TriangleRenderer.hpp" />
@@ -106,15 +106,15 @@
     <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
     <ClCompile Include="Platform\WindowsWindow.cpp" />
-    <ClCompile Include="SimpleRendering\FontRenderer.cpp" />
+    <ClCompile Include="SimpleRendering\FontRendererContext.cpp" />
     <ClCompile Include="SimpleRendering\DxResource.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
     <ClCompile Include="SimpleRendering\IDxObject.cpp" />
-    <ClCompile Include="SimpleRendering\IRenderer.cpp" />
-    <ClCompile Include="SimpleRendering\RectangleRenderer.cpp" />
-    <ClCompile Include="SimpleRendering\ShapeRenderer.cpp" />
+    <ClCompile Include="SimpleRendering\IRendererContext.cpp" />
+    <ClCompile Include="SimpleRendering\RectangleRendererContext.cpp" />
+    <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Container\IId.inl" />
@@ -125,7 +125,7 @@
     <None Include="Language\IParser.inl" />
     <None Include="Language\LanguageCommon.inl" />
     <None Include="Profiler\ScopedCpuProfiler.inl" />
-    <None Include="SimpleRendering\IRenderer.inl" />
+    <None Include="SimpleRendering\IRendererContext.inl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="FsLibrary.natvis" />

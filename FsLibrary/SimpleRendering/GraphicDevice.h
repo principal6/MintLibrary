@@ -15,9 +15,9 @@
 #include <FsLibrary/SimpleRendering/DxShader.h>
 #include <FsLibrary/SimpleRendering/DxResource.h>
 #include <FsLibrary/SimpleRendering/TriangleRenderer.h>
-#include <FsLibrary/SimpleRendering/RectangleRenderer.h>
-#include <FsLibrary/SimpleRendering/ShapeRenderer.h>
-#include <FsLibrary/SimpleRendering/FontRenderer.h>
+#include <FsLibrary/SimpleRendering/RectangleRendererContext.h>
+#include <FsLibrary/SimpleRendering/ShapeRendererContext.h>
+#include <FsLibrary/SimpleRendering/FontRendererContext.h>
 
 #include <FsLibrary/Gui/GuiContext.h>
 
@@ -78,9 +78,9 @@ namespace fs
 		public:
 			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
 			fs::SimpleRendering::DxResourcePool&						getResourcePool() noexcept;
-			fs::SimpleRendering::RectangleRenderer&						getRectangleRenderer() noexcept;
-			fs::SimpleRendering::ShapeRenderer&							getShapeRenderer() noexcept;
-			fs::SimpleRendering::FontRenderer&							getFontRenderer() noexcept;
+			fs::SimpleRendering::RectangleRendererContext&				getRectangleRendererContext() noexcept;
+			fs::SimpleRendering::ShapeRendererContext&					getShapeRendererContext() noexcept;
+			fs::SimpleRendering::FontRendererContext&					getFontRendererContext() noexcept;
 			fs::Gui::GuiContext&										getGuiContext() noexcept;
 			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
 
@@ -139,9 +139,9 @@ namespace fs
 			fs::Language::CppHlsl										_cppHlslStructuredBuffers;
 
 		private:
-			fs::SimpleRendering::RectangleRenderer						_rectangleRenderer;
-			fs::SimpleRendering::ShapeRenderer							_shapeRenderer;
-			fs::SimpleRendering::FontRenderer							_fontRenderer;
+			fs::SimpleRendering::RectangleRendererContext				_rectangleRendererContext;
+			fs::SimpleRendering::ShapeRendererContext					_shapeRendererContext;
+			fs::SimpleRendering::FontRendererContext					_fontRendererContext;
 		
 		private:
 			fs::Gui::GuiContext											_guiContext;

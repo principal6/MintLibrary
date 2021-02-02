@@ -18,10 +18,11 @@ namespace fs
 	{
 		GuiContext::GuiContext(fs::SimpleRendering::GraphicDevice* const graphicDevice)
 			: _graphicDevice{ graphicDevice }
-			, _shapeRendererBackground{ _graphicDevice }
-			, _fontRendererBackground{ _graphicDevice }
-			, _shapeRendererForeground{ _graphicDevice }
-			, _fontRendererForeground{ _graphicDevice }
+			, _shapeRendererContextBackground{ _graphicDevice }
+			, _fontRendererContextBackground{ _graphicDevice }
+			, _shapeRendererContextForeground{ _graphicDevice }
+			, _fontRendererContextForeground{ _graphicDevice }
+			, _shapeRendererContextTopMost{ _graphicDevice }
 			, _focusedControlHashKey{ 0 }
 			, _hoveredControlHashKey{ 0 }
 			, _hoverStartTimeMs{ 0 }
@@ -62,31 +63,34 @@ namespace fs
 
 		void GuiContext::initialize(const char* const font)
 		{
-			if (_fontRendererBackground.loadFont(font) == false)
+			if (_fontRendererContextBackground.loadFont(font) == false)
 			{
-				_fontRendererBackground.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
-				_fontRendererBackground.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'°¡', L'ÆR'));
-				_fontRendererBackground.bakeFont(font, fs::SimpleRendering::kDefaultFontSize, font, 2048, 1, 1);
-				_fontRendererBackground.loadFont(font);
+				_fontRendererContextBackground.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
+				_fontRendererContextBackground.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'°¡', L'ÆR'));
+				_fontRendererContextBackground.bakeFont(font, fs::SimpleRendering::kDefaultFontSize, font, 2048, 1, 1);
+				_fontRendererContextBackground.loadFont(font);
 			}
 
-			if (_fontRendererForeground.loadFont(font) == false)
+			if (_fontRendererContextForeground.loadFont(font) == false)
 			{
-				_fontRendererForeground.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
-				_fontRendererForeground.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'°¡', L'ÆR'));
-				_fontRendererForeground.bakeFont(font, fs::SimpleRendering::kDefaultFontSize, font, 2048, 1, 1);
-				_fontRendererForeground.loadFont(font);
+				_fontRendererContextForeground.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
+				_fontRendererContextForeground.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'°¡', L'ÆR'));
+				_fontRendererContextForeground.bakeFont(font, fs::SimpleRendering::kDefaultFontSize, font, 2048, 1, 1);
+				_fontRendererContextForeground.loadFont(font);
 			}
 
-			_shapeRendererBackground.initializeShaders();
-			_shapeRendererBackground.setUseMultipleViewports();
-			_fontRendererBackground.initializeShaders();
-			_fontRendererBackground.setUseMultipleViewports();
+			_shapeRendererContextBackground.initializeShaders();
+			_shapeRendererContextBackground.setUseMultipleViewports();
+			_fontRendererContextBackground.initializeShaders();
+			_fontRendererContextBackground.setUseMultipleViewports();
 
-			_shapeRendererForeground.initializeShaders();
-			_shapeRendererForeground.setUseMultipleViewports();
-			_fontRendererForeground.initializeShaders();
-			_fontRendererForeground.setUseMultipleViewports();
+			_shapeRendererContextForeground.initializeShaders();
+			_shapeRendererContextForeground.setUseMultipleViewports();
+			_fontRendererContextForeground.initializeShaders();
+			_fontRendererContextForeground.setUseMultipleViewports();
+
+			_shapeRendererContextTopMost.initializeShaders();
+			_shapeRendererContextTopMost.setUseMultipleViewports();
 
 			resetNextStates();
 			resetStatesPerFrame();
@@ -202,7 +206,7 @@ namespace fs
 			// Áß¿ä
 			nextNoAutoPositioned();
 
-			const float titleWidth = _fontRendererForeground.calculateTextWidth(title, fs::StringUtil::wcslen(title));
+			const float titleWidth = _fontRendererContextForeground.calculateTextWidth(title, fs::StringUtil::wcslen(title));
 			ControlDataParam controlDataParam;
 			controlDataParam._initialDisplaySize = windowParam._size;
 			controlDataParam._desiredPositionInParent = windowParam._position;
@@ -217,7 +221,7 @@ namespace fs
 
 			fs::SimpleRendering::Color color;
 			const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), color);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isFocused == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
 
 			// Viewport & Scissor rectangle
 			{
@@ -254,9 +258,9 @@ namespace fs
 			if (isOpen == true)
 			{
 				const fs::Float3& windowCenterPosition = getControlCenterPosition(windowControlData);
-				shapeRenderer.setColor(color);
-				shapeRenderer.setPosition(windowCenterPosition);
-				shapeRenderer.drawRoundedRectangle(windowControlData.getDisplaySize(), (kDefaultRoundnessInPixel * 2.0f / windowControlData.getDisplaySize().minElement()), 0.0f, 0.0f);
+				shapeRendererContext.setColor(color);
+				shapeRendererContext.setPosition(windowCenterPosition);
+				shapeRendererContext.drawRoundedRectangle(windowControlData.getDisplaySize(), (kDefaultRoundnessInPixel * 2.0f / windowControlData.getDisplaySize().minElement()), 0.0f, 0.0f);
 
 				_controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
 			}
@@ -280,7 +284,7 @@ namespace fs
 		{
 			static constexpr ControlType controlType = ControlType::Button;
 			
-			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+			const float textWidth = _fontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
 			ControlDataParam controlDataParam;
 			controlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12);
 			ControlData& controlData = getControlData(text, controlType, controlDataParam);
@@ -289,16 +293,16 @@ namespace fs
 			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
 		
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
-			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isAncestorFocused_ == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
+			fs::SimpleRendering::FontRendererContext& fontRendererContext = (isAncestorFocused_ == true) ? _fontRendererContextForeground : _fontRendererContextBackground;
 			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
-			shapeRenderer.setColor(color);
-			shapeRenderer.setPosition(controlCenterPosition);
+			shapeRendererContext.setColor(color);
+			shapeRendererContext.setPosition(controlCenterPosition);
 			const fs::Float2& displaySize = controlData.getDisplaySize();
-			shapeRenderer.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
+			shapeRendererContext.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
 
-			fontRenderer.setColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
-			fontRenderer.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
+			fontRendererContext.setColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
+			fontRendererContext.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
 
 			if (isClicked == true)
 			{
@@ -312,7 +316,7 @@ namespace fs
 		{
 			static constexpr ControlType controlType = ControlType::Label;
 
-			const float textWidth = _fontRendererBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+			const float textWidth = _fontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
 			ControlDataParam controlDataParam;
 			controlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, fs::SimpleRendering::kDefaultFontSize + 12) : labelParam._size;
 			ControlData& controlData = getControlData(text, controlType, controlDataParam);
@@ -321,15 +325,15 @@ namespace fs
 			processShowOnlyControl(controlData, colorWithAlpha);
 
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
-			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isAncestorFocused_ == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
+			fs::SimpleRendering::FontRendererContext& fontRendererContext = (isAncestorFocused_ == true) ? _fontRendererContextForeground : _fontRendererContextBackground;
 			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
-			shapeRenderer.setColor(labelParam._backgroundColor);
-			shapeRenderer.setPosition(controlCenterPosition);
+			shapeRendererContext.setColor(labelParam._backgroundColor);
+			shapeRendererContext.setPosition(controlCenterPosition);
 			const fs::Float2& displaySize = controlData.getDisplaySize();
-			shapeRenderer.drawRectangle(displaySize, 0.0f, 0.0f);
+			shapeRendererContext.drawRectangle(displaySize, 0.0f, 0.0f);
 
-			fontRenderer.setColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
+			fontRendererContext.setColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
 
 			fs::Float3 textPosition = controlCenterPosition;
 			fs::SimpleRendering::TextRenderDirectionHorz textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Centered;
@@ -360,7 +364,7 @@ namespace fs
 					textRenderDirectionVert = fs::SimpleRendering::TextRenderDirectionVert::Upward;
 				}
 			}
-			fontRenderer.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
+			fontRendererContext.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
 
 		const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue)
@@ -412,7 +416,7 @@ namespace fs
 				outValue = thumbAt;
 
 				const bool isAncestorFocused_ = isAncestorFocused(trackControlData);
-				fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+				fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isAncestorFocused_ == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
 
 				// Draw track
 				{
@@ -425,36 +429,36 @@ namespace fs
 					fs::Float3 trackRenderPosition = trackCenterPosition - fs::Float3(trackRectLength * 0.5f, 0.0f, 0.0f);
 
 					// Left(or Upper) half circle
-					shapeRenderer.setColor(kThumbBaseColor);
-					shapeRenderer.setPosition(trackRenderPosition);
-					shapeRenderer.drawHalfCircle(trackRadius, +fs::Math::kPiOverTwo);
+					shapeRendererContext.setColor(kThumbBaseColor);
+					shapeRendererContext.setPosition(trackRenderPosition);
+					shapeRendererContext.drawHalfCircle(trackRadius, +fs::Math::kPiOverTwo);
 
 					// Left rect
 					trackRenderPosition._x += trackRectLeftLength * 0.5f;
-					shapeRenderer.setPosition(trackRenderPosition);
-					shapeRenderer.drawRectangle(fs::Float2(trackRectLeftLength, kSliderTrackThicknes), 0.0f, 0.0f);
+					shapeRendererContext.setPosition(trackRenderPosition);
+					shapeRendererContext.drawRectangle(fs::Float2(trackRectLeftLength, kSliderTrackThicknes), 0.0f, 0.0f);
 					trackRenderPosition._x += trackRectLeftLength * 0.5f;
 
 					// Right rect
-					shapeRenderer.setColor(trackbColor);
+					shapeRendererContext.setColor(trackbColor);
 					trackRenderPosition._x += trackRectRightLength * 0.5f;
-					shapeRenderer.setPosition(trackRenderPosition);
-					shapeRenderer.drawRectangle(fs::Float2(trackRectRightLength, kSliderTrackThicknes), 0.0f, 0.0f);
+					shapeRendererContext.setPosition(trackRenderPosition);
+					shapeRendererContext.drawRectangle(fs::Float2(trackRectRightLength, kSliderTrackThicknes), 0.0f, 0.0f);
 					trackRenderPosition._x += trackRectRightLength * 0.5f;
 
 					// Right(or Lower) half circle
-					shapeRenderer.setPosition(trackRenderPosition);
-					shapeRenderer.drawHalfCircle(trackRadius, -fs::Math::kPiOverTwo);
+					shapeRendererContext.setPosition(trackRenderPosition);
+					shapeRendererContext.drawHalfCircle(trackRadius, -fs::Math::kPiOverTwo);
 				}
 
 				// Draw thumb
 				{
 					const fs::Float3& thumbCenterPosition = getControlCenterPosition(thumbControlData);
-					shapeRenderer.setPosition(thumbCenterPosition);
-					shapeRenderer.setColor(fs::SimpleRendering::Color::kWhite.scaleA(thumbColor.a()));
-					shapeRenderer.drawCircle(kSliderThumbRadius);
-					shapeRenderer.setColor(thumbColor);
-					shapeRenderer.drawCircle(kSliderThumbRadius - 2.0f);
+					shapeRendererContext.setPosition(thumbCenterPosition);
+					shapeRendererContext.setColor(fs::SimpleRendering::Color::kWhite.scaleA(thumbColor.a()));
+					shapeRendererContext.drawCircle(kSliderThumbRadius);
+					shapeRendererContext.setColor(thumbColor);
+					shapeRendererContext.drawCircle(kSliderThumbRadius - 2.0f);
 				}
 			}
 			
@@ -516,10 +520,10 @@ namespace fs
 					}
 
 					// Rendering track
-					fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
-					shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
-					shapeRenderer.setColor(trackColor);
-					shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData.getDisplaySize()._y), kScrollBarThickness);
+					fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isParentWindowFocused == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
+					shapeRendererContext.setPositionZ(trackControlData.getViewportIndexAsFloat());
+					shapeRendererContext.setColor(trackColor);
+					shapeRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData.getDisplaySize()._y), kScrollBarThickness);
 
 					// Thumb
 					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentWindowPreviousClientSize._y);
@@ -564,18 +568,18 @@ namespace fs
 							fs::Float3 thumbRenderPosition = fs::Float3(thumbControlData._position._x + kScrollBarThickness * 0.5f, thumbControlData._position._y, thumbControlData.getViewportIndexAsFloat());
 							const float rectHeight = thumbSize - radius * 2.0f;
 							thumbRenderPosition._y += radius;
-							shapeRenderer.setColor(thumbColor);
+							shapeRendererContext.setColor(thumbColor);
 
 							// Upper half circle
-							shapeRenderer.setPosition(thumbRenderPosition);
-							shapeRenderer.drawHalfCircle(radius, 0.0f);
+							shapeRendererContext.setPosition(thumbRenderPosition);
+							shapeRendererContext.drawHalfCircle(radius, 0.0f);
 
 							// Rect
 							if (0.0f < rectHeight)
 							{
 								thumbRenderPosition._y += rectHeight * 0.5f;
-								shapeRenderer.setPosition(thumbRenderPosition);
-								shapeRenderer.drawRectangle(thumbControlData.getDisplaySize() - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+								shapeRendererContext.setPosition(thumbRenderPosition);
+								shapeRendererContext.drawRectangle(thumbControlData.getDisplaySize() - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
 							}
 
 							// Lower half circle
@@ -583,8 +587,8 @@ namespace fs
 							{
 								thumbRenderPosition._y += rectHeight * 0.5f;
 							}
-							shapeRenderer.setPosition(thumbRenderPosition);
-							shapeRenderer.drawHalfCircle(radius, fs::Math::kPi);
+							shapeRendererContext.setPosition(thumbRenderPosition);
+							shapeRendererContext.drawHalfCircle(radius, fs::Math::kPi);
 						}
 					}
 				}
@@ -626,10 +630,10 @@ namespace fs
 					}
 
 					// Rendering track
-					fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isParentWindowFocused == true) ? _shapeRendererForeground : _shapeRendererBackground;
-					shapeRenderer.setPositionZ(trackControlData.getViewportIndexAsFloat());
-					shapeRenderer.setColor(trackColor);
-					shapeRenderer.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData.getDisplaySize()._x, 0.0f), kScrollBarThickness);
+					fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isParentWindowFocused == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
+					shapeRendererContext.setPositionZ(trackControlData.getViewportIndexAsFloat());
+					shapeRendererContext.setColor(trackColor);
+					shapeRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData.getDisplaySize()._x, 0.0f), kScrollBarThickness);
 
 					// Thumb
 					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentWindowPreviousClientSize._x);
@@ -675,18 +679,18 @@ namespace fs
 							fs::Float3 thumbRenderPosition = fs::Float3(thumbControlData._position._x, thumbControlData._position._y + kScrollBarThickness * 0.5f, thumbControlData.getViewportIndexAsFloat());
 							const float rectHeight = thumbSize - radius * 2.0f;
 							thumbRenderPosition._x += radius;
-							shapeRenderer.setColor(thumbColor);
+							shapeRendererContext.setColor(thumbColor);
 
 							// Upper half circle
-							shapeRenderer.setPosition(thumbRenderPosition);
-							shapeRenderer.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
+							shapeRendererContext.setPosition(thumbRenderPosition);
+							shapeRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
 
 							// Rect
 							if (0.0f < rectHeight)
 							{
 								thumbRenderPosition._x += rectHeight * 0.5f;
-								shapeRenderer.setPosition(thumbRenderPosition);
-								shapeRenderer.drawRectangle(thumbControlData.getDisplaySize() - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+								shapeRendererContext.setPosition(thumbRenderPosition);
+								shapeRendererContext.drawRectangle(thumbControlData.getDisplaySize() - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
 							}
 
 							// Lower half circle
@@ -694,8 +698,8 @@ namespace fs
 							{
 								thumbRenderPosition._x += rectHeight * 0.5f;
 							}
-							shapeRenderer.setPosition(thumbRenderPosition);
-							shapeRenderer.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
+							shapeRendererContext.setPosition(thumbRenderPosition);
+							shapeRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
 						}
 					}
 				}
@@ -730,15 +734,15 @@ namespace fs
 			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), titleBarColor);
 
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
-			fs::SimpleRendering::FontRenderer& fontRenderer = (isAncestorFocused_ == true) ? _fontRendererForeground : _fontRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isAncestorFocused_ == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
+			fs::SimpleRendering::FontRendererContext& fontRendererContext = (isAncestorFocused_ == true) ? _fontRendererContextForeground : _fontRendererContextBackground;
 			
-			shapeRenderer.setColor(fs::SimpleRendering::Color(127, 127, 127));
-			shapeRenderer.drawLine(controlData._position + fs::Float2(0.0f, titleBarSize._y), controlData._position + fs::Float2(controlData.getDisplaySize()._x, titleBarSize._y), 1.0f);
+			shapeRendererContext.setColor(fs::SimpleRendering::Color(127, 127, 127));
+			shapeRendererContext.drawLine(controlData._position + fs::Float2(0.0f, titleBarSize._y), controlData._position + fs::Float2(controlData.getDisplaySize()._x, titleBarSize._y), 1.0f);
 
 			const fs::Float3& titleBarTextPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(innerPadding.left(), titleBarSize._y * 0.5f, controlData.getViewportIndexAsFloat());
-			fontRenderer.setColor((isAncestorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
-			fontRenderer.drawDynamicText(windowTitle, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
+			fontRendererContext.setColor((isAncestorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
+			fontRendererContext.drawDynamicText(windowTitle, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
 
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 
@@ -776,12 +780,12 @@ namespace fs
 			const bool isClicked = processClickControl(controlData, color, color.scaleRgb(1.5f), color.scaleRgb(0.75f), controlColor);
 
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = (isAncestorFocused_ == true) ? _shapeRendererForeground : _shapeRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = (isAncestorFocused_ == true) ? _shapeRendererContextForeground : _shapeRendererContextBackground;
 
 			const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
-			shapeRenderer.setColor(controlColor);
-			shapeRenderer.setPosition(controlCenterPosition);
-			shapeRenderer.drawCircle(radius);
+			shapeRendererContext.setColor(controlColor);
+			shapeRendererContext.setPosition(controlCenterPosition);
+			shapeRendererContext.drawCircle(radius);
 
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 
@@ -797,7 +801,7 @@ namespace fs
 			// Áß¿ä
 			nextNoAutoPositioned();
 
-			const float tooltipTextWidth = _fontRendererForeground.calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
+			const float tooltipTextWidth = _fontRendererContextForeground.calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
 			ControlDataParam controlDataParam;
 			controlDataParam._initialDisplaySize = fs::Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, fs::SimpleRendering::kDefaultFontSize * kTooltipFontScale + tooltipWindowPadding);
 			controlDataParam._desiredPositionInParent = position;
@@ -811,8 +815,8 @@ namespace fs
 			fs::SimpleRendering::Color dummyColor;
 			processShowOnlyControl(controlData, dummyColor);
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
-			fs::SimpleRendering::ShapeRenderer& shapeRenderer = _shapeRendererForeground;
-			fs::SimpleRendering::FontRenderer& fontRenderer = _fontRendererForeground;
+			fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = _shapeRendererContextForeground;
+			fs::SimpleRendering::FontRendererContext& fontRendererContext = _fontRendererContextForeground;
 
 			// Viewport & Scissor rectangle
 			{
@@ -832,13 +836,13 @@ namespace fs
 
 			{
 				const fs::Float3& controlCenterPosition = getControlCenterPosition(controlData);
-				shapeRenderer.setColor(getNamedColor(NamedColor::TooltipBackground));
-				shapeRenderer.setPosition(controlCenterPosition);
-				shapeRenderer.drawRoundedRectangle(controlData.getDisplaySize(), (kDefaultRoundnessInPixel / controlData.getDisplaySize().minElement()) * 0.75f, 0.0f, 0.0f);
+				shapeRendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
+				shapeRendererContext.setPosition(controlCenterPosition);
+				shapeRendererContext.drawRoundedRectangle(controlData.getDisplaySize(), (kDefaultRoundnessInPixel / controlData.getDisplaySize().minElement()) * 0.75f, 0.0f, 0.0f);
 
 				const fs::Float3& textPosition = fs::Float3(controlData._position._x, controlData._position._y, 0.0f) + fs::Float3(tooltipWindowPadding, controlDataParam._initialDisplaySize._y * 0.5f, controlData.getViewportIndexAsFloat());
-				fontRenderer.setColor(getNamedColor(NamedColor::DarkFont));
-				fontRenderer.drawDynamicText(tooltipText, textPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, kTooltipFontScale);
+				fontRendererContext.setColor(getNamedColor(NamedColor::DarkFont));
+				fontRendererContext.drawDynamicText(tooltipText, textPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, kTooltipFontScale);
 			}
 		}
 
@@ -1325,6 +1329,19 @@ namespace fs
 					changeTargetControlData._position._y = fs::min(fs::max(changeTargetControlData._draggingConstraints.top(), naivePosition._y), changeTargetControlData._draggingConstraints.bottom());
 				}
 
+				const ControlData& changeTargetParentControlData = getControlData(changeTargetControlData.getParentHashKey());
+				if (changeTargetParentControlData._dockingType == DockingType::Dock || changeTargetParentControlData._dockingType == DockingType::DockerDock)
+				{
+					// Docking!!!
+
+					fs::SimpleRendering::ShapeRendererContext& shapeRendererContext = _shapeRendererContextTopMost;
+					//fs::Float3 changeTargetParentControlCenterPosition = getControlCenterPosition(changeTargetParentControlData);
+					//changeTargetParentControlCenterPosition._x = 25.0f;
+					//shapeRendererContext.setColor(fs::SimpleRendering::Color(200, 210, 255));
+					//shapeRendererContext.setPosition(changeTargetParentControlCenterPosition);
+					//shapeRendererContext.drawRectangle(fs::Float2(50, 50), 0.0f, 0.0f);
+				}
+
 				_isMouseInteractionDonePerFrame = true;
 			}
 
@@ -1416,26 +1433,6 @@ namespace fs
 			return false;
 		}
 		
-		const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept
-		{
-			return (_hoveredControlHashKey == controlData.getHashKey());
-		}
-
-		const bool GuiContext::isControlPressed(const ControlData& controlData) const noexcept
-		{
-			return (_pressedControlHashKey == controlData.getHashKey());
-		}
-
-		const bool GuiContext::isControlClicked(const ControlData& controlData) const noexcept
-		{
-			return (_clickedControlHashKeyPerFrame == controlData.getHashKey());
-		}
-
-		const bool GuiContext::isControlFocused(const ControlData& controlData) const noexcept
-		{
-			return (_focusedControlHashKey == ((0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey()));
-		}
-
 		const bool GuiContext::isMeOrAncestorFocusedXXX(const ControlData& controlData) const noexcept
 		{
 			if (_focusedControlHashKey == controlData.getHashKey())
@@ -1465,16 +1462,6 @@ namespace fs
 			return isAncestorFocusedRecursiveXXX(getControlData(hashKey).getParentHashKey());
 		}
 
-		const fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
-		{
-			return _namedColors[static_cast<uint32>(namedColor)];
-		}
-
-		fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) noexcept
-		{
-			return _namedColors[static_cast<uint32>(namedColor)];
-		}
-
 		void GuiContext::render()
 		{
 			FS_ASSERT("±èÀå¿ø", _controlStackPerFrame.empty() == true, "begin °ú end È£Ãâ È½¼ö°¡ ¸ÂÁö ¾Ê½À´Ï´Ù!!!");
@@ -1495,6 +1482,7 @@ namespace fs
 			}
 
 			// Background
+			if (_shapeRendererContextBackground.hasData() == true || _fontRendererContextBackground.hasData() == true)
 			{
 				if (useBackgroundViewports == true)
 				{
@@ -1502,11 +1490,12 @@ namespace fs
 					_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayBackgroundPerFrame.size()), &_scissorRectangleArrayBackgroundPerFrame[0]);
 				}
 
-				_shapeRendererBackground.render();
-				_fontRendererBackground.render();
+				_shapeRendererContextBackground.render();
+				_fontRendererContextBackground.render();
 			}
 		
 			// Foreground
+			if (_shapeRendererContextForeground.hasData() == true || _fontRendererContextForeground.hasData() == true)
 			{
 				if (useForegroundViewports == true)
 				{
@@ -1516,8 +1505,20 @@ namespace fs
 					_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayForegroundPerFrame.size()), &_scissorRectangleArrayForegroundPerFrame[0]);
 				}
 
-				_shapeRendererForeground.render();
-				_fontRendererForeground.render();
+				_shapeRendererContextForeground.render();
+				_fontRendererContextForeground.render();
+			}
+
+			// TopMost
+			
+			if (_shapeRendererContextTopMost.hasData() == true)
+			{
+				_graphicDevice->useScissorRectanglesWithMultipleViewports();
+
+				_graphicDevice->getDxDeviceContext()->RSSetViewports(static_cast<UINT>(1), &_viewportTopMost);
+				_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(1), &_scissorRectangleTopMost);
+
+				_shapeRendererContextTopMost.render();
 			}
 			
 			if (shouldSetViewports == true)
@@ -1525,11 +1526,13 @@ namespace fs
 				_graphicDevice->useFullScreenViewport();
 			}
 
-			_shapeRendererBackground.flushData();
-			_fontRendererBackground.flushData();
+			_shapeRendererContextBackground.flushData();
+			_fontRendererContextBackground.flushData();
 			
-			_shapeRendererForeground.flushData();
-			_fontRendererForeground.flushData();
+			_shapeRendererContextForeground.flushData();
+			_fontRendererContextForeground.flushData();
+
+			_shapeRendererContextTopMost.flushData();
 
 			resetStatesPerFrame();
 		}
@@ -1547,8 +1550,18 @@ namespace fs
 			_viewportArrayForegroundPerFrame.clear();
 			_scissorRectangleArrayForegroundPerFrame.clear();
 
-			const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
-			_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
+			// Root control
+			{
+				const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
+				_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
+				
+				// Viewport & ScissorRectangle
+				_viewportTopMost = _graphicDevice->getFullScreenViewport();
+				_scissorRectangleTopMost.left = static_cast<LONG>(0);
+				_scissorRectangleTopMost.top = static_cast<LONG>(0);
+				_scissorRectangleTopMost.right = static_cast<LONG>(_rootControlData.getDisplaySize()._x);
+				_scissorRectangleTopMost.bottom = static_cast<LONG>(_rootControlData.getDisplaySize()._y);
+			}
 
 			if (_resizedControlHashKey == 0)
 			{

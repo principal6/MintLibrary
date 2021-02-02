@@ -58,6 +58,14 @@ namespace fs
 			Both
 		};
 
+		enum class DockingType
+		{
+			None,
+			Dock,
+			Docker,
+			DockerDock
+		};
+
 
 		class Rect
 		{

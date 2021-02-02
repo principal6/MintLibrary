@@ -899,11 +899,11 @@ const bool testWindow()
 			}
 
 			{
-				fs::SimpleRendering::FontRenderer& fontRenderer = graphicDevice.getFontRenderer();
+				fs::SimpleRendering::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
 
-				fontRenderer.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
-				fontRenderer.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float3(10, 5, 0));
-				fontRenderer.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float3(120, 5, 0));
+				fontRendererContext.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
+				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float3(10, 5, 0));
+				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float3(120, 5, 0));
 			}
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();

@@ -9,8 +9,8 @@
 
 #include <FsLibrary/Gui/GuiCommon.h>
 
-#include <FsLibrary/SimpleRendering/ShapeRenderer.h>
-#include <FsLibrary/SimpleRendering/FontRenderer.h>
+#include <FsLibrary/SimpleRendering/ShapeRendererContext.h>
+#include <FsLibrary/SimpleRendering/FontRendererContext.h>
 
 #include <FsLibrary/Container/IId.h>
 
@@ -129,6 +129,8 @@ namespace fs
 				bool					_isDraggable;
 				Rect					_draggingConstraints; // MUST set all four values if want to limit dragging area
 				uint64					_delegateHashKey; // Used for drag, resize and focus
+				DockingType				_dockingType;
+
 				// [Window] ScrollBar type
 				// [ScrollBar] Thumb at [0, 1]
 				ControlValue			_value;
@@ -332,17 +334,22 @@ namespace fs
 		private:
 			fs::SimpleRendering::GraphicDevice* const	_graphicDevice;
 
-			fs::SimpleRendering::ShapeRenderer			_shapeRendererBackground;
-			fs::SimpleRendering::FontRenderer			_fontRendererBackground;
+			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextBackground;
+			fs::SimpleRendering::FontRendererContext	_fontRendererContextBackground;
 
-			fs::SimpleRendering::ShapeRenderer			_shapeRendererForeground;
-			fs::SimpleRendering::FontRenderer			_fontRendererForeground;
+			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextForeground;
+			fs::SimpleRendering::FontRendererContext	_fontRendererContextForeground;
+
+			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextTopMost;
 
 			std::vector<D3D11_VIEWPORT>					_viewportArrayBackgroundPerFrame;
 			std::vector<D3D11_RECT>						_scissorRectangleArrayBackgroundPerFrame;
 
 			std::vector<D3D11_VIEWPORT>					_viewportArrayForegroundPerFrame;
 			std::vector<D3D11_RECT>						_scissorRectangleArrayForegroundPerFrame;
+
+			D3D11_VIEWPORT								_viewportTopMost;
+			D3D11_RECT									_scissorRectangleTopMost;
 
 		private:
 			const ControlData							kNullControlData;

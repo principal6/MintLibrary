@@ -29,11 +29,17 @@ namespace fs
 			, _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
 			, _childAt{ _innerPadding.left(), _innerPadding.top() }
 			, _delegateHashKey{ 0 }
+			, _dockingType{ DockingType::None }
 			, _controlType{ controlType }
 			, _controlState{ ControlState::Visible }
 			, _viewportIndex{ 0 }
 		{
 			_draggingConstraints.setNan();
+
+			if (controlType == ControlType::ROOT)
+			{
+				_dockingType = DockingType::Dock;
+			}
 		}
 
 		FS_INLINE const uint64 GuiContext::ControlData::getHashKey() const noexcept
@@ -219,5 +225,34 @@ namespace fs
 			return fs::Float3(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, controlData.getViewportIndexAsFloat());
 		}
 
+		FS_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept
+		{
+			return (_hoveredControlHashKey == controlData.getHashKey());
+		}
+
+		FS_INLINE const bool GuiContext::isControlPressed(const ControlData& controlData) const noexcept
+		{
+			return (_pressedControlHashKey == controlData.getHashKey());
+		}
+
+		FS_INLINE const bool GuiContext::isControlClicked(const ControlData& controlData) const noexcept
+		{
+			return (_clickedControlHashKeyPerFrame == controlData.getHashKey());
+		}
+
+		FS_INLINE const bool GuiContext::isControlFocused(const ControlData& controlData) const noexcept
+		{
+			return (_focusedControlHashKey == ((0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey()));
+		}
+
+		FS_INLINE const fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
+		{
+			return _namedColors[static_cast<uint32>(namedColor)];
+		}
+
+		FS_INLINE fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) noexcept
+		{
+			return _namedColors[static_cast<uint32>(namedColor)];
+		}
 	}
 }

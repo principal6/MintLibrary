@@ -28,9 +28,9 @@ namespace fs
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
 			, _resourcePool{ this }
-			, _rectangleRenderer{ this }
-			, _shapeRenderer{ this }
-			, _fontRenderer{ this }
+			, _rectangleRendererContext{ this }
+			, _shapeRendererContext{ this }
+			, _fontRendererContext{ this }
 			, _guiContext{ this }
 		{
 			__noop;
@@ -53,12 +53,12 @@ namespace fs
 			createFontTextureFromMemory();
 #endif
 
-			if (_fontRenderer.loadFont(kDefaultFont) == false)
+			if (_fontRendererContext.loadFont(kDefaultFont) == false)
 			{
-				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
-				_fontRenderer.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
-				_fontRenderer.bakeFont(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
-				_fontRenderer.loadFont(kDefaultFont);
+				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
+				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
+				_fontRendererContext.bakeFont(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
+				_fontRendererContext.loadFont(kDefaultFont);
 			}
 
 			_guiContext.initialize(kDefaultFont);
@@ -200,9 +200,9 @@ namespace fs
 
 		void GraphicDevice::initializeShaders()
 		{
-			_rectangleRenderer.initializeShaders();
-			_shapeRenderer.initializeShaders();
-			_fontRenderer.initializeShaders();
+			_rectangleRendererContext.initializeShaders();
+			_shapeRendererContext.initializeShaders();
+			_fontRendererContext.initializeShaders();
 		}
 
 		void GraphicDevice::initializeSamplerStates()
@@ -438,9 +438,9 @@ namespace fs
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
-			_rectangleRenderer.flushData();
-			_shapeRenderer.flushData();
-			_fontRenderer.flushData();
+			_rectangleRendererContext.flushData();
+			_shapeRendererContext.flushData();
+			_fontRendererContext.flushData();
 		}
 
 		void GraphicDevice::endRendering()
@@ -449,13 +449,13 @@ namespace fs
 			_deviceContext->PSSetShaderResources(0, 1, _fontTextureSrv.GetAddressOf());
 #endif
 
-#pragma region Renderers
+#pragma region Renderer Contexts
 			useFullScreenViewport();
 
-			_rectangleRenderer.render();
-			_shapeRenderer.render();
+			_rectangleRendererContext.render();
+			_shapeRendererContext.render();
 			_guiContext.render();
-			_fontRenderer.render();
+			_fontRendererContext.render();
 #pragma endregion
 
 			_swapChain->Present(0, 0);
