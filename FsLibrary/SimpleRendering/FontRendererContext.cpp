@@ -73,17 +73,29 @@ namespace fs
 
 
 		FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
+			: FontRendererContext(graphicDevice, FS_NEW(SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>, graphicDevice))
+		{
+			_ownTriangleRenderer = true;
+		}
+
+		FontRendererContext::FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice, fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer)
 			: IRendererContext(graphicDevice)
 			, _ftLibrary{ nullptr }
 			, _ftFace{ nullptr }
 			, _fontSize{ 16 }
-			, _triangleRenderer{ graphicDevice }
+			, _triangleRenderer{ triangleRenderer }
+			, _ownTriangleRenderer{ false }
 		{
 			__noop;
 		}
 
 		FontRendererContext::~FontRendererContext()
 		{
+			if (_ownTriangleRenderer == true)
+			{
+				FS_DELETE(_triangleRenderer);
+			}
+
 			deinitializeFreeType();
 		}
 
@@ -492,17 +504,17 @@ namespace fs
 
 		void FontRendererContext::flushData() noexcept
 		{
-			_triangleRenderer.flush();
+			_triangleRenderer->flush();
 		}
 
 		const bool FontRendererContext::hasData() const noexcept
 		{
-			return _triangleRenderer.isRenderable();
+			return _triangleRenderer->isRenderable();
 		}
 
 		void FontRendererContext::render() noexcept
 		{
-			if (_triangleRenderer.isRenderable() == true)
+			if (_triangleRenderer->isRenderable() == true)
 			{
 				_graphicDevice->getResourcePool().bindToShader(_fontTextureId, fs::SimpleRendering::DxShaderType::PixelShader, 0);
 				
@@ -516,7 +528,7 @@ namespace fs
 
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 
-				_triangleRenderer.render();
+				_triangleRenderer->render();
 
 				if (getUseMultipleViewports() == true)
 				{
@@ -527,7 +539,7 @@ namespace fs
 
 		void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
 		{
-			auto& vertexArray = _triangleRenderer.vertexArray();
+			auto& vertexArray = _triangleRenderer->vertexArray();
 
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
 			const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
@@ -568,6 +580,11 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
+		const DxObjectId& FontRendererContext::getFontTextureId() const noexcept
+		{
+			return _fontTextureId;
+		}
+
 		void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
@@ -579,7 +596,7 @@ namespace fs
 
 			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
-			auto& vertexArray = _triangleRenderer.vertexArray();
+			auto& vertexArray = _triangleRenderer->vertexArray();
 			
 			fs::CppHlsl::VS_INPUT_SHAPE v;
 			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
@@ -590,6 +607,7 @@ namespace fs
 			v._texCoord._y = glyphInfo._uv0._y;
 			v._info._x = _viewportIndex;
 			v._info._y = (drawShade == true) ? 1.0f : 0.0f;
+			v._info._z = 1.0f; // used by ShapeFontRendererContext
 			vertexArray.emplace_back(v);
 			
 			v._position._x += static_cast<float>(glyphInfo._width) * scale;
@@ -615,10 +633,10 @@ namespace fs
 
 		void FontRendererContext::prepareIndexArray()
 		{
-			const auto& vertexArray = _triangleRenderer.vertexArray();
+			const auto& vertexArray = _triangleRenderer->vertexArray();
 			const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-			auto& indexArray = _triangleRenderer.indexArray();
+			auto& indexArray = _triangleRenderer->indexArray();
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
 			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

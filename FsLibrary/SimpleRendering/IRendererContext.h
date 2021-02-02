@@ -99,7 +99,7 @@ namespace fs
 			void									setPositionZ(const float s) noexcept;
 			void									setColor(const fs::SimpleRendering::Color& color) noexcept;
 			void									setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept;
-			void									setViewportIndex(const uint32 viewportIndex) noexcept;
+			virtual void							setViewportIndex(const uint32 viewportIndex) noexcept;
 
 		protected:
 			const fs::Float4&						getColorInternal(const uint32 index) const noexcept;

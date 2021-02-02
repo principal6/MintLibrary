@@ -9,8 +9,7 @@
 
 #include <FsLibrary/Gui/GuiCommon.h>
 
-#include <FsLibrary/SimpleRendering/ShapeRendererContext.h>
-#include <FsLibrary/SimpleRendering/FontRendererContext.h>
+#include <FsLibrary/SimpleRendering/ShapeFontRendererContext.h>
 
 #include <FsLibrary/Container/IId.h>
 
@@ -99,7 +98,6 @@ namespace fs
 			static constexpr float						kDockingInteractionLong = 40.0f;
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
-			static constexpr float						kControlDepthStride = -0.0001f;
 
 			class ControlData
 			{
@@ -127,7 +125,6 @@ namespace fs
 				const uint32						getChildViewportIndex() const noexcept;
 				const std::vector<ControlData>&		getChildControlDataArray() const noexcept;
 				const bool&							hasChildWindow() const noexcept;
-				const float							getDepth() const noexcept;
 			
 			public:
 				const bool&							hasChildWindowInternalXXX() const noexcept;
@@ -140,7 +137,6 @@ namespace fs
 				void								setOffsetY_XXX(const float offsetY) noexcept;
 				void								setViewportIndexXXX(const uint32 viewportIndex) noexcept;
 				void								setChildViewportIndexXXX(const uint32 viewportIndex) noexcept;
-				void								setDepthXXX(const float depth) noexcept;
 
 			public:
 				fs::Float2							_interactionSize;
@@ -175,7 +171,6 @@ namespace fs
 				std::vector<ControlData>			_childControlDataArray;
 				bool								_hasChildWindow;
 				bool								_previousHasChildWindow;
-				float								_depth;
 			};
 			
 			struct ControlDataParam
@@ -230,32 +225,32 @@ namespace fs
 
 
 		public:
-														GuiContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
-														~GuiContext();
+																GuiContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																~GuiContext();
 
 		public:
-			void										initialize(const char* const font);
+			void												initialize(const char* const font);
 
 		public:
-			void										handleEvents(fs::Window::IWindow* const window);
+			void												handleEvents(fs::Window::IWindow* const window);
 
 		private:
-			const bool									isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept;
-			const bool									isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
-			const bool									isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizeMethod& outResizeMethod) const noexcept;
+			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept;
+			const bool											isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
+			const bool											isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizeMethod& outResizeMethod) const noexcept;
 
 
 #pragma region Next-states
 		public:
-			void										nextSameLine();
-			void										nextControlSize(const fs::Float2& size, const bool force = false);
-			void										nextNoAutoPositioned();
+			void												nextSameLine();
+			void												nextControlSize(const fs::Float2& size, const bool force = false);
+			void												nextNoAutoPositioned();
 			// Only works if NoAutoPositioned!
-			void										nextControlPosition(const fs::Float2& position);
-			void										nextTooltip(const wchar_t* const tooltipText);
+			void												nextControlPosition(const fs::Float2& position);
+			void												nextTooltip(const wchar_t* const tooltipText);
 
 		private:
-			void										resetNextStates();
+			void												resetNextStates();
 #pragma endregion
 
 
@@ -274,180 +269,176 @@ namespace fs
 		public:
 			// [Window | Control with ID]
 			// title is used as unique id for windows
-			const bool									beginWindow(const wchar_t* const title, const WindowParam& windowParam);
-			void										endWindow() { endControlInternal(ControlType::Window); }
+			const bool											beginWindow(const wchar_t* const title, const WindowParam& windowParam);
+			void												endWindow() { endControlInternal(ControlType::Window); }
 
 			// [Button]
 			// Return 'true' if clicked
-			const bool									beginButton(const wchar_t* const text);
-			void										endButton() { endControlInternal(ControlType::Button); }
+			const bool											beginButton(const wchar_t* const text);
+			void												endButton() { endControlInternal(ControlType::Button); }
 
 			// [Label]
-			void										pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
+			void												pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
 			// [Slider]
 			// Return 'true' if value was changed
-			const bool									beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue);
-			void										endSlider() { endControlInternal(ControlType::Slider); }
+			const bool											beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue);
+			void												endSlider() { endControlInternal(ControlType::Slider); }
 
 		private:
 			// Returns size of titlebar
-			fs::Float2									beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding);
-			void										endTitleBar() { endControlInternal(ControlType::TitleBar); }
+			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding);
+			void												endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
-			const bool									beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
-			void										endRoundButton() { endControlInternal(ControlType::RoundButton); }
+			const bool											beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
+			void												endRoundButton() { endControlInternal(ControlType::RoundButton); }
 
 			// [Tooltip]
 			// Unique control
-			void										pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position);
+			void												pushTooltipWindow(const wchar_t* const tooltipText, const fs::Float2& position);
 
 			// [ScrollBar]
 			// Return 'true' if value was changed
-			void										pushScrollBar(const ScrollBarType scrollBarType);
+			void												pushScrollBar(const ScrollBarType scrollBarType);
 
 		private:
-			void										endControlInternal(const ControlType controlType);
+			void												endControlInternal(const ControlType controlType);
 
 		private:
-			const ControlData&							getControlDataStackTopXXX() const noexcept;
-			ControlData&								getControlDataStackTopXXX() noexcept;
-			ControlData&								getControlData(const uint64 hashKey) noexcept;
-			const ControlData&							getControlData(const uint64 hashKey) const noexcept;
-			fs::Float4									getControlCenterPosition(const ControlData& controlData) const noexcept;
-			const wchar_t*								generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
-			const uint64								generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&								getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& controlDataParam) noexcept;
-			void										calculateControlChildAt(ControlData& controlData) noexcept;
-			const ControlData&							getParentWindowControlData() const noexcept;
-			const ControlData&							getParentWindowControlData(const ControlData& controlData) const noexcept;
-			const ControlData&							getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
+			const ControlData&									getControlDataStackTopXXX() const noexcept;
+			ControlData&										getControlDataStackTopXXX() noexcept;
+			ControlData&										getControlData(const uint64 hashKey) noexcept;
+			const ControlData&									getControlData(const uint64 hashKey) const noexcept;
+			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
+			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
+			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
+			ControlData&										getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& controlDataParam) noexcept;
+			void												calculateControlChildAt(ControlData& controlData) noexcept;
+			const ControlData&									getParentWindowControlData() const noexcept;
+			const ControlData&									getParentWindowControlData(const ControlData& controlData) const noexcept;
+			const ControlData&									getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
 
 
 #pragma region Before drawing controls
 		private:
-			const bool									processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			const bool									processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			void										processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
-			const bool									processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			const bool											processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			const bool											processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			void												processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
+			const bool											processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			
-			void										processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
-			void										processControlCommonInternal(ControlData& controlData) noexcept;
-			void										processControlDocking(ControlData& controlData) noexcept;
-			const bool									isInteractingInternal(const ControlData& controlData) const noexcept;
+			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
+			void												processControlCommonInternal(ControlData& controlData) noexcept;
+			void												processControlDocking(ControlData& controlData) noexcept;
+			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;
 			
 			// These functions must be called after process- functions
-			const bool									isDraggingControl(const ControlData& controlData) const noexcept;
-			const bool									isResizingControl(const ControlData& controlData) const noexcept;
-			const bool									isControlHovered(const ControlData& controlData) const noexcept;
-			const bool									isControlPressed(const ControlData& controlData) const noexcept;
-			const bool									isControlClicked(const ControlData& controlData) const noexcept;
-			const bool									isControlFocused(const ControlData& controlData) const noexcept;
+			const bool											isDraggingControl(const ControlData& controlData) const noexcept;
+			const bool											isResizingControl(const ControlData& controlData) const noexcept;
+			const bool											isControlHovered(const ControlData& controlData) const noexcept;
+			const bool											isControlPressed(const ControlData& controlData) const noexcept;
+			const bool											isControlClicked(const ControlData& controlData) const noexcept;
+			const bool											isControlFocused(const ControlData& controlData) const noexcept;
 
 			// RendererContext 고를 때 사용
-			const bool									isAncestorFocused(const ControlData& controlData) const noexcept;
-			const bool									isAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
-			const bool									isAncestorFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
+			const bool											isAncestorFocused(const ControlData& controlData) const noexcept;
+			const bool											isAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
+			const bool											isAncestorFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-			const bool									isAncestor(const uint64 myHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isAncestor(const uint64 myHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
 
 			// Focus, Out-of-focus 색 정할 때 사용
-			const bool									isClosestFocusableAncestorFocused(const ControlData& controlData) const noexcept;
-			const bool									isClosestFocusableAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
+			const bool											isClosestFocusableAncestorFocused(const ControlData& controlData) const noexcept;
+			const bool											isClosestFocusableAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
 
-			const fs::SimpleRendering::Color&			getNamedColor(const NamedColor namedColor) const noexcept;
-			fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) noexcept;
+			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
+			fs::SimpleRendering::Color&							getNamedColor(const NamedColor namedColor) noexcept;
 #pragma endregion
 
 
 		public:
-			void										render();
+			void												render();
 
 		private:
-			void										resetStatesPerFrame();
+			void												resetStatesPerFrame();
 
 		private:
-			fs::SimpleRendering::GraphicDevice* const	_graphicDevice;
+			fs::SimpleRendering::GraphicDevice* const			_graphicDevice;
 
-			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextBackground;
-			fs::SimpleRendering::FontRendererContext	_fontRendererContextBackground;
+			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextBackground;
+			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextForeground;
+			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextTopMost;
 
-			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextForeground;
-			fs::SimpleRendering::FontRendererContext	_fontRendererContextForeground;
+			std::vector<D3D11_VIEWPORT>							_viewportArrayPerFrame;
+			std::vector<D3D11_RECT>								_scissorRectangleArrayPerFrame;
 
-			fs::SimpleRendering::ShapeRendererContext	_shapeRendererContextTopMost;
-
-			std::vector<D3D11_VIEWPORT>					_viewportArrayPerFrame;
-			std::vector<D3D11_RECT>						_scissorRectangleArrayPerFrame;
-
-			D3D11_VIEWPORT								_viewportTopMost;
-			D3D11_RECT									_scissorRectangleTopMost;
+			D3D11_VIEWPORT										_viewportTopMost;
+			D3D11_RECT											_scissorRectangleTopMost;
 
 		private:
-			const ControlData							kNullControlData;
-			ControlData									_rootControlData;
+			const ControlData									kNullControlData;
+			ControlData											_rootControlData;
 		
 		private:
-			std::vector<ControlStackData>				_controlStackPerFrame;
+			std::vector<ControlStackData>						_controlStackPerFrame;
 
 		private:
-			mutable bool								_isMouseInteractionDonePerFrame;
-			mutable uint64								_focusedControlHashKey;
-			mutable uint64								_hoveredControlHashKey;
-			mutable uint64								_pressedControlHashKey;
-			mutable fs::Float2							_pressedControlInitialPosition;
-			mutable uint64								_clickedControlHashKeyPerFrame;
-			uint64										_hoverStartTimeMs;
-			bool										_hoverStarted;
+			mutable bool										_isMouseInteractionDonePerFrame;
+			mutable uint64										_focusedControlHashKey;
+			mutable uint64										_hoveredControlHashKey;
+			mutable uint64										_pressedControlHashKey;
+			mutable fs::Float2									_pressedControlInitialPosition;
+			mutable uint64										_clickedControlHashKeyPerFrame;
+			uint64												_hoverStartTimeMs;
+			bool												_hoverStarted;
 		
 
 #pragma region Mouse Capture States
 		private:
-			mutable bool								_isDragBegun;
-			mutable uint64								_draggedControlHashKey;
-			mutable fs::Float2							_draggedControlInitialPosition;
+			mutable bool										_isDragBegun;
+			mutable uint64										_draggedControlHashKey;
+			mutable fs::Float2									_draggedControlInitialPosition;
 		
 		private:
-			mutable bool								_isResizeBegun;
-			mutable uint64								_resizedControlHashKey;
-			mutable fs::Float2							_resizedControlInitialPosition;
-			mutable fs::Float2							_resizedControlInitialDisplaySize;
-			mutable ResizeMethod						_resizeMethod;
+			mutable bool										_isResizeBegun;
+			mutable uint64										_resizedControlHashKey;
+			mutable fs::Float2									_resizedControlInitialPosition;
+			mutable fs::Float2									_resizedControlInitialDisplaySize;
+			mutable ResizeMethod								_resizeMethod;
 #pragma endregion
 		
 		private:
-			std::unordered_map<uint64, ControlData>		_controlIdMap;
+			std::unordered_map<uint64, ControlData>				_controlIdMap;
 
 
 #pragma region Next-states
 		private:
-			bool										_nextSameLine;
-			fs::Float2									_nextControlSize;
-			bool										_nextSizingForced;
-			bool										_nextNoAutoPositioned;
-			fs::Float2									_nextControlPosition;
-			const wchar_t*								_nextTooltipText;
+			bool												_nextSameLine;
+			fs::Float2											_nextControlSize;
+			bool												_nextSizingForced;
+			bool												_nextNoAutoPositioned;
+			fs::Float2											_nextControlPosition;
+			const wchar_t*										_nextTooltipText;
 #pragma endregion
 
 
 #pragma region Mouse states
 		private:
-			fs::Float2									_mousePosition;
-			fs::Float2									_mouseDownPosition;
-			fs::Float2									_mouseUpPosition;
-			bool										_mouseButtonDown;
-			bool										_mouseDownUp;
-			mutable fs::Window::CursorType				_cursorType; // per frame
+			fs::Float2											_mousePosition;
+			fs::Float2											_mouseDownPosition;
+			fs::Float2											_mouseUpPosition;
+			bool												_mouseButtonDown;
+			bool												_mouseDownUp;
+			mutable fs::Window::CursorType						_cursorType; // per frame
 #pragma endregion
 
 		private:
-			fs::Float2									_tooltipPosition;
-			uint64										_tooltipParentWindowHashKey;
-			const wchar_t*								_tooltipTextFinal;
+			fs::Float2											_tooltipPosition;
+			uint64												_tooltipParentWindowHashKey;
+			const wchar_t*										_tooltipTextFinal;
 
 		private:
-			fs::SimpleRendering::Color					_namedColors[static_cast<uint32>(NamedColor::COUNT)];
+			fs::SimpleRendering::Color							_namedColors[static_cast<uint32>(NamedColor::COUNT)];
 		};
 	}
 }

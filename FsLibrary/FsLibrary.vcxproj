@@ -85,6 +85,7 @@
     <ClInclude Include="SimpleRendering\GraphicDevice.h" />
     <ClInclude Include="SimpleRendering\IRendererContext.h" />
     <ClInclude Include="SimpleRendering\RectangleRendererContext.h" />
+    <ClInclude Include="SimpleRendering\ShapeFontRendererContext.h" />
     <ClInclude Include="SimpleRendering\ShapeRendererContext.h" />
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
     <ClInclude Include="SimpleRendering\TriangleRenderer.h" />
@@ -113,6 +114,7 @@
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
     <ClCompile Include="SimpleRendering\IDxObject.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRendererContext.cpp" />
+    <ClCompile Include="SimpleRendering\ShapeFontRendererContext.cpp" />
     <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp" />
   </ItemGroup>
   <ItemGroup>

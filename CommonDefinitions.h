@@ -90,7 +90,7 @@ namespace fs
 #ifdef FS_CHECK_HEAP_ALLOCATION
 	__noop;
 #else
-	#define FS_NEW(type) new type{}
+	#define FS_NEW(type, ...) new type{ __VA_ARGS__ }
 	#define FS_NEW_ARRAY(type, size) new type[size]{}
 	#define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
 	#define FS_DELETE_ARRAY(obj) if (obj != nullptr) { delete[] obj; obj = nullptr; }

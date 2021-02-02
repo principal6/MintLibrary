@@ -36,7 +36,6 @@ namespace fs
 			, _childViewportIndex{ 0 }
 			, _hasChildWindow{ false }
 			, _previousHasChildWindow{ false }
-			, _depth{ 1.0f }
 		{
 			_draggingConstraints.setNan();
 
@@ -137,11 +136,6 @@ namespace fs
 			return _previousHasChildWindow;
 		}
 
-		FS_INLINE const float GuiContext::ControlData::getDepth() const noexcept
-		{
-			return _depth;
-		}
-
 		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
 		{
 			_controlState = controlState;
@@ -165,11 +159,6 @@ namespace fs
 		FS_INLINE void GuiContext::ControlData::setChildViewportIndexXXX(const uint32 viewportIndex) noexcept
 		{
 			_childViewportIndex = viewportIndex;
-		}
-
-		FS_INLINE void GuiContext::ControlData::setDepthXXX(const float depth) noexcept
-		{
-			_depth = depth;
 		}
 
 
@@ -267,7 +256,7 @@ namespace fs
 		
 		FS_INLINE fs::Float4 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
 		{
-			return fs::Float4(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, controlData.getDepth(), 1.0f);
+			return fs::Float4(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, 0.0f, 1.0f);
 		}
 
 		FS_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept

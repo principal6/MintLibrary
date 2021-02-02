@@ -245,6 +245,9 @@
     <ClInclude Include="SimpleRendering\FontRendererContext.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleRendering\ShapeFontRendererContext.h">
+      <Filter>SimpleRendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="File\BinaryFile.cpp">
@@ -308,6 +311,9 @@
       <Filter>SimpleRendering</Filter>
     </ClCompile>
     <ClCompile Include="SimpleRendering\FontRendererContext.cpp">
+      <Filter>SimpleRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleRendering\ShapeFontRendererContext.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
   </ItemGroup>
