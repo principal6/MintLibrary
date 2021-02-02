@@ -131,7 +131,7 @@ namespace fs
 			}
 		}
 
-		const bool FontRendererContext::loadFont(const char* const fontFileName)
+		const bool FontRendererContext::loadFontData(const char* const fontFileName)
 		{
 			std::string fontFileNameS = fontFileName;
 			fs::StringUtil::excludeExtension(fontFileNameS);
@@ -163,13 +163,13 @@ namespace fs
 			uint64 glyphInfoCount = 0;
 			glyphInfoCount = *binaryFileReader.read<uint64>();
 
-			_glyphInfoArray.resize(glyphInfoCount);
-			_glyphMap.clear();
-			_glyphMap.reserve(glyphInfoCount);
+			_fontData._glyphInfoArray.resize(glyphInfoCount);
+			_fontData._glyphMap.clear();
+			_fontData._glyphMap.reserve(glyphInfoCount);
 
 			for (uint64 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
-				GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+				GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 				glyphInfo._charCode = *binaryFileReader.read<wchar_t>();
 				glyphInfo._width = *binaryFileReader.read<GlyphMetricType>();
 				glyphInfo._height = *binaryFileReader.read<GlyphMetricType>();
@@ -181,7 +181,7 @@ namespace fs
 				glyphInfo._uv1._x = *binaryFileReader.read<float>();
 				glyphInfo._uv1._y = *binaryFileReader.read<float>();
 
-				_glyphMap[glyphInfo._charCode] = glyphIndex;
+				_fontData._glyphMap[glyphInfo._charCode] = glyphIndex;
 			}
 
 			std::vector<byte> rawData;
@@ -215,11 +215,30 @@ namespace fs
 #endif
 			
 			fs::SimpleRendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-			_fontTextureId = resourcePool.pushTexture2D(fs::SimpleRendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
+			_fontData._fontTextureId = resourcePool.pushTexture2D(fs::SimpleRendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
 			return true;
 		}
 
-		const bool FontRendererContext::bakeFont(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
+		const bool FontRendererContext::loadFontData(const FontData& fontData)
+		{
+			if (fontData._fontTextureId.isValid() == false)
+			{
+				FS_ASSERT("김장원", false, "FontData 의 FontTexture 가 Invalid 합니다!");
+				return false;
+			}
+
+			if (fontData._glyphInfoArray.empty() == true)
+			{
+				FS_ASSERT("김장원", false, "FontData 의 GlyphInfo 가 비어 있습니다!");
+				return false;
+			}
+
+			_fontData = fontData;
+
+			return true;
+		}
+
+		const bool FontRendererContext::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
 		{
 			std::string fontFaceFileNameS = fontFaceFileName;
 			if (fs::StringUtil::hasExtension(fontFaceFileNameS) == false)
@@ -242,8 +261,8 @@ namespace fs
 			static constexpr int16 kInitialHeight = 64;
 			std::vector<uint8> pixelArray(static_cast<int64>(textureWidth) * kInitialHeight);
 
-			_glyphInfoArray.clear();
-			_glyphMap.clear();
+			_fontData._glyphInfoArray.clear();
+			_fontData._glyphMap.clear();
 
 			int16 pixelX{ 0 };
 			int16 pixelY{ 0 };
@@ -299,6 +318,11 @@ namespace fs
 			binaryFileWriter.save(outputFileNameS.c_str());
 
 			return true;
+		}
+
+		const FontRendererContext::FontData& FontRendererContext::getFontData() const noexcept
+		{
+			return _fontData;
 		}
 
 		const bool FontRendererContext::initializeFreeType(const char* const fontFaceFileName, const int16 fontSize)
@@ -376,8 +400,8 @@ namespace fs
 			GlyphInfo glyphInfo{ wch, &_ftFace->glyph->metrics };
 			glyphInfo._uv0._x = static_cast<float>(spaceLeft + pixelPositionX);
 			glyphInfo._uv0._y = static_cast<float>(spaceTop + pixelPositionY);
-			_glyphInfoArray.emplace_back(glyphInfo);
-			_glyphMap[wch] = _glyphInfoArray.size() - 1;
+			_fontData._glyphInfoArray.emplace_back(glyphInfo);
+			_fontData._glyphMap[wch] = _fontData._glyphInfoArray.size() - 1;
 			
 			pixelPositionX += spacedWidth;
 			return true;
@@ -388,10 +412,10 @@ namespace fs
 			const double textureWidthF = static_cast<double>(textureWidth);
 			const double textureHeightF = static_cast<double>(textureHeight);
 
-			const uint64 glyphInfoCount = _glyphInfoArray.size();
+			const uint64 glyphInfoCount = _fontData._glyphInfoArray.size();
 			for (uint64 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
-				GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+				GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 				glyphInfo._uv0._x = static_cast<float>(static_cast<double>(glyphInfo._uv0._x) / textureWidthF);
 				glyphInfo._uv0._y = static_cast<float>(static_cast<double>(glyphInfo._uv0._y) / textureHeightF);
 				glyphInfo._uv1._x = glyphInfo._uv0._x + static_cast<float>(static_cast<double>(glyphInfo._width) / textureWidthF);
@@ -405,11 +429,11 @@ namespace fs
 			binaryFileWriter.write(textureWidth);
 			binaryFileWriter.write(textureHeight);
 
-			const uint64 glyphInfoCount = _glyphInfoArray.size();
+			const uint64 glyphInfoCount = _fontData._glyphInfoArray.size();
 			binaryFileWriter.write(glyphInfoCount);
 			for (uint64 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
-				const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 				binaryFileWriter.write(glyphInfo._charCode);
 				binaryFileWriter.write(glyphInfo._width);
 				binaryFileWriter.write(glyphInfo._height);
@@ -516,7 +540,7 @@ namespace fs
 		{
 			if (_triangleRenderer->isRenderable() == true)
 			{
-				_graphicDevice->getResourcePool().bindToShader(_fontTextureId, fs::SimpleRendering::DxShaderType::PixelShader, 0);
+				_graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::SimpleRendering::DxShaderType::PixelShader, 0);
 				
 				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
@@ -568,13 +592,13 @@ namespace fs
 				const wchar_t& wideChar = wideText[textAt];
 				
 				uint64 glyphIndex = 0;
-				auto found = _glyphMap.find(wideChar);
-				if (found != _glyphMap.end())
+				auto found = _fontData._glyphMap.find(wideChar);
+				if (found != _fontData._glyphMap.end())
 				{
-					glyphIndex = _glyphMap.at(wideChar);
+					glyphIndex = _fontData._glyphMap.at(wideChar);
 				}
 
-				const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 				totalWidth += glyphInfo._horiAdvance;
 			}
 			return static_cast<float>(totalWidth);
@@ -582,20 +606,20 @@ namespace fs
 
 		const DxObjectId& FontRendererContext::getFontTextureId() const noexcept
 		{
-			return _fontTextureId;
+			return _fontData._fontTextureId;
 		}
 
 		void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
-			auto found = _glyphMap.find(wideChar);
-			if (found != _glyphMap.end())
+			auto found = _fontData._glyphMap.find(wideChar);
+			if (found != _fontData._glyphMap.end())
 			{
-				glyphIndex = _glyphMap.at(wideChar);
+				glyphIndex = _fontData._glyphMap.at(wideChar);
 			}
 
 			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
-			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
+			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 			auto& vertexArray = _triangleRenderer->vertexArray();
 			
 			fs::CppHlsl::VS_INPUT_SHAPE v;

@@ -61,21 +61,18 @@ namespace fs
 
 		void GuiContext::initialize(const char* const font)
 		{
-			std::vector<fs::SimpleRendering::GlyphRange> glyphRangeArray;
-			glyphRangeArray.emplace_back(fs::SimpleRendering::GlyphRange(0, 0x33DD));
-			glyphRangeArray.emplace_back(fs::SimpleRendering::GlyphRange(L'°¡', L'ÆR'));
-
-			if (_shapeFontRendererContextBackground.initializeFont(font, glyphRangeArray) == false)
+			const fs::SimpleRendering::FontRendererContext::FontData& fontData = _graphicDevice->getFontRendererContext().getFontData();
+			if (_shapeFontRendererContextBackground.initializeFontData(fontData) == false)
 			{
 				FS_ASSERT("±èÀå¿ø", false, "ShapeFontRendererContext::initializeFont() ¿¡ ½ÇÆÐÇß½À´Ï´Ù!");
 			}
 
-			if (_shapeFontRendererContextForeground.initializeFont(font, glyphRangeArray) == false)
+			if (_shapeFontRendererContextForeground.initializeFontData(fontData) == false)
 			{
 				FS_ASSERT("±èÀå¿ø", false, "ShapeFontRendererContext::initializeFont() ¿¡ ½ÇÆÐÇß½À´Ï´Ù!");
 			}
 
-			if (_shapeFontRendererContextTopMost.initializeFont(font, glyphRangeArray) == false)
+			if (_shapeFontRendererContextTopMost.initializeFontData(fontData) == false)
 			{
 				FS_ASSERT("±èÀå¿ø", false, "ShapeFontRendererContext::initializeFont() ¿¡ ½ÇÆÐÇß½À´Ï´Ù!");
 			}

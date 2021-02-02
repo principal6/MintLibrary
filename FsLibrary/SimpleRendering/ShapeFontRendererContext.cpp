@@ -195,25 +195,14 @@ namespace fs
 			_fontRendererContext.setViewportIndex(viewportIndex);
 		}
 
-		const bool ShapeFontRendererContext::initializeFont(const char* const fontFileName, const std::vector<fs::SimpleRendering::GlyphRange>& glyphRangeArray) noexcept
+		const bool ShapeFontRendererContext::initializeFontData(const FontRendererContext::FontData& fontData) noexcept
 		{
-			if (glyphRangeArray.empty() == true)
-			{
-				FS_ASSERT("김장원", false, "GlyphRange 가 비어있으면 안 됩니다!");
-				return false;
-			}
+			return _fontRendererContext.loadFontData(fontData);
+		}
 
-			if (_fontRendererContext.loadFont(fontFileName) == false)
-			{
-				const uint32 glyphRangeCount = static_cast<uint32>(glyphRangeArray.size());
-				for (uint32 glyphRangeIndex = 0; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
-				{
-					_fontRendererContext.pushGlyphRange(glyphRangeArray[glyphRangeIndex]);
-				}
-				_fontRendererContext.bakeFont(fontFileName, fs::SimpleRendering::kDefaultFontSize, fontFileName, 2048, 1, 1);
-				return _fontRendererContext.loadFont(fontFileName);
-			}
-			return true;
+		const FontRendererContext::FontData& ShapeFontRendererContext::getFontData() const noexcept
+		{
+			return _fontRendererContext.getFontData();
 		}
 
 		void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)

@@ -74,6 +74,14 @@ namespace fs
 			static constexpr const char* const									kFontFileExtension = ".fnt";
 
 		public:
+			struct FontData
+			{
+				std::vector<GlyphInfo>					_glyphInfoArray;
+				std::unordered_map<wchar_t, uint64>		_glyphMap;
+				DxObjectId								_fontTextureId;
+			};
+
+		public:
 																				FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
 																				FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice, fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer);
 			virtual																~FontRendererContext();
@@ -82,8 +90,10 @@ namespace fs
 			void																pushGlyphRange(const GlyphRange& glyphRange);
 
 		public:
-			const bool															loadFont(const char* const fontFileName);
-			const bool															bakeFont(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+			const bool															loadFontData(const char* const fontFileName);
+			const bool															loadFontData(const FontData& fontData);
+			const bool															bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+			const FontData&														getFontData() const noexcept;
 
 		private:
 			const bool															initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
@@ -120,8 +130,7 @@ namespace fs
 			std::vector<GlyphRange>												_glyphRangeArray;
 		
 		private:
-			std::vector<GlyphInfo>												_glyphInfoArray;
-			std::unordered_map<wchar_t, uint64>									_glyphMap;
+			FontData															_fontData;
 
 		private:
 			bool																_ownTriangleRenderer;
@@ -129,7 +138,6 @@ namespace fs
 			DxObjectId															_vertexShaderId;
 			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;
-			DxObjectId															_fontTextureId;
 		};
 	}
 }

@@ -53,12 +53,12 @@ namespace fs
 			createFontTextureFromMemory();
 #endif
 
-			if (_fontRendererContext.loadFont(kDefaultFont) == false)
+			if (_fontRendererContext.loadFontData(kDefaultFont) == false)
 			{
 				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
 				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
-				_fontRendererContext.bakeFont(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
-				_fontRendererContext.loadFont(kDefaultFont);
+				_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
+				_fontRendererContext.loadFontData(kDefaultFont);
 			}
 
 			_guiContext.initialize(kDefaultFont);
