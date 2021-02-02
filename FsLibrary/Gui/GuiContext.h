@@ -99,6 +99,7 @@ namespace fs
 			static constexpr float						kDockingInteractionLong = 40.0f;
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
+			static constexpr float						kControlDepthStride = -0.0001f;
 
 			class ControlData
 			{
@@ -126,6 +127,7 @@ namespace fs
 				const uint32						getChildViewportIndex() const noexcept;
 				const std::vector<ControlData>&		getChildControlDataArray() const noexcept;
 				const bool&							hasChildWindow() const noexcept;
+				const float							getDepth() const noexcept;
 			
 			public:
 				const bool&							hasChildWindowInternalXXX() const noexcept;
@@ -138,6 +140,7 @@ namespace fs
 				void								setOffsetY_XXX(const float offsetY) noexcept;
 				void								setViewportIndexXXX(const uint32 viewportIndex) noexcept;
 				void								setChildViewportIndexXXX(const uint32 viewportIndex) noexcept;
+				void								setDepthXXX(const float depth) noexcept;
 
 			public:
 				fs::Float2							_interactionSize;
@@ -172,6 +175,7 @@ namespace fs
 				std::vector<ControlData>			_childControlDataArray;
 				bool								_hasChildWindow;
 				bool								_previousHasChildWindow;
+				float								_depth;
 			};
 			
 			struct ControlDataParam

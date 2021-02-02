@@ -36,7 +36,7 @@ namespace fs
 					
 					VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
 					{
-						const uint shapeInfo = asuint(input._info.x);
+						const uint shapeInfo = asuint(input._info.y);
 						const uint shapeType = (shapeInfo >> 30) & 3;
 						const uint shapeIndex = shapeInfo & 0x3FFFFFFF;
 						
@@ -44,12 +44,12 @@ namespace fs
 						transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
 						
 						VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xyz, 1.0);
-						result._color		= input._color;
-						result._texCoord	= input._texCoord;
-						result._info.x		= (float)shapeType;
-						result._info.y		= (float)shapeIndex;
-						result._info.z		= (uint)input._info.y;
+						result._position		= float4(mul(transformedPosition, _cbProjectionMatrix).xyz, 1.0);
+						result._color			= input._color;
+						result._texCoord		= input._texCoord;
+						result._info.x			= (float)shapeType;
+						result._info.y			= (float)shapeIndex;
+						result._viewportIndex	= (uint)input._info.x;
 						
 						return result;
 					}
@@ -70,7 +70,6 @@ namespace fs
 					{
 						for (int i = 0; i < 3; ++i)
 						{
-							input[i]._viewportIndex = (uint)input[i]._info.z;
 							OutputStream.Append(input[i]);
 						}
 						OutputStream.RestartStrip();
@@ -211,8 +210,8 @@ namespace fs
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			v._texCoord._w = abs(pointA._x - pointB._x);
-			v._info._x = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
-			v._info._y = _viewportIndex;
+			v._info._x = _viewportIndex;
+			v._info._y = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
 			vertexArray.emplace_back(v);
 
 			v._position._x = controlPoint._x;
@@ -252,8 +251,8 @@ namespace fs
 				v._position = _position;
 				v._position._x = pointA._x;
 				v._position._y = pointA._y;
-				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = pointB._x;
@@ -289,8 +288,8 @@ namespace fs
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 1.0f;
 			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
-			v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
-			v._info._y = _viewportIndex;
+			v._info._x = _viewportIndex;
+			v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
 			vertexArray.emplace_back(v);
 
 			v._position._x += radius;
@@ -338,8 +337,8 @@ namespace fs
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
 				v._texCoord._w = halfRadius * 2.0f;
-				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfRadius;
@@ -406,8 +405,8 @@ namespace fs
 				v._texCoord._y = +1.0f;
 				v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
 				v._texCoord._w = radius;
-				v._info._x = getShapeInfoAsFloat(ShapeType::Circle);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::Circle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +radius;
@@ -468,8 +467,8 @@ namespace fs
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
 				v._texCoord._w = radius;
-				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +radius * sinHalfArcAngle;
@@ -550,8 +549,8 @@ namespace fs
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = +1.0f; // @IMPORTANT
 				v._texCoord._w = outerRadius;
-				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +outerRadius * tanHalfArcAngle;
@@ -723,8 +722,8 @@ namespace fs
 				v._position = _position;
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y - halfSize._y;
-				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfSize._x;
@@ -770,8 +769,8 @@ namespace fs
 				v._position = _position;
 				v._position._x = -halfSize._x + horizontalOffsetL;
 				v._position._y = -halfSize._y;
-				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-				v._info._y = _viewportIndex;
+				v._info._x = _viewportIndex;
+				v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.emplace_back(v);
 
 				v._position._x = +halfSize._x - horizontalOffsetR;
@@ -968,8 +967,8 @@ namespace fs
 			v._position = _position;
 			v._position._x = v0._x;
 			v._position._y = v0._y;
-			v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-			v._info._y = _viewportIndex;
+			v._info._x = _viewportIndex;
+			v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
 			vertexArray.emplace_back(v);
 
 			v._position._x = v1._x;

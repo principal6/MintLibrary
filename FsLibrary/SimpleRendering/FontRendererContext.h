@@ -67,64 +67,64 @@ namespace fs
 
 		class FontRendererContext final : public IRendererContext
 		{
-			static constexpr int16										kSpaceBottomForVisibility = 1;
+			static constexpr int16											kSpaceBottomForVisibility = 1;
 			static_assert(kSpaceBottomForVisibility == 1, "kSpaceBottomForVisibility must be 1");
-			static constexpr int16										kSpaceBottom = 1;
+			static constexpr int16											kSpaceBottom = 1;
 			static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
-			static constexpr const char* const							kFontFileExtension = ".fnt";
+			static constexpr const char* const								kFontFileExtension = ".fnt";
 
 		public:
-																		FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
-																		~FontRendererContext();
+																			FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																			~FontRendererContext();
 
 		public:
-			void														pushGlyphRange(const GlyphRange& glyphRange);
+			void															pushGlyphRange(const GlyphRange& glyphRange);
 
 		public:
-			const bool													loadFont(const char* const fontFileName);
-			const bool													bakeFont(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+			const bool														loadFont(const char* const fontFileName);
+			const bool														bakeFont(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
 
 		private:
-			const bool													initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
-			const bool													deinitializeFreeType();
+			const bool														initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
+			const bool														deinitializeFreeType();
 		
 		private:
-			const bool													bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, std::vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
-			void														completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
-			void														writeMetaData(const int16 textureWidth, const int16 textureHeight, fs::BinaryFileWriter& binaryFileWriter) const noexcept;
+			const bool														bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, std::vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
+			void															completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
+			void															writeMetaData(const int16 textureWidth, const int16 textureHeight, fs::BinaryFileWriter& binaryFileWriter) const noexcept;
 
 		public:
-			virtual void												initializeShaders() noexcept override final;
-			virtual void												flushData() noexcept override final;
-			virtual const bool											hasData() const noexcept override final;
-			virtual void												render() noexcept final;
+			virtual void													initializeShaders() noexcept override final;
+			virtual void													flushData() noexcept override final;
+			virtual const bool												hasData() const noexcept override final;
+			virtual void													render() noexcept final;
 
 		public:
-			void														drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
-			const float													calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+			void															drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
+			const float														calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
 
 		private:
-			void														drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade);
+			void															drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade);
 
 		private:
-			void														prepareIndexArray();
+			void															prepareIndexArray();
 
 		private:
-			FT_Library													_ftLibrary;
-			FT_Face														_ftFace;
-			int16														_fontSize;
-			std::vector<GlyphRange>										_glyphRangeArray;
+			FT_Library														_ftLibrary;
+			FT_Face															_ftFace;
+			int16															_fontSize;
+			std::vector<GlyphRange>											_glyphRangeArray;
 		
 		private:
-			std::vector<GlyphInfo>										_glyphInfoArray;
-			std::unordered_map<wchar_t, uint64>							_glyphMap;
+			std::vector<GlyphInfo>											_glyphInfoArray;
+			std::unordered_map<wchar_t, uint64>								_glyphMap;
 
 		private:
-			fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
-			DxObjectId													_vertexShaderId;
-			DxObjectId													_geometryShaderId;
-			DxObjectId													_pixelShaderId;
-			DxObjectId													_fontTextureId;
+			fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>	_triangleRenderer;
+			DxObjectId														_vertexShaderId;
+			DxObjectId														_geometryShaderId;
+			DxObjectId														_pixelShaderId;
+			DxObjectId														_fontTextureId;
 		};
 	}
 }

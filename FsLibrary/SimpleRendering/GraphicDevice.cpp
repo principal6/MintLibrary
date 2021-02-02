@@ -118,7 +118,7 @@ namespace fs
 
 				D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
 				depthStencilDescriptor.DepthEnable = TRUE;
-				depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+				depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 				depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 				depthStencilDescriptor.StencilEnable = FALSE;
 				_device->CreateDepthStencilState(&depthStencilDescriptor, _depthStencilStateLessEqual.ReleaseAndGetAddressOf());

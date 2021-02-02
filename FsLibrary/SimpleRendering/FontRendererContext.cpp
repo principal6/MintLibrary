@@ -421,19 +421,19 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 
-					VS_OUTPUT main(VS_INPUT input)
+					VS_OUTPUT_SHAPE main(VS_INPUT_SHAPE input)
 					{
-						VS_OUTPUT result = (VS_OUTPUT)0;
+						VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
 						result._position		= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 						result._color			= input._color;
 						result._texCoord		= input._texCoord;
-						result._flag			= input._flag;
-						result._viewportIndex	= (uint)input._position.w;
+						result._info			= input._info;
+						result._viewportIndex	= (uint)input._info.x;
 						return result;
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShader("FontRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -444,7 +444,7 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					
 					[maxvertexcount(3)]
-					void main(triangle VS_OUTPUT input[3], inout TriangleStream<VS_OUTPUT> OutputStream)
+					void main(triangle VS_OUTPUT_SHAPE input[3], inout TriangleStream<VS_OUTPUT_SHAPE> OutputStream)
 					{
 						for (int i = 0; i < 3; ++i)
 						{
@@ -467,12 +467,12 @@ namespace fs
 					sampler					sampler0;
 					Texture2D<float>		texture0;
 				
-					float4 main(VS_OUTPUT input) : SV_Target
+					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
-						const float sampled = texture0.Sample(sampler0, input._texCoord);
+						const float sampled = texture0.Sample(sampler0, input._texCoord.xy);
 						float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
 						
-						if (input._flag == 1)
+						if (input._info.y == 1.0)
 						{
 							const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
 							const float rbSampled = texture0.Sample(sampler0, rbCoord);
@@ -581,14 +581,15 @@ namespace fs
 			const GlyphInfo& glyphInfo = _glyphInfoArray[glyphIndex];
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			
-			fs::CppHlsl::VS_INPUT v;
+			fs::CppHlsl::VS_INPUT_SHAPE v;
 			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
 			v._position._y = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
 			v._position._z = position._z;
-			v._position._w = _viewportIndex;
 			v._color = _defaultColor;
-			v._texCoord = glyphInfo._uv0;
-			v._flag = (drawShade == true) ? 1 : 0;
+			v._texCoord._x = glyphInfo._uv0._x;
+			v._texCoord._y = glyphInfo._uv0._y;
+			v._info._x = _viewportIndex;
+			v._info._y = (drawShade == true) ? 1.0f : 0.0f;
 			vertexArray.emplace_back(v);
 			
 			v._position._x += static_cast<float>(glyphInfo._width) * scale;
@@ -603,7 +604,8 @@ namespace fs
 			vertexArray.emplace_back(v);
 
 			v._position._x += static_cast<float>(glyphInfo._width) * scale;
-			v._texCoord = glyphInfo._uv1;
+			v._texCoord._x = glyphInfo._uv1._x;
+			v._texCoord._y = glyphInfo._uv1._y;
 			vertexArray.emplace_back(v);
 
 			prepareIndexArray();

@@ -460,7 +460,7 @@ namespace fs
 					const float trackRectLeftLength = thumbAt * sliderValidLength;
 					const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
-					fs::Float4 trackCenterPosition = getControlCenterPosition(trackControlData);
+					const fs::Float4& trackCenterPosition = getControlCenterPosition(trackControlData);
 					fs::Float4 trackRenderPosition = trackCenterPosition - fs::Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
 
 					// Left(or Upper) half circle
@@ -601,7 +601,7 @@ namespace fs
 
 						// Rendering thumb
 						{
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + kScrollBarThickness * 0.5f, thumbControlData._position._y, 0.0f, 1.0f);
+							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + kScrollBarThickness * 0.5f, thumbControlData._position._y, thumbControlData.getDepth(), 1.0f);
 							const float rectHeight = thumbSize - radius * 2.0f;
 							thumbRenderPosition._y += radius;
 							shapeRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
@@ -713,7 +713,7 @@ namespace fs
 
 						// Rendering thumb
 						{
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x, thumbControlData._position._y + kScrollBarThickness * 0.5f, 0.0f, 1.0f);
+							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x, thumbControlData._position._y + kScrollBarThickness * 0.5f, thumbControlData.getDepth(), 1.0f);
 							const float rectHeight = thumbSize - radius * 2.0f;
 							thumbRenderPosition._x += radius;
 							shapeRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
@@ -779,7 +779,7 @@ namespace fs
 			shapeRendererContext.setColor(fs::SimpleRendering::Color(127, 127, 127));
 			shapeRendererContext.drawLine(controlData._position + fs::Float2(0.0f, titleBarSize._y), controlData._position + fs::Float2(controlData.getDisplaySize()._x, titleBarSize._y), 1.0f);
 
-			const fs::Float4& titleBarTextPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
+			const fs::Float4& titleBarTextPosition = fs::Float4(controlData._position._x, controlData._position._y, controlData.getDepth(), 1.0f) + fs::Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
 			const bool isClosestFocusableAncestorFocused_ = isClosestFocusableAncestorFocused(controlData);
 			fontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			fontRendererContext.setColor((isClosestFocusableAncestorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
@@ -932,8 +932,17 @@ namespace fs
 			}
 
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-			std::vector<ControlData>& parentChildControlArray = const_cast<std::vector<ControlData>&>(parentControlData.getChildControlDataArray());
-			parentChildControlArray.emplace_back(controlData);
+			{
+				std::vector<ControlData>& parentChildControlArray = const_cast<std::vector<ControlData>&>(parentControlData.getChildControlDataArray());
+				parentChildControlArray.emplace_back(controlData);
+			}
+
+			// Depth
+			//if (controlType == ControlType::Window)
+			{
+				//controlData.setDepthXXX(parentControlData.getDepth() + ((controlType == ControlType::Window) ? kControlDepthStride : 0.0f));
+			}
+
 			if (controlType == ControlType::Window)
 			{
 				const_cast<bool&>(parentControlData.hasChildWindowInternalXXX()) = true;
@@ -1412,6 +1421,7 @@ namespace fs
 				{
 					fs::Float4 renderPosition = changeTargetParentControlCenterPosition;
 					renderPosition._x += -parentControlData.getDisplaySize()._x * 0.5f + horzRenderingCenterOffset;
+					renderPosition._z = 0.0f; // TopMost
 					shapeRendererContext.setPosition(renderPosition);
 					shapeRendererContext.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
 				}
@@ -1421,6 +1431,7 @@ namespace fs
 				{
 					fs::Float4 renderPosition = changeTargetParentControlCenterPosition;
 					renderPosition._x += +parentControlData.getDisplaySize()._x * 0.5f - horzRenderingCenterOffset;
+					renderPosition._z = 0.0f; // TopMost
 					shapeRendererContext.setPosition(renderPosition);
 					shapeRendererContext.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
 				}
@@ -1596,14 +1607,14 @@ namespace fs
 			_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayPerFrame.size()), &_scissorRectangleArrayPerFrame[0]);
 
 			// Background
-			if (_shapeRendererContextBackground.hasData() == true || _fontRendererContextBackground.hasData() == true)
+			//if (_shapeRendererContextBackground.hasData() == true || _fontRendererContextBackground.hasData() == true)
 			{
 				_shapeRendererContextBackground.render();
 				_fontRendererContextBackground.render();
 			}
 		
 			// Foreground
-			if (_shapeRendererContextForeground.hasData() == true || _fontRendererContextForeground.hasData() == true)
+			//if (_shapeRendererContextForeground.hasData() == true || _fontRendererContextForeground.hasData() == true)
 			{
 				_shapeRendererContextForeground.render();
 				_fontRendererContextForeground.render();
