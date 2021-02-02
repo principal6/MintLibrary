@@ -89,14 +89,17 @@ namespace fs
 			virtual void							flushData() noexcept abstract;
 			virtual const bool						hasData() const noexcept abstract;
 			virtual void							render() noexcept abstract;
+		
+		public:
 			void									setUseMultipleViewports() noexcept;
 			const bool								getUseMultipleViewports() const noexcept;
 
 		public:
-			void									setPosition(const fs::Float3& position) noexcept;
+			void									setPosition(const fs::Float4& position) noexcept;
 			void									setPositionZ(const float s) noexcept;
 			void									setColor(const fs::SimpleRendering::Color& color) noexcept;
 			void									setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept;
+			void									setViewportIndex(const uint32 viewportIndex) noexcept;
 
 		protected:
 			const fs::Float4&						getColorInternal(const uint32 index) const noexcept;
@@ -105,9 +108,10 @@ namespace fs
 			fs::SimpleRendering::GraphicDevice*		_graphicDevice;
 		
 		protected:
-			fs::Float3								_position;
+			fs::Float4								_position;
 			std::vector<SimpleRendering::Color>		_colorArray;
 			fs::SimpleRendering::Color				_defaultColor;
+			float									_viewportIndex;
 		
 		private:
 			bool									_useMultipleViewports;

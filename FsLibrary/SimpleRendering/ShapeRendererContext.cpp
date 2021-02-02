@@ -36,20 +36,20 @@ namespace fs
 					
 					VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
 					{
-						const uint shapeInfo = asuint(input._position.w);
+						const uint shapeInfo = asuint(input._info.x);
 						const uint shapeType = (shapeInfo >> 30) & 3;
 						const uint shapeIndex = shapeInfo & 0x3FFFFFFF;
 						
-						float4 transformedPosition = float4(input._position.xy, 0.0, 1.0);
+						float4 transformedPosition = float4(input._position.xyz, 1.0);
 						transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
 						
 						VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xy, 0.0, 1.0);
+						result._position	= float4(mul(transformedPosition, _cbProjectionMatrix).xyz, 1.0);
 						result._color		= input._color;
 						result._texCoord	= input._texCoord;
 						result._info.x		= (float)shapeType;
 						result._info.y		= (float)shapeIndex;
-						result._info.z		= (uint)input._position.z;
+						result._info.z		= (uint)input._info.y;
 						
 						return result;
 					}
@@ -205,13 +205,14 @@ namespace fs
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = color;
+			v._position = _position;
 			v._position._x = pointArray[0 ^ flip]._x;
 			v._position._y = pointArray[0 ^ flip]._y;
-			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 0.0f;
 			v._texCoord._w = abs(pointA._x - pointB._x);
+			v._info._x = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
+			v._info._y = _viewportIndex;
 			vertexArray.emplace_back(v);
 
 			v._position._x = controlPoint._x;
@@ -248,10 +249,11 @@ namespace fs
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			{
 				v._color = color;
+				v._position = _position;
 				v._position._x = pointA._x;
 				v._position._y = pointA._y;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = pointB._x;
@@ -281,13 +283,14 @@ namespace fs
 			
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
+			v._position = _position;
 			v._position._x = -halfRadius;
 			v._position._y = -halfRadius;
-			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 			v._texCoord._x = 0.0f;
 			v._texCoord._y = 1.0f;
 			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
+			v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
+			v._info._y = _viewportIndex;
 			vertexArray.emplace_back(v);
 
 			v._position._x += radius;
@@ -328,14 +331,15 @@ namespace fs
 			CppHlsl::VS_INPUT_SHAPE v;
 			{
 				v._color = color;
+				v._position = _position;
 				v._position._x = offset._x - halfRadius;
 				v._position._y = offset._y - halfRadius;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
 				v._texCoord._w = halfRadius * 2.0f;
+				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfRadius;
@@ -369,68 +373,22 @@ namespace fs
 
 		void ShapeRendererContext::drawHalfCircle(const float radius, const float rotationAngle)
 		{
-			const fs::Float3 originalPosition = _position;
+			const fs::Float4 originalPosition = _position;
 			const float halfRadius = radius * 0.5f;
 
-			const fs::Float3& offset = fs::Float3(+halfRadius, -halfRadius, 0.0f);
-			const fs::Float3x3& rotationMatrixA = fs::Float3x3::rotationMatrixZ(-rotationAngle);
-			const fs::Float3& rotatedOffsetA = rotationMatrixA.mul(offset);
+			const fs::Float4& offset = fs::Float4(+halfRadius, -halfRadius, 0.0f, 0.0f);
+			const fs::Float4x4& rotationMatrixA = fs::Float4x4::rotationMatrixZ(-rotationAngle);
+			const fs::Float4& rotatedOffsetA = rotationMatrixA.mul(offset);
 			setPosition(originalPosition + rotatedOffsetA);
 			drawQuarterCircle(radius, rotationAngle);
 
-			const fs::Float3x3& rotationMatrixB = fs::Float3x3::rotationMatrixZ(-(rotationAngle + fs::Math::kPiOverTwo));
-			const fs::Float3& rotatedOffsetB = rotationMatrixB.mul(offset);
+			const fs::Float4x4& rotationMatrixB = fs::Float4x4::rotationMatrixZ(-(rotationAngle + fs::Math::kPiOverTwo));
+			const fs::Float4& rotatedOffsetB = rotationMatrixB.mul(offset);
 			setPosition(originalPosition + rotatedOffsetB);
 			drawQuarterCircle(radius, rotationAngle + fs::Math::kPiOverTwo);
 
 			setPosition(originalPosition);
 		}
-
-		/*
-		void ShapeRenderer::drawHalfCircleDeprecated(const float radius, const float rotationAngle, const bool insideOut)
-		{
-			drawHalfCircleInternalDeprecated(radius, insideOut);
-			pushShapeTransform(rotationAngle);
-		}
-
-		void ShapeRenderer::drawHalfCircleInternalDeprecated(const float radius, const bool insideOut)
-		{
-			static constexpr uint32 kDeltaVertexCount = 3;
-			const float scaledRadius = fs::Math::kSqrtOfTwo * radius;
-
-			auto& vertexArray = _triangleRenderer.vertexArray();
-
-			CppHlsl::VS_INPUT_SHAPE v;
-			v._color = _defaultColor;
-			v._position._x = -scaledRadius;
-			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
-			v._texCoord._x = -fs::Math::kSqrtOfTwo;
-			v._texCoord._y = 0.0f;
-			v._texCoord._w = radius;
-			v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
-			vertexArray.emplace_back(v);
-
-			v._position._x = 0.0f;
-			v._position._y = -scaledRadius;
-			v._texCoord._x = 0.0f;
-			v._texCoord._y = +fs::Math::kSqrtOfTwo;
-			vertexArray.emplace_back(v);
-
-			v._position._x = +scaledRadius - 1.0f; // 오차 처리
-			v._position._y = 0.0f;
-			v._texCoord._x = +fs::Math::kSqrtOfTwo;
-			v._texCoord._y = 0.0f;
-			vertexArray.emplace_back(v);
-
-			const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-
-			auto& indexArray = _triangleRenderer.indexArray();
-			indexArray.push_back(vertexOffset + 0);
-			indexArray.push_back(vertexOffset + 1);
-			indexArray.push_back(vertexOffset + 2);
-		}
-		*/
 
 		void ShapeRendererContext::drawCircle(const float radius, const bool insideOut)
 		{
@@ -441,14 +399,15 @@ namespace fs
 			CppHlsl::VS_INPUT_SHAPE v;
 			{
 				v._color = _defaultColor;
+				v._position = _position;
 				v._position._x = -radius;
 				v._position._y = -radius;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Circle);
 				v._texCoord._x = -1.0f;
 				v._texCoord._y = +1.0f;
 				v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
 				v._texCoord._w = radius;
+				v._info._x = getShapeInfoAsFloat(ShapeType::Circle);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +radius;
@@ -502,14 +461,15 @@ namespace fs
 			// Right arc section
 			{
 				v._color = _defaultColor;
+				v._position = _position;
 				v._position._x = 0.0f;
 				v._position._y = -radius;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = 1.0f;
 				v._texCoord._w = radius;
+				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +radius * sinHalfArcAngle;
@@ -583,14 +543,15 @@ namespace fs
 			// Right outer arc section
 			{
 				v._color = _defaultColor;
+				v._position = _position;
 				v._position._x = 0.0f;
 				v._position._y = -outerRadius;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::Circular);
 				v._texCoord._x = 0.0f;
 				v._texCoord._y = 1.0f;
 				v._texCoord._z = +1.0f; // @IMPORTANT
 				v._texCoord._w = outerRadius;
+				v._info._x = getShapeInfoAsFloat(ShapeType::Circular);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +outerRadius * tanHalfArcAngle;
@@ -759,10 +720,11 @@ namespace fs
 			CppHlsl::VS_INPUT_SHAPE v;
 			{
 				v._color = color;
+				v._position = _position;
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y - halfSize._y;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = offset._x + halfSize._x;
@@ -805,10 +767,11 @@ namespace fs
 			CppHlsl::VS_INPUT_SHAPE v;
 			{
 				v._color = _defaultColor;
+				v._position = _position;
 				v._position._x = -halfSize._x + horizontalOffsetL;
 				v._position._y = -halfSize._y;
-				v._position._z = _position._z;
-				v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+				v._info._y = _viewportIndex;
 				vertexArray.emplace_back(v);
 
 				v._position._x = +halfSize._x - horizontalOffsetR;
@@ -1002,10 +965,11 @@ namespace fs
 
 			CppHlsl::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
+			v._position = _position;
 			v._position._x = v0._x;
 			v._position._y = v0._y;
-			v._position._z = _position._z;
-			v._position._w = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+			v._info._x = getShapeInfoAsFloat(ShapeType::SolidTriangle);
+			v._info._y = _viewportIndex;
 			vertexArray.emplace_back(v);
 
 			v._position._x = v1._x;

@@ -33,6 +33,9 @@ namespace fs
 			, _controlType{ controlType }
 			, _controlState{ ControlState::Visible }
 			, _viewportIndex{ 0 }
+			, _childViewportIndex{ 0 }
+			, _hasChildWindow{ false }
+			, _previousHasChildWindow{ false }
 		{
 			_draggingConstraints.setNan();
 
@@ -40,6 +43,17 @@ namespace fs
 			{
 				_dockingType = DockingType::Dock;
 			}
+		}
+
+		FS_INLINE void GuiContext::ControlData::clearPerFrameData() noexcept
+		{
+			_nextChildOffset.setZero();
+			_previousClientSize = _clientSize;
+			_clientSize.setZero();
+			_childControlDataArray.clear();
+			_deltaPosition.setZero();
+			_previousHasChildWindow = _hasChildWindow;
+			_hasChildWindow = false;
 		}
 
 		FS_INLINE const uint64 GuiContext::ControlData::getHashKey() const noexcept
@@ -102,9 +116,24 @@ namespace fs
 			return _viewportIndex;
 		}
 
-		FS_INLINE const float GuiContext::ControlData::getViewportIndexAsFloat() const noexcept
+		FS_INLINE const uint32 GuiContext::ControlData::getChildViewportIndex() const noexcept
 		{
-			return static_cast<float>(_viewportIndex);
+			return _childViewportIndex;
+		}
+
+		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getChildControlDataArray() const noexcept
+		{
+			return _childControlDataArray;
+		}
+
+		FS_INLINE const bool& GuiContext::ControlData::hasChildWindowInternalXXX() const noexcept
+		{
+			return _hasChildWindow;
+		}
+
+		FS_INLINE const bool& GuiContext::ControlData::hasChildWindow() const noexcept
+		{
+			return _previousHasChildWindow;
 		}
 
 		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
@@ -125,6 +154,11 @@ namespace fs
 		FS_INLINE void GuiContext::ControlData::setViewportIndexXXX(const uint32 viewportIndex) noexcept
 		{
 			_viewportIndex = viewportIndex;
+		}
+
+		FS_INLINE void GuiContext::ControlData::setChildViewportIndexXXX(const uint32 viewportIndex) noexcept
+		{
+			_childViewportIndex = viewportIndex;
 		}
 
 
@@ -172,7 +206,7 @@ namespace fs
 			_nextTooltipText = nullptr;
 		}
 
-		FS_INLINE const GuiContext::ControlData& GuiContext::getControlDataStackTop() const noexcept
+		FS_INLINE const GuiContext::ControlData& GuiContext::getControlDataStackTopXXX() const noexcept
 		{
 			if (_controlStackPerFrame.empty() == false)
 			{
@@ -185,7 +219,7 @@ namespace fs
 			return _rootControlData;
 		}
 
-		FS_INLINE GuiContext::ControlData& GuiContext::getControlDataStackTop() noexcept
+		FS_INLINE GuiContext::ControlData& GuiContext::getControlDataStackTopXXX() noexcept
 		{
 			if (_controlStackPerFrame.empty() == false)
 			{
@@ -220,9 +254,9 @@ namespace fs
 			return _rootControlData;
 		}
 		
-		FS_INLINE fs::Float3 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
+		FS_INLINE fs::Float4 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
 		{
-			return fs::Float3(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, controlData.getViewportIndexAsFloat());
+			return fs::Float4(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, 0.0f, 1.0f);
 		}
 
 		FS_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept

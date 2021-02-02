@@ -301,9 +301,6 @@
     <ClCompile Include="Gui\GuiContext.cpp">
       <Filter>Gui</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRendering\IRendererContext.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>

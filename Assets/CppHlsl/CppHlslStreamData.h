@@ -20,21 +20,21 @@ namespace fs
 								{
 									__noop;
 								}
-								VS_INPUT(const float3& position, const float4& color)
+								VS_INPUT(const float4& position, const float4& color)
 									: _position{ position }
 									, _color{ color }
 									, _flag{ 0 }
 								{
 									__noop;
 								}
-								VS_INPUT(const float3& position, const float2& texCoord)
+								VS_INPUT(const float4& position, const float2& texCoord)
 									: _position{ position }
 									, _texCoord{ texCoord }
 									, _flag{ 1 }
 								{
 									__noop;
 								}
-								VS_INPUT(const float3& position, const float4& color, const float2& texCoord)
+								VS_INPUT(const float4& position, const float4& color, const float2& texCoord)
 									: _position{ position }
 									, _color{ color }
 									, _texCoord{ texCoord }
@@ -55,6 +55,7 @@ namespace fs
 			float4				_position;
 			float4				_color;
 			float4				_texCoord;
+			float4				_info;
 		};
 
 

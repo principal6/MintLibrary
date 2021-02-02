@@ -10,9 +10,9 @@ namespace fs
 {
 	namespace SimpleRendering
 	{
-		FS_INLINE fs::Float3 getVertexPosition(const uint32 vertexIndex, const fs::Float3& position, const fs::Float2& size)
+		FS_INLINE fs::Float4 getVertexPosition(const uint32 vertexIndex, const fs::Float4& position, const fs::Float2& size)
 		{
-			return fs::Float3(position._x + (vertexIndex & 1) * size._x, position._y + ((vertexIndex & 2) >> 1) * size._y, position._z);
+			return fs::Float4(position._x + (vertexIndex & 1) * size._x, position._y + ((vertexIndex & 2) >> 1) * size._y, position._z, position._w);
 		}
 
 		FS_INLINE fs::Float2 getVertexTexturePosition(const uint32 vertexIndex, const fs::Float2& position, const fs::Float2& size)

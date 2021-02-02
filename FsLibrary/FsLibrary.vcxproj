@@ -112,7 +112,6 @@
     <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
     <ClCompile Include="SimpleRendering\IDxObject.cpp" />
-    <ClCompile Include="SimpleRendering\IRendererContext.cpp" />
     <ClCompile Include="SimpleRendering\RectangleRendererContext.cpp" />
     <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp" />
   </ItemGroup>

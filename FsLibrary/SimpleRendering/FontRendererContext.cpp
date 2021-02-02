@@ -423,12 +423,12 @@ namespace fs
 
 					VS_OUTPUT main(VS_INPUT input)
 					{
-						VS_OUTPUT result;
-						result._position		= mul(float4(input._position.xy, 0.0, 1.0), _cbProjectionMatrix);
+						VS_OUTPUT result = (VS_OUTPUT)0;
+						result._position		= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 						result._color			= input._color;
 						result._texCoord		= input._texCoord;
 						result._flag			= input._flag;
-						result._viewportIndex	= (uint)input._position.z;
+						result._viewportIndex	= (uint)input._position.w;
 						return result;
 					}
 					)"
@@ -525,7 +525,7 @@ namespace fs
 			}
 		}
 
-		void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float3& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+		void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 
@@ -533,7 +533,7 @@ namespace fs
 			const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
 			
 			const float scaledFontSize = _fontSize * scale;
-			fs::Float3 currentPosition = position + fs::Float3(0.0f, -scaledFontSize * 0.5f - 1.0f, 0.0f);
+			fs::Float4 currentPosition = position + fs::Float4(0.0f, -scaledFontSize * 0.5f - 1.0f, 0.0f, 0.0f);
 			if (directionHorz != TextRenderDirectionHorz::Rightward)
 			{
 				currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
@@ -568,7 +568,7 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
-		void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float3& position, const float scale, const bool drawShade)
+		void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade)
 		{
 			uint64 glyphIndex = 0;
 			auto found = _glyphMap.find(wideChar);
@@ -585,6 +585,7 @@ namespace fs
 			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
 			v._position._y = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
 			v._position._z = position._z;
+			v._position._w = _viewportIndex;
 			v._color = _defaultColor;
 			v._texCoord = glyphInfo._uv0;
 			v._flag = (drawShade == true) ? 1 : 0;

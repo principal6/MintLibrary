@@ -893,6 +893,34 @@ const bool testWindow()
 							guiContext.endButton();
 						}
 
+						fs::Gui::WindowParam testWindowParam;
+						testWindowParam._size = fs::Float2(100.0f, 200.0f);
+						testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
+						if (guiContext.beginWindow(L"TEST", testWindowParam))
+						{
+							if (guiContext.beginButton(L"테스트!!") == true)
+							{
+								guiContext.endButton();
+							}
+
+							if (false)
+							{
+								fs::Gui::WindowParam testWindowParam2;
+								testWindowParam2._size = fs::Float2(60.0f, 100.0f);
+								if (guiContext.beginWindow(L"TEST?", testWindowParam))
+								{
+									if (guiContext.beginButton(L"테스트?") == true)
+									{
+										guiContext.endButton();
+									}
+
+									guiContext.endWindow();
+								}
+							}
+
+							guiContext.endWindow();
+						}
+
 						guiContext.endWindow();
 					}
 				}
@@ -902,8 +930,8 @@ const bool testWindow()
 				fs::SimpleRendering::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
 
 				fontRendererContext.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
-				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float3(10, 5, 0));
-				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float3(120, 5, 0));
+				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float4(10, 5, 0, 1));
+				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float4(120, 5, 0, 1));
 			}
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
