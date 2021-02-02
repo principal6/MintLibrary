@@ -90,11 +90,11 @@ namespace fs
 			_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
 
 			// Full-screen Viewport & ScissorRectangle
-			_viewportTopMost = _graphicDevice->getFullScreenViewport();
-			_scissorRectangleTopMost.left = static_cast<LONG>(0);
-			_scissorRectangleTopMost.top = static_cast<LONG>(0);
-			_scissorRectangleTopMost.right = static_cast<LONG>(_rootControlData.getDisplaySize()._x);
-			_scissorRectangleTopMost.bottom = static_cast<LONG>(_rootControlData.getDisplaySize()._y);
+			_viewportFullScreen = _graphicDevice->getFullScreenViewport();
+			_scissorRectangleFullScreen.left = static_cast<LONG>(0);
+			_scissorRectangleFullScreen.top = static_cast<LONG>(0);
+			_scissorRectangleFullScreen.right = static_cast<LONG>(_rootControlData.getDisplaySize()._x);
+			_scissorRectangleFullScreen.bottom = static_cast<LONG>(_rootControlData.getDisplaySize()._y);
 
 			resetNextStates();
 			resetStatesPerFrame();
@@ -276,7 +276,7 @@ namespace fs
 					scissorRectangleForChild.bottom = fs::max(scissorRectangleForChild.top, scissorRectangleForChild.bottom);
 				}
 				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChild);
-				_viewportArrayPerFrame.emplace_back(_viewportTopMost);
+				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
 
 			const bool isOpen = windowControlData.isControlState(ControlState::VisibleOpen);
@@ -862,7 +862,7 @@ namespace fs
 				scissorRectangleForMe.right = static_cast<LONG>(scissorRectangleForMe.left + controlData.getDisplaySize()._x);
 				scissorRectangleForMe.bottom = static_cast<LONG>(scissorRectangleForMe.top + controlData.getDisplaySize()._y);
 				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
-				_viewportArrayPerFrame.emplace_back(_viewportTopMost);
+				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
 
 			{
@@ -1398,7 +1398,7 @@ namespace fs
 				const float horzBoxHeight = kDockingInteractionLong - kDockingInteractionDisplayBorderThickness * 2.0f;
 
 				fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-				shapeFontRendererContext.setViewportIndex(0); // TopMost
+				shapeFontRendererContext.setViewportIndex(parentControlData.getViewportIndex());
 				shapeFontRendererContext.setColor(color);
 
 				// Left
@@ -1406,7 +1406,6 @@ namespace fs
 				{
 					fs::Float4 renderPosition = changeTargetParentControlCenterPosition;
 					renderPosition._x += -parentControlData.getDisplaySize()._x * 0.5f + horzRenderingCenterOffset;
-					renderPosition._z = 0.0f; // TopMost
 					shapeFontRendererContext.setPosition(renderPosition);
 					shapeFontRendererContext.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
 				}
@@ -1416,7 +1415,6 @@ namespace fs
 				{
 					fs::Float4 renderPosition = changeTargetParentControlCenterPosition;
 					renderPosition._x += +parentControlData.getDisplaySize()._x * 0.5f - horzRenderingCenterOffset;
-					renderPosition._z = 0.0f; // TopMost
 					shapeFontRendererContext.setPosition(renderPosition);
 					shapeFontRendererContext.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
 				}
@@ -1606,11 +1604,6 @@ namespace fs
 			// TopMost
 			if (_shapeFontRendererContextTopMost.hasData() == true)
 			{
-				_graphicDevice->useScissorRectanglesWithMultipleViewports();
-
-				_graphicDevice->getDxDeviceContext()->RSSetViewports(static_cast<UINT>(1), &_viewportTopMost);
-				_graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(1), &_scissorRectangleTopMost);
-
 				_shapeFontRendererContextTopMost.render();
 			}
 			
@@ -1635,8 +1628,10 @@ namespace fs
 
 			_viewportArrayPerFrame.clear();
 			_scissorRectangleArrayPerFrame.clear();
-			_viewportArrayPerFrame.emplace_back(_viewportTopMost);
-			_scissorRectangleArrayPerFrame.emplace_back(_scissorRectangleTopMost);
+
+			// FullScreen Viewport & ScissorRectangle is at index 0!
+			_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+			_scissorRectangleArrayPerFrame.emplace_back(_scissorRectangleFullScreen);
 
 			if (_resizedControlHashKey == 0)
 			{

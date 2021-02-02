@@ -372,8 +372,8 @@ namespace fs
 			std::vector<D3D11_VIEWPORT>							_viewportArrayPerFrame;
 			std::vector<D3D11_RECT>								_scissorRectangleArrayPerFrame;
 
-			D3D11_VIEWPORT										_viewportTopMost;
-			D3D11_RECT											_scissorRectangleTopMost;
+			D3D11_VIEWPORT										_viewportFullScreen;
+			D3D11_RECT											_scissorRectangleFullScreen;
 
 		private:
 			const ControlData									kNullControlData;
