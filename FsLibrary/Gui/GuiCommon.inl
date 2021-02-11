@@ -24,6 +24,24 @@ namespace fs
 			__noop;
 		}
 
+		inline constexpr Rect::Rect(const fs::Float2& positionFromLeftTop, const fs::Float2& size)
+		{
+			left(positionFromLeftTop._x);
+			right(left() + size._x);
+			top(positionFromLeftTop._y);
+			bottom(top() + size._y);
+		}
+
+		FS_INLINE const bool Rect::operator==(const Rect& rhs) const noexcept
+		{
+			return _raw == rhs._raw;
+		}
+
+		FS_INLINE const bool Rect::operator!=(const Rect& rhs) const noexcept
+		{
+			return _raw != rhs._raw;
+		}
+
 		FS_INLINE constexpr const float Rect::left() const noexcept
 		{
 			return _raw._x;
@@ -62,6 +80,27 @@ namespace fs
 		FS_INLINE constexpr void Rect::bottom(const float s) noexcept
 		{
 			_raw._w = s;
+		}
+
+		FS_INLINE constexpr const fs::Float2 Rect::center() const noexcept
+		{
+			return fs::Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
+		}
+
+		FS_INLINE constexpr const fs::Float2 Rect::size() const noexcept
+		{
+			return fs::Float2(right() - left(), bottom() - top());
+		}
+
+		FS_INLINE constexpr const fs::Float2 Rect::position() const noexcept
+		{
+			return fs::Float2(left(), top());
+		}
+
+		FS_INLINE constexpr void Rect::position(const fs::Float2& position) noexcept
+		{
+			left(position._x);
+			top(position._y);
 		}
 
 		FS_INLINE const bool Rect::isNan() const noexcept

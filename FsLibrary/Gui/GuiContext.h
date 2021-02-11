@@ -75,6 +75,46 @@ namespace fs
 			float	_f;
 		};
 
+		struct ResizingMask
+		{
+		public:
+									ResizingMask()								= default;
+									ResizingMask(const ResizingMask& rhs)		= default;
+									ResizingMask(ResizingMask&& rhs) noexcept	= default;
+									~ResizingMask()								= default;
+
+		public:
+			ResizingMask&			operator=(const ResizingMask& rhs)			= default;
+			ResizingMask&			operator=(ResizingMask&& rhs) noexcept		= default;
+
+		public:
+			static ResizingMask		fromDockingMethod(const DockingMethod dockingMethod) noexcept;
+
+		public:
+			void					setAllTrue() noexcept;
+			void					setAllFalse() noexcept;
+			const bool				isResizable() const noexcept;
+			const bool				topLeft() const noexcept;
+			const bool				topRight() const noexcept;
+			const bool				bottomLeft() const noexcept;
+			const bool				bottomRight() const noexcept;
+			const bool				overlaps(const ResizingMask& rhs) const noexcept;
+
+		public:
+			union
+			{
+				uint8	_rawMask{ 0 };
+				struct
+				{
+					bool	_top : 1;
+					bool	_left : 1;
+					bool	_right : 1;
+					bool	_bottom : 1;
+				};
+			};
+		};
+
+
 		class GuiContext final
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
@@ -99,6 +139,20 @@ namespace fs
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
 
+			class DockDatum
+			{
+			public:
+				fs::Float2				_dockSize;
+				std::vector<uint64>		_dockedControlHashArray;
+			};
+
+
+			struct DockingStateContext
+			{
+				fs::Float2							_displaySize;
+				ResizingMask						_resizingMask;
+			};
+
 			class ControlData
 			{
 			public:
@@ -113,7 +167,6 @@ namespace fs
 				const uint64						getHashKey() const noexcept;
 				const uint64						getParentHashKey() const noexcept;
 				const Rect&							getInnerPadding() const noexcept;
-				const fs::Float2&					getDisplaySize() const noexcept;
 				const fs::Float2&					getDisplaySizeMin() const noexcept;
 				const fs::Float2&					getClientSize() const noexcept;
 				const fs::Float2&					getPreviousClientSize() const noexcept;
@@ -125,12 +178,21 @@ namespace fs
 				const uint32						getChildViewportIndex() const noexcept;
 				const std::vector<ControlData>&		getChildControlDataArray() const noexcept;
 				const bool&							hasChildWindow() const noexcept;
+				DockDatum&							getDockDatum(const DockingMethod dockingMethod) noexcept;
+				const DockDatum&					getDockDatum(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2					getDockPosition(const DockingMethod dockingMethod) const noexcept;
+				void								connectToDock(const uint64 dockControlHashKey) noexcept;
+				void								disconnectFromDock() noexcept;
+				const bool							isDocking() const noexcept;
+				const bool							isDockHosting() const noexcept;
+				const bool							isResizable() const noexcept;
 			
 			public:
 				const bool&							hasChildWindowInternalXXX() const noexcept;
 
 			public:
 				void								setControlState(const ControlState controlState) noexcept;
+				void								swapDockingStateContext() noexcept;
 			
 			public:
 				void								setParentHashKeyXXX(const uint64 parentHashKey) noexcept;
@@ -139,26 +201,29 @@ namespace fs
 				void								setChildViewportIndexXXX(const uint32 viewportIndex) noexcept;
 
 			public:
+				fs::Float2							_displaySize;
 				fs::Float2							_interactionSize;
 				fs::Float2							_position; // In screen space, at left-top corner
 				fs::Float2							_deltaPosition;
 				fs::Float2							_displayOffset; // Used for scrolling child controls (of Window control)
 				bool								_isFocusable;
-				bool								_isResizable;
+				ResizingMask						_resizingMask;
 				bool								_isDraggable;
 				Rect								_draggingConstraints; // MUST set all four values if want to limit dragging area
 				uint64								_delegateHashKey; // Used for drag, resize and focus
-				DockingType							_dockingType;
+				DockingControlType					_dockingControlType;
+				DockingMethod						_lastDockingMethod;
+				DockingMethod						_lastDockingMethodCandidate;
+				std::wstring						_text;
 
 				// [Window] ScrollBar type
 				// [ScrollBar] Thumb at [0, 1]
-				ControlValue						_value;
+				ControlValue						_internalValue;
 
 			private:
 				uint64								_hashKey;
 				uint64								_parentHashKey;
 				Rect								_innerPadding; // For child controls
-				fs::Float2							_displaySize;
 				fs::Float2							_displaySizeMin;
 				fs::Float2							_clientSize; // Could be smaller or larger than _displaySize
 				fs::Float2							_previousClientSize;
@@ -171,12 +236,16 @@ namespace fs
 				std::vector<ControlData>			_childControlDataArray;
 				bool								_hasChildWindow;
 				bool								_previousHasChildWindow;
+				DockDatum							_dockData[static_cast<uint32>(DockingMethod::COUNT)];
+				uint64								_dockControlHashKey;
+				DockingStateContext					_dokcingStateContext;
 			};
 			
 			struct ControlDataParam
 			{
 				Rect				_innerPadding;
 				fs::Float2			_initialDisplaySize;
+				ResizingMask		_initialResizingMask;
 				fs::Float2			_desiredPositionInParent	= fs::Float2::kNan;
 				fs::Float2			_deltaInteractionSize		= fs::Float2::kZero;
 				fs::Float2			_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
@@ -237,7 +306,8 @@ namespace fs
 		private:
 			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept;
 			const bool											isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
-			const bool											isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizeMethod& outResizeMethod) const noexcept;
+			const bool											isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept;
+			const bool											isPositionInRect(const fs::Float2& position, const Rect& rect) const noexcept;
 
 
 #pragma region Next-states
@@ -302,6 +372,7 @@ namespace fs
 			void												pushScrollBar(const ScrollBarType scrollBarType);
 
 		private:
+			void												renderDock(const ControlData& controlData, fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext);
 			void												endControlInternal(const ControlType controlType);
 
 		private:
@@ -329,7 +400,7 @@ namespace fs
 			
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
-			void												processControlDocking(ControlData& controlData) noexcept;
+			void												processControlDocking(ControlData& controlData, const bool isDragging) noexcept;
 			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;
 			
 			// These functions must be called after process- functions
@@ -348,8 +419,8 @@ namespace fs
 			const bool											isAncestor(const uint64 myHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
 
 			// Focus, Out-of-focus 색 정할 때 사용
-			const bool											isClosestFocusableAncestorFocused(const ControlData& controlData) const noexcept;
-			const bool											isClosestFocusableAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
+			const bool											needToColorOutOfFocus(const ControlData& controlData) const noexcept;
+			const ControlData&									getClosestFocusableAncestorInternal(const ControlData& controlData) const noexcept;
 
 			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
 			fs::SimpleRendering::Color&							getNamedColor(const NamedColor namedColor) noexcept;
@@ -404,7 +475,7 @@ namespace fs
 			mutable uint64										_resizedControlHashKey;
 			mutable fs::Float2									_resizedControlInitialPosition;
 			mutable fs::Float2									_resizedControlInitialDisplaySize;
-			mutable ResizeMethod								_resizeMethod;
+			mutable ResizingMethod								_resizingMethod;
 #pragma endregion
 		
 		private:

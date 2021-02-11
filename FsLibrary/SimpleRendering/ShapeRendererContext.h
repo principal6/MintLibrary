@@ -94,9 +94,11 @@ namespace fs
 		public:
 			void																drawTaperedRectangle(const fs::Float2& size, const float tapering, const float bias, const float rotationAngle);
 			void																drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
+			void																drawHalfRoundedRectangle(const fs::Float2& size, const float roundness, const float rotationAngle);
 
 		protected:
 			void																drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::SimpleRendering::Color& color);
+			void																drawHalfRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::SimpleRendering::Color& color);
 
 		public:
 			// Independent from internal position set by setPosition() call

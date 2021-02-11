@@ -6,6 +6,69 @@ namespace fs
 {
 	namespace Gui
 	{
+		inline ResizingMask ResizingMask::fromDockingMethod(const DockingMethod dockingMethod) noexcept
+		{
+			ResizingMask result;
+			result.setAllFalse();
+
+			switch (dockingMethod)
+			{
+			case fs::Gui::DockingMethod::LeftSide:
+				result._right = true;
+				break;
+			case fs::Gui::DockingMethod::RightSide:
+				result._left = true;
+				break;
+			case fs::Gui::DockingMethod::COUNT:
+				break;
+			default:
+				break;
+			}
+
+			return result;
+		}
+
+		FS_INLINE void ResizingMask::setAllTrue() noexcept
+		{
+			_rawMask = 0xFF;
+		}
+
+		FS_INLINE void ResizingMask::setAllFalse() noexcept
+		{
+			_rawMask = 0;
+		}
+
+		FS_INLINE const bool ResizingMask::isResizable() const noexcept
+		{
+			return (_rawMask != 0);
+		}
+
+		FS_INLINE const bool ResizingMask::topLeft() const noexcept
+		{
+			return (_top && _left);
+		}
+
+		FS_INLINE const bool ResizingMask::topRight() const noexcept
+		{
+			return (_top && _right);
+		}
+
+		FS_INLINE const bool ResizingMask::bottomLeft() const noexcept
+		{
+			return (_bottom && _left);
+		}
+
+		FS_INLINE const bool ResizingMask::bottomRight() const noexcept
+		{
+			return (_bottom && _right);
+		}
+
+		FS_INLINE const bool ResizingMask::overlaps(const ResizingMask& rhs) const noexcept
+		{
+			return ((_rawMask & rhs._rawMask) != 0);
+		}
+
+
 		inline GuiContext::ControlData::ControlData()
 			: ControlData(0, 0, ControlType::ROOT)
 		{
@@ -21,15 +84,16 @@ namespace fs
 		inline GuiContext::ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const fs::Float2& size)
 			: _interactionSize{ size }
 			, _isFocusable{ false }
-			, _isResizable{ false }
 			, _isDraggable{ false }
-			, _hashKey{ hashKey }
-			, _parentHashKey{ parentHashKey }
 			, _displaySize{ size }
 			, _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
 			, _childAt{ _innerPadding.left(), _innerPadding.top() }
 			, _delegateHashKey{ 0 }
-			, _dockingType{ DockingType::None }
+			, _dockingControlType{ DockingControlType::None }
+			, _lastDockingMethod{ DockingMethod::COUNT }
+			, _lastDockingMethodCandidate{ DockingMethod::COUNT }
+			, _hashKey{ hashKey }
+			, _parentHashKey{ parentHashKey }
 			, _controlType{ controlType }
 			, _controlState{ ControlState::Visible }
 			, _viewportIndex{ 0 }
@@ -41,7 +105,7 @@ namespace fs
 
 			if (controlType == ControlType::ROOT)
 			{
-				_dockingType = DockingType::Dock;
+				_dockingControlType = DockingControlType::Dock;
 			}
 		}
 
@@ -69,11 +133,6 @@ namespace fs
 		FS_INLINE const Rect& GuiContext::ControlData::getInnerPadding() const noexcept
 		{
 			return _innerPadding;
-		}
-
-		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySize() const noexcept
-		{
-			return _displaySize;
 		}
 
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
@@ -136,9 +195,68 @@ namespace fs
 			return _previousHasChildWindow;
 		}
 
+		FS_INLINE GuiContext::DockDatum& GuiContext::ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
+		{
+			return _dockData[static_cast<uint32>(dockingMethod)];
+		}
+
+		FS_INLINE const GuiContext::DockDatum& GuiContext::ControlData::getDockDatum(const DockingMethod dockingMethod) const noexcept
+		{
+			return _dockData[static_cast<uint32>(dockingMethod)];
+		}
+
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
+		{
+			const DockDatum& dockDatum = getDockDatum(dockingMethod);
+			if (dockingMethod == DockingMethod::RightSide)
+			{
+				return fs::Float2(_position._x + _displaySize._x - dockDatum._dockSize._x, _position._y);
+			}
+			return _position;
+		}
+
+		FS_INLINE void GuiContext::ControlData::connectToDock(const uint64 dockControlHashKey) noexcept
+		{
+			_dockControlHashKey = dockControlHashKey;
+		}
+
+		FS_INLINE void GuiContext::ControlData::disconnectFromDock() noexcept
+		{
+			_dockControlHashKey = 0;
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isDocking() const noexcept
+		{
+			return (_dockControlHashKey != 0);
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isDockHosting() const noexcept
+		{
+			for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
+			{
+				const DockDatum& dockDatum = getDockDatum(dockingMethodIter);
+				if (dockDatum._dockedControlHashArray.empty() == false)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isResizable() const noexcept
+		{
+			return _resizingMask.isResizable();
+		}
+
 		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
 		{
 			_controlState = controlState;
+		}
+
+		FS_INLINE void GuiContext::ControlData::swapDockingStateContext() noexcept
+		{
+			std::swap(_displaySize, _dokcingStateContext._displaySize);
+			std::swap(_resizingMask, _dokcingStateContext._resizingMask);
 		}
 
 		FS_INLINE void GuiContext::ControlData::setParentHashKeyXXX(const uint64 parentHashKey) noexcept
@@ -256,7 +374,7 @@ namespace fs
 		
 		FS_INLINE fs::Float4 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
 		{
-			return fs::Float4(controlData._position._x + controlData.getDisplaySize()._x * 0.5f, controlData._position._y + controlData.getDisplaySize()._y * 0.5f, 0.0f, 1.0f);
+			return fs::Float4(controlData._position._x + controlData._displaySize._x * 0.5f, controlData._position._y + controlData._displaySize._y * 0.5f, 0.0f, 1.0f);
 		}
 
 		FS_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept

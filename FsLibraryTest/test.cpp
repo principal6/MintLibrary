@@ -903,6 +903,7 @@ const bool testWindow()
 								guiContext.endButton();
 							}
 
+							/*
 							{
 								fs::Gui::WindowParam testWindowParam2;
 								testWindowParam2._size = fs::Float2(100.0f, 100.0f);
@@ -918,6 +919,7 @@ const bool testWindow()
 									guiContext.endWindow();
 								}
 							}
+							*/
 
 							guiContext.endWindow();
 						}
