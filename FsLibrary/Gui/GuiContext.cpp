@@ -596,14 +596,14 @@ namespace fs
 					shapeFontRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData._displaySize._y), kScrollBarThickness);
 
 					// Thumb
+					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentWindowPreviousClientSize._y);
-					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio;
+					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio - radius * 2.0f;
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
 
 						ControlData& thumbControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
-						const float radius = kScrollBarThickness * 0.5f;
-						const float trackRemnantSize = std::abs(trackControlData._displaySize._y - thumbSize - radius);
+						const float trackRemnantSize = std::abs(trackControlData._displaySize._y - thumbSize);
 
 						ParamPrepareControlData paramPrepareControlDataThumb;
 						{
@@ -712,14 +712,14 @@ namespace fs
 					shapeFontRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData._displaySize._x, 0.0f), kScrollBarThickness);
 
 					// Thumb
+					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentWindowPreviousClientSize._x);
-					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio;
+					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio - radius * 2.0f;
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
 
 						ControlData& thumbControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
-						const float radius = kScrollBarThickness * 0.5f;
-						const float trackRemnantSize = std::abs(trackControlData._displaySize._x - thumbSize - radius);
+						const float trackRemnantSize = std::abs(trackControlData._displaySize._x - thumbSize);
 
 						ParamPrepareControlData paramPrepareControlDataThumb;
 						{
