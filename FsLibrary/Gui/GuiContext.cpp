@@ -1619,9 +1619,10 @@ namespace fs
 					interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
 					interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-					previewRect.position(parentControlData._position);
+					const fs::Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::LeftSide);
+					previewRect.position(dockPosition);
 					previewRect.right(previewRect.left() + previewShortLength);
-					previewRect.bottom(previewRect.top() + parentControlData._displaySize._y);
+					previewRect.bottom(previewRect.top() + parentControlData._displaySize._y - parentControlData.getDockOffsetSize(DockingMethod::LeftSide)._y);
 
 					if (isDragging == true)
 					{
@@ -1654,10 +1655,10 @@ namespace fs
 					interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
 					interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-					previewRect.right(parentControlData._position._x + parentControlData._displaySize._x);
-					previewRect.left(previewRect.right() - previewShortLength);
-					previewRect.top(parentControlData._position._y);
-					previewRect.bottom(previewRect.top() + parentControlData._displaySize._y);
+					const fs::Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::RightSide);
+					previewRect.position(dockPosition);
+					previewRect.right(previewRect.left() + previewShortLength);
+					previewRect.bottom(previewRect.top() + parentControlData._displaySize._y - parentControlData.getDockOffsetSize(DockingMethod::RightSide)._y);
 
 					if (isDragging == true)
 					{

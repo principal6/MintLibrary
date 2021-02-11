@@ -135,6 +135,15 @@ namespace fs
 			return _innerPadding;
 		}
 
+		FS_INLINE fs::Float2 GuiContext::ControlData::getClientSize() const noexcept
+		{
+			if (_controlType == ControlType::Window)
+			{
+				return fs::Float2(_displaySize._x, _displaySize._y - kTitleBarBaseSize._y);
+			}
+			return _displaySize;
+		}
+
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
 		{
 			return _displaySizeMin;
@@ -205,14 +214,20 @@ namespace fs
 			return _dockData[static_cast<uint32>(dockingMethod)];
 		}
 
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize(const DockingMethod dockingMethod) const noexcept
+		{
+			return fs::Float2(0.0f, (_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f);
+		}
+
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
 		{
 			const DockDatum& dockDatum = getDockDatum(dockingMethod);
+			const fs::Float2& offset = getDockOffsetSize(dockingMethod);
 			if (dockingMethod == DockingMethod::RightSide)
 			{
-				return fs::Float2(_position._x + _displaySize._x - dockDatum._dockSize._x, _position._y);
+				return fs::Float2(_position._x + _displaySize._x - dockDatum._dockSize._x, _position._y) + offset;
 			}
-			return _position;
+			return _position + offset;
 		}
 
 		FS_INLINE void GuiContext::ControlData::connectToDock(const uint64 dockControlHashKey) noexcept

@@ -168,6 +168,7 @@ namespace fs
 				const uint64						getHashKey() const noexcept;
 				const uint64						getParentHashKey() const noexcept;
 				const Rect&							getInnerPadding() const noexcept;
+				fs::Float2							getClientSize() const noexcept;
 				const fs::Float2&					getDisplaySizeMin() const noexcept;
 				const fs::Float2&					getContentAreaSize() const noexcept;
 				const fs::Float2&					getPreviousContentAreaSize() const noexcept;
@@ -181,6 +182,7 @@ namespace fs
 				const bool&							hasChildWindow() const noexcept;
 				DockDatum&							getDockDatum(const DockingMethod dockingMethod) noexcept;
 				const DockDatum&					getDockDatum(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2					getDockOffsetSize(const DockingMethod dockingMethod) const noexcept;
 				const fs::Float2					getDockPosition(const DockingMethod dockingMethod) const noexcept;
 				void								connectToDock(const uint64 dockControlHashKey) noexcept;
 				void								disconnectFromDock() noexcept;
