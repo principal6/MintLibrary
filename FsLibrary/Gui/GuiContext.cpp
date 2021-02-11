@@ -554,7 +554,7 @@ namespace fs
 
 			ScrollBarType& parentWindowControlScrollBarState = reinterpret_cast<ScrollBarType&>(parentWindowControlData._internalValue._i);
 			const bool isAncestorFocused = isAncestorFocusedInclusiveXXX(parentWindowControlData);
-			const fs::Float2& parentWindowPreviousClientSize = parentWindowControlData.getPreviousClientSize();
+			const fs::Float2& parentWindowPreviousClientSize = parentWindowControlData.getPreviousContentAreaSize();
 
 			// Vertical Track
 			if (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both)
@@ -1117,7 +1117,7 @@ namespace fs
 				}
 				else
 				{
-					if (parentControlData.getClientSize()._x == 0.0f)
+					if (parentControlData.getContentAreaSize()._x == 0.0f)
 					{
 						// 맨 처음 추가되는 컨트롤은 SameLine 일 수 없지만 ClientSize 에는 추가되어야 하므로...
 						deltaX = controlData._displaySize._x + kDefaultIntervalX;
@@ -1139,7 +1139,7 @@ namespace fs
 				}
 
 				// Parent client size
-				fs::Float2& parentControlClientSize = const_cast<fs::Float2&>(parentControlData.getClientSize());
+				fs::Float2& parentControlClientSize = const_cast<fs::Float2&>(parentControlData.getContentAreaSize());
 				if (controlDataParam._ignoreForClientSize == false)
 				{
 					parentControlClientSize += fs::Float2(deltaX, deltaY);

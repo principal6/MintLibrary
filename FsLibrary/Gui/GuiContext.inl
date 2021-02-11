@@ -112,8 +112,8 @@ namespace fs
 		FS_INLINE void GuiContext::ControlData::clearPerFrameData() noexcept
 		{
 			_nextChildOffset.setZero();
-			_previousClientSize = _clientSize;
-			_clientSize.setZero();
+			_previousContentAreaSize = _contentAreaSize;
+			_contentAreaSize.setZero();
 			_childControlDataArray.clear();
 			_deltaPosition.setZero();
 			_previousHasChildWindow = _hasChildWindow;
@@ -140,14 +140,14 @@ namespace fs
 			return _displaySizeMin;
 		}
 
-		FS_INLINE const fs::Float2& GuiContext::ControlData::getClientSize() const noexcept
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getContentAreaSize() const noexcept
 		{
-			return _clientSize;
+			return _contentAreaSize;
 		}
 
-		FS_INLINE const fs::Float2& GuiContext::ControlData::getPreviousClientSize() const noexcept
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getPreviousContentAreaSize() const noexcept
 		{
-			return _previousClientSize;
+			return _previousContentAreaSize;
 		}
 
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getChildAt() const noexcept

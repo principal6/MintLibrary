@@ -169,8 +169,8 @@ namespace fs
 				const uint64						getParentHashKey() const noexcept;
 				const Rect&							getInnerPadding() const noexcept;
 				const fs::Float2&					getDisplaySizeMin() const noexcept;
-				const fs::Float2&					getClientSize() const noexcept;
-				const fs::Float2&					getPreviousClientSize() const noexcept;
+				const fs::Float2&					getContentAreaSize() const noexcept;
+				const fs::Float2&					getPreviousContentAreaSize() const noexcept;
 				const fs::Float2&					getChildAt() const noexcept;
 				const fs::Float2&					getNextChildOffset() const noexcept;
 				const ControlType					getControlType() const noexcept;
@@ -226,8 +226,8 @@ namespace fs
 				uint64								_parentHashKey;
 				Rect								_innerPadding; // For child controls
 				fs::Float2							_displaySizeMin;
-				fs::Float2							_clientSize; // Could be smaller or larger than _displaySize
-				fs::Float2							_previousClientSize;
+				fs::Float2							_contentAreaSize; // Could be smaller or larger than _displaySize
+				fs::Float2							_previousContentAreaSize;
 				fs::Float2							_childAt; // In screen space, Next child control will be positioned according to this
 				fs::Float2							_nextChildOffset; // Every new child sets this offset to calculate next _childAt
 				ControlType							_controlType;
