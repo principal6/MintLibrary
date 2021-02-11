@@ -153,6 +153,7 @@ namespace fs
 				ResizingMask						_resizingMask;
 			};
 
+
 			class ControlData
 			{
 			public:
@@ -241,7 +242,7 @@ namespace fs
 				DockingStateContext					_dokcingStateContext;
 			};
 			
-			struct ControlDataParam
+			struct ParamPrepareControlData
 			{
 				Rect				_innerPadding;
 				fs::Float2			_initialDisplaySize;
@@ -249,11 +250,10 @@ namespace fs
 				fs::Float2			_desiredPositionInParent	= fs::Float2::kNan;
 				fs::Float2			_deltaInteractionSize		= fs::Float2::kZero;
 				fs::Float2			_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-				uint64				_parentHashKeyOverride		= 0;
 				bool				_alwaysResetDisplaySize		= false;
 				bool				_alwaysResetParent			= false;
+				uint64				_parentHashKeyOverride		= 0;
 				bool				_alwaysResetPosition		= true;
-				const wchar_t*		_hashGenerationKeyOverride	= nullptr;
 				bool				_ignoreForClientSize		= false;
 				ViewportUsage		_viewportUsage				= ViewportUsage::Child;
 			};
@@ -383,7 +383,7 @@ namespace fs
 			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
 			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
 			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&										getControlData(const wchar_t* const text, const ControlType controlType, const ControlDataParam& controlDataParam) noexcept;
+			ControlData&										getControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
 			void												calculateControlChildAt(ControlData& controlData) noexcept;
 			const ControlData&									getParentWindowControlData() const noexcept;
 			const ControlData&									getParentWindowControlData(const ControlData& controlData) const noexcept;
@@ -393,6 +393,8 @@ namespace fs
 
 #pragma region Before drawing controls
 		private:
+			void												prepareControlData(ControlData& controlData, const ParamPrepareControlData& paramPrepareControlData) noexcept;
+			
 			const bool											processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			const bool											processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			void												processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;

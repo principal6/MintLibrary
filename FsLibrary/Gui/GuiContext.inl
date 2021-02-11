@@ -76,7 +76,7 @@ namespace fs
 		}
 
 		inline GuiContext::ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType)
-			: ControlData(hashKey, parentHashKey, controlType, fs::Float2::kZero)
+			: ControlData(hashKey, parentHashKey, controlType, fs::Float2::kNan)
 		{
 			__noop;
 		}
