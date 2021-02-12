@@ -1,7 +1,6 @@
 #include <stdafx.h>
 #include <FsPlatform/Include/TextFile.h>
 
-#include <FsLibrary/ContiguousContainer/ContiguousVector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
 #include <fstream>

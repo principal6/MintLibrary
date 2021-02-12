@@ -1,7 +1,7 @@
 ﻿#include <stdafx.h>
 #include <FsPlatform/Include/WindowsWindow.h>
-#include <windowsx.h>
 
+#include <windowsx.h>
 #include <mutex>
 
 

@@ -6,8 +6,8 @@
 
 
 #include <CommonDefinitions.h>
+
 #include <FsPlatform/Include/IFile.h>
-#include <FsLibrary/ContiguousContainer/ContiguousVector.h>
 
 
 namespace fs
@@ -35,7 +35,7 @@ namespace fs
 		const char*					get() const noexcept;
 		
 	private:
-		fs::ContiguousVector<byte>	_byteArray;
+		std::vector<byte>			_byteArray;
 		TextFileEncoding			_encoding = TextFileEncoding::ASCII;
 	};
 
@@ -59,7 +59,7 @@ namespace fs
 		void						write(const char* const text) noexcept;
 
 	private:
-		fs::ContiguousVector<byte>	_byteArray;
+		std::vector<byte>			_byteArray;
 		TextFileEncoding			_encoding = TextFileEncoding::ASCII;
 	};
 }
