@@ -79,7 +79,7 @@ namespace fs
 		{
 		public:
 			constexpr						Rect();
-			constexpr						Rect(const float uniformPadding);
+			constexpr						Rect(const float uniformValue);
 			constexpr						Rect(const float left, const float right, const float top, const float bottom);
 			constexpr						Rect(const fs::Float2& positionFromLeftTop, const fs::Float2& size);
 			constexpr						Rect(const Rect& rhs) = default;
@@ -110,6 +110,7 @@ namespace fs
 			constexpr void					position(const fs::Float2& position) noexcept;
 
 		public:
+			constexpr const bool			contains(const fs::Float2& position) const noexcept;
 			const bool						isNan() const noexcept;
 			void							setNan() noexcept;
 

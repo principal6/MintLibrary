@@ -41,11 +41,10 @@ namespace fs
 
 			getNamedColor(NamedColor::WindowFocused) = fs::SimpleRendering::Color(3, 5, 7);
 			getNamedColor(NamedColor::WindowOutOfFocus) = fs::SimpleRendering::Color(3, 5, 7);
+			getNamedColor(NamedColor::Dock) = getNamedColor(NamedColor::NormalState);
 
 			getNamedColor(NamedColor::TitleBarFocused) = getNamedColor(NamedColor::WindowFocused);
 			getNamedColor(NamedColor::TitleBarOutOfFocus) = getNamedColor(NamedColor::WindowOutOfFocus);
-			//getNamedColor(NamedColor::TitleBarFocused) = fs::SimpleRendering::Color(3, 5, 57);
-			//getNamedColor(NamedColor::TitleBarOutOfFocus) = fs::SimpleRendering::Color(3, 5, 107);
 
 			getNamedColor(NamedColor::TooltipBackground) = fs::SimpleRendering::Color(200, 255, 220);
 
@@ -238,11 +237,6 @@ namespace fs
 				}
 			}
 			return false;
-		}
-
-		const bool GuiContext::isPositionInRect(const fs::Float2& position, const Rect& rect) const noexcept
-		{
-			return (rect.left() <= position._x && position._x <= rect.right() && rect.top() <= position._y && position._y <= rect.bottom());
 		}
 
 		const bool GuiContext::beginWindow(const wchar_t* const title, const WindowParam& windowParam)
@@ -917,8 +911,7 @@ namespace fs
 
 						shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
 						
-						//shapeFontRendererContext.setColor(getNamedColor(NamedColor::WindowFocused));
-						shapeFontRendererContext.setColor(getNamedColor(NamedColor::PressedState));
+						shapeFontRendererContext.setColor(getNamedColor(NamedColor::Dock));
 						shapeFontRendererContext.setPosition(fs::Float4(dockPosition._x + controlData.getDockSize(dockingMethodIter)._x * 0.5f, dockPosition._y + controlData.getDockSize(dockingMethodIter)._y * 0.5f, 0, 0));
 
 						shapeFontRendererContext.drawRectangle(controlData.getDockSize(dockingMethodIter), 0.0f, 0.0f);
@@ -1722,7 +1715,7 @@ namespace fs
 				renderPosition._y = boxRect.center()._y;
 				_shapeFontRendererContextTopMost.setViewportIndex(parentControlData.getViewportIndex());
 
-				const bool isMouseInBoxRect = isPositionInRect(_mousePosition, boxRect);
+				const bool isMouseInBoxRect = boxRect.contains(_mousePosition);
 				_shapeFontRendererContextTopMost.setColor(((isMouseInBoxRect == true) ? color.scaleRgb(1.5f) : color));
 				_shapeFontRendererContextTopMost.setPosition(renderPosition);
 				_shapeFontRendererContextTopMost.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
@@ -1820,7 +1813,7 @@ namespace fs
 					}
 				}
 
-				if (_mouseDownUp == true && isPositionInRect(_mouseUpPosition, interactionBoxRect) == true && controlData._lastDockingMethodCandidate != DockingMethod::COUNT)
+				if (_mouseDownUp == true && interactionBoxRect.contains(_mouseUpPosition) == true && controlData._lastDockingMethodCandidate != DockingMethod::COUNT)
 				{
 					if (controlData.isDocking() == false)
 					{

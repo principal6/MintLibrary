@@ -187,6 +187,7 @@ namespace fs
 				const fs::Float2&							getChildAt() const noexcept;
 				const fs::Float2&							getNextChildOffset() const noexcept;
 				const ControlType							getControlType() const noexcept;
+				const bool									isRootControl() const noexcept;
 				const bool									isControlState(const ControlState controlState) const noexcept;
 				const uint32								getViewportIndex() const noexcept;
 				const uint32								getViewportIndexForChildren() const noexcept;
@@ -260,7 +261,6 @@ namespace fs
 				uint32										_viewportIndexForDocks;
 				std::vector<ControlData>					_childControlDataArray;
 				std::unordered_map<uint64, bool>			_childWindowHashKeyMap;
-				bool										_previousHasChildWindow;
 				DockDatum									_dockData[static_cast<uint32>(DockingMethod::COUNT)];
 				uint64										_dockControlHashKey;
 				DockingStateContext							_dokcingStateContext;
@@ -302,6 +302,7 @@ namespace fs
 
 				WindowFocused,
 				WindowOutOfFocus,
+				Dock,
 
 				TitleBarFocused,
 				TitleBarOutOfFocus,
@@ -333,7 +334,6 @@ namespace fs
 			const bool											isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
 			const bool											isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept;
 			const bool											shouldIgnoreInteraction(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
-			const bool											isPositionInRect(const fs::Float2& position, const Rect& rect) const noexcept;
 
 
 #pragma region Next-states

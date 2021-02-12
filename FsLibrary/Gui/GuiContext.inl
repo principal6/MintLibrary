@@ -120,6 +120,8 @@ namespace fs
 			, _controlState{ ControlState::Visible }
 			, _viewportIndex{ 0 }
 			, _viewportIndexForChildren{ 0 }
+			, _viewportIndexForDocks{ 0 }
+			, _dockControlHashKey{ 0 }
 		{
 			_draggingConstraints.setNan();
 
@@ -200,6 +202,11 @@ namespace fs
 		FS_INLINE const ControlType GuiContext::ControlData::getControlType() const noexcept
 		{
 			return _controlType;
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isRootControl() const noexcept
+		{
+			return _controlType == ControlType::ROOT;
 		}
 
 		FS_INLINE const bool GuiContext::ControlData::isControlState(const ControlState controlState) const noexcept

@@ -32,7 +32,7 @@ namespace fs
 		template <typename T>
 		class Accessor final
 		{
-			friend Allocator;
+			friend Allocator<T>;
 
 		public:
 											Accessor(Allocator<T>* const memoryAllocator);

@@ -12,8 +12,8 @@ namespace fs
 			__noop;
 		}
 
-		inline constexpr Rect::Rect(const float uniformPadding)
-			: Rect(uniformPadding, uniformPadding, uniformPadding, uniformPadding)
+		inline constexpr Rect::Rect(const float uniformValue)
+			: Rect(uniformValue, uniformValue, uniformValue, uniformValue)
 		{
 			__noop;
 		}
@@ -101,6 +101,11 @@ namespace fs
 		{
 			left(position._x);
 			top(position._y);
+		}
+
+		FS_INLINE constexpr const bool Rect::contains(const fs::Float2& position) const noexcept
+		{
+			return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
 		}
 
 		FS_INLINE const bool Rect::isNan() const noexcept

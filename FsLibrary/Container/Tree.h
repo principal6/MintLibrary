@@ -22,8 +22,8 @@ namespace fs
 	template <typename T>
 	class TreeNodeAccessor
 	{
-		friend Tree;
-		friend TreeNode;
+		friend Tree<T>;
+		friend TreeNode<T>;
 
 		static constexpr uint32			kInvalidNodeId = kUint32Max;
 
