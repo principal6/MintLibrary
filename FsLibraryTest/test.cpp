@@ -913,7 +913,7 @@ const bool testWindow()
 							testWindowParam2._size = fs::Float2(100.0f, 100.0f);
 							testWindowParam2._position._x = 10.0f;
 							testWindowParam2._position._y = 60.0f;
-							if (guiContext.beginWindow(L"2ND", testWindowParam2))
+							if (guiContext.beginWindow(L"2NDDD", testWindowParam2))
 							{
 								if (guiContext.beginButton(L"YEAH") == true)
 								{

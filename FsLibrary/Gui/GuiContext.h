@@ -117,6 +117,19 @@ namespace fs
 		};
 
 
+		class TaskWhenMouseUp
+		{
+		public:
+			void				clear() noexcept;
+			const bool			isSet() const noexcept;
+			void				setUpdateDockDatum(const uint64 controlHashKey) noexcept;
+			const uint64		getUpdateDockDatum() const noexcept;
+
+		private:
+			uint64				_controlHashKeyForUpdateDockDatum = 0;
+		};
+
+
 		class GuiContext final
 		{
 			static constexpr float						kDefaultIntervalX = 5.0f;
@@ -141,6 +154,7 @@ namespace fs
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
 
+
 			class DockDatum
 			{
 			public:
@@ -154,14 +168,17 @@ namespace fs
 				const bool					isRawDockSizeSet() const noexcept;
 				void						setRawDockSize(const fs::Float2& rawDockSize) noexcept;
 				const fs::Float2&			getRawDockSizeXXX() const noexcept;
+				void						swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept;
 				const int32					getDockedControlIndex(const uint64 dockedControlHashKey) const noexcept;
 				const uint64				getDockedControlHashKey(const int32 dockedControlIndex) const noexcept;
 				const float					getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept;
+				const int32					getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept;
 
 			public:
 				std::vector<uint64>			_dockedControlHashArray;
 				int32						_dockedControlIndexShown;
-				std::vector<float>			_dockedControlTitleBarOffsetArray;
+				std::vector<float>			_dockedControlTitleBarOffsetArray; // TitleBar 렌더링 위치 계산에 사용
+				std::vector<float>			_dockedControlTitleBarWidthArray; // TitleBar 순서 변경 시 마우스 Interaction 에 사용!
 
 			private:
 				fs::Float2					_rawDockSize;
@@ -446,7 +463,7 @@ namespace fs
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
 			void												processControlDocking(ControlData& controlData, const bool isDragging) noexcept;
 
-			void												updateDockDatum(const uint64 dockControlHashKey) noexcept;
+			void												updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray = false) noexcept;
 
 			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;
 			
@@ -555,6 +572,7 @@ namespace fs
 			fs::Float2											_tooltipPosition;
 			uint64												_tooltipParentWindowHashKey;
 			const wchar_t*										_tooltipTextFinal;
+			TaskWhenMouseUp										_taskWhenMouseUp;
 
 		private:
 			fs::SimpleRendering::Color							_namedColors[static_cast<uint32>(NamedColor::COUNT)];

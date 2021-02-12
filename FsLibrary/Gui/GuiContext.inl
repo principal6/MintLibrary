@@ -6,6 +6,27 @@ namespace fs
 {
 	namespace Gui
 	{
+		FS_INLINE void TaskWhenMouseUp::clear() noexcept
+		{
+			_controlHashKeyForUpdateDockDatum = 0;
+		}
+
+		FS_INLINE const bool TaskWhenMouseUp::isSet() const noexcept
+		{
+			return _controlHashKeyForUpdateDockDatum != 0;
+		}
+
+		FS_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const uint64 controlHashKey) noexcept
+		{
+			_controlHashKeyForUpdateDockDatum = controlHashKey;
+		}
+
+		FS_INLINE const uint64 TaskWhenMouseUp::getUpdateDockDatum() const noexcept
+		{
+			return _controlHashKeyForUpdateDockDatum;
+		}
+
+
 		inline ResizingMask ResizingMask::fromDockingMethod(const DockingMethod dockingMethod) noexcept
 		{
 			ResizingMask result;
@@ -95,6 +116,11 @@ namespace fs
 			return _rawDockSize;
 		}
 
+		FS_INLINE void GuiContext::DockDatum::swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept
+		{
+			std::swap(_dockedControlHashArray[indexA], _dockedControlHashArray[indexB]);
+		}
+
 		FS_INLINE const int32 GuiContext::DockDatum::getDockedControlIndex(const uint64 dockedControlHashKey) const noexcept
 		{
 			const int32 dockedControlCount = static_cast<int32>(_dockedControlHashArray.size());
@@ -116,6 +142,24 @@ namespace fs
 		FS_INLINE const float GuiContext::DockDatum::getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept
 		{
 			return _dockedControlTitleBarOffsetArray[dockedControlIndex];
+		}
+
+		FS_INLINE const int32 GuiContext::DockDatum::getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept
+		{
+			int32 resultIndex = -1;
+			float widthSum = 0.0f;
+			const int32 dockedControlCount = static_cast<int32>(_dockedControlTitleBarWidthArray.size());
+			for (int32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
+			{
+				if (widthSum <= relativeMousePositionX && relativeMousePositionX <= widthSum + _dockedControlTitleBarWidthArray[dockedControlIndex])
+				{
+					resultIndex = dockedControlIndex;
+				}
+
+				widthSum += _dockedControlTitleBarWidthArray[dockedControlIndex];
+			}
+
+			return resultIndex;
 		}
 
 

@@ -124,6 +124,11 @@ namespace fs
 				}
 				else if (eventData._type == fs::Window::EventType::MouseUp)
 				{
+					if (_taskWhenMouseUp.isSet())
+					{
+						updateDockDatum(_taskWhenMouseUp.getUpdateDockDatum());
+					}
+
 					_mouseUpPosition = fs::Float2(eventData._data._mousePosition);
 					if (_mouseButtonDown == true)
 					{
@@ -1539,6 +1544,8 @@ namespace fs
 			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			if (_isMouseInteractionDonePerFrame == true)
 			{
+				fnResetHoverDataIfMe(controlHashKey);
+				fnResetPressDataIfMe(controlHashKey);
 				return;
 			}
 
@@ -1725,25 +1732,56 @@ namespace fs
 
 					changeTargetControlData._position = originalPosition;
 
-					static constexpr float kDockingBreakDistance = 16.0f;
-					const fs::Float2 mouseDeltaPosition = _mousePosition - _mouseDownPosition;
-					if (kDockingBreakDistance < std::abs(mouseDeltaPosition._x) || kDockingBreakDistance < std::abs(mouseDeltaPosition._y))
+					ControlData& dockControlData = getControlData(changeTargetControlData.getDockControlHashKey());
+					DockDatum& dockDatum = dockControlData.getDockDatum(changeTargetControlData._lastDockingMethod);
+					const fs::Float2& dockSize = dockControlData.getDockSize(changeTargetControlData._lastDockingMethod);
+					const fs::Float2& dockPosition = dockControlData.getDockPosition(changeTargetControlData._lastDockingMethod);
+					const fs::Rect dockRect{ dockPosition, dockSize };
+					bool needToDisconnectFromDock = true;
+					if (dockRect.contains(_mousePosition) == true)
 					{
-						ControlData& changeTargetParentControlData = getControlData(changeTargetControlData.getParentHashKey());
+						needToDisconnectFromDock = false;
 
-						DockDatum& changeTargetParentControlDockDatum = changeTargetParentControlData.getDockDatum(changeTargetControlData._lastDockingMethod);
-						const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(changeTargetParentControlDockDatum._dockedControlHashArray.size());
+						const fs::Rect dockTitleBarAreaRect{ dockPosition, fs::Float2(dockSize._x, kTitleBarBaseSize._y) };
+						if (dockTitleBarAreaRect.contains(_mousePosition) == true)
+						{
+							const float titleBarOffset = _mousePosition._x - dockTitleBarAreaRect.left();
+							const int32 targetDockedControlindex = dockDatum.getDockedControlIndexByMousePosition(titleBarOffset);
+							if (0 <= targetDockedControlindex)
+							{
+								const int32 originalDockedControlIndex = dockDatum.getDockedControlIndex(changeTargetControlData.getHashKey());
+								if (originalDockedControlIndex != targetDockedControlindex)
+								{
+									dockDatum.swapDockedControlsXXX(originalDockedControlIndex, targetDockedControlindex);
+									dockDatum._dockedControlIndexShown = targetDockedControlindex;
+
+									_taskWhenMouseUp.setUpdateDockDatum(dockControlData.getHashKey());
+									updateDockDatum(dockControlData.getHashKey(), true);
+								}
+							}
+							else
+							{
+								needToDisconnectFromDock = true;
+							}
+						}
+					}
+
+					if (needToDisconnectFromDock == true)
+					{
+						// 마우스가 dockRect 를 벗어나야 옮길 수 있다!
+
+						const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlHashArray.size());
 						int32 indexToErase = -1;
 						for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
 						{
-							if (changeTargetParentControlDockDatum._dockedControlHashArray[iter] == changeTargetControlData.getHashKey())
+							if (dockDatum._dockedControlHashArray[iter] == changeTargetControlData.getHashKey())
 							{
 								indexToErase = static_cast<int32>(iter);
 							}
 						}
 						if (0 <= indexToErase)
 						{
-							changeTargetParentControlDockDatum._dockedControlHashArray.erase(changeTargetParentControlDockDatum._dockedControlHashArray.begin() + indexToErase);
+							dockDatum._dockedControlHashArray.erase(dockDatum._dockedControlHashArray.begin() + indexToErase);
 						}
 						else
 						{
@@ -1758,7 +1796,7 @@ namespace fs
 						const uint64 dockControlHashKeyCopy = changeTargetControlData.getDockControlHashKey();
 
 						changeTargetControlData.disconnectFromDock();
-						changeTargetParentControlDockDatum._dockedControlIndexShown = fs::min(changeTargetParentControlDockDatum._dockedControlIndexShown, static_cast<int32>(changeTargetParentControlDockDatum._dockedControlHashArray.size() - 1));
+						dockDatum._dockedControlIndexShown = fs::min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlHashArray.size() - 1));
 						changeTargetControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
 
 						updateDockDatum(dockControlHashKeyCopy);
@@ -1934,7 +1972,7 @@ namespace fs
 			}
 		}
 
-		void GuiContext::updateDockDatum(const uint64 dockControlHashKey) noexcept
+		void GuiContext::updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray) noexcept
 		{
 			ControlData& dockControlData = getControlData(dockControlHashKey);
 			for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
@@ -1943,23 +1981,23 @@ namespace fs
 				DockDatum& dockDatum = dockControlData.getDockDatum(dockingMethodIter);
 				const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlHashArray.size());
 				dockDatum._dockedControlTitleBarOffsetArray.resize(dockedControlCount);
+				dockDatum._dockedControlTitleBarWidthArray.resize(dockedControlCount);
 
-				float totalOffset = 0.0f;
+				float titleBarWidthSum = 0.0f;
 				for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
 				{
 					ControlData& dockedControlData = getControlData(dockDatum._dockedControlHashArray[dockedControlIndex]);
 					dockedControlData._displaySize = dockControlData.getDockSize(dockingMethodIter);
 					dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
-
-					if (1 <= dockedControlIndex)
+					
+					const wchar_t* const title = dockedControlData.getText();
+					const float titleBarWidth = _shapeFontRendererContextTopMost.calculateTextWidth(title, fs::StringUtil::wcslen(title)) + 16.0f;
+					dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
+					if (dontUpdateWidthArray == false)
 					{
-						const ControlData& prevDockedControlData = getControlData(dockDatum._dockedControlHashArray[dockedControlIndex - 1]);
-						const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(prevDockedControlData.getText(), fs::StringUtil::wcslen(prevDockedControlData.getText()));
-
-						totalOffset += textWidth + 16.0f;
-
-						dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = totalOffset;
+						dockDatum._dockedControlTitleBarWidthArray[dockedControlIndex] = titleBarWidth;
 					}
+					titleBarWidthSum += titleBarWidth;
 				}
 			}
 		}
