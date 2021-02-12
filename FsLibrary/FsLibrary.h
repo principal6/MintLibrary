@@ -10,8 +10,7 @@
 #include <FsLibrary/Algorithm.hpp>
 #include <FsLibrary/ContiguousContainer/ContiguousContainer.h>
 #include <FsLibrary/Memory/Memory.h>
-#include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/Language/Language.h>
+
 #include <FsLibrary/Profiler/Profiler.h>
 
 #include <FsMath/Include/Math.h>
@@ -19,6 +18,9 @@
 #include <FsContainer/Include/Container.h>
 
 #include <FsPlatform/Include/Platform.h>
+
+#include <FsRenderingBase/Include/GraphicDevice.h>
+#include <FsRenderingBase/Include/Language/Language.h>
 
 
 #endif // !FS_LIBRARY_H
