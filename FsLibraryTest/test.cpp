@@ -810,6 +810,8 @@ const bool testWindow()
 					fs::Gui::WindowParam windowParam;
 					windowParam._size = fs::Float2(300.0f, 400.0f);
 					windowParam._position = fs::Float2(20.0f, 50.0f);
+					windowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
+					windowParam._initialDockingSize._x = 240.0f;
 					if (guiContext.beginWindow(L"응용 프로그램", windowParam) == true)
 					{
 						//guiContext.nextControlSize(fs::Float2(500.0f, 5.0f));
@@ -897,6 +899,7 @@ const bool testWindow()
 							fs::Gui::WindowParam testWindowParam;
 							testWindowParam._size = fs::Float2(200.0f, 240.0f);
 							testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
+							testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
 							if (guiContext.beginWindow(L"1ST", testWindowParam))
 							{
 								if (guiContext.beginButton(L"테스트!!") == true)

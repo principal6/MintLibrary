@@ -46,9 +46,11 @@ namespace fs
 
 		struct WindowParam
 		{
-			fs::Float2			_size				= fs::Float2(180, 100);
-			fs::Float2			_position			= fs::Float2(100, 100);
-			ScrollBarType		_scrollBarType		= ScrollBarType::None;
+			fs::Float2			_size					= fs::Float2(180, 100);
+			fs::Float2			_position				= fs::Float2(100, 100);
+			ScrollBarType		_scrollBarType			= ScrollBarType::None;
+			DockingMethod		_initialDockingMethod	= DockingMethod::COUNT;
+			fs::Float2			_initialDockingSize		= fs::Float2(160, 0);
 		};
 
 		// If no value is set, default values will be used properly
@@ -80,7 +82,7 @@ namespace fs
 		struct ResizingMask
 		{
 		public:
-									ResizingMask()								= default;
+									ResizingMask();
 									ResizingMask(const ResizingMask& rhs)		= default;
 									ResizingMask(ResizingMask&& rhs) noexcept	= default;
 									~ResizingMask()								= default;
@@ -105,7 +107,7 @@ namespace fs
 		public:
 			union
 			{
-				uint8	_rawMask{ 0 };
+				uint8	_rawMask;
 				struct
 				{
 					bool	_top : 1;
@@ -256,6 +258,7 @@ namespace fs
 				void										setViewportIndexForDocksXXX(const uint32 viewportIndex) noexcept;
 
 			public:
+				uint8										_updateCount;
 				fs::Float2									_displaySize;
 				fs::Float2									_position; // In screen space, at left-top corner
 				fs::Float2									_deltaPosition;
@@ -463,6 +466,8 @@ namespace fs
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
 			void												processControlDocking(ControlData& controlData, const bool isDragging) noexcept;
 
+			void												dock(const uint64 dockedControlHashKey, const uint64 dockControlHashKey) noexcept;
+			void												undock(const uint64 dockedControlHashKey) noexcept;
 			void												updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray = false) noexcept;
 
 			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;

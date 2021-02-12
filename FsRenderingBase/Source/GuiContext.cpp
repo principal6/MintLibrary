@@ -258,6 +258,18 @@ namespace fs
 			windowControlData._dockingControlType = DockingControlType::DockerDock;
 			windowControlData._isFocusable = true;
 
+
+			// Initial docking
+			if (windowControlData._updateCount == 2 && windowParam._initialDockingMethod != DockingMethod::COUNT)
+			{
+				windowControlData._lastDockingMethodCandidate = windowParam._initialDockingMethod;
+
+				ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
+				parentControlData.setDockSize(windowParam._initialDockingMethod, fs::Float2(windowParam._initialDockingSize._x, parentControlData._displaySize._y));
+
+				dock(windowControlData.getHashKey(), parentControlData.getHashKey());
+			}
+
 			ParamPrepareControlData paramPrepareControlData;
 			{
 				paramPrepareControlData._initialDisplaySize = windowParam._size;
@@ -1194,7 +1206,13 @@ namespace fs
 
 				_controlIdMap[hashKey] = newControlData;
 			}
-			return _controlIdMap[hashKey];
+
+			ControlData& controlData = _controlIdMap[hashKey];
+			if (controlData._updateCount < 3)
+			{
+				++controlData._updateCount;
+			}
+			return controlData;
 		}
 
 		void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
@@ -1770,36 +1788,7 @@ namespace fs
 					{
 						// 마우스가 dockRect 를 벗어나야 옮길 수 있다!
 
-						const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlHashArray.size());
-						int32 indexToErase = -1;
-						for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
-						{
-							if (dockDatum._dockedControlHashArray[iter] == changeTargetControlData.getHashKey())
-							{
-								indexToErase = static_cast<int32>(iter);
-							}
-						}
-						if (0 <= indexToErase)
-						{
-							dockDatum._dockedControlHashArray.erase(dockDatum._dockedControlHashArray.begin() + indexToErase);
-						}
-						else
-						{
-							FS_LOG_ERROR("김장원", "Docked Control 이 Parent 의 Child Array 에 없는 상황입니다!!!");
-						}
-
-						changeTargetControlData.swapDockingStateContext();
-
-						_draggedControlInitialPosition = changeTargetControlData._position;
-						_focusedControlHashKey = changeTargetControlData.getHashKey();
-
-						const uint64 dockControlHashKeyCopy = changeTargetControlData.getDockControlHashKey();
-
-						changeTargetControlData.disconnectFromDock();
-						dockDatum._dockedControlIndexShown = fs::min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlHashArray.size() - 1));
-						changeTargetControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
-
-						updateDockDatum(dockControlHashKeyCopy);
+						undock(changeTargetControlData.getHashKey());
 					}
 				}
 				else
@@ -1936,40 +1925,84 @@ namespace fs
 					{
 						// Docking 시작.
 
-						controlData.swapDockingStateContext();
-
-						if (controlData._lastDockingMethod != controlData._lastDockingMethodCandidate)
-						{
-							controlData._lastDockingMethod = controlData._lastDockingMethodCandidate;
-
-							controlData._lastDockingMethodCandidate = DockingMethod::COUNT;
-						}
-						
-						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(controlData._lastDockingMethod);
-						if (controlData._lastDockingMethod != controlData._lastDockingMethodCandidate)
-						{
-							controlData._displaySize = parentControlData.getDockSize(controlData._lastDockingMethod);
-						}
-						parentControlDockDatum._dockedControlHashArray.emplace_back(controlData.getHashKey());
-
-						controlData._resizingMask = ResizingMask::fromDockingMethod(controlData._lastDockingMethod);
-						controlData._position = parentControlData.getDockPosition(controlData._lastDockingMethod);
-						controlData.connectToDock(parentControlData.getHashKey());
-						
-						parentControlDockDatum._dockedControlIndexShown = parentControlDockDatum.getDockedControlIndex(controlData.getHashKey());
-						
-						updateDockDatum(parentControlData.getHashKey());
-
-						// 내가 Focus 였다면 부모로 옮기자!
-						if (isControlFocused(controlData) == true)
-						{
-							_focusedControlHashKey = parentControlData.getHashKey();
-						}
+						dock(controlData.getHashKey(), parentControlData.getHashKey());
 
 						_draggedControlHashKey = 0;
 					}
 				}
 			}
+		}
+
+		void GuiContext::dock(const uint64 dockedControlHashKey, const uint64 dockControlHashKey) noexcept
+		{
+			ControlData& dockedControlData = getControlData(dockedControlHashKey);
+			dockedControlData.swapDockingStateContext();
+
+			if (dockedControlData._lastDockingMethod != dockedControlData._lastDockingMethodCandidate)
+			{
+				dockedControlData._lastDockingMethod = dockedControlData._lastDockingMethodCandidate;
+
+				dockedControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
+			}
+
+			ControlData& dockControlData = getControlData(dockControlHashKey);
+			DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._lastDockingMethod);
+			if (dockedControlData._lastDockingMethod != dockedControlData._lastDockingMethodCandidate)
+			{
+				dockedControlData._displaySize = dockControlData.getDockSize(dockedControlData._lastDockingMethod);
+			}
+			parentControlDockDatum._dockedControlHashArray.emplace_back(dockedControlData.getHashKey());
+
+			dockedControlData._resizingMask = ResizingMask::fromDockingMethod(dockedControlData._lastDockingMethod);
+			dockedControlData._position = dockControlData.getDockPosition(dockedControlData._lastDockingMethod);
+			dockedControlData.connectToDock(dockControlHashKey);
+
+			parentControlDockDatum._dockedControlIndexShown = parentControlDockDatum.getDockedControlIndex(dockedControlData.getHashKey());
+
+			updateDockDatum(dockControlHashKey);
+
+			// 내가 Focus 였다면 Dock 을 가진 컨트롤로 옮기자!
+			if (isControlFocused(dockedControlData) == true)
+			{
+				_focusedControlHashKey = dockControlHashKey;
+			}
+		}
+
+		void GuiContext::undock(const uint64 dockedControlHashKey) noexcept
+		{
+			ControlData& dockedControlData = getControlData(dockedControlHashKey);
+			ControlData& dockControlData = getControlData(dockedControlData.getDockControlHashKey());
+			DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._lastDockingMethod);
+			const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlHashArray.size());
+			int32 indexToErase = -1;
+			for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
+			{
+				if (dockDatum._dockedControlHashArray[iter] == dockedControlData.getHashKey())
+				{
+					indexToErase = static_cast<int32>(iter);
+				}
+			}
+			if (0 <= indexToErase)
+			{
+				dockDatum._dockedControlHashArray.erase(dockDatum._dockedControlHashArray.begin() + indexToErase);
+			}
+			else
+			{
+				FS_LOG_ERROR("김장원", "Docked Control 이 Parent 의 Child Array 에 없는 상황입니다!!!");
+			}
+
+			dockedControlData.swapDockingStateContext();
+
+			_draggedControlInitialPosition = dockedControlData._position;
+			_focusedControlHashKey = dockedControlData.getHashKey();
+
+			const uint64 dockControlHashKeyCopy = dockedControlData.getDockControlHashKey();
+
+			dockedControlData.disconnectFromDock();
+			dockDatum._dockedControlIndexShown = fs::min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlHashArray.size() - 1));
+			dockedControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
+
+			updateDockDatum(dockControlHashKeyCopy);
 		}
 
 		void GuiContext::updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray) noexcept
@@ -2158,7 +2191,7 @@ namespace fs
 			// #2. Docking
 			const bool isDocking = closestFocusableAncestorInclusive.isDocking();
 			const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlHashKey());
-			return (isDocking == true && (isControlFocused(dockControlData) == true || isDescendantFocused(dockControlData) == true));
+			return (isDocking == true && (dockControlData.isRootControl() == true || isControlFocused(dockControlData) == true || isDescendantFocused(dockControlData) == true));
 		}
 
 		const bool GuiContext::isDescendantFocused(const ControlData& controlData) const noexcept
