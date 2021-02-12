@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <FsLibrary/Gui/GuiContext.h>
 
-#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 

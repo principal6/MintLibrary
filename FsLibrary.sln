@@ -20,6 +20,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsLogger", "FsLogger\FsLogg
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsCommon", "FsCommon.vcxitems", "{08274C87-6720-46DA-B1DF-DBA3A406EF4A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FsContainer", "FsContainer\FsContainer.vcxproj", "{0152168D-27A5-4C7D-BE25-1310B5C023C9}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		FsCommon.vcxitems*{08274c87-6720-46da-b1df-dba3a406ef4a}*SharedItemsImports = 9
@@ -65,6 +67,14 @@ Global
 		{32E04223-7002-4BD9-844C-4AD386AD94A4}.Release|x64.Build.0 = Release|x64
 		{32E04223-7002-4BD9-844C-4AD386AD94A4}.Release|x86.ActiveCfg = Release|Win32
 		{32E04223-7002-4BD9-844C-4AD386AD94A4}.Release|x86.Build.0 = Release|Win32
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Debug|x64.ActiveCfg = Debug|x64
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Debug|x64.Build.0 = Debug|x64
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Debug|x86.ActiveCfg = Debug|Win32
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Debug|x86.Build.0 = Debug|Win32
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Release|x64.ActiveCfg = Release|x64
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Release|x64.Build.0 = Release|x64
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Release|x86.ActiveCfg = Release|Win32
+		{0152168D-27A5-4C7D-BE25-1310B5C023C9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

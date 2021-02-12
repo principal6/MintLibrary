@@ -10,7 +10,7 @@
 #include <FsLibrary/Platform/IWindow.h>
 #include <FsLibrary/Platform/WindowsWindow.h>
 
-#include <FsLibrary/Container/ScopeString.hpp>
+#include <FsContainer/Include/ScopeString.hpp>
 
 #include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 

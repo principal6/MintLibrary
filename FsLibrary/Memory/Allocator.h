@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsLibrary/Container/BitVector.h>
+#include <FsContainer/Include/BitVector.h>
 
 
 namespace fs

@@ -4,7 +4,7 @@
 #include <stdafx.h>
 #include <FsLibrary/Memory/Allocator.h>
 
-#include <FsLibrary/Container/BitVector.hpp>
+#include <FsContainer/Include/BitVector.hpp>
 
 
 namespace fs

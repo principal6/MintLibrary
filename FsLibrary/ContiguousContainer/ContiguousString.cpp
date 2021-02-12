@@ -2,7 +2,7 @@
 #include <FsLibrary/ContiguousContainer/ContiguousString.h>
 #include <FsLibrary/ContiguousContainer/ContiguousString.hpp>
 
-#include <FsLibrary/Container/StringUtil.h>
+#include <FsContainer/Include/StringUtil.h>
 
 #include <FsLibrary/Memory/Allocator.hpp>
 

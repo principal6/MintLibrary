@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{4ce4d61c-eace-499d-a069-905200c5a603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{e610a8b1-07f7-4c70-aa42-960573aaed96}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\BitVector.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\BitVector.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Container.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IId.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ScopeString.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ScopeString.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StackHolder.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StackHolder.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StaticArray.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StringUtil.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StringUtil.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tree.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tree.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\UniqueString.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\UniqueString.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\IId.inl">
+      <Filter>Include</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\UniqueString.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

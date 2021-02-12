@@ -5,7 +5,7 @@
 
 #include <FsLibrary/Algorithm.hpp>
 
-#include <FsLibrary/Container/ScopeString.hpp>
+#include <FsContainer/Include/ScopeString.hpp>
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>

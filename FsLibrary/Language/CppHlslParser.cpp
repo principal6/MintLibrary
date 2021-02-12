@@ -3,8 +3,8 @@
 
 #include <FsLibrary/Language/ILexer.h>
 
-#include <FsLibrary/Container/StringUtil.hpp>
-#include <FsLibrary/Container/Tree.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/Tree.hpp>
 
 #include <functional>
 

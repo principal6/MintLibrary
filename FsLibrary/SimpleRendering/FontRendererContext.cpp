@@ -14,7 +14,7 @@
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 #include <FsLibrary/SimpleRendering/TriangleRenderer.hpp>
 
-#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
 
 #include <FsLibrary/File/BinaryFile.hpp>
 #include <FsLibrary/File/FileUtil.hpp>

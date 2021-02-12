@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <FsLibrary/Language/CppHlslLexer.h>
 
-#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
 
 
 namespace fs

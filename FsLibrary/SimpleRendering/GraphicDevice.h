@@ -7,9 +7,9 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsLibrary/Container/StaticArray.h>
-#include <FsLibrary/Container/ScopeString.h>
-#include <FsLibrary/Container/UniqueString.h>
+#include <FsContainer/Include/StaticArray.h>
+#include <FsContainer/Include/ScopeString.h>
+#include <FsContainer/Include/UniqueString.h>
 
 #include <FsLibrary/SimpleRendering/DxShaderHeaderMemory.h>
 #include <FsLibrary/SimpleRendering/DxShader.h>

@@ -4,7 +4,7 @@
 #include <stdafx.h>
 #include <FsLibrary/ContiguousContainer/ContiguousString.h>
 
-#include <FsLibrary/Container/StringUtil.h>
+#include <FsContainer/Include/StringUtil.h>
 
 
 namespace fs

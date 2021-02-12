@@ -7,9 +7,6 @@
     <Filter Include="File">
       <UniqueIdentifier>{7df36888-f59b-464a-a537-15cbcbc67808}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Container">
-      <UniqueIdentifier>{f4749e69-78fc-4420-b618-690bcce7fb83}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SimpleRendering">
       <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
     </Filter>
@@ -54,46 +51,16 @@
     <ClInclude Include="File\XmlFile.h">
       <Filter>File</Filter>
     </ClInclude>
-    <ClInclude Include="Container\StaticArray.h">
-      <Filter>Container</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\IWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="Platform\WindowsWindow.h">
       <Filter>Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Container\StackHolder.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\StackHolder.hpp">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\ScopeString.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\ScopeString.hpp">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\BitVector.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\BitVector.hpp">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\UniqueString.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\StringUtil.h">
-      <Filter>Container</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\Platform.h">
       <Filter>Platform</Filter>
     </ClInclude>
     <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Container\Container.h">
-      <Filter>Container</Filter>
-    </ClInclude>
     <ClInclude Include="File\File.h">
       <Filter>File</Filter>
     </ClInclude>
@@ -111,20 +78,8 @@
     </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="Container\UniqueString.hpp">
-      <Filter>Container</Filter>
-    </ClInclude>
     <ClInclude Include="File\BinaryFile.hpp">
       <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Tree.h">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Tree.hpp">
-      <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\StringUtil.hpp">
-      <Filter>Container</Filter>
     </ClInclude>
     <ClInclude Include="File\TextFile.h">
       <Filter>File</Filter>
@@ -227,9 +182,6 @@
     <ClInclude Include="Gui\GuiContext.h">
       <Filter>Gui</Filter>
     </ClInclude>
-    <ClInclude Include="Container\IId.h">
-      <Filter>Container</Filter>
-    </ClInclude>
     <ClInclude Include="Gui\GuiCommon.h">
       <Filter>Gui</Filter>
     </ClInclude>
@@ -270,9 +222,6 @@
     </ClCompile>
     <ClCompile Include="SimpleRendering\IDxObject.cpp">
       <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Container\UniqueString.cpp">
-      <Filter>Container</Filter>
     </ClCompile>
     <ClCompile Include="File\TextFile.cpp">
       <Filter>File</Filter>
@@ -335,9 +284,6 @@
     </None>
     <None Include="Gui\GuiContext.inl">
       <Filter>Gui</Filter>
-    </None>
-    <None Include="Container\IId.inl">
-      <Filter>Container</Filter>
     </None>
     <None Include="SimpleRendering\IRendererContext.inl">
       <Filter>SimpleRendering</Filter>

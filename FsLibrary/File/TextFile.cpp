@@ -2,7 +2,7 @@
 #include <FsLibrary/File/TextFile.h>
 
 #include <FsLibrary/ContiguousContainer/ContiguousVector.hpp>
-#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
 
 #include <fstream>
 

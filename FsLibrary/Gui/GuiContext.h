@@ -11,7 +11,7 @@
 
 #include <FsLibrary/SimpleRendering/ShapeFontRendererContext.h>
 
-#include <FsLibrary/Container/IId.h>
+#include <FsContainer/Include/IId.h>
 
 #include <FsLibrary/Platform/IWindow.h>
 

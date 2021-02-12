@@ -3,7 +3,7 @@
 
 //#include <FsLibrary/ContiguousContainer/ContiguousVector.hpp>
 #include <FsLibrary/ContiguousContainer/ContiguousString.hpp>
-#include <FsLibrary/Container/StringUtil.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
 
 
 namespace fs

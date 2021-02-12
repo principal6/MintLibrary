@@ -26,21 +26,6 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="Container\BitVector.h" />
-    <ClInclude Include="Container\BitVector.hpp" />
-    <ClInclude Include="Container\Container.h" />
-    <ClInclude Include="Container\IId.h" />
-    <ClInclude Include="Container\ScopeString.h" />
-    <ClInclude Include="Container\ScopeString.hpp" />
-    <ClInclude Include="Container\StackHolder.h" />
-    <ClInclude Include="Container\StackHolder.hpp" />
-    <ClInclude Include="Container\StaticArray.h" />
-    <ClInclude Include="Container\StringUtil.h" />
-    <ClInclude Include="Container\StringUtil.hpp" />
-    <ClInclude Include="Container\Tree.h" />
-    <ClInclude Include="Container\Tree.hpp" />
-    <ClInclude Include="Container\UniqueString.h" />
-    <ClInclude Include="Container\UniqueString.hpp" />
     <ClInclude Include="ContiguousContainer\ContiguousContainer.h" />
     <ClInclude Include="ContiguousContainer\ContiguousString.h" />
     <ClInclude Include="ContiguousContainer\ContiguousString.hpp" />
@@ -94,7 +79,6 @@
     <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Container\UniqueString.cpp" />
     <ClCompile Include="ContiguousContainer\ContiguousString.cpp" />
     <ClCompile Include="File\BinaryFile.cpp" />
     <ClCompile Include="File\TextFile.cpp" />
@@ -118,7 +102,6 @@
     <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Container\IId.inl" />
     <None Include="Gui\GuiContext.inl" />
     <None Include="Language\CppHlslParser.inl" />
     <None Include="Language\ILexer.inl" />
@@ -259,7 +242,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -284,7 +267,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
