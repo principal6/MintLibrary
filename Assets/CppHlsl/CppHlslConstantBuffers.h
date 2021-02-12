@@ -5,7 +5,7 @@
 #define FS_CPP_HLSL_CONSTANT_BUFFERS_H
 
 
-#include <FsLibrary/Language/CppHlslTypes.h>
+#include <FsRenderingBase/Include/Language/CppHlslTypes.h>
 
 
 namespace fs

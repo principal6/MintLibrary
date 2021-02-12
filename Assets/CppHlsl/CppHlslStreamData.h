@@ -5,7 +5,7 @@
 #define FS_CPP_HLSL_STRUCTS_H
 
 
-#include <FsLibrary/Language/CppHlslTypes.h>
+#include <FsRenderingBase/Include/Language/CppHlslTypes.h>
 
 
 namespace fs

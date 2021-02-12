@@ -1,48 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="SimpleRendering">
-      <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Memory">
       <UniqueIdentifier>{e8e4d94d-4313-4154-ae01-e1430ba1caa5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Language">
-      <UniqueIdentifier>{65183733-0f5f-4535-85c7-ec6d65fdd22c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Profiler">
       <UniqueIdentifier>{9babe998-8a61-4c57-a47e-d9b5edd5624b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Language\CppHlsl">
-      <UniqueIdentifier>{0ad96984-e29f-43ac-8ebe-7c6370cbbcb6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ContiguousContainer">
       <UniqueIdentifier>{9089e893-c77c-46ee-858c-3ea3ee6563d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets">
-      <UniqueIdentifier>{0fa2eb07-4611-40c3-9524-0b59bc3e7bbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\CppHlsl">
-      <UniqueIdentifier>{20444c3a-73ad-4d90-acda-8ed853f51d74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Gui">
-      <UniqueIdentifier>{734eb805-99d4-41e1-9b5c-4bf89cd8138b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="SimpleRendering\GraphicDevice.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\DxShader.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\IDxObject.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
     <ClInclude Include="Memory\Allocator.h">
@@ -66,44 +36,11 @@
     <ClInclude Include="Memory\Owner.hpp">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Language\Tokenizer.h">
-      <Filter>Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\Language.h">
-      <Filter>Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\LanguageCommon.h">
-      <Filter>Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\IParser.h">
-      <Filter>Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\ILexer.h">
-      <Filter>Language</Filter>
-    </ClInclude>
     <ClInclude Include="Profiler\ScopedCpuProfiler.h">
       <Filter>Profiler</Filter>
     </ClInclude>
     <ClInclude Include="Profiler\Profiler.h">
       <Filter>Profiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\CppHlsl.h">
-      <Filter>Language\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\CppHlslLexer.h">
-      <Filter>Language\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\CppHlslParser.h">
-      <Filter>Language\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Language\CppHlslTypes.h">
-      <Filter>Language\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\GraphicDevice.inl">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h">
-      <Filter>SimpleRendering</Filter>
     </ClInclude>
     <ClInclude Include="ContiguousContainer\ContiguousContainer.h">
       <Filter>ContiguousContainer</Filter>
@@ -122,120 +59,15 @@
     <ClInclude Include="ContiguousContainer\ContiguousVector.hpp">
       <Filter>ContiguousContainer</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleRendering\TriangleRenderer.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\TriangleRenderer.hpp">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\DxResource.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Gui\GuiContext.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Gui\GuiCommon.h">
-      <Filter>Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\IRendererContext.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\ShapeRendererContext.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\RectangleRendererContext.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\FontRendererContext.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleRendering\ShapeFontRendererContext.h">
-      <Filter>SimpleRendering</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimpleRendering\GraphicDevice.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\DxShader.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\IDxObject.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\Tokenizer.cpp">
-      <Filter>Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\IParser.cpp">
-      <Filter>Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\ILexer.cpp">
-      <Filter>Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\CppHlslLexer.cpp">
-      <Filter>Language\CppHlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\CppHlslParser.cpp">
-      <Filter>Language\CppHlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="Language\CppHlsl.cpp">
-      <Filter>Language\CppHlsl</Filter>
-    </ClCompile>
     <ClCompile Include="ContiguousContainer\ContiguousString.cpp">
       <Filter>ContiguousContainer</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleRendering\DxResource.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Gui\GuiContext.cpp">
-      <Filter>Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\RectangleRendererContext.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\FontRendererContext.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="SimpleRendering\ShapeFontRendererContext.cpp">
-      <Filter>SimpleRendering</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Language\IParser.inl">
-      <Filter>Language</Filter>
-    </None>
-    <None Include="Language\LanguageCommon.inl">
-      <Filter>Language</Filter>
-    </None>
-    <None Include="Language\ILexer.inl">
-      <Filter>Language</Filter>
-    </None>
     <None Include="Profiler\ScopedCpuProfiler.inl">
       <Filter>Profiler</Filter>
-    </None>
-    <None Include="Language\CppHlslParser.inl">
-      <Filter>Language\CppHlsl</Filter>
-    </None>
-    <None Include="Gui\GuiContext.inl">
-      <Filter>Gui</Filter>
-    </None>
-    <None Include="SimpleRendering\IRendererContext.inl">
-      <Filter>SimpleRendering</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

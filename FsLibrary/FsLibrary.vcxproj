@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="..\CommonDefinitions.h" />
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="Algorithm.h" />
@@ -32,17 +29,6 @@
     <ClInclude Include="ContiguousContainer\ContiguousVector.h" />
     <ClInclude Include="ContiguousContainer\ContiguousVector.hpp" />
     <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Gui\GuiCommon.h" />
-    <ClInclude Include="Gui\GuiContext.h" />
-    <ClInclude Include="Language\CppHlsl.h" />
-    <ClInclude Include="Language\CppHlslLexer.h" />
-    <ClInclude Include="Language\CppHlslParser.h" />
-    <ClInclude Include="Language\CppHlslTypes.h" />
-    <ClInclude Include="Language\ILexer.h" />
-    <ClInclude Include="Language\IParser.h" />
-    <ClInclude Include="Language\Language.h" />
-    <ClInclude Include="Language\LanguageCommon.h" />
-    <ClInclude Include="Language\Tokenizer.h" />
     <ClInclude Include="Memory\Allocator.h" />
     <ClInclude Include="Memory\Allocator.hpp" />
     <ClInclude Include="Memory\Memory.h" />
@@ -52,48 +38,12 @@
     <ClInclude Include="Memory\Viewer.hpp" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
-    <ClInclude Include="SimpleRendering\FontRendererContext.h" />
-    <ClInclude Include="SimpleRendering\DxResource.h" />
-    <ClInclude Include="SimpleRendering\GraphicDevice.inl" />
-    <ClInclude Include="SimpleRendering\IDxObject.h" />
-    <ClInclude Include="SimpleRendering\DxShader.h" />
-    <ClInclude Include="SimpleRendering\DxShaderHeaderMemory.h" />
-    <ClInclude Include="SimpleRendering\GraphicDevice.h" />
-    <ClInclude Include="SimpleRendering\IRendererContext.h" />
-    <ClInclude Include="SimpleRendering\RectangleRendererContext.h" />
-    <ClInclude Include="SimpleRendering\ShapeFontRendererContext.h" />
-    <ClInclude Include="SimpleRendering\ShapeRendererContext.h" />
-    <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
-    <ClInclude Include="SimpleRendering\TriangleRenderer.h" />
-    <ClInclude Include="SimpleRendering\TriangleRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContiguousContainer\ContiguousString.cpp" />
-    <ClCompile Include="Gui\GuiContext.cpp" />
-    <ClCompile Include="Language\CppHlsl.cpp" />
-    <ClCompile Include="Language\CppHlslLexer.cpp" />
-    <ClCompile Include="Language\CppHlslParser.cpp" />
-    <ClCompile Include="Language\ILexer.cpp" />
-    <ClCompile Include="Language\IParser.cpp" />
-    <ClCompile Include="Language\Tokenizer.cpp" />
-    <ClCompile Include="SimpleRendering\FontRendererContext.cpp" />
-    <ClCompile Include="SimpleRendering\DxResource.cpp" />
-    <ClCompile Include="SimpleRendering\DxShader.cpp" />
-    <ClCompile Include="SimpleRendering\DxShaderHeaderMemory.cpp" />
-    <ClCompile Include="SimpleRendering\GraphicDevice.cpp" />
-    <ClCompile Include="SimpleRendering\IDxObject.cpp" />
-    <ClCompile Include="SimpleRendering\RectangleRendererContext.cpp" />
-    <ClCompile Include="SimpleRendering\ShapeFontRendererContext.cpp" />
-    <ClCompile Include="SimpleRendering\ShapeRendererContext.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Gui\GuiContext.inl" />
-    <None Include="Language\CppHlslParser.inl" />
-    <None Include="Language\ILexer.inl" />
-    <None Include="Language\IParser.inl" />
-    <None Include="Language\LanguageCommon.inl" />
     <None Include="Profiler\ScopedCpuProfiler.inl" />
-    <None Include="SimpleRendering\IRendererContext.inl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="FsLibrary.natvis" />
@@ -165,15 +115,13 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir);$(SolutionDir)Externals\freetype_2_10_4\include;$(SolutionDir)Externals\stb_image;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\freetype_2_10_4\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -227,7 +175,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -252,7 +200,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
