@@ -40,6 +40,7 @@ namespace fs
 		enum class ViewportUsage
 		{
 			Parent,
+			ParentDock,
 			Child,
 		};
 
@@ -143,16 +144,25 @@ namespace fs
 			class DockDatum
 			{
 			public:
+											DockDatum();
+											~DockDatum() = default;
+
+			public:
 				const bool					hasDockedControls() const noexcept;
 
 			public:
 				const bool					isRawDockSizeSet() const noexcept;
 				void						setRawDockSize(const fs::Float2& rawDockSize) noexcept;
 				const fs::Float2&			getRawDockSizeXXX() const noexcept;
+				const int32					getDockedControlIndex(const uint64 dockedControlHashKey) const noexcept;
+				const uint64				getDockedControlHashKey(const int32 dockedControlIndex) const noexcept;
+				const float					getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept;
 
 			public:
 				std::vector<uint64>			_dockedControlHashArray;
-			
+				int32						_dockedControlIndexShown;
+				std::vector<float>			_dockedControlTitleBarOffsetArray;
+
 			private:
 				fs::Float2					_rawDockSize;
 			};
@@ -188,6 +198,7 @@ namespace fs
 				const fs::Float2&							getChildAt() const noexcept;
 				const fs::Float2&							getNextChildOffset() const noexcept;
 				const ControlType							getControlType() const noexcept;
+				const wchar_t*								getText() const noexcept;
 				const bool									isRootControl() const noexcept;
 				const bool									isControlState(const ControlState controlState) const noexcept;
 				const uint32								getViewportIndex() const noexcept;
@@ -197,6 +208,7 @@ namespace fs
 				const bool									hasChildWindow() const noexcept;
 				DockDatum&									getDockDatum(const DockingMethod dockingMethod) noexcept;
 				const DockDatum&							getDockDatum(const DockingMethod dockingMethod) const noexcept;
+				const bool									isShowingInDock(const ControlData& dockedControlData) const noexcept;
 				void										setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept;
 				const fs::Float2							getDockSize(const DockingMethod dockingMethod) const noexcept;
 				const fs::Float2							getDockOffsetSize(const DockingMethod dockingMethod) const noexcept;
@@ -204,6 +216,7 @@ namespace fs
 				const fs::Float2							getHorzDockSizeSum() const noexcept;
 				void										connectToDock(const uint64 dockControlHashKey) noexcept;
 				void										disconnectFromDock() noexcept;
+				const uint64								getDockControlHashKey() const noexcept;
 				const bool									isDocking() const noexcept;
 				const bool									isDockHosting() const noexcept;
 				const bool									isResizable() const noexcept;
@@ -304,6 +317,7 @@ namespace fs
 				WindowFocused,
 				WindowOutOfFocus,
 				Dock,
+				ShownInDock,
 
 				TitleBarFocused,
 				TitleBarOutOfFocus,
@@ -315,6 +329,7 @@ namespace fs
 
 				LightFont,
 				DarkFont,
+				ShownInDockFont,
 				
 				COUNT
 			};
@@ -430,6 +445,9 @@ namespace fs
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
 			void												processControlDocking(ControlData& controlData, const bool isDragging) noexcept;
+
+			void												updateDockDatum(const uint64 dockControlHashKey) noexcept;
+
 			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;
 			
 			// These functions must be called after process- functions
@@ -449,6 +467,7 @@ namespace fs
 
 			// Focus, Out-of-focus 색 정할 때 사용
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
+			const bool											isDescendantFocused(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
 
 			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;

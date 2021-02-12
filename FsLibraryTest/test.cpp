@@ -805,7 +805,7 @@ const bool testWindow()
 			graphicDevice.beginRendering();
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-
+				
 				{
 					fs::Gui::WindowParam windowParam;
 					windowParam._size = fs::Float2(300.0f, 400.0f);
@@ -893,35 +893,35 @@ const bool testWindow()
 							guiContext.endButton();
 						}
 
-						fs::Gui::WindowParam testWindowParam;
-						testWindowParam._size = fs::Float2(200.0f, 240.0f);
-						testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
-						if (guiContext.beginWindow(L"TEST", testWindowParam))
 						{
-							if (guiContext.beginButton(L"테스트!!") == true)
+							fs::Gui::WindowParam testWindowParam;
+							testWindowParam._size = fs::Float2(200.0f, 240.0f);
+							testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
+							if (guiContext.beginWindow(L"1ST", testWindowParam))
 							{
-								guiContext.endButton();
-							}
-
-							/*
-							{
-								fs::Gui::WindowParam testWindowParam2;
-								testWindowParam2._size = fs::Float2(100.0f, 100.0f);
-								testWindowParam2._position._x = 10.0f;
-								testWindowParam2._position._y = 60.0f;
-								if (guiContext.beginWindow(L"TEST?", testWindowParam2))
+								if (guiContext.beginButton(L"테스트!!") == true)
 								{
-									if (guiContext.beginButton(L"테스트?") == true)
-									{
-										guiContext.endButton();
-									}
-
-									guiContext.endWindow();
+									guiContext.endButton();
 								}
-							}
-							*/
 
-							guiContext.endWindow();
+								guiContext.endWindow();
+							}
+						}
+
+						{
+							fs::Gui::WindowParam testWindowParam2;
+							testWindowParam2._size = fs::Float2(100.0f, 100.0f);
+							testWindowParam2._position._x = 10.0f;
+							testWindowParam2._position._y = 60.0f;
+							if (guiContext.beginWindow(L"2ND", testWindowParam2))
+							{
+								if (guiContext.beginButton(L"YEAH") == true)
+								{
+									guiContext.endButton();
+								}
+
+								guiContext.endWindow();
+							}
 						}
 
 						guiContext.endWindow();

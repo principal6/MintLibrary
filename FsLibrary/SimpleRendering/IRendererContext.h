@@ -64,12 +64,14 @@ namespace fs
 			void					a(const float value) noexcept { _raw._w = value; }
 
 		public:
-			Color					scaleRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+			Color					addedRgb(const float s) const noexcept { return Color(_raw._x + s, _raw._y + s, _raw._z + s, _raw._w); }
+			Color					addedRgb(const int32 s) const noexcept { return Color(_raw._x + (s / 255.0f), _raw._y + (s / 255.0f), _raw._z + (s / 255.0f), _raw._w); }
+			Color					scaledRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+			Color					scaledA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
 			void					scaleR(const float s) noexcept { _raw._x *= s; }
 			void					scaleG(const float s) noexcept { _raw._y *= s; }
 			void					scaleB(const float s) noexcept { _raw._z *= s; }
 			void					scaleA(const float s) noexcept { _raw._w *= s; }
-			Color					scaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
 			const bool				isTransparent() const noexcept;
 
 		private:

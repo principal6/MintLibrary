@@ -69,6 +69,12 @@ namespace fs
 		}
 
 
+		inline GuiContext::DockDatum::DockDatum()
+			: _dockedControlIndexShown{ 0 }
+		{
+			__noop;
+		}
+
 		FS_INLINE const bool GuiContext::DockDatum::hasDockedControls() const noexcept
 		{
 			return !_dockedControlHashArray.empty();
@@ -87,6 +93,29 @@ namespace fs
 		FS_INLINE const fs::Float2& GuiContext::DockDatum::getRawDockSizeXXX() const noexcept
 		{
 			return _rawDockSize;
+		}
+
+		FS_INLINE const int32 GuiContext::DockDatum::getDockedControlIndex(const uint64 dockedControlHashKey) const noexcept
+		{
+			const int32 dockedControlCount = static_cast<int32>(_dockedControlHashArray.size());
+			for (int32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
+			{
+				if (_dockedControlHashArray[dockedControlIndex] == dockedControlHashKey)
+				{
+					return dockedControlIndex;
+				}
+			}
+			return -1;
+		}
+
+		FS_INLINE const uint64 GuiContext::DockDatum::getDockedControlHashKey(const int32 dockedControlIndex) const noexcept
+		{
+			return _dockedControlHashArray[dockedControlIndex];
+		}
+
+		FS_INLINE const float GuiContext::DockDatum::getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept
+		{
+			return _dockedControlTitleBarOffsetArray[dockedControlIndex];
 		}
 
 
@@ -204,6 +233,11 @@ namespace fs
 			return _controlType;
 		}
 
+		FS_INLINE const wchar_t* GuiContext::ControlData::getText() const noexcept
+		{
+			return _text.c_str();
+		}
+
 		FS_INLINE const bool GuiContext::ControlData::isRootControl() const noexcept
 		{
 			return _controlType == ControlType::ROOT;
@@ -247,6 +281,12 @@ namespace fs
 		FS_INLINE const GuiContext::DockDatum& GuiContext::ControlData::getDockDatum(const DockingMethod dockingMethod) const noexcept
 		{
 			return _dockData[static_cast<uint32>(dockingMethod)];
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isShowingInDock(const ControlData& dockedControlData) const noexcept
+		{
+			const DockDatum& dockDatum = getDockDatum(dockedControlData._lastDockingMethod);			
+			return dockDatum.getDockedControlIndex(dockedControlData.getHashKey()) == dockDatum._dockedControlIndexShown;
 		}
 
 		FS_INLINE void GuiContext::ControlData::setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept
@@ -311,6 +351,11 @@ namespace fs
 		FS_INLINE void GuiContext::ControlData::disconnectFromDock() noexcept
 		{
 			_dockControlHashKey = 0;
+		}
+
+		FS_INLINE const uint64 GuiContext::ControlData::getDockControlHashKey() const noexcept
+		{
+			return _dockControlHashKey;
 		}
 
 		FS_INLINE const bool GuiContext::ControlData::isDocking() const noexcept
