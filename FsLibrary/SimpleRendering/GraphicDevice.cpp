@@ -26,6 +26,7 @@ namespace fs
 		GraphicDevice::GraphicDevice()
 			: _window{ nullptr }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
+			, _fullScreenViewport{}
 			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
 			, _resourcePool{ this }
 			, _rectangleRendererContext{ this }

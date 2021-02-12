@@ -7,8 +7,6 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsLibrary/ContiguousContainer/ContiguousVector.h>
-
 
 namespace fs
 {
@@ -118,7 +116,7 @@ namespace fs
 		T											_data;
 
 		TreeNodeAccessor<T>							_parentNodeAccessor;
-		fs::ContiguousVector<TreeNodeAccessor<T>>	_childNodeAccessorArray;
+		std::vector<TreeNodeAccessor<T>>			_childNodeAccessorArray;
 	};
 
 
@@ -169,7 +167,7 @@ namespace fs
 		const uint32							getAvailableNodeSlot();
 
 	private:
-		fs::ContiguousVector<TreeNode<T>>		_nodeArray;
+		std::vector<TreeNode<T>>				_nodeArray;
 		uint32									_nextNodeId;
 		uint32									_nodeCount;
 	};

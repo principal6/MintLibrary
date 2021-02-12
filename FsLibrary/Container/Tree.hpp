@@ -4,8 +4,6 @@
 #include <stdafx.h>
 #include <FsLibrary/Container/Tree.h>
 
-#include <FsLibrary/ContiguousContainer/ContiguousVector.hpp>
-
 
 namespace fs
 {
@@ -234,7 +232,7 @@ namespace fs
 		}
 
 		const TreeNode<T>& startNode = getNodeXXX(startNodeAccessor);
-		const uint32 childCount = startNode._childNodeAccessorArray.size();
+		const uint32 childCount = static_cast<uint32>(startNode._childNodeAccessorArray.size());
 		for (uint32 childIndex = 0; childIndex < childCount; ++childIndex)
 		{
 			TreeNodeAccessor<T> foundNodeAccessor = findNode(startNode._childNodeAccessorArray[childIndex], nodeData);
@@ -268,7 +266,7 @@ namespace fs
 		}
 
 		const TreeNode<T>& node = getNodeXXX(nodeAccessor);
-		return node._childNodeAccessorArray.size();
+		return static_cast<uint32>(node._childNodeAccessorArray.size());
 	}
 
 	template<typename T>
@@ -441,7 +439,7 @@ namespace fs
 			childNode.invalidate();
 
 			// childNodeAccessor 를 node 의 _childNodeAccessorArray 에서 제거
-			node._childNodeAccessorArray.erase(childAt); 
+			node._childNodeAccessorArray.erase(node._childNodeAccessorArray.begin() + childAt);
 
 			--_nodeCount;
 		}
@@ -454,7 +452,7 @@ namespace fs
 		{
 			TreeNode<T>& node = getNodeXXX(nodeAccessor);
 
-			const uint32 childCount = node._childNodeAccessorArray.size();
+			const uint32 childCount = static_cast<uint32>(node._childNodeAccessorArray.size());
 			if (0 < childCount)
 			{
 				for (uint32 childIndex = childCount - 1; childIndex != kUint32Max; --childIndex)
@@ -468,7 +466,7 @@ namespace fs
 					childNode.invalidate();
 
 					// childNodeAccessor 를 node 의 _childNodeAccessorArray 에서 제거
-					node._childNodeAccessorArray.erase(childIndex);
+					node._childNodeAccessorArray.erase(node._childNodeAccessorArray.begin() + childIndex);
 
 					--_nodeCount;
 				}
@@ -494,7 +492,7 @@ namespace fs
 		TreeNode<T>& oldParnetNode = _nodeArray[oldParentNodeAccessor._slotIndex];
 		{
 			uint32 childAt = kUint32Max;
-			const uint32 oldParentNodeChildCount = oldParnetNode._childNodeAccessorArray.size();
+			const uint32 oldParentNodeChildCount = static_cast<uint32>(oldParnetNode._childNodeAccessorArray.size());
 			for (uint32 childIndex = 0; childIndex < oldParentNodeChildCount; ++childIndex)
 			{
 				const TreeNodeAccessor<T>& childNodeAccessor = oldParnetNode._childNodeAccessorArray[childIndex];
@@ -507,7 +505,7 @@ namespace fs
 
 			FS_ASSERT("김장원", childAt != kUint32Max, "발생하면 안 되는 상황!!!");
 
-			oldParnetNode._childNodeAccessorArray.erase(childAt);
+			oldParnetNode._childNodeAccessorArray.erase(oldParnetNode._childNodeAccessorArray.begin() + childAt);
 		}
 
 		TreeNode<T>& node = _nodeArray[nodeAccessor._slotIndex];
@@ -522,7 +520,7 @@ namespace fs
 	{
 		while (true)
 		{
-			const uint32 slotCount = _nodeArray.size();
+			const uint32 slotCount = static_cast<uint32>(_nodeArray.size());
 			for (uint32 slotIndex = 0; slotIndex < slotCount; ++slotIndex)
 			{
 				TreeNode<T>& node = _nodeArray[slotIndex];
