@@ -935,10 +935,21 @@ namespace fs
 			//controlData._isFocusable = true;
 			controlData._delegateHashKey = controlData.getParentHashKey();
 			
+			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			const bool isParentControlDocking = parentControlData.isDocking();
 			ParamPrepareControlData paramPrepareControlData;
 			{
-				paramPrepareControlData._initialDisplaySize = titleBarSize;
-				paramPrepareControlData._deltaInteractionSize = fs::Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
+				if (isParentControlDocking == true)
+				{
+					const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(windowTitle, fs::StringUtil::wcslen(windowTitle));
+					const fs::Float2& displaySizeOverride = fs::Float2(textWidth + 16.0f, controlData._displaySize._y);
+					paramPrepareControlData._initialDisplaySize = displaySizeOverride;
+				}
+				else
+				{
+					paramPrepareControlData._initialDisplaySize = titleBarSize;
+					paramPrepareControlData._deltaInteractionSize = fs::Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
+				}
 				paramPrepareControlData._alwaysResetDisplaySize = true;
 				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
 			}
@@ -952,15 +963,11 @@ namespace fs
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			shapeFontRendererContext.setColor(titleBarColor);
-			if (parentControlData.isDocking() == true)
+			if (isParentControlDocking == true)
 			{
-				const float textWidth = shapeFontRendererContext.calculateTextWidth(windowTitle, fs::StringUtil::wcslen(windowTitle));
-				const fs::Float2& displaySizeOverride = fs::Float2(textWidth + 16.0f, controlData._displaySize._y);
-
-				shapeFontRendererContext.setPosition(controlCenterPosition - fs::Float4((controlData._displaySize._x - displaySizeOverride._x) * 0.5f, 0, 0, 0));
-				shapeFontRendererContext.drawRectangle(displaySizeOverride, 0.0f, 0.0f);
+				shapeFontRendererContext.setPosition(fs::Float4(controlCenterPosition._x, controlCenterPosition._y, 0, 0));
+				shapeFontRendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
 			}
 			else
 			{
@@ -1681,7 +1688,7 @@ namespace fs
 						changeTargetControlData.swapDockingStateContext();
 
 						_draggedControlInitialPosition = changeTargetControlData._position;
-
+						_focusedControlHashKey = changeTargetControlData.getHashKey();
 
 						changeTargetControlData.disconnectFromDock();
 					}
