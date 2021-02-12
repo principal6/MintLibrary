@@ -133,11 +133,11 @@ namespace fs
 			}
 		}
 
-		const bool GuiContext::isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept
+		const bool GuiContext::isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& controlPositionOffset, const fs::Float2& interactionSize) const noexcept
 		{
-			const fs::Float2 max = controlPosition + interactionSize;
-			if (controlPosition._x <= screenPosition._x && screenPosition._x <= max._x &&
-				controlPosition._y <= screenPosition._y && screenPosition._y <= max._y)
+			const fs::Float2 max = controlPosition + controlPositionOffset + interactionSize;
+			if (controlPosition._x + controlPositionOffset._x <= screenPosition._x && screenPosition._x <= max._x &&
+				controlPosition._y + controlPositionOffset._y <= screenPosition._y && screenPosition._y <= max._y)
 			{
 				return true;
 			}
@@ -146,15 +146,27 @@ namespace fs
 
 		const bool GuiContext::isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept
 		{
-			return isInControlInternal(screenPosition, controlData._position, controlData._interactionSize);
+			if (controlData.isDockHosting() == true)
+			{
+				const DockDatum& dockDatumLeftSide = controlData.getDockDatum(DockingMethod::LeftSide);
+				if (dockDatumLeftSide.hasDockedControls() == true)
+				{
+					return isInControlInternal(screenPosition, controlData._position, fs::Float2(controlData.getDockSize(DockingMethod::LeftSide)._x, 0.0f), controlData.getNonDockInteractionSize());
+				}
+				else
+				{
+					return isInControlInternal(screenPosition, controlData._position, fs::Float2::kZero, controlData.getNonDockInteractionSize());
+				}
+			}
+			return isInControlInternal(screenPosition, controlData._position, fs::Float2::kZero, controlData.getInteractionSize());
 		}
 
 		const bool GuiContext::isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept
 		{
 			const fs::Float2 extendedPosition = controlData._position - fs::Float2(kHalfBorderThickness);
-			const fs::Float2 extendedInteractionSize = controlData._interactionSize + fs::Float2(kHalfBorderThickness * 2.0f);
-			const fs::Float2 originalMax = controlData._position + controlData._interactionSize;
-			if (isInControlInternal(screenPosition, extendedPosition, extendedInteractionSize) == true)
+			const fs::Float2 extendedInteractionSize = controlData.getInteractionSize() + fs::Float2(kHalfBorderThickness * 2.0f);
+			const fs::Float2 originalMax = controlData._position + controlData.getInteractionSize();
+			if (isInControlInternal(screenPosition, extendedPosition, fs::Float2::kZero, extendedInteractionSize) == true)
 			{
 				outResizingMask.setAllFalse();
 
@@ -206,6 +218,27 @@ namespace fs
 			return false;
 		}
 
+		const bool GuiContext::shouldIgnoreInteraction(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept
+		{
+			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			if (controlData.getControlType() == ControlType::Window || parentControlData.hasChildWindow() == false)
+			{
+				return false;
+			}
+
+			// ParentControlData 가 Window 일 때만 여기에 온다.
+			const auto& childWindowHashKeyMap = parentControlData.getChildWindowHashKeyMap();
+			for (const auto& iter : childWindowHashKeyMap)
+			{
+				const ControlData& childWindowControlData = getControlData(iter.first);
+				if (isInControlInteractionArea(screenPosition, childWindowControlData) == true)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		const bool GuiContext::isPositionInRect(const fs::Float2& position, const Rect& rect) const noexcept
 		{
 			return (rect.left() <= position._x && position._x <= rect.right() && rect.top() <= position._y && position._y <= rect.bottom());
@@ -233,6 +266,15 @@ namespace fs
 				paramPrepareControlData._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f;
 				paramPrepareControlData._alwaysResetPosition = false;
 				paramPrepareControlData._viewportUsage = ViewportUsage::Parent; // ROOT
+
+				if (windowControlData.isDockHosting() == true)
+				{
+					paramPrepareControlData._deltaInteractionSizeByDock = -windowControlData.getHorzDockSizeSum();
+				}
+				else
+				{
+					paramPrepareControlData._deltaInteractionSizeByDock.setZero();
+				}
 			}
 			nextNoAutoPositioned();
 			prepareControlData(windowControlData, paramPrepareControlData);
@@ -260,7 +302,14 @@ namespace fs
 			{
 				if (isParentAlsoWindow == true)
 				{
-					windowControlData.setViewportIndexXXX(parentControlData.getChildViewportIndex());
+					if (windowControlData.isDocking() == true)
+					{
+						windowControlData.setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
+					}
+					else
+					{
+						windowControlData.setViewportIndexXXX(parentControlData.getViewportIndexForChildren());
+					}
 				}
 
 				// ScrollBar state
@@ -268,28 +317,67 @@ namespace fs
 				const bool hasScrollBarVert = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert);
 				const bool hasScrollBarHorz = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz);
 
-				// Viewport & ScissorRectangle for child controls !!!
-				windowControlData.setChildViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
-				D3D11_RECT scissorRectangleForChild;
-				scissorRectangleForChild.left = static_cast<LONG>(windowControlData._position._x + paramPrepareControlData._innerPadding.left());
-				scissorRectangleForChild.top = static_cast<LONG>(windowControlData._position._y + paramPrepareControlData._innerPadding.top() + kTitleBarBaseSize._y);
-				scissorRectangleForChild.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - paramPrepareControlData._innerPadding.left() - paramPrepareControlData._innerPadding.right() - ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f));
-				scissorRectangleForChild.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.top() - paramPrepareControlData._innerPadding.bottom() - ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f));
-				if (isParentAlsoWindow == true)
+				// Viewport & ScissorRectangle for docks !!!
 				{
-					const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getChildViewportIndex()];
-					scissorRectangleForChild.left = fs::max(scissorRectangleForChild.left, parentScissorRectangle.left);
-					scissorRectangleForChild.right = fs::min(scissorRectangleForChild.right, parentScissorRectangle.right);
-					scissorRectangleForChild.top = fs::max(scissorRectangleForChild.top, parentScissorRectangle.top);
-					scissorRectangleForChild.bottom = fs::min(scissorRectangleForChild.bottom, parentScissorRectangle.bottom);
+					windowControlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
 
-					// ScissorRectangle 에 음수가 들어가는 것 방지!! (중요)
-					scissorRectangleForChild.right = fs::max(scissorRectangleForChild.left, scissorRectangleForChild.right);
-					scissorRectangleForChild.bottom = fs::max(scissorRectangleForChild.top, scissorRectangleForChild.bottom);
+					D3D11_RECT scissorRectangleForDocks;
+					scissorRectangleForDocks.left = static_cast<LONG>(windowControlData._position._x + paramPrepareControlData._innerPadding.left());
+					scissorRectangleForDocks.top = static_cast<LONG>(windowControlData._position._y + paramPrepareControlData._innerPadding.top() + kTitleBarBaseSize._y);
+					scissorRectangleForDocks.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - paramPrepareControlData._innerPadding.left() - paramPrepareControlData._innerPadding.right());
+					scissorRectangleForDocks.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.top() - paramPrepareControlData._innerPadding.bottom());
+					
+					if (isParentAlsoWindow == true)
+					{
+						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
+						scissorRectangleForDocks.left = fs::max(scissorRectangleForDocks.left, parentScissorRectangle.left);
+						scissorRectangleForDocks.right = fs::min(scissorRectangleForDocks.right, parentScissorRectangle.right);
+						scissorRectangleForDocks.top = fs::max(scissorRectangleForDocks.top, parentScissorRectangle.top);
+						scissorRectangleForDocks.bottom = fs::min(scissorRectangleForDocks.bottom, parentScissorRectangle.bottom);
+
+						// ScissorRectangle 에 음수가 들어가는 것 방지!! (중요)
+						scissorRectangleForDocks.right = fs::max(scissorRectangleForDocks.left, scissorRectangleForDocks.right);
+						scissorRectangleForDocks.bottom = fs::max(scissorRectangleForDocks.top, scissorRectangleForDocks.bottom);
+					}
+					_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForDocks);
+					_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 				}
-				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChild);
-				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+
+				// Viewport & ScissorRectangle for child controls !!!
+				{
+					windowControlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
+
+					const DockDatum& dockDatumLeftSide = windowControlData.getDockDatum(DockingMethod::LeftSide);
+					const DockDatum& dockDatumRightSide = windowControlData.getDockDatum(DockingMethod::RightSide);
+					D3D11_RECT scissorRectangleForChildren;
+					scissorRectangleForChildren.left = static_cast<LONG>(windowControlData._position._x + paramPrepareControlData._innerPadding.left());
+					if (dockDatumLeftSide.hasDockedControls() == true)
+					{
+						scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSize(DockingMethod::LeftSide)._x);
+					}
+					scissorRectangleForChildren.top = static_cast<LONG>(windowControlData._position._y + paramPrepareControlData._innerPadding.top() + kTitleBarBaseSize._y);
+					scissorRectangleForChildren.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - paramPrepareControlData._innerPadding.left() - paramPrepareControlData._innerPadding.right() - ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f));
+					if (dockDatumRightSide.hasDockedControls() == true)
+					{
+						scissorRectangleForChildren.right -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::RightSide)._x);
+					}
+					scissorRectangleForChildren.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.top() - paramPrepareControlData._innerPadding.bottom() - ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f));
+					
+					if (isParentAlsoWindow == true)
+					{
+						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
+						scissorRectangleForChildren.left = fs::max(scissorRectangleForChildren.left, parentScissorRectangle.left);
+						scissorRectangleForChildren.right = fs::min(scissorRectangleForChildren.right, parentScissorRectangle.right);
+						scissorRectangleForChildren.top = fs::max(scissorRectangleForChildren.top, parentScissorRectangle.top);
+						scissorRectangleForChildren.bottom = fs::min(scissorRectangleForChildren.bottom, parentScissorRectangle.bottom);
+
+						// ScissorRectangle 에 음수가 들어가는 것 방지!! (중요)
+						scissorRectangleForChildren.right = fs::max(scissorRectangleForChildren.left, scissorRectangleForChildren.right);
+						scissorRectangleForChildren.bottom = fs::max(scissorRectangleForChildren.top, scissorRectangleForChildren.bottom);
+					}
+					_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChildren);
+					_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+				}
 			}
 
 			const bool isOpen = windowControlData.isControlState(ControlState::VisibleOpen);
@@ -538,11 +626,11 @@ namespace fs
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			static std::function fnCalculatePureWindowWidth = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return windowControlData._displaySize._x - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f);
+				return fs::max(0.0f, windowControlData._displaySize._x - windowControlData.getHorzDockSizeSum()._x - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f));
 			};
 			static std::function fnCalculatePureWindowHeight = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return windowControlData._displaySize._y - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f);
+				return fs::max(0.0f, windowControlData._displaySize._y - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f));
 			};
 
 			ControlData& parentWindowControlData = getControlDataStackTopXXX();
@@ -565,8 +653,18 @@ namespace fs
 				{
 					paramPrepareControlDataTrack._initialDisplaySize._x = kScrollBarThickness;
 					paramPrepareControlDataTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentWindowControlData, parentWindowControlScrollBarState);
+
 					paramPrepareControlDataTrack._desiredPositionInParent._x = parentWindowControlData._displaySize._x - kHalfBorderThickness * 2.0f;
+					if (parentWindowControlData.isDockHosting() == true)
+					{
+						const DockDatum& rightSideDockDatum = parentWindowControlData.getDockDatum(DockingMethod::RightSide);
+						if (rightSideDockDatum.hasDockedControls() == true)
+						{
+							paramPrepareControlDataTrack._desiredPositionInParent._x -= parentWindowControlData.getDockSize(DockingMethod::RightSide)._x;
+						}
+					}
 					paramPrepareControlDataTrack._desiredPositionInParent._y = kTitleBarBaseSize._y + parentWindowControlData.getInnerPadding().top();
+
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
 					paramPrepareControlDataTrack._alwaysResetPosition = true;
@@ -609,8 +707,10 @@ namespace fs
 						{
 							paramPrepareControlDataThumb._initialDisplaySize._x = kScrollBarThickness;
 							paramPrepareControlDataThumb._initialDisplaySize._y = thumbSize;
+							
 							paramPrepareControlDataThumb._desiredPositionInParent._x = paramPrepareControlDataTrack._desiredPositionInParent._x - kScrollBarThickness * 0.5f;
 							paramPrepareControlDataThumb._desiredPositionInParent._y = paramPrepareControlDataTrack._desiredPositionInParent._y;
+
 							paramPrepareControlDataThumb._parentHashKeyOverride = parentWindowControlData.getHashKey();
 							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
 							paramPrepareControlDataThumb._ignoreForClientSize = true;
@@ -681,8 +781,18 @@ namespace fs
 				{
 					paramPrepareControlDataTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentWindowControlData, parentWindowControlScrollBarState);
 					paramPrepareControlDataTrack._initialDisplaySize._y = kScrollBarThickness;
+
 					paramPrepareControlDataTrack._desiredPositionInParent._x = parentWindowControlData.getInnerPadding().left();
+					if (parentWindowControlData.isDockHosting() == true)
+					{
+						const DockDatum& leftSideDockDatum = parentWindowControlData.getDockDatum(DockingMethod::LeftSide);
+						if (leftSideDockDatum.hasDockedControls() == true)
+						{
+							paramPrepareControlDataTrack._desiredPositionInParent._x += parentWindowControlData.getDockSize(DockingMethod::LeftSide)._x;
+						}
+					}
 					paramPrepareControlDataTrack._desiredPositionInParent._y = parentWindowControlData._displaySize._y - kHalfBorderThickness * 2.0f;
+					
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
 					paramPrepareControlDataTrack._alwaysResetPosition = true;
@@ -725,8 +835,10 @@ namespace fs
 						{
 							paramPrepareControlDataThumb._initialDisplaySize._x = thumbSize;
 							paramPrepareControlDataThumb._initialDisplaySize._y = kScrollBarThickness;
+
 							paramPrepareControlDataThumb._desiredPositionInParent._x = paramPrepareControlDataTrack._desiredPositionInParent._x;
 							paramPrepareControlDataThumb._desiredPositionInParent._y = paramPrepareControlDataTrack._desiredPositionInParent._y - kScrollBarThickness * 0.5f;
+							
 							paramPrepareControlDataThumb._parentHashKeyOverride = parentWindowControlData.getHashKey();
 							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
 							paramPrepareControlDataThumb._alwaysResetPosition = false; // 중요!
@@ -797,18 +909,17 @@ namespace fs
 				for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
 				{
 					const DockDatum& dockDatum = controlData.getDockDatum(dockingMethodIter);
-					if (dockDatum._dockedControlHashArray.empty() == false)
+					if (dockDatum.hasDockedControls() == true)
 					{
 						const fs::Float2& dockPosition = controlData.getDockPosition(dockingMethodIter);
 
-						//shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-						shapeFontRendererContext.setViewportIndex(controlData.getChildViewportIndex());
+						shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
 						
 						//shapeFontRendererContext.setColor(getNamedColor(NamedColor::WindowFocused));
 						shapeFontRendererContext.setColor(getNamedColor(NamedColor::PressedState));
-						shapeFontRendererContext.setPosition(fs::Float4(dockPosition._x + dockDatum._dockSize._x * 0.5f, dockPosition._y + dockDatum._dockSize._y * 0.5f, 0, 0));
+						shapeFontRendererContext.setPosition(fs::Float4(dockPosition._x + controlData.getDockSize(dockingMethodIter)._x * 0.5f, dockPosition._y + controlData.getDockSize(dockingMethodIter)._y * 0.5f, 0, 0));
 
-						shapeFontRendererContext.drawRectangle(dockDatum._dockSize, 0.0f, 0.0f);
+						shapeFontRendererContext.drawRectangle(controlData.getDockSize(dockingMethodIter), 0.0f, 0.0f);
 					}
 				}
 			}
@@ -826,7 +937,7 @@ namespace fs
 
 			ControlData& controlData = getControlData(windowTitle, controlType);
 			controlData._isDraggable = true;
-			controlData._isFocusable = true;
+			//controlData._isFocusable = true;
 			controlData._delegateHashKey = controlData.getParentHashKey();
 			
 			ParamPrepareControlData paramPrepareControlData;
@@ -866,9 +977,9 @@ namespace fs
 			}
 
 			const fs::Float4& titleBarTextPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
-			const bool needToColorOutOfFocus_ = needToColorOutOfFocus(parentControlData);
+			const bool needToColorFocused_ = needToColorFocused(parentControlData);
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setTextColor((needToColorOutOfFocus_ == true) ? getNamedColor(NamedColor::DarkFont) : getNamedColor(NamedColor::LightFont));
+			shapeFontRendererContext.setTextColor((needToColorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
 			shapeFontRendererContext.drawDynamicText(windowTitle, titleBarTextPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, 0.9375f);
 
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
@@ -1069,11 +1180,15 @@ namespace fs
 				parentChildControlArray.emplace_back(controlData);
 			}
 
-			// Has child window
+			// Child window
 			const ControlType controlType = controlData.getControlType();
 			if (controlType == ControlType::Window)
 			{
-				const_cast<bool&>(parentControlData.hasChildWindowInternalXXX()) = true;
+				const uint64 controlHashKey = controlData.getHashKey();
+				if (parentControlData.hasChildWindowConnected(controlHashKey) == false)
+				{
+					parentControlData.connectChildWindow(controlHashKey);
+				}
 			}
 
 			// Inner padding
@@ -1097,7 +1212,12 @@ namespace fs
 			}
 
 			// Interaction size!!!
-			controlData._interactionSize = controlData._displaySize + controlDataParam._deltaInteractionSize;
+			{
+				fs::Float2& controlInteractionSize = const_cast<fs::Float2&>(controlData.getInteractionSize());
+				fs::Float2& controlContentInteractionSize = const_cast<fs::Float2&>(controlData.getNonDockInteractionSize());
+				controlInteractionSize = controlData._displaySize + controlDataParam._deltaInteractionSize;
+				controlContentInteractionSize = controlInteractionSize + controlDataParam._deltaInteractionSizeByDock;
+			}
 
 			// Position, Parent offset, Parent child at, Parent client size
 			if (_nextNoAutoPositioned == false)
@@ -1124,6 +1244,16 @@ namespace fs
 					}
 
 					parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._displayOffset._x; // @중요
+					
+					if (parentControlData.isDockHosting() == true)
+					{
+						const DockDatum& leftSideDockDatum = parentControlData.getDockDatum(DockingMethod::LeftSide);
+						if (leftSideDockDatum.hasDockedControls() == true)
+						{
+							parentControlChildAt._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
+						}
+					}
+
 					if (0.0f < parentControlNextChildOffset._y)
 					{
 						deltaY = parentControlNextChildOffset._y;
@@ -1190,7 +1320,7 @@ namespace fs
 
 			// Viewport index
 			{
-				controlData.setViewportIndexXXX((controlDataParam._viewportUsage == ViewportUsage::Parent) ? parentControlData.getViewportIndex() : parentControlData.getChildViewportIndex());
+				controlData.setViewportIndexXXX((controlDataParam._viewportUsage == ViewportUsage::Parent) ? parentControlData.getViewportIndex() : parentControlData.getViewportIndexForChildren());
 			}
 		}
 
@@ -1210,7 +1340,7 @@ namespace fs
 				outBackgroundColor = pressedColor;
 			}
 
-			if (needToColorOutOfFocus(controlData) == true)
+			if (needToColorFocused(controlData) == false)
 			{
 				// Out-of-focus alpha
 				outBackgroundColor.scaleA(kDefaultOutOfFocusAlpha);
@@ -1234,15 +1364,12 @@ namespace fs
 				_focusedControlHashKey = controlHashKey;
 			}
 
-			bool isFocused = false;
-			if (controlHashKey == _focusedControlHashKey)
+			if (needToColorFocused(controlData) == true)
 			{
 				// Focused
 
 				outBackgroundColor = focusedColor;
 				outBackgroundColor.a(kDefaultFocusedAlpha);
-
-				isFocused = true;
 			}
 			else
 			{
@@ -1254,18 +1381,18 @@ namespace fs
 
 			processControlCommonInternal(controlData);
 
-			return isFocused;
+			return isControlFocused(controlData);
 		}
 
 		void GuiContext::processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone) noexcept
 		{
 			processControlInteractionInternal(controlData, doNotSetMouseInteractionDone);
 
-			if (needToColorOutOfFocus(controlData) == false)
+			if (needToColorFocused(controlData) == true)
 			{
 				outBackgroundColor.scaleA(kDefaultFocusedAlpha);
 			}
-			else if (_focusedControlHashKey != controlData.getHashKey())
+			else
 			{
 				outBackgroundColor.scaleA(kDefaultOutOfFocusAlpha);
 			}
@@ -1287,7 +1414,7 @@ namespace fs
 				outBackgroundColor = dragColor;
 			}
 
-			if (needToColorOutOfFocus(controlData) == true)
+			if (needToColorFocused(controlData) == false)
 			{
 				outBackgroundColor.scaleA(kDefaultOutOfFocusAlpha);
 			}
@@ -1327,15 +1454,17 @@ namespace fs
 				return;
 			}
 
-			if (_isMouseInteractionDonePerFrame == true)
+			// Docking 중이라면 우선순위가 높다!!
+			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			if (parentControlData.isDocking() == false && controlData.isDocking() == false && _isMouseInteractionDonePerFrame == true)
 			{
 				return;
 			}
 
-			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			const bool shouldIgnoreInteraction_ = shouldIgnoreInteraction(_mousePosition, controlData);
 			const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mousePosition, parentControlData);
 			const bool isMouseInInteractionArea = isInControlInteractionArea(_mousePosition, controlData);
-			if (isMouseInParentInteractionArea == true && isMouseInInteractionArea == true)
+			if (isMouseInParentInteractionArea == true && isMouseInInteractionArea == true && shouldIgnoreInteraction_ == false)
 			{
 				// Hovered
 
@@ -1446,7 +1575,7 @@ namespace fs
 					const float newPositionX = _resizedControlInitialPosition._x - mouseDeltaPosition._x * flipHorz;
 					const float newDisplaySizeX = _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz;
 
-					if (changeTargetControlData.getDisplaySizeMin()._x < newDisplaySizeX)
+					if (changeTargetControlData.getDisplaySizeMin()._x + changeTargetControlData.getHorzDockSizeSum()._x < newDisplaySizeX)
 					{
 						if (flipHorz < 0.0f)
 						{
@@ -1472,25 +1601,29 @@ namespace fs
 
 				if (changeTargetControlData.isDocking() == true)
 				{
+					// 내가 Docking 중인 컨트롤이라면 부모의 Dock 크기도 같이 변경해줘야 한다.
+
 					ControlData& changeTargetParentControlData = getControlData(changeTargetControlData.getParentHashKey());
-					DockDatum& changeTargetParentControlDockDatum = changeTargetParentControlData.getDockDatum(changeTargetControlData._lastDockingMethod);
-					changeTargetParentControlDockDatum._dockSize = changeTargetControlDisplaySize;
+					changeTargetParentControlData.setDockSize(changeTargetControlData._lastDockingMethod, changeTargetControlDisplaySize);
 				}
 				else if (changeTargetControlData._dockingControlType == DockingControlType::Dock || changeTargetControlData._dockingControlType == DockingControlType::DockerDock)
 				{
+					// 내가 DockHosting 중인지 확인
+
 					for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
 					{
 						const DockDatum& dockDatum = changeTargetControlData.getDockDatum(dockingMethodIter);
 						const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlHashArray.size());
 						if (0 < dockedControlCount)
 						{
-							// Docked Control 의 위치를 갱신해줘야 한다!
+							// Docked Control 의 위치와 크기를 갱신해줘야 한다!!
 
 							for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
 							{
 								const uint64 dockedControlHashKey = dockDatum._dockedControlHashArray[dockedControlIndex];
 								ControlData& dockedControlData = getControlData(dockedControlHashKey);
 								dockedControlData._position = changeTargetControlData.getDockPosition(dockingMethodIter);
+								dockedControlData._displaySize = changeTargetControlData.getDockSize(dockingMethodIter);
 							}
 						}
 					}
@@ -1530,6 +1663,7 @@ namespace fs
 					if (kDockingBreakDistance < std::abs(mouseDeltaPosition._x) || kDockingBreakDistance < std::abs(mouseDeltaPosition._y))
 					{
 						ControlData& changeTargetParentControlData = getControlData(changeTargetControlData.getParentHashKey());
+
 						DockDatum& changeTargetParentControlDockDatum = changeTargetParentControlData.getDockDatum(changeTargetControlData._lastDockingMethod);
 						const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(changeTargetParentControlDockDatum._dockedControlHashArray.size());
 						int32 indexToErase = -1;
@@ -1552,6 +1686,7 @@ namespace fs
 						changeTargetControlData.swapDockingStateContext();
 
 						_draggedControlInitialPosition = changeTargetControlData._position;
+
 
 						changeTargetControlData.disconnectFromDock();
 					}
@@ -1592,10 +1727,10 @@ namespace fs
 			};
 			static std::function fnRenderPreview = [&](const Rect& previewRect)
 			{
-				_shapeFontRendererContextBackground.setViewportIndex(0);
-				_shapeFontRendererContextBackground.setColor(color.scaleA(0.5f));
-				_shapeFontRendererContextBackground.setPosition(fs::Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
-				_shapeFontRendererContextBackground.drawRectangle(previewRect.size(), 0.0f, 0.0f);
+				_shapeFontRendererContextTopMost.setViewportIndex(0);
+				_shapeFontRendererContextTopMost.setColor(color.scaleA(0.5f));
+				_shapeFontRendererContextTopMost.setPosition(fs::Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
+				_shapeFontRendererContextTopMost.drawRectangle(previewRect.size(), 0.0f, 0.0f);
 			};
 
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
@@ -1629,16 +1764,16 @@ namespace fs
 						fnRenderDockingBox(interactionBoxRect, parentControlData);
 
 						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::LeftSide);
-						if (parentControlDockDatum._dockSize != fs::Float2::kZero)
+						if (parentControlDockDatum.isRawDockSizeSet() == true)
 						{
-							previewRect.right(previewRect.left() + parentControlDockDatum._dockSize._x);
-							previewRect.bottom(previewRect.top() + parentControlDockDatum._dockSize._y);
+							previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::LeftSide)._x);
+							previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::LeftSide)._y);
 
 							fnRenderPreview(previewRect);
 						}
 						else
 						{
-							parentControlDockDatum._dockSize = previewRect.size();
+							parentControlDockDatum.setRawDockSize(previewRect.size());
 
 							fnRenderPreview(previewRect);
 						}
@@ -1665,16 +1800,16 @@ namespace fs
 						fnRenderDockingBox(interactionBoxRect, parentControlData);
 
 						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::RightSide);
-						if (parentControlDockDatum._dockSize != fs::Float2::kZero)
+						if (parentControlDockDatum.isRawDockSizeSet() == true)
 						{
-							previewRect.left(previewRect.right() - parentControlDockDatum._dockSize._x);
-							previewRect.bottom(previewRect.top() + parentControlDockDatum._dockSize._y);
+							previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::RightSide)._x);
+							previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::RightSide)._y);
 
 							fnRenderPreview(previewRect);
 						}
 						else
 						{
-							parentControlDockDatum._dockSize = previewRect.size();
+							parentControlDockDatum.setRawDockSize(previewRect.size());
 
 							fnRenderPreview(previewRect);
 						}
@@ -1687,6 +1822,8 @@ namespace fs
 				{
 					if (controlData.isDocking() == false)
 					{
+						// Docking 시작.
+
 						controlData.swapDockingStateContext();
 
 						if (controlData._lastDockingMethod != controlData._lastDockingMethodCandidate)
@@ -1699,13 +1836,19 @@ namespace fs
 						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(controlData._lastDockingMethod);
 						if (controlData._lastDockingMethod != controlData._lastDockingMethodCandidate)
 						{
-							controlData._displaySize = parentControlDockDatum._dockSize;
+							controlData._displaySize = parentControlData.getDockSize(controlData._lastDockingMethod);
 						}
 						parentControlDockDatum._dockedControlHashArray.emplace_back(controlData.getHashKey());
 
 						controlData._resizingMask = ResizingMask::fromDockingMethod(controlData._lastDockingMethod);
 						controlData._position = parentControlData.getDockPosition(controlData._lastDockingMethod);
 						controlData.connectToDock(parentControlData.getHashKey());
+
+						// 내가 Focus 였다면 부모로 옮기자!
+						if (isControlFocused(controlData) == true)
+						{
+							_focusedControlHashKey = parentControlData.getHashKey();
+						}
 
 						_draggedControlHashKey = 0;
 					}
@@ -1725,7 +1868,7 @@ namespace fs
 				const ControlData& focusedControlData = getControlData(_focusedControlHashKey);
 				if (isInControlInteractionArea(_mousePosition, focusedControlData) == true || isInControlBorderArea(_mousePosition, focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
 				{
-					// 마우스가 Focus Control 과 상호작용할 경우
+					// 마우스가 Focus Control 과 상호작용할 경우 나와는 상호작용하지 않는것으로 판단!!
 					return false;
 				}
 			}
@@ -1848,13 +1991,13 @@ namespace fs
 			return isAncestorFocusedRecursiveXXX(parentHashKey);
 		}
 
-		const bool GuiContext::needToColorOutOfFocus(const ControlData& controlData) const noexcept
+		const bool GuiContext::needToColorFocused(const ControlData& controlData) const noexcept
 		{
-			const ControlData& closestFocusableAncestor = getClosestFocusableAncestorInternal(controlData);
-			return (closestFocusableAncestor.isDocking() == false && isControlFocused(closestFocusableAncestor) == false);
+			const ControlData& closestFocusableAncestor = getClosestFocusableAncestorInclusiveInternal(controlData);
+			return (closestFocusableAncestor.isDockHosting() == true || closestFocusableAncestor.isDocking() == true || isControlFocused(closestFocusableAncestor) == true);
 		}
 
-		const GuiContext::ControlData& GuiContext::getClosestFocusableAncestorInternal(const ControlData& controlData) const noexcept
+		const GuiContext::ControlData& GuiContext::getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept
 		{
 			if (controlData.getHashKey() == 0)
 			{
@@ -1867,7 +2010,7 @@ namespace fs
 				return controlData;
 			}
 
-			return getClosestFocusableAncestorInternal(getControlData(controlData.getParentHashKey()));
+			return getClosestFocusableAncestorInclusiveInternal(getControlData(controlData.getParentHashKey()));
 		}
 
 		void GuiContext::render()

@@ -142,8 +142,18 @@ namespace fs
 			class DockDatum
 			{
 			public:
-				fs::Float2				_dockSize;
-				std::vector<uint64>		_dockedControlHashArray;
+				const bool					hasDockedControls() const noexcept;
+
+			public:
+				const bool					isRawDockSizeSet() const noexcept;
+				void						setRawDockSize(const fs::Float2& rawDockSize) noexcept;
+				const fs::Float2&			getRawDockSizeXXX() const noexcept;
+
+			public:
+				std::vector<uint64>			_dockedControlHashArray;
+			
+			private:
+				fs::Float2					_rawDockSize;
 			};
 
 
@@ -157,91 +167,103 @@ namespace fs
 			class ControlData
 			{
 			public:
-													ControlData();
-													ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType);
-													ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const fs::Float2& size);
+															ControlData();
+															ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType);
+															ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const fs::Float2& size);
 			
 			public:
-				void								clearPerFrameData() noexcept;
+				void										clearPerFrameData() noexcept;
 
 			public:
-				const uint64						getHashKey() const noexcept;
-				const uint64						getParentHashKey() const noexcept;
-				const Rect&							getInnerPadding() const noexcept;
-				fs::Float2							getClientSize() const noexcept;
-				const fs::Float2&					getDisplaySizeMin() const noexcept;
-				const fs::Float2&					getContentAreaSize() const noexcept;
-				const fs::Float2&					getPreviousContentAreaSize() const noexcept;
-				const fs::Float2&					getChildAt() const noexcept;
-				const fs::Float2&					getNextChildOffset() const noexcept;
-				const ControlType					getControlType() const noexcept;
-				const bool							isControlState(const ControlState controlState) const noexcept;
-				const uint32						getViewportIndex() const noexcept;
-				const uint32						getChildViewportIndex() const noexcept;
-				const std::vector<ControlData>&		getChildControlDataArray() const noexcept;
-				const bool&							hasChildWindow() const noexcept;
-				DockDatum&							getDockDatum(const DockingMethod dockingMethod) noexcept;
-				const DockDatum&					getDockDatum(const DockingMethod dockingMethod) const noexcept;
-				const fs::Float2					getDockOffsetSize(const DockingMethod dockingMethod) const noexcept;
-				const fs::Float2					getDockPosition(const DockingMethod dockingMethod) const noexcept;
-				void								connectToDock(const uint64 dockControlHashKey) noexcept;
-				void								disconnectFromDock() noexcept;
-				const bool							isDocking() const noexcept;
-				const bool							isDockHosting() const noexcept;
-				const bool							isResizable() const noexcept;
+				const uint64								getHashKey() const noexcept;
+				const uint64								getParentHashKey() const noexcept;
+				const Rect&									getInnerPadding() const noexcept;
+				fs::Float2									getClientSize() const noexcept;
+				const fs::Float2&							getDisplaySizeMin() const noexcept;
+				const fs::Float2&							getInteractionSize() const noexcept;
+				const fs::Float2&							getNonDockInteractionSize() const noexcept;
+				const fs::Float2&							getContentAreaSize() const noexcept;
+				const fs::Float2&							getPreviousContentAreaSize() const noexcept;
+				const fs::Float2&							getChildAt() const noexcept;
+				const fs::Float2&							getNextChildOffset() const noexcept;
+				const ControlType							getControlType() const noexcept;
+				const bool									isControlState(const ControlState controlState) const noexcept;
+				const uint32								getViewportIndex() const noexcept;
+				const uint32								getViewportIndexForChildren() const noexcept;
+				const uint32								getViewportIndexForDocks() const noexcept;
+				const std::vector<ControlData>&				getChildControlDataArray() const noexcept;
+				const bool									hasChildWindow() const noexcept;
+				DockDatum&									getDockDatum(const DockingMethod dockingMethod) noexcept;
+				const DockDatum&							getDockDatum(const DockingMethod dockingMethod) const noexcept;
+				void										setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept;
+				const fs::Float2							getDockSize(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2							getDockOffsetSize(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2							getDockPosition(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2							getHorzDockSizeSum() const noexcept;
+				void										connectToDock(const uint64 dockControlHashKey) noexcept;
+				void										disconnectFromDock() noexcept;
+				const bool									isDocking() const noexcept;
+				const bool									isDockHosting() const noexcept;
+				const bool									isResizable() const noexcept;
 			
 			public:
-				const bool&							hasChildWindowInternalXXX() const noexcept;
+				const bool									hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept;
+				void										connectChildWindow(const uint64 childWindowHashKey) noexcept;
+				void										disconnectChildWindow(const uint64 childWindowHashKey) noexcept;
+				const std::unordered_map<uint64, bool>&		getChildWindowHashKeyMap() const noexcept;
 
 			public:
-				void								setControlState(const ControlState controlState) noexcept;
-				void								swapDockingStateContext() noexcept;
+				void										setControlState(const ControlState controlState) noexcept;
+				void										swapDockingStateContext() noexcept;
 			
 			public:
-				void								setParentHashKeyXXX(const uint64 parentHashKey) noexcept;
-				void								setOffsetY_XXX(const float offsetY) noexcept;
-				void								setViewportIndexXXX(const uint32 viewportIndex) noexcept;
-				void								setChildViewportIndexXXX(const uint32 viewportIndex) noexcept;
+				void										setParentHashKeyXXX(const uint64 parentHashKey) noexcept;
+				void										setOffsetY_XXX(const float offsetY) noexcept;
+				void										setViewportIndexXXX(const uint32 viewportIndex) noexcept;
+				void										setViewportIndexForChildrenXXX(const uint32 viewportIndex) noexcept;
+				void										setViewportIndexForDocksXXX(const uint32 viewportIndex) noexcept;
 
 			public:
-				fs::Float2							_displaySize;
-				fs::Float2							_interactionSize;
-				fs::Float2							_position; // In screen space, at left-top corner
-				fs::Float2							_deltaPosition;
-				fs::Float2							_displayOffset; // Used for scrolling child controls (of Window control)
-				bool								_isFocusable;
-				ResizingMask						_resizingMask;
-				bool								_isDraggable;
-				Rect								_draggingConstraints; // MUST set all four values if want to limit dragging area
-				uint64								_delegateHashKey; // Used for drag, resize and focus
-				DockingControlType					_dockingControlType;
-				DockingMethod						_lastDockingMethod;
-				DockingMethod						_lastDockingMethodCandidate;
-				std::wstring						_text;
+				fs::Float2									_displaySize;
+				fs::Float2									_position; // In screen space, at left-top corner
+				fs::Float2									_deltaPosition;
+				fs::Float2									_displayOffset; // Used for scrolling child controls (of Window control)
+				bool										_isFocusable;
+				ResizingMask								_resizingMask;
+				bool										_isDraggable;
+				Rect										_draggingConstraints; // MUST set all four values if want to limit dragging area
+				uint64										_delegateHashKey; // Used for drag, resize and focus
+				DockingControlType							_dockingControlType;
+				DockingMethod								_lastDockingMethod;
+				DockingMethod								_lastDockingMethodCandidate;
+				std::wstring								_text;
 
 				// [Window] ScrollBar type
 				// [ScrollBar] Thumb at [0, 1]
-				ControlValue						_internalValue;
+				ControlValue								_internalValue;
 
 			private:
-				uint64								_hashKey;
-				uint64								_parentHashKey;
-				Rect								_innerPadding; // For child controls
-				fs::Float2							_displaySizeMin;
-				fs::Float2							_contentAreaSize; // Could be smaller or larger than _displaySize
-				fs::Float2							_previousContentAreaSize;
-				fs::Float2							_childAt; // In screen space, Next child control will be positioned according to this
-				fs::Float2							_nextChildOffset; // Every new child sets this offset to calculate next _childAt
-				ControlType							_controlType;
-				ControlState						_controlState;
-				uint32								_viewportIndex;
-				uint32								_childViewportIndex; // Used by window
-				std::vector<ControlData>			_childControlDataArray;
-				bool								_hasChildWindow;
-				bool								_previousHasChildWindow;
-				DockDatum							_dockData[static_cast<uint32>(DockingMethod::COUNT)];
-				uint64								_dockControlHashKey;
-				DockingStateContext					_dokcingStateContext;
+				uint64										_hashKey;
+				uint64										_parentHashKey;
+				Rect										_innerPadding; // For child controls
+				fs::Float2									_displaySizeMin;
+				fs::Float2									_interactionSize; // _nonDockInteractionSize + dock size
+				fs::Float2									_nonDockInteractionSize; // Exluces dock area
+				fs::Float2									_contentAreaSize; // Could be smaller or larger than _displaySize
+				fs::Float2									_previousContentAreaSize;
+				fs::Float2									_childAt; // In screen space, Next child control will be positioned according to this
+				fs::Float2									_nextChildOffset; // Every new child sets this offset to calculate next _childAt
+				ControlType									_controlType;
+				ControlState								_controlState;
+				uint32										_viewportIndex;
+				uint32										_viewportIndexForChildren; // Used by window
+				uint32										_viewportIndexForDocks;
+				std::vector<ControlData>					_childControlDataArray;
+				std::unordered_map<uint64, bool>			_childWindowHashKeyMap;
+				bool										_previousHasChildWindow;
+				DockDatum									_dockData[static_cast<uint32>(DockingMethod::COUNT)];
+				uint64										_dockControlHashKey;
+				DockingStateContext							_dokcingStateContext;
 			};
 			
 			struct ParamPrepareControlData
@@ -249,15 +271,16 @@ namespace fs
 				Rect				_innerPadding;
 				fs::Float2			_initialDisplaySize;
 				ResizingMask		_initialResizingMask;
-				fs::Float2			_desiredPositionInParent	= fs::Float2::kNan;
-				fs::Float2			_deltaInteractionSize		= fs::Float2::kZero;
-				fs::Float2			_displaySizeMin				= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-				bool				_alwaysResetDisplaySize		= false;
-				bool				_alwaysResetParent			= false;
-				uint64				_parentHashKeyOverride		= 0;
-				bool				_alwaysResetPosition		= true;
-				bool				_ignoreForClientSize		= false;
-				ViewportUsage		_viewportUsage				= ViewportUsage::Child;
+				fs::Float2			_desiredPositionInParent			= fs::Float2::kNan;
+				fs::Float2			_deltaInteractionSize				= fs::Float2::kZero;
+				fs::Float2			_deltaInteractionSizeByDock			= fs::Float2::kZero;
+				fs::Float2			_displaySizeMin						= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+				bool				_alwaysResetDisplaySize				= false;
+				bool				_alwaysResetParent					= false;
+				uint64				_parentHashKeyOverride				= 0;
+				bool				_alwaysResetPosition				= true;
+				bool				_ignoreForClientSize				= false;
+				ViewportUsage		_viewportUsage						= ViewportUsage::Child;
 			};
 			
 			struct ControlStackData
@@ -306,9 +329,10 @@ namespace fs
 			void												handleEvents(fs::Window::IWindow* const window);
 
 		private:
-			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& interactionSize) const noexcept;
+			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& controlPositionOffset, const fs::Float2& interactionSize) const noexcept;
 			const bool											isInControlInteractionArea(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
 			const bool											isInControlBorderArea(const fs::Float2& screenPosition, const ControlData& controlData, fs::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept;
+			const bool											shouldIgnoreInteraction(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept;
 			const bool											isPositionInRect(const fs::Float2& position, const Rect& rect) const noexcept;
 
 
@@ -423,8 +447,8 @@ namespace fs
 			const bool											isAncestor(const uint64 myHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
 
 			// Focus, Out-of-focus 색 정할 때 사용
-			const bool											needToColorOutOfFocus(const ControlData& controlData) const noexcept;
-			const ControlData&									getClosestFocusableAncestorInternal(const ControlData& controlData) const noexcept;
+			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
+			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
 
 			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
 			fs::SimpleRendering::Color&							getNamedColor(const NamedColor namedColor) noexcept;

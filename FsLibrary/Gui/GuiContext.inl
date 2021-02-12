@@ -69,6 +69,27 @@ namespace fs
 		}
 
 
+		FS_INLINE const bool GuiContext::DockDatum::hasDockedControls() const noexcept
+		{
+			return !_dockedControlHashArray.empty();
+		}
+
+		FS_INLINE const bool GuiContext::DockDatum::isRawDockSizeSet() const noexcept
+		{
+			return _rawDockSize != fs::Float2::kZero;
+		}
+
+		FS_INLINE void GuiContext::DockDatum::setRawDockSize(const fs::Float2& rawDockSize) noexcept
+		{
+			_rawDockSize = rawDockSize;
+		}
+
+		FS_INLINE const fs::Float2& GuiContext::DockDatum::getRawDockSizeXXX() const noexcept
+		{
+			return _rawDockSize;
+		}
+
+
 		inline GuiContext::ControlData::ControlData()
 			: ControlData(0, 0, ControlType::ROOT)
 		{
@@ -97,9 +118,7 @@ namespace fs
 			, _controlType{ controlType }
 			, _controlState{ ControlState::Visible }
 			, _viewportIndex{ 0 }
-			, _childViewportIndex{ 0 }
-			, _hasChildWindow{ false }
-			, _previousHasChildWindow{ false }
+			, _viewportIndexForChildren{ 0 }
 		{
 			_draggingConstraints.setNan();
 
@@ -116,8 +135,6 @@ namespace fs
 			_contentAreaSize.setZero();
 			_childControlDataArray.clear();
 			_deltaPosition.setZero();
-			_previousHasChildWindow = _hasChildWindow;
-			_hasChildWindow = false;
 		}
 
 		FS_INLINE const uint64 GuiContext::ControlData::getHashKey() const noexcept
@@ -147,6 +164,16 @@ namespace fs
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
 		{
 			return _displaySizeMin;
+		}
+
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getInteractionSize() const noexcept
+		{
+			return _interactionSize;
+		}
+
+		FS_INLINE const fs::Float2& GuiContext::ControlData::getNonDockInteractionSize() const noexcept
+		{
+			return _nonDockInteractionSize;
 		}
 
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getContentAreaSize() const noexcept
@@ -184,9 +211,14 @@ namespace fs
 			return _viewportIndex;
 		}
 
-		FS_INLINE const uint32 GuiContext::ControlData::getChildViewportIndex() const noexcept
+		FS_INLINE const uint32 GuiContext::ControlData::getViewportIndexForChildren() const noexcept
 		{
-			return _childViewportIndex;
+			return _viewportIndexForChildren;
+		}
+
+		FS_INLINE const uint32 GuiContext::ControlData::getViewportIndexForDocks() const noexcept
+		{
+			return _viewportIndexForDocks;
 		}
 
 		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getChildControlDataArray() const noexcept
@@ -194,14 +226,9 @@ namespace fs
 			return _childControlDataArray;
 		}
 
-		FS_INLINE const bool& GuiContext::ControlData::hasChildWindowInternalXXX() const noexcept
+		FS_INLINE const bool GuiContext::ControlData::hasChildWindow() const noexcept
 		{
-			return _hasChildWindow;
-		}
-
-		FS_INLINE const bool& GuiContext::ControlData::hasChildWindow() const noexcept
-		{
-			return _previousHasChildWindow;
+			return !_childWindowHashKeyMap.empty();
 		}
 
 		FS_INLINE GuiContext::DockDatum& GuiContext::ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
@@ -214,6 +241,29 @@ namespace fs
 			return _dockData[static_cast<uint32>(dockingMethod)];
 		}
 
+		FS_INLINE void GuiContext::ControlData::setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept
+		{
+			getDockDatum(dockingMethod).setRawDockSize(dockSize);
+		}
+
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockSize(const DockingMethod dockingMethod) const noexcept
+		{
+			const DockDatum& dockDatum = getDockDatum(dockingMethod);
+			fs::Float2 resultDockSize = dockDatum.getRawDockSizeXXX();
+			switch (dockingMethod)
+			{
+			case fs::Gui::DockingMethod::LeftSide:
+			case fs::Gui::DockingMethod::RightSide:
+				resultDockSize._y = _displaySize._y - ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() + _innerPadding.bottom() : 0.0f);
+				break;
+			case fs::Gui::DockingMethod::COUNT:
+				break;
+			default:
+				break;
+			}
+			return resultDockSize;
+		}
+
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize(const DockingMethod dockingMethod) const noexcept
 		{
 			return fs::Float2(0.0f, (_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f);
@@ -221,13 +271,28 @@ namespace fs
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
 		{
-			const DockDatum& dockDatum = getDockDatum(dockingMethod);
+			const fs::Float2& dockSize = getDockSize(dockingMethod);
 			const fs::Float2& offset = getDockOffsetSize(dockingMethod);
 			if (dockingMethod == DockingMethod::RightSide)
 			{
-				return fs::Float2(_position._x + _displaySize._x - dockDatum._dockSize._x, _position._y) + offset;
+				return fs::Float2(_position._x + _displaySize._x - dockSize._x, _position._y) + offset;
 			}
 			return _position + offset;
+		}
+
+		inline const fs::Float2 GuiContext::ControlData::getHorzDockSizeSum() const noexcept
+		{
+			fs::Float2 sum = fs::Float2::kZero;
+			for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
+			{
+				const fs::Float2& dockSize = getDockSize(dockingMethodIter);
+				const DockDatum& dockDatum = getDockDatum(dockingMethodIter);
+				if (dockDatum._dockedControlHashArray.empty() == false)
+				{
+					sum._x += dockSize._x;
+				}
+			}
+			return sum;
 		}
 
 		FS_INLINE void GuiContext::ControlData::connectToDock(const uint64 dockControlHashKey) noexcept
@@ -250,7 +315,7 @@ namespace fs
 			for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
 			{
 				const DockDatum& dockDatum = getDockDatum(dockingMethodIter);
-				if (dockDatum._dockedControlHashArray.empty() == false)
+				if (dockDatum.hasDockedControls() == true)
 				{
 					return true;
 				}
@@ -261,6 +326,26 @@ namespace fs
 		FS_INLINE const bool GuiContext::ControlData::isResizable() const noexcept
 		{
 			return _resizingMask.isResizable();
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept
+		{
+			return _childWindowHashKeyMap.find(childWindowHashKey) != _childWindowHashKeyMap.end();
+		}
+
+		FS_INLINE void GuiContext::ControlData::connectChildWindow(const uint64 childWindowHashKey) noexcept
+		{
+			_childWindowHashKeyMap.insert(std::make_pair(childWindowHashKey, true));
+		}
+
+		FS_INLINE void GuiContext::ControlData::disconnectChildWindow(const uint64 childWindowHashKey) noexcept
+		{
+			_childWindowHashKeyMap.erase(childWindowHashKey);
+		}
+
+		FS_INLINE const std::unordered_map<uint64, bool>& GuiContext::ControlData::getChildWindowHashKeyMap() const noexcept
+		{
+			return _childWindowHashKeyMap;
 		}
 
 		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
@@ -289,9 +374,14 @@ namespace fs
 			_viewportIndex = viewportIndex;
 		}
 
-		FS_INLINE void GuiContext::ControlData::setChildViewportIndexXXX(const uint32 viewportIndex) noexcept
+		FS_INLINE void GuiContext::ControlData::setViewportIndexForChildrenXXX(const uint32 viewportIndex) noexcept
 		{
-			_childViewportIndex = viewportIndex;
+			_viewportIndexForChildren = viewportIndex;
+		}
+
+		FS_INLINE void GuiContext::ControlData::setViewportIndexForDocksXXX(const uint32 viewportIndex) noexcept
+		{
+			_viewportIndexForDocks = viewportIndex;
 		}
 
 
