@@ -37,11 +37,13 @@
     <ClCompile Include="Source\Float4x4.cpp" />
     <ClCompile Include="Source\Int2.cpp" />
     <ClCompile Include="Source\Quaternion.cpp" />
+    <ClInclude Include="Include\Rect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Float2.inl" />
     <None Include="Include\Float3.inl" />
     <None Include="Include\Float4.inl" />
+    <None Include="Include\Rect.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

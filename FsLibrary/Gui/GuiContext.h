@@ -17,6 +17,7 @@
 
 #include <FsMath/Include/Float2.h>
 #include <FsMath/Include/Float4.h>
+#include <FsMath/Include/Rect.h>
 
 
 namespace fs

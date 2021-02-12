@@ -339,9 +339,6 @@
     <None Include="Container\IId.inl">
       <Filter>Container</Filter>
     </None>
-    <None Include="Gui\GuiCommon.inl">
-      <Filter>Gui</Filter>
-    </None>
     <None Include="SimpleRendering\IRendererContext.inl">
       <Filter>SimpleRendering</Filter>
     </None>

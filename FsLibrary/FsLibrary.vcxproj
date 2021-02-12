@@ -119,7 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Container\IId.inl" />
-    <None Include="Gui\GuiCommon.inl" />
     <None Include="Gui\GuiContext.inl" />
     <None Include="Language\CppHlslParser.inl" />
     <None Include="Language\ILexer.inl" />

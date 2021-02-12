@@ -39,6 +39,9 @@
     <ClInclude Include="Include\Quaternion.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Rect.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -74,6 +77,9 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\Float3.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Rect.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>
