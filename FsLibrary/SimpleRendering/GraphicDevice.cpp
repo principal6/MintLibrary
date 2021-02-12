@@ -7,8 +7,8 @@
 
 #include <FsLibrary/Algorithm.hpp>
 
-#include <FsLibrary/Platform/IWindow.h>
-#include <FsLibrary/Platform/WindowsWindow.h>
+#include <FsPlatform/Include/IWindow.h>
+#include <FsPlatform/Include/WindowsWindow.h>
 
 #include <FsContainer/Include/ScopeString.hpp>
 

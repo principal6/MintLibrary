@@ -16,8 +16,8 @@
 
 #include <FsContainer/Include/StringUtil.hpp>
 
-#include <FsLibrary/File/BinaryFile.hpp>
-#include <FsLibrary/File/FileUtil.hpp>
+#include <FsPlatform/Include/BinaryFile.hpp>
+#include <FsPlatform/Include/FileUtil.hpp>
 #include "FontRendererContext.h"
 
 

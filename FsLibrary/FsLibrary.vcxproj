@@ -31,14 +31,6 @@
     <ClInclude Include="ContiguousContainer\ContiguousString.hpp" />
     <ClInclude Include="ContiguousContainer\ContiguousVector.h" />
     <ClInclude Include="ContiguousContainer\ContiguousVector.hpp" />
-    <ClInclude Include="File\BinaryFile.h" />
-    <ClInclude Include="File\BinaryFile.hpp" />
-    <ClInclude Include="File\FileUtil.h" />
-    <ClInclude Include="File\FileUtil.hpp" />
-    <ClInclude Include="File\File.h" />
-    <ClInclude Include="File\IFile.h" />
-    <ClInclude Include="File\TextFile.h" />
-    <ClInclude Include="File\XmlFile.h" />
     <ClInclude Include="FsLibrary.h" />
     <ClInclude Include="Gui\GuiCommon.h" />
     <ClInclude Include="Gui\GuiContext.h" />
@@ -58,7 +50,6 @@
     <ClInclude Include="Memory\Owner.hpp" />
     <ClInclude Include="Memory\Viewer.h" />
     <ClInclude Include="Memory\Viewer.hpp" />
-    <ClInclude Include="Platform\Platform.h" />
     <ClInclude Include="Profiler\Profiler.h" />
     <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
     <ClInclude Include="SimpleRendering\FontRendererContext.h" />
@@ -75,14 +66,9 @@
     <ClInclude Include="SimpleRendering\SimpleRenderingCommon.h" />
     <ClInclude Include="SimpleRendering\TriangleRenderer.h" />
     <ClInclude Include="SimpleRendering\TriangleRenderer.hpp" />
-    <ClInclude Include="Platform\IWindow.h" />
-    <ClInclude Include="Platform\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContiguousContainer\ContiguousString.cpp" />
-    <ClCompile Include="File\BinaryFile.cpp" />
-    <ClCompile Include="File\TextFile.cpp" />
-    <ClCompile Include="File\XmlFile.cpp" />
     <ClCompile Include="Gui\GuiContext.cpp" />
     <ClCompile Include="Language\CppHlsl.cpp" />
     <ClCompile Include="Language\CppHlslLexer.cpp" />
@@ -90,7 +76,6 @@
     <ClCompile Include="Language\ILexer.cpp" />
     <ClCompile Include="Language\IParser.cpp" />
     <ClCompile Include="Language\Tokenizer.cpp" />
-    <ClCompile Include="Platform\WindowsWindow.cpp" />
     <ClCompile Include="SimpleRendering\FontRendererContext.cpp" />
     <ClCompile Include="SimpleRendering\DxResource.cpp" />
     <ClCompile Include="SimpleRendering\DxShader.cpp" />
@@ -242,7 +227,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;freetyped.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -267,7 +252,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

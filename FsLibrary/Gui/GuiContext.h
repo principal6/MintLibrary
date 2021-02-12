@@ -13,7 +13,7 @@
 
 #include <FsContainer/Include/IId.h>
 
-#include <FsLibrary/Platform/IWindow.h>
+#include <FsPlatform/Include/IWindow.h>
 
 #include <FsMath/Include/Float2.h>
 #include <FsMath/Include/Float4.h>

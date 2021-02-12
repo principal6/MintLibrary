@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Platform">
-      <UniqueIdentifier>{21646a4a-0761-4321-b377-9858c49492b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="File">
-      <UniqueIdentifier>{7df36888-f59b-464a-a537-15cbcbc67808}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SimpleRendering">
       <UniqueIdentifier>{2e3b7e46-2951-4128-8cda-807ae810e0d6}</UniqueIdentifier>
     </Filter>
@@ -36,34 +30,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="File\BinaryFile.h">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="File\FileUtil.h">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="File\FileUtil.hpp">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="File\IFile.h">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="File\XmlFile.h">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform\IWindow.h">
-      <Filter>Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform\WindowsWindow.h">
-      <Filter>Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform\Platform.h">
-      <Filter>Platform</Filter>
-    </ClInclude>
     <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="File\File.h">
-      <Filter>File</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleRendering\GraphicDevice.h">
       <Filter>SimpleRendering</Filter>
     </ClInclude>
@@ -78,12 +45,6 @@
     </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="File\BinaryFile.hpp">
-      <Filter>File</Filter>
-    </ClInclude>
-    <ClInclude Include="File\TextFile.h">
-      <Filter>File</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\Allocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
@@ -202,15 +163,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="File\BinaryFile.cpp">
-      <Filter>File</Filter>
-    </ClCompile>
-    <ClCompile Include="File\XmlFile.cpp">
-      <Filter>File</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform\WindowsWindow.cpp">
-      <Filter>Platform</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleRendering\GraphicDevice.cpp">
       <Filter>SimpleRendering</Filter>
     </ClCompile>
@@ -222,9 +174,6 @@
     </ClCompile>
     <ClCompile Include="SimpleRendering\IDxObject.cpp">
       <Filter>SimpleRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="File\TextFile.cpp">
-      <Filter>File</Filter>
     </ClCompile>
     <ClCompile Include="Language\Tokenizer.cpp">
       <Filter>Language</Filter>

@@ -13,7 +13,7 @@
 #include <FsLibrary/SimpleRendering/IRendererContext.h>
 #include <FsLibrary/SimpleRendering/TriangleRenderer.h>
 
-#include <FsLibrary/File/BinaryFile.h>
+#include <FsPlatform/Include/BinaryFile.h>
 
 
 typedef struct FT_Glyph_Metrics_	FT_Glyph_Metrics;

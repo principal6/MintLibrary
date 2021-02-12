@@ -5,7 +5,7 @@
 
 #include <FsLibrary/SimpleRendering/GraphicDevice.h>
 
-#include <FsLibrary/Platform/WindowsWindow.h>
+#include <FsPlatform/Include/WindowsWindow.h>
 
 #include <FsLibrary/Profiler/ScopedCpuProfiler.h>
 

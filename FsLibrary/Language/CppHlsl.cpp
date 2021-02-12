@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <FsLibrary/Language/CppHlsl.h>
 
-#include <FsLibrary/File/TextFile.h>
+#include <FsPlatform/Include/TextFile.h>
 
 #include <typeindex>
 
