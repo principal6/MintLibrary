@@ -223,7 +223,7 @@ namespace fs
 			return _parentHashKey;
 		}
 
-		FS_INLINE const Rect& GuiContext::ControlData::getInnerPadding() const noexcept
+		FS_INLINE const fs::Rect& GuiContext::ControlData::getInnerPadding() const noexcept
 		{
 			return _innerPadding;
 		}

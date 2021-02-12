@@ -144,7 +144,7 @@ namespace fs
 			static constexpr float						kFontScaleB = 0.875f;
 			static constexpr float						kFontScaleC = 0.8125f;
 			static constexpr float						kScrollBarThickness = 8.0f;
-			static constexpr Rect						kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
+			static constexpr fs::Rect					kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
 			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
 			static constexpr float						kHalfBorderThickness = 5.0f;
 			static constexpr float						kSliderTrackThicknes = 6.0f;
@@ -205,7 +205,7 @@ namespace fs
 			public:
 				const uint64								getHashKey() const noexcept;
 				const uint64								getParentHashKey() const noexcept;
-				const Rect&									getInnerPadding() const noexcept;
+				const fs::Rect&								getInnerPadding() const noexcept;
 				fs::Float2									getClientSize() const noexcept;
 				const fs::Float2&							getDisplaySizeMin() const noexcept;
 				const fs::Float2&							getInteractionSize() const noexcept;
@@ -263,7 +263,7 @@ namespace fs
 				bool										_isFocusable;
 				ResizingMask								_resizingMask;
 				bool										_isDraggable;
-				Rect										_draggingConstraints; // MUST set all four values if want to limit dragging area
+				fs::Rect									_draggingConstraints; // MUST set all four values if want to limit dragging area
 				uint64										_delegateHashKey; // Used for drag, resize and focus
 				DockingControlType							_dockingControlType;
 				DockingMethod								_lastDockingMethod;
@@ -277,7 +277,7 @@ namespace fs
 			private:
 				uint64										_hashKey;
 				uint64										_parentHashKey;
-				Rect										_innerPadding; // For child controls
+				fs::Rect									_innerPadding; // For child controls
 				fs::Float2									_displaySizeMin;
 				fs::Float2									_interactionSize; // _nonDockInteractionSize + dock size
 				fs::Float2									_nonDockInteractionSize; // Exluces dock area
@@ -299,7 +299,7 @@ namespace fs
 			
 			struct ParamPrepareControlData
 			{
-				Rect				_innerPadding;
+				fs::Rect			_innerPadding;
 				fs::Float2			_initialDisplaySize;
 				ResizingMask		_initialResizingMask;
 				fs::Float2			_desiredPositionInParent			= fs::Float2::kNan;
@@ -310,7 +310,7 @@ namespace fs
 				bool				_alwaysResetParent					= false;
 				uint64				_parentHashKeyOverride				= 0;
 				bool				_alwaysResetPosition				= true;
-				bool				_ignoreForClientSize				= false;
+				bool				_ignoreMeForClientSize				= false;
 				ViewportUsage		_viewportUsage						= ViewportUsage::Child;
 			};
 			
@@ -416,7 +416,7 @@ namespace fs
 
 		private:
 			// Returns size of titlebar
-			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding);
+			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding);
 			void												endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
 			const bool											beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);

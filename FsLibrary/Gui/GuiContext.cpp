@@ -263,7 +263,7 @@ namespace fs
 				paramPrepareControlData._initialDisplaySize = windowParam._size;
 				paramPrepareControlData._initialResizingMask.setAllTrue();
 				paramPrepareControlData._desiredPositionInParent = windowParam._position;
-				paramPrepareControlData._innerPadding = Rect(windowInnerPadding);
+				paramPrepareControlData._innerPadding = fs::Rect(windowInnerPadding);
 				paramPrepareControlData._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.left() + kTitleBarInnerPadding.right() + kDefaultRoundButtonRadius * 2.0f;
 				paramPrepareControlData._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f;
 				paramPrepareControlData._alwaysResetPosition = false;
@@ -700,7 +700,7 @@ namespace fs
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
 					paramPrepareControlDataTrack._alwaysResetPosition = true;
-					paramPrepareControlDataTrack._ignoreForClientSize = true;
+					paramPrepareControlDataTrack._ignoreMeForClientSize = true;
 					paramPrepareControlDataTrack._viewportUsage = ViewportUsage::Parent;
 				}
 				nextNoAutoPositioned();
@@ -745,7 +745,7 @@ namespace fs
 
 							paramPrepareControlDataThumb._parentHashKeyOverride = parentWindowControlData.getHashKey();
 							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
-							paramPrepareControlDataThumb._ignoreForClientSize = true;
+							paramPrepareControlDataThumb._ignoreMeForClientSize = true;
 							paramPrepareControlDataThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
@@ -828,7 +828,7 @@ namespace fs
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
 					paramPrepareControlDataTrack._alwaysResetPosition = true;
-					paramPrepareControlDataTrack._ignoreForClientSize = true;
+					paramPrepareControlDataTrack._ignoreMeForClientSize = true;
 					paramPrepareControlDataTrack._viewportUsage = ViewportUsage::Parent;
 				}
 				nextNoAutoPositioned();
@@ -874,7 +874,7 @@ namespace fs
 							paramPrepareControlDataThumb._parentHashKeyOverride = parentWindowControlData.getHashKey();
 							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
 							paramPrepareControlDataThumb._alwaysResetPosition = false; // Áß¿ä!
-							paramPrepareControlDataThumb._ignoreForClientSize = true;
+							paramPrepareControlDataThumb._ignoreMeForClientSize = true;
 							paramPrepareControlDataThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
@@ -963,7 +963,7 @@ namespace fs
 			_controlStackPerFrame.pop_back();
 		}
 
-		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const Rect& innerPadding)
+		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding)
 		{
 			static constexpr ControlType controlType = ControlType::TitleBar;
 
@@ -1267,7 +1267,7 @@ namespace fs
 
 			// Inner padding
 			{
-				Rect& controlInnerPadding = const_cast<Rect&>(controlData.getInnerPadding());
+				fs::Rect& controlInnerPadding = const_cast<fs::Rect&>(controlData.getInnerPadding());
 				controlInnerPadding = controlDataParam._innerPadding;
 			}
 
@@ -1344,7 +1344,7 @@ namespace fs
 
 				// Parent client size
 				fs::Float2& parentControlClientSize = const_cast<fs::Float2&>(parentControlData.getContentAreaSize());
-				if (controlDataParam._ignoreForClientSize == false)
+				if (controlDataParam._ignoreMeForClientSize == false)
 				{
 					parentControlClientSize += fs::Float2(deltaX, deltaY);
 				}
@@ -1819,7 +1819,7 @@ namespace fs
 		void GuiContext::processControlDocking(ControlData& controlData, const bool isDragging) noexcept
 		{
 			static constexpr fs::SimpleRendering::Color color = fs::SimpleRendering::Color(100, 110, 160);
-			static std::function fnRenderDockingBox = [&](const Rect& boxRect, const ControlData& parentControlData)
+			static std::function fnRenderDockingBox = [&](const fs::Rect& boxRect, const ControlData& parentControlData)
 			{
 				const float horzRenderingCenterOffset = kDockingInteractionShort * 0.5f + kDockingInteractionOffset;
 				const float horzBoxWidth = kDockingInteractionShort - kDockingInteractionDisplayBorderThickness * 2.0f;
@@ -1836,7 +1836,7 @@ namespace fs
 				_shapeFontRendererContextTopMost.setPosition(renderPosition);
 				_shapeFontRendererContextTopMost.drawRectangle(fs::Float2(horzBoxWidth, horzBoxHeight), kDockingInteractionDisplayBorderThickness, 0.0f);
 			};
-			static std::function fnRenderPreview = [&](const Rect& previewRect)
+			static std::function fnRenderPreview = [&](const fs::Rect& previewRect)
 			{
 				_shapeFontRendererContextTopMost.setViewportIndex(0);
 				_shapeFontRendererContextTopMost.setColor(color.scaledA(0.5f));
@@ -1855,8 +1855,8 @@ namespace fs
 				const float previewShortLengthMax = 160.0f;
 				const float previewShortLength = fs::min(parentControlData._displaySize._x * 0.5f, previewShortLengthMax);
 
-				Rect interactionBoxRect;
-				Rect previewRect;
+				fs::Rect interactionBoxRect;
+				fs::Rect previewRect;
 
 				// Left
 				if (_mousePosition._x <= parentControlData._position._x + horzInteractionLength)
