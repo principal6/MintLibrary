@@ -220,13 +220,14 @@ namespace fs
 
 		const bool GuiContext::shouldIgnoreInteraction(const fs::Float2& screenPosition, const ControlData& controlData) const noexcept
 		{
+			const ControlType controlType = controlData.getControlType();
 			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-			if (controlData.getControlType() == ControlType::Window || parentControlData.hasChildWindow() == false)
+			if (controlType == ControlType::Window || parentControlData.hasChildWindow() == false)
 			{
 				return false;
 			}
 
-			// ParentControlData 가 Window 일 때만 여기에 온다.
+			// ParentControlData 가 Root 거나 Window 일 때만 여기에 온다.
 			const auto& childWindowHashKeyMap = parentControlData.getChildWindowHashKeyMap();
 			for (const auto& iter : childWindowHashKeyMap)
 			{
@@ -551,6 +552,7 @@ namespace fs
 				{
 					paramPrepareControlDataThumb._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
 					paramPrepareControlDataThumb._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
+					paramPrepareControlDataThumb._alwaysResetPosition = false;
 					paramPrepareControlDataThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
 				}
 				nextNoAutoPositioned();

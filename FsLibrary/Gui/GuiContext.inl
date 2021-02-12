@@ -104,6 +104,7 @@ namespace fs
 		
 		inline GuiContext::ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const fs::Float2& size)
 			: _interactionSize{ size }
+			, _nonDockInteractionSize{ size }
 			, _isFocusable{ false }
 			, _isDraggable{ false }
 			, _displaySize{ size }
