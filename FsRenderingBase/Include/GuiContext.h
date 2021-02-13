@@ -50,7 +50,7 @@ namespace fs
 			fs::Float2			_position				= fs::Float2(100, 100);
 			ScrollBarType		_scrollBarType			= ScrollBarType::None;
 			DockingMethod		_initialDockingMethod	= DockingMethod::COUNT;
-			fs::Float2			_initialDockingSize		= fs::Float2(160, 0);
+			fs::Float2			_initialDockingSize		= fs::Float2(160);
 		};
 
 		// If no value is set, default values will be used properly
@@ -230,9 +230,10 @@ namespace fs
 				const bool									isShowingInDock(const ControlData& dockedControlData) const noexcept;
 				void										setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept;
 				const fs::Float2							getDockSize(const DockingMethod dockingMethod) const noexcept;
-				const fs::Float2							getDockOffsetSize(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2							getDockOffsetSize() const noexcept;
 				const fs::Float2							getDockPosition(const DockingMethod dockingMethod) const noexcept;
-				const fs::Float2							getHorzDockSizeSum() const noexcept;
+				const float									getHorzDockSizeSum() const noexcept;
+				const float									getVertDockSizeSum() const noexcept;
 				void										connectToDock(const uint64 dockControlHashKey) noexcept;
 				void										disconnectFromDock() noexcept;
 				const uint64								getDockControlHashKey() const noexcept;

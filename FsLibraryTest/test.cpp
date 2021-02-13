@@ -850,8 +850,8 @@ const bool testWindow()
 
 				{
 					fs::Gui::WindowParam windowParam;
-					windowParam._size = fs::Float2(300.0f, 400.0f);
-					windowParam._position = fs::Float2(400.0f, 50.0f);
+					windowParam._size = fs::Float2(500.0f, 500.0f);
+					windowParam._position = fs::Float2(200.0f, 50.0f);
 					windowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
 					if (guiContext.beginWindow(L"def", windowParam) == true)
 					{
@@ -899,7 +899,7 @@ const bool testWindow()
 							fs::Gui::WindowParam testWindowParam;
 							testWindowParam._size = fs::Float2(200.0f, 240.0f);
 							testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
-							testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
+							testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
 							if (guiContext.beginWindow(L"1ST", testWindowParam))
 							{
 								if (guiContext.beginButton(L"테스트!!") == true)
@@ -912,11 +912,12 @@ const bool testWindow()
 						}
 
 						{
-							fs::Gui::WindowParam testWindowParam2;
-							testWindowParam2._size = fs::Float2(100.0f, 100.0f);
-							testWindowParam2._position._x = 10.0f;
-							testWindowParam2._position._y = 60.0f;
-							if (guiContext.beginWindow(L"2NDDD", testWindowParam2))
+							fs::Gui::WindowParam testWindowParam;
+							testWindowParam._size = fs::Float2(100.0f, 100.0f);
+							testWindowParam._position._x = 10.0f;
+							testWindowParam._position._y = 60.0f;
+							testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
+							if (guiContext.beginWindow(L"2NDDD", testWindowParam))
 							{
 								if (guiContext.beginButton(L"YEAH") == true)
 								{

@@ -46,6 +46,12 @@ namespace fs
 			case fs::Gui::DockingMethod::RightSide:
 				result._left = true;
 				break;
+			case fs::Gui::DockingMethod::TopSide:
+				result._bottom = true;
+				break;
+			case fs::Gui::DockingMethod::BottomSide:
+				result._top = true;
+				break;
 			case fs::Gui::DockingMethod::COUNT:
 				break;
 			default:
@@ -347,6 +353,8 @@ namespace fs
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockSize(const DockingMethod dockingMethod) const noexcept
 		{
+			const DockDatum& dockDatumTopSide = getDockDatum(DockingMethod::TopSide);
+			const DockDatum& dockDatumBottomSide = getDockDatum(DockingMethod::BottomSide);
 			const DockDatum& dockDatum = getDockDatum(dockingMethod);
 			fs::Float2 resultDockSize = dockDatum.getRawDockSizeXXX();
 			switch (dockingMethod)
@@ -354,6 +362,18 @@ namespace fs
 			case fs::Gui::DockingMethod::LeftSide:
 			case fs::Gui::DockingMethod::RightSide:
 				resultDockSize._y = _displaySize._y - ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() + _innerPadding.bottom() : 0.0f);
+				if (dockDatumTopSide.hasDockedControls() == true)
+				{
+					resultDockSize._y -= dockDatumTopSide.getRawDockSizeXXX()._y;
+				}
+				if (dockDatumBottomSide.hasDockedControls() == true)
+				{
+					resultDockSize._y -= dockDatumBottomSide.getRawDockSizeXXX()._y;
+				}
+				break;
+			case fs::Gui::DockingMethod::TopSide:
+			case fs::Gui::DockingMethod::BottomSide:
+				resultDockSize._x = _displaySize._x - ((_controlType == ControlType::Window) ? _innerPadding.left() + _innerPadding.right() : 0.0f);
 				break;
 			case fs::Gui::DockingMethod::COUNT:
 				break;
@@ -363,32 +383,89 @@ namespace fs
 			return resultDockSize;
 		}
 
-		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize(const DockingMethod dockingMethod) const noexcept
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize() const noexcept
 		{
 			return fs::Float2(0.0f, (_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f);
 		}
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
 		{
+			const DockDatum& dockDatumTopSide = getDockDatum(DockingMethod::TopSide);
 			const fs::Float2& dockSize = getDockSize(dockingMethod);
-			const fs::Float2& offset = getDockOffsetSize(dockingMethod);
-			if (dockingMethod == DockingMethod::RightSide)
+			const fs::Float2& offset = getDockOffsetSize();
+
+			fs::Float2 resultDockPosition;
+			switch (dockingMethod)
 			{
-				return fs::Float2(_position._x + _displaySize._x - dockSize._x, _position._y) + offset;
+			case fs::Gui::DockingMethod::LeftSide:
+				resultDockPosition = _position + offset;
+				if (dockDatumTopSide.hasDockedControls() == true)
+				{
+					const fs::Float2& dockSizeTopSide = getDockSize(DockingMethod::TopSide);
+					resultDockPosition._y += dockSizeTopSide._y;
+				}
+				break;
+			case fs::Gui::DockingMethod::RightSide:
+				resultDockPosition = fs::Float2(_position._x + _displaySize._x - dockSize._x, _position._y) + offset;
+				if (dockDatumTopSide.hasDockedControls() == true)
+				{
+					const fs::Float2& dockSizeTopSide = getDockSize(DockingMethod::TopSide);
+					resultDockPosition._y += dockSizeTopSide._y;
+				}
+				break;
+			case fs::Gui::DockingMethod::TopSide:
+				resultDockPosition = fs::Float2(_position._x, _position._y) + offset;
+				break;
+			case fs::Gui::DockingMethod::BottomSide:
+				resultDockPosition = fs::Float2(_position._x, _position._y + _displaySize._y - dockSize._y);
+				break;
+			case fs::Gui::DockingMethod::COUNT:
+			default:
+				break;
 			}
-			return _position + offset;
+
+			return resultDockPosition;
 		}
 
-		inline const fs::Float2 GuiContext::ControlData::getHorzDockSizeSum() const noexcept
+		inline const float GuiContext::ControlData::getHorzDockSizeSum() const noexcept
 		{
-			fs::Float2 sum = fs::Float2::kZero;
-			for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
+			float sum = 0.0f;
 			{
-				const fs::Float2& dockSize = getDockSize(dockingMethodIter);
-				const DockDatum& dockDatum = getDockDatum(dockingMethodIter);
+				const fs::Float2& dockSize = getDockSize(DockingMethod::LeftSide);
+				const DockDatum& dockDatum = getDockDatum(DockingMethod::LeftSide);
 				if (dockDatum._dockedControlHashArray.empty() == false)
 				{
-					sum._x += dockSize._x;
+					sum += dockSize._x;
+				}
+			}
+			{
+				const fs::Float2& dockSize = getDockSize(DockingMethod::RightSide);
+				const DockDatum& dockDatum = getDockDatum(DockingMethod::RightSide);
+				if (dockDatum._dockedControlHashArray.empty() == false)
+				{
+					sum += dockSize._x;
+				}
+			}
+			return sum;
+		}
+
+		inline const float GuiContext::ControlData::getVertDockSizeSum() const noexcept
+		{
+			float sum = 0.0f;
+			{
+				const fs::Float2& dockSize = getDockSize(DockingMethod::TopSide);
+				const DockDatum& dockDatum = getDockDatum(DockingMethod::TopSide);
+				if (dockDatum._dockedControlHashArray.empty() == false)
+				{
+					sum += dockSize._y;
+				}
+			}
+			{
+				const fs::Float2& dockSize = getDockSize(DockingMethod::BottomSide);
+				const DockDatum& dockDatum = getDockDatum(DockingMethod::BottomSide);
+				if (dockDatum._dockedControlHashArray.empty() == false)
+				{
+					sum += dockSize._y;
 				}
 			}
 			return sum;

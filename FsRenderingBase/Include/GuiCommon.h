@@ -70,6 +70,8 @@ namespace fs
 		{
 			LeftSide,
 			RightSide,
+			TopSide,
+			BottomSide,
 
 			COUNT
 		};
