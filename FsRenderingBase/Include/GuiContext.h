@@ -393,10 +393,11 @@ namespace fs
 			// Tooltip Label
 			// ScrollBar Slider
 			// Window docking system!!!
-			// RadioButton CheckBox
+			// CheckBox
+			// TextBox SpinBox
 			// ListView TreeView
+			// Group RadioButton
 			// ComboBox
-			// TextEdit SpinBox
 			// Splitter
 
 		public:
