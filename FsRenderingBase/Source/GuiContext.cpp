@@ -732,20 +732,45 @@ namespace fs
 					}
 
 					// Rendering track
+					const float radius = kScrollBarThickness * 0.5f;
 					fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-					shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
-					shapeFontRendererContext.setColor(trackColor);
-					shapeFontRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(0.0f, trackControlData._displaySize._y), kScrollBarThickness);
+					{
+						const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
+						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+						shapeFontRendererContext.setColor(trackColor);
+
+						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x, trackControlData._position._y + radius, 0.0f, 1.0f);
+
+						// Upper half circle
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
+
+						// Rect
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._y += rectLength * 0.5f;
+							shapeFontRendererContext.setPosition(trackRenderPosition);
+							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+						}
+
+						// Lower half circle
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._y += rectLength * 0.5f;
+						}
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
+					}
+
 
 					// Thumb
-					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentWindowPreviousClientSize._y);
 					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio - radius * 2.0f;
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
 
-						ControlData& thumbControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
 						const float trackRemnantSize = std::abs(trackControlData._displaySize._y - thumbSize);
+						ControlData& thumbControlData = getControlData(generateControlKeyString(parentWindowControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
 
 						ParamPrepareControlData paramPrepareControlDataThumb;
 						{
@@ -782,28 +807,28 @@ namespace fs
 
 						// Rendering thumb
 						{
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + kScrollBarThickness * 0.5f, thumbControlData._position._y, 0.0f, 1.0f);
-							const float rectHeight = thumbSize - radius * 2.0f;
-							thumbRenderPosition._y += radius;
+							const float rectLength = thumbSize - radius * 2.0f;
 							shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
 							shapeFontRendererContext.setColor(thumbColor);
 
+							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
+							
 							// Upper half circle
 							shapeFontRendererContext.setPosition(thumbRenderPosition);
 							shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
 
 							// Rect
-							if (0.0f < rectHeight)
+							if (0.0f < rectLength)
 							{
-								thumbRenderPosition._y += rectHeight * 0.5f;
+								thumbRenderPosition._y += rectLength * 0.5f;
 								shapeFontRendererContext.setPosition(thumbRenderPosition);
 								shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
 							}
 
 							// Lower half circle
-							if (0.0f < rectHeight)
+							if (0.0f < rectLength)
 							{
-								thumbRenderPosition._y += rectHeight * 0.5f;
+								thumbRenderPosition._y += rectLength * 0.5f;
 							}
 							shapeFontRendererContext.setPosition(thumbRenderPosition);
 							shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
@@ -860,13 +885,38 @@ namespace fs
 					}
 
 					// Rendering track
+					const float radius = kScrollBarThickness * 0.5f;
 					fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-					shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
-					shapeFontRendererContext.setColor(trackColor);
-					shapeFontRendererContext.drawLine(trackControlData._position, trackControlData._position + fs::Float2(trackControlData._displaySize._x, 0.0f), kScrollBarThickness);
+					{
+						const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
+						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+						shapeFontRendererContext.setColor(trackColor);
+
+						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x + radius, trackControlData._position._y, 0.0f, 1.0f);
+
+						// Left half circle
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
+
+						// Rect
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._x += rectLength * 0.5f;
+							shapeFontRendererContext.setPosition(trackRenderPosition);
+							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+						}
+
+						// Right half circle
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._x += rectLength * 0.5f;
+						}
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
+					}
+
 
 					// Thumb
-					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentWindowPreviousClientSize._x);
 					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio - radius * 2.0f;
 					{
@@ -911,28 +961,28 @@ namespace fs
 
 						// Rendering thumb
 						{
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x, thumbControlData._position._y + kScrollBarThickness * 0.5f, 0.0f, 1.0f);
-							const float rectHeight = thumbSize - radius * 2.0f;
-							thumbRenderPosition._x += radius;
+							const float rectLength = thumbSize - radius * 2.0f;
 							shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
 							shapeFontRendererContext.setColor(thumbColor);
+							
+							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
 
-							// Upper half circle
+							// Left half circle
 							shapeFontRendererContext.setPosition(thumbRenderPosition);
 							shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
 
 							// Rect
-							if (0.0f < rectHeight)
+							if (0.0f < rectLength)
 							{
-								thumbRenderPosition._x += rectHeight * 0.5f;
+								thumbRenderPosition._x += rectLength * 0.5f;
 								shapeFontRendererContext.setPosition(thumbRenderPosition);
 								shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
 							}
 
-							// Lower half circle
-							if (0.0f < rectHeight)
+							// Right half circle
+							if (0.0f < rectLength)
 							{
-								thumbRenderPosition._x += rectHeight * 0.5f;
+								thumbRenderPosition._x += rectLength * 0.5f;
 							}
 							shapeFontRendererContext.setPosition(thumbRenderPosition);
 							shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
