@@ -1848,7 +1848,6 @@ namespace fs
 				fs::Rect previewRect;
 
 				// Left
-				if (_mousePosition._x <= parentControlData._position._x + horzInteractionLength)
 				{
 					interactionBoxRect.left(parentControlData._position._x + kDockingInteractionOffset);
 					interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionShort);
@@ -1865,26 +1864,28 @@ namespace fs
 						fnRenderDockingBox(interactionBoxRect, parentControlData);
 
 						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::LeftSide);
-						if (parentControlDockDatum.isRawDockSizeSet() == true)
+						if (interactionBoxRect.contains(_mousePosition) == true)
 						{
-							previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::LeftSide)._x);
-							previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::LeftSide)._y);
+							controlData._lastDockingMethodCandidate = DockingMethod::LeftSide;
+							
+							if (parentControlDockDatum.isRawDockSizeSet() == true)
+							{
+								previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::LeftSide)._x);
+								previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::LeftSide)._y);
 
-							fnRenderPreview(previewRect);
+								fnRenderPreview(previewRect);
+							}
+							else
+							{
+								parentControlDockDatum.setRawDockSize(previewRect.size());
+
+								fnRenderPreview(previewRect);
+							}
 						}
-						else
-						{
-							parentControlDockDatum.setRawDockSize(previewRect.size());
-
-							fnRenderPreview(previewRect);
-						}
-
-						controlData._lastDockingMethodCandidate = DockingMethod::LeftSide;
 					}
 				}
 
 				// Right
-				if (parentControlData._position._x + parentControlData._displaySize._x - horzInteractionLength <= _mousePosition._x)
 				{
 					interactionBoxRect.right(parentControlData._position._x + parentControlData._displaySize._x - kDockingInteractionOffset);
 					interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
@@ -1901,25 +1902,28 @@ namespace fs
 						fnRenderDockingBox(interactionBoxRect, parentControlData);
 
 						DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::RightSide);
-						if (parentControlDockDatum.isRawDockSizeSet() == true)
+						if (interactionBoxRect.contains(_mousePosition) == true)
 						{
-							previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::RightSide)._x);
-							previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::RightSide)._y);
+							controlData._lastDockingMethodCandidate = DockingMethod::RightSide;
 
-							fnRenderPreview(previewRect);
+							if (parentControlDockDatum.isRawDockSizeSet() == true)
+							{
+								previewRect.right(previewRect.left() + parentControlData.getDockSize(DockingMethod::RightSide)._x);
+								previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockingMethod::RightSide)._y);
+
+								fnRenderPreview(previewRect);
+							}
+							else
+							{
+								parentControlDockDatum.setRawDockSize(previewRect.size());
+
+								fnRenderPreview(previewRect);
+							}
 						}
-						else
-						{
-							parentControlDockDatum.setRawDockSize(previewRect.size());
-
-							fnRenderPreview(previewRect);
-						}
-
-						controlData._lastDockingMethodCandidate = DockingMethod::RightSide;
 					}
 				}
 
-				if (_mouseDownUp == true && interactionBoxRect.contains(_mouseUpPosition) == true && controlData._lastDockingMethodCandidate != DockingMethod::COUNT)
+				if (_mouseDownUp == true && controlData._lastDockingMethodCandidate != DockingMethod::COUNT)
 				{
 					if (controlData.isDocking() == false)
 					{
