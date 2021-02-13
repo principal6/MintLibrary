@@ -339,6 +339,7 @@ namespace fs
 				WindowOutOfFocus,
 				Dock,
 				ShownInDock,
+				HighlightColor,
 
 				TitleBarFocused,
 				TitleBarOutOfFocus,

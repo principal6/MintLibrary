@@ -36,13 +36,14 @@ namespace fs
 			, _tooltipTextFinal{ nullptr }
 		{
 			getNamedColor(NamedColor::NormalState) = fs::SimpleRendering::Color(45, 47, 49);
-			getNamedColor(NamedColor::HoverState) = fs::SimpleRendering::Color(126, 128, 130);
-			getNamedColor(NamedColor::PressedState) = fs::SimpleRendering::Color(46, 72, 88);
+			getNamedColor(NamedColor::HoverState) = getNamedColor(NamedColor::NormalState).addedRgb(0.25f);
+			getNamedColor(NamedColor::PressedState) = fs::SimpleRendering::Color(80, 100, 120);
 
 			getNamedColor(NamedColor::WindowFocused) = fs::SimpleRendering::Color(3, 5, 7);
-			getNamedColor(NamedColor::WindowOutOfFocus) = fs::SimpleRendering::Color(3, 5, 7);
+			getNamedColor(NamedColor::WindowOutOfFocus) = getNamedColor(NamedColor::WindowFocused);
 			getNamedColor(NamedColor::Dock) = getNamedColor(NamedColor::NormalState);
 			getNamedColor(NamedColor::ShownInDock) = fs::SimpleRendering::Color(23, 25, 27);
+			getNamedColor(NamedColor::HighlightColor) = fs::SimpleRendering::Color(100, 180, 255);
 
 			getNamedColor(NamedColor::TitleBarFocused) = getNamedColor(NamedColor::WindowFocused);
 			getNamedColor(NamedColor::TitleBarOutOfFocus) = getNamedColor(NamedColor::WindowOutOfFocus);
@@ -50,11 +51,11 @@ namespace fs
 			getNamedColor(NamedColor::TooltipBackground) = fs::SimpleRendering::Color(200, 255, 220);
 
 			getNamedColor(NamedColor::ScrollBarTrack) = fs::SimpleRendering::Color(80, 82, 84);
-			getNamedColor(NamedColor::ScrollBarThumb) = fs::SimpleRendering::Color(160, 162, 164);
+			getNamedColor(NamedColor::ScrollBarThumb) = getNamedColor(NamedColor::ScrollBarTrack).addedRgb(0.25f);
 
 			getNamedColor(NamedColor::LightFont) = fs::SimpleRendering::Color(233, 235, 237);
-			getNamedColor(NamedColor::DarkFont) = fs::SimpleRendering::Color(53, 55, 57);
-			getNamedColor(NamedColor::ShownInDockFont) = fs::SimpleRendering::Color(53, 155, 255);
+			getNamedColor(NamedColor::DarkFont) = getNamedColor(NamedColor::LightFont).addedRgb(-0.75f);
+			getNamedColor(NamedColor::ShownInDockFont) = getNamedColor(NamedColor::HighlightColor);
 		}
 
 		GuiContext::~GuiContext()
@@ -619,9 +620,8 @@ namespace fs
 				nextNoAutoPositioned();
 				prepareControlData(thumbControlData, paramPrepareControlDataThumb);
 				
-				static constexpr fs::SimpleRendering::Color kThumbBaseColor = fs::SimpleRendering::Color(120, 130, 200);
 				fs::SimpleRendering::Color thumbColor;
-				processScrollableControl(thumbControlData, kThumbBaseColor, kThumbBaseColor.scaledRgb(1.5f), thumbColor);
+				processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
 
 				const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
 				if (trackControlData._internalValue._f != thumbAt)
@@ -648,7 +648,7 @@ namespace fs
 
 					// Left(or Upper) half circle
 					shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
-					shapeFontRendererContext.setColor(kThumbBaseColor);
+					shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor));
 					shapeFontRendererContext.setPosition(trackRenderPosition);
 					shapeFontRendererContext.drawHalfCircle(trackRadius, +fs::Math::kPiOverTwo);
 
