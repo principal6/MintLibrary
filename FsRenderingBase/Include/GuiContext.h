@@ -73,11 +73,33 @@ namespace fs
 			fs::Float2		_size			= fs::Float2(128.0f, 0.0f);
 		};
 
-		union ControlValue
+		// [Window] ScrollBar type
+		// [ScrollBar] Thumb at [0, 1]
+		// [CheckBox] Toggle state
+		class ControlValue
 		{
-			int32	_i{ 0 };
-			float	_f;
+		public:
+									ControlValue() = default;
+									~ControlValue() = default;
+
+		public:
+			void					setScrollBarType(const ScrollBarType scrollBarType) noexcept;
+			void					setThumbAt(const float thumbAt) noexcept;
+			void					setIsToggled(const bool isToggled) noexcept;
+
+		public:
+			const ScrollBarType&	getScrollBarType() const noexcept;
+			const float				getThumbAt() const noexcept;
+			const bool				getIsToggled() const noexcept;
+
+		private:
+			union
+			{
+				int32	_i{ 0 };
+				float	_f;
+			};
 		};
+		
 
 		struct ResizingMask
 		{
@@ -155,6 +177,7 @@ namespace fs
 			static constexpr float						kDockingInteractionLong = 40.0f;
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
+			static constexpr fs::Float2					kCheckBoxSize = fs::Float2(16.0f, 16.0f);
 
 
 			class DockDatum
@@ -273,10 +296,8 @@ namespace fs
 				DockingMethod								_lastDockingMethod;
 				DockingMethod								_lastDockingMethodCandidate;
 				std::wstring								_text;
-
-				// [Window] ScrollBar type
-				// [ScrollBar] Thumb at [0, 1]
-				ControlValue								_internalValue;
+				ControlValue								_controlValue;
+				uint64										_controlValueChangedTimePointMs;
 
 			private:
 				uint64										_hashKey;
@@ -412,6 +433,11 @@ namespace fs
 			const bool											beginButton(const wchar_t* const text);
 			void												endButton() { endControlInternal(ControlType::Button); }
 
+			// [CheckBox]
+			// Return 'true' if toggle state has changed
+			const bool											beginCheckBox(const wchar_t* const text, bool& outIsChecked);
+			void												endCheckBox() { endControlInternal(ControlType::CheckBox); }
+
 			// [Label]
 			void												pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
@@ -464,6 +490,7 @@ namespace fs
 			const bool											processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			void												processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
 			const bool											processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			const bool											processToggleControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& toggledColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
 			
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void												processControlCommonInternal(ControlData& controlData) noexcept;

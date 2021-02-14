@@ -323,7 +323,7 @@ namespace fs
 			// Viewport & Scissor rectangle
 			{
 				// ScrollBar state
-				const ScrollBarType scrollBarState = static_cast<ScrollBarType>(windowControlData._internalValue._i);
+				const ScrollBarType scrollBarState = windowControlData._controlValue.getScrollBarType();
 				const bool hasScrollBarVert = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert);
 				const bool hasScrollBarHorz = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz);
 
@@ -506,7 +506,6 @@ namespace fs
 			const fs::Float2& displaySize = controlData._displaySize;
 			shapeFontRendererContext.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
 
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
 			shapeFontRendererContext.drawDynamicText(text, controlCenterPosition, fs::SimpleRendering::TextRenderDirectionHorz::Centered, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
 
@@ -516,6 +515,52 @@ namespace fs
 			}
 
 			return isClicked;
+		}
+
+		const bool GuiContext::beginCheckBox(const wchar_t* const text, bool& outIsChecked)
+		{
+			static constexpr ControlType controlType = ControlType::CheckBox;
+
+			ControlData& controlData = getControlData(text, controlType);
+			ParamPrepareControlData paramPrepareControlData;
+			{
+				paramPrepareControlData._initialDisplaySize = kCheckBoxSize;
+			}
+			prepareControlData(controlData, paramPrepareControlData);
+
+			// Toggle control
+			fs::SimpleRendering::Color color;
+			const bool isPressed = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), color);
+
+			outIsChecked = controlData._controlValue.getIsToggled();
+
+			const bool isAncestorFocused_ = isAncestorFocused(controlData);
+			fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused_ == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			shapeFontRendererContext.setColor(color);
+			shapeFontRendererContext.setPosition(controlCenterPosition);
+			const fs::Float2& displaySize = controlData._displaySize;
+			shapeFontRendererContext.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel / displaySize.minElement()), 0.0f, 0.0f);
+
+			if (outIsChecked == true)
+			{
+				shapeFontRendererContext.setColor(getNamedColor(NamedColor::LightFont));
+				fs::Float2 p0 = fs::Float2(controlCenterPosition._x - 1.0f, controlCenterPosition._y + 4.0f);
+				shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(-4.0f, -5.0f), 2.0f);
+
+				shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(+7.0f, -8.0f), 2.0f);
+			}
+
+			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
+			shapeFontRendererContext.drawDynamicText(text, controlCenterPosition + fs::Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
+
+			if (isPressed == true)
+			{
+				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
+			}
+
+			return isPressed;
 		}
 
 		void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
@@ -602,7 +647,7 @@ namespace fs
 				const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
 				ControlData& thumbControlData = getControlData(name, thumbControlType);
-				thumbControlData._position._x = trackControlData._position._x + trackControlData._internalValue._f * sliderValidLength;
+				thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue.getThumbAt() * sliderValidLength;
 				thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
 				thumbControlData._isDraggable = true;
 				thumbControlData._draggingConstraints.top(thumbControlData._position._y);
@@ -624,13 +669,13 @@ namespace fs
 				processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
 
 				const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
-				if (trackControlData._internalValue._f != thumbAt)
+				if (trackControlData._controlValue.getThumbAt() != thumbAt)
 				{
 					_controlStackPerFrame.emplace_back(ControlStackData(trackControlData));
 
 					isChanged = true;
 				}
-				trackControlData._internalValue._f = thumbAt;
+				trackControlData._controlValue.setThumbAt(thumbAt);
 				outValue = thumbAt;
 
 				const bool isAncestorFocused_ = isAncestorFocused(trackControlData);
@@ -703,7 +748,7 @@ namespace fs
 				return;
 			}
 
-			ScrollBarType& parentWindowControlScrollBarState = reinterpret_cast<ScrollBarType&>(parentWindowControlData._internalValue._i);
+			const ScrollBarType& parentWindowControlScrollBarState = parentWindowControlData._controlValue.getScrollBarType();
 			const bool isAncestorFocused = isAncestorFocusedInclusiveXXX(parentWindowControlData);
 			const fs::Float2& parentWindowPreviousClientSize = parentWindowControlData.getPreviousContentAreaSize();
 
@@ -747,7 +792,7 @@ namespace fs
 					// Update parent window scrollbar state
 					if (parentWindowControlScrollBarState != ScrollBarType::Both)
 					{
-						parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Horz) ? ScrollBarType::Both : ScrollBarType::Vert;
+						parentWindowControlData._controlValue.setScrollBarType((parentWindowControlScrollBarState == ScrollBarType::Horz) ? ScrollBarType::Both : ScrollBarType::Vert);
 					}
 
 					// Rendering track
@@ -815,13 +860,13 @@ namespace fs
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._y = parentWindowControlData._position._y + paramPrepareControlDataTrack._desiredPositionInParent._y + (thumbControlData._internalValue._f * trackRemnantSize);
+						thumbControlData._position._y = parentWindowControlData._position._y + paramPrepareControlDataTrack._desiredPositionInParent._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::SimpleRendering::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top()) / trackRemnantSize);
-						thumbControlData._internalValue._f = thumbAtRatio;
+						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
 						parentWindowControlData._displayOffset._y = -thumbAtRatio * (parentWindowPreviousClientSize._y - trackControlData._displaySize._y); // Scrolling!
 
 						// Rendering thumb
@@ -856,7 +901,7 @@ namespace fs
 				}
 				else
 				{
-					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Vert || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Horz;
+					parentWindowControlData._controlValue.setScrollBarType((parentWindowControlScrollBarState == ScrollBarType::Vert || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Horz);
 				}
 			}
 
@@ -900,7 +945,7 @@ namespace fs
 					// Update parent window scrollbar state
 					if (parentWindowControlScrollBarState != ScrollBarType::Both)
 					{
-						parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Vert) ? ScrollBarType::Both : ScrollBarType::Horz;
+						parentWindowControlData._controlValue.setScrollBarType((parentWindowControlScrollBarState == ScrollBarType::Vert) ? ScrollBarType::Both : ScrollBarType::Horz);
 					}
 
 					// Rendering track
@@ -969,13 +1014,13 @@ namespace fs
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._x = parentWindowControlData._position._x + paramPrepareControlDataTrack._desiredPositionInParent._x + (thumbControlData._internalValue._f * trackRemnantSize);
+						thumbControlData._position._x = parentWindowControlData._position._x + paramPrepareControlDataTrack._desiredPositionInParent._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::SimpleRendering::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
-						thumbControlData._internalValue._f = thumbAtRatio;
+						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
 						parentWindowControlData._displayOffset._x = -thumbAtRatio * (parentWindowPreviousClientSize._x - trackControlData._displaySize._x + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
 						// Rendering thumb
@@ -1010,7 +1055,7 @@ namespace fs
 				}
 				else
 				{
-					parentWindowControlScrollBarState = (parentWindowControlScrollBarState == ScrollBarType::Horz || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Vert;
+					parentWindowControlData._controlValue.setScrollBarType((parentWindowControlScrollBarState == ScrollBarType::Horz || parentWindowControlScrollBarState == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Vert);
 				}
 			}
 		}
@@ -1609,6 +1654,31 @@ namespace fs
 			return isPressed;
 		}
 		
+		const bool GuiContext::processToggleControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& toggledColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept
+		{
+			processControlInteractionInternal(controlData);
+
+			const bool isPressed = isControlPressed(controlData);
+			if (isPressed == true)
+			{
+				if (controlData._controlValueChangedTimePointMs + 160 < fs::Profiler::getCurrentTimeMs())
+				{
+					controlData._controlValue.setIsToggled(!controlData._controlValue.getIsToggled());
+					controlData._controlValueChangedTimePointMs = fs::Profiler::getCurrentTimeMs();
+				}
+			}
+
+			outBackgroundColor = (controlData._controlValue.getIsToggled() == true) ? toggledColor : normalColor;
+
+			if (needToColorFocused(controlData) == false)
+			{
+				outBackgroundColor.scaleA(kDefaultOutOfFocusAlpha);
+			}
+
+			processControlCommonInternal(controlData);
+			return isPressed;
+		}
+
 		void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone) noexcept
 		{
 			static std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 

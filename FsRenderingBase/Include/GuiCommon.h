@@ -28,6 +28,7 @@ namespace fs
 			ScrollBarThumb, // PRIVATE
 			Slider,
 			SliderThumb, // PRIVATE
+			CheckBox,
 
 			COUNT
 		};

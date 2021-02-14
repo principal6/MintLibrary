@@ -27,6 +27,37 @@ namespace fs
 		}
 
 
+		FS_INLINE void ControlValue::setScrollBarType(const ScrollBarType scrollBarType) noexcept
+		{
+			_i = static_cast<int32>(scrollBarType);
+		}
+
+		FS_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
+		{
+			_f = thumbAt;
+		}
+
+		FS_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
+		{
+			_i = (isToggled == true) ? 1 : 0;
+		}
+
+		FS_INLINE const ScrollBarType& ControlValue::getScrollBarType() const noexcept
+		{
+			return *reinterpret_cast<const ScrollBarType*>(&_i);
+		}
+
+		FS_INLINE const float ControlValue::getThumbAt() const noexcept
+		{
+			return _f;
+		}
+
+		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
+		{
+			return (_i == 1);
+		}
+
+
 		inline ResizingMask::ResizingMask()
 			: _rawMask{ 0 }
 		{

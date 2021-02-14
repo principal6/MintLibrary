@@ -863,6 +863,14 @@ const bool testWindow()
 						}
 
 						{
+							bool isChecked = false;
+							if (guiContext.beginCheckBox(L"체크박스", isChecked) == true)
+							{
+								guiContext.endCheckBox();
+							}
+						}
+
+						{
 							fs::Gui::SliderParam sliderParam;
 							sliderParam._size._y = 32.0f;
 							float value = 0.0f;
