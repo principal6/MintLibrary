@@ -259,6 +259,15 @@ namespace fs
 				_eventQueue.push(eventData);
 				return 0;
 			}
+			case WM_LBUTTONDBLCLK:
+			{
+				eventData._type = EventType::MouseDoubleClicked;
+				eventData._data._mouseInfo = 1;
+				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
+				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				_eventQueue.push(eventData);
+				return 0;
+			}
 			default:
 				break;
 			}

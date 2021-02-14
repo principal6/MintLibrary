@@ -47,6 +47,7 @@ namespace fs
 			MouseMove,
 			MouseDown,
 			MouseUp,
+			MouseDoubleClicked,
 		};
 
 		struct EventData

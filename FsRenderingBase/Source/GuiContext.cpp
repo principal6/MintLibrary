@@ -535,7 +535,7 @@ namespace fs
 
 			// Toggle control
 			fs::SimpleRendering::Color color;
-			const bool isPressed = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), color);
+			const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), color);
 
 			outIsChecked = controlData._controlValue.getIsToggled();
 
@@ -560,12 +560,12 @@ namespace fs
 			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::SimpleRendering::Color(1.0f, 1.0f, 1.0f, color.a()));
 			shapeFontRendererContext.drawDynamicText(text, controlCenterPosition + fs::Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered, kFontScaleB);
 
-			if (isPressed == true)
+			if (isClicked == true)
 			{
 				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			}
 
-			return isPressed;
+			return isClicked;
 		}
 
 		void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
@@ -1480,7 +1480,7 @@ namespace fs
 						if (controlType != ControlType::Window && dockDatumTopSide.hasDockedControls() == true)
 						{
 							// 맨 처음 Child Control 만 내려주면 된다!!
-							const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y;
+							const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y + parentControlData.getInnerPadding().top();
 							if (parentControlChildAt._y < offsetY)
 							{
 								parentControlChildAt._y += offsetY;
@@ -1681,14 +1681,10 @@ namespace fs
 		{
 			processControlInteractionInternal(controlData);
 
-			const bool isPressed = isControlPressed(controlData);
-			if (isPressed == true)
+			const bool isClicked = isControlClicked(controlData);
+			if (isClicked == true)
 			{
-				if (controlData._controlValueChangedTimePointMs + 160 < fs::Profiler::getCurrentTimeMs())
-				{
-					controlData._controlValue.setIsToggled(!controlData._controlValue.getIsToggled());
-					controlData._controlValueChangedTimePointMs = fs::Profiler::getCurrentTimeMs();
-				}
+				controlData._controlValue.setIsToggled(!controlData._controlValue.getIsToggled());
 			}
 
 			outBackgroundColor = (controlData._controlValue.getIsToggled() == true) ? toggledColor : normalColor;
@@ -1699,7 +1695,7 @@ namespace fs
 			}
 
 			processControlCommonInternal(controlData);
-			return isPressed;
+			return isClicked;
 		}
 
 		void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone) noexcept
@@ -1766,7 +1762,8 @@ namespace fs
 					}
 				}
 
-				if (_mouseButtonDown == false)
+				// Click Event 가 발생했을 때도 Pressed 상태 유지!
+				if (_mouseDownUp == false && _mouseButtonDown == false)
 				{
 					fnResetPressDataIfMe(controlHashKey);
 				}

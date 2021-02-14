@@ -297,7 +297,6 @@ namespace fs
 				DockingMethod								_lastDockingMethodCandidate;
 				std::wstring								_text;
 				ControlValue								_controlValue;
-				uint64										_controlValueChangedTimePointMs;
 
 			private:
 				uint64										_hashKey;
