@@ -723,5 +723,16 @@ namespace fs
 		{
 			return _namedColors[static_cast<uint32>(namedColor)];
 		}
+
+		FS_INLINE const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
+		{
+			float result = 0.0f;
+			if (0.0f != _mouseWheel && isInControlInteractionArea(_mousePosition, scrollParentControlData) == true)
+			{
+				result = _mouseWheel * kMouseWheelScrollScale;
+				_mouseWheel = 0.0f;
+			}
+			return result;
+		}
 	}
 }

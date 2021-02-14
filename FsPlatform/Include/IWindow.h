@@ -48,6 +48,7 @@ namespace fs
 			MouseDown,
 			MouseUp,
 			MouseDoubleClicked,
+			MouseWheel,
 		};
 
 		struct EventData
@@ -81,8 +82,8 @@ namespace fs
 				struct
 				{
 					Int2		_mousePosition;
-					int32		_mouseInfo;
-					//int32		_reserved;
+					int32		_mouseInfoI;
+					float		_mouseInfoF;
 				};
 				struct
 				{

@@ -137,6 +137,10 @@ namespace fs
 					}
 					_mouseButtonDown = false;
 				}
+				else if (eventData._type == fs::Window::EventType::MouseWheel)
+				{
+					_mouseWheel = eventData._data._mouseInfoF;
+				}
 			}
 		}
 
@@ -882,7 +886,8 @@ namespace fs
 						fs::SimpleRendering::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
-						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top()) / trackRemnantSize);
+						const float mouseWheelScroll = getMouseWheelScroll(parentWindowControlData);
+						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
 						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
 						parentWindowControlData._displayOffset._y = -thumbAtRatio * (parentWindowPreviousClientSize._y - trackControlData._displaySize._y); // Scrolling!
 

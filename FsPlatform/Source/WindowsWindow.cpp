@@ -235,7 +235,7 @@ namespace fs
 				{
 					mouseInfo = 1;
 				}
-				eventData._data._mouseInfo = mouseInfo;
+				eventData._data._mouseInfoI = mouseInfo;
 				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
 				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
 				_eventQueue.push(eventData);
@@ -244,7 +244,7 @@ namespace fs
 			case WM_LBUTTONDOWN:
 			{
 				eventData._type = EventType::MouseDown;
-				eventData._data._mouseInfo = 1;
+				eventData._data._mouseInfoI = 1;
 				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
 				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
 				_eventQueue.push(eventData);
@@ -253,7 +253,7 @@ namespace fs
 			case WM_LBUTTONUP:
 			{
 				eventData._type = EventType::MouseUp;
-				eventData._data._mouseInfo = 1;
+				eventData._data._mouseInfoI = 1;
 				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
 				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
 				_eventQueue.push(eventData);
@@ -262,7 +262,18 @@ namespace fs
 			case WM_LBUTTONDBLCLK:
 			{
 				eventData._type = EventType::MouseDoubleClicked;
-				eventData._data._mouseInfo = 1;
+				eventData._data._mouseInfoI = 1;
+				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
+				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_MOUSEWHEEL:
+			{
+				WORD fwKeys = GET_KEYSTATE_WPARAM(wParam);
+				eventData._type = EventType::MouseWheel;
+				eventData._data._mouseInfoI = (fwKeys & MK_MBUTTON) ? 1 : 0;
+				eventData._data._mouseInfoF = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
 				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
 				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
 				_eventQueue.push(eventData);

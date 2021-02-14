@@ -178,6 +178,7 @@ namespace fs
 			static constexpr float						kDockingInteractionDisplayBorderThickness = 2.0f;
 			static constexpr float						kDockingInteractionOffset = 5.0f;
 			static constexpr fs::Float2					kCheckBoxSize = fs::Float2(16.0f, 16.0f);
+			static constexpr float						kMouseWheelScrollScale = -8.0f;
 
 
 			class DockDatum
@@ -523,6 +524,8 @@ namespace fs
 
 			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
 			fs::SimpleRendering::Color&							getNamedColor(const NamedColor namedColor) noexcept;
+
+			const float											getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
 #pragma endregion
 
 
@@ -599,6 +602,7 @@ namespace fs
 			fs::Float2											_mouseUpPosition;
 			bool												_mouseButtonDown;
 			bool												_mouseDownUp;
+			mutable float										_mouseWheel;
 			mutable fs::Window::CursorType						_cursorType; // per frame
 #pragma endregion
 
