@@ -283,6 +283,7 @@ namespace fs
 				dock(windowControlData.getHashKey(), parentControlData.getHashKey());
 			}
 
+
 			ParamPrepareControlData paramPrepareControlData;
 			{
 				paramPrepareControlData._initialDisplaySize = windowParam._size;
@@ -416,7 +417,11 @@ namespace fs
 						scissorRectangleForChildren.right -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::RightSide)._x);
 					}
 					scissorRectangleForChildren.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.top() - paramPrepareControlData._innerPadding.bottom() - ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f));
-					
+					if (dockDatumBottomSide.hasDockedControls() == true)
+					{
+						scissorRectangleForChildren.bottom -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::BottomSide)._y);
+					}
+
 					if (isParentAlsoWindow == true)
 					{
 						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
@@ -734,11 +739,17 @@ namespace fs
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			static std::function fnCalculatePureWindowWidth = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return fs::max(0.0f, windowControlData._displaySize._x - windowControlData.getHorzDockSizeSum() - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f));
+				return fs::max(
+					0.0f, 
+					windowControlData._displaySize._x - windowControlData.getHorzDockSizeSum() - windowControlData.getInnerPadding().left() - windowControlData.getInnerPadding().right() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f)
+				);
 			};
 			static std::function fnCalculatePureWindowHeight = [this](const ControlData& windowControlData, const ScrollBarType& scrollBarState)
 			{
-				return fs::max(0.0f, windowControlData._displaySize._y - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f));
+				return fs::max(
+					0.0f, 
+					windowControlData._displaySize._y - windowControlData.getVertDockSizeSum() - kTitleBarBaseSize._y - windowControlData.getInnerPadding().top() - windowControlData.getInnerPadding().bottom() - ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f)
+				);
 			};
 
 			ControlData& parentWindowControlData = getControlDataStackTopXXX();
@@ -763,15 +774,21 @@ namespace fs
 					paramPrepareControlDataTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentWindowControlData, parentWindowControlScrollBarState);
 
 					paramPrepareControlDataTrack._desiredPositionInParent._x = parentWindowControlData._displaySize._x - kHalfBorderThickness * 2.0f;
+					paramPrepareControlDataTrack._desiredPositionInParent._y = kTitleBarBaseSize._y + parentWindowControlData.getInnerPadding().top();
 					if (parentWindowControlData.isDockHosting() == true)
 					{
-						const DockDatum& rightSideDockDatum = parentWindowControlData.getDockDatum(DockingMethod::RightSide);
-						if (rightSideDockDatum.hasDockedControls() == true)
+						const DockDatum& dockDatumRightSide = parentWindowControlData.getDockDatum(DockingMethod::RightSide);
+						if (dockDatumRightSide.hasDockedControls() == true)
 						{
 							paramPrepareControlDataTrack._desiredPositionInParent._x -= parentWindowControlData.getDockSize(DockingMethod::RightSide)._x;
 						}
+
+						const DockDatum& dockDatumTopSide = parentWindowControlData.getDockDatum(DockingMethod::TopSide);
+						if (dockDatumTopSide.hasDockedControls() == true)
+						{
+							paramPrepareControlDataTrack._desiredPositionInParent._y += parentWindowControlData.getDockSize(DockingMethod::TopSide)._y;
+						}
 					}
-					paramPrepareControlDataTrack._desiredPositionInParent._y = kTitleBarBaseSize._y + parentWindowControlData.getInnerPadding().top();
 
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
@@ -916,15 +933,21 @@ namespace fs
 					paramPrepareControlDataTrack._initialDisplaySize._y = kScrollBarThickness;
 
 					paramPrepareControlDataTrack._desiredPositionInParent._x = parentWindowControlData.getInnerPadding().left();
+					paramPrepareControlDataTrack._desiredPositionInParent._y = parentWindowControlData._displaySize._y - kHalfBorderThickness * 2.0f;
 					if (parentWindowControlData.isDockHosting() == true)
 					{
-						const DockDatum& leftSideDockDatum = parentWindowControlData.getDockDatum(DockingMethod::LeftSide);
-						if (leftSideDockDatum.hasDockedControls() == true)
+						const DockDatum& dockDatumLeftSide = parentWindowControlData.getDockDatum(DockingMethod::LeftSide);
+						if (dockDatumLeftSide.hasDockedControls() == true)
 						{
 							paramPrepareControlDataTrack._desiredPositionInParent._x += parentWindowControlData.getDockSize(DockingMethod::LeftSide)._x;
 						}
+
+						const DockDatum& dockDatumBottomSide = parentWindowControlData.getDockDatum(DockingMethod::BottomSide);
+						if (dockDatumBottomSide.hasDockedControls() == true)
+						{
+							paramPrepareControlDataTrack._desiredPositionInParent._y -= parentWindowControlData.getDockSize(DockingMethod::BottomSide)._y;
+						}
 					}
-					paramPrepareControlDataTrack._desiredPositionInParent._y = parentWindowControlData._displaySize._y - kHalfBorderThickness * 2.0f;
 					
 					paramPrepareControlDataTrack._parentHashKeyOverride = parentWindowControlData.getHashKey();
 					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
@@ -1846,7 +1869,7 @@ namespace fs
 					const float newPositionY = _resizedControlInitialPosition._y - mouseDeltaPosition._y * flipVert;
 					const float newDisplaySizeY = _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert;
 
-					if (changeTargetControlData.getDisplaySizeMin()._y < newDisplaySizeY)
+					if (changeTargetControlData.getDisplaySizeMin()._y + changeTargetControlData.getVertDockSizeSum() < newDisplaySizeY)
 					{
 						if (flipVert < 0.0f)
 						{
