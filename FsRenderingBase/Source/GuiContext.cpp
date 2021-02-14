@@ -1750,8 +1750,8 @@ namespace fs
 
 				const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseDownPosition, controlData);
 
-				//if (_hoveredControlHashKey != controlHashKey && controlData._isFocusable == false)
-				if (_hoveredControlHashKey != controlHashKey)
+				if (_hoveredControlHashKey != controlHashKey && controlData._isFocusable == false)
+				//if (_hoveredControlHashKey != controlHashKey)
 				{
 					fnResetHoverDataIfMe(_hoveredControlHashKey);
 
@@ -1817,7 +1817,8 @@ namespace fs
 				}
 			}
 
-			if (_nextTooltipText != nullptr && isControlHovered(controlData) == true && _hoverStartTimeMs + 1000 < fs::Profiler::getCurrentTimeMs())
+			const bool isHovered = isControlHovered(controlData);
+			if (_nextTooltipText != nullptr && isHovered == true && _hoverStartTimeMs + 1000 < fs::Profiler::getCurrentTimeMs())
 			{
 				if (_hoverStarted == true)
 				{
