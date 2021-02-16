@@ -210,6 +210,11 @@ namespace fs
 			_fontRendererContext.drawDynamicText(wideText, position, directionHorz, directionVert, scale, drawShade);
 		}
 
+		void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+		{
+			_fontRendererContext.drawDynamicText(wideText, textLength, position, directionHorz, directionVert, scale, drawShade);
+		}
+
 		const float ShapeFontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
 		{
 			return _fontRendererContext.calculateTextWidth(wideText, textLength);

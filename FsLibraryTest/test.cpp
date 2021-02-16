@@ -782,19 +782,9 @@ const bool testWindow()
 				EventData event = window.popEvent();
 				if (event._type == EventType::KeyDown)
 				{
-					if (event._data._keyCode == EventData::KeyCode::Escape)
+					if (event._value.getKeyCode() == EventData::KeyCode::Escape)
 					{
 						window.destroy();
-					}
-					else if (event._data._keyCode == EventData::KeyCode::Left)
-					{
-						const Int2& pos = window.getPosition();
-						window.setPosition(pos - Int2(5, 0));
-					}
-					else if (event._data._keyCode == EventData::KeyCode::Right)
-					{
-						const Int2& pos = window.getPosition();
-						window.setPosition(pos + Int2(5, 0));
 					}
 				}
 			}
@@ -901,6 +891,13 @@ const bool testWindow()
 						if (guiContext.beginButton(L"테스트3") == true)
 						{
 							guiContext.endButton();
+						}
+
+						static std::wstring textBoxContent;
+						if (guiContext.beginTextBox(L"TextBox", textBoxContent) == true)
+						{
+
+							guiContext.endTextBox();
 						}
 
 						{

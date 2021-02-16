@@ -27,20 +27,27 @@ namespace fs
 		}
 
 
+		inline ControlValue::ControlValue()
+			: _i{}
+		{
+			__noop;
+		}
+
 		FS_INLINE void ControlValue::setScrollBarType(const ScrollBarType scrollBarType) noexcept
 		{
-			_i = static_cast<int32>(scrollBarType);
+			_i[0] = static_cast<int32>(scrollBarType);
 		}
 
 		FS_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
 		{
-			_f = thumbAt;
+			_f[0] = thumbAt;
 		}
 
 		FS_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
 		{
-			_i = (isToggled == true) ? 1 : 0;
+			_i[0] = (isToggled == true) ? 1 : 0;
 		}
+
 
 		FS_INLINE const ScrollBarType& ControlValue::getScrollBarType() const noexcept
 		{
@@ -49,12 +56,32 @@ namespace fs
 
 		FS_INLINE const float ControlValue::getThumbAt() const noexcept
 		{
-			return _f;
+			return _f[0];
 		}
 
 		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
 		{
-			return (_i == 1);
+			return (_i[0] == 1);
+		}
+
+		FS_INLINE int16& ControlValue::getCaretAt() noexcept
+		{
+			return _hi[0];
+		}
+
+		FS_INLINE int16& ControlValue::getCaretState() noexcept
+		{
+			return _hi[1];
+		}
+
+		FS_INLINE uint64& ControlValue::getLastCaretBlinkTimeMs() noexcept
+		{
+			return _lui[3];
+		}
+
+		FS_INLINE float& ControlValue::getTextDisplayOffset() noexcept
+		{
+			return _f[1];
 		}
 
 
@@ -354,6 +381,17 @@ namespace fs
 		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getChildControlDataArray() const noexcept
 		{
 			return _childControlDataArray;
+		}
+
+		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getPreviousChildControlDataArray() const noexcept
+		{
+			return _previousChildControlDataArray;
+		}
+
+		FS_INLINE void GuiContext::ControlData::prepareChildControlDataArray() noexcept
+		{
+			std::swap(_childControlDataArray, _previousChildControlDataArray);
+			_childControlDataArray.clear();
 		}
 
 		FS_INLINE const bool GuiContext::ControlData::hasChildWindow() const noexcept

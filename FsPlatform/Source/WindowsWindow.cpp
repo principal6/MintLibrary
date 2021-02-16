@@ -1,8 +1,11 @@
 ﻿#include <stdafx.h>
 #include <FsPlatform/Include/WindowsWindow.h>
 
+#include <immdev.h>
 #include <windowsx.h>
 #include <mutex>
+
+#pragma comment(lib, "imm32")
 
 
 namespace fs
@@ -189,82 +192,138 @@ namespace fs
 			::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
 		}
 
+		const uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
+		{
+			return ::GetCaretBlinkTime();
+		}
+
 		LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 		{
+			const fs::Float2& mousePosition = fs::Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
+
 			EventData eventData;
 			switch (Msg)
 			{
 			case WM_DESTROY:
+			{
 				PostQuitMessage(0);
 				return 0;
+			}
+			case WM_CHAR:
+			{
+				eventData._type = EventType::KeyStroke;
+				eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
+
+				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_IME_CHAR:
+			{
+				eventData._type = EventType::KeyStroke;
+				eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
+
+				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_IME_COMPOSITION:
+			{
+				if (lParam & GCS_COMPSTR)
+				{
+					const HIMC hInputMethodContext{ ImmGetContext(_hWnd) };
+					const LONG length{ ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, NULL, 0) };
+					
+					wchar_t wcharArray[3]{};
+					ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, wcharArray, length);
+					
+					ImmReleaseContext(_hWnd, hInputMethodContext);
+
+					eventData._type = EventType::KeyStrokeCandidate;
+					eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
+
+					_eventQueue.push(eventData);
+					return 0;
+				}
+				break;
+			}	
 			case WM_KEYDOWN:
 			{
 				eventData._type = EventType::KeyDown;
+				eventData._value.setKeyCode(EventData::KeyCode::NONE);
+
 				if (wParam == VK_ESCAPE)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Escape;
+					eventData._value.setKeyCode(EventData::KeyCode::Escape);
 				}
 				else if (wParam == VK_RETURN)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Enter;
+					eventData._value.setKeyCode(EventData::KeyCode::Enter);
 				}
 				else if (wParam == VK_UP)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Up;
+					eventData._value.setKeyCode(EventData::KeyCode::Up);
 				}
 				else if (wParam == VK_DOWN)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Down;
+					eventData._value.setKeyCode(EventData::KeyCode::Down);
 				}
 				else if (wParam == VK_LEFT)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Left;
+					eventData._value.setKeyCode(EventData::KeyCode::Left);
 				}
 				else if (wParam == VK_RIGHT)
 				{
-					eventData._data._keyCode = EventData::KeyCode::Right;
+					eventData._value.setKeyCode(EventData::KeyCode::Right);
 				}
+				else if (wParam == VK_DELETE)
+				{
+					eventData._value.setKeyCode(EventData::KeyCode::Delete);
+				}
+				else if (wParam == VK_HOME)
+				{
+					eventData._value.setKeyCode(EventData::KeyCode::Home);
+				}
+				else if (wParam == VK_END)
+				{
+					eventData._value.setKeyCode(EventData::KeyCode::End);
+				}
+
 				_eventQueue.push(eventData);
 				return 0;
 			}
 			case WM_MOUSEMOVE:
 			{
 				eventData._type = EventType::MouseMove;
-				int32 mouseInfo = 0;
-				if (wParam == MK_LBUTTON)
-				{
-					mouseInfo = 1;
-				}
-				eventData._data._mouseInfoI = mouseInfo;
-				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
-				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				//int32 mouseInfo = 0;
+				//if (wParam == MK_LBUTTON)
+				//{
+				//	mouseInfo = 1;
+				//}
+				eventData._value.setMousePosition(mousePosition);
+
 				_eventQueue.push(eventData);
 				return 0;
 			}
 			case WM_LBUTTONDOWN:
 			{
 				eventData._type = EventType::MouseDown;
-				eventData._data._mouseInfoI = 1;
-				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
-				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				eventData._value.setMousePosition(mousePosition);
+
 				_eventQueue.push(eventData);
 				return 0;
 			}
 			case WM_LBUTTONUP:
 			{
 				eventData._type = EventType::MouseUp;
-				eventData._data._mouseInfoI = 1;
-				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
-				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				eventData._value.setMousePosition(mousePosition);
+
 				_eventQueue.push(eventData);
 				return 0;
 			}
 			case WM_LBUTTONDBLCLK:
 			{
 				eventData._type = EventType::MouseDoubleClicked;
-				eventData._data._mouseInfoI = 1;
-				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
-				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				eventData._value.setMousePosition(mousePosition);
+
 				_eventQueue.push(eventData);
 				return 0;
 			}
@@ -272,10 +331,10 @@ namespace fs
 			{
 				WORD fwKeys = GET_KEYSTATE_WPARAM(wParam);
 				eventData._type = EventType::MouseWheel;
-				eventData._data._mouseInfoI = (fwKeys & MK_MBUTTON) ? 1 : 0;
-				eventData._data._mouseInfoF = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
-				eventData._data._mousePosition._x = GET_X_LPARAM(lParam);
-				eventData._data._mousePosition._y = GET_Y_LPARAM(lParam);
+				//(fwKeys & MK_MBUTTON) ? 1 : 0;
+				eventData._value.setMouseWheel(static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA);
+				eventData._value.setMousePosition(mousePosition);
+
 				_eventQueue.push(eventData);
 				return 0;
 			}

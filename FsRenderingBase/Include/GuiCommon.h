@@ -29,6 +29,7 @@ namespace fs
 			Slider,
 			SliderThumb, // PRIVATE
 			CheckBox,
+			TextBox,
 
 			COUNT
 		};

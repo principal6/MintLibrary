@@ -44,6 +44,8 @@ namespace fs
 			None,
 			KeyDown,
 			KeyUp,
+			KeyStroke,
+			KeyStrokeCandidate,
 			MouseMove,
 			MouseDown,
 			MouseUp,
@@ -55,46 +57,63 @@ namespace fs
 		{
 			enum class KeyCode : uint64
 			{
+				NONE,
 				Escape,
 				Enter,
 				Up,
 				Down,
 				Left,
-				Right
+				Right,
+				Delete,
+				Home,
+				End,
 			};
-			union Data
+
+			class EventValue
 			{
-				Data()
+			public:
+											EventValue();
+											EventValue(const EventValue& rhs);
+											~EventValue() = default;
+
+			public:
+				void						setKeyCode(const EventData::KeyCode keyCode) noexcept;
+				const EventData::KeyCode	getKeyCode() const noexcept;
+
+				void						setMousePosition(const fs::Float2& mousePosition) noexcept;
+				const fs::Float2&			getMousePosition() const noexcept;
+
+				void						setMouseWheel(const float mouseWheel) noexcept;
+				const float					getMouseWheel() const noexcept;
+
+				void						setInputWchar(const wchar_t inputWchar) noexcept;
+				const wchar_t				getInputWchar() const noexcept;
+
+			private:
+				union
 				{
-					__noop;
-				}
-				Data(const Data& rhs)
-				{
-					_raw[0] = rhs._raw[0];
-					_raw[1] = rhs._raw[1];
-				}
-				~Data()
-				{
-					__noop;
-				}
-				uint64		_raw[2]{};
-				//
-				struct
-				{
-					Int2		_mousePosition;
-					int32		_mouseInfoI;
-					float		_mouseInfoF;
-				};
-				struct
-				{
-					KeyCode		_keyCode;
-					//int32		_reserved;
-					//int32		_reserved1;
+					uint64					_raw[2]{};
+					struct
+					{
+						fs::Float2			_mousePosition;
+						int32				_mouseInfoI;
+						float				_mouseInfoF;
+					};
+					struct
+					{
+						KeyCode				_keyCode;
+						//int32				_reserved;
+						//int32				_reserved1;
+					};
+					struct
+					{
+						wchar_t				_inputWchar;
+					};
 				};
 			};
 
-			EventType		_type{ EventType::None };
-			Data			_data{};
+			EventType			_type{ EventType::None };
+			EventValue			_value{};
 		};
 
 		enum class CursorType
@@ -148,6 +167,8 @@ namespace fs
 
 			virtual void					setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
 			const CursorType				getCursorType() const noexcept { return _currentCursorType; }
+
+			virtual const uint32			getCaretBlinkIntervalMs() const noexcept abstract;
 
 		protected:
 			bool							_isRunning{ false };

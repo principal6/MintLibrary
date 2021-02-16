@@ -94,6 +94,7 @@ namespace fs
 			const bool															loadFontData(const FontData& fontData);
 			const bool															bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
 			const FontData&														getFontData() const noexcept;
+			const int16															getFontSize() const noexcept;
 
 		private:
 			const bool															initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
@@ -112,6 +113,7 @@ namespace fs
 
 		public:
 			void																drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
+			void																drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
 			const float															calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
 		
 		public:

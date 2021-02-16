@@ -324,6 +324,11 @@ namespace fs
 			return _fontData;
 		}
 
+		const int16 FontRendererContext::getFontSize() const noexcept
+		{
+			return _fontSize;
+		}
+
 		const bool FontRendererContext::initializeFreeType(const char* const fontFaceFileName, const int16 fontSize)
 		{
 			if (FT_Init_FreeType(&_ftLibrary))
@@ -562,11 +567,13 @@ namespace fs
 
 		void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
 		{
-			auto& vertexArray = _triangleRenderer->vertexArray();
-
 			const uint32 textLength = fs::StringUtil::wcslen(wideText);
+			drawDynamicText(wideText, textLength, position, directionHorz, directionVert, scale, drawShade);
+		}
+
+		void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+		{
 			const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
-			
 			const float scaledFontSize = _fontSize * scale;
 			fs::Float4 currentPosition = position + fs::Float4(0.0f, -scaledFontSize * 0.5f - 1.0f, 0.0f, 0.0f);
 			if (directionHorz != TextRenderDirectionHorz::Rightward)

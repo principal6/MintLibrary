@@ -54,6 +54,9 @@ namespace fs
 
 		public:
 			virtual void						setCursorType(const CursorType cursorType) noexcept override final;
+		
+		public:
+			virtual const uint32				getCaretBlinkIntervalMs() const noexcept override final;
 
 		protected:
 			LRESULT								processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);

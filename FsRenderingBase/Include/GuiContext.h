@@ -79,7 +79,7 @@ namespace fs
 		class ControlValue
 		{
 		public:
-									ControlValue() = default;
+									ControlValue();
 									~ControlValue() = default;
 
 		public:
@@ -91,12 +91,34 @@ namespace fs
 			const ScrollBarType&	getScrollBarType() const noexcept;
 			const float				getThumbAt() const noexcept;
 			const bool				getIsToggled() const noexcept;
+			int16&					getCaretAt() noexcept;
+			int16&					getCaretState() noexcept;
+			float&					getTextDisplayOffset() noexcept;
+			uint64&					getLastCaretBlinkTimeMs() noexcept;
 
 		private:
 			union
 			{
-				int32	_i{ 0 };
-				float	_f;
+				struct
+				{
+					uint64	_lui[4];
+				};
+				struct
+				{
+					int64	_li[4];
+				};
+				struct
+				{
+					int32	_i[8];
+				};				
+				struct
+				{
+					float	_f[8];
+				};
+				struct
+				{
+					int16	_hi[16];
+				};
 			};
 		};
 		
@@ -179,6 +201,7 @@ namespace fs
 			static constexpr float						kDockingInteractionOffset = 5.0f;
 			static constexpr fs::Float2					kCheckBoxSize = fs::Float2(16.0f, 16.0f);
 			static constexpr float						kMouseWheelScrollScale = -8.0f;
+			static constexpr float						kTextBoxBackSpaceStride = 48.0f;
 
 
 			class DockDatum
@@ -248,6 +271,8 @@ namespace fs
 				const uint32								getViewportIndexForChildren() const noexcept;
 				const uint32								getViewportIndexForDocks() const noexcept;
 				const std::vector<ControlData>&				getChildControlDataArray() const noexcept;
+				const std::vector<ControlData>&				getPreviousChildControlDataArray() const noexcept;
+				void										prepareChildControlDataArray() noexcept;
 				const bool									hasChildWindow() const noexcept;
 				DockDatum&									getDockDatum(const DockingMethod dockingMethod) noexcept;
 				const DockDatum&							getDockDatum(const DockingMethod dockingMethod) const noexcept;
@@ -316,6 +341,7 @@ namespace fs
 				uint32										_viewportIndexForChildren; // Used by window
 				uint32										_viewportIndexForDocks;
 				std::vector<ControlData>					_childControlDataArray;
+				std::vector<ControlData>					_previousChildControlDataArray;
 				std::unordered_map<uint64, bool>			_childWindowHashKeyMap;
 				DockDatum									_dockData[static_cast<uint32>(DockingMethod::COUNT)];
 				uint64										_dockControlHashKey;
@@ -446,6 +472,10 @@ namespace fs
 			const bool											beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue);
 			void												endSlider() { endControlInternal(ControlType::Slider); }
 
+			// [TextBox]
+			const bool											beginTextBox(const wchar_t* const name, std::wstring& outText);
+			void												endTextBox() { endControlInternal(ControlType::TextBox); }
+
 		private:
 			// Returns size of titlebar
 			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding);
@@ -538,6 +568,7 @@ namespace fs
 		private:
 			fs::SimpleRendering::GraphicDevice* const			_graphicDevice;
 
+			float												_fontSize;
 			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextBackground;
 			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextForeground;
 			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextTopMost;
@@ -604,6 +635,14 @@ namespace fs
 			bool												_mouseDownUp;
 			mutable float										_mouseWheel;
 			mutable fs::Window::CursorType						_cursorType; // per frame
+#pragma endregion
+
+#pragma region Key Character Input
+		private:
+			uint32												_caretBlinkIntervalMs;
+			wchar_t												_wcharInput;
+			wchar_t												_wcharInputCandiate;
+			fs::Window::EventData::KeyCode						_keyCode;
 #pragma endregion
 
 		private:

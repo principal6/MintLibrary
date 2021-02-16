@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp" />
+    <ClCompile Include="Source\IWindow.cpp" />
     <ClCompile Include="Source\TextFile.cpp" />
     <ClCompile Include="Source\WindowsWindow.cpp" />
   </ItemGroup>

@@ -30,6 +30,7 @@ namespace fs
 			const bool														initializeFontData(const FontRendererContext::FontData& fontData) noexcept;
 			const FontRendererContext::FontData&							getFontData() const noexcept;
 			void															drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
+			void															drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
 			const float														calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
 			void															setTextColor(const fs::SimpleRendering::Color& textColor) noexcept;
 
