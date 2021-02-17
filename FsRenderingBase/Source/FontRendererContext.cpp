@@ -623,40 +623,46 @@ namespace fs
 			{
 				glyphIndex = _fontData._glyphMap.at(wideChar);
 			}
-
-			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-			auto& vertexArray = _triangleRenderer->vertexArray();
-			
-			fs::CppHlsl::VS_INPUT_SHAPE v;
-			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
-			v._position._y = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
-			v._position._z = position._z;
-			v._color = _defaultColor;
-			v._texCoord._x = glyphInfo._uv0._x;
-			v._texCoord._y = glyphInfo._uv0._y;
-			v._info._x = _viewportIndex;
-			v._info._y = (drawShade == true) ? 1.0f : 0.0f;
-			v._info._z = 1.0f; // used by ShapeFontRendererContext
-			vertexArray.emplace_back(v);
-			
-			v._position._x += static_cast<float>(glyphInfo._width) * scale;
-			v._texCoord._x = glyphInfo._uv1._x;
-			v._texCoord._y = glyphInfo._uv0._y;
-			vertexArray.emplace_back(v);
-			
-			v._position._x = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
-			v._position._y += static_cast<float>(glyphInfo._height) * scale;
-			v._texCoord._x = glyphInfo._uv0._x;
-			v._texCoord._y = glyphInfo._uv1._y;
-			vertexArray.emplace_back(v);
+			const float x0 = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
+			const float x1 = x0 + static_cast<float>(glyphInfo._width) * scale;
+			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
+			const float y0 = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
+			const float y1 = y0 + static_cast<float>(glyphInfo._height) * scale;
+			if (0.0f <= x1 && x0 <= _graphicDevice->getWindowSize()._x && 0.0f <= y1 && y0 <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+			{
+				auto& vertexArray = _triangleRenderer->vertexArray();
 
-			v._position._x += static_cast<float>(glyphInfo._width) * scale;
-			v._texCoord._x = glyphInfo._uv1._x;
-			v._texCoord._y = glyphInfo._uv1._y;
-			vertexArray.emplace_back(v);
+				fs::CppHlsl::VS_INPUT_SHAPE v;
+				v._position._x = x0;
+				v._position._y = y0;
+				v._position._z = position._z;
+				v._color = _defaultColor;
+				v._texCoord._x = glyphInfo._uv0._x;
+				v._texCoord._y = glyphInfo._uv0._y;
+				v._info._x = _viewportIndex;
+				v._info._y = (drawShade == true) ? 1.0f : 0.0f;
+				v._info._z = 1.0f; // used by ShapeFontRendererContext
+				vertexArray.emplace_back(v);
 
-			prepareIndexArray();
+				v._position._x = x1;
+				v._texCoord._x = glyphInfo._uv1._x;
+				v._texCoord._y = glyphInfo._uv0._y;
+				vertexArray.emplace_back(v);
+
+				v._position._x = x0;
+				v._position._y = y1;
+				v._texCoord._x = glyphInfo._uv0._x;
+				v._texCoord._y = glyphInfo._uv1._y;
+				vertexArray.emplace_back(v);
+
+				v._position._x = x1;
+				v._texCoord._x = glyphInfo._uv1._x;
+				v._texCoord._y = glyphInfo._uv1._y;
+				vertexArray.emplace_back(v);
+
+				prepareIndexArray();
+			}
 
 			position._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
 		}
