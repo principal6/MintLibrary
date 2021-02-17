@@ -64,24 +64,34 @@ namespace fs
 			return (_i[0] == 1);
 		}
 
-		FS_INLINE int16& ControlValue::getCaretAt() noexcept
+		FS_INLINE uint16& ControlValue::getCaretAt() noexcept
 		{
-			return _hi[0];
+			return _hui[0];
 		}
 
-		FS_INLINE int16& ControlValue::getCaretState() noexcept
+		FS_INLINE uint16& ControlValue::getCaretState() noexcept
 		{
-			return _hi[1];
+			return _hui[1];
+		}
+
+		FS_INLINE uint16& ControlValue::getSelectionStart() noexcept
+		{
+			return _hui[2];
+		}
+
+		FS_INLINE uint16& ControlValue::getSelectionLength() noexcept
+		{
+			return _hui[3];
+		}
+
+		FS_INLINE float& ControlValue::getTextDisplayOffset() noexcept
+		{
+			return _f[2];
 		}
 
 		FS_INLINE uint64& ControlValue::getLastCaretBlinkTimeMs() noexcept
 		{
 			return _lui[3];
-		}
-
-		FS_INLINE float& ControlValue::getTextDisplayOffset() noexcept
-		{
-			return _f[1];
 		}
 
 

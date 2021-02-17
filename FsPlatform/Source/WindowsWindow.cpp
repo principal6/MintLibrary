@@ -48,46 +48,14 @@ namespace fs
 			return windowsWindowPool.redirectMessage(hWnd, Msg, wParam, lParam);
 		}
 
-		static EventData::KeyCode convertWparamToKeyCode(const WPARAM wParam)
+
+		WindowsWindow::WparamKeyCodePair::WparamKeyCodePair(const WPARAM wParam, const EventData::KeyCode keyCode)
+			: _wParam{ wParam }
+			, _keyCode{ keyCode }
 		{
-			EventData::KeyCode result = EventData::KeyCode::NONE;
-			switch (wParam)
-			{
-			case VK_ESCAPE:
-				result = EventData::KeyCode::Escape;
-				break;
-			case VK_RETURN:
-				result = EventData::KeyCode::Enter;
-				break;
-			case VK_UP:
-				result = EventData::KeyCode::Up;
-				break;
-			case VK_DOWN:
-				result = EventData::KeyCode::Down;
-				break;
-			case VK_LEFT:
-				result = EventData::KeyCode::Left;
-				break;
-			case VK_RIGHT:
-				result = EventData::KeyCode::Right;
-				break;
-			case VK_DELETE:
-				result = EventData::KeyCode::Delete;
-				break;
-			case VK_HOME:
-				result = EventData::KeyCode::Home;
-				break;
-			case VK_END:
-				result = EventData::KeyCode::End;
-				break;
-			case VK_SHIFT:
-				result = EventData::KeyCode::Shift;
-				break;
-			default:
-				break;
-			}
-			return result;
+			__noop;
 		}
+
 
 		WindowsWindow::WindowsWindow()
 			: _windowStyle{}
@@ -173,6 +141,8 @@ namespace fs
 			_cursorArray[static_cast<uint32>(CursorType::SizeRightTilted)]	= LoadCursorW(nullptr, IDC_SIZENESW);
 
 			setCursorType(CursorType::Arrow);
+
+			buildWparamKeyCodePairArray();
 			
 			FS_WINDOW_RETURN_OK;
 		}
@@ -182,6 +152,48 @@ namespace fs
 			__super::destroy();
 
 			DestroyWindow(_hWnd);
+		}
+
+		void WindowsWindow::buildWparamKeyCodePairArray() noexcept
+		{
+			_wParamKeyCodePairArray.clear();
+			
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_ESCAPE, EventData::KeyCode::Escape));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_RETURN, EventData::KeyCode::Enter));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_UP, EventData::KeyCode::Up));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_DOWN, EventData::KeyCode::Down));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_LEFT, EventData::KeyCode::Left));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_RIGHT, EventData::KeyCode::Right));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_DELETE, EventData::KeyCode::Delete));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_HOME, EventData::KeyCode::Home));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_END, EventData::KeyCode::End));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
+		}
+
+		EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
+		{
+			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
+			for (uint32 iter = 0; iter < count; ++iter)
+			{
+				if (_wParamKeyCodePairArray[iter]._wParam == wParam)
+				{
+					return _wParamKeyCodePairArray[iter]._keyCode;
+				}
+			}
+			return EventData::KeyCode::NONE;
+		}
+
+		WPARAM WindowsWindow::convertKeyCodeToWparam(const EventData::KeyCode keyCode) const noexcept
+		{
+			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
+			for (uint32 iter = 0; iter < count; ++iter)
+			{
+				if (_wParamKeyCodePairArray[iter]._keyCode == keyCode)
+				{
+					return _wParamKeyCodePairArray[iter]._wParam;
+				}
+			}
+			return 0;
 		}
 
 		bool WindowsWindow::isRunning() noexcept
@@ -236,6 +248,12 @@ namespace fs
 		const uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
 		{
 			return ::GetCaretBlinkTime();
+		}
+
+		const bool WindowsWindow::isKeyDown(const EventData::KeyCode keyCode) const noexcept
+		{
+			const WPARAM virtualKey = convertKeyCodeToWparam(keyCode);
+			return (0 < virtualKey) ? (GetKeyState(static_cast<int>(virtualKey)) < 0) : false;
 		}
 
 		LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)

@@ -807,15 +807,15 @@ namespace fs
 			// Input 처리
 			if (isFocused == true)
 			{
-				static std::function fnRefreshCaret = [](const uint64 currentTimeMs, int16& caretState, uint64& lastCaretBlinkTimeMs)
+				static std::function fnRefreshCaret = [](const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs)
 				{
 					lastCaretBlinkTimeMs = currentTimeMs;
 					caretState = 0;
 				};
 				const uint64 currentTimeMs = fs::Profiler::getCurrentTimeMs();
-				const int16 oldCaretAt = controlData._controlValue.getCaretAt();
-				int16& caretAt = controlData._controlValue.getCaretAt();
-				int16& caretState = controlData._controlValue.getCaretState();
+				const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
+				uint16& caretAt = controlData._controlValue.getCaretAt();
+				uint16& caretState = controlData._controlValue.getCaretState();
 				uint64& lastCaretBlinkTimeMs = controlData._controlValue.getLastCaretBlinkTimeMs();
 				if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
 				{
@@ -824,6 +824,7 @@ namespace fs
 					caretState ^= 1;
 				}
 
+				const bool isShiftKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Shift);
 				if (_wcharInput != L'\0')
 				{
 					// 글자 입력
@@ -861,9 +862,9 @@ namespace fs
 				else
 				{
 					// 키 눌림 처리
+					
+					const uint16 textLength = static_cast<uint16>(outText.length());
 
-					bool needToRefreshCaret = false;
-					const int16 textLength = static_cast<int16>(outText.length());
 					if (_keyCode == fs::Window::EventData::KeyCode::Left)
 					{
 						caretAt = fs::max(caretAt - 1, 0);
@@ -902,12 +903,72 @@ namespace fs
 				if (oldCaretAt != caretAt)
 				{
 					fnRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+
+					// Selection
+					if (isShiftKeyDown == true && _keyCode != fs::Window::EventData::KeyCode::NONE)
+					{
+						uint16& selectionStart = controlData._controlValue.getSelectionStart();
+						uint16& selectionLength = controlData._controlValue.getSelectionLength();
+
+						if (selectionLength == 0)
+						{
+							// 새 Selection
+							selectionStart = fs::min(caretAt, oldCaretAt);
+							selectionLength = fs::max(caretAt, oldCaretAt) - selectionStart;
+						}
+						else
+						{
+							// 기존에 Selection 있음
+							const bool isLeftWard = caretAt < oldCaretAt;
+							const uint16 oldSelectionStart = selectionStart;
+							const uint16 oldSelectionEnd = selectionStart + selectionLength;
+							const bool fromHead = (oldSelectionStart == oldCaretAt);
+							if (((oldSelectionEnd == oldCaretAt) && (caretAt < oldSelectionStart)) || ((oldSelectionStart == oldCaretAt && oldSelectionEnd < caretAt)))
+							{
+								// 새 caretAt 위치가 급격히 달라진 경우
+								if (caretAt < oldSelectionStart)
+								{
+									selectionStart = caretAt;
+									selectionLength = oldSelectionStart - caretAt;
+								}
+								else
+								{
+									selectionStart = oldSelectionEnd;
+									selectionLength = caretAt - selectionStart;
+								}
+							}
+							else
+							{
+								if (fromHead == true)
+								{
+									// from Head
+									const uint16 selectionEnd = oldSelectionEnd;
+									selectionStart = (isLeftWard == true) ? fs::min(selectionStart, caretAt) : fs::max(selectionStart, caretAt);
+									selectionLength = selectionEnd - selectionStart;
+								}
+								else
+								{
+									// from Tail
+									const uint16 selectionEnd = (isLeftWard == true) ? fs::min(oldSelectionEnd, caretAt) : fs::max(oldSelectionEnd, caretAt);
+									selectionStart = fs::min(selectionStart, caretAt);
+									selectionLength = selectionEnd - selectionStart;
+								}
+							}
+						}
+					}
+				}
+
+				if (isShiftKeyDown == false && _keyCode != fs::Window::EventData::KeyCode::NONE)
+				{
+					// Selection 해제
+					uint16& selectionLength = controlData._controlValue.getSelectionLength();
+					selectionLength = 0;
 				}
 			}
 
 			// Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-			const int16 textLength = static_cast<int16>(outText.length());
-			const int16 caretAt = controlData._controlValue.getCaretAt();
+			const uint16 textLength = static_cast<uint16>(outText.length());
+			const uint16 caretAt = controlData._controlValue.getCaretAt();
 			float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
 			const float textWidthTillCaret = shapeFontRendererContext.calculateTextWidth(outText.c_str(), fs::min(caretAt, textLength));
 			{
@@ -934,7 +995,7 @@ namespace fs
 			}
 
 			// 렌더링
-			const int16 caretState = controlData._controlValue.getCaretState();
+			const uint16 caretState = controlData._controlValue.getCaretState();
 			const fs::Float2& controlLeftCenterPosition = fnGetControlLeftCenterPosition(controlData);
 			const fs::Float4 textRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
 			if (isFocused == true && 32 <= _wcharInputCandiate)
@@ -982,12 +1043,31 @@ namespace fs
 				}
 
 				// Caret 렌더링
-				if (0 == caretState)
+				if (isFocused == true && caretState == 0)
 				{
 					const float caretHeight = _fontSize;
 					const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y - caretHeight * 0.5f);
 					shapeFontRendererContext.setColor(fs::SimpleRendering::Color::kBlack);
 					shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(0.0f, caretHeight), 2.0f);
+				}
+			}
+
+			// Selection 렌더링
+			if (isFocused == true)
+			{
+				const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+				const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+				const uint16 selectionEnd = selectionStart + selectionLength;
+				if (0 < selectionLength)
+				{
+					const float textWidthTillSelectionStart = shapeFontRendererContext.calculateTextWidth(outText.c_str(), selectionStart);
+					const float textWidthTillSelectionEnd = shapeFontRendererContext.calculateTextWidth(outText.c_str(), selectionEnd);
+					const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
+
+					const fs::Float4 selectionRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
+					shapeFontRendererContext.setPosition(selectionRenderPosition);
+					shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f));
+					shapeFontRendererContext.drawRectangle(fs::Float2(textWidthSelection, _fontSize * 1.25f), 0.0f, 0.0f);
 				}
 			}
 

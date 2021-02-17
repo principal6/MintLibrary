@@ -171,6 +171,8 @@ namespace fs
 
 			virtual const uint32			getCaretBlinkIntervalMs() const noexcept abstract;
 
+			virtual const bool				isKeyDown(const EventData::KeyCode keyCode) const noexcept abstract;
+
 		protected:
 			bool							_isRunning{ false };
 			CreationData					_creationData{};

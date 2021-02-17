@@ -1,3 +1,4 @@
+#include "IRendererContext.h"
 namespace fs
 {
 	namespace SimpleRendering
@@ -24,6 +25,7 @@ namespace fs
 		{
 			return _useMultipleViewports;
 		}
+
 
 		FS_INLINE const bool Color::isTransparent() const noexcept
 		{

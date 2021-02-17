@@ -91,8 +91,10 @@ namespace fs
 			const ScrollBarType&	getScrollBarType() const noexcept;
 			const float				getThumbAt() const noexcept;
 			const bool				getIsToggled() const noexcept;
-			int16&					getCaretAt() noexcept;
-			int16&					getCaretState() noexcept;
+			uint16&					getCaretAt() noexcept;
+			uint16&					getCaretState() noexcept;
+			uint16&					getSelectionStart() noexcept;
+			uint16&					getSelectionLength() noexcept;
 			float&					getTextDisplayOffset() noexcept;
 			uint64&					getLastCaretBlinkTimeMs() noexcept;
 
@@ -114,6 +116,10 @@ namespace fs
 				struct
 				{
 					float	_f[8];
+				};
+				struct
+				{
+					uint16	_hui[16];
 				};
 				struct
 				{

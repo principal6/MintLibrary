@@ -32,9 +32,18 @@ namespace fs
 
 
 #pragma region Windows Window
-		class WindowsWindow : public IWindow
+		class WindowsWindow final : public IWindow
 		{
 			friend WindowsWindowPool;
+
+			struct WparamKeyCodePair
+			{
+				WparamKeyCodePair() = default;
+				WparamKeyCodePair(const WPARAM wParam, const EventData::KeyCode keyCode);
+
+				WPARAM				_wParam;
+				EventData::KeyCode	_keyCode;
+			};
 
 		public:
 												WindowsWindow();
@@ -43,6 +52,11 @@ namespace fs
 		public:
 			virtual bool						create(const CreationData& creationData) noexcept override;
 			virtual void						destroy() noexcept override;
+
+		private:
+			void								buildWparamKeyCodePairArray() noexcept;
+			EventData::KeyCode					convertWparamToKeyCode(const WPARAM wParam) const noexcept;
+			WPARAM								convertKeyCodeToWparam(const EventData::KeyCode keyCode) const noexcept;
 
 		public:
 			virtual bool						isRunning() noexcept override;
@@ -57,6 +71,7 @@ namespace fs
 		
 		public:
 			virtual const uint32				getCaretBlinkIntervalMs() const noexcept override final;
+			virtual const bool					isKeyDown(const EventData::KeyCode keyCode) const noexcept override final;
 
 		protected:
 			LRESULT								processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
@@ -69,6 +84,7 @@ namespace fs
 		
 		private:
 			HCURSOR								_cursorArray[static_cast<uint32>(CursorType::COUNT)];
+			std::vector<WparamKeyCodePair>		_wParamKeyCodePairArray;
 		};
 #pragma endregion
 	}
