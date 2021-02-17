@@ -72,6 +72,13 @@ namespace fs
 		public:
 			virtual const uint32				getCaretBlinkIntervalMs() const noexcept override final;
 			virtual const bool					isKeyDown(const EventData::KeyCode keyCode) const noexcept override final;
+		
+		public:
+			virtual void						textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
+			virtual void						textFromClipboard(std::wstring& outText) const noexcept override final;
+		
+		public:
+			virtual void						showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;
 
 		protected:
 			LRESULT								processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);

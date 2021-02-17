@@ -208,6 +208,7 @@ namespace fs
 			static constexpr fs::Float2					kCheckBoxSize = fs::Float2(16.0f, 16.0f);
 			static constexpr float						kMouseWheelScrollScale = -8.0f;
 			static constexpr float						kTextBoxBackSpaceStride = 48.0f;
+			static constexpr uint32						kTextBoxMaxTextLength = 2048;
 
 
 			class DockDatum

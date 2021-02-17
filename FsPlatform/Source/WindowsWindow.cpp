@@ -1,6 +1,8 @@
 ﻿#include <stdafx.h>
 #include <FsPlatform/Include/WindowsWindow.h>
 
+#include <FsContainer/Include/StringUtil.hpp>
+
 #include <immdev.h>
 #include <windowsx.h>
 #include <mutex>
@@ -168,6 +170,8 @@ namespace fs
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_HOME, EventData::KeyCode::Home));
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_END, EventData::KeyCode::End));
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_CONTROL, EventData::KeyCode::Control));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_MENU, EventData::KeyCode::Alt));
 		}
 
 		EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
@@ -253,7 +257,72 @@ namespace fs
 		const bool WindowsWindow::isKeyDown(const EventData::KeyCode keyCode) const noexcept
 		{
 			const WPARAM virtualKey = convertKeyCodeToWparam(keyCode);
-			return (0 < virtualKey) ? (GetKeyState(static_cast<int>(virtualKey)) < 0) : false;
+			return (0 < virtualKey) ? (::GetKeyState(static_cast<int>(virtualKey)) < 0) : false;
+		}
+
+		void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
+		{
+			if (fs::StringUtil::isNullOrEmpty(text) == true)
+			{
+				return;
+			}
+
+			::OpenClipboard(_hWnd);
+			
+			const uint32 bufferSize = (textLength + 1) * sizeof(wchar_t);
+			const HGLOBAL hGlobalText = GlobalAlloc(GMEM_MOVEABLE, bufferSize); // Clipboard 에 넘어간 데이터는 System 이 관리하므로 GlobalFree 를 호출하지 않는다!!!
+			if (hGlobalText != nullptr)
+			{
+				wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(GlobalLock(hGlobalText));
+				if (lockedWstring != nullptr)
+				{
+					memcpy(lockedWstring, text, bufferSize);
+					lockedWstring[textLength] = L'\0';
+
+					GlobalUnlock(hGlobalText);
+				}
+			}
+			::SetClipboardData(CF_UNICODETEXT, hGlobalText);
+
+			::CloseClipboard();
+		}
+
+		void WindowsWindow::textFromClipboard(std::wstring& outText) const noexcept
+		{
+			::OpenClipboard(_hWnd);
+
+			const HANDLE hClipboardData = ::GetClipboardData(CF_UNICODETEXT);
+			if (hClipboardData != nullptr)
+			{
+				wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(GlobalLock(hClipboardData));
+				if (lockedWstring != nullptr)
+				{
+					const uint32 textLength = fs::StringUtil::wcslen(lockedWstring);
+					outText = lockedWstring;
+					GlobalUnlock(hClipboardData);
+				}
+			}
+
+			::CloseClipboard();
+		}
+
+		void WindowsWindow::showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept
+		{
+			UINT type = MB_OK;
+			switch (messageBoxType)
+			{
+			case fs::Window::MessageBoxType::Ok:
+				break;
+			case fs::Window::MessageBoxType::Warning:
+				type = MB_ICONEXCLAMATION;
+				break;
+			case fs::Window::MessageBoxType::Error:
+				type = MB_ICONERROR;
+				break;
+			default:
+				break;
+			}
+			::MessageBoxW(_hWnd, message.c_str(), title.c_str(), type);
 		}
 
 		LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)

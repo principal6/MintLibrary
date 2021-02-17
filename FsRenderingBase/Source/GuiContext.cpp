@@ -807,10 +807,65 @@ namespace fs
 			// Input 처리
 			if (isFocused == true)
 			{
+				static bool isFirstCalled = true;
+				static std::wstring errorMessage;
+				if (isFirstCalled == true)
+				{
+					errorMessage.resize(1024);
+					swprintf_s(errorMessage.data(), 1024, L"텍스트 길이가 %d 자를 넘을 수 없습니다!", kTextBoxMaxTextLength);
+					isFirstCalled = false;
+				}
+
 				static std::function fnRefreshCaret = [](const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs)
 				{
 					lastCaretBlinkTimeMs = currentTimeMs;
 					caretState = 0;
+				};
+				static std::function fnEraseSelection = [&]()
+				{
+					const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+					const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+					outText.erase(selectionStart, selectionLength);
+
+					const uint16 textLength = static_cast<uint16>(outText.length());
+					uint16& caretAt = controlData._controlValue.getCaretAt();
+					caretAt = fs::min(static_cast<uint16>(caretAt - selectionLength), textLength);
+
+					controlData._controlValue.getSelectionLength() = 0;
+				};
+				static std::function fnInsertWchar = [&](uint16& caretAt, const wchar_t input)
+				{
+					if (outText.length() < kTextBoxMaxTextLength)
+					{
+						outText.insert(outText.begin() + caretAt, input);
+
+						++caretAt;
+					}
+					else
+					{
+						_graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
+					}
+				};
+				static std::function fnInsertWstring = [&](uint16& caretAt, const std::wstring& input)
+				{
+					const uint32 oldLength = static_cast<uint32>(outText.length());
+					if (oldLength < kTextBoxMaxTextLength)
+					{
+						uint32 deltaLength = static_cast<uint32>(input.length());
+						if (kTextBoxMaxTextLength < oldLength + input.length())
+						{
+							_graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
+
+							deltaLength = kTextBoxMaxTextLength - oldLength;
+						}
+						outText.insert(caretAt, input.substr(0, deltaLength));
+
+						caretAt += static_cast<uint16>(deltaLength);
+					}
+					else
+					{
+						_graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
+					}
 				};
 				const uint64 currentTimeMs = fs::Profiler::getCurrentTimeMs();
 				const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
@@ -825,34 +880,79 @@ namespace fs
 				}
 
 				const bool isShiftKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Shift);
+				const bool isControlKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Control);
 				if (_wcharInput != L'\0')
 				{
 					// 글자 입력
 
 					if (32 <= _wcharInput)
 					{
-						if (caretAt == static_cast<int16>(outText.length()))
+						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+						if (0 < selectionLength)
 						{
-							outText.push_back(_wcharInput);
-						}
-						else
-						{
-							outText.insert(outText.begin() + caretAt, _wcharInput);
+							fnEraseSelection();
 						}
 
-						++caretAt;
+						fnInsertWchar(caretAt, _wcharInput);
 					}
 					else
 					{
-						const int16 textLength = static_cast<int16>(outText.length());
+						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
 
 						if (_wcharInput == VK_BACK) // BackSpace
 						{
-							if (outText.empty() == false && 0 < caretAt)
+							const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+							if (0 < selectionLength)
 							{
-								outText.erase(outText.begin() + caretAt - 1);
+								fnEraseSelection();
+							}
+							else
+							{
+								if (outText.empty() == false && 0 < caretAt)
+								{
+									outText.erase(outText.begin() + caretAt - 1);
 
-								caretAt = fs::max(caretAt - 1, 0);
+									caretAt = fs::max(caretAt - 1, 0);
+								}
+							}
+						}
+						else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
+						{
+							controlData._controlValue.getSelectionStart() = 0;
+							controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
+							caretAt = controlData._controlValue.getSelectionLength();
+						}
+						else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
+						{
+							if (0 < selectionLength)
+							{
+								const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+								_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
+							}
+						}
+						else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
+						{
+							std::wstring fromClipboard;
+							_graphicDevice->getWindow()->textFromClipboard(fromClipboard);
+
+							if (fromClipboard.empty() == false)
+							{
+								if (0 < selectionLength)
+								{
+									fnEraseSelection();
+								}
+
+								fnInsertWstring(caretAt, fromClipboard);
+							}
+						}
+						else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
+						{
+							if (0 < selectionLength)
+							{
+								const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+								_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
+
+								fnEraseSelection();
 							}
 						}
 					}
@@ -875,11 +975,19 @@ namespace fs
 					}
 					else if (_keyCode == fs::Window::EventData::KeyCode::Delete)
 					{
-						if (0 < textLength && caretAt < textLength)
+						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+						if (0 < selectionLength)
 						{
-							outText.erase(outText.begin() + caretAt);
+							fnEraseSelection();
+						}
+						else
+						{
+							if (0 < textLength && caretAt < textLength)
+							{
+								outText.erase(outText.begin() + caretAt);
 
-							caretAt = fs::min(caretAt, textLength);
+								caretAt = fs::min(caretAt, textLength);
+							}
 						}
 					}
 					else if (_keyCode == fs::Window::EventData::KeyCode::Home)
@@ -958,7 +1066,7 @@ namespace fs
 					}
 				}
 
-				if (isShiftKeyDown == false && _keyCode != fs::Window::EventData::KeyCode::NONE)
+				if (isShiftKeyDown == false && _keyCode != fs::Window::EventData::KeyCode::NONE && _keyCode != fs::Window::EventData::KeyCode::Control && _keyCode != fs::Window::EventData::KeyCode::Alt)
 				{
 					// Selection 해제
 					uint16& selectionLength = controlData._controlValue.getSelectionLength();

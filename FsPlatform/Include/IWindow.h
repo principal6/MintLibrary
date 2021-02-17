@@ -30,6 +30,13 @@ namespace fs
 			NullptrString,
 		};
 
+		enum class MessageBoxType
+		{
+			Ok,
+			Warning,
+			Error,
+		};
+
 		struct CreationData
 		{
 			Int2				_size{};
@@ -68,6 +75,8 @@ namespace fs
 				Home,
 				End,
 				Shift,
+				Control,
+				Alt,
 			};
 
 			class EventValue
@@ -172,6 +181,10 @@ namespace fs
 			virtual const uint32			getCaretBlinkIntervalMs() const noexcept abstract;
 
 			virtual const bool				isKeyDown(const EventData::KeyCode keyCode) const noexcept abstract;
+
+			virtual void					textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
+			virtual void					textFromClipboard(std::wstring& outText) const noexcept abstract;
+			virtual void					showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
 		protected:
 			bool							_isRunning{ false };
