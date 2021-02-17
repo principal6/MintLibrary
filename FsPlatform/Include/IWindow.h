@@ -67,6 +67,7 @@ namespace fs
 				Delete,
 				Home,
 				End,
+				Shift,
 			};
 
 			class EventValue

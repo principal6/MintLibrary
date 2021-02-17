@@ -48,6 +48,47 @@ namespace fs
 			return windowsWindowPool.redirectMessage(hWnd, Msg, wParam, lParam);
 		}
 
+		static EventData::KeyCode convertWparamToKeyCode(const WPARAM wParam)
+		{
+			EventData::KeyCode result = EventData::KeyCode::NONE;
+			switch (wParam)
+			{
+			case VK_ESCAPE:
+				result = EventData::KeyCode::Escape;
+				break;
+			case VK_RETURN:
+				result = EventData::KeyCode::Enter;
+				break;
+			case VK_UP:
+				result = EventData::KeyCode::Up;
+				break;
+			case VK_DOWN:
+				result = EventData::KeyCode::Down;
+				break;
+			case VK_LEFT:
+				result = EventData::KeyCode::Left;
+				break;
+			case VK_RIGHT:
+				result = EventData::KeyCode::Right;
+				break;
+			case VK_DELETE:
+				result = EventData::KeyCode::Delete;
+				break;
+			case VK_HOME:
+				result = EventData::KeyCode::Home;
+				break;
+			case VK_END:
+				result = EventData::KeyCode::End;
+				break;
+			case VK_SHIFT:
+				result = EventData::KeyCode::Shift;
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
 		WindowsWindow::WindowsWindow()
 			: _windowStyle{}
 			, _hWnd{}
@@ -248,45 +289,7 @@ namespace fs
 			case WM_KEYDOWN:
 			{
 				eventData._type = EventType::KeyDown;
-				eventData._value.setKeyCode(EventData::KeyCode::NONE);
-
-				if (wParam == VK_ESCAPE)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Escape);
-				}
-				else if (wParam == VK_RETURN)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Enter);
-				}
-				else if (wParam == VK_UP)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Up);
-				}
-				else if (wParam == VK_DOWN)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Down);
-				}
-				else if (wParam == VK_LEFT)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Left);
-				}
-				else if (wParam == VK_RIGHT)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Right);
-				}
-				else if (wParam == VK_DELETE)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Delete);
-				}
-				else if (wParam == VK_HOME)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::Home);
-				}
-				else if (wParam == VK_END)
-				{
-					eventData._value.setKeyCode(EventData::KeyCode::End);
-				}
-
+				eventData._value.setKeyCode(convertWparamToKeyCode(wParam));
 				_eventQueue.push(eventData);
 				return 0;
 			}
