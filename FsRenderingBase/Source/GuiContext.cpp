@@ -2118,7 +2118,8 @@ namespace fs
 			const uint64 controlHashKey = (0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey();
 
 			// Check new focus
-			if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true))
+			if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true &&
+				(_mouseButtonDownFirst == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true)))
 			{
 				// Focus entered
 				_focusedControlHashKey = controlHashKey;
@@ -2275,7 +2276,7 @@ namespace fs
 				}
 
 				// Pressed (Mouse down)
-				if (_mouseButtonDownFirst == true && isMouseDownInInteractionArea == true)
+				if (_mouseButtonDown == true && isMouseDownInInteractionArea == true)
 				{
 					fnResetHoverDataIfMe(controlHashKey);
 
