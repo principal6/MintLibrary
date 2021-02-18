@@ -51,7 +51,7 @@ namespace fs
 
 		FS_INLINE const ScrollBarType& ControlValue::getScrollBarType() const noexcept
 		{
-			return *reinterpret_cast<const ScrollBarType*>(&_i);
+			return *reinterpret_cast<const ScrollBarType*>(&_i[0]);
 		}
 
 		FS_INLINE const float ControlValue::getThumbAt() const noexcept
@@ -61,7 +61,7 @@ namespace fs
 
 		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
 		{
-			return (_i[0] == 1);
+			return (_i[0] != 0);
 		}
 
 		FS_INLINE uint16& ControlValue::getCaretAt() noexcept
