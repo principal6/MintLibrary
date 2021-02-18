@@ -626,7 +626,7 @@ namespace fs
 			fs::Float4 textPosition = controlCenterPosition;
 			fs::SimpleRendering::TextRenderDirectionHorz textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Centered;
 			fs::SimpleRendering::TextRenderDirectionVert textRenderDirectionVert = fs::SimpleRendering::TextRenderDirectionVert::Centered;
-			if (labelParam._alignmentHorz != TextAlignmentHorz::Middle)
+			if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
 			{
 				if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
 				{
@@ -639,7 +639,7 @@ namespace fs
 					textRenderDirectionHorz = fs::SimpleRendering::TextRenderDirectionHorz::Leftward;
 				}
 			}
-			if (labelParam._alignmentVert != TextAlignmentVert::Center)
+			if (labelParam._alignmentVert != TextAlignmentVert::Middle)
 			{
 				if (labelParam._alignmentVert == TextAlignmentVert::Top)
 				{
@@ -655,18 +655,18 @@ namespace fs
 			shapeFontRendererContext.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
 
-		const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue)
+		const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue)
 		{
 			static constexpr ControlType trackControlType = ControlType::Slider;
 
 			bool isChanged = false;
-			const float sliderValidLength = SliderParam._size._x - kSliderThumbRadius * 2.0f;
+			const float sliderValidLength = sliderParam._size._x - kSliderThumbRadius * 2.0f;
 			ControlData& trackControlData = getControlData(name, trackControlType);
 			
 			ParamPrepareControlData paramPrepareControlDataTrack;
 			{
-				paramPrepareControlDataTrack._initialDisplaySize._x = SliderParam._size._x;
-				paramPrepareControlDataTrack._initialDisplaySize._y = (0.0f == SliderParam._size._y) ? kSliderThumbRadius * 2.0f : SliderParam._size._y;
+				paramPrepareControlDataTrack._initialDisplaySize._x = sliderParam._size._x;
+				paramPrepareControlDataTrack._initialDisplaySize._y = (0.0f == sliderParam._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._size._y;
 			}
 			prepareControlData(trackControlData, paramPrepareControlDataTrack);
 			
@@ -716,7 +716,7 @@ namespace fs
 				// Draw track
 				{
 					const float trackRadius = kSliderTrackThicknes * 0.5f;
-					const float trackRectLength = SliderParam._size._x - trackRadius * 2.0f;
+					const float trackRectLength = sliderParam._size._x - trackRadius * 2.0f;
 					const float trackRectLeftLength = thumbAt * sliderValidLength;
 					const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
@@ -761,7 +761,7 @@ namespace fs
 			return isChanged;
 		}
 
-		const bool GuiContext::beginTextBox(const wchar_t* const name, std::wstring& outText)
+		const bool GuiContext::beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText)
 		{
 			static constexpr ControlType controlType = ControlType::TextBox;
 			static std::function fnGetControlLeftCenterPosition = [&](const ControlData& controlData)->fs::Float2
@@ -774,13 +774,13 @@ namespace fs
 
 			ParamPrepareControlData paramPrepareControlData;
 			{
-				paramPrepareControlData._initialDisplaySize._x = 100.0f;
-				paramPrepareControlData._initialDisplaySize._y = _fontSize + 12.0f;
+				paramPrepareControlData._initialDisplaySize._x = textBoxParam._size._x;
+				paramPrepareControlData._initialDisplaySize._y = fs::max(_fontSize, textBoxParam._size._y);
 			}
 			prepareControlData(controlData, paramPrepareControlData);
 
 			fs::SimpleRendering::Color color;
-			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::LightFont), getNamedColor(NamedColor::LightFont).addedRgb(-0.25f), color);
+			const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), color);
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
 			fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused_ == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 			
@@ -813,11 +813,22 @@ namespace fs
 				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
 
-			// Draw background
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(color);
-			shapeFontRendererContext.setPosition(controlCenterPosition);
-			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+
+			const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
+			const float inputCandidateWidth = (32 <= _wcharInputCandiate) ? shapeFontRendererContext.calculateTextWidth(inputCandidate, 1) : 0.0f;
+			fs::Float4 textRenderOffset;
+			if (controlData._controlValue.getTextDisplayOffset() == 0)
+			{
+				const float fullTextWidth = shapeFontRendererContext.calculateTextWidth(outText.c_str(), static_cast<uint32>(outText.length()));
+				if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
+				{
+					textRenderOffset._x = (controlData._displaySize._x - fullTextWidth - inputCandidateWidth) * 0.5f;
+				}
+				else if (textBoxParam._alignmentHorz == TextAlignmentHorz::Right)
+				{
+					textRenderOffset._x = controlData._displaySize._x - fullTextWidth - inputCandidateWidth;
+				}
+			}
 
 			// Input 처리
 			if (isFocused == true)
@@ -948,14 +959,15 @@ namespace fs
 				const bool isShiftKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Shift);
 				const bool isControlKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Control);
 
-				// 마우스 입력 척리
+
+				// 마우스 입력 처리
 				const bool isMouseLeftDown = _graphicDevice->getWindow()->isMouseDown(fs::Window::EventData::MouseButton::Left);
 				const bool isMouseLeftDownFirst = _graphicDevice->getWindow()->isMouseDownFirst(fs::Window::EventData::MouseButton::Left);
 				if (isMouseLeftDown == true || isMouseLeftDownFirst == true)
 				{
 					const uint16 textLength = static_cast<uint16>(outText.length());
 					const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-					const float positionInText = _mousePosition._x - controlData._position._x + textDisplayOffset;
+					const float positionInText = _mousePosition._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
 					const uint32 newCaretAt = shapeFontRendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
 					if (isMouseLeftDownFirst == true)
 					{
@@ -980,9 +992,17 @@ namespace fs
 				else
 				{
 					const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
-					if (_wcharInput != L'\0')
+					if (32 <= _wcharInputCandiate)
 					{
-						// 글자 입력
+						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+						if (0 < selectionLength)
+						{
+							fnEraseSelection();
+						}
+					}
+					else if (_wcharInput != L'\0')
+					{
+						// 글자 입력 or 키 입력
 
 						if (32 <= _wcharInput)
 						{
@@ -1133,13 +1153,6 @@ namespace fs
 			float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
 			const float textWidthTillCaret = shapeFontRendererContext.calculateTextWidth(outText.c_str(), fs::min(caretAt, textLength));
 			{
-				float inputCandidateWidth = 0.0f;
-				if (32 <= _wcharInputCandiate)
-				{
-					const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
-					inputCandidateWidth = shapeFontRendererContext.calculateTextWidth(inputCandidate, 1);
-				}
-
 				const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
 				if (0.0f < deltaTextDisplayOffsetRight)
 				{
@@ -1154,8 +1167,16 @@ namespace fs
 					textDisplayOffset = fs::max(textDisplayOffset, 0.0f);
 				}
 			}
+			
 
-			// 렌더링
+			// Draw background
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			shapeFontRendererContext.setColor(color);
+			shapeFontRendererContext.setPosition(controlCenterPosition);
+			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+
+
+			// Text 및 Caret 렌더링
 			const uint16 caretState = controlData._controlValue.getCaretState();
 			const fs::Float2& controlLeftCenterPosition = fnGetControlLeftCenterPosition(controlData);
 			const fs::Float4 textRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
@@ -1166,28 +1187,26 @@ namespace fs
 				// Text 렌더링 (Caret 이전)
 				if (outText.empty() == false)
 				{
-					shapeFontRendererContext.setTextColor(fs::SimpleRendering::Color::kBlack);
-					shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
+					shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+					shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
 				}
 
 				// Input Candidate 렌더링
-				const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
-				const float inputCandidateWidth = shapeFontRendererContext.calculateTextWidth(inputCandidate, 1);
-				shapeFontRendererContext.setTextColor(fs::SimpleRendering::Color::kBlack);
-				shapeFontRendererContext.drawDynamicText(inputCandidate, fs::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0), fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
+				shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+				shapeFontRendererContext.drawDynamicText(inputCandidate, fs::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
 
 				// Text 렌더링 (Caret 이후)
 				if (outText.empty() == false)
 				{
-					shapeFontRendererContext.setTextColor(fs::SimpleRendering::Color::kBlack);
-					shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + fs::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0), fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
+					shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+					shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + fs::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
 				}
 
 				// Caret 렌더링 (Input Candidate 의 바로 뒤에!)
 				if (0 == caretState)
 				{
 					const float caretHeight = _fontSize;
-					const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset, controlLeftCenterPosition._y - caretHeight * 0.5f);
+					const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
 					shapeFontRendererContext.setColor(fs::SimpleRendering::Color::kBlack);
 					shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(0.0f, caretHeight), 2.0f);
 				}
@@ -1199,15 +1218,15 @@ namespace fs
 				// Text 전체 렌더링
 				if (outText.empty() == false)
 				{
-					shapeFontRendererContext.setTextColor(fs::SimpleRendering::Color::kBlack);
-					shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
+					shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+					shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset, fs::SimpleRendering::TextRenderDirectionHorz::Rightward, fs::SimpleRendering::TextRenderDirectionVert::Centered);
 				}
 
 				// Caret 렌더링
 				if (isFocused == true && caretState == 0)
 				{
 					const float caretHeight = _fontSize;
-					const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y - caretHeight * 0.5f);
+					const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
 					shapeFontRendererContext.setColor(fs::SimpleRendering::Color::kBlack);
 					shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(0.0f, caretHeight), 2.0f);
 				}
@@ -1226,7 +1245,7 @@ namespace fs
 					const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
 
 					const fs::Float4 selectionRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
-					shapeFontRendererContext.setPosition(selectionRenderPosition);
+					shapeFontRendererContext.setPosition(selectionRenderPosition + textRenderOffset);
 					shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f));
 					shapeFontRendererContext.drawRectangle(fs::Float2(textWidthSelection, _fontSize * 1.25f), 0.0f, 0.0f);
 				}

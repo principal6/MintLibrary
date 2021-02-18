@@ -892,12 +892,17 @@ const bool testWindow()
 						{
 							guiContext.endButton();
 						}
-
+						
 						static std::wstring textBoxContent;
-						if (guiContext.beginTextBox(L"TextBox", textBoxContent) == true)
 						{
-
-							guiContext.endTextBox();
+							fs::Gui::TextBoxParam textBoxParam;
+							textBoxParam._size._x = 240.0f;
+							textBoxParam._size._y = 24.0f;
+							textBoxParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Center;
+							if (guiContext.beginTextBox(L"TextBox", textBoxParam, textBoxContent) == true)
+							{
+								guiContext.endTextBox();
+							}
 						}
 
 						{

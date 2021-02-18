@@ -59,8 +59,8 @@ namespace fs
 			fs::SimpleRendering::Color	_backgroundColor	= fs::SimpleRendering::Color::kTransparent;
 			fs::SimpleRendering::Color	_fontColor			= fs::SimpleRendering::Color::kTransparent;
 			fs::Float2					_size				= fs::Float2::kZero;
-			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Middle;
-			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Center;
+			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Center;
+			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Middle;
 		};
 
 		struct SliderParam
@@ -72,10 +72,16 @@ namespace fs
 			//bool			_isVertical		= false; // Horizontal if false
 			fs::Float2		_size			= fs::Float2(128.0f, 0.0f);
 		};
+		
+		struct TextBoxParam
+		{
+			fs::Float2					_size				= fs::Float2(128.0f, 0.0f);
+			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Left;
+			fs::SimpleRendering::Color	_backgroundColor	= fs::SimpleRendering::Color::kWhite;
+			fs::SimpleRendering::Color	_fontColor			= fs::SimpleRendering::Color::kBlack;
+		};
 
-		// [Window] ScrollBar type
-		// [ScrollBar] Thumb at [0, 1]
-		// [CheckBox] Toggle state
+
 		class ControlValue
 		{
 		public:
@@ -88,9 +94,9 @@ namespace fs
 			void					setIsToggled(const bool isToggled) noexcept;
 
 		public:
-			const ScrollBarType&	getScrollBarType() const noexcept;
-			const float				getThumbAt() const noexcept;
-			const bool				getIsToggled() const noexcept;
+			const ScrollBarType&	getScrollBarType() const noexcept; // [Window]
+			const float				getThumbAt() const noexcept; // [Slider], [ScrollBar]
+			const bool				getIsToggled() const noexcept; // [CheckBox]
 			uint16&					getCaretAt() noexcept;
 			uint16&					getCaretState() noexcept;
 			uint16&					getSelectionStart() noexcept;
@@ -476,11 +482,11 @@ namespace fs
 
 			// [Slider]
 			// Return 'true' if value was changed
-			const bool											beginSlider(const wchar_t* const name, const SliderParam& SliderParam, float& outValue);
+			const bool											beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
 			void												endSlider() { endControlInternal(ControlType::Slider); }
 
 			// [TextBox]
-			const bool											beginTextBox(const wchar_t* const name, std::wstring& outText);
+			const bool											beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
 			void												endTextBox() { endControlInternal(ControlType::TextBox); }
 
 		private:

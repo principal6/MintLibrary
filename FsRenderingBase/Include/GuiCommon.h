@@ -85,14 +85,14 @@ namespace fs
 		enum class TextAlignmentHorz
 		{
 			Left,
-			Middle,
+			Center,
 			Right
 		};
 
 		enum class TextAlignmentVert
 		{
 			Top,
-			Center,
+			Middle,
 			Bottom
 		};
 	}
