@@ -159,12 +159,10 @@ namespace fs
 			const int16 textureWidth = *binaryFileReader.read<int16>();
 			const int16 textureHeight = *binaryFileReader.read<int16>();
 
-			uint64 glyphInfoCount = 0;
-			glyphInfoCount = *binaryFileReader.read<uint64>();
-
+			const uint64 glyphInfoCount = *binaryFileReader.read<uint64>();
+			const uint64 charCodeToGlyphIndexMapSize = *binaryFileReader.read<uint64>();
 			_fontData._glyphInfoArray.resize(glyphInfoCount);
-			_fontData._glyphMap.clear();
-			_fontData._glyphMap.reserve(glyphInfoCount);
+			_fontData._charCodeToGlyphIndexMap.resize(charCodeToGlyphIndexMapSize);
 
 			for (uint64 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
@@ -179,8 +177,8 @@ namespace fs
 				glyphInfo._uv0._y = *binaryFileReader.read<float>();
 				glyphInfo._uv1._x = *binaryFileReader.read<float>();
 				glyphInfo._uv1._y = *binaryFileReader.read<float>();
-
-				_fontData._glyphMap[glyphInfo._charCode] = glyphIndex;
+				
+				_fontData._charCodeToGlyphIndexMap[glyphInfo._charCode] = glyphIndex;
 			}
 
 			std::vector<byte> rawData;
@@ -261,10 +259,16 @@ namespace fs
 			std::vector<uint8> pixelArray(static_cast<int64>(textureWidth) * kInitialHeight);
 
 			_fontData._glyphInfoArray.clear();
-			_fontData._glyphMap.clear();
+			_fontData._charCodeToGlyphIndexMap.clear();
 
 			int16 pixelX{ 0 };
 			int16 pixelY{ 0 };
+			wchar_t maxCharCode = 0;
+			for (const auto& glyphRange : _glyphRangeArray)
+			{
+				maxCharCode = fs::max(maxCharCode, glyphRange._endWchar);
+			}
+			_fontData._charCodeToGlyphIndexMap.resize(maxCharCode + 1);
 			for (const auto& glyphRange : _glyphRangeArray)
 			{
 				for (wchar_t wch = glyphRange._startWchar; wch <= glyphRange._endWchar; ++wch)
@@ -405,7 +409,7 @@ namespace fs
 			glyphInfo._uv0._x = static_cast<float>(spaceLeft + pixelPositionX);
 			glyphInfo._uv0._y = static_cast<float>(spaceTop + pixelPositionY);
 			_fontData._glyphInfoArray.emplace_back(glyphInfo);
-			_fontData._glyphMap[wch] = _fontData._glyphInfoArray.size() - 1;
+			_fontData._charCodeToGlyphIndexMap[wch] = _fontData._glyphInfoArray.size() - 1;
 			
 			pixelPositionX += spacedWidth;
 			return true;
@@ -435,6 +439,8 @@ namespace fs
 
 			const uint64 glyphInfoCount = _fontData._glyphInfoArray.size();
 			binaryFileWriter.write(glyphInfoCount);
+			const uint64 charCodeToGlyphIndexMapSize = _fontData._charCodeToGlyphIndexMap.size();
+			binaryFileWriter.write(charCodeToGlyphIndexMapSize);
 			for (uint64 glyphIndex = 0; glyphIndex < glyphInfoCount; ++glyphIndex)
 			{
 				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
@@ -597,13 +603,7 @@ namespace fs
 			{
 				const wchar_t& wideChar = wideText[textAt];
 				
-				uint64 glyphIndex = 0;
-				auto found = _fontData._glyphMap.find(wideChar);
-				if (found != _fontData._glyphMap.end())
-				{
-					glyphIndex = _fontData._glyphMap.at(wideChar);
-				}
-
+				const uint64 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
 				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 				totalWidth += glyphInfo._horiAdvance;
 			}
@@ -617,12 +617,7 @@ namespace fs
 
 		void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade)
 		{
-			uint64 glyphIndex = 0;
-			auto found = _fontData._glyphMap.find(wideChar);
-			if (found != _fontData._glyphMap.end())
-			{
-				glyphIndex = _fontData._glyphMap.at(wideChar);
-			}
+			const uint64 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
 			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
 			const float x0 = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
 			const float x1 = x0 + static_cast<float>(glyphInfo._width) * scale;

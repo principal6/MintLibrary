@@ -76,9 +76,9 @@ namespace fs
 		public:
 			struct FontData
 			{
-				std::vector<GlyphInfo>					_glyphInfoArray;
-				std::unordered_map<wchar_t, uint64>		_glyphMap;
-				DxObjectId								_fontTextureId;
+				std::vector<GlyphInfo>	_glyphInfoArray;
+				std::vector<uint64>		_charCodeToGlyphIndexMap;
+				DxObjectId				_fontTextureId;
 			};
 
 		public:
