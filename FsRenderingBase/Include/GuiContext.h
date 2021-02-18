@@ -639,6 +639,7 @@ namespace fs
 			fs::Float2											_mouseDownPosition;
 			fs::Float2											_mouseUpPosition;
 			bool												_mouseButtonDown;
+			bool												_mouseButtonDownFirst;
 			bool												_mouseDownUp;
 			mutable float										_mouseWheel;
 			mutable fs::Window::CursorType						_cursorType; // per frame

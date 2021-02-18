@@ -79,6 +79,13 @@ namespace fs
 				Alt,
 			};
 
+			enum class MouseButton : int32
+			{
+				Left,
+				Middle,
+				Right,
+			};
+
 			class EventValue
 			{
 			public:
@@ -106,7 +113,7 @@ namespace fs
 					struct
 					{
 						fs::Float2			_mousePosition;
-						int32				_mouseInfoI;
+						MouseButton			_mouseButton;
 						float				_mouseInfoF;
 					};
 					struct
@@ -181,6 +188,9 @@ namespace fs
 			virtual const uint32			getCaretBlinkIntervalMs() const noexcept abstract;
 
 			virtual const bool				isKeyDown(const EventData::KeyCode keyCode) const noexcept abstract;
+			virtual const bool				isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept abstract;
+			virtual const bool				isMouseDown(const EventData::MouseButton mouseButton) const noexcept abstract;
+			virtual const bool				isMouseDownFirst(const EventData::MouseButton mouseButton) const noexcept abstract;
 
 			virtual void					textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
 			virtual void					textFromClipboard(std::wstring& outText) const noexcept abstract;

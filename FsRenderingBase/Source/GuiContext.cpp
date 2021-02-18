@@ -116,7 +116,7 @@ namespace fs
 		{
 			// 초기화
 			_mouseDownUp = false;
-
+			_mouseButtonDownFirst = false;
 
 			fs::Window::WindowsWindow* const windowsWindow = static_cast<fs::Window::WindowsWindow*>(window);
 			if (windowsWindow->hasEvent() == true)
@@ -130,6 +130,7 @@ namespace fs
 				{
 					_mouseDownPosition = eventData._value.getMousePosition();
 					_mouseButtonDown = true;
+					_mouseButtonDownFirst = true;
 				}
 				else if (eventData._type == fs::Window::EventType::MouseUp)
 				{
@@ -829,7 +830,6 @@ namespace fs
 					swprintf_s(errorMessage.data(), 1024, L"텍스트 길이가 %d 자를 넘을 수 없습니다!", kTextBoxMaxTextLength);
 					isFirstCalled = false;
 				}
-
 				static std::function fnRefreshCaret = [](const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs)
 				{
 					lastCaretBlinkTimeMs = currentTimeMs;
@@ -881,8 +881,60 @@ namespace fs
 						_graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
 					}
 				};
+				static std::function fnProcessSelection = [&](const uint16 oldCaretAt, const uint16 caretAt)
+				{
+					uint16& selectionStart = controlData._controlValue.getSelectionStart();
+					uint16& selectionLength = controlData._controlValue.getSelectionLength();
+
+					if (selectionLength == 0)
+					{
+						// 새 Selection
+						selectionStart = fs::min(caretAt, oldCaretAt);
+						selectionLength = fs::max(caretAt, oldCaretAt) - selectionStart;
+					}
+					else
+					{
+						// 기존에 Selection 있음
+						const bool isLeftWard = caretAt < oldCaretAt;
+						const uint16 oldSelectionStart = selectionStart;
+						const uint16 oldSelectionEnd = selectionStart + selectionLength;
+						const bool fromHead = (oldSelectionStart == oldCaretAt);
+						if (((oldSelectionEnd == oldCaretAt) && (caretAt < oldSelectionStart)) || ((oldSelectionStart == oldCaretAt && oldSelectionEnd < caretAt)))
+						{
+							// 새 caretAt 위치가 급격히 달라진 경우
+							if (caretAt < oldSelectionStart)
+							{
+								selectionStart = caretAt;
+								selectionLength = oldSelectionStart - caretAt;
+							}
+							else
+							{
+								selectionStart = oldSelectionEnd;
+								selectionLength = caretAt - selectionStart;
+							}
+						}
+						else
+						{
+							if (fromHead == true)
+							{
+								// from Head
+								const uint16 selectionEnd = oldSelectionEnd;
+								selectionStart = (isLeftWard == true) ? fs::min(selectionStart, caretAt) : fs::max(selectionStart, caretAt);
+								selectionLength = selectionEnd - selectionStart;
+							}
+							else
+							{
+								// from Tail
+								const uint16 selectionEnd = (isLeftWard == true) ? fs::min(oldSelectionEnd, caretAt) : fs::max(oldSelectionEnd, caretAt);
+								selectionStart = fs::min(selectionStart, caretAt);
+								selectionLength = selectionEnd - selectionStart;
+							}
+						}
+					}
+				};
+
+
 				const uint64 currentTimeMs = fs::Profiler::getCurrentTimeMs();
-				const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
 				uint16& caretAt = controlData._controlValue.getCaretAt();
 				uint16& caretState = controlData._controlValue.getCaretState();
 				uint64& lastCaretBlinkTimeMs = controlData._controlValue.getLastCaretBlinkTimeMs();
@@ -895,25 +947,132 @@ namespace fs
 
 				const bool isShiftKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Shift);
 				const bool isControlKeyDown = _graphicDevice->getWindow()->isKeyDown(fs::Window::EventData::KeyCode::Control);
-				if (_wcharInput != L'\0')
+
+				// 마우스 입력 척리
+				const bool isMouseLeftDown = _graphicDevice->getWindow()->isMouseDown(fs::Window::EventData::MouseButton::Left);
+				const bool isMouseLeftDownFirst = _graphicDevice->getWindow()->isMouseDownFirst(fs::Window::EventData::MouseButton::Left);
+				if (isMouseLeftDown == true || isMouseLeftDownFirst == true)
 				{
-					// 글자 입력
-
-					if (32 <= _wcharInput)
+					const uint16 textLength = static_cast<uint16>(outText.length());
+					const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+					const float positionInText = _mousePosition._x - controlData._position._x + textDisplayOffset;
+					const uint32 newCaretAt = shapeFontRendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
+					if (isMouseLeftDownFirst == true)
 					{
-						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-						if (0 < selectionLength)
-						{
-							fnEraseSelection();
-						}
+						caretAt = newCaretAt;
 
-						fnInsertWchar(caretAt, _wcharInput);
+						controlData._controlValue.getSelectionLength() = 0;
+						controlData._controlValue.getSelectionStart() = caretAt;
 					}
 					else
 					{
-						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+						if (newCaretAt != caretAt)
+						{
+							fnProcessSelection(caretAt, newCaretAt);
 
-						if (_wcharInput == VK_BACK) // BackSpace
+							caretAt = newCaretAt;
+						}
+					}
+
+					_wcharInput = 0;
+					_keyCode = fs::Window::EventData::KeyCode::NONE;
+				}
+				else
+				{
+					const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
+					if (_wcharInput != L'\0')
+					{
+						// 글자 입력
+
+						if (32 <= _wcharInput)
+						{
+							const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+							if (0 < selectionLength)
+							{
+								fnEraseSelection();
+							}
+
+							fnInsertWchar(caretAt, _wcharInput);
+						}
+						else
+						{
+							const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+
+							if (_wcharInput == VK_BACK) // BackSpace
+							{
+								const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+								if (0 < selectionLength)
+								{
+									fnEraseSelection();
+								}
+								else
+								{
+									if (outText.empty() == false && 0 < caretAt)
+									{
+										outText.erase(outText.begin() + caretAt - 1);
+
+										caretAt = fs::max(caretAt - 1, 0);
+									}
+								}
+							}
+							else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
+							{
+								controlData._controlValue.getSelectionStart() = 0;
+								controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
+								caretAt = controlData._controlValue.getSelectionLength();
+							}
+							else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
+							{
+								if (0 < selectionLength)
+								{
+									const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+									_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
+								}
+							}
+							else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
+							{
+								std::wstring fromClipboard;
+								_graphicDevice->getWindow()->textFromClipboard(fromClipboard);
+
+								if (fromClipboard.empty() == false)
+								{
+									if (0 < selectionLength)
+									{
+										fnEraseSelection();
+									}
+
+									fnInsertWstring(caretAt, fromClipboard);
+								}
+							}
+							else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
+							{
+								if (0 < selectionLength)
+								{
+									const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+									_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
+
+									fnEraseSelection();
+								}
+							}
+						}
+
+						_wcharInput = L'\0';
+					}
+					else
+					{
+						// 키 눌림 처리
+
+						const uint16 textLength = static_cast<uint16>(outText.length());
+
+						if (_keyCode == fs::Window::EventData::KeyCode::Left)
+						{
+							caretAt = fs::max(caretAt - 1, 0);
+						}
+						else if (_keyCode == fs::Window::EventData::KeyCode::Right)
+						{
+							caretAt = fs::min(caretAt + 1, static_cast<int32>(textLength));
+						}
+						else if (_keyCode == fs::Window::EventData::KeyCode::Delete)
 						{
 							const uint16 selectionLength = controlData._controlValue.getSelectionLength();
 							if (0 < selectionLength)
@@ -922,169 +1081,49 @@ namespace fs
 							}
 							else
 							{
-								if (outText.empty() == false && 0 < caretAt)
+								if (0 < textLength && caretAt < textLength)
 								{
-									outText.erase(outText.begin() + caretAt - 1);
+									outText.erase(outText.begin() + caretAt);
 
-									caretAt = fs::max(caretAt - 1, 0);
+									caretAt = fs::min(caretAt, textLength);
 								}
 							}
 						}
-						else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
+						else if (_keyCode == fs::Window::EventData::KeyCode::Home)
 						{
-							controlData._controlValue.getSelectionStart() = 0;
-							controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
-							caretAt = controlData._controlValue.getSelectionLength();
-						}
-						else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
-						{
-							if (0 < selectionLength)
-							{
-								const uint16 selectionStart = controlData._controlValue.getSelectionStart();
-								_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
-							}
-						}
-						else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
-						{
-							std::wstring fromClipboard;
-							_graphicDevice->getWindow()->textFromClipboard(fromClipboard);
+							caretAt = 0;
 
-							if (fromClipboard.empty() == false)
-							{
-								if (0 < selectionLength)
-								{
-									fnEraseSelection();
-								}
-
-								fnInsertWstring(caretAt, fromClipboard);
-							}
+							float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+							textDisplayOffset = 0.0f;
 						}
-						else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
+						else if (_keyCode == fs::Window::EventData::KeyCode::End)
 						{
-							if (0 < selectionLength)
-							{
-								const uint16 selectionStart = controlData._controlValue.getSelectionStart();
-								_graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
+							caretAt = textLength;
 
-								fnEraseSelection();
-							}
+							float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+							const float textWidth = shapeFontRendererContext.calculateTextWidth(outText.c_str(), textLength);
+							textDisplayOffset = fs::max(0.0f, textWidth - controlData._displaySize._x);
 						}
 					}
 
-					_wcharInput = L'\0';
-				}
-				else
-				{
-					// 키 눌림 처리
-					
-					const uint16 textLength = static_cast<uint16>(outText.length());
+					// Caret 위치가 바뀐 경우 refresh
+					if (oldCaretAt != caretAt)
+					{
+						fnRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
 
-					if (_keyCode == fs::Window::EventData::KeyCode::Left)
-					{
-						caretAt = fs::max(caretAt - 1, 0);
-					}
-					else if (_keyCode == fs::Window::EventData::KeyCode::Right)
-					{
-						caretAt = fs::min(caretAt + 1, static_cast<int32>(textLength));
-					}
-					else if (_keyCode == fs::Window::EventData::KeyCode::Delete)
-					{
-						const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-						if (0 < selectionLength)
+						// Selection
+						if (isShiftKeyDown == true && _keyCode != fs::Window::EventData::KeyCode::NONE)
 						{
-							fnEraseSelection();
-						}
-						else
-						{
-							if (0 < textLength && caretAt < textLength)
-							{
-								outText.erase(outText.begin() + caretAt);
-
-								caretAt = fs::min(caretAt, textLength);
-							}
+							fnProcessSelection(oldCaretAt, caretAt);
 						}
 					}
-					else if (_keyCode == fs::Window::EventData::KeyCode::Home)
-					{
-						caretAt = 0;
 
-						float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-						textDisplayOffset = 0.0f;
-					}
-					else if (_keyCode == fs::Window::EventData::KeyCode::End)
+					if (isShiftKeyDown == false && _keyCode != fs::Window::EventData::KeyCode::NONE && _keyCode != fs::Window::EventData::KeyCode::Control && _keyCode != fs::Window::EventData::KeyCode::Alt)
 					{
-						caretAt = textLength;
-						
-						float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-						const float textWidth = shapeFontRendererContext.calculateTextWidth(outText.c_str(), textLength);
-						textDisplayOffset = fs::max(0.0f, textWidth - controlData._displaySize._x);
-					}
-				}
-
-				// Caret 위치가 바뀐 경우 refresh
-				if (oldCaretAt != caretAt)
-				{
-					fnRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
-
-					// Selection
-					if (isShiftKeyDown == true && _keyCode != fs::Window::EventData::KeyCode::NONE)
-					{
-						uint16& selectionStart = controlData._controlValue.getSelectionStart();
+						// Selection 해제
 						uint16& selectionLength = controlData._controlValue.getSelectionLength();
-
-						if (selectionLength == 0)
-						{
-							// 새 Selection
-							selectionStart = fs::min(caretAt, oldCaretAt);
-							selectionLength = fs::max(caretAt, oldCaretAt) - selectionStart;
-						}
-						else
-						{
-							// 기존에 Selection 있음
-							const bool isLeftWard = caretAt < oldCaretAt;
-							const uint16 oldSelectionStart = selectionStart;
-							const uint16 oldSelectionEnd = selectionStart + selectionLength;
-							const bool fromHead = (oldSelectionStart == oldCaretAt);
-							if (((oldSelectionEnd == oldCaretAt) && (caretAt < oldSelectionStart)) || ((oldSelectionStart == oldCaretAt && oldSelectionEnd < caretAt)))
-							{
-								// 새 caretAt 위치가 급격히 달라진 경우
-								if (caretAt < oldSelectionStart)
-								{
-									selectionStart = caretAt;
-									selectionLength = oldSelectionStart - caretAt;
-								}
-								else
-								{
-									selectionStart = oldSelectionEnd;
-									selectionLength = caretAt - selectionStart;
-								}
-							}
-							else
-							{
-								if (fromHead == true)
-								{
-									// from Head
-									const uint16 selectionEnd = oldSelectionEnd;
-									selectionStart = (isLeftWard == true) ? fs::min(selectionStart, caretAt) : fs::max(selectionStart, caretAt);
-									selectionLength = selectionEnd - selectionStart;
-								}
-								else
-								{
-									// from Tail
-									const uint16 selectionEnd = (isLeftWard == true) ? fs::min(oldSelectionEnd, caretAt) : fs::max(oldSelectionEnd, caretAt);
-									selectionStart = fs::min(selectionStart, caretAt);
-									selectionLength = selectionEnd - selectionStart;
-								}
-							}
-						}
+						selectionLength = 0;
 					}
-				}
-
-				if (isShiftKeyDown == false && _keyCode != fs::Window::EventData::KeyCode::NONE && _keyCode != fs::Window::EventData::KeyCode::Control && _keyCode != fs::Window::EventData::KeyCode::Alt)
-				{
-					// Selection 해제
-					uint16& selectionLength = controlData._controlValue.getSelectionLength();
-					selectionLength = 0;
 				}
 			}
 
@@ -2209,7 +2248,7 @@ namespace fs
 			const bool isMouseInInteractionArea = isInControlInteractionArea(_mousePosition, controlData);
 			if (isMouseInParentInteractionArea == true && isMouseInInteractionArea == true && shouldIgnoreInteraction_ == false)
 			{
-				// Hovered
+				// Hovered (at least)
 
 				if (doNotSetMouseInteractionDone == false)
 				{
@@ -2219,7 +2258,6 @@ namespace fs
 				const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseDownPosition, controlData);
 
 				if (_hoveredControlHashKey != controlHashKey && controlData._isFocusable == false)
-				//if (_hoveredControlHashKey != controlHashKey)
 				{
 					fnResetHoverDataIfMe(_hoveredControlHashKey);
 
@@ -2236,9 +2274,9 @@ namespace fs
 					fnResetPressDataIfMe(controlHashKey);
 				}
 
-				if (_mouseButtonDown == true && isMouseDownInInteractionArea == true)
+				// Pressed (Mouse down)
+				if (_mouseButtonDownFirst == true && isMouseDownInInteractionArea == true)
 				{
-					// Pressed (Mouse down)
 					fnResetHoverDataIfMe(controlHashKey);
 
 					if (_pressedControlHashKey != controlHashKey)
@@ -2249,9 +2287,9 @@ namespace fs
 					}
 				}
 
+				// Clicked (only in interaction area)
 				if (_mouseDownUp == true && isMouseDownInInteractionArea == true)
 				{
-					// Clicked (only in interaction area)
 					if (_pressedControlHashKey == controlHashKey)
 					{
 						_clickedControlHashKeyPerFrame = controlHashKey;

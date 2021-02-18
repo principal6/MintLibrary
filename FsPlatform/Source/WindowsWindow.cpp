@@ -260,6 +260,40 @@ namespace fs
 			return (0 < virtualKey) ? (::GetKeyState(static_cast<int>(virtualKey)) < 0) : false;
 		}
 
+		const bool WindowsWindow::isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept
+		{
+			const WPARAM virtualKey = convertKeyCodeToWparam(keyCode);
+			return (0 < virtualKey) ? ((::GetAsyncKeyState(static_cast<int>(virtualKey)) & 1) != 0) : false;
+		}
+
+		const bool WindowsWindow::isMouseDown(const EventData::MouseButton mouseButton) const noexcept
+		{
+			WPARAM virtualKey = VK_LBUTTON;
+			if (mouseButton == EventData::MouseButton::Middle)
+			{
+				virtualKey = VK_MBUTTON;
+			}
+			else if (mouseButton == EventData::MouseButton::Right)
+			{
+				virtualKey = VK_RBUTTON;
+			}
+			return (::GetKeyState(static_cast<int>(virtualKey)) < 0);
+		}
+
+		const bool WindowsWindow::isMouseDownFirst(const EventData::MouseButton mouseButton) const noexcept
+		{
+			WPARAM virtualKey = VK_LBUTTON;
+			if (mouseButton == EventData::MouseButton::Middle)
+			{
+				virtualKey = VK_MBUTTON;
+			}
+			else if (mouseButton == EventData::MouseButton::Right)
+			{
+				virtualKey = VK_RBUTTON;
+			}
+			return ((::GetAsyncKeyState(static_cast<int>(virtualKey)) & 1) != 0);
+		}
+
 		void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
 		{
 			if (fs::StringUtil::isNullOrEmpty(text) == true)

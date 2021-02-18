@@ -610,6 +610,26 @@ namespace fs
 			return static_cast<float>(totalWidth);
 		}
 
+		const uint32 FontRendererContext::calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+		{
+			const int32 positionInTextInt = static_cast<int32>(positionInText);
+			int32 totalWidth = 0;
+			for (uint32 textAt = 0; textAt < textLength; ++textAt)
+			{
+				const wchar_t& wideChar = wideText[textAt];
+
+				const uint64 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
+				const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
+				totalWidth += glyphInfo._horiAdvance;
+
+				if (positionInTextInt < totalWidth)
+				{
+					return textAt;
+				}
+			}
+			return textLength;
+		}
+
 		const DxObjectId& FontRendererContext::getFontTextureId() const noexcept
 		{
 			return _fontData._fontTextureId;
