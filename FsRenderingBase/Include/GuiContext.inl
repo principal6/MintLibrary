@@ -290,7 +290,6 @@ namespace fs
 			_nextChildOffset.setZero();
 			_previousContentAreaSize = _contentAreaSize;
 			_contentAreaSize.setZero();
-			_childControlDataArray.clear();
 			_deltaPosition.setZero();
 		}
 
@@ -388,20 +387,20 @@ namespace fs
 			return _viewportIndexForDocks;
 		}
 
-		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getChildControlDataArray() const noexcept
+		FS_INLINE const std::vector<uint64>& GuiContext::ControlData::getChildControlDataHashKeyArray() const noexcept
 		{
-			return _childControlDataArray;
+			return _childControlDataHashKeyArray;
 		}
 
-		FS_INLINE const std::vector<GuiContext::ControlData>& GuiContext::ControlData::getPreviousChildControlDataArray() const noexcept
+		FS_INLINE const std::vector<uint64>& GuiContext::ControlData::getPreviousChildControlDataHashKeyArray() const noexcept
 		{
-			return _previousChildControlDataArray;
+			return _previousChildControlDataHashKeyArray;
 		}
 
-		FS_INLINE void GuiContext::ControlData::prepareChildControlDataArray() noexcept
+		FS_INLINE void GuiContext::ControlData::prepareChildControlDataHashKeyArray() noexcept
 		{
-			std::swap(_childControlDataArray, _previousChildControlDataArray);
-			_childControlDataArray.clear();
+			std::swap(_childControlDataHashKeyArray, _previousChildControlDataHashKeyArray);
+			_childControlDataHashKeyArray.clear();
 		}
 
 		FS_INLINE const bool GuiContext::ControlData::hasChildWindow() const noexcept

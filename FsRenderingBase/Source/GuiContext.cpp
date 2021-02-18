@@ -779,7 +779,7 @@ namespace fs
 			prepareControlData(controlData, paramPrepareControlData);
 
 			fs::SimpleRendering::Color color;
-			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::LightFont), getNamedColor(NamedColor::DarkFont), color);
+			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::LightFont), getNamedColor(NamedColor::LightFont).addedRgb(-0.25f), color);
 			const bool isAncestorFocused_ = isAncestorFocused(controlData);
 			fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused_ == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 			
@@ -794,6 +794,20 @@ namespace fs
 				scissorRectangleForMe.top = static_cast<LONG>(controlData._position._y);
 				scissorRectangleForMe.right = static_cast<LONG>(scissorRectangleForMe.left + controlData._displaySize._x);
 				scissorRectangleForMe.bottom = static_cast<LONG>(scissorRectangleForMe.top + controlData._displaySize._y);
+
+				const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+				{
+					const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
+					scissorRectangleForMe.left = fs::max(scissorRectangleForMe.left, parentScissorRectangle.left);
+					scissorRectangleForMe.right = fs::min(scissorRectangleForMe.right, parentScissorRectangle.right);
+					scissorRectangleForMe.top = fs::max(scissorRectangleForMe.top, parentScissorRectangle.top);
+					scissorRectangleForMe.bottom = fs::min(scissorRectangleForMe.bottom, parentScissorRectangle.bottom);
+
+					// ScissorRectangle 에 음수가 들어가는 것 방지!! (중요)
+					scissorRectangleForMe.right = fs::max(scissorRectangleForMe.left, scissorRectangleForMe.right);
+					scissorRectangleForMe.bottom = fs::max(scissorRectangleForMe.top, scissorRectangleForMe.bottom);
+				}
+
 				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
 				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
@@ -1854,13 +1868,13 @@ namespace fs
 
 			// Child ControlData array
 			{
-				controlData.prepareChildControlDataArray();
+				controlData.prepareChildControlDataHashKeyArray();
 			}
 
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			{
-				std::vector<ControlData>& parentChildControlDataArray = const_cast<std::vector<ControlData>&>(parentControlData.getChildControlDataArray());
-				parentChildControlDataArray.emplace_back(controlData);
+				std::vector<uint64>& parentChildControlDataHashKeyArray = const_cast<std::vector<uint64>&>(parentControlData.getChildControlDataHashKeyArray());
+				parentChildControlDataHashKeyArray.emplace_back(controlData.getHashKey());
 			}
 
 			// Child window
@@ -2911,10 +2925,10 @@ namespace fs
 
 		const bool GuiContext::isDescendantFocused(const ControlData& controlData) const noexcept
 		{
-			const auto& previousChildControlDataArray = controlData.getPreviousChildControlDataArray();
-			for (const auto& previousChildControlData : previousChildControlDataArray)
+			const auto& previousChildControlDataHashKeyArray = controlData.getPreviousChildControlDataHashKeyArray();
+			for (const auto& previousChildControlDataHashKey : previousChildControlDataHashKeyArray)
 			{
-				if (isControlFocused(previousChildControlData) == true)
+				if (isControlFocused(getControlData(previousChildControlDataHashKey)) == true)
 				{
 					return true;
 				}

@@ -277,9 +277,9 @@ namespace fs
 				const uint32								getViewportIndex() const noexcept;
 				const uint32								getViewportIndexForChildren() const noexcept;
 				const uint32								getViewportIndexForDocks() const noexcept;
-				const std::vector<ControlData>&				getChildControlDataArray() const noexcept;
-				const std::vector<ControlData>&				getPreviousChildControlDataArray() const noexcept;
-				void										prepareChildControlDataArray() noexcept;
+				const std::vector<uint64>&					getChildControlDataHashKeyArray() const noexcept;
+				const std::vector<uint64>&					getPreviousChildControlDataHashKeyArray() const noexcept;
+				void										prepareChildControlDataHashKeyArray() noexcept;
 				const bool									hasChildWindow() const noexcept;
 				DockDatum&									getDockDatum(const DockingMethod dockingMethod) noexcept;
 				const DockDatum&							getDockDatum(const DockingMethod dockingMethod) const noexcept;
@@ -347,8 +347,8 @@ namespace fs
 				uint32										_viewportIndex;
 				uint32										_viewportIndexForChildren; // Used by window
 				uint32										_viewportIndexForDocks;
-				std::vector<ControlData>					_childControlDataArray;
-				std::vector<ControlData>					_previousChildControlDataArray;
+				std::vector<uint64>							_childControlDataHashKeyArray;
+				std::vector<uint64>							_previousChildControlDataHashKeyArray;
 				std::unordered_map<uint64, bool>			_childWindowHashKeyMap;
 				DockDatum									_dockData[static_cast<uint32>(DockingMethod::COUNT)];
 				uint64										_dockControlHashKey;
