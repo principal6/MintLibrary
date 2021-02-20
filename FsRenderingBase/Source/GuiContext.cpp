@@ -1166,6 +1166,11 @@ namespace fs
 
 					textDisplayOffset = fs::max(textDisplayOffset, 0.0f);
 				}
+
+				if (textWidthTillCaret + inputCandidateWidth < controlData._displaySize._x)
+				{
+					textDisplayOffset = 0.0f;
+				}
 			}
 			
 
