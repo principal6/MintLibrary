@@ -25,8 +25,8 @@ namespace fs
 		Rect&							operator=(Rect&& rhs) noexcept = default;
 		
 	public:
-		const bool						operator==(const Rect& rhs) const noexcept;
-		const bool						operator!=(const Rect& rhs) const noexcept;
+		constexpr const bool			operator==(const Rect& rhs) const noexcept;
+		constexpr const bool			operator!=(const Rect& rhs) const noexcept;
 
 	public:
 		constexpr const float			left() const noexcept;

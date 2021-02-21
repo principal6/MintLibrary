@@ -26,12 +26,12 @@ namespace fs
 		bottom(top() + size._y);
 	}
 
-	FS_INLINE const bool Rect::operator==(const Rect& rhs) const noexcept
+	FS_INLINE constexpr const bool Rect::operator==(const Rect& rhs) const noexcept
 	{
 		return _raw == rhs._raw;
 	}
 
-	FS_INLINE const bool Rect::operator!=(const Rect& rhs) const noexcept
+	FS_INLINE constexpr const bool Rect::operator!=(const Rect& rhs) const noexcept
 	{
 		return _raw != rhs._raw;
 	}

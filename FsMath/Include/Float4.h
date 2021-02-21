@@ -49,8 +49,8 @@ namespace fs
 		const float&			operator[](const uint32 index) const noexcept;
 
 	public:
-		const bool				operator==(const Float4& rhs) const noexcept;
-		const bool				operator!=(const Float4& rhs) const noexcept;
+		constexpr const bool	operator==(const Float4& rhs) const noexcept;
+		constexpr const bool	operator!=(const Float4& rhs) const noexcept;
 
 	public:
 		static const float		dotProductRaw(const float* const a, const float* const b);

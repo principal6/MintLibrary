@@ -84,12 +84,12 @@ namespace fs
 		return (&_x)[index];
 	}
 
-	const bool Float4::operator==(const Float4& rhs) const noexcept
+	constexpr const bool Float4::operator==(const Float4& rhs) const noexcept
 	{
 		return (_x == rhs._x && _y == rhs._y && _z == rhs._z && _w == rhs._w);
 	}
 
-	const bool Float4::operator!=(const Float4& rhs) const noexcept
+	constexpr const bool Float4::operator!=(const Float4& rhs) const noexcept
 	{
 		return !(*this == rhs);
 	}
