@@ -457,6 +457,7 @@ namespace fs
 			// CheckBox
 			// TextBox SpinBox
 			// ListView TreeView
+			// Menu
 			// Group RadioButton
 			// ComboBox
 			// Splitter
