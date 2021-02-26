@@ -4,7 +4,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		const DxObjectId	DxObjectId::kInvalidObjectId;
 		std::atomic<uint32>	DxObjectId::_lastRawId{ DxObjectId::kDxInvalidObjectRawId };

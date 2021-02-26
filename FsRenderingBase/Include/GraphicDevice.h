@@ -39,7 +39,7 @@ namespace fs
 		class IWindow;
 	}
 
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		using Microsoft::WRL::ComPtr;
 
@@ -76,11 +76,11 @@ namespace fs
 			const D3D11_VIEWPORT&										getFullScreenViewport() const noexcept;
 
 		public:
-			fs::SimpleRendering::DxShaderPool&							getShaderPool() noexcept;
-			fs::SimpleRendering::DxResourcePool&						getResourcePool() noexcept;
-			fs::SimpleRendering::RectangleRendererContext&				getRectangleRendererContext() noexcept;
-			fs::SimpleRendering::ShapeRendererContext&					getShapeRendererContext() noexcept;
-			fs::SimpleRendering::FontRendererContext&					getFontRendererContext() noexcept;
+			fs::RenderingBase::DxShaderPool&							getShaderPool() noexcept;
+			fs::RenderingBase::DxResourcePool&						getResourcePool() noexcept;
+			fs::RenderingBase::RectangleRendererContext&				getRectangleRendererContext() noexcept;
+			fs::RenderingBase::ShapeRendererContext&					getShapeRendererContext() noexcept;
+			fs::RenderingBase::FontRendererContext&					getFontRendererContext() noexcept;
 			fs::Gui::GuiContext&										getGuiContext() noexcept;
 			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
 
@@ -139,9 +139,9 @@ namespace fs
 			fs::Language::CppHlsl										_cppHlslStructuredBuffers;
 
 		private:
-			fs::SimpleRendering::RectangleRendererContext				_rectangleRendererContext;
-			fs::SimpleRendering::ShapeRendererContext					_shapeRendererContext;
-			fs::SimpleRendering::FontRendererContext					_fontRendererContext;
+			fs::RenderingBase::RectangleRendererContext				_rectangleRendererContext;
+			fs::RenderingBase::ShapeRendererContext					_shapeRendererContext;
+			fs::RenderingBase::FontRendererContext					_fontRendererContext;
 		
 		private:
 			fs::Gui::GuiContext											_guiContext;

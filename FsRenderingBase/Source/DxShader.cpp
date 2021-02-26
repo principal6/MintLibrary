@@ -18,7 +18,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 #pragma region Static function definitions
 		template<uint32 BufferSize>
@@ -195,17 +195,17 @@ namespace fs
 		{
 			switch (shaderType)
 			{
-			case fs::SimpleRendering::DxShaderType::VertexShader:
+			case fs::RenderingBase::DxShaderType::VertexShader:
 				_graphicDevice->getDxDeviceContext()->VSSetShader(nullptr, nullptr, 0);
 				_graphicDevice->getDxDeviceContext()->IASetInputLayout(nullptr);
 				break;
-			case fs::SimpleRendering::DxShaderType::GeometryShader:
+			case fs::RenderingBase::DxShaderType::GeometryShader:
 				_graphicDevice->getDxDeviceContext()->GSSetShader(nullptr, nullptr, 0);
 				break;
-			case fs::SimpleRendering::DxShaderType::PixelShader:
+			case fs::RenderingBase::DxShaderType::PixelShader:
 				_graphicDevice->getDxDeviceContext()->PSSetShader(nullptr, nullptr, 0);
 				break;
-			case fs::SimpleRendering::DxShaderType::COUNT:
+			case fs::RenderingBase::DxShaderType::COUNT:
 				break;
 			default:
 				break;

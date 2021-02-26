@@ -11,12 +11,12 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class ShapeFontRendererContext final : public ShapeRendererContext
 		{
 		public:
-																			ShapeFontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																			ShapeFontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 			virtual															~ShapeFontRendererContext();
 
 		public:
@@ -33,10 +33,10 @@ namespace fs
 			void															drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
 			const float														calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
 			const uint32													calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
-			void															setTextColor(const fs::SimpleRendering::Color& textColor) noexcept;
+			void															setTextColor(const fs::RenderingBase::Color& textColor) noexcept;
 
 		private:
-			fs::SimpleRendering::FontRendererContext						_fontRendererContext;
+			fs::RenderingBase::FontRendererContext						_fontRendererContext;
 		};
 	}
 }

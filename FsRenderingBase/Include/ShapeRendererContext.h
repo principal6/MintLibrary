@@ -17,7 +17,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class ShapeRendererContext : public IRendererContext
 		{
@@ -37,7 +37,7 @@ namespace fs
 			static constexpr uint8												kInfoCircular			= 2;
 
 		public:
-																				ShapeRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																				ShapeRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 			virtual																~ShapeRendererContext();
 
 		public:
@@ -47,7 +47,7 @@ namespace fs
 			virtual void														render() noexcept;
 
 		public:
-			void																setBorderColor(const fs::SimpleRendering::Color& borderColor) noexcept;
+			void																setBorderColor(const fs::RenderingBase::Color& borderColor) noexcept;
 
 		public:
 			// Independent from internal position set by setPosition() call
@@ -55,7 +55,7 @@ namespace fs
 			void																drawQuadraticBezier(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const bool validate = true);
 
 		protected:
-			void																drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::SimpleRendering::Color& color, const bool validate = true);
+			void																drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::RenderingBase::Color& color, const bool validate = true);
 			
 		public:
 			// Independent from internal position set by setPosition() call
@@ -63,14 +63,14 @@ namespace fs
 			void																drawSolidTriangle(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC);
 
 		protected:
-			void																drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::SimpleRendering::Color& color);
+			void																drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::RenderingBase::Color& color);
 
 		public:
 			void																drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
 			void																drawQuarterCircle(const float radius, const float rotationAngle);
 		
 		protected:
-			void																drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::SimpleRendering::Color& color);
+			void																drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::RenderingBase::Color& color);
 
 		public:
 			// This function Interprets internal positon as the center of the entire circle (= center root of half circle)
@@ -89,7 +89,7 @@ namespace fs
 			void																drawRectangle(const fs::Float2& size, const float borderThickness, const float rotationAngle);
 
 		protected:
-			void																drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::SimpleRendering::Color& color);
+			void																drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::RenderingBase::Color& color);
 
 		public:
 			void																drawTaperedRectangle(const fs::Float2& size, const float tapering, const float bias, const float rotationAngle);
@@ -97,8 +97,8 @@ namespace fs
 			void																drawHalfRoundedRectangle(const fs::Float2& size, const float roundness, const float rotationAngle);
 
 		protected:
-			void																drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::SimpleRendering::Color& color);
-			void																drawHalfRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::SimpleRendering::Color& color);
+			void																drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::RenderingBase::Color& color);
+			void																drawHalfRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::RenderingBase::Color& color);
 
 		public:
 			// Independent from internal position set by setPosition() call
@@ -116,7 +116,7 @@ namespace fs
 			void																drawColorPallete(const float radius);
 
 		protected:
-			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>*			_triangleRenderer;
+			RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>*			_triangleRenderer;
 			DxObjectId															_vertexShaderId;
 			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;
@@ -126,7 +126,7 @@ namespace fs
 			DxObjectId															_sbTransformBufferId;
 		
 		protected:
-			fs::SimpleRendering::Color											_borderColor;
+			fs::RenderingBase::Color											_borderColor;
 		};
 	}
 }

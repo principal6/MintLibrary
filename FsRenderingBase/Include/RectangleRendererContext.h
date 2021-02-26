@@ -13,12 +13,12 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class RectangleRendererContext final : public IRendererContext
 		{
 		public:
-																	RectangleRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																	RectangleRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 			virtual													~RectangleRendererContext() = default;
 
 		public:
@@ -42,7 +42,7 @@ namespace fs
 			fs::Float2												_size;
 		
 		private:
-			SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
+			RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
 			DxObjectId												_vertexShaderId;
 			DxObjectId												_pixelShaderId;
 		};

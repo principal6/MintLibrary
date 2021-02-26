@@ -26,7 +26,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		GlyphInfo::GlyphInfo()
 			: _charCode{}
@@ -72,12 +72,12 @@ namespace fs
 
 
 		FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
-			: FontRendererContext(graphicDevice, FS_NEW(SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>, graphicDevice))
+			: FontRendererContext(graphicDevice, FS_NEW(RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>, graphicDevice))
 		{
 			_ownTriangleRenderer = true;
 		}
 
-		FontRendererContext::FontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice, fs::SimpleRendering::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer)
+		FontRendererContext::FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer)
 			: IRendererContext(graphicDevice)
 			, _ftLibrary{ nullptr }
 			, _ftFace{ nullptr }
@@ -211,8 +211,8 @@ namespace fs
 			}
 #endif
 			
-			fs::SimpleRendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-			_fontData._fontTextureId = resourcePool.pushTexture2D(fs::SimpleRendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
+			fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+			_fontData._fontTextureId = resourcePool.pushTexture2D(fs::RenderingBase::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
 			return true;
 		}
 
@@ -457,7 +457,7 @@ namespace fs
 
 		void FontRendererContext::initializeShaders() noexcept
 		{
-			fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+			fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
 			// Compile vertex shader and create input layer
 			{
@@ -550,9 +550,9 @@ namespace fs
 		{
 			if (_triangleRenderer->isRenderable() == true)
 			{
-				_graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::SimpleRendering::DxShaderType::PixelShader, 0);
+				_graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::RenderingBase::DxShaderType::PixelShader, 0);
 				
-				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+				fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
 
 				if (getUseMultipleViewports() == true)

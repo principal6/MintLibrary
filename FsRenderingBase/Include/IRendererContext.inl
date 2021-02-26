@@ -1,13 +1,13 @@
 #include "IRendererContext.h"
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		inline const Color Color::kTransparent = Color(0, 0, 0, 0);
 		inline const Color Color::kWhite = Color(255, 255, 255, 255);
 		inline const Color Color::kBlack = Color(0, 0, 0, 255);
 
-		inline IRendererContext::IRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice)
+		inline IRendererContext::IRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
 			: _graphicDevice{ graphicDevice }
 			, _defaultColor{ Color::kWhite }
 			, _viewportIndex{ 0.0f }
@@ -42,13 +42,13 @@ namespace fs
 			_position._z = s;
 		}
 
-		FS_INLINE void IRendererContext::setColor(const fs::SimpleRendering::Color& color) noexcept
+		FS_INLINE void IRendererContext::setColor(const fs::RenderingBase::Color& color) noexcept
 		{
 			_colorArray.clear();
 			_defaultColor = color;
 		}
 
-		FS_INLINE void IRendererContext::setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept
+		FS_INLINE void IRendererContext::setColor(const std::vector<fs::RenderingBase::Color>& colorArray) noexcept
 		{
 			_colorArray = colorArray;
 

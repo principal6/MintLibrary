@@ -764,7 +764,7 @@ const bool testWindow()
 		return false;
 	}
 
-	SimpleRendering::GraphicDevice graphicDevice;
+	RenderingBase::GraphicDevice graphicDevice;
 	graphicDevice.initialize(&window);
 
 	uint64 previousFrameTimeMs = 0;
@@ -892,7 +892,7 @@ const bool testWindow()
 						{
 							guiContext.endButton();
 						}
-						
+
 						static std::wstring textBoxContent;
 						{
 							fs::Gui::TextBoxParam textBoxParam;
@@ -903,6 +903,20 @@ const bool testWindow()
 							{
 								guiContext.endTextBox();
 							}
+						}
+
+						fs::Gui::ListViewParam listViewParam;
+						int16 listViewSelectedItemIndex = 0;
+						if (guiContext.beginListView(L"리스트뷰", listViewSelectedItemIndex, listViewParam) == true)
+						{
+							guiContext.pushListItem(L"아이템1");
+							guiContext.pushListItem(L"아이템2");
+							guiContext.pushListItem(L"아이템3");
+							guiContext.pushListItem(L"아이템4");
+							guiContext.pushListItem(L"아이템5");
+							guiContext.pushListItem(L"아이템6");
+
+							guiContext.endListView();
 						}
 
 						{
@@ -944,9 +958,9 @@ const bool testWindow()
 			}
 
 			{
-				fs::SimpleRendering::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
+				fs::RenderingBase::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
 
-				fontRendererContext.setColor(fs::SimpleRendering::Color(0.125f, 0.125f, 0.5f));
+				fontRendererContext.setColor(fs::RenderingBase::Color(0.125f, 0.125f, 0.5f));
 				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float4(10, 5, 0, 1));
 				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float4(120, 5, 0, 1));
 			}

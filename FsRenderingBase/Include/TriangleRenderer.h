@@ -14,7 +14,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class GraphicDevice;
 
@@ -26,7 +26,7 @@ namespace fs
 		class TriangleRenderer
 		{
 		public:
-															TriangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+															TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice);
 															~TriangleRenderer() = default;
 
 		public:
@@ -42,7 +42,7 @@ namespace fs
 			void											prepareBuffer();
 
 		private:
-			fs::SimpleRendering::GraphicDevice* const		_graphicDevice;
+			fs::RenderingBase::GraphicDevice* const		_graphicDevice;
 			const uint32									_vertexStride;
 		
 		private:

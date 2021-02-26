@@ -17,7 +17,7 @@ namespace fs
 		class CppHlslTypeInfo;
 	}
 
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class DxShaderHeaderMemory;
 		class GraphicDevice;

@@ -8,10 +8,10 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		template <typename T>
-		inline TriangleRenderer<T>::TriangleRenderer(fs::SimpleRendering::GraphicDevice* const graphicDevice)
+		inline TriangleRenderer<T>::TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice)
 			: _graphicDevice{ graphicDevice }
 			, _vertexStride{ sizeof(T) }
 			, _vertexBufferId{}

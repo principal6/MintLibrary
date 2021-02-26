@@ -33,65 +33,75 @@ namespace fs
 			__noop;
 		}
 
-		FS_INLINE void ControlValue::setScrollBarType(const ScrollBarType scrollBarType) noexcept
+		FS_INLINE void ControlValue::setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept
 		{
-			_i[0] = static_cast<int32>(scrollBarType);
-		}
-
-		FS_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
-		{
-			_f[0] = thumbAt;
+			_hi[0] = static_cast<int16>(scrollBarType);
 		}
 
 		FS_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
 		{
-			_i[0] = (isToggled == true) ? 1 : 0;
+			_hi[1] = (isToggled == true) ? 1 : 0;
+		}
+
+		FS_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
+		{
+			_f[1] = thumbAt;
+		}
+
+		FS_INLINE void ControlValue::setSelectedItemIndex(const int16 itemIndex) noexcept
+		{
+			_hi[4] = itemIndex;
 		}
 
 
-		FS_INLINE const ScrollBarType& ControlValue::getScrollBarType() const noexcept
+		FS_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
 		{
-			return *reinterpret_cast<const ScrollBarType*>(&_i[0]);
-		}
-
-		FS_INLINE const float ControlValue::getThumbAt() const noexcept
-		{
-			return _f[0];
-		}
-
-		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
-		{
-			return (_i[0] != 0);
+			return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
 		}
 
 		FS_INLINE uint16& ControlValue::getCaretAt() noexcept
 		{
-			return _hui[0];
+			return _hui[2];
 		}
 
 		FS_INLINE uint16& ControlValue::getCaretState() noexcept
 		{
-			return _hui[1];
+			return _hui[3];
 		}
 
 		FS_INLINE uint16& ControlValue::getSelectionStart() noexcept
 		{
-			return _hui[2];
+			return _hui[4];
 		}
 
 		FS_INLINE uint16& ControlValue::getSelectionLength() noexcept
 		{
-			return _hui[3];
+			return _hui[5];
 		}
 
 		FS_INLINE float& ControlValue::getTextDisplayOffset() noexcept
 		{
-			return _f[2];
+			return _f[3];
 		}
 
 		FS_INLINE uint64& ControlValue::getLastCaretBlinkTimeMs() noexcept
 		{
-			return _lui[3];
+			return _lui[2];
+		}
+
+		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
+		{
+			return (_hi[1] != 0);
+		}
+
+		FS_INLINE const float ControlValue::getThumbAt() const noexcept
+		{
+			return _f[1];
+		}
+
+		FS_INLINE int16& ControlValue::getSelectedItemIndex() noexcept
+		{
+			return _hi[4];
 		}
 
 
@@ -761,12 +771,12 @@ namespace fs
 			return (_focusedControlHashKey == ((0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey()));
 		}
 
-		FS_INLINE const fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
+		FS_INLINE const fs::RenderingBase::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
 		{
 			return _namedColors[static_cast<uint32>(namedColor)];
 		}
 
-		FS_INLINE fs::SimpleRendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) noexcept
+		FS_INLINE fs::RenderingBase::Color& GuiContext::getNamedColor(const NamedColor namedColor) noexcept
 		{
 			return _namedColors[static_cast<uint32>(namedColor)];
 		}

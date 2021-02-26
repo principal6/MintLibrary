@@ -7,7 +7,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		FS_INLINE fs::Float4 getVertexPosition(const uint32 vertexIndex, const fs::Float4& position, const fs::Float2& size)
 		{
@@ -19,7 +19,7 @@ namespace fs
 			return fs::Float2(position._x + (vertexIndex & 1) * size._x, position._y + ((vertexIndex & 2) >> 1) * size._y);
 		}
 
-		RectangleRendererContext::RectangleRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice)
+		RectangleRendererContext::RectangleRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
 			: IRendererContext(graphicDevice)
 			, _triangleRenderer{ graphicDevice }
 		{
@@ -28,7 +28,7 @@ namespace fs
 
 		void RectangleRendererContext::initializeShaders() noexcept
 		{
-			fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+			fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
 			// Compile vertex shader and create input layer
 			{
@@ -96,7 +96,7 @@ namespace fs
 		{
 			if (_triangleRenderer.isRenderable() == true)
 			{
-				fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+				fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
 				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
 				_triangleRenderer.render();

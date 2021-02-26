@@ -21,13 +21,13 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		GraphicDevice::GraphicDevice()
 			: _window{ nullptr }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _fullScreenViewport{}
-			, _shaderPool{ this, &_shaderHeaderMemory, fs::SimpleRendering::DxShaderVersion::v_5_0 }
+			, _shaderPool{ this, &_shaderHeaderMemory, fs::RenderingBase::DxShaderVersion::v_5_0 }
 			, _resourcePool{ this }
 			, _rectangleRendererContext{ this }
 			, _shapeRendererContext{ this }
@@ -56,8 +56,8 @@ namespace fs
 
 			if (_fontRendererContext.loadFontData(kDefaultFont) == false)
 			{
-				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(0, 0x33DD));
-				_fontRendererContext.pushGlyphRange(fs::SimpleRendering::GlyphRange(L'가', L'힣'));
+				_fontRendererContext.pushGlyphRange(fs::RenderingBase::GlyphRange(0, 0x33DD));
+				_fontRendererContext.pushGlyphRange(fs::RenderingBase::GlyphRange(L'가', L'힣'));
 				_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1);
 				_fontRendererContext.loadFontData(kDefaultFont);
 			}

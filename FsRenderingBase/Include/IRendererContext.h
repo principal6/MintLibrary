@@ -16,7 +16,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class GraphicDevice;
 
@@ -83,7 +83,7 @@ namespace fs
 		{
 		public:
 													IRendererContext() = default;
-													IRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+													IRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 			virtual									~IRendererContext() = default;
 
 		public:
@@ -99,20 +99,20 @@ namespace fs
 		public:
 			void									setPosition(const fs::Float4& position) noexcept;
 			void									setPositionZ(const float s) noexcept;
-			void									setColor(const fs::SimpleRendering::Color& color) noexcept;
-			void									setColor(const std::vector<fs::SimpleRendering::Color>& colorArray) noexcept;
+			void									setColor(const fs::RenderingBase::Color& color) noexcept;
+			void									setColor(const std::vector<fs::RenderingBase::Color>& colorArray) noexcept;
 			virtual void							setViewportIndex(const uint32 viewportIndex) noexcept;
 
 		protected:
 			const fs::Float4&						getColorInternal(const uint32 index) const noexcept;
 		
 		protected:
-			fs::SimpleRendering::GraphicDevice*		_graphicDevice;
+			fs::RenderingBase::GraphicDevice*		_graphicDevice;
 		
 		protected:
 			fs::Float4								_position;
-			std::vector<SimpleRendering::Color>		_colorArray;
-			fs::SimpleRendering::Color				_defaultColor;
+			std::vector<RenderingBase::Color>		_colorArray;
+			fs::RenderingBase::Color				_defaultColor;
 			float									_viewportIndex;
 		
 		private:

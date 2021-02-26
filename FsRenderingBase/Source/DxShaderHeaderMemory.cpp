@@ -6,7 +6,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		void DxShaderHeaderMemory::pushHeader(const char* const name, const char* const content)
 		{

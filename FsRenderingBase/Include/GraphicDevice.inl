@@ -1,28 +1,28 @@
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
-		FS_INLINE fs::SimpleRendering::DxShaderPool& GraphicDevice::getShaderPool() noexcept
+		FS_INLINE fs::RenderingBase::DxShaderPool& GraphicDevice::getShaderPool() noexcept
 		{
 			return _shaderPool;
 		}
 
-		FS_INLINE fs::SimpleRendering::DxResourcePool& GraphicDevice::getResourcePool() noexcept
+		FS_INLINE fs::RenderingBase::DxResourcePool& GraphicDevice::getResourcePool() noexcept
 		{
 			return _resourcePool;
 		}
 
-		FS_INLINE fs::SimpleRendering::RectangleRendererContext& GraphicDevice::getRectangleRendererContext() noexcept
+		FS_INLINE fs::RenderingBase::RectangleRendererContext& GraphicDevice::getRectangleRendererContext() noexcept
 		{
 			return _rectangleRendererContext; 
 		}
 
-		FS_INLINE fs::SimpleRendering::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
+		FS_INLINE fs::RenderingBase::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
 		{
 			return _shapeRendererContext;
 		}
 
-		FS_INLINE fs::SimpleRendering::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
+		FS_INLINE fs::RenderingBase::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
 		{
 			return _fontRendererContext;
 		}

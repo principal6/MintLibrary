@@ -7,16 +7,16 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		DxResource DxResource::s_invalidInstance(nullptr);
 		DXGI_FORMAT DxResource::getDxgiFormat(const DxTextureFormat format)
 		{
 			switch (format)
 			{
-			case fs::SimpleRendering::DxTextureFormat::R8_UNORM:
+			case fs::RenderingBase::DxTextureFormat::R8_UNORM:
 				return DXGI_FORMAT::DXGI_FORMAT_R8_UNORM;
-			case fs::SimpleRendering::DxTextureFormat::R8G8B8A8_UNORM:
+			case fs::RenderingBase::DxTextureFormat::R8G8B8A8_UNORM:
 				return DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
 			default:
 				break;
@@ -29,9 +29,9 @@ namespace fs
 		{
 			switch (format)
 			{
-			case fs::SimpleRendering::DxTextureFormat::R8_UNORM:
+			case fs::RenderingBase::DxTextureFormat::R8_UNORM:
 				return 1;
-			case fs::SimpleRendering::DxTextureFormat::R8G8B8A8_UNORM:
+			case fs::RenderingBase::DxTextureFormat::R8G8B8A8_UNORM:
 				return 4;
 			default:
 				break;
@@ -56,9 +56,9 @@ namespace fs
 		{
 			switch (_resourceType)
 			{
-			case fs::SimpleRendering::DxResourceType::INVALID:
+			case fs::RenderingBase::DxResourceType::INVALID:
 				break;
-			case fs::SimpleRendering::DxResourceType::ConstantBuffer:
+			case fs::RenderingBase::DxResourceType::ConstantBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -84,8 +84,8 @@ namespace fs
 				}
 				break;
 			}
-			case fs::SimpleRendering::DxResourceType::VertexBuffer:
-			case fs::SimpleRendering::DxResourceType::IndexBuffer:
+			case fs::RenderingBase::DxResourceType::VertexBuffer:
+			case fs::RenderingBase::DxResourceType::IndexBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -111,7 +111,7 @@ namespace fs
 				}
 				break;
 			}
-			case fs::SimpleRendering::DxResourceType::StructuredBuffer:
+			case fs::RenderingBase::DxResourceType::StructuredBuffer:
 			{
 				ComPtr<ID3D11Resource> newResource;
 
@@ -155,7 +155,7 @@ namespace fs
 		{
 			switch (_resourceType)
 			{
-			case fs::SimpleRendering::DxResourceType::Texture2D:
+			case fs::RenderingBase::DxResourceType::Texture2D:
 			{
 				ComPtr<ID3D11Resource> newResource;
 

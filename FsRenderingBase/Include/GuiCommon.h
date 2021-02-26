@@ -30,6 +30,8 @@ namespace fs
 			SliderThumb, // PRIVATE
 			CheckBox,
 			TextBox,
+			ListView,
+			ListItem,
 
 			COUNT
 		};
@@ -52,7 +54,7 @@ namespace fs
 			RepositionBoth,
 		};
 
-		enum class ScrollBarType
+		enum class ScrollBarType : int16
 		{
 			None,
 			Vert,

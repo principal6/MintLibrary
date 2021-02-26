@@ -11,7 +11,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class DxResourcePool;
 

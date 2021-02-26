@@ -22,7 +22,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class GraphicDevice;
 	}
@@ -56,8 +56,8 @@ namespace fs
 		// If no value is set, default values will be used properly
 		struct LabelParam
 		{
-			fs::SimpleRendering::Color	_backgroundColor	= fs::SimpleRendering::Color::kTransparent;
-			fs::SimpleRendering::Color	_fontColor			= fs::SimpleRendering::Color::kTransparent;
+			fs::RenderingBase::Color	_backgroundColor	= fs::RenderingBase::Color::kTransparent;
+			fs::RenderingBase::Color	_fontColor			= fs::RenderingBase::Color::kTransparent;
 			fs::Float2					_size				= fs::Float2::kZero;
 			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Center;
 			TextAlignmentVert			_alignmentVert		= TextAlignmentVert::Middle;
@@ -77,24 +77,52 @@ namespace fs
 		{
 			fs::Float2					_size				= fs::Float2(128.0f, 0.0f);
 			TextAlignmentHorz			_alignmentHorz		= TextAlignmentHorz::Left;
-			fs::SimpleRendering::Color	_backgroundColor	= fs::SimpleRendering::Color::kWhite;
-			fs::SimpleRendering::Color	_fontColor			= fs::SimpleRendering::Color::kBlack;
+			fs::RenderingBase::Color	_backgroundColor	= fs::RenderingBase::Color::kWhite;
+			fs::RenderingBase::Color	_fontColor			= fs::RenderingBase::Color::kBlack;
+		};
+
+		struct ListViewParam
+		{
+			bool		_useScrollBar	= true;
 		};
 
 
+		//             |        CASE 0       |        CASE 1       |
+		//             |---------------------|---------------------|
+		// hi00 i0 li0 |               ScrollBarType               |
+		// hi01        | [[NONE]]            | IsToggled           |
+		// hi02 i1     | CaretAt             | ThumbAt             |
+		// hi03        | CaretStete          |  ..                 |
+		// hi04 i2 li1 | SelectionStart      | SelectedItemIndex   |
+		// hi05        | SelectionLength     |                     |
+		// hi06 i3     | TextDisplayOffset   |                     |
+		// hi07        |  ..                 |                     |
+		// hi08 i4 li2 | LastCaretBlinkTime  |                     |
+		// hi09        |  ..                 |                     |
+		// hi10 i5     |  ..                 |                     |
+		// hi11        |  ..                 |                     |
+		// hi12 i6 li3 |                     |                     |
+		// hi13        |                     |                     |
+		// hi14 i7     |                     |                     |
+		// hi15        |                     |                     |
 		class ControlValue
 		{
 		public:
 									ControlValue();
-									~ControlValue() = default;
+									~ControlValue()							= default;
 
 		public:
-			void					setScrollBarType(const ScrollBarType scrollBarType) noexcept;
+			ControlValue&			operator=(const ControlValue& rhs)		= default;
+			ControlValue&			operator=(ControlValue&& rhs) noexcept	= default;
+
+		public:
+			void					setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept;
 			void					setThumbAt(const float thumbAt) noexcept;
 			void					setIsToggled(const bool isToggled) noexcept;
+			void					setSelectedItemIndex(const int16 itemIndex) noexcept;
 
 		public:
-			const ScrollBarType&	getScrollBarType() const noexcept; // [Window]
+			const ScrollBarType&	getCurrentScrollBarType() const noexcept; // [Window]
 			const float				getThumbAt() const noexcept; // [Slider], [ScrollBar]
 			const bool				getIsToggled() const noexcept; // [CheckBox]
 			uint16&					getCaretAt() noexcept;
@@ -103,6 +131,7 @@ namespace fs
 			uint16&					getSelectionLength() noexcept;
 			float&					getTextDisplayOffset() noexcept;
 			uint64&					getLastCaretBlinkTimeMs() noexcept;
+			int16&					getSelectedItemIndex() noexcept; // [ListView]
 
 		private:
 			union
@@ -190,6 +219,7 @@ namespace fs
 
 		class GuiContext final
 		{
+		private:
 			static constexpr float						kDefaultIntervalX = 5.0f;
 			static constexpr float						kDefaultIntervalY = 5.0f;
 			static constexpr float						kDefaultRoundnessInPixel = 8.0f;
@@ -203,7 +233,7 @@ namespace fs
 			static constexpr float						kFontScaleC = 0.8125f;
 			static constexpr float						kScrollBarThickness = 8.0f;
 			static constexpr fs::Rect					kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
-			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::SimpleRendering::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
+			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
 			static constexpr float						kHalfBorderThickness = 5.0f;
 			static constexpr float						kSliderTrackThicknes = 6.0f;
 			static constexpr float						kSliderThumbRadius = 8.0f;
@@ -216,7 +246,7 @@ namespace fs
 			static constexpr float						kTextBoxBackSpaceStride = 48.0f;
 			static constexpr uint32						kTextBoxMaxTextLength = 2048;
 
-
+		private:
 			class DockDatum
 			{
 			public:
@@ -246,14 +276,41 @@ namespace fs
 				fs::Float2					_rawDockSize;
 			};
 
-
 			struct DockingStateContext
 			{
 				fs::Float2							_displaySize;
 				ResizingMask						_resizingMask;
 			};
 
+			enum class NamedColor
+			{
+				NormalState,
+				HoverState,
+				PressedState,
 
+				WindowFocused,
+				WindowOutOfFocus,
+				Dock,
+				ShownInDock,
+				HighlightColor,
+
+				TitleBarFocused,
+				TitleBarOutOfFocus,
+
+				TooltipBackground,
+
+				ScrollBarTrack,
+				ScrollBarThumb,
+
+				LightFont,
+				DarkFont,
+				ShownInDockFont,
+
+				COUNT
+			};
+
+
+		public:
 			class ControlData
 			{
 			public:
@@ -361,6 +418,8 @@ namespace fs
 				DockingStateContext							_dokcingStateContext;
 			};
 			
+
+		private:
 			struct ParamPrepareControlData
 			{
 				fs::Rect			_innerPadding;
@@ -374,7 +433,8 @@ namespace fs
 				bool				_alwaysResetParent					= false;
 				uint64				_parentHashKeyOverride				= 0;
 				bool				_alwaysResetPosition				= true;
-				bool				_ignoreMeForClientSize				= false;
+				bool				_ignoreMeForContentAreaSize				= false;
+				bool				_noIntervalForNextSibling			= false;
 				ViewportUsage		_viewportUsage						= ViewportUsage::Child;
 			};
 			
@@ -389,36 +449,9 @@ namespace fs
 				uint64				_hashKey;
 			};
 
-			enum class NamedColor
-			{
-				NormalState,
-				HoverState,
-				PressedState,
-
-				WindowFocused,
-				WindowOutOfFocus,
-				Dock,
-				ShownInDock,
-				HighlightColor,
-
-				TitleBarFocused,
-				TitleBarOutOfFocus,
-
-				TooltipBackground,
-
-				ScrollBarTrack,
-				ScrollBarThumb,
-
-				LightFont,
-				DarkFont,
-				ShownInDockFont,
-				
-				COUNT
-			};
-
-
+		
 		public:
-																GuiContext(fs::SimpleRendering::GraphicDevice* const graphicDevice);
+																GuiContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 																~GuiContext();
 
 		public:
@@ -455,9 +488,11 @@ namespace fs
 			// ScrollBar Slider
 			// Window docking system!!!
 			// CheckBox
-			// TextBox SpinBox
-			// ListView TreeView
+			// TextBox
+			// ListView
 			// Menu
+			// SpinBox
+			// TreeView
 			// Group RadioButton
 			// ComboBox
 			// Splitter
@@ -490,12 +525,19 @@ namespace fs
 			const bool											beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
 			void												endTextBox() { endControlInternal(ControlType::TextBox); }
 
+			// [ListView]
+			const bool											beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
+			void												endListView();
+
+			// [ListItem]
+			void												pushListItem(const wchar_t* const text);
+
 		private:
 			// Returns size of titlebar
 			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding);
 			void												endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
-			const bool											beginRoundButton(const wchar_t* const windowTitle, const fs::SimpleRendering::Color& color);
+			const bool											beginRoundButton(const wchar_t* const windowTitle, const fs::RenderingBase::Color& color);
 			void												endRoundButton() { endControlInternal(ControlType::RoundButton); }
 
 			// [Tooltip]
@@ -507,7 +549,7 @@ namespace fs
 			void												pushScrollBar(const ScrollBarType scrollBarType);
 
 		private:
-			void												renderDock(const ControlData& controlData, fs::SimpleRendering::ShapeFontRendererContext& shapeFontRendererContext);
+			void												renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 			void												endControlInternal(const ControlType controlType);
 
 		private:
@@ -530,11 +572,11 @@ namespace fs
 		private:
 			void												prepareControlData(ControlData& controlData, const ParamPrepareControlData& paramPrepareControlData) noexcept;
 			
-			const bool											processClickControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& hoverColor, const fs::SimpleRendering::Color& pressedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			const bool											processFocusControl(ControlData& controlData, const fs::SimpleRendering::Color& focusedColor, const fs::SimpleRendering::Color& nonFocusedColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			void												processShowOnlyControl(ControlData& controlData, fs::SimpleRendering::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
-			const bool											processScrollableControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& dragColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
-			const bool											processToggleControl(ControlData& controlData, const fs::SimpleRendering::Color& normalColor, const fs::SimpleRendering::Color& toggledColor, fs::SimpleRendering::Color& outBackgroundColor) noexcept;
+			const bool											processClickControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& pressedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
+			const bool											processFocusControl(ControlData& controlData, const fs::RenderingBase::Color& focusedColor, const fs::RenderingBase::Color& nonFocusedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
+			void												processShowOnlyControl(ControlData& controlData, fs::RenderingBase::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
+			const bool											processScrollableControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& dragColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
+			const bool											processToggleControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& toggledColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
@@ -566,8 +608,8 @@ namespace fs
 			const bool											isDescendantFocused(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
 
-			const fs::SimpleRendering::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
-			fs::SimpleRendering::Color&							getNamedColor(const NamedColor namedColor) noexcept;
+			const fs::RenderingBase::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
+			fs::RenderingBase::Color&							getNamedColor(const NamedColor namedColor) noexcept;
 
 			const float											getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
 #pragma endregion
@@ -580,12 +622,12 @@ namespace fs
 			void												resetStatesPerFrame();
 
 		private:
-			fs::SimpleRendering::GraphicDevice* const			_graphicDevice;
+			fs::RenderingBase::GraphicDevice* const			_graphicDevice;
 
 			float												_fontSize;
-			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextBackground;
-			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextForeground;
-			fs::SimpleRendering::ShapeFontRendererContext		_shapeFontRendererContextTopMost;
+			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextBackground;
+			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextForeground;
+			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextTopMost;
 
 			std::vector<D3D11_VIEWPORT>							_viewportArrayPerFrame;
 			std::vector<D3D11_RECT>								_scissorRectangleArrayPerFrame;
@@ -667,7 +709,7 @@ namespace fs
 			TaskWhenMouseUp										_taskWhenMouseUp;
 
 		private:
-			fs::SimpleRendering::Color							_namedColors[static_cast<uint32>(NamedColor::COUNT)];
+			fs::RenderingBase::Color							_namedColors[static_cast<uint32>(NamedColor::COUNT)];
 		};
 	}
 }

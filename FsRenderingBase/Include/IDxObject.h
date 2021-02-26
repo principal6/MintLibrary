@@ -12,7 +12,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		class GraphicDevice;
 		class IDxObject;

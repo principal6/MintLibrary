@@ -8,7 +8,7 @@
 
 namespace fs
 {
-    namespace SimpleRendering
+    namespace RenderingBase
     {
         class DxShaderHeaderMemory : public ID3DInclude
         {

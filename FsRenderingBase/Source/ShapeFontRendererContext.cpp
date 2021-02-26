@@ -6,9 +6,9 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
-		ShapeFontRendererContext::ShapeFontRendererContext(fs::SimpleRendering::GraphicDevice* const graphicDevice)
+		ShapeFontRendererContext::ShapeFontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
 			: ShapeRendererContext(graphicDevice)
 			, _fontRendererContext{ graphicDevice, _triangleRenderer }
 		{
@@ -22,7 +22,7 @@ namespace fs
 
 		void ShapeFontRendererContext::initializeShaders() noexcept
 		{
-			fs::SimpleRendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+			fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
 			{
 				static constexpr const char kShaderString[]
@@ -183,7 +183,7 @@ namespace fs
 
 		void ShapeFontRendererContext::render() noexcept
 		{
-			_graphicDevice->getResourcePool().bindToShader(_fontRendererContext.getFontTextureId(), fs::SimpleRendering::DxShaderType::PixelShader, 0);
+			_graphicDevice->getResourcePool().bindToShader(_fontRendererContext.getFontTextureId(), fs::RenderingBase::DxShaderType::PixelShader, 0);
 
 			__super::render();
 		}
@@ -225,7 +225,7 @@ namespace fs
 			return _fontRendererContext.calculateIndexFromPositionInText(wideText, textLength, positionInText);
 		}
 
-		void ShapeFontRendererContext::setTextColor(const fs::SimpleRendering::Color& textColor) noexcept
+		void ShapeFontRendererContext::setTextColor(const fs::RenderingBase::Color& textColor) noexcept
 		{
 			_fontRendererContext.setColor(textColor);
 		}

@@ -7,7 +7,7 @@
 
 namespace fs
 {
-	namespace SimpleRendering
+	namespace RenderingBase
 	{
 		enum class TextRenderDirectionHorz
 		{
