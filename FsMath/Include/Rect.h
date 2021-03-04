@@ -33,6 +33,8 @@ namespace fs
 		constexpr const float			right() const noexcept;
 		constexpr const float			top() const noexcept;
 		constexpr const float			bottom() const noexcept;
+		constexpr const float			horz() const noexcept;
+		constexpr const float			vert() const noexcept;
 
 		constexpr void					left(const float s) noexcept;
 		constexpr void					right(const float s) noexcept;

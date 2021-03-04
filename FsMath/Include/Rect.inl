@@ -56,6 +56,16 @@ namespace fs
 		return _raw._w;
 	}
 
+	FS_INLINE constexpr const float Rect::horz() const noexcept
+	{
+		return left() + right();
+	}
+
+	FS_INLINE constexpr const float Rect::vert() const noexcept
+	{
+		return top() + bottom();
+	}
+
 	FS_INLINE constexpr void Rect::left(const float s) noexcept
 	{
 		_raw._x = s;
