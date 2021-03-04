@@ -90,15 +90,15 @@ namespace fs
 		//             |        CASE 0       |        CASE 1       |
 		//             |---------------------|---------------------|
 		// hi00 i0 li0 |               ScrollBarType               |
-		// hi01        | [[NONE]]            | IsToggled           |
+		// hi01        |                MenuBarType                |
 		// hi02 i1     | CaretAt             | ThumbAt             |
 		// hi03        | CaretStete          |  ..                 |
 		// hi04 i2 li1 | SelectionStart      | SelectedItemIndex   |
-		// hi05        | SelectionLength     |                     |
-		// hi06 i3     | TextDisplayOffset   |                     |
-		// hi07        |  ..                 |                     |
-		// hi08 i4 li2 | LastCaretBlinkTime  |                     |
-		// hi09        |  ..                 |                     |
+		// hi05        | SelectionLength     | IsToggled           |
+		// hi06 i3     | TextDisplayOffset   | ItemSizeX           |
+		// hi07        |  ..                 |  ..                 |
+		// hi08 i4 li2 | LastCaretBlinkTime  | ItemSizeY           |
+		// hi09        |  ..                 |  ..                 |
 		// hi10 i5     |  ..                 |                     |
 		// hi11        |  ..                 |                     |
 		// hi12 i6 li3 |                     |                     |
@@ -117,48 +117,61 @@ namespace fs
 
 		public:
 			void					setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept;
+			void					setCurrentMenuBarType(const MenuBarType menuBarType) noexcept;
 			void					setThumbAt(const float thumbAt) noexcept;
-			void					setIsToggled(const bool isToggled) noexcept;
 			void					setSelectedItemIndex(const int16 itemIndex) noexcept;
+			void					setIsToggled(const bool isToggled) noexcept;
+			void					setItemSizeX(const float itemSizeX) noexcept;
+			void					setItemSizeY(const float itemSizeY) noexcept;
+			void					addItemSizeX(const float itemSizeX) noexcept;
+			void					addItemSizeY(const float itemSizeY) noexcept;
 
 		public:
-			const ScrollBarType&	getCurrentScrollBarType() const noexcept; // [Window]
+			const ScrollBarType&	getCurrentScrollBarType() const noexcept;
+			const MenuBarType&		getCurrentMenuBarType() const noexcept;
 			const float				getThumbAt() const noexcept; // [Slider], [ScrollBar]
-			const bool				getIsToggled() const noexcept; // [CheckBox]
+			int16&					getSelectedItemIndex() noexcept; // [ListView]
+			const bool&				getIsToggled() const noexcept; // [CheckBox]
+			const float				getItemSizeX() const noexcept;
+			const float				getItemSizeY() const noexcept;
 			uint16&					getCaretAt() noexcept;
 			uint16&					getCaretState() noexcept;
 			uint16&					getSelectionStart() noexcept;
 			uint16&					getSelectionLength() noexcept;
 			float&					getTextDisplayOffset() noexcept;
 			uint64&					getLastCaretBlinkTimeMs() noexcept;
-			int16&					getSelectedItemIndex() noexcept; // [ListView]
 
 		private:
+			static constexpr uint32 kSize64 = 4;
 			union
 			{
 				struct
 				{
-					uint64	_lui[4];
+					uint64	_lui[kSize64];
 				};
 				struct
 				{
-					int64	_li[4];
+					int64	_li[kSize64];
 				};
 				struct
 				{
-					int32	_i[8];
+					int32	_i[kSize64 * 2];
 				};				
 				struct
 				{
-					float	_f[8];
+					float	_f[kSize64 * 2];
 				};
 				struct
 				{
-					uint16	_hui[16];
+					uint16	_hui[kSize64 * 4];
 				};
 				struct
 				{
-					int16	_hi[16];
+					int16	_hi[kSize64 * 4];
+				};
+				struct
+				{
+					int8	_c[kSize64 * 8];
 				};
 			};
 		};
@@ -233,7 +246,10 @@ namespace fs
 			static constexpr float						kFontScaleC = 0.8125f;
 			static constexpr float						kScrollBarThickness = 8.0f;
 			static constexpr fs::Rect					kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
-			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.top() + kTitleBarInnerPadding.bottom());
+			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
+			static constexpr fs::Float2					kMenuBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + 8.0f);
+			static constexpr float						kMenuItemSpaceLeft = 16.0f;
+			static constexpr float						kMenuItemSpaceRight = 48.0f;
 			static constexpr float						kHalfBorderThickness = 5.0f;
 			static constexpr float						kSliderTrackThicknes = 6.0f;
 			static constexpr float						kSliderThumbRadius = 8.0f;
@@ -353,6 +369,7 @@ namespace fs
 				const fs::Float2							getDockPosition(const DockingMethod dockingMethod) const noexcept;
 				const float									getHorzDockSizeSum() const noexcept;
 				const float									getVertDockSizeSum() const noexcept;
+				const fs::Float2							getMenuBarThickness() const noexcept;
 				void										connectToDock(const uint64 dockControlHashKey) noexcept;
 				void										disconnectFromDock() noexcept;
 				const uint64								getDockControlHashKey() const noexcept;
@@ -384,8 +401,9 @@ namespace fs
 				fs::Float2									_deltaPosition;
 				fs::Float2									_displayOffset; // Used for scrolling child controls (of Window control)
 				bool										_isFocusable;
-				ResizingMask								_resizingMask;
 				bool										_isDraggable;
+				bool										_isInteractableOutsideParent;
+				ResizingMask								_resizingMask;
 				fs::Rect									_draggingConstraints; // MUST set all four values if want to limit dragging area
 				uint64										_delegateHashKey; // Used for drag, resize and focus
 				DockingControlType							_dockingControlType;
@@ -472,6 +490,7 @@ namespace fs
 			void												nextSameLine();
 			void												nextControlSize(const fs::Float2& size, const bool force = false);
 			void												nextNoAutoPositioned();
+			void												nextControlSizeNonContrainedToParent();
 			// Only works if NoAutoPositioned!
 			void												nextControlPosition(const fs::Float2& position);
 			void												nextTooltip(const wchar_t* const tooltipText);
@@ -532,6 +551,19 @@ namespace fs
 			// [ListItem]
 			void												pushListItem(const wchar_t* const text);
 
+			// [MenuBar]
+			const bool											beginMenuBar(const wchar_t* const name);
+			void												endMenuBar() { endControlInternal(ControlType::MenuBar); }
+
+			// [MenuBarItem]
+			const bool											beginMenuBarItem(const wchar_t* const text);
+			void												endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
+
+			// [MenuItem]
+			const bool											beginMenuItem(const wchar_t* const text);
+			void												endMenuItem() { endControlInternal(ControlType::MenuItem); }
+
+
 		private:
 			// Returns size of titlebar
 			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding);
@@ -576,7 +608,7 @@ namespace fs
 			const bool											processFocusControl(ControlData& controlData, const fs::RenderingBase::Color& focusedColor, const fs::RenderingBase::Color& nonFocusedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			void												processShowOnlyControl(ControlData& controlData, fs::RenderingBase::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
 			const bool											processScrollableControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& dragColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
-			const bool											processToggleControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& toggledColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
+			const bool											processToggleControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& toggledColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
 			void												processControlCommonInternal(ControlData& controlData) noexcept;
@@ -601,14 +633,17 @@ namespace fs
 			const bool											isAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
 			const bool											isAncestorFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-			const bool											isAncestor(const uint64 myHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isAncestorInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isAncestorRecursiveXXX(const uint64 currentControlHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isDescendantInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
+			const bool											isDescendantRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
 
 			// Focus, Out-of-focus 색 정할 때 사용
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
 			const bool											isDescendantFocused(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
 
-			const fs::RenderingBase::Color&					getNamedColor(const NamedColor namedColor) const noexcept;
+			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;
 			fs::RenderingBase::Color&							getNamedColor(const NamedColor namedColor) noexcept;
 
 			const float											getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
@@ -622,12 +657,12 @@ namespace fs
 			void												resetStatesPerFrame();
 
 		private:
-			fs::RenderingBase::GraphicDevice* const			_graphicDevice;
+			fs::RenderingBase::GraphicDevice* const				_graphicDevice;
 
 			float												_fontSize;
-			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextBackground;
-			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextForeground;
-			fs::RenderingBase::ShapeFontRendererContext		_shapeFontRendererContextTopMost;
+			fs::RenderingBase::ShapeFontRendererContext			_shapeFontRendererContextBackground;
+			fs::RenderingBase::ShapeFontRendererContext			_shapeFontRendererContextForeground;
+			fs::RenderingBase::ShapeFontRendererContext			_shapeFontRendererContextTopMost;
 
 			std::vector<D3D11_VIEWPORT>							_viewportArrayPerFrame;
 			std::vector<D3D11_RECT>								_scissorRectangleArrayPerFrame;
@@ -676,6 +711,7 @@ namespace fs
 			bool												_nextSameLine;
 			fs::Float2											_nextControlSize;
 			bool												_nextSizingForced;
+			bool												_nextControlSizeNonContrainedToParent;
 			bool												_nextNoAutoPositioned;
 			fs::Float2											_nextControlPosition;
 			const wchar_t*										_nextTooltipText;

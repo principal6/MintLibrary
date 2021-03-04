@@ -796,6 +796,11 @@ const bool testWindow()
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 				
+				if (guiContext.beginMenuBar(L"메뉴테스트") == true)
+				{
+					guiContext.endMenuBar();
+				}
+
 				{
 					fs::Gui::WindowParam windowParam;
 					windowParam._size = fs::Float2(300.0f, 400.0f);
@@ -845,6 +850,36 @@ const bool testWindow()
 					windowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
 					if (guiContext.beginWindow(L"def", windowParam) == true)
 					{
+						if (guiContext.beginMenuBar(L"메뉴테스트1") == true)
+						{
+							if (guiContext.beginMenuBarItem(L"파일") == true)
+							{
+								if (guiContext.beginMenuItem(L"새로 만들기") == true)
+								{
+									guiContext.endMenuItem();
+								}
+
+								if (guiContext.beginMenuItem(L"불러오기") == true)
+								{
+									guiContext.endMenuItem();
+								}
+
+								if (guiContext.beginMenuItem(L"내보내기") == true)
+								{
+									guiContext.endMenuItem();
+								}
+
+								guiContext.endMenuBarItem();
+							}
+
+							if (guiContext.beginMenuBarItem(L"도움말") == true)
+							{
+								guiContext.endMenuBarItem();
+							}
+
+							guiContext.endMenuBar();
+						}
+
 						guiContext.nextTooltip(L"툴팁 테스트!");
 
 						if (guiContext.beginButton(L"테스트") == true)
@@ -961,8 +996,8 @@ const bool testWindow()
 				fs::RenderingBase::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
 
 				fontRendererContext.setColor(fs::RenderingBase::Color(0.125f, 0.125f, 0.5f));
-				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float4(10, 5, 0, 1));
-				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float4(120, 5, 0, 1));
+				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float4(10, 45, 0, 1));
+				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float4(120, 45, 0, 1));
 			}
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();

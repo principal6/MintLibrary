@@ -32,6 +32,9 @@ namespace fs
 			TextBox,
 			ListView,
 			ListItem,
+			MenuBar,
+			MenuBarItem,
+			MenuItem,
 
 			COUNT
 		};
@@ -60,6 +63,15 @@ namespace fs
 			Vert,
 			Horz,
 			Both
+		};
+
+		enum class MenuBarType : int16
+		{
+			None,
+			Top,
+			Bottom,
+			Left,
+			Right,
 		};
 
 		enum class DockingControlType

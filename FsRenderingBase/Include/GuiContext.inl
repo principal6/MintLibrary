@@ -38,9 +38,9 @@ namespace fs
 			_hi[0] = static_cast<int16>(scrollBarType);
 		}
 
-		FS_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
+		FS_INLINE void ControlValue::setCurrentMenuBarType(const MenuBarType menuBarType) noexcept
 		{
-			_hi[1] = (isToggled == true) ? 1 : 0;
+			_hi[1] = static_cast<int16>(menuBarType);
 		}
 
 		FS_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
@@ -53,10 +53,65 @@ namespace fs
 			_hi[4] = itemIndex;
 		}
 
+		FS_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
+		{
+			//_hi[5] = (isToggled == true) ? 1 : 0;
+			_c[5 * 2] = (isToggled == true) ? 1 : 0;
+		}
+
+		FS_INLINE void ControlValue::setItemSizeX(const float itemSizeX) noexcept
+		{
+			_f[3] = itemSizeX;
+		}
+
+		FS_INLINE void ControlValue::setItemSizeY(const float itemSizeY) noexcept
+		{
+			_f[4] = itemSizeY;
+		}
+
+		FS_INLINE void ControlValue::addItemSizeX(const float itemSizeX) noexcept
+		{
+			_f[3] += itemSizeX;
+		}
+
+		FS_INLINE void ControlValue::addItemSizeY(const float itemSizeY) noexcept
+		{
+			_f[4] += itemSizeY;
+		}
 
 		FS_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
 		{
 			return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
+		}
+
+		FS_INLINE const MenuBarType& ControlValue::getCurrentMenuBarType() const noexcept
+		{
+			return *reinterpret_cast<const MenuBarType*>(&_hi[1]);
+		}
+
+		FS_INLINE const float ControlValue::getThumbAt() const noexcept
+		{
+			return _f[1];
+		}
+
+		FS_INLINE int16& ControlValue::getSelectedItemIndex() noexcept
+		{
+			return _hi[4];
+		}
+
+		FS_INLINE const bool& ControlValue::getIsToggled() const noexcept
+		{
+			return *reinterpret_cast<const bool*>(&_c[5 * 2]); // (_hi[5] != 0);
+		}
+
+		FS_INLINE const float ControlValue::getItemSizeX() const noexcept
+		{
+			return _f[3];
+		}
+
+		FS_INLINE const float ControlValue::getItemSizeY() const noexcept
+		{
+			return _f[4];
 		}
 
 		FS_INLINE uint16& ControlValue::getCaretAt() noexcept
@@ -87,21 +142,6 @@ namespace fs
 		FS_INLINE uint64& ControlValue::getLastCaretBlinkTimeMs() noexcept
 		{
 			return _lui[2];
-		}
-
-		FS_INLINE const bool ControlValue::getIsToggled() const noexcept
-		{
-			return (_hi[1] != 0);
-		}
-
-		FS_INLINE const float ControlValue::getThumbAt() const noexcept
-		{
-			return _f[1];
-		}
-
-		FS_INLINE int16& ControlValue::getSelectedItemIndex() noexcept
-		{
-			return _hi[4];
 		}
 
 
@@ -271,6 +311,7 @@ namespace fs
 			, _nonDockInteractionSize{ size }
 			, _isFocusable{ false }
 			, _isDraggable{ false }
+			, _isInteractableOutsideParent{ false }
 			, _displaySize{ size }
 			, _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
 			, _childAt{ _innerPadding.left(), _innerPadding.top() }
@@ -320,11 +361,12 @@ namespace fs
 
 		FS_INLINE fs::Float2 GuiContext::ControlData::getClientSize() const noexcept
 		{
+			fs::Float2 result = fs::Float2(_displaySize._x - _innerPadding.horz(), _displaySize._y - _innerPadding.vert());
 			if (_controlType == ControlType::Window)
 			{
-				return fs::Float2(_displaySize._x, _displaySize._y - kTitleBarBaseSize._y);
+				result._y -= kTitleBarBaseSize._y;
 			}
-			return _displaySize;
+			return result;
 		}
 
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
@@ -441,6 +483,7 @@ namespace fs
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockSize(const DockingMethod dockingMethod) const noexcept
 		{
+			const fs::Float2& menuBarThickness = getMenuBarThickness();
 			const DockDatum& dockDatumTopSide = getDockDatum(DockingMethod::TopSide);
 			const DockDatum& dockDatumBottomSide = getDockDatum(DockingMethod::BottomSide);
 			const DockDatum& dockDatum = getDockDatum(dockingMethod);
@@ -449,7 +492,7 @@ namespace fs
 			{
 			case fs::Gui::DockingMethod::LeftSide:
 			case fs::Gui::DockingMethod::RightSide:
-				resultDockSize._y = _displaySize._y - ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() + _innerPadding.bottom() : 0.0f);
+				resultDockSize._y = getClientSize()._y;
 				if (dockDatumTopSide.hasDockedControls() == true)
 				{
 					resultDockSize._y -= dockDatumTopSide.getRawDockSizeXXX()._y;
@@ -458,10 +501,12 @@ namespace fs
 				{
 					resultDockSize._y -= dockDatumBottomSide.getRawDockSizeXXX()._y;
 				}
+				
+				resultDockSize._y -= menuBarThickness._y;
 				break;
 			case fs::Gui::DockingMethod::TopSide:
 			case fs::Gui::DockingMethod::BottomSide:
-				resultDockSize._x = _displaySize._x - ((_controlType == ControlType::Window) ? _innerPadding.left() + _innerPadding.right() : 0.0f);
+				resultDockSize._x = getClientSize()._x;
 				break;
 			case fs::Gui::DockingMethod::COUNT:
 				break;
@@ -473,7 +518,7 @@ namespace fs
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize() const noexcept
 		{
-			return fs::Float2(0.0f, (_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f);
+			return fs::Float2(0.0f, ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
 		}
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
@@ -511,7 +556,6 @@ namespace fs
 			default:
 				break;
 			}
-
 			return resultDockPosition;
 		}
 
@@ -557,6 +601,17 @@ namespace fs
 				}
 			}
 			return sum;
+		}
+
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getMenuBarThickness() const noexcept
+		{
+			fs::Float2 result;
+			const MenuBarType currentMenuBarType = _controlValue.getCurrentMenuBarType();
+			if (currentMenuBarType == MenuBarType::Top || currentMenuBarType == MenuBarType::Bottom)
+			{
+				result._y = kMenuBarBaseSize._y;
+			}
+			return result;
 		}
 
 		FS_INLINE void GuiContext::ControlData::connectToDock(const uint64 dockControlHashKey) noexcept
@@ -678,6 +733,11 @@ namespace fs
 			_nextNoAutoPositioned = true;
 		}
 
+		FS_INLINE void GuiContext::nextControlSizeNonContrainedToParent()
+		{
+			_nextControlSizeNonContrainedToParent = true;
+		}
+
 		FS_INLINE void GuiContext::nextControlPosition(const fs::Float2& position)
 		{
 			_nextControlPosition = position;
@@ -693,6 +753,7 @@ namespace fs
 			_nextSameLine = false;
 			_nextControlSize.setZero();
 			_nextSizingForced = false;
+			_nextControlSizeNonContrainedToParent = false;
 			_nextNoAutoPositioned = false;
 			_nextControlPosition.setZero();
 			_nextTooltipText = nullptr;
