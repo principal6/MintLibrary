@@ -1421,6 +1421,7 @@ namespace fs
 
 			ParamPrepareControlData paramPrepareControlData;
 			{
+				paramPrepareControlData._alwaysResetDisplaySize = true;
 				paramPrepareControlData._initialDisplaySize._x = parentControlData._displaySize._x;
 				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
 				paramPrepareControlData._desiredPositionInParent._x = 0.0f;
