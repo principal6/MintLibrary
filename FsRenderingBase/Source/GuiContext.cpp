@@ -302,6 +302,222 @@ namespace fs
 			return false;
 		}
 
+		void GuiContext::testWindow()
+		{
+			fs::Gui::WindowParam windowParam;
+			windowParam._size = fs::Float2(500.0f, 500.0f);
+			windowParam._position = fs::Float2(200.0f, 50.0f);
+			windowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
+			if (beginWindow(L"TestWindow", windowParam) == true)
+			{
+				if (beginMenuBar(L"메뉴테스트1") == true)
+				{
+					if (beginMenuBarItem(L"파일") == true)
+					{
+						if (beginMenuItem(L"새로 만들기") == true)
+						{
+							if (beginMenuItem(L"T") == true)
+							{
+								endMenuItem();
+							}
+
+							if (beginMenuItem(L"TT") == true)
+							{
+								endMenuItem();
+							}
+
+							endMenuItem();
+						}
+
+						if (beginMenuItem(L"불러오기") == true)
+						{
+							if (beginMenuItem(L"ABC") == true)
+							{
+								if (beginMenuItem(L"Nest") == true)
+								{
+									endMenuItem();
+								}
+
+								endMenuItem();
+							}
+
+							if (beginMenuItem(L"DEF") == true)
+							{
+								endMenuItem();
+							}
+
+							endMenuItem();
+						}
+
+						if (beginMenuItem(L"내보내기") == true)
+						{
+							endMenuItem();
+						}
+
+						endMenuBarItem();
+					}
+
+					if (beginMenuBarItem(L"도움말") == true)
+					{
+						endMenuBarItem();
+					}
+
+					endMenuBar();
+				}
+
+				nextTooltip(L"툴팁 테스트!");
+
+				if (beginButton(L"테스트") == true)
+				{
+					endButton();
+				}
+
+				{
+					bool isChecked = false;
+					if (beginCheckBox(L"체크박스", isChecked) == true)
+					{
+						endCheckBox();
+					}
+				}
+
+				{
+					fs::Gui::SliderParam sliderParam;
+					sliderParam._size._y = 32.0f;
+					float value = 0.0f;
+					if (beginSlider(L"Slider0", sliderParam, value) == true)
+					{
+						endSlider();
+					}
+				}
+
+
+				nextSameLine();
+				if (beginButton(L"테스트A") == true)
+				{
+					endButton();
+				}
+
+				nextSameLine();
+				if (beginButton(L"테스트B") == true)
+				{
+					endButton();
+				}
+
+				if (beginButton(L"테스트2") == true)
+				{
+					endButton();
+				}
+
+				if (beginButton(L"테스트3") == true)
+				{
+					endButton();
+				}
+
+				static std::wstring textBoxContent;
+				{
+					fs::Gui::TextBoxParam textBoxParam;
+					textBoxParam._size._x = 240.0f;
+					textBoxParam._size._y = 24.0f;
+					textBoxParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Center;
+					if (beginTextBox(L"TextBox", textBoxParam, textBoxContent) == true)
+					{
+						endTextBox();
+					}
+				}
+
+				fs::Gui::ListViewParam listViewParam;
+				int16 listViewSelectedItemIndex = 0;
+				if (beginListView(L"리스트뷰", listViewSelectedItemIndex, listViewParam) == true)
+				{
+					pushListItem(L"아이템1");
+					pushListItem(L"아이템2");
+					pushListItem(L"아이템3");
+					pushListItem(L"아이템4");
+					pushListItem(L"아이템5");
+					pushListItem(L"아이템6");
+
+					endListView();
+				}
+
+				{
+					fs::Gui::WindowParam testWindowParam;
+					testWindowParam._size = fs::Float2(200.0f, 240.0f);
+					testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
+					testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
+					if (beginWindow(L"1ST", testWindowParam))
+					{
+						if (beginButton(L"테스트!!") == true)
+						{
+							endButton();
+						}
+
+						endWindow();
+					}
+				}
+
+				{
+					fs::Gui::WindowParam testWindowParam;
+					testWindowParam._size = fs::Float2(100.0f, 100.0f);
+					testWindowParam._position._x = 10.0f;
+					testWindowParam._position._y = 60.0f;
+					testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
+					if (beginWindow(L"2NDDD", testWindowParam))
+					{
+						if (beginButton(L"YEAH") == true)
+						{
+							endButton();
+						}
+
+						endWindow();
+					}
+				}
+
+				endWindow();
+			}
+		}
+
+		void GuiContext::testDockedWindow()
+		{
+			fs::Gui::WindowParam windowParam;
+			windowParam._size = fs::Float2(300.0f, 400.0f);
+			windowParam._position = fs::Float2(20.0f, 50.0f);
+			windowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
+			windowParam._initialDockingSize._x = 240.0f;
+			if (beginWindow(L"TestDockedWindow", windowParam) == true)
+			{
+				if (beginButton(L"버튼이요") == true)
+				{
+					bool a = true;
+					endButton();
+				}
+
+				nextSameLine();
+
+				nextTooltip(L"Button B Toolip!!");
+
+				if (beginButton(L"Button B") == true)
+				{
+					endButton();
+				}
+
+				if (beginButton(L"Another") == true)
+				{
+					endButton();
+				}
+
+				pushLabel(L"A label!");
+
+				nextSameLine();
+
+				if (beginButton(L"Fourth") == true)
+				{
+					endButton();
+				}
+
+				endWindow();
+			}
+		}
+
 		const bool GuiContext::beginWindow(const wchar_t* const title, const WindowParam& windowParam)
 		{
 			static constexpr ControlType controlType = ControlType::Window;

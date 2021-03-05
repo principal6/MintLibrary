@@ -521,6 +521,10 @@ namespace fs
 			// Splitter
 
 		public:
+			void												testWindow();
+			void												testDockedWindow();
+
+		public:
 			// [Window | Control with ID]
 			// title is used as unique id for windows
 			const bool											beginWindow(const wchar_t* const title, const WindowParam& windowParam);
