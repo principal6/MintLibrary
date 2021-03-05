@@ -81,6 +81,7 @@ namespace fs
         }
 
         void convertWideStringToString(const std::wstring& source, std::string& destination);
+        void convertStringToWideString(const std::string& source, std::wstring& destination);
         void excludeExtension(std::string& inoutText);
 
         static void tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
