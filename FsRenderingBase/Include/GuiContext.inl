@@ -79,6 +79,11 @@ namespace fs
 			_f[4] += itemSizeY;
 		}
 
+		FS_INLINE void ControlValue::setInternalTimeMs(const uint64 internalTimeMs) noexcept
+		{
+			_lui[3] = internalTimeMs;
+		}
+
 		FS_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
 		{
 			return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
@@ -139,9 +144,9 @@ namespace fs
 			return _f[3];
 		}
 
-		FS_INLINE uint64& ControlValue::getLastCaretBlinkTimeMs() noexcept
+		FS_INLINE uint64& ControlValue::getInternalTimeMs() noexcept
 		{
-			return _lui[2];
+			return _lui[3];
 		}
 
 
@@ -326,6 +331,7 @@ namespace fs
 			, _viewportIndex{ 0 }
 			, _viewportIndexForChildren{ 0 }
 			, _viewportIndexForDocks{ 0 }
+			, _previousMaxChildControlCount{ 0 }
 			, _dockControlHashKey{ 0 }
 		{
 			_draggingConstraints.setNan();
@@ -449,9 +455,15 @@ namespace fs
 			return _previousChildControlDataHashKeyArray;
 		}
 
+		FS_INLINE const uint16 GuiContext::ControlData::getPreviousMaxChildControlCount() const noexcept
+		{
+			return _previousMaxChildControlCount;
+		}
+
 		FS_INLINE void GuiContext::ControlData::prepareChildControlDataHashKeyArray() noexcept
 		{
 			std::swap(_childControlDataHashKeyArray, _previousChildControlDataHashKeyArray);
+			_previousMaxChildControlCount = fs::max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlDataHashKeyArray.size()));
 			_childControlDataHashKeyArray.clear();
 		}
 

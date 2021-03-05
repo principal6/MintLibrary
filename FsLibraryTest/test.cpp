@@ -856,11 +856,36 @@ const bool testWindow()
 							{
 								if (guiContext.beginMenuItem(L"새로 만들기") == true)
 								{
+									if (guiContext.beginMenuItem(L"T") == true)
+									{
+										guiContext.endMenuItem();
+									}
+
+									if (guiContext.beginMenuItem(L"TT") == true)
+									{
+										guiContext.endMenuItem();
+									}
+
 									guiContext.endMenuItem();
 								}
 
 								if (guiContext.beginMenuItem(L"불러오기") == true)
 								{
+									if (guiContext.beginMenuItem(L"ABC") == true)
+									{
+										if (guiContext.beginMenuItem(L"Nest") == true)
+										{
+											guiContext.endMenuItem();
+										}
+
+										guiContext.endMenuItem();
+									}
+
+									if (guiContext.beginMenuItem(L"DEF") == true)
+									{
+										guiContext.endMenuItem();
+									}
+
 									guiContext.endMenuItem();
 								}
 

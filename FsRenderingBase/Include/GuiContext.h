@@ -97,14 +97,14 @@ namespace fs
 		// hi05        | SelectionLength     | IsToggled           |
 		// hi06 i3     | TextDisplayOffset   | ItemSizeX           |
 		// hi07        |  ..                 |  ..                 |
-		// hi08 i4 li2 | LastCaretBlinkTime  | ItemSizeY           |
-		// hi09        |  ..                 |  ..                 |
-		// hi10 i5     |  ..                 |                     |
-		// hi11        |  ..                 |                     |
-		// hi12 i6 li3 |                     |                     |
-		// hi13        |                     |                     |
-		// hi14 i7     |                     |                     |
-		// hi15        |                     |                     |
+		// hi08 i4 li2 |                     | ItemSizeY           |
+		// hi09        |                     |  ..                 |
+		// hi10 i5     |                     |                     |
+		// hi11        |                     |                     |
+		// hi12 i6 li3 | InternalTimeMs      |                     |
+		// hi13        |  ..                 |                     |
+		// hi14 i7     |  ..                 |                     |
+		// hi15        |  ..                 |                     |
 		class ControlValue
 		{
 		public:
@@ -125,6 +125,7 @@ namespace fs
 			void					setItemSizeY(const float itemSizeY) noexcept;
 			void					addItemSizeX(const float itemSizeX) noexcept;
 			void					addItemSizeY(const float itemSizeY) noexcept;
+			void					setInternalTimeMs(const uint64 internalTimeMs) noexcept;
 
 		public:
 			const ScrollBarType&	getCurrentScrollBarType() const noexcept;
@@ -139,7 +140,7 @@ namespace fs
 			uint16&					getSelectionStart() noexcept;
 			uint16&					getSelectionLength() noexcept;
 			float&					getTextDisplayOffset() noexcept;
-			uint64&					getLastCaretBlinkTimeMs() noexcept;
+			uint64&					getInternalTimeMs() noexcept;
 
 		private:
 			static constexpr uint32 kSize64 = 4;
@@ -248,6 +249,7 @@ namespace fs
 			static constexpr fs::Rect					kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
 			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
 			static constexpr fs::Float2					kMenuBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + 8.0f);
+			static constexpr float						kMenuBarItemTextSpace = 24.0f;
 			static constexpr float						kMenuItemSpaceLeft = 16.0f;
 			static constexpr float						kMenuItemSpaceRight = 48.0f;
 			static constexpr float						kHalfBorderThickness = 5.0f;
@@ -358,6 +360,7 @@ namespace fs
 				const uint32								getViewportIndexForDocks() const noexcept;
 				const std::vector<uint64>&					getChildControlDataHashKeyArray() const noexcept;
 				const std::vector<uint64>&					getPreviousChildControlDataHashKeyArray() const noexcept;
+				const uint16								getPreviousMaxChildControlCount() const noexcept;
 				void										prepareChildControlDataHashKeyArray() noexcept;
 				const bool									hasChildWindow() const noexcept;
 				DockDatum&									getDockDatum(const DockingMethod dockingMethod) noexcept;
@@ -430,6 +433,7 @@ namespace fs
 				uint32										_viewportIndexForDocks;
 				std::vector<uint64>							_childControlDataHashKeyArray;
 				std::vector<uint64>							_previousChildControlDataHashKeyArray;
+				uint16										_previousMaxChildControlCount;
 				std::unordered_map<uint64, bool>			_childWindowHashKeyMap;
 				DockDatum									_dockData[static_cast<uint32>(DockingMethod::COUNT)];
 				uint64										_dockControlHashKey;
@@ -641,6 +645,7 @@ namespace fs
 			// Focus, Out-of-focus 색 정할 때 사용
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
 			const bool											isDescendantFocused(const ControlData& controlData) const noexcept;
+			const bool											isDescendantHovered(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
 
 			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;

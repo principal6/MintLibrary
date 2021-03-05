@@ -33,6 +33,11 @@ namespace fs
 			return fs::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
 		};
 
+		FS_INLINE fs::Float2 getControlRightCenterPosition(const GuiContext::ControlData& controlData)
+		{
+			return fs::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
+		};
+
 
 		GuiContext::GuiContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
 			: _graphicDevice{ graphicDevice }
@@ -935,7 +940,7 @@ namespace fs
 				const uint64 currentTimeMs = fs::Profiler::getCurrentTimeMs();
 				uint16& caretAt = controlData._controlValue.getCaretAt();
 				uint16& caretState = controlData._controlValue.getCaretState();
-				uint64& lastCaretBlinkTimeMs = controlData._controlValue.getLastCaretBlinkTimeMs();
+				uint64& lastCaretBlinkTimeMs = controlData._controlValue.getInternalTimeMs();
 				if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
 				{
 					lastCaretBlinkTimeMs = currentTimeMs;
@@ -1486,7 +1491,7 @@ namespace fs
 
 			ParamPrepareControlData paramPrepareControlData;
 			{
-				paramPrepareControlData._initialDisplaySize._x = textWidth + 20.0f;
+				paramPrepareControlData._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
 				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
 				paramPrepareControlData._desiredPositionInParent._x = parentControlData._controlValue.getItemSizeX();
 				paramPrepareControlData._desiredPositionInParent._y = 0.0f;
@@ -1547,10 +1552,11 @@ namespace fs
 
 			ControlData& controlData = getControlData(text, controlType);
 			controlData._isInteractableOutsideParent = true;
-
+			
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const ControlType parentControlType = parentControlData.getControlType();
-			if (parentControlType != ControlType::MenuBarItem && parentControlType != ControlType::MenuItem)
+			const bool isParentControlMenuItem = (parentControlType == ControlType::MenuItem);
+			if (parentControlType != ControlType::MenuBarItem && isParentControlMenuItem == false)
 			{
 				FS_LOG_ERROR("김장원", "MenuItem 은 MenuBarItem 이나 MenuItem 컨트롤의 자식으로만 사용할 수 있습니다!");
 				return false;
@@ -1565,30 +1571,56 @@ namespace fs
 				paramPrepareControlData._initialDisplaySize._x = parentControlData._controlValue.getItemSizeX();
 				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
 				paramPrepareControlData._innerPadding.left(kMenuItemSpaceLeft);
-				paramPrepareControlData._desiredPositionInParent._x = 0.0f;
-				paramPrepareControlData._desiredPositionInParent._y = parentControlData._controlValue.getItemSizeY() + paramPrepareControlData._initialDisplaySize._y;
+				paramPrepareControlData._desiredPositionInParent._x = (isParentControlMenuItem == true) ? parentControlData._displaySize._x : 0.0f;
+				paramPrepareControlData._desiredPositionInParent._y = parentControlData._controlValue.getItemSizeY() + ((isParentControlMenuItem == true) ? 0.0f : paramPrepareControlData._initialDisplaySize._y);
 			}
 			nextNoAutoPositioned();
 			nextControlSizeNonContrainedToParent();
 			prepareControlData(controlData, paramPrepareControlData);
 			parentControlData._controlValue.setItemSizeX(fs::max(parentControlData._controlValue.getItemSizeX(), textWidth + kMenuItemSpaceRight));
 			parentControlData._controlValue.addItemSizeY(controlData._displaySize._y);
+			controlData._controlValue.setItemSizeY(0.0f);
 
-			const fs::RenderingBase::Color& normalColor = getNamedColor(NamedColor::NormalState);
+			const bool isDescendantHovered_ = isDescendantHovered(controlData);
+			const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered_ == true) ? NamedColor::HoverState : NamedColor::NormalState);
 			const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
 			const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
 			fs::RenderingBase::Color finalColor;
 			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalColor);
+			const bool isHovered = isControlHovered(controlData);
+			const bool& isToggled = controlData._controlValue.getIsToggled();
+			const uint64 internalTimeMs = controlData._controlValue.getInternalTimeMs();
+			const int16 myIndex = static_cast<int16>(parentControlData.getChildControlDataHashKeyArray().size() - 1);
+			if (isHovered == true)
+			{
+				parentControlData._controlValue.setSelectedItemIndex(myIndex);
+			}
+			else if (isHovered == false && isDescendantHovered_  == false && isToggled == true)
+			{
+				parentControlData._controlValue.setSelectedItemIndex(-1);
+			}
+			controlData._controlValue.setIsToggled((parentControlData._controlValue.getSelectedItemIndex() == myIndex));
 
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
+			
 			// Background 렌더링
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			shapeFontRendererContext.setColor(finalColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, 0.0f, 0.0f, 0.0f);
+
+			// 삼각형 렌더링
+			const uint16 previousMaxChildCount = controlData.getPreviousMaxChildControlCount();
+			if (0 < previousMaxChildCount)
+			{
+				const fs::Float2& controlRightCenterPosition = getControlRightCenterPosition(controlData);
+				fs::Float2 a = controlRightCenterPosition + fs::Float2(-14, -5);
+				fs::Float2 b = controlRightCenterPosition + fs::Float2( -4,  0);
+				fs::Float2 c = controlRightCenterPosition + fs::Float2(-14, +5);
+				shapeFontRendererContext.setColor(getNamedColor((isToggled == true) ? NamedColor::HighlightColor : NamedColor::LightFont));
+				shapeFontRendererContext.drawSolidTriangle(a, b, c);
+			}
 
 			// Text 렌더링
 			const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
@@ -1596,11 +1628,13 @@ namespace fs
 			shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left(),
 				controlLeftCenterPosition._y, 0, 0), fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
 
-			if (isClicked == true)
+			// (previousMaxChildCount) 최초 업데이트 시 Child 가 다 등록되어야 하므로 controlData._updateCount 를 이용한다.
+			const bool result = (isToggled || isClicked || controlData._updateCount <= 1);
+			if (result == true)
 			{
 				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			}
-			return isClicked;
+			return result;
 		}
 
 		void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
@@ -3381,15 +3415,12 @@ namespace fs
 
 		const bool GuiContext::isDescendantFocused(const ControlData& controlData) const noexcept
 		{
-			const auto& previousChildControlDataHashKeyArray = controlData.getPreviousChildControlDataHashKeyArray();
-			for (const auto& previousChildControlDataHashKey : previousChildControlDataHashKeyArray)
-			{
-				if (isControlFocused(getControlData(previousChildControlDataHashKey)) == true)
-				{
-					return true;
-				}
-			}
-			return false;
+			return isDescendantInclusive(controlData, _pressedControlHashKey);
+		}
+
+		const bool GuiContext::isDescendantHovered(const ControlData& controlData) const noexcept
+		{
+			return isDescendantInclusive(controlData, _hoveredControlHashKey);
 		}
 
 		const GuiContext::ControlData& GuiContext::getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept
