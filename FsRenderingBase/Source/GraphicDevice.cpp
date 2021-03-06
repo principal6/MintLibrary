@@ -177,7 +177,7 @@ namespace fs
 
 			// Constant buffers
 			{
-				fs::CppHlsl::CB_Transforms cbTransforms;
+				fs::RenderingBase::CB_Transforms cbTransforms;
 				cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 				{
 					_cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");

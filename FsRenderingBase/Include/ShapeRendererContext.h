@@ -116,13 +116,13 @@ namespace fs
 			void																drawColorPallete(const float radius);
 
 		protected:
-			RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>*			_triangleRenderer;
+			RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>*			_triangleRenderer;
 			DxObjectId															_vertexShaderId;
 			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;
 
 		protected:
-			std::vector<fs::CppHlsl::SB_Transform>								_sbTransformData;
+			std::vector<fs::RenderingBase::SB_Transform>								_sbTransformData;
 			DxObjectId															_sbTransformBufferId;
 		
 		protected:

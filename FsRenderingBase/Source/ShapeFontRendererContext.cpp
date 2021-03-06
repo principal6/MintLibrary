@@ -55,7 +55,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeFontRendererVS", kShaderString, "main_shape", &typeInfo);
 			}
 
@@ -170,7 +170,7 @@ namespace fs
 			// @Áß¿ä
 			// Identity SB_Transform for font rendering!!
 			{
-				fs::CppHlsl::SB_Transform sbTransformIdentity;
+				fs::RenderingBase::SB_Transform sbTransformIdentity;
 				sbTransformIdentity._transformMatrix.setIdentity();
 				_sbTransformData.emplace_back(sbTransformIdentity);
 			}

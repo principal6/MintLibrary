@@ -534,9 +534,9 @@ const bool testStringUtil()
 			#include <ShaderStructDefinitions>
 			#include <VsConstantBuffers>
 
-			VS_OUTPUT main(VS_INPUT input)
+			VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
 			{
-				VS_OUTPUT result = (VS_OUTPUT)0;
+				VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
 				result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 				result._color		= input._color;
 				result._texCoord	= input._texCoord;
@@ -731,15 +731,15 @@ const bool testLanguage()
 		fs::float3 _c			= fs::float3(16.0f, 32.0f, 64.0f);	// v[1]
 		fs::float1 _padding1	= 128.0f;
 	};
-	fs::CppHlsl::VS_INPUT vsInput;
-	uint64 a = sizeof(fs::CppHlsl::VS_INPUT);
-	uint64 b = sizeof(fs::CppHlsl::VS_OUTPUT);
-	uint64 c = sizeof(fs::CppHlsl::CB_Transforms);
+	fs::RenderingBase::VS_INPUT_COLOR vsInput;
+	uint64 a = sizeof(fs::RenderingBase::VS_INPUT_COLOR);
+	uint64 b = sizeof(fs::RenderingBase::VS_OUTPUT_COLOR);
+	uint64 c = sizeof(fs::RenderingBase::CB_Transforms);
 	TestStruct ts;
 	uint64 tss = sizeof(TestStruct);
 
 	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT");
+	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT_COLOR");
 	const fs::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
 	const fs::Language::CppHlslTypeInfo& typeInfo2 = cppHlslParser.getTypeInfo(2);
 	return true;

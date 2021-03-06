@@ -38,9 +38,9 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 
-					VS_OUTPUT main(VS_INPUT input)
+					VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
 					{
-						VS_OUTPUT result = (VS_OUTPUT)0;
+						VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
 						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
 						result._color		= input._color;
 						result._texCoord	= input._texCoord;
@@ -49,7 +49,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_COLOR));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("RectangleRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -63,7 +63,7 @@ namespace fs
 					sampler		sampler0;
 					Texture2D	texture0;
 				
-					float4 main(VS_OUTPUT input) : SV_Target
+					float4 main(VS_OUTPUT_COLOR input) : SV_Target
 					{
 						float4 result = input._color;
 						if (input._flag == 1)
@@ -106,10 +106,10 @@ namespace fs
 		void RectangleRendererContext::drawColored()
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getColorInternal(0)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getColorInternal(1)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getColorInternal(2)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getColorInternal(3)));
 
 			prepareIndexArray();
 		}
@@ -117,10 +117,10 @@ namespace fs
 		void RectangleRendererContext::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getVertexTexturePosition(3, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getVertexTexturePosition(3, texturePosition, textureSize)));
 
 			prepareIndexArray();
 		}
@@ -128,10 +128,10 @@ namespace fs
 		void RectangleRendererContext::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::CppHlsl::VS_INPUT(getVertexPosition(3, _position, _size), getColorInternal(3), getVertexTexturePosition(3, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
+			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getColorInternal(3), getVertexTexturePosition(3, texturePosition, textureSize)));
 
 			prepareIndexArray();
 		}

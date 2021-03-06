@@ -83,7 +83,7 @@ namespace fs
 
 		public:
 																				FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
-																				FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer);
+																				FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer);
 			virtual																~FontRendererContext();
 
 		public:
@@ -137,7 +137,7 @@ namespace fs
 
 		private:
 			bool																_ownTriangleRenderer;
-			fs::RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>*		_triangleRenderer;
+			fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>*		_triangleRenderer;
 			DxObjectId															_vertexShaderId;
 			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;

@@ -17,7 +17,7 @@ namespace fs
 			, _triangleRenderer{ nullptr }
 			, _borderColor{ fs::RenderingBase::Color(1.0f, 1.0f, 1.0f) }
 		{
-			_triangleRenderer = FS_NEW(RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>, graphicDevice);
+			_triangleRenderer = FS_NEW(RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice);
 		}
 
 		ShapeRendererContext::~ShapeRendererContext()
@@ -59,7 +59,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeInfo);
 			}
 
@@ -206,7 +206,7 @@ namespace fs
 				flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
 			}
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			v._color = color;
 			v._position = _position;
 			v._position._x = pointArray[0 ^ flip]._x;
@@ -248,7 +248,7 @@ namespace fs
 		{
 			static constexpr uint32 kDeltaVertexCount = 3;
 			
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			auto& vertexArray = _triangleRenderer->vertexArray();
 			{
 				v._color = color;
@@ -284,7 +284,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 			
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
 			v._position = _position;
 			v._position._x = -halfRadius;
@@ -331,7 +331,7 @@ namespace fs
 			static constexpr uint32 kDeltaVertexCount = 4;
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			{
 				v._color = color;
 				v._position = _position;
@@ -399,7 +399,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			{
 				v._color = _defaultColor;
 				v._position = _position;
@@ -459,7 +459,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			
 			// Right arc section
 			{
@@ -541,7 +541,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 
 			// Right outer arc section
 			{
@@ -720,7 +720,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			{
 				v._color = color;
 				v._position = _position;
@@ -767,7 +767,7 @@ namespace fs
 			const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			{
 				v._color = _defaultColor;
 				v._position = _position;
@@ -1041,7 +1041,7 @@ namespace fs
 
 			auto& vertexArray = _triangleRenderer->vertexArray();
 
-			CppHlsl::VS_INPUT_SHAPE v;
+			RenderingBase::VS_INPUT_SHAPE v;
 			v._color = _defaultColor;
 			v._position = _position;
 			v._position._x = v0._x;
@@ -1096,7 +1096,7 @@ namespace fs
 
 		void ShapeRendererContext::pushShapeTransform(const float rotationAngle, const bool applyInternalPosition)
 		{
-			fs::CppHlsl::SB_Transform transform;
+			fs::RenderingBase::SB_Transform transform;
 			transform._transformMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
 			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
 			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;

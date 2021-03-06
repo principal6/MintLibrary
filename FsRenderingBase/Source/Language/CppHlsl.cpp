@@ -82,10 +82,10 @@ namespace fs
 		const CppHlslTypeInfo& CppHlsl::getTypeInfo(const std::type_info& stdTypeInfo) const noexcept
 		{
 			std::string stdTypeName = stdTypeInfo.name();
-			const uint64 lastColonPosition = stdTypeName.find_last_of(':');
-			if (lastColonPosition != std::string::npos)
+			const uint64 firstSpacePosition = stdTypeName.find(' ');
+			if (firstSpacePosition != std::string::npos)
 			{
-				stdTypeName = stdTypeName.substr(lastColonPosition + 1);
+				stdTypeName = stdTypeName.substr(firstSpacePosition + 1);
 			}
 			return getTypeInfo(stdTypeName);
 		}

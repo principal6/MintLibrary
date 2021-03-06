@@ -42,6 +42,13 @@ namespace fs
 		};
 
 		using IndexElementType = uint16;
+		// Triangle face
+		struct Face
+		{
+			fs::RenderingBase::IndexElementType		_indexArray[3];
+		};
+
+
 		class DxResource final : public IDxObject
 		{
 			friend DxResourcePool;

@@ -10,7 +10,7 @@
 
 namespace fs
 {
-	namespace CppHlsl
+	namespace RenderingBase
 	{
 		struct SB_Transform
 		{

@@ -10,7 +10,7 @@
 
 namespace fs
 {
-	namespace CppHlsl
+	namespace RenderingBase
 	{
 		struct CB_Transforms CPP_HLSL_REGISTER_INDEX(0)
 		{

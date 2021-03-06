@@ -1808,10 +1808,7 @@ namespace fs
 
 		const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const std::string& typeName) const noexcept
 		{
-			std::string fullName = "fs::CppHlsl::";
-			fullName += typeName;
-
-			auto found = _typeInfoUmap.find(fullName);
+			auto found = _typeInfoUmap.find(typeName);
 			if (found == _typeInfoUmap.end())
 			{
 				return CppHlslTypeInfo::kInvalidTypeInfo;

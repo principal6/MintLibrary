@@ -42,7 +42,7 @@ namespace fs
 			fs::Float2												_size;
 		
 		private:
-			RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT>	_triangleRenderer;
+			RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_COLOR>	_triangleRenderer;
 			DxObjectId												_vertexShaderId;
 			DxObjectId												_pixelShaderId;
 		};

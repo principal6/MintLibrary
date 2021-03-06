@@ -72,12 +72,12 @@ namespace fs
 
 
 		FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
-			: FontRendererContext(graphicDevice, FS_NEW(RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>, graphicDevice))
+			: FontRendererContext(graphicDevice, FS_NEW(RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice))
 		{
 			_ownTriangleRenderer = true;
 		}
 
-		FontRendererContext::FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<CppHlsl::VS_INPUT_SHAPE>* const triangleRenderer)
+		FontRendererContext::FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer)
 			: IRendererContext(graphicDevice)
 			, _ftLibrary{ nullptr }
 			, _ftFace{ nullptr }
@@ -479,7 +479,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::CppHlsl::VS_INPUT_SHAPE));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -648,7 +648,7 @@ namespace fs
 			{
 				auto& vertexArray = _triangleRenderer->vertexArray();
 
-				fs::CppHlsl::VS_INPUT_SHAPE v;
+				fs::RenderingBase::VS_INPUT_SHAPE v;
 				v._position._x = x0;
 				v._position._y = y0;
 				v._position._z = position._z;
