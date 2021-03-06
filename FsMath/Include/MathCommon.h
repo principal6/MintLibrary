@@ -57,6 +57,16 @@ namespace fs
 		{
 			return (value != value);
 		}
+
+		FS_INLINE const float toRadian(const float degree) noexcept
+		{
+			return (degree / 360.0f * kTwoPi);
+		}
+
+		FS_INLINE const float toDegree(const float radian) noexcept
+		{
+			return (radian / kTwoPi * 360.0f);
+		}
 	}
 }
 
