@@ -94,11 +94,12 @@ namespace fs
 
 	Float4x4 Float4x4::projectionMatrixPerspective(const float fov, const float nearZ, const float farZ, const float ratio) noexcept
 	{
-		const float a = 1.0f / (tanf(fov) * ratio);
-		const float b = 1.0f / (tanf(fov));
-		const float c = (-farZ) / (farZ - nearZ);
-		const float d = (nearZ * farZ) / (farZ - nearZ);
-		const float e = -1.0f;
+		const float halfFov = fov * 0.5f;
+		const float a = 1.0f / (tanf(halfFov) * ratio);
+		const float b = 1.0f / (tanf(halfFov));
+		const float c = (farZ) / (farZ - nearZ);
+		const float d = -(farZ * nearZ) / (farZ - nearZ);
+		const float e = 1.0f;
 		return Float4x4
 		(
 			a, 0, 0, 0,
