@@ -59,7 +59,7 @@ namespace fs
 		Float4x4				operator/(const float s) const noexcept;
 		// matrix(lhs) * matrix(rhs)
 		Float4x4				operator*(const Float4x4& rhs) const noexcept;
-		// matrix * vector (=> right-handed coordinate system)
+		// matrix * (column) vector
 		Float4					operator*(const Float4& v) const noexcept;
 
 	public:
@@ -81,6 +81,7 @@ namespace fs
 
 	public:
 		Float4x4				mul(const Float4x4& rhs) const noexcept;
+		// matrix * (column) vector
 		Float4					mul(const Float4& v) const noexcept;
 
 	public:
