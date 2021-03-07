@@ -46,6 +46,14 @@ namespace fs
 			_byteArray.push_back(readByte);
 		}
 
+		if (_byteArray.empty() == false)
+		{
+			if (_byteArray.back() == 255)
+			{
+				_byteArray.pop_back();
+			}
+		}
+
 		return true;
 	}
 
