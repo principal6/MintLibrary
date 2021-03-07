@@ -31,7 +31,7 @@ namespace fs
 		const bool						isValid() const noexcept;
 
 	protected:
-		virtual void					assignId() noexcept abstract;
+		virtual void					assignRawId(const uint32 rawId) noexcept abstract;
 
 	protected:
 		uint32							_rawId{ kInvalidRawId };
