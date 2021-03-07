@@ -22,7 +22,7 @@ namespace fs
 		static const float			norm(const Quaternion& q) noexcept;
 
 	public:
-		static Quaternion			rotationQuaternion(const fs::Float3& axis, float angle) noexcept;
+		static Quaternion			makeRotationQuaternion(const fs::Float3& axis, float angle) noexcept;
 
 		// q^(-1)
 		static Quaternion			reciprocal(const Quaternion& q) noexcept;
@@ -62,6 +62,8 @@ namespace fs
 		Quaternion					conjugate() const noexcept;
 		Quaternion					reciprocal() const noexcept;
 		fs::Float4					rotateVector(const fs::Float4& inputVector);
+		void						setAxisAngle(const fs::Float3& axis, float angle) noexcept;
+		void						getAxisAngle(fs::Float3& axis, float& angle) const noexcept;
 
 	public:
 		union

@@ -6,6 +6,7 @@
 
 
 #include <FsMath/Include/Float4.h>
+#include <FsMath/Include/Quaternion.h>
 
 
 namespace fs
@@ -15,6 +16,7 @@ namespace fs
 #pragma endregion
 
 
+	// Right-handed system
 	// Mostly for column vector
 	class Float4x4 final
 	{
@@ -24,14 +26,18 @@ namespace fs
 		static Float4x4			mul(const Float4x4& l, const Float4x4& r) noexcept;
 			   
 		static Float4x4			translationMatrix(const float x, const float y, const float z) noexcept;
+		static Float4x4			translationMatrix(const fs::Float3& translation) noexcept;
 		static Float4x4			scalingMatrix(const float x, const float y, const float z) noexcept;
+		static Float4x4			scalingMatrix(const fs::Float3& scale) noexcept;
 		static Float4x4			rotationMatrixX(const float angle) noexcept;
 		static Float4x4			rotationMatrixY(const float angle) noexcept;
 		static Float4x4			rotationMatrixZ(const float angle) noexcept;
 		static Float4x4			rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
-
 		// Rodrigues' rotation formula
-		static Float4x4			rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept;
+		static Float4x4			rotationMatrixAxisAngle(const fs::Float3& axis, const float angle) noexcept;
+		static Float4x4			rotationMatrix(const fs::Quaternion& rotation) noexcept;
+		static Float4x4			srtMatrix(const fs::Float3& scale, const fs::Quaternion& rotation, const fs::Float3& translation) noexcept;
+
 		static Float4x4			projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
 		static Float4x4			projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
 #pragma endregion
@@ -53,6 +59,9 @@ namespace fs
 		Float4x4&				operator=(Float4x4&& rhs) noexcept															= default;
 
 	public:
+		Float4x4&				operator*=(const Float4x4& rhs) noexcept;
+	
+	public:
 		Float4x4				operator+(const Float4x4& rhs) const noexcept;
 		Float4x4				operator-(const Float4x4& rhs) const noexcept;
 
@@ -71,6 +80,13 @@ namespace fs
 									float m30, float m31, float m32, float m33) noexcept;
 		void					setZero() noexcept;
 		void					setIdentity() noexcept;
+
+	public:
+		void					preScale(const float x, const float y, const float z) noexcept;
+		void					postScale(const float x, const float y, const float z) noexcept;
+		void					setTranslation(const float x, const float y, const float z) noexcept;
+		void					preTranslate(const float x, const float y, const float z) noexcept;
+		void					postTranslate(const float x, const float y, const float z) noexcept;
 
 	public:
 		Float3x3				minor(const uint32 row, const uint32 col) const noexcept;

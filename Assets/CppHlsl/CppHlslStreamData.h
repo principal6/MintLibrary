@@ -22,7 +22,6 @@ namespace fs
 			float4				_positionU;       // position  + texCoord[0]
 			float4				_tangentV;        // tangent   + texCoord[1]
 			float4				_bitangentW;      // bitangent + texCoord[2]
-			uint				_materialId{ 0 };
 			uint				_instanceId{ 0 };
 		};
 
@@ -81,7 +80,6 @@ namespace fs
 			float4				_worldTangent;
 			float4				_worldBitangent;
 			float4				_texCoord;
-			uint				_materialId{ 0 };
 		};
 
 		struct VS_OUTPUT_COLOR

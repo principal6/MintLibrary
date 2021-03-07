@@ -537,7 +537,7 @@ const bool testStringUtil()
 			VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
 			{
 				VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
-				result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+				result._position	= mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
 				result._color		= input._color;
 				result._texCoord	= input._texCoord;
 				result._flag		= input._flag;
@@ -734,7 +734,7 @@ const bool testLanguage()
 	fs::RenderingBase::VS_INPUT_COLOR vsInput;
 	uint64 a = sizeof(fs::RenderingBase::VS_INPUT_COLOR);
 	uint64 b = sizeof(fs::RenderingBase::VS_OUTPUT_COLOR);
-	uint64 c = sizeof(fs::RenderingBase::CB_Transforms);
+	uint64 c = sizeof(fs::RenderingBase::CB_View);
 	TestStruct ts;
 	uint64 tss = sizeof(TestStruct);
 
@@ -767,6 +767,18 @@ const bool testWindow()
 	RenderingBase::GraphicDevice graphicDevice;
 	graphicDevice.initialize(&window);
 
+	Rendering::ObjectManager objectManager{ &graphicDevice };
+	objectManager.initialize();
+	
+	Rendering::Object& testObject = objectManager.createObject();
+	{
+		testObject.attachComponent(objectManager.createMeshComponent());
+
+		fs::Rendering::TransformComponent* transformComponent = static_cast<fs::Rendering::TransformComponent*>(testObject.getComponent(fs::Rendering::ObjectComponentType::TransformComponent));
+		transformComponent->_srt._translation._z = 4.0f;
+		transformComponent->_srt._rotation.setAxisAngle(fs::Float3(1.0f, 1.0f, 0.0f), fs::Math::kPiOverEight);
+	}
+
 	uint64 previousFrameTimeMs = 0;
 	while (window.isRunning() == true)
 	{
@@ -785,6 +797,10 @@ const bool testWindow()
 					if (event._value.getKeyCode() == EventData::KeyCode::Escape)
 					{
 						window.destroy();
+					}
+					else if (event._value.getKeyCode() == EventData::KeyCode::Enter)
+					{
+						graphicDevice.getShaderPool().recompileAllShaders();
 					}
 				}
 			}
@@ -809,6 +825,8 @@ const bool testWindow()
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
 			previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
+
+			objectManager.renderMeshComponents();
 
 			graphicDevice.endRendering();
 		}

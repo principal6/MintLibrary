@@ -5,7 +5,7 @@
 #define FS_I_RENDERER_CONTEXT_H
 
 
-#include <FsRenderingBase/Include/SimpleRenderingCommon.h>
+#include <FsRenderingBase/Include/RenderingBaseCommon.h>
 
 #include <FsMath/Include/Float2.h>
 #include <FsMath/Include/Float3.h>

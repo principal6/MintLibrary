@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsRenderingBase/Include/SimpleRenderingCommon.h>
+#include <FsRenderingBase/Include/RenderingBaseCommon.h>
 
 
 namespace fs

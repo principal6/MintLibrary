@@ -177,17 +177,18 @@ namespace fs
 
 			// Constant buffers
 			{
-				fs::RenderingBase::CB_Transforms cbTransforms;
-				cbTransforms._cbProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
+				_cbViewData._cb2DProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 				{
 					_cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
 					_cppHlslConstantBuffers.generateHlslString(fs::Language::CppHlslFileType::ConstantBuffers);
 					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 					
-					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(cbTransforms));
-					DxObjectId id = _resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&cbTransforms._cbProjectionMatrix), sizeof(cbTransforms));
-					_resourcePool.getResource(id).bindToShader(DxShaderType::VertexShader, cppHlslTypeInfo.getRegisterIndex());
-					_resourcePool.getResource(id).bindToShader(DxShaderType::PixelShader, cppHlslTypeInfo.getRegisterIndex());
+					const fs::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(_cbViewData));
+					_cbViewId = _resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbViewData), sizeof(_cbViewData), cppHlslTypeInfo.getRegisterIndex());
+					
+					fs::RenderingBase::DxResource& cbView = _resourcePool.getResource(_cbViewId);
+					cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
+					cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
 				}
 			}
 

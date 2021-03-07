@@ -41,13 +41,6 @@ namespace fs
 			R8G8B8A8_UNORM,
 		};
 
-		using IndexElementType = uint16;
-		// Triangle face
-		struct Face
-		{
-			fs::RenderingBase::IndexElementType		_indexArray[3];
-		};
-
 
 		class DxResource final : public IDxObject
 		{
@@ -88,6 +81,9 @@ namespace fs
 			void							setOffset(const uint32 elementOffset);
 		
 		public:
+			const uint32					getRegisterIndex() const noexcept;
+		
+		public:
 			void							bindAsInput() const noexcept;
 			void							bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
 
@@ -107,6 +103,8 @@ namespace fs
 			uint16							_textureWidth;
 			uint16							_textureHeight;
 
+			uint16							_registerIndex;
+
 		private:
 			static DxResource				s_invalidInstance;
 		};
@@ -119,7 +117,7 @@ namespace fs
 			virtual							~DxResourcePool() = default;
 
 		public:
-			const DxObjectId&				pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize);
+			const DxObjectId&				pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
 			const DxObjectId&				pushVertexBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);
 			const DxObjectId&				pushIndexBuffer(const byte* const resourceContent, const uint32 elementCount);
 			const DxObjectId&				pushStructuredBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);

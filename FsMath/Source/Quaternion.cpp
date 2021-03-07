@@ -21,7 +21,7 @@ namespace fs
 		return Quaternion(conjugate / (norm * norm));
 	}
 
-	Quaternion Quaternion::rotationQuaternion(const fs::Float3& axis, float angle) noexcept
+	Quaternion Quaternion::makeRotationQuaternion(const fs::Float3& axis, float angle) noexcept
 	{
 		const fs::Float3	r			= fs::Float3::normalize(axis);
 		const float			half_angle	= angle * 0.5f;
@@ -119,5 +119,36 @@ namespace fs
 		result *= conjugate();
 		return fs::Float4(result._x, result._y, result._z, inputVector._w);
 	}
-}
 
+	void Quaternion::setAxisAngle(const fs::Float3& axis, float angle) noexcept
+	{
+		const fs::Float3	normalizedAxis	= fs::Float3::normalize(axis);
+		const float			halfAngle		= angle * 0.5f;
+		const float			cosHalfAngle	= cosf(halfAngle);
+		const float			sinHalfAngle	= 1.0f - cosHalfAngle * cosHalfAngle;
+		_x = sinHalfAngle * normalizedAxis._x;
+		_y = sinHalfAngle * normalizedAxis._y;
+		_z = sinHalfAngle * normalizedAxis._z;
+		_w = cosHalfAngle;
+	}
+
+	void Quaternion::getAxisAngle(fs::Float3& axis, float& angle) const noexcept
+	{
+		angle = acos(_w) * 2.0f;
+
+		const float sinHalfAngle = 1.0f - _w * _w;
+		if (sinHalfAngle == 0.0f)
+		{
+			axis._x = 1.0f;
+			axis._y = 0.0f;
+			axis._z = 0.0f;
+		}
+		else
+		{
+			axis._x = _x / sinHalfAngle;
+			axis._y = _y / sinHalfAngle;
+			axis._z = _z / sinHalfAngle;
+			axis.normalize();
+		}
+	}
+}

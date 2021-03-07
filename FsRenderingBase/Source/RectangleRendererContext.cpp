@@ -41,7 +41,7 @@ namespace fs
 					VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
 					{
 						VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
-						result._position	= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+						result._position	= mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
 						result._color		= input._color;
 						result._texCoord	= input._texCoord;
 						result._flag		= input._flag;
@@ -49,7 +49,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_COLOR));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_COLOR));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("RectangleRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -97,8 +97,8 @@ namespace fs
 			if (_triangleRenderer.isRenderable() == true)
 			{
 				fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
+				shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
+				shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 				_triangleRenderer.render();
 			}
 		}

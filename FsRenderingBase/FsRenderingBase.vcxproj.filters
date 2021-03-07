@@ -51,7 +51,7 @@
     <ClInclude Include="Include\ShapeRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\SimpleRenderingCommon.h">
+    <ClInclude Include="Include\RenderingBaseCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\TriangleRenderer.h">

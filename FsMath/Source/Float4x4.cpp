@@ -27,6 +27,11 @@ namespace fs
 		);
 	}
 
+	Float4x4 Float4x4::translationMatrix(const fs::Float3& translation) noexcept
+	{
+		return translationMatrix(translation._x, translation._y, translation._z);
+	}
+
 	Float4x4 Float4x4::scalingMatrix(const float x, const float y, const float z) noexcept
 	{
 		return Float4x4
@@ -36,6 +41,11 @@ namespace fs
 			0, 0, z, 0,
 			0, 0, 0, 1
 		);
+	}
+
+	Float4x4 Float4x4::scalingMatrix(const fs::Float3& scale) noexcept
+	{
+		return scalingMatrix(scale._x, scale._y, scale._z);
 	}
 
 	Float4x4 Float4x4::rotationMatrixX(const float angle) noexcept
@@ -76,11 +86,11 @@ namespace fs
 		return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
 	}
 
-	Float4x4 Float4x4::rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept
+	Float4x4 Float4x4::rotationMatrixAxisAngle(const fs::Float3& axis, const float angle) noexcept
 	{
 		// (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
 
-		const Float4 r = Float4::normalize(Float4(axis._x, axis._y, axis._z, 0.0f));
+		const Float3 r = Float3::normalize(axis);
 		const float c = cosf(angle);
 		const float s = sinf(angle);
 
@@ -95,6 +105,25 @@ namespace fs
 			0                                 , 0                                 , 0                                 , 1
 		);
 		return result;
+	}
+
+	Float4x4 Float4x4::rotationMatrix(const fs::Quaternion& rotation) noexcept
+	{
+		fs::Float3 axis;
+		float angle;
+		rotation.getAxisAngle(axis, angle);
+		return rotationMatrixAxisAngle(axis, angle);
+	}
+	
+	Float4x4 Float4x4::srtMatrix(const fs::Float3& scale, const fs::Quaternion& rotation, const fs::Float3& translation) noexcept
+	{
+		// SRT matrix for column vector is like below:
+		// SRT = T * R * S
+		// which is the same as below..
+		Float4x4 matrix = rotationMatrix(rotation);
+		matrix.preTranslate(translation._x, translation._y, translation._z);
+		matrix.postScale(scale._x, scale._y, scale._z);
+		return matrix;
 	}
 
 	Float4x4 Float4x4::projectionMatrixPerspective(const float fov, const float nearZ, const float farZ, const float ratio) noexcept
@@ -160,6 +189,39 @@ namespace fs
 		}
 	{
 		__noop;
+	}
+
+	Float4x4& Float4x4::operator*=(const Float4x4& rhs) noexcept
+	{
+		// row 0
+		fs::Float4 row = _row[0];
+		_row[0]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
+		_row[0]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
+		_row[0]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
+		_row[0]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
+
+		// row 1
+		row = _row[1];
+		_row[1]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
+		_row[1]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
+		_row[1]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
+		_row[1]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
+
+		// row 2
+		row = _row[2];
+		_row[2]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
+		_row[2]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
+		_row[2]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
+		_row[2]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
+
+		// row 3
+		row = _row[3];
+		_row[3]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
+		_row[3]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
+		_row[3]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
+		_row[3]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
+
+		return *this;
 	}
 
 	Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
@@ -256,6 +318,57 @@ namespace fs
 			= _m[2][0] = _m[2][1] = _m[2][3] = _m[3][0] = _m[3][1] = _m[3][2] = 0.0f;
 	}
 
+	void Float4x4::preScale(const float x, const float y, const float z) noexcept
+	{
+		_row[0] *= x;
+		_row[1] *= y;
+		_row[2] *= z;
+	}
+
+	void Float4x4::postScale(const float x, const float y, const float z) noexcept
+	{
+		_11 *= x;
+		_21 *= x;
+		_31 *= x;
+		_41 *= x;
+
+		_12 *= y;
+		_22 *= y;
+		_32 *= y;
+		_42 *= y;
+
+		_13 *= z;
+		_23 *= z;
+		_33 *= z;
+		_43 *= z;
+	}
+
+	void Float4x4::setTranslation(const float x, const float y, const float z) noexcept
+	{
+		_14 = x;
+		_24 = y;
+		_34 = z;
+	}
+
+	void Float4x4::preTranslate(const float x, const float y, const float z) noexcept
+	{
+		_14 += x;
+		_24 += y;
+		_34 += z;
+	}
+
+	void Float4x4::postTranslate(const float x, const float y, const float z) noexcept
+	{
+		fs::Float4 row = _row[0];
+		_row[0]._w += row._x * x + row._y * y + row._z * z;
+		row = _row[1];
+		_row[1]._w += row._x * x + row._y * y + row._z * z;
+		row = _row[2];
+		_row[2]._w += row._x * x + row._y * y + row._z * z;
+		row = _row[3];
+		_row[3]._w += row._x * x + row._y * y + row._z * z;
+	}
+
 	Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
 	{
 		Float3x3 result;
@@ -327,28 +440,28 @@ namespace fs
 		return Float4x4
 		(
 			// row 0
-			Float4::dotProductRaw(_m[0], rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-			Float4::dotProductRaw(_m[0], rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-			Float4::dotProductRaw(_m[0], rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-			Float4::dotProductRaw(_m[0], rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
+			Float4::dotProductRaw(_row[0]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
+			Float4::dotProductRaw(_row[0]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
+			Float4::dotProductRaw(_row[0]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
+			Float4::dotProductRaw(_row[0]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
 
 			// row 1
-			Float4::dotProductRaw(_m[1], rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-			Float4::dotProductRaw(_m[1], rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-			Float4::dotProductRaw(_m[1], rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-			Float4::dotProductRaw(_m[1], rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
+			Float4::dotProductRaw(_row[1]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
+			Float4::dotProductRaw(_row[1]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
+			Float4::dotProductRaw(_row[1]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
+			Float4::dotProductRaw(_row[1]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
 
 			// row 2
-			Float4::dotProductRaw(_m[2], rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-			Float4::dotProductRaw(_m[2], rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-			Float4::dotProductRaw(_m[2], rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-			Float4::dotProductRaw(_m[2], rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
+			Float4::dotProductRaw(_row[2]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
+			Float4::dotProductRaw(_row[2]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
+			Float4::dotProductRaw(_row[2]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
+			Float4::dotProductRaw(_row[2]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
 
 			// row 3
-			Float4::dotProductRaw(_m[3], rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-			Float4::dotProductRaw(_m[3], rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-			Float4::dotProductRaw(_m[3], rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-			Float4::dotProductRaw(_m[3], rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3])
+			Float4::dotProductRaw(_row[3]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
+			Float4::dotProductRaw(_row[3]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
+			Float4::dotProductRaw(_row[3]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
+			Float4::dotProductRaw(_row[3]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3])
 		);
 	}
 
@@ -357,16 +470,16 @@ namespace fs
 		return Float4
 		(
 			// x'
-			Float4::dotProductRaw(_m[0], v[0], v[1], v[2], v[3]),
+			Float4::dot(_row[0], v),
 
 			// y'
-			Float4::dotProductRaw(_m[1], v[0], v[1], v[2], v[3]),
+			Float4::dot(_row[1], v),
 
 			// z'
-			Float4::dotProductRaw(_m[2], v[0], v[1], v[2], v[3]),
+			Float4::dot(_row[2], v),
 
 			// w'
-			Float4::dotProductRaw(_m[3], v[0], v[1], v[2], v[3])
+			Float4::dot(_row[3], v)
 		);
 	}
 

@@ -52,6 +52,7 @@ namespace fs
 
 		public:
 			void						bind() const noexcept;
+			void						unbind() const noexcept;
 
 		private:
 			DxInputElementSet			_inputElementSet;
@@ -59,7 +60,9 @@ namespace fs
 			ComPtr<ID3D10Blob>			_shaderBlob;
 			ComPtr<ID3D11DeviceChild>	_shader;
 			DxShaderType				_shaderType;
-			std::string					_identifier;
+			std::string					_hlslFileName;
+			std::string					_hlslBinaryFileName;
+			std::string					_entryPoint;
 
 		public:
 			static const DxShader		kNullInstance;
@@ -87,22 +90,30 @@ namespace fs
 			const DxObjectId&			pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
 		public:
-			const DxObjectId&			pushVertexShader(const char* const inputShaderFileName, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo, const char* const outputDirectory = nullptr);
-			const DxObjectId&			pushNonVertexShader(const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
+			const DxObjectId&			pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo, const char* const outputDirectory = nullptr);
+			const DxObjectId&			pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
 		private:
-			const DxObjectId&			createVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
-			const DxObjectId&			createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+			const DxObjectId&			pushVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
+			const DxObjectId&			pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+		
+		private:
+			const bool					createVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo);
+			const bool					createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
 
 		private:
-			const bool					compileShaderFromFile(const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, DxShader& inoutShader);
+			const bool					compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+			const bool					compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
 			const bool					compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
+
+		public:
+			void						recompileAllShaders();
 
 		private:
 			void						reportCompileError();
 
 		public:
-			void						bindShader(const DxShaderType shaderType, const DxObjectId& objectId);
+			void						bindShaderIfNot(const DxShaderType shaderType, const DxObjectId& objectId);
 			void						unbindShader(const DxShaderType shaderType);
 			
 		private:

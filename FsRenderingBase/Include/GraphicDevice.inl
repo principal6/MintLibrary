@@ -1,3 +1,4 @@
+#include "GraphicDevice.h"
 namespace fs
 {
 	namespace RenderingBase
@@ -32,9 +33,24 @@ namespace fs
 			return _guiContext;
 		}
 
-		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslStructs() const noexcept
+		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslSteamData() const noexcept
 		{
 			return _cppHlslStreamData;
+		}
+
+		FS_INLINE const fs::Language::CppHlsl& GraphicDevice::getCppHlslConstantBuffers() const noexcept
+		{
+			return _cppHlslConstantBuffers;
+		}
+
+		FS_INLINE fs::RenderingBase::CB_View& GraphicDevice::getCbViewData() noexcept
+		{
+			return _cbViewData;
+		}
+
+		FS_INLINE DxObjectId GraphicDevice::getCbViewId() const noexcept
+		{
+			return _cbViewId;
 		}
 
 		FS_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept

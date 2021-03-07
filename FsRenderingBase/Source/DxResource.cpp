@@ -48,6 +48,9 @@ namespace fs
 			, _elementStride{ 0 }
 			, _elementCount{ 0 }
 			, _elementOffset{ 0 }
+			, _textureWidth{ 0 }
+			, _textureHeight{ 0 }
+			, _registerIndex{ 0 }
 		{
 			__noop;
 		}
@@ -279,6 +282,11 @@ namespace fs
 			_elementOffset = elementOffset;
 		}
 
+		const uint32 DxResource::getRegisterIndex() const noexcept
+		{
+			return _registerIndex;
+		}
+
 		void DxResource::bindAsInput() const noexcept
 		{
 			if (_resourceType == DxResourceType::VertexBuffer)
@@ -340,17 +348,18 @@ namespace fs
 			__noop;
 		}
 
-		const DxObjectId& DxResourcePool::pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize)
+		const DxObjectId& DxResourcePool::pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::ConstantBuffer;
 			if (resource.createBuffer(resourceContent, bufferSize, 1) == true)
 			{
 				resource.assignIdXXX();
+				resource._registerIndex = registerIndex;
+				
 				_resourceArray.emplace_back(std::move(resource));
 				return _resourceArray.back().getId();
 			}
-
 			FS_ASSERT("김장원", false, "pushConstantBuffer 에 실패했습니다!");
 			return DxObjectId::kInvalidObjectId;
 		}

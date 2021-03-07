@@ -4,6 +4,9 @@
 
 namespace fs
 {
+	const Float3 Float3::kUnitScale = Float3(1.0f, 1.0f, 1.0f);
+	
+
 	Float3& Float3::operator+=(const Float3& rhs)
 	{
 		_x += rhs._x;
@@ -118,6 +121,11 @@ namespace fs
 		return Float3(float3 / float3.length());
 	}
 
+	void Float3::normalize() noexcept
+	{
+		*this = Float3::normalize(*this);
+	}
+
 	const float Float3::lengthSqaure() const noexcept
 	{
 		return dot(*this, *this);
@@ -139,36 +147,4 @@ namespace fs
 	{
 		return Float2(_x, _y);
 	}
-	
-	/*
-	void Float3::x(const float newX) noexcept
-	{
-		_x = newX;
-	}
-
-	const float Float3::x() const noexcept
-	{
-		return _x;
-	}
-
-	void Float3::y(const float newY) noexcept
-	{
-		_y = newY;
-	}
-
-	const float Float3::y() const noexcept
-	{
-		return _y;
-	}
-
-	void Float3::z(const float newZ) noexcept
-	{
-		_z = newZ;
-	}
-
-	const float Float3::z() const noexcept
-	{
-		return _z;
-	}
-	*/
 }

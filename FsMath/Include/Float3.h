@@ -14,6 +14,9 @@ namespace fs
 	class Float3 final
 	{
 	public:
+		static const Float3		kUnitScale;
+
+	public:
 		constexpr				Float3();
 		constexpr explicit		Float3(const float s);
 		constexpr explicit		Float3(const float x, const float y, const float z);
@@ -60,6 +63,9 @@ namespace fs
 		static const float		dot(const Float3& lhs, const Float3& rhs) noexcept;
 		static Float3			cross(const Float3& lhs, const Float3& rhs) noexcept;
 		static Float3			normalize(const Float3& float3) noexcept;
+	
+	public:
+		void					normalize() noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;

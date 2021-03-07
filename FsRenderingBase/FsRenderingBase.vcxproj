@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -150,6 +150,8 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,7 +190,7 @@
     <ClInclude Include="Include\RectangleRendererContext.h" />
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
     <ClInclude Include="Include\ShapeRendererContext.h" />
-    <ClInclude Include="Include\SimpleRenderingCommon.h" />
+    <ClInclude Include="Include\RenderingBaseCommon.h" />
     <ClInclude Include="Include\TriangleRenderer.h" />
     <ClInclude Include="Include\TriangleRenderer.hpp" />
   </ItemGroup>

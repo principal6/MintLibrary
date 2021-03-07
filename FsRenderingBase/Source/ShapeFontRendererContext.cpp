@@ -44,7 +44,7 @@ namespace fs
 						transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
 						
 						VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-						result._position		= float4(mul(transformedPosition, _cbProjectionMatrix).xyz, 1.0);
+						result._position		= float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);
 						result._color			= input._color;
 						result._texCoord		= input._texCoord;
 						result._info			= input._info;
@@ -55,7 +55,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeFontRendererVS", kShaderString, "main_shape", &typeInfo);
 			}
 
@@ -86,7 +86,7 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 
-					static const float kDeltaDoublePixel = _cbProjectionMatrix[0][0];
+					static const float kDeltaDoublePixel = _cb2DProjectionMatrix[0][0];
 					static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
 					static const float kDeltaHalfPixel = kDeltaPixel * 0.5;
 					

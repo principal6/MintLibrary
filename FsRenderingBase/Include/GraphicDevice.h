@@ -77,12 +77,17 @@ namespace fs
 
 		public:
 			fs::RenderingBase::DxShaderPool&							getShaderPool() noexcept;
-			fs::RenderingBase::DxResourcePool&						getResourcePool() noexcept;
+			fs::RenderingBase::DxResourcePool&							getResourcePool() noexcept;
 			fs::RenderingBase::RectangleRendererContext&				getRectangleRendererContext() noexcept;
 			fs::RenderingBase::ShapeRendererContext&					getShapeRendererContext() noexcept;
-			fs::RenderingBase::FontRendererContext&					getFontRendererContext() noexcept;
+			fs::RenderingBase::FontRendererContext&						getFontRendererContext() noexcept;
 			fs::Gui::GuiContext&										getGuiContext() noexcept;
-			const fs::Language::CppHlsl&								getCppHlslStructs() const noexcept;
+			const fs::Language::CppHlsl&								getCppHlslSteamData() const noexcept;
+			const fs::Language::CppHlsl&								getCppHlslConstantBuffers() const noexcept;
+
+		public:
+			fs::RenderingBase::CB_View&									getCbViewData() noexcept;
+			DxObjectId													getCbViewId() const noexcept;
 
 		public:
 			ID3D11Device*												getDxDevice() noexcept;
@@ -118,6 +123,10 @@ namespace fs
 			DxShaderHeaderMemory										_shaderHeaderMemory;
 			DxShaderPool												_shaderPool;
 			DxResourcePool												_resourcePool;
+		
+		private:
+			fs::RenderingBase::CB_View									_cbViewData;
+			DxObjectId													_cbViewId;
 
 		private:
 			ComPtr<ID3D11SamplerState>									_samplerState;
@@ -139,9 +148,9 @@ namespace fs
 			fs::Language::CppHlsl										_cppHlslStructuredBuffers;
 
 		private:
-			fs::RenderingBase::RectangleRendererContext				_rectangleRendererContext;
-			fs::RenderingBase::ShapeRendererContext					_shapeRendererContext;
-			fs::RenderingBase::FontRendererContext					_fontRendererContext;
+			fs::RenderingBase::RectangleRendererContext					_rectangleRendererContext;
+			fs::RenderingBase::ShapeRendererContext						_shapeRendererContext;
+			fs::RenderingBase::FontRendererContext						_fontRendererContext;
 		
 		private:
 			fs::Gui::GuiContext											_guiContext;

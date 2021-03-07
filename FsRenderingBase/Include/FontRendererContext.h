@@ -9,7 +9,7 @@
 
 #include <FsMath/Include/Float2.h>
 
-#include <FsRenderingBase/Include/SimpleRenderingCommon.h>
+#include <FsRenderingBase/Include/RenderingBaseCommon.h>
 #include <FsRenderingBase/Include/IRendererContext.h>
 #include <FsRenderingBase/Include/TriangleRenderer.h>
 

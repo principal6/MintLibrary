@@ -79,6 +79,23 @@ namespace fs
 			}
 		}
 
+		void DxShader::unbind() const noexcept
+		{
+			if (_shaderType == DxShaderType::VertexShader)
+			{
+				_graphicDevice->getDxDeviceContext()->VSSetShader(nullptr, nullptr, 0);
+				_graphicDevice->getDxDeviceContext()->IASetInputLayout(nullptr);
+			}
+			else if (_shaderType == DxShaderType::GeometryShader)
+			{
+				_graphicDevice->getDxDeviceContext()->GSSetShader(nullptr, nullptr, 0);
+			}
+			else if (_shaderType == DxShaderType::PixelShader)
+			{
+				_graphicDevice->getDxDeviceContext()->PSSetShader(nullptr, nullptr, 0);
+			}
+		}
+
 
 		DxShaderPool::DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
 			: IDxObject(graphicDevice, DxObjectType::Pool)
@@ -99,9 +116,9 @@ namespace fs
 			{
 				return DxObjectId::kInvalidObjectId;
 			}
-			shader._identifier = shaderIdentifier;
+			shader._hlslFileName = shaderIdentifier;
 
-			return createVertexShaderInternal(shader, inputElementTypeInfo);
+			return pushVertexShaderInternal(shader, inputElementTypeInfo);
 		}
 
 		const DxObjectId& DxShaderPool::pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType)
@@ -115,138 +132,182 @@ namespace fs
 			{
 				return DxObjectId::kInvalidObjectId;
 			}
-			shader._identifier = shaderIdentifier;
+			shader._hlslFileName = shaderIdentifier;
 
-			return createNonVertexShaderInternal(shader, shaderType);
+			return pushNonVertexShaderInternal(shader, shaderType);
 		}
 
-		const DxObjectId& DxShaderPool::pushVertexShader(const char* const inputShaderFileName, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo, const char* const outputDirectory)
+		const DxObjectId& DxShaderPool::pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo, const char* const outputDirectory)
 		{
 			DxShader shader(_graphicDevice, DxShaderType::VertexShader);
-			if (compileShaderFromFile(inputShaderFileName, entryPoint, outputDirectory, DxShaderType::VertexShader, shader) == false)
+			if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, DxShaderType::VertexShader, false, shader) == false)
 			{
 				return DxObjectId::kInvalidObjectId;
 			}
-			return createVertexShaderInternal(shader, inputElementTypeInfo);
+			return pushVertexShaderInternal(shader, inputElementTypeInfo);
 		}
 
-		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory)
+		const DxObjectId& DxShaderPool::pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory)
 		{
 			DxShader shader(_graphicDevice, shaderType);
-			if (compileShaderFromFile(inputShaderFileName, entryPoint, outputDirectory, shaderType, shader) == false)
+			if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
 				return DxObjectId::kInvalidObjectId;
 			}
-			return createNonVertexShaderInternal(shader, shaderType);
+			return pushNonVertexShaderInternal(shader, shaderType);
 		}
 
-		const DxObjectId& DxShaderPool::createVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
+		const DxObjectId& DxShaderPool::pushVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
+		{
+			if (createVertexShaderInternal(shader, inputElementTypeInfo) == true)
+			{
+				shader.assignIdXXX();
+				_vertexShaderArray.emplace_back(std::move(shader));
+				return _vertexShaderArray.back().getId();
+			}
+			return DxObjectId::kInvalidObjectId;
+		}
+
+		const DxObjectId& DxShaderPool::pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
+		{
+			if (createNonVertexShaderInternal(shader, shaderType) == true)
+			{
+				if (shaderType == DxShaderType::GeometryShader)
+				{
+					shader.assignIdXXX();
+					_geometryShaderArray.emplace_back(std::move(shader));
+					return _geometryShaderArray.back().getId();
+				}
+				else if (shaderType == DxShaderType::PixelShader)
+				{
+					shader.assignIdXXX();
+					_pixelShaderArray.emplace_back(std::move(shader));
+					return _pixelShaderArray.back().getId();
+				}
+			}
+			return DxObjectId::kInvalidObjectId;
+		}
+
+		const bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const fs::Language::CppHlslTypeInfo* const inputElementTypeInfo)
 		{
 			if (FAILED(_graphicDevice->getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 			{
-				return DxObjectId::kInvalidObjectId;
+				return false;
 			}
 
 			// Input Layer
-			const uint32 memberCount = inputElementTypeInfo->getMemberCount();
-			shader._inputElementSet._semanticNameArray.reserve(memberCount);
-			shader._inputElementSet._inputElementDescriptorArray.reserve(memberCount);
-			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+			if (inputElementTypeInfo != nullptr)
 			{
-				const Language::CppHlslTypeInfo& memberType = inputElementTypeInfo->getMember(memberIndex);
-				shader._inputElementSet._semanticNameArray.emplace_back(Language::CppHlslParser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
+				const uint32 memberCount = inputElementTypeInfo->getMemberCount();
+				shader._inputElementSet._semanticNameArray.clear();
+				shader._inputElementSet._semanticNameArray.reserve(memberCount);
+				shader._inputElementSet._inputElementDescriptorArray.clear();
+				shader._inputElementSet._inputElementDescriptorArray.reserve(memberCount);
+				for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+				{
+					const Language::CppHlslTypeInfo& memberType = inputElementTypeInfo->getMember(memberIndex);
+					shader._inputElementSet._semanticNameArray.emplace_back(Language::CppHlslParser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
 
-				D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-				inputElementDescriptor.SemanticName = shader._inputElementSet._semanticNameArray[memberIndex].c_str();
-				inputElementDescriptor.SemanticIndex = 0;
-				inputElementDescriptor.Format = Language::CppHlslParser::convertCppHlslTypeToDxgiFormat(memberType);
-				inputElementDescriptor.InputSlot = 0;
-				inputElementDescriptor.AlignedByteOffset = memberType.getByteOffset();
-				inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-				inputElementDescriptor.InstanceDataStepRate = 0;
-				shader._inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
-			}
-			if (FAILED(_graphicDevice->getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
-				shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
-			{
-				FS_LOG_ERROR("김장원", "VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", shader._identifier.c_str(), inputElementTypeInfo->getTypeName().c_str());
-				return DxObjectId::kInvalidObjectId;
+					D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
+					inputElementDescriptor.SemanticName = shader._inputElementSet._semanticNameArray[memberIndex].c_str();
+					inputElementDescriptor.SemanticIndex = 0;
+					inputElementDescriptor.Format = Language::CppHlslParser::convertCppHlslTypeToDxgiFormat(memberType);
+					inputElementDescriptor.InputSlot = 0;
+					inputElementDescriptor.AlignedByteOffset = memberType.getByteOffset();
+					inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
+					inputElementDescriptor.InstanceDataStepRate = 0;
+					shader._inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
+				}
+				if (FAILED(_graphicDevice->getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
+					shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
+				{
+					FS_LOG_ERROR("김장원", "VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", shader._hlslFileName.c_str(), inputElementTypeInfo->getTypeName().c_str());
+					return false;
+				}
 			}
 
-			shader.assignIdXXX();
-			_vertexShaderArray.emplace_back(std::move(shader));
-			return _vertexShaderArray.back().getId();
+			return true;
 		}
 
-		const DxObjectId& DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
+		const bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
 		{
 			if (shaderType == DxShaderType::GeometryShader)
 			{
 				if (FAILED(_graphicDevice->getDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
-					return DxObjectId::kInvalidObjectId;
+					return false;
 				}
-
-				shader.assignIdXXX();
-				_geometryShaderArray.emplace_back(std::move(shader));
-				return _geometryShaderArray.back().getId();
 			}
 			else if (shaderType == DxShaderType::PixelShader)
 			{
 				if (FAILED(_graphicDevice->getDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
 				{
-					return DxObjectId::kInvalidObjectId;
+					return false;
 				}
-
-				shader.assignIdXXX();
-				_pixelShaderArray.emplace_back(std::move(shader));
-				return _pixelShaderArray.back().getId();
 			}
-
-			return DxObjectId::kInvalidObjectId;
-		}
-
-		const bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, DxShader& inoutShader)
-		{
-			std::string compiledShaderFileName{ inputShaderFileName };
-			fs::StringUtil::excludeExtension(compiledShaderFileName);
-
-			if (fs::FileUtil::exists(inputShaderFileName) == false)
+			else
 			{
-				FS_LOG_ERROR("김장원", "Input shader file not found : %s", inputShaderFileName);
 				return false;
 			}
 
+			return true;
+		}
+
+		const bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+		{
+			std::string inputShaderFilePath{ inputDirectory };
+			inputShaderFilePath += inputShaderFileName;
+			if (fs::FileUtil::exists(inputShaderFilePath.c_str()) == false)
+			{
+				FS_LOG_ERROR("김장원", "Input shader file not found : %s", inputShaderFilePath.c_str());
+				return false;
+			}
+
+			std::string outputShaderFilePath{ inputShaderFileName };
+			fs::StringUtil::excludeExtension(outputShaderFilePath);
 			if (outputDirectory != nullptr)
 			{
-				compiledShaderFileName = outputDirectory + compiledShaderFileName;
+				outputShaderFilePath = outputDirectory + outputShaderFilePath;
 			}
-			compiledShaderFileName.append(kCompiledShaderFileExtension);
+			else
+			{
+				outputShaderFilePath = inputDirectory + outputShaderFilePath;
+			}
+			outputShaderFilePath.append(kCompiledShaderFileExtension);
 
-			if (fs::FileUtil::exists(compiledShaderFileName.c_str()) == false)
+			return compileShaderFromFile(inputShaderFilePath.c_str(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
+		}
+
+		const bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+		{
+			if (kStringNPos == fs::StringUtil::find(inputShaderFilePath, ".hlsl"))
+			{
+				return false;
+			}
+
+			if (fs::FileUtil::exists(outputShaderFilePath) == false || forceCompilation == true)
 			{
 				DxShaderCompileParam compileParam;
-				compileParam._inputFileName = inputShaderFileName;
-				compileParam._outputFileName = compiledShaderFileName.c_str();
+				compileParam._inputFileName = inputShaderFilePath;
+				compileParam._outputFileName = outputShaderFilePath;
 				if (compileShaderInternalXXX(shaderType, compileParam, entryPoint, inoutShader._shaderBlob.ReleaseAndGetAddressOf()) == false)
 				{
 					return false;
 				}
-
-				inoutShader._identifier = inputShaderFileName;
 			}
 			else
 			{
 				std::wstring compiledShaderFileNameWide;
-				fs::StringUtil::convertStringToWideString(compiledShaderFileName, compiledShaderFileNameWide);
-
+				fs::StringUtil::convertStringToWideString(outputShaderFilePath, compiledShaderFileNameWide);
 				if (FAILED(D3DReadFileToBlob(compiledShaderFileNameWide.c_str(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
 				{
 					return false;
 				}
-
-				inoutShader._identifier = compiledShaderFileName.c_str();
 			}
+
+			inoutShader._entryPoint = entryPoint;
+			inoutShader._hlslFileName = inputShaderFilePath;
+			inoutShader._hlslBinaryFileName = outputShaderFilePath;
 
 			return true;
 		}
@@ -279,7 +340,8 @@ namespace fs
 				identifier = compileParam._shaderIdentifier;
 			}
 
-			if (FAILED(D3DCompile(content, contentLength, identifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), 0, 0, outBlob, _errorMessageBlob.ReleaseAndGetAddressOf())))
+			const UINT debugFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+			if (FAILED(D3DCompile(content, contentLength, identifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), debugFlag, 0, outBlob, _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
 				reportCompileError();
 				return false;
@@ -298,6 +360,48 @@ namespace fs
 			return true;
 		}
 
+		void DxShaderPool::recompileAllShaders()
+		{
+			const uint32 shaderTypeCount = static_cast<uint32>(fs::RenderingBase::DxShaderType::COUNT);
+			for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; shaderTypeIndex++)
+			{
+				const fs::RenderingBase::DxShaderType shaderType = static_cast<fs::RenderingBase::DxShaderType>(shaderTypeIndex);
+				const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
+				if (objectId.isValid() == true)
+				{
+					getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).unbind();
+				}
+			}
+
+			for (auto& shader : _vertexShaderArray)
+			{
+				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
+				createVertexShaderInternal(shader, nullptr);
+			}
+
+			for (auto& shader : _geometryShaderArray)
+			{
+				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
+				createNonVertexShaderInternal(shader, fs::RenderingBase::DxShaderType::GeometryShader);
+			}
+
+			for (auto& shader : _pixelShaderArray)
+			{
+				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
+				createNonVertexShaderInternal(shader, fs::RenderingBase::DxShaderType::PixelShader);
+			}
+
+			for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; shaderTypeIndex++)
+			{
+				const fs::RenderingBase::DxShaderType shaderType = static_cast<fs::RenderingBase::DxShaderType>(shaderTypeIndex);
+				const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
+				if (objectId.isValid() == true)
+				{
+					getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).bind();
+				}
+			}
+		}
+
 		void DxShaderPool::reportCompileError()
 		{
 			std::string errorMessages(reinterpret_cast<char*>(_errorMessageBlob->GetBufferPointer()));
@@ -309,7 +413,7 @@ namespace fs
 			FS_LOG_ERROR("김장원", "Shader Compile Error\n\n%s", errorMessages.c_str());
 		}
 
-		void DxShaderPool::bindShader(const DxShaderType shaderType, const DxObjectId& objectId)
+		void DxShaderPool::bindShaderIfNot(const DxShaderType shaderType, const DxObjectId& objectId)
 		{
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
 			if (_boundShaderIdArray[shaderTypeIndex] != objectId)
@@ -322,26 +426,14 @@ namespace fs
 
 		void DxShaderPool::unbindShader(const DxShaderType shaderType)
 		{
-			switch (shaderType)
+			if (shaderType == DxShaderType::COUNT)
 			{
-			case fs::RenderingBase::DxShaderType::VertexShader:
-				_graphicDevice->getDxDeviceContext()->VSSetShader(nullptr, nullptr, 0);
-				_graphicDevice->getDxDeviceContext()->IASetInputLayout(nullptr);
-				break;
-			case fs::RenderingBase::DxShaderType::GeometryShader:
-				_graphicDevice->getDxDeviceContext()->GSSetShader(nullptr, nullptr, 0);
-				break;
-			case fs::RenderingBase::DxShaderType::PixelShader:
-				_graphicDevice->getDxDeviceContext()->PSSetShader(nullptr, nullptr, 0);
-				break;
-			case fs::RenderingBase::DxShaderType::COUNT:
-				break;
-			default:
-				break;
+				return;
 			}
 
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			_boundShaderIdArray[shaderTypeIndex] = DxObjectId();
+			getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).unbind();
+			_boundShaderIdArray[shaderTypeIndex] = DxObjectId::kInvalidObjectId;
 		}
 
 		const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectId& objectId)

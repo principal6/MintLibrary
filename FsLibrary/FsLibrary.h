@@ -22,5 +22,7 @@
 #include <FsRenderingBase/Include/GraphicDevice.h>
 #include <FsRenderingBase/Include/Language/Language.h>
 
+#include <FsRendering/Include/Rendering.h>
+
 
 #endif // !FS_LIBRARY_H

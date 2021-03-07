@@ -86,10 +86,18 @@ namespace fs
 		const bool				isNan() const noexcept;
 		
 	public:
-		float					_x;
-		float					_y;
-		float					_z;
-		float					_w;
+		union
+		{
+			struct
+			{
+				float			_x;
+				float			_y;
+				float			_z;
+				float			_w;
+			};
+			float				_f[4];
+		};
+		
 	};
 }
 

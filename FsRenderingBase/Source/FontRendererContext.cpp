@@ -470,7 +470,7 @@ namespace fs
 					VS_OUTPUT_SHAPE main(VS_INPUT_SHAPE input)
 					{
 						VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
-						result._position		= mul(float4(input._position.xyz, 1.0), _cbProjectionMatrix);
+						result._position		= mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
 						result._color			= input._color;
 						result._texCoord		= input._texCoord;
 						result._info			= input._info;
@@ -479,7 +479,7 @@ namespace fs
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslStructs().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -553,14 +553,14 @@ namespace fs
 				_graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::RenderingBase::DxShaderType::PixelShader, 0);
 				
 				fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-				shaderPool.bindShader(DxShaderType::VertexShader, _vertexShaderId);
+				shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
 				if (getUseMultipleViewports() == true)
 				{
-					shaderPool.bindShader(DxShaderType::GeometryShader, _geometryShaderId);
+					shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderId);
 				}
 
-				shaderPool.bindShader(DxShaderType::PixelShader, _pixelShaderId);
+				shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
 				_triangleRenderer->render();
 
