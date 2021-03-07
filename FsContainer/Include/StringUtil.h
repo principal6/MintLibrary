@@ -41,6 +41,49 @@ namespace fs
             return static_cast<uint32>(::wcslen(rawWideString));
         }
 
+        FS_INLINE uint32 find(const char* const source, const char* const target, const uint32 offset = 0)
+        {
+            if (source == nullptr || target == nullptr)
+            {
+                return kStringNPos;
+            }
+
+            const uint32 sourceLength = fs::StringUtil::strlen(source);
+            const uint32 targetLength = fs::StringUtil::strlen(target);
+            if (sourceLength < offset + targetLength)
+            {
+                return kStringNPos;
+            }
+
+            uint32 result = kStringNPos;
+            uint32 targetIter = 0;
+            bool isFound = false;
+            for (uint32 sourceIter = 0; sourceIter < sourceLength; sourceIter++)
+            {
+                if (source[sourceIter] == target[targetIter])
+                {
+                    if (targetIter == 0)
+                    {
+                        result = sourceIter;
+                    }
+
+                    ++targetIter;
+                    if (targetIter == targetLength)
+                    {
+                        isFound = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    targetIter = 0;
+                    result = kStringNPos;
+                }
+            }
+
+            return (isFound == true) ? result : kStringNPos;
+        }
+
         FS_INLINE const bool strcmp(const char* const a, const char* const b)
         {
             return (0 == ::strcmp(a, b));
