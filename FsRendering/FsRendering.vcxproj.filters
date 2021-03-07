@@ -47,9 +47,6 @@
     <ClCompile Include="Source\ObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TransformComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\VsDefault.hlsl">

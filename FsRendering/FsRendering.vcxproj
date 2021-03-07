@@ -31,7 +31,6 @@
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\ObjectComponent.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />
-    <ClCompile Include="Source\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\PsDefault.hlsl">
