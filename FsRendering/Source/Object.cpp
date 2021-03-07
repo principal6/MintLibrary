@@ -84,14 +84,19 @@ namespace fs
 			return nullptr;
 		}
 
-		TransformComponent* Object::getObjectTransformComponent() const noexcept
+		fs::Rendering::Srt& Object::getObjectTransformSrt() noexcept
 		{
-			return static_cast<TransformComponent*>(_componentArray[0]);
+			return getObjectTransformComponent()->_srt;
 		}
 
 		fs::Float4x4 Object::getObjectTransformMatrix() const noexcept
 		{
 			return getObjectTransformComponent()->_srt.toMatrix();
+		}
+
+		TransformComponent* Object::getObjectTransformComponent() const noexcept
+		{
+			return static_cast<TransformComponent*>(_componentArray[0]);
 		}
 	}
 }

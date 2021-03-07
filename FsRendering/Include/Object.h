@@ -18,6 +18,7 @@ namespace fs
 		class TransformComponent;
 		class ObjectManager;
 		enum class ObjectComponentType;
+		struct Srt;
 
 
 		class Object final
@@ -37,8 +38,11 @@ namespace fs
 		public:
 			const uint32					getComponentCount() const noexcept;
 			ObjectComponent*				getComponent(const ObjectComponentType type) const noexcept;
-			TransformComponent*				getObjectTransformComponent() const noexcept;
+			fs::Rendering::Srt&				getObjectTransformSrt() noexcept;
 			fs::Float4x4					getObjectTransformMatrix() const noexcept;
+
+		private:
+			TransformComponent*				getObjectTransformComponent() const noexcept;
 
 		private:
 			static ObjectManager*			_objectManager;
