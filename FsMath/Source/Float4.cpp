@@ -120,9 +120,31 @@ namespace fs
 		);
 	}
 
+	Float4 Float4::crossNormalize(const Float4& lhs, const Float4& rhs) noexcept
+	{
+		return normalize(cross(lhs, rhs));
+	}
+
 	Float4 Float4::normalize(const Float4& float4) noexcept
 	{
 		return (float4 / float4.length());
+	}
+
+	void Float4::normalize() noexcept
+	{
+		*this = Float4::normalize(*this);
+	}
+
+	void Float4::setXyz(const Float4& rhs) noexcept
+	{
+		_x = rhs._x;
+		_y = rhs._y;
+		_z = rhs._z;
+	}
+
+	Float4 Float4::getXyz0() const noexcept
+	{
+		return Float4(_x, _y, _z, 0.0f);
 	}
 
 	const float Float4::lengthSqaure() const noexcept

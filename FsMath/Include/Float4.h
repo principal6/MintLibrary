@@ -63,7 +63,15 @@ namespace fs
 
 		// in 3D affine space
 		static Float4			cross(const Float4& lhs, const Float4& rhs) noexcept;
+		static Float4			crossNormalize(const Float4& lhs, const Float4& rhs) noexcept;
 		static Float4			normalize(const Float4& float4) noexcept;
+	
+	public:
+		void					normalize() noexcept;
+	
+	public:
+		void					setXyz(const Float4& rhs) noexcept;
+		Float4					getXyz0() const noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;

@@ -59,8 +59,17 @@ namespace fs
 	public:
 		Float2						mul(const Float2& v) const noexcept;
 
-	private:
-		float						_m[2][2]{};
+	public:
+		union
+		{
+			float						_m[2][2];
+			fs::Float2					_row[2];
+			struct
+			{
+				float					_11, _12;
+				float					_21, _22;
+			};
+		};
 	};
 }
 

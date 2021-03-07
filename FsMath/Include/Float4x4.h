@@ -15,7 +15,7 @@ namespace fs
 #pragma endregion
 
 
-	// right-handed coordinate system
+	// Mostly for column vector
 	class Float4x4 final
 	{
 #pragma region Static Functions
@@ -28,6 +28,7 @@ namespace fs
 		static Float4x4			rotationMatrixX(const float angle) noexcept;
 		static Float4x4			rotationMatrixY(const float angle) noexcept;
 		static Float4x4			rotationMatrixZ(const float angle) noexcept;
+		static Float4x4			rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
 
 		// Rodrigues' rotation formula
 		static Float4x4			rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept;
@@ -85,7 +86,18 @@ namespace fs
 		Float4					mul(const Float4& v) const noexcept;
 
 	public:
-		float					_m[4][4];
+		union
+		{
+			float					_m[4][4];
+			fs::Float4				_row[4];
+			struct
+			{
+				float				_11, _12, _13, _14;
+				float				_21, _22, _23, _24;
+				float				_31, _32, _33, _34;
+				float				_41, _42, _43, _44;
+			};
+		};
 	};
 }
 

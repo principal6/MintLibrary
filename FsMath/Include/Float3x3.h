@@ -63,8 +63,18 @@ namespace fs
 	public:
 		Float3				mul(const Float3& v) const noexcept;
 
-	private:
-		float				_m[3][3]{};
+	public:
+		union
+		{
+			float				_m[3][3];
+			fs::Float3			_row[3];
+			struct
+			{
+				float			_11, _12, _13;
+				float			_21, _22, _23;
+				float			_31, _32, _33;
+			};
+		};
 	};
 }
 

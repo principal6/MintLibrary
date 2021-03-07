@@ -71,6 +71,11 @@ namespace fs
 		);
 	}
 
+	Float4x4 Float4x4::rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept
+	{
+		return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
+	}
+
 	Float4x4 Float4x4::rotationMatrixAxisAngle(const Float4& axis, const float angle) noexcept
 	{
 		// (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
