@@ -24,6 +24,7 @@ namespace fs
 	{
 		class TransformComponent;
 		class MeshComponent;
+		class CameraObject;
 
 
 		class ObjectManager final
@@ -36,7 +37,14 @@ namespace fs
 			void														initialize() noexcept;
 
 		public:
-			Object&														createObject();
+			fs::Rendering::Object*										createObject();
+			fs::Rendering::CameraObject*								createCameraObject();
+
+		private:
+			void														destroyObjects();
+
+		private:
+			fs::Rendering::Object*										createObjectInternalXXX(fs::Rendering::Object* const object);
 		
 		public:
 			fs::Rendering::TransformComponent*							createTransformComponent();
@@ -52,11 +60,14 @@ namespace fs
 		public:
 			void														renderMeshComponents();
 
+		public:
+			const uint32												getObjectCount() const noexcept;
+
 		private:
 			fs::RenderingBase::GraphicDevice* const						_graphicDevice;
 
 		private:
-			std::vector<fs::Rendering::Object>							_objectArray;
+			std::vector<fs::Rendering::Object*>							_objectArray;
 
 		private:
 			std::vector<fs::Rendering::MeshComponent*>					_meshComponentArray;

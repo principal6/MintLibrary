@@ -43,16 +43,6 @@ namespace fs
 			return _cppHlslConstantBuffers;
 		}
 
-		FS_INLINE fs::RenderingBase::CB_View& GraphicDevice::getCbViewData() noexcept
-		{
-			return _cbViewData;
-		}
-
-		FS_INLINE DxObjectId GraphicDevice::getCbViewId() const noexcept
-		{
-			return _cbViewId;
-		}
-
 		FS_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept
 		{
 			return _device.Get();

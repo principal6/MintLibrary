@@ -5,6 +5,7 @@
 
 #include <immdev.h>
 #include <windowsx.h>
+#include <hidusage.h>
 #include <mutex>
 
 #pragma comment(lib, "imm32")
@@ -64,6 +65,8 @@ namespace fs
 			, _hWnd{}
 			, _hInstance{}
 			, _msg{}
+			, _cursorArray{}
+			, _byteArrayForRawInput{}
 		{
 			__noop;
 		}
@@ -145,7 +148,20 @@ namespace fs
 			setCursorType(CursorType::Arrow);
 
 			buildWparamKeyCodePairArray();
-			
+
+
+			// For Mouse Input
+			RAWINPUTDEVICE rawInputDevice{};
+			rawInputDevice.dwFlags = 0;
+			rawInputDevice.hwndTarget = nullptr;
+			rawInputDevice.usUsage = HID_USAGE_GENERIC_MOUSE;
+			rawInputDevice.usUsagePage = HID_USAGE_PAGE_GENERIC;
+			if (::RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE)) == FALSE)
+			{
+				FS_WINDOW_RETURN_FAIL(CreationError::FailedToRegisterRawInputDevices);
+			}
+
+
 			FS_WINDOW_RETURN_OK;
 		}
 
@@ -172,6 +188,10 @@ namespace fs
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_CONTROL, EventData::KeyCode::Control));
 			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_MENU, EventData::KeyCode::Alt));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('W', EventData::KeyCode::W));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('A', EventData::KeyCode::A));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('S', EventData::KeyCode::S));
+			_wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('D', EventData::KeyCode::D));
 		}
 
 		EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
@@ -423,6 +443,7 @@ namespace fs
 				//	mouseInfo = 1;
 				//}
 				eventData._value.setMousePosition(mousePosition);
+				_previousMousePosition = mousePosition;
 
 				_eventQueue.push(eventData);
 				return 0;
@@ -431,6 +452,7 @@ namespace fs
 			{
 				eventData._type = EventType::MouseDown;
 				eventData._value.setMousePosition(mousePosition);
+				_previousMousePosition = mousePosition;
 
 				_eventQueue.push(eventData);
 				return 0;
@@ -439,6 +461,7 @@ namespace fs
 			{
 				eventData._type = EventType::MouseUp;
 				eventData._value.setMousePosition(mousePosition);
+				_previousMousePosition = mousePosition;
 
 				_eventQueue.push(eventData);
 				return 0;
@@ -447,6 +470,7 @@ namespace fs
 			{
 				eventData._type = EventType::MouseDoubleClicked;
 				eventData._value.setMousePosition(mousePosition);
+				_previousMousePosition = mousePosition;
 
 				_eventQueue.push(eventData);
 				return 0;
@@ -458,8 +482,28 @@ namespace fs
 				//(fwKeys & MK_MBUTTON) ? 1 : 0;
 				eventData._value.setMouseWheel(static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA);
 				eventData._value.setMousePosition(mousePosition);
+				_previousMousePosition = mousePosition;
 
 				_eventQueue.push(eventData);
+				return 0;
+			}
+			case WM_INPUT:
+			{
+				UINT byteCount = sizeof(RAWINPUT);
+				GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, _byteArrayForRawInput, &byteCount, sizeof(RAWINPUTHEADER));
+				const RAWINPUT& rawInput = *reinterpret_cast<RAWINPUT*>(_byteArrayForRawInput);
+				if (rawInput.header.dwType == RIM_TYPEMOUSE)
+				{
+					const RAWMOUSE& rawMouse = rawInput.data.mouse;
+					if ((rawMouse.usFlags & MOUSE_MOVE_RELATIVE) == MOUSE_MOVE_RELATIVE)
+					{
+						eventData._type = EventType::MouseMoveDelta;
+
+						eventData._value.setMouseDeltaPosition(fs::Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY)));
+
+						_eventQueue.push(eventData);
+					}
+				}
 				return 0;
 			}
 			default:

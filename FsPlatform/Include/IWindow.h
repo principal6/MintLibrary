@@ -27,6 +27,7 @@ namespace fs
 			None,
 			FailedToGetInstanceHandle,
 			FailedToCreateWindow,
+			FailedToRegisterRawInputDevices,
 			NullptrString,
 		};
 
@@ -54,6 +55,7 @@ namespace fs
 			KeyStroke,
 			KeyStrokeCandidate,
 			MouseMove,
+			MouseMoveDelta,
 			MouseDown,
 			MouseUp,
 			MouseDoubleClicked,
@@ -77,6 +79,10 @@ namespace fs
 				Shift,
 				Control,
 				Alt,
+				W,
+				A,
+				S,
+				D,
 			};
 
 			enum class MouseButton : int32
@@ -98,7 +104,9 @@ namespace fs
 				const EventData::KeyCode	getKeyCode() const noexcept;
 
 				void						setMousePosition(const fs::Float2& mousePosition) noexcept;
+				void						setMouseDeltaPosition(const fs::Float2& mouseDeltaPosition) noexcept;
 				const fs::Float2&			getMousePosition() const noexcept;
+				const fs::Float2			getAndClearMouseDeltaPosition() const noexcept;
 
 				void						setMouseWheel(const float mouseWheel) noexcept;
 				const float					getMouseWheel() const noexcept;
@@ -109,18 +117,17 @@ namespace fs
 			private:
 				union
 				{
-					uint64					_raw[2]{};
+					uint64					_raw[3]{};
 					struct
 					{
 						fs::Float2			_mousePosition;
+						mutable fs::Float2	_mouseDeltaPosition;
 						MouseButton			_mouseButton;
 						float				_mouseInfoF;
 					};
 					struct
 					{
 						KeyCode				_keyCode;
-						//int32				_reserved;
-						//int32				_reserved1;
 					};
 					struct
 					{
@@ -203,6 +210,9 @@ namespace fs
 			CreationError					_creationError{};
 			std::queue<EventData>			_eventQueue{};
 		
+		protected:
+			fs::Float2						_previousMousePosition;
+
 		protected:
 			CursorType						_currentCursorType;
 		};

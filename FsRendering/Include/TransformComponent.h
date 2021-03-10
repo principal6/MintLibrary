@@ -17,18 +17,6 @@ namespace fs
 {
 	namespace Rendering
 	{
-		struct Srt
-		{
-		public:
-			fs::Float4x4			toMatrix() const noexcept { return fs::Float4x4::srtMatrix(_scale, _rotation, _translation); }
-		
-		public:
-			fs::Float3				_scale			= fs::Float3::kUnitScale;
-			fs::Quaternion			_rotation;
-			fs::Float3				_translation;
-		};
-
-
 		class TransformComponent : public ObjectComponent
 		{
 		public:

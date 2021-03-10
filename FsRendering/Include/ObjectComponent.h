@@ -9,6 +9,8 @@
 
 #include <FsContainer/Include/IId.h>
 
+#include <FsMath/Include/Float4x4.h>
+
 
 namespace fs
 {
@@ -35,6 +37,18 @@ namespace fs
 
 		public:
 			const uint32			getRawId() const noexcept;
+		};
+
+
+		struct Srt
+		{
+		public:
+			fs::Float4x4			toMatrix() const noexcept { return fs::Float4x4::srtMatrix(_scale, _rotation, _translation); }
+
+		public:
+			fs::Float3				_scale = fs::Float3::kUnitScale;
+			fs::Quaternion			_rotation;
+			fs::Float3				_translation;
 		};
 
 

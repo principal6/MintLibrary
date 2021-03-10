@@ -86,8 +86,8 @@ namespace fs
 			const fs::Language::CppHlsl&								getCppHlslConstantBuffers() const noexcept;
 
 		public:
-			fs::RenderingBase::CB_View&									getCbViewData() noexcept;
-			DxObjectId													getCbViewId() const noexcept;
+			void														setViewMatrix(const fs::Float4x4& viewMatrix) noexcept;
+			void														setPerspectiveProjectionMatrix(const fs::Float4x4& perspectiveProjectionMatrix) noexcept;
 
 		public:
 			ID3D11Device*												getDxDevice() noexcept;

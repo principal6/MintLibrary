@@ -5,7 +5,7 @@
 #include <FsRenderingBase/Include/TriangleRenderer.hpp>
 
 #include <FsRendering/Include/MeshComponent.h>
-#include "..\Include\ObjectManager.h"
+#include <FsRendering/Include/CameraObject.h>
 
 
 namespace fs
@@ -16,12 +16,12 @@ namespace fs
 			: _graphicDevice{ graphicDevice }
 			, _triangleRenderer{ graphicDevice }
 		{
-			Object::_objectManager = this;
+			__noop;
 		}
 		
 		ObjectManager::~ObjectManager()
 		{
-			__noop;
+			destroyObjects();
 		}
 
 		void ObjectManager::initialize() noexcept
@@ -36,14 +36,42 @@ namespace fs
 			fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
 			const fs::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
 			_cbTransformId = resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbTransformData), sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
+
+			const fs::Int2& windowSize = _graphicDevice->getWindowSize();
+			const fs::Float2& windowSizeF = fs::Float2(windowSize);
+			_graphicDevice->setPerspectiveProjectionMatrix(fs::Float4x4::projectionMatrixPerspective(fs::Math::toRadian(60.0f), 0.1f, 100.0f, windowSizeF._x / windowSizeF._y));
 		}
 
-		Object& ObjectManager::createObject()
+		fs::Rendering::Object* ObjectManager::createObject()
 		{
-			fs::Rendering::Object newObject;
-			_objectArray.emplace_back(std::move(newObject));
-			_objectArray.back().attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
-			return _objectArray.back();
+			return createObjectInternalXXX(FS_NEW(fs::Rendering::Object));
+		}
+
+		fs::Rendering::CameraObject* ObjectManager::createCameraObject()
+		{
+			return static_cast<fs::Rendering::CameraObject*>(createObjectInternalXXX(FS_NEW(fs::Rendering::CameraObject)));
+		}
+
+		void ObjectManager::destroyObjects()
+		{
+			const uint32 objectCount = getObjectCount();
+			for (uint32 objectIndex = 0; objectIndex < objectCount; objectIndex++)
+			{
+				if (_objectArray[objectIndex] != nullptr)
+				{
+					destroyObjectComponents(*_objectArray[objectIndex]);
+
+					FS_DELETE(_objectArray[objectIndex]);
+				}
+			}
+			_objectArray.clear();
+		}
+
+		fs::Rendering::Object* ObjectManager::createObjectInternalXXX(fs::Rendering::Object* const object)
+		{
+			_objectArray.emplace_back(object);
+			object->attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
+			return object;
 		}
 
 		fs::Rendering::TransformComponent* ObjectManager::createTransformComponent()
@@ -126,20 +154,11 @@ namespace fs
 
 		void ObjectManager::renderMeshComponents()
 		{
-			const fs::Int2& windowSize = _graphicDevice->getWindowSize();
-			const fs::Float2& windowSizeF = fs::Float2(windowSize);
 			fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 			shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::VertexShader, _vertexShaderId);
 			shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::PixelShader, _pixelShaderId);
 
 			fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-			fs::RenderingBase::DxResource& cbView = resourcePool.getResource(_graphicDevice->getCbViewId());
-			{
-				fs::RenderingBase::CB_View& cbViewData = _graphicDevice->getCbViewData();
-				cbViewData._cbPerspectiveProjectionMatrix = fs::Float4x4::projectionMatrixPerspective(fs::Math::toRadian(60.0f), 0.1f, 100.0f, windowSizeF._x / windowSizeF._y);
-				cbView.updateBuffer(reinterpret_cast<const byte*>(&cbViewData), 1);
-				cbView.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbView.getRegisterIndex());
-			}
 			fs::RenderingBase::DxResource& cbTransform = resourcePool.getResource(_cbTransformId);
 			{
 				cbTransform.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbTransform.getRegisterIndex());
@@ -171,6 +190,11 @@ namespace fs
 			}
 
 			_triangleRenderer.render();
+		}
+		
+		const uint32 ObjectManager::getObjectCount() const noexcept
+		{
+			return static_cast<uint32>(_objectArray.size());
 		}
 	}
 }

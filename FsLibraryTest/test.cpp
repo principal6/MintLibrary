@@ -770,14 +770,16 @@ const bool testWindow()
 	Rendering::ObjectManager objectManager{ &graphicDevice };
 	objectManager.initialize();
 	
-	Rendering::Object& testObject = objectManager.createObject();
+	Rendering::Object* const testObject = objectManager.createObject();
+	Rendering::CameraObject* const testCameraObject = objectManager.createCameraObject();
 	{
-		testObject.attachComponent(objectManager.createMeshComponent());
+		testObject->attachComponent(objectManager.createMeshComponent());
 
-		fs::Rendering::TransformComponent* transformComponent = static_cast<fs::Rendering::TransformComponent*>(testObject.getComponent(fs::Rendering::ObjectComponentType::TransformComponent));
+		fs::Rendering::TransformComponent* transformComponent = static_cast<fs::Rendering::TransformComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::TransformComponent));
 		transformComponent->_srt._translation._z = 4.0f;
-		transformComponent->_srt._rotation.setAxisAngle(fs::Float3(1.0f, 1.0f, 0.0f), fs::Math::kPiOverEight);
+		//transformComponent->_srt._rotation.setAxisAngle(fs::Float3(1.0f, 1.0f, 0.0f), fs::Math::kPiOverEight);
 	}
+	testCameraObject->rotatePitch(0.125f);
 
 	uint64 previousFrameTimeMs = 0;
 	while (window.isRunning() == true)
@@ -803,6 +805,38 @@ const bool testWindow()
 						graphicDevice.getShaderPool().recompileAllShaders();
 					}
 				}
+				else if (event._type == EventType::MouseMoveDelta)
+				{
+					if (window.isMouseDown(fs::Window::EventData::MouseButton::Right) == true)
+					{
+						const fs::Float2& mouseDeltaPosition = event._value.getAndClearMouseDeltaPosition();
+						testCameraObject->rotatePitch(mouseDeltaPosition._y);
+						testCameraObject->rotateYaw(mouseDeltaPosition._x);
+					}
+				}
+			}
+		}
+
+		// Dynamic Keyboard Inputs
+		{
+			if (window.isKeyDown(EventData::KeyCode::W) == true)
+			{
+				testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Forward);
+			}
+
+			if (window.isKeyDown(EventData::KeyCode::S) == true)
+			{
+				testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Backward);
+			}
+
+			if (window.isKeyDown(EventData::KeyCode::A) == true)
+			{
+				testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Leftward);
+			}
+
+			if (window.isKeyDown(EventData::KeyCode::D) == true)
+			{
+				testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Rightward);
 			}
 		}
 
@@ -826,6 +860,7 @@ const bool testWindow()
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
 			previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
 
+			graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
 			objectManager.renderMeshComponents();
 
 			graphicDevice.endRendering();

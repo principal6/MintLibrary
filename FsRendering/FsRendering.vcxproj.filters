@@ -33,6 +33,9 @@
     <ClInclude Include="Include\Rendering.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\CameraObject.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -47,6 +50,9 @@
     <ClCompile Include="Source\ObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CameraObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\VsDefault.hlsl">
@@ -55,5 +61,10 @@
     <FxCompile Include="..\Assets\Hlsl\PsDefault.hlsl">
       <Filter>Assets\Hlsl</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\Object.inl">
+      <Filter>Include</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -10,15 +10,21 @@ namespace fs
 {
 	namespace Rendering
 	{
-		ObjectManager* Object::_objectManager;
 		Object::Object()
+			: _objectType{ ObjectType::Object }
+		{
+			__noop;
+		}
+
+		Object::Object(const ObjectType objectType)
+			: _objectType{ objectType }
 		{
 			__noop;
 		}
 
 		Object::~Object()
 		{
-			_objectManager->destroyObjectComponents(*this);
+			__noop;
 		}
 
 		void Object::attachComponent(ObjectComponent* const objectComponent)
@@ -65,7 +71,7 @@ namespace fs
 				_componentArray.pop_back();
 			}
 		}
-		
+
 		const uint32 fs::Rendering::Object::getComponentCount() const noexcept
 		{
 			return static_cast<uint32>(_componentArray.size());
@@ -85,6 +91,11 @@ namespace fs
 		}
 
 		fs::Rendering::Srt& Object::getObjectTransformSrt() noexcept
+		{
+			return getObjectTransformComponent()->_srt;
+		}
+
+		const fs::Rendering::Srt& Object::getObjectTransformSrt() const noexcept
 		{
 			return getObjectTransformComponent()->_srt;
 		}

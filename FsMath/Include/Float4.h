@@ -72,6 +72,7 @@ namespace fs
 	public:
 		void					setXyz(const Float4& rhs) noexcept;
 		Float4					getXyz0() const noexcept;
+		Float3					getXyz() const noexcept;
 
 	public:
 		const float				lengthSqaure() const noexcept;

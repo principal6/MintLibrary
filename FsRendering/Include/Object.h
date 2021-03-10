@@ -8,6 +8,7 @@
 #include <CommonDefinitions.h>
 
 #include <FsMath/Include/Float4x4.h>
+#include <FsRendering/Include/ObjectComponent.h>
 
 
 namespace fs
@@ -20,39 +21,53 @@ namespace fs
 		enum class ObjectComponentType;
 		struct Srt;
 
+		enum class ObjectType
+		{
+			INVALID,
+			Object,
+			CameraObject
+		};
 
-		class Object final
+
+		class Object
 		{
 			friend ObjectManager;
 
 		private:
 											Object();
-		
-		public:
-											~Object();
 
+		protected:
+											Object(const ObjectType objectType);
+			virtual							~Object();
+		
 		public:
 			void							attachComponent(ObjectComponent* const objectComponent);
 			void							detachComponent(ObjectComponent* const objectComponent);
 		
 		public:
+			const ObjectType				getType() const noexcept;
+			const bool						isTypeOf(const ObjectType objectType) const noexcept;
 			const uint32					getComponentCount() const noexcept;
 			ObjectComponent*				getComponent(const ObjectComponentType type) const noexcept;
 			fs::Rendering::Srt&				getObjectTransformSrt() noexcept;
+			const fs::Rendering::Srt&		getObjectTransformSrt() const noexcept;
 			fs::Float4x4					getObjectTransformMatrix() const noexcept;
 
-		private:
+		protected:
 			TransformComponent*				getObjectTransformComponent() const noexcept;
 
-		private:
-			static ObjectManager*			_objectManager;
+		protected:
+			const ObjectType				_objectType;
 
-		private:
+		protected:
 			std::vector<ObjectComponent*>	_componentArray;
 		};
 
 	}
 }
+
+
+#include <FsRendering/Include/Object.inl>
 
 
 #endif // !FS_OBJECT_H

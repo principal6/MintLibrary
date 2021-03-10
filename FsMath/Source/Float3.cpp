@@ -116,6 +116,11 @@ namespace fs
 		);
 	}
 
+	Float3 Float3::crossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept
+	{
+		return normalize(cross(lhs, rhs));
+	}
+
 	Float3 Float3::normalize(const Float3& float3) noexcept
 	{
 		return Float3(float3 / float3.length());

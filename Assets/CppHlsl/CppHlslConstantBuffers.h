@@ -16,6 +16,8 @@ namespace fs
 		{
 			float4x4			_cb2DProjectionMatrix;
 			float4x4			_cbPerspectiveProjectionMatrix;
+			float4x4			_cbViewMatrix;
+			float4x4			_cbViewPerspectiveProjectionMatrix;
 		};
 
 		struct CB_Transform CPP_HLSL_REGISTER_INDEX(1)

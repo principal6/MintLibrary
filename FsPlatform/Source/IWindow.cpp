@@ -32,9 +32,21 @@ namespace fs
 			_mousePosition = mousePosition;
 		}
 
+		void EventData::EventValue::setMouseDeltaPosition(const fs::Float2& mouseDeltaPosition) noexcept
+		{
+			_mouseDeltaPosition = mouseDeltaPosition;
+		}
+
 		const fs::Float2& EventData::EventValue::getMousePosition() const noexcept
 		{
 			return _mousePosition;
+		}
+
+		const fs::Float2 EventData::EventValue::getAndClearMouseDeltaPosition() const noexcept
+		{
+			fs::Float2 result = _mouseDeltaPosition;
+			_mouseDeltaPosition.setZero();
+			return result;
 		}
 		
 		void EventData::EventValue::setMouseWheel(const float mouseWheel) noexcept

@@ -62,6 +62,7 @@ namespace fs
 	public:
 		static const float		dot(const Float3& lhs, const Float3& rhs) noexcept;
 		static Float3			cross(const Float3& lhs, const Float3& rhs) noexcept;
+		static Float3			crossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept;
 		static Float3			normalize(const Float3& float3) noexcept;
 	
 	public:

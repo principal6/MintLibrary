@@ -11,6 +11,11 @@ namespace fs
 		return m.mul(v);
 	}
 
+	Float3 Float4x4::mul(const Float4x4& m, const Float3& v) noexcept
+	{
+		return m.mul(v);
+	}
+
 	Float4x4 Float4x4::mul(const Float4x4& l, const Float4x4& r) noexcept
 	{
 		return l.mul(r);
@@ -113,6 +118,17 @@ namespace fs
 		float angle;
 		rotation.getAxisAngle(axis, angle);
 		return rotationMatrixAxisAngle(axis, angle);
+	}
+
+	Float4x4 Float4x4::fromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept
+	{
+		return Float4x4
+		(
+			axisX._x, axisX._y, axisX._z, 0.0f,
+			axisY._x, axisY._y, axisY._z, 0.0f,
+			axisZ._x, axisZ._y, axisZ._z, 0.0f,
+			     0.0f,    0.0f,     0.0f, 1.0f
+		);
 	}
 	
 	Float4x4 Float4x4::srtMatrix(const fs::Float3& scale, const fs::Quaternion& rotation, const fs::Float3& translation) noexcept
@@ -274,6 +290,11 @@ namespace fs
 		return mul(*this, v);
 	}
 
+	Float3 Float4x4::operator*(const Float3& v) const noexcept
+	{
+		return mul(*this, v);
+	}
+
 	void Float4x4::set(
 		float m00, float m01, float m02, float m03, 
 		float m10, float m11, float m12, float m13, 
@@ -343,6 +364,16 @@ namespace fs
 		_43 *= z;
 	}
 
+	void Float4x4::preScale(const fs::Float3& scale) noexcept
+	{
+		preScale(scale._x, scale._y, scale._z);
+	}
+
+	void Float4x4::postScale(const fs::Float3& scale) noexcept
+	{
+		postScale(scale._x, scale._y, scale._z);
+	}
+
 	void Float4x4::setTranslation(const float x, const float y, const float z) noexcept
 	{
 		_14 = x;
@@ -367,6 +398,16 @@ namespace fs
 		_row[2]._w += row._x * x + row._y * y + row._z * z;
 		row = _row[3];
 		_row[3]._w += row._x * x + row._y * y + row._z * z;
+	}
+
+	void Float4x4::preTranslate(const fs::Float3& translation) noexcept
+	{
+		preTranslate(translation._x, translation._y, translation._z);
+	}
+
+	void Float4x4::postTranslate(const fs::Float3& translation) noexcept
+	{
+		postTranslate(translation._x, translation._y, translation._z);
 	}
 
 	Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
@@ -480,6 +521,21 @@ namespace fs
 
 			// w'
 			Float4::dot(_row[3], v)
+		);
+	}
+
+	Float3 Float4x4::mul(const Float3& v) const noexcept
+	{
+		return Float3
+		(
+			// x'
+			Float3::dotProductRaw(_row[0]._f, &v[0]),
+			
+			// y'
+			Float3::dotProductRaw(_row[1]._f, &v[0]),
+
+			// z'
+			Float3::dotProductRaw(_row[2]._f, &v[0])
 		);
 	}
 

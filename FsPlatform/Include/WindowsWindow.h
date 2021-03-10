@@ -95,6 +95,7 @@ namespace fs
 		private:
 			HCURSOR								_cursorArray[static_cast<uint32>(CursorType::COUNT)];
 			std::vector<WparamKeyCodePair>		_wParamKeyCodePairArray;
+			BYTE								_byteArrayForRawInput[sizeof(RAWINPUT)];
 		};
 #pragma endregion
 	}

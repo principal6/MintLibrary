@@ -479,6 +479,28 @@ namespace fs
 			return _fullScreenViewport;
 		}
 		
+		void GraphicDevice::setViewMatrix(const fs::Float4x4& viewMatrix) noexcept
+		{
+			_cbViewData._cbViewMatrix = viewMatrix;
+			
+			_cbViewData._cbViewPerspectiveProjectionMatrix = _cbViewData._cbPerspectiveProjectionMatrix * _cbViewData._cbViewMatrix;
+
+			DxResource& cbView = _resourcePool.getResource(_cbViewId);
+			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
+			//cbView.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbView.getRegisterIndex());
+		}
+
+		void GraphicDevice::setPerspectiveProjectionMatrix(const fs::Float4x4& perspectiveProjectionMatrix) noexcept
+		{
+			_cbViewData._cbPerspectiveProjectionMatrix = perspectiveProjectionMatrix;
+
+			_cbViewData._cbViewPerspectiveProjectionMatrix = _cbViewData._cbPerspectiveProjectionMatrix * _cbViewData._cbViewMatrix;
+
+			DxResource& cbView = _resourcePool.getResource(_cbViewId);
+			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
+			//cbView.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbView.getRegisterIndex());
+		}
+
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept
 		{
 			return (_window != nullptr) ? _window->getSize() : fs::Int2::kZero;

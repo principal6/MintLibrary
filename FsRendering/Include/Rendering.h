@@ -6,6 +6,7 @@
 
 
 #include <FsRendering/Include/Object.h>
+#include <FsRendering/Include/CameraObject.h>
 
 #include <FsRendering/Include/MeshComponent.h>
 

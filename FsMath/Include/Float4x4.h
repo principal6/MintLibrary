@@ -23,6 +23,7 @@ namespace fs
 #pragma region Static Functions
 	public:
 		static Float4			mul(const Float4x4& m, const Float4& v) noexcept;
+		static Float3			mul(const Float4x4& m, const Float3& v) noexcept;
 		static Float4x4			mul(const Float4x4& l, const Float4x4& r) noexcept;
 			   
 		static Float4x4			translationMatrix(const float x, const float y, const float z) noexcept;
@@ -36,6 +37,7 @@ namespace fs
 		// Rodrigues' rotation formula
 		static Float4x4			rotationMatrixAxisAngle(const fs::Float3& axis, const float angle) noexcept;
 		static Float4x4			rotationMatrix(const fs::Quaternion& rotation) noexcept;
+		static Float4x4			fromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept;
 		static Float4x4			srtMatrix(const fs::Float3& scale, const fs::Quaternion& rotation, const fs::Float3& translation) noexcept;
 
 		static Float4x4			projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
@@ -71,6 +73,8 @@ namespace fs
 		Float4x4				operator*(const Float4x4& rhs) const noexcept;
 		// matrix * (column) vector
 		Float4					operator*(const Float4& v) const noexcept;
+		// matrix * (column) vector
+		Float3					operator*(const Float3& v) const noexcept;
 
 	public:
 		void					set(
@@ -84,9 +88,15 @@ namespace fs
 	public:
 		void					preScale(const float x, const float y, const float z) noexcept;
 		void					postScale(const float x, const float y, const float z) noexcept;
+		void					preScale(const fs::Float3& scale) noexcept;
+		void					postScale(const fs::Float3& scale) noexcept;
+
+	public:
 		void					setTranslation(const float x, const float y, const float z) noexcept;
 		void					preTranslate(const float x, const float y, const float z) noexcept;
 		void					postTranslate(const float x, const float y, const float z) noexcept;
+		void					preTranslate(const fs::Float3& translation) noexcept;
+		void					postTranslate(const fs::Float3& translation) noexcept;
 
 	public:
 		Float3x3				minor(const uint32 row, const uint32 col) const noexcept;
@@ -100,6 +110,8 @@ namespace fs
 		Float4x4				mul(const Float4x4& rhs) const noexcept;
 		// matrix * (column) vector
 		Float4					mul(const Float4& v) const noexcept;
+		// matrix * (column) vector
+		Float3					mul(const Float3& v) const noexcept;
 
 	public:
 		union

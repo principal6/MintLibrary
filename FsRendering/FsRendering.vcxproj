@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\CameraObject.h" />
     <ClInclude Include="Include\Rendering.h" />
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\Object.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\CameraObject.cpp" />
     <ClCompile Include="Source\MeshComponent.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\ObjectComponent.cpp" />
@@ -50,6 +52,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\Object.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

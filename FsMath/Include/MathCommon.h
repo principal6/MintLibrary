@@ -67,6 +67,40 @@ namespace fs
 		{
 			return (radian / kTwoPi * 360.0f);
 		}
+
+		FS_INLINE const float limitAngleToPositiveTwoPi(const float radian) noexcept
+		{
+			float result = radian;
+			while (+kTwoPi < result)
+			{
+				result -= kTwoPi;
+			}
+			return result;
+		}
+
+		FS_INLINE const float limitAngleToNegativeTwoPi(const float radian) noexcept
+		{
+			float result = radian;
+			while (result < -kTwoPi)
+			{
+				result += kTwoPi;
+			}
+			return result;
+		}
+
+		FS_INLINE const float limitAngleToPositiveNegativeTwoPiRotation(const float radian) noexcept
+		{
+			if (+kTwoPi < radian)
+			{
+				return limitAngleToPositiveTwoPi(radian);
+			}
+			else if (radian < -kTwoPi)
+			{
+				return limitAngleToNegativeTwoPi(radian);
+			}
+			return radian;
+		}
+
 	}
 }
 
