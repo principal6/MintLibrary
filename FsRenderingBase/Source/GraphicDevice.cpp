@@ -487,7 +487,6 @@ namespace fs
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewId);
 			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
-			//cbView.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbView.getRegisterIndex());
 		}
 
 		void GraphicDevice::setPerspectiveProjectionMatrix(const fs::Float4x4& perspectiveProjectionMatrix) noexcept
@@ -498,7 +497,6 @@ namespace fs
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewId);
 			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
-			//cbView.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbView.getRegisterIndex());
 		}
 
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept

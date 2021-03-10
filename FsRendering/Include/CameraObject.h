@@ -47,7 +47,7 @@ namespace fs
 			fs::Float4x4			getViewMatrix() const noexcept;
 		
 		private:
-			fs::Float4x4			getRotatedFrameMatrix() const noexcept;
+			fs::Float4x4			getRotationMatrix() const noexcept;
 
 		private:
 			fs::Float3				_baseUpDirection;

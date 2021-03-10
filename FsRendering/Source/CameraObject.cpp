@@ -73,17 +73,17 @@ namespace fs
 
 		fs::Float4x4 CameraObject::getViewMatrix() const noexcept
 		{
-			fs::Float4x4 rotatedFrameMatrix = getRotatedFrameMatrix();
-			return rotatedFrameMatrix * fs::Float4x4::translationMatrix(getObjectTransformSrt()._translation).inverse();
+			const fs::Float4x4& rotationMatrix = getRotationMatrix();
+			return rotationMatrix.transpose() * fs::Float4x4::translationMatrix(getObjectTransformSrt()._translation).inverse();
 		}
 		
-		fs::Float4x4 CameraObject::getRotatedFrameMatrix() const noexcept
+		fs::Float4x4 CameraObject::getRotationMatrix() const noexcept
 		{
 			const fs::Float3& forwardDirectionAfterYaw = fs::Float4x4::rotationMatrixY(_yaw) * _baseForwardDirection;
 			const fs::Float3& rightDirection = fs::Float3::crossAndNormalize(_baseUpDirection, forwardDirectionAfterYaw);
 			_forwardDirectionFinal = fs::Float4x4::rotationMatrixAxisAngle(rightDirection, _pitch) * forwardDirectionAfterYaw;
 			const fs::Float3& upDirection = fs::Float3::crossAndNormalize(_forwardDirectionFinal, rightDirection);
-			return fs::Float4x4::fromAxes(rightDirection, upDirection, _forwardDirectionFinal);
+			return fs::Float4x4::rotationMatrixFromAxes(rightDirection, upDirection, _forwardDirectionFinal);
 		}
 	}
 }
