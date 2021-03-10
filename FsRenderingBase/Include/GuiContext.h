@@ -442,7 +442,7 @@ namespace fs
 			
 
 		private:
-			struct ParamPrepareControlData
+			struct PrepareControlDataParam
 			{
 				fs::Rect			_innerPadding;
 				fs::Float2			_initialDisplaySize;
@@ -610,7 +610,7 @@ namespace fs
 
 #pragma region Before drawing controls
 		private:
-			void												prepareControlData(ControlData& controlData, const ParamPrepareControlData& paramPrepareControlData) noexcept;
+			void												prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
 			
 			const bool											processClickControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& pressedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			const bool											processFocusControl(ControlData& controlData, const fs::RenderingBase::Color& focusedColor, const fs::RenderingBase::Color& nonFocusedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;

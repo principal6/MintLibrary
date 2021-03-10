@@ -550,29 +550,29 @@ namespace fs
 			}
 
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize = windowParam._size;
-				paramPrepareControlData._initialResizingMask.setAllTrue();
-				paramPrepareControlData._desiredPositionInParent = windowParam._position;
-				paramPrepareControlData._innerPadding = fs::Rect(windowInnerPadding);
-				paramPrepareControlData._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-				paramPrepareControlData._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f;
-				paramPrepareControlData._alwaysResetPosition = false;
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent; // ROOT
+				prepareControlDataParam._initialDisplaySize = windowParam._size;
+				prepareControlDataParam._initialResizingMask.setAllTrue();
+				prepareControlDataParam._desiredPositionInParent = windowParam._position;
+				prepareControlDataParam._innerPadding = fs::Rect(windowInnerPadding);
+				prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
+				prepareControlDataParam._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f;
+				prepareControlDataParam._alwaysResetPosition = false;
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent; // ROOT
 
 				if (windowControlData.isDockHosting() == true)
 				{
-					paramPrepareControlData._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
-					paramPrepareControlData._deltaInteractionSizeByDock._y = -windowControlData.getVertDockSizeSum();
+					prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
+					prepareControlDataParam._deltaInteractionSizeByDock._y = -windowControlData.getVertDockSizeSum();
 				}
 				else
 				{
-					paramPrepareControlData._deltaInteractionSizeByDock.setZero();
+					prepareControlDataParam._deltaInteractionSizeByDock.setZero();
 				}
 			}
 			nextNoAutoPositioned();
-			prepareControlData(windowControlData, paramPrepareControlData);
+			prepareControlData(windowControlData, prepareControlDataParam);
 
 			const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
 			const bool isParentAlsoWindow = parentControlData.getControlType() == ControlType::Window;
@@ -630,10 +630,10 @@ namespace fs
 					windowControlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
 
 					D3D11_RECT scissorRectangleForDocks;
-					scissorRectangleForDocks.left = static_cast<LONG>(windowControlData._position._x + paramPrepareControlData._innerPadding.left());
-					scissorRectangleForDocks.top = static_cast<LONG>(windowControlData._position._y + paramPrepareControlData._innerPadding.top() + kTitleBarBaseSize._y);
-					scissorRectangleForDocks.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - paramPrepareControlData._innerPadding.horz());
-					scissorRectangleForDocks.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.vert());
+					scissorRectangleForDocks.left = static_cast<LONG>(windowControlData._position._x + prepareControlDataParam._innerPadding.left());
+					scissorRectangleForDocks.top = static_cast<LONG>(windowControlData._position._y + prepareControlDataParam._innerPadding.top() + kTitleBarBaseSize._y);
+					scissorRectangleForDocks.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - prepareControlDataParam._innerPadding.horz());
+					scissorRectangleForDocks.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - prepareControlDataParam._innerPadding.vert());
 					
 					if (isParentAlsoWindow == true)
 					{
@@ -654,22 +654,22 @@ namespace fs
 					const DockDatum& dockDatumLeftSide = windowControlData.getDockDatum(DockingMethod::LeftSide);
 					const DockDatum& dockDatumRightSide = windowControlData.getDockDatum(DockingMethod::RightSide);
 					D3D11_RECT scissorRectangleForChildren;
-					scissorRectangleForChildren.top = static_cast<LONG>(windowControlData._position._y + paramPrepareControlData._innerPadding.top() + kTitleBarBaseSize._y);
+					scissorRectangleForChildren.top = static_cast<LONG>(windowControlData._position._y + prepareControlDataParam._innerPadding.top() + kTitleBarBaseSize._y);
 					if (dockDatumTopSide.hasDockedControls() == true)
 					{
 						scissorRectangleForChildren.top += static_cast<LONG>(windowControlData.getDockSize(DockingMethod::TopSide)._y);
 					}
-					scissorRectangleForChildren.left = static_cast<LONG>(windowControlData._position._x + paramPrepareControlData._innerPadding.left());
+					scissorRectangleForChildren.left = static_cast<LONG>(windowControlData._position._x + prepareControlDataParam._innerPadding.left());
 					if (dockDatumLeftSide.hasDockedControls() == true)
 					{
 						scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSize(DockingMethod::LeftSide)._x);
 					}
-					scissorRectangleForChildren.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - paramPrepareControlData._innerPadding.horz() - ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f));
+					scissorRectangleForChildren.right = static_cast<LONG>(windowControlData._position._x + windowControlData._displaySize._x - prepareControlDataParam._innerPadding.horz() - ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f));
 					if (dockDatumRightSide.hasDockedControls() == true)
 					{
 						scissorRectangleForChildren.right -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::RightSide)._x);
 					}
-					scissorRectangleForChildren.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - paramPrepareControlData._innerPadding.vert() - ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f));
+					scissorRectangleForChildren.bottom = static_cast<LONG>(windowControlData._position._y + windowControlData._displaySize._y - prepareControlDataParam._innerPadding.vert() - ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f));
 					if (dockDatumBottomSide.hasDockedControls() == true)
 					{
 						scissorRectangleForChildren.bottom -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::BottomSide)._y);
@@ -738,12 +738,12 @@ namespace fs
 			
 			ControlData& controlData = getControlData(text, controlType);
 			
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
 				const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
-				paramPrepareControlData._initialDisplaySize = fs::Float2(textWidth + 24, _fontSize + 12);
+				prepareControlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, _fontSize + 12);
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 		
 			fs::RenderingBase::Color color;
 			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
@@ -773,11 +773,11 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::CheckBox;
 
 			ControlData& controlData = getControlData(text, controlType);
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize = kCheckBoxSize;
+				prepareControlDataParam._initialDisplaySize = kCheckBoxSize;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 
 			// Toggle control
 			fs::RenderingBase::Color color;
@@ -821,11 +821,11 @@ namespace fs
 			const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
 			ControlData& controlData = getControlData(text, controlType);
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, _fontSize + 12) : labelParam._size;
+				prepareControlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, _fontSize + 12) : labelParam._size;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			
 			fs::RenderingBase::Color colorWithAlpha = fs::RenderingBase::Color(255, 255, 255);
 			processShowOnlyControl(controlData, colorWithAlpha);
@@ -882,12 +882,12 @@ namespace fs
 			const float sliderValidLength = sliderParam._size._x - kSliderThumbRadius * 2.0f;
 			ControlData& trackControlData = getControlData(name, trackControlType);
 			
-			ParamPrepareControlData paramPrepareControlDataTrack;
+			PrepareControlDataParam prepareControlDataParamForTrack;
 			{
-				paramPrepareControlDataTrack._initialDisplaySize._x = sliderParam._size._x;
-				paramPrepareControlDataTrack._initialDisplaySize._y = (0.0f == sliderParam._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._size._y;
+				prepareControlDataParamForTrack._initialDisplaySize._x = sliderParam._size._x;
+				prepareControlDataParamForTrack._initialDisplaySize._y = (0.0f == sliderParam._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._size._y;
 			}
-			prepareControlData(trackControlData, paramPrepareControlDataTrack);
+			prepareControlData(trackControlData, prepareControlDataParamForTrack);
 			
 			fs::RenderingBase::Color trackbColor = getNamedColor(NamedColor::HoverState);
 			processShowOnlyControl(trackControlData, trackbColor, true);
@@ -906,15 +906,15 @@ namespace fs
 				thumbControlData._draggingConstraints.left(trackControlData._position._x);
 				thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + sliderValidLength);
 
-				ParamPrepareControlData paramPrepareControlDataThumb;
+				PrepareControlDataParam prepareControlDataParamForThumb;
 				{
-					paramPrepareControlDataThumb._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
-					paramPrepareControlDataThumb._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
-					paramPrepareControlDataThumb._alwaysResetPosition = false;
-					paramPrepareControlDataThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
+					prepareControlDataParamForThumb._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
+					prepareControlDataParamForThumb._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
+					prepareControlDataParamForThumb._alwaysResetPosition = false;
+					prepareControlDataParamForThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
 				}
 				nextNoAutoPositioned();
-				prepareControlData(thumbControlData, paramPrepareControlDataThumb);
+				prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 				
 				fs::RenderingBase::Color thumbColor;
 				processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
@@ -987,12 +987,12 @@ namespace fs
 			ControlData& controlData = getControlData(name, controlType);
 			controlData._isFocusable = true;
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize._x = textBoxParam._size._x;
-				paramPrepareControlData._initialDisplaySize._y = fs::max(_fontSize, textBoxParam._size._y);
+				prepareControlDataParam._initialDisplaySize._x = textBoxParam._size._x;
+				prepareControlDataParam._initialDisplaySize._y = fs::max(_fontSize, textBoxParam._size._y);
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 
 			fs::RenderingBase::Color color;
 			const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), color);
@@ -1474,12 +1474,12 @@ namespace fs
 			ControlData& controlData = getControlData(name, controlType);
 			controlData._isFocusable = false;
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize._x = 160.0f;
-				paramPrepareControlData._initialDisplaySize._y = 100.0f;
+				prepareControlDataParam._initialDisplaySize._x = 160.0f;
+				prepareControlDataParam._initialDisplaySize._y = 100.0f;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			
 			const uint32 previousChildCount = static_cast<uint32>(controlData.getPreviousChildControlDataHashKeyArray().size());
 			if (previousChildCount == 0)
@@ -1578,15 +1578,15 @@ namespace fs
 			ControlData& controlData = getControlData(text, controlType);
 			controlData._isFocusable = false;
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize._x = 160.0f;
-				paramPrepareControlData._initialDisplaySize._y = _fontSize + 12.0f;
-				paramPrepareControlData._innerPadding.left(paramPrepareControlData._initialDisplaySize._y * 0.25f);
-				paramPrepareControlData._noIntervalForNextSibling = true;
-				paramPrepareControlData._viewportUsage = fs::Gui::ViewportUsage::Child;
+				prepareControlDataParam._initialDisplaySize._x = 160.0f;
+				prepareControlDataParam._initialDisplaySize._y = _fontSize + 12.0f;
+				prepareControlDataParam._innerPadding.left(prepareControlDataParam._initialDisplaySize._y * 0.25f);
+				prepareControlDataParam._noIntervalForNextSibling = true;
+				prepareControlDataParam._viewportUsage = fs::Gui::ViewportUsage::Child;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const int16 parentSelectedItemIndex = parentControlData._controlValue.getSelectedItemIndex();
@@ -1640,17 +1640,17 @@ namespace fs
 			}
 			parentControlData._controlValue.setCurrentMenuBarType(MenuBarType::Top);
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._alwaysResetDisplaySize = true;
-				paramPrepareControlData._initialDisplaySize._x = parentControlData._displaySize._x;
-				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
-				paramPrepareControlData._desiredPositionInParent._x = 0.0f;
-				paramPrepareControlData._desiredPositionInParent._y = (isParentControlWindow == true) ? kTitleBarBaseSize._y : 0.0f;
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
+				prepareControlDataParam._alwaysResetDisplaySize = true;
+				prepareControlDataParam._initialDisplaySize._x = parentControlData._displaySize._x;
+				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+				prepareControlDataParam._desiredPositionInParent._x = 0.0f;
+				prepareControlDataParam._desiredPositionInParent._y = (isParentControlWindow == true) ? kTitleBarBaseSize._y : 0.0f;
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
 			nextNoAutoPositioned();
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 
 			if (_pressedControlHashKey != 0 && isDescendantInclusive(controlData, _pressedControlHashKey) == false
 				&& isInControlInternal(_mousePosition, controlData._position, fs::Float2::kZero, fs::Float2(controlData._controlValue.getItemSizeX(), controlData.getInteractionSize()._y)) == false)
@@ -1705,16 +1705,16 @@ namespace fs
 			const uint32 textLength = fs::StringUtil::wcslen(text);
 			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
-				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
-				paramPrepareControlData._desiredPositionInParent._x = parentControlData._controlValue.getItemSizeX();
-				paramPrepareControlData._desiredPositionInParent._y = 0.0f;
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
+				prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
+				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+				prepareControlDataParam._desiredPositionInParent._x = parentControlData._controlValue.getItemSizeX();
+				prepareControlDataParam._desiredPositionInParent._y = 0.0f;
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
 			nextNoAutoPositioned();
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			parentControlData._controlValue.addItemSizeX(controlData._displaySize._x);
 			controlData._controlValue.setItemSizeY(0.0f);
 
@@ -1781,18 +1781,18 @@ namespace fs
 			const uint32 textLength = fs::StringUtil::wcslen(text);
 			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._alwaysResetDisplaySize = true;
-				paramPrepareControlData._initialDisplaySize._x = parentControlData._controlValue.getItemSizeX();
-				paramPrepareControlData._initialDisplaySize._y = kMenuBarBaseSize._y;
-				paramPrepareControlData._innerPadding.left(kMenuItemSpaceLeft);
-				paramPrepareControlData._desiredPositionInParent._x = (isParentControlMenuItem == true) ? parentControlData._displaySize._x : 0.0f;
-				paramPrepareControlData._desiredPositionInParent._y = parentControlData._controlValue.getItemSizeY() + ((isParentControlMenuItem == true) ? 0.0f : paramPrepareControlData._initialDisplaySize._y);
+				prepareControlDataParam._alwaysResetDisplaySize = true;
+				prepareControlDataParam._initialDisplaySize._x = parentControlData._controlValue.getItemSizeX();
+				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+				prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
+				prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? parentControlData._displaySize._x : 0.0f;
+				prepareControlDataParam._desiredPositionInParent._y = parentControlData._controlValue.getItemSizeY() + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._initialDisplaySize._y);
 			}
 			nextNoAutoPositioned();
 			nextControlSizeNonContrainedToParent();
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			parentControlData._controlValue.setItemSizeX(fs::max(parentControlData._controlValue.getItemSizeX(), textWidth + kMenuItemSpaceRight));
 			parentControlData._controlValue.addItemSizeY(controlData._displaySize._y);
 			controlData._controlValue.setItemSizeY(0.0f);
@@ -1888,38 +1888,38 @@ namespace fs
 			{
 				ControlData& trackControlData = getControlData(generateControlKeyString(parentControlData, L"ScrollBarVertTrack", trackControlType), trackControlType);
 
-				ParamPrepareControlData paramPrepareControlDataTrack;
+				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
-					paramPrepareControlDataTrack._initialDisplaySize._x = kScrollBarThickness;
-					paramPrepareControlDataTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentControlData, parentControlCurrentScrollBarType);
+					prepareControlDataParamForTrack._initialDisplaySize._x = kScrollBarThickness;
+					prepareControlDataParamForTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentControlData, parentControlCurrentScrollBarType);
 
 					const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 					const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
-					paramPrepareControlDataTrack._desiredPositionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
-					paramPrepareControlDataTrack._desiredPositionInParent._y = titleBarHeight + parentControlData.getInnerPadding().top() + menuBarThicknes._y;
+					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
+					prepareControlDataParamForTrack._desiredPositionInParent._y = titleBarHeight + parentControlData.getInnerPadding().top() + menuBarThicknes._y;
 					if (parentControlData.isDockHosting() == true)
 					{
 						const DockDatum& dockDatumRightSide = parentControlData.getDockDatum(DockingMethod::RightSide);
 						if (dockDatumRightSide.hasDockedControls() == true)
 						{
-							paramPrepareControlDataTrack._desiredPositionInParent._x -= parentControlData.getDockSize(DockingMethod::RightSide)._x;
+							prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSize(DockingMethod::RightSide)._x;
 						}
 
 						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
 						if (dockDatumTopSide.hasDockedControls() == true)
 						{
-							paramPrepareControlDataTrack._desiredPositionInParent._y += parentControlData.getDockSize(DockingMethod::TopSide)._y;
+							prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSize(DockingMethod::TopSide)._y;
 						}
 					}
 
-					paramPrepareControlDataTrack._parentHashKeyOverride = parentControlData.getHashKey();
-					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
-					paramPrepareControlDataTrack._alwaysResetPosition = true;
-					paramPrepareControlDataTrack._ignoreMeForContentAreaSize = true;
-					paramPrepareControlDataTrack._viewportUsage = ViewportUsage::Parent;
+					prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
+					prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
+					prepareControlDataParamForTrack._alwaysResetPosition = true;
+					prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
+					prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
 				}
 				nextNoAutoPositioned();
-				prepareControlData(trackControlData, paramPrepareControlDataTrack);
+				prepareControlData(trackControlData, prepareControlDataParamForTrack);
 
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
@@ -1975,31 +1975,31 @@ namespace fs
 						const float trackRemnantSize = std::abs(trackControlData._displaySize._y - thumbSize);
 						ControlData& thumbControlData = getControlData(generateControlKeyString(parentControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
 
-						ParamPrepareControlData paramPrepareControlDataThumb;
+						PrepareControlDataParam prepareControlDataParamForThumb;
 						{
-							paramPrepareControlDataThumb._initialDisplaySize._x = kScrollBarThickness;
-							paramPrepareControlDataThumb._initialDisplaySize._y = thumbSize;
+							prepareControlDataParamForThumb._initialDisplaySize._x = kScrollBarThickness;
+							prepareControlDataParamForThumb._initialDisplaySize._y = thumbSize;
 							
-							paramPrepareControlDataThumb._desiredPositionInParent._x = paramPrepareControlDataTrack._desiredPositionInParent._x - kScrollBarThickness * 0.5f;
-							paramPrepareControlDataThumb._desiredPositionInParent._y = paramPrepareControlDataTrack._desiredPositionInParent._y;
+							prepareControlDataParamForThumb._desiredPositionInParent._x = prepareControlDataParamForTrack._desiredPositionInParent._x - kScrollBarThickness * 0.5f;
+							prepareControlDataParamForThumb._desiredPositionInParent._y = prepareControlDataParamForTrack._desiredPositionInParent._y;
 
-							paramPrepareControlDataThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
-							paramPrepareControlDataThumb._ignoreMeForContentAreaSize = true;
-							paramPrepareControlDataThumb._viewportUsage = ViewportUsage::Parent;
+							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
+							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
+							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
+							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
-							thumbControlData._draggingConstraints.left(parentControlData._position._x + paramPrepareControlDataThumb._desiredPositionInParent._x);
+							thumbControlData._draggingConstraints.left(parentControlData._position._x + prepareControlDataParamForThumb._desiredPositionInParent._x);
 							thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
 							thumbControlData._draggingConstraints.top(trackControlData._position._y);
 							thumbControlData._draggingConstraints.bottom(trackControlData._position._y + trackRemnantSize);
 						}
 						nextNoAutoPositioned();
-						prepareControlData(thumbControlData, paramPrepareControlDataThumb);
+						prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._y = parentControlData._position._y + paramPrepareControlDataTrack._desiredPositionInParent._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+						thumbControlData._position._y = parentControlData._position._y + prepareControlDataParamForTrack._desiredPositionInParent._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::RenderingBase::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
@@ -2050,36 +2050,36 @@ namespace fs
 			{
 				ControlData& trackControlData = getControlData(generateControlKeyString(parentControlData, L"ScrollBarHorzTrack", trackControlType), trackControlType);
 				
-				ParamPrepareControlData paramPrepareControlDataTrack;
+				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
-					paramPrepareControlDataTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentControlData, parentControlCurrentScrollBarType);
-					paramPrepareControlDataTrack._initialDisplaySize._y = kScrollBarThickness;
+					prepareControlDataParamForTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentControlData, parentControlCurrentScrollBarType);
+					prepareControlDataParamForTrack._initialDisplaySize._y = kScrollBarThickness;
 
-					paramPrepareControlDataTrack._desiredPositionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
-					paramPrepareControlDataTrack._desiredPositionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
+					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
+					prepareControlDataParamForTrack._desiredPositionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
 					if (parentControlData.isDockHosting() == true)
 					{
 						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
 						if (dockDatumLeftSide.hasDockedControls() == true)
 						{
-							paramPrepareControlDataTrack._desiredPositionInParent._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
+							prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
 						}
 
 						const DockDatum& dockDatumBottomSide = parentControlData.getDockDatum(DockingMethod::BottomSide);
 						if (dockDatumBottomSide.hasDockedControls() == true)
 						{
-							paramPrepareControlDataTrack._desiredPositionInParent._y -= parentControlData.getDockSize(DockingMethod::BottomSide)._y;
+							prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSize(DockingMethod::BottomSide)._y;
 						}
 					}
 					
-					paramPrepareControlDataTrack._parentHashKeyOverride = parentControlData.getHashKey();
-					paramPrepareControlDataTrack._alwaysResetDisplaySize = true;
-					paramPrepareControlDataTrack._alwaysResetPosition = true;
-					paramPrepareControlDataTrack._ignoreMeForContentAreaSize = true;
-					paramPrepareControlDataTrack._viewportUsage = ViewportUsage::Parent;
+					prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
+					prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
+					prepareControlDataParamForTrack._alwaysResetPosition = true;
+					prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
+					prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
 				}
 				nextNoAutoPositioned();
-				prepareControlData(trackControlData, paramPrepareControlDataTrack);
+				prepareControlData(trackControlData, prepareControlDataParamForTrack);
 
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
@@ -2135,32 +2135,32 @@ namespace fs
 						ControlData& thumbControlData = getControlData(generateControlKeyString(parentControlData, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
 						const float trackRemnantSize = std::abs(trackControlData._displaySize._x - thumbSize);
 
-						ParamPrepareControlData paramPrepareControlDataThumb;
+						PrepareControlDataParam prepareControlDataParamForThumb;
 						{
-							paramPrepareControlDataThumb._initialDisplaySize._x = thumbSize;
-							paramPrepareControlDataThumb._initialDisplaySize._y = kScrollBarThickness;
+							prepareControlDataParamForThumb._initialDisplaySize._x = thumbSize;
+							prepareControlDataParamForThumb._initialDisplaySize._y = kScrollBarThickness;
 
-							paramPrepareControlDataThumb._desiredPositionInParent._x = paramPrepareControlDataTrack._desiredPositionInParent._x;
-							paramPrepareControlDataThumb._desiredPositionInParent._y = paramPrepareControlDataTrack._desiredPositionInParent._y - kScrollBarThickness * 0.5f;
+							prepareControlDataParamForThumb._desiredPositionInParent._x = prepareControlDataParamForTrack._desiredPositionInParent._x;
+							prepareControlDataParamForThumb._desiredPositionInParent._y = prepareControlDataParamForTrack._desiredPositionInParent._y - kScrollBarThickness * 0.5f;
 							
-							paramPrepareControlDataThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							paramPrepareControlDataThumb._alwaysResetDisplaySize = true;
-							paramPrepareControlDataThumb._alwaysResetPosition = false; // 중요!
-							paramPrepareControlDataThumb._ignoreMeForContentAreaSize = true;
-							paramPrepareControlDataThumb._viewportUsage = ViewportUsage::Parent;
+							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
+							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
+							prepareControlDataParamForThumb._alwaysResetPosition = false; // 중요!
+							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
+							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
 							thumbControlData._draggingConstraints.left(trackControlData._position._x);
 							thumbControlData._draggingConstraints.right(trackControlData._position._x + trackRemnantSize);
-							thumbControlData._draggingConstraints.top(parentControlData._position._y + paramPrepareControlDataThumb._desiredPositionInParent._y);
+							thumbControlData._draggingConstraints.top(parentControlData._position._y + prepareControlDataParamForThumb._desiredPositionInParent._y);
 							thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
 						}
 						nextNoAutoPositioned();
-						prepareControlData(thumbControlData, paramPrepareControlDataThumb);
+						prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._x = parentControlData._position._x + paramPrepareControlDataTrack._desiredPositionInParent._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+						thumbControlData._position._x = parentControlData._position._x + prepareControlDataParamForTrack._desiredPositionInParent._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::RenderingBase::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
@@ -2245,7 +2245,7 @@ namespace fs
 			
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const bool isParentControlDocking = parentControlData.isDocking();
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
 				if (isParentControlDocking == true)
 				{
@@ -2254,20 +2254,20 @@ namespace fs
 					const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentControlData.getHashKey());
 					const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(windowTitle, fs::StringUtil::wcslen(windowTitle));
 					const fs::Float2& displaySizeOverride = fs::Float2(textWidth + 16.0f, controlData._displaySize._y);
-					paramPrepareControlData._initialDisplaySize = displaySizeOverride;
-					paramPrepareControlData._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
-					paramPrepareControlData._desiredPositionInParent._y = 0.0f;
+					prepareControlDataParam._initialDisplaySize = displaySizeOverride;
+					prepareControlDataParam._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
+					prepareControlDataParam._desiredPositionInParent._y = 0.0f;
 				}
 				else
 				{
-					paramPrepareControlData._initialDisplaySize = titleBarSize;
-					paramPrepareControlData._deltaInteractionSize = fs::Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
+					prepareControlDataParam._initialDisplaySize = titleBarSize;
+					prepareControlDataParam._deltaInteractionSize = fs::Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
 				}
-				paramPrepareControlData._alwaysResetDisplaySize = true;
-				paramPrepareControlData._alwaysResetPosition = true;
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
+				prepareControlDataParam._alwaysResetDisplaySize = true;
+				prepareControlDataParam._alwaysResetPosition = true;
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			
 			fs::RenderingBase::Color titleBarColor;
 			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), titleBarColor);
@@ -2356,13 +2356,13 @@ namespace fs
 			const float radius = kDefaultRoundButtonRadius;
 			ControlData& controlData = getControlData(windowTitle, controlType);
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
-				paramPrepareControlData._parentHashKeyOverride = parentWindowData.getHashKey();
-				paramPrepareControlData._initialDisplaySize = fs::Float2(radius * 2.0f);
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
+				prepareControlDataParam._parentHashKeyOverride = parentWindowData.getHashKey();
+				prepareControlDataParam._initialDisplaySize = fs::Float2(radius * 2.0f);
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			
 			fs::RenderingBase::Color controlColor;
 			const bool isClicked = processClickControl(controlData, color, color.scaledRgb(1.5f), color.scaledRgb(0.75f), controlColor);
@@ -2389,19 +2389,19 @@ namespace fs
 
 			ControlData& controlData = getControlData(tooltipText, controlType, L"TooltipWindow");
 
-			ParamPrepareControlData paramPrepareControlData;
+			PrepareControlDataParam prepareControlDataParam;
 			{
 				const float tooltipTextWidth = _shapeFontRendererContextForeground.calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
-				paramPrepareControlData._initialDisplaySize = fs::Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
-				paramPrepareControlData._desiredPositionInParent = position;
-				paramPrepareControlData._alwaysResetParent = true;
-				paramPrepareControlData._alwaysResetDisplaySize = true;
-				paramPrepareControlData._alwaysResetPosition = true;
-				paramPrepareControlData._parentHashKeyOverride = _tooltipParentWindowHashKey; // ROOT
-				paramPrepareControlData._viewportUsage = ViewportUsage::Parent;
+				prepareControlDataParam._initialDisplaySize = fs::Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
+				prepareControlDataParam._desiredPositionInParent = position;
+				prepareControlDataParam._alwaysResetParent = true;
+				prepareControlDataParam._alwaysResetDisplaySize = true;
+				prepareControlDataParam._alwaysResetPosition = true;
+				prepareControlDataParam._parentHashKeyOverride = _tooltipParentWindowHashKey; // ROOT
+				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
 			nextNoAutoPositioned();
-			prepareControlData(controlData, paramPrepareControlData);
+			prepareControlData(controlData, prepareControlDataParam);
 			
 			fs::RenderingBase::Color dummyColor;
 			processShowOnlyControl(controlData, dummyColor);
@@ -2428,7 +2428,7 @@ namespace fs
 				shapeFontRendererContext.setPosition(controlCenterPosition);
 				shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
 
-				const fs::Float4& textPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(tooltipWindowPadding, paramPrepareControlData._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
+				const fs::Float4& textPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
 				shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 				shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
 				shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale);
@@ -2514,20 +2514,20 @@ namespace fs
 			return getParentWindowControlDataInternal(controlData.getParentHashKey());
 		}
 
-		void GuiContext::prepareControlData(ControlData& controlData, const ParamPrepareControlData& paramPrepareControlData) noexcept
+		void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
 		{
 			const bool isNewData = controlData._displaySize.isNan();
 
 			controlData.clearPerFrameData();
-			if ((isNewData == true) || (paramPrepareControlData._alwaysResetParent == true))
+			if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
 			{
 				const ControlData& stackTopControlData = getControlDataStackTopXXX();
-				const uint64 parentHashKey = (paramPrepareControlData._parentHashKeyOverride == 0) ? stackTopControlData.getHashKey() : paramPrepareControlData._parentHashKeyOverride;
+				const uint64 parentHashKey = (prepareControlDataParam._parentHashKeyOverride == 0) ? stackTopControlData.getHashKey() : prepareControlDataParam._parentHashKeyOverride;
 				controlData.setParentHashKeyXXX(parentHashKey);
 
 				if (isNewData == true)
 				{
-					controlData._resizingMask = paramPrepareControlData._initialResizingMask;
+					controlData._resizingMask = prepareControlDataParam._initialResizingMask;
 				}
 			}
 
@@ -2556,37 +2556,37 @@ namespace fs
 			// Inner padding
 			{
 				fs::Rect& controlInnerPadding = const_cast<fs::Rect&>(controlData.getInnerPadding());
-				controlInnerPadding = paramPrepareControlData._innerPadding;
+				controlInnerPadding = prepareControlDataParam._innerPadding;
 			}
 
 			// Display size, Display size min
-			if (isNewData == true || paramPrepareControlData._alwaysResetDisplaySize == true)
+			if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
 			{
 				const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
 
 				if (_nextControlSizeNonContrainedToParent == true)
 				{
-					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? paramPrepareControlData._initialDisplaySize._x : _nextControlSize._x;
-					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? paramPrepareControlData._initialDisplaySize._y : _nextControlSize._y;
+					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextControlSize._x;
+					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextControlSize._y;
 				}
 				else
 				{
-					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, paramPrepareControlData._initialDisplaySize._x) :
+					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) :
 						((_nextSizingForced == true) ? _nextControlSize._x : fs::min(maxDisplaySizeX, _nextControlSize._x));
-					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? paramPrepareControlData._initialDisplaySize._y :
-						((_nextSizingForced == true) ? _nextControlSize._y : fs::max(paramPrepareControlData._initialDisplaySize._y, _nextControlSize._y));
+					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y :
+						((_nextSizingForced == true) ? _nextControlSize._y : fs::max(prepareControlDataParam._initialDisplaySize._y, _nextControlSize._y));
 				}
 
 				fs::Float2& controlDisplaySizeMin = const_cast<fs::Float2&>(controlData.getDisplaySizeMin());
-				controlDisplaySizeMin = paramPrepareControlData._displaySizeMin;
+				controlDisplaySizeMin = prepareControlDataParam._displaySizeMin;
 			}
 
 			// Interaction size!!!
 			{
 				fs::Float2& controlInteractionSize = const_cast<fs::Float2&>(controlData.getInteractionSize());
 				fs::Float2& controlContentInteractionSize = const_cast<fs::Float2&>(controlData.getNonDockInteractionSize());
-				controlInteractionSize = controlData._displaySize + paramPrepareControlData._deltaInteractionSize;
-				controlContentInteractionSize = controlInteractionSize + paramPrepareControlData._deltaInteractionSizeByDock;
+				controlInteractionSize = controlData._displaySize + prepareControlDataParam._deltaInteractionSize;
+				controlContentInteractionSize = controlInteractionSize + prepareControlDataParam._deltaInteractionSizeByDock;
 			}
 
 			// Position, Parent offset, Parent child at, Parent content area size
@@ -2632,7 +2632,7 @@ namespace fs
 					parentControlNextChildOffset = controlData._displaySize;
 				}
 
-				const bool addIntervalY = (_nextNoAutoPositioned == false && paramPrepareControlData._noIntervalForNextSibling == false);
+				const bool addIntervalY = (_nextNoAutoPositioned == false && prepareControlDataParam._noIntervalForNextSibling == false);
 				if (addIntervalY == true)
 				{
 					parentControlNextChildOffset._y += kDefaultIntervalY;
@@ -2640,7 +2640,7 @@ namespace fs
 
 				// Parent content area size
 				fs::Float2& parentControlContentAreaSize = const_cast<fs::Float2&>(parentControlData.getContentAreaSize());
-				if (paramPrepareControlData._ignoreMeForContentAreaSize == false)
+				if (prepareControlDataParam._ignoreMeForContentAreaSize == false)
 				{
 					if (true == _nextSameLine)
 					{
@@ -2662,17 +2662,17 @@ namespace fs
 			{
 				// NO Auto-positioned
 
-				if (paramPrepareControlData._alwaysResetPosition == true || isNewData == true)
+				if (prepareControlDataParam._alwaysResetPosition == true || isNewData == true)
 				{
 					controlData._position = parentControlData._position;
 
-					if (paramPrepareControlData._desiredPositionInParent.isNan() == true)
+					if (prepareControlDataParam._desiredPositionInParent.isNan() == true)
 					{
 						controlData._position += _nextControlPosition;
 					}
 					else
 					{
-						controlData._position += paramPrepareControlData._desiredPositionInParent;
+						controlData._position += prepareControlDataParam._desiredPositionInParent;
 					}
 				}
 			}
@@ -2701,7 +2701,7 @@ namespace fs
 
 			// Viewport index
 			{
-				switch (paramPrepareControlData._viewportUsage)
+				switch (prepareControlDataParam._viewportUsage)
 				{
 				case fs::Gui::ViewportUsage::Parent:
 					controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
