@@ -112,6 +112,11 @@ namespace fs
 		return result;
 	}
 
+	Float4x4 Float4x4::rotationMatrixFromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept
+	{
+		return axesToColumns(axisX, axisY, axisZ);
+	}
+
 	Float4x4 Float4x4::rotationMatrix(const fs::Quaternion& rotation) noexcept
 	{
 		fs::Float3 axis;
@@ -120,7 +125,18 @@ namespace fs
 		return rotationMatrixAxisAngle(axis, angle);
 	}
 
-	Float4x4 Float4x4::fromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept
+	Float4x4 Float4x4::axesToColumns(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept
+	{
+		return Float4x4
+		(
+			axisX._x, axisY._x, axisZ._x, 0.0f,
+			axisX._y, axisY._y, axisZ._y, 0.0f,
+			axisX._z, axisY._z, axisZ._z, 0.0f,
+			     0.0f,    0.0f,     0.0f, 1.0f
+		);
+	}
+
+	Float4x4 Float4x4::axesToRows(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept
 	{
 		return Float4x4
 		(

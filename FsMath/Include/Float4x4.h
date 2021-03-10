@@ -36,8 +36,11 @@ namespace fs
 		static Float4x4			rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
 		// Rodrigues' rotation formula
 		static Float4x4			rotationMatrixAxisAngle(const fs::Float3& axis, const float angle) noexcept;
+		static Float4x4			rotationMatrixFromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept;
 		static Float4x4			rotationMatrix(const fs::Quaternion& rotation) noexcept;
-		static Float4x4			fromAxes(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept;
+		static Float4x4			axesToColumns(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept;
+		// Interprets vector from new basis.
+		static Float4x4			axesToRows(const fs::Float3& axisX, const fs::Float3& axisY, const fs::Float3& axisZ) noexcept;
 		static Float4x4			srtMatrix(const fs::Float3& scale, const fs::Quaternion& rotation, const fs::Float3& translation) noexcept;
 
 		static Float4x4			projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
