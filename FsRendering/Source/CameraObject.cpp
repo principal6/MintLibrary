@@ -74,7 +74,7 @@ namespace fs
 		fs::Float4x4 CameraObject::getViewMatrix() const noexcept
 		{
 			const fs::Float4x4& rotationMatrix = getRotationMatrix();
-			return rotationMatrix.transpose() * fs::Float4x4::translationMatrix(getObjectTransformSrt()._translation).inverse();
+			return rotationMatrix.transpose() * fs::Float4x4::translationMatrix(-getObjectTransformSrt()._translation);
 		}
 		
 		fs::Float4x4 CameraObject::getRotationMatrix() const noexcept
