@@ -1416,29 +1416,19 @@ namespace fs
 			processShowOnlyControl(controlData, finalBackgroundColor, true);
 
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
-			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-			// Viewport & Scissor rectangle for me
 			{
-				controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
 				D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(controlData.getControlRect());
 				const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 				{
 					const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
 					constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
 				}
-
-				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
-				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+				pushScissorRectangleForMe(controlData, scissorRectangleForMe);
 			}
-			// Viewport & Scissor rectangle for children
 			{
+				D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(controlData.getControlRect());
 				const float halfRoundnessInPixel = kDefaultRoundnessInPixel * 0.5f;
 				const float quarterRoundnessInPixel = halfRoundnessInPixel * 0.5f;
-
-				controlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
-				D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(controlData.getControlRect());
 				scissorRectangleForChildren.left += static_cast<LONG>(quarterRoundnessInPixel);
 				scissorRectangleForChildren.right -= static_cast<LONG>(halfRoundnessInPixel);
 				const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
@@ -1446,10 +1436,10 @@ namespace fs
 					const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
 					constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
 				}
-
-				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChildren);
-				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+				pushScissorRectangleForChildren(controlData, scissorRectangleForChildren);
 			}
+
+			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
