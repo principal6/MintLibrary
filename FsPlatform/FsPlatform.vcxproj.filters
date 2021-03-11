@@ -36,6 +36,9 @@
     <ClInclude Include="Include\WindowsWindow.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\PlatformCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp">

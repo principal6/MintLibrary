@@ -68,5 +68,21 @@ namespace fs
 		{
 			return _inputWchar;
 		}
+		
+		
+		IWindow::IWindow()
+			: IWindow(fs::Platform::PlatformType::INVALID)
+		{
+			__noop;
+		}
+		
+		IWindow::IWindow(const fs::Platform::PlatformType platformType)
+			: _isRunning{ false }
+			, _platformType{ platformType }
+			, _creationError{ CreationError::None }
+			, _currentCursorType{ CursorType::Arrow }
+		{
+			__noop;
+		}
 	}
 }

@@ -7,6 +7,8 @@
 
 #include <CommonDefinitions.h>
 
+#include <FsPlatform/Include/PlatformCommon.h>
+
 #include <FsMath/Include/Int2.h>
 #include <FsMath/Include/Float3.h>
 
@@ -151,10 +153,12 @@ namespace fs
 			COUNT
 		};
 
+
 		class IWindow abstract
 		{
 		public:
-											IWindow() = default;
+											IWindow();
+											IWindow(const fs::Platform::PlatformType platformType);
 			virtual							~IWindow() = default;
 
 		public:
@@ -204,11 +208,12 @@ namespace fs
 			virtual void					showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
 		protected:
-			bool							_isRunning{ false };
-			CreationData					_creationData{};
-			fs::Int2						_entireSize{};
-			CreationError					_creationError{};
-			std::queue<EventData>			_eventQueue{};
+			bool							_isRunning;
+			fs::Platform::PlatformType		_platformType;
+			CreationData					_creationData;
+			fs::Int2						_entireSize;
+			CreationError					_creationError;
+			std::queue<EventData>			_eventQueue;
 		
 		protected:
 			fs::Float2						_previousMousePosition;

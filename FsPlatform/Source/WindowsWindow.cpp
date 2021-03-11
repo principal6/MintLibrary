@@ -61,7 +61,8 @@ namespace fs
 
 
 		WindowsWindow::WindowsWindow()
-			: _windowStyle{}
+			: IWindow(fs::Platform::PlatformType::Windows)
+			, _windowStyle{}
 			, _hWnd{}
 			, _hInstance{}
 			, _msg{}
