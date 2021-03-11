@@ -55,6 +55,9 @@ namespace fs
 			const bool													loadFontData();
 
 		private:
+			const bool													createSwapChain(const fs::Int2& windowSize, const HWND windowHandle);
+			const bool													initializeBackBuffer();
+			const bool													initializeDepthStencil(const fs::Int2& windowSize);
 			void														initializeShaderHeaderMemory();
 			void														initializeShaders();
 			void														initializeSamplerStates();

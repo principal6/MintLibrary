@@ -61,63 +61,25 @@ namespace fs
 
 		void GraphicDevice::createDxDevice()
 		{
-			const fs::Window::WindowsWindow* const windowsWindow = static_cast<const fs::Window::WindowsWindow*>(_window);
-			const Int2 windowSize = _window->getSize();
+			const fs::Window::WindowsWindow& windowsWindow = *static_cast<const fs::Window::WindowsWindow*>(_window);
+			const fs::Int2& windowSize = windowsWindow.getSize();
 
-			// Create SwapChain
+			if (createSwapChain(windowSize, windowsWindow.getHandle()) == false)
 			{
-				DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
-				swapChainDescriptor.BufferCount = 1;
-				swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
-				swapChainDescriptor.BufferDesc.Width = static_cast<UINT>(windowSize._x);
-				swapChainDescriptor.BufferDesc.Height = static_cast<UINT>(windowSize._y);
-				swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
-				swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60;
-				swapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
-				swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-				swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-				swapChainDescriptor.Flags = 0;
-				swapChainDescriptor.OutputWindow = windowsWindow->getHandle();
-				swapChainDescriptor.SampleDesc.Count = 1;
-				swapChainDescriptor.SampleDesc.Quality = 0;
-				swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
-				swapChainDescriptor.Windowed = TRUE;
-
-				D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION,
-					&swapChainDescriptor, _swapChain.ReleaseAndGetAddressOf(), _device.ReleaseAndGetAddressOf(), nullptr, _deviceContext.ReleaseAndGetAddressOf());
+				return;
 			}
 
-			// Create back-buffer RTV
+			if (initializeBackBuffer() == false)
 			{
-				_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(_backBuffer.ReleaseAndGetAddressOf()));
-				_device->CreateRenderTargetView(_backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf());
+				return;
 			}
 
-			// Create depth-stencil view
+			if (initializeDepthStencil(windowSize) == false)
 			{
-				D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
-				depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
-				depthStencilBufferDescriptor.Height = static_cast<UINT>(windowSize._y);
-				depthStencilBufferDescriptor.MipLevels = 1;
-				depthStencilBufferDescriptor.ArraySize = 1;
-				depthStencilBufferDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-				depthStencilBufferDescriptor.SampleDesc.Count = 1;
-				depthStencilBufferDescriptor.SampleDesc.Quality = 0;
-				depthStencilBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
-				depthStencilBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-				depthStencilBufferDescriptor.CPUAccessFlags = 0;
-				depthStencilBufferDescriptor.MiscFlags = 0;
-
-				_device->CreateTexture2D(&depthStencilBufferDescriptor, nullptr, _depthStencilBuffer.ReleaseAndGetAddressOf());
-				_device->CreateDepthStencilView(_depthStencilBuffer.Get(), nullptr, _depthStencilView.ReleaseAndGetAddressOf());
-
-				D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
-				depthStencilDescriptor.DepthEnable = TRUE;
-				depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
-				depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-				depthStencilDescriptor.StencilEnable = FALSE;
-				_device->CreateDepthStencilState(&depthStencilDescriptor, _depthStencilStateLessEqual.ReleaseAndGetAddressOf());
+				return;
 			}
+
+			initializeFullScreenData(windowSize);
 
 			// Set render targets
 			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), _depthStencilView.Get());
@@ -127,7 +89,6 @@ namespace fs
 			initializeShaders();
 			initializeSamplerStates();
 			initializeBlendStates();
-			initializeFullScreenData(windowSize);
 
 			// Rasterizer states and viewport
 			{
@@ -165,6 +126,87 @@ namespace fs
 			if (_fontRendererContext.loadFontData(kDefaultFont) == false)
 			{
 				FS_LOG_ERROR("김장원", "폰트 데이터를 로드하지 못했습니다!");
+				return false;
+			}
+
+			return true;
+		}
+
+		const bool GraphicDevice::createSwapChain(const fs::Int2& windowSize, const HWND windowHandle)
+		{
+			DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
+			swapChainDescriptor.BufferCount = 1;
+			swapChainDescriptor.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
+			swapChainDescriptor.BufferDesc.Width = static_cast<UINT>(windowSize._x);
+			swapChainDescriptor.BufferDesc.Height = static_cast<UINT>(windowSize._y);
+			swapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
+			swapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60;
+			swapChainDescriptor.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_UNSPECIFIED;
+			swapChainDescriptor.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER::DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+			swapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+			swapChainDescriptor.Flags = 0;
+			swapChainDescriptor.OutputWindow = windowHandle;
+			swapChainDescriptor.SampleDesc.Count = 1;
+			swapChainDescriptor.SampleDesc.Quality = 0;
+			swapChainDescriptor.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+			swapChainDescriptor.Windowed = TRUE;
+
+			if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION,
+				&swapChainDescriptor, _swapChain.ReleaseAndGetAddressOf(), _device.ReleaseAndGetAddressOf(), nullptr, _deviceContext.ReleaseAndGetAddressOf())))
+			{
+				FS_LOG_ERROR("김장원", "SwapChain 생성에 실패했습니다!");
+				return false;
+			}
+			return true;
+		}
+
+		const bool GraphicDevice::initializeBackBuffer()
+		{
+			_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(_backBuffer.ReleaseAndGetAddressOf()));
+			
+			if (FAILED(_device->CreateRenderTargetView(_backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf())))
+			{
+				FS_LOG_ERROR("김장원", "BackBuffer 초기화에 실패했습니다!");
+				return false;
+			}
+			return true;
+		}
+
+		const bool GraphicDevice::initializeDepthStencil(const fs::Int2& windowSize)
+		{
+			D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
+			depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
+			depthStencilBufferDescriptor.Height = static_cast<UINT>(windowSize._y);
+			depthStencilBufferDescriptor.MipLevels = 1;
+			depthStencilBufferDescriptor.ArraySize = 1;
+			depthStencilBufferDescriptor.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+			depthStencilBufferDescriptor.SampleDesc.Count = 1;
+			depthStencilBufferDescriptor.SampleDesc.Quality = 0;
+			depthStencilBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+			depthStencilBufferDescriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+			depthStencilBufferDescriptor.CPUAccessFlags = 0;
+			depthStencilBufferDescriptor.MiscFlags = 0;
+
+			if (FAILED(_device->CreateTexture2D(&depthStencilBufferDescriptor, nullptr, _depthStencilBuffer.ReleaseAndGetAddressOf())))
+			{
+				FS_LOG_ERROR("김장원", "DepthStencil 텍스쳐 생성에 실패했습니다.");
+				return false;
+			}
+			
+			if (FAILED(_device->CreateDepthStencilView(_depthStencilBuffer.Get(), nullptr, _depthStencilView.ReleaseAndGetAddressOf())))
+			{
+				FS_LOG_ERROR("김장원", "DepthStencil 뷰 생성에 실패했습니다.");
+				return false;
+			}
+
+			D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
+			depthStencilDescriptor.DepthEnable = TRUE;
+			depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+			depthStencilDescriptor.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+			depthStencilDescriptor.StencilEnable = FALSE;
+			if (FAILED(_device->CreateDepthStencilState(&depthStencilDescriptor, _depthStencilStateLessEqual.ReleaseAndGetAddressOf())))
+			{
+				FS_LOG_ERROR("김장원", "DepthStencil State 생성에 실패했습니다.");
 				return false;
 			}
 
