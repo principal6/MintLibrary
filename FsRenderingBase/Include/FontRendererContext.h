@@ -72,6 +72,7 @@ namespace fs
 			static constexpr int16												kSpaceBottom = 1;
 			static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
 			static constexpr const char* const									kFontFileExtension = ".fnt";
+			static constexpr const char* const									kFontFileMagicNumber = "FNT";
 
 		public:
 			struct FontData
@@ -91,6 +92,12 @@ namespace fs
 
 		public:
 			const bool															existsFontData(const char* const fontFileName);
+
+		private:
+			const std::string													getFontDataFileNameWithExtension(const char* const fontFileName) const noexcept;
+			const bool															existsFontDataInternal(const char* const fontFileNameWithExtension) const noexcept;
+
+		public:
 			const bool															loadFontData(const char* const fontFileName);
 			const bool															loadFontData(const FontData& fontData);
 			const bool															bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
@@ -138,7 +145,7 @@ namespace fs
 
 		private:
 			bool																_ownTriangleRenderer;
-			fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>*		_triangleRenderer;
+			fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>*	_triangleRenderer;
 			DxObjectId															_vertexShaderId;
 			DxObjectId															_geometryShaderId;
 			DxObjectId															_pixelShaderId;

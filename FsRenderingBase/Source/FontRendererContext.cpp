@@ -19,6 +19,8 @@
 #include <FsPlatform/Include/BinaryFile.hpp>
 #include <FsPlatform/Include/FileUtil.hpp>
 
+#include <FsMath/Include/Rect.h>
+
 
 //#define FS_FONT_RENDERER_SAVE_PNG_FOR_TEST
 #define FS_FONT_RENDERER_COMPRESS_AS_PNG
@@ -132,35 +134,43 @@ namespace fs
 
 		const bool FontRendererContext::existsFontData(const char* const fontFileName)
 		{
-			std::string fontFileNameS = fontFileName;
-			fs::StringUtil::excludeExtension(fontFileNameS);
-			fontFileNameS.append(kFontFileExtension);
-			return fs::FileUtil::exists(fontFileNameS.c_str());
+			std::string fontFileNameWithExtension = getFontDataFileNameWithExtension(fontFileName);
+			return existsFontDataInternal(fontFileNameWithExtension.c_str());
+		}
+
+		const std::string FontRendererContext::getFontDataFileNameWithExtension(const char* const fontFileName) const noexcept
+		{
+			std::string fontFileNameWithExtension = fontFileName;
+			fs::StringUtil::excludeExtension(fontFileNameWithExtension);
+			fontFileNameWithExtension.append(kFontFileExtension);
+			return fontFileNameWithExtension;
+		}
+
+		const bool FontRendererContext::existsFontDataInternal(const char* const fontFileNameWithExtension) const noexcept
+		{
+			return fs::FileUtil::exists(fontFileNameWithExtension);
 		}
 
 		const bool FontRendererContext::loadFontData(const char* const fontFileName)
 		{
-			std::string fontFileNameS = fontFileName;
-			fs::StringUtil::excludeExtension(fontFileNameS);
-			fontFileNameS.append(kFontFileExtension);
-
-			if (fs::FileUtil::exists(fontFileNameS.c_str()) == false)
+			std::string fontFileNameWithExtension = getFontDataFileNameWithExtension(fontFileName);
+			if (existsFontDataInternal(fontFileNameWithExtension.c_str()) == false)
 			{
-				FS_LOG("김장원", "해당 FontFile 이 존재하지 않습니다: ", fontFileName);
+				FS_LOG_ERROR("김장원", "해당 FontFile 이 존재하지 않습니다: %s", fontFileNameWithExtension.c_str());
 				return false;
 			}
 
 			fs::BinaryFileReader binaryFileReader;
-			if (binaryFileReader.open(fontFileNameS.c_str()) == false)
+			if (binaryFileReader.open(fontFileNameWithExtension.c_str()) == false)
 			{
-				FS_LOG_ERROR("김장원", "해당 FontFile 을 여는 데 실패했습니다.");
+				FS_LOG_ERROR("김장원", "해당 FontFile 을 여는 데 실패했습니다: %s", fontFileNameWithExtension.c_str());
 				return false;
 			}
 
 			const char kMagicNumber[4]{ *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>() };
-			if (fs::StringUtil::strcmp(kMagicNumber, "FNT") == false)
+			if (fs::StringUtil::strcmp(kMagicNumber, kFontFileMagicNumber) == false)
 			{
-				FS_ASSERT("김장원", false, "FNT 파일이 아닙니다!");
+				FS_LOG_ERROR("김장원", "%s 파일이 아닙니다!", kFontFileMagicNumber);
 				return false;
 			}
 
@@ -228,13 +238,13 @@ namespace fs
 		{
 			if (fontData._fontTextureId.isValid() == false)
 			{
-				FS_ASSERT("김장원", false, "FontData 의 FontTexture 가 Invalid 합니다!");
+				FS_LOG_ERROR("김장원", "FontData 의 FontTexture 가 Invalid 합니다!");
 				return false;
 			}
 
 			if (fontData._glyphInfoArray.empty() == true)
 			{
-				FS_ASSERT("김장원", false, "FontData 의 GlyphInfo 가 비어 있습니다!");
+				FS_LOG_ERROR("김장원", "FontData 의 GlyphInfo 가 비어 있습니다!");
 				return false;
 			}
 
@@ -647,18 +657,19 @@ namespace fs
 		{
 			const uint64 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
 			const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-			const float x0 = position._x + static_cast<float>(glyphInfo._horiBearingX) * scale;
-			const float x1 = x0 + static_cast<float>(glyphInfo._width) * scale;
 			const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
-			const float y0 = position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale;
-			const float y1 = y0 + static_cast<float>(glyphInfo._height) * scale;
-			if (0.0f <= x1 && x0 <= _graphicDevice->getWindowSize()._x && 0.0f <= y1 && y0 <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+			fs::Rect glyphRect;
+			glyphRect.left(position._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
+			glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
+			glyphRect.top(position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+			glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
+			if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
 			{
 				auto& vertexArray = _triangleRenderer->vertexArray();
 
 				fs::RenderingBase::VS_INPUT_SHAPE v;
-				v._position._x = x0;
-				v._position._y = y0;
+				v._position._x = glyphRect.left();
+				v._position._y = glyphRect.top();
 				v._position._z = position._z;
 				v._color = _defaultColor;
 				v._texCoord._x = glyphInfo._uv0._x;
@@ -668,18 +679,18 @@ namespace fs
 				v._info._z = 1.0f; // used by ShapeFontRendererContext
 				vertexArray.emplace_back(v);
 
-				v._position._x = x1;
+				v._position._x = glyphRect.right();
 				v._texCoord._x = glyphInfo._uv1._x;
 				v._texCoord._y = glyphInfo._uv0._y;
 				vertexArray.emplace_back(v);
 
-				v._position._x = x0;
-				v._position._y = y1;
+				v._position._x = glyphRect.left();
+				v._position._y = glyphRect.bottom();
 				v._texCoord._x = glyphInfo._uv0._x;
 				v._texCoord._y = glyphInfo._uv1._y;
 				vertexArray.emplace_back(v);
 
-				v._position._x = x1;
+				v._position._x = glyphRect.right();
 				v._texCoord._x = glyphInfo._uv1._x;
 				v._texCoord._y = glyphInfo._uv1._y;
 				vertexArray.emplace_back(v);
