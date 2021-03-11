@@ -653,9 +653,9 @@ namespace fs
 			if (isOpen == true)
 			{
 				shapeFontRendererContext.setViewportIndex(windowControlData.getViewportIndex());
-				shapeFontRendererContext.setColor(finalBackgroundColor);
 
 				const fs::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
+				shapeFontRendererContext.setColor(finalBackgroundColor);
 				shapeFontRendererContext.setPosition(windowCenterPosition + fs::Float4(0, windowControlData._controlValue.getItemSizeY() * 0.5f, 0, 0));
 				if (windowControlData.isDocking() == true)
 				{
@@ -670,15 +670,15 @@ namespace fs
 				}
 
 				renderDock(windowControlData, shapeFontRendererContext);
-				
 				_controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
 			}
-
 			
 			windowControlData._controlValue.setItemSizeX(windowControlData._displaySize._x);
-			nextNoAutoPositioned(); // 중요
-			beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding);
-			endTitleBar();
+			{
+				nextNoAutoPositioned(); // 중요
+				beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding);
+				endTitleBar();
+			}
 
 			if (windowParam._scrollBarType != ScrollBarType::None)
 			{
@@ -1436,29 +1436,23 @@ namespace fs
 			
 			ControlData& controlData = createOrGetControlData(name, controlType);
 			controlData._isFocusable = false;
-
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				prepareControlDataParam._initialDisplaySize._x = 160.0f;
 				prepareControlDataParam._initialDisplaySize._y = 100.0f;
 			}
 			prepareControlData(controlData, prepareControlDataParam);
-			
-			const uint32 previousChildCount = static_cast<uint32>(controlData.getPreviousChildControlDataHashKeyArray().size());
-			if (previousChildCount == 0)
+			if (controlData.getPreviousChildControlCount() == 0)
 			{
 				controlData._controlValue.setSelectedItemIndex(-1);
 			}
 			outSelectedListItemIndex = controlData._controlValue.getSelectedItemIndex();
 
-			fs::RenderingBase::Color color = getNamedColor(NamedColor::LightFont);
-			processShowOnlyControl(controlData, color, true);
+			fs::RenderingBase::Color finalBackgroundColor = getNamedColor(NamedColor::LightFont);
+			processShowOnlyControl(controlData, finalBackgroundColor, true);
 
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
 			// Viewport & Scissor rectangle for me
 			{
 				controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
@@ -1473,7 +1467,6 @@ namespace fs
 				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
 				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
-
 			// Viewport & Scissor rectangle for children
 			{
 				const float halfRoundnessInPixel = kDefaultRoundnessInPixel * 0.5f;
@@ -1493,15 +1486,13 @@ namespace fs
 				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChildren);
 				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
 			}
-
-			// Background 렌더링
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(color);
+
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 			
-			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
-
 			if (listViewParam._useScrollBar == true)
 			{
 				controlData._controlValue.setCurrentScrollBarType(fs::Gui::ScrollBarType::Vert);
@@ -1510,7 +1501,7 @@ namespace fs
 			{
 				controlData._controlValue.setCurrentScrollBarType(fs::Gui::ScrollBarType::None);
 			}
-
+			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			return true;
 		}
 

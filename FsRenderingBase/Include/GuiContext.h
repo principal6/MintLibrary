@@ -363,6 +363,7 @@ namespace fs
 				const uint32								getViewportIndexForDocks() const noexcept;
 				const std::vector<uint64>&					getChildControlDataHashKeyArray() const noexcept;
 				const std::vector<uint64>&					getPreviousChildControlDataHashKeyArray() const noexcept;
+				const uint16								getPreviousChildControlCount() const noexcept;
 				const uint16								getPreviousMaxChildControlCount() const noexcept;
 				void										prepareChildControlDataHashKeyArray() noexcept;
 				const bool									hasChildWindow() const noexcept;

@@ -465,6 +465,11 @@ namespace fs
 			return _previousChildControlDataHashKeyArray;
 		}
 
+		FS_INLINE const uint16 GuiContext::ControlData::getPreviousChildControlCount() const noexcept
+		{
+			return static_cast<uint16>(_previousChildControlDataHashKeyArray.size());
+		}
+
 		FS_INLINE const uint16 GuiContext::ControlData::getPreviousMaxChildControlCount() const noexcept
 		{
 			return _previousMaxChildControlCount;
