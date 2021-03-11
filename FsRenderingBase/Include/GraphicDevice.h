@@ -29,9 +29,6 @@
 #include <Assets/CppHlsl/CppHlslConstantBuffers.h>
 
 
-//#define FS_TEST_MEMORY_FONT_TEXTURE
-
-
 namespace fs
 {
 	namespace Window
@@ -51,10 +48,11 @@ namespace fs
 																		~GraphicDevice() = default;
 
 		public:
-			void														initialize(fs::Window::IWindow* const window);
+			const bool													initialize(fs::Window::IWindow* const window);
 
 		private:
 			void														createDxDevice();
+			const bool													loadFontData();
 
 		private:
 			void														initializeShaderHeaderMemory();
@@ -62,10 +60,6 @@ namespace fs
 			void														initializeSamplerStates();
 			void														initializeBlendStates();
 			void														initializeFullScreenData(const fs::Int2& windowSize);
-
-#if defined FS_TEST_MEMORY_FONT_TEXTURE
-			void														createFontTextureFromMemory();
-#endif
 
 		public:
 			void														beginRendering();
@@ -101,7 +95,7 @@ namespace fs
 			fs::Window::IWindow*										_window;
 
 		private:
-			float														_clearColor[4];
+			fs::RenderingBase::Color									_clearColor;
 
 	#pragma region DirectX
 		private:
@@ -135,15 +129,6 @@ namespace fs
 			ComPtr<ID3D11SamplerState>									_samplerState;
 			ComPtr<ID3D11BlendState>									_blendState;
 	#pragma endregion
-
-#if defined FS_TEST_MEMORY_FONT_TEXTURE
-		private:
-			static constexpr uint32										kFontTextureWidth		= 16 * kBitsPerByte;
-			static constexpr uint32										kFontTextureHeight		= 60;
-			static constexpr uint32										kFontTexturePixelCount	= kFontTextureWidth * kFontTextureHeight;
-			std::vector<uint8>											_fontTextureRaw;
-			ComPtr<ID3D11ShaderResourceView>							_fontTextureSrv;
-#endif
 
 		private:
 			fs::Language::CppHlsl										_cppHlslStreamData;

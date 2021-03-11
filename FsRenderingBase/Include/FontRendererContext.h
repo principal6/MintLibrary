@@ -90,6 +90,7 @@ namespace fs
 			void																pushGlyphRange(const GlyphRange& glyphRange);
 
 		public:
+			const bool															existsFontData(const char* const fontFileName);
 			const bool															loadFontData(const char* const fontFileName);
 			const bool															loadFontData(const FontData& fontData);
 			const bool															bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);

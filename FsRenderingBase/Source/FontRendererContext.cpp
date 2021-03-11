@@ -130,6 +130,14 @@ namespace fs
 			}
 		}
 
+		const bool FontRendererContext::existsFontData(const char* const fontFileName)
+		{
+			std::string fontFileNameS = fontFileName;
+			fs::StringUtil::excludeExtension(fontFileNameS);
+			fontFileNameS.append(kFontFileExtension);
+			return fs::FileUtil::exists(fontFileNameS.c_str());
+		}
+
 		const bool FontRendererContext::loadFontData(const char* const fontFileName)
 		{
 			std::string fontFileNameS = fontFileName;

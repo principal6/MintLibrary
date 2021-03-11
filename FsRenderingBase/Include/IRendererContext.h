@@ -35,11 +35,13 @@ namespace fs
 			constexpr				Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
 			constexpr				Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
 			constexpr				Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
+			constexpr				Color(const fs::Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
 			constexpr explicit		Color(const fs::Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
 
 		public:
 									operator fs::Float4&() noexcept { return _raw; }
 									operator const fs::Float4&() const noexcept { return _raw; }
+									operator const float*() const noexcept { return _raw._f; }
 			Color					operator*(const Color& rhs) const noexcept { return Color(_raw._x * rhs._raw._x, _raw._y * rhs._raw._y, _raw._z * rhs._raw._z, _raw._w * rhs._raw._w); }
 			Color					operator*(const float s) const noexcept { return Color(_raw * s); }
 			Color					operator/(const float s) const { return Color(_raw / s); }
