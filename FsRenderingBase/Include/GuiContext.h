@@ -663,6 +663,7 @@ namespace fs
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
 			const bool											isDescendantControlFocused(const ControlData& controlData) const noexcept;
 			const bool											isDescendantControlHovered(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlPressed(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
 			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;

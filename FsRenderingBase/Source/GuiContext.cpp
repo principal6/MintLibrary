@@ -1564,11 +1564,9 @@ namespace fs
 			}
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
-			// Background ·»´õ¸µ
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			shapeFontRendererContext.setColor(finalColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
@@ -1607,7 +1605,7 @@ namespace fs
 			nextNoAutoPositioned();
 			prepareControlData(controlData, prepareControlDataParam);
 
-			if (_pressedControlHashKey != 0 && isDescendantControlInclusive(controlData, _pressedControlHashKey) == false
+			if (_pressedControlHashKey != 0 && isDescendantControlPressed(controlData) == false
 				&& isInControlInternal(_mousePosition, controlData._position, fs::Float2::kZero, fs::Float2(controlData._controlValue.getItemSizeX(), controlData.getInteractionSize()._y)) == false)
 			{
 				controlData._controlValue.setIsToggled(false);
@@ -1629,17 +1627,14 @@ namespace fs
 			}
 
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
-			// Background ·»´õ¸µ
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			shapeFontRendererContext.setColor(color);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, 0.0f, 0.0f, 0.0f);
 
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
-
 			return true;
 		}
 
@@ -1657,11 +1652,10 @@ namespace fs
 			}
 			parentControlData._controlValue.setCurrentMenuBarType(MenuBarType::Top);
 
-			const uint32 textLength = fs::StringUtil::wcslen(text);
-			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
-
 			PrepareControlDataParam prepareControlDataParam;
 			{
+				const uint32 textLength = fs::StringUtil::wcslen(text);
+				const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
 				prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
 				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
 				prepareControlDataParam._desiredPositionInParent._x = parentControlData._controlValue.getItemSizeX();
@@ -1678,8 +1672,8 @@ namespace fs
 			const fs::RenderingBase::Color& normalColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::NormalState);
 			const fs::RenderingBase::Color& hoverColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::HoverState);
 			const fs::RenderingBase::Color& pressedColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
-			fs::RenderingBase::Color finalColor;
-			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalColor);
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalBackgroundColor);
 			const bool& isParentControlToggled = parentControlData._controlValue.getIsToggled();
 			if (isClicked == true)
 			{	
@@ -1694,16 +1688,13 @@ namespace fs
 			const bool isMeSelected = (parentControlData._controlValue.getSelectedItemIndex() == myIndex);
 			
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
-			// Background ·»´õ¸µ
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(finalColor);
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, 0.0f, 0.0f, 0.0f);
 
-			// Text ·»´õ¸µ
 			const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
 			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
 			shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left() + controlData._displaySize._x * 0.5f,
@@ -1723,7 +1714,6 @@ namespace fs
 
 			ControlData& controlData = createOrGetControlData(text, controlType);
 			controlData._isInteractableOutsideParent = true;
-			
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const ControlType parentControlType = parentControlData.getControlType();
 			const bool isParentControlMenuItem = (parentControlType == ControlType::MenuItem);
@@ -1732,9 +1722,6 @@ namespace fs
 				FS_LOG_ERROR("±èÀå¿ø", "MenuItem Àº MenuBarItem ÀÌ³ª MenuItem ÄÁÆ®·ÑÀÇ ÀÚ½ÄÀ¸·Î¸¸ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù!");
 				return false;
 			}
-
-			const uint32 textLength = fs::StringUtil::wcslen(text);
-			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
 
 			PrepareControlDataParam prepareControlDataParam;
 			{
@@ -1748,16 +1735,19 @@ namespace fs
 			nextNoAutoPositioned();
 			nextControlSizeNonContrainedToParent();
 			prepareControlData(controlData, prepareControlDataParam);
+
+			const uint32 textLength = fs::StringUtil::wcslen(text);
+			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
 			parentControlData._controlValue.setItemSizeX(fs::max(parentControlData._controlValue.getItemSizeX(), textWidth + kMenuItemSpaceRight));
 			parentControlData._controlValue.addItemSizeY(controlData._displaySize._y);
 			controlData._controlValue.setItemSizeY(0.0f);
 
-			const bool isDescendantHovered_ = isDescendantControlHovered(controlData);
-			const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered_ == true) ? NamedColor::HoverState : NamedColor::NormalState);
+			const bool isDescendantHovered = isDescendantControlHovered(controlData);
+			const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered == true) ? NamedColor::HoverState : NamedColor::NormalState);
 			const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
 			const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
-			fs::RenderingBase::Color finalColor;
-			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalColor);
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalBackgroundColor);
 			const bool isHovered = isControlHovered(controlData);
 			const bool& isToggled = controlData._controlValue.getIsToggled();
 			const uint64 internalTimeMs = controlData._controlValue.getInternalTimeMs();
@@ -1766,22 +1756,20 @@ namespace fs
 			{
 				parentControlData._controlValue.setSelectedItemIndex(myIndex);
 			}
-			else if (isHovered == false && isDescendantHovered_  == false && isToggled == true)
+			else if (isHovered == false && isDescendantHovered  == false && isToggled == true)
 			{
 				parentControlData._controlValue.setSelectedItemIndex(-1);
 			}
 			controlData._controlValue.setIsToggled((parentControlData._controlValue.getSelectedItemIndex() == myIndex));
 
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-			
-			// Background ·»´õ¸µ
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(finalColor);
+			
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, 0.0f, 0.0f, 0.0f);
 
-			// »ï°¢Çü ·»´õ¸µ
 			const uint16 previousMaxChildCount = controlData.getPreviousMaxChildControlCount();
 			if (0 < previousMaxChildCount)
 			{
@@ -1793,7 +1781,6 @@ namespace fs
 				shapeFontRendererContext.drawSolidTriangle(a, b, c);
 			}
 
-			// Text ·»´õ¸µ
 			const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
 			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
 			shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left(),
@@ -2343,7 +2330,6 @@ namespace fs
 			const float tooltipWindowPadding = 8.0f;
 
 			ControlData& controlData = createOrGetControlData(tooltipText, controlType, L"TooltipWindow");
-
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				const float tooltipTextWidth = _shapeFontRendererContextForeground.calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
@@ -2362,32 +2348,17 @@ namespace fs
 			processShowOnlyControl(controlData, dummyColor);
 
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
+			shapeFontRendererContext.setPosition(controlCenterPosition);
+			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
 
-			//// Viewport & Scissor rectangle
-			//{
-			//	controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-			//
-			//	D3D11_RECT scissorRectangleForMe;
-			//	scissorRectangleForMe.left = static_cast<LONG>(controlData._position._x);
-			//	scissorRectangleForMe.top = static_cast<LONG>(controlData._position._y);
-			//	scissorRectangleForMe.right = static_cast<LONG>(scissorRectangleForMe.left + controlData._displaySize._x);
-			//	scissorRectangleForMe.bottom = static_cast<LONG>(scissorRectangleForMe.top + controlData._displaySize._y);
-			//	_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
-			//	_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
-			//}
-
-			{
-				const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-				shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-				shapeFontRendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
-				shapeFontRendererContext.setPosition(controlCenterPosition);
-				shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
-
-				const fs::Float4& textPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
-				shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-				shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
-				shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale);
-			}
+			const fs::Float4& textPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
+			shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale);
 		}
 
 		const wchar_t* GuiContext::generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept
@@ -3527,7 +3498,7 @@ namespace fs
 
 		const bool GuiContext::isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept
 		{
-			return isDescendantControlRecursiveXXX(controlData.getHashKey(), descendantCandidateHashKey);
+			return ((0 == descendantCandidateHashKey) ? false : isDescendantControlRecursiveXXX(controlData.getHashKey(), descendantCandidateHashKey));
 		}
 
 		const bool GuiContext::isDescendantControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept
@@ -3612,6 +3583,11 @@ namespace fs
 		const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
 		{
 			return isDescendantControlInclusive(controlData, _hoveredControlHashKey);
+		}
+
+		const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
+		{
+			return isDescendantControlInclusive(controlData, _pressedControlHashKey);
 		}
 
 		const GuiContext::ControlData& GuiContext::getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept
