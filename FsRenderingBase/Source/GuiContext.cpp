@@ -810,7 +810,6 @@ namespace fs
 					textRenderDirectionVert = fs::RenderingBase::TextRenderDirectionVert::Upward;
 				}
 			}
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
 			shapeFontRendererContext.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
@@ -2166,7 +2165,6 @@ namespace fs
 			ControlData& controlData = createOrGetControlData(windowTitle, controlType);
 			controlData._isDraggable = true;
 			controlData._delegateHashKey = controlData.getParentHashKey();
-			
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 			const bool isParentControlDocking = parentControlData.isDocking();
 			PrepareControlDataParam prepareControlDataParam;
@@ -2193,8 +2191,8 @@ namespace fs
 			}
 			prepareControlData(controlData, prepareControlDataParam);
 			
-			fs::RenderingBase::Color titleBarColor;
-			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), titleBarColor);
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), finalBackgroundColor);
 			if (isParentControlDocking == true)
 			{
 				if (isControlPressed(controlData) == true)
@@ -2209,8 +2207,7 @@ namespace fs
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-			shapeFontRendererContext.setPosition(controlCenterPosition);
+			shapeFontRendererContext.setPosition(getControlCenterPosition(controlData));
 			if (isParentControlDocking == true)
 			{
 				const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
@@ -2228,7 +2225,7 @@ namespace fs
 			}
 			else
 			{
-				shapeFontRendererContext.setColor(titleBarColor);
+				shapeFontRendererContext.setColor(finalBackgroundColor);
 
 				shapeFontRendererContext.drawHalfRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), fs::Math::kPi);
 
@@ -2238,7 +2235,6 @@ namespace fs
 
 			const fs::Float4& titleBarTextPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
 			const bool needToColorFocused_ = needToColorFocused(parentControlData);
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
 			if (isParentControlDocking == true)
 			{
 				const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
