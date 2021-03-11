@@ -526,7 +526,7 @@ namespace fs
 
 			PrepareControlDataParam prepareControlDataParam;
 			{
-				const float titleWidth = _shapeFontRendererContextForeground.calculateTextWidth(title, fs::StringUtil::wcslen(title));
+				const float titleWidth = calculateTextWidth(title, fs::StringUtil::wcslen(title));
 				prepareControlDataParam._initialDisplaySize = windowParam._size;
 				prepareControlDataParam._initialResizingMask.setAllTrue();
 				prepareControlDataParam._desiredPositionInParent = windowParam._position;
@@ -560,11 +560,7 @@ namespace fs
 				const ScrollBarType scrollBarState = windowControlData._controlValue.getCurrentScrollBarType();
 				const bool hasScrollBarVert = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert);
 				const bool hasScrollBarHorz = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz);
-
-				// Viewport & ScissorRectangle for me !!!
 				{
-					windowControlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
 					D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(windowControlData.getControlRect());
 					scissorRectangleForMe.top -= static_cast<LONG>(kTitleBarBaseSize._y);
 					if (isParentAlsoWindow == true)
@@ -572,26 +568,9 @@ namespace fs
 						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
 						constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
 					}
-					_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
-					_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+					pushScissorRectangleForMe(windowControlData, scissorRectangleForMe);
 				}
-
-				if (isParentAlsoWindow == true)
 				{
-					if (windowControlData.isDocking() == true)
-					{
-						windowControlData.setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
-					}
-					else
-					{
-						windowControlData.setViewportIndexXXX(parentControlData.getViewportIndex());
-					}
-				}
-
-				// Viewport & ScissorRectangle for docks !!!
-				{
-					windowControlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
 					D3D11_RECT scissorRectangleForDocks = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
 					scissorRectangleForDocks.top += static_cast<LONG>(kTitleBarBaseSize._y);
 					if (isParentAlsoWindow == true)
@@ -600,14 +579,9 @@ namespace fs
 						constraintInnerRect(scissorRectangleForDocks, parentScissorRectangle);
 
 					}
-					_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForDocks);
-					_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+					pushScissorRectangleForDocks(windowControlData, scissorRectangleForDocks);
 				}
-
-				// Viewport & ScissorRectangle for child controls !!!
 				{
-					windowControlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
 					D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
 					scissorRectangleForChildren.top += static_cast<LONG>(kTitleBarBaseSize._y);
 					scissorRectangleForChildren.right -= static_cast<LONG>((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f);
@@ -637,8 +611,7 @@ namespace fs
 						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
 						constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
 					}
-					_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForChildren);
-					_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+					pushScissorRectangleForChildren(windowControlData, scissorRectangleForChildren);
 				}
 			}
 
@@ -715,7 +688,7 @@ namespace fs
 			ControlData& controlData = createOrGetControlData(text, controlType);
 			PrepareControlDataParam prepareControlDataParam;
 			{
-				const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+				const float textWidth = calculateTextWidth(text, fs::StringUtil::wcslen(text));
 				prepareControlDataParam._initialDisplaySize = fs::Float2(textWidth + 24, _fontSize + 12);
 			}
 			prepareControlData(controlData, prepareControlDataParam);
@@ -791,7 +764,7 @@ namespace fs
 			ControlData& controlData = createOrGetControlData(text, controlType);
 			PrepareControlDataParam prepareControlDataParam;
 			{
-				const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
+				const float textWidth = calculateTextWidth(text, fs::StringUtil::wcslen(text));
 				prepareControlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, _fontSize + 12) : labelParam._size;
 			}
 			prepareControlData(controlData, prepareControlDataParam);
@@ -954,7 +927,6 @@ namespace fs
 			
 			ControlData& controlData = createOrGetControlData(name, controlType);
 			controlData._isFocusable = true;
-
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				prepareControlDataParam._initialDisplaySize._x = textBoxParam._size._x;
@@ -962,35 +934,26 @@ namespace fs
 			}
 			prepareControlData(controlData, prepareControlDataParam);
 
-			fs::RenderingBase::Color color;
-			const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), color);
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
-			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-			
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-
-			// Viewport & Scissor rectangle
 			{
-				controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
 				D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(controlData.getControlRect());
 				const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
 				{
 					const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
 					constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
 				}
-
-				_scissorRectangleArrayPerFrame.emplace_back(scissorRectangleForMe);
-				_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+				pushScissorRectangleForMe(controlData, scissorRectangleForMe);
 			}
 
-
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
-			const float inputCandidateWidth = (32 <= _wcharInputCandiate) ? shapeFontRendererContext.calculateTextWidth(inputCandidate, 1) : 0.0f;
+			const float inputCandidateWidth = (32 <= _wcharInputCandiate) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
 			fs::Float4 textRenderOffset;
 			if (controlData._controlValue.getTextDisplayOffset() == 0)
 			{
-				const float fullTextWidth = shapeFontRendererContext.calculateTextWidth(outText.c_str(), static_cast<uint32>(outText.length()));
+				const float fullTextWidth = calculateTextWidth(outText.c_str(), static_cast<uint32>(outText.length()));
 				if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
 				{
 					textRenderOffset._x = (controlData._displaySize._x - fullTextWidth - inputCandidateWidth) * 0.5f;
@@ -1139,7 +1102,7 @@ namespace fs
 					const uint16 textLength = static_cast<uint16>(outText.length());
 					const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
 					const float positionInText = _mousePosition._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
-					const uint32 newCaretAt = shapeFontRendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
+					const uint32 newCaretAt = calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
 					if (isMouseLeftDownFirst == true)
 					{
 						caretAt = newCaretAt;
@@ -1292,7 +1255,7 @@ namespace fs
 							caretAt = textLength;
 
 							float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-							const float textWidth = shapeFontRendererContext.calculateTextWidth(outText.c_str(), textLength);
+							const float textWidth = calculateTextWidth(outText.c_str(), textLength);
 							textDisplayOffset = fs::max(0.0f, textWidth - controlData._displaySize._x);
 						}
 					}
@@ -1322,7 +1285,7 @@ namespace fs
 			const uint16 textLength = static_cast<uint16>(outText.length());
 			const uint16 caretAt = controlData._controlValue.getCaretAt();
 			float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-			const float textWidthTillCaret = shapeFontRendererContext.calculateTextWidth(outText.c_str(), fs::min(caretAt, textLength));
+			const float textWidthTillCaret = calculateTextWidth(outText.c_str(), fs::min(caretAt, textLength));
 			{
 				const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
 				if (0.0f < deltaTextDisplayOffsetRight)
@@ -1345,9 +1308,10 @@ namespace fs
 			}
 			
 
-			// Draw background
+			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(color);
+			
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
 			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
@@ -1416,8 +1380,8 @@ namespace fs
 				const uint16 selectionEnd = selectionStart + selectionLength;
 				if (0 < selectionLength)
 				{
-					const float textWidthTillSelectionStart = shapeFontRendererContext.calculateTextWidth(outText.c_str(), selectionStart);
-					const float textWidthTillSelectionEnd = shapeFontRendererContext.calculateTextWidth(outText.c_str(), selectionEnd);
+					const float textWidthTillSelectionStart = calculateTextWidth(outText.c_str(), selectionStart);
+					const float textWidthTillSelectionEnd = calculateTextWidth(outText.c_str(), selectionEnd);
 					const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
 
 					const fs::Float4 selectionRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
@@ -1646,7 +1610,7 @@ namespace fs
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				const uint32 textLength = fs::StringUtil::wcslen(text);
-				const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
+				const float textWidth = calculateTextWidth(text, textLength);
 				prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
 				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
 				prepareControlDataParam._desiredPositionInParent._x = parentControlData._controlValue.getItemSizeX();
@@ -1728,7 +1692,7 @@ namespace fs
 			prepareControlData(controlData, prepareControlDataParam);
 
 			const uint32 textLength = fs::StringUtil::wcslen(text);
-			const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(text, textLength);
+			const float textWidth = calculateTextWidth(text, textLength);
 			parentControlData._controlValue.setItemSizeX(fs::max(parentControlData._controlValue.getItemSizeX(), textWidth + kMenuItemSpaceRight));
 			parentControlData._controlValue.addItemSizeY(controlData._displaySize._y);
 			controlData._controlValue.setItemSizeY(0.0f);
@@ -2168,6 +2132,43 @@ namespace fs
 			_controlStackPerFrame.pop_back();
 		}
 
+		void GuiContext::pushScissorRectangleForMe(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+		{
+			controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
+
+			_scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
+			_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+
+			const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			if (parentControlData.isTypeOf(ControlType::Window) == true && controlData.isTypeOf(ControlType::Window) == true)
+			{
+				if (controlData.isDocking() == true)
+				{
+					controlData.setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
+				}
+				else
+				{
+					controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
+				}
+			}
+		}
+
+		void GuiContext::pushScissorRectangleForDocks(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+		{
+			controlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
+
+			_scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
+			_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+		}
+
+		void GuiContext::pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+		{
+			controlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
+
+			_scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
+			_viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+		}
+
 		fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding)
 		{
 			static constexpr ControlType controlType = ControlType::TitleBar;
@@ -2185,7 +2186,7 @@ namespace fs
 					const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
 					const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentControlData._lastDockingMethod);
 					const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentControlData.getHashKey());
-					const float textWidth = _shapeFontRendererContextTopMost.calculateTextWidth(windowTitle, fs::StringUtil::wcslen(windowTitle));
+					const float textWidth = calculateTextWidth(windowTitle, fs::StringUtil::wcslen(windowTitle));
 					const fs::Float2& displaySizeOverride = fs::Float2(textWidth + 16.0f, controlData._displaySize._y);
 					prepareControlDataParam._initialDisplaySize = displaySizeOverride;
 					prepareControlDataParam._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
@@ -2323,7 +2324,7 @@ namespace fs
 			ControlData& controlData = createOrGetControlData(tooltipText, controlType, L"TooltipWindow");
 			PrepareControlDataParam prepareControlDataParam;
 			{
-				const float tooltipTextWidth = _shapeFontRendererContextForeground.calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
+				const float tooltipTextWidth = calculateTextWidth(tooltipText, fs::StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
 				prepareControlDataParam._initialDisplaySize = fs::Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
 				prepareControlDataParam._desiredPositionInParent = position;
 				prepareControlDataParam._alwaysResetParent = true;
@@ -3283,7 +3284,7 @@ namespace fs
 					dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
 					
 					const wchar_t* const title = dockedControlData.getText();
-					const float titleBarWidth = _shapeFontRendererContextTopMost.calculateTextWidth(title, fs::StringUtil::wcslen(title)) + 16.0f;
+					const float titleBarWidth = calculateTextWidth(title, fs::StringUtil::wcslen(title)) + 16.0f;
 					dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
 					if (dontUpdateWidthArray == false)
 					{

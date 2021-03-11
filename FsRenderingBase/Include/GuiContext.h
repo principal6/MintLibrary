@@ -601,6 +601,9 @@ namespace fs
 		private:
 			void												renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 			void												endControlInternal(const ControlType controlType);
+			void												pushScissorRectangleForMe(ControlData& controlData, const D3D11_RECT& scissorRectangle);
+			void												pushScissorRectangleForDocks(ControlData& controlData, const D3D11_RECT& scissorRectangle);
+			void												pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle);
 
 		private:
 			const ControlData&									getControlDataStackTopXXX() const noexcept;
@@ -671,6 +674,8 @@ namespace fs
 			fs::RenderingBase::Color&							getNamedColor(const NamedColor namedColor) noexcept;
 
 			const float											getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
+			const float											calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+			const uint32										calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 #pragma endregion
 
 
