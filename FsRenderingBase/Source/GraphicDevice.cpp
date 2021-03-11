@@ -27,6 +27,7 @@ namespace fs
 			: _window{ nullptr }
 			, _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
 			, _fullScreenViewport{}
+			, _fullScreenScissorRectangle{}
 			, _shaderPool{ this, &_shaderHeaderMemory, fs::RenderingBase::DxShaderVersion::v_5_0 }
 			, _resourcePool{ this }
 			, _rectangleRendererContext{ this }
@@ -133,6 +134,7 @@ namespace fs
 			initializeShaders();
 			initializeSamplerStates();
 			initializeBlendStates();
+			initializeFullScreenData(windowSize);
 
 			// Rasterizer states and viewport
 			{
@@ -150,17 +152,7 @@ namespace fs
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateDefault.ReleaseAndGetAddressOf());
 
 				rasterizerDescriptor.ScissorEnable = TRUE;
-				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());
-
-				// Full-screen viewport
-				{
-					_fullScreenViewport.Width = static_cast<FLOAT>(windowSize._x);
-					_fullScreenViewport.Height = static_cast<FLOAT>(windowSize._y);
-					_fullScreenViewport.MinDepth = 0.0f;
-					_fullScreenViewport.MaxDepth = 1.0f;
-					_fullScreenViewport.TopLeftX = 0.0f;
-					_fullScreenViewport.TopLeftY = 0.0f;
-				}
+				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());	
 			}
 		}
 
@@ -242,6 +234,21 @@ namespace fs
 				const float kBlendFactor[4]{ 0, 0, 0, 0 };
 				_deviceContext->OMSetBlendState(_blendState.Get(), kBlendFactor, 0xFFFFFFFF);
 			}
+		}
+
+		void GraphicDevice::initializeFullScreenData(const fs::Int2& windowSize)
+		{
+			_fullScreenViewport.Width = static_cast<FLOAT>(windowSize._x);
+			_fullScreenViewport.Height = static_cast<FLOAT>(windowSize._y);
+			_fullScreenViewport.MinDepth = 0.0f;
+			_fullScreenViewport.MaxDepth = 1.0f;
+			_fullScreenViewport.TopLeftX = 0.0f;
+			_fullScreenViewport.TopLeftY = 0.0f;
+
+			_fullScreenScissorRectangle.left = 0;
+			_fullScreenScissorRectangle.right = 0;
+			_fullScreenScissorRectangle.right = windowSize._x;
+			_fullScreenScissorRectangle.bottom = windowSize._y;
 		}
 
 #if defined FS_TEST_MEMORY_FONT_TEXTURE
@@ -477,6 +484,11 @@ namespace fs
 		const D3D11_VIEWPORT& GraphicDevice::getFullScreenViewport() const noexcept
 		{
 			return _fullScreenViewport;
+		}
+
+		const D3D11_RECT& GraphicDevice::getFullScreenScissorRectangle() const noexcept
+		{
+			return _fullScreenScissorRectangle;
 		}
 		
 		void GraphicDevice::setViewMatrix(const fs::Float4x4& viewMatrix) noexcept

@@ -123,13 +123,8 @@ namespace fs
 			
 			const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
 			_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
-
-			// Full-screen Viewport & ScissorRectangle
 			_viewportFullScreen = _graphicDevice->getFullScreenViewport();
-			_scissorRectangleFullScreen.left = static_cast<LONG>(0);
-			_scissorRectangleFullScreen.top = static_cast<LONG>(0);
-			_scissorRectangleFullScreen.right = static_cast<LONG>(_rootControlData._displaySize._x);
-			_scissorRectangleFullScreen.bottom = static_cast<LONG>(_rootControlData._displaySize._y);
+			_scissorRectangleFullScreen = _graphicDevice->getFullScreenScissorRectangle();
 
 			resetNextStates();
 			resetStatesPerFrame();

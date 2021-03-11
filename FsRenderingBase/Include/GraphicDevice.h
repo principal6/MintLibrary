@@ -61,6 +61,7 @@ namespace fs
 			void														initializeShaders();
 			void														initializeSamplerStates();
 			void														initializeBlendStates();
+			void														initializeFullScreenData(const fs::Int2& windowSize);
 
 #if defined FS_TEST_MEMORY_FONT_TEXTURE
 			void														createFontTextureFromMemory();
@@ -74,6 +75,7 @@ namespace fs
 			void														useScissorRectanglesWithMultipleViewports() noexcept;
 			void														useFullScreenViewport() noexcept;
 			const D3D11_VIEWPORT&										getFullScreenViewport() const noexcept;
+			const D3D11_RECT&											getFullScreenScissorRectangle() const noexcept;
 
 		public:
 			fs::RenderingBase::DxShaderPool&							getShaderPool() noexcept;
@@ -118,6 +120,7 @@ namespace fs
 			ComPtr<ID3D11RasterizerState>								_rasterizerStateDefault;
 			ComPtr<ID3D11RasterizerState>								_rasterizerStateScissorRectangles;
 			D3D11_VIEWPORT												_fullScreenViewport;
+			D3D11_RECT													_fullScreenScissorRectangle;
 
 		private:
 			DxShaderHeaderMemory										_shaderHeaderMemory;
