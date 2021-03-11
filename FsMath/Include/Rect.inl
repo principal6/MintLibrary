@@ -1,5 +1,11 @@
 namespace fs
 {
+	FS_INLINE constexpr Rect Rect::fromPositionSize(const fs::Float2& positionFromLeftTop, const fs::Float2& size)
+	{
+		return Rect(positionFromLeftTop, size);
+	}
+
+	
 	inline constexpr Rect::Rect()
 		: Rect(0.0f, 0.0f, 0.0f, 0.0f)
 	{

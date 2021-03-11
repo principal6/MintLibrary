@@ -41,6 +41,9 @@ namespace fs
 		using Microsoft::WRL::ComPtr;
 
 
+		D3D11_RECT	rectToD3dRect(const Rect& rect) noexcept;
+
+
 		class GraphicDevice final
 		{
 		public:

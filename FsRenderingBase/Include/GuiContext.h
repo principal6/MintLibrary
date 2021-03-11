@@ -95,9 +95,9 @@ namespace fs
 		// hi03        | CaretStete          |  ..                 |
 		// hi04 i2 li1 | SelectionStart      | SelectedItemIndex   |
 		// hi05        | SelectionLength     | IsToggled           |
-		// hi06 i3     | TextDisplayOffset   | ItemSizeX           |
+		// hi06 i3     | TextDisplayOffset   | ItemSizeX           | == TitleBarSizeX
 		// hi07        |  ..                 |  ..                 |
-		// hi08 i4 li2 |                     | ItemSizeY           |
+		// hi08 i4 li2 |                     | ItemSizeY           | == TitleBarSizeY
 		// hi09        |                     |  ..                 |
 		// hi10 i5     |                     |                     |
 		// hi11        |                     |                     |
@@ -135,6 +135,7 @@ namespace fs
 			const bool&				getIsToggled() const noexcept; // [CheckBox]
 			const float				getItemSizeX() const noexcept;
 			const float				getItemSizeY() const noexcept;
+			const fs::Float2		getItemSize() const noexcept;
 			uint16&					getCaretAt() noexcept;
 			uint16&					getCaretState() noexcept;
 			uint16&					getSelectionStart() noexcept;
@@ -245,6 +246,7 @@ namespace fs
 			static constexpr float						kFontScaleA = 1.0f;
 			static constexpr float						kFontScaleB = 0.875f;
 			static constexpr float						kFontScaleC = 0.8125f;
+			static constexpr fs::Rect					kWindowInnerPadding = fs::Rect(4.0f);
 			static constexpr float						kScrollBarThickness = 8.0f;
 			static constexpr fs::Rect					kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
 			static constexpr fs::Float2					kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
@@ -352,6 +354,7 @@ namespace fs
 				const fs::Float2&							getChildAt() const noexcept;
 				const fs::Float2&							getNextChildOffset() const noexcept;
 				const ControlType							getControlType() const noexcept;
+				const bool									isTypeOf(const ControlType controlType) const noexcept;
 				const wchar_t*								getText() const noexcept;
 				const bool									isRootControl() const noexcept;
 				const bool									isControlState(const ControlState controlState) const noexcept;
@@ -379,6 +382,8 @@ namespace fs
 				const bool									isDocking() const noexcept;
 				const bool									isDockHosting() const noexcept;
 				const bool									isResizable() const noexcept;
+				Rect										getControlRect() const noexcept;
+				Rect										getControlPaddedRect() const noexcept;
 			
 			public:
 				const bool									hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept;
@@ -530,6 +535,10 @@ namespace fs
 			const bool											beginWindow(const wchar_t* const title, const WindowParam& windowParam);
 			void												endWindow() { endControlInternal(ControlType::Window); }
 
+		private:
+			void												dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const fs::Float2& initialDockingSize);
+
+		public:
 			// [Button]
 			// Return 'true' if clicked
 			const bool											beginButton(const wchar_t* const text);
@@ -600,7 +609,7 @@ namespace fs
 			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
 			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
 			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
-			ControlData&										getControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
+			ControlData&										createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
 			void												calculateControlChildAt(ControlData& controlData) noexcept;
 			const ControlData&									getParentWindowControlData() const noexcept;
 			const ControlData&									getParentWindowControlData(const ControlData& controlData) const noexcept;
@@ -619,8 +628,12 @@ namespace fs
 			const bool											processToggleControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& toggledColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			
 			void												processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
-			void												processControlCommonInternal(ControlData& controlData) noexcept;
-			void												processControlDocking(ControlData& controlData, const bool isDragging) noexcept;
+			void												processControlCommon(ControlData& controlData) noexcept;
+			void												checkControlResizing(ControlData& controlData) noexcept;
+			void												checkControlHoveringForTooltip(ControlData& controlData) noexcept;
+			void												processControlResizingInternal(ControlData& controlData) noexcept;
+			void												processControlDraggingInternal(ControlData& controlData) noexcept;
+			void												processControlDockingInternal(ControlData& controlData) noexcept;
 
 			void												dock(const uint64 dockedControlHashKey, const uint64 dockControlHashKey) noexcept;
 			void												undock(const uint64 dockedControlHashKey) noexcept;
@@ -629,28 +642,28 @@ namespace fs
 			const bool											isInteractingInternal(const ControlData& controlData) const noexcept;
 			
 			// These functions must be called after process- functions
-			const bool											isDraggingControl(const ControlData& controlData) const noexcept;
-			const bool											isResizingControl(const ControlData& controlData) const noexcept;
+			const bool											isControlBeingDragged(const ControlData& controlData) const noexcept;
+			const bool											isControlBeingResized(const ControlData& controlData) const noexcept;
 			const bool											isControlHovered(const ControlData& controlData) const noexcept;
 			const bool											isControlPressed(const ControlData& controlData) const noexcept;
 			const bool											isControlClicked(const ControlData& controlData) const noexcept;
 			const bool											isControlFocused(const ControlData& controlData) const noexcept;
 
 			// RendererContext 고를 때 사용
-			const bool											isAncestorFocused(const ControlData& controlData) const noexcept;
-			const bool											isAncestorFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
-			const bool											isAncestorFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
+			const bool											isAncestorControlFocused(const ControlData& controlData) const noexcept;
+			const bool											isAncestorControlFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
+			const bool											isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-			const bool											isAncestorInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
-			const bool											isAncestorRecursiveXXX(const uint64 currentControlHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
-			const bool											isDescendantInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
-			const bool											isDescendantRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
+			const bool											isAncestorControlInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isAncestorControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
+			const bool											isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
+			const bool											isDescendantControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
 
 			// Focus, Out-of-focus 색 정할 때 사용
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
-			const bool											isDescendantFocused(const ControlData& controlData) const noexcept;
-			const bool											isDescendantHovered(const ControlData& controlData) const noexcept;
-			const ControlData&									getClosestFocusableAncestorInclusiveInternal(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlFocused(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlHovered(const ControlData& controlData) const noexcept;
+			const ControlData&									getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
 			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;
 			fs::RenderingBase::Color&							getNamedColor(const NamedColor namedColor) noexcept;
@@ -663,7 +676,7 @@ namespace fs
 			void												render();
 
 		private:
-			void												resetStatesPerFrame();
+			void												resetPerFrameStates();
 
 		private:
 			fs::RenderingBase::GraphicDevice* const				_graphicDevice;

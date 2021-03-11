@@ -119,6 +119,11 @@ namespace fs
 			return _f[4];
 		}
 
+		FS_INLINE const fs::Float2 ControlValue::getItemSize() const noexcept
+		{
+			return fs::Float2(getItemSizeX(), getItemSizeY());
+		}
+
 		FS_INLINE uint16& ControlValue::getCaretAt() noexcept
 		{
 			return _hui[2];
@@ -415,6 +420,11 @@ namespace fs
 			return _controlType;
 		}
 
+		FS_INLINE const bool GuiContext::ControlData::isTypeOf(const ControlType controlType) const noexcept
+		{
+			return (controlType == _controlType);
+		}
+
 		FS_INLINE const wchar_t* GuiContext::ControlData::getText() const noexcept
 		{
 			return _text.c_str();
@@ -662,6 +672,22 @@ namespace fs
 		FS_INLINE const bool GuiContext::ControlData::isResizable() const noexcept
 		{
 			return _resizingMask.isResizable();
+		}
+
+		FS_INLINE Rect GuiContext::ControlData::getControlRect() const noexcept
+		{
+			return Rect::fromPositionSize(_position, _displaySize);
+		}
+
+		FS_INLINE Rect GuiContext::ControlData::getControlPaddedRect() const noexcept
+		{
+			return Rect
+			(
+				_position._x + _innerPadding.left(),
+				_position._x + _displaySize._x - _innerPadding.horz(),
+				_position._y + _innerPadding.top(), 
+				_position._y + _displaySize._y - _innerPadding.vert()
+			);
 		}
 
 		FS_INLINE const bool GuiContext::ControlData::hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept

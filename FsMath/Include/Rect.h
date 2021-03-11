@@ -13,6 +13,9 @@ namespace fs
 	class Rect
 	{
 	public:
+		static constexpr Rect			fromPositionSize(const fs::Float2& positionFromLeftTop, const fs::Float2& size);
+
+	public:
 		constexpr						Rect();
 		constexpr						Rect(const float uniformValue);
 		constexpr						Rect(const float left, const float right, const float top, const float bottom);

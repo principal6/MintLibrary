@@ -3,6 +3,17 @@ namespace fs
 {
 	namespace RenderingBase
 	{
+		FS_INLINE D3D11_RECT rectToD3dRect(const Rect& rect) noexcept
+		{
+			D3D11_RECT result;
+			result.left   = static_cast<LONG>(rect.left());
+			result.right  = static_cast<LONG>(rect.right());
+			result.top    = static_cast<LONG>(rect.top());
+			result.bottom = static_cast<LONG>(rect.bottom());
+			return result;
+		}
+
+
 		FS_INLINE fs::RenderingBase::DxShaderPool& GraphicDevice::getShaderPool() noexcept
 		{
 			return _shaderPool;
