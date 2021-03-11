@@ -2433,8 +2433,6 @@ namespace fs
 
 		void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
 		{
-			controlData.clearPerFrameData();
-
 			const bool isNewData = controlData._displaySize.isNan();
 			if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
 			{
@@ -2447,60 +2445,26 @@ namespace fs
 					controlData._resizingMask = prepareControlDataParam._initialResizingMask;
 				}
 			}
-			controlData.prepareChildControlDataHashKeyArray();
-
 
 			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-			{
-				std::vector<uint64>& parentChildControlDataHashKeyArray = const_cast<std::vector<uint64>&>(parentControlData.getChildControlDataHashKeyArray());
-				parentChildControlDataHashKeyArray.emplace_back(controlData.getHashKey());
-			}
-
-			// Child window
-			const ControlType controlType = controlData.getControlType();
-			if (controlType == ControlType::Window)
-			{
-				const uint64 controlHashKey = controlData.getHashKey();
-				if (parentControlData.hasChildWindowConnected(controlHashKey) == false)
-				{
-					parentControlData.connectChildWindow(controlHashKey);
-				}
-			}
-
-			// Inner padding
-			{
-				fs::Rect& controlInnerPadding = const_cast<fs::Rect&>(controlData.getInnerPadding());
-				controlInnerPadding = prepareControlDataParam._innerPadding;
-			}
-
-			// Display size, Display size min
+			controlData.updatePerFrameWithParent(isNewData, prepareControlDataParam, parentControlData);
+			
+			// Display size
 			if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
 			{
 				const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
-
 				if (_nextControlSizeNonContrainedToParent == true)
 				{
-					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextControlSize._x;
-					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextControlSize._y;
+					controlData._displaySize._x = (_nextDesiredControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextDesiredControlSize._x;
+					controlData._displaySize._y = (_nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextDesiredControlSize._y;
 				}
 				else
 				{
-					controlData._displaySize._x = (_nextControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) :
-						((_nextSizingForced == true) ? _nextControlSize._x : fs::min(maxDisplaySizeX, _nextControlSize._x));
-					controlData._displaySize._y = (_nextControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y :
-						((_nextSizingForced == true) ? _nextControlSize._y : fs::max(prepareControlDataParam._initialDisplaySize._y, _nextControlSize._y));
+					controlData._displaySize._x = (_nextDesiredControlSize._x <= 0.0f) ? fs::min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) :
+						((_nextSizingForced == true) ? _nextDesiredControlSize._x : fs::min(maxDisplaySizeX, _nextDesiredControlSize._x));
+					controlData._displaySize._y = (_nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y :
+						((_nextSizingForced == true) ? _nextDesiredControlSize._y : fs::max(prepareControlDataParam._initialDisplaySize._y, _nextDesiredControlSize._y));
 				}
-
-				fs::Float2& controlDisplaySizeMin = const_cast<fs::Float2&>(controlData.getDisplaySizeMin());
-				controlDisplaySizeMin = prepareControlDataParam._displaySizeMin;
-			}
-
-			// Interaction size!!!
-			{
-				fs::Float2& controlInteractionSize = const_cast<fs::Float2&>(controlData.getInteractionSize());
-				fs::Float2& controlContentInteractionSize = const_cast<fs::Float2&>(controlData.getNonDockInteractionSize());
-				controlInteractionSize = controlData._displaySize + prepareControlDataParam._deltaInteractionSize;
-				controlContentInteractionSize = controlInteractionSize + prepareControlDataParam._deltaInteractionSizeByDock;
 			}
 
 			// Position, Parent offset, Parent child at, Parent content area size
@@ -2524,7 +2488,7 @@ namespace fs
 					if (parentControlData.isDockHosting() == true)
 					{
 						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
-						if (controlType != ControlType::Window && dockDatumTopSide.hasDockedControls() == true)
+						if (controlData.isTypeOf(ControlType::Window) == false && dockDatumTopSide.hasDockedControls() == true)
 						{
 							// 맨 처음 Child Control 만 내려주면 된다!!
 							const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y + parentControlData.getInnerPadding().top();
@@ -2591,45 +2555,8 @@ namespace fs
 				}
 			}
 
-			// Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
-			if (controlData._isDraggable == true && controlData._draggingConstraints.isNan() == false)
-			{
-				controlData._position._x = fs::min(fs::max(controlData._draggingConstraints.left(), controlData._position._x), controlData._draggingConstraints.right());
-				controlData._position._y = fs::min(fs::max(controlData._draggingConstraints.top(), controlData._position._y), controlData._draggingConstraints.bottom());
-			}
-
-			// State
-			{
-				if (controlType == ControlType::Window)
-				{
-					controlData.setControlState(ControlState::VisibleOpen);
-				}
-				else
-				{
-					controlData.setControlState(ControlState::Visible);
-				}
-			}
-
 			// Child at
 			calculateControlChildAt(controlData);
-
-			// Viewport index
-			{
-				switch (prepareControlDataParam._viewportUsage)
-				{
-				case fs::Gui::ViewportUsage::Parent:
-					controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
-					break;
-				case fs::Gui::ViewportUsage::ParentDock:
-					controlData.setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
-					break;
-				case fs::Gui::ViewportUsage::Child:
-					controlData.setViewportIndexXXX(parentControlData.getViewportIndexForChildren());
-					break;
-				default:
-					break;
-				}
-			}
 		}
 
 		const bool GuiContext::processClickControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& pressedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept

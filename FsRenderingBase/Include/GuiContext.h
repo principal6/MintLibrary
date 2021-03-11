@@ -331,6 +331,24 @@ namespace fs
 
 
 		public:
+			struct PrepareControlDataParam
+			{
+				fs::Rect			_innerPadding;
+				fs::Float2			_initialDisplaySize;
+				ResizingMask		_initialResizingMask;
+				fs::Float2			_desiredPositionInParent			= fs::Float2::kNan;
+				fs::Float2			_deltaInteractionSize				= fs::Float2::kZero;
+				fs::Float2			_deltaInteractionSizeByDock			= fs::Float2::kZero;
+				fs::Float2			_displaySizeMin						= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+				bool				_alwaysResetDisplaySize				= false;
+				bool				_alwaysResetParent					= false;
+				uint64				_parentHashKeyOverride				= 0;
+				bool				_alwaysResetPosition				= true;
+				bool				_ignoreMeForContentAreaSize				= false;
+				bool				_noIntervalForNextSibling			= false;
+				ViewportUsage		_viewportUsage						= ViewportUsage::Child;
+			};
+
 			class ControlData
 			{
 			public:
@@ -340,6 +358,7 @@ namespace fs
 			
 			public:
 				void										clearPerFrameData() noexcept;
+				void										updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parent) noexcept;
 
 			public:
 				const uint64								getHashKey() const noexcept;
@@ -387,8 +406,7 @@ namespace fs
 				Rect										getControlPaddedRect() const noexcept;
 			
 			public:
-				const bool									hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept;
-				void										connectChildWindow(const uint64 childWindowHashKey) noexcept;
+				void										connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
 				void										disconnectChildWindow(const uint64 childWindowHashKey) noexcept;
 				const std::unordered_map<uint64, bool>&		getChildWindowHashKeyMap() const noexcept;
 
@@ -448,24 +466,6 @@ namespace fs
 			
 
 		private:
-			struct PrepareControlDataParam
-			{
-				fs::Rect			_innerPadding;
-				fs::Float2			_initialDisplaySize;
-				ResizingMask		_initialResizingMask;
-				fs::Float2			_desiredPositionInParent			= fs::Float2::kNan;
-				fs::Float2			_deltaInteractionSize				= fs::Float2::kZero;
-				fs::Float2			_deltaInteractionSizeByDock			= fs::Float2::kZero;
-				fs::Float2			_displaySizeMin						= fs::Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-				bool				_alwaysResetDisplaySize				= false;
-				bool				_alwaysResetParent					= false;
-				uint64				_parentHashKeyOverride				= 0;
-				bool				_alwaysResetPosition				= true;
-				bool				_ignoreMeForContentAreaSize				= false;
-				bool				_noIntervalForNextSibling			= false;
-				ViewportUsage		_viewportUsage						= ViewportUsage::Child;
-			};
-			
 			struct ControlStackData
 			{
 			public:
@@ -733,7 +733,7 @@ namespace fs
 #pragma region Next-states
 		private:
 			bool												_nextSameLine;
-			fs::Float2											_nextControlSize;
+			fs::Float2											_nextDesiredControlSize;
 			bool												_nextSizingForced;
 			bool												_nextControlSizeNonContrainedToParent;
 			bool												_nextNoAutoPositioned;

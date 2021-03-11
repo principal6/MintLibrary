@@ -355,6 +355,52 @@ namespace fs
 			_deltaPosition.setZero();
 		}
 
+		FS_INLINE void GuiContext::ControlData::updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData) noexcept
+		{
+			clearPerFrameData();
+
+			prepareChildControlDataHashKeyArray();
+
+			parentControlData._childControlDataHashKeyArray.emplace_back(_hashKey);
+			parentControlData.connectChildWindowIfNot(*this);
+
+			_displaySizeMin = prepareControlDataParam._displaySizeMin;
+			_innerPadding = prepareControlDataParam._innerPadding;
+			_interactionSize = _displaySize + prepareControlDataParam._deltaInteractionSize;
+			_nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
+
+			// Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
+			if (_isDraggable == true && _draggingConstraints.isNan() == false)
+			{
+				_position._x = fs::min(fs::max(_draggingConstraints.left(), _position._x), _draggingConstraints.right());
+				_position._y = fs::min(fs::max(_draggingConstraints.top(), _position._y), _draggingConstraints.bottom());
+			}
+
+			if (_controlType == ControlType::Window)
+			{
+				setControlState(ControlState::VisibleOpen);
+			}
+			else
+			{
+				setControlState(ControlState::Visible);
+			}
+
+			switch (prepareControlDataParam._viewportUsage)
+			{
+			case fs::Gui::ViewportUsage::Parent:
+				setViewportIndexXXX(parentControlData.getViewportIndex());
+				break;
+			case fs::Gui::ViewportUsage::ParentDock:
+				setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
+				break;
+			case fs::Gui::ViewportUsage::Child:
+				setViewportIndexXXX(parentControlData.getViewportIndexForChildren());
+				break;
+			default:
+				break;
+			}
+		}
+
 		FS_INLINE const uint64 GuiContext::ControlData::getHashKey() const noexcept
 		{
 			return _hashKey;
@@ -695,14 +741,12 @@ namespace fs
 			);
 		}
 
-		FS_INLINE const bool GuiContext::ControlData::hasChildWindowConnected(const uint64 childWindowHashKey) const noexcept
+		FS_INLINE void GuiContext::ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
 		{
-			return _childWindowHashKeyMap.find(childWindowHashKey) != _childWindowHashKeyMap.end();
-		}
-
-		FS_INLINE void GuiContext::ControlData::connectChildWindow(const uint64 childWindowHashKey) noexcept
-		{
-			_childWindowHashKeyMap.insert(std::make_pair(childWindowHashKey, true));
+			if (childWindowControlData._controlType == ControlType::Window && _childWindowHashKeyMap.find(childWindowControlData._hashKey) == _childWindowHashKeyMap.end())
+			{
+				_childWindowHashKeyMap.insert(std::make_pair(childWindowControlData._hashKey, true));
+			}
 		}
 
 		FS_INLINE void GuiContext::ControlData::disconnectChildWindow(const uint64 childWindowHashKey) noexcept
@@ -767,7 +811,7 @@ namespace fs
 
 		FS_INLINE void GuiContext::nextControlSize(const fs::Float2& size, const bool force)
 		{
-			_nextControlSize = size;
+			_nextDesiredControlSize = size;
 			_nextSizingForced = force;
 		}
 
@@ -794,7 +838,7 @@ namespace fs
 		FS_INLINE void GuiContext::resetNextStates()
 		{
 			_nextSameLine = false;
-			_nextControlSize.setZero();
+			_nextDesiredControlSize.setZero();
 			_nextSizingForced = false;
 			_nextControlSizeNonContrainedToParent = false;
 			_nextNoAutoPositioned = false;
