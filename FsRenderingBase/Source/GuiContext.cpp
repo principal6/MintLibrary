@@ -713,7 +713,6 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::Button;
 			
 			ControlData& controlData = createOrGetControlData(text, controlType);
-			
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
@@ -721,26 +720,24 @@ namespace fs
 			}
 			prepareControlData(controlData, prepareControlDataParam);
 		
-			fs::RenderingBase::Color color;
-			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), color);
-		
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), finalBackgroundColor);
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(color);
+			
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
-			const fs::Float2& displaySize = controlData._displaySize;
-			shapeFontRendererContext.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel * 2.0f / displaySize.minElement()), 0.0f, 0.0f);
+			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, color.a()));
+			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
 			shapeFontRendererContext.drawDynamicText(text, controlCenterPosition, fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB);
 
 			if (isClicked == true)
 			{
 				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			}
-
 			return isClicked;
 		}
 
@@ -755,20 +752,18 @@ namespace fs
 			}
 			prepareControlData(controlData, prepareControlDataParam);
 
-			// Toggle control
-			fs::RenderingBase::Color color;
-			const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), color);
-
+			fs::RenderingBase::Color finalBackgroundColor;
+			const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
+			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			outIsChecked = controlData._controlValue.getIsToggled();
 
-			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setColor(color);
+			
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+			shapeFontRendererContext.setColor(finalBackgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
-			const fs::Float2& displaySize = controlData._displaySize;
-			shapeFontRendererContext.drawRoundedRectangle(displaySize, (kDefaultRoundnessInPixel / displaySize.minElement()), 0.0f, 0.0f);
+			shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
 			if (outIsChecked == true)
 			{
@@ -779,14 +774,13 @@ namespace fs
 				shapeFontRendererContext.drawLine(p0, p0 + fs::Float2(+7.0f, -8.0f), 2.0f);
 			}
 
-			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, color.a()));
+			shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
 			shapeFontRendererContext.drawDynamicText(text, controlCenterPosition + fs::Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB);
 
 			if (isClicked == true)
 			{
 				_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			}
-
 			return isClicked;
 		}
 
@@ -794,11 +788,10 @@ namespace fs
 		{
 			static constexpr ControlType controlType = ControlType::Label;
 
-			const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
 			ControlData& controlData = createOrGetControlData(text, controlType);
-
 			PrepareControlDataParam prepareControlDataParam;
 			{
+				const float textWidth = _shapeFontRendererContextBackground.calculateTextWidth(text, fs::StringUtil::wcslen(text));
 				prepareControlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, _fontSize + 12) : labelParam._size;
 			}
 			prepareControlData(controlData, prepareControlDataParam);
@@ -808,15 +801,12 @@ namespace fs
 
 			const bool isAncestorFocused = isAncestorControlFocused(controlData);
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			
+			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			shapeFontRendererContext.setColor(labelParam._backgroundColor);
 			shapeFontRendererContext.setPosition(controlCenterPosition);
-			const fs::Float2& displaySize = controlData._displaySize;
-			shapeFontRendererContext.drawRectangle(displaySize, 0.0f, 0.0f);
-
-			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
-			shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
+			shapeFontRendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
 
 			fs::Float4 textPosition = controlCenterPosition;
 			fs::RenderingBase::TextRenderDirectionHorz textRenderDirectionHorz = fs::RenderingBase::TextRenderDirectionHorz::Centered;
@@ -847,6 +837,8 @@ namespace fs
 					textRenderDirectionVert = fs::RenderingBase::TextRenderDirectionVert::Upward;
 				}
 			}
+			shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+			shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
 			shapeFontRendererContext.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
 		}
 
@@ -855,7 +847,6 @@ namespace fs
 			static constexpr ControlType trackControlType = ControlType::Slider;
 
 			bool isChanged = false;
-			const float sliderValidLength = sliderParam._size._x - kSliderThumbRadius * 2.0f;
 			ControlData& trackControlData = createOrGetControlData(name, trackControlType);
 			
 			PrepareControlDataParam prepareControlDataParamForTrack;
@@ -871,6 +862,7 @@ namespace fs
 			{
 				static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
+				const float sliderValidLength = sliderParam._size._x - kSliderThumbRadius * 2.0f;
 				const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
 				ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
