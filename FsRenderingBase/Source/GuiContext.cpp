@@ -556,10 +556,8 @@ namespace fs
 
 			// Viewport & Scissor rectangle
 			{
-				// ScrollBar state
-				const ScrollBarType scrollBarState = windowControlData._controlValue.getCurrentScrollBarType();
-				const bool hasScrollBarVert = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert);
-				const bool hasScrollBarHorz = (scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz);
+				const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
+				const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
 				{
 					D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(windowControlData.getControlRect());
 					scissorRectangleForMe.top -= static_cast<LONG>(kTitleBarBaseSize._y);
@@ -1448,11 +1446,11 @@ namespace fs
 			
 			if (listViewParam._useScrollBar == true)
 			{
-				controlData._controlValue.setCurrentScrollBarType(fs::Gui::ScrollBarType::Vert);
+				controlData._controlValue.enableScrollBar(fs::Gui::ScrollBarType::Vert);
 			}
 			else
 			{
-				controlData._controlValue.setCurrentScrollBarType(fs::Gui::ScrollBarType::None);
+				controlData._controlValue.disableScrollBar(fs::Gui::ScrollBarType::Vert);
 			}
 			_controlStackPerFrame.emplace_back(ControlStackData(controlData));
 			return true;
@@ -1461,8 +1459,8 @@ namespace fs
 		void GuiContext::endListView()
 		{
 			ControlData& controlData = getControlDataStackTopXXX();
-			const fs::Gui::ScrollBarType scrollBarType = controlData._controlValue.getCurrentScrollBarType();
-			if (scrollBarType == fs::Gui::ScrollBarType::Vert)
+			const bool hasScrollBarVert = controlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
+			if (hasScrollBarVert == true)
 			{
 				pushScrollBar(fs::Gui::ScrollBarType::Vert);
 			}
@@ -1742,29 +1740,28 @@ namespace fs
 		void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
 		{
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
-			static std::function fnCalculatePureWindowWidth = [this](const ControlData& parentControlData, const ScrollBarType& scrollBarState)
+			static std::function fnCalculatePureWindowWidth = [this](const ControlData& parentControlData, const bool hasScrollBarVert)
 			{
 				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 				return fs::max(
 					0.0f, 
 					parentControlData._displaySize._x - parentControlData.getHorzDockSizeSum() - parentControlData.getInnerPadding().horz() 
-						- ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Vert) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._x
+						- ((hasScrollBarVert == true) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._x
 				);
 			};
-			static std::function fnCalculatePureWindowHeight = [this](const ControlData& parentControlData, const ScrollBarType& scrollBarState)
+			static std::function fnCalculatePureWindowHeight = [this](const ControlData& parentControlData, const bool hasScrollBarHorz)
 			{
 				const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlData.getControlType()) ? kTitleBarBaseSize._y : 0.0f;
 				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 				return fs::max(
 					0.0f, 
 					parentControlData._displaySize._y - parentControlData.getVertDockSizeSum() - titleBarHeight - parentControlData.getInnerPadding().vert() 
-						- ((scrollBarState == ScrollBarType::Both || scrollBarState == ScrollBarType::Horz) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._y
+						- ((hasScrollBarHorz == true) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._y
 				);
 			};
 
 			ControlData& parentControlData = getControlDataStackTopXXX();
 			const ControlType parentControlType = parentControlData.getControlType();
-			const ScrollBarType& parentControlCurrentScrollBarType = parentControlData._controlValue.getCurrentScrollBarType();
 			const bool isAncestorFocused = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const fs::Float2& parentControlPreviousContentAreaSize = parentControlData.getPreviousContentAreaSize();
 			const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
@@ -1777,7 +1774,7 @@ namespace fs
 				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
 					prepareControlDataParamForTrack._initialDisplaySize._x = kScrollBarThickness;
-					prepareControlDataParamForTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentControlData, parentControlCurrentScrollBarType);
+					prepareControlDataParamForTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz));
 
 					const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 					const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
@@ -1810,15 +1807,12 @@ namespace fs
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
 
-				const float parentWindowPureDisplayHeight = fnCalculatePureWindowHeight(parentControlData, parentControlCurrentScrollBarType);
+				const float parentWindowPureDisplayHeight = fnCalculatePureWindowHeight(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz));
 				const float extraSize = parentControlPreviousContentAreaSize._y - parentWindowPureDisplayHeight;
 				if (0.0f <= extraSize)
 				{
 					// Update parent control current scrollbar type
-					if (parentControlCurrentScrollBarType != ScrollBarType::Both)
-					{
-						parentControlData._controlValue.setCurrentScrollBarType((parentControlCurrentScrollBarType == ScrollBarType::Horz) ? ScrollBarType::Both : ScrollBarType::Vert);
-					}
+					parentControlData._controlValue.enableScrollBar(ScrollBarType::Vert);
 
 					// Rendering track
 					const float radius = kScrollBarThickness * 0.5f;
@@ -1927,7 +1921,7 @@ namespace fs
 				}
 				else
 				{
-					parentControlData._controlValue.setCurrentScrollBarType((parentControlCurrentScrollBarType == ScrollBarType::Vert || parentControlCurrentScrollBarType == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Horz);
+					parentControlData._controlValue.disableScrollBar(ScrollBarType::Vert);
 				}
 			}
 
@@ -1938,7 +1932,7 @@ namespace fs
 				
 				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
-					prepareControlDataParamForTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentControlData, parentControlCurrentScrollBarType);
+					prepareControlDataParamForTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert));
 					prepareControlDataParamForTrack._initialDisplaySize._y = kScrollBarThickness;
 
 					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
@@ -1970,15 +1964,12 @@ namespace fs
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
 
-				const float parentWindowPureDisplayWidth = fnCalculatePureWindowWidth(parentControlData, parentControlCurrentScrollBarType);
+				const float parentWindowPureDisplayWidth = fnCalculatePureWindowWidth(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert));
 				const float extraSize = parentControlPreviousContentAreaSize._x - parentWindowPureDisplayWidth;
 				if (0.0f <= extraSize)
 				{
 					// Update parent window scrollbar state
-					if (parentControlCurrentScrollBarType != ScrollBarType::Both)
-					{
-						parentControlData._controlValue.setCurrentScrollBarType((parentControlCurrentScrollBarType == ScrollBarType::Vert) ? ScrollBarType::Both : ScrollBarType::Horz);
-					}
+					parentControlData._controlValue.enableScrollBar(ScrollBarType::Horz);
 
 					// Rendering track
 					const float radius = kScrollBarThickness * 0.5f;
@@ -2087,7 +2078,7 @@ namespace fs
 				}
 				else
 				{
-					parentControlData._controlValue.setCurrentScrollBarType((parentControlCurrentScrollBarType == ScrollBarType::Horz || parentControlCurrentScrollBarType == ScrollBarType::None) ? ScrollBarType::None : ScrollBarType::Vert);
+					parentControlData._controlValue.disableScrollBar(ScrollBarType::Horz);
 				}
 			}
 		}

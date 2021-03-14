@@ -116,7 +116,15 @@ namespace fs
 			ControlValue&			operator=(ControlValue&& rhs) noexcept	= default;
 
 		public:
+			void					enableScrollBar(const ScrollBarType scrollBarType) noexcept;
+			void					disableScrollBar(const ScrollBarType scrollBarType) noexcept;
+			const bool				isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept;
+
+		private:
 			void					setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept;
+			const ScrollBarType&	getCurrentScrollBarType() const noexcept;
+		
+		public:
 			void					setCurrentMenuBarType(const MenuBarType menuBarType) noexcept;
 			void					setThumbAt(const float thumbAt) noexcept;
 			void					setSelectedItemIndex(const int16 itemIndex) noexcept;
@@ -128,7 +136,6 @@ namespace fs
 			void					setInternalTimeMs(const uint64 internalTimeMs) noexcept;
 
 		public:
-			const ScrollBarType&	getCurrentScrollBarType() const noexcept;
 			const MenuBarType&		getCurrentMenuBarType() const noexcept;
 			const float				getThumbAt() const noexcept; // [Slider], [ScrollBar]
 			int16&					getSelectedItemIndex() noexcept; // [ListView]

@@ -33,9 +33,80 @@ namespace fs
 			__noop;
 		}
 
+		FS_INLINE void ControlValue::enableScrollBar(const ScrollBarType scrollBarType) noexcept
+		{
+			const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
+			if (currentScrollBarType != ScrollBarType::Both && scrollBarType != ScrollBarType::None)
+			{
+				if (currentScrollBarType == ScrollBarType::Horz && scrollBarType != ScrollBarType::Horz)
+				{
+					setCurrentScrollBarType(ScrollBarType::Both);
+				}
+				else if (currentScrollBarType == ScrollBarType::Vert && scrollBarType != ScrollBarType::Vert)
+				{
+					setCurrentScrollBarType(ScrollBarType::Both);
+				}
+				else
+				{
+					setCurrentScrollBarType(scrollBarType);
+				}
+			}
+		}
+
+		FS_INLINE void ControlValue::disableScrollBar(const ScrollBarType scrollBarType) noexcept
+		{
+			const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
+			if (currentScrollBarType != ScrollBarType::None && scrollBarType != ScrollBarType::None)
+			{
+				if (scrollBarType == ScrollBarType::Both)
+				{
+					setCurrentScrollBarType(ScrollBarType::None);
+				}
+				else if (scrollBarType == ScrollBarType::Vert)
+				{
+					if (currentScrollBarType == ScrollBarType::Vert)
+					{
+						setCurrentScrollBarType(ScrollBarType::None);
+					}
+					else
+					{
+						setCurrentScrollBarType(ScrollBarType::Horz);
+					}
+				}
+				else if (scrollBarType == ScrollBarType::Horz)
+				{
+					if (currentScrollBarType == ScrollBarType::Horz)
+					{
+						setCurrentScrollBarType(ScrollBarType::None);
+					}
+					else
+					{
+						setCurrentScrollBarType(ScrollBarType::Vert);
+					}
+				}
+			}
+		}
+
+		FS_INLINE const bool ControlValue::isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept
+		{
+			FS_ASSERT("김장원", scrollBarType != ScrollBarType::None, "잘못된 질문입니다.");
+
+			const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
+			if (currentScrollBarType == ScrollBarType::Both)
+			{
+				return true;
+			}
+			return (currentScrollBarType == scrollBarType);
+		}
+
 		FS_INLINE void ControlValue::setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept
 		{
 			_hi[0] = static_cast<int16>(scrollBarType);
+		}
+
+		FS_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
+		{
+			return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
 		}
 
 		FS_INLINE void ControlValue::setCurrentMenuBarType(const MenuBarType menuBarType) noexcept
@@ -82,11 +153,6 @@ namespace fs
 		FS_INLINE void ControlValue::setInternalTimeMs(const uint64 internalTimeMs) noexcept
 		{
 			_lui[3] = internalTimeMs;
-		}
-
-		FS_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
-		{
-			return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
 		}
 
 		FS_INLINE const MenuBarType& ControlValue::getCurrentMenuBarType() const noexcept
