@@ -373,6 +373,8 @@ namespace fs
 				const fs::Rect&								getInnerPadding() const noexcept;
 				fs::Float2									getClientSize() const noexcept;
 				const fs::Float2&							getDisplaySizeMin() const noexcept;
+				const float									getPureDisplayWidth() const noexcept;
+				const float									getPureDisplayHeight() const noexcept;
 				const fs::Float2&							getInteractionSize() const noexcept;
 				const fs::Float2&							getNonDockInteractionSize() const noexcept;
 				const fs::Float2&							getContentAreaSize() const noexcept;

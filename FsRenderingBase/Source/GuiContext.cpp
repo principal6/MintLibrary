@@ -1740,29 +1740,10 @@ namespace fs
 		void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
 		{
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
-			static std::function fnCalculatePureWindowWidth = [this](const ControlData& parentControlData, const bool hasScrollBarVert)
-			{
-				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
-				return fs::max(
-					0.0f, 
-					parentControlData._displaySize._x - parentControlData.getHorzDockSizeSum() - parentControlData.getInnerPadding().horz() 
-						- ((hasScrollBarVert == true) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._x
-				);
-			};
-			static std::function fnCalculatePureWindowHeight = [this](const ControlData& parentControlData, const bool hasScrollBarHorz)
-			{
-				const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlData.getControlType()) ? kTitleBarBaseSize._y : 0.0f;
-				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
-				return fs::max(
-					0.0f, 
-					parentControlData._displaySize._y - parentControlData.getVertDockSizeSum() - titleBarHeight - parentControlData.getInnerPadding().vert() 
-						- ((hasScrollBarHorz == true) ? kScrollBarThickness * 2.0f : 0.0f) - menuBarThicknes._y
-				);
-			};
-
+			
 			ControlData& parentControlData = getControlDataStackTopXXX();
 			const ControlType parentControlType = parentControlData.getControlType();
-			const bool isAncestorFocused = isAncestorControlFocusedInclusiveXXX(parentControlData);
+			const bool isAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const fs::Float2& parentControlPreviousContentAreaSize = parentControlData.getPreviousContentAreaSize();
 			const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 
@@ -1774,7 +1755,7 @@ namespace fs
 				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
 					prepareControlDataParamForTrack._initialDisplaySize._x = kScrollBarThickness;
-					prepareControlDataParamForTrack._initialDisplaySize._y = fnCalculatePureWindowHeight(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz));
+					prepareControlDataParamForTrack._initialDisplaySize._y = parentControlData.getPureDisplayHeight();
 
 					const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 					const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
@@ -1807,7 +1788,7 @@ namespace fs
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
 
-				const float parentWindowPureDisplayHeight = fnCalculatePureWindowHeight(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz));
+				const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
 				const float extraSize = parentControlPreviousContentAreaSize._y - parentWindowPureDisplayHeight;
 				if (0.0f <= extraSize)
 				{
@@ -1816,7 +1797,7 @@ namespace fs
 
 					// Rendering track
 					const float radius = kScrollBarThickness * 0.5f;
-					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 					{
 						const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
 						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
@@ -1932,7 +1913,7 @@ namespace fs
 				
 				PrepareControlDataParam prepareControlDataParamForTrack;
 				{
-					prepareControlDataParamForTrack._initialDisplaySize._x = fnCalculatePureWindowWidth(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert));
+					prepareControlDataParamForTrack._initialDisplaySize._x = parentControlData.getPureDisplayWidth();
 					prepareControlDataParamForTrack._initialDisplaySize._y = kScrollBarThickness;
 
 					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
@@ -1964,7 +1945,7 @@ namespace fs
 				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
 				processShowOnlyControl(trackControlData, trackColor, true);
 
-				const float parentWindowPureDisplayWidth = fnCalculatePureWindowWidth(parentControlData, parentControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert));
+				const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
 				const float extraSize = parentControlPreviousContentAreaSize._x - parentWindowPureDisplayWidth;
 				if (0.0f <= extraSize)
 				{
@@ -1973,7 +1954,7 @@ namespace fs
 
 					// Rendering track
 					const float radius = kScrollBarThickness * 0.5f;
-					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 					{
 						const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
 						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());

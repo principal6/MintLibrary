@@ -497,6 +497,29 @@ namespace fs
 			return _displaySizeMin;
 		}
 
+		FS_INLINE const float GuiContext::ControlData::getPureDisplayWidth() const noexcept
+		{
+			const fs::Float2& menuBarThicknes = getMenuBarThickness();
+			return fs::max(
+				0.0f,
+				_displaySize._x - getHorzDockSizeSum() - _innerPadding.horz()
+				 - ((_controlValue.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+				 - menuBarThicknes._x
+			);
+		}
+
+		FS_INLINE const float GuiContext::ControlData::getPureDisplayHeight() const noexcept
+		{
+			const float titleBarHeight = (_controlType == fs::Gui::ControlType::Window) ? kTitleBarBaseSize._y : 0.0f;
+			const fs::Float2& menuBarThicknes = getMenuBarThickness();
+			return fs::max(
+				0.0f,
+				_displaySize._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
+				 - ((_controlValue.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+				 - menuBarThicknes._y
+			);
+		}
+
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getInteractionSize() const noexcept
 		{
 			return _interactionSize;
