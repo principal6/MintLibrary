@@ -988,6 +988,11 @@ namespace fs
 			return fs::Float4(controlData._position._x + controlData._displaySize._x * 0.5f, controlData._position._y + controlData._displaySize._y * 0.5f, 0.0f, 1.0f);
 		}
 
+		FS_INLINE fs::Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
+		{
+			return controlData._position - getControlData(controlData.getParentHashKey())._position;
+		}
+
 		FS_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept
 		{
 			return (_hoveredControlHashKey == controlData.getHashKey());

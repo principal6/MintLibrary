@@ -86,6 +86,12 @@ namespace fs
 			bool		_useScrollBar	= true;
 		};
 
+		struct ScrollBarTrackParam
+		{
+			fs::Float2			_size = fs::Float2(180, 100);
+			fs::Float2			_positionInParent = fs::Float2(100, 100);
+		};
+
 
 		//             |        CASE 0       |        CASE 1       |
 		//             |---------------------|---------------------|
@@ -607,6 +613,9 @@ namespace fs
 			// Return 'true' if value was changed
 			void												pushScrollBar(const ScrollBarType scrollBarType);
 
+			ControlData&										pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, bool& outHasExtraSize);
+			//void												pushScrollBarThumb(const ScrollBarType scrollBarType);
+
 		private:
 			void												renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 			void												endControlInternal(const ControlType controlType);
@@ -620,6 +629,7 @@ namespace fs
 			ControlData&										getControlData(const uint64 hashKey) noexcept;
 			const ControlData&									getControlData(const uint64 hashKey) const noexcept;
 			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
+			fs::Float2											getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
 			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
 			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
 			ControlData&										createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;

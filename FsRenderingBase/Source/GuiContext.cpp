@@ -532,7 +532,7 @@ namespace fs
 				prepareControlDataParam._desiredPositionInParent = windowParam._position;
 				prepareControlDataParam._innerPadding = kWindowInnerPadding;
 				prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-				prepareControlDataParam._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f;
+				prepareControlDataParam._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f + windowControlData.getMenuBarThickness()._y;
 				prepareControlDataParam._alwaysResetPosition = false;
 				prepareControlDataParam._viewportUsage = ViewportUsage::Parent; // ROOT
 				prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
@@ -1743,124 +1743,65 @@ namespace fs
 			
 			ControlData& parentControlData = getControlDataStackTopXXX();
 			const ControlType parentControlType = parentControlData.getControlType();
-			const bool isAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
+			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const fs::Float2& parentControlPreviousContentAreaSize = parentControlData.getPreviousContentAreaSize();
 			const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
+			const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
+			const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
 			// Vertical Track
 			if (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both)
 			{
-				ControlData& trackControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarVertTrack", trackControlType), trackControlType);
-
-				PrepareControlDataParam prepareControlDataParamForTrack;
-				{
-					prepareControlDataParamForTrack._initialDisplaySize._x = kScrollBarThickness;
-					prepareControlDataParamForTrack._initialDisplaySize._y = parentControlData.getPureDisplayHeight();
-
-					const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
-					const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
-					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
-					prepareControlDataParamForTrack._desiredPositionInParent._y = titleBarHeight + parentControlData.getInnerPadding().top() + menuBarThicknes._y;
-					if (parentControlData.isDockHosting() == true)
-					{
-						const DockDatum& dockDatumRightSide = parentControlData.getDockDatum(DockingMethod::RightSide);
-						if (dockDatumRightSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSize(DockingMethod::RightSide)._x;
-						}
-
-						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
-						if (dockDatumTopSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSize(DockingMethod::TopSide)._y;
-						}
-					}
-
-					prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
-					prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
-					prepareControlDataParamForTrack._alwaysResetPosition = true;
-					prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
-					prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
-				}
-				nextNoAutoPositioned();
-				prepareControlData(trackControlData, prepareControlDataParamForTrack);
-
-				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
-				processShowOnlyControl(trackControlData, trackColor, true);
-
-				const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
-				const float extraSize = parentControlPreviousContentAreaSize._y - parentWindowPureDisplayHeight;
-				if (0.0f <= extraSize)
+				ScrollBarTrackParam scrollBarTrackParam;
+				scrollBarTrackParam._size._x = kScrollBarThickness;
+				scrollBarTrackParam._size._y = parentWindowPureDisplayHeight;
+				const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+				const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
+				scrollBarTrackParam._positionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
+				scrollBarTrackParam._positionInParent._y = titleBarHeight + parentControlData.getInnerPadding().top() + menuBarThicknes._y;
+				bool hasExtraSize = false;
+				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, hasExtraSize);
+				if (hasExtraSize == true)
 				{
 					// Update parent control current scrollbar type
 					parentControlData._controlValue.enableScrollBar(ScrollBarType::Vert);
 
-					// Rendering track
-					const float radius = kScrollBarThickness * 0.5f;
-					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-					{
-						const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
-						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
-						shapeFontRendererContext.setColor(trackColor);
-
-						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x, trackControlData._position._y + radius, 0.0f, 1.0f);
-
-						// Upper half circle
-						shapeFontRendererContext.setPosition(trackRenderPosition);
-						shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
-
-						// Rect
-						if (0.0f < rectLength)
-						{
-							trackRenderPosition._y += rectLength * 0.5f;
-							shapeFontRendererContext.setPosition(trackRenderPosition);
-							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
-						}
-
-						// Lower half circle
-						if (0.0f < rectLength)
-						{
-							trackRenderPosition._y += rectLength * 0.5f;
-						}
-						shapeFontRendererContext.setPosition(trackRenderPosition);
-						shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
-					}
-
-
 					// Thumb
+					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentControlPreviousContentAreaSize._y);
 					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio - radius * 2.0f;
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
 
-						const float trackRemnantSize = std::abs(trackControlData._displaySize._y - thumbSize);
+						const float trackRemnantSize = std::abs(parentWindowPureDisplayHeight - thumbSize);
 						ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
 
 						PrepareControlDataParam prepareControlDataParamForThumb;
 						{
+							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
 							prepareControlDataParamForThumb._initialDisplaySize._x = kScrollBarThickness;
 							prepareControlDataParamForThumb._initialDisplaySize._y = thumbSize;
 							
-							prepareControlDataParamForThumb._desiredPositionInParent._x = prepareControlDataParamForTrack._desiredPositionInParent._x - kScrollBarThickness * 0.5f;
-							prepareControlDataParamForThumb._desiredPositionInParent._y = prepareControlDataParamForTrack._desiredPositionInParent._y;
+							prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(trackControlData);
+							prepareControlDataParamForThumb._desiredPositionInParent._x -= kScrollBarThickness * 0.5f;
 
 							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
 							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
 							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
-							thumbControlData._draggingConstraints.left(parentControlData._position._x + prepareControlDataParamForThumb._desiredPositionInParent._x);
+							thumbControlData._draggingConstraints.left(trackControlData._position._x - kScrollBarThickness * 0.5f);
 							thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
 							thumbControlData._draggingConstraints.top(trackControlData._position._y);
-							thumbControlData._draggingConstraints.bottom(trackControlData._position._y + trackRemnantSize);
+							thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top() + trackRemnantSize);
 						}
 						nextNoAutoPositioned();
 						prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._y = parentControlData._position._y + prepareControlDataParamForTrack._desiredPositionInParent._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+						thumbControlData._position._y = trackControlData._position._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::RenderingBase::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
@@ -1868,7 +1809,7 @@ namespace fs
 						const float mouseWheelScroll = getMouseWheelScroll(parentControlData);
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
 						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-						parentControlData._displayOffset._y = -thumbAtRatio * (parentControlPreviousContentAreaSize._y - trackControlData._displaySize._y); // Scrolling!
+						parentControlData._displayOffset._y = -thumbAtRatio * (parentControlPreviousContentAreaSize._y - parentWindowPureDisplayHeight); // Scrolling!
 
 						// Rendering thumb
 						{
@@ -1903,114 +1844,53 @@ namespace fs
 				else
 				{
 					parentControlData._controlValue.disableScrollBar(ScrollBarType::Vert);
+
+					parentControlData._displayOffset._y = 0.0f; // Scrolling!
 				}
 			}
 
 			// Horizontal Track
 			if (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both)
 			{
-				ControlData& trackControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarHorzTrack", trackControlType), trackControlType);
-				
-				PrepareControlDataParam prepareControlDataParamForTrack;
-				{
-					prepareControlDataParamForTrack._initialDisplaySize._x = parentControlData.getPureDisplayWidth();
-					prepareControlDataParamForTrack._initialDisplaySize._y = kScrollBarThickness;
-
-					prepareControlDataParamForTrack._desiredPositionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
-					prepareControlDataParamForTrack._desiredPositionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
-					if (parentControlData.isDockHosting() == true)
-					{
-						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
-						if (dockDatumLeftSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
-						}
-
-						const DockDatum& dockDatumBottomSide = parentControlData.getDockDatum(DockingMethod::BottomSide);
-						if (dockDatumBottomSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSize(DockingMethod::BottomSide)._y;
-						}
-					}
-					
-					prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
-					prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
-					prepareControlDataParamForTrack._alwaysResetPosition = true;
-					prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
-					prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
-				}
-				nextNoAutoPositioned();
-				prepareControlData(trackControlData, prepareControlDataParamForTrack);
-
-				fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
-				processShowOnlyControl(trackControlData, trackColor, true);
-
-				const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
-				const float extraSize = parentControlPreviousContentAreaSize._x - parentWindowPureDisplayWidth;
-				if (0.0f <= extraSize)
+				ScrollBarTrackParam scrollBarTrackParam;
+				scrollBarTrackParam._size._x = parentWindowPureDisplayWidth;
+				scrollBarTrackParam._size._y = kScrollBarThickness;
+				scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
+				scrollBarTrackParam._positionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
+				bool hasExtraSize = false;
+				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, hasExtraSize);
+				if (hasExtraSize == true)
 				{
 					// Update parent window scrollbar state
 					parentControlData._controlValue.enableScrollBar(ScrollBarType::Horz);
 
-					// Rendering track
-					const float radius = kScrollBarThickness * 0.5f;
-					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-					{
-						const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
-						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
-						shapeFontRendererContext.setColor(trackColor);
-
-						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x + radius, trackControlData._position._y, 0.0f, 1.0f);
-
-						// Left half circle
-						shapeFontRendererContext.setPosition(trackRenderPosition);
-						shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
-
-						// Rect
-						if (0.0f < rectLength)
-						{
-							trackRenderPosition._x += rectLength * 0.5f;
-							shapeFontRendererContext.setPosition(trackRenderPosition);
-							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
-						}
-
-						// Right half circle
-						if (0.0f < rectLength)
-						{
-							trackRenderPosition._x += rectLength * 0.5f;
-						}
-						shapeFontRendererContext.setPosition(trackRenderPosition);
-						shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
-					}
-
-
 					// Thumb
+					const float radius = kScrollBarThickness * 0.5f;
 					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentControlPreviousContentAreaSize._x);
 					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio - radius * 2.0f;
 					{
 						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
 
 						ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
-						const float trackRemnantSize = std::abs(trackControlData._displaySize._x - thumbSize);
+						const float trackRemnantSize = std::abs(parentWindowPureDisplayWidth - thumbSize);
 
 						PrepareControlDataParam prepareControlDataParamForThumb;
 						{
+							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
 							prepareControlDataParamForThumb._initialDisplaySize._x = thumbSize;
 							prepareControlDataParamForThumb._initialDisplaySize._y = kScrollBarThickness;
 
-							prepareControlDataParamForThumb._desiredPositionInParent._x = prepareControlDataParamForTrack._desiredPositionInParent._x;
-							prepareControlDataParamForThumb._desiredPositionInParent._y = prepareControlDataParamForTrack._desiredPositionInParent._y - kScrollBarThickness * 0.5f;
+							prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(trackControlData);
+							prepareControlDataParamForThumb._desiredPositionInParent._y -= kScrollBarThickness * 0.5f;
 							
 							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
-							prepareControlDataParamForThumb._alwaysResetPosition = false; // 중요!
 							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
 							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
 
 							thumbControlData._isDraggable = true;
 							thumbControlData._draggingConstraints.left(trackControlData._position._x);
-							thumbControlData._draggingConstraints.right(trackControlData._position._x + trackRemnantSize);
-							thumbControlData._draggingConstraints.top(parentControlData._position._y + prepareControlDataParamForThumb._desiredPositionInParent._y);
+							thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + trackRemnantSize);
+							thumbControlData._draggingConstraints.top(trackControlData._position._y - kScrollBarThickness * 0.5f);
 							thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
 						}
 						nextNoAutoPositioned();
@@ -2018,14 +1898,14 @@ namespace fs
 
 						// @중요
 						// Calculate position from internal value
-						thumbControlData._position._x = parentControlData._position._x + prepareControlDataParamForTrack._desiredPositionInParent._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+						thumbControlData._position._x = trackControlData._position._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
 
 						fs::RenderingBase::Color thumbColor;
 						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
 						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
 						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-						parentControlData._displayOffset._x = -thumbAtRatio * (parentControlPreviousContentAreaSize._x - trackControlData._displaySize._x + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
+						parentControlData._displayOffset._x = -thumbAtRatio * (parentControlPreviousContentAreaSize._x - parentWindowPureDisplayWidth + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
 						// Rendering thumb
 						{
@@ -2060,8 +1940,158 @@ namespace fs
 				else
 				{
 					parentControlData._controlValue.disableScrollBar(ScrollBarType::Horz);
+
+					parentControlData._displayOffset._x = 0.0f; // Scrolling!
 				}
 			}
+		}
+
+		GuiContext::ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, bool& outHasExtraSize)
+		{
+			static constexpr ControlType trackControlType = ControlType::ScrollBar;
+
+			FS_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
+
+			ControlData& parentControlData = getControlDataStackTopXXX();
+			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
+			const bool isVert = (scrollBarType == ScrollBarType::Vert);
+
+			ControlData& trackControlData = createOrGetControlData(generateControlKeyString(parentControlData, 
+				(isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
+			outHasExtraSize = false;
+
+			PrepareControlDataParam prepareControlDataParamForTrack;
+			{
+				prepareControlDataParamForTrack._initialDisplaySize = scrollBarTrackParam._size;
+				prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
+
+				if (parentControlData.isDockHosting() == true)
+				{
+					if (isVert == true)
+					{
+						const DockDatum& dockDatumRightSide = parentControlData.getDockDatum(DockingMethod::RightSide);
+						if (dockDatumRightSide.hasDockedControls() == true)
+						{
+							prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSize(DockingMethod::RightSide)._x;
+						}
+
+						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
+						if (dockDatumTopSide.hasDockedControls() == true)
+						{
+							prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSize(DockingMethod::TopSide)._y;
+						}
+					}
+					else
+					{
+						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
+						if (dockDatumLeftSide.hasDockedControls() == true)
+						{
+							prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
+						}
+
+						const DockDatum& dockDatumBottomSide = parentControlData.getDockDatum(DockingMethod::BottomSide);
+						if (dockDatumBottomSide.hasDockedControls() == true)
+						{
+							prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSize(DockingMethod::BottomSide)._y;
+						}
+					}
+				}
+
+				prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
+				prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
+				prepareControlDataParamForTrack._alwaysResetPosition = true;
+				prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
+				prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
+			}
+			nextNoAutoPositioned();
+			prepareControlData(trackControlData, prepareControlDataParamForTrack);
+
+			fs::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
+			processShowOnlyControl(trackControlData, trackColor, true);
+
+			// Vertical Track
+			if (isVert == true)
+			{
+				const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+				const float extraSize = parentControlData.getPreviousContentAreaSize()._y - parentWindowPureDisplayHeight;
+				if (0.0f <= extraSize)
+				{
+					// Rendering track
+					const float radius = kScrollBarThickness * 0.5f;
+					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+					{
+						const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
+						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+						shapeFontRendererContext.setColor(trackColor);
+
+						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x, trackControlData._position._y + radius, 0.0f, 1.0f);
+
+						// Upper half circle
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
+
+						// Rect
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._y += rectLength * 0.5f;
+							shapeFontRendererContext.setPosition(trackRenderPosition);
+							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+						}
+
+						// Lower half circle
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._y += rectLength * 0.5f;
+						}
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
+					}
+
+					outHasExtraSize = true;
+				}
+			}
+			else
+			{
+				const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
+				const float extraSize = parentControlData.getPreviousContentAreaSize()._x - parentWindowPureDisplayWidth;
+				if (0.0f <= extraSize)
+				{
+					// Rendering track
+					const float radius = kScrollBarThickness * 0.5f;
+					fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+					{
+						const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
+						shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+						shapeFontRendererContext.setColor(trackColor);
+
+						fs::Float4 trackRenderPosition = fs::Float4(trackControlData._position._x + radius, trackControlData._position._y, 0.0f, 1.0f);
+
+						// Left half circle
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
+
+						// Rect
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._x += rectLength * 0.5f;
+							shapeFontRendererContext.setPosition(trackRenderPosition);
+							shapeFontRendererContext.drawRectangle(trackControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+						}
+
+						// Right half circle
+						if (0.0f < rectLength)
+						{
+							trackRenderPosition._x += rectLength * 0.5f;
+						}
+						shapeFontRendererContext.setPosition(trackRenderPosition);
+						shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
+					}
+
+					outHasExtraSize = true;
+				}
+			}
+
+			return trackControlData;
 		}
 
 		void GuiContext::renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
@@ -2360,6 +2390,13 @@ namespace fs
 					? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
 					: fs::Float2::kZero) +
 				fs::Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
+
+			const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockingMethod::TopSide);
+			if (dockDatumTopSide.hasDockedControls() == true)
+			{
+				// 맨 처음 Child Control 만 내려주면 된다!!
+				controlChildAt._y += controlData.getDockSize(DockingMethod::TopSide)._y + controlData.getInnerPadding().top();
+			}
 		}
 
 		const GuiContext::ControlData& GuiContext::getParentWindowControlData() const noexcept
@@ -2450,11 +2487,11 @@ namespace fs
 						if (controlData.isTypeOf(ControlType::Window) == false && dockDatumTopSide.hasDockedControls() == true)
 						{
 							// 맨 처음 Child Control 만 내려주면 된다!!
-							const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y + parentControlData.getInnerPadding().top();
-							if (parentControlChildAt._y < offsetY)
-							{
-								parentControlChildAt._y += offsetY;
-							}
+							//const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y + parentControlData.getInnerPadding().top();
+							//if (parentControlChildAt._y < offsetY)
+							//{
+							//	parentControlChildAt._y += offsetY;
+							//}
 						}
 
 						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
