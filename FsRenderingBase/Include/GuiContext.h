@@ -618,7 +618,7 @@ namespace fs
 			//void												pushScrollBarThumb(const ScrollBarType scrollBarType);
 
 		private:
-			void												renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
+			void												processDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 			void												endControlInternal(const ControlType controlType);
 			void												pushScissorRectangleForMe(ControlData& controlData, const D3D11_RECT& scissorRectangle);
 			void												pushScissorRectangleForDocks(ControlData& controlData, const D3D11_RECT& scissorRectangle);

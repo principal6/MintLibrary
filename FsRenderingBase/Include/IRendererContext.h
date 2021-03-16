@@ -66,6 +66,7 @@ namespace fs
 			void					a(const float value) noexcept { _raw._w = value; }
 
 		public:
+			void					rgb(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
 			Color					addedRgb(const float s) const noexcept { return Color(fs::Math::saturate(_raw._x + s), fs::Math::saturate(_raw._y + s), fs::Math::saturate(_raw._z + s), _raw._w); }
 			Color					addedRgb(const int32 s) const noexcept { return addedRgb(s / 255.0f); }
 			Color					scaledRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }

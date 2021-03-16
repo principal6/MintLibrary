@@ -612,7 +612,7 @@ namespace fs
 					shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - fs::Float2(0, windowControlData._controlValue.getItemSizeY()), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
 				}
 
-				renderDock(windowControlData, shapeFontRendererContext);
+				processDock(windowControlData, shapeFontRendererContext);
 				_controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
 			}
 			
@@ -2043,7 +2043,7 @@ namespace fs
 			return trackControlData;
 		}
 
-		void GuiContext::renderDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
+		void GuiContext::processDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
 		{
 			if (controlData._dockingControlType == DockingControlType::Dock || controlData._dockingControlType == DockingControlType::DockerDock)
 			{
@@ -2055,6 +2055,13 @@ namespace fs
 						const fs::Float2& dockSize = controlData.getDockSize(dockingMethodIter);
 						const fs::Float2& dockPosition = controlData.getDockPosition(dockingMethodIter);
 
+						if (_mouseButtonDownFirst == true)
+						{
+							if (isInControlInternal(_mouseDownPosition, dockPosition, fs::Float2::kZero, dockSize) == true)
+							{
+								_focusedControlHashKey = controlData.getHashKey();
+							}
+						}
 						shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
 						
 						shapeFontRendererContext.setColor(getNamedColor(NamedColor::Dock));
@@ -2151,6 +2158,8 @@ namespace fs
 					ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
 					DockDatum& dockDatum = dockControlData.getDockDatum(parentControlData._lastDockingMethod);
 					dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentControlData.getHashKey());
+					
+					_focusedControlHashKey = dockControlData.getHashKey();
 				}
 			}
 
@@ -2677,6 +2686,8 @@ namespace fs
 				{
 					fnResetPressDataIfMe(controlHashKey);
 				}
+				
+				const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
 
 				// Pressed (Mouse down)
 				if (_mouseButtonDown == true && isMouseDownInInteractionArea == true)
@@ -2688,6 +2699,8 @@ namespace fs
 						_pressedControlHashKey = controlHashKey;
 
 						_pressedControlInitialPosition = controlData._position;
+
+						_focusedControlHashKey = closestFocusableAncestor.getHashKey();
 					}
 				}
 
@@ -2697,6 +2710,8 @@ namespace fs
 					if (_pressedControlHashKey == controlHashKey)
 					{
 						_clickedControlHashKeyPerFrame = controlHashKey;
+
+						_focusedControlHashKey = closestFocusableAncestor.getHashKey();
 					}
 				}
 			}
@@ -3442,7 +3457,7 @@ namespace fs
 				return controlData;
 			}
 
-			if (controlData._isFocusable == true)
+			if (controlData._isFocusable == true && controlData.isDocking() == false)
 			{
 				return controlData;
 			}
@@ -3505,7 +3520,7 @@ namespace fs
 			_keyCode = fs::Window::EventData::KeyCode::NONE;
 
 			// 다음 프레임에 가장 먼저 렌더링 되는 것!!
-			renderDock(_rootControlData, _shapeFontRendererContextBackground);
+			processDock(_rootControlData, _shapeFontRendererContextBackground);
 		}
 	}
 }
