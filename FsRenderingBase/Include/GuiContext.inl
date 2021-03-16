@@ -678,6 +678,12 @@ namespace fs
 			return resultDockSize;
 		}
 
+		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockSizeIfHosting(const DockingMethod dockingMethod) const noexcept
+		{
+			const DockDatum& dockDatum = getDockDatum(dockingMethod);
+			return (dockDatum.hasDockedControls() == true) ? getDockSize(dockingMethod) : fs::Float2::kZero;
+		}
+
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getDockOffsetSize() const noexcept
 		{
 			return fs::Float2(0.0f, ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
@@ -694,19 +700,11 @@ namespace fs
 			{
 			case fs::Gui::DockingMethod::LeftSide:
 				resultDockPosition = _position + offset;
-				if (dockDatumTopSide.hasDockedControls() == true)
-				{
-					const fs::Float2& dockSizeTopSide = getDockSize(DockingMethod::TopSide);
-					resultDockPosition._y += dockSizeTopSide._y;
-				}
+				resultDockPosition._y += getDockSizeIfHosting(DockingMethod::TopSide)._y;
 				break;
 			case fs::Gui::DockingMethod::RightSide:
 				resultDockPosition = fs::Float2(_position._x + _displaySize._x - dockSize._x, _position._y) + offset;
-				if (dockDatumTopSide.hasDockedControls() == true)
-				{
-					const fs::Float2& dockSizeTopSide = getDockSize(DockingMethod::TopSide);
-					resultDockPosition._y += dockSizeTopSide._y;
-				}
+				resultDockPosition._y += getDockSizeIfHosting(DockingMethod::TopSide)._y;
 				break;
 			case fs::Gui::DockingMethod::TopSide:
 				resultDockPosition = fs::Float2(_position._x, _position._y) + offset;
@@ -721,48 +719,14 @@ namespace fs
 			return resultDockPosition;
 		}
 
-		inline const float GuiContext::ControlData::getHorzDockSizeSum() const noexcept
+		FS_INLINE const float GuiContext::ControlData::getHorzDockSizeSum() const noexcept
 		{
-			float sum = 0.0f;
-			{
-				const fs::Float2& dockSize = getDockSize(DockingMethod::LeftSide);
-				const DockDatum& dockDatum = getDockDatum(DockingMethod::LeftSide);
-				if (dockDatum._dockedControlHashArray.empty() == false)
-				{
-					sum += dockSize._x;
-				}
-			}
-			{
-				const fs::Float2& dockSize = getDockSize(DockingMethod::RightSide);
-				const DockDatum& dockDatum = getDockDatum(DockingMethod::RightSide);
-				if (dockDatum._dockedControlHashArray.empty() == false)
-				{
-					sum += dockSize._x;
-				}
-			}
-			return sum;
+			return getDockSizeIfHosting(DockingMethod::LeftSide)._x + getDockSizeIfHosting(DockingMethod::RightSide)._x;
 		}
 
-		inline const float GuiContext::ControlData::getVertDockSizeSum() const noexcept
+		FS_INLINE const float GuiContext::ControlData::getVertDockSizeSum() const noexcept
 		{
-			float sum = 0.0f;
-			{
-				const fs::Float2& dockSize = getDockSize(DockingMethod::TopSide);
-				const DockDatum& dockDatum = getDockDatum(DockingMethod::TopSide);
-				if (dockDatum._dockedControlHashArray.empty() == false)
-				{
-					sum += dockSize._y;
-				}
-			}
-			{
-				const fs::Float2& dockSize = getDockSize(DockingMethod::BottomSide);
-				const DockDatum& dockDatum = getDockDatum(DockingMethod::BottomSide);
-				if (dockDatum._dockedControlHashArray.empty() == false)
-				{
-					sum += dockSize._y;
-				}
-			}
-			return sum;
+			return getDockSizeIfHosting(DockingMethod::TopSide)._y + getDockSizeIfHosting(DockingMethod::BottomSide)._y;
 		}
 
 		FS_INLINE const fs::Float2 GuiContext::ControlData::getMenuBarThickness() const noexcept

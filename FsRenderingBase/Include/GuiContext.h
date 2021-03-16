@@ -406,6 +406,7 @@ namespace fs
 				const bool									isShowingInDock(const ControlData& dockedControlData) const noexcept;
 				void										setDockSize(const DockingMethod dockingMethod, const fs::Float2& dockSize) noexcept;
 				const fs::Float2							getDockSize(const DockingMethod dockingMethod) const noexcept;
+				const fs::Float2							getDockSizeIfHosting(const DockingMethod dockingMethod) const noexcept;
 				const fs::Float2							getDockOffsetSize() const noexcept;
 				const fs::Float2							getDockPosition(const DockingMethod dockingMethod) const noexcept;
 				const float									getHorzDockSizeSum() const noexcept;

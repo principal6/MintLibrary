@@ -200,19 +200,7 @@ namespace fs
 		{
 			if (controlData.isDockHosting() == true)
 			{
-				fs::Float2 positionOffset;
-
-				const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockingMethod::TopSide);
-				const DockDatum& dockDatumLeftSide = controlData.getDockDatum(DockingMethod::LeftSide);
-				if (dockDatumTopSide.hasDockedControls() == true)
-				{
-					positionOffset._y = controlData.getDockSize(DockingMethod::TopSide)._y;
-				}
-				if (dockDatumLeftSide.hasDockedControls() == true)
-				{
-					positionOffset._x = controlData.getDockSize(DockingMethod::LeftSide)._x;
-				}
-
+				const fs::Float2 positionOffset{ controlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x, controlData.getDockSizeIfHosting(DockingMethod::TopSide)._y };
 				return isInControlInternal(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
 			}
 			return isInControlInternal(screenPosition, controlData._position, fs::Float2::kZero, controlData.getInteractionSize());
@@ -581,29 +569,13 @@ namespace fs
 				}
 				{
 					D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
-					scissorRectangleForChildren.top += static_cast<LONG>(kTitleBarBaseSize._y);
-					scissorRectangleForChildren.right -= static_cast<LONG>((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f);
-					scissorRectangleForChildren.bottom -= static_cast<LONG>((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f);
-					const DockDatum& dockDatumTopSide = windowControlData.getDockDatum(DockingMethod::TopSide);
-					const DockDatum& dockDatumBottomSide = windowControlData.getDockDatum(DockingMethod::BottomSide);
-					const DockDatum& dockDatumLeftSide = windowControlData.getDockDatum(DockingMethod::LeftSide);
-					const DockDatum& dockDatumRightSide = windowControlData.getDockDatum(DockingMethod::RightSide);
-					if (dockDatumTopSide.hasDockedControls() == true)
-					{
-						scissorRectangleForChildren.top += static_cast<LONG>(windowControlData.getDockSize(DockingMethod::TopSide)._y);
-					}
-					if (dockDatumLeftSide.hasDockedControls() == true)
-					{
-						scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSize(DockingMethod::LeftSide)._x);
-					}
-					if (dockDatumRightSide.hasDockedControls() == true)
-					{
-						scissorRectangleForChildren.right -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::RightSide)._x);
-					}
-					if (dockDatumBottomSide.hasDockedControls() == true)
-					{
-						scissorRectangleForChildren.bottom -= static_cast<LONG>(windowControlData.getDockSize(DockingMethod::BottomSide)._y);
-					}
+					scissorRectangleForChildren.top += static_cast<LONG>(
+						kTitleBarBaseSize._y + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y + windowControlData.getMenuBarThickness()._y);
+					scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
+					scissorRectangleForChildren.right -= static_cast<LONG>(
+						((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
+					scissorRectangleForChildren.bottom -= static_cast<LONG>(
+						((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
 					if (isParentAlsoWindow == true)
 					{
 						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
@@ -1964,39 +1936,16 @@ namespace fs
 			{
 				prepareControlDataParamForTrack._initialDisplaySize = scrollBarTrackParam._size;
 				prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
-
-				if (parentControlData.isDockHosting() == true)
+				if (isVert == true)
 				{
-					if (isVert == true)
-					{
-						const DockDatum& dockDatumRightSide = parentControlData.getDockDatum(DockingMethod::RightSide);
-						if (dockDatumRightSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSize(DockingMethod::RightSide)._x;
-						}
-
-						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
-						if (dockDatumTopSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSize(DockingMethod::TopSide)._y;
-						}
-					}
-					else
-					{
-						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
-						if (dockDatumLeftSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
-						}
-
-						const DockDatum& dockDatumBottomSide = parentControlData.getDockDatum(DockingMethod::BottomSide);
-						if (dockDatumBottomSide.hasDockedControls() == true)
-						{
-							prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSize(DockingMethod::BottomSide)._y;
-						}
-					}
+					prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x;
+					prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y;
 				}
-
+				else
+				{
+					prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x;
+					prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y;
+				}
 				prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
 				prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
 				prepareControlDataParamForTrack._alwaysResetPosition = true;
@@ -2109,9 +2058,9 @@ namespace fs
 						shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
 						
 						shapeFontRendererContext.setColor(getNamedColor(NamedColor::Dock));
-						shapeFontRendererContext.setPosition(fs::Float4(dockPosition._x + controlData.getDockSize(dockingMethodIter)._x * 0.5f, dockPosition._y + controlData.getDockSize(dockingMethodIter)._y * 0.5f, 0, 0));
+						shapeFontRendererContext.setPosition(fs::Float4(dockPosition._x + dockSize._x * 0.5f, dockPosition._y + dockSize._y * 0.5f, 0, 0));
 
-						shapeFontRendererContext.drawRectangle(controlData.getDockSize(dockingMethodIter), 0.0f, 0.0f);
+						shapeFontRendererContext.drawRectangle(dockSize, 0.0f, 0.0f);
 					}
 				}
 			}
@@ -2480,26 +2429,7 @@ namespace fs
 				else
 				{
 					parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._displayOffset._x; // @중요
-					
-					if (parentControlData.isDockHosting() == true)
-					{
-						const DockDatum& dockDatumTopSide = parentControlData.getDockDatum(DockingMethod::TopSide);
-						if (controlData.isTypeOf(ControlType::Window) == false && dockDatumTopSide.hasDockedControls() == true)
-						{
-							// 맨 처음 Child Control 만 내려주면 된다!!
-							//const float offsetY = parentControlData.getDockSize(DockingMethod::TopSide)._y + parentControlData.getInnerPadding().top();
-							//if (parentControlChildAt._y < offsetY)
-							//{
-							//	parentControlChildAt._y += offsetY;
-							//}
-						}
-
-						const DockDatum& dockDatumLeftSide = parentControlData.getDockDatum(DockingMethod::LeftSide);
-						if (dockDatumLeftSide.hasDockedControls() == true)
-						{
-							parentControlChildAt._x += parentControlData.getDockSize(DockingMethod::LeftSide)._x;
-						}
-					}
+					parentControlChildAt._x += parentControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x;
 
 					parentControlChildAt._y += parentControlNextChildOffset._y;
 
