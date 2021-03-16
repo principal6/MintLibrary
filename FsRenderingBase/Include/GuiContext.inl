@@ -492,6 +492,11 @@ namespace fs
 			return result;
 		}
 
+		FS_INLINE const float GuiContext::ControlData::getTopOffsetToClientArea() const noexcept
+		{
+			return ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y : 0.0f) + getMenuBarThickness()._y;
+		}
+
 		FS_INLINE const fs::Float2& GuiContext::ControlData::getDisplaySizeMin() const noexcept
 		{
 			return _displaySizeMin;

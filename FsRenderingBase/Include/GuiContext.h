@@ -378,6 +378,7 @@ namespace fs
 				const uint64								getParentHashKey() const noexcept;
 				const fs::Rect&								getInnerPadding() const noexcept;
 				fs::Float2									getClientSize() const noexcept;
+				const float									getTopOffsetToClientArea() const noexcept;
 				const fs::Float2&							getDisplaySizeMin() const noexcept;
 				const float									getPureDisplayWidth() const noexcept;
 				const float									getPureDisplayHeight() const noexcept;

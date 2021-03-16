@@ -520,7 +520,7 @@ namespace fs
 				prepareControlDataParam._desiredPositionInParent = windowParam._position;
 				prepareControlDataParam._innerPadding = kWindowInnerPadding;
 				prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-				prepareControlDataParam._displaySizeMin._y = kTitleBarBaseSize._y + 16.0f + windowControlData.getMenuBarThickness()._y;
+				prepareControlDataParam._displaySizeMin._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
 				prepareControlDataParam._alwaysResetPosition = false;
 				prepareControlDataParam._viewportUsage = ViewportUsage::Parent; // ROOT
 				prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
@@ -570,7 +570,7 @@ namespace fs
 				{
 					D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
 					scissorRectangleForChildren.top += static_cast<LONG>(
-						kTitleBarBaseSize._y + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y + windowControlData.getMenuBarThickness()._y);
+						windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
 					scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
 					scissorRectangleForChildren.right -= static_cast<LONG>(
 						((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
@@ -1714,29 +1714,25 @@ namespace fs
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			
 			ControlData& parentControlData = getControlDataStackTopXXX();
-			const ControlType parentControlType = parentControlData.getControlType();
 			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const fs::Float2& parentControlPreviousContentAreaSize = parentControlData.getPreviousContentAreaSize();
-			const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
-			const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
-			const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
-			// Vertical Track
-			if (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both)
+			const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
+			if (useVertical == true)
 			{
+				const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+
 				ScrollBarTrackParam scrollBarTrackParam;
 				scrollBarTrackParam._size._x = kScrollBarThickness;
 				scrollBarTrackParam._size._y = parentWindowPureDisplayHeight;
-				const float titleBarOffsetX = (fs::Gui::ControlType::Window == parentControlType) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
-				const float titleBarHeight = (fs::Gui::ControlType::Window == parentControlType) ? kTitleBarBaseSize._y : 0.0f;
+				const float titleBarOffsetX = (parentControlData.isTypeOf(fs::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 				scrollBarTrackParam._positionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
-				scrollBarTrackParam._positionInParent._y = titleBarHeight + parentControlData.getInnerPadding().top() + menuBarThicknes._y;
+				scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
 				bool hasExtraSize = false;
 				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, hasExtraSize);
 				if (hasExtraSize == true)
 				{
-					// Update parent control current scrollbar type
 					parentControlData._controlValue.enableScrollBar(ScrollBarType::Vert);
 
 					// Thumb
@@ -1821,9 +1817,12 @@ namespace fs
 				}
 			}
 
-			// Horizontal Track
-			if (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both)
+			const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
+			if (useHorizontal == true)
 			{
+				const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
+				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
+
 				ScrollBarTrackParam scrollBarTrackParam;
 				scrollBarTrackParam._size._x = parentWindowPureDisplayWidth;
 				scrollBarTrackParam._size._y = kScrollBarThickness;
@@ -1833,7 +1832,6 @@ namespace fs
 				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, hasExtraSize);
 				if (hasExtraSize == true)
 				{
-					// Update parent window scrollbar state
 					parentControlData._controlValue.enableScrollBar(ScrollBarType::Horz);
 
 					// Thumb
