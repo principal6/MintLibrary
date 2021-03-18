@@ -635,7 +635,6 @@ namespace fs
 			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
 			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
 			ControlData&										createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
-			void												calculateControlChildAt(ControlData& controlData) noexcept;
 			const ControlData&									getParentWindowControlData() const noexcept;
 			const ControlData&									getParentWindowControlData(const ControlData& controlData) const noexcept;
 			const ControlData&									getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
@@ -645,7 +644,8 @@ namespace fs
 #pragma region Before drawing controls
 		private:
 			void												prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
-			
+			void												calculateControlChildAt(ControlData& controlData) noexcept;
+
 			const bool											processClickControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& pressedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			const bool											processFocusControl(ControlData& controlData, const fs::RenderingBase::Color& focusedColor, const fs::RenderingBase::Color& nonFocusedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept;
 			void												processShowOnlyControl(ControlData& controlData, fs::RenderingBase::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;

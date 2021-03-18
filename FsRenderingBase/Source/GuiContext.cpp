@@ -2339,24 +2339,6 @@ namespace fs
 			return controlData;
 		}
 
-		void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
-		{
-			const MenuBarType currentMenuBarType = controlData._controlValue.getCurrentMenuBarType();
-			fs::Float2& controlChildAt = const_cast<fs::Float2&>(controlData.getChildAt());
-			controlChildAt = controlData._position + controlData._displayOffset + 
-				((_nextNoAutoPositioned == false) 
-					? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
-					: fs::Float2::kZero) +
-				fs::Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
-
-			const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockingMethod::TopSide);
-			if (dockDatumTopSide.hasDockedControls() == true)
-			{
-				// 맨 처음 Child Control 만 내려주면 된다!!
-				controlChildAt._y += controlData.getDockSize(DockingMethod::TopSide)._y + controlData.getInnerPadding().top();
-			}
-		}
-
 		const GuiContext::ControlData& GuiContext::getParentWindowControlData() const noexcept
 		{
 			FS_ASSERT("김장원", _controlStackPerFrame.empty() == false, "Control 스택이 비어있을 때 호출되면 안 됩니다!!!");
@@ -2492,6 +2474,24 @@ namespace fs
 
 			// Child at
 			calculateControlChildAt(controlData);
+		}
+
+		void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
+		{
+			const MenuBarType currentMenuBarType = controlData._controlValue.getCurrentMenuBarType();
+			fs::Float2& controlChildAt = const_cast<fs::Float2&>(controlData.getChildAt());
+			controlChildAt = controlData._position + controlData._displayOffset +
+				((_nextNoAutoPositioned == false)
+					? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
+					: fs::Float2::kZero) +
+				fs::Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
+
+			const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockingMethod::TopSide);
+			if (dockDatumTopSide.hasDockedControls() == true)
+			{
+				// 맨 처음 Child Control 만 내려주면 된다!!
+				controlChildAt._y += controlData.getDockSize(DockingMethod::TopSide)._y + controlData.getInnerPadding().top();
+			}
 		}
 
 		const bool GuiContext::processClickControl(ControlData& controlData, const fs::RenderingBase::Color& normalColor, const fs::RenderingBase::Color& hoverColor, const fs::RenderingBase::Color& pressedColor, fs::RenderingBase::Color& outBackgroundColor) noexcept
