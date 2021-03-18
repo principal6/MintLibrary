@@ -791,7 +791,7 @@ const bool testWindow()
 		// Events
 		{
 			fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-			guiContext.handleEvents(&window);
+			guiContext.receiveEventsFrom(&window);
 
 			if (window.hasEvent() == true)
 			{
@@ -849,6 +849,20 @@ const bool testWindow()
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 				guiContext.testDockedWindow();
 				guiContext.testWindow();
+				if (guiContext.beginMenuBar(L"MainMenuBar") == true)
+				{
+					if (guiContext.beginMenuBarItem(L"파일") == true)
+					{
+						guiContext.endMenuBarItem();
+					}
+
+					if (guiContext.beginMenuBarItem(L"도움말") == true)
+					{
+						guiContext.endMenuBarItem();
+					}
+
+					guiContext.endMenuBar();
+				}
 			}
 
 			{

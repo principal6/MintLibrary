@@ -503,7 +503,7 @@ namespace fs
 			void												initialize(const char* const font);
 
 		public:
-			void												handleEvents(fs::Window::IWindow* const window);
+			void												receiveEventsFrom(fs::Window::IWindow* const window);
 
 		private:
 			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& controlPositionOffset, const fs::Float2& interactionSize) const noexcept;
@@ -626,8 +626,8 @@ namespace fs
 			void												pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle);
 
 		private:
-			const ControlData&									getControlDataStackTopXXX() const noexcept;
-			ControlData&										getControlDataStackTopXXX() noexcept;
+			const ControlData&									getControlStackTopXXX() const noexcept;
+			ControlData&										getControlStackTopXXX() noexcept;
 			ControlData&										getControlData(const uint64 hashKey) noexcept;
 			const ControlData&									getControlData(const uint64 hashKey) const noexcept;
 			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
@@ -676,7 +676,8 @@ namespace fs
 
 			// RendererContext 고를 때 사용
 			const bool											isAncestorControlFocused(const ControlData& controlData) const noexcept;
-			const bool											isAncestorControlFocusedRecursiveXXX(const uint64 hashKey) const noexcept;
+			const bool											isAncestorControlPressed(const ControlData& controlData) const noexcept;
+			const bool											isAncestorControlTargetRecursiveXXX(const uint64 hashKey, const uint64 targetHashKey) const noexcept;
 			const bool											isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
 			const bool											isAncestorControlInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
@@ -686,9 +687,9 @@ namespace fs
 
 			// Focus, Out-of-focus 색 정할 때 사용
 			const bool											needToColorFocused(const ControlData& controlData) const noexcept;
-			const bool											isDescendantControlFocused(const ControlData& controlData) const noexcept;
-			const bool											isDescendantControlHovered(const ControlData& controlData) const noexcept;
-			const bool											isDescendantControlPressed(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
 			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;

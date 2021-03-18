@@ -130,7 +130,7 @@ namespace fs
 			resetPerFrameStates();
 		}
 
-		void GuiContext::handleEvents(fs::Window::IWindow* const window)
+		void GuiContext::receiveEventsFrom(fs::Window::IWindow* const window)
 		{
 			// 초기화
 			_mouseDownUp = false;
@@ -183,6 +183,9 @@ namespace fs
 					_keyCode = eventData._value.getKeyCode();
 				}
 			}
+
+			// Root 컨트롤의 Interaction 이 가장 먼저 처리되어야 한다!
+			processControlInteractionInternal(_rootControlData, true);
 		}
 
 		const bool GuiContext::isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& controlPositionOffset, const fs::Float2& interactionSize) const noexcept
@@ -1430,7 +1433,7 @@ namespace fs
 
 		void GuiContext::endListView()
 		{
-			ControlData& controlData = getControlDataStackTopXXX();
+			ControlData& controlData = getControlStackTopXXX();
 			const bool hasScrollBarVert = controlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
 			if (hasScrollBarVert == true)
 			{
@@ -1519,7 +1522,7 @@ namespace fs
 			nextNoAutoPositioned();
 			prepareControlData(controlData, prepareControlDataParam);
 
-			if (_pressedControlHashKey != 0 && isDescendantControlPressed(controlData) == false
+			if (_pressedControlHashKey != 0 && isDescendantControlPressedInclusive(controlData) == false
 				&& isInControlInternal(_mousePosition, controlData._position, fs::Float2::kZero, fs::Float2(controlData._controlValue.getItemSizeX(), controlData.getInteractionSize()._y)) == false)
 			{
 				controlData._controlValue.setIsToggled(false);
@@ -1556,8 +1559,8 @@ namespace fs
 		{
 			static constexpr ControlType controlType = ControlType::MenuBarItem;
 
-			ControlData& controlData = createOrGetControlData(text, controlType);
-			ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+			ControlData& parentControlData = getControlStackTopXXX();
+			ControlData& controlData = createOrGetControlData(text, controlType, generateControlKeyString(parentControlData, text, controlType));
 			const ControlType parentControlType = parentControlData.getControlType();
 			if (parentControlType != ControlType::MenuBar)
 			{
@@ -1588,11 +1591,17 @@ namespace fs
 			const fs::RenderingBase::Color& pressedColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
 			fs::RenderingBase::Color finalBackgroundColor;
 			const bool isClicked = processClickControl(controlData, normalColor, hoverColor, pressedColor, finalBackgroundColor);
+			const bool isParentAncestorPressed = isAncestorControlPressed(parentControlData);
 			const bool& isParentControlToggled = parentControlData._controlValue.getIsToggled();
 			if (isClicked == true)
 			{	
-				parentControlData._controlValue.setIsToggled(!isParentControlToggled);
+				parentControlData._controlValue.setIsToggled( !isParentControlToggled);
 				parentControlData._controlValue.setSelectedItemIndex((isParentControlToggled == true) ? myIndex : -1);
+			}
+			else if (isParentAncestorPressed == true)
+			{
+				parentControlData._controlValue.setIsToggled(false);
+				parentControlData._controlValue.setSelectedItemIndex(-1);
 			}
 
 			if (isControlHovered(controlData) == true && isParentControlToggled == true)
@@ -1656,7 +1665,7 @@ namespace fs
 			parentControlData._controlValue.addItemSizeY(controlData._displaySize._y);
 			controlData._controlValue.setItemSizeY(0.0f);
 
-			const bool isDescendantHovered = isDescendantControlHovered(controlData);
+			const bool isDescendantHovered = isDescendantControlHoveredInclusive(controlData);
 			const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered == true) ? NamedColor::HoverState : NamedColor::NormalState);
 			const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
 			const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
@@ -1713,7 +1722,7 @@ namespace fs
 		{
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			
-			ControlData& parent = getControlDataStackTopXXX();
+			ControlData& parent = getControlStackTopXXX();
 			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
 			const fs::Float2& parentControlPreviousContentAreaSize = parent.getPreviousContentAreaSize();
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
@@ -1779,7 +1788,7 @@ namespace fs
 
 			FS_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
-			ControlData& parentControlData = getControlDataStackTopXXX();
+			ControlData& parentControlData = getControlStackTopXXX();
 			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const bool isVert = (scrollBarType == ScrollBarType::Vert);
 
@@ -2324,7 +2333,7 @@ namespace fs
 			auto found = _controlIdMap.find(hashKey);
 			if (found == _controlIdMap.end())
 			{
-				const ControlData& stackTopControlData = getControlDataStackTopXXX();
+				const ControlData& stackTopControlData = getControlStackTopXXX();
 				ControlData newControlData{ hashKey, stackTopControlData.getHashKey(), controlType };
 				newControlData._text = text;
 
@@ -2372,7 +2381,7 @@ namespace fs
 			const bool isNewData = controlData._displaySize.isNan();
 			if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
 			{
-				const ControlData& stackTopControlData = getControlDataStackTopXXX();
+				const ControlData& stackTopControlData = getControlStackTopXXX();
 				const uint64 parentHashKey = (prepareControlDataParam._parentHashKeyOverride == 0) ? stackTopControlData.getHashKey() : prepareControlDataParam._parentHashKeyOverride;
 				controlData.setParentHashKeyXXX(parentHashKey);
 
@@ -3382,23 +3391,28 @@ namespace fs
 
 		const bool GuiContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
 		{
-			return isAncestorControlFocusedRecursiveXXX(controlData.getParentHashKey());
+			return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _focusedControlHashKey);
 		}
 
-		const bool GuiContext::isAncestorControlFocusedRecursiveXXX(const uint64 hashKey) const noexcept
+		const bool GuiContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
+		{
+			return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _pressedControlHashKey);
+		}
+
+		const bool GuiContext::isAncestorControlTargetRecursiveXXX(const uint64 hashKey, const uint64 targetHashKey) const noexcept
 		{
 			if (hashKey == 0)
 			{
 				return false;
 			}
 
-			if (hashKey == _focusedControlHashKey)
+			if (hashKey == targetHashKey)
 			{
 				return true;
 			}
 
 			const uint64 parentHashKey = getControlData(hashKey).getParentHashKey();
-			return isAncestorControlFocusedRecursiveXXX(parentHashKey);
+			return isAncestorControlTargetRecursiveXXX(parentHashKey, targetHashKey);
 		}
 
 		const bool GuiContext::needToColorFocused(const ControlData& controlData) const noexcept
@@ -3413,7 +3427,7 @@ namespace fs
 			}
 
 			// #1. Child Control Focused
-			const bool isDescendantFocused = isDescendantControlFocused(closestFocusableAncestorInclusive);
+			const bool isDescendantFocused = isDescendantControlFocusedInclusive(closestFocusableAncestorInclusive);
 			if (isDescendantFocused == true)
 			{
 				return true;
@@ -3431,20 +3445,20 @@ namespace fs
 			// #2. Docking
 			const bool isDocking = closestFocusableAncestorInclusive.isDocking();
 			const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlHashKey());
-			return (isDocking == true && (dockControlData.isRootControl() == true || isControlFocused(dockControlData) == true || isDescendantControlFocused(dockControlData) == true));
+			return (isDocking == true && (dockControlData.isRootControl() == true || isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
 		}
 
-		const bool GuiContext::isDescendantControlFocused(const ControlData& controlData) const noexcept
+		const bool GuiContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
 		{
 			return isDescendantControlInclusive(controlData, _pressedControlHashKey);
 		}
 
-		const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
+		const bool GuiContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
 		{
 			return isDescendantControlInclusive(controlData, _hoveredControlHashKey);
 		}
 
-		const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
+		const bool GuiContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
 		{
 			return isDescendantControlInclusive(controlData, _pressedControlHashKey);
 		}
@@ -3519,7 +3533,7 @@ namespace fs
 
 			_keyCode = fs::Window::EventData::KeyCode::NONE;
 
-			// 다음 프레임에 가장 먼저 렌더링 되는 것!!
+			// 다음 프레임에서 가장 먼저 렌더링 되는 것!!
 			processDock(_rootControlData, _shapeFontRendererContextBackground);
 		}
 	}

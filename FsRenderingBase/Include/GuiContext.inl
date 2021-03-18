@@ -904,7 +904,7 @@ namespace fs
 			_nextTooltipText = nullptr;
 		}
 
-		FS_INLINE const GuiContext::ControlData& GuiContext::getControlDataStackTopXXX() const noexcept
+		FS_INLINE const GuiContext::ControlData& GuiContext::getControlStackTopXXX() const noexcept
 		{
 			if (_controlStackPerFrame.empty() == false)
 			{
@@ -917,7 +917,7 @@ namespace fs
 			return _rootControlData;
 		}
 
-		FS_INLINE GuiContext::ControlData& GuiContext::getControlDataStackTopXXX() noexcept
+		FS_INLINE GuiContext::ControlData& GuiContext::getControlStackTopXXX() noexcept
 		{
 			if (_controlStackPerFrame.empty() == false)
 			{
