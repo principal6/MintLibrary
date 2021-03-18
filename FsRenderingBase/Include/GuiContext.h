@@ -616,7 +616,7 @@ namespace fs
 			void												pushScrollBar(const ScrollBarType scrollBarType);
 
 			ControlData&										pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, bool& outHasExtraSize);
-			//void												pushScrollBarThumb(const ScrollBarType scrollBarType);
+			void												pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 
 		private:
 			void												processDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);

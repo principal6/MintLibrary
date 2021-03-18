@@ -10,7 +10,6 @@
 
 #pragma comment(lib, "imm32")
 
-
 namespace fs
 {
 	namespace Window

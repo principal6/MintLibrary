@@ -1713,205 +1713,62 @@ namespace fs
 		{
 			static constexpr ControlType trackControlType = ControlType::ScrollBar;
 			
-			ControlData& parentControlData = getControlDataStackTopXXX();
-			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
-			const fs::Float2& parentControlPreviousContentAreaSize = parentControlData.getPreviousContentAreaSize();
+			ControlData& parent = getControlDataStackTopXXX();
+			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
+			const fs::Float2& parentControlPreviousContentAreaSize = parent.getPreviousContentAreaSize();
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
 			const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
 			if (useVertical == true)
 			{
-				const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+				const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
 
 				ScrollBarTrackParam scrollBarTrackParam;
 				scrollBarTrackParam._size._x = kScrollBarThickness;
 				scrollBarTrackParam._size._y = parentWindowPureDisplayHeight;
-				const float titleBarOffsetX = (parentControlData.isTypeOf(fs::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
-				scrollBarTrackParam._positionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
-				scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
+				const float titleBarOffsetX = (parent.isTypeOf(fs::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+				scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
+				scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
 				bool hasExtraSize = false;
-				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, hasExtraSize);
+				ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, hasExtraSize);
 				if (hasExtraSize == true)
 				{
-					parentControlData._controlValue.enableScrollBar(ScrollBarType::Vert);
+					parent._controlValue.enableScrollBar(ScrollBarType::Vert);
 
-					// Thumb
-					const float radius = kScrollBarThickness * 0.5f;
-					const float thumbSizeRatio = (parentWindowPureDisplayHeight / parentControlPreviousContentAreaSize._y);
-					const float thumbSize = parentWindowPureDisplayHeight * thumbSizeRatio - radius * 2.0f;
-					{
-						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
-
-						const float trackRemnantSize = std::abs(parentWindowPureDisplayHeight - thumbSize);
-						ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
-
-						PrepareControlDataParam prepareControlDataParamForThumb;
-						{
-							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
-							prepareControlDataParamForThumb._initialDisplaySize._x = kScrollBarThickness;
-							prepareControlDataParamForThumb._initialDisplaySize._y = thumbSize;
-							
-							prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(trackControlData);
-							prepareControlDataParamForThumb._desiredPositionInParent._x -= kScrollBarThickness * 0.5f;
-
-							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
-							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
-
-							thumbControlData._isDraggable = true;
-							thumbControlData._draggingConstraints.left(trackControlData._position._x - kScrollBarThickness * 0.5f);
-							thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
-							thumbControlData._draggingConstraints.top(trackControlData._position._y);
-							thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top() + trackRemnantSize);
-						}
-						nextNoAutoPositioned();
-						prepareControlData(thumbControlData, prepareControlDataParamForThumb);
-
-						// @중요
-						// Calculate position from internal value
-						thumbControlData._position._y = trackControlData._position._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
-
-						fs::RenderingBase::Color thumbColor;
-						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
-
-						const float mouseWheelScroll = getMouseWheelScroll(parentControlData);
-						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
-						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-						parentControlData._displayOffset._y = -thumbAtRatio * (parentControlPreviousContentAreaSize._y - parentWindowPureDisplayHeight); // Scrolling!
-
-						// Rendering thumb
-						{
-							const float rectLength = thumbSize - radius * 2.0f;
-							shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
-							shapeFontRendererContext.setColor(thumbColor);
-
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
-							
-							// Upper half circle
-							shapeFontRendererContext.setPosition(thumbRenderPosition);
-							shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
-
-							// Rect
-							if (0.0f < rectLength)
-							{
-								thumbRenderPosition._y += rectLength * 0.5f;
-								shapeFontRendererContext.setPosition(thumbRenderPosition);
-								shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
-							}
-
-							// Lower half circle
-							if (0.0f < rectLength)
-							{
-								thumbRenderPosition._y += rectLength * 0.5f;
-							}
-							shapeFontRendererContext.setPosition(thumbRenderPosition);
-							shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
-						}
-					}
+					pushScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, shapeFontRendererContext);
 				}
 				else
 				{
-					parentControlData._controlValue.disableScrollBar(ScrollBarType::Vert);
+					parent._controlValue.disableScrollBar(ScrollBarType::Vert);
 
-					parentControlData._displayOffset._y = 0.0f; // Scrolling!
+					parent._displayOffset._y = 0.0f; // Scrolling!
 				}
 			}
 
 			const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
 			if (useHorizontal == true)
 			{
-				const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
-				const fs::Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
+				const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
+				const fs::Float2& menuBarThicknes = parent.getMenuBarThickness();
 
 				ScrollBarTrackParam scrollBarTrackParam;
 				scrollBarTrackParam._size._x = parentWindowPureDisplayWidth;
 				scrollBarTrackParam._size._y = kScrollBarThickness;
-				scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
-				scrollBarTrackParam._positionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
+				scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
+				scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
 				bool hasExtraSize = false;
-				ControlData& trackControlData = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, hasExtraSize);
+				ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, hasExtraSize);
 				if (hasExtraSize == true)
 				{
-					parentControlData._controlValue.enableScrollBar(ScrollBarType::Horz);
+					parent._controlValue.enableScrollBar(ScrollBarType::Horz);
 
-					// Thumb
-					const float radius = kScrollBarThickness * 0.5f;
-					const float thumbSizeRatio = (parentWindowPureDisplayWidth / parentControlPreviousContentAreaSize._x);
-					const float thumbSize = parentWindowPureDisplayWidth * thumbSizeRatio - radius * 2.0f;
-					{
-						static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
-
-						ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(parentControlData, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
-						const float trackRemnantSize = std::abs(parentWindowPureDisplayWidth - thumbSize);
-
-						PrepareControlDataParam prepareControlDataParamForThumb;
-						{
-							prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
-							prepareControlDataParamForThumb._initialDisplaySize._x = thumbSize;
-							prepareControlDataParamForThumb._initialDisplaySize._y = kScrollBarThickness;
-
-							prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(trackControlData);
-							prepareControlDataParamForThumb._desiredPositionInParent._y -= kScrollBarThickness * 0.5f;
-							
-							prepareControlDataParamForThumb._parentHashKeyOverride = parentControlData.getHashKey();
-							prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
-							prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
-
-							thumbControlData._isDraggable = true;
-							thumbControlData._draggingConstraints.left(trackControlData._position._x);
-							thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + trackRemnantSize);
-							thumbControlData._draggingConstraints.top(trackControlData._position._y - kScrollBarThickness * 0.5f);
-							thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
-						}
-						nextNoAutoPositioned();
-						prepareControlData(thumbControlData, prepareControlDataParamForThumb);
-
-						// @중요
-						// Calculate position from internal value
-						thumbControlData._position._x = trackControlData._position._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
-
-						fs::RenderingBase::Color thumbColor;
-						processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
-
-						const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
-						thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-						parentControlData._displayOffset._x = -thumbAtRatio * (parentControlPreviousContentAreaSize._x - parentWindowPureDisplayWidth + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
-
-						// Rendering thumb
-						{
-							const float rectLength = thumbSize - radius * 2.0f;
-							shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
-							shapeFontRendererContext.setColor(thumbColor);
-							
-							fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
-
-							// Left half circle
-							shapeFontRendererContext.setPosition(thumbRenderPosition);
-							shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
-
-							// Rect
-							if (0.0f < rectLength)
-							{
-								thumbRenderPosition._x += rectLength * 0.5f;
-								shapeFontRendererContext.setPosition(thumbRenderPosition);
-								shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
-							}
-
-							// Right half circle
-							if (0.0f < rectLength)
-							{
-								thumbRenderPosition._x += rectLength * 0.5f;
-							}
-							shapeFontRendererContext.setPosition(thumbRenderPosition);
-							shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
-						}
-					}
+					pushScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, shapeFontRendererContext);
 				}
 				else
 				{
-					parentControlData._controlValue.disableScrollBar(ScrollBarType::Horz);
+					parent._controlValue.disableScrollBar(ScrollBarType::Horz);
 
-					parentControlData._displayOffset._x = 0.0f; // Scrolling!
+					parent._displayOffset._x = 0.0f; // Scrolling!
 				}
 			}
 		}
@@ -2039,6 +1896,148 @@ namespace fs
 			}
 
 			return trackControlData;
+		}
+
+		void GuiContext::pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
+		{
+			static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
+			const float radius = kScrollBarThickness * 0.5f;
+			const float thumbSizeRatio = (visibleLength / totalLength);
+			const float thumbSize = visibleLength * thumbSizeRatio - radius * 2.0f;
+			const float trackRemnantSize = std::abs(visibleLength - thumbSize);
+			ControlData& scrollBarParent = getControlData(scrollBarTrack.getParentHashKey());
+
+			if (scrollBarType == ScrollBarType::Vert)
+			{
+				ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
+				PrepareControlDataParam prepareControlDataParamForThumb;
+				{
+					prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
+					prepareControlDataParamForThumb._initialDisplaySize._x = kScrollBarThickness;
+					prepareControlDataParamForThumb._initialDisplaySize._y = thumbSize;
+
+					prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
+					prepareControlDataParamForThumb._desiredPositionInParent._x -= kScrollBarThickness * 0.5f;
+
+					prepareControlDataParamForThumb._parentHashKeyOverride = scrollBarParent.getHashKey();
+					prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
+					prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
+
+					thumbControlData._isDraggable = true;
+					thumbControlData._draggingConstraints.left(scrollBarTrack._position._x - kScrollBarThickness * 0.5f);
+					thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
+					thumbControlData._draggingConstraints.top(scrollBarTrack._position._y);
+					thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top() + trackRemnantSize);
+				}
+				nextNoAutoPositioned();
+				prepareControlData(thumbControlData, prepareControlDataParamForThumb);
+
+				// @중요
+				// Calculate position from internal value
+				thumbControlData._position._y = scrollBarTrack._position._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+
+				fs::RenderingBase::Color thumbColor;
+				processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
+
+				const float mouseWheelScroll = getMouseWheelScroll(scrollBarParent);
+				const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
+				thumbControlData._controlValue.setThumbAt(thumbAtRatio);
+				scrollBarParent._displayOffset._y = -thumbAtRatio * (totalLength - visibleLength); // Scrolling!
+
+				// Rendering thumb
+				{
+					const float rectLength = thumbSize - radius * 2.0f;
+					shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
+					shapeFontRendererContext.setColor(thumbColor);
+
+					fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
+
+					// Upper half circle
+					shapeFontRendererContext.setPosition(thumbRenderPosition);
+					shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
+
+					// Rect
+					if (0.0f < rectLength)
+					{
+						thumbRenderPosition._y += rectLength * 0.5f;
+						shapeFontRendererContext.setPosition(thumbRenderPosition);
+						shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+					}
+
+					// Lower half circle
+					if (0.0f < rectLength)
+					{
+						thumbRenderPosition._y += rectLength * 0.5f;
+					}
+					shapeFontRendererContext.setPosition(thumbRenderPosition);
+					shapeFontRendererContext.drawHalfCircle(radius, fs::Math::kPi);
+				}
+			}
+			else if (scrollBarType == ScrollBarType::Horz)
+			{
+				ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
+				PrepareControlDataParam prepareControlDataParamForThumb;
+				{
+					prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
+					prepareControlDataParamForThumb._initialDisplaySize._x = thumbSize;
+					prepareControlDataParamForThumb._initialDisplaySize._y = kScrollBarThickness;
+
+					prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
+					prepareControlDataParamForThumb._desiredPositionInParent._y -= kScrollBarThickness * 0.5f;
+
+					prepareControlDataParamForThumb._parentHashKeyOverride = scrollBarParent.getHashKey();
+					prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
+					prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
+
+					thumbControlData._isDraggable = true;
+					thumbControlData._draggingConstraints.left(scrollBarTrack._position._x);
+					thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + trackRemnantSize);
+					thumbControlData._draggingConstraints.top(scrollBarTrack._position._y - kScrollBarThickness * 0.5f);
+					thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
+				}
+				nextNoAutoPositioned();
+				prepareControlData(thumbControlData, prepareControlDataParamForThumb);
+
+				// @중요
+				// Calculate position from internal value
+				thumbControlData._position._x = scrollBarTrack._position._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+
+				fs::RenderingBase::Color thumbColor;
+				processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
+
+				const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
+				thumbControlData._controlValue.setThumbAt(thumbAtRatio);
+				scrollBarParent._displayOffset._x = -thumbAtRatio * (totalLength - visibleLength + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
+
+				// Rendering thumb
+				{
+					const float rectLength = thumbSize - radius * 2.0f;
+					shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
+					shapeFontRendererContext.setColor(thumbColor);
+
+					fs::Float4 thumbRenderPosition = fs::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
+
+					// Left half circle
+					shapeFontRendererContext.setPosition(thumbRenderPosition);
+					shapeFontRendererContext.drawHalfCircle(radius, +fs::Math::kPiOverTwo);
+
+					// Rect
+					if (0.0f < rectLength)
+					{
+						thumbRenderPosition._x += rectLength * 0.5f;
+						shapeFontRendererContext.setPosition(thumbRenderPosition);
+						shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - fs::Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+					}
+
+					// Right half circle
+					if (0.0f < rectLength)
+					{
+						thumbRenderPosition._x += rectLength * 0.5f;
+					}
+					shapeFontRendererContext.setPosition(thumbRenderPosition);
+					shapeFontRendererContext.drawHalfCircle(radius, -fs::Math::kPiOverTwo);
+				}
+			}
 		}
 
 		void GuiContext::processDock(const ControlData& controlData, fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)

@@ -13,7 +13,7 @@ namespace fs
 		}
 
 		EventData::EventValue::EventValue(const EventValue& rhs)
-			: _raw{ rhs._raw[0], rhs._raw[1] }
+			: _raw{ rhs._raw[0], rhs._raw[1], rhs._raw[2] }
 		{
 			__noop;
 		}
