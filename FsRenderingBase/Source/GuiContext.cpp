@@ -2057,7 +2057,10 @@ namespace fs
 						{
 							if (isInControlInternal(_mouseDownPosition, dockPosition, fs::Float2::kZero, dockSize) == true)
 							{
-								_focusedControlHashKey = controlData.getHashKey();
+								if (isDescendantControlInclusive(controlData, _focusedControlHashKey) == false)
+								{
+									_focusedControlHashKey = controlData.getHashKey();
+								}
 							}
 						}
 						shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
