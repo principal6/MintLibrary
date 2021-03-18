@@ -1,3 +1,4 @@
+#include "Rect.h"
 namespace fs
 {
 	FS_INLINE constexpr Rect Rect::fromPositionSize(const fs::Float2& positionFromLeftTop, const fs::Float2& size)
@@ -116,6 +117,11 @@ namespace fs
 	FS_INLINE constexpr const bool Rect::contains(const fs::Float2& position) const noexcept
 	{
 		return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
+	}
+
+	FS_INLINE constexpr const bool Rect::contains(const Rect& rhs) const noexcept
+	{
+		return (left() <= rhs.left()) && (rhs.right() <= right()) && (top() >= rhs.top()) && (rhs.bottom() >= bottom());
 	}
 
 	FS_INLINE const bool Rect::isNan() const noexcept

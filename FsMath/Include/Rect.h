@@ -51,6 +51,7 @@ namespace fs
 
 	public:
 		constexpr const bool			contains(const fs::Float2& position) const noexcept;
+		constexpr const bool			contains(const Rect& rhs) const noexcept;
 		const bool						isNan() const noexcept;
 		void							setNan() noexcept;
 
