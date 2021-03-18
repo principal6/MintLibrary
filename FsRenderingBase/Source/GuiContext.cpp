@@ -491,7 +491,7 @@ namespace fs
 					endButton();
 				}
 
-				pushLabel(L"A label!");
+				pushLabel(L"TestLable00000", L"A label!");
 
 				nextSameLine();
 
@@ -730,11 +730,11 @@ namespace fs
 			return isClicked;
 		}
 
-		void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
+		void GuiContext::pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam)
 		{
 			static constexpr ControlType controlType = ControlType::Label;
 
-			ControlData& controlData = createOrGetControlData(text, controlType);
+			ControlData& controlData = createOrGetControlData(text, controlType, generateControlKeyString(name, controlType));
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				const float textWidth = calculateTextWidth(text, fs::StringUtil::wcslen(text));
@@ -1792,8 +1792,7 @@ namespace fs
 			const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
 			const bool isVert = (scrollBarType == ScrollBarType::Vert);
 
-			ControlData& trackControlData = createOrGetControlData(generateControlKeyString(parentControlData, 
-				(isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
+			ControlData& trackControlData = createOrGetControlData(generateControlKeyString((isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
 			outHasExtraSize = false;
 
 			PrepareControlDataParam prepareControlDataParamForTrack;
@@ -2308,12 +2307,17 @@ namespace fs
 			shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale);
 		}
 
-		const wchar_t* GuiContext::generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept
+		const wchar_t* GuiContext::generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept
+		{
+			return generateControlKeyString(getControlStackTopXXX(), name, controlType);
+		}
+
+		const wchar_t* GuiContext::generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept
 		{
 			static std::wstring hashKeyWstring;
 			hashKeyWstring.clear();
 			hashKeyWstring.append(std::to_wstring(parentControlData.getHashKey()));
-			hashKeyWstring.append(text);
+			hashKeyWstring.append(name);
 			hashKeyWstring.append(std::to_wstring(static_cast<uint16>(controlType)));
 			return hashKeyWstring.c_str();
 		}

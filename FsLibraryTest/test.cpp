@@ -847,7 +847,6 @@ const bool testWindow()
 			graphicDevice.beginRendering();
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-				guiContext.testDockedWindow();
 				guiContext.testWindow();
 				if (guiContext.beginMenuBar(L"MainMenuBar") == true)
 				{
@@ -863,14 +862,22 @@ const bool testWindow()
 
 					guiContext.endMenuBar();
 				}
-			}
 
-			{
-				fs::RenderingBase::FontRendererContext& fontRendererContext = graphicDevice.getFontRendererContext();
-
-				fontRendererContext.setColor(fs::RenderingBase::Color(0.125f, 0.125f, 0.5f));
-				fontRendererContext.drawDynamicText((L"FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fs::Float4(10, 45, 0, 1));
-				fontRendererContext.drawDynamicText((L"CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fs::Float4(120, 45, 0, 1));
+				fs::Gui::WindowParam inspectorWindowParam;
+				inspectorWindowParam._size = fs::Float2(300.0f, 400.0f);
+				inspectorWindowParam._position = fs::Float2(20.0f, 50.0f);
+				inspectorWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
+				inspectorWindowParam._initialDockingSize._x = 240.0f;
+				if (guiContext.beginWindow(L"Inspector", inspectorWindowParam) == true)
+				{
+					fs::Gui::LabelParam fpsLabelParam;
+					fpsLabelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);
+					fpsLabelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Left;
+					guiContext.pushLabel(L"FPS_Label", (L" FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fpsLabelParam);
+					guiContext.pushLabel(L"CPU_Label", (L" CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fpsLabelParam);
+				
+					guiContext.endWindow();
+				}
 			}
 
 			const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();

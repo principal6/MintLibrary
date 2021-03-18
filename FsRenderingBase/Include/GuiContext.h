@@ -568,7 +568,7 @@ namespace fs
 			void												endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
 			// [Label]
-			void												pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
+			void												pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
 			// [Slider]
 			// Return 'true' if value was changed
@@ -632,7 +632,8 @@ namespace fs
 			const ControlData&									getControlData(const uint64 hashKey) const noexcept;
 			fs::Float4											getControlCenterPosition(const ControlData& controlData) const noexcept;
 			fs::Float2											getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
-			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const text, const ControlType controlType) const noexcept;
+			const wchar_t*										generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept;
+			const wchar_t*										generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept;
 			const uint64										generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
 			ControlData&										createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
 			const ControlData&									getParentWindowControlData() const noexcept;
