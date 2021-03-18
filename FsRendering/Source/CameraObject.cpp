@@ -11,21 +11,46 @@ namespace fs
 			, _baseUpDirection{ 0.0f, 1.0f, 0.0f }
 			, _baseForwardDirection{ 0.0f, 0.0f, 1.0f }
 			, _focusOffset{ 0.0f, 0.0f, 2.0f }
+			, _fov{ fs::Math::toRadian(60.0f) }
 			, _nearZ{ 0.1f }
 			, _farZ{ 1000.0f }
-			, _fov{ fs::Math::toRadian(60.0f) }
+			, _screenRatio{ 1.0f }
 			, _pitch{ 0.0f }
 			, _yaw{ 0.0f }
 			, _roll{ 0.0f }
 			, _movementFactor{ 0.005f }
 			, _rotationFactor{ 0.005f }
 		{
-			__noop;
+			updatePerspectiveMatrix();
 		}
 
 		CameraObject::~CameraObject()
 		{
 			__noop;
+		}
+
+		void CameraObject::setPerspectiveFov(const float fov)
+		{
+			_fov = fov;
+			updatePerspectiveMatrix();
+		}
+
+		void CameraObject::setPerspectiveZRange(const float nearZ, const float farZ)
+		{
+			_nearZ = nearZ;
+			_farZ = farZ;
+			updatePerspectiveMatrix();
+		}
+
+		void CameraObject::setPerspectiveScreenRatio(const float screenRatio)
+		{
+			_screenRatio = screenRatio;
+			updatePerspectiveMatrix();
+		}
+
+		void CameraObject::updatePerspectiveMatrix() noexcept
+		{
+			_projectionMatrix = fs::Float4x4::projectionMatrixPerspective(_fov, _nearZ, _farZ, _screenRatio);
 		}
 
 		void CameraObject::move(const MoveDirection moveDirection)
@@ -76,7 +101,12 @@ namespace fs
 			const fs::Float4x4& rotationMatrix = getRotationMatrix();
 			return rotationMatrix.transpose() * fs::Float4x4::translationMatrix(-getObjectTransformSrt()._translation);
 		}
-		
+
+		const fs::Float4x4& CameraObject::getProjectionMatrix() const noexcept
+		{
+			return _projectionMatrix;
+		}
+
 		fs::Float4x4 CameraObject::getRotationMatrix() const noexcept
 		{
 			const fs::Float3& forwardDirectionAfterYaw = fs::Float4x4::rotationMatrixY(_yaw) * _baseForwardDirection;

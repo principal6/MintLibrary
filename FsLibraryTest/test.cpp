@@ -772,6 +772,8 @@ const bool testWindow()
 	
 	Rendering::Object* const testObject = objectManager.createObject();
 	Rendering::CameraObject* const testCameraObject = objectManager.createCameraObject();
+	fs::Float2 windowSize = graphicDevice.getWindowSizeFloat2();
+	testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
 	{
 		testObject->attachComponent(objectManager.createMeshComponent());
 
@@ -861,6 +863,9 @@ const bool testWindow()
 			previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
 
 			graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
+			graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());
+			graphicDevice.updateViewProjectionMatrix();
+
 			objectManager.renderMeshComponents();
 
 			graphicDevice.endRendering();

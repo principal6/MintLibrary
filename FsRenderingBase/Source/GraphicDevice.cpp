@@ -357,17 +357,21 @@ namespace fs
 		{
 			_cbViewData._cbViewMatrix = viewMatrix;
 			
-			_cbViewData._cbViewPerspectiveProjectionMatrix = _cbViewData._cbPerspectiveProjectionMatrix * _cbViewData._cbViewMatrix;
+			DxResource& cbView = _resourcePool.getResource(_cbViewId);
+			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
+		}
+
+		void GraphicDevice::setProjectionMatrix(const fs::Float4x4& projectionMatrix) noexcept
+		{
+			_cbViewData._cb3DProjectionMatrix = projectionMatrix;
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewId);
 			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
 		}
 
-		void GraphicDevice::setPerspectiveProjectionMatrix(const fs::Float4x4& perspectiveProjectionMatrix) noexcept
+		void GraphicDevice::updateViewProjectionMatrix() noexcept
 		{
-			_cbViewData._cbPerspectiveProjectionMatrix = perspectiveProjectionMatrix;
-
-			_cbViewData._cbViewPerspectiveProjectionMatrix = _cbViewData._cbPerspectiveProjectionMatrix * _cbViewData._cbViewMatrix;
+			_cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
 			DxResource& cbView = _resourcePool.getResource(_cbViewId);
 			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
@@ -376,6 +380,11 @@ namespace fs
 		const fs::Int2& GraphicDevice::getWindowSize() const noexcept
 		{
 			return (_window != nullptr) ? _window->getSize() : fs::Int2::kZero;
+		}
+
+		fs::Float2 GraphicDevice::getWindowSizeFloat2() const noexcept
+		{
+			return fs::Float2(getWindowSize());
 		}
 		
 		fs::Window::IWindow* GraphicDevice::getWindow() noexcept

@@ -36,10 +36,6 @@ namespace fs
 			fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
 			const fs::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
 			_cbTransformId = resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbTransformData), sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
-
-			const fs::Int2& windowSize = _graphicDevice->getWindowSize();
-			const fs::Float2& windowSizeF = fs::Float2(windowSize);
-			_graphicDevice->setPerspectiveProjectionMatrix(fs::Float4x4::projectionMatrixPerspective(fs::Math::toRadian(60.0f), 0.1f, 100.0f, windowSizeF._x / windowSizeF._y));
 		}
 
 		fs::Rendering::Object* ObjectManager::createObject()

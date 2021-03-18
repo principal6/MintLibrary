@@ -15,9 +15,9 @@ namespace fs
 		struct CB_View CPP_HLSL_REGISTER_INDEX(0)
 		{
 			float4x4			_cb2DProjectionMatrix;
-			float4x4			_cbPerspectiveProjectionMatrix;
+			float4x4			_cb3DProjectionMatrix;
 			float4x4			_cbViewMatrix;
-			float4x4			_cbViewPerspectiveProjectionMatrix;
+			float4x4			_cbViewProjectionMatrix;
 		};
 
 		struct CB_Transform CPP_HLSL_REGISTER_INDEX(1)

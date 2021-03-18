@@ -89,12 +89,14 @@ namespace fs
 
 		public:
 			void														setViewMatrix(const fs::Float4x4& viewMatrix) noexcept;
-			void														setPerspectiveProjectionMatrix(const fs::Float4x4& perspectiveProjectionMatrix) noexcept;
+			void														setProjectionMatrix(const fs::Float4x4& projectionMatrix) noexcept;
+			void														updateViewProjectionMatrix() noexcept;
 
 		public:
 			ID3D11Device*												getDxDevice() noexcept;
 			ID3D11DeviceContext*										getDxDeviceContext() noexcept;
 			const fs::Int2&												getWindowSize() const noexcept;
+			fs::Float2													getWindowSizeFloat2() const noexcept;
 			fs::Window::IWindow*										getWindow() noexcept;
 
 		private:
