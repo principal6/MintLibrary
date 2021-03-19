@@ -398,7 +398,7 @@ namespace fs
 			, _hashKey{ hashKey }
 			, _parentHashKey{ parentHashKey }
 			, _controlType{ controlType }
-			, _controlState{ ControlState::Visible }
+			, _visibleState{ VisibleState::Visible }
 			, _viewportIndex{ 0 }
 			, _viewportIndexForChildren{ 0 }
 			, _viewportIndexForDocks{ 0 }
@@ -440,15 +440,6 @@ namespace fs
 			{
 				_position._x = fs::min(fs::max(_draggingConstraints.left(), _position._x), _draggingConstraints.right());
 				_position._y = fs::min(fs::max(_draggingConstraints.top(), _position._y), _draggingConstraints.bottom());
-			}
-
-			if (_controlType == ControlType::Window)
-			{
-				setControlState(ControlState::VisibleOpen);
-			}
-			else
-			{
-				setControlState(ControlState::Visible);
 			}
 
 			switch (prepareControlDataParam._viewportUsage)
@@ -575,9 +566,14 @@ namespace fs
 			return _controlType == ControlType::ROOT;
 		}
 
-		FS_INLINE const bool GuiContext::ControlData::isControlState(const ControlState controlState) const noexcept
+		FS_INLINE const bool GuiContext::ControlData::isVisibleState(const VisibleState visibleState) const noexcept
 		{
-			return controlState == _controlState;
+			return visibleState == _visibleState;
+		}
+
+		FS_INLINE const bool GuiContext::ControlData::isControlVisible() const noexcept
+		{
+			return (_visibleState != VisibleState::Invisible);
 		}
 
 		FS_INLINE const uint32 GuiContext::ControlData::getViewportIndex() const noexcept
@@ -817,9 +813,9 @@ namespace fs
 			return _childWindowHashKeyMap;
 		}
 
-		FS_INLINE void GuiContext::ControlData::setControlState(const ControlState controlState) noexcept
+		FS_INLINE void GuiContext::ControlData::setVisibleState(const VisibleState visibleState) noexcept
 		{
-			_controlState = controlState;
+			_visibleState = visibleState;
 		}
 
 		FS_INLINE void GuiContext::ControlData::swapDockingStateContext() noexcept

@@ -392,7 +392,8 @@ namespace fs
 				const bool									isTypeOf(const ControlType controlType) const noexcept;
 				const wchar_t*								getText() const noexcept;
 				const bool									isRootControl() const noexcept;
-				const bool									isControlState(const ControlState controlState) const noexcept;
+				const bool									isVisibleState(const VisibleState visibleState) const noexcept;
+				const bool									isControlVisible() const noexcept;
 				const uint32								getViewportIndex() const noexcept;
 				const uint32								getViewportIndexForChildren() const noexcept;
 				const uint32								getViewportIndexForDocks() const noexcept;
@@ -428,7 +429,7 @@ namespace fs
 				const std::unordered_map<uint64, bool>&		getChildWindowHashKeyMap() const noexcept;
 
 			public:
-				void										setControlState(const ControlState controlState) noexcept;
+				void										setVisibleState(const VisibleState visibleState) noexcept;
 				void										swapDockingStateContext() noexcept;
 			
 			public:
@@ -468,7 +469,7 @@ namespace fs
 				fs::Float2									_childAt; // In screen space, Next child control will be positioned according to this
 				fs::Float2									_nextChildOffset; // Every new child sets this offset to calculate next _childAt
 				ControlType									_controlType;
-				ControlState								_controlState;
+				VisibleState								_visibleState;
 				uint32										_viewportIndex;
 				uint32										_viewportIndexForChildren; // Used by window
 				uint32										_viewportIndexForDocks;
@@ -544,13 +545,13 @@ namespace fs
 			// Splitter
 
 		public:
-			void												testWindow();
-			void												testDockedWindow();
+			void												testWindow(VisibleState& inoutVisibleState);
+			void												testDockedWindow(VisibleState& inoutVisibleState);
 
 		public:
 			// [Window | Control with ID]
 			// title is used as unique id for windows
-			const bool											beginWindow(const wchar_t* const title, const WindowParam& windowParam);
+			const bool											beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
 			void												endWindow() { endControlInternal(ControlType::Window); }
 
 		private:
@@ -601,11 +602,10 @@ namespace fs
 
 		private:
 			// Returns size of titlebar
-			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding);
+			fs::Float2											beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding, VisibleState& inoutParentVisibleState);
 			void												endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
-			const bool											beginRoundButton(const wchar_t* const windowTitle, const fs::RenderingBase::Color& color);
-			void												endRoundButton() { endControlInternal(ControlType::RoundButton); }
+			const bool											pushRoundButton(const wchar_t* const windowTitle, const fs::RenderingBase::Color& color);
 
 			// [Tooltip]
 			// Unique control
@@ -640,6 +640,11 @@ namespace fs
 			const ControlData&									getParentWindowControlData(const ControlData& controlData) const noexcept;
 			const ControlData&									getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
+
+
+		public:
+			const bool											isControlClicked() const noexcept;
+			const bool											isControlPressed() const noexcept;
 
 
 #pragma region Before drawing controls
@@ -691,6 +696,8 @@ namespace fs
 			const bool											isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
 			const bool											isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept;
 			const bool											isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlPressed(const ControlData& controlData) const noexcept;
+			const bool											isDescendantControlHovered(const ControlData& controlData) const noexcept;
 			const ControlData&									getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
 			const fs::RenderingBase::Color&						getNamedColor(const NamedColor namedColor) const noexcept;

@@ -847,7 +847,9 @@ const bool testWindow()
 			graphicDevice.beginRendering();
 			{
 				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-				guiContext.testWindow();
+
+				static fs::Gui::VisibleState testWindowVisibleState;
+				guiContext.testWindow(testWindowVisibleState);
 				if (guiContext.beginMenuBar(L"MainMenuBar") == true)
 				{
 					if (guiContext.beginMenuBarItem(L"파일") == true)
@@ -855,8 +857,18 @@ const bool testWindow()
 						guiContext.endMenuBarItem();
 					}
 
-					if (guiContext.beginMenuBarItem(L"도움말") == true)
+					if (guiContext.beginMenuBarItem(L"윈도우") == true)
 					{
+						if (guiContext.beginMenuItem(L"TestWindow") == true)
+						{
+							if (guiContext.isControlPressed() == true)
+							{
+								testWindowVisibleState = fs::Gui::VisibleState::VisibleOpen;
+							}
+							
+							guiContext.endMenuItem();
+						}
+
 						guiContext.endMenuBarItem();
 					}
 
@@ -868,7 +880,8 @@ const bool testWindow()
 				inspectorWindowParam._position = fs::Float2(20.0f, 50.0f);
 				inspectorWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
 				inspectorWindowParam._initialDockingSize._x = 240.0f;
-				if (guiContext.beginWindow(L"Inspector", inspectorWindowParam) == true)
+				static fs::Gui::VisibleState inspectorVisibleState;
+				if (guiContext.beginWindow(L"Inspector", inspectorWindowParam, inspectorVisibleState) == true)
 				{
 					fs::Gui::LabelParam fpsLabelParam;
 					fpsLabelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);

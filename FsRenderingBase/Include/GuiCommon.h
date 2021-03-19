@@ -39,11 +39,11 @@ namespace fs
 			COUNT
 		};
 
-		enum class ControlState
+		enum class VisibleState
 		{
 			Visible,
+			VisibleOpen = Visible,
 
-			VisibleOpen,
 			VisibleClosed,
 
 			Invisible
