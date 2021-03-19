@@ -645,6 +645,7 @@ namespace fs
 		public:
 			const bool											isControlClicked() const noexcept;
 			const bool											isControlPressed() const noexcept;
+			const bool											isFocusedControlTextBox() const noexcept;
 
 
 #pragma region Before drawing controls

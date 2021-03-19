@@ -933,7 +933,7 @@ namespace fs
 
 			const fs::Float4& controlCenterPosition = getControlCenterPosition(controlData);
 			const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
-			const float inputCandidateWidth = (32 <= _wcharInputCandiate) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+			const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
 			fs::Float4 textRenderOffset;
 			if (controlData._controlValue.getTextDisplayOffset() == 0)
 			{
@@ -2408,6 +2408,11 @@ namespace fs
 			return isControlPressed(getControlStackTopXXX());
 		}
 
+		const bool GuiContext::isFocusedControlTextBox() const noexcept
+		{
+			return (_focusedControlHashKey == 0) ? false : getControlData(_focusedControlHashKey).isTypeOf(ControlType::TextBox);
+		}
+
 		void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
 		{
 			const bool isNewData = controlData._displaySize.isNan();
@@ -3482,7 +3487,7 @@ namespace fs
 
 		const bool GuiContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
 		{
-			return isDescendantControlInclusive(controlData, _pressedControlHashKey);
+			return isDescendantControlInclusive(controlData, _focusedControlHashKey);
 		}
 
 		const bool GuiContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept

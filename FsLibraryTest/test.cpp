@@ -787,7 +787,8 @@ const bool testWindow()
 	while (window.isRunning() == true)
 	{
 		const uint64 loopStartTimeMs = fs::Profiler::getCurrentTimeMs();
-		
+		fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+
 		// Events
 		{
 			fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
@@ -816,6 +817,7 @@ const bool testWindow()
 		}
 
 		// Dynamic Keyboard Inputs
+		if (guiContext.isFocusedControlTextBox() == false)
 		{
 			if (window.isKeyDown(EventData::KeyCode::W) == true)
 			{
@@ -842,9 +844,7 @@ const bool testWindow()
 		{
 			graphicDevice.beginRendering();
 			{
-				fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
-
-				static fs::Gui::VisibleState testWindowVisibleState;
+				static fs::Gui::VisibleState testWindowVisibleState = fs::Gui::VisibleState::Invisible;
 				guiContext.testWindow(testWindowVisibleState);
 				if (guiContext.beginMenuBar(L"MainMenuBar") == true)
 				{

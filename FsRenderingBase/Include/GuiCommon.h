@@ -44,7 +44,7 @@ namespace fs
 			Visible,
 			VisibleOpen = Visible,
 
-			VisibleClosed,
+			VisibleFolded,
 
 			Invisible
 		};
