@@ -798,11 +798,7 @@ const bool testWindow()
 				EventData event = window.popEvent();
 				if (event._type == EventType::KeyDown)
 				{
-					if (event._value.getKeyCode() == EventData::KeyCode::Escape)
-					{
-						window.destroy();
-					}
-					else if (event._value.getKeyCode() == EventData::KeyCode::Enter)
+					if (event._value.getKeyCode() == EventData::KeyCode::Enter)
 					{
 						graphicDevice.getShaderPool().recompileAllShaders();
 					}
@@ -854,6 +850,14 @@ const bool testWindow()
 				{
 					if (guiContext.beginMenuBarItem(L"파일") == true)
 					{
+						if (guiContext.beginMenuItem(L"종료") == true)
+						{
+							if (guiContext.isControlPressed() == true)
+							{
+								window.destroy();
+							}
+							guiContext.endMenuItem();
+						}
 						guiContext.endMenuBarItem();
 					}
 

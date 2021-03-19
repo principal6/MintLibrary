@@ -1511,24 +1511,24 @@ namespace fs
 			static constexpr ControlType controlType = ControlType::MenuBar;
 
 			ControlData& menuBar = createOrGetControlData(name, controlType);
-			ControlData& parentControlData = getControlData(menuBar.getParentHashKey());
-			const ControlType parentControlType = parentControlData.getControlType();
-			const bool isParentControlRoot = parentControlData.isTypeOf(ControlType::ROOT);
-			const bool isParentControlWindow = parentControlData.isTypeOf(ControlType::Window);
-			if (isParentControlRoot == false && isParentControlWindow == false)
+			ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
+			const ControlType menuBarParentType = menuBarParent.getControlType();
+			const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
+			const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
+			if (isMenuBarParentRoot == false && isMenuBarParentWindow == false)
 			{
 				FS_LOG_ERROR("김장원", "MenuBar 는 Window 나 Root 컨트롤의 자식으로만 사용할 수 있습니다!");
 				return false;
 			}
-			parentControlData._controlValue.setCurrentMenuBarType(MenuBarType::Top);
+			menuBarParent._controlValue.setCurrentMenuBarType(MenuBarType::Top); // TODO...
 
 			PrepareControlDataParam prepareControlDataParam;
 			{
 				prepareControlDataParam._alwaysResetDisplaySize = true;
-				prepareControlDataParam._initialDisplaySize._x = parentControlData._displaySize._x;
+				prepareControlDataParam._initialDisplaySize._x = menuBarParent._displaySize._x;
 				prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
 				prepareControlDataParam._desiredPositionInParent._x = 0.0f;
-				prepareControlDataParam._desiredPositionInParent._y = (isParentControlWindow == true) ? kTitleBarBaseSize._y : 0.0f;
+				prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseSize._y : 0.0f;
 				prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
 			}
 			nextNoAutoPositioned();
@@ -1552,7 +1552,7 @@ namespace fs
 
 			fs::RenderingBase::Color color = getNamedColor(NamedColor::NormalState);
 			processShowOnlyControl(menuBar, color, true);
-			if (isParentControlRoot == true)
+			if (isMenuBarParentRoot == true)
 			{
 				color.a(1.0f);
 			}
@@ -1596,13 +1596,13 @@ namespace fs
 			menuBar._controlValue.addItemSizeX(menuBarItem._displaySize._x);
 			menuBarItem._controlValue.setItemSizeY(0.0f);
 
-			const int16 parentSelectedItemIndex = menuBar._controlValue.getSelectedItemIndex();
+			const int16& menuBarSelectedItemIndex = menuBar._controlValue.getSelectedItemIndex();
 			const int16 myIndex = static_cast<int16>(menuBar.getChildControlDataHashKeyArray().size() - 1);
-			const bool wasMeSelected = (parentSelectedItemIndex == myIndex);
-			const fs::RenderingBase::Color& normalColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::NormalState);
-			const fs::RenderingBase::Color& hoverColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::HoverState);
-			const fs::RenderingBase::Color& pressedColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
+			const bool wasMeSelected = (menuBarSelectedItemIndex == myIndex);
 			fs::RenderingBase::Color finalBackgroundColor;
+			const fs::RenderingBase::Color& normalColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::NormalState);
+			const fs::RenderingBase::Color& hoverColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::HoverState);
+			const fs::RenderingBase::Color& pressedColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
 			const bool isClicked = processClickControl(menuBarItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
 			const bool isParentAncestorPressed = isAncestorControlPressed(menuBar);
 			const bool isDescendantHovered = isDescendantControlHovered(menuBarItem);
@@ -1613,17 +1613,15 @@ namespace fs
 				menuBar._controlValue.setIsToggled(!isParentControlToggled);
 				menuBar._controlValue.setSelectedItemIndex(myIndex);
 			}
-			else if (isParentAncestorPressed == true && wasMeSelected == true)
+			else if (wasMeSelected == true && isParentAncestorPressed == true)
 			{
 				menuBar._controlValue.setIsToggled(false);
 				menuBar._controlValue.setSelectedItemIndex(-1);
 			}
-
 			if (isControlHovered(menuBarItem) == true && isParentControlToggled == true)
 			{
 				menuBar._controlValue.setSelectedItemIndex(myIndex);
 			}
-			const bool isMeSelected = (menuBar._controlValue.getSelectedItemIndex() == myIndex);
 			
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
 			shapeFontRendererContext.setViewportIndex(menuBarItem.getViewportIndex());
@@ -1638,6 +1636,7 @@ namespace fs
 			shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f,
 				controlLeftCenterPosition._y, 0, 0), fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered);
 
+			const bool isMeSelected = (menuBarSelectedItemIndex == myIndex);
 			const bool result = (isClicked || isMeSelected || (isParentAncestorPressed && wasMeSelected));
 			if (result == true)
 			{
@@ -1681,15 +1680,18 @@ namespace fs
 			menuItem._controlValue.setItemSizeY(0.0f);
 
 			const bool isDescendantHovered = isDescendantControlHoveredInclusive(menuItem);
-			const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered == true) ? NamedColor::HoverState : NamedColor::NormalState);
-			const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
-			const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
 			fs::RenderingBase::Color finalBackgroundColor;
-			const bool isClicked = processClickControl(menuItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
+			{
+				const fs::RenderingBase::Color& normalColor = getNamedColor((isDescendantHovered == true) ? NamedColor::HoverState : NamedColor::NormalState);
+				const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
+				const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
+				processClickControl(menuItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
+			}
 			const bool isHovered = isControlHovered(menuItem);
 			const bool isPresssed = isControlPressed(menuItem);
 			const bool& isToggled = menuItem._controlValue.getIsToggled();
 			const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlDataHashKeyArray().size() - 1);
+			const bool isMeSelected = (menuItemParent._controlValue.getSelectedItemIndex() == myIndex);
 			if (isHovered == true)
 			{
 				menuItemParent._controlValue.setSelectedItemIndex(myIndex);
@@ -1698,7 +1700,7 @@ namespace fs
 			{
 				menuItemParent._controlValue.setSelectedItemIndex(-1);
 			}
-			menuItem._controlValue.setIsToggled((menuItemParent._controlValue.getSelectedItemIndex() == myIndex));
+			menuItem._controlValue.setIsToggled(isMeSelected);
 
 			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
 			shapeFontRendererContext.setViewportIndex(menuItem.getViewportIndex());
@@ -1725,7 +1727,7 @@ namespace fs
 				controlLeftCenterPosition._y, 0, 0), fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
 
 			// (previousMaxChildCount) 최초 업데이트 시 Child 가 다 등록되어야 하므로 controlData._updateCount 를 이용한다.
-			const bool result = (isToggled || isPresssed || isClicked || menuItem._updateCount <= 1);
+			const bool result = (isToggled || isPresssed || menuItem._updateCount <= 1);
 			if (result == true)
 			{
 				_controlStackPerFrame.emplace_back(ControlStackData(menuItem));
