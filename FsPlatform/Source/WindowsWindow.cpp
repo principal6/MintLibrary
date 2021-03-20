@@ -3,6 +3,8 @@
 
 #include <FsContainer/Include/StringUtil.hpp>
 
+#include <FsMath/Include/Rect.h>
+
 #include <immdev.h>
 #include <windowsx.h>
 #include <hidusage.h>
@@ -237,17 +239,22 @@ namespace fs
 
 		void WindowsWindow::setSize(const Int2& newSize)
 		{
+			setSizeData(newSize);
+			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
+		}
+
+		void WindowsWindow::setSizeData(const Int2& newSize)
+		{
 			_creationData._size = newSize;
 
 			RECT windowRect;
 			windowRect.left = _creationData._position._x;
 			windowRect.top = _creationData._position._y;
 			windowRect.bottom = windowRect.top + newSize._y;
-			windowRect.right = windowRect.left +newSize._x;
+			windowRect.right = windowRect.left + newSize._x;
 			AdjustWindowRect(&windowRect, _windowStyle, FALSE);
 
 			_entireSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
-			SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
 		}
 
 		void WindowsWindow::setPosition(const Int2& newPosition)
@@ -266,7 +273,22 @@ namespace fs
 		{
 			__super::setCursorType(cursorType);
 
-			::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
+			POINT rawCursorPosition;
+			::GetCursorPos(&rawCursorPosition);
+			const fs::Float2 cursorPosition(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
+
+			RECT rawClientRect;
+			::GetClientRect(_hWnd, &rawClientRect);
+			POINT leftTop{ rawClientRect.left, rawClientRect.top };
+			POINT rightBottom{ rawClientRect.right, rawClientRect.bottom };
+			::ClientToScreen(_hWnd, &leftTop);
+			::ClientToScreen(_hWnd, &rightBottom);
+			
+			const fs::Rect clientRect = fs::Rect::fromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
+			if (clientRect.contains(cursorPosition) == true)
+			{
+				::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
+			}
 		}
 
 		const uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
@@ -504,6 +526,16 @@ namespace fs
 						_eventQueue.push(eventData);
 					}
 				}
+				return 0;
+			}
+			case WM_SIZE:
+			{
+				const fs::Int2 size{ LOWORD(lParam), HIWORD(lParam) };
+				setSizeData(size);
+				
+				eventData._type = EventType::WindowResized;
+				eventData._value.setSize(fs::Float2(size));
+				_eventQueue.push(eventData);
 				return 0;
 			}
 			default:

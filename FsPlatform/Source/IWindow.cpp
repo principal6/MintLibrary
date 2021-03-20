@@ -68,6 +68,16 @@ namespace fs
 		{
 			return _inputWchar;
 		}
+
+		void EventData::EventValue::setSize(const fs::Float2& size) noexcept
+		{
+			_size = size;
+		}
+
+		const fs::Float2& EventData::EventValue::getSize() const noexcept
+		{
+			return _size;
+		}
 		
 		
 		IWindow::IWindow()

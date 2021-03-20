@@ -62,6 +62,7 @@ namespace fs
 			MouseUp,
 			MouseDoubleClicked,
 			MouseWheel,
+			WindowResized,
 		};
 
 		struct EventData
@@ -116,6 +117,9 @@ namespace fs
 				void						setInputWchar(const wchar_t inputWchar) noexcept;
 				const wchar_t				getInputWchar() const noexcept;
 
+				void						setSize(const fs::Float2& size) noexcept;
+				const fs::Float2&			getSize() const noexcept;
+
 			private:
 				union
 				{
@@ -130,10 +134,11 @@ namespace fs
 					struct
 					{
 						KeyCode				_keyCode;
+						wchar_t				_inputWchar;
 					};
 					struct
 					{
-						wchar_t				_inputWchar;
+						fs::Float2			_size;
 					};
 				};
 			};

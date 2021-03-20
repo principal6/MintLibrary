@@ -6,6 +6,11 @@ namespace fs
 		return Rect(positionFromLeftTop, size);
 	}
 
+	FS_INLINE constexpr Rect Rect::fromLongs(const long left, const long right, const long top, const long bottom)
+	{
+		return Rect(static_cast<float>(left), static_cast<float>(right), static_cast<float>(top), static_cast<float>(bottom));
+	}
+
 	
 	inline constexpr Rect::Rect()
 		: Rect(0.0f, 0.0f, 0.0f, 0.0f)
@@ -19,18 +24,16 @@ namespace fs
 		__noop;
 	}
 
-	inline constexpr Rect::Rect(const float left, const float right, const float top, const float bottom)
-		: _raw{ left, right, top, bottom }
+	inline constexpr Rect::Rect(const fs::Float2& positionFromLeftTop, const fs::Float2& size)
+		: Rect(positionFromLeftTop._x, positionFromLeftTop._x + size._x, positionFromLeftTop._y, positionFromLeftTop._y + size._y)
 	{
 		__noop;
 	}
 
-	inline constexpr Rect::Rect(const fs::Float2& positionFromLeftTop, const fs::Float2& size)
+	inline constexpr Rect::Rect(const float left, const float right, const float top, const float bottom)
+		: _raw{ left, right, top, bottom }
 	{
-		left(positionFromLeftTop._x);
-		right(left() + size._x);
-		top(positionFromLeftTop._y);
-		bottom(top() + size._y);
+		__noop;
 	}
 
 	FS_INLINE constexpr const bool Rect::operator==(const Rect& rhs) const noexcept

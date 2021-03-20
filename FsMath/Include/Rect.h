@@ -14,12 +14,13 @@ namespace fs
 	{
 	public:
 		static constexpr Rect			fromPositionSize(const fs::Float2& positionFromLeftTop, const fs::Float2& size);
+		static constexpr Rect			fromLongs(const long left, const long right, const long top, const long bottom);
 
 	public:
 		constexpr						Rect();
 		constexpr						Rect(const float uniformValue);
-		constexpr						Rect(const float left, const float right, const float top, const float bottom);
 		constexpr						Rect(const fs::Float2& positionFromLeftTop, const fs::Float2& size);
+		constexpr						Rect(const float left, const float right, const float top, const float bottom);
 		constexpr						Rect(const Rect& rhs) = default;
 		constexpr						Rect(Rect&& rhs) noexcept = default;
 

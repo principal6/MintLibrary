@@ -63,11 +63,13 @@ namespace fs
 
 		public:
 			virtual void						setSize(const Int2& newSize) override final;
+			void								setSizeData(const Int2& newSize);
 			virtual void						setPosition(const Int2& newPosition) override final;
 			HWND								getHandle() const noexcept;
 
 		public:
 			virtual void						setCursorType(const CursorType cursorType) noexcept override final;
+			void								setCursorTypeIfMouseInClient(const CursorType cursorType, const fs::Float2& mousePosition) noexcept;
 		
 		public:
 			virtual const uint32				getCaretBlinkIntervalMs() const noexcept override final;
