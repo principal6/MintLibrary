@@ -52,6 +52,7 @@ namespace fs
 
 		public:
 			const bool													initialize(fs::Window::IWindow* const window);
+			void														updateScreenSize();
 
 		private:
 			void														createDxDevice();
@@ -60,12 +61,14 @@ namespace fs
 		private:
 			const bool													createSwapChain(const fs::Int2& windowSize, const HWND windowHandle);
 			const bool													initializeBackBuffer();
-			const bool													initializeDepthStencil(const fs::Int2& windowSize);
+			const bool													initializeDepthStencilBufferAndView(const fs::Int2& windowSize);
+			const bool													initializeDepthStencilStates();
 			void														initializeShaderHeaderMemory();
 			void														initializeShaders();
 			void														initializeSamplerStates();
 			void														initializeBlendStates();
 			void														initializeFullScreenData(const fs::Int2& windowSize);
+			void														setDefaultRenderTargetsAndDepthStencil();
 
 		public:
 			void														beginRendering();
@@ -88,6 +91,7 @@ namespace fs
 			const fs::Language::CppHlsl&								getCppHlslConstantBuffers() const noexcept;
 
 		public:
+			void														initialize2DProjectionMatrix(const fs::Float2& windowSize) noexcept;
 			void														setViewMatrix(const fs::Float4x4& viewMatrix) noexcept;
 			void														setProjectionMatrix(const fs::Float4x4& projectionMatrix) noexcept;
 			void														updateViewProjectionMatrix() noexcept;
@@ -112,7 +116,6 @@ namespace fs
 			ComPtr<ID3D11DeviceContext>									_deviceContext;
 
 		private:
-			ComPtr<ID3D11Texture2D>										_backBuffer;
 			ComPtr<ID3D11RenderTargetView>								_backBufferRtv;
 			ComPtr<ID3D11Texture2D>										_depthStencilBuffer;
 			ComPtr<ID3D11DepthStencilView>								_depthStencilView;

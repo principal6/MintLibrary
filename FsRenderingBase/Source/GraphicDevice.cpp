@@ -59,6 +59,23 @@ namespace fs
 			return true;
 		}
 
+		void GraphicDevice::updateScreenSize()
+		{
+			_deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
+			_deviceContext->OMSetDepthStencilState(nullptr, 0);
+
+			_backBufferRtv->Release();
+
+			_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0);
+
+			initializeBackBuffer();
+			initializeDepthStencilBufferAndView(_window->getSize());
+			initializeFullScreenData(_window->getSize());
+			initialize2DProjectionMatrix(fs::Float2(_window->getSize()));
+
+			setDefaultRenderTargetsAndDepthStencil();
+		}
+
 		void GraphicDevice::createDxDevice()
 		{
 			const fs::Window::WindowsWindow& windowsWindow = *static_cast<const fs::Window::WindowsWindow*>(_window);
@@ -74,17 +91,13 @@ namespace fs
 				return;
 			}
 
-			if (initializeDepthStencil(windowSize) == false)
+			if (initializeDepthStencilBufferAndView(windowSize) == false)
 			{
 				return;
 			}
+			initializeDepthStencilStates();
 
 			initializeFullScreenData(windowSize);
-
-			// Set render targets
-			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), _depthStencilView.Get());
-			_deviceContext->OMSetDepthStencilState(_depthStencilStateLessEqual.Get(), 0);
-
 			initializeShaderHeaderMemory();
 			initializeShaders();
 			initializeSamplerStates();
@@ -108,6 +121,8 @@ namespace fs
 				rasterizerDescriptor.ScissorEnable = TRUE;
 				_device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());	
 			}
+
+			setDefaultRenderTargetsAndDepthStencil();
 		}
 
 		const bool GraphicDevice::loadFontData()
@@ -162,9 +177,10 @@ namespace fs
 
 		const bool GraphicDevice::initializeBackBuffer()
 		{
-			_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(_backBuffer.ReleaseAndGetAddressOf()));
+			ComPtr<ID3D11Texture2D> backBuffer;
+			_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf()));
 			
-			if (FAILED(_device->CreateRenderTargetView(_backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf())))
+			if (FAILED(_device->CreateRenderTargetView(backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf())))
 			{
 				FS_LOG_ERROR("김장원", "BackBuffer 초기화에 실패했습니다!");
 				return false;
@@ -172,7 +188,7 @@ namespace fs
 			return true;
 		}
 
-		const bool GraphicDevice::initializeDepthStencil(const fs::Int2& windowSize)
+		const bool GraphicDevice::initializeDepthStencilBufferAndView(const fs::Int2& windowSize)
 		{
 			D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
 			depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
@@ -199,6 +215,11 @@ namespace fs
 				return false;
 			}
 
+			return true;
+		}
+
+		const bool GraphicDevice::initializeDepthStencilStates()
+		{
 			D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
 			depthStencilDescriptor.DepthEnable = TRUE;
 			depthStencilDescriptor.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
@@ -226,7 +247,6 @@ namespace fs
 
 			// Constant buffers
 			{
-				_cbViewData._cb2DProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(static_cast<float>(windowSize._x), static_cast<float>(windowSize._y));
 				{
 					_cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
 					_cppHlslConstantBuffers.generateHlslString(fs::Language::CppHlslFileType::ConstantBuffers);
@@ -239,6 +259,8 @@ namespace fs
 					cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
 					cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
 				}
+
+				initialize2DProjectionMatrix(fs::Float2(windowSize));
 			}
 
 			// Structured buffers
@@ -308,6 +330,12 @@ namespace fs
 			_fullScreenScissorRectangle.bottom = windowSize._y;
 		}
 
+		void GraphicDevice::setDefaultRenderTargetsAndDepthStencil()
+		{
+			_deviceContext->OMSetRenderTargets(1, _backBufferRtv.GetAddressOf(), _depthStencilView.Get());
+			_deviceContext->OMSetDepthStencilState(_depthStencilStateLessEqual.Get(), 0);
+		}
+
 		void GraphicDevice::beginRendering()
 		{
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
@@ -353,6 +381,14 @@ namespace fs
 			return _fullScreenScissorRectangle;
 		}
 		
+		void GraphicDevice::initialize2DProjectionMatrix(const fs::Float2& windowSize) noexcept
+		{
+			_cbViewData._cb2DProjectionMatrix = fs::Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+
+			DxResource& cbView = _resourcePool.getResource(_cbViewId);
+			cbView.updateBuffer(reinterpret_cast<byte*>(&_cbViewData), 1);
+		}
+
 		void GraphicDevice::setViewMatrix(const fs::Float4x4& viewMatrix) noexcept
 		{
 			_cbViewData._cbViewMatrix = viewMatrix;

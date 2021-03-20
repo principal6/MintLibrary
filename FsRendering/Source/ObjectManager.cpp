@@ -148,6 +148,19 @@ namespace fs
 			}
 		}
 
+		void ObjectManager::updateScreenSize(const fs::Float2& screenSize)
+		{
+			const float screenRatio = (screenSize._x / screenSize._y);
+			for (auto& object : _objectArray)
+			{
+				if (object->isTypeOf(ObjectType::CameraObject) == true)
+				{
+					CameraObject* const cameraObject = static_cast<CameraObject*>(object);
+					cameraObject->setPerspectiveScreenRatio(screenRatio);
+				}
+			}
+		}
+
 		void ObjectManager::renderMeshComponents()
 		{
 			fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();

@@ -502,6 +502,7 @@ namespace fs
 
 		public:
 			void												initialize(const char* const font);
+			void												updateScreenSize(const fs::Float2& newScreenSize);
 
 		public:
 			void												receiveEventsFrom(fs::Window::IWindow* const window);
@@ -729,6 +730,8 @@ namespace fs
 
 			D3D11_VIEWPORT										_viewportFullScreen;
 			D3D11_RECT											_scissorRectangleFullScreen;
+
+			int8												_updateScreenSizeCounter;
 
 		private:
 			const ControlData									kNullControlData;

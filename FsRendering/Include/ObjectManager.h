@@ -58,6 +58,9 @@ namespace fs
 			void														deregisterMeshComponent(fs::Rendering::MeshComponent* const meshComponent);
 
 		public:
+			void														updateScreenSize(const fs::Float2& screenSize);
+
+		public:
 			void														renderMeshComponents();
 
 		public:

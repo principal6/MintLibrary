@@ -813,6 +813,12 @@ const bool testWindow()
 						testCameraObject->rotateYaw(mouseDeltaPosition._x);
 					}
 				}
+				else if (event._type == EventType::WindowResized)
+				{
+					graphicDevice.updateScreenSize();
+					guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+					objectManager.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+				}
 			}
 		}
 

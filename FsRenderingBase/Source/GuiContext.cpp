@@ -123,11 +123,19 @@ namespace fs
 			
 			const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
 			_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
-			_viewportFullScreen = _graphicDevice->getFullScreenViewport();
-			_scissorRectangleFullScreen = _graphicDevice->getFullScreenScissorRectangle();
+			updateScreenSize(windowSize);
 
 			resetNextStates();
 			resetPerFrameStates();
+		}
+
+		void GuiContext::updateScreenSize(const fs::Float2& newScreenSize)
+		{
+			_rootControlData._displaySize = newScreenSize;
+			_viewportFullScreen = _graphicDevice->getFullScreenViewport();
+			_scissorRectangleFullScreen = _graphicDevice->getFullScreenScissorRectangle();
+
+			_updateScreenSizeCounter = 2;
 		}
 
 		void GuiContext::receiveEventsFrom(fs::Window::IWindow* const window)
@@ -556,6 +564,11 @@ namespace fs
 			{
 				const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
 				const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
+				if (0 < _updateScreenSizeCounter)
+				{
+					windowControlData._position = dockControlData.getDockPosition(windowControlData._lastDockingMethod);
+					windowControlData._displaySize = dockControlData.getDockSize(windowControlData._lastDockingMethod);
+				}
 				needToProcessControl &= (isDocking && isShownInDock);
 			}
 
@@ -3602,6 +3615,11 @@ namespace fs
 
 			// 다음 프레임에서 가장 먼저 렌더링 되는 것!!
 			processDock(_rootControlData, _shapeFontRendererContextBackground);
+
+			if (0 < _updateScreenSizeCounter)
+			{
+				--_updateScreenSizeCounter;
+			}
 		}
 	}
 }
