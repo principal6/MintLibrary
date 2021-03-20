@@ -648,6 +648,9 @@ namespace fs
 			const bool											isControlPressed() const noexcept;
 			const bool											isFocusedControlTextBox() const noexcept;
 
+		private:
+			void												setControlFocused(const ControlData& control) noexcept;
+
 
 #pragma region Before drawing controls
 		private:

@@ -123,6 +123,8 @@ namespace fs
 			
 			const fs::Float2& windowSize = fs::Float2(_graphicDevice->getWindowSize());
 			_rootControlData = ControlData(1, 0, fs::Gui::ControlType::ROOT, windowSize);
+			_rootControlData._isFocusable = false;
+
 			updateScreenSize(windowSize);
 
 			resetNextStates();
@@ -528,6 +530,13 @@ namespace fs
 			if (windowControlData.isVisibleState(inoutVisibleState) == false)
 			{
 				windowControlData.setVisibleState(inoutVisibleState);
+
+				const bool isVisible = windowControlData.isControlVisible();
+				const bool isDocking = windowControlData.isDocking();
+				if (isVisible == true)
+				{
+					setControlFocused(windowControlData);
+				}
 			}
 			dockWindowOnceInitially(windowControlData, windowParam._initialDockingMethod, windowParam._initialDockingSize);
 
@@ -2100,7 +2109,7 @@ namespace fs
 							{
 								if (isDescendantControlInclusive(controlData, _focusedControlHashKey) == false)
 								{
-									_focusedControlHashKey = controlData.getHashKey();
+									setControlFocused(controlData);
 								}
 							}
 						}
@@ -2201,7 +2210,7 @@ namespace fs
 					DockDatum& dockDatum = dockControlData.getDockDatum(parentControlData._lastDockingMethod);
 					dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentControlData.getHashKey());
 					
-					_focusedControlHashKey = dockControlData.getHashKey();
+					setControlFocused(dockControlData);
 				}
 			}
 
@@ -2430,6 +2439,14 @@ namespace fs
 			return (_focusedControlHashKey == 0) ? false : getControlData(_focusedControlHashKey).isTypeOf(ControlType::TextBox);
 		}
 
+		void GuiContext::setControlFocused(const ControlData& control) noexcept
+		{
+			if (control._isFocusable == true)
+			{
+				_focusedControlHashKey = control.getHashKey();
+			}
+		}
+
 		void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
 		{
 			const bool isNewData = controlData._displaySize.isNan();
@@ -2595,7 +2612,7 @@ namespace fs
 				(_mouseButtonDownFirst == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true)))
 			{
 				// Focus entered
-				_focusedControlHashKey = controlHashKey;
+				setControlFocused(controlData);
 			}
 
 			if (needToColorFocused(controlData) == true)
@@ -2763,7 +2780,7 @@ namespace fs
 
 						_pressedControlInitialPosition = controlData._position;
 
-						_focusedControlHashKey = closestFocusableAncestor.getHashKey();
+						setControlFocused(closestFocusableAncestor);
 					}
 				}
 
@@ -2774,7 +2791,7 @@ namespace fs
 					{
 						_clickedControlHashKeyPerFrame = controlHashKey;
 
-						_focusedControlHashKey = closestFocusableAncestor.getHashKey();
+						setControlFocused(closestFocusableAncestor);
 					}
 				}
 			}
@@ -3228,7 +3245,7 @@ namespace fs
 			// 내가 Focus 였다면 Dock 을 가진 컨트롤로 옮기자!
 			if (isControlFocused(dockedControlData) == true)
 			{
-				_focusedControlHashKey = dockControlHashKey;
+				setControlFocused(dockControlData);
 			}
 		}
 
@@ -3258,7 +3275,7 @@ namespace fs
 			dockedControlData.swapDockingStateContext();
 
 			_draggedControlInitialPosition = dockedControlData._position;
-			_focusedControlHashKey = dockedControlData.getHashKey();
+			setControlFocused(dockedControlData);
 
 			const uint64 dockControlHashKeyCopy = dockedControlData.getDockControlHashKey();
 
