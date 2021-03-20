@@ -1712,6 +1712,7 @@ namespace fs
 				const fs::RenderingBase::Color& hoverColor = getNamedColor(NamedColor::HoverState);
 				const fs::RenderingBase::Color& pressedColor = getNamedColor(NamedColor::PressedState);
 				processClickControl(menuItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
+				finalBackgroundColor.a(1.0f);
 			}
 			const bool isHovered = isControlHovered(menuItem);
 			const bool isPresssed = isControlPressed(menuItem);
