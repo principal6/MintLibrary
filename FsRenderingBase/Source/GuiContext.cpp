@@ -540,19 +540,6 @@ namespace fs
 			nextNoAutoPositioned();
 			prepareControlData(windowControlData, prepareControlDataParam);
 
-			bool isOpen = windowControlData.isControlVisible();
-			if (windowControlData.isDocking() == true)
-			{
-				const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
-				const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
-				isOpen = isShownInDock;
-			}
-
-			if (isOpen == false)
-			{
-				return false;
-			}
-
 			const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
 			const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
 			if (isParentAlsoWindow == true)
@@ -561,88 +548,105 @@ namespace fs
 				windowControlData._deltaPosition = parentControlData._deltaPosition; // 계층 가장 아래 Window 까지 전파되도록
 			}
 
-			fs::RenderingBase::Color finalBackgroundColor;
-			const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor);
-			const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
-			fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
-			// Viewport & Scissor rectangle
+			const bool isVisible = windowControlData.isControlVisible();
+			const bool isDocking = windowControlData.isDocking();
+			bool needToProcessControl = isVisible;
+			if (isDocking == true)
 			{
-				const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
-				const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
-				{
-					D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(windowControlData.getControlRect());
-					scissorRectangleForMe.top -= static_cast<LONG>(kTitleBarBaseSize._y);
-					if (isParentAlsoWindow == true)
-					{
-						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
-						constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
-					}
-					pushScissorRectangleForMe(windowControlData, scissorRectangleForMe);
-				}
-				{
-					D3D11_RECT scissorRectangleForDocks = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
-					scissorRectangleForDocks.top += static_cast<LONG>(kTitleBarBaseSize._y);
-					if (isParentAlsoWindow == true)
-					{
-						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
-						constraintInnerRect(scissorRectangleForDocks, parentScissorRectangle);
-
-					}
-					pushScissorRectangleForDocks(windowControlData, scissorRectangleForDocks);
-				}
-				{
-					D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
-					scissorRectangleForChildren.top += static_cast<LONG>(
-						windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
-					scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
-					scissorRectangleForChildren.right -= static_cast<LONG>(
-						((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
-					scissorRectangleForChildren.bottom -= static_cast<LONG>(
-						((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
-					if (isParentAlsoWindow == true)
-					{
-						const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
-						constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
-					}
-					pushScissorRectangleForChildren(windowControlData, scissorRectangleForChildren);
-				}
+				const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
+				const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
+				needToProcessControl &= (isDocking && isShownInDock);
 			}
 
+			if (needToProcessControl == true)
+			{
+				fs::RenderingBase::Color finalBackgroundColor;
+				const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor);
+				const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
+				fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+
+				// Viewport & Scissor rectangle
+				{
+					const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
+					const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
+					{
+						D3D11_RECT scissorRectangleForMe = fs::RenderingBase::rectToD3dRect(windowControlData.getControlRect());
+						scissorRectangleForMe.top -= static_cast<LONG>(kTitleBarBaseSize._y);
+						if (isParentAlsoWindow == true)
+						{
+							const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
+							constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
+						}
+						pushScissorRectangleForMe(windowControlData, scissorRectangleForMe);
+					}
+					{
+						D3D11_RECT scissorRectangleForDocks = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
+						scissorRectangleForDocks.top += static_cast<LONG>(kTitleBarBaseSize._y);
+						if (isParentAlsoWindow == true)
+						{
+							const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
+							constraintInnerRect(scissorRectangleForDocks, parentScissorRectangle);
+
+						}
+						pushScissorRectangleForDocks(windowControlData, scissorRectangleForDocks);
+					}
+					{
+						D3D11_RECT scissorRectangleForChildren = fs::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
+						scissorRectangleForChildren.top += static_cast<LONG>(
+							windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
+						scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
+						scissorRectangleForChildren.right -= static_cast<LONG>(
+							((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
+						scissorRectangleForChildren.bottom -= static_cast<LONG>(
+							((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
+						if (isParentAlsoWindow == true)
+						{
+							const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
+							constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
+						}
+						pushScissorRectangleForChildren(windowControlData, scissorRectangleForChildren);
+					}
+				}
+
+
+				shapeFontRendererContext.setViewportIndex(windowControlData.getViewportIndex());
+
+				const fs::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
+				shapeFontRendererContext.setColor(finalBackgroundColor);
+				shapeFontRendererContext.setPosition(windowCenterPosition + fs::Float4(0, windowControlData._controlValue.getItemSizeY() * 0.5f, 0, 0));
+				if (windowControlData.isDocking() == true)
+				{
+					fs::RenderingBase::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
+					inDockColor.a(finalBackgroundColor.a());
+					shapeFontRendererContext.setColor(inDockColor);
+					shapeFontRendererContext.drawRectangle(windowControlData._displaySize - fs::Float2(0, windowControlData._controlValue.getItemSizeY()), 0.0f, 0.0f);
+				}
+				else
+				{
+					shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - fs::Float2(0, windowControlData._controlValue.getItemSizeY()), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
+				}
+
+				processDock(windowControlData, shapeFontRendererContext);
+				_controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
+			}
 			
-			shapeFontRendererContext.setViewportIndex(windowControlData.getViewportIndex());
-
-			const fs::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
-			shapeFontRendererContext.setColor(finalBackgroundColor);
-			shapeFontRendererContext.setPosition(windowCenterPosition + fs::Float4(0, windowControlData._controlValue.getItemSizeY() * 0.5f, 0, 0));
-			if (windowControlData.isDocking() == true)
+			if (isVisible == true)
 			{
-				fs::RenderingBase::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
-				inDockColor.a(finalBackgroundColor.a());
-				shapeFontRendererContext.setColor(inDockColor);
-				shapeFontRendererContext.drawRectangle(windowControlData._displaySize - fs::Float2(0, windowControlData._controlValue.getItemSizeY()), 0.0f, 0.0f);
-			}
-			else
-			{
-				shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - fs::Float2(0, windowControlData._controlValue.getItemSizeY()), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
-			}
+				windowControlData._controlValue.setItemSizeX(windowControlData._displaySize._x);
+				{
+					nextNoAutoPositioned(); // 중요
+					beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding, inoutVisibleState);
+					endTitleBar();
+				}
 
-			processDock(windowControlData, shapeFontRendererContext);
-			_controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
+				if (windowParam._scrollBarType != ScrollBarType::None)
+				{
+					pushScrollBar(windowParam._scrollBarType);
+				}
+			}
 			
-
-			windowControlData._controlValue.setItemSizeX(windowControlData._displaySize._x);
-			{
-				nextNoAutoPositioned(); // 중요
-				beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding, inoutVisibleState);
-				endTitleBar();
-			}
-
-			if (windowParam._scrollBarType != ScrollBarType::None)
-			{
-				pushScrollBar(windowParam._scrollBarType);
-			}
-			return true;
+			return needToProcessControl;
 		}
 
 		void GuiContext::dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const fs::Float2& initialDockingSize)
