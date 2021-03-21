@@ -26,6 +26,7 @@ namespace fs
 {
 #pragma region Logging
 	#define FS_LOG(author, format, ...)						fs::Logger::log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+	#define FS_LOG_PURE(author, format, ...)				fs::Logger::log(nullptr, author, nullptr, nullptr, 0, format, __VA_ARGS__)
 	#define FS_LOG_ERROR(author, format, ...)				fs::Logger::logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
 #pragma endregion
 

@@ -78,7 +78,14 @@ namespace fs
 				localtime_s(&localNow, &now);
 				strftime(timeBuffer, kTimeBufferSize, "%Y-%m-%d-%H:%M:%S", &localNow);
 
-				sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s[%d] %s()\n", logTag, timeBuffer, author, content, fileName + _basePathOffset, lineNumber, functionName);
+				if (nullptr == logTag || nullptr == functionName || nullptr == fileName)
+				{
+					sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s\n", author, content);
+				}
+				else
+				{
+					sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s[%d] %s()\n", logTag, timeBuffer, author, content, fileName + _basePathOffset, lineNumber, functionName);
+				}
 
 				OutputDebugStringA(outBuffer);
 

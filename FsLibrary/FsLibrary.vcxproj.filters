@@ -64,6 +64,7 @@
     <ClCompile Include="ContiguousContainer\ContiguousString.cpp">
       <Filter>ContiguousContainer</Filter>
     </ClCompile>
+    <ClCompile Include="FsLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Profiler\ScopedCpuProfiler.inl">

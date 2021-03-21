@@ -5,7 +5,18 @@
 #define FS_LIBRARY_H
 
 
-#include <stdafx.h>
+#include <CommonDefinitions.h>
+
+namespace fs
+{
+	class FsLibraryVersion
+	{
+	public:
+		static const uint16 getVersionMajor() noexcept;
+		static const uint16 getVersionMinor() noexcept;
+		static void         printVersion() noexcept;
+	};
+}
 
 #include <FsLibrary/Algorithm.hpp>
 #include <FsLibrary/ContiguousContainer/ContiguousContainer.h>
