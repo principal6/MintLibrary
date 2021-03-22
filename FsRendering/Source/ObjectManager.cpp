@@ -30,8 +30,8 @@ namespace fs
 			const fs::Language::CppHlsl& cppHlsl = _graphicDevice->getCppHlslSteamData();
 			const fs::Language::CppHlslTypeInfo& vsInputTypeInfo = cppHlsl.getTypeInfo(typeid(fs::RenderingBase::VS_INPUT));
 			
-			_vertexShaderId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeInfo, "Assets/HlslBinary/");
-			_pixelShaderId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", fs::RenderingBase::DxShaderType::PixelShader, "Assets/HlslBinary/");
+			_vertexShaderId = shaderPool.pushVertexShader("FsLibrary/Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeInfo, "FsLibrary/Assets/HlslBinary/");
+			_pixelShaderId = shaderPool.pushNonVertexShader("FsLibrary/Assets/Hlsl/", "PsDefault.hlsl", "main", fs::RenderingBase::DxShaderType::PixelShader, "FsLibrary/Assets/HlslBinary/");
 
 			fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
 			const fs::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));

@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/DxResource.h>
 
-#include <FsLibrary/Algorithm.hpp>
+#include <FsLibrary/Include/Algorithm.hpp>
 #include <FsRenderingBase/Include/GraphicDevice.h>
 
 

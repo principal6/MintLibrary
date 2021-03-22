@@ -7,7 +7,7 @@
 
 #include <FsPlatform/Include/WindowsWindow.h>
 
-#include <FsLibrary/Profiler/ScopedCpuProfiler.h>
+#include <FsLibrary/Include/ScopedCpuProfiler.h>
 
 #include <functional>
 

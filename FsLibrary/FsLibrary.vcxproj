@@ -19,35 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CommonDefinitions.h" />
     <ClInclude Include="..\stdafx.h" />
-    <ClInclude Include="Algorithm.h" />
-    <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="ContiguousContainer\ContiguousContainer.h" />
-    <ClInclude Include="ContiguousContainer\ContiguousString.h" />
-    <ClInclude Include="ContiguousContainer\ContiguousString.hpp" />
-    <ClInclude Include="ContiguousContainer\ContiguousVector.h" />
-    <ClInclude Include="ContiguousContainer\ContiguousVector.hpp" />
-    <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Memory\Allocator.h" />
-    <ClInclude Include="Memory\Allocator.hpp" />
-    <ClInclude Include="Memory\Memory.h" />
-    <ClInclude Include="Memory\Owner.h" />
-    <ClInclude Include="Memory\Owner.hpp" />
-    <ClInclude Include="Memory\Viewer.h" />
-    <ClInclude Include="Memory\Viewer.hpp" />
-    <ClInclude Include="Profiler\Profiler.h" />
-    <ClInclude Include="Profiler\ScopedCpuProfiler.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ContiguousContainer\ContiguousString.cpp" />
-    <ClCompile Include="FsLibrary.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Profiler\ScopedCpuProfiler.inl" />
+    <ClInclude Include="Include\Algorithm.h" />
+    <ClInclude Include="Include\Algorithm.hpp" />
+    <ClInclude Include="Include\Allocator.h" />
+    <ClInclude Include="Include\Allocator.hpp" />
+    <ClInclude Include="Include\ContiguousContainer.h" />
+    <ClInclude Include="Include\ContiguousString.h" />
+    <ClInclude Include="Include\ContiguousString.hpp" />
+    <ClInclude Include="Include\ContiguousVector.h" />
+    <ClInclude Include="Include\ContiguousVector.hpp" />
+    <ClInclude Include="Include\FsLibrary.h" />
+    <ClInclude Include="Include\Memory.h" />
+    <ClInclude Include="Include\Owner.h" />
+    <ClInclude Include="Include\Owner.hpp" />
+    <ClInclude Include="Include\Profiler.h" />
+    <ClInclude Include="Include\ScopedCpuProfiler.h" />
+    <ClInclude Include="Include\Viewer.h" />
+    <ClInclude Include="Include\Viewer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="FsLibrary.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\ScopedCpuProfiler.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\ContiguousString.cpp" />
+    <ClCompile Include="Source\FsLibrary.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -42,10 +42,10 @@ namespace fs
 
 		struct CreationData
 		{
-			Int2				_size{};
-			Int2				_position{ kInt16Min, kInt16Min };
-			const wchar_t*		_title{};
-			Style				_style{};
+			Int2				_size{ 800, 600 };
+			Int2				_position{ kInt32Min, kInt32Min };
+			const wchar_t*		_title{ L"FsLibrary" };
+			Style				_style{ Style::Default };
 			Float3				_bgColor{ 1.0f, 1.0f, 1.0f };
 		};
 

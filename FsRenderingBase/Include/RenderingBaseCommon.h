@@ -23,7 +23,7 @@ namespace fs
 			Downward
 		};
 
-		static constexpr const char* const			kDefaultFont = "Assets/noto_sans_kr_medium";
+		static constexpr const char* const			kDefaultFont = "FsLibrary/Assets/noto_sans_kr_medium";
 		static constexpr int32						kDefaultFontSize = 18;
 
 		using IndexElementType						= uint16;

@@ -1,77 +1,81 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Memory">
-      <UniqueIdentifier>{e8e4d94d-4313-4154-ae01-e1430ba1caa5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Profiler">
-      <UniqueIdentifier>{9babe998-8a61-4c57-a47e-d9b5edd5624b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ContiguousContainer">
-      <UniqueIdentifier>{9089e893-c77c-46ee-858c-3ea3ee6563d4}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="FsLibrary.h" />
-    <ClInclude Include="Algorithm.h" />
-    <ClInclude Include="Algorithm.hpp" />
-    <ClInclude Include="Memory\Allocator.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Allocator.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Memory.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Viewer.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Viewer.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Owner.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Owner.hpp">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Profiler\ScopedCpuProfiler.h">
-      <Filter>Profiler</Filter>
-    </ClInclude>
-    <ClInclude Include="Profiler\Profiler.h">
-      <Filter>Profiler</Filter>
-    </ClInclude>
-    <ClInclude Include="ContiguousContainer\ContiguousContainer.h">
-      <Filter>ContiguousContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CommonDefinitions.h" />
     <ClInclude Include="..\stdafx.h" />
-    <ClInclude Include="ContiguousContainer\ContiguousString.h">
-      <Filter>ContiguousContainer</Filter>
+    <ClInclude Include="Include\Algorithm.h">
+      <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="ContiguousContainer\ContiguousString.hpp">
-      <Filter>ContiguousContainer</Filter>
+    <ClInclude Include="Include\Algorithm.hpp">
+      <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="ContiguousContainer\ContiguousVector.h">
-      <Filter>ContiguousContainer</Filter>
+    <ClInclude Include="Include\Allocator.h">
+      <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="ContiguousContainer\ContiguousVector.hpp">
-      <Filter>ContiguousContainer</Filter>
+    <ClInclude Include="Include\Allocator.hpp">
+      <Filter>Include</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ContiguousContainer\ContiguousString.cpp">
-      <Filter>ContiguousContainer</Filter>
-    </ClCompile>
-    <ClCompile Include="FsLibrary.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Profiler\ScopedCpuProfiler.inl">
-      <Filter>Profiler</Filter>
-    </None>
+    <ClInclude Include="Include\ContiguousContainer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ContiguousString.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ContiguousString.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ContiguousVector.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ContiguousVector.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\FsLibrary.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Memory.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Owner.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Owner.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Profiler.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ScopedCpuProfiler.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Viewer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Viewer.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="FsLibrary.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{9688e6c4-def7-4070-9632-6b2869865ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{d3a7e132-64da-425f-88c2-71c799663c2a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\ScopedCpuProfiler.inl">
+      <Filter>Include</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\ContiguousString.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FsLibrary.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

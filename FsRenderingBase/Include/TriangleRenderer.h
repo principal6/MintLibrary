@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <FsLibrary/Assets/CppHlsl/CppHlslStreamData.h>
 
 #include <FsRenderingBase/Include/DxResource.h>
 

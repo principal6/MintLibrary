@@ -5,8 +5,8 @@
 #define FS_STRING_UTIL_H
 
 
-#include <FsLibrary/ContiguousContainer/ContiguousVector.h>
-#include <FsLibrary/ContiguousContainer/ContiguousString.h>
+#include <FsLibrary/Include/ContiguousVector.h>
+#include <FsLibrary/Include/ContiguousString.h>
 
 
 namespace fs

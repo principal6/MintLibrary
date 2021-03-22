@@ -1,4 +1,4 @@
-﻿#include <FsLibrary/FsLibrary.h>
+﻿#include <FsLibrary/Include/FsLibrary.h>
 
 
 #ifdef FS_DEBUG
@@ -715,7 +715,7 @@ const bool testLanguage()
 	using namespace fs;
 	
 	TextFileReader textFileReader;
-	textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
+	textFileReader.open("FsLibrary/Assets/CppHlsl/CppHlslStreamData.h");
 	
 	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
 	cppHlslLexer.execute();

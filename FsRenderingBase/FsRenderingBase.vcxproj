@@ -166,9 +166,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
+    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslConstantBuffers.h" />
+    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslStreamData.h" />
+    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="Include\DxResource.h" />
     <ClInclude Include="Include\DxShader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />

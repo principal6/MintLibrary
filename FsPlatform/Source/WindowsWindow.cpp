@@ -83,15 +83,15 @@ namespace fs
 				FS_WINDOW_RETURN_FAIL(CreationError::FailedToGetInstanceHandle);
 			}
 
-			if (creationData._title == nullptr)
+			if (_creationData._title == nullptr)
 			{
 				FS_WINDOW_RETURN_FAIL(CreationError::NullptrString);
 			}
 
 			const COLORREF backgroundColor = RGB(
-				static_cast<uint8>(creationData._bgColor[0] * 255.0f),
-				static_cast<uint8>(creationData._bgColor[1] * 255.0f), 
-				static_cast<uint8>(creationData._bgColor[2] * 255.0f));
+				static_cast<uint8>(_creationData._bgColor[0] * 255.0f),
+				static_cast<uint8>(_creationData._bgColor[1] * 255.0f), 
+				static_cast<uint8>(_creationData._bgColor[2] * 255.0f));
 
 			WNDCLASSEXW windowClass{};
 			windowClass.cbClsExtra = 0;
@@ -108,7 +108,7 @@ namespace fs
 			RegisterClassExW(&windowClass);
 
 			_windowStyle = WS_OVERLAPPED;
-			switch (creationData._style)
+			switch (_creationData._style)
 			{
 			case Style::Default:
 				_windowStyle = WS_OVERLAPPEDWINDOW;
@@ -123,16 +123,20 @@ namespace fs
 				break;
 			}
 
-			const int32 x = (creationData._position._x == kInt32Min) ? CW_USEDEFAULT : creationData._position._x;
-			const int32 y = (creationData._position._y == kInt32Min) ? CW_USEDEFAULT : creationData._position._y;
-			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, creationData._title, _windowStyle, x, y,
-				creationData._size._x, creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
+			const int32 x = (_creationData._position._x == kInt32Min) ? CW_USEDEFAULT : _creationData._position._x;
+			const int32 y = (_creationData._position._y == kInt32Min) ? CW_USEDEFAULT : _creationData._position._y;
+			_hWnd = CreateWindowExW(0, windowClass.lpszClassName, _creationData._title, _windowStyle, x, y,
+				_creationData._size._x, _creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
 			if (_hWnd == nullptr)
 			{
 				FS_WINDOW_RETURN_FAIL(CreationError::FailedToCreateWindow);
 			}
 
-			setSize(creationData._size);
+			RECT rawWindowRect;
+			::GetWindowRect(_hWnd, &rawWindowRect);
+			_creationData._position.set(rawWindowRect.left, rawWindowRect.top);
+
+			setSize(_creationData._size);
 
 			ShowWindow(_hWnd, SW_SHOWDEFAULT);
 

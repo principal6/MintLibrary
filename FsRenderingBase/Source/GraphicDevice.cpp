@@ -5,7 +5,7 @@
 #include <functional>
 #include <typeinfo>
 
-#include <FsLibrary/Algorithm.hpp>
+#include <FsLibrary/Include/Algorithm.hpp>
 
 #include <FsPlatform/Include/IWindow.h>
 #include <FsPlatform/Include/WindowsWindow.h>
@@ -240,7 +240,7 @@ namespace fs
 
 			// Stream data
 			{
-				_cppHlslStreamData.parseCppHlslFile("Assets/CppHlsl/CppHlslStreamData.h");
+				_cppHlslStreamData.parseCppHlslFile("FsLibrary/Assets/CppHlsl/CppHlslStreamData.h");
 				_cppHlslStreamData.generateHlslString(fs::Language::CppHlslFileType::StreamData);
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.getHlslString());
 			}
@@ -248,7 +248,7 @@ namespace fs
 			// Constant buffers
 			{
 				{
-					_cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
+					_cppHlslConstantBuffers.parseCppHlslFile("FsLibrary/Assets/CppHlsl/CppHlslConstantBuffers.h");
 					_cppHlslConstantBuffers.generateHlslString(fs::Language::CppHlslFileType::ConstantBuffers);
 					_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 					
@@ -265,7 +265,7 @@ namespace fs
 
 			// Structured buffers
 			{
-				_cppHlslStructuredBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslStructuredBuffers.h");
+				_cppHlslStructuredBuffers.parseCppHlslFile("FsLibrary/Assets/CppHlsl/CppHlslStructuredBuffers.h");
 				_cppHlslStructuredBuffers.generateHlslString(fs::Language::CppHlslFileType::StructuredBuffers);
 				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
 			}
