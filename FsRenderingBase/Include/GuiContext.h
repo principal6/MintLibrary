@@ -247,6 +247,8 @@ namespace fs
 
 		class GuiContext final
 		{
+			friend fs::RenderingBase::GraphicDevice;
+
 		private:
 			static constexpr float						kDefaultIntervalX = 5.0f;
 			static constexpr float						kDefaultIntervalY = 5.0f;
@@ -496,8 +498,10 @@ namespace fs
 			};
 
 		
-		public:
+		private:
 																GuiContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
+
+		public:
 																~GuiContext();
 
 		public:
@@ -713,11 +717,8 @@ namespace fs
 			const uint32										calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 #pragma endregion
 
-
-		public:
-			void												render();
-
 		private:
+			void												render();
 			void												resetPerFrameStates();
 
 		private:

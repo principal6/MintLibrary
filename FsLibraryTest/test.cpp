@@ -791,7 +791,6 @@ const bool testWindow()
 
 		// Events
 		{
-			fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 			guiContext.receiveEventsFrom(&window);
 
 			if (window.hasEvent() == true)
