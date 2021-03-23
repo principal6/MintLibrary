@@ -17,6 +17,8 @@ namespace fs
 	{
 		class RectangleRendererContext final : public IRendererContext
 		{
+			static constexpr uint32													kVertexCountPerRectangle = 4;
+
 		public:
 																					RectangleRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
 			virtual																	~RectangleRendererContext() = default;

@@ -107,7 +107,7 @@ namespace fs
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			fs::RenderingBase::VS_INPUT_SHAPE vertex;
-			for (uint32 iter = 0; iter < 4; iter++)
+			for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
 			{
 				vertex._position = getVertexPosition(iter, _position, _size);
 				vertex._color = getColorInternal(iter);
@@ -120,12 +120,13 @@ namespace fs
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			fs::RenderingBase::VS_INPUT_SHAPE vertex;
-			for (uint32 iter = 0; iter < 4; iter++)
+			for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
 			{
 				vertex._position = getVertexPosition(iter, _position, _size);
 				const fs::Float2& texCoord = getVertexTexturePosition(iter, texturePosition, textureSize);
 				vertex._texCoord._x = texCoord._x;
 				vertex._texCoord._y = texCoord._y;
+				vertex._info._x = 1.0f;
 				vertexArray.emplace_back(vertex);
 			}
 			prepareIndexArray();
@@ -135,13 +136,14 @@ namespace fs
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
 			fs::RenderingBase::VS_INPUT_SHAPE vertex;
-			for (uint32 iter = 0; iter < 4; iter++)
+			for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
 			{
 				vertex._position = getVertexPosition(iter, _position, _size);
 				vertex._color = getColorInternal(iter);
 				const fs::Float2& texCoord = getVertexTexturePosition(iter, texturePosition, textureSize);
 				vertex._texCoord._x = texCoord._x;
 				vertex._texCoord._y = texCoord._y;
+				vertex._info._x = 2.0f;
 				vertexArray.emplace_back(vertex);
 			}
 			prepareIndexArray();
@@ -153,12 +155,12 @@ namespace fs
 			const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
 			auto& indexArray = _triangleRenderer.indexArray();
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
-			indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 0);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 1);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 2);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 1);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 3);
+			indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 2);
 		}
 	}
 }
