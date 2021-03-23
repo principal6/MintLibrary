@@ -188,7 +188,7 @@ namespace fs
 				_eventQueue.pop();
 				return event;
 			}
-			const EventData&				peekEvent()
+			const EventData&				peekEvent() const
 			{
 				return _eventQueue.front();
 			}

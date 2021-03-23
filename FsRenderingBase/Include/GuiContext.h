@@ -509,7 +509,7 @@ namespace fs
 			void												updateScreenSize(const fs::Float2& newScreenSize);
 
 		public:
-			void												receiveEventsFrom(fs::Window::IWindow* const window);
+			void												handleEvents(const fs::Window::IWindow* const window);
 
 		private:
 			const bool											isInControlInternal(const fs::Float2& screenPosition, const fs::Float2& controlPosition, const fs::Float2& controlPositionOffset, const fs::Float2& interactionSize) const noexcept;

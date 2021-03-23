@@ -140,13 +140,13 @@ namespace fs
 			_updateScreenSizeCounter = 2;
 		}
 
-		void GuiContext::receiveEventsFrom(fs::Window::IWindow* const window)
+		void GuiContext::handleEvents(const fs::Window::IWindow* const window)
 		{
 			// √ ±‚»≠
 			_mouseDownUp = false;
 			_mouseButtonDownFirst = false;
 
-			fs::Window::WindowsWindow* const windowsWindow = static_cast<fs::Window::WindowsWindow*>(window);
+			const fs::Window::WindowsWindow* const windowsWindow = static_cast<const fs::Window::WindowsWindow*>(window);
 			if (windowsWindow->hasEvent() == true)
 			{
 				const fs::Window::EventData& eventData = windowsWindow->peekEvent();
