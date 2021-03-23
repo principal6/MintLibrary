@@ -150,6 +150,7 @@ namespace fs
 			fs::RenderingBase::RectangleRendererContext					_rectangleRendererContext;
 			fs::RenderingBase::ShapeRendererContext						_shapeRendererContext;
 			fs::RenderingBase::FontRendererContext						_fontRendererContext;
+			bool														_needEndRenderingCall;
 		
 		private:
 			fs::Gui::GuiContext											_guiContext;

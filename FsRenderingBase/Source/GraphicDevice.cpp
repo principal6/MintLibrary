@@ -33,6 +33,7 @@ namespace fs
 			, _rectangleRendererContext{ this }
 			, _shapeRendererContext{ this }
 			, _fontRendererContext{ this }
+			, _needEndRenderingCall{ false }
 			, _guiContext{ this }
 		{
 			__noop;
@@ -338,6 +339,14 @@ namespace fs
 
 		void GraphicDevice::beginRendering()
 		{
+			if (true == _needEndRenderingCall)
+			{
+				FS_LOG_ERROR("김장원", "beginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 endRendering() 을 호출해 주세요!");
+				return;
+			}
+
+			_needEndRenderingCall = true;
+
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
 			_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		
@@ -348,6 +357,12 @@ namespace fs
 
 		void GraphicDevice::endRendering()
 		{
+			if (false == _needEndRenderingCall)
+			{
+				FS_LOG_ERROR("김장원", "endRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 beginRendering() 을 호출해 주세요!");
+				return;
+			}
+
 #pragma region Renderer Contexts
 			useFullScreenViewport();
 
@@ -358,6 +373,8 @@ namespace fs
 #pragma endregion
 
 			_swapChain->Present(0, 0);
+
+			_needEndRenderingCall = false;
 		}
 
 		void GraphicDevice::useScissorRectanglesWithMultipleViewports() noexcept
