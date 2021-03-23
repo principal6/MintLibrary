@@ -798,7 +798,7 @@ const bool testWindow()
 				EventData event = window.popEvent();
 				if (event._type == EventType::KeyDown)
 				{
-					if (event._value.getKeyCode() == EventData::KeyCode::Enter)
+					if (event._value.isKeyCode(EventData::KeyCode::Enter) == true)
 					{
 						graphicDevice.getShaderPool().recompileAllShaders();
 					}

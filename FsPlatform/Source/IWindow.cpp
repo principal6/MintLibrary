@@ -26,6 +26,11 @@ namespace fs
 		{
 			return _keyCode;
 		}
+
+		const bool EventData::EventValue::isKeyCode(const EventData::KeyCode keyCode) const noexcept
+		{
+			return keyCode == _keyCode;
+		}
 		
 		void EventData::EventValue::setMousePosition(const fs::Float2& mousePosition) noexcept
 		{

@@ -105,6 +105,7 @@ namespace fs
 			public:
 				void						setKeyCode(const EventData::KeyCode keyCode) noexcept;
 				const EventData::KeyCode	getKeyCode() const noexcept;
+				const bool					isKeyCode(const EventData::KeyCode keyCode) const noexcept;
 
 				void						setMousePosition(const fs::Float2& mousePosition) noexcept;
 				void						setMouseDeltaPosition(const fs::Float2& mouseDeltaPosition) noexcept;
