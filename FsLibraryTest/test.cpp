@@ -731,15 +731,15 @@ const bool testLanguage()
 		fs::float3 _c			= fs::float3(16.0f, 32.0f, 64.0f);	// v[1]
 		fs::float1 _padding1	= 128.0f;
 	};
-	fs::RenderingBase::VS_INPUT_COLOR vsInput;
-	uint64 a = sizeof(fs::RenderingBase::VS_INPUT_COLOR);
-	uint64 b = sizeof(fs::RenderingBase::VS_OUTPUT_COLOR);
+	fs::RenderingBase::VS_INPUT_SHAPE vsInput;
+	uint64 a = sizeof(fs::RenderingBase::VS_INPUT_SHAPE);
+	uint64 b = sizeof(fs::RenderingBase::VS_OUTPUT_SHAPE);
 	uint64 c = sizeof(fs::RenderingBase::CB_View);
 	TestStruct ts;
 	uint64 tss = sizeof(TestStruct);
 
 	std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT_COLOR");
+	const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT_SHAPE");
 	const fs::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
 	const fs::Language::CppHlslTypeInfo& typeInfo2 = cppHlslParser.getTypeInfo(2);
 	return true;

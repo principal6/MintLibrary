@@ -38,18 +38,18 @@ namespace fs
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
 
-					VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
+					VS_OUTPUT_SHAPE main(VS_INPUT_SHAPE input)
 					{
-						VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
-						result._position	= mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
-						result._color		= input._color;
-						result._texCoord	= input._texCoord;
-						result._flag		= input._flag;
+						VS_OUTPUT_SHAPE result	= (VS_OUTPUT_SHAPE)0;
+						result._position		= mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
+						result._color			= input._color;
+						result._texCoord		= input._texCoord;
+						result._info			= input._info;
 						return result;
 					}
 					)"
 				};
-				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_COLOR));
+				const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(fs::RenderingBase::VS_INPUT_SHAPE));
 				_vertexShaderId = shaderPool.pushVertexShaderFromMemory("RectangleRendererVS", kShaderString, "main", &typeInfo);
 			}
 
@@ -63,14 +63,14 @@ namespace fs
 					sampler		sampler0;
 					Texture2D	texture0;
 				
-					float4 main(VS_OUTPUT_COLOR input) : SV_Target
+					float4 main(VS_OUTPUT_SHAPE input) : SV_Target
 					{
 						float4 result = input._color;
-						if (input._flag == 1)
+						if (input._info.x == 1.0)
 						{
 							result = texture0.Sample(sampler0, input._texCoord);
 						}
-						else if (input._flag == 2)
+						else if (input._info.x == 2.0)
 						{
 							result *= texture0.Sample(sampler0, input._texCoord);
 						}
@@ -106,33 +106,44 @@ namespace fs
 		void RectangleRendererContext::drawColored()
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getColorInternal(0)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getColorInternal(1)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getColorInternal(2)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getColorInternal(3)));
-
+			fs::RenderingBase::VS_INPUT_SHAPE vertex;
+			for (uint32 iter = 0; iter < 4; iter++)
+			{
+				vertex._position = getVertexPosition(iter, _position, _size);
+				vertex._color = getColorInternal(iter);
+				vertexArray.emplace_back(vertex);
+			}
 			prepareIndexArray();
 		}
 
 		void RectangleRendererContext::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getVertexTexturePosition(0, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getVertexTexturePosition(1, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getVertexTexturePosition(2, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getVertexTexturePosition(3, texturePosition, textureSize)));
-
+			fs::RenderingBase::VS_INPUT_SHAPE vertex;
+			for (uint32 iter = 0; iter < 4; iter++)
+			{
+				vertex._position = getVertexPosition(iter, _position, _size);
+				const fs::Float2& texCoord = getVertexTexturePosition(iter, texturePosition, textureSize);
+				vertex._texCoord._x = texCoord._x;
+				vertex._texCoord._y = texCoord._y;
+				vertexArray.emplace_back(vertex);
+			}
 			prepareIndexArray();
 		}
 
 		void RectangleRendererContext::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
 		{
 			auto& vertexArray = _triangleRenderer.vertexArray();
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(0, _position, _size), getColorInternal(0), getVertexTexturePosition(0, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(1, _position, _size), getColorInternal(1), getVertexTexturePosition(1, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(2, _position, _size), getColorInternal(2), getVertexTexturePosition(2, texturePosition, textureSize)));
-			vertexArray.emplace_back(fs::RenderingBase::VS_INPUT_COLOR(getVertexPosition(3, _position, _size), getColorInternal(3), getVertexTexturePosition(3, texturePosition, textureSize)));
-
+			fs::RenderingBase::VS_INPUT_SHAPE vertex;
+			for (uint32 iter = 0; iter < 4; iter++)
+			{
+				vertex._position = getVertexPosition(iter, _position, _size);
+				vertex._color = getColorInternal(iter);
+				const fs::Float2& texCoord = getVertexTexturePosition(iter, texturePosition, textureSize);
+				vertex._texCoord._x = texCoord._x;
+				vertex._texCoord._y = texCoord._y;
+				vertexArray.emplace_back(vertex);
+			}
 			prepareIndexArray();
 		}
 
