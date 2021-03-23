@@ -715,7 +715,7 @@ const bool testLanguage()
 	using namespace fs;
 	
 	TextFileReader textFileReader;
-	textFileReader.open("FsLibrary/Assets/CppHlsl/CppHlslStreamData.h");
+	textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
 	
 	Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
 	cppHlslLexer.execute();

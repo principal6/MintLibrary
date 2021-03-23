@@ -12,7 +12,7 @@
 
 #include <FsMath/Include/Int2.h>
 
-#include <FsLibrary/Assets/CppHlsl/CppHlslStructuredBuffers.h>
+#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
 
 
 namespace fs

@@ -93,13 +93,13 @@
     <ClInclude Include="Include\GuiContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslConstantBuffers.h">
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
       <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslStreamData.h">
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h">
       <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="..\FsLibrary\Assets\CppHlsl\CppHlslStructuredBuffers.h">
+    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
       <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>

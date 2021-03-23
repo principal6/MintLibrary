@@ -9,7 +9,7 @@
 
 #include <FsRendering/Include/Object.h>
 
-#include <FsLibrary/Assets/CppHlsl/CppHlslConstantBuffers.h>
+#include <Assets/CppHlsl/CppHlslConstantBuffers.h>
 
 
 namespace fs

@@ -5,7 +5,7 @@
 
 #include <FsMath/Include/Float2x2.h>
 
-#include <FsLibrary/Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/CppHlsl/CppHlslStreamData.h>
 
 
 namespace fs

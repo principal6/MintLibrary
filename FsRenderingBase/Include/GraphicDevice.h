@@ -25,8 +25,8 @@
 
 #include <FsMath/Include/Float4x4.h>
 
-#include <FsLibrary/Assets/CppHlsl/CppHlslStreamData.h>
-#include <FsLibrary/Assets/CppHlsl/CppHlslConstantBuffers.h>
+#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/CppHlsl/CppHlslConstantBuffers.h>
 
 
 namespace fs
