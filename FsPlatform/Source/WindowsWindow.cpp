@@ -422,7 +422,7 @@ namespace fs
 				eventData._type = EventType::KeyStroke;
 				eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_IME_CHAR:
@@ -430,7 +430,7 @@ namespace fs
 				eventData._type = EventType::KeyStroke;
 				eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_IME_COMPOSITION:
@@ -448,7 +448,7 @@ namespace fs
 					eventData._type = EventType::KeyStrokeCandidate;
 					eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
 
-					_eventQueue.push(eventData);
+					pushEvent(std::move(eventData));
 					return 0;
 				}
 				break;
@@ -457,7 +457,7 @@ namespace fs
 			{
 				eventData._type = EventType::KeyDown;
 				eventData._value.setKeyCode(convertWparamToKeyCode(wParam));
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_MOUSEMOVE:
@@ -471,7 +471,7 @@ namespace fs
 				eventData._value.setMousePosition(mousePosition);
 				_previousMousePosition = mousePosition;
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_LBUTTONDOWN:
@@ -480,7 +480,7 @@ namespace fs
 				eventData._value.setMousePosition(mousePosition);
 				_previousMousePosition = mousePosition;
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_LBUTTONUP:
@@ -489,7 +489,7 @@ namespace fs
 				eventData._value.setMousePosition(mousePosition);
 				_previousMousePosition = mousePosition;
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_LBUTTONDBLCLK:
@@ -498,7 +498,7 @@ namespace fs
 				eventData._value.setMousePosition(mousePosition);
 				_previousMousePosition = mousePosition;
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_MOUSEWHEEL:
@@ -510,7 +510,7 @@ namespace fs
 				eventData._value.setMousePosition(mousePosition);
 				_previousMousePosition = mousePosition;
 
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			case WM_INPUT:
@@ -527,7 +527,7 @@ namespace fs
 
 						eventData._value.setMouseDeltaPosition(fs::Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY)));
 
-						_eventQueue.push(eventData);
+						pushEvent(std::move(eventData));
 					}
 				}
 				return 0;
@@ -539,7 +539,7 @@ namespace fs
 				
 				eventData._type = EventType::WindowResized;
 				eventData._value.setSize(fs::Float2(size));
-				_eventQueue.push(eventData);
+				pushEvent(std::move(eventData));
 				return 0;
 			}
 			default:

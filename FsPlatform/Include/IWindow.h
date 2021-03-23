@@ -173,6 +173,15 @@ namespace fs
 		public:
 			virtual bool					isRunning() noexcept { return _isRunning; }
 			bool							hasEvent() const noexcept { return (0 < _eventQueue.size()); }
+			void							pushEvent(EventData&& eventData)
+			{
+				if (_eventQueue.size() == kEventQueueCapacity)
+				{
+					// 처리되지 않은 Event 에 대해 손실 발생!!!
+					_eventQueue.pop();
+				}
+				_eventQueue.push(std::move(eventData));
+			}
 			EventData						popEvent()
 			{
 				EventData event = _eventQueue.front();
@@ -213,11 +222,16 @@ namespace fs
 			virtual void					showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
 		protected:
+			static constexpr uint32			kEventQueueCapacity = 128;
+
+		protected:
 			bool							_isRunning;
 			fs::Platform::PlatformType		_platformType;
 			CreationData					_creationData;
 			fs::Int2						_entireSize;
 			CreationError					_creationError;
+
+		private:
 			std::queue<EventData>			_eventQueue;
 		
 		protected:
