@@ -114,6 +114,7 @@ namespace fs
 		{
 		public:
 											DxResourcePool(GraphicDevice* const graphicDevice);
+											DxResourcePool(const DxResourcePool& rhs) = delete;
 			virtual							~DxResourcePool() = default;
 
 		public:

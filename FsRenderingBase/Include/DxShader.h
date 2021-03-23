@@ -83,6 +83,7 @@ namespace fs
 
 		public:
 										DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
+										DxShaderPool(const DxShaderPool& rhs) = delete;
 			virtual						~DxShaderPool() = default;
 
 		public:
