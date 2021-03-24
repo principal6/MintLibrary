@@ -6,7 +6,7 @@
 
 
 #include <cstdint>
-
+#include <stdafx.h>
 
 #define FS_INLINE __forceinline
 

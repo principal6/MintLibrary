@@ -87,34 +87,28 @@ namespace fs
 		};
 
 
-		class PixelRgba final
+		class ColorImage
 		{
 		public:
-										PixelRgba() : _width{ 0 } { __noop; }
-										~PixelRgba() = default;
+									ColorImage() = default;
+									~ColorImage() = default;
 
 		public:
-			void						setSize(const uint32 width, const uint32 height) noexcept;
-			void						setSize(const uint32 width, const uint32 height, const Color& initializationColor) noexcept;
-			void						setColor(const uint32 x, const uint32 y, const Color& color) noexcept;
-			void						setR(const uint32 x, const uint32 y, const byte value) noexcept;
-			void						setG(const uint32 x, const uint32 y, const byte value) noexcept;
-			void						setB(const uint32 x, const uint32 y, const byte value) noexcept;
-			void						setA(const uint32 x, const uint32 y, const byte value) noexcept;
+			void					setSize(const uint32 width, const uint32 height) noexcept;
+			void					fill(const Color& color) noexcept;
+			void					setAt(const uint32 x, const uint32 y, const Color& color) noexcept;
+			const Color&			getAt(const uint32 x, const uint32 y) noexcept;
 
 		public:
-			const uint32				getByteCount() const noexcept;
-			const byte*					getByteRawPointer() const noexcept;
+			const byte*				buildPixelRgbaArray() noexcept;
 
 		private:
-			const uint32				convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
+			const int32				convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
 
 		private:
-			static constexpr uint32		kByteCountPerPixel = 4;
-
-		private:
-			uint32						_width = 0;
-			std::vector<byte>			_byteArray;
+			uint32					_width = 0;
+			std::vector<Color>		_colorArray;
+			std::vector<byte>		_byteArray;
 		};
 
 

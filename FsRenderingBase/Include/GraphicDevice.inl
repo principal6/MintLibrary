@@ -1,4 +1,6 @@
-#include "GraphicDevice.h"
+#pragma once
+
+
 namespace fs
 {
 	namespace RenderingBase

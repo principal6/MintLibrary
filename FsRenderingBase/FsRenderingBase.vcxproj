@@ -204,6 +204,7 @@
     <None Include="Include\Language\LanguageCommon.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Include\IRendererContext.cpp" />
     <ClCompile Include="Source\DxResource.cpp" />
     <ClCompile Include="Source\DxShader.cpp" />
     <ClCompile Include="Source\DxShaderHeaderMemory.cpp" />

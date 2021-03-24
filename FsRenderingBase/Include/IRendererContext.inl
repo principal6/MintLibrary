@@ -1,4 +1,7 @@
 #include "IRendererContext.h"
+#pragma once
+
+
 namespace fs
 {
 	namespace RenderingBase
@@ -7,73 +10,52 @@ namespace fs
 		inline const Color Color::kWhite = Color(255, 255, 255, 255);
 		inline const Color Color::kBlack = Color(0, 0, 0, 255);
 
-
-		FS_INLINE void PixelRgba::setSize(const uint32 width, const uint32 height) noexcept
+		
+		FS_INLINE void fs::RenderingBase::ColorImage::setSize(const uint32 width, const uint32 height) noexcept
 		{
 			_width = width;
-			_byteArray.resize(width * height * kByteCountPerPixel);
+			_colorArray.resize(width * height);
 		}
 
-		FS_INLINE void PixelRgba::setSize(const uint32 width, const uint32 height, const Color& initializationColor) noexcept
+		FS_INLINE void ColorImage::fill(const Color& color) noexcept
 		{
-			_width = width;
-			const uint32 pixelCount = width * height;
-			_byteArray.resize(pixelCount * kByteCountPerPixel);
-			const byte r = initializationColor.rAsByte();
-			const byte g = initializationColor.gAsByte();
-			const byte b = initializationColor.bAsByte();
-			const byte a = initializationColor.aAsByte();
-			for (uint32 pixelIndex = 0; pixelIndex < pixelCount; ++pixelIndex)
+			for (auto& colorEntry : _colorArray)
 			{
-				_byteArray[pixelIndex * kByteCountPerPixel + 0] = r;
-				_byteArray[pixelIndex * kByteCountPerPixel + 1] = g;
-				_byteArray[pixelIndex * kByteCountPerPixel + 2] = b;
-				_byteArray[pixelIndex * kByteCountPerPixel + 3] = a;
+				colorEntry = color;
 			}
 		}
 
-		FS_INLINE void PixelRgba::setColor(const uint32 x, const uint32 y, const Color& color) noexcept
+		FS_INLINE void ColorImage::setAt(const uint32 x, const uint32 y, const Color& color) noexcept
 		{
-			const uint32 baseIndex = convertXyToIndex(x, y);
-			_byteArray[baseIndex + 0] = color.rAsByte();
-			_byteArray[baseIndex + 1] = color.gAsByte();
-			_byteArray[baseIndex + 2] = color.bAsByte();
-			_byteArray[baseIndex + 3] = color.aAsByte();
+			const int32 index = convertXyToIndex(x, y);
+			_colorArray[index] = color;
 		}
 
-		FS_INLINE void PixelRgba::setR(const uint32 x, const uint32 y, const byte value) noexcept
+		FS_INLINE const Color& ColorImage::getAt(const uint32 x, const uint32 y) noexcept
 		{
-			_byteArray[convertXyToIndex(x, y) + 0] = value;
+			const int32 index = convertXyToIndex(x, y);
+			return _colorArray[index];
 		}
 
-		FS_INLINE void PixelRgba::setG(const uint32 x, const uint32 y, const byte value) noexcept
+		FS_INLINE const byte* ColorImage::buildPixelRgbaArray() noexcept
 		{
-			_byteArray[convertXyToIndex(x, y) + 1] = value;
-		}
-
-		FS_INLINE void PixelRgba::setB(const uint32 x, const uint32 y, const byte value) noexcept
-		{
-			_byteArray[convertXyToIndex(x, y) + 2] = value;
-		}
-
-		FS_INLINE void PixelRgba::setA(const uint32 x, const uint32 y, const byte value) noexcept
-		{
-			_byteArray[convertXyToIndex(x, y) + 3] = value;
-		}
-
-		FS_INLINE const uint32 PixelRgba::getByteCount() const noexcept
-		{
-			return static_cast<uint32>(_byteArray.size());
-		}
-
-		FS_INLINE const byte* PixelRgba::getByteRawPointer() const noexcept
-		{
+			static constexpr uint32 kByteCountPerPixel = 4;
+			const uint32 pixelCount = static_cast<uint32>(_colorArray.size());
+			_byteArray.resize(pixelCount * kByteCountPerPixel);
+			for (uint32 pixelIndex = 0; pixelIndex < pixelCount; ++pixelIndex)
+			{
+				const Color& color = _colorArray[pixelIndex];
+				_byteArray[pixelIndex * kByteCountPerPixel + 0] = color.rAsByte();
+				_byteArray[pixelIndex * kByteCountPerPixel + 1] = color.gAsByte();
+				_byteArray[pixelIndex * kByteCountPerPixel + 2] = color.bAsByte();
+				_byteArray[pixelIndex * kByteCountPerPixel + 3] = color.aAsByte();
+			}
 			return _byteArray.data();
 		}
 
-		FS_INLINE const uint32 PixelRgba::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
+		FS_INLINE const int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
 		{
-			return fs::min(static_cast<uint32>((_width * kByteCountPerPixel * y) + kByteCountPerPixel * x), static_cast<uint32>(_byteArray.size()));
+			return fs::min(static_cast<int32>((_width * y) + x), static_cast<int32>(_colorArray.size() - 1));
 		}
 
 
