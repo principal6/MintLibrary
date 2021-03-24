@@ -55,6 +55,11 @@ namespace fs
 			const float				b() const noexcept { return _raw._z; }
 			const float				a() const noexcept { return _raw._w; }
 
+			const byte				rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
+			const byte				gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
+			const byte				bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
+			const byte				aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
+
 			void					r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
 			void					g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
 			void					b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
@@ -79,6 +84,37 @@ namespace fs
 
 		private:
 			fs::Float4				_raw;
+		};
+
+
+		class PixelRgba final
+		{
+		public:
+										PixelRgba() : _width{ 0 } { __noop; }
+										~PixelRgba() = default;
+
+		public:
+			void						setSize(const uint32 width, const uint32 height) noexcept;
+			void						setSize(const uint32 width, const uint32 height, const Color& initializationColor) noexcept;
+			void						setColor(const uint32 x, const uint32 y, const Color& color) noexcept;
+			void						setR(const uint32 x, const uint32 y, const byte value) noexcept;
+			void						setG(const uint32 x, const uint32 y, const byte value) noexcept;
+			void						setB(const uint32 x, const uint32 y, const byte value) noexcept;
+			void						setA(const uint32 x, const uint32 y, const byte value) noexcept;
+
+		public:
+			const uint32				getByteCount() const noexcept;
+			const byte*					getByteRawPointer() const noexcept;
+
+		private:
+			const uint32				convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
+
+		private:
+			static constexpr uint32		kByteCountPerPixel = 4;
+
+		private:
+			uint32						_width = 0;
+			std::vector<byte>			_byteArray;
 		};
 
 

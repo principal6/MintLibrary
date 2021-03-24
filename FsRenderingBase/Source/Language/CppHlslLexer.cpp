@@ -276,6 +276,7 @@ namespace fs
 
 						if (isSuccess == false)
 						{
+							FS_LOG_ERROR("김장원", "실패!! lineSkipperClassifier[%d] sourceAt[%d]", (int)lineSkipperTableItem._lineSkipperClassifier, sourceAt);
 							return false;
 						}
 					}

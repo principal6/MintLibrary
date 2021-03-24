@@ -19,7 +19,11 @@ namespace fs
 		void CppHlsl::parseCppHlslFile(const char* const fileName)
 		{
 			TextFileReader textFileReader;
-			textFileReader.open(fileName);
+			if (textFileReader.open(fileName) == false)
+			{
+				FS_LOG_ERROR("김장원", "CppHlsl 파일[%s] 을 여는 데 실패했습니다!!", fileName);
+				return;
+			}
 
 			_lexer.setSource(textFileReader.get());
 			_lexer.execute();
@@ -56,6 +60,11 @@ namespace fs
 
 					++bufferIndex;
 				}
+			}
+
+			if (_hlslString.empty() == true)
+			{
+				FS_LOG_ERROR("김장원", "Hlsl String 을 Generate 하지 못했습니다!! typeInfoCount: %d", typeInfoCount);
 			}
 		}
 

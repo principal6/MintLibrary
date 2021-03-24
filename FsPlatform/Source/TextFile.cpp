@@ -19,13 +19,14 @@ namespace fs
 
 		_byteArray.clear();
 
+		bool isBomChecked = false;
 		while (ifs.eof() == false)
 		{
 			byte readByte{ static_cast<byte>(ifs.get()) };
 			_byteArray.push_back(readByte);
 
 			// BOM »Æ¿Œ
-			if (_byteArray.size() == 3)
+			if (isBomChecked == false && _byteArray.size() == 3)
 			{
 				if (_byteArray.at(0) == 0xEF &&
 					_byteArray.at(1) == 0xBB &&
@@ -34,23 +35,17 @@ namespace fs
 					// UTF-8 (BOM)
 					_encoding = TextFileEncoding::UTF8_BOM;
 					_byteArray.clear();
+
+					isBomChecked = true;
 				}
-
-				break;
 			}
-		}
-
-		while (ifs.eof() == false)
-		{
-			byte readByte{ static_cast<byte>(ifs.get()) };
-			_byteArray.push_back(readByte);
 		}
 
 		if (_byteArray.empty() == false)
 		{
 			if (_byteArray.back() == 255)
 			{
-				_byteArray.pop_back();
+				_byteArray.back() = 0;
 			}
 		}
 
