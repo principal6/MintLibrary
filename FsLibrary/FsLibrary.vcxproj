@@ -42,6 +42,7 @@
     <Natvis Include="FsLibrary.natvis" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Include\ContiguousString.inl" />
     <None Include="Include\ScopedCpuProfiler.inl" />
   </ItemGroup>
   <ItemGroup>

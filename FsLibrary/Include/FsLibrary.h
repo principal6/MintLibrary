@@ -9,13 +9,13 @@
 
 namespace fs
 {
-	class FsLibraryVersion
-	{
-	public:
-		static const uint16 getVersionMajor() noexcept;
-		static const uint16 getVersionMinor() noexcept;
-		static void         printVersion() noexcept;
-	};
+    class FsLibraryVersion
+    {
+    public:
+        static const uint16 getVersionMajor() noexcept;
+        static const uint16 getVersionMinor() noexcept;
+        static void         printVersion() noexcept;
+    };
 }
 
 #include <FsLibrary/Include/Algorithm.hpp>
