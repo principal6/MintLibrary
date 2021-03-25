@@ -11,12 +11,12 @@
 
 namespace fs
 {
-	namespace StringUtil
-	{
+    namespace StringUtil
+    {
         FS_INLINE const bool isNullOrEmpty(const char* const rawString)
-		{
-			return (nullptr == rawString || '\0' == rawString[0]);
-		}
+        {
+            return (nullptr == rawString || '\0' == rawString[0]);
+        }
 
         FS_INLINE const bool isNullOrEmpty(const wchar_t* const rawWideString)
         {

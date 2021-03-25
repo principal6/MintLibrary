@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl" />
+    <None Include="Include\StaticArray.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\UniqueString.cpp" />
