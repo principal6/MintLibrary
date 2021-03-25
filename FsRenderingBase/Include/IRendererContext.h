@@ -10,6 +10,7 @@
 #include <FsMath/Include/Float2.h>
 #include <FsMath/Include/Float3.h>
 #include <FsMath/Include/Float4.h>
+#include <FsMath/Include/Int2.h>
 
 #include <FsRenderingBase/Include/IDxObject.h>
 
@@ -94,10 +95,14 @@ namespace fs
 									~ColorImage() = default;
 
 		public:
-			void					setSize(const uint32 width, const uint32 height) noexcept;
+			void					setSize(const fs::Int2& size) noexcept;
+			const fs::Int2&			getSize() const noexcept;
+
+		public:
 			void					fill(const Color& color) noexcept;
-			void					setAt(const uint32 x, const uint32 y, const Color& color) noexcept;
-			const Color&			getAt(const uint32 x, const uint32 y) noexcept;
+			void					fillRect(const fs::Int2& position, const fs::Int2& size, const Color& color) noexcept;
+			void					setPixel(const fs::Int2& at, const Color& color) noexcept;
+			const Color&			getPixel(const fs::Int2& at) noexcept;
 
 		public:
 			const byte*				buildPixelRgbaArray() noexcept;
@@ -106,7 +111,7 @@ namespace fs
 			const int32				convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
 
 		private:
-			uint32					_width = 0;
+			fs::Int2				_size;
 			std::vector<Color>		_colorArray;
 			std::vector<byte>		_byteArray;
 		};

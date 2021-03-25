@@ -11,10 +11,15 @@ namespace fs
 		inline const Color Color::kBlack = Color(0, 0, 0, 255);
 
 		
-		FS_INLINE void fs::RenderingBase::ColorImage::setSize(const uint32 width, const uint32 height) noexcept
+		FS_INLINE void fs::RenderingBase::ColorImage::setSize(const fs::Int2& size) noexcept
 		{
-			_width = width;
-			_colorArray.resize(width * height);
+			_size = size;
+			_colorArray.resize(_size._x * _size._y);
+		}
+
+		FS_INLINE const fs::Int2& ColorImage::getSize() const noexcept
+		{
+			return _size;
 		}
 
 		FS_INLINE void ColorImage::fill(const Color& color) noexcept
@@ -25,15 +30,46 @@ namespace fs
 			}
 		}
 
-		FS_INLINE void ColorImage::setAt(const uint32 x, const uint32 y, const Color& color) noexcept
+		FS_INLINE void ColorImage::fillRect(const fs::Int2& position, const fs::Int2& size, const Color& color) noexcept
 		{
-			const int32 index = convertXyToIndex(x, y);
+			if (size._x <= 0 || size._y <= 0)
+			{
+				return;
+			}
+
+			const int32 beginX = fs::max(position._x, 0);
+			const int32 beginY = fs::max(position._y, 0);
+			if (_size._x <= beginX || _size._y <= beginY)
+			{
+				return;
+			}
+
+			const int32 endX = fs::min(position._x + size._x, _size._x);
+			const int32 endY = fs::min(position._y + size._y, _size._y);
+			if (endX < 0 || endY < 0)
+			{
+				return;
+			}
+
+			for (int32 y = beginY; y < endY; ++y)
+			{
+				const int32 base = _size._x * y;
+				for (int32 x = beginX; x < endX; ++x)
+				{
+					_colorArray[base + x] = color;
+				}
+			}
+		}
+
+		FS_INLINE void ColorImage::setPixel(const fs::Int2& at, const Color& color) noexcept
+		{
+			const int32 index = convertXyToIndex(at._x, at._y);
 			_colorArray[index] = color;
 		}
 
-		FS_INLINE const Color& ColorImage::getAt(const uint32 x, const uint32 y) noexcept
+		FS_INLINE const Color& ColorImage::getPixel(const fs::Int2& at) noexcept
 		{
-			const int32 index = convertXyToIndex(x, y);
+			const int32 index = convertXyToIndex(at._x, at._y);
 			return _colorArray[index];
 		}
 
@@ -55,7 +91,7 @@ namespace fs
 
 		FS_INLINE const int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
 		{
-			return fs::min(static_cast<int32>((_width * y) + x), static_cast<int32>(_colorArray.size() - 1));
+			return fs::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
 		}
 
 
