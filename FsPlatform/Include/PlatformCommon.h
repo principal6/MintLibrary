@@ -7,18 +7,18 @@
 
 namespace fs
 {
-	namespace Platform
-	{
-		enum class PlatformType
-		{
-			INVALID,
+    namespace Platform
+    {
+        enum class PlatformType
+        {
+            INVALID,
 
-			Windows,
-			// MacOs
-			// Linux
-			// ...
-		};
-	}
+            Windows,
+            // MacOs
+            // Linux
+            // ...
+        };
+    }
 }
 
 

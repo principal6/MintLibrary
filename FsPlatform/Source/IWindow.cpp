@@ -4,100 +4,100 @@
 
 namespace fs
 {
-	namespace Window
-	{
-		EventData::EventValue::EventValue()
-			: _raw{ 0 }
-		{
-			__noop;
-		}
+    namespace Window
+    {
+        EventData::EventValue::EventValue()
+            : _raw{ 0 }
+        {
+            __noop;
+        }
 
-		EventData::EventValue::EventValue(const EventValue& rhs)
-			: _raw{ rhs._raw[0], rhs._raw[1], rhs._raw[2] }
-		{
-			__noop;
-		}
-		
-		void EventData::EventValue::setKeyCode(const EventData::KeyCode keyCode) noexcept
-		{
-			_keyCode = keyCode;
-		}
-		const EventData::KeyCode EventData::EventValue::getKeyCode() const noexcept
-		{
-			return _keyCode;
-		}
+        EventData::EventValue::EventValue(const EventValue& rhs)
+            : _raw{ rhs._raw[0], rhs._raw[1], rhs._raw[2] }
+        {
+            __noop;
+        }
+        
+        void EventData::EventValue::setKeyCode(const EventData::KeyCode keyCode) noexcept
+        {
+            _keyCode = keyCode;
+        }
+        const EventData::KeyCode EventData::EventValue::getKeyCode() const noexcept
+        {
+            return _keyCode;
+        }
 
-		const bool EventData::EventValue::isKeyCode(const EventData::KeyCode keyCode) const noexcept
-		{
-			return keyCode == _keyCode;
-		}
-		
-		void EventData::EventValue::setMousePosition(const fs::Float2& mousePosition) noexcept
-		{
-			_mousePosition = mousePosition;
-		}
+        const bool EventData::EventValue::isKeyCode(const EventData::KeyCode keyCode) const noexcept
+        {
+            return keyCode == _keyCode;
+        }
+        
+        void EventData::EventValue::setMousePosition(const fs::Float2& mousePosition) noexcept
+        {
+            _mousePosition = mousePosition;
+        }
 
-		void EventData::EventValue::setMouseDeltaPosition(const fs::Float2& mouseDeltaPosition) noexcept
-		{
-			_mouseDeltaPosition = mouseDeltaPosition;
-		}
+        void EventData::EventValue::setMouseDeltaPosition(const fs::Float2& mouseDeltaPosition) noexcept
+        {
+            _mouseDeltaPosition = mouseDeltaPosition;
+        }
 
-		const fs::Float2& EventData::EventValue::getMousePosition() const noexcept
-		{
-			return _mousePosition;
-		}
+        const fs::Float2& EventData::EventValue::getMousePosition() const noexcept
+        {
+            return _mousePosition;
+        }
 
-		const fs::Float2 EventData::EventValue::getAndClearMouseDeltaPosition() const noexcept
-		{
-			fs::Float2 result = _mouseDeltaPosition;
-			_mouseDeltaPosition.setZero();
-			return result;
-		}
-		
-		void EventData::EventValue::setMouseWheel(const float mouseWheel) noexcept
-		{
-			_mouseInfoF = mouseWheel;
-		}
-		
-		const float EventData::EventValue::getMouseWheel() const noexcept
-		{
-			return _mouseInfoF;
-		}
-		
-		void EventData::EventValue::setInputWchar(const wchar_t inputWchar) noexcept
-		{
-			_inputWchar = inputWchar;
-		}
-		
-		const wchar_t EventData::EventValue::getInputWchar() const noexcept
-		{
-			return _inputWchar;
-		}
+        const fs::Float2 EventData::EventValue::getAndClearMouseDeltaPosition() const noexcept
+        {
+            fs::Float2 result = _mouseDeltaPosition;
+            _mouseDeltaPosition.setZero();
+            return result;
+        }
+        
+        void EventData::EventValue::setMouseWheel(const float mouseWheel) noexcept
+        {
+            _mouseInfoF = mouseWheel;
+        }
+        
+        const float EventData::EventValue::getMouseWheel() const noexcept
+        {
+            return _mouseInfoF;
+        }
+        
+        void EventData::EventValue::setInputWchar(const wchar_t inputWchar) noexcept
+        {
+            _inputWchar = inputWchar;
+        }
+        
+        const wchar_t EventData::EventValue::getInputWchar() const noexcept
+        {
+            return _inputWchar;
+        }
 
-		void EventData::EventValue::setSize(const fs::Float2& size) noexcept
-		{
-			_size = size;
-		}
+        void EventData::EventValue::setSize(const fs::Float2& size) noexcept
+        {
+            _size = size;
+        }
 
-		const fs::Float2& EventData::EventValue::getSize() const noexcept
-		{
-			return _size;
-		}
-		
-		
-		IWindow::IWindow()
-			: IWindow(fs::Platform::PlatformType::INVALID)
-		{
-			__noop;
-		}
-		
-		IWindow::IWindow(const fs::Platform::PlatformType platformType)
-			: _isRunning{ false }
-			, _platformType{ platformType }
-			, _creationError{ CreationError::None }
-			, _currentCursorType{ CursorType::Arrow }
-		{
-			__noop;
-		}
-	}
+        const fs::Float2& EventData::EventValue::getSize() const noexcept
+        {
+            return _size;
+        }
+        
+        
+        IWindow::IWindow()
+            : IWindow(fs::Platform::PlatformType::INVALID)
+        {
+            __noop;
+        }
+        
+        IWindow::IWindow(const fs::Platform::PlatformType platformType)
+            : _isRunning{ false }
+            , _platformType{ platformType }
+            , _creationError{ CreationError::None }
+            , _currentCursorType{ CursorType::Arrow }
+        {
+            __noop;
+        }
+    }
 }
