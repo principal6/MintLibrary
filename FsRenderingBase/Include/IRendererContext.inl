@@ -67,10 +67,19 @@ namespace fs
             _colorArray[index] = color;
         }
 
-        FS_INLINE const Color& ColorImage::getPixel(const fs::Int2& at) noexcept
+        FS_INLINE const Color& ColorImage::getPixel(const fs::Int2& at) const noexcept
         {
             const int32 index = convertXyToIndex(at._x, at._y);
             return _colorArray[index];
+        }
+
+        FS_INLINE void ColorImage::getAdjacentPixels(const fs::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept
+        {
+            outAdjacentPixels._top      = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x, at._y - 1);
+            outAdjacentPixels._bottom   = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x, at._y + 1);
+            outAdjacentPixels._left     = (at._x <= 0) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y);
+            outAdjacentPixels._right    = (_size._x - 1 <= at._x) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y);
+            outAdjacentPixels._center   = getColorFromXy(at._x, at._y);
         }
 
         FS_INLINE const byte* ColorImage::buildPixelRgbaArray() noexcept
@@ -92,6 +101,11 @@ namespace fs
         FS_INLINE const int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
         {
             return fs::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
+        }
+
+        FS_INLINE const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept
+        {
+            return (x < static_cast<uint32>(_size._x) && y < static_cast<uint32>(_size._y)) ? _colorArray[(_size._x * y) + x] : Color::kTransparent;
         }
 
 

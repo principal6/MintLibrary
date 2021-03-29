@@ -91,6 +91,16 @@ namespace fs
         class ColorImage
         {
         public:
+            struct AdjacentPixels
+            {
+                Color   _top;
+                Color   _bottom;
+                Color   _left;
+                Color   _right;
+                Color   _center;
+            };
+
+        public:
                                     ColorImage() = default;
                                     ~ColorImage() = default;
 
@@ -102,13 +112,15 @@ namespace fs
             void                    fill(const Color& color) noexcept;
             void                    fillRect(const fs::Int2& position, const fs::Int2& size, const Color& color) noexcept;
             void                    setPixel(const fs::Int2& at, const Color& color) noexcept;
-            const Color&            getPixel(const fs::Int2& at) noexcept;
+            const Color&            getPixel(const fs::Int2& at) const noexcept;
+            void                    getAdjacentPixels(const fs::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
 
         public:
             const byte*             buildPixelRgbaArray() noexcept;
 
         private:
             const int32             convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
+            const Color&            getColorFromXy(const uint32 x, const uint32 y) const noexcept;
 
         private:
             fs::Int2                _size;
