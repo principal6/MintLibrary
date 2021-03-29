@@ -10,13 +10,13 @@
 
 namespace fs
 {
-	namespace RenderingBase
-	{
-		struct SB_Transform
-		{
-			float4x4	_transformMatrix;
-		};
-	}
+    namespace RenderingBase
+    {
+        struct SB_Transform
+        {
+            float4x4    _transformMatrix;
+        };
+    }
 }
 
 

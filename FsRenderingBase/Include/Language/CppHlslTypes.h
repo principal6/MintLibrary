@@ -16,12 +16,12 @@ namespace fs
 #define CPP_HLSL_REGISTER_INDEX(Index)
 
 
-	using uint				= uint32;
-	using float1			= float;
-	using float2			= fs::Float2;
-	using float3			= fs::Float3;
-	using float4			= fs::Float4;
-	using float4x4			= fs::Float4x4;
+    using uint              = uint32;
+    using float1            = float;
+    using float2            = fs::Float2;
+    using float3            = fs::Float3;
+    using float4            = fs::Float4;
+    using float4x4          = fs::Float4x4;
 }
 
 

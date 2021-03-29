@@ -12,19 +12,19 @@
 
 namespace fs
 {
-	namespace Language
-	{
-		class CppHlslLexer final : public ILexer
-		{
-		public:
-													CppHlslLexer();
-													CppHlslLexer(const std::string& source);
-			virtual									~CppHlslLexer() = default;
+    namespace Language
+    {
+        class CppHlslLexer final : public ILexer
+        {
+        public:
+                                                    CppHlslLexer();
+                                                    CppHlslLexer(const std::string& source);
+            virtual                                 ~CppHlslLexer() = default;
 
-		public:
-			virtual const bool						execute() override final;
-		};
-	}
+        public:
+            virtual const bool                      execute() override final;
+        };
+    }
 }
 
 

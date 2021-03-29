@@ -7,35 +7,35 @@
 
 namespace fs
 {
-	namespace RenderingBase
-	{
-		enum class TextRenderDirectionHorz
-		{
-			Leftward,
-			Centered,
-			Rightward
-		};
+    namespace RenderingBase
+    {
+        enum class TextRenderDirectionHorz
+        {
+            Leftward,
+            Centered,
+            Rightward
+        };
 
-		enum class TextRenderDirectionVert
-		{
-			Upward,
-			Centered,
-			Downward
-		};
+        enum class TextRenderDirectionVert
+        {
+            Upward,
+            Centered,
+            Downward
+        };
 
-		static constexpr const char* const			kDefaultFont = "Assets/noto_sans_kr_medium";
-		static constexpr int32						kDefaultFontSize = 18;
+        static constexpr const char* const          kDefaultFont = "Assets/noto_sans_kr_medium";
+        static constexpr int32                      kDefaultFontSize = 18;
 
-		using IndexElementType						= uint16;
+        using IndexElementType                      = uint16;
 
-		// Triangle face
-		struct Face
-		{
-			static constexpr uint8					kIndexCountPerFace = 3;
+        // Triangle face
+        struct Face
+        {
+            static constexpr uint8                  kIndexCountPerFace = 3;
 
-			fs::RenderingBase::IndexElementType		_indexArray[kIndexCountPerFace];
-		};
-	}
+            fs::RenderingBase::IndexElementType     _indexArray[kIndexCountPerFace];
+        };
+    }
 }
 
 

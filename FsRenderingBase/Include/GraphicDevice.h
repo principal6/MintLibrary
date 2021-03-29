@@ -31,131 +31,131 @@
 
 namespace fs
 {
-	namespace Window
-	{
-		class IWindow;
-	}
+    namespace Window
+    {
+        class IWindow;
+    }
 
-	namespace RenderingBase
-	{
-		using Microsoft::WRL::ComPtr;
-
-
-		D3D11_RECT	rectToD3dRect(const Rect& rect) noexcept;
+    namespace RenderingBase
+    {
+        using Microsoft::WRL::ComPtr;
 
 
-		class GraphicDevice final
-		{
-		public:
-																		GraphicDevice();
-																		~GraphicDevice() = default;
+        D3D11_RECT  rectToD3dRect(const Rect& rect) noexcept;
 
-		public:
-			const bool													initialize(fs::Window::IWindow* const window);
-			void														updateScreenSize();
 
-		private:
-			void														createDxDevice();
-			const bool													loadFontData();
+        class GraphicDevice final
+        {
+        public:
+                                                                GraphicDevice();
+                                                                ~GraphicDevice() = default;
 
-		private:
-			const bool													createSwapChain(const fs::Int2& windowSize, const HWND windowHandle);
-			const bool													initializeBackBuffer();
-			const bool													initializeDepthStencilBufferAndView(const fs::Int2& windowSize);
-			const bool													initializeDepthStencilStates();
-			void														initializeShaderHeaderMemory();
-			void														initializeShaders();
-			void														initializeSamplerStates();
-			void														initializeBlendStates();
-			void														initializeFullScreenData(const fs::Int2& windowSize);
-			void														setDefaultRenderTargetsAndDepthStencil();
+        public:
+            const bool                                          initialize(fs::Window::IWindow* const window);
+            void                                                updateScreenSize();
 
-		public:
-			void														beginRendering();
-			void														endRendering();
+        private:
+            void                                                createDxDevice();
+            const bool                                          loadFontData();
 
-		public:
-			void														useScissorRectanglesWithMultipleViewports() noexcept;
-			void														useFullScreenViewport() noexcept;
-			const D3D11_VIEWPORT&										getFullScreenViewport() const noexcept;
-			const D3D11_RECT&											getFullScreenScissorRectangle() const noexcept;
+        private:
+            const bool                                          createSwapChain(const fs::Int2& windowSize, const HWND windowHandle);
+            const bool                                          initializeBackBuffer();
+            const bool                                          initializeDepthStencilBufferAndView(const fs::Int2& windowSize);
+            const bool                                          initializeDepthStencilStates();
+            void                                                initializeShaderHeaderMemory();
+            void                                                initializeShaders();
+            void                                                initializeSamplerStates();
+            void                                                initializeBlendStates();
+            void                                                initializeFullScreenData(const fs::Int2& windowSize);
+            void                                                setDefaultRenderTargetsAndDepthStencil();
 
-		public:
-			fs::RenderingBase::DxShaderPool&							getShaderPool() noexcept;
-			fs::RenderingBase::DxResourcePool&							getResourcePool() noexcept;
-			fs::RenderingBase::RectangleRendererContext&				getRectangleRendererContext() noexcept;
-			fs::RenderingBase::ShapeRendererContext&					getShapeRendererContext() noexcept;
-			fs::RenderingBase::FontRendererContext&						getFontRendererContext() noexcept;
-			fs::Gui::GuiContext&										getGuiContext() noexcept;
-			const fs::Language::CppHlsl&								getCppHlslSteamData() const noexcept;
-			const fs::Language::CppHlsl&								getCppHlslConstantBuffers() const noexcept;
+        public:
+            void                                                beginRendering();
+            void                                                endRendering();
 
-		public:
-			void														initialize2DProjectionMatrix(const fs::Float2& windowSize) noexcept;
-			void														setViewMatrix(const fs::Float4x4& viewMatrix) noexcept;
-			void														setProjectionMatrix(const fs::Float4x4& projectionMatrix) noexcept;
-			void														updateViewProjectionMatrix() noexcept;
+        public:
+            void                                                useScissorRectanglesWithMultipleViewports() noexcept;
+            void                                                useFullScreenViewport() noexcept;
+            const D3D11_VIEWPORT&                               getFullScreenViewport() const noexcept;
+            const D3D11_RECT&                                   getFullScreenScissorRectangle() const noexcept;
 
-		public:
-			ID3D11Device*												getDxDevice() noexcept;
-			ID3D11DeviceContext*										getDxDeviceContext() noexcept;
-			const fs::Int2&												getWindowSize() const noexcept;
-			fs::Float2													getWindowSizeFloat2() const noexcept;
-			fs::Window::IWindow*										getWindow() noexcept;
+        public:
+            fs::RenderingBase::DxShaderPool&                    getShaderPool() noexcept;
+            fs::RenderingBase::DxResourcePool&                  getResourcePool() noexcept;
+            fs::RenderingBase::RectangleRendererContext&        getRectangleRendererContext() noexcept;
+            fs::RenderingBase::ShapeRendererContext&            getShapeRendererContext() noexcept;
+            fs::RenderingBase::FontRendererContext&             getFontRendererContext() noexcept;
+            fs::Gui::GuiContext&                                getGuiContext() noexcept;
+            const fs::Language::CppHlsl&                        getCppHlslSteamData() const noexcept;
+            const fs::Language::CppHlsl&                        getCppHlslConstantBuffers() const noexcept;
 
-		private:
-			fs::Window::IWindow*										_window;
+        public:
+            void                                                initialize2DProjectionMatrix(const fs::Float2& windowSize) noexcept;
+            void                                                setViewMatrix(const fs::Float4x4& viewMatrix) noexcept;
+            void                                                setProjectionMatrix(const fs::Float4x4& projectionMatrix) noexcept;
+            void                                                updateViewProjectionMatrix() noexcept;
 
-		private:
-			fs::RenderingBase::Color									_clearColor;
+        public:
+            ID3D11Device*                                       getDxDevice() noexcept;
+            ID3D11DeviceContext*                                getDxDeviceContext() noexcept;
+            const fs::Int2&                                     getWindowSize() const noexcept;
+            fs::Float2                                          getWindowSizeFloat2() const noexcept;
+            fs::Window::IWindow*                                getWindow() noexcept;
 
-	#pragma region DirectX
-		private:
-			ComPtr<IDXGISwapChain>										_swapChain;
-			ComPtr<ID3D11Device>										_device;
-			ComPtr<ID3D11DeviceContext>									_deviceContext;
+        private:
+            fs::Window::IWindow*                                _window;
 
-		private:
-			ComPtr<ID3D11RenderTargetView>								_backBufferRtv;
-			ComPtr<ID3D11Texture2D>										_depthStencilBuffer;
-			ComPtr<ID3D11DepthStencilView>								_depthStencilView;
-			ComPtr<ID3D11DepthStencilState>								_depthStencilStateLessEqual;
-		
-		private:
-			ComPtr<ID3D11RasterizerState>								_rasterizerStateDefault;
-			ComPtr<ID3D11RasterizerState>								_rasterizerStateScissorRectangles;
-			D3D11_VIEWPORT												_fullScreenViewport;
-			D3D11_RECT													_fullScreenScissorRectangle;
+        private:
+            fs::RenderingBase::Color                            _clearColor;
 
-		private:
-			DxShaderHeaderMemory										_shaderHeaderMemory;
-			DxShaderPool												_shaderPool;
-			DxResourcePool												_resourcePool;
-		
-		private:
-			fs::RenderingBase::CB_View									_cbViewData;
-			DxObjectId													_cbViewId;
+    #pragma region DirectX
+        private:
+            ComPtr<IDXGISwapChain>                              _swapChain;
+            ComPtr<ID3D11Device>                                _device;
+            ComPtr<ID3D11DeviceContext>                         _deviceContext;
 
-		private:
-			ComPtr<ID3D11SamplerState>									_samplerState;
-			ComPtr<ID3D11BlendState>									_blendState;
-	#pragma endregion
+        private:
+            ComPtr<ID3D11RenderTargetView>                      _backBufferRtv;
+            ComPtr<ID3D11Texture2D>                             _depthStencilBuffer;
+            ComPtr<ID3D11DepthStencilView>                      _depthStencilView;
+            ComPtr<ID3D11DepthStencilState>                     _depthStencilStateLessEqual;
 
-		private:
-			fs::Language::CppHlsl										_cppHlslStreamData;
-			fs::Language::CppHlsl										_cppHlslConstantBuffers;
-			fs::Language::CppHlsl										_cppHlslStructuredBuffers;
+        private:
+            ComPtr<ID3D11RasterizerState>                       _rasterizerStateDefault;
+            ComPtr<ID3D11RasterizerState>                       _rasterizerStateScissorRectangles;
+            D3D11_VIEWPORT                                      _fullScreenViewport;
+            D3D11_RECT                                          _fullScreenScissorRectangle;
 
-		private:
-			fs::RenderingBase::RectangleRendererContext					_rectangleRendererContext;
-			fs::RenderingBase::ShapeRendererContext						_shapeRendererContext;
-			fs::RenderingBase::FontRendererContext						_fontRendererContext;
-			bool														_needEndRenderingCall;
-		
-		private:
-			fs::Gui::GuiContext											_guiContext;
-		};
-	}
+        private:
+            DxShaderHeaderMemory                                _shaderHeaderMemory;
+            DxShaderPool                                        _shaderPool;
+            DxResourcePool                                      _resourcePool;
+
+        private:
+            fs::RenderingBase::CB_View                          _cbViewData;
+            DxObjectId                                          _cbViewId;
+
+        private:
+            ComPtr<ID3D11SamplerState>                          _samplerState;
+            ComPtr<ID3D11BlendState>                            _blendState;
+    #pragma endregion
+
+        private:
+            fs::Language::CppHlsl                               _cppHlslStreamData;
+            fs::Language::CppHlsl                               _cppHlslConstantBuffers;
+            fs::Language::CppHlsl                               _cppHlslStructuredBuffers;
+
+        private:
+            fs::RenderingBase::RectangleRendererContext         _rectangleRendererContext;
+            fs::RenderingBase::ShapeRendererContext             _shapeRendererContext;
+            fs::RenderingBase::FontRendererContext              _fontRendererContext;
+            bool                                                _needEndRenderingCall;
+
+        private:
+            fs::Gui::GuiContext                                 _guiContext;
+        };
+    }
 }
 
 

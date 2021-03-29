@@ -175,6 +175,5 @@
     <ClCompile Include="Source\GuiContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Include\IRendererContext.cpp" />
   </ItemGroup>
 </Project>

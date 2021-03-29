@@ -13,45 +13,45 @@
 
 namespace fs
 {
-	namespace Language
-	{
-		enum class CppHlslFileType
-		{
-			StreamData,
-			ConstantBuffers,
-			StructuredBuffers,
-		};
+    namespace Language
+    {
+        enum class CppHlslFileType
+        {
+            StreamData,
+            ConstantBuffers,
+            StructuredBuffers,
+        };
 
-		class CppHlsl
-		{
-		public:
-										CppHlsl();
-										~CppHlsl() = default;
+        class CppHlsl
+        {
+        public:
+                                        CppHlsl();
+                                        ~CppHlsl() = default;
 
-		public:
-			void						parseCppHlslFile(const char* const fileName);
-		
-		public:
-			void						generateHlslString(const CppHlslFileType fileType);
-		
-		public:
-			const char*					getHlslString() const noexcept;
+        public:
+            void                        parseCppHlslFile(const char* const fileName);
+        
+        public:
+            void                        generateHlslString(const CppHlslFileType fileType);
+        
+        public:
+            const char*                 getHlslString() const noexcept;
 
-		public:
-			const uint32				getTypeInfoCount() const noexcept;
-			const CppHlslTypeInfo&		getTypeInfo(const uint64 typeIndex) const noexcept;
-			const CppHlslTypeInfo&		getTypeInfo(const std::string& typeName) const noexcept;
-			const CppHlslTypeInfo&		getTypeInfo(const std::type_info& stdTypeInfo) const noexcept;
-		
-		private:
-			CppHlslLexer				_lexer;
-			CppHlslParser				_parser;
+        public:
+            const uint32                getTypeInfoCount() const noexcept;
+            const CppHlslTypeInfo&      getTypeInfo(const uint64 typeIndex) const noexcept;
+            const CppHlslTypeInfo&      getTypeInfo(const std::string& typeName) const noexcept;
+            const CppHlslTypeInfo&      getTypeInfo(const std::type_info& stdTypeInfo) const noexcept;
+        
+        private:
+            CppHlslLexer                _lexer;
+            CppHlslParser               _parser;
 
-		private:
-			CppHlslFileType				_fileType;
-			std::string					_hlslString;
-		};
-	}
+        private:
+            CppHlslFileType             _fileType;
+            std::string                 _hlslString;
+        };
+    }
 }
 
 

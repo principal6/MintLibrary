@@ -14,46 +14,46 @@
 
 namespace fs
 {
-	namespace RenderingBase
-	{
-		class GraphicDevice;
+    namespace RenderingBase
+    {
+        class GraphicDevice;
 
 
-		using Microsoft::WRL::ComPtr;
+        using Microsoft::WRL::ComPtr;
 
 
-		template <typename T>
-		class TriangleRenderer
-		{
-		public:
-															TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice);
-															~TriangleRenderer() = default;
+        template <typename T>
+        class TriangleRenderer
+        {
+        public:
+                                                        TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice);
+                                                        ~TriangleRenderer() = default;
 
-		public:
-			std::vector<T>&									vertexArray() noexcept;
-			std::vector<IndexElementType>&					indexArray() noexcept;
+        public:
+            std::vector<T>&                             vertexArray() noexcept;
+            std::vector<IndexElementType>&              indexArray() noexcept;
 
-		public:
-			void											flush();
-			const bool										isRenderable() const noexcept;
-			void											render();
+        public:
+            void                                        flush();
+            const bool                                  isRenderable() const noexcept;
+            void                                        render();
 
-		private:
-			void											prepareBuffer();
+        private:
+            void                                        prepareBuffer();
 
-		private:
-			fs::RenderingBase::GraphicDevice* const		_graphicDevice;
-			const uint32									_vertexStride;
-		
-		private:
-			std::vector<T>									_vertexArray;
-			DxObjectId										_vertexBufferId;
+        private:
+            fs::RenderingBase::GraphicDevice* const     _graphicDevice;
+            const uint32                                _vertexStride;
+        
+        private:
+            std::vector<T>                              _vertexArray;
+            DxObjectId                                  _vertexBufferId;
 
-		private:
-			std::vector<IndexElementType>					_indexArray;
-			DxObjectId										_indexBufferId;
-		};
-	}
+        private:
+            std::vector<IndexElementType>               _indexArray;
+            DxObjectId                                  _indexBufferId;
+        };
+    }
 }
 
 
