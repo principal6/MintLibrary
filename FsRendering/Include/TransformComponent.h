@@ -15,19 +15,19 @@
 
 namespace fs
 {
-	namespace Rendering
-	{
-		class TransformComponent : public ObjectComponent
-		{
-		public:
-									TransformComponent() : ObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
-									TransformComponent(const ObjectComponentType derivedType) : ObjectComponent(derivedType) { __noop; }
-			virtual					~TransformComponent() { __noop; }
+    namespace Rendering
+    {
+        class TransformComponent : public ObjectComponent
+        {
+        public:
+                                    TransformComponent() : ObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
+                                    TransformComponent(const ObjectComponentType derivedType) : ObjectComponent(derivedType) { __noop; }
+            virtual                 ~TransformComponent() { __noop; }
 
-		public:
-			Srt						_srt;
-		};
-	}
+        public:
+            Srt                     _srt;
+        };
+    }
 }
 
 
