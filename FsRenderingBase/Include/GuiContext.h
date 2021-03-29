@@ -708,6 +708,7 @@ namespace fs
             const bool                                          isDescendantControlPressed(const ControlData& controlData) const noexcept;
             const bool                                          isDescendantControlHovered(const ControlData& controlData) const noexcept;
             const ControlData&                                  getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
+            const bool                                          hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
             const fs::RenderingBase::Color&                     getNamedColor(const NamedColor namedColor) const noexcept;
             fs::RenderingBase::Color&                           getNamedColor(const NamedColor namedColor) noexcept;

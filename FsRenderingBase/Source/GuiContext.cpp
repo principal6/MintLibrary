@@ -3489,32 +3489,29 @@ namespace fs
 
         const bool GuiContext::needToColorFocused(const ControlData& controlData) const noexcept
         {
-            const ControlData& closestFocusableAncestorInclusive = getClosestFocusableAncestorControlInclusive(controlData);
+            // #0. Child of docking control
+            const bool hasDockingAncestorInclusive = hasDockingAncestorControlInclusive(controlData);
+            if (hasDockingAncestorInclusive == true)
+            {
+                return true;
+            }
 
-            // #0. Focused
+            // #1. Focused
+            const ControlData& closestFocusableAncestorInclusive = getClosestFocusableAncestorControlInclusive(controlData);
             const bool isFocused = isControlFocused(closestFocusableAncestorInclusive);
             if (isFocused == true)
             {
                 return true;
             }
 
-            // #1. Child Control Focused
+            // #2. Child Control Focused
             const bool isDescendantFocused = isDescendantControlFocusedInclusive(closestFocusableAncestorInclusive);
             if (isDescendantFocused == true)
             {
                 return true;
             }
 
-            /*
-            // #1. DockHosting
-            const bool isDockHosting = closestFocusableAncestorInclusive.isDockHosting();
-            if (isDockHosting == true && (isFocused == true || isDescendantControlFocused(closestFocusableAncestorInclusive)))
-            {
-                return true;
-            }
-            */
-
-            // #2. Docking
+            // #3. Docking
             const bool isDocking = closestFocusableAncestorInclusive.isDocking();
             const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlHashKey());
             return (isDocking == true && (dockControlData.isRootControl() == true || isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
@@ -3575,6 +3572,22 @@ namespace fs
             }
 
             return getClosestFocusableAncestorControlInclusive(getControlData(controlData.getParentHashKey()));
+        }
+
+        const bool GuiContext::hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept
+        {
+            if (controlData.getHashKey() <= 1)
+            {
+                // ROOT
+                return false;
+            }
+
+            if (controlData.isDocking() == true)
+            {
+                return true;
+            }
+
+            return hasDockingAncestorControlInclusive(getControlData(controlData.getParentHashKey()));
         }
 
         void GuiContext::render()
