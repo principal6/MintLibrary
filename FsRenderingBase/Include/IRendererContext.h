@@ -29,7 +29,6 @@ namespace fs
             static const Color      kWhite;
             static const Color      kBlack;
 
-
         public:
             constexpr               Color() : Color(255, 255, 255) { __noop; }
             constexpr               Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } { __noop; }
@@ -51,25 +50,25 @@ namespace fs
             const bool              operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
 
         public:
-            const float             r() const noexcept { return _raw._x; }
-            const float             g() const noexcept { return _raw._y; }
-            const float             b() const noexcept { return _raw._z; }
-            const float             a() const noexcept { return _raw._w; }
+            constexpr float         r() const noexcept { return _raw._x; }
+            constexpr float         g() const noexcept { return _raw._y; }
+            constexpr float         b() const noexcept { return _raw._z; }
+            constexpr float         a() const noexcept { return _raw._w; }
 
-            const byte              rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
-            const byte              gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
-            const byte              bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
-            const byte              aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
+            constexpr byte          rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
+            constexpr byte          gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
+            constexpr byte          bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
+            constexpr byte          aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
 
-            void                    r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
-            void                    g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
-            void                    b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
-            void                    a(const int32 value) noexcept { _raw._w = (value / 255.0f); }
+            constexpr void          r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
+            constexpr void          g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
+            constexpr void          b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
+            constexpr void          a(const int32 value) noexcept { _raw._w = (value / 255.0f); }
 
-            void                    r(const float value) noexcept { _raw._x = value; }
-            void                    g(const float value) noexcept { _raw._y = value; }
-            void                    b(const float value) noexcept { _raw._z = value; }
-            void                    a(const float value) noexcept { _raw._w = value; }
+            constexpr void          r(const float value) noexcept { _raw._x = value; }
+            constexpr void          g(const float value) noexcept { _raw._y = value; }
+            constexpr void          b(const float value) noexcept { _raw._z = value; }
+            constexpr void          a(const float value) noexcept { _raw._w = value; }
 
         public:
             void                    rgb(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
@@ -83,6 +82,9 @@ namespace fs
             void                    scaleA(const float s) noexcept { _raw._w *= s; }
             const bool              isTransparent() const noexcept;
 
+        public:
+            constexpr float         toLuma() const noexcept; // Rec. 601
+
         private:
             fs::Float4              _raw;
         };
@@ -93,11 +95,18 @@ namespace fs
         public:
             struct AdjacentPixels
             {
-                Color   _top;
-                Color   _bottom;
                 Color   _left;
+                Color   _top;
                 Color   _right;
-                Color   _center;
+                Color   _bottom;
+            };
+
+            struct CoAdjacentPixels
+            {
+                Color   _topLeft;
+                Color   _topRight;
+                Color   _bottomRight;
+                Color   _bottomLeft;
             };
 
         public:
@@ -114,6 +123,7 @@ namespace fs
             void                    setPixel(const fs::Int2& at, const Color& color) noexcept;
             const Color&            getPixel(const fs::Int2& at) const noexcept;
             void                    getAdjacentPixels(const fs::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
+            void                    getCoAdjacentPixels(const fs::Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
 
         public:
             const byte*             buildPixelRgbaArray() noexcept;

@@ -79,7 +79,31 @@ namespace fs
             outAdjacentPixels._bottom   = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x, at._y + 1);
             outAdjacentPixels._left     = (at._x <= 0) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y);
             outAdjacentPixels._right    = (_size._x - 1 <= at._x) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y);
-            outAdjacentPixels._center   = getColorFromXy(at._x, at._y);
+        }
+
+        FS_INLINE void ColorImage::getCoAdjacentPixels(const fs::Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept
+        {
+            if (at._x <= 0)
+            {
+                outCoAdjacentPixels._topLeft        = Color::kTransparent;
+                outCoAdjacentPixels._bottomLeft     = Color::kTransparent;
+            }
+            else
+            {
+                outCoAdjacentPixels._topLeft        = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y - 1);
+                outCoAdjacentPixels._bottomLeft     = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x - 1, at._y + 1);
+            }
+
+            if (_size._x - 1 <= at._x)
+            {
+                outCoAdjacentPixels._topRight       = Color::kTransparent;
+                outCoAdjacentPixels._bottomRight    = Color::kTransparent;
+            }
+            else
+            {
+                outCoAdjacentPixels._topRight       = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y - 1);
+                outCoAdjacentPixels._bottomRight    = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y + 1);
+            }
         }
 
         FS_INLINE const byte* ColorImage::buildPixelRgbaArray() noexcept
@@ -132,6 +156,11 @@ namespace fs
         FS_INLINE const bool Color::isTransparent() const noexcept
         {
             return (_raw._w <= 0.0f);
+        }
+
+        FS_INLINE constexpr float Color::toLuma() const noexcept
+        {
+            return _raw._x * 0.299f + _raw._y * 0.587f + _raw._z * 0.114f;
         }
 
         FS_INLINE void IRendererContext::setPosition(const fs::Float4& position) noexcept
