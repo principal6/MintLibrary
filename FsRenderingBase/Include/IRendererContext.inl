@@ -95,6 +95,58 @@ namespace fs
             return _colorArray[index];
         }
 
+        FS_INLINE const Color ColorImage::getSubPixel(const fs::Float2& at) const noexcept
+        {
+            static constexpr float kSubPixelEpsilon = 0.01f;
+
+            const float floorX = std::floor(at._x);
+            const float deltaX = at._x - floorX;
+
+            const float floorY = std::floor(at._y);
+            const float deltaY = at._y - floorY;
+
+            if (deltaX < kSubPixelEpsilon && deltaY < kSubPixelEpsilon)
+            {
+                return getPixel(fs::Int2(static_cast<int32>(at._x), static_cast<int32>(at._y)));
+            }
+
+            const int32 y = static_cast<int32>(floorY);
+            const int32 x = static_cast<int32>(floorX);
+            if (deltaX < kSubPixelEpsilon) // Only vertical
+            {   
+                const int32 yPrime = y + static_cast<int32>(std::ceil(deltaY));
+
+                Color a = getPixel(fs::Int2(x, y));
+                Color b = getPixel(fs::Int2(x, yPrime));
+
+                return a * (1.0f - deltaY) + b * deltaY;
+            }
+            else if (deltaY < kSubPixelEpsilon) // Only horizontal
+            {
+                const int32 xPrime = x + static_cast<int32>(std::ceil(deltaX));
+
+                Color a = getPixel(fs::Int2(x, y));
+                Color b = getPixel(fs::Int2(xPrime, y));
+
+                return a * (1.0f - deltaX) + b * deltaX;
+            }
+            else // Both
+            {
+                const int32 xPrime = x + static_cast<int32>(std::ceil(deltaX));
+                const int32 yPrime = y + static_cast<int32>(std::ceil(deltaY));
+
+                Color a0 = getPixel(fs::Int2(x, y));
+                Color b0 = getPixel(fs::Int2(xPrime, y));
+                Color r0 = a0 * (1.0f - deltaX) + b0 * deltaX;
+
+                Color a1 = getPixel(fs::Int2(x, yPrime));
+                Color b1 = getPixel(fs::Int2(xPrime, yPrime));
+                Color r1 = a1 * (1.0f - deltaX) + b1 * deltaX;
+
+                return r0 * (1.0f - deltaY) + r1 * deltaY;
+            }
+        }
+
         FS_INLINE void ColorImage::getAdjacentPixels(const fs::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept
         {
             outAdjacentPixels._top      = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x, at._y - 1);

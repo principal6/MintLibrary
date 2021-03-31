@@ -123,6 +123,7 @@ namespace fs
             void                    fillCircle(const fs::Int2& center, const int32 radius, const Color& color) noexcept;
             void                    setPixel(const fs::Int2& at, const Color& color) noexcept;
             const Color&            getPixel(const fs::Int2& at) const noexcept;
+            const Color             getSubPixel(const fs::Float2& at) const noexcept;
             void                    getAdjacentPixels(const fs::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
             void                    getCoAdjacentPixels(const fs::Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
 
