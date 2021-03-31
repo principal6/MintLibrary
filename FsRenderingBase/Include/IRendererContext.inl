@@ -61,6 +61,28 @@ namespace fs
             }
         }
 
+        FS_INLINE void ColorImage::fillCircle(const fs::Int2& center, const int32 radius, const Color& color) noexcept
+        {
+            const int32 twoRadii = radius * 2;
+            const int32 left = center._x - radius;
+            const int32 right = left + twoRadii;
+            const int32 top = center._y - radius;
+            const int32 bottom = top + twoRadii;
+            const float radiusF = static_cast<float>(radius);
+            for (int32 y = top; y < bottom; ++y)
+            {
+                for (int32 x = left; x < right; ++x)
+                {
+                    const fs::Int2 currentPosition{ x, y };
+                    const fs::Float2 diff = fs::Float2(currentPosition - center);
+                    if (diff.length() <= radiusF)
+                    {
+                        setPixel(currentPosition, color);
+                    }
+                }
+            }
+        }
+
         FS_INLINE void ColorImage::setPixel(const fs::Int2& at, const Color& color) noexcept
         {
             const int32 index = convertXyToIndex(at._x, at._y);
