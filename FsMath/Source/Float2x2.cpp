@@ -106,6 +106,11 @@ namespace fs
         ) / determinant();
     }
 
+    const bool Float2x2::isInvertible() const noexcept
+    {
+        return (0.0f != determinant());
+    }
+
     Float2 Float2x2::mul(const Float2& v) const noexcept
     {
         return Float2(_m[0][0] * v._x + _m[0][1] * v._y, _m[1][0] * v._x + _m[1][1] * v._y);

@@ -135,6 +135,20 @@ namespace fs
         *this = Float4::normalize(*this);
     }
 
+    void Float4::setXyz(const float x, const float y, const float z) noexcept
+    {
+        _x = x;
+        _y = y;
+        _z = z;
+    }
+
+    void Float4::setXyz(const Float3& rhs) noexcept
+    {
+        _x = rhs._x;
+        _y = rhs._y;
+        _z = rhs._z;
+    }
+
     void Float4::setXyz(const Float4& rhs) noexcept
     {
         _x = rhs._x;

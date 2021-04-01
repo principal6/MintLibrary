@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\CameraObject.h" />
+    <ClInclude Include="Include\MeshGenerator.h" />
     <ClInclude Include="Include\Rendering.h" />
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\Object.h" />
@@ -30,6 +31,7 @@
   <ItemGroup>
     <ClCompile Include="Source\CameraObject.cpp" />
     <ClCompile Include="Source\MeshComponent.cpp" />
+    <ClCompile Include="Source\MeshGenerator.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\ObjectComponent.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />

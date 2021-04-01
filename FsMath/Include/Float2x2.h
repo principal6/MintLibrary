@@ -55,6 +55,7 @@ namespace fs
     public:
         const float                 determinant() const noexcept;
         Float2x2                    inverse() const noexcept;
+        const bool                  isInvertible() const noexcept;
 
     public:
         Float2                      mul(const Float2& v) const noexcept;
