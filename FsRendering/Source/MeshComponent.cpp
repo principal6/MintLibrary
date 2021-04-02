@@ -13,7 +13,11 @@ namespace fs
         MeshComponent::MeshComponent()
             : TransformComponent(ObjectComponentType::MeshComponent)
         {
-            MeshGenerator::generateCube(_meshData);
+            //MeshGenerator::generateCube(_meshData);
+
+            //MeshGenerator::generateCone(MeshGenerator::ConeParam(), _meshData);
+            
+            MeshGenerator::generateCylinder(MeshGenerator::CylinderParam(), _meshData);
         }
 
         MeshComponent::~MeshComponent()

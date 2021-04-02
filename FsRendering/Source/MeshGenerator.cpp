@@ -42,7 +42,7 @@ namespace fs
         }
 
 
-        void MeshGenerator::pushVertexWithPosition(const uint32 positionIndex, MeshData& meshData) noexcept
+        void MeshGenerator::pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept
         {
             fs::RenderingBase::VS_INPUT vertex;
             vertex._positionU = meshData._positionArray[positionIndex];
@@ -61,7 +61,17 @@ namespace fs
             return fs::Float2(inoutVertex._positionU._w, inoutVertex._tangentV._w);
         }
 
-        void MeshGenerator::generateQuadFace(const uint32 vertexOffset, MeshData& meshData) noexcept
+        void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
+        {
+            fs::RenderingBase::Face face;
+            face._indexArray[0] = vertexOffset + 0;
+            face._indexArray[1] = vertexOffset + 1;
+            face._indexArray[2] = vertexOffset + 2;
+            calculateTangentBitangent(face, meshData._vertexArray);
+            meshData._faceArray.emplace_back(face);
+        }
+
+        void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
             fs::RenderingBase::Face face;
             face._indexArray[0] = vertexOffset + 0;
@@ -196,29 +206,161 @@ namespace fs
             meshData._positionArray[6] = fs::Float4(+kHalfSize, -kHalfSize, +kHalfSize, 1.0f);
             meshData._positionArray[7] = fs::Float4(-kHalfSize, -kHalfSize, +kHalfSize, 1.0f);
 
-            prepareCubeQuadFace({ 4, 5, 0, 1 }, meshData); // Top
-            prepareCubeQuadFace({ 0, 1, 3, 2 }, meshData); // Front
-            prepareCubeQuadFace({ 1, 5, 2, 6 }, meshData); // Right
-            prepareCubeQuadFace({ 5, 4, 6, 7 }, meshData); // Back
-            prepareCubeQuadFace({ 4, 0, 7, 3 }, meshData); // Left
-            prepareCubeQuadFace({ 3, 2, 7, 6 }, meshData); // Bottom
+            const fs::Float2 uvs[4]{ fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
+            pushQuad({ 4, 5, 1, 0 }, meshData, uvs); // Top
+            pushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Front
+            pushQuad({ 1, 5, 6, 2 }, meshData, uvs); // Right
+            pushQuad({ 5, 4, 7, 6 }, meshData, uvs); // Back
+            pushQuad({ 4, 0, 3, 7 }, meshData, uvs); // Left
+            pushQuad({ 3, 2, 6, 7 }, meshData, uvs); // Bottom
+        }
+
+        void MeshGenerator::generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            // Position
+            {
+                meshData._positionArray.push_back(fs::Float4(0.0f, coneParam._height, 0.0f, 1.0f));
+
+                const float angleStep = fs::Math::kTwoPi / static_cast<float>(coneParam._sideCount);
+                fs::Float4 newPosition;
+                newPosition._y = 0.0f;
+                newPosition._w = 1.0f;
+                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount; ++sideIndex)
+                {
+                    newPosition._x = ::cos(angleStep * sideIndex) * coneParam._radius;
+                    newPosition._z = ::sin(angleStep * sideIndex) * coneParam._radius;
+
+                    meshData._positionArray.push_back(newPosition);
+                }
+
+                meshData._positionArray.push_back(fs::Float4(0.0f, 0.0f, 0.0f, 1.0f));
+            }
+            const int32 positionIndexTopCenter      = 0;
+            const int32 positionIndexBottomCenter   = static_cast<int32>(meshData._positionArray.size() - 1);
+
+            // Cone sides
+            {
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
+                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount - 1; ++sideIndex)
+                {
+                    pushTri({ positionIndexTopCenter, sideIndex + 2, sideIndex + 1 }, meshData, uvs);
+                }
+                pushTri({ positionIndexTopCenter, 1, coneParam._sideCount }, meshData, uvs);
+
+                smoothNormals(meshData);
+            }
+
+            // Cone bottom
+            {
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 1.0f), fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f) };
+                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount - 1; ++sideIndex)
+                {
+                    pushTri({ positionIndexBottomCenter, sideIndex + 1, sideIndex + 2 }, meshData, uvs);
+                }
+                pushTri({ positionIndexBottomCenter, coneParam._sideCount, 1 }, meshData, uvs);
+            }
+            
+        }
+
+        void MeshGenerator::generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            // Position
+            {
+                meshData._positionArray.push_back(fs::Float4(0.0f, cylinderParam._height, 0.0f, 1.0f));
+
+                const float angleStep = fs::Math::kTwoPi / static_cast<float>(cylinderParam._sideCount);
+                fs::Float4 newPosition;
+                newPosition._w = 1.0f;
+                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount; ++sideIndex)
+                {
+                    newPosition._x = ::cos(angleStep * sideIndex) * cylinderParam._radius;
+                    newPosition._y = cylinderParam._height;
+                    newPosition._z = ::sin(angleStep * sideIndex) * cylinderParam._radius;
+
+                    meshData._positionArray.push_back(newPosition);
+                    
+                    newPosition._y = 0.0f;
+                    meshData._positionArray.push_back(newPosition);
+                }
+
+                meshData._positionArray.push_back(fs::Float4(0.0f, 0.0f, 0.0f, 1.0f));
+            }
+            const int32 positionIndexTopCenter      = 0;
+            const int32 positionIndexBottomCenter   = static_cast<int32>(meshData._positionArray.size() - 1);
+
+            // Cylinder sides
+            {
+                const fs::Float2 uvs[4]{ fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
+                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
+                {
+                    const int32 sideIndexOffset = 1 + sideIndex * 2;
+                    pushQuad({ sideIndexOffset + 0, sideIndexOffset + 2, sideIndexOffset + 3, sideIndexOffset + 1 }, meshData, uvs);
+                }
+                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
+                pushQuad({ sideIndexOffset + 0, 1, 2, sideIndexOffset + 1 }, meshData, uvs);
+
+                smoothNormals(meshData);
+            }
+
+            // Clylinder top
+            {
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
+                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
+                {
+                    const int32 sideIndexOffset = 1 + sideIndex * 2;
+                    pushTri({ positionIndexTopCenter, sideIndexOffset + 2, sideIndexOffset }, meshData, uvs);
+                }
+                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
+                pushTri({ positionIndexTopCenter, 1, sideIndexOffset }, meshData, uvs);
+            }
+
+            // Clylinder bottom
+            {
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 1.0f), fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f) };
+                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
+                {
+                    const int32 sideIndexOffset = 1 + sideIndex * 2;
+                    pushTri({ positionIndexBottomCenter, sideIndexOffset + 1, sideIndexOffset + 3 }, meshData, uvs);
+                }
+                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
+                pushTri({ positionIndexBottomCenter, sideIndexOffset + 1, 2 }, meshData, uvs);
+            }
         }
         
-        void MeshGenerator::prepareCubeQuadFace(const int32(&positionIndices)[4], MeshData& meshData) noexcept
+        void MeshGenerator::pushTri(const int32(&positionIndices)[3], MeshData& meshData, const fs::Float2(&uvs)[3]) noexcept
         {
             const uint32 vertexCountOld = meshData.getVertexCount();
 
-            pushVertexWithPosition(positionIndices[0], meshData);
-            pushVertexWithPosition(positionIndices[1], meshData);
-            pushVertexWithPosition(positionIndices[2], meshData);
-            pushVertexWithPosition(positionIndices[3], meshData);
+            pushVertexWithPositionXXX(positionIndices[0], meshData);
+            pushVertexWithPositionXXX(positionIndices[1], meshData);
+            pushVertexWithPositionXXX(positionIndices[2], meshData);
 
-            setVertexUv(meshData, vertexCountOld + 0, 0.0f, 0.0f);
-            setVertexUv(meshData, vertexCountOld + 1, 1.0f, 0.0f);
-            setVertexUv(meshData, vertexCountOld + 2, 0.0f, 1.0f);
-            setVertexUv(meshData, vertexCountOld + 3, 1.0f, 1.0f);
+            setVertexUv(meshData, vertexCountOld + 0, uvs[0]._x, uvs[0]._y);
+            setVertexUv(meshData, vertexCountOld + 1, uvs[1]._x, uvs[1]._y);
+            setVertexUv(meshData, vertexCountOld + 2, uvs[2]._x, uvs[2]._y);
 
-            generateQuadFace(vertexCountOld, meshData);
+            pushTriFaceXXX(vertexCountOld, meshData);
+        }
+
+        void MeshGenerator::pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const fs::Float2(&uvsInClockwise)[4]) noexcept
+        {
+            const uint32 vertexCountOld = meshData.getVertexCount();
+
+            pushVertexWithPositionXXX(positionIndicesInClockwise[0], meshData);
+            pushVertexWithPositionXXX(positionIndicesInClockwise[1], meshData);
+            pushVertexWithPositionXXX(positionIndicesInClockwise[3], meshData);
+            pushVertexWithPositionXXX(positionIndicesInClockwise[2], meshData);
+
+            setVertexUv(meshData, vertexCountOld + 0, uvsInClockwise[0]._x, uvsInClockwise[0]._y);
+            setVertexUv(meshData, vertexCountOld + 1, uvsInClockwise[1]._x, uvsInClockwise[1]._y);
+            setVertexUv(meshData, vertexCountOld + 2, uvsInClockwise[3]._x, uvsInClockwise[3]._y);
+            setVertexUv(meshData, vertexCountOld + 3, uvsInClockwise[2]._x, uvsInClockwise[2]._y);
+
+            pushQuadFaceXXX(vertexCountOld, meshData);
         }
     }
 }

@@ -50,16 +50,35 @@ namespace fs
         class MeshGenerator abstract final
         {
         public:
+            struct ConeParam
+            {
+                const int16     _sideCount = 16;
+                const float     _radius = 1.0f;
+                const float     _height = 2.0f;
+            };
+
+            struct CylinderParam
+            {
+                const int16     _sideCount = 16;
+                const float     _radius = 1.0f;
+                const float     _height = 2.0f;
+            };
+
+        public:
             static void         generateCube(MeshData& meshData) noexcept;
+            static void         generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
+            static void         generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
 
         private:
-            static void         prepareCubeQuadFace(const int32(&positionIndices)[4], MeshData& meshData) noexcept;
+            static void         pushTri(const int32(&positionIndices)[3], MeshData& meshData, const fs::Float2(&uvs)[3]) noexcept;
+            static void         pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const fs::Float2(&uvsInClockwise)[4]) noexcept;
 
         private:
-            static void         pushVertexWithPosition(const uint32 positionIndex, MeshData& meshData) noexcept;
+            static void         pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept;
             static void         setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept;
             static fs::Float2   getVertexUv(const fs::RenderingBase::VS_INPUT& inoutVertex) noexcept;
-            static void         generateQuadFace(const uint32 vertexOffset, MeshData& meshData) noexcept;
+            static void         pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
+            static void         pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
 
         public:
             static void         calculateTangentBitangent(const fs::RenderingBase::Face& face, std::vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept;
