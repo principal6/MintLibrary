@@ -261,7 +261,6 @@ namespace fs
                 }
                 pushTri({ positionIndexBottomCenter, coneParam._sideCount, 1 }, meshData, uvs);
             }
-            
         }
 
         void MeshGenerator::generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept
@@ -294,40 +293,88 @@ namespace fs
 
             // Cylinder sides
             {
+                const int16 positionIndexBase = 1;
                 const fs::Float2 uvs[4]{ fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
                 for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
                 {
-                    const int32 sideIndexOffset = 1 + sideIndex * 2;
-                    pushQuad({ sideIndexOffset + 0, sideIndexOffset + 2, sideIndexOffset + 3, sideIndexOffset + 1 }, meshData, uvs);
+                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
+                    pushQuad({ positionIndex + 0, positionIndex + 2, positionIndex + 3, positionIndex + 1 }, meshData, uvs);
                 }
-                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
-                pushQuad({ sideIndexOffset + 0, 1, 2, sideIndexOffset + 1 }, meshData, uvs);
+                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
+                pushQuad({ positionIndex + 0, 1, 2, positionIndex + 1 }, meshData, uvs);
 
                 smoothNormals(meshData);
             }
 
             // Clylinder top
             {
+                const int16 positionIndexBase = 1;
                 const fs::Float2 uvs[3]{ fs::Float2(0.5f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
                 for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
                 {
-                    const int32 sideIndexOffset = 1 + sideIndex * 2;
-                    pushTri({ positionIndexTopCenter, sideIndexOffset + 2, sideIndexOffset }, meshData, uvs);
+                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
+                    pushTri({ positionIndexTopCenter, positionIndex + 2, positionIndex }, meshData, uvs);
                 }
-                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
-                pushTri({ positionIndexTopCenter, 1, sideIndexOffset }, meshData, uvs);
+                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
+                pushTri({ positionIndexTopCenter, positionIndexBase, positionIndex }, meshData, uvs);
             }
 
             // Clylinder bottom
             {
+                const int16 positionIndexBase = 1;
                 const fs::Float2 uvs[3]{ fs::Float2(0.5f, 1.0f), fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f) };
                 for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
                 {
-                    const int32 sideIndexOffset = 1 + sideIndex * 2;
-                    pushTri({ positionIndexBottomCenter, sideIndexOffset + 1, sideIndexOffset + 3 }, meshData, uvs);
+                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
+                    pushTri({ positionIndexBottomCenter, positionIndex + 1, positionIndex + 3 }, meshData, uvs);
                 }
-                const int32 sideIndexOffset = 1 + (cylinderParam._sideCount - 1) * 2;
-                pushTri({ positionIndexBottomCenter, sideIndexOffset + 1, 2 }, meshData, uvs);
+                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
+                pushTri({ positionIndexBottomCenter, positionIndex + 1, positionIndexBase + 1 }, meshData, uvs);
+            }
+        }
+
+        void MeshGenerator::generateOctahedron(const OctahedronParam& octahedronParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            // Position
+            meshData._positionArray.push_back(fs::Float4(0.0f, +octahedronParam._radius, 0.0f, 1.0f));
+            meshData._positionArray.push_back(
+                fs::Float4(::cos(fs::Math::kTwoPi * 0.0f  + octahedronParam._radius), 0.0f, ::sin(fs::Math::kTwoPi * 0.0f  + octahedronParam._radius), 1.0f));
+            meshData._positionArray.push_back(
+                fs::Float4(::cos(fs::Math::kTwoPi * 0.25f + octahedronParam._radius), 0.0f, ::sin(fs::Math::kTwoPi * 0.25f + octahedronParam._radius), 1.0f));
+            meshData._positionArray.push_back(
+                fs::Float4(::cos(fs::Math::kTwoPi * 0.5f  + octahedronParam._radius), 0.0f, ::sin(fs::Math::kTwoPi * 0.5f  + octahedronParam._radius), 1.0f));
+            meshData._positionArray.push_back(
+                fs::Float4(::cos(fs::Math::kTwoPi * 0.75f + octahedronParam._radius), 0.0f, ::sin(fs::Math::kTwoPi * 0.75f + octahedronParam._radius), 1.0f));
+            meshData._positionArray.push_back(fs::Float4(0.0f, -octahedronParam._radius, 0.0f, 1.0f));
+            const int32 positionIndexTopCenter = 0;
+            const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.size() - 1);
+
+            // Upper
+            {
+                const int16 positionIndexBase = 1;
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 0.0f), fs::Float2(1.0f, 1.0f), fs::Float2(0.0f, 1.0f) };
+                for (int16 sideIndex = 0; sideIndex < 3; ++sideIndex)
+                {
+                    const int16 positionIndex = positionIndexBase + sideIndex;
+                    pushTri({ positionIndexTopCenter, positionIndex + 1, positionIndex }, meshData, uvs);
+                }
+                const int16 positionIndex = positionIndexBase + 3;
+                pushTri({ positionIndexTopCenter, 1, positionIndex }, meshData, uvs);
+            }
+
+            // Lower
+            {
+                const int16 positionIndexBase = 1;
+                const fs::Float2 uvs[3]{ fs::Float2(0.5f, 1.0f), fs::Float2(0.0f, 0.0f), fs::Float2(1.0f, 0.0f) };
+                for (int16 sideIndex = 0; sideIndex < 3; ++sideIndex)
+                {
+                    const int16 positionIndex = positionIndexBase + sideIndex;
+                    pushTri({ positionIndexBottomCenter, positionIndex, positionIndex + 1}, meshData, uvs);
+                }
+                const int16 positionIndex = positionIndexBase + 3;
+                pushTri({ positionIndexBottomCenter, positionIndex, 1 }, meshData, uvs);
             }
         }
         

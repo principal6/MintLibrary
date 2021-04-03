@@ -64,10 +64,16 @@ namespace fs
                 const float     _height = 2.0f;
             };
 
+            struct OctahedronParam
+            {
+                const float     _radius = 1.0f;
+            };
+
         public:
             static void         generateCube(MeshData& meshData) noexcept;
             static void         generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
             static void         generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
+            static void         generateOctahedron(const OctahedronParam& octahedronParam, MeshData& meshData) noexcept;
 
         private:
             static void         pushTri(const int32(&positionIndices)[3], MeshData& meshData, const fs::Float2(&uvs)[3]) noexcept;

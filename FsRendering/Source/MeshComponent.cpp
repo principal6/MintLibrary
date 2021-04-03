@@ -17,7 +17,9 @@ namespace fs
 
             //MeshGenerator::generateCone(MeshGenerator::ConeParam(), _meshData);
             
-            MeshGenerator::generateCylinder(MeshGenerator::CylinderParam(), _meshData);
+            //MeshGenerator::generateCylinder(MeshGenerator::CylinderParam(), _meshData);
+            
+            MeshGenerator::generateOctahedron(MeshGenerator::OctahedronParam(), _meshData);
         }
 
         MeshComponent::~MeshComponent()
