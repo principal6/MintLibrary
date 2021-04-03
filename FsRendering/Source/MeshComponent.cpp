@@ -19,7 +19,9 @@ namespace fs
             
             //MeshGenerator::generateCylinder(MeshGenerator::CylinderParam(), _meshData);
             
-            MeshGenerator::generateOctahedron(MeshGenerator::OctahedronParam(), _meshData);
+            //MeshGenerator::generateOctahedron(MeshGenerator::RadiusParam(), _meshData);
+            
+            MeshGenerator::generateGeoSphere(MeshGenerator::GeoSpherePram(), _meshData);
         }
 
         MeshComponent::~MeshComponent()
@@ -44,7 +46,7 @@ namespace fs
 
         const fs::RenderingBase::IndexElementType* MeshComponent::getIndices() const noexcept
         {
-            return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._indexArray[0];
+            return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
         }
     }
 }

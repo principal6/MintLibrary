@@ -77,6 +77,9 @@ namespace fs
         public:
             void                                                useScissorRectanglesWithMultipleViewports() noexcept;
             void                                                useFullScreenViewport() noexcept;
+            void                                                useWireFrameNoCullingRasterizer() noexcept;
+            void                                                useWireFrameCullBackRasterizer() noexcept;
+            void                                                useSolidCullBackRasterizer() noexcept;
             const D3D11_VIEWPORT&                               getFullScreenViewport() const noexcept;
             const D3D11_RECT&                                   getFullScreenScissorRectangle() const noexcept;
 
@@ -122,7 +125,10 @@ namespace fs
             ComPtr<ID3D11DepthStencilState>                     _depthStencilStateLessEqual;
 
         private:
-            ComPtr<ID3D11RasterizerState>                       _rasterizerStateDefault;
+            ID3D11RasterizerState*                              _currentRasterizerFor3D;
+            ComPtr<ID3D11RasterizerState>                       _rasterizerStateSolidCullBack;
+            ComPtr<ID3D11RasterizerState>                       _rasterizerStateWireFrameNoCulling;
+            ComPtr<ID3D11RasterizerState>                       _rasterizerStateWireFrameCullBack;
             ComPtr<ID3D11RasterizerState>                       _rasterizerStateScissorRectangles;
             D3D11_VIEWPORT                                      _fullScreenViewport;
             D3D11_RECT                                          _fullScreenScissorRectangle;

@@ -26,6 +26,7 @@ namespace fs
         GraphicDevice::GraphicDevice()
             : _window{ nullptr }
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
+            , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
             , _fullScreenScissorRectangle{}
             , _shaderPool{ this, &_shaderHeaderMemory, fs::RenderingBase::DxShaderVersion::v_5_0 }
@@ -108,19 +109,27 @@ namespace fs
             {
                 D3D11_RASTERIZER_DESC rasterizerDescriptor;
                 rasterizerDescriptor.AntialiasedLineEnable = TRUE;
-                rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+                rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
                 rasterizerDescriptor.DepthBias = 0;
                 rasterizerDescriptor.DepthBiasClamp = 0.0f;
                 rasterizerDescriptor.DepthClipEnable = TRUE;
-                rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+                rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
                 rasterizerDescriptor.FrontCounterClockwise = FALSE;
                 rasterizerDescriptor.MultisampleEnable = TRUE;
                 rasterizerDescriptor.ScissorEnable = FALSE;
                 rasterizerDescriptor.SlopeScaledDepthBias = 0.0f;
-                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateDefault.ReleaseAndGetAddressOf());
+                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateWireFrameNoCulling.ReleaseAndGetAddressOf());
+
+                rasterizerDescriptor.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateWireFrameCullBack.ReleaseAndGetAddressOf());
+
+                rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateSolidCullBack.ReleaseAndGetAddressOf());
 
                 rasterizerDescriptor.ScissorEnable = TRUE;
-                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());    
+                _device->CreateRasterizerState(&rasterizerDescriptor, _rasterizerStateScissorRectangles.ReleaseAndGetAddressOf());
+
+                _currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
             }
 
             setDefaultRenderTargetsAndDepthStencil();
@@ -384,8 +393,23 @@ namespace fs
 
         void GraphicDevice::useFullScreenViewport() noexcept
         {
-            _deviceContext->RSSetState(_rasterizerStateDefault.Get());
+            _deviceContext->RSSetState(_currentRasterizerFor3D);
             _deviceContext->RSSetViewports(1, &_fullScreenViewport);
+        }
+
+        void GraphicDevice::useWireFrameNoCullingRasterizer() noexcept
+        {
+            _currentRasterizerFor3D = _rasterizerStateWireFrameNoCulling.Get();
+        }
+
+        void GraphicDevice::useWireFrameCullBackRasterizer() noexcept
+        {
+            _currentRasterizerFor3D = _rasterizerStateWireFrameCullBack.Get();
+        }
+
+        void GraphicDevice::useSolidCullBackRasterizer() noexcept
+        {
+            _currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
         }
 
         const D3D11_VIEWPORT& GraphicDevice::getFullScreenViewport() const noexcept

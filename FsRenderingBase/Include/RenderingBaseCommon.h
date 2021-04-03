@@ -33,7 +33,7 @@ namespace fs
         {
             static constexpr uint8                  kIndexCountPerFace = 3;
 
-            fs::RenderingBase::IndexElementType     _indexArray[kIndexCountPerFace];
+            fs::RenderingBase::IndexElementType     _vertexIndexArray[kIndexCountPerFace];
         };
     }
 }

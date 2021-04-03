@@ -802,6 +802,18 @@ const bool testWindow()
                     {
                         graphicDevice.getShaderPool().recompileAllShaders();
                     }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Num1) == true)
+                    {
+                        graphicDevice.useSolidCullBackRasterizer();
+                    }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Num2) == true)
+                    {
+                        graphicDevice.useWireFrameCullBackRasterizer();
+                    }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Num3) == true)
+                    {
+                        graphicDevice.useWireFrameNoCullingRasterizer();
+                    }
                 }
                 else if (event._type == EventType::MouseMoveDelta)
                 {
