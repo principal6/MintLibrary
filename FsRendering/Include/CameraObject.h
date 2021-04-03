@@ -12,12 +12,12 @@ namespace fs
 {
     namespace Rendering
     {
-        class ObjectManager;
+        class ObjectPool;
 
 
         class CameraObject final : public Object
         {
-            friend ObjectManager;
+            friend ObjectPool;
 
         public:
             enum class MoveDirection

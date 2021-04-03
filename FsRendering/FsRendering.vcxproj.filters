@@ -27,7 +27,7 @@
     <ClInclude Include="Include\MeshComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ObjectManager.h">
+    <ClInclude Include="Include\ObjectPool.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Rendering.h">
@@ -39,15 +39,18 @@
     <ClInclude Include="Include\MeshGenerator.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\MeshRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ObjectPool.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MeshComponent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ObjectManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\IObjectComponent.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MeshGenerator.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

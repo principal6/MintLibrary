@@ -21,20 +21,22 @@
   <ItemGroup>
     <ClInclude Include="Include\CameraObject.h" />
     <ClInclude Include="Include\MeshGenerator.h" />
+    <ClInclude Include="Include\MeshRenderer.h" />
+    <ClInclude Include="Include\ObjectPool.hpp" />
     <ClInclude Include="Include\Rendering.h" />
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\IObjectComponent.h" />
-    <ClInclude Include="Include\ObjectManager.h" />
+    <ClInclude Include="Include\ObjectPool.h" />
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CameraObject.cpp" />
     <ClCompile Include="Source\MeshComponent.cpp" />
     <ClCompile Include="Source\MeshGenerator.cpp" />
+    <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\IObjectComponent.cpp" />
-    <ClCompile Include="Source\ObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\PsDefault.hlsl">

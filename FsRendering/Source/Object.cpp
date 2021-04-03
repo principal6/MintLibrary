@@ -2,7 +2,7 @@
 #include <FsRendering/Include/Object.h>
 
 #include <FsRendering/Include/IObjectComponent.h>
-#include <FsRendering/Include/ObjectManager.h>
+#include <FsRendering/Include/ObjectPool.h>
 #include <FsRendering/Include/TransformComponent.h>
 
 

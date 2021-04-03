@@ -17,7 +17,7 @@ namespace fs
     {
         class IObjectComponent;
         class TransformComponent;
-        class ObjectManager;
+        class ObjectPool;
         enum class ObjectComponentType;
         struct Srt;
 
@@ -31,7 +31,7 @@ namespace fs
 
         class Object
         {
-            friend ObjectManager;
+            friend ObjectPool;
 
         private:
                                             Object();

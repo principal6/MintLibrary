@@ -767,15 +767,16 @@ const bool testWindow()
     RenderingBase::GraphicDevice graphicDevice;
     graphicDevice.initialize(&window);
 
-    Rendering::ObjectManager objectManager{ &graphicDevice };
-    objectManager.initialize();
+    Rendering::MeshRenderer meshRenderer{ &graphicDevice };
+    meshRenderer.initialize();
     
-    Rendering::Object* const testObject = objectManager.createObject();
-    Rendering::CameraObject* const testCameraObject = objectManager.createCameraObject();
+    Rendering::ObjectPool objectPool;
+    Rendering::Object* const testObject = objectPool.createObject();
+    Rendering::CameraObject* const testCameraObject = objectPool.createCameraObject();
     fs::Float2 windowSize = graphicDevice.getWindowSizeFloat2();
     testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
     {
-        testObject->attachComponent(objectManager.createMeshComponent());
+        testObject->attachComponent(objectPool.createMeshComponent());
 
         fs::Rendering::TransformComponent* transformComponent = static_cast<fs::Rendering::TransformComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::TransformComponent));
         transformComponent->_srt._translation._z = 4.0f;
@@ -828,7 +829,7 @@ const bool testWindow()
                 {
                     graphicDevice.updateScreenSize();
                     guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
-                    objectManager.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+                    objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
                 }
             }
         }
@@ -921,7 +922,7 @@ const bool testWindow()
             graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());
             graphicDevice.updateViewProjectionMatrix();
 
-            objectManager.renderMeshComponents();
+            meshRenderer.render(objectPool);
 
             graphicDevice.endRendering();
         }

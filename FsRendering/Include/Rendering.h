@@ -10,7 +10,8 @@
 
 #include <FsRendering/Include/MeshComponent.h>
 
-#include <FsRendering/Include/ObjectManager.h>
+#include <FsRendering/Include/ObjectPool.h>
+#include <FsRendering/Include/MeshRenderer.h>
 
 
 #endif // !FS_RENDERING_H
