@@ -11,7 +11,9 @@
 #include <FsRendering/Include/MeshComponent.h>
 
 #include <FsRendering/Include/ObjectPool.h>
+#include <FsRendering/Include/ObjectPool.hpp>
 #include <FsRendering/Include/MeshRenderer.h>
+#include <FsRendering/Include/DeltaTimer.h>
 
 
 #endif // !FS_RENDERING_H

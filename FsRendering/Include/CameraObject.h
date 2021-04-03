@@ -31,7 +31,7 @@ namespace fs
             };
 
         private:
-                                    CameraObject();
+                                    CameraObject(const ObjectPool* const objectPool);
                                     
         public:
             virtual                 ~CameraObject();

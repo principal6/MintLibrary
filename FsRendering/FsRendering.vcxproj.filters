@@ -45,6 +45,9 @@
     <ClInclude Include="Include\ObjectPool.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DeltaTimer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -63,6 +66,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MeshRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DeltaTimer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,33 +6,35 @@
 
 #include <FsRendering/Include/MeshComponent.h>
 #include <FsRendering/Include/CameraObject.h>
+#include <FsRendering/Include/DeltaTimer.h>
 
 
 namespace fs
 {
     namespace Rendering
     {
-        ObjectPool::ObjectPool()
+        inline ObjectPool::ObjectPool()
+            : _deltaTimer{ &fs::Rendering::DeltaTimer::getDeltaTimer() }
         {
             __noop;
         }
         
-        ObjectPool::~ObjectPool()
+        inline ObjectPool::~ObjectPool()
         {
             destroyObjects();
         }
 
-        fs::Rendering::Object* ObjectPool::createObject()
+        inline fs::Rendering::Object* ObjectPool::createObject()
         {
-            return createObjectInternalXXX(FS_NEW(fs::Rendering::Object));
+            return createObjectInternalXXX(FS_NEW(fs::Rendering::Object, this));
         }
 
-        fs::Rendering::CameraObject* ObjectPool::createCameraObject()
+        inline fs::Rendering::CameraObject* ObjectPool::createCameraObject()
         {
-            return static_cast<fs::Rendering::CameraObject*>(createObjectInternalXXX(FS_NEW(fs::Rendering::CameraObject)));
+            return static_cast<fs::Rendering::CameraObject*>(createObjectInternalXXX(FS_NEW(fs::Rendering::CameraObject, this)));
         }
 
-        void ObjectPool::destroyObjects()
+        inline void ObjectPool::destroyObjects()
         {
             const uint32 objectCount = getObjectCount();
             for (uint32 objectIndex = 0; objectIndex < objectCount; objectIndex++)
@@ -47,26 +49,26 @@ namespace fs
             _objectArray.clear();
         }
 
-        fs::Rendering::Object* ObjectPool::createObjectInternalXXX(fs::Rendering::Object* const object)
+        inline fs::Rendering::Object* ObjectPool::createObjectInternalXXX(fs::Rendering::Object* const object)
         {
             _objectArray.emplace_back(object);
             object->attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
             return object;
         }
 
-        fs::Rendering::TransformComponent* ObjectPool::createTransformComponent()
+        inline fs::Rendering::TransformComponent* ObjectPool::createTransformComponent()
         {
             return FS_NEW(fs::Rendering::TransformComponent);
         }
 
-        fs::Rendering::MeshComponent* ObjectPool::createMeshComponent()
+        inline fs::Rendering::MeshComponent* ObjectPool::createMeshComponent()
         {
             fs::Rendering::MeshComponent* result = FS_NEW(fs::Rendering::MeshComponent);
             _meshComponentArray.emplace_back(std::move(result));
             return _meshComponentArray.back();
         }
 
-        void ObjectPool::destroyObjectComponents(Object& object)
+        inline void ObjectPool::destroyObjectComponents(Object& object)
         {
             const uint32 componentCount = static_cast<uint32>(object._componentArray.size());
             for (uint32 componentIndex = 0; componentIndex < componentCount; componentIndex++)
@@ -85,7 +87,7 @@ namespace fs
             }
         }
 
-        void ObjectPool::registerMeshComponent(fs::Rendering::MeshComponent* const meshComponent)
+        inline void ObjectPool::registerMeshComponent(fs::Rendering::MeshComponent* const meshComponent)
         {
             if (meshComponent == nullptr)
             {
@@ -104,7 +106,7 @@ namespace fs
             _meshComponentArray.emplace_back(meshComponent);
         }
 
-        void ObjectPool::deregisterMeshComponent(fs::Rendering::MeshComponent* const meshComponent)
+        inline void ObjectPool::deregisterMeshComponent(fs::Rendering::MeshComponent* const meshComponent)
         {
             if (meshComponent == nullptr)
             {
@@ -132,7 +134,12 @@ namespace fs
             }
         }
 
-        void ObjectPool::updateScreenSize(const fs::Float2& screenSize)
+        inline void ObjectPool::computeDeltaTime() const noexcept
+        {
+            _deltaTimer->computeDeltaTimeS();
+        }
+
+        inline void ObjectPool::updateScreenSize(const fs::Float2& screenSize)
         {
             const float screenRatio = (screenSize._x / screenSize._y);
             for (auto& object : _objectArray)
@@ -145,14 +152,19 @@ namespace fs
             }
         }
 
-        const std::vector<fs::Rendering::MeshComponent*>& ObjectPool::getMeshComponents() const noexcept
+        FS_INLINE const std::vector<fs::Rendering::MeshComponent*>& ObjectPool::getMeshComponents() const noexcept
         {
             return _meshComponentArray;
         }
         
-        const uint32 ObjectPool::getObjectCount() const noexcept
+        FS_INLINE const uint32 ObjectPool::getObjectCount() const noexcept
         {
             return static_cast<uint32>(_objectArray.size());
+        }
+
+        FS_INLINE const DeltaTimer* ObjectPool::getDeltaTimerXXX() const noexcept
+        {
+            return _deltaTimer;
         }
     }
 }

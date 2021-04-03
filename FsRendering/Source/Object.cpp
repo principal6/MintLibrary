@@ -2,7 +2,7 @@
 #include <FsRendering/Include/Object.h>
 
 #include <FsRendering/Include/IObjectComponent.h>
-#include <FsRendering/Include/ObjectPool.h>
+#include <FsRendering/Include/ObjectPool.hpp>
 #include <FsRendering/Include/TransformComponent.h>
 
 
@@ -10,14 +10,15 @@ namespace fs
 {
     namespace Rendering
     {
-        Object::Object()
-            : _objectType{ ObjectType::Object }
+        Object::Object(const ObjectPool* const objectPool)
+            : Object(objectPool, ObjectType::Object)
         {
             __noop;
         }
 
-        Object::Object(const ObjectType objectType)
-            : _objectType{ objectType }
+        Object::Object(const ObjectPool* const objectPool, const ObjectType objectType)
+            : _objectPool{ objectPool }
+            , _objectType{ objectType }
         {
             __noop;
         }
@@ -108,6 +109,12 @@ namespace fs
         TransformComponent* Object::getObjectTransformComponent() const noexcept
         {
             return static_cast<TransformComponent*>(_componentArray[0]);
+        }
+
+        const float Object::getDeltaTimeS() const noexcept
+        {
+            const DeltaTimer& deltaTimer = *_objectPool->getDeltaTimerXXX();
+            return deltaTimer.getDeltaTimeS();
         }
     }
 }

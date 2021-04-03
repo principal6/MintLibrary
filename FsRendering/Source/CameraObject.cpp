@@ -1,13 +1,14 @@
 #include <stdafx.h>
 #include <FsRendering/Include/CameraObject.h>
+#include <FsRendering/Include/ObjectPool.hpp>
 
 
 namespace fs
 {
     namespace Rendering
     {
-        CameraObject::CameraObject()
-            : Object(ObjectType::CameraObject)
+        CameraObject::CameraObject(const ObjectPool* const objectPool)
+            : Object(objectPool, ObjectType::CameraObject)
             , _baseUpDirection{ 0.0f, 1.0f, 0.0f }
             , _baseForwardDirection{ 0.0f, 0.0f, 1.0f }
             , _focusOffset{ 0.0f, 0.0f, 2.0f }
@@ -18,7 +19,7 @@ namespace fs
             , _pitch{ 0.0f }
             , _yaw{ 0.0f }
             , _roll{ 0.0f }
-            , _movementFactor{ 0.005f }
+            , _movementFactor{ 10.0f }
             , _rotationFactor{ 0.005f }
         {
             updatePerspectiveMatrix();
@@ -55,29 +56,31 @@ namespace fs
 
         void CameraObject::move(const MoveDirection moveDirection)
         {
+            const float deltaTimeS = getDeltaTimeS();
+
             const fs::Float3& rightDirection = fs::Float3::cross(_baseUpDirection, _forwardDirectionFinal);
             const fs::Float3& upDirection = fs::Float3::cross(_forwardDirectionFinal, rightDirection);
-
+            
             fs::Rendering::Srt& srt = getObjectTransformSrt();
             switch (moveDirection)
             {
             case fs::Rendering::CameraObject::MoveDirection::Forward:
-                srt._translation += _forwardDirectionFinal * _movementFactor;
+                srt._translation += _forwardDirectionFinal * _movementFactor * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Backward:
-                srt._translation -= _forwardDirectionFinal * _movementFactor;
+                srt._translation -= _forwardDirectionFinal * _movementFactor * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Leftward:
-                srt._translation -= rightDirection * _movementFactor;
+                srt._translation -= rightDirection * _movementFactor * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Rightward:
-                srt._translation += rightDirection * _movementFactor;
+                srt._translation += rightDirection * _movementFactor * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Upward:
-                srt._translation += upDirection * _movementFactor;
+                srt._translation += upDirection * _movementFactor * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Downward:
-                srt._translation -= upDirection * _movementFactor;
+                srt._translation -= upDirection * _movementFactor * deltaTimeS;
                 break;
             default:
                 break;

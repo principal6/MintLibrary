@@ -787,6 +787,8 @@ const bool testWindow()
     uint64 previousFrameTimeMs = 0;
     while (window.isRunning() == true)
     {
+        objectPool.computeDeltaTime();
+
         const uint64 loopStartTimeMs = fs::Profiler::getCurrentTimeMs();
         fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 
@@ -837,6 +839,16 @@ const bool testWindow()
         // Dynamic Keyboard Inputs
         if (guiContext.isFocusedControlTextBox() == false)
         {
+            if (window.isKeyDown(EventData::KeyCode::Q) == true)
+            {
+                testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Upward);
+            }
+
+            if (window.isKeyDown(EventData::KeyCode::E) == true)
+            {
+                testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Downward);
+            }
+
             if (window.isKeyDown(EventData::KeyCode::W) == true)
             {
                 testCameraObject->move(fs::Rendering::CameraObject::MoveDirection::Forward);
@@ -909,7 +921,7 @@ const bool testWindow()
                     fs::Gui::LabelParam fpsLabelParam;
                     fpsLabelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);
                     fpsLabelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Left;
-
+                    
                     fs::formatString(tempBuffer, L" FPS: %d", fs::Profiler::FpsCounter::getFps());
                     guiContext.pushLabel(L"FPS_Label", tempBuffer, fpsLabelParam);
 

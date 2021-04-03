@@ -21,6 +21,7 @@ namespace fs
         class TransformComponent;
         class MeshComponent;
         class CameraObject;
+        class DeltaTimer;
 
 
         class ObjectPool final
@@ -51,6 +52,7 @@ namespace fs
             void                                                                deregisterMeshComponent(fs::Rendering::MeshComponent* const meshComponent);
 
         public:
+            void                                                                computeDeltaTime() const noexcept;
             void                                                                updateScreenSize(const fs::Float2& screenSize);
 
         public:
@@ -58,6 +60,10 @@ namespace fs
 
         public:
             const uint32                                                        getObjectCount() const noexcept;
+            const DeltaTimer*                                                   getDeltaTimerXXX() const noexcept;
+
+        private:
+            const DeltaTimer* const                                             _deltaTimer;
 
         private:
             std::vector<fs::Rendering::Object*>                                 _objectArray;

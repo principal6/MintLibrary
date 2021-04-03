@@ -34,10 +34,10 @@ namespace fs
             friend ObjectPool;
 
         private:
-                                            Object();
+                                            Object(const ObjectPool* const objectPool);
 
         protected:
-                                            Object(const ObjectType objectType);
+                                            Object(const ObjectPool* const objectPool, const ObjectType objectType);
             virtual                         ~Object();
         
         public:
@@ -55,8 +55,10 @@ namespace fs
 
         protected:
             TransformComponent*             getObjectTransformComponent() const noexcept;
+            const float                     getDeltaTimeS() const noexcept;
 
         protected:
+            const ObjectPool* const         _objectPool;
             const ObjectType                _objectType;
 
         protected:

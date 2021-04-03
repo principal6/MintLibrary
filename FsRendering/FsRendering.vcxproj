@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\CameraObject.h" />
+    <ClInclude Include="Include\DeltaTimer.h" />
     <ClInclude Include="Include\MeshGenerator.h" />
     <ClInclude Include="Include\MeshRenderer.h" />
     <ClInclude Include="Include\ObjectPool.hpp" />
@@ -32,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\CameraObject.cpp" />
+    <ClCompile Include="Source\DeltaTimer.cpp" />
     <ClCompile Include="Source\MeshComponent.cpp" />
     <ClCompile Include="Source\MeshGenerator.cpp" />
     <ClCompile Include="Source\MeshRenderer.cpp" />
