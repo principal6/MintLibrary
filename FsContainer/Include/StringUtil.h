@@ -11,127 +11,41 @@
 
 namespace fs
 {
+    template <uint32 Size>
+    void                formatString(char(&buffer)[Size], const char* format, ...);
+    void                formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
+    
+    template <uint32 Size>
+    void                formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...);
+    void                formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
+
+
     namespace StringUtil
     {
-        FS_INLINE const bool isNullOrEmpty(const char* const rawString)
-        {
-            return (nullptr == rawString || '\0' == rawString[0]);
-        }
+        const bool      isNullOrEmpty(const char* const rawString);
+        const bool      isNullOrEmpty(const wchar_t* const rawWideString);
+        
+        const uint32    strlen(const char* const rawString);
+        const uint32    wcslen(const wchar_t* const rawWideString);
+        const uint32    find(const char* const source, const char* const target, const uint32 offset = 0);
+        const bool      strcmp(const char* const a, const char* const b);
 
-        FS_INLINE const bool isNullOrEmpty(const wchar_t* const rawWideString)
-        {
-            return (nullptr == rawWideString || L'\0' == rawWideString[0]);
-        }
+        static uint64   hashRawString64(const char* const rawString, const uint32 length);
+        static uint64   hashRawString64(const char* const rawString);
+        static uint64   hashRawString64(const wchar_t* const rawString);
 
-        FS_INLINE uint32 strlen(const char* const rawString)
-        {
-            if (isNullOrEmpty(rawString) == true)
-            {
-                return 0;
-            }
-            return static_cast<uint32>(::strlen(rawString));
-        }
+        void            convertWideStringToString(const std::wstring& source, std::string& destination);
+        void            convertStringToWideString(const std::string& source, std::wstring& destination);
+        void            excludeExtension(std::string& inoutText);
 
-        FS_INLINE uint32 wcslen(const wchar_t* const rawWideString)
-        {
-            if (isNullOrEmpty(rawWideString) == true)
-            {
-                return 0;
-            }
-            return static_cast<uint32>(::wcslen(rawWideString));
-        }
-
-        FS_INLINE uint32 find(const char* const source, const char* const target, const uint32 offset = 0)
-        {
-            if (source == nullptr || target == nullptr)
-            {
-                return kStringNPos;
-            }
-
-            const uint32 sourceLength = fs::StringUtil::strlen(source);
-            const uint32 targetLength = fs::StringUtil::strlen(target);
-            if (sourceLength < offset + targetLength)
-            {
-                return kStringNPos;
-            }
-
-            uint32 result = kStringNPos;
-            uint32 targetIter = 0;
-            bool isFound = false;
-            for (uint32 sourceIter = 0; sourceIter < sourceLength; sourceIter++)
-            {
-                if (source[sourceIter] == target[targetIter])
-                {
-                    if (targetIter == 0)
-                    {
-                        result = sourceIter;
-                    }
-
-                    ++targetIter;
-                    if (targetIter == targetLength)
-                    {
-                        isFound = true;
-                        break;
-                    }
-                }
-                else
-                {
-                    targetIter = 0;
-                    result = kStringNPos;
-                }
-            }
-
-            return (isFound == true) ? result : kStringNPos;
-        }
-
-        FS_INLINE const bool strcmp(const char* const a, const char* const b)
-        {
-            return (0 == ::strcmp(a, b));
-        }
-
-        static uint64 hashRawString64(const char* const rawString, const uint32 length)
-        {
-            // Hashing algorithm: FNV1a
-
-            if (isNullOrEmpty(rawString) == true)
-            {
-                return kUint64Max;
-            }
-
-            static constexpr uint64 kOffset = 0xcbf29ce484222325;
-            static constexpr uint64 kPrime = 0x00000100000001B3;
-
-            uint64 hash = kOffset;
-            for (uint32 rawStringAt = 0; rawStringAt < length; ++rawStringAt)
-            {
-                hash ^= static_cast<uint8>(rawString[rawStringAt]);
-                hash *= kPrime;
-            }
-            return hash;
-        }
-
-        static uint64 hashRawString64(const char* const rawString)
-        {
-            const uint32 rawStringLength = strlen(rawString);
-            return hashRawString64(rawString, rawStringLength);
-        }
-
-        static uint64 hashRawString64(const wchar_t* const rawString)
-        {
-            const uint32 rawStringLength = wcslen(rawString);
-            const char* const rawStringA = reinterpret_cast<const char*>(rawString);
-            return hashRawString64(rawStringA, rawStringLength * 2);
-        }
-
-        void convertWideStringToString(const std::wstring& source, std::string& destination);
-        void convertStringToWideString(const std::string& source, std::wstring& destination);
-        void excludeExtension(std::string& inoutText);
-
-        static void tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
-        static void tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
-        static void tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray);
+        static void     tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
+        static void     tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
+        static void     tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray);
     }
 }
+
+
+#include <FsContainer/Include/StringUtil.inl>
 
 
 #endif // !FS_STRING_UTIL_H

@@ -62,6 +62,9 @@
     <None Include="Include\StaticArray.inl">
       <Filter>Include</Filter>
     </None>
+    <None Include="Include\StringUtil.inl">
+      <Filter>Include</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\UniqueString.cpp">

@@ -898,19 +898,29 @@ const bool testWindow()
                 }
 
                 fs::Gui::WindowParam inspectorWindowParam;
-                inspectorWindowParam._size = fs::Float2(300.0f, 400.0f);
+                inspectorWindowParam._size = fs::Float2(320.0f, 400.0f);
                 inspectorWindowParam._position = fs::Float2(20.0f, 50.0f);
                 inspectorWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
-                inspectorWindowParam._initialDockingSize._x = 240.0f;
+                inspectorWindowParam._initialDockingSize._x = 320.0f;
                 static fs::Gui::VisibleState inspectorVisibleState;
                 if (guiContext.beginWindow(L"Inspector", inspectorWindowParam, inspectorVisibleState) == true)
                 {
+                    wchar_t tempBuffer[256];
                     fs::Gui::LabelParam fpsLabelParam;
                     fpsLabelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);
                     fpsLabelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Left;
-                    guiContext.pushLabel(L"FPS_Label", (L" FPS: " + std::to_wstring(fs::Profiler::FpsCounter::getFps())).c_str(), fpsLabelParam);
-                    guiContext.pushLabel(L"CPU_Label", (L" CPU: " + std::to_wstring(previousFrameTimeMs) + L" ms").c_str(), fpsLabelParam);
-                
+
+                    fs::formatString(tempBuffer, L" FPS: %d", fs::Profiler::FpsCounter::getFps());
+                    guiContext.pushLabel(L"FPS_Label", tempBuffer, fpsLabelParam);
+
+                    fs::formatString(tempBuffer, L" CPU: %d ms", previousFrameTimeMs);
+                    guiContext.pushLabel(L"CPU_Label", tempBuffer, fpsLabelParam);
+                    
+                    fs::formatString(tempBuffer, L" Camera Position: %.3f, %.3f, %.3f", 
+                        testCameraObject->getObjectTransformSrt()._translation._x,
+                        testCameraObject->getObjectTransformSrt()._translation._y, 
+                        testCameraObject->getObjectTransformSrt()._translation._z);
+                    guiContext.pushLabel(L"Camera Position", tempBuffer, fpsLabelParam);
                     guiContext.endWindow();
                 }
             }
