@@ -17,7 +17,7 @@ namespace fs
     namespace Rendering
     {
         class Object;
-        class ObjectComponent;
+        class IObjectComponent;
 
 
         enum class ObjectComponentType
@@ -30,7 +30,7 @@ namespace fs
 
         class ObjectComponentId final : public IId
         {
-            friend ObjectComponent;
+            friend IObjectComponent;
 
         private:
             virtual void            assignRawId(const uint32 rawId) noexcept override final;
@@ -52,7 +52,7 @@ namespace fs
         };
 
 
-        class ObjectComponent abstract
+        class IObjectComponent abstract
         {
             friend Object;
 
@@ -60,8 +60,8 @@ namespace fs
             static std::atomic<uint32>              _nextRawId;
 
         public:
-                                                    ObjectComponent(const ObjectComponentType type);
-            virtual                                 ~ObjectComponent() { __noop; }
+                                                    IObjectComponent(const ObjectComponentType type);
+            virtual                                 ~IObjectComponent() { __noop; }
 
         public:
             FS_INLINE const ObjectComponentType     getType() const noexcept { return _type; }

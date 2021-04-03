@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Include\ObjectComponent.h">
+    <ClInclude Include="Include\IObjectComponent.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Object.h">
@@ -50,7 +50,7 @@
     <ClCompile Include="Source\ObjectManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ObjectComponent.cpp">
+    <ClCompile Include="Source\IObjectComponent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\CameraObject.cpp">

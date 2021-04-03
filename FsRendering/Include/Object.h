@@ -8,14 +8,14 @@
 #include <CommonDefinitions.h>
 
 #include <FsMath/Include/Float4x4.h>
-#include <FsRendering/Include/ObjectComponent.h>
+#include <FsRendering/Include/IObjectComponent.h>
 
 
 namespace fs
 {
     namespace Rendering
     {
-        class ObjectComponent;
+        class IObjectComponent;
         class TransformComponent;
         class ObjectManager;
         enum class ObjectComponentType;
@@ -41,14 +41,14 @@ namespace fs
             virtual                         ~Object();
         
         public:
-            void                            attachComponent(ObjectComponent* const objectComponent);
-            void                            detachComponent(ObjectComponent* const objectComponent);
+            void                            attachComponent(IObjectComponent* const objectComponent);
+            void                            detachComponent(IObjectComponent* const objectComponent);
         
         public:
             const ObjectType                getType() const noexcept;
             const bool                      isTypeOf(const ObjectType objectType) const noexcept;
             const uint32                    getComponentCount() const noexcept;
-            ObjectComponent*                getComponent(const ObjectComponentType type) const noexcept;
+            IObjectComponent*                getComponent(const ObjectComponentType type) const noexcept;
             fs::Rendering::Srt&             getObjectTransformSrt() noexcept;
             const fs::Rendering::Srt&       getObjectTransformSrt() const noexcept;
             fs::Float4x4                    getObjectTransformMatrix() const noexcept;
@@ -60,7 +60,7 @@ namespace fs
             const ObjectType                _objectType;
 
         protected:
-            std::vector<ObjectComponent*>   _componentArray;
+            std::vector<IObjectComponent*>   _componentArray;
         };
 
     }

@@ -1,7 +1,7 @@
 #include <stdafx.h>
 #include <FsRendering/Include/Object.h>
 
-#include <FsRendering/Include/ObjectComponent.h>
+#include <FsRendering/Include/IObjectComponent.h>
 #include <FsRendering/Include/ObjectManager.h>
 #include <FsRendering/Include/TransformComponent.h>
 
@@ -27,7 +27,7 @@ namespace fs
             __noop;
         }
 
-        void Object::attachComponent(ObjectComponent* const objectComponent)
+        void Object::attachComponent(IObjectComponent* const objectComponent)
         {
             if (objectComponent != nullptr)
             {
@@ -43,7 +43,7 @@ namespace fs
             }
         }
 
-        void Object::detachComponent(ObjectComponent* const objectComponent)
+        void Object::detachComponent(IObjectComponent* const objectComponent)
         {
             if (objectComponent == nullptr)
             {
@@ -77,7 +77,7 @@ namespace fs
             return static_cast<uint32>(_componentArray.size());
         }
 
-        ObjectComponent* Object::getComponent(const ObjectComponentType type) const noexcept
+        IObjectComponent* Object::getComponent(const ObjectComponentType type) const noexcept
         {
             const uint32 componentCount = getComponentCount();
             for (uint32 componentIndex = 0; componentIndex < componentCount; componentIndex++)

@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsRendering/Include/ObjectComponent.h>
+#include <FsRendering/Include/IObjectComponent.h>
 
 #include <FsMath/Include/Float4x4.h>
 #include <FsMath/Include/Quaternion.h>
@@ -17,11 +17,11 @@ namespace fs
 {
     namespace Rendering
     {
-        class TransformComponent : public ObjectComponent
+        class TransformComponent : public IObjectComponent
         {
         public:
-                                    TransformComponent() : ObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
-                                    TransformComponent(const ObjectComponentType derivedType) : ObjectComponent(derivedType) { __noop; }
+                                    TransformComponent() : IObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
+                                    TransformComponent(const ObjectComponentType derivedType) : IObjectComponent(derivedType) { __noop; }
             virtual                 ~TransformComponent() { __noop; }
 
         public:

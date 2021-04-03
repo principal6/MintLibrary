@@ -87,7 +87,7 @@ namespace fs
             const uint32 componentCount = static_cast<uint32>(object._componentArray.size());
             for (uint32 componentIndex = 0; componentIndex < componentCount; componentIndex++)
             {
-                ObjectComponent*& component = object._componentArray[componentIndex];
+                IObjectComponent*& component = object._componentArray[componentIndex];
                 if (component != nullptr)
                 {
                     const ObjectComponentType componentType = component->getType();

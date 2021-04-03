@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <FsRendering/Include/ObjectComponent.h>
+#include <FsRendering/Include/IObjectComponent.h>
 
 
 namespace fs
@@ -17,14 +17,14 @@ namespace fs
         }
 
 
-        std::atomic<uint32> ObjectComponent::_nextRawId = 0;
-        ObjectComponent::ObjectComponent(const ObjectComponentType type)
+        std::atomic<uint32> IObjectComponent::_nextRawId = 0;
+        IObjectComponent::IObjectComponent(const ObjectComponentType type)
             : _ownerObject{ nullptr }
             , _type{ type }
         {
-            _id.assignRawId(ObjectComponent::_nextRawId);
+            _id.assignRawId(IObjectComponent::_nextRawId);
 
-            ++ObjectComponent::_nextRawId;
+            ++IObjectComponent::_nextRawId;
         }
     }
 }

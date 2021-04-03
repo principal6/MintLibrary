@@ -24,7 +24,7 @@
     <ClInclude Include="Include\Rendering.h" />
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\Object.h" />
-    <ClInclude Include="Include\ObjectComponent.h" />
+    <ClInclude Include="Include\IObjectComponent.h" />
     <ClInclude Include="Include\ObjectManager.h" />
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
@@ -33,7 +33,7 @@
     <ClCompile Include="Source\MeshComponent.cpp" />
     <ClCompile Include="Source\MeshGenerator.cpp" />
     <ClCompile Include="Source\Object.cpp" />
-    <ClCompile Include="Source\ObjectComponent.cpp" />
+    <ClCompile Include="Source\IObjectComponent.cpp" />
     <ClCompile Include="Source\ObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
