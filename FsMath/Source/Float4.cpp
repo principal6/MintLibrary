@@ -161,6 +161,11 @@ namespace fs
         return Float4(_x, _y, _z, 0.0f);
     }
 
+    Float4 Float4::getXyz1() const noexcept
+    {
+        return Float4(_x, _y, _z, 1.0f);
+    }
+
     Float3 Float4::getXyz() const noexcept
     {
         return Float3(_x, _y, _z);

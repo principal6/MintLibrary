@@ -74,6 +74,7 @@ namespace fs
         void                    setXyz(const Float3& rhs) noexcept;
         void                    setXyz(const Float4& rhs) noexcept;
         Float4                  getXyz0() const noexcept;
+        Float4                  getXyz1() const noexcept;
         Float3                  getXyz() const noexcept;
 
     public:
