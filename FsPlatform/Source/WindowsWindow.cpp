@@ -200,6 +200,16 @@ namespace fs
             _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('A', EventData::KeyCode::A));
             _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('S', EventData::KeyCode::S));
             _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('D', EventData::KeyCode::D));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('0', EventData::KeyCode::Num0));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('1', EventData::KeyCode::Num1));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('2', EventData::KeyCode::Num2));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('3', EventData::KeyCode::Num3));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('4', EventData::KeyCode::Num4));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('5', EventData::KeyCode::Num5));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('6', EventData::KeyCode::Num6));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('7', EventData::KeyCode::Num7));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('8', EventData::KeyCode::Num8));
+            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('9', EventData::KeyCode::Num9));
         }
 
         EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
