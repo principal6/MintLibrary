@@ -767,6 +767,8 @@ const bool testWindow()
     RenderingBase::GraphicDevice graphicDevice;
     graphicDevice.initialize(&window);
 
+    fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+
     Rendering::MeshRenderer meshRenderer{ &graphicDevice };
     meshRenderer.initialize();
     
@@ -788,9 +790,6 @@ const bool testWindow()
     while (window.isRunning() == true)
     {
         objectPool.computeDeltaTime();
-
-        const uint64 loopStartTimeMs = fs::Profiler::getCurrentTimeMs();
-        fs::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
 
         // Events
         {
@@ -925,7 +924,7 @@ const bool testWindow()
                     fs::formatString(tempBuffer, L" FPS: %d", fs::Profiler::FpsCounter::getFps());
                     guiContext.pushLabel(L"FPS_Label", tempBuffer, fpsLabelParam);
 
-                    fs::formatString(tempBuffer, L" CPU: %d ms", previousFrameTimeMs);
+                    fs::formatString(tempBuffer, L" CPU: %d ms", fs::Profiler::FpsCounter::getFrameTimeMs());
                     guiContext.pushLabel(L"CPU_Label", tempBuffer, fpsLabelParam);
                     
                     fs::formatString(tempBuffer, L" Camera Position: %.3f, %.3f, %.3f", 
@@ -936,9 +935,6 @@ const bool testWindow()
                     guiContext.endWindow();
                 }
             }
-
-            const uint64 loopEndTimeMs = fs::Profiler::getCurrentTimeMs();
-            previousFrameTimeMs = loopEndTimeMs - loopStartTimeMs;
 
             graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
             graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());

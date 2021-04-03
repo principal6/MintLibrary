@@ -1,3 +1,4 @@
+#include "ScopedCpuProfiler.h"
 #pragma once
 
 
@@ -16,24 +17,40 @@ namespace fs
         }
 
 
-        inline uint64 FpsCounter::_frameTimeUs      = 0;
-        inline uint64 FpsCounter::_frameCounter     = 0;
-        inline uint64 FpsCounter::_fps              = 0;
+        inline uint64 FpsCounter::_previousTimeUs       = 0;
+        inline uint64 FpsCounter::_frameTimeUs          = 0;
+        inline uint64 FpsCounter::_previousFpsTimeUs    = 0;
+        inline uint64 FpsCounter::_frameCounter         = 0;
+        inline uint64 FpsCounter::_fps                  = 0;
         FS_INLINE void FpsCounter::count() noexcept
         {
             ++_frameCounter;
 
-            if (1'000'000 <= fs::Profiler::getCurrentTimeUs() - _frameTimeUs)
+            const uint64 currentTimeUs = fs::Profiler::getCurrentTimeUs();
+            if (1'000'000 <= currentTimeUs - _previousFpsTimeUs)
             {
                 _fps = _frameCounter;
                 _frameCounter = 0;
-                _frameTimeUs = fs::Profiler::getCurrentTimeUs();
+                _previousFpsTimeUs = currentTimeUs;
             }
+
+            _frameTimeUs = currentTimeUs - _previousTimeUs;
+            _previousTimeUs = currentTimeUs;
         }
 
         FS_INLINE const uint64 FpsCounter::getFps() noexcept
         {
             return _fps;
+        }
+
+        inline const uint64 FpsCounter::getFrameTimeUs() noexcept
+        {
+            return _frameTimeUs;
+        }
+
+        inline const uint64 FpsCounter::getFrameTimeMs() noexcept
+        {
+            return (_frameTimeUs / 1'000);
         }
 
 

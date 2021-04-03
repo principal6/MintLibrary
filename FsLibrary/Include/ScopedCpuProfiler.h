@@ -21,9 +21,13 @@ namespace fs
         public:
             static void             count() noexcept;
             static const uint64     getFps() noexcept;
+            static const uint64     getFrameTimeUs() noexcept;
+            static const uint64     getFrameTimeMs() noexcept;
             
         private:
+            static uint64           _previousTimeUs;
             static uint64           _frameTimeUs;
+            static uint64           _previousFpsTimeUs;
             static uint64           _frameCounter;
             static uint64           _fps;
         };
