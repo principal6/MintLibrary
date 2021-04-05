@@ -55,7 +55,7 @@ namespace fs
 
         FS_INLINE const bool isNan(const float value) noexcept
         {
-            return (value != value);
+            return ::_isnan(value) != 0;
         }
 
         FS_INLINE const float toRadian(const float degree) noexcept
