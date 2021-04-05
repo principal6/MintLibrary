@@ -151,6 +151,11 @@ namespace fs
             setVertexUv(vertex, uv);
         }
 
+        FS_INLINE fs::Float4 MeshGenerator::computeNormalFromTangentBitangent(const fs::RenderingBase::VS_INPUT& vertex) noexcept
+        {
+            return fs::Float4::crossNormalize(vertex._tangentV, vertex._bitangentW);
+        }
+
         void MeshGenerator::calculateTangentBitangent(const fs::RenderingBase::Face& face, std::vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept
         {
             fs::RenderingBase::VS_INPUT& v0 = inoutVertexArray[face._vertexIndexArray[0]];
@@ -219,9 +224,9 @@ namespace fs
                 const uint16 v0Index = meshData._faceArray[faceIndex]._vertexIndexArray[0];
                 const uint16 v1Index = meshData._faceArray[faceIndex]._vertexIndexArray[1];
                 const uint16 v2Index = meshData._faceArray[faceIndex]._vertexIndexArray[2];
-                const fs::Float4 v0Normal = fs::Float4::crossNormalize(meshData._vertexArray[v0Index]._tangentV, meshData._vertexArray[v0Index]._bitangentW);
-                const fs::Float4 v1Normal = fs::Float4::crossNormalize(meshData._vertexArray[v1Index]._tangentV, meshData._vertexArray[v1Index]._bitangentW);
-                const fs::Float4 v2Normal = fs::Float4::crossNormalize(meshData._vertexArray[v2Index]._tangentV, meshData._vertexArray[v2Index]._bitangentW);
+                const fs::Float4 v0Normal = computeNormalFromTangentBitangent(meshData._vertexArray[v0Index]);
+                const fs::Float4 v1Normal = computeNormalFromTangentBitangent(meshData._vertexArray[v1Index]);
+                const fs::Float4 v2Normal = computeNormalFromTangentBitangent(meshData._vertexArray[v2Index]);
 
                 normalArray[meshData._vertexToPositionTable[v0Index]] += v0Normal;
                 normalArray[meshData._vertexToPositionTable[v0Index]]._w += 1.0f;
@@ -507,61 +512,146 @@ namespace fs
         void MeshGenerator::subdivideTriByMidpoints(MeshData& meshData) noexcept
         {
             MeshData newMeshData = meshData;
-            newMeshData._positionArray.reserve(newMeshData.getPositionCount() * 2);
-            newMeshData._vertexArray.reserve(newMeshData.getFaceCount() * 4);
-            newMeshData._vertexToPositionTable.reserve(newMeshData.getFaceCount() * 4);
-            newMeshData._faceArray.reserve(newMeshData.getFaceCount() * 4);
+            newMeshData._positionArray.reserve(newMeshData.getPositionCount() + ((newMeshData.getFaceCount() / 2) * 3));
+            newMeshData._vertexArray.reserve(newMeshData.getVertexCount() * 5);
+            newMeshData._vertexToPositionTable.reserve(newMeshData.getVertexCount() * 5);
+            newMeshData._faceArray.reserve(newMeshData.getFaceCount() * 5);
 
+            struct PositionEdge
+            {
+            public:
+                PositionEdge(const int32 positionIndexA, const int32 positionIndexB) 
+                    : _positionIndexA{ fs::min(positionIndexA, positionIndexB) }
+                    , _positionIndexB{ fs::max(positionIndexA, positionIndexB) } 
+                {
+                    __noop;
+                }
+
+            public:
+                FS_INLINE const int32   key() const noexcept { return _positionIndexA; }
+                FS_INLINE const int32   value() const noexcept { return _positionIndexB; }
+
+            private:
+                int32                   _positionIndexA = -1;
+                int32                   _positionIndexB = -1;
+            };
+
+            class PositionEdgeGraph
+            {
+            public:
+                FS_INLINE void          setPositionCount(const uint32 positionCount) noexcept
+                {
+                    _edgeDataMap.resize(positionCount);
+                }
+                FS_INLINE void          setMidpoint(const PositionEdge& edge, const int32 midpointPositionIndex) noexcept
+                {
+                    _edgeDataMap[edge.key()][edge.value()] = midpointPositionIndex;
+                }
+                FS_INLINE const bool    hasMidpoint(const PositionEdge& edge) const noexcept
+                {
+                    if (_edgeDataMap[edge.key()].end() != _edgeDataMap[edge.key()].find(edge.value()))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                FS_INLINE const int32   getMidpointPositionIndex(const PositionEdge& edge) const noexcept
+                {
+                    return _edgeDataMap[edge.key()].at(edge.value());
+                }
+
+            private:
+                std::vector<std::unordered_map<int32, int32>>   _edgeDataMap;
+            };
+
+            PositionEdgeGraph positionEdgeGraph;
+            positionEdgeGraph.setPositionCount(meshData.getPositionCount());
             const uint32 oldFaceCount = static_cast<uint32>(newMeshData._faceArray.size());
             for (uint32 oldFaceIndex = 0; oldFaceIndex < oldFaceCount; ++oldFaceIndex)
             {
-                const fs::RenderingBase::Face& oldFace = meshData._faceArray[oldFaceIndex];
-                const fs::RenderingBase::IndexElementType oldFaceVertexIndices[3]
+                const fs::RenderingBase::Face& face = meshData._faceArray[oldFaceIndex]; 
+                const int32 faceVertexPositionIndices[3]
                 {
-                    oldFace._vertexIndexArray[0],
-                    oldFace._vertexIndexArray[1],
-                    oldFace._vertexIndexArray[2]
+                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[0]]),
+                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[1]]),
+                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[2]])
                 };
 
-                const fs::Float2 oldFaceVertexUvs[3]
+                int32 midpointPositionIndex01 = 0;
+                int32 midpointPositionIndex12 = 0;
+                int32 midpointPositionIndex20 = 0;
                 {
-                    getVertexUv(getFaceVertex0(oldFace, meshData)),
-                    getVertexUv(getFaceVertex1(oldFace, meshData)),
-                    getVertexUv(getFaceVertex2(oldFace, meshData))
-                };
+                    const PositionEdge positionEdge01 = PositionEdge(faceVertexPositionIndices[0], faceVertexPositionIndices[1]);
+                    const PositionEdge positionEdge12 = PositionEdge(faceVertexPositionIndices[1], faceVertexPositionIndices[2]);
+                    const PositionEdge positionEdge20 = PositionEdge(faceVertexPositionIndices[2], faceVertexPositionIndices[0]);
+
+                    const fs::Float4& faceVertexPosition0 = getFaceVertexPosition0(face, meshData);
+                    const fs::Float4& faceVertexPosition1 = getFaceVertexPosition1(face, meshData);
+                    const fs::Float4& faceVertexPosition2 = getFaceVertexPosition2(face, meshData);
+
+                    const int32 newPositionIndexBase = static_cast<int32>(newMeshData._positionArray.size());
+                    int8 addedPointCount = 0;
+                    // Midpoint 0-1
+                    if (positionEdgeGraph.hasMidpoint(positionEdge01) == false)
+                    {
+                        fs::Float4 midPointPosition_01 = (faceVertexPosition0 + faceVertexPosition1) * 0.5f;
+                        pushPosition(midPointPosition_01, newMeshData);
+
+                        midpointPositionIndex01 = newPositionIndexBase + addedPointCount;
+                        ++addedPointCount;
+                        positionEdgeGraph.setMidpoint(positionEdge01, midpointPositionIndex01);
+                    }
+                    else
+                    {
+                        midpointPositionIndex01 = positionEdgeGraph.getMidpointPositionIndex(positionEdge01);
+                    }
+
+                    // Midpoint 1-2
+                    if (positionEdgeGraph.hasMidpoint(positionEdge12) == false)
+                    {
+                        fs::Float4 midPointPosition_12 = (faceVertexPosition1 + faceVertexPosition2) * 0.5f;
+                        pushPosition(midPointPosition_12, newMeshData);
+
+                        midpointPositionIndex12 = newPositionIndexBase + addedPointCount;
+                        ++addedPointCount;
+                        positionEdgeGraph.setMidpoint(positionEdge12, midpointPositionIndex12);
+                    }
+                    else
+                    {
+                        midpointPositionIndex12 = positionEdgeGraph.getMidpointPositionIndex(positionEdge12);
+                    }
+
+                    // Midpoint 2-0
+                    if (positionEdgeGraph.hasMidpoint(positionEdge20) == false)
+                    {
+                        fs::Float4 midPointPosition_20 = (faceVertexPosition2 + faceVertexPosition0) * 0.5f;
+                        pushPosition(midPointPosition_20, newMeshData);
+
+                        midpointPositionIndex20 = newPositionIndexBase + addedPointCount;
+                        ++addedPointCount;
+                        positionEdgeGraph.setMidpoint(positionEdge20, midpointPositionIndex20);
+                    }
+                    else
+                    {
+                        midpointPositionIndex20 = positionEdgeGraph.getMidpointPositionIndex(positionEdge20);
+                    }
+                }
                 
-                const int32 oldFaceVertexPositionIndices[3]
+                // UV
+                const fs::Float2 faceVertexUvs[3]
                 {
-                    static_cast<int32>(meshData._vertexToPositionTable[oldFaceVertexIndices[0]]),
-                    static_cast<int32>(meshData._vertexToPositionTable[oldFaceVertexIndices[1]]),
-                    static_cast<int32>(meshData._vertexToPositionTable[oldFaceVertexIndices[2]])
+                    getVertexUv(getFaceVertex0(face, meshData)),
+                    getVertexUv(getFaceVertex1(face, meshData)),
+                    getVertexUv(getFaceVertex2(face, meshData))
                 };
+                const fs::Float2 midPointUv01 = (faceVertexUvs[0] + faceVertexUvs[1]) * 0.5f;
+                const fs::Float2 midPointUv12 = (faceVertexUvs[1] + faceVertexUvs[2]) * 0.5f;
+                const fs::Float2 midPointUv20 = (faceVertexUvs[2] + faceVertexUvs[0]) * 0.5f;
 
-                const fs::Float4& faceVertexPosition0 = getFaceVertexPosition0(oldFace, meshData);
-                const fs::Float4& faceVertexPosition1 = getFaceVertexPosition1(oldFace, meshData);
-                const fs::Float4& faceVertexPosition2 = getFaceVertexPosition2(oldFace, meshData);
-
-                // Midpoint 0-1
-                fs::Float4 midPointPosition_01 = (faceVertexPosition0 + faceVertexPosition1) * 0.5f;
-                fs::Float2 midPointUv_01 = (oldFaceVertexUvs[0] + oldFaceVertexUvs[1]) * 0.5f;
-
-                // Midpoint 1-2
-                fs::Float4 midPointPosition_12 = (faceVertexPosition1 + faceVertexPosition2) * 0.5f;
-                fs::Float2 midPointUv_12 = (oldFaceVertexUvs[1] + oldFaceVertexUvs[2]) * 0.5f;
-                
-                // Midpoint 2-0
-                fs::Float4 midPointPosition_20 = (faceVertexPosition2 + faceVertexPosition0) * 0.5f;
-                fs::Float2 midPointUv_20 = (oldFaceVertexUvs[2] + oldFaceVertexUvs[0]) * 0.5f;
-
-                const int32 newPositionIndexBase = static_cast<int32>(newMeshData._positionArray.size());
-                pushPosition(midPointPosition_01, newMeshData);
-                pushPosition(midPointPosition_12, newMeshData);
-                pushPosition(midPointPosition_20, newMeshData);
-
-                pushTri({ oldFaceVertexPositionIndices[0], newPositionIndexBase + 0, newPositionIndexBase + 2 }, newMeshData, { oldFaceVertexUvs[0], midPointUv_01, midPointUv_20 });
-                pushTri({ newPositionIndexBase + 0, oldFaceVertexPositionIndices[1], newPositionIndexBase + 1 }, newMeshData, { midPointUv_01, oldFaceVertexUvs[1], midPointUv_12 });
-                pushTri({ newPositionIndexBase + 1, oldFaceVertexPositionIndices[2], newPositionIndexBase + 2 }, newMeshData, { midPointUv_12, oldFaceVertexUvs[2], midPointUv_20 });
-                pushTri({ newPositionIndexBase + 0, newPositionIndexBase + 1, newPositionIndexBase + 2 }, newMeshData, { midPointUv_01, midPointUv_12, midPointUv_20 });
+                pushTri({ faceVertexPositionIndices[0], midpointPositionIndex01     , midpointPositionIndex20 }, newMeshData, { faceVertexUvs[0], midPointUv01, midPointUv20 });
+                pushTri({ midpointPositionIndex01     , faceVertexPositionIndices[1], midpointPositionIndex12 }, newMeshData, { midPointUv01, faceVertexUvs[1], midPointUv12 });
+                pushTri({ midpointPositionIndex12     , faceVertexPositionIndices[2], midpointPositionIndex20 }, newMeshData, { midPointUv12, faceVertexUvs[2], midPointUv20 });
+                pushTri({ midpointPositionIndex01     , midpointPositionIndex12     , midpointPositionIndex20 }, newMeshData, { midPointUv01, midPointUv12, midPointUv20 });
             }
             
             newMeshData.shrinkToFit();

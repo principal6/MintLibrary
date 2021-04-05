@@ -111,6 +111,7 @@ namespace fs
             static void                             pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
             static void                             pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
             static void                             recalculateTangentBitangentFromNormal(const fs::Float4& normal, fs::RenderingBase::VS_INPUT& vertex) noexcept;
+            static fs::Float4                       computeNormalFromTangentBitangent(const fs::RenderingBase::VS_INPUT& vertex) noexcept;
 
         public:
             static void                             calculateTangentBitangent(const fs::RenderingBase::Face& face, std::vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept;

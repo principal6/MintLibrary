@@ -21,7 +21,10 @@ namespace fs
             
             //MeshGenerator::generateOctahedron(MeshGenerator::RadiusParam(), _meshData);
             
-            MeshGenerator::generateGeoSphere(MeshGenerator::GeoSpherePram(), _meshData);
+            MeshGenerator::GeoSpherePram geosphereParam;
+            geosphereParam._subdivisionIteration = 2;
+            //geosphereParam._smooth = true;
+            MeshGenerator::generateGeoSphere(geosphereParam, _meshData);
         }
 
         MeshComponent::~MeshComponent()
