@@ -776,6 +776,7 @@ const bool testWindow()
     Rendering::Object* const testObject = objectPool.createObject();
     Rendering::CameraObject* const testCameraObject = objectPool.createCameraObject();
     fs::Float2 windowSize = graphicDevice.getWindowSizeFloat2();
+    testCameraObject->setPerspectiveZRange(0.01f, 1000.0f);
     testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
     {
         testObject->attachComponent(objectPool.createMeshComponent());
