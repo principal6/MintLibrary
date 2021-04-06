@@ -482,6 +482,13 @@ namespace fs
                 pushEvent(std::move(eventData));
                 return 0;
             }
+            case WM_KEYUP:
+            {
+                eventData._type = EventType::KeyUp;
+                eventData._value.setKeyCode(convertWparamToKeyCode(wParam));
+                pushEvent(std::move(eventData));
+                return 0;
+            }
             case WM_MOUSEMOVE:
             {
                 eventData._type = EventType::MouseMove;

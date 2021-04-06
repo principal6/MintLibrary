@@ -816,6 +816,29 @@ const bool testWindow()
                     {
                         graphicDevice.useWireFrameNoCullingRasterizer();
                     }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
+                    {
+                        testCameraObject->setIsBoostMode(true);
+                    }
+                }
+                else if (event._type == EventType::KeyUp)
+                {
+                    if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
+                    {
+                        testCameraObject->setIsBoostMode(false);
+                    }
+                }
+                else if (event._type == EventType::MouseWheel)
+                {
+                    const float mouseWheel = event._value.getMouseWheel();
+                    if (0.0f < mouseWheel)
+                    {
+                        testCameraObject->increaseMoveSpeed();
+                    }
+                    else
+                    {
+                        testCameraObject->decreaseMoveSpeed();
+                    }
                 }
                 else if (event._type == EventType::MouseMoveDelta)
                 {

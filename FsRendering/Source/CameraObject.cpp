@@ -19,7 +19,8 @@ namespace fs
             , _pitch{ 0.0f }
             , _yaw{ 0.0f }
             , _roll{ 0.0f }
-            , _movementFactor{ 10.0f }
+            , _moveSpeed{ MoveSpeed::x8_0 }
+            , _isBoostMode{ false }
             , _rotationFactor{ 0.005f }
         {
             updatePerspectiveMatrix();
@@ -61,30 +62,46 @@ namespace fs
             const fs::Float3& rightDirection = fs::Float3::cross(_baseUpDirection, _forwardDirectionFinal);
             const fs::Float3& upDirection = fs::Float3::cross(_forwardDirectionFinal, rightDirection);
             
+            const float moveSpeedFloat = getMoveSpeedAsFloat((true == _isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
             fs::Rendering::Srt& srt = getObjectTransformSrt();
             switch (moveDirection)
             {
             case fs::Rendering::CameraObject::MoveDirection::Forward:
-                srt._translation += _forwardDirectionFinal * _movementFactor * deltaTimeS;
+                srt._translation += _forwardDirectionFinal * moveSpeedFloat * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Backward:
-                srt._translation -= _forwardDirectionFinal * _movementFactor * deltaTimeS;
+                srt._translation -= _forwardDirectionFinal * moveSpeedFloat * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Leftward:
-                srt._translation -= rightDirection * _movementFactor * deltaTimeS;
+                srt._translation -= rightDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Rightward:
-                srt._translation += rightDirection * _movementFactor * deltaTimeS;
+                srt._translation += rightDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Upward:
-                srt._translation += upDirection * _movementFactor * deltaTimeS;
+                srt._translation += upDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case fs::Rendering::CameraObject::MoveDirection::Downward:
-                srt._translation -= upDirection * _movementFactor * deltaTimeS;
+                srt._translation -= upDirection * moveSpeedFloat * deltaTimeS;
                 break;
             default:
                 break;
             }
+        }
+
+        void CameraObject::increaseMoveSpeed() noexcept
+        {
+            _moveSpeed = getFasterMoveSpeed(_moveSpeed);
+        }
+
+        void CameraObject::decreaseMoveSpeed() noexcept
+        {
+            _moveSpeed = getSlowerMoveSpeed(_moveSpeed);
+        }
+
+        void CameraObject::setIsBoostMode(const bool isBoostMode) noexcept
+        {
+            _isBoostMode = isBoostMode;
         }
 
         void CameraObject::rotatePitch(const float angle)

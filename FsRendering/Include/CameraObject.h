@@ -31,6 +31,48 @@ namespace fs
             };
 
         private:
+            enum class MoveSpeed : uint8
+            {
+                x0_125,
+                x0_25,
+                x0_5,
+                x1_0,
+                x2_0,
+                x4_0,
+                x8_0,
+                x16_0,
+                COUNT
+            };
+
+            FS_INLINE constexpr const float getMoveSpeedAsFloat(const MoveSpeed moveSpeed)
+            {
+                static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base 가 달라졌습니다!");
+                const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
+                return 0.125f * static_cast<float>(fs::Math::pow2_ui32(moveSpeedUint8));
+            }
+
+            FS_INLINE constexpr const MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)
+            {
+                const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
+                const uint8 moveSpeedMax = static_cast<uint8>(MoveSpeed::COUNT) - 1;
+                if (moveSpeedUint8 < moveSpeedMax)
+                {
+                    return static_cast<MoveSpeed>(moveSpeedUint8 + 1);
+                }
+                return moveSpeed;
+            }
+
+            FS_INLINE constexpr const MoveSpeed getSlowerMoveSpeed(const MoveSpeed moveSpeed)
+            {
+                const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
+                if (0 < moveSpeedUint8)
+                {
+                    return static_cast<MoveSpeed>(moveSpeedUint8 - 1);
+                }
+                return moveSpeed;
+            }
+
+        private:
                                     CameraObject(const ObjectPool* const objectPool);
                                     
         public:
@@ -46,6 +88,9 @@ namespace fs
         
         public:
             void                    move(const MoveDirection moveDirection);
+            void                    increaseMoveSpeed() noexcept;
+            void                    decreaseMoveSpeed() noexcept;
+            void                    setIsBoostMode(const bool isBoostMode) noexcept;
 
         public:
             void                    rotatePitch(const float angle);
@@ -77,7 +122,8 @@ namespace fs
             float                   _pitch;
             float                   _yaw;
             float                   _roll;
-            float                   _movementFactor;
+            MoveSpeed               _moveSpeed;
+            bool                    _isBoostMode;
             float                   _rotationFactor;
         };
     }
