@@ -579,6 +579,7 @@ namespace fs
         {
             MeshData newMeshData;
             newMeshData._positionArray = oldMeshData._positionArray;
+            newMeshData._positionArray.reserve((newMeshData._positionArray.size() - 2) * 4 + 2);
             newMeshData._vertexArray.reserve(oldMeshData.getVertexCount() * 4);
             newMeshData._vertexToPositionTable.reserve(oldMeshData.getVertexCount() * 4);
             newMeshData._faceArray.reserve(oldMeshData.getFaceCount() * 4);

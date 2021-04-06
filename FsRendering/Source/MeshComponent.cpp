@@ -15,7 +15,7 @@ namespace fs
         {
             MeshGenerator::GeoSpherePram geosphereParam;
             geosphereParam._radius = 1.0f;
-            geosphereParam._subdivisionIteration = 2;
+            geosphereParam._subdivisionIteration = 3;
             geosphereParam._smooth = true;
             MeshGenerator::generateGeoSphere(geosphereParam, _meshData);
         }
