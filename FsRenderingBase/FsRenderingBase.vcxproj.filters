@@ -102,6 +102,9 @@
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
       <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
+    <ClInclude Include="Include\RenderingBase.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">

@@ -616,8 +616,8 @@ const bool testMemoryAllocator2()
             viewer1 = viewer;
             fs::Memory::Viewer<fs::ContiguousStringA> viewer2 = viewer1;
         }
-        const bool viewerAlive1 = viewer.isAlive();
-        FS_LOG("김장원", (true == viewerAlive1) ? "true" : "false");
+        //const bool viewerAlive1 = viewer.isAlive();
+        //FS_LOG("김장원", (true == viewerAlive1) ? "true" : "false");
     }
 
     {
@@ -977,7 +977,6 @@ const bool testWindow()
 const bool testAll()
 {
     //fs::Logger::setOutputFileName("LOG.txt");
-
 /*
 */
     testIntTypes();

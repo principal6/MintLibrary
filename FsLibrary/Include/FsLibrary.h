@@ -30,8 +30,7 @@ namespace fs
 
 #include <FsPlatform/Include/Platform.h>
 
-#include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/Language/Language.h>
+#include <FsRenderingBase/Include/RenderingBase.h>
 
 #include <FsRendering/Include/Rendering.h>
 

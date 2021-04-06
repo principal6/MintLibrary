@@ -110,6 +110,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,6 +154,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -211,6 +213,7 @@
     <ClInclude Include="Include\Language\LanguageCommon.h" />
     <ClInclude Include="Include\Language\Tokenizer.h" />
     <ClInclude Include="Include\RectangleRendererContext.h" />
+    <ClInclude Include="Include\RenderingBase.h" />
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
     <ClInclude Include="Include\ShapeRendererContext.h" />
     <ClInclude Include="Include\RenderingBaseCommon.h" />

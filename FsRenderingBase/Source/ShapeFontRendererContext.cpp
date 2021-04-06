@@ -2,6 +2,7 @@
 #include <FsRenderingBase/Include/ShapeFontRendererContext.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
+#include <FsRenderingBase/Include/TriangleRenderer.hpp>
 
 
 namespace fs
