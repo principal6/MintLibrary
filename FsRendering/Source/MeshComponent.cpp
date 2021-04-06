@@ -13,17 +13,10 @@ namespace fs
         MeshComponent::MeshComponent()
             : TransformComponent(ObjectComponentType::MeshComponent)
         {
-            //MeshGenerator::generateCube(_meshData);
-
-            //MeshGenerator::generateCone(MeshGenerator::ConeParam(), _meshData);
-            
-            //MeshGenerator::generateCylinder(MeshGenerator::CylinderParam(), _meshData);
-            
-            //MeshGenerator::generateOctahedron(MeshGenerator::RadiusParam(), _meshData);
-            
             MeshGenerator::GeoSpherePram geosphereParam;
+            geosphereParam._radius = 1.0f;
             geosphereParam._subdivisionIteration = 2;
-            //geosphereParam._smooth = true;
+            geosphereParam._smooth = true;
             MeshGenerator::generateGeoSphere(geosphereParam, _meshData);
         }
 

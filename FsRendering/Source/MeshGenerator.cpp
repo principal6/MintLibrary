@@ -34,7 +34,7 @@ namespace fs
             _faceArray.shrink_to_fit();
         }
 
-        void MeshData::updateVertexPositions() noexcept
+        void MeshData::updateVertexFromPositions() noexcept
         {
             const uint32 vertexCount = getVertexCount();
             for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
@@ -60,7 +60,7 @@ namespace fs
         }
 
 
-        void MeshGenerator::pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept
+        FS_INLINE void MeshGenerator::pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept
         {
             fs::RenderingBase::VS_INPUT vertex;
             vertex._positionU = meshData._positionArray[positionIndex];
@@ -68,51 +68,66 @@ namespace fs
             meshData._vertexToPositionTable.emplace_back(positionIndex);
         }
 
-        void MeshGenerator::setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
+        FS_INLINE void MeshGenerator::setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
         {
             meshData._vertexArray[vertexIndex]._positionU._w = u;
             meshData._vertexArray[vertexIndex]._tangentV._w = v;
         }
 
-        void MeshGenerator::setVertexUv(fs::RenderingBase::VS_INPUT& vertex, const fs::Float2& uv) noexcept
+        FS_INLINE void MeshGenerator::setVertexUv(fs::RenderingBase::VS_INPUT& vertex, const fs::Float2& uv) noexcept
         {
             vertex._positionU._w = uv._x;
             vertex._tangentV._w = uv._y;
         }
 
-        fs::Float2 MeshGenerator::getVertexUv(const fs::RenderingBase::VS_INPUT& inoutVertex) noexcept
+        FS_INLINE fs::Float2 MeshGenerator::getVertexUv(const fs::RenderingBase::VS_INPUT& inoutVertex) noexcept
         {
             return fs::Float2(inoutVertex._positionU._w, inoutVertex._tangentV._w);
         }
 
-        fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[0]];
         }
 
-        fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[1]];
         }
 
-        fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE fs::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[2]];
         }
 
-        fs::Float4& MeshGenerator::getFaceVertexPosition0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
-            return meshData._positionArray[meshData._vertexToPositionTable[face._vertexIndexArray[0]]];
+            return meshData._vertexToPositionTable[face._vertexIndexArray[0]];
         }
 
-        fs::Float4& MeshGenerator::getFaceVertexPosition1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
-            return meshData._positionArray[meshData._vertexToPositionTable[face._vertexIndexArray[1]]];
+            return meshData._vertexToPositionTable[face._vertexIndexArray[1]];
         }
 
-        fs::Float4& MeshGenerator::getFaceVertexPosition2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        FS_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
         {
-            return meshData._positionArray[meshData._vertexToPositionTable[face._vertexIndexArray[2]]];
+            return meshData._vertexToPositionTable[face._vertexIndexArray[2]];
+        }
+
+        FS_INLINE fs::Float4& MeshGenerator::getFaceVertexPosition0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        {
+            return meshData._positionArray[getFaceVertexPositionIndex0(face, meshData)];
+        }
+
+        FS_INLINE fs::Float4& MeshGenerator::getFaceVertexPosition1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        {
+            return meshData._positionArray[getFaceVertexPositionIndex1(face, meshData)];
+        }
+
+        FS_INLINE fs::Float4& MeshGenerator::getFaceVertexPosition2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept
+        {
+            return meshData._positionArray[getFaceVertexPositionIndex2(face, meshData)];
         }
 
         void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
@@ -466,13 +481,64 @@ namespace fs
                 smoothNormals(meshData);
             }
         }
+
+        void MeshGenerator::transformMeshData(MeshData& meshData, const fs::Float4x4& transformationMatrix) noexcept
+        {
+            const uint32 positionCount = meshData.getPositionCount();
+            for (uint32 positionIndex = 0; positionIndex < positionCount; ++positionIndex)
+            {
+                fs::Float4& position = meshData._positionArray[positionIndex];
+                position = transformationMatrix.mul(position);
+            }
+            meshData.updateVertexFromPositions();
+        }
+
+        void MeshGenerator::mergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept
+        {
+            outMeshData = meshDataA;
+
+            mergeMeshData(meshDataB, outMeshData);
+        }
+
+        void MeshGenerator::mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept
+        {
+            const uint32 oldPositionCount = inoutTargetMeshData.getPositionCount();
+            const uint32 deltaPositionCount = sourceMeshData.getPositionCount();
+            inoutTargetMeshData._positionArray.reserve(inoutTargetMeshData._positionArray.size() + deltaPositionCount);
+            for (uint32 deltaPositionIndex = 0; deltaPositionIndex < deltaPositionCount; ++deltaPositionIndex)
+            {
+                inoutTargetMeshData._positionArray.push_back(sourceMeshData._positionArray[deltaPositionIndex]);
+            }
+
+            const uint32 oldVertexCount = inoutTargetMeshData.getVertexCount();
+            const uint32 deltaVertexCount = sourceMeshData.getVertexCount();
+            inoutTargetMeshData._vertexArray.reserve(inoutTargetMeshData._vertexArray.size() + deltaVertexCount);
+            inoutTargetMeshData._vertexToPositionTable.reserve(inoutTargetMeshData._vertexToPositionTable.size() + deltaVertexCount);
+            for (uint32 deltaVertexIndex = 0; deltaVertexIndex < deltaVertexCount; ++deltaVertexIndex)
+            {
+                inoutTargetMeshData._vertexArray.push_back(sourceMeshData._vertexArray[deltaVertexIndex]);
+                inoutTargetMeshData._vertexToPositionTable.push_back(oldPositionCount + inoutTargetMeshData._vertexToPositionTable[deltaVertexIndex]);
+            }
+
+            const uint32 deltaFaceCount = sourceMeshData.getFaceCount();
+            inoutTargetMeshData._faceArray.reserve(inoutTargetMeshData._faceArray.size() + deltaFaceCount);
+            fs::RenderingBase::Face face;
+            for (uint32 deltaFaceIndex = 0; deltaFaceIndex < deltaFaceCount; ++deltaFaceIndex)
+            {
+                face._vertexIndexArray[0] = oldVertexCount + sourceMeshData._faceArray[deltaFaceIndex]._vertexIndexArray[0];
+                face._vertexIndexArray[1] = oldVertexCount + sourceMeshData._faceArray[deltaFaceIndex]._vertexIndexArray[1];
+                face._vertexIndexArray[2] = oldVertexCount + sourceMeshData._faceArray[deltaFaceIndex]._vertexIndexArray[2];
+
+                inoutTargetMeshData._faceArray.push_back(face);
+            }
+        }
         
-        inline void MeshGenerator::pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept
+        FS_INLINE void MeshGenerator::pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept
         {
             meshData._positionArray.push_back(fs::Float4(xyz[0], xyz[1], xyz[2], 1.0f));
         }
 
-        inline void MeshGenerator::pushPosition(const fs::Float4& xyzw, MeshData& meshData) noexcept
+        FS_INLINE void MeshGenerator::pushPosition(const fs::Float4& xyzw, MeshData& meshData) noexcept
         {
             meshData._positionArray.push_back(xyzw);
         }
@@ -509,13 +575,13 @@ namespace fs
             pushQuadFaceXXX(vertexCountOld, meshData);
         }
         
-        void MeshGenerator::subdivideTriByMidpoints(MeshData& meshData) noexcept
+        void MeshGenerator::subdivideTriByMidpoints(MeshData& oldMeshData) noexcept
         {
-            MeshData newMeshData = meshData;
-            newMeshData._positionArray.reserve(newMeshData.getPositionCount() + ((newMeshData.getFaceCount() / 2) * 3));
-            newMeshData._vertexArray.reserve(newMeshData.getVertexCount() * 5);
-            newMeshData._vertexToPositionTable.reserve(newMeshData.getVertexCount() * 5);
-            newMeshData._faceArray.reserve(newMeshData.getFaceCount() * 5);
+            MeshData newMeshData;
+            newMeshData._positionArray = oldMeshData._positionArray;
+            newMeshData._vertexArray.reserve(oldMeshData.getVertexCount() * 4);
+            newMeshData._vertexToPositionTable.reserve(oldMeshData.getVertexCount() * 4);
+            newMeshData._faceArray.reserve(oldMeshData.getFaceCount() * 4);
 
             struct PositionEdge
             {
@@ -565,16 +631,16 @@ namespace fs
             };
 
             PositionEdgeGraph positionEdgeGraph;
-            positionEdgeGraph.setPositionCount(meshData.getPositionCount());
-            const uint32 oldFaceCount = static_cast<uint32>(newMeshData._faceArray.size());
+            positionEdgeGraph.setPositionCount(oldMeshData.getPositionCount());
+            const uint32 oldFaceCount = static_cast<uint32>(oldMeshData._faceArray.size());
             for (uint32 oldFaceIndex = 0; oldFaceIndex < oldFaceCount; ++oldFaceIndex)
             {
-                const fs::RenderingBase::Face& face = meshData._faceArray[oldFaceIndex]; 
+                const fs::RenderingBase::Face& face = oldMeshData._faceArray[oldFaceIndex]; 
                 const int32 faceVertexPositionIndices[3]
                 {
-                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[0]]),
-                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[1]]),
-                    static_cast<int32>(meshData._vertexToPositionTable[face._vertexIndexArray[2]])
+                    static_cast<int32>(getFaceVertexPositionIndex0(face, oldMeshData)),
+                    static_cast<int32>(getFaceVertexPositionIndex1(face, oldMeshData)),
+                    static_cast<int32>(getFaceVertexPositionIndex2(face, oldMeshData)),
                 };
 
                 int32 midpointPositionIndex01 = 0;
@@ -585,9 +651,9 @@ namespace fs
                     const PositionEdge positionEdge12 = PositionEdge(faceVertexPositionIndices[1], faceVertexPositionIndices[2]);
                     const PositionEdge positionEdge20 = PositionEdge(faceVertexPositionIndices[2], faceVertexPositionIndices[0]);
 
-                    const fs::Float4& faceVertexPosition0 = getFaceVertexPosition0(face, meshData);
-                    const fs::Float4& faceVertexPosition1 = getFaceVertexPosition1(face, meshData);
-                    const fs::Float4& faceVertexPosition2 = getFaceVertexPosition2(face, meshData);
+                    const fs::Float4& faceVertexPosition0 = getFaceVertexPosition0(face, oldMeshData);
+                    const fs::Float4& faceVertexPosition1 = getFaceVertexPosition1(face, oldMeshData);
+                    const fs::Float4& faceVertexPosition2 = getFaceVertexPosition2(face, oldMeshData);
 
                     const int32 newPositionIndexBase = static_cast<int32>(newMeshData._positionArray.size());
                     int8 addedPointCount = 0;
@@ -640,9 +706,9 @@ namespace fs
                 // UV
                 const fs::Float2 faceVertexUvs[3]
                 {
-                    getVertexUv(getFaceVertex0(face, meshData)),
-                    getVertexUv(getFaceVertex1(face, meshData)),
-                    getVertexUv(getFaceVertex2(face, meshData))
+                    getVertexUv(getFaceVertex0(face, oldMeshData)),
+                    getVertexUv(getFaceVertex1(face, oldMeshData)),
+                    getVertexUv(getFaceVertex2(face, oldMeshData))
                 };
                 const fs::Float2 midPointUv01 = (faceVertexUvs[0] + faceVertexUvs[1]) * 0.5f;
                 const fs::Float2 midPointUv12 = (faceVertexUvs[1] + faceVertexUvs[2]) * 0.5f;
@@ -656,7 +722,7 @@ namespace fs
             
             newMeshData.shrinkToFit();
 
-            std::swap(meshData, newMeshData);
+            std::swap(oldMeshData, newMeshData);
         }
 
         void MeshGenerator::projectVerticesToSphere(const RadiusParam& radiusParam, MeshData& meshData) noexcept
@@ -698,7 +764,7 @@ namespace fs
                 recalculateTangentBitangentFromNormal(faceNormal, getFaceVertex2(face, meshData));
             }
 
-            meshData.updateVertexPositions();
+            meshData.updateVertexFromPositions();
         }
     }
 }

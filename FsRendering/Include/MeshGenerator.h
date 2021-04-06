@@ -14,6 +14,8 @@ namespace fs
 {
     class Float2;
     class Float4;
+    class Float4x4;
+
 
     namespace RenderingBase
     {
@@ -32,7 +34,7 @@ namespace fs
         public:
             void            clear() noexcept;
             void            shrinkToFit() noexcept;
-            void            updateVertexPositions() noexcept;
+            void            updateVertexFromPositions() noexcept;
             const uint32    getPositionCount() const noexcept;
             const uint32    getVertexCount() const noexcept;
             const uint32    getFaceCount() const noexcept;
@@ -87,6 +89,11 @@ namespace fs
             static void                             generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void                             generateGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept;
 
+        public:
+            static void                             transformMeshData(MeshData& meshData, const fs::Float4x4& transformationMatrix) noexcept;
+            static void                             mergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept;
+            static void                             mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept;
+
         private:
             static void                             pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept;
             static void                             pushPosition(const fs::Float4& xyzw, MeshData& meshData) noexcept;
@@ -94,7 +101,7 @@ namespace fs
             static void                             pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const fs::Float2(&uvsInClockwise)[4]) noexcept;
         
         private:
-            static void                             subdivideTriByMidpoints(MeshData& meshData) noexcept;
+            static void                             subdivideTriByMidpoints(MeshData& oldMeshData) noexcept;
             static void                             projectVerticesToSphere(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
 
         private:
@@ -105,6 +112,9 @@ namespace fs
             static fs::RenderingBase::VS_INPUT&     getFaceVertex0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
             static fs::RenderingBase::VS_INPUT&     getFaceVertex1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
             static fs::RenderingBase::VS_INPUT&     getFaceVertex2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
             static fs::Float4&                      getFaceVertexPosition0(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
             static fs::Float4&                      getFaceVertexPosition1(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
             static fs::Float4&                      getFaceVertexPosition2(const fs::RenderingBase::Face& face, MeshData& meshData) noexcept;
