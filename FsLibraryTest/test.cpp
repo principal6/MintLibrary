@@ -1025,12 +1025,19 @@ int main()
 
     fs::FsLibraryVersion::printVersion();
 
-#if defined FS_TEST_PERFORMANCE
-    //testMemoryAllocator();
-    testBitVector();
-    //testStringTypes();
+#if defined FS_DEBUG
+    #if defined FS_TEST_PERFORMANCE
+        //testMemoryAllocator();
+        testBitVector();
+        //testStringTypes();
+    #else
+        testAll();
+        
+    #endif
 #else
-    testAll();
+    HWND handleToConsoleWindow = ::GetConsoleWindow();
+    ::FreeConsole();
+    ::SendMessageW(handleToConsoleWindow, WM_CLOSE, 0, 0);
 #endif
     
     testWindow();

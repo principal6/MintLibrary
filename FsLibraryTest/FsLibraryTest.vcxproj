@@ -71,21 +71,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)_output\$(Configuration);$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir)FsLibrary\;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)_output\$(Configuration)\FsLibrary;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)_output\$(Configuration)\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)_output\$(Configuration);$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
