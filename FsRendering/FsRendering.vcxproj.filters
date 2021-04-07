@@ -79,6 +79,12 @@
     <FxCompile Include="..\Assets\Hlsl\PsDefault.hlsl">
       <Filter>Assets\Hlsl</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Hlsl\GsNormal.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Hlsl\PsNormal.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Object.inl">

@@ -432,6 +432,11 @@ namespace fs
             }
 
             const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
+            if (false == _boundShaderIdArray[shaderTypeIndex].isValid())
+            {
+                return;
+            }
+
             getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).unbind();
             _boundShaderIdArray[shaderTypeIndex] = DxObjectId::kInvalidObjectId;
         }

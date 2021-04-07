@@ -28,8 +28,13 @@ namespace fs
             const uint32                                    getIndexCount() const noexcept;
             const fs::RenderingBase::IndexElementType*      getIndices() const noexcept;
 
+        public:
+            void                                            drawNormals(const bool drawNormals) noexcept;
+            const bool                                      drawNormals() const noexcept;
+
         private:
             MeshData                                        _meshData;
+            bool                                            _drawNormals;
         };
     }
 }

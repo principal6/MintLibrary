@@ -817,6 +817,11 @@ const bool testWindow()
                     {
                         graphicDevice.useWireFrameNoCullingRasterizer();
                     }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Num4) == true)
+                    {
+                        fs::Rendering::MeshComponent* const meshComponent = static_cast<fs::Rendering::MeshComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::MeshComponent));
+                        meshComponent->drawNormals(!meshComponent->drawNormals());
+                    }
                     else if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
                     {
                         testCameraObject->setIsBoostMode(true);

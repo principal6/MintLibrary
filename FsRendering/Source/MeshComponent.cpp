@@ -12,6 +12,7 @@ namespace fs
     {
         MeshComponent::MeshComponent()
             : TransformComponent(ObjectComponentType::MeshComponent)
+            , _drawNormals{ false }
         {
             MeshGenerator::GeoSpherePram geosphereParam;
             geosphereParam._radius = 1.0f;
@@ -43,6 +44,16 @@ namespace fs
         const fs::RenderingBase::IndexElementType* MeshComponent::getIndices() const noexcept
         {
             return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
+        }
+        
+        void MeshComponent::drawNormals(const bool drawNormals) noexcept
+        {
+            _drawNormals = drawNormals;
+        }
+        
+        const bool MeshComponent::drawNormals() const noexcept
+        {
+            return _drawNormals;
         }
     }
 }

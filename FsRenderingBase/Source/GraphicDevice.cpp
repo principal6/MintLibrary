@@ -267,6 +267,7 @@ namespace fs
                     
                     fs::RenderingBase::DxResource& cbView = _resourcePool.getResource(_cbViewId);
                     cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
+                    cbView.bindToShader(DxShaderType::GeometryShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
                 }
 

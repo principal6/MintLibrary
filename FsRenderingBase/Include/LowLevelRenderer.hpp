@@ -61,19 +61,21 @@ namespace fs
             vertexBuffer.bindAsInput();
             indexBuffer.bindAsInput();
 
+            const uint32 vertexCount = static_cast<uint32>(_vertexArray.size());
             const uint32 indexCount = static_cast<uint32>(_indexArray.size());
             switch (renderingPrimitive)
             {
             case fs::RenderingBase::RenderingPrimitive::LineList:
                 _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+                _graphicDevice->getDxDeviceContext()->Draw(vertexCount, 0);
                 break;
             case fs::RenderingBase::RenderingPrimitive::TriangleList:
                 _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                _graphicDevice->getDxDeviceContext()->DrawIndexed(indexCount, 0, 0);
                 break;
             default:
                 break;
             }
-            _graphicDevice->getDxDeviceContext()->DrawIndexed(indexCount, 0, 0);
         }
         
         template <typename T>

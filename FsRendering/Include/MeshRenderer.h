@@ -46,8 +46,10 @@ namespace fs
             fs::RenderingBase::DxObjectId                                       _cbTransformId;
 
         private:
-            fs::RenderingBase::DxObjectId               _vertexShaderId;
-            fs::RenderingBase::DxObjectId               _pixelShaderId;
+            fs::RenderingBase::DxObjectId               _vsDefaultId;
+            fs::RenderingBase::DxObjectId               _psDefaultId;
+            fs::RenderingBase::DxObjectId               _gsNormalId;
+            fs::RenderingBase::DxObjectId               _psNormalId;
         };
     }
 }

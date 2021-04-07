@@ -311,6 +311,10 @@ namespace fs
                 {
                     _graphicDevice->getDxDeviceContext()->VSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
                 }
+                else if (shaderType == DxShaderType::GeometryShader)
+                {
+                    _graphicDevice->getDxDeviceContext()->GSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
+                }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
                     _graphicDevice->getDxDeviceContext()->PSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
@@ -325,6 +329,10 @@ namespace fs
                 if (shaderType == DxShaderType::VertexShader)
                 {
                     _graphicDevice->getDxDeviceContext()->VSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const *>(_view.GetAddressOf()));
+                }
+                else if (shaderType == DxShaderType::GeometryShader)
+                {
+                    _graphicDevice->getDxDeviceContext()->GSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf()));
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
