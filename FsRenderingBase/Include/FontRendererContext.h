@@ -11,7 +11,7 @@
 
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
 #include <FsRenderingBase/Include/IRendererContext.h>
-#include <FsRenderingBase/Include/TriangleRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
 
 #include <FsPlatform/Include/BinaryFile.h>
 
@@ -84,7 +84,7 @@ namespace fs
 
         public:
                                                 FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice);
-                                                FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer);
+                                                FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer);
             virtual                             ~FontRendererContext();
 
         public:
@@ -145,7 +145,7 @@ namespace fs
 
         private:
             bool                                _ownTriangleRenderer;
-            TriangleRenderer<VS_INPUT_SHAPE>*   _triangleRenderer;
+            LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
             DxObjectId                          _vertexShaderId;
             DxObjectId                          _geometryShaderId;
             DxObjectId                          _pixelShaderId;

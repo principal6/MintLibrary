@@ -14,7 +14,7 @@
 #include <FsRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <FsRenderingBase/Include/DxShader.h>
 #include <FsRenderingBase/Include/DxResource.h>
-#include <FsRenderingBase/Include/TriangleRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
 #include <FsRenderingBase/Include/RectangleRendererContext.h>
 #include <FsRenderingBase/Include/ShapeRendererContext.h>
 #include <FsRenderingBase/Include/FontRendererContext.h>

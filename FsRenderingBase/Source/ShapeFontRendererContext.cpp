@@ -2,7 +2,7 @@
 #include <FsRenderingBase/Include/ShapeFontRendererContext.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 
 namespace fs
@@ -11,7 +11,7 @@ namespace fs
     {
         ShapeFontRendererContext::ShapeFontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
             : ShapeRendererContext(graphicDevice)
-            , _fontRendererContext{ graphicDevice, _triangleRenderer }
+            , _fontRendererContext{ graphicDevice, _lowLevelRenderer }
         {
             __noop;
         }
@@ -164,7 +164,7 @@ namespace fs
 
         void ShapeFontRendererContext::flushData() noexcept
         {
-            _triangleRenderer->flush();
+            _lowLevelRenderer->flush();
 
             flushShapeTransform();
 
@@ -179,7 +179,7 @@ namespace fs
 
         const bool ShapeFontRendererContext::hasData() const noexcept
         {
-            return _triangleRenderer->isRenderable();
+            return _lowLevelRenderer->isRenderable();
         }
 
         void ShapeFontRendererContext::render() noexcept

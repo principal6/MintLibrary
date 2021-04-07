@@ -12,7 +12,7 @@
 #include <algorithm>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <FsContainer/Include/StringUtil.hpp>
 
@@ -74,17 +74,17 @@ namespace fs
 
 
         FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
-            : FontRendererContext(graphicDevice, FS_NEW(RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice))
+            : FontRendererContext(graphicDevice, FS_NEW(RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice))
         {
             _ownTriangleRenderer = true;
         }
 
-        FontRendererContext::FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer)
+        FontRendererContext::FontRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice, fs::RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer)
             : IRendererContext(graphicDevice)
             , _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
             , _fontSize{ 16 }
-            , _triangleRenderer{ triangleRenderer }
+            , _lowLevelRenderer{ triangleRenderer }
             , _ownTriangleRenderer{ false }
         {
             __noop;
@@ -94,7 +94,7 @@ namespace fs
         {
             if (_ownTriangleRenderer == true)
             {
-                FS_DELETE(_triangleRenderer);
+                FS_DELETE(_lowLevelRenderer);
             }
 
             deinitializeFreeType();
@@ -556,17 +556,17 @@ namespace fs
 
         void FontRendererContext::flushData() noexcept
         {
-            _triangleRenderer->flush();
+            _lowLevelRenderer->flush();
         }
 
         const bool FontRendererContext::hasData() const noexcept
         {
-            return _triangleRenderer->isRenderable();
+            return _lowLevelRenderer->isRenderable();
         }
 
         void FontRendererContext::render() noexcept
         {
-            if (_triangleRenderer->isRenderable() == true)
+            if (_lowLevelRenderer->isRenderable() == true)
             {
                 _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::RenderingBase::DxShaderType::PixelShader, 0);
                 
@@ -580,7 +580,7 @@ namespace fs
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                _triangleRenderer->render();
+                _lowLevelRenderer->render(fs::RenderingBase::RenderingPrimitive::TriangleList);
 
                 if (getUseMultipleViewports() == true)
                 {
@@ -665,7 +665,7 @@ namespace fs
             glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
             if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
             {
-                auto& vertexArray = _triangleRenderer->vertexArray();
+                auto& vertexArray = _lowLevelRenderer->vertexArray();
 
                 fs::RenderingBase::VS_INPUT_SHAPE v;
                 v._position._x = glyphRect.left();
@@ -703,10 +703,10 @@ namespace fs
 
         void FontRendererContext::prepareIndexArray()
         {
-            const auto& vertexArray = _triangleRenderer->vertexArray();
+            const auto& vertexArray = _lowLevelRenderer->vertexArray();
             const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

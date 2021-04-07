@@ -54,12 +54,6 @@
     <ClInclude Include="Include\RenderingBaseCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\TriangleRenderer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\TriangleRenderer.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Language\CppHlsl.h">
       <Filter>Include\Language</Filter>
     </ClInclude>
@@ -105,6 +99,8 @@
     <ClInclude Include="Include\RenderingBase.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\LowLevelRenderer.h" />
+    <ClInclude Include="Include\LowLevelRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">

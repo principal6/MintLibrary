@@ -2,7 +2,7 @@
 #include <FsRenderingBase/Include/RectangleRendererContext.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 
 namespace fs
@@ -21,7 +21,7 @@ namespace fs
 
         RectangleRendererContext::RectangleRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
             : IRendererContext(graphicDevice)
-            , _triangleRenderer{ graphicDevice }
+            , _lowLevelRenderer{ graphicDevice }
         {
             __noop;
         }
@@ -84,28 +84,28 @@ namespace fs
 
         void RectangleRendererContext::flushData() noexcept
         {
-            _triangleRenderer.flush();
+            _lowLevelRenderer.flush();
         }
 
         const bool RectangleRendererContext::hasData() const noexcept
         {
-            return _triangleRenderer.isRenderable();
+            return _lowLevelRenderer.isRenderable();
         }
 
         void RectangleRendererContext::render() noexcept
         {
-            if (_triangleRenderer.isRenderable() == true)
+            if (_lowLevelRenderer.isRenderable() == true)
             {
                 fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
-                _triangleRenderer.render();
+                _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
             }
         }
 
         void RectangleRendererContext::drawColored()
         {
-            auto& vertexArray = _triangleRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertexArray();
             fs::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -118,7 +118,7 @@ namespace fs
 
         void RectangleRendererContext::drawTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
         {
-            auto& vertexArray = _triangleRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertexArray();
             fs::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -134,7 +134,7 @@ namespace fs
 
         void RectangleRendererContext::drawColoredTextured(const fs::Float2& texturePosition, const fs::Float2& textureSize)
         {
-            auto& vertexArray = _triangleRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertexArray();
             fs::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -151,10 +151,10 @@ namespace fs
 
         void RectangleRendererContext::prepareIndexArray()
         {
-            const auto& vertexArray = _triangleRenderer.vertexArray();
+            const auto& vertexArray = _lowLevelRenderer.vertexArray();
             const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-            auto& indexArray = _triangleRenderer.indexArray();
+            auto& indexArray = _lowLevelRenderer.indexArray();
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 0);
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 1);
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 2);

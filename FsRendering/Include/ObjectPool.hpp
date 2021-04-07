@@ -2,7 +2,7 @@
 #include <FsRendering/Include/ObjectPool.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <FsRendering/Include/MeshComponent.h>
 #include <FsRendering/Include/CameraObject.h>

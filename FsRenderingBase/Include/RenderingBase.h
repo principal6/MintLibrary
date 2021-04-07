@@ -19,8 +19,8 @@
 #include <FsRenderingBase/Include/RectangleRendererContext.h>
 #include <FsRenderingBase/Include/ShapeFontRendererContext.h>
 #include <FsRenderingBase/Include/ShapeRendererContext.h>
-#include <FsRenderingBase/Include/TriangleRenderer.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 
 #endif // !FS_RENDERING_BASE_H

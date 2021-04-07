@@ -2,7 +2,7 @@
 #include <FsRenderingBase/Include/ShapeRendererContext.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <FsMath/Include/Float2x2.h>
 #include <FsMath/Include/Float3x3.h>
@@ -14,15 +14,15 @@ namespace fs
     {
         ShapeRendererContext::ShapeRendererContext(fs::RenderingBase::GraphicDevice* const graphicDevice)
             : IRendererContext(graphicDevice)
-            , _triangleRenderer{ nullptr }
+            , _lowLevelRenderer{ nullptr }
             , _borderColor{ fs::RenderingBase::Color(1.0f, 1.0f, 1.0f) }
         {
-            _triangleRenderer = FS_NEW(RenderingBase::TriangleRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice);
+            _lowLevelRenderer = FS_NEW(RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice);
         }
 
         ShapeRendererContext::~ShapeRendererContext()
         {
-            FS_DELETE(_triangleRenderer);
+            FS_DELETE(_lowLevelRenderer);
         }
 
         void ShapeRendererContext::initializeShaders() noexcept
@@ -140,19 +140,19 @@ namespace fs
 
         void ShapeRendererContext::flushData() noexcept
         {
-            _triangleRenderer->flush();
+            _lowLevelRenderer->flush();
 
             flushShapeTransform();
         }
 
         const bool ShapeRendererContext::hasData() const noexcept
         {
-            return _triangleRenderer->isRenderable();
+            return _lowLevelRenderer->isRenderable();
         }
 
         void ShapeRendererContext::render() noexcept
         {
-            if (_triangleRenderer->isRenderable() == true)
+            if (_lowLevelRenderer->isRenderable() == true)
             {
                 prepareStructuredBuffer();
 
@@ -169,7 +169,7 @@ namespace fs
                 fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
                 resourcePool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
 
-                _triangleRenderer->render();
+                _lowLevelRenderer->render(fs::RenderingBase::RenderingPrimitive::TriangleList);
 
                 if (getUseMultipleViewports() == true)
                 {
@@ -194,7 +194,7 @@ namespace fs
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const fs::Float2(&pointArray)[2] = { pointA, pointB };
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             uint8 flip = 0;
             if (validate == true)
@@ -231,7 +231,7 @@ namespace fs
             vertexArray.emplace_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -249,7 +249,7 @@ namespace fs
             static constexpr uint32 kDeltaVertexCount = 3;
             
             RenderingBase::VS_INPUT_SHAPE v;
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
             {
                 v._color = color;
                 v._position = _position;
@@ -269,7 +269,7 @@ namespace fs
             }
             
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -282,7 +282,7 @@ namespace fs
             static constexpr uint32 kDeltaVertexCount = 3;
             const float halfRadius = radius * 0.5f;
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
             
             RenderingBase::VS_INPUT_SHAPE v;
             v._color = _defaultColor;
@@ -309,7 +309,7 @@ namespace fs
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -330,7 +330,7 @@ namespace fs
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
             RenderingBase::VS_INPUT_SHAPE v;
             {
                 v._color = color;
@@ -362,7 +362,7 @@ namespace fs
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -397,7 +397,7 @@ namespace fs
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             RenderingBase::VS_INPUT_SHAPE v;
             {
@@ -434,7 +434,7 @@ namespace fs
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             {
                 // Body left upper
                 indexArray.push_back(vertexOffset + 0);
@@ -457,7 +457,7 @@ namespace fs
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             RenderingBase::VS_INPUT_SHAPE v;
             
@@ -511,7 +511,7 @@ namespace fs
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -539,7 +539,7 @@ namespace fs
             const float cosHalfArcAngle = cos(halfArcAngle);
             const float tanHalfArcAngle = tan(halfArcAngle);
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             RenderingBase::VS_INPUT_SHAPE v;
 
@@ -649,7 +649,7 @@ namespace fs
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             
             // Right outer arc section
             indexArray.push_back(vertexOffset + 0);
@@ -718,7 +718,7 @@ namespace fs
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             RenderingBase::VS_INPUT_SHAPE v;
             {
@@ -745,7 +745,7 @@ namespace fs
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
 
             // Body left upper
             indexArray.push_back(vertexOffset + 0);
@@ -766,7 +766,7 @@ namespace fs
             const float horizontalOffsetL = horizontalSpace * bias;
             const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
             RenderingBase::VS_INPUT_SHAPE v;
             {
                 v._color = _defaultColor;
@@ -791,7 +791,7 @@ namespace fs
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -1039,7 +1039,7 @@ namespace fs
             const fs::Float2 v2 = p0 + normal * halfThickness;
             const fs::Float2 v3 = p1 + normal * halfThickness;
 
-            auto& vertexArray = _triangleRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertexArray();
 
             RenderingBase::VS_INPUT_SHAPE v;
             v._color = _defaultColor;
@@ -1063,7 +1063,7 @@ namespace fs
             vertexArray.emplace_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _triangleRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indexArray();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);

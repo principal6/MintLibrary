@@ -217,8 +217,8 @@
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
     <ClInclude Include="Include\ShapeRendererContext.h" />
     <ClInclude Include="Include\RenderingBaseCommon.h" />
-    <ClInclude Include="Include\TriangleRenderer.h" />
-    <ClInclude Include="Include\TriangleRenderer.hpp" />
+    <ClInclude Include="Include\LowLevelRenderer.h" />
+    <ClInclude Include="Include\LowLevelRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl" />

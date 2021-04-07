@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdafx.h>
-#include <FsRenderingBase/Include/TriangleRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
 
@@ -11,7 +11,7 @@ namespace fs
     namespace RenderingBase
     {
         template <typename T>
-        inline TriangleRenderer<T>::TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice)
+        inline LowLevelRenderer<T>::LowLevelRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _vertexStride{ sizeof(T) }
             , _vertexBufferId{}
@@ -21,39 +21,39 @@ namespace fs
         }
 
         template <typename T>
-        FS_INLINE std::vector<T>& TriangleRenderer<T>::vertexArray() noexcept
+        FS_INLINE std::vector<T>& LowLevelRenderer<T>::vertexArray() noexcept
         {
             return _vertexArray;
         }
 
         template <typename T>
-        FS_INLINE std::vector<IndexElementType>& TriangleRenderer<T>::indexArray() noexcept
+        FS_INLINE std::vector<IndexElementType>& LowLevelRenderer<T>::indexArray() noexcept
         {
             return _indexArray;
         }
 
         template <typename T>
-        FS_INLINE void TriangleRenderer<T>::flush()
+        FS_INLINE void LowLevelRenderer<T>::flush() noexcept
         {
             _vertexArray.clear();
             _indexArray.clear();
         }
 
         template<typename T>
-        FS_INLINE const bool TriangleRenderer<T>::isRenderable() const noexcept
+        FS_INLINE const bool LowLevelRenderer<T>::isRenderable() const noexcept
         {
             return _vertexArray.empty() == false;
         }
 
         template <typename T>
-        inline void TriangleRenderer<T>::render()
+        inline void LowLevelRenderer<T>::render(const RenderingPrimitive renderingPrimitive) noexcept
         {
             if (isRenderable() == false)
             {
                 return;
             }
 
-            prepareBuffer();
+            prepareBuffers();
 
             DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
@@ -62,12 +62,22 @@ namespace fs
             indexBuffer.bindAsInput();
 
             const uint32 indexCount = static_cast<uint32>(_indexArray.size());
-            _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            switch (renderingPrimitive)
+            {
+            case fs::RenderingBase::RenderingPrimitive::LineList:
+                _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+                break;
+            case fs::RenderingBase::RenderingPrimitive::TriangleList:
+                _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                break;
+            default:
+                break;
+            }
             _graphicDevice->getDxDeviceContext()->DrawIndexed(indexCount, 0, 0);
         }
         
         template <typename T>
-        inline void TriangleRenderer<T>::prepareBuffer()
+        inline void LowLevelRenderer<T>::prepareBuffers() noexcept
         {
             DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             

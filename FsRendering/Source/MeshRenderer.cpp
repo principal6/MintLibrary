@@ -2,7 +2,7 @@
 #include <FsRendering/Include/MeshRenderer.h>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <FsRendering/Include/Object.h>
 #include <FsRendering/Include/ObjectPool.hpp>
@@ -15,7 +15,7 @@ namespace fs
     {
         MeshRenderer::MeshRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
-            , _triangleRenderer{ graphicDevice }
+            , _lowLevelRenderer{ graphicDevice }
         {
             __noop;
         }
@@ -53,10 +53,10 @@ namespace fs
                 cbTransform.bindToShader(fs::RenderingBase::DxShaderType::VertexShader, cbTransform.getRegisterIndex());
             }
 
-            _triangleRenderer.flush();
+            _lowLevelRenderer.flush();
 
-            auto& trVertexArray = _triangleRenderer.vertexArray();
-            auto& trIndexArray = _triangleRenderer.indexArray();
+            auto& trVertexArray = _lowLevelRenderer.vertexArray();
+            auto& trIndexArray = _lowLevelRenderer.indexArray();
 
             for (auto& meshComponentIter : meshComponents)
             {
@@ -78,7 +78,7 @@ namespace fs
                 }
             }
 
-            _triangleRenderer.render();
+            _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
         }
 
     }

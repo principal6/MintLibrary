@@ -12,7 +12,7 @@
 
 #include <FsContainer/Include/ScopeString.hpp>
 
-#include <FsRenderingBase/Include/TriangleRenderer.hpp>
+#include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
 
 #pragma comment(lib, "d3d11.lib")

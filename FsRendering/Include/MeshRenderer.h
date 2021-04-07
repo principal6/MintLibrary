@@ -7,7 +7,7 @@
 
 #include <CommonDefinitions.h>
 
-#include <FsRenderingBase/Include/TriangleRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
 
 #include <Assets/CppHlsl/CppHlslConstantBuffers.h>
 
@@ -41,7 +41,7 @@ namespace fs
             fs::RenderingBase::GraphicDevice* const     _graphicDevice;
 
         private:
-            fs::RenderingBase::TriangleRenderer<fs::RenderingBase::VS_INPUT>    _triangleRenderer;
+            fs::RenderingBase::LowLevelRenderer<fs::RenderingBase::VS_INPUT>    _lowLevelRenderer;
             fs::RenderingBase::CB_Transform                                     _cbTransformData;
             fs::RenderingBase::DxObjectId                                       _cbTransformId;
 

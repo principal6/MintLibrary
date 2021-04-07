@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef FS_TRIANGLE_BUFFER_H
-#define FS_TRIANGLE_BUFFER_H
+#ifndef FS_LOW_LEVEL_RENDERER_H
+#define FS_LOW_LEVEL_RENDERER_H
 
 
 #include <CommonDefinitions.h>
@@ -19,27 +19,31 @@ namespace fs
         class GraphicDevice;
 
 
-        using Microsoft::WRL::ComPtr;
+        enum class RenderingPrimitive
+        {
+            LineList,
+            TriangleList,
+        };
 
 
         template <typename T>
-        class TriangleRenderer
+        class LowLevelRenderer
         {
         public:
-                                                        TriangleRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice);
-                                                        ~TriangleRenderer() = default;
+                                                        LowLevelRenderer(fs::RenderingBase::GraphicDevice* const graphicDevice);
+                                                        ~LowLevelRenderer() = default;
 
         public:
             std::vector<T>&                             vertexArray() noexcept;
             std::vector<IndexElementType>&              indexArray() noexcept;
 
         public:
-            void                                        flush();
+            void                                        flush() noexcept;
             const bool                                  isRenderable() const noexcept;
-            void                                        render();
+            void                                        render(const RenderingPrimitive renderingPrimitive) noexcept;
 
         private:
-            void                                        prepareBuffer();
+            void                                        prepareBuffers() noexcept;
 
         private:
             fs::RenderingBase::GraphicDevice* const     _graphicDevice;
@@ -57,4 +61,4 @@ namespace fs
 }
 
 
-#endif // !FS_TRIANGLE_BUFFER_H
+#endif // !FS_LOW_LEVEL_RENDERER_H

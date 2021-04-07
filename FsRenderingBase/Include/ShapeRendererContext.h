@@ -8,7 +8,7 @@
 #include <CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/IRendererContext.h>
-#include <FsRenderingBase/Include/TriangleRenderer.h>
+#include <FsRenderingBase/Include/LowLevelRenderer.h>
 
 #include <FsMath/Include/Int2.h>
 
@@ -116,7 +116,7 @@ namespace fs
             void                                    drawColorPallete(const float radius);
 
         protected:
-            TriangleRenderer<VS_INPUT_SHAPE>*       _triangleRenderer;
+            LowLevelRenderer<VS_INPUT_SHAPE>*       _lowLevelRenderer;
             DxObjectId                              _vertexShaderId;
             DxObjectId                              _geometryShaderId;
             DxObjectId                              _pixelShaderId;
