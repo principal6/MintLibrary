@@ -35,8 +35,9 @@ namespace fs
             _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", fs::RenderingBase::DxShaderType::PixelShader, "Assets/HlslBinary/");
             
             _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", fs::RenderingBase::DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _psNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsNormal.hlsl", "main", fs::RenderingBase::DxShaderType::PixelShader, "Assets/HlslBinary/");
-
+            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", fs::RenderingBase::DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", fs::RenderingBase::DxShaderType::PixelShader, "Assets/HlslBinary/");
+            
             fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             const fs::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
             _cbTransformId = resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbTransformData), sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
@@ -83,14 +84,20 @@ namespace fs
                 shaderPool.unbindShader(fs::RenderingBase::DxShaderType::GeometryShader);
                 _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
 
-                if (meshComponent->drawNormals() == true)
+                if (meshComponent->shouldDrawNormals() == true)
                 {
                     shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::GeometryShader, _gsNormalId);
-                    shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::PixelShader, _psNormalId);
+                    shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::PixelShader, _psTexCoordAsColorId);
                     _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::LineList);
                 }
-            }
 
+                if (meshComponent->shouldDrawEdges() == true)
+                {
+                    shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::GeometryShader, _gsTriangleEdgeId);
+                    shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::PixelShader, _psTexCoordAsColorId);
+                    _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
+                }
+            }
         }
     }
 }

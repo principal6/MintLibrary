@@ -12,7 +12,7 @@ namespace fs
     {
         MeshComponent::MeshComponent()
             : TransformComponent(ObjectComponentType::MeshComponent)
-            , _drawNormals{ false }
+            , _shouldDrawNormals{ false }
         {
             MeshGenerator::GeoSpherePram geosphereParam;
             geosphereParam._radius = 1.0f;
@@ -46,14 +46,24 @@ namespace fs
             return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
         }
         
-        void MeshComponent::drawNormals(const bool drawNormals) noexcept
+        void MeshComponent::shouldDrawNormals(const bool shouldDrawNormals) noexcept
         {
-            _drawNormals = drawNormals;
+            _shouldDrawNormals = shouldDrawNormals;
         }
         
-        const bool MeshComponent::drawNormals() const noexcept
+        const bool MeshComponent::shouldDrawNormals() const noexcept
         {
-            return _drawNormals;
+            return _shouldDrawNormals;
+        }
+        
+        void MeshComponent::shouldDrawEdges(const bool shouldDrawEdges) noexcept
+        {
+            _shouldDrawEdges = shouldDrawEdges;
+        }
+
+        const bool MeshComponent::shouldDrawEdges() const noexcept
+        {
+            return _shouldDrawEdges;
         }
     }
 }

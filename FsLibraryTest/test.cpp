@@ -820,7 +820,12 @@ const bool testWindow()
                     else if (event._value.isKeyCode(EventData::KeyCode::Num4) == true)
                     {
                         fs::Rendering::MeshComponent* const meshComponent = static_cast<fs::Rendering::MeshComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::MeshComponent));
-                        meshComponent->drawNormals(!meshComponent->drawNormals());
+                        meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
+                    }
+                    else if (event._value.isKeyCode(EventData::KeyCode::Num5) == true)
+                    {
+                        fs::Rendering::MeshComponent* const meshComponent = static_cast<fs::Rendering::MeshComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::MeshComponent));
+                        meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
                     }
                     else if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
                     {

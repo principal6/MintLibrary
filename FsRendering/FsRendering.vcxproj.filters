@@ -82,7 +82,10 @@
     <FxCompile Include="..\Assets\Hlsl\GsNormal.hlsl">
       <Filter>Assets\Hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\PsNormal.hlsl">
+    <FxCompile Include="..\Assets\Hlsl\PsTexCoordAsColor.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Assets\Hlsl\GsTriangleEdge.hlsl">
       <Filter>Assets\Hlsl</Filter>
     </FxCompile>
   </ItemGroup>

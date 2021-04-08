@@ -49,7 +49,8 @@ namespace fs
             fs::RenderingBase::DxObjectId               _vsDefaultId;
             fs::RenderingBase::DxObjectId               _psDefaultId;
             fs::RenderingBase::DxObjectId               _gsNormalId;
-            fs::RenderingBase::DxObjectId               _psNormalId;
+            fs::RenderingBase::DxObjectId               _gsTriangleEdgeId;
+            fs::RenderingBase::DxObjectId               _psTexCoordAsColorId;
         };
     }
 }
