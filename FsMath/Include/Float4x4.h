@@ -102,6 +102,9 @@ namespace fs
         void                    postTranslate(const fs::Float3& translation) noexcept;
 
     public:
+        void                    decomposeSrt(fs::Float3& outScale, fs::Float4x4& outRotationMatrix, fs::Float3& outTranslation) const noexcept;
+
+    public:
         Float3x3                minor(const uint32 row, const uint32 col) const noexcept;
         const float             determinant() const noexcept;
         Float4x4                transpose() const noexcept;

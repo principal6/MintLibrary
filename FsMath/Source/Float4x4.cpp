@@ -425,6 +425,45 @@ namespace fs
         postTranslate(translation._x, translation._y, translation._z);
     }
 
+    void Float4x4::decomposeSrt(fs::Float3& outScale, fs::Float4x4& outRotationMatrix, fs::Float3& outTranslation) const noexcept
+    {
+        // TODO: avoid nan in outRotationMatrix
+        
+
+        // Srt Matrix
+        // 
+        // | s_x * r_11  s_y * r_12  s_z * r_13  t_x |
+        // | s_x * r_21  s_y * r_22  s_z * r_23  t_y |
+        // | s_x * r_31  s_y * r_32  s_z * r_33  t_z |
+        // | 0           0           0           1   |
+        
+        // s
+        outScale._x = ::sqrtf((_11 * _11) + (_21 * _21) + (_31 * _31));
+        outScale._y = ::sqrtf((_12 * _12) + (_22 * _22) + (_32 * _32));
+        outScale._z = ::sqrtf((_13 * _13) + (_23 * _23) + (_33 * _33));
+
+        // r
+        outRotationMatrix._11 = _11 / outScale._x;
+        outRotationMatrix._21 = _21 / outScale._x;
+        outRotationMatrix._31 = _31 / outScale._x;
+
+        outRotationMatrix._12 = _12 / outScale._y;
+        outRotationMatrix._22 = _22 / outScale._y;
+        outRotationMatrix._32 = _32 / outScale._y;
+
+        outRotationMatrix._13 = _13 / outScale._z;
+        outRotationMatrix._23 = _23 / outScale._z;
+        outRotationMatrix._33 = _33 / outScale._z;
+
+        outRotationMatrix._14 = outRotationMatrix._24 = outRotationMatrix._34 = outRotationMatrix._41 = outRotationMatrix._42 = outRotationMatrix._43 = 0.0f;
+        outRotationMatrix._44 = 1.0f;
+
+        // t
+        outTranslation._x = _14;
+        outTranslation._y = _24;
+        outTranslation._z = _34;
+    }
+
     Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
     {
         Float3x3 result;
