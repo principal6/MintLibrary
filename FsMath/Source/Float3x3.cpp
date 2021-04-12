@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <FsMath/Include/Float3x3.h>
+﻿#include <FsMath/Include/Float3x3.h>
 
 #include <FsMath/Include/Float2x2.h>
 

@@ -68,6 +68,9 @@
     <ClCompile Include="Source\Quaternion.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MathCommon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Float4.inl">

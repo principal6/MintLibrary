@@ -1,5 +1,6 @@
-﻿#include <stdafx.h>
-#include <FsMath/Include/Int2.h>
+﻿#include <FsMath/Include/Int2.h>
+
+#include <FsCommon/Include/Logger.h>
 
 
 namespace fs

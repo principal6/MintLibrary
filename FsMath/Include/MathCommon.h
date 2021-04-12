@@ -6,7 +6,6 @@
 
 
 #include <CommonDefinitions.h>
-#include <cmath>
 
 
 namespace fs
@@ -53,10 +52,7 @@ namespace fs
             return static_cast<float>(1e+300 * 1e+300) * 0.0f;
         }
 
-        FS_INLINE const bool isNan(const float value) noexcept
-        {
-            return ::_isnan(value) != 0;
-        }
+        const bool isNan(const float value) noexcept;
 
         FS_INLINE const float toRadian(const float degree) noexcept
         {

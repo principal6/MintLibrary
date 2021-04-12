@@ -184,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;FsRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;FsRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -208,7 +208,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>FsLogger.lib;FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;FsRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FsMath.lib;FsContainer.lib;FsPlatform.lib;FsRenderingBase.lib;FsRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

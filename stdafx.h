@@ -27,8 +27,7 @@
 
 
 #pragma region FS Library
-#include <CommonDefinitions.h>
-#include <FsLogger/Include/Logger.h>
+#include <FsCommon/Include/Logger.h>
 #pragma endregion
 
 

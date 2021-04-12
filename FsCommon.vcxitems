@@ -15,6 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)CommonDefinitions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FsCommon\Include\Logger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)FsCommon\Source\Logger.cpp" />
   </ItemGroup>
 </Project>

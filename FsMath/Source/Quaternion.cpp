@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <FsMath/Include/Quaternion.h>
+﻿#include <FsMath/Include/Quaternion.h>
 
 
 namespace fs

@@ -36,6 +36,7 @@
     <ClCompile Include="Source\Float4.cpp" />
     <ClCompile Include="Source\Float4x4.cpp" />
     <ClCompile Include="Source\Int2.cpp" />
+    <ClCompile Include="Source\MathCommon.cpp" />
     <ClCompile Include="Source\Quaternion.cpp" />
     <ClInclude Include="Include\Rect.h" />
   </ItemGroup>

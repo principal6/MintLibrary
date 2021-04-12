@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <FsMath/Include/Float2x2.h>
+﻿#include <FsMath/Include/Float2x2.h>
 
 
 namespace fs
