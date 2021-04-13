@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 
-#include <stdafx.h>
 #include <FsContainer/Include/BitVector.h>
 
 #include <FsMath/Include/MathCommon.h>

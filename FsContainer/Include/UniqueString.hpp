@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdafx.h>
 #include <FsContainer/Include/UniqueString.h>
 
 #include <FsContainer/Include/StringUtil.h>
