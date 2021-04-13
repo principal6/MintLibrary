@@ -1,4 +1,3 @@
-#include <stdafx.h>
 #include <FsPlatform/Include/TextFile.h>
 
 #include <FsContainer/Include/StringUtil.hpp>

@@ -1,4 +1,3 @@
-#include <stdafx.h>
 #include <FsPlatform/Include/IWindow.h>
 
 

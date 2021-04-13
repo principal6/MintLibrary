@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <FsPlatform/Include/WindowsWindow.h>
+﻿#include <FsPlatform/Include/WindowsWindow.h>
 
 #include <FsContainer/Include/StringUtil.hpp>
 

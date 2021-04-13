@@ -1,7 +1,6 @@
 #pragma once
 
 
-#include <stdafx.h>
 #include <FsPlatform/Include/BinaryFile.h>
 
 #include <FsContainer/Include/StringUtil.h>

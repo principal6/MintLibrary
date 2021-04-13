@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <FsPlatform/Include/BinaryFile.h>
+﻿#include <FsPlatform/Include/BinaryFile.h>
 
 #include <fstream>
 
