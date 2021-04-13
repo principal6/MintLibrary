@@ -5,7 +5,7 @@
 #define FS_OBJECT_COMPONENT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/IId.h>
 

@@ -5,7 +5,7 @@
 #define FS_BIT_VECTOR_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 
 namespace fs

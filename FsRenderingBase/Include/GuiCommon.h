@@ -5,7 +5,7 @@
 #define FS_GUI_COMMON_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsMath/Include/Float4.h>
 

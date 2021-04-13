@@ -5,7 +5,7 @@
 #define FS_SHAPE_RENDERER_CONTEXT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/IRendererContext.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.h>

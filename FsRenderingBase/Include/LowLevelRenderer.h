@@ -5,7 +5,7 @@
 #define FS_LOW_LEVEL_RENDERER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>
 

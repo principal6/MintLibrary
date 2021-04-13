@@ -5,7 +5,7 @@
 #define FS_CPP_PARSER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/Language/IParser.h>
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>

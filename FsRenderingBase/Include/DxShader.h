@@ -5,7 +5,7 @@
 #define FS_DX_SHADER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/IDxObject.h>
 

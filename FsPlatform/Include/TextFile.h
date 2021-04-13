@@ -5,7 +5,7 @@
 #define FS_TEXT_FILE_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsPlatform/Include/IFile.h>
 

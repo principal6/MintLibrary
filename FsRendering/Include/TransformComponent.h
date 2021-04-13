@@ -5,7 +5,7 @@
 #define FS_TRANSFORM_COMPONENT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRendering/Include/IObjectComponent.h>
 

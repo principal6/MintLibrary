@@ -5,7 +5,7 @@
 #define FS_CPP_LEXER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/Language/ILexer.h>
 

@@ -14,7 +14,7 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)CommonDefinitions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FsCommon\Include\CommonDefinitions.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FsCommon\Include\Logger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdafx.h" />
   </ItemGroup>

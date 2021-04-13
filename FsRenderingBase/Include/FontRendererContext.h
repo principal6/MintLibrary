@@ -5,7 +5,7 @@
 #define FS_FONT_RENDERER_CONTEXT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsMath/Include/Float2.h>
 

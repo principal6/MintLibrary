@@ -5,7 +5,7 @@
 #define FS_GRAPHIC_DEVICE_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/StaticArray.h>
 #include <FsContainer/Include/ScopeString.h>

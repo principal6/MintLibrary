@@ -5,7 +5,7 @@
 #define FS_MATH_COMMON_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 
 namespace fs

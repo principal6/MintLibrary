@@ -12,6 +12,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)FsCommon\Include\Logger.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)FsCommon\Include\CommonDefinitions.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)FsCommon\Source\Logger.cpp">

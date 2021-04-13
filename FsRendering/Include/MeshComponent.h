@@ -5,7 +5,7 @@
 #define FS_MESH_COMPONENT_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
 

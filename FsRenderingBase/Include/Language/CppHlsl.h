@@ -5,7 +5,7 @@
 #define FS_CPP_HLSL_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/Language/CppHlslLexer.h>
 #include <FsRenderingBase/Include/Language/CppHlslParser.h>

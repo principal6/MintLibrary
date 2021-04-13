@@ -5,7 +5,7 @@
 #define FS_TOKENIZER_H
 
 
-#include <CommonDefinitions.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsLibrary/Include/ContiguousString.h>
 

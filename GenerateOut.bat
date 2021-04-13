@@ -5,7 +5,6 @@ echo Generate /Out directory, containing files for importing FsLibrary
 robocopy Assets Out/Assets /S
 
 : Include Directory
-robocopy ./ Out/FsLibrary/Include CommonDefinitions.h
 robocopy ./ Out/FsLibrary/Include stdafx.h
 robocopy FsCommon/Include Out/FsLibrary/Include/FsCommon/Include /S
 robocopy FsContainer/Include Out/FsLibrary/Include/FsContainer/Include /S
