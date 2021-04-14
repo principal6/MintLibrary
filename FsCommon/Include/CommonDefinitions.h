@@ -56,6 +56,7 @@ namespace fs
     using               uint32                  = uint32_t;
     using               uint64                  = uint64_t;
 
+    using                 byte                  =    uint8;
 
     static constexpr      int8 kInt8Max         = (  int8) 0x7F;
     static constexpr      int8 kInt8Min         = (  int8)~0x7F;
