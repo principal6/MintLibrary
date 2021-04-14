@@ -21,8 +21,6 @@ namespace fs
 
 
 #include <FsLibrary/Include/Algorithm.h>
-#include <FsLibrary/Include/ContiguousContainer.h>
-#include <FsLibrary/Include/Memory.h>
 
 #include <FsLibrary/Include/Profiler.h>
 

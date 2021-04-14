@@ -5,12 +5,26 @@
 #define FS_STRING_UTIL_H
 
 
-#include <FsLibrary/Include/ContiguousVector.h>
-#include <FsLibrary/Include/ContiguousString.h>
+#include <FsCommon/Include/CommonDefinitions.h>
 
 
 namespace fs
 {
+    struct StringRange final
+    {
+                        StringRange();
+                        StringRange(const uint32 offset);
+                        StringRange(const uint32 offset, const uint32 length);
+
+    public:
+        const bool      isLengthSet() const noexcept;
+
+    public:
+        uint32          _offset;
+        uint32          _length;
+    };
+
+
     template <uint32 Size>
     void                formatString(char(&buffer)[Size], const char* format, ...);
     void                formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
@@ -38,8 +52,8 @@ namespace fs
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
         void            excludeExtension(std::string& inoutText);
 
-        static void     tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
-        static void     tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray);
+        static void     tokenize(const std::string& inputString, const char delimiter, std::vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const std::vector<char>& delimiterArray, std::vector<std::string>& outArray);
         static void     tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray);
     }
 }

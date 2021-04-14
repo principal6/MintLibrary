@@ -1,8 +1,6 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/ILexer.h>
 
-//#include <FsLibrary/Include/ContiguousVector.hpp>
-#include <FsLibrary/Include/ContiguousString.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
 

@@ -7,6 +7,33 @@
 
 namespace fs
 {
+    inline StringRange::StringRange()
+        : _offset{ 0 }
+        , _length{ kUint32Max }
+    {
+        __noop;
+    }
+
+    inline StringRange::StringRange(const uint32 offset)
+        : _offset{ offset }
+        , _length{ kUint32Max }
+    {
+        __noop;
+    }
+
+    inline StringRange::StringRange(const uint32 offset, const uint32 length)
+        : _offset{ offset }
+        , _length{ length }
+    {
+        __noop;
+    }
+
+    FS_INLINE const bool StringRange::isLengthSet() const noexcept
+    {
+        return _length;
+    }
+
+
     namespace StringUtil
     {
         FS_INLINE void convertWideStringToString(const std::wstring& source, std::string& destination)
@@ -36,7 +63,7 @@ namespace fs
             }
         }
 
-        void tokenize(const fs::ContiguousStringA& inputString, const char delimiter, fs::ContiguousVector<fs::ContiguousStringA>& outArray)
+        void tokenize(const std::string& inputString, const char delimiter, std::vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -46,10 +73,10 @@ namespace fs
             outArray.clear();
 
             uint32 prevAt = 0;
-            const uint32 length = inputString.length();
+            const uint32 length = static_cast<uint32>(inputString.length());
             for (uint32 at = 0; at < length; ++at)
             {
-                if (inputString.getChar(at) == delimiter)
+                if (inputString.at(at) == delimiter)
                 {
                     if (prevAt < at)
                     {
@@ -66,7 +93,7 @@ namespace fs
             }
         }
 
-        void tokenize(const fs::ContiguousStringA& inputString, const fs::ContiguousVector<char>& delimiterArray, fs::ContiguousVector<fs::ContiguousStringA>& outArray)
+        void tokenize(const std::string& inputString, const std::vector<char>& delimiterArray, std::vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -76,13 +103,13 @@ namespace fs
             outArray.clear();
 
             uint32 prevAt = 0;
-            const uint32 delimiterCount = delimiterArray.size();
-            const uint32 length = inputString.length();
+            const uint32 delimiterCount = static_cast<uint32>(delimiterArray.size());
+            const uint32 length = static_cast<uint32>(inputString.length());
             for (uint32 at = 0; at < length; ++at)
             {
                 for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
                 {
-                    if (inputString.getChar(at) == delimiterArray.at(delimiterIndex))
+                    if (inputString.at(at) == delimiterArray.at(delimiterIndex))
                     {
                         if (prevAt < at)
                         {

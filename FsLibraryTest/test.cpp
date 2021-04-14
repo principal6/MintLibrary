@@ -303,64 +303,6 @@ const bool testBitVector()
     return true;
 }
 
-const bool testMemoryAllocator()
-{
-    {
-        struct ForTest
-        {
-            ForTest() : _name{ '\0' }, _value{ 0 } { __noop; }
-            ForTest(const char name, const int16 value) :_name{ name }, _value{ value } { printf("ForTest[%c] ctor\n", _name); }
-            ~ForTest() { printf("ForTest[%c] dtor\n", _name); }
-            char    _name;
-            int16    _value;
-        };
-
-        fs::Memory::Allocator<ForTest>& memoryAllocator2 = fs::Memory::Allocator<ForTest>::getInstance();
-        fs::Memory::Accessor maa = memoryAllocator2.allocate('a', 1);
-        const bool isMaaValid0 = maa.isValid();
-        fs::Memory::Accessor mab = memoryAllocator2.allocate('b', 2);
-        {
-            const fs::Memory::Accessor mab1 = mab;
-            auto mab1raw = mab1.getMemory();
-            maa.setMemory(mab1raw);
-        }
-        memoryAllocator2.deallocate(maa);
-        memoryAllocator2.deallocate(mab);
-        const bool isMaaValid1 = maa.isValid();
-        fs::Memory::Accessor mac = memoryAllocator2.allocate('c', 3);
-        fs::Memory::Accessor mad = memoryAllocator2.allocateArray(5, 'd', 4);
-        memoryAllocator2.reallocateArray(mad, 5, true);
-    }
-
-    {
-        fs::Memory::Allocator<char>& memoryAllocator2 = fs::Memory::Allocator<char>::getInstance();
-        fs::Memory::Accessor a = memoryAllocator2.allocateArray(5);
-        a.setMemory("abcd", 5);
-    }
-
-#if defined FS_TEST_PERFORMANCE
-    {
-#if defined FS_DEBUG
-        static constexpr uint32 kCount = 10'000;
-#else
-        static constexpr uint32 kCount = 30'000;
-#endif
-        fs::Profiler::ScopedCpuProfiler profiler{ "ContiguousVector of ContiguousStringA" };
-        
-        fs::ContiguousVector<fs::ContiguousStringA> vec;
-        for (uint32 i = 0; i < kCount; ++i)
-        {
-            vec.push_back("abcd");
-        }
-    }
-
-    auto logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
-    const bool isEmpty = logArray.empty();
-#endif
-
-    return true;
-}
-
 const bool testStringTypes()
 {
 #pragma region ScopeString
@@ -408,56 +350,12 @@ const bool testStringTypes()
     }
 #pragma endregion
 
-#pragma region DynamicString
-    using fs::ContiguousStringA;
-    {
-        ContiguousStringA a;
-        a.append("abcdefg hijklmnopqrst");
-        a.append("HELLO!!!!?");
-
-        ContiguousStringA b = "ABCDEFG!";
-        b.assign("haha..");
-        a = b;
-        const bool cmp0 = (a == b);
-        a = a.substr(0, 5);
-        const bool cmp1 = (a == b);
-        a.assign("AGAIN");
-        b.clear();
-        b.append("Hello World!");
-        const bool cmp2 = b.compare("llo", fs::StringRange(2, 3));
-
-        ContiguousStringA c = b.substr(100);
-        const bool cEmpty = c.empty();
-        const uint32 foundO0 = b.find("o", 6);
-        const uint32 foundO1 = b.find("o", 20);
-        const uint32 foundO2 = b.rfind("o", 6);
-        const uint32 foundH0 = b.find("H", 3);
-        const uint32 foundH1 = b.rfind("H", 11);
-        const uint32 foundD0 = b.find("d");
-        const uint32 foundD1 = b.rfind("d");
-        const uint64 hashA = a.hash();
-        const uint64 hashB = b.hash();
-        const uint64 hashC = c.hash();
-        c.assign("wow");
-        c.setChar(0, 'k');
-        c.setChar(1, 'j');
-        const char getChar = c.getChar(10);
-
-        ContiguousStringA from_value0 = ContiguousStringA::from_value<float>(1.23f);
-        ContiguousStringA from_value1 = ContiguousStringA::from_value<bool>(true);
-        ContiguousStringA from_value2 = ContiguousStringA::from_value<uint32>(3294967295);
-
-        const float to_value0 = ContiguousStringA::to_float(from_value0);
-        const bool to_value1 = ContiguousStringA::to_bool(from_value1);
-        const uint32 to_value2 = ContiguousStringA::to_uint32(from_value2);
-    }
-
 #if defined FS_TEST_PERFORMANCE
     static constexpr uint32 kCount = 20'000;
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "fs::ContiguousVector<fs::ContiguousStringA>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
 
-        fs::ContiguousVector<fs::ContiguousStringA> dnsArray;
+        std::vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -466,9 +364,9 @@ const bool testStringTypes()
     }
 
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<fs::ContiguousStringA>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
 
-        std::vector<fs::ContiguousStringA> dnsArray;
+        std::vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -477,9 +375,9 @@ const bool testStringTypes()
     }
 
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "fs::ContiguousVector<std::string>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
 
-        fs::ContiguousVector<std::string> dnsArray;
+        std::vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -508,18 +406,14 @@ const bool testStringTypes()
 
 const bool testVector()
 {
-    fs::ContiguousVector<uint32> a(5);
+    fs::Vector<uint32> a(5);
     a.push_back(1);
     a.push_back(2);
     a.push_back(3);
-
-#if defined FS_TEST_FAILURES
-    a.set(12, 3);
-#endif
-
     a.insert(2, 5);
     a.erase(1);
-    fs::ContiguousVector<uint32> b(20);
+
+    fs::Vector<uint32> b(20);
     b.push_back(9);
 
     fs::Vector<uint32> c(3);
@@ -537,11 +431,11 @@ const bool testVector()
 
 const bool testStringUtil()
 {
-    const fs::ContiguousStringA testA{ "ab c   def g" };
-    fs::ContiguousVector<fs::ContiguousStringA> testATokenized;
+    const std::string testA{ "ab c   def g" };
+    std::vector<std::string> testATokenized;
     fs::StringUtil::tokenize(testA, ' ', testATokenized);
     
-    fs::ContiguousStringA testB{
+    std::string testB{
         R"(
             #include <ShaderStructDefinitions>
             #include <VsConstantBuffers>
@@ -557,8 +451,8 @@ const bool testStringUtil()
             }
         )"
     };
-    const fs::ContiguousVector<char> delimiterArray{ ' ', '\t', '\n' };
-    fs::ContiguousVector<fs::ContiguousStringA> testBTokenized;
+    const std::vector<char> delimiterArray{ ' ', '\t', '\n' };
+    std::vector<std::string> testBTokenized;
     fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
     return true;
@@ -566,11 +460,11 @@ const bool testStringUtil()
 
 const bool testTree()
 {
-    fs::Tree<fs::ContiguousStringA> stringTree;
+    fs::Tree<std::string> stringTree;
     fs::TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
     
     fs::TreeNodeAccessor a = rootNode.insertChildNode("A");
-    const fs::ContiguousStringA& aData = a.getNodeData();
+    const std::string& aData = a.getNodeData();
     
     fs::TreeNodeAccessor b = a.insertChildNode("b");
     fs::TreeNodeAccessor c = a.insertChildNode("c");
@@ -595,99 +489,6 @@ const bool testTree()
 #if defined FS_TEST_FAILURES
     stringTree.moveToParent(rootNode, d);
 #endif
-
-    return true;
-}
-
-const bool testMemoryAllocator2()
-{
-    {
-        struct TestStruct
-        {
-            int32                           _id = 0;
-            fs::ContiguousVector<float>     _vec;
-        };
-
-        fs::ContiguousVector<TestStruct>    a;
-        a.resize(10);
-    }
-
-    {
-        fs::Memory::Viewer<fs::ContiguousStringA> viewer;
-        fs::Memory::Viewer<fs::ContiguousStringA> viewer1;
-        {
-            fs::Memory::Owner<fs::ContiguousStringA> abc{ "ABC" };
-            viewer = abc;
-            
-            fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
-            const fs::ContiguousStringA& viewerData = *scopedViewer;
-
-            const bool viewerAlive = viewer.isAlive();
-            FS_LOG("김장원", (true == viewerAlive) ? "true" : "false");
-
-            viewer1 = viewer;
-            fs::Memory::Viewer<fs::ContiguousStringA> viewer2 = viewer1;
-        }
-        //const bool viewerAlive1 = viewer.isAlive();
-        //FS_LOG("김장원", (true == viewerAlive1) ? "true" : "false");
-    }
-
-    {
-        fs::Memory::Owner<fs::ContiguousStringA> abc = fs::ContiguousStringA("ABC");
-
-        fs::Memory::Viewer<fs::ContiguousStringA> viewer;
-        {
-            viewer = abc;
-            const fs::ContiguousStringA& viewerData = viewer.viewData();
-
-            fs::Memory::Viewer<fs::ContiguousStringA> viewer1 = viewer;
-        }
-    }
-
-    {
-        fs::Memory::Owner<int32> a;
-#if defined FS_TEST_FAILURES
-        a.accessData() = 5;
-#else
-        if (a.isValid() == false)
-        {
-            a = fs::Memory::Owner<int32>(5);
-            int32 aData = a.viewData();
-            int32& aData1 = a.accessData();
-            aData1 = 7;
-        }
-#endif
-
-        fs::Memory::Owner<int32> b = 11;
-    }
-
-    {
-        fs::Memory::Viewer<fs::ContiguousStringA> viewer;
-        fs::Memory::Owner<fs::ContiguousStringA> ownerCopy;
-        {
-            fs::Memory::Owner<fs::ContiguousStringA> owner{ "ABC" };
-            viewer = owner;
-
-            fs::Memory::ScopedViewer scopedViewer = viewer.viewDataSafe();
-            owner.~Owner();
-
-            ownerCopy = fs::ContiguousStringA(scopedViewer.viewData());
-        }
-    }
-
-    if (false)
-    {
-        std::chrono::steady_clock clock;
-        const uint64 startTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
-        fs::ContiguousVector<fs::ContiguousStringA> dsv;
-        for (uint32 i = 0; i < 10'000; ++i)
-        {
-            dsv.push_back(fs::ContiguousStringA("abcd"));
-        }
-        const uint64 endTime = std::chrono::duration_cast<std::chrono::milliseconds>(clock.now().time_since_epoch()).count();
-        const uint64 duration = endTime - startTime;
-        FS_LOG("김장원", "fs::ContiguousVector<fs::DynamicString>::push_back() X 10,000 times - duration: %llu ms", duration);
-    }
 
     return true;
 }
@@ -1011,8 +812,6 @@ const bool testAll()
 
     testBitVector();
 
-    testMemoryAllocator();
-
 
     /*
     */
@@ -1023,8 +822,6 @@ const bool testAll()
     testStringUtil();
 
     testTree();
-
-    testMemoryAllocator2();
 
     FS_LOG("김장원", "LOG %d", 1234);
     //FS_ASSERT("김장원", false, "ASSERTION");

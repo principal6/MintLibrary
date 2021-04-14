@@ -60,6 +60,7 @@ namespace fs
     public:
         const uint32    capacity() const noexcept;
         const uint32    size() const noexcept;
+        const bool      empty() const noexcept;
 
     private:
         T*              _rawPointer;

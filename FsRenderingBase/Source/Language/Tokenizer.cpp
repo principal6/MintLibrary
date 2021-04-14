@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/Tokenizer.h>
 
+#include <FsContainer/Include/StringUtil.hpp>
+
 
 namespace fs
 {

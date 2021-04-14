@@ -7,9 +7,6 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
-//#include <FsLibrary/Include/ContiguousVector.h>
-#include <FsLibrary/Include/ContiguousString.h>
-
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>
 
 

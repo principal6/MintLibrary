@@ -23,30 +23,7 @@
       <Item Name="[MemoryAllocator]">_memoryAllocator</Item>
     </Expand>
   </Type>
-  
-  <Type Name="fs::ContiguousVector&lt;*&gt;">
-    <DisplayString>{{ size = {_size} }}</DisplayString>
-    <Expand>
-      <Item Name="[Size]" ExcludeView="simple">_size</Item>
-      <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
-      <!--<Item Name="[MemoryAccessor]">_memoryAccessor</Item>-->
-      <ArrayItems>
-        <Size>_size</Size>
-        <ValuePointer>($T1*)(_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset))</ValuePointer>
-      </ArrayItems>
-    </Expand>
-  </Type>
-
-  <Type Name="fs::ContiguousStringA">
-    <DisplayString Condition="_length == 0 || _memoryAccessor._memoryAllocator->_memoryBlockArray[_memoryAccessor._blockOffset]._referenceCount == 0">NULL</DisplayString>
-    <DisplayString>{{ Value = {_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset)} }}</DisplayString>
-    <Expand>
-      <Item Name="[Length]" ExcludeView="simple">_length</Item>
-      <Item Name="[Hash]" ExcludeView="simple">_cachedHash</Item>
-      <Item Name="[Value]" Condition="0 &lt; _length &amp;&amp; 0 &lt; _memoryAccessor._memoryAllocator->_memoryBlockArray[_memoryAccessor._blockOffset]._referenceCount">_memoryAccessor._memoryAllocator->_rawMemory + (_memoryAccessor._memoryAllocator->kTypeSize * _memoryAccessor._blockOffset)</Item>
-    </Expand>
-  </Type>
-  
+    
 <!-- @@@ Tree BEGINS @@@ -->
   <Type Name="fs::TreeNode&lt;*&gt;">
     <DisplayString>{{ Node Data = { _data } }}</DisplayString>

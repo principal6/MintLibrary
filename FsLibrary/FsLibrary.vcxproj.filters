@@ -8,49 +8,13 @@
     <ClInclude Include="Include\Algorithm.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Allocator.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Allocator.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ContiguousContainer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ContiguousString.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ContiguousString.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ContiguousVector.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ContiguousVector.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Memory.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Owner.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Owner.hpp">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Profiler.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\ScopedCpuProfiler.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Viewer.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Viewer.hpp">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHpps.h">
@@ -72,14 +36,8 @@
     <None Include="Include\ScopedCpuProfiler.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\ContiguousString.inl">
-      <Filter>Include</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ContiguousString.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\AllHeaders.cpp">
       <Filter>Source</Filter>
     </ClCompile>

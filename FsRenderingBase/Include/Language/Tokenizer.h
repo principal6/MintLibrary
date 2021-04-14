@@ -7,7 +7,7 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
-#include <FsLibrary/Include/ContiguousString.h>
+#include <FsContainer/Include/StringUtil.h>
 
 
 //#define FS_USE_TOKEN_STRING_IN_RELEASE
@@ -32,7 +32,7 @@ namespace fs
             void                            tokenize();
 
             const uint32                    getTokenCount() const noexcept;
-            const StringRange&              getTokenData(const uint32 tokenIndex) const noexcept;
+            const fs::StringRange&          getTokenData(const uint32 tokenIndex) const noexcept;
 
         public:
             const std::string&              getSource() const noexcept;
@@ -46,7 +46,7 @@ namespace fs
             std::unordered_map<char, int8>  _tokenIdentifierUmap;
         
         private:
-            std::vector<StringRange>        _tokenArray;
+            std::vector<fs::StringRange>    _tokenArray;
 
 #if defined FS_DEBUG || defined FS_USE_TOKEN_STRING_IN_RELEASE
         private:

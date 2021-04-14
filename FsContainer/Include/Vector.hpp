@@ -316,4 +316,9 @@ namespace fs
         return _size;
     }
 
+    template<typename T>
+    FS_INLINE const bool Vector<T>::empty() const noexcept
+    {
+        return (_size == 0);
+    }
 }
