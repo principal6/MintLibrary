@@ -29,7 +29,7 @@
     <ClInclude Include="Include\ContiguousVector.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\FsLibrary.h">
+    <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Memory.h">
@@ -51,6 +51,9 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Viewer.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,7 +80,7 @@
     <ClCompile Include="Source\ContiguousString.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\FsLibrary.cpp">
+    <ClCompile Include="Source\AllHeaders.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

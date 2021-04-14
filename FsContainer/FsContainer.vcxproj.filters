@@ -15,7 +15,7 @@
     <ClInclude Include="Include\BitVector.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Container.h">
+    <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\IId.h">
@@ -58,6 +58,9 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Vector.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

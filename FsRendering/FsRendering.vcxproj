@@ -19,12 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\CameraObject.h" />
     <ClInclude Include="Include\DeltaTimer.h" />
     <ClInclude Include="Include\MeshGenerator.h" />
     <ClInclude Include="Include\MeshRenderer.h" />
     <ClInclude Include="Include\ObjectPool.hpp" />
-    <ClInclude Include="Include\Rendering.h" />
+    <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\MeshComponent.h" />
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\IObjectComponent.h" />

@@ -22,6 +22,7 @@
     <ClInclude Include="..\stdafx.h" />
     <ClInclude Include="Include\Algorithm.h" />
     <ClInclude Include="Include\Algorithm.hpp" />
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Allocator.h" />
     <ClInclude Include="Include\Allocator.hpp" />
     <ClInclude Include="Include\ContiguousContainer.h" />
@@ -29,7 +30,7 @@
     <ClInclude Include="Include\ContiguousString.hpp" />
     <ClInclude Include="Include\ContiguousVector.h" />
     <ClInclude Include="Include\ContiguousVector.hpp" />
-    <ClInclude Include="Include\FsLibrary.h" />
+    <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\Memory.h" />
     <ClInclude Include="Include\Owner.h" />
     <ClInclude Include="Include\Owner.hpp" />
@@ -47,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ContiguousString.cpp" />
-    <ClCompile Include="Source\FsLibrary.cpp" />
+    <ClCompile Include="Source\AllHeaders.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

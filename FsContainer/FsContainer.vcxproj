@@ -178,7 +178,8 @@
   <ItemGroup>
     <ClInclude Include="Include\BitVector.h" />
     <ClInclude Include="Include\BitVector.hpp" />
-    <ClInclude Include="Include\Container.h" />
+    <ClInclude Include="Include\AllHeaders.h" />
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\IId.h" />
     <ClInclude Include="Include\ScopeString.h" />
     <ClInclude Include="Include\ScopeString.hpp" />

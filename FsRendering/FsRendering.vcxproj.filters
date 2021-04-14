@@ -30,7 +30,7 @@
     <ClInclude Include="Include\ObjectPool.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Rendering.h">
+    <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\CameraObject.h">
@@ -46,6 +46,9 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\DeltaTimer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

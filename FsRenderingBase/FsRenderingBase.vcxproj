@@ -194,6 +194,7 @@
     <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h" />
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\DxResource.h" />
     <ClInclude Include="Include\DxShader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
@@ -213,7 +214,7 @@
     <ClInclude Include="Include\Language\LanguageCommon.h" />
     <ClInclude Include="Include\Language\Tokenizer.h" />
     <ClInclude Include="Include\RectangleRendererContext.h" />
-    <ClInclude Include="Include\RenderingBase.h" />
+    <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
     <ClInclude Include="Include\ShapeRendererContext.h" />
     <ClInclude Include="Include\RenderingBaseCommon.h" />

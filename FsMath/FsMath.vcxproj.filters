@@ -30,7 +30,7 @@
     <ClInclude Include="Include\Int2.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math.h">
+    <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\MathCommon.h">

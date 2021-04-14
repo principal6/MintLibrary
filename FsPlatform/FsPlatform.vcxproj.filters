@@ -27,7 +27,7 @@
     <ClInclude Include="Include\IWindow.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Platform.h">
+    <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\TextFile.h">
@@ -37,6 +37,9 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\PlatformCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

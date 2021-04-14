@@ -26,7 +26,7 @@
     <ClInclude Include="Include\Float4.h" />
     <ClInclude Include="Include\Float4x4.h" />
     <ClInclude Include="Include\Int2.h" />
-    <ClInclude Include="Include\Math.h" />
+    <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\MathCommon.h" />
     <ClInclude Include="Include\Quaternion.h" />
     <ClCompile Include="Source\Float2.cpp" />

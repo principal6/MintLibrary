@@ -1,4 +1,5 @@
-﻿#include <FsLibrary/Include/FsLibrary.h>
+﻿#include <FsLibrary/Include/AllHeaders.h>
+#include <FsLibrary/Include/AllHpps.h>
 
 
 #ifdef FS_DEBUG
