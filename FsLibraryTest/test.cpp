@@ -520,6 +520,17 @@ const bool testVector()
     a.erase(1);
     fs::ContiguousVector<uint32> b(20);
     b.push_back(9);
+
+    fs::Vector<uint32> c(3);
+    c.insert(3, 10);
+    c.insert(2, 0);
+    c.insert(99, 1);
+    c.insert(1, 0);
+    c.insert(0, 100);
+    c.erase(100);
+    c.erase(2);
+    c.shrink_to_fit();
+
     return true;
 }
 

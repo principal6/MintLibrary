@@ -191,6 +191,8 @@
     <ClInclude Include="Include\Tree.hpp" />
     <ClInclude Include="Include\UniqueString.h" />
     <ClInclude Include="Include\UniqueString.hpp" />
+    <ClInclude Include="Include\Vector.h" />
+    <ClInclude Include="Include\Vector.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl" />

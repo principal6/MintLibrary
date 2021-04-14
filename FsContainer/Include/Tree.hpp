@@ -4,6 +4,8 @@
 #include <stdafx.h>
 #include <FsContainer/Include/Tree.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 
 namespace fs
 {
@@ -466,7 +468,7 @@ namespace fs
                     childNode.invalidate();
 
                     // childNodeAccessor 를 node 의 _childNodeAccessorArray 에서 제거
-                    node._childNodeAccessorArray.erase(node._childNodeAccessorArray.begin() + childIndex);
+                    node._childNodeAccessorArray.erase(childIndex);
 
                     --_nodeCount;
                 }
@@ -505,7 +507,7 @@ namespace fs
 
             FS_ASSERT("김장원", childAt != kUint32Max, "발생하면 안 되는 상황!!!");
 
-            oldParnetNode._childNodeAccessorArray.erase(oldParnetNode._childNodeAccessorArray.begin() + childAt);
+            oldParnetNode._childNodeAccessorArray.erase(childAt);
         }
 
         TreeNode<T>& node = _nodeArray[nodeAccessor._slotIndex];

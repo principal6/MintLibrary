@@ -54,6 +54,12 @@
     <ClInclude Include="Include\UniqueString.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Vector.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Vector.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">

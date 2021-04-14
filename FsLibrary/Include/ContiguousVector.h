@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef FS_VECTOR_H
-#define FS_VECTOR_H
+#ifndef FS_CONTIGUOUS_VECTOR_H
+#define FS_CONTIGUOUS_VECTOR_H
 
 
 #include <FsCommon/Include/CommonDefinitions.h>
@@ -70,4 +70,4 @@ namespace fs
 }
 
 
-#endif // !FS_VECTOR_H
+#endif // !FS_CONTIGUOUS_VECTOR_H

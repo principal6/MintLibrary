@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="fs::Memory::Accessor&lt;*&gt;">
+    <Type Name="fs::Vector&lt;*&gt;">
+        <DisplayString>{{ size = {_size} capacity = {_capacity} }}</DisplayString>
+        <Expand>
+            <Item Name="[Size]" ExcludeView="simple">_size</Item>
+            <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
+            <ArrayItems>
+                <Size>_size</Size>
+                <ValuePointer>_rawPointer</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="fs::Memory::Accessor&lt;*&gt;">
     <DisplayString Condition="_id == kMemoryBlockIdInvalid">{{ INVALID }}</DisplayString>
     <DisplayString>{{ ID = {_id} }}</DisplayString>
     <Expand>
