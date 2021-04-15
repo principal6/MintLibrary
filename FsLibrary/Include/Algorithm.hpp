@@ -75,24 +75,4 @@ namespace fs
         }
         return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
     }
-
-    template <typename T>
-    void stableDelete(fs::Vector<T>& vec, const uint32 index)
-    {
-        const uint32 count = static_cast<uint32>(vec.size());
-        if (index < count)
-        {
-            if (index == count - 1)
-            {
-                vec.pop_back();
-                return;
-            }
-
-            for (uint32 iter = index; iter < count - 1; ++iter)
-            {
-                vec[iter] = std::move(vec[iter + 1]);
-            }
-            vec.pop_back();
-        }
-    }
 }
