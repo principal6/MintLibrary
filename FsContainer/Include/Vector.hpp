@@ -59,7 +59,7 @@ namespace fs
     template<typename T>
     inline Vector<T>::~Vector()
     {
-        FS_DELETE_ARRAY(_rawPointer);
+        freeRawPointer(_rawPointer, _size);
     }
 
     template<typename T>
@@ -82,7 +82,7 @@ namespace fs
     {
         if (this != &rhs)
         {
-            FS_DELETE_ARRAY(_rawPointer);
+            freeRawPointer(_rawPointer, _size);
 
             _rawPointer = std::move(rhs._rawPointer);
             _capacity = std::move(rhs._capacity);
@@ -113,30 +113,31 @@ namespace fs
             return;
         }
 
+        T* temp = nullptr;
         if (0 < _size)
         {
-            T* temp = FS_NEW_ARRAY(T, _size);
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                temp[index] = _rawPointer[index];
-            }
-
-            FS_DELETE_ARRAY(_rawPointer);
-            _rawPointer = FS_NEW_ARRAY(T, capacity);
+            temp = FS_MALLOC(T, _size);
 
             for (uint32 index = 0; index < _size; ++index)
             {
-                _rawPointer[index] = temp[index];
+                FS_PLACEMNT_NEW(&temp[index], T(_rawPointer[index]));
             }
-
-            FS_DELETE_ARRAY(temp);
         }
-        else
+
+        freeRawPointer(_rawPointer, _size);
+
+        _rawPointer = FS_MALLOC(T, capacity);
+
+        if (0 < _size)
         {
-            FS_DELETE_ARRAY(_rawPointer);
-            _rawPointer = FS_NEW_ARRAY(T, capacity);
-        }
+            for (uint32 index = 0; index < _size; ++index)
+            {
+                FS_PLACEMNT_NEW(&_rawPointer[index], T(temp[index]));
+            }
 
+            freeRawPointer(temp, _size);
+        }
+        
         _capacity = capacity;
     }
 
@@ -144,6 +145,21 @@ namespace fs
     FS_INLINE void Vector<T>::resize(const uint32 size) noexcept
     {
         reserve(size);
+
+        if (_size < size)
+        {
+            for (uint32 index = _size; index < size; ++index)
+            {
+                FS_PLACEMNT_NEW(&_rawPointer[index], T());
+            }
+        }
+        else if (size < _size)
+        {
+            for (uint32 index = size; index < _size; ++index)
+            {
+                _rawPointer[index].~T();
+            }
+        }
 
         _size = size;
     }
@@ -153,30 +169,49 @@ namespace fs
     {
         if (_size < _capacity)
         {
-            T* temp = FS_NEW_ARRAY(T, _size);
+            T* temp = FS_MALLOC(T, _size);
             for (uint32 index = 0; index < _size; ++index)
             {
-                temp[index] = _rawPointer[index];
+                FS_PLACEMNT_NEW(&temp[index], T(_rawPointer[index]));
             }
 
-            FS_DELETE_ARRAY(_rawPointer);
-            _rawPointer = FS_NEW_ARRAY(T, _size);
+            freeRawPointer(_rawPointer, _size);
+            _rawPointer = FS_MALLOC(T, _size);
 
             for (uint32 index = 0; index < _size; ++index)
             {
-                _rawPointer[index] = temp[index];
+                FS_PLACEMNT_NEW(&_rawPointer[index], T(temp[index]));
             }
 
-            FS_DELETE_ARRAY(temp);
+            freeRawPointer(temp, _size);
 
             _capacity = _size;
         }
     }
 
     template<typename T>
+    inline void Vector<T>::freeRawPointer(T*& rawPointer, const uint32 size) noexcept
+    {
+        if (rawPointer == nullptr)
+        {
+            return;
+        }
+
+        for (uint32 index = 0; index < size; ++index)
+        {
+            rawPointer[index].~T();
+        }
+
+        FS_FREE(rawPointer);
+    }
+
+    template<typename T>
     FS_INLINE void Vector<T>::clear() noexcept
     {
-        _size = 0;
+        while (empty() == false)
+        {
+            pop_back();
+        }
     }
 
     template<typename T>
@@ -184,7 +219,8 @@ namespace fs
     {
         expandCapacityIfNecessary();
 
-        _rawPointer[_size] = newEntry;
+        FS_PLACEMNT_NEW(&_rawPointer[_size], T(newEntry));
+
         ++_size;
     }
 
@@ -193,7 +229,8 @@ namespace fs
     {
         expandCapacityIfNecessary();
 
-        _rawPointer[_size] = std::move(newEntry);
+        FS_PLACEMNT_NEW(&_rawPointer[_size], T(std::move(newEntry)));
+
         ++_size;
     }
 
@@ -205,6 +242,8 @@ namespace fs
             return;
         }
         
+        _rawPointer[_size - 1].~T();
+
         --_size;
     }
 

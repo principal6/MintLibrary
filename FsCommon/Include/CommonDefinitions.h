@@ -93,9 +93,13 @@ namespace fs
     __noop;
 #else
     #define FS_NEW(type, ...) new type{ __VA_ARGS__ }
+    #define FS_PLACEMNT_NEW(pointer, ctor) new (pointer) ctor
     #define FS_NEW_ARRAY(type, size) new type[size]{}
+    #define FS_NEW_ARRAY_USING_BYTE(type, size) reinterpret_cast<type*>(new byte[sizeof(type) * size]{})
     #define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
     #define FS_DELETE_ARRAY(obj) if (obj != nullptr) { delete[] obj; obj = nullptr; }
+    #define FS_MALLOC(type, count) reinterpret_cast<type*>(malloc(sizeof(type) * count))
+    #define FS_FREE(pointer) free(pointer); pointer = nullptr
 #endif
 
 

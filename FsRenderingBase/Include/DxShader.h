@@ -9,6 +9,8 @@
 
 #include <FsRenderingBase/Include/IDxObject.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -29,8 +31,8 @@ namespace fs
 
         struct DxInputElementSet
         {
-            std::vector<std::string>                _semanticNameArray;
-            std::vector<D3D11_INPUT_ELEMENT_DESC>   _inputElementDescriptorArray;
+            fs::Vector<std::string>                 _semanticNameArray;
+            fs::Vector<D3D11_INPUT_ELEMENT_DESC>    _inputElementDescriptorArray;
         };
 
         enum class DxShaderVersion
@@ -130,9 +132,9 @@ namespace fs
             DxShaderVersion             _shaderVersion;
 
         private:
-            std::vector<DxShader>       _vertexShaderArray;
-            std::vector<DxShader>       _geometryShaderArray;
-            std::vector<DxShader>       _pixelShaderArray;
+            fs::Vector<DxShader>        _vertexShaderArray;
+            fs::Vector<DxShader>        _geometryShaderArray;
+            fs::Vector<DxShader>        _pixelShaderArray;
 
         private:
             DxObjectId                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];

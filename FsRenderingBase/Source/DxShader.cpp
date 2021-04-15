@@ -7,6 +7,7 @@
 
 #include <FsContainer/Include/ScopeString.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/Vector.hpp>
 
 #include <FsPlatform/Include/TextFile.h>
 #include <FsPlatform/Include/FileUtil.hpp>
@@ -162,7 +163,7 @@ namespace fs
             if (createVertexShaderInternal(shader, inputElementTypeInfo) == true)
             {
                 shader.assignIdXXX();
-                _vertexShaderArray.emplace_back(std::move(shader));
+                _vertexShaderArray.push_back(std::move(shader));
                 return _vertexShaderArray.back().getId();
             }
             return DxObjectId::kInvalidObjectId;
@@ -175,13 +176,13 @@ namespace fs
                 if (shaderType == DxShaderType::GeometryShader)
                 {
                     shader.assignIdXXX();
-                    _geometryShaderArray.emplace_back(std::move(shader));
+                    _geometryShaderArray.push_back(std::move(shader));
                     return _geometryShaderArray.back().getId();
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
                     shader.assignIdXXX();
-                    _pixelShaderArray.emplace_back(std::move(shader));
+                    _pixelShaderArray.push_back(std::move(shader));
                     return _pixelShaderArray.back().getId();
                 }
             }
@@ -206,7 +207,7 @@ namespace fs
                 for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                 {
                     const Language::CppHlslTypeInfo& memberType = inputElementTypeInfo->getMember(memberIndex);
-                    shader._inputElementSet._semanticNameArray.emplace_back(Language::CppHlslParser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
+                    shader._inputElementSet._semanticNameArray.push_back(Language::CppHlslParser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
 
                     D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
                     inputElementDescriptor.SemanticName = shader._inputElementSet._semanticNameArray[memberIndex].c_str();
@@ -216,7 +217,7 @@ namespace fs
                     inputElementDescriptor.AlignedByteOffset = memberType.getByteOffset();
                     inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
                     inputElementDescriptor.InstanceDataStepRate = 0;
-                    shader._inputElementSet._inputElementDescriptorArray.emplace_back(inputElementDescriptor);
+                    shader._inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
                 }
                 if (FAILED(_graphicDevice->getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
                     shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
@@ -373,20 +374,26 @@ namespace fs
                 }
             }
 
-            for (auto& shader : _vertexShaderArray)
+            const uint32 vertexShaderCount = _vertexShaderArray.size();
+            for (uint32 vertexShaderIndex = 0; vertexShaderIndex < vertexShaderCount; ++vertexShaderIndex)
             {
+                DxShader& shader = _vertexShaderArray[vertexShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
                 createVertexShaderInternal(shader, nullptr);
             }
 
-            for (auto& shader : _geometryShaderArray)
+            const uint32 geometryShaderCount = _geometryShaderArray.size();
+            for (uint32 geometryShaderIndex = 0; geometryShaderIndex < geometryShaderCount; ++geometryShaderIndex)
             {
+                DxShader& shader = _geometryShaderArray[geometryShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
                 createNonVertexShaderInternal(shader, fs::RenderingBase::DxShaderType::GeometryShader);
             }
 
-            for (auto& shader : _pixelShaderArray)
+            const uint32 pixelShaderCount = _pixelShaderArray.size();
+            for (uint32 pixelShaderIndex = 0; pixelShaderIndex < pixelShaderCount; ++pixelShaderIndex)
             {
+                DxShader& shader = _pixelShaderArray[pixelShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
                 createNonVertexShaderInternal(shader, fs::RenderingBase::DxShaderType::PixelShader);
             }

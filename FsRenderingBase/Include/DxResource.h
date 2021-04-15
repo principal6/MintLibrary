@@ -9,6 +9,8 @@
 
 #include <FsRenderingBase/Include/IDxObject.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -135,7 +137,7 @@ namespace fs
             DxResource&                     getResource(const DxObjectId& objectId);
 
         private:
-            std::vector<DxResource>         _resourceArray{};
+            fs::Vector<DxResource>          _resourceArray{};
         };
     }
 }

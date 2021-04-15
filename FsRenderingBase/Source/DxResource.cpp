@@ -1,7 +1,10 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/DxResource.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsLibrary/Include/Algorithm.hpp>
+
 #include <FsRenderingBase/Include/GraphicDevice.h>
 
 
@@ -365,7 +368,7 @@ namespace fs
                 resource.assignIdXXX();
                 resource._registerIndex = registerIndex;
                 
-                _resourceArray.emplace_back(std::move(resource));
+                _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }
             FS_ASSERT("김장원", false, "pushConstantBuffer 에 실패했습니다!");
@@ -379,7 +382,7 @@ namespace fs
             if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
             {
                 resource.assignIdXXX();
-                _resourceArray.emplace_back(std::move(resource));
+                _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }
 
@@ -394,7 +397,7 @@ namespace fs
             if (resource.createBuffer(resourceContent, DxResource::kIndexBufferElementStride, elementCount) == true)
             {
                 resource.assignIdXXX();
-                _resourceArray.emplace_back(std::move(resource));
+                _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }
 
@@ -409,7 +412,7 @@ namespace fs
             if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
             {
                 resource.assignIdXXX();
-                _resourceArray.emplace_back(std::move(resource));
+                _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }
 
@@ -424,7 +427,7 @@ namespace fs
             if (resource.createTexture(format, textureContent, width, height) == true)
             {
                 resource.assignIdXXX();
-                _resourceArray.emplace_back(std::move(resource));
+                _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }
 

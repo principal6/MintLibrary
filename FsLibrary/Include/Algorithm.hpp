@@ -4,11 +4,13 @@
 #include <stdafx.h>
 #include <FsLibrary/Include/Algorithm.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 
 namespace fs
 {
     template <typename T>
-    const int32 binarySearchInternal(const std::vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
+    const int32 binarySearchInternal(const fs::Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -31,7 +33,7 @@ namespace fs
     }
 
     template <typename T>
-    const int32 binarySearch(const std::vector<T>& vec, const T& value)
+    const int32 binarySearch(const fs::Vector<T>& vec, const T& value)
     {
         if (vec.empty() == true)
         {
@@ -42,7 +44,7 @@ namespace fs
 
 
     template <typename T, typename CompT>
-    const int32 binarySearchInternal(const std::vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
+    const int32 binarySearchInternal(const fs::Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -65,7 +67,7 @@ namespace fs
     }
 
     template<typename T, typename CompT>
-    const int32 binarySearch(const std::vector<T>& vec, const CompT& value)
+    const int32 binarySearch(const fs::Vector<T>& vec, const CompT& value)
     {
         if (vec.empty() == true)
         {
@@ -75,7 +77,7 @@ namespace fs
     }
 
     template <typename T>
-    void stableDelete(std::vector<T>& vec, const uint32 index)
+    void stableDelete(fs::Vector<T>& vec, const uint32 index)
     {
         const uint32 count = static_cast<uint32>(vec.size());
         if (index < count)

@@ -38,6 +38,9 @@ namespace fs
         void            resize(const uint32 size) noexcept;
         void            shrink_to_fit() noexcept;
 
+    private:
+        static void     freeRawPointer(T*& rawPointer, const uint32 size) noexcept;
+
     public:
         void            clear() noexcept;
         void            push_back(const T& newEntry) noexcept;
