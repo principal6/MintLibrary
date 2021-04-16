@@ -416,6 +416,9 @@ const bool testVector()
     fs::Vector<uint32> b(20);
     b.push_back(9);
 
+    // Move semantic 점검!
+    std::swap(a, b);
+
     fs::Vector<uint32> c(3);
     c.insert(3, 10);
     c.insert(2, 0);
@@ -555,6 +558,21 @@ const bool testLanguage()
     const fs::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT_SHAPE");
     const fs::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
     const fs::Language::CppHlslTypeInfo& typeInfo2 = cppHlslParser.getTypeInfo(2);
+    return true;
+}
+
+const bool testAlgorithm()
+{
+    fs::Vector<uint32> a;
+    a.push_back(4);
+    a.push_back(3);
+    a.push_back(0);
+    a.push_back(2);
+    a.push_back(1);
+
+    fs::quickSort(a, fs::ComparatorAscending<uint32>());
+    fs::quickSort(a, fs::ComparatorDescending<uint32>());
+    
     return true;
 }
 
@@ -832,6 +850,8 @@ const bool testAll()
     testFiles();
 
     testLanguage();
+
+    testAlgorithm();
 
     return true;
 }

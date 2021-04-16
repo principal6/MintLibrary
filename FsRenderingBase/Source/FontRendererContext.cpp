@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+#include <FsLibrary/Include/Algorithm.hpp>
+
 #include <FsRenderingBase/Include/GraphicDevice.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
@@ -108,8 +110,7 @@ namespace fs
             const uint32 glyphRangeCount = _glyphRangeArray.size();
             if (2 <= glyphRangeCount)
             {
-                // ### TODO!!! ###
-                //std::sort(_glyphRangeArray.begin(), _glyphRangeArray.end());
+                fs::quickSort(_glyphRangeArray, fs::ComparatorAscending<fs::RenderingBase::GlyphRange>());
 
                 fs::Vector<uint32> deletionList;
                 for (uint32 glyphRangeIndex = 1; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
