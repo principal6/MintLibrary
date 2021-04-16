@@ -61,7 +61,7 @@ namespace fs
 
         FS_INLINE void CppHlslTypeInfo::pushMember(const CppHlslTypeInfo& member)
         {
-            _memberArray.emplace_back(member);
+            _memberArray.push_back(member);
         }
 
         FS_INLINE const bool CppHlslTypeInfo::isRegisterIndexValid() const noexcept

@@ -39,7 +39,7 @@ namespace fs
 
         public:
             const uint32                getTypeInfoCount() const noexcept;
-            const CppHlslTypeInfo&      getTypeInfo(const uint64 typeIndex) const noexcept;
+            const CppHlslTypeInfo&      getTypeInfo(const uint32 typeIndex) const noexcept;
             const CppHlslTypeInfo&      getTypeInfo(const std::string& typeName) const noexcept;
             const CppHlslTypeInfo&      getTypeInfo(const std::type_info& stdTypeInfo) const noexcept;
         

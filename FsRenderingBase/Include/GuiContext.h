@@ -11,6 +11,7 @@
 
 #include <FsRenderingBase/Include/ShapeFontRendererContext.h>
 
+#include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/IId.h>
 
 #include <FsPlatform/Include/IWindow.h>
@@ -302,10 +303,10 @@ namespace fs
                 const int32                 getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept;
 
             public:
-                std::vector<uint64>         _dockedControlHashArray;
+                fs::Vector<uint64>          _dockedControlHashArray;
                 int32                       _dockedControlIndexShown;
-                std::vector<float>          _dockedControlTitleBarOffsetArray; // TitleBar 렌더링 위치 계산에 사용
-                std::vector<float>          _dockedControlTitleBarWidthArray; // TitleBar 순서 변경 시 마우스 Interaction 에 사용!
+                fs::Vector<float>           _dockedControlTitleBarOffsetArray; // TitleBar 렌더링 위치 계산에 사용
+                fs::Vector<float>           _dockedControlTitleBarWidthArray; // TitleBar 순서 변경 시 마우스 Interaction 에 사용!
 
             private:
                 fs::Float2                  _rawDockSize;
@@ -399,8 +400,8 @@ namespace fs
                 const uint32                                getViewportIndex() const noexcept;
                 const uint32                                getViewportIndexForChildren() const noexcept;
                 const uint32                                getViewportIndexForDocks() const noexcept;
-                const std::vector<uint64>&                  getChildControlDataHashKeyArray() const noexcept;
-                const std::vector<uint64>&                  getPreviousChildControlDataHashKeyArray() const noexcept;
+                const fs::Vector<uint64>&                   getChildControlDataHashKeyArray() const noexcept;
+                const fs::Vector<uint64>&                   getPreviousChildControlDataHashKeyArray() const noexcept;
                 const uint16                                getPreviousChildControlCount() const noexcept;
                 const uint16                                getPreviousMaxChildControlCount() const noexcept;
                 void                                        prepareChildControlDataHashKeyArray() noexcept;
@@ -475,8 +476,8 @@ namespace fs
                 uint32                                      _viewportIndex;
                 uint32                                      _viewportIndexForChildren; // Used by window
                 uint32                                      _viewportIndexForDocks;
-                std::vector<uint64>                         _childControlDataHashKeyArray;
-                std::vector<uint64>                         _previousChildControlDataHashKeyArray;
+                fs::Vector<uint64>                          _childControlDataHashKeyArray;
+                fs::Vector<uint64>                          _previousChildControlDataHashKeyArray;
                 uint16                                      _previousMaxChildControlCount;
                 std::unordered_map<uint64, bool>            _childWindowHashKeyMap;
                 DockDatum                                   _dockData[static_cast<uint32>(DockingMethod::COUNT)];
@@ -730,8 +731,8 @@ namespace fs
             fs::RenderingBase::ShapeFontRendererContext         _shapeFontRendererContextForeground;
             fs::RenderingBase::ShapeFontRendererContext         _shapeFontRendererContextTopMost;
 
-            std::vector<D3D11_VIEWPORT>                         _viewportArrayPerFrame;
-            std::vector<D3D11_RECT>                             _scissorRectangleArrayPerFrame;
+            fs::Vector<D3D11_VIEWPORT>                          _viewportArrayPerFrame;
+            fs::Vector<D3D11_RECT>                              _scissorRectangleArrayPerFrame;
 
             D3D11_VIEWPORT                                      _viewportFullScreen;
             D3D11_RECT                                          _scissorRectangleFullScreen;
@@ -743,7 +744,7 @@ namespace fs
             ControlData                                         _rootControlData;
         
         private:
-            std::vector<ControlStackData>                       _controlStackPerFrame;
+            fs::Vector<ControlStackData>                        _controlStackPerFrame;
 
         private:
             mutable bool                                        _isMouseInteractionDonePerFrame;

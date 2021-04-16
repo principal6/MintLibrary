@@ -7,6 +7,8 @@
 
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsMath/Include/Float2.h>
 #include <FsMath/Include/Float3.h>
 #include <FsMath/Include/Float4.h>
@@ -136,8 +138,8 @@ namespace fs
 
         private:
             fs::Int2                _size;
-            std::vector<Color>      _colorArray;
-            std::vector<byte>       _byteArray;
+            fs::Vector<Color>       _colorArray;
+            fs::Vector<byte>        _byteArray;
         };
 
 
@@ -162,7 +164,7 @@ namespace fs
             void                                    setPosition(const fs::Float4& position) noexcept;
             void                                    setPositionZ(const float s) noexcept;
             void                                    setColor(const fs::RenderingBase::Color& color) noexcept;
-            void                                    setColor(const std::vector<fs::RenderingBase::Color>& colorArray) noexcept;
+            void                                    setColor(const fs::Vector<fs::RenderingBase::Color>& colorArray) noexcept;
             virtual void                            setViewportIndex(const uint32 viewportIndex) noexcept;
 
         protected:
@@ -173,7 +175,7 @@ namespace fs
         
         protected:
             fs::Float4                              _position;
-            std::vector<RenderingBase::Color>       _colorArray;
+            fs::Vector<RenderingBase::Color>        _colorArray;
             fs::RenderingBase::Color                _defaultColor;
             float                                   _viewportIndex;
         

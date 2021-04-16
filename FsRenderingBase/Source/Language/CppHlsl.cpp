@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/CppHlsl.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsPlatform/Include/TextFile.h>
 
 #include <typeindex>
@@ -78,7 +80,7 @@ namespace fs
             return _parser.getTypeInfoCount();
         }
 
-        const CppHlslTypeInfo& CppHlsl::getTypeInfo(const uint64 typeIndex) const noexcept
+        const CppHlslTypeInfo& CppHlsl::getTypeInfo(const uint32 typeIndex) const noexcept
         {
             return _parser.getTypeInfo(typeIndex);
         }

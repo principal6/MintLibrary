@@ -19,7 +19,7 @@ namespace fs
 
     public:
                         Vector();
-                        Vector(const uint32 capacity);
+                        Vector(const uint32 size);
                         Vector(const std::initializer_list<T>& initializerList);
                         Vector(const Vector& rhs) noexcept;
                         Vector(Vector&& rhs) noexcept;
@@ -34,7 +34,7 @@ namespace fs
         const T&        operator[](const uint32 index) const noexcept;
 
     public:
-        void            reserve(const uint32 capacity) noexcept;
+        void            reserve(uint32 capacity) noexcept;
         void            resize(const uint32 size) noexcept;
         void            shrink_to_fit() noexcept;
 
@@ -59,6 +59,7 @@ namespace fs
         const T&        back() const noexcept;
         T&              at(const uint32 index) noexcept;
         const T&        at(const uint32 index) const noexcept;
+        const T*        data() const noexcept;
 
     public:
         const uint32    capacity() const noexcept;

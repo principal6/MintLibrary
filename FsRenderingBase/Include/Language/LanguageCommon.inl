@@ -7,16 +7,16 @@ namespace fs
     {
         inline SymbolTableItem::SymbolTableItem()
             : _symbolClassifier{ SymbolClassifier::Identifier }
-            , _symbolIndex{ kUint64Max }
-            , _sourceAt{ kUint64Max }
+            , _symbolIndex{ kUint32Max }
+            , _sourceAt{ kUint32Max }
         {
             __noop;
         }
 
-        inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint64 sourceAt)
+        inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt)
             : _symbolClassifier{ symbolClassifier }
             , _symbolString{ symbolString }
-            , _symbolIndex{ kUint64Max }
+            , _symbolIndex{ kUint32Max }
             , _sourceAt{ sourceAt }
         {
             __noop;
@@ -25,8 +25,8 @@ namespace fs
         inline SymbolTableItem::SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString)
             : _symbolClassifier{ symbolClassifier }
             , _symbolString{ symbolString }
-            , _symbolIndex{ kUint64Max }
-            , _sourceAt{ kUint64Max }
+            , _symbolIndex{ kUint32Max }
+            , _sourceAt{ kUint32Max }
         {
             __noop;
         }
@@ -45,11 +45,11 @@ namespace fs
         {
             _symbolClassifier = SymbolClassifier::POST_CLEARED;
             _symbolString.clear();
-            _symbolIndex = kUint64Max;
+            _symbolIndex = kUint32Max;
             // _sourceAt 은 그냥 남겨둔다.
         }
 
-        FS_INLINE const uint64 SymbolTableItem::index() const noexcept
+        FS_INLINE const uint32 SymbolTableItem::index() const noexcept
         {
             return _symbolIndex;
         }

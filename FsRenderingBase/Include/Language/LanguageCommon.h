@@ -75,7 +75,7 @@ namespace fs
 
         public:
                                     SymbolTableItem();
-                                    SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint64 sourceAt);
+                                    SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt);
                                     SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
 
         public:
@@ -84,17 +84,17 @@ namespace fs
 
         public:
             void                    clearData();
-            const uint64            index() const noexcept;
+            const uint32            index() const noexcept;
 
         public:
             SymbolClassifier        _symbolClassifier;
             std::string             _symbolString;
 
         private:
-            uint64                  _symbolIndex;
+            uint32                  _symbolIndex;
         
         public:
-            uint64                  _sourceAt;
+            uint32                  _sourceAt;
         };
 
 

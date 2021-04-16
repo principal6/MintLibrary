@@ -426,7 +426,7 @@ namespace fs
 
             prepareChildControlDataHashKeyArray();
 
-            parentControlData._childControlDataHashKeyArray.emplace_back(_hashKey);
+            parentControlData._childControlDataHashKeyArray.push_back(_hashKey);
             parentControlData.connectChildWindowIfNot(*this);
 
             _displaySizeMin = prepareControlDataParam._displaySizeMin;
@@ -590,12 +590,12 @@ namespace fs
             return _viewportIndexForDocks;
         }
 
-        FS_INLINE const std::vector<uint64>& GuiContext::ControlData::getChildControlDataHashKeyArray() const noexcept
+        FS_INLINE const fs::Vector<uint64>& GuiContext::ControlData::getChildControlDataHashKeyArray() const noexcept
         {
             return _childControlDataHashKeyArray;
         }
 
-        FS_INLINE const std::vector<uint64>& GuiContext::ControlData::getPreviousChildControlDataHashKeyArray() const noexcept
+        FS_INLINE const fs::Vector<uint64>& GuiContext::ControlData::getPreviousChildControlDataHashKeyArray() const noexcept
         {
             return _previousChildControlDataHashKeyArray;
         }

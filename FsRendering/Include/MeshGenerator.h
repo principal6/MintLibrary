@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
 
 
@@ -44,10 +46,10 @@ namespace fs
             static const fs::RenderingBase::IndexElementType    kNullIndex;
 
         public:
-            std::vector<fs::Float4>                             _positionArray;
-            std::vector<uint32>                                 _vertexToPositionTable;
-            std::vector<fs::RenderingBase::VS_INPUT>            _vertexArray;
-            std::vector<fs::RenderingBase::Face>                _faceArray;
+            fs::Vector<fs::Float4>                              _positionArray;
+            fs::Vector<uint32>                                  _vertexToPositionTable;
+            fs::Vector<fs::RenderingBase::VS_INPUT>             _vertexArray;
+            fs::Vector<fs::RenderingBase::Face>                 _faceArray;
         };
 
 
@@ -124,7 +126,7 @@ namespace fs
             static fs::Float4                       computeNormalFromTangentBitangent(const fs::RenderingBase::VS_INPUT& vertex) noexcept;
 
         public:
-            static void                             calculateTangentBitangent(const fs::RenderingBase::Face& face, std::vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept;
+            static void                             calculateTangentBitangent(const fs::RenderingBase::Face& face, fs::Vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept;
             static void                             smoothNormals(MeshData& meshData) noexcept;
         };
     }

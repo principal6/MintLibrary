@@ -7,6 +7,7 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/StringUtil.h>
 
 
@@ -46,11 +47,11 @@ namespace fs
             std::unordered_map<char, int8>  _tokenIdentifierUmap;
         
         private:
-            std::vector<fs::StringRange>    _tokenArray;
+            fs::Vector<fs::StringRange>     _tokenArray;
 
 #if defined FS_DEBUG || defined FS_USE_TOKEN_STRING_IN_RELEASE
         private:
-            std::vector<std::string>        _tokenStringArray;
+            fs::Vector<std::string>         _tokenStringArray;
 #endif
         };
     }

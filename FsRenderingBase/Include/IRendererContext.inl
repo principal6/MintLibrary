@@ -24,8 +24,10 @@ namespace fs
 
         FS_INLINE void ColorImage::fill(const Color& color) noexcept
         {
-            for (auto& colorEntry : _colorArray)
+            const uint32 colorCount = _colorArray.size();
+            for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
             {
+                Color& colorEntry = _colorArray[colorIndex];
                 colorEntry = color;
             }
         }
@@ -253,7 +255,7 @@ namespace fs
             _defaultColor = color;
         }
 
-        FS_INLINE void IRendererContext::setColor(const std::vector<fs::RenderingBase::Color>& colorArray) noexcept
+        FS_INLINE void IRendererContext::setColor(const fs::Vector<fs::RenderingBase::Color>& colorArray) noexcept
         {
             _colorArray = colorArray;
 

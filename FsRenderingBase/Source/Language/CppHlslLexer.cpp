@@ -152,8 +152,8 @@ namespace fs
             {
                 std::string preprocessedSource;
 
-                uint64 prevSourceAt = 0;
-                uint64 sourceAt = 0;
+                uint32 prevSourceAt = 0;
+                uint32 sourceAt = 0;
 
                 while (continueExecution(sourceAt) == true)
                 {
@@ -171,7 +171,7 @@ namespace fs
                             // Trim
                             {
                                 // Front
-                                uint64 trimFront = 0;
+                                uint32 trimFront = 0;
                                 while (trimFront < prev.size())
                                 {
                                     if (prev[trimFront] == '\r' || prev[trimFront] == '\n')
@@ -202,7 +202,7 @@ namespace fs
                             preprocessedSource.append(prev);
 
                             std::string line;
-                            for (uint64 sourceIter = sourceAt + 2; continueExecution(sourceIter) == true; ++sourceIter)
+                            for (uint32 sourceIter = sourceAt + 2; continueExecution(sourceIter) == true; ++sourceIter)
                             {
                                 if (_source.at(sourceIter) == '\n')
                                 {
@@ -235,7 +235,7 @@ namespace fs
                             LineSkipperTableItem closeLineSkipperTableItem;
                             if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenCloseMarker)
                             {
-                                uint64 sourceIter = sourceAt + 2;
+                                uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
                                     if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
@@ -252,7 +252,7 @@ namespace fs
                             }
                             else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenMarker)
                             {
-                                uint64 sourceIter = sourceAt + 2;
+                                uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
                                     if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
@@ -290,8 +290,8 @@ namespace fs
             }
 
 
-            uint64 prevSourceAt = 0;
-            uint64 sourceAt = 0;
+            uint32 prevSourceAt = 0;
+            uint32 sourceAt = 0;
             while (continueExecution(sourceAt) == true)
             {
                 executeDefault(prevSourceAt, sourceAt);

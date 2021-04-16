@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>
 
 
@@ -84,11 +86,11 @@ namespace fs
                                         : _string{ string }
                                         , _operatorClassifier{ operatorClassifier }
                                     {
-                                        _length = _string.length();
+                                        _length = static_cast<uint32>(_string.length());
                                     }
 
             std::string             _string;
-            uint64                  _length;
+            uint32                  _length;
             OperatorClassifier      _operatorClassifier;
         };
 
@@ -107,7 +109,7 @@ namespace fs
                                         , _lineSkipperGroupId{ lineSkipperGroupId }
                                         , _lineSkipperClassifier{ lineSkipperClassifier }
                                     {
-                                        _length = _string.length();
+                                        _length = static_cast<uint32>(_string.length());
                                     }
 
             static const uint16     getNextGroupId()
@@ -118,7 +120,7 @@ namespace fs
             }
 
             std::string             _string;
-            uint64                  _length;
+            uint32                  _length;
             uint16                  _lineSkipperGroupId;
             LineSkipperClassifier   _lineSkipperClassifier;
 
@@ -158,14 +160,14 @@ namespace fs
             virtual const bool                      execute() abstract;
         
         protected:
-            const bool                              continueExecution(const uint64 sourceAt) const noexcept;
-            const char                              getCh0(const uint64 sourceAt) const noexcept;
-            const char                              getCh1(const uint64 sourceAt) const noexcept;
-            const char                              getCh2(const uint64 sourceAt) const noexcept;
-            void                                    executeDefault(uint64& prevSourceAt, uint64& sourceAt);
+            const bool                              continueExecution(const uint32 sourceAt) const noexcept;
+            const char                              getCh0(const uint32 sourceAt) const noexcept;
+            const char                              getCh1(const uint32 sourceAt) const noexcept;
+            const char                              getCh2(const uint32 sourceAt) const noexcept;
+            void                                    executeDefault(uint32& prevSourceAt, uint32& sourceAt);
             
         private:
-            void                                    advanceExecution(const SymbolClassifier symbolClassifier, const uint64 advance, uint64& prevSourceAt, uint64& sourceAt);
+            void                                    advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt);
         
         protected:
             void                                    endExecution();
@@ -179,19 +181,19 @@ namespace fs
             const bool                              isStatementTerminator(const char input) const noexcept;
             const bool                              isGrouper(const char input, GrouperTableItem& out) const noexcept;
             const bool                              isStringQuote(const char input) const noexcept;
-            const bool                              isPunctuator(const char ch0, const char ch1, const char ch2, uint64& outAdvance) const noexcept;
+            const bool                              isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept;
             const bool                              isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
             const bool                              isNumber(const std::string& input) const noexcept;
             const bool                              isKeyword(const std::string& input) const noexcept;
 
         public:
-            const std::vector<SymbolTableItem>&     getSymbolTable() const noexcept;
+            const fs::Vector<SymbolTableItem>&      getSymbolTable() const noexcept;
             const uint32                            getSymbolCount() const noexcept;
             const SymbolTableItem&                  getSymbol(const uint32 symbolIndex) const noexcept;
 
         protected:
             std::string                             _source;
-            uint64                                  _totalTimeMs;
+            uint32                                  _totalTimeMs;
 
         protected:
             char                                    _escaper;
@@ -201,30 +203,30 @@ namespace fs
             std::unordered_map<char, int8>          _delimiterUmap;
 
         protected:
-            std::vector<LineSkipperTableItem>       _lineSkipperTable;
-            std::unordered_map<uint64, uint64>      _lineSkipperUmap;
+            fs::Vector<LineSkipperTableItem>        _lineSkipperTable;
+            std::unordered_map<uint64, uint32>      _lineSkipperUmap;
 
         protected:
-            std::vector<std::string>                _keywordTable;
-            std::unordered_map<uint64, uint64>      _keywordUmap;
+            fs::Vector<std::string>                 _keywordTable;
+            std::unordered_map<uint64, uint32>      _keywordUmap;
 
         protected:
-            std::vector<GrouperTableItem>           _grouperTable;
-            std::unordered_map<char, uint64>        _grouperUmap;
+            fs::Vector<GrouperTableItem>            _grouperTable;
+            std::unordered_map<char, uint32>        _grouperUmap;
 
         protected:
             std::unordered_map<char, int8>          _stringQuoteUmap;
 
         protected:
-            std::vector<std::string>                _punctuatorTable;
-            std::unordered_map<uint64, uint64>      _punctuatorUmap;
+            fs::Vector<std::string>                 _punctuatorTable;
+            std::unordered_map<uint64, uint32>      _punctuatorUmap;
 
         protected:
-            std::vector<OperatorTableItem>          _operatorTable;
-            std::unordered_map<uint64, uint64>      _operatorUmap;
+            fs::Vector<OperatorTableItem>           _operatorTable;
+            std::unordered_map<uint64, uint32>      _operatorUmap;
 
         protected:
-            std::vector<SymbolTableItem>            _symbolTable;
+            fs::Vector<SymbolTableItem>             _symbolTable;
         };
     }
 }

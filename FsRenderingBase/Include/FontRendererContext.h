@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsMath/Include/Float2.h>
 
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
@@ -77,8 +79,8 @@ namespace fs
         public:
             struct FontData
             {
-                std::vector<GlyphInfo>  _glyphInfoArray;
-                std::vector<uint64>     _charCodeToGlyphIndexMap;
+                fs::Vector<GlyphInfo>   _glyphInfoArray;
+                fs::Vector<uint32>      _charCodeToGlyphIndexMap;
                 DxObjectId              _fontTextureId;
             };
 
@@ -109,7 +111,7 @@ namespace fs
             const bool                          deinitializeFreeType();
         
         private:
-            const bool                          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, std::vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
+            const bool                          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, fs::Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
             void                                completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
             void                                writeMetaData(const int16 textureWidth, const int16 textureHeight, fs::BinaryFileWriter& binaryFileWriter) const noexcept;
 
@@ -138,7 +140,7 @@ namespace fs
             FT_Library                          _ftLibrary;
             FT_Face                             _ftFace;
             int16                               _fontSize;
-            std::vector<GlyphRange>             _glyphRangeArray;
+            fs::Vector<GlyphRange>              _glyphRangeArray;
         
         private:
             FontData                            _fontData;

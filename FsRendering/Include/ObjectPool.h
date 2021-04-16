@@ -7,6 +7,8 @@
 
 #include <FsRendering/Include/Object.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -56,7 +58,7 @@ namespace fs
             void                                                                updateScreenSize(const fs::Float2& screenSize);
 
         public:
-            const std::vector<fs::Rendering::MeshComponent*>&                   getMeshComponents() const noexcept;
+            const fs::Vector<fs::Rendering::MeshComponent*>&                    getMeshComponents() const noexcept;
 
         public:
             const uint32                                                        getObjectCount() const noexcept;
@@ -66,10 +68,10 @@ namespace fs
             const DeltaTimer* const                                             _deltaTimer;
 
         private:
-            std::vector<fs::Rendering::Object*>                                 _objectArray;
+            fs::Vector<fs::Rendering::Object*>                                  _objectArray;
 
         private:
-            std::vector<fs::Rendering::MeshComponent*>                          _meshComponentArray;
+            fs::Vector<fs::Rendering::MeshComponent*>                           _meshComponentArray;
         };
     }
 }

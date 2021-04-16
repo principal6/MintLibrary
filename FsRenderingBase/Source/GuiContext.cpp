@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/GuiContext.h>
 
+#include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
@@ -650,7 +651,7 @@ namespace fs
                 }
 
                 processDock(windowControlData, shapeFontRendererContext);
-                _controlStackPerFrame.emplace_back(ControlStackData(windowControlData));
+                _controlStackPerFrame.push_back(ControlStackData(windowControlData));
             }
             
             if (isVisible == true)
@@ -720,7 +721,7 @@ namespace fs
 
             if (isClicked == true)
             {
-                _controlStackPerFrame.emplace_back(ControlStackData(controlData));
+                _controlStackPerFrame.push_back(ControlStackData(controlData));
             }
             return isClicked;
         }
@@ -763,7 +764,7 @@ namespace fs
 
             if (isClicked == true)
             {
-                _controlStackPerFrame.emplace_back(ControlStackData(controlData));
+                _controlStackPerFrame.push_back(ControlStackData(controlData));
             }
             return isClicked;
         }
@@ -873,7 +874,7 @@ namespace fs
                 const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
                 if (trackControlData._controlValue.getThumbAt() != thumbAt)
                 {
-                    _controlStackPerFrame.emplace_back(ControlStackData(trackControlData));
+                    _controlStackPerFrame.push_back(ControlStackData(trackControlData));
 
                     isChanged = true;
                 }
@@ -1465,7 +1466,7 @@ namespace fs
             {
                 controlData._controlValue.disableScrollBar(fs::Gui::ScrollBarType::Vert);
             }
-            _controlStackPerFrame.emplace_back(ControlStackData(controlData));
+            _controlStackPerFrame.push_back(ControlStackData(controlData));
             return true;
         }
 
@@ -1591,7 +1592,7 @@ namespace fs
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(menuBar._displaySize, 0.0f, 0.0f, 0.0f);
 
-            _controlStackPerFrame.emplace_back(ControlStackData(menuBar));
+            _controlStackPerFrame.push_back(ControlStackData(menuBar));
             return true;
         }
 
@@ -1666,7 +1667,7 @@ namespace fs
             const bool result = (isClicked || isMeSelected || (isParentAncestorPressed && wasMeSelected));
             if (result == true)
             {
-                _controlStackPerFrame.emplace_back(ControlStackData(menuBarItem));
+                _controlStackPerFrame.push_back(ControlStackData(menuBarItem));
             }
             return result;
         }
@@ -1757,7 +1758,7 @@ namespace fs
             const bool result = (isToggled || isPresssed || menuItem._updateCount <= 1);
             if (result == true)
             {
-                _controlStackPerFrame.emplace_back(ControlStackData(menuItem));
+                _controlStackPerFrame.push_back(ControlStackData(menuItem));
             }
             return result;
         }
@@ -2135,8 +2136,8 @@ namespace fs
         {
             controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
 
-            _scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
-            _viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
+            _viewportArrayPerFrame.push_back(_viewportFullScreen);
 
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             if (parentControlData.isTypeOf(ControlType::Window) == true && controlData.isTypeOf(ControlType::Window) == true)
@@ -2156,16 +2157,16 @@ namespace fs
         {
             controlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
 
-            _scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
-            _viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
+            _viewportArrayPerFrame.push_back(_viewportFullScreen);
         }
 
         void GuiContext::pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle)
         {
             controlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
 
-            _scissorRectangleArrayPerFrame.emplace_back(scissorRectangle);
-            _viewportArrayPerFrame.emplace_back(_viewportFullScreen);
+            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
+            _viewportArrayPerFrame.push_back(_viewportFullScreen);
         }
 
         fs::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const fs::Float2& titleBarSize, const fs::Rect& innerPadding, VisibleState& inoutParentVisibleState)
@@ -2260,7 +2261,7 @@ namespace fs
             }
             shapeFontRendererContext.drawDynamicText(windowTitle, titleBarTextPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, 0.9375f);
 
-            _controlStackPerFrame.emplace_back(ControlStackData(controlData));
+            _controlStackPerFrame.push_back(ControlStackData(controlData));
 
             // Close button
             if (parentControlData.isDocking() == false)
@@ -3233,7 +3234,7 @@ namespace fs
             {
                 dockedControlData._displaySize = dockControlData.getDockSize(dockedControlData._lastDockingMethod);
             }
-            parentControlDockDatum._dockedControlHashArray.emplace_back(dockedControlData.getHashKey());
+            parentControlDockDatum._dockedControlHashArray.push_back(dockedControlData.getHashKey());
 
             dockedControlData._resizingMask = ResizingMask::fromDockingMethod(dockedControlData._lastDockingMethod);
             dockedControlData._position = dockControlData.getDockPosition(dockedControlData._lastDockingMethod);
@@ -3266,7 +3267,7 @@ namespace fs
             }
             if (0 <= indexToErase)
             {
-                dockDatum._dockedControlHashArray.erase(dockDatum._dockedControlHashArray.begin() + indexToErase);
+                dockDatum._dockedControlHashArray.erase(indexToErase);
             }
             else
             {
@@ -3450,9 +3451,11 @@ namespace fs
 
             const ControlData& controlData = getControlData(currentControlHashKey);
             const auto& previousChildControlDataHashKeyArray = controlData.getPreviousChildControlDataHashKeyArray();
-            for (const auto& previousChildControlDataHashKey : previousChildControlDataHashKeyArray)
+            const uint32 previousChildControlCount = previousChildControlDataHashKeyArray.size();
+            for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                if (isDescendantControlRecursiveXXX(previousChildControlDataHashKey, descendantCandidateHashKey) == true)
+                const uint64 previousChildControlHashKey = previousChildControlDataHashKeyArray[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, descendantCandidateHashKey) == true)
                 {
                     return true;
                 }
@@ -3535,9 +3538,11 @@ namespace fs
         const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
         {
             const auto& previousChildControlDataHashKeyArray = controlData.getPreviousChildControlDataHashKeyArray();
-            for (const auto& previousChildControlDataHashKey : previousChildControlDataHashKeyArray)
+            const uint32 previousChildControlCount = previousChildControlDataHashKeyArray.size();
+            for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                if (isDescendantControlRecursiveXXX(previousChildControlDataHashKey, _pressedControlHashKey) == true)
+                const uint64 previousChildControlHashKey = previousChildControlDataHashKeyArray[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _pressedControlHashKey) == true)
                 {
                     return true;
                 }
@@ -3548,9 +3553,11 @@ namespace fs
         const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
         {
             const auto& previousChildControlDataHashKeyArray = controlData.getPreviousChildControlDataHashKeyArray();
-            for (const auto& previousChildControlDataHashKey : previousChildControlDataHashKeyArray)
+            const uint32 previousChildControlCount = previousChildControlDataHashKeyArray.size();
+            for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                if (isDescendantControlRecursiveXXX(previousChildControlDataHashKey, _hoveredControlHashKey) == true)
+                const uint64 previousChildControlHashKey = previousChildControlDataHashKeyArray[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _hoveredControlHashKey) == true)
                 {
                     return true;
                 }
@@ -3634,8 +3641,8 @@ namespace fs
             _scissorRectangleArrayPerFrame.clear();
 
             // FullScreen Viewport & ScissorRectangle is at index 0!
-            _viewportArrayPerFrame.emplace_back(_viewportFullScreen);
-            _scissorRectangleArrayPerFrame.emplace_back(_scissorRectangleFullScreen);
+            _viewportArrayPerFrame.push_back(_viewportFullScreen);
+            _scissorRectangleArrayPerFrame.push_back(_scissorRectangleFullScreen);
 
             if (_resizedControlHashKey == 0)
             {

@@ -9,6 +9,8 @@
 
 #include <FsPlatform/Include/IFile.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -36,7 +38,7 @@ namespace fs
         const bool              canRead(const uint32 byteCount) const noexcept;
 
     private:
-        std::vector<byte>       _byteArray;
+        fs::Vector<byte>        _byteArray;
         mutable uint32          _at{ 0 };
     };
 
@@ -63,7 +65,7 @@ namespace fs
         void                    write(const char* const in) noexcept;
 
     private:
-        std::vector<byte>       _byteArray;
+        fs::Vector<byte>        _byteArray;
     };
 }
 

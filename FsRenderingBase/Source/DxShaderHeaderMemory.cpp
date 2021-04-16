@@ -1,6 +1,7 @@
 ﻿#include <stdafx.h>
 #include <FsRenderingBase/Include/DxShaderHeaderMemory.h>
 
+#include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/ScopeString.hpp>
 
 
@@ -10,8 +11,8 @@ namespace fs
     {
         void DxShaderHeaderMemory::pushHeader(const char* const name, const char* const content)
         {
-            _fileNameArray.emplace_back(name);
-            _fileContentArray.emplace_back(content);
+            _fileNameArray.push_back(name);
+            _fileContentArray.push_back(content);
         }
 
         HRESULT DxShaderHeaderMemory::Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes)

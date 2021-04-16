@@ -3,6 +3,8 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsRenderingBase/Include/GraphicDevice.h>
 
 
@@ -21,13 +23,13 @@ namespace fs
         }
 
         template <typename T>
-        FS_INLINE std::vector<T>& LowLevelRenderer<T>::vertexArray() noexcept
+        FS_INLINE fs::Vector<T>& LowLevelRenderer<T>::vertexArray() noexcept
         {
             return _vertexArray;
         }
 
         template <typename T>
-        FS_INLINE std::vector<IndexElementType>& LowLevelRenderer<T>::indexArray() noexcept
+        FS_INLINE fs::Vector<IndexElementType>& LowLevelRenderer<T>::indexArray() noexcept
         {
             return _indexArray;
         }

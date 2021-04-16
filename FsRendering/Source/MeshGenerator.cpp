@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRendering/Include/MeshGenerator.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsMath/Include/Float2x2.h>
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>
@@ -64,8 +66,8 @@ namespace fs
         {
             fs::RenderingBase::VS_INPUT vertex;
             vertex._positionU = meshData._positionArray[positionIndex];
-            meshData._vertexArray.emplace_back(vertex);
-            meshData._vertexToPositionTable.emplace_back(positionIndex);
+            meshData._vertexArray.push_back(vertex);
+            meshData._vertexToPositionTable.push_back(positionIndex);
         }
 
         FS_INLINE void MeshGenerator::setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
@@ -137,7 +139,7 @@ namespace fs
             face._vertexIndexArray[1] = vertexOffset + 1;
             face._vertexIndexArray[2] = vertexOffset + 2;
             calculateTangentBitangent(face, meshData._vertexArray);
-            meshData._faceArray.emplace_back(face);
+            meshData._faceArray.push_back(face);
         }
 
         void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
@@ -147,13 +149,13 @@ namespace fs
             face._vertexIndexArray[1] = vertexOffset + 1;
             face._vertexIndexArray[2] = vertexOffset + 2;
             calculateTangentBitangent(face, meshData._vertexArray);
-            meshData._faceArray.emplace_back(face);
+            meshData._faceArray.push_back(face);
 
             face._vertexIndexArray[0] = vertexOffset + 2;
             face._vertexIndexArray[1] = vertexOffset + 1;
             face._vertexIndexArray[2] = vertexOffset + 3;
             calculateTangentBitangent(face, meshData._vertexArray);
-            meshData._faceArray.emplace_back(face);
+            meshData._faceArray.push_back(face);
         }
 
         void MeshGenerator::recalculateTangentBitangentFromNormal(const fs::Float4& normal, fs::RenderingBase::VS_INPUT& vertex) noexcept
@@ -171,7 +173,7 @@ namespace fs
             return fs::Float4::crossNormalize(vertex._tangentV, vertex._bitangentW);
         }
 
-        void MeshGenerator::calculateTangentBitangent(const fs::RenderingBase::Face& face, std::vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept
+        void MeshGenerator::calculateTangentBitangent(const fs::RenderingBase::Face& face, fs::Vector<fs::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept
         {
             fs::RenderingBase::VS_INPUT& v0 = inoutVertexArray[face._vertexIndexArray[0]];
             fs::RenderingBase::VS_INPUT& v1 = inoutVertexArray[face._vertexIndexArray[1]];
@@ -233,7 +235,7 @@ namespace fs
             const uint32 vertexCount = meshData.getVertexCount();
             const uint32 faceCount = meshData.getFaceCount();
             const uint32 positionCount = meshData.getPositionCount();
-            std::vector<fs::Float4> normalArray(positionCount);
+            fs::Vector<fs::Float4> normalArray(positionCount);
             for (uint32 faceIndex = 0; faceIndex < faceCount; faceIndex++)
             {
                 const uint16 v0Index = meshData._faceArray[faceIndex]._vertexIndexArray[0];
@@ -628,7 +630,7 @@ namespace fs
                 }
 
             private:
-                std::vector<std::unordered_map<int32, int32>>   _edgeDataMap;
+                fs::Vector<std::unordered_map<int32, int32>>    _edgeDataMap;
             };
 
             PositionEdgeGraph positionEdgeGraph;

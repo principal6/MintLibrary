@@ -1,6 +1,9 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/ShapeFontRendererContext.h>
 
+#include <FsContainer/Include/Vector.hpp>
+#include <FsContainer/Include/StringUtil.hpp>
+
 #include <FsRenderingBase/Include/GraphicDevice.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
@@ -173,7 +176,7 @@ namespace fs
             {
                 fs::RenderingBase::SB_Transform sbTransformIdentity;
                 sbTransformIdentity._transformMatrix.setIdentity();
-                _sbTransformData.emplace_back(sbTransformIdentity);
+                _sbTransformData.push_back(sbTransformIdentity);
             }
         }
 

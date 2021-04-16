@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 //#define FS_UNIQUE_STRING_EXPOSE_ID
 
@@ -125,7 +127,7 @@ namespace fs
         std::unordered_map<uint64, UniqueStringAId>     _registrationMap;
 
     private:
-        std::vector<uint32>                             _offsetArray;
+        fs::Vector<uint32>                              _offsetArray;
         char*                                           _rawMemory;
         uint32                                          _rawCapacity;
         uint32                                          _totalLength;

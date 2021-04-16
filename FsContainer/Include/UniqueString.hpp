@@ -4,6 +4,8 @@
 
 #include <FsContainer/Include/StringUtil.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 
 namespace fs
 {

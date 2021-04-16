@@ -3,7 +3,7 @@
 
 #include <FsPlatform/Include/BinaryFile.h>
 
-#include <FsContainer/Include/StringUtil.h>
+#include <FsContainer/Include/StringUtil.hpp>
 
 
 namespace fs

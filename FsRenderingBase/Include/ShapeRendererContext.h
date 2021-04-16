@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsRenderingBase/Include/IRendererContext.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.h>
 
@@ -122,7 +124,7 @@ namespace fs
             DxObjectId                              _pixelShaderId;
 
         protected:
-            std::vector<SB_Transform>               _sbTransformData;
+            fs::Vector<SB_Transform>                _sbTransformData;
             DxObjectId                              _sbTransformBufferId;
         
         protected:

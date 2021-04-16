@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRendering/Include/Object.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsRendering/Include/IObjectComponent.h>
 #include <FsRendering/Include/ObjectPool.hpp>
 #include <FsRendering/Include/TransformComponent.h>
@@ -40,7 +42,7 @@ namespace fs
 
                 objectComponent->_ownerObject = this;
 
-                _componentArray.emplace_back(objectComponent);
+                _componentArray.push_back(objectComponent);
             }
         }
 

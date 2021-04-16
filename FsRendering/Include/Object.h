@@ -7,7 +7,10 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <FsMath/Include/Float4x4.h>
+
 #include <FsRendering/Include/IObjectComponent.h>
 
 
@@ -62,7 +65,7 @@ namespace fs
             const ObjectType                _objectType;
 
         protected:
-            std::vector<IObjectComponent*>   _componentArray;
+            fs::Vector<IObjectComponent*>   _componentArray;
         };
 
     }

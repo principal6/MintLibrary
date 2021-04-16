@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/ILexer.h>
 
+#include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
 
@@ -55,8 +56,8 @@ namespace fs
                 const uint64 keyOpenClose = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpenClose) == _lineSkipperUmap.end())
                 {
-                    _lineSkipperTable.emplace_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenCloseMarker, 0));
-                    const uint64 lineSkipperIndex = _lineSkipperTable.size() - 1;
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenCloseMarker, 0));
+                    const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(std::make_pair(keyOpenClose, lineSkipperIndex));
                 }
                 return;
@@ -68,16 +69,16 @@ namespace fs
                 const uint64 keyOpen = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpen) == _lineSkipperUmap.end())
                 {
-                    _lineSkipperTable.emplace_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenMarker, nextGroupId));
-                    const uint64 lineSkipperIndex = _lineSkipperTable.size() - 1;
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenMarker, nextGroupId));
+                    const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(std::make_pair(keyOpen, lineSkipperIndex));
                 }
 
                 const uint64 keyClose = (1 == lengthClose) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
                 if (_lineSkipperUmap.find(keyClose) == _lineSkipperUmap.end())
                 {
-                    _lineSkipperTable.emplace_back(LineSkipperTableItem(lineSkipperClose, LineSkipperClassifier::CloseMarker, nextGroupId));
-                    const uint64 lineSkipperIndex = _lineSkipperTable.size() - 1;
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, LineSkipperClassifier::CloseMarker, nextGroupId));
+                    const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(std::make_pair(keyClose, lineSkipperIndex));
                 }
             }
@@ -95,8 +96,8 @@ namespace fs
             const uint64 key = (1 == length) ? lineSkipper[0] : static_cast<uint64>(lineSkipper[1]) * 255 + lineSkipper[0];
             if (_lineSkipperUmap.find(key) == _lineSkipperUmap.end())
             {
-                _lineSkipperTable.emplace_back(LineSkipperTableItem(lineSkipper, LineSkipperClassifier::SingleMarker, 0));
-                const uint64 lineSkipperIndex = _lineSkipperTable.size() - 1;
+                _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipper, LineSkipperClassifier::SingleMarker, 0));
+                const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                 _lineSkipperUmap.insert(std::make_pair(key, lineSkipperIndex));
             }
         }
@@ -106,8 +107,8 @@ namespace fs
             const uint64 hash = fs::StringUtil::hashRawString64(keyword);
             if (_keywordUmap.find(hash) == _keywordUmap.end())
             {
-                _keywordTable.emplace_back(keyword);
-                const uint64 keywordIndex = _keywordTable.size() - 1;
+                _keywordTable.push_back(keyword);
+                const uint32 keywordIndex = _keywordTable.size() - 1;
                 _keywordUmap.insert(std::make_pair(hash, keywordIndex));
             }
         }
@@ -116,8 +117,8 @@ namespace fs
         {
             if (_grouperUmap.find(grouper) == _grouperUmap.end())
             {
-                _grouperTable.emplace_back(GrouperTableItem(grouper, grouperClassifier));
-                const uint64 grouperIndex = _grouperTable.size() - 1;
+                _grouperTable.push_back(GrouperTableItem(grouper, grouperClassifier));
+                const uint32 grouperIndex = _grouperTable.size() - 1;
 
                 _grouperUmap.insert(std::make_pair(grouper, grouperIndex));
             }
@@ -143,9 +144,9 @@ namespace fs
             const uint64 key = fs::StringUtil::hashRawString64(punctuator);
             if (_punctuatorUmap.find(key) == _punctuatorUmap.end())
             {
-                _punctuatorTable.emplace_back(punctuator);
+                _punctuatorTable.push_back(punctuator);
 
-                const uint64 punctuatorIndex = _punctuatorTable.size() - 1;
+                const uint32 punctuatorIndex = _punctuatorTable.size() - 1;
                 _punctuatorUmap.insert(std::make_pair(key, punctuatorIndex));
             }
         }
@@ -167,40 +168,39 @@ namespace fs
             const uint64 key = (1 == length) ? operator_[0] : static_cast<uint64>(operator_[1]) * 255 + operator_[0];
             if (_operatorUmap.find(key) == _operatorUmap.end())
             {
-                _operatorTable.emplace_back(OperatorTableItem(operator_, operatorClassifier));
-                const uint64 operatorIndex = _operatorTable.size() - 1;
+                _operatorTable.push_back(OperatorTableItem(operator_, operatorClassifier));
+                const uint32 operatorIndex = _operatorTable.size() - 1;
                 _operatorUmap.insert(std::make_pair(key, operatorIndex));
             }
         }
 
-        const bool ILexer::continueExecution(const uint64 sourceAt) const noexcept
+        const bool ILexer::continueExecution(const uint32 sourceAt) const noexcept
         {
             return sourceAt < _source.length();
         }
 
-        const char ILexer::getCh0(const uint64 sourceAt) const noexcept
+        const char ILexer::getCh0(const uint32 sourceAt) const noexcept
         {
             return _source.at(sourceAt);
         }
 
-        const char ILexer::getCh1(const uint64 sourceAt) const noexcept
+        const char ILexer::getCh1(const uint32 sourceAt) const noexcept
         {
             return (sourceAt + 1 < _source.length()) ? _source.at(sourceAt + 1) : 0;
         }
 
-        const char ILexer::getCh2(const uint64 sourceAt) const noexcept
+        const char ILexer::getCh2(const uint32 sourceAt) const noexcept
         {
             return (sourceAt + 2 < _source.length()) ? _source.at(sourceAt + 2) : 0;
         }
 
-        void ILexer::executeDefault(uint64& prevSourceAt, uint64& sourceAt)
+        void ILexer::executeDefault(uint32& prevSourceAt, uint32& sourceAt)
         {
-            const uint64 sourceLength = _source.length();
             const char ch0 = getCh0(sourceAt);
             const char ch1 = getCh1(sourceAt);
             const char ch2 = getCh2(sourceAt);
             
-            uint64 advance = 0;
+            uint32 advance = 0;
             SymbolClassifier symbolClassifier = SymbolClassifier::Identifier;
             OperatorTableItem operatorTableItem;
             GrouperTableItem grouperTableItem;
@@ -238,16 +238,15 @@ namespace fs
             advanceExecution(symbolClassifier, advance, prevSourceAt, sourceAt);
         }
 
-        void ILexer::advanceExecution(const SymbolClassifier symbolClassifier, const uint64 advance, uint64& prevSourceAt, uint64& sourceAt)
+        void ILexer::advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt)
         {
             if (0 < advance)
             {
-                const uint64 sourceLength = _source.length();
                 const char ch0 = getCh0(sourceAt);
                 const char ch1 = getCh1(sourceAt);
                 const char ch2 = getCh2(sourceAt);
 
-                const uint64 tokenLength = sourceAt - prevSourceAt;
+                const uint32 tokenLength = sourceAt - prevSourceAt;
                 if (symbolClassifier == SymbolClassifier::Delimiter)
                 {
                     if (tokenLength == 0)
@@ -280,14 +279,14 @@ namespace fs
                         tokenSymbolClassifier = SymbolClassifier::Keyword;
                     }
 
-                    _symbolTable.emplace_back(SymbolTableItem(tokenSymbolClassifier, tokenString, sourceAt));
+                    _symbolTable.push_back(SymbolTableItem(tokenSymbolClassifier, tokenString, sourceAt));
                 }
 
                 // Delimiter 제외 자기 자신도 symbol 이다!!!
                 if (symbolClassifier != SymbolClassifier::Delimiter)
                 {
                     char symbolStringRaw[4] = { ch0, (2 == advance) ? ch1 : 0, (3 == advance) ? ch2 : 0, 0 };
-                    _symbolTable.emplace_back(SymbolTableItem(symbolClassifier, symbolStringRaw, sourceAt));
+                    _symbolTable.push_back(SymbolTableItem(symbolClassifier, symbolStringRaw, sourceAt));
                 }
 
                 prevSourceAt = sourceAt + advance;
@@ -303,8 +302,8 @@ namespace fs
         {
             // String Literal
             {
-                uint64 symbolIndex = 0;
-                const uint64 symbolCount = _symbolTable.size();
+                uint32 symbolIndex = 0;
+                const uint32 symbolCount = _symbolTable.size();
                 while (symbolIndex < symbolCount)
                 {
                     if (_symbolTable[symbolIndex]._symbolClassifier == SymbolClassifier::StringQuote)
@@ -331,8 +330,8 @@ namespace fs
 
         void ILexer::updateSymbolIndex()
         {
-            const uint64 symbolCount = _symbolTable.size();
-            for (uint64 symbolIndex = 0; symbolIndex < symbolCount; ++symbolIndex)
+            const uint32 symbolCount = _symbolTable.size();
+            for (uint32 symbolIndex = 0; symbolIndex < symbolCount; ++symbolIndex)
             {
                 _symbolTable[symbolIndex]._symbolIndex = symbolIndex;
             }
@@ -387,7 +386,7 @@ namespace fs
             return _stringQuoteUmap.find(input) != _stringQuoteUmap.end();
         }
 
-        const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint64& outAdvance) const noexcept
+        const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
         {
             const char keyString3[4]{ ch0, ch1, ch2, '\0' };
             const uint64 key3 = fs::StringUtil::hashRawString64(keyString3);
@@ -481,7 +480,7 @@ namespace fs
             return static_cast<uint32>(_symbolTable.size());
         }
 
-        const std::vector<SymbolTableItem>& ILexer::getSymbolTable() const noexcept
+        const fs::Vector<SymbolTableItem>& ILexer::getSymbolTable() const noexcept
         {
             return _symbolTable;
         }

@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -52,9 +54,9 @@ namespace fs
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
         void            excludeExtension(std::string& inoutText);
 
-        static void     tokenize(const std::string& inputString, const char delimiter, std::vector<std::string>& outArray);
-        static void     tokenize(const std::string& inputString, const std::vector<char>& delimiterArray, std::vector<std::string>& outArray);
-        static void     tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const char delimiter, fs::Vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const std::string& delimiterString, fs::Vector<std::string>& outArray);
     }
 }
 

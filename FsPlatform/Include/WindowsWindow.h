@@ -7,6 +7,8 @@
 
 #include <FsPlatform/Include/IWindow.h>
 
+#include <FsContainer/Include/Vector.h>
+
 
 namespace fs
 {
@@ -25,7 +27,7 @@ namespace fs
             LRESULT                             redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
         private:
-            std::vector<WindowsWindow*>         _windowArray;
+            fs::Vector<WindowsWindow*>          _windowArray;
             std::unordered_map<HWND, uint8>     _hWndMap;
         };
 #pragma endregion
@@ -96,7 +98,7 @@ namespace fs
         
         private:
             HCURSOR                             _cursorArray[static_cast<uint32>(CursorType::COUNT)];
-            std::vector<WparamKeyCodePair>      _wParamKeyCodePairArray;
+            fs::Vector<WparamKeyCodePair>       _wParamKeyCodePairArray;
             BYTE                                _byteArrayForRawInput[sizeof(RAWINPUT)];
         };
 #pragma endregion

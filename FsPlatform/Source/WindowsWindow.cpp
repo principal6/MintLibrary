@@ -1,6 +1,7 @@
 ﻿#include <FsPlatform/Include/WindowsWindow.h>
 
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/Vector.hpp>
 
 #include <FsMath/Include/Rect.h>
 
@@ -183,42 +184,42 @@ namespace fs
         {
             _wParamKeyCodePairArray.clear();
             
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_ESCAPE, EventData::KeyCode::Escape));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_RETURN, EventData::KeyCode::Enter));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_UP, EventData::KeyCode::Up));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_DOWN, EventData::KeyCode::Down));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_LEFT, EventData::KeyCode::Left));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_RIGHT, EventData::KeyCode::Right));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_DELETE, EventData::KeyCode::Delete));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_HOME, EventData::KeyCode::Home));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_END, EventData::KeyCode::End));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_CONTROL, EventData::KeyCode::Control));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair(VK_MENU, EventData::KeyCode::Alt));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('Q', EventData::KeyCode::Q));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('W', EventData::KeyCode::W));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('E', EventData::KeyCode::E));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('R', EventData::KeyCode::R));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('T', EventData::KeyCode::T));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('Y', EventData::KeyCode::Y));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('A', EventData::KeyCode::A));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('S', EventData::KeyCode::S));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('D', EventData::KeyCode::D));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('F', EventData::KeyCode::F));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('Z', EventData::KeyCode::Z));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('X', EventData::KeyCode::X));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('C', EventData::KeyCode::C));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('V', EventData::KeyCode::V));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('0', EventData::KeyCode::Num0));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('1', EventData::KeyCode::Num1));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('2', EventData::KeyCode::Num2));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('3', EventData::KeyCode::Num3));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('4', EventData::KeyCode::Num4));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('5', EventData::KeyCode::Num5));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('6', EventData::KeyCode::Num6));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('7', EventData::KeyCode::Num7));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('8', EventData::KeyCode::Num8));
-            _wParamKeyCodePairArray.emplace_back(WparamKeyCodePair('9', EventData::KeyCode::Num9));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_ESCAPE, EventData::KeyCode::Escape));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RETURN, EventData::KeyCode::Enter));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_UP, EventData::KeyCode::Up));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DOWN, EventData::KeyCode::Down));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_LEFT, EventData::KeyCode::Left));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RIGHT, EventData::KeyCode::Right));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DELETE, EventData::KeyCode::Delete));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_HOME, EventData::KeyCode::Home));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_END, EventData::KeyCode::End));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_CONTROL, EventData::KeyCode::Control));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_MENU, EventData::KeyCode::Alt));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Q', EventData::KeyCode::Q));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('W', EventData::KeyCode::W));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('E', EventData::KeyCode::E));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('R', EventData::KeyCode::R));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('T', EventData::KeyCode::T));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Y', EventData::KeyCode::Y));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('A', EventData::KeyCode::A));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('S', EventData::KeyCode::S));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('D', EventData::KeyCode::D));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('F', EventData::KeyCode::F));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Z', EventData::KeyCode::Z));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('X', EventData::KeyCode::X));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('C', EventData::KeyCode::C));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('V', EventData::KeyCode::V));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('0', EventData::KeyCode::Num0));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('1', EventData::KeyCode::Num1));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('2', EventData::KeyCode::Num2));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('3', EventData::KeyCode::Num3));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('4', EventData::KeyCode::Num4));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('5', EventData::KeyCode::Num5));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('6', EventData::KeyCode::Num6));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('7', EventData::KeyCode::Num7));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('8', EventData::KeyCode::Num8));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('9', EventData::KeyCode::Num9));
         }
 
         EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept

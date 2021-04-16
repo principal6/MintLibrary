@@ -3,6 +3,7 @@
 
 #include <FsRenderingBase/Include/Language/ILexer.h>
 
+#include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 #include <FsContainer/Include/Tree.hpp>
 
@@ -57,7 +58,7 @@ namespace fs
             TreeNodeAccessor<SyntaxTreeItem> syntaxTreeRootNode = getSyntaxTreeRootNode();
             _globalNamespaceNode = syntaxTreeRootNode.insertChildNode(SyntaxTreeItem(kGlobalNamespaceSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_Namespace));
 
-            uint64 advanceCount = 0;
+            uint32 advanceCount = 0;
             while (needToContinueParsing() == true)
             {
                 if (parseCode(getSymbolPosition(), _globalNamespaceNode, advanceCount) == false)
@@ -78,7 +79,7 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseCode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount)
         {
             _currentScopeNamespaceNode = namespaceNode;
 
@@ -190,12 +191,12 @@ namespace fs
             const uint32 correctedTypeSize = (((typeSize - 1) / 16) + 1) * 16;
             typeInfo.setSize(correctedTypeSize);
 
-            _typeInfoArray.emplace_back(typeInfo);
-            const uint64 typeInfoIndex = _typeInfoArray.size() - 1;
+            _typeInfoArray.push_back(typeInfo);
+            const uint32 typeInfoIndex = _typeInfoArray.size() - 1;
             _typeInfoUmap.insert(std::make_pair(typeInfo.getTypeName(), typeInfoIndex));
         }
 
-        const bool CppHlslParser::parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseClassStruct(const bool isStruct, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount)
         {
             // class A;
             // class alignas(4) A;
@@ -211,7 +212,7 @@ namespace fs
 
             TreeNodeAccessor classStructNode = namespaceNode.insertChildNode(SyntaxTreeItem(currentSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Keyword));
 
-            uint64 identifierOffset = 1;
+            uint32 identifierOffset = 1;
             {
                 const SymbolTableItem& symbol = getSymbol(symbolPosition + 1);
                 if (symbol._symbolClassifier != SymbolClassifier::Identifier)
@@ -224,7 +225,7 @@ namespace fs
 
                     if (symbol._symbolString == "alignas")
                     {
-                        uint64 alignasAdvanceCount = 1;
+                        uint32 alignasAdvanceCount = 1;
                         FS_RETURN_FALSE_IF_NOT(parseAlignas(symbolPosition + 1, classStructNode, alignasAdvanceCount) == true);
                         identifierOffset += alignasAdvanceCount;
                     }
@@ -237,17 +238,17 @@ namespace fs
             }
             
             {
-                const uint64 identifierSymbolPosition = symbolPosition + identifierOffset;
+                const uint32 identifierSymbolPosition = symbolPosition + identifierOffset;
                 const SymbolTableItem& classIdentifierSymbol = getSymbol(identifierSymbolPosition);
 
-                const uint64 typeIndex = registerType(namespaceNode, CppHlslTypeTableItem(classIdentifierSymbol, CppHlslUserDefinedTypeInfo::Default));
+                const uint32 typeIndex = registerType(namespaceNode, CppHlslTypeTableItem(classIdentifierSymbol, CppHlslUserDefinedTypeInfo::Default));
                 
                 classStructNode.insertChildNode(SyntaxTreeItem(classIdentifierSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Identifier));
 
                 // TODO: final, abstract 등의 postfix 키워드...
-                const uint64 postIdentifierSymbolPosition = identifierSymbolPosition + 1;
+                const uint32 postIdentifierSymbolPosition = identifierSymbolPosition + 1;
                 const SymbolTableItem& postIdentifierSymbol = getSymbol(postIdentifierSymbolPosition);
-                uint64 openSymbolPosition = postIdentifierSymbolPosition;
+                uint32 openSymbolPosition = postIdentifierSymbolPosition;
                 if (isCppHlslDefinition(CppHlslDefinitionEnum::RegisterIndex, postIdentifierSymbol._symbolString) == true)
                 {
                     const SymbolTableItem& registerIndexSymbol = getSymbol(postIdentifierSymbolPosition + 2);
@@ -276,7 +277,7 @@ namespace fs
                         return false;
                     }
 
-                    uint64 depthMathcingCloseSymbolPosition = 0;
+                    uint32 depthMathcingCloseSymbolPosition = 0;
                     if (findNextDepthMatchingCloseSymbol(openSymbolPosition, "}", depthMathcingCloseSymbolPosition) == false)
                     {
                         reportError(postIdentifierSymbol, ErrorType::NoMatchingGrouper, "'}' 를 찾지 못했습니다.");
@@ -290,12 +291,12 @@ namespace fs
                         return false;
                     }
 
-                    uint64 currentPosition = openSymbolPosition + 1;
+                    uint32 currentPosition = openSymbolPosition + 1;
                     CppHlslSubInfo_AccessModifier currentAccessModifier = (true == isStruct) ? CppHlslSubInfo_AccessModifier::Public : CppHlslSubInfo_AccessModifier::Private;
                     bool continueParsingMember = false;
                     while (true)
                     {
-                        uint64 advanceCount = 0;
+                        uint32 advanceCount = 0;
                         FS_RETURN_FALSE_IF_NOT(parseClassStructMember(classIdentifierSymbol, currentPosition, classStructNode, currentAccessModifier, advanceCount, continueParsingMember) == true);
                         currentPosition += advanceCount;
 
@@ -318,7 +319,7 @@ namespace fs
             return false;
         }
 
-        const bool CppHlslParser::parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing)
+        const bool CppHlslParser::parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint32& outAdvanceCount, bool& outContinueParsing)
         {
             outContinueParsing = true;
             outAdvanceCount = 0;
@@ -349,7 +350,7 @@ namespace fs
             }
 
             // AccessModifier
-            uint64 postAccessModifierOffset = 0;
+            uint32 postAccessModifierOffset = 0;
             {
                 const SymbolTableItem& symbol = getSymbol(symbolPosition);
                 if (convertSymbolToAccessModifierSyntax(symbol) == CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_AccessModifier)
@@ -367,7 +368,7 @@ namespace fs
             }
 
             {
-                const uint64 currentPosition = symbolPosition + postAccessModifierOffset;
+                const uint32 currentPosition = symbolPosition + postAccessModifierOffset;
                 const SymbolTableItem& symbol = getSymbol(currentPosition);
                 const bool isDestructor = (symbol._symbolString == "~");
                 if (symbol._symbolString == classIdentifierSymbol._symbolString || isDestructor == true)
@@ -378,7 +379,7 @@ namespace fs
                     TreeNodeAccessor ctorOrDtorNode = ancestorNode.insertChildNode(SyntaxTreeItem((isDestructor == true) ? postSymbol : symbol, (isDestructor == true) ? CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Destructor : CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Constructor));
                     ctorOrDtorNode.getNodeDataXXX().setSubInfo(static_cast<SyntaxSubInfoType>(inOutAccessModifier));
 
-                    const uint64 openParenthesisPosition = (isDestructor == true) ? currentPosition + 2 : currentPosition + 1;
+                    const uint32 openParenthesisPosition = (isDestructor == true) ? currentPosition + 2 : currentPosition + 1;
                     const SymbolTableItem& openParenthesisSymbol = getSymbol(openParenthesisPosition);
                     if (openParenthesisSymbol._symbolString != "(")
                     {
@@ -386,7 +387,7 @@ namespace fs
                         return false;
                     }
 
-                    uint64 closeParenthesisPosition = 0;
+                    uint32 closeParenthesisPosition = 0;
                     if (findNextDepthMatchingCloseSymbol(openParenthesisPosition, ")", closeParenthesisPosition) == false)
                     {
                         reportError(openParenthesisSymbol, ErrorType::NoMatchingGrouper, "')' 를 찾지 못했습니다.");
@@ -402,7 +403,7 @@ namespace fs
 
                     const SymbolTableItem& postCloseParenthesisSymbol = getSymbol(closeParenthesisPosition + 1);
                     const bool isDeclaration = (postCloseParenthesisSymbol._symbolString == ";");
-                    uint64 declarationEndPosition = closeParenthesisPosition + 1;
+                    uint32 declarationEndPosition = closeParenthesisPosition + 1;
                     bool hasInitializerList = false;
                     if (isDestructor == false)
                     {
@@ -415,7 +416,7 @@ namespace fs
                         
                         if (postCloseParenthesisSymbol._symbolString == ":")
                         {
-                            uint64 initializeListAdvanceCount = 0;
+                            uint32 initializeListAdvanceCount = 0;
                             FS_RETURN_FALSE_IF_NOT(parseClassStructInitializerList(closeParenthesisPosition + 2, ctorOrDtorNode, initializeListAdvanceCount) == true);
                             declarationEndPosition += initializeListAdvanceCount;
                             hasInitializerList = true;
@@ -441,7 +442,7 @@ namespace fs
                         {
                             // Instructions
 
-                            uint64 postInstructionAdvance = 0;
+                            uint32 postInstructionAdvance = 0;
                             FS_RETURN_FALSE_IF_NOT(parseFunctionInstructions(declarationEndPosition + 1, ctorOrDtorNode, postInstructionAdvance) == true);
                             outAdvanceCount = (declarationEndPosition + postInstructionAdvance) - symbolPosition + 1;
                             return true;
@@ -459,10 +460,10 @@ namespace fs
                     // Member function/variable
 
                     bool isFunction = false;
-                    uint64 postTypeChunkPosition = 0;
+                    uint32 postTypeChunkPosition = 0;
                     if (isTypeChunk(currentPosition, postTypeChunkPosition) == true)
                     {
-                        const uint64 openParenthesisPosition = postTypeChunkPosition + 1;
+                        const uint32 openParenthesisPosition = postTypeChunkPosition + 1;
                         const SymbolTableItem& postPostTpeChunkSymbol = getSymbol(openParenthesisPosition);
                         if (postPostTpeChunkSymbol._symbolString == "(")
                         {
@@ -470,7 +471,7 @@ namespace fs
 
                             isFunction = true;
 
-                            uint64 closeParenthesisPosition = 0;
+                            uint32 closeParenthesisPosition = 0;
                             if (findNextDepthMatchingCloseSymbol(openParenthesisPosition, ")", closeParenthesisPosition) == false)
                             {
                                 reportError(symbol, ErrorType::NoMatchingGrouper, "')' 를 찾지 못했습니다.");
@@ -489,7 +490,7 @@ namespace fs
                             bool isAbstract = false;
                             bool isDefault  = false;
                             bool isDelete   = false;
-                            uint64 postAttributePosition    = closeParenthesisPosition + 1;
+                            uint32 postAttributePosition    = closeParenthesisPosition + 1;
                             bool hasEqualSign               = false;
                             while (true)
                             {
@@ -638,7 +639,7 @@ namespace fs
                             {
                                 FS_RETURN_FALSE_IF_NOT(parseFunctionParameters(false, openParenthesisPosition + 1, memberFunctionNode) == true);
 
-                                uint64 postInstructionAdvance = 0;
+                                uint32 postInstructionAdvance = 0;
                                 FS_RETURN_FALSE_IF_NOT(parseFunctionInstructions(postAttributePosition + 1, memberFunctionNode, postInstructionAdvance) == true);
 
                                 outAdvanceCount = postAttributePosition + postInstructionAdvance - currentPosition + 1;
@@ -670,7 +671,7 @@ namespace fs
                                 memberVariableListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kMemberVariableListSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_MemberVariable));
                             }
 
-                            uint64 postTypeNodeOffset = 0;
+                            uint32 postTypeNodeOffset = 0;
                             TreeNodeAccessor<SyntaxTreeItem> typeNode;
                             FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppHlslTypeNodeParsingMethod::ClassStructMember, currentPosition, memberVariableListNode, typeNode, postTypeNodeOffset) == true);
                             typeNode.getNodeDataXXX().setSubInfo(static_cast<SyntaxSubInfoType>(inOutAccessModifier));
@@ -678,7 +679,7 @@ namespace fs
                             const SymbolTableItem& identifierSymbol = getSymbol(postTypeChunkPosition);
                             const TreeNodeAccessor identifierNode = typeNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_MemberVariableIdentifier));
 
-                            const uint64 postIdentifierSymbolPosition = postTypeChunkPosition + 1;
+                            const uint32 postIdentifierSymbolPosition = postTypeChunkPosition + 1;
                             const SymbolTableItem& postIdentifierSymbol = getSymbol(postTypeChunkPosition + 1);
                             if (postIdentifierSymbol._symbolString == ";")
                             {
@@ -692,7 +693,7 @@ namespace fs
                                 // TODO
                                 // Initialization
 
-                                uint64 closeSymbolPosition = 0;
+                                uint32 closeSymbolPosition = 0;
                                 if (findNextDepthMatchingCloseSymbol(postIdentifierSymbolPosition, (postIdentifierSymbol._symbolString == "(") ? ")" : "}", closeSymbolPosition) == false)
                                 {
                                     reportError(postIdentifierSymbol, ErrorType::NoMatchingGrouper, "')' 나 '}' 를 찾지 못했습니다.");
@@ -729,7 +730,7 @@ namespace fs
             return false;
         }
 
-        const bool CppHlslParser::parseClassStructInitializerList(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseClassStructInitializerList(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
@@ -741,11 +742,11 @@ namespace fs
             }
 
             TreeNodeAccessor initializerListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kInitializerListSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_ClassStruct_Constructor_InitializerList));
-            uint64 currentOffset = 0;
+            uint32 currentOffset = 0;
             bool continueParsing = true;
             do
             {
-                uint64 advanceCount = 0;
+                uint32 advanceCount = 0;
                 FS_RETURN_FALSE_IF_NOT(parseClassStructInitializerList_Item(symbolPosition + currentOffset, initializerListNode, advanceCount, continueParsing) == true);
 
                 currentOffset += advanceCount;
@@ -755,7 +756,7 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseClassStructInitializerList_Item(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount, bool& outContinueParsing)
+        const bool CppHlslParser::parseClassStructInitializerList_Item(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount, bool& outContinueParsing)
         {
             const SymbolTableItem& memberSymbol = getSymbol(symbolPosition);
 
@@ -871,7 +872,7 @@ namespace fs
             return false;
         }
 
-        const bool CppHlslParser::parseFunctionParameters(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode)
+        const bool CppHlslParser::parseFunctionParameters(const bool isDeclaration, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode)
         {
             const SymbolTableItem& currentSymbol = getSymbol(symbolPosition);
             if (currentSymbol._symbolString == ")")
@@ -880,7 +881,7 @@ namespace fs
                 return true;
             }
 
-            uint64 closeParenthesisPosition = 0;
+            uint32 closeParenthesisPosition = 0;
             if (findNextSymbol(symbolPosition, ")", closeParenthesisPosition) == false)
             {
                 reportError(currentSymbol, ErrorType::LackOfCode);
@@ -889,8 +890,8 @@ namespace fs
 
             TreeNodeAccessor<SyntaxTreeItem> parameterListNode = ancestorNode.insertChildNode(SyntaxTreeItem(kParameterListSymbol, CppHlslSyntaxClassifier_Function_Parameter));
 
-            uint64 currentItemOffset = 0;
-            uint64 advanceCount = 0;
+            uint32 currentItemOffset = 0;
+            uint32 advanceCount = 0;
             do
             {
                 FS_RETURN_FALSE_IF_NOT(parseFunctionParameters_Item(isDeclaration, symbolPosition + currentItemOffset, parameterListNode, advanceCount) == true);
@@ -900,15 +901,15 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseFunctionParameters_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseFunctionParameters_Item(const bool isDeclaration, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
             TreeNodeAccessor<SyntaxTreeItem> typeNode;
-            uint64 postTypeNodeOffset = 0;
+            uint32 postTypeNodeOffset = 0;
             FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppHlslTypeNodeParsingMethod::FunctionParameter, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
 
-            const uint64 postfixOffset = postTypeNodeOffset;
+            const uint32 postfixOffset = postTypeNodeOffset;
             {
                 const SymbolTableItem& symbol = getSymbol(symbolPosition + postfixOffset);
                 if (symbol._symbolString == ",")
@@ -949,7 +950,7 @@ namespace fs
             return false;
         }
 
-        const bool CppHlslParser::parseFunctionInstructions(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseFunctionInstructions(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
@@ -963,36 +964,36 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseExpression(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseExpression(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
             const SymbolTableItem firstSymbol = getSymbol(symbolPosition);
             if (firstSymbol._symbolString == "(")
             {
-                uint64 closeSymbolPosition = 0;
+                uint32 closeSymbolPosition = 0;
                 if (findNextDepthMatchingCloseSymbol(symbolPosition, ")", closeSymbolPosition) == false)
                 {
                     reportError(firstSymbol, ErrorType::NoMatchingGrouper, "')' 를 찾을 수 없었습니다.");
                     return false;
                 }
 
-                uint64 symbolIter = symbolPosition + 1;
+                uint32 symbolIter = symbolPosition + 1;
                 while (symbolIter < closeSymbolPosition)
                 {
-                    uint64 advanceCount = 0;
+                    uint32 advanceCount = 0;
                     FS_RETURN_FALSE_IF_NOT(parseExpression(symbolIter, ancestorNode, advanceCount) == true);
                     symbolIter += advanceCount;
                 }
             }
             else
             {
-                uint64 postTypeChunkPosition = 0;
+                uint32 postTypeChunkPosition = 0;
                 if (isTypeChunk(symbolPosition, postTypeChunkPosition) == true)
                 {
                     // Declaration
 
-                    uint64 postTypeNodeOffset = 0;
+                    uint32 postTypeNodeOffset = 0;
                     TreeNodeAccessor<SyntaxTreeItem> typeNode;
                     FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppHlslTypeNodeParsingMethod::Expression, symbolPosition, ancestorNode, typeNode, postTypeNodeOffset) == true);
 
@@ -1089,9 +1090,9 @@ namespace fs
             return false;
         }
 
-        const bool CppHlslParser::isTypeChunk(const uint64 symbolPosition, uint64& outPostTypeChunkPosition)
+        const bool CppHlslParser::isTypeChunk(const uint32 symbolPosition, uint32& outPostTypeChunkPosition)
         {
-            uint64 offset = 0;
+            uint32 offset = 0;
             bool foundTypeSymbol = false;
             while (true)
             {
@@ -1136,7 +1137,7 @@ namespace fs
             return foundTypeSymbol;
         }
 
-        const bool CppHlslParser::parseTypeNode(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseTypeNode(const CppHlslTypeNodeParsingMethod parsingMethod, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
@@ -1173,13 +1174,13 @@ namespace fs
             CppHlslTypeModifierSet typeModifierSet;
 
             // 1) Premodifier
-            uint64 postPremodifierOffset = 0;
+            uint32 postPremodifierOffset = 0;
             FS_RETURN_FALSE_IF_NOT(parseTypeNode_CheckModifiers(parsingMethod, symbolPosition, typeModifierSet, postPremodifierOffset));
             
             // 2) namespace::
             bool isImplicitIntType = false;
             bool isNamespaceSpecified = false;
-            uint64 postNamespaceOffset = postPremodifierOffset;
+            uint32 postNamespaceOffset = postPremodifierOffset;
             std::string typeFullIdentifier = kGlobalNamespaceSymbol._symbolString;
             while (true)
             {
@@ -1228,9 +1229,9 @@ namespace fs
             }
 
             // Postmodifier
-            uint64 postPostmodifierOffset = (isImplicitIntType == true) ? postNamespaceOffset : postNamespaceOffset + 1;
+            uint32 postPostmodifierOffset = (isImplicitIntType == true) ? postNamespaceOffset : postNamespaceOffset + 1;
             {
-                uint64 advanceCount = 0;
+                uint32 advanceCount = 0;
                 FS_RETURN_FALSE_IF_NOT(parseTypeNode_CheckModifiers(parsingMethod, symbolPosition + postPostmodifierOffset, typeModifierSet, advanceCount));
                 postPostmodifierOffset += advanceCount;
             }
@@ -1239,13 +1240,13 @@ namespace fs
             outTypeNode.getNodeDataXXX().setMainInfo(static_cast<SyntaxMainInfoType>(typeModifierSet.getTypeModifierFlags()));
 
             // 3) * (const) or & &&
-            uint64 postPointerReferenceOffset = postPostmodifierOffset;
+            uint32 postPointerReferenceOffset = postPostmodifierOffset;
             {
                 uint8 ampersandCount = 0; // [0, 2]
                 TreeNodeAccessor<SyntaxTreeItem> previousNode;
                 while (true)
                 {
-                    const uint64 currentPosition = symbolPosition + postPointerReferenceOffset;
+                    const uint32 currentPosition = symbolPosition + postPointerReferenceOffset;
                     if (hasSymbol(currentPosition) == false)
                     {
                         break;
@@ -1296,7 +1297,7 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseTypeNode_CheckModifiers(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppHlslTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseTypeNode_CheckModifiers(const CppHlslTypeNodeParsingMethod parsingMethod, const uint32 symbolPosition, CppHlslTypeModifierSet& outTypeModifierSet, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
             
@@ -1427,7 +1428,7 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseAlignas(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount)
         {
             outAdvanceCount = 0;
 
@@ -1460,7 +1461,7 @@ namespace fs
             return true;
         }
 
-        const bool CppHlslParser::parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseUsing(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount)
         {
             FS_RETURN_FALSE_IF_NOT(hasSymbol(symbolPosition + 4) == true);
 
@@ -1491,17 +1492,17 @@ namespace fs
             TreeNodeAccessor<SyntaxTreeItem> aliasNode = usingNode.insertChildNode(SyntaxTreeItem(aliasSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_Type_Alias));
             
             TreeNodeAccessor<SyntaxTreeItem> typeNode;
-            uint64 postTypeNodeOffset = 0;
+            uint32 postTypeNodeOffset = 0;
             FS_RETURN_FALSE_IF_NOT(parseTypeNode(CppHlslTypeNodeParsingMethod::FunctionParameter, symbolPosition + 3, usingNode, typeNode, postTypeNodeOffset) == true);
 
-            const uint64 typeIndex = registerType(namespaceNode, CppHlslTypeTableItem(typeNode.getNodeData()));
+            const uint32 typeIndex = registerType(namespaceNode, CppHlslTypeTableItem(typeNode.getNodeData()));
             FS_RETURN_FALSE_IF_NOT(registerTypeAlias(aliasSymbol._symbolString, typeIndex) == true);
 
             outAdvanceCount = postTypeNodeOffset + 4;
             return true;
         }
 
-        const bool CppHlslParser::parseNamespace(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount)
+        const bool CppHlslParser::parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount)
         {
             // Non-statement
 
@@ -1530,7 +1531,7 @@ namespace fs
                 return false;
             }
 
-            uint64 closeSymbolPosition = 0;
+            uint32 closeSymbolPosition = 0;
             if (findNextDepthMatchingCloseSymbol(symbolPosition + 2, "}", closeSymbolPosition) == false)
             {
                 reportError(openSymbol, ErrorType::NoMatchingGrouper, "'}' 를 찾지 못했습니다!");
@@ -1543,10 +1544,10 @@ namespace fs
                 newNamespaceNode = namespaceNode.insertChildNode(SyntaxTreeItem(identifierSymbol, CppHlslSyntaxClassifier::CppHlslSyntaxClassifier_Namespace));
             }
 
-            uint64 symbolIter = symbolPosition + 3;
+            uint32 symbolIter = symbolPosition + 3;
             while (symbolIter < closeSymbolPosition)
             {
-                uint64 advanceCount = 0;
+                uint32 advanceCount = 0;
                 FS_RETURN_FALSE_IF_NOT(parseCode(symbolIter, newNamespaceNode, advanceCount) == true);
                 symbolIter += advanceCount;
             }
@@ -1557,12 +1558,12 @@ namespace fs
 
         TreeNodeAccessor<SyntaxTreeItem> CppHlslParser::findNamespaceNode(const std::string& namespaceFullIdentifier) const noexcept
         {
-            std::vector<std::string> namespaceStack;
+            fs::Vector<std::string> namespaceStack;
             fs::StringUtil::tokenize(namespaceFullIdentifier, "::", namespaceStack);
 
             TreeNodeAccessor<SyntaxTreeItem> result = _globalNamespaceNode;
-            const uint64 namespaceStackDepth = namespaceStack.size();
-            for (uint64 iter = 1; iter < namespaceStackDepth; ++iter)
+            const uint32 namespaceStackDepth = namespaceStack.size();
+            for (uint32 iter = 1; iter < namespaceStackDepth; ++iter)
             {
                 result = findNamespaceNodeInternal(result, namespaceStack[iter]);
             }
@@ -1574,23 +1575,23 @@ namespace fs
             std::string result;
 
             TreeNodeAccessor<SyntaxTreeItem> currentNamespaceNode = namespaceNode;
-            std::vector<std::string> namespaceStack;
+            fs::Vector<std::string> namespaceStack;
             while (true)
             {
                 if (isNamespaceNode(currentNamespaceNode) == false)
                 {
                     break;
                 }
-                namespaceStack.emplace_back(currentNamespaceNode.getNodeData()._symbolTableItem._symbolString);
+                namespaceStack.push_back(currentNamespaceNode.getNodeData()._symbolTableItem._symbolString);
                 currentNamespaceNode = currentNamespaceNode.getParentNode();
             }
 
-            const uint64 stackDepth = namespaceStack.size();
+            const uint32 stackDepth = namespaceStack.size();
             if (0 < stackDepth)
             {
                 result = namespaceStack.back();
                 namespaceStack.pop_back();
-                for (uint64 iter = 0; iter < stackDepth - 1; ++iter)
+                for (uint32 iter = 0; iter < stackDepth - 1; ++iter)
                 {
                     result += "::";
                     result += namespaceStack.back();
@@ -1634,7 +1635,7 @@ namespace fs
 
         void CppHlslParser::registerTypeTemplateInternal(const bool isBuiltIn, const std::string& typeFullIdentifier, const uint32 typeSize)
         {
-            std::vector<std::string> typeStack;
+            fs::Vector<std::string> typeStack;
             fs::StringUtil::tokenize(typeFullIdentifier, "::", typeStack);
 
             std::string typeFullIdentifier_;
@@ -1647,10 +1648,10 @@ namespace fs
             auto found = _typeTableUmap.find(typeFullIdentifier_);
             if (found == _typeTableUmap.end())
             {
-                _typeTable.emplace_back(CppHlslTypeTableItem(SymbolTableItem(SymbolClassifier::Identifier, typeStack.back()), CppHlslUserDefinedTypeInfo::Default));
+                _typeTable.push_back(CppHlslTypeTableItem(SymbolTableItem(SymbolClassifier::Identifier, typeStack.back()), CppHlslUserDefinedTypeInfo::Default));
                 _typeTable.back().setTypeSize(typeSize);
 
-                const uint64 typeTableIndex = _typeTable.size() - 1;
+                const uint32 typeTableIndex = _typeTable.size() - 1;
                 if (isBuiltIn == true)
                 {
                     _builtInTypeUmap.insert(std::make_pair(typeStack.back(), typeTableIndex));
@@ -1659,7 +1660,7 @@ namespace fs
             }
         }
 
-        const uint64 CppHlslParser::registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type)
+        const uint32 CppHlslParser::registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type)
         {
             FS_ASSERT("김장원", isNamespaceNode(namespaceNode) == true, "namespaceNode 가 잘못됐습니다!");
 
@@ -1667,8 +1668,8 @@ namespace fs
             auto found = _typeTableUmap.find(typeFullIdentifier);
             if (found == _typeTableUmap.end())
             {
-                _typeTable.emplace_back(type);
-                const uint64 typeTableIndex = _typeTable.size() - 1;
+                _typeTable.push_back(type);
+                const uint32 typeTableIndex = _typeTable.size() - 1;
                 _typeTableUmap.insert(std::make_pair(typeFullIdentifier, typeTableIndex));
                 return typeTableIndex;
             }
@@ -1690,7 +1691,7 @@ namespace fs
 
         std::string CppHlslParser::extractPureTypeName(const std::string& typeFullIdentifier) noexcept
         {
-            const uint64 lastColonPosition = typeFullIdentifier.find_last_of(':');
+            const size_t lastColonPosition = typeFullIdentifier.find_last_of(':');
             if (lastColonPosition != std::string::npos)
             {
                 return typeFullIdentifier.substr(lastColonPosition + 1);
@@ -1698,7 +1699,7 @@ namespace fs
             return typeFullIdentifier;
         }
 
-        const bool CppHlslParser::registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex)
+        const bool CppHlslParser::registerTypeAlias(const std::string& typeAlias, const uint32 typeIndex)
         {
             auto found = _typeAliasTableUmap.find(typeAlias);
             if (found != _typeAliasTableUmap.end())
@@ -1797,7 +1798,7 @@ namespace fs
             return _typeTable[_typeTableUmap.at(typeFullIdentifier)];
         }
 
-        const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const uint64 typeIndex) const noexcept
+        const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const uint32 typeIndex) const noexcept
         {
             if (typeIndex < _typeInfoArray.size())
             {

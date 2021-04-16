@@ -3,6 +3,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <d3dcommon.h>
 
 
@@ -24,8 +26,8 @@ namespace fs
             HRESULT                             Close(LPCVOID pData) override final;
 
         private:
-            std::vector<std::string>            _fileNameArray;
-            std::vector<std::string>            _fileContentArray;
+            fs::Vector<std::string>             _fileNameArray;
+            fs::Vector<std::string>             _fileContentArray;
         };
     }
 }

@@ -192,7 +192,7 @@ namespace fs
             uint32                                  _registerIndex;
             uint32                                  _size;            // Byte count
             uint32                                  _byteOffset;
-            std::vector<CppHlslTypeInfo>            _memberArray;    // Member variables
+            fs::Vector<CppHlslTypeInfo>             _memberArray;    // Member variables
         };
 
 
@@ -249,38 +249,38 @@ namespace fs
             virtual const bool                          execute() override final;
 
         private:
-            const bool                                  parseCode(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
+            const bool                                  parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount);
 
         private:
             void                                        generateTypeInfo(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const TreeNodeAccessor<SyntaxTreeItem>& classStructNode);
 
         private:
-            const bool                                  parseClassStruct(const bool isStruct, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
-            const bool                                  parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint64& outAdvanceCount, bool& outContinueParsing);
-            const bool                                  parseClassStructInitializerList(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
-            const bool                                  parseClassStructInitializerList_Item(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount, bool& outContinueParsing);
+            const bool                                  parseClassStruct(const bool isStruct, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount);
+            const bool                                  parseClassStructMember(const SymbolTableItem& classIdentifierSymbol, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, CppHlslSubInfo_AccessModifier& inOutAccessModifier, uint32& outAdvanceCount, bool& outContinueParsing);
+            const bool                                  parseClassStructInitializerList(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount);
+            const bool                                  parseClassStructInitializerList_Item(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount, bool& outContinueParsing);
         
         private:
-            const bool                                  parseFunctionParameters(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
-            const bool                                  parseFunctionParameters_Item(const bool isDeclaration, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
-            const bool                                  parseFunctionInstructions(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+            const bool                                  parseFunctionParameters(const bool isDeclaration, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode);
+            const bool                                  parseFunctionParameters_Item(const bool isDeclaration, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount);
+            const bool                                  parseFunctionInstructions(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount);
         
         private:
-            const bool                                  parseExpression(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
+            const bool                                  parseExpression(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount);
         
         private:
-            const bool                                  isTypeChunk(const uint64 symbolPosition, uint64& outPostTypeChunkPosition);
+            const bool                                  isTypeChunk(const uint32 symbolPosition, uint32& outPostTypeChunkPosition);
             
             // Identifier Àü±îÁö ÆÄ½Ì
-            const bool                                  parseTypeNode(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint64& outAdvanceCount);
-            const bool                                  parseTypeNode_CheckModifiers(const CppHlslTypeNodeParsingMethod parsingMethod, const uint64 symbolPosition, CppHlslTypeModifierSet& outTypeModifierSet, uint64& outAdvanceCount);
+            const bool                                  parseTypeNode(const CppHlslTypeNodeParsingMethod parsingMethod, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, TreeNodeAccessor<SyntaxTreeItem>& outTypeNode, uint32& outAdvanceCount);
+            const bool                                  parseTypeNode_CheckModifiers(const CppHlslTypeNodeParsingMethod parsingMethod, const uint32 symbolPosition, CppHlslTypeModifierSet& outTypeModifierSet, uint32& outAdvanceCount);
         
         private:
-            const bool                                  parseAlignas(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint64& outAdvanceCount);
-            const bool                                  parseUsing(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
+            const bool                                  parseAlignas(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& ancestorNode, uint32& outAdvanceCount);
+            const bool                                  parseUsing(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount);
         
         private:
-            const bool                                  parseNamespace(const uint64 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint64& outAdvanceCount);
+            const bool                                  parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount);
 
         private:
             TreeNodeAccessor<SyntaxTreeItem>            findNamespaceNode(const std::string& namespaceFullIdentifier) const noexcept;
@@ -302,13 +302,13 @@ namespace fs
             void                                        registerTypeTemplateInternal(const bool isBuiltIn, const std::string& typeFullIdentifier, const uint32 typeSize);
         
         private:
-            const uint64                                registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type);
+            const uint32                                registerType(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const CppHlslTypeTableItem& type);
             std::string                                 getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept;
             std::string                                 getTypeInfoIdentifierXXX(const std::string& typeFullIdentifier) const noexcept;
             static std::string                          extractPureTypeName(const std::string& typeFullIdentifier) noexcept;
 
         private:
-            const bool                                  registerTypeAlias(const std::string& typeAlias, const uint64 typeIndex);
+            const bool                                  registerTypeAlias(const std::string& typeAlias, const uint32 typeIndex);
         
         private:
             const bool                                  isSymbolType(const SymbolTableItem& typeSymbol) const noexcept;
@@ -321,7 +321,7 @@ namespace fs
             const CppHlslTypeTableItem&                 getType(const std::string& typeFullIdentifier) const noexcept;
 
         public:
-            const CppHlslTypeInfo&                      getTypeInfo(const uint64 typeIndex) const noexcept;
+            const CppHlslTypeInfo&                      getTypeInfo(const uint32 typeIndex) const noexcept;
             const CppHlslTypeInfo&                      getTypeInfo(const std::string& typeName) const noexcept;
             const uint32                                getTypeInfoCount() const noexcept;
 
@@ -339,17 +339,17 @@ namespace fs
             TreeNodeAccessor<SyntaxTreeItem>            _currentScopeNamespaceNode;
 
         private:
-            std::vector<CppHlslTypeTableItem>           _typeTable;
-            std::unordered_map<std::string, uint64>     _typeTableUmap;
+            fs::Vector<CppHlslTypeTableItem>            _typeTable;
+            std::unordered_map<std::string, uint32>     _typeTableUmap;
 
-            std::unordered_map<std::string, uint64>     _typeAliasTableUmap;
+            std::unordered_map<std::string, uint32>     _typeAliasTableUmap;
             
         private:
-            std::vector<CppHlslTypeInfo>                _typeInfoArray;
-            std::unordered_map<std::string, uint64>     _typeInfoUmap;
+            fs::Vector<CppHlslTypeInfo>                 _typeInfoArray;
+            std::unordered_map<std::string, uint32>     _typeInfoUmap;
         
         private:
-            std::unordered_map<std::string, uint64>     _builtInTypeUmap;
+            std::unordered_map<std::string, uint32>     _builtInTypeUmap;
         
         private:
             static const SymbolTableItem                kInitializerListSymbol;

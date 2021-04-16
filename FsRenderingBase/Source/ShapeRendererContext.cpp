@@ -216,19 +216,19 @@ namespace fs
             v._texCoord._w = abs(pointA._x - pointB._x);
             v._info._x = _viewportIndex;
             v._info._y = getShapeInfoAsFloat(ShapeType::QuadraticBezierTriangle);
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = controlPoint._x;
             v._position._y = controlPoint._y;
             v._texCoord._x = 0.5f;
             v._texCoord._y = 0.0f;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = pointArray[1 ^ flip]._x;
             v._position._y = pointArray[1 ^ flip]._y;
             v._texCoord._x = 1.0f;
             v._texCoord._y = 1.0f;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indexArray();
@@ -257,15 +257,15 @@ namespace fs
                 v._position._y = pointA._y;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = pointB._x;
                 v._position._y = pointB._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = pointC._x;
                 v._position._y = pointC._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
             
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -294,18 +294,18 @@ namespace fs
             v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
             v._info._x = _viewportIndex;
             v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x += radius;
             v._texCoord._x = 1.0f;
             v._texCoord._y = 1.0f;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = -halfRadius;
             v._position._y += radius;
             v._texCoord._x = 0.0f;
             v._texCoord._y = 0.0f;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
@@ -343,22 +343,22 @@ namespace fs
                 v._texCoord._w = halfRadius * 2.0f;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfRadius;
                 v._texCoord._x = 1.0f;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._y = offset._y + halfRadius;
                 v._texCoord._x = 1.0f;
                 v._texCoord._y = 0.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = offset._x - halfRadius;
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = 0.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
@@ -411,25 +411,25 @@ namespace fs
                 v._texCoord._w = radius;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::Circle);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +radius;
                 v._position._y = -radius;
                 v._texCoord._x = +1.0f;
                 v._texCoord._y = +1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = -radius;
                 v._position._y = +radius;
                 v._texCoord._x = -1.0f;
                 v._texCoord._y = -1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +radius;
                 v._position._y = +radius;
                 v._texCoord._x = +1.0f;
                 v._texCoord._y = -1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -473,17 +473,17 @@ namespace fs
                 v._texCoord._w = radius;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +radius * sinHalfArcAngle;
                 v._texCoord._x = +sinHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._y = -radius * cosHalfArcAngle;
                 v._texCoord._x = +sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
             
             // Left arc section
@@ -492,12 +492,12 @@ namespace fs
                 v._position._y = -radius;
                 v._texCoord._x = -sinHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._y = -radius * cosHalfArcAngle;
                 v._texCoord._x = -sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Center
@@ -506,7 +506,7 @@ namespace fs
                 v._position._y = 0.0f;
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = 0.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -555,18 +555,18 @@ namespace fs
                 v._texCoord._w = outerRadius;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::Circular);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +outerRadius * tanHalfArcAngle;
                 v._texCoord._x = +tanHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +outerRadius * sinHalfArcAngle;
                 v._position._y = -outerRadius * cosHalfArcAngle;
                 v._texCoord._x = +sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Left outer arc section
@@ -575,13 +575,13 @@ namespace fs
                 v._position._y = -outerRadius;
                 v._texCoord._x = -tanHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = -outerRadius * sinHalfArcAngle;
                 v._position._y = -outerRadius * cosHalfArcAngle;
                 v._texCoord._x = -sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const float innerRatio = innerRadius / outerRadius;
@@ -591,7 +591,7 @@ namespace fs
                 v._position._y = -innerRadius;
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = innerRatio;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Right inner arc section
@@ -601,18 +601,18 @@ namespace fs
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = -1.0f; // @IMPORTANT
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +innerRadius * tanHalfArcAngle;
                 v._texCoord._x = +tanHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +innerRadius * sinHalfArcAngle;
                 v._position._y = -innerRadius * cosHalfArcAngle;
                 v._texCoord._x = +sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Left inner arc section
@@ -621,13 +621,13 @@ namespace fs
                 v._position._y = -innerRadius;
                 v._texCoord._x = -tanHalfArcAngle;
                 v._texCoord._y = 1.0f;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = -innerRadius * sinHalfArcAngle;
                 v._position._y = -innerRadius * cosHalfArcAngle;
                 v._texCoord._x = -sinHalfArcAngle;
                 v._texCoord._y = +cosHalfArcAngle;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Right side
@@ -637,14 +637,14 @@ namespace fs
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = 0.0f;
                 v._texCoord._z = +1.0f; // @IMPORTANT
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             // Left side
             {
                 v._position._x = -innerRadius * tanHalfArcAngle;
                 v._position._y = -innerRadius;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -728,19 +728,19 @@ namespace fs
                 v._position._y = offset._y - halfSize._y;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfSize._x;
                 v._position._y = offset._y - halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y + halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfSize._x;
                 v._position._y = offset._y + halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -775,19 +775,19 @@ namespace fs
                 v._position._y = -halfSize._y;
                 v._info._x = _viewportIndex;
                 v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +halfSize._x - horizontalOffsetR;
                 v._position._y = -halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = -halfSize._x;
                 v._position._y = +halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
 
                 v._position._x = +halfSize._x;
                 v._position._y = +halfSize._y;
-                vertexArray.emplace_back(v);
+                vertexArray.push_back(v);
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -1048,19 +1048,19 @@ namespace fs
             v._position._y = v0._y;
             v._info._x = _viewportIndex;
             v._info._y = getShapeInfoAsFloat(ShapeType::SolidTriangle);
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = v1._x;
             v._position._y = v1._y;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = v2._x;
             v._position._y = v2._y;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             v._position._x = v3._x;
             v._position._y = v3._y;
-            vertexArray.emplace_back(v);
+            vertexArray.push_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indexArray();
@@ -1101,7 +1101,7 @@ namespace fs
             transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
             transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
             //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
-            _sbTransformData.emplace_back(transform);
+            _sbTransformData.push_back(transform);
         }
 
         void ShapeRendererContext::prepareStructuredBuffer()

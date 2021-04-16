@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRendering/Include/MeshComponent.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsRenderingBase/Include/DxResource.h>
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>

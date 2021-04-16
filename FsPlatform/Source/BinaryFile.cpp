@@ -1,5 +1,7 @@
 ﻿#include <FsPlatform/Include/BinaryFile.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <fstream>
 
 
@@ -20,11 +22,11 @@ namespace fs
         ifs.seekg(0, ifs.end);
         const uint64 legth = ifs.tellg();
         ifs.seekg(0, ifs.beg);
-        _byteArray.reserve(legth);
+        _byteArray.reserve(static_cast<uint32>(legth));
         while (ifs.eof() == false)
         {
             byte readByte{ static_cast<byte>(ifs.get()) };
-            _byteArray.emplace_back(readByte);
+            _byteArray.push_back(readByte);
         }
         return true;
     }

@@ -1,6 +1,7 @@
 #include <FsPlatform/Include/TextFile.h>
 
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/Vector.hpp>
 
 #include <fstream>
 

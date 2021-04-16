@@ -1,6 +1,8 @@
 #include <stdafx.h>
 #include <FsRendering/Include/MeshRenderer.h>
 
+#include <FsContainer/Include/Vector.hpp>
+
 #include <FsRenderingBase/Include/GraphicDevice.h>
 #include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 
@@ -45,7 +47,7 @@ namespace fs
 
         void MeshRenderer::render(const fs::Rendering::ObjectPool& objectPool) noexcept
         {
-            const std::vector<fs::Rendering::MeshComponent*>& meshComponents = objectPool.getMeshComponents();
+            const fs::Vector<fs::Rendering::MeshComponent*>& meshComponents = objectPool.getMeshComponents();
 
             fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
             shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::VertexShader, _vsDefaultId);
@@ -59,9 +61,10 @@ namespace fs
 
             auto& trVertexArray = _lowLevelRenderer.vertexArray();
             auto& trIndexArray = _lowLevelRenderer.indexArray();
-            for (auto& meshComponentIter : meshComponents)
+            const uint32 meshComponentCount = meshComponents.size();
+            for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
             {
-                const MeshComponent* const meshComponent = meshComponentIter;
+                const MeshComponent* const meshComponent = meshComponents[meshCompnentIndex];
                 _cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->getObjectTransformMatrix() * meshComponent->_srt.toMatrix();
                 cbTransform.updateBuffer(reinterpret_cast<const byte*>(&_cbTransformData), 1);
 
@@ -73,11 +76,11 @@ namespace fs
                 const fs::RenderingBase::IndexElementType* const indices = meshComponent->getIndices();
                 for (uint32 vertexIter = 0; vertexIter < vertexCount; vertexIter++)
                 {
-                    trVertexArray.emplace_back(vertices[vertexIter]);
+                    trVertexArray.push_back(vertices[vertexIter]);
                 }
                 for (uint32 indexIter = 0; indexIter < indexCount; indexIter++)
                 {
-                    trIndexArray.emplace_back(indices[indexIter]);
+                    trIndexArray.push_back(indices[indexIter]);
                 }
 
                 shaderPool.bindShaderIfNot(fs::RenderingBase::DxShaderType::PixelShader, _psDefaultId);

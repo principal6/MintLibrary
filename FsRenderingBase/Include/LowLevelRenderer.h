@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
+
 #include <Assets/CppHlsl/CppHlslStreamData.h>
 
 #include <FsRenderingBase/Include/DxResource.h>
@@ -34,8 +36,8 @@ namespace fs
                                                         ~LowLevelRenderer() = default;
 
         public:
-            std::vector<T>&                             vertexArray() noexcept;
-            std::vector<IndexElementType>&              indexArray() noexcept;
+            fs::Vector<T>&                              vertexArray() noexcept;
+            fs::Vector<IndexElementType>&               indexArray() noexcept;
 
         public:
             void                                        flush() noexcept;
@@ -50,11 +52,11 @@ namespace fs
             const uint32                                _vertexStride;
         
         private:
-            std::vector<T>                              _vertexArray;
+            fs::Vector<T>                               _vertexArray;
             DxObjectId                                  _vertexBufferId;
 
         private:
-            std::vector<IndexElementType>               _indexArray;
+            fs::Vector<IndexElementType>                _indexArray;
             DxObjectId                                  _indexBufferId;
         };
     }

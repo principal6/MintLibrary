@@ -111,7 +111,7 @@ namespace fs
             {
                 vertex._position = getVertexPosition(iter, _position, _size);
                 vertex._color = getColorInternal(iter);
-                vertexArray.emplace_back(vertex);
+                vertexArray.push_back(vertex);
             }
             prepareIndexArray();
         }
@@ -127,7 +127,7 @@ namespace fs
                 vertex._texCoord._x = texCoord._x;
                 vertex._texCoord._y = texCoord._y;
                 vertex._info._x = 1.0f;
-                vertexArray.emplace_back(vertex);
+                vertexArray.push_back(vertex);
             }
             prepareIndexArray();
         }
@@ -144,7 +144,7 @@ namespace fs
                 vertex._texCoord._x = texCoord._x;
                 vertex._texCoord._y = texCoord._y;
                 vertex._info._x = 2.0f;
-                vertexArray.emplace_back(vertex);
+                vertexArray.push_back(vertex);
             }
             prepareIndexArray();
         }

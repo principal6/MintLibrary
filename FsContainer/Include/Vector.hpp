@@ -1,6 +1,10 @@
 #pragma once
 
 
+#ifndef FS_VECTOR_HPP
+#define FS_VECTOR_HPP
+
+
 #include <FsContainer/Include/Vector.h>
 
 
@@ -16,20 +20,20 @@ namespace fs
     }
 
     template<typename T>
-    inline Vector<T>::Vector(const uint32 capacity)
+    inline Vector<T>::Vector(const uint32 size)
         : Vector()
     {
-        reserve(capacity);
+        resize(size);
     }
 
     template<typename T>
     inline Vector<T>::Vector(const std::initializer_list<T>& initializerList)
     {
-        const size_t count = initializerList.size();
+        const uint32 count = static_cast<uint32>(initializerList.size());
         resize(count);
 
         const T* const first = initializerList.begin();
-        for (size_t index = 0; index < count; ++index)
+        for (uint32 index = 0; index < count; ++index)
         {
             _rawPointer[index] = *(first + index);
         }
@@ -49,11 +53,11 @@ namespace fs
 
     template<typename T>
     inline Vector<T>::Vector(Vector&& rhs) noexcept
-        : _rawPointer{ std::move(rhs._rawPointer) }
+        : _rawPointer{ rhs._rawPointer }
         , _capacity{ std::move(rhs._capacity) }
         , _size{ std::move(rhs._size) }
     {
-        __noop;
+        rhs._rawPointer = nullptr;
     }
 
     template<typename T>
@@ -84,9 +88,11 @@ namespace fs
         {
             freeRawPointer(_rawPointer, _size);
 
-            _rawPointer = std::move(rhs._rawPointer);
+            _rawPointer = rhs._rawPointer;
             _capacity = std::move(rhs._capacity);
             _size = std::move(rhs._size);
+
+            rhs._rawPointer = nullptr;
         }
         return *this;
     }
@@ -106,12 +112,15 @@ namespace fs
     }
 
     template<typename T>
-    FS_INLINE void Vector<T>::reserve(const uint32 capacity) noexcept
+    FS_INLINE void Vector<T>::reserve(uint32 capacity) noexcept
     {
         if (capacity <= _capacity)
         {
             return;
         }
+
+        // 잦은 reserve 시 성능 최적화!!!
+        capacity = fs::max(capacity, _capacity * 2);
 
         T* temp = nullptr;
         if (0 < _size)
@@ -344,6 +353,12 @@ namespace fs
     }
 
     template<typename T>
+    FS_INLINE const T* Vector<T>::data() const noexcept
+    {
+        return _rawPointer;
+    }
+
+    template<typename T>
     FS_INLINE const uint32 Vector<T>::capacity() const noexcept
     {
         return _capacity;
@@ -361,3 +376,6 @@ namespace fs
         return (_size == 0);
     }
 }
+
+
+#endif // !FS_VECTOR_HPP

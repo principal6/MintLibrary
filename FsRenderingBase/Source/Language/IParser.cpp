@@ -32,7 +32,7 @@ namespace fs
             return result;
         }
 
-        void IParser::getSyntaxTreeStringInternal(const uint64 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept
+        void IParser::getSyntaxTreeStringInternal(const uint32 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint32 depth, std::string& outResult) noexcept
         {
             if (node.isValid() == true)
             {
@@ -45,18 +45,18 @@ namespace fs
                 
                 const SymbolTableItem& symbolTableItem = syntaxTreeItem._symbolTableItem;
 
-                for (uint64 i = 0; i < depth; ++i)
+                for (uint32 i = 0; i < depth; ++i)
                 {
                     line.append(">");
                 }
 
                 line.append(symbolTableItem._symbolString);
 
-                const uint64 headLength = line.length();
+                const size_t headLength = line.length();
                 if (headLength < headSpace)
                 {
-                    const uint64 remnant = headSpace - headLength;
-                    for (uint64 i = 0; i < remnant; ++i)
+                    const size_t remnant = headSpace - headLength;
+                    for (size_t i = 0; i < remnant; ++i)
                     {
                         line.append(" ");
                     }
@@ -119,29 +119,29 @@ namespace fs
             return _symbolAt < _symbolTable.size();
         }
 
-        void IParser::advanceSymbolPositionXXX(const uint64 advanceCount)
+        void IParser::advanceSymbolPositionXXX(const uint32 advanceCount)
         {
-            _symbolAt += max(advanceCount, static_cast<uint64>(1));
+            _symbolAt += max(advanceCount, static_cast<uint32>(1));
         }
 
-        const bool IParser::hasSymbol(const uint64 symbolPosition) const noexcept
+        const bool IParser::hasSymbol(const uint32 symbolPosition) const noexcept
         {
             return (symbolPosition < _symbolTable.size());
         }
 
-        const uint64 IParser::getSymbolPosition() const noexcept
+        const uint32 IParser::getSymbolPosition() const noexcept
         {
             return _symbolAt;
         }
 
-        SymbolTableItem& IParser::getSymbol(const uint64 symbolPosition) const noexcept
+        SymbolTableItem& IParser::getSymbol(const uint32 symbolPosition) const noexcept
         {
             return _symbolTable[symbolPosition];
         }
 
-        const bool IParser::findNextSymbol(const uint64 symbolPosition, const char* const cmp, uint64& outSymbolPosition) const noexcept
+        const bool IParser::findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept
         {
-            for (uint64 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
+            for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
                 const SymbolTableItem& symbol = _symbolTable[symbolIter];
                 if (symbol._symbolString == cmp)
@@ -153,9 +153,9 @@ namespace fs
             return false;
         }
 
-        const bool IParser::findNextSymbol(const uint64 symbolPosition, const SymbolClassifier symbolClassifier, uint64& outSymbolPosition) const noexcept
+        const bool IParser::findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept
         {
-            for (uint64 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
+            for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
                 const SymbolTableItem& symbol = _symbolTable[symbolIter];
                 if (symbol._symbolClassifier == symbolClassifier)
@@ -167,9 +167,9 @@ namespace fs
             return false;
         }
 
-        const bool IParser::findNextSymbolEither(const uint64 symbolPosition, const char* const cmp0, const char* const cmp1, uint64& outSymbolPosition) const noexcept
+        const bool IParser::findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept
         {
-            for (uint64 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
+            for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
                 const SymbolTableItem& symbol = _symbolTable[symbolIter];
                 if (symbol._symbolString == cmp0 || symbol._symbolString == cmp1)
@@ -181,7 +181,7 @@ namespace fs
             return false;
         }
 
-        const bool IParser::findNextDepthMatchingCloseSymbol(const uint64 openSymbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept
+        const bool IParser::findNextDepthMatchingCloseSymbol(const uint32 openSymbolPosition, const char* const closeSymbolString, uint32& outSymbolPosition) const noexcept
         {
             const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
             if (openSymbol._symbolClassifier != SymbolClassifier::Grouper_Open)
@@ -191,7 +191,7 @@ namespace fs
             }
 
             int32 depth = 0;
-            for (uint64 symbolIter = openSymbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
+            for (uint32 symbolIter = openSymbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
                 const SymbolTableItem& symbol = _symbolTable[symbolIter];
                 if (symbol._symbolString == openSymbol._symbolString)
@@ -216,12 +216,12 @@ namespace fs
 
         void IParser::reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType)
         {
-            _errorMessageArray.emplace_back(symbolTableItem, errorType);
+            _errorMessageArray.push_back(ErrorMessage(symbolTableItem, errorType));
         }
 
         void IParser::reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation)
         {
-            _errorMessageArray.emplace_back(symbolTableItem, errorType, additionalExplanation);
+            _errorMessageArray.push_back(ErrorMessage(symbolTableItem, errorType, additionalExplanation));
         }
 
         const bool IParser::hasReportedErrors() const noexcept

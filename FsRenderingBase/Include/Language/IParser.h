@@ -7,6 +7,7 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/Tree.h>
 
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>
@@ -62,7 +63,7 @@ namespace fs
                                                             ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
 
             private:
-                const uint64                                _sourceAt;
+                const uint32                                _sourceAt;
                 std::string                                 _message;
             };
 
@@ -78,7 +79,7 @@ namespace fs
             const std::string                               getSyntaxTreeString() noexcept;
 
         private:
-            void                                            getSyntaxTreeStringInternal(const uint64 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint64 depth, std::string& outResult) noexcept;
+            void                                            getSyntaxTreeStringInternal(const uint32 headSpace, const TreeNodeAccessor<SyntaxTreeItem>& node, const uint32 depth, std::string& outResult) noexcept;
 
         protected:
             void                                            reset();
@@ -87,18 +88,18 @@ namespace fs
             const bool                                      needToContinueParsing() const noexcept;
 
         protected:
-            void                                            advanceSymbolPositionXXX(const uint64 advanceCount);
+            void                                            advanceSymbolPositionXXX(const uint32 advanceCount);
 
         protected:
-            const bool                                      hasSymbol(const uint64 symbolPosition) const noexcept;
-            const uint64                                    getSymbolPosition() const noexcept;
-            SymbolTableItem&                                getSymbol(const uint64 symbolPosition) const noexcept;
+            const bool                                      hasSymbol(const uint32 symbolPosition) const noexcept;
+            const uint32                                    getSymbolPosition() const noexcept;
+            SymbolTableItem&                                getSymbol(const uint32 symbolPosition) const noexcept;
 
         protected:
-            const bool                                      findNextSymbol(const uint64 symbolPosition, const char* const cmp, uint64& outSymbolPosition) const noexcept;
-            const bool                                      findNextSymbol(const uint64 symbolPosition, const SymbolClassifier symbolClassifier, uint64& outSymbolPosition) const noexcept;
-            const bool                                      findNextSymbolEither(const uint64 symbolPosition, const char* const cmp0, const char* const cmp1, uint64& outSymbolPosition) const noexcept;
-            const bool                                      findNextDepthMatchingCloseSymbol(const uint64 openSymbolPosition, const char* const closeSymbolString, uint64& outSymbolPosition) const noexcept;
+            const bool                                      findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept;
+            const bool                                      findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept;
+            const bool                                      findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept;
+            const bool                                      findNextDepthMatchingCloseSymbol(const uint32 openSymbolPosition, const char* const closeSymbolString, uint32& outSymbolPosition) const noexcept;
         
         protected:
             void                                            reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
@@ -110,14 +111,14 @@ namespace fs
             
         protected:
             ILexer&                                         _lexer;
-            std::vector<SymbolTableItem>&                   _symbolTable;
+            fs::Vector<SymbolTableItem>&                    _symbolTable;
 
         private:
             fs::Tree<SyntaxTreeItem>                        _syntaxTree;
         
         private:
-            uint64                                          _symbolAt;
-            std::vector<ErrorMessage>                       _errorMessageArray;
+            uint32                                          _symbolAt;
+            fs::Vector<ErrorMessage>                        _errorMessageArray;
             static const SymbolTableItem                    kRootSymbol;
         };
     }

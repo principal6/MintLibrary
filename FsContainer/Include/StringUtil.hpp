@@ -1,7 +1,13 @@
 #pragma once
 
+
+#ifndef FS_STRING_UTIL_HPP
+#define FS_STRING_UTIL_HPP
+
+
 #include <FsContainer/Include/StringUtil.h>
 
+#include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/Tree.hpp>
 
 
@@ -63,7 +69,7 @@ namespace fs
             }
         }
 
-        void tokenize(const std::string& inputString, const char delimiter, std::vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const char delimiter, fs::Vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -93,7 +99,7 @@ namespace fs
             }
         }
 
-        void tokenize(const std::string& inputString, const std::vector<char>& delimiterArray, std::vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const fs::Vector<char>& delimiterArray, fs::Vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -127,7 +133,7 @@ namespace fs
             }
         }
 
-        void tokenize(const std::string& inputString, const std::string& delimiterString, std::vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const std::string& delimiterString, fs::Vector<std::string>& outArray)
         {
             if (inputString.empty() == true || delimiterString.empty() == true)
             {
@@ -165,3 +171,6 @@ namespace fs
         }
     }
 }
+
+
+#endif // !FS_STRING_UTIL_HPP

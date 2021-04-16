@@ -156,16 +156,16 @@ const bool testBitVector()
         static constexpr uint32 kCount = 200'000'000;
 #endif
 
-        std::vector<uint8> sourceData;
+        fs::Vector<uint8> sourceData;
         sourceData.resize(kCount);
 
-        std::vector<uint8> byteVector;
-        std::vector<uint8> byteVectorCopy;
+        fs::Vector<uint8> byteVector;
+        fs::Vector<uint8> byteVectorCopy;
         byteVector.resize(kCount);
         byteVectorCopy.resize(kCount);
 
-        std::vector<bool> boolVector;
-        std::vector<bool> boolVectorCopy;
+        fs::Vector<bool> boolVector;
+        fs::Vector<bool> boolVectorCopy;
         boolVector.resize(kCount);
         boolVectorCopy.resize(kCount);
 
@@ -295,7 +295,7 @@ const bool testBitVector()
             }
         }
 
-        std::vector<fs::Profiler::ScopedCpuProfiler::Log> logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
+        fs::Vector<fs::Profiler::ScopedCpuProfiler::Log> logArray = fs::Profiler::ScopedCpuProfiler::getEntireLogArray();
         const bool isEmpty = logArray.empty();
     }
 #endif
@@ -353,9 +353,9 @@ const bool testStringTypes()
 #if defined FS_TEST_PERFORMANCE
     static constexpr uint32 kCount = 20'000;
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
 
-        std::vector<std::string> dnsArray;
+        fs::Vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -364,9 +364,9 @@ const bool testStringTypes()
     }
 
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
 
-        std::vector<std::string> dnsArray;
+        fs::Vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -375,9 +375,9 @@ const bool testStringTypes()
     }
 
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
 
-        std::vector<std::string> dnsArray;
+        fs::Vector<std::string> dnsArray;
         dnsArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -386,9 +386,9 @@ const bool testStringTypes()
     }
 
     {
-        fs::Profiler::ScopedCpuProfiler profiler{ "std::vector<std::string>" };
+        fs::Profiler::ScopedCpuProfiler profiler{ "fs::Vector<std::string>" };
 
-        std::vector<std::string> sArray;
+        fs::Vector<std::string> sArray;
         sArray.resize(kCount);
         for (uint32 i = 0; i < kCount; ++i)
         {
@@ -432,7 +432,7 @@ const bool testVector()
 const bool testStringUtil()
 {
     const std::string testA{ "ab c   def g" };
-    std::vector<std::string> testATokenized;
+    fs::Vector<std::string> testATokenized;
     fs::StringUtil::tokenize(testA, ' ', testATokenized);
     
     std::string testB{
@@ -451,8 +451,8 @@ const bool testStringUtil()
             }
         )"
     };
-    const std::vector<char> delimiterArray{ ' ', '\t', '\n' };
-    std::vector<std::string> testBTokenized;
+    const fs::Vector<char> delimiterArray{ ' ', '\t', '\n' };
+    fs::Vector<std::string> testBTokenized;
     fs::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
     return true;
