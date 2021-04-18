@@ -9,6 +9,7 @@
 #include <FsContainer/Include/ScopeString.h>
 #include <FsContainer/Include/StackHolder.h>
 #include <FsContainer/Include/StaticArray.h>
+#include <FsContainer/Include/StaticBitArray.h>
 #include <FsContainer/Include/UniqueString.h>
 #include <FsContainer/Include/StringUtil.h>
 #include <FsContainer/Include/Tree.h>

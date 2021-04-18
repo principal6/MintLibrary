@@ -186,6 +186,8 @@
     <ClInclude Include="Include\StackHolder.h" />
     <ClInclude Include="Include\StackHolder.hpp" />
     <ClInclude Include="Include\StaticArray.h" />
+    <ClInclude Include="Include\StaticBitArray.h" />
+    <ClInclude Include="Include\StaticBitArray.hpp" />
     <ClInclude Include="Include\StringUtil.h" />
     <ClInclude Include="Include\StringUtil.hpp" />
     <ClInclude Include="Include\Tree.h" />

@@ -59,6 +59,21 @@ void testStaticArray()
 {
     using namespace fs;
     constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
+
+    StaticBitArray<3> ba;
+    const uint32 bitCount = ba.getBitCount();
+    const uint32 byteCount = ba.getByteCount();
+    ba.setByte(0, 0xFF);
+    ba.setAll(false);
+    ba.set(0, true);
+    ba.set(3, true);
+    ba.setUnsafe(5, true);
+    const bool test0 = ba.get(0);
+    const bool test1 = ba.get(1);
+    const bool test3 = ba.get(3);
+    const bool test5 = ba.getUnsafe(5);
+
+    return;
 }
 
 void testStackHolder()

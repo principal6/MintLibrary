@@ -8,6 +8,7 @@
 #include <FsContainer/Include/BitVector.hpp>
 #include <FsContainer/Include/ScopeString.hpp>
 #include <FsContainer/Include/StackHolder.hpp>
+#include <FsContainer/Include/StaticBitArray.hpp>
 #include <FsContainer/Include/UniqueString.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 #include <FsContainer/Include/Tree.hpp>
