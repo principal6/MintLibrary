@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/ILexer.h>
 
+#include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
@@ -104,7 +105,7 @@ namespace fs
 
         void ILexer::registerKeyword(const char* const keyword)
         {
-            const uint64 hash = fs::StringUtil::hashRawString64(keyword);
+            const uint64 hash = fs::computeHash(keyword);
             if (_keywordUmap.find(hash) == _keywordUmap.end())
             {
                 _keywordTable.push_back(keyword);
@@ -141,7 +142,7 @@ namespace fs
                 return;
             }
 
-            const uint64 key = fs::StringUtil::hashRawString64(punctuator);
+            const uint64 key = fs::computeHash(punctuator);
             if (_punctuatorUmap.find(key) == _punctuatorUmap.end())
             {
                 _punctuatorTable.push_back(punctuator);
@@ -389,7 +390,7 @@ namespace fs
         const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
         {
             const char keyString3[4]{ ch0, ch1, ch2, '\0' };
-            const uint64 key3 = fs::StringUtil::hashRawString64(keyString3);
+            const uint64 key3 = fs::computeHash(keyString3);
             auto found3 = _punctuatorUmap.find(key3);
             if (found3 != _punctuatorUmap.end())
             {
@@ -398,7 +399,7 @@ namespace fs
             }
 
             const char keyString2[3]{ ch0, ch1, '\0' };
-            const uint64 key2 = fs::StringUtil::hashRawString64(keyString2);
+            const uint64 key2 = fs::computeHash(keyString2);
             auto found2 = _punctuatorUmap.find(key2);
             if (found2 != _punctuatorUmap.end())
             {
@@ -407,7 +408,7 @@ namespace fs
             }
 
             const char keyString1[2]{ ch0, '\0' };
-            const uint64 key1 = fs::StringUtil::hashRawString64(keyString1);
+            const uint64 key1 = fs::computeHash(keyString1);
             auto found1 = _punctuatorUmap.find(key1);
             if (found1 != _punctuatorUmap.end())
             {
@@ -472,7 +473,7 @@ namespace fs
 
         const bool ILexer::isKeyword(const std::string& input) const noexcept
         {
-            return _keywordUmap.find(fs::StringUtil::hashRawString64(input.c_str())) != _keywordUmap.end();
+            return _keywordUmap.find(fs::computeHash(input.c_str())) != _keywordUmap.end();
         }
 
         const uint32 ILexer::getSymbolCount() const noexcept

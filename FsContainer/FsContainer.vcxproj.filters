@@ -69,6 +69,15 @@
     <ClInclude Include="Include\StaticBitArray.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\HashMap.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\HashMap.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Hash.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">
@@ -78,6 +87,9 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\StringUtil.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Hash.hpp">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>

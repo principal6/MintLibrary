@@ -60,7 +60,7 @@ void testStaticArray()
     using namespace fs;
     constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
 
-    StaticBitArray<3> ba;
+    StaticBitArray<3> ba(true);
     const uint32 bitCount = ba.getBitCount();
     const uint32 byteCount = ba.getByteCount();
     ba.setByte(0, 0xFF);
@@ -314,6 +314,25 @@ const bool testBitVector()
         const bool isEmpty = logArray.empty();
     }
 #endif
+
+    return true;
+}
+
+const bool testHashMap()
+{
+    fs::HashMap<std::string, std::string> hashMap;
+    hashMap.insert("1", "a");
+    hashMap.insert("5", "b");
+    hashMap.insert("11", "c");
+    hashMap.insert("21", "d");
+    hashMap.insert("33", "e");
+    hashMap.insert("41", "f");
+
+    fs::KeyValuePair<std::string, std::string> keyValuePair0 = hashMap.find("1");
+    
+    hashMap.erase("21");
+
+    fs::KeyValuePair<std::string, std::string> keyValuePair1 = hashMap.find("21");
 
     return true;
 }
@@ -845,6 +864,7 @@ const bool testAll()
 
     testBitVector();
 
+    testHashMap();
 
     /*
     */

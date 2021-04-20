@@ -13,10 +13,16 @@
 namespace fs
 {
     template<uint32 BitCount>
-    inline constexpr StaticBitArray<BitCount>::StaticBitArray()
+    inline StaticBitArray<BitCount>::StaticBitArray()
         : _byteArray{}
     {
         static_assert(0 < BitCount, "BitCount of StaticBitArray must be greater than zero!!!");
+    }
+
+    template<uint32 BitCount>
+    inline StaticBitArray<BitCount>::StaticBitArray(const bool initialValue)
+    {
+        setAll(initialValue);
     }
 
     template<uint32 BitCount>
@@ -119,13 +125,13 @@ namespace fs
     }
 
     template<uint32 BitCount>
-    inline constexpr const uint32 StaticBitArray<BitCount>::getBitCount() const noexcept
+    inline const uint32 StaticBitArray<BitCount>::getBitCount() const noexcept
     {
         return BitCount;
     }
 
     template<uint32 BitCount>
-    inline constexpr const uint32 StaticBitArray<BitCount>::getByteCount() const noexcept
+    inline const uint32 StaticBitArray<BitCount>::getByteCount() const noexcept
     {
         return kByteCount;
     }

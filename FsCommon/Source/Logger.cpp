@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <cstdarg>
+#include "..\Include\Logger.h"
 
 
 namespace fs
@@ -67,6 +68,26 @@ namespace fs
         logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
         printf(finalBuffer);
+    }
+
+    void Logger::logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+    {
+        static constexpr int32 kErrorExitCode = -1;
+        static char finalBuffer[kFinalBufferSize]{};
+        static char content[kFinalBufferSize]{};
+
+        // variadic arguments
+        {
+            va_list vl;
+            va_start(vl, format);
+            vsprintf_s(content, kFinalBufferSize, format, vl);
+            va_end(vl);
+        }
+
+        logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
+
+        printf(finalBuffer);
+        ::MessageBoxA(nullptr, finalBuffer, "LOG ALERT", MB_ICONEXCLAMATION);
     }
 
     void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)

@@ -15,6 +15,7 @@
 #include <FsContainer/Include/Tree.h>
 #include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/IId.h>
+#include <FsContainer/Include/HashMap.h>
 
 
 #endif // !FS_CONTAINER_ALL_HEADERS_H

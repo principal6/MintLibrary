@@ -20,6 +20,7 @@ namespace fs
 #pragma region Logging
     #define FS_LOG(author, format, ...)                     fs::Logger::getInstance().log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
     #define FS_LOG_PURE(author, format, ...)                fs::Logger::getInstance().log(nullptr, author, nullptr, nullptr, 0, format, __VA_ARGS__)
+    #define FS_LOG_ALERT(author, format, ...)               fs::Logger::getInstance().logAlert(" ALERT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
     #define FS_LOG_ERROR(author, format, ...)               fs::Logger::getInstance().logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
 #pragma endregion
 
@@ -49,6 +50,7 @@ namespace fs
     public:
         static Logger&  getInstance() noexcept;
         void            log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
+        void            logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
         void            logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
 
     private:

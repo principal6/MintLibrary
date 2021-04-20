@@ -5,16 +5,16 @@
 #define FS_COMMON_DEFINITIONS_H
 
 
-#include <cstdint>
-#include <stdafx.h>
-
-
 #define FS_INLINE __forceinline
 
 
 #if defined DEBUG or defined _DEBUG
 #define FS_DEBUG
 #endif
+
+
+#include <cstdint>
+#include <stdafx.h>
 
 
 namespace fs

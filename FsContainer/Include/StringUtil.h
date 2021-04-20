@@ -46,10 +46,6 @@ namespace fs
         const uint32    find(const char* const source, const char* const target, const uint32 offset = 0);
         const bool      strcmp(const char* const a, const char* const b);
 
-        static uint64   hashRawString64(const char* const rawString, const uint32 length);
-        static uint64   hashRawString64(const char* const rawString);
-        static uint64   hashRawString64(const wchar_t* const rawString);
-
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
         void            excludeExtension(std::string& inoutText);

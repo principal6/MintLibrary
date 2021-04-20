@@ -1,6 +1,7 @@
 #include <FsContainer/Include/UniqueString.h>
 #include <FsContainer/Include/UniqueString.hpp>
 
+#include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/StringUtil.h>
 
 
@@ -59,7 +60,7 @@ namespace fs
             return UniqueStringA::kInvalidId;
         }
 
-        const uint64 hash = StringUtil::hashRawString64(rawString);
+        const uint64 hash = fs::computeHash(rawString);
         {
             auto found = _registrationMap.find(hash);
             if (found != _registrationMap.end())

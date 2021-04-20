@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/GuiContext.h>
 
+#include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 
@@ -2374,7 +2375,7 @@ namespace fs
             hashKeyWstring.clear();
             hashKeyWstring.append(text);
             hashKeyWstring.append(std::to_wstring(static_cast<uint16>(controlType)));
-            return fs::StringUtil::hashRawString64(hashKeyWstring.c_str());
+            return fs::computeHash(hashKeyWstring.c_str());
         }
 
         GuiContext::ControlData& GuiContext::createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride) noexcept

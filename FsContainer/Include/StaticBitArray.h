@@ -14,7 +14,8 @@ namespace fs
     class StaticBitArray
     {
     public:
-        constexpr                   StaticBitArray();
+                                    StaticBitArray();
+                                    StaticBitArray(const bool initialValue);
                                     ~StaticBitArray();
 
     public:
@@ -41,8 +42,8 @@ namespace fs
         const bool                  getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept;
 
     public:
-        constexpr const uint32      getBitCount() const noexcept;
-        constexpr const uint32      getByteCount() const noexcept;
+        const uint32                getBitCount() const noexcept;
+        const uint32                getByteCount() const noexcept;
 
     private:
         static constexpr uint32     kByteCount{ 1 + ((BitCount - 1) / kBitsPerByte) };

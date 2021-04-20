@@ -13,6 +13,7 @@
 #include <FsContainer/Include/StringUtil.hpp>
 #include <FsContainer/Include/Tree.hpp>
 #include <FsContainer/Include/Vector.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 
 #endif // !FS_CONTAINER_ALL_HPPS_H

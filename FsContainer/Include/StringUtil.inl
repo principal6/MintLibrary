@@ -114,39 +114,5 @@ namespace fs
         {
             return (0 == ::strcmp(a, b));
         }
-
-        FS_INLINE uint64 hashRawString64(const char* const rawString, const uint32 length)
-        {
-            // Hashing algorithm: FNV1a
-
-            if (isNullOrEmpty(rawString) == true)
-            {
-                return kUint64Max;
-            }
-
-            static constexpr uint64 kOffset = 0xcbf29ce484222325;
-            static constexpr uint64 kPrime = 0x00000100000001B3;
-
-            uint64 hash = kOffset;
-            for (uint32 rawStringAt = 0; rawStringAt < length; ++rawStringAt)
-            {
-                hash ^= static_cast<uint8>(rawString[rawStringAt]);
-                hash *= kPrime;
-            }
-            return hash;
-        }
-
-        FS_INLINE uint64 hashRawString64(const char* const rawString)
-        {
-            const uint32 rawStringLength = strlen(rawString);
-            return hashRawString64(rawString, rawStringLength);
-        }
-
-        FS_INLINE uint64 hashRawString64(const wchar_t* const rawString)
-        {
-            const uint32 rawStringLength = wcslen(rawString);
-            const char* const rawStringA = reinterpret_cast<const char*>(rawString);
-            return hashRawString64(rawStringA, rawStringLength * 2);
-        }
     }
 }

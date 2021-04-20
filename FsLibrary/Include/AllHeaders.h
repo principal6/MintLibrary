@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsCommon/Include/Logger.h>
+
 
 namespace fs
 {
