@@ -610,27 +610,36 @@ namespace fs
             public:
                 FS_INLINE void          setPositionCount(const uint32 positionCount) noexcept
                 {
-                    _edgeDataMap.resize(positionCount);
+                    _positionCount = positionCount;
+                    _edgeTable.resize(positionCount * positionCount);
+                    const uint32 length = _edgeTable.size();
+                    for (uint32 index = 0; index < length; ++index)
+                    {
+                        _edgeTable[index] = -1;
+                    }
                 }
                 FS_INLINE void          setMidpoint(const PositionEdge& edge, const int32 midpointPositionIndex) noexcept
                 {
-                    _edgeDataMap[edge.key()][edge.value()] = midpointPositionIndex;
+                    _edgeTable[getIndexFromEdge(edge)] = midpointPositionIndex;
                 }
                 FS_INLINE const bool    hasMidpoint(const PositionEdge& edge) const noexcept
                 {
-                    if (_edgeDataMap[edge.key()].end() != _edgeDataMap[edge.key()].find(edge.value()))
-                    {
-                        return true;
-                    }
-                    return false;
+                    return (0 <= _edgeTable[getIndexFromEdge(edge)]);
                 }
                 FS_INLINE const int32   getMidpointPositionIndex(const PositionEdge& edge) const noexcept
                 {
-                    return _edgeDataMap[edge.key()].at(edge.value());
+                    return _edgeTable[getIndexFromEdge(edge)];
                 }
 
             private:
-                fs::Vector<std::unordered_map<int32, int32>>    _edgeDataMap;
+                FS_INLINE const uint32  getIndexFromEdge(const PositionEdge& edge) const noexcept
+                {
+                    return edge.key() * _positionCount + edge.value();
+                }
+
+            private:
+                int32               _positionCount = 0;
+                fs::Vector<int32>   _edgeTable;
             };
 
             PositionEdgeGraph positionEdgeGraph;
