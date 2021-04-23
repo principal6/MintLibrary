@@ -1,11 +1,12 @@
 #include <stdafx.h>
 #include <FsRenderingBase/Include/Language/CppHlslParser.h>
 
-#include <FsRenderingBase/Include/Language/ILexer.h>
-
 #include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
 #include <FsContainer/Include/Tree.hpp>
+#include <FsContainer/Include/HashMap.hpp>
+
+#include <FsRenderingBase/Include/Language/ILexer.h>
 
 #include <functional>
 
@@ -193,7 +194,7 @@ namespace fs
 
             _typeInfoArray.push_back(typeInfo);
             const uint32 typeInfoIndex = _typeInfoArray.size() - 1;
-            _typeInfoUmap.insert(std::make_pair(typeInfo.getTypeName(), typeInfoIndex));
+            _typeInfoUmap.insert(typeInfo.getTypeName(), typeInfoIndex);
         }
 
         const bool CppHlslParser::parseClassStruct(const bool isStruct, const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, uint32& outAdvanceCount)
@@ -1646,7 +1647,7 @@ namespace fs
             }
 
             auto found = _typeTableUmap.find(typeFullIdentifier_);
-            if (found == _typeTableUmap.end())
+            if (found.isValid() == false)
             {
                 _typeTable.push_back(CppHlslTypeTableItem(SymbolTableItem(SymbolClassifier::Identifier, typeStack.back()), CppHlslUserDefinedTypeInfo::Default));
                 _typeTable.back().setTypeSize(typeSize);
@@ -1654,9 +1655,9 @@ namespace fs
                 const uint32 typeTableIndex = _typeTable.size() - 1;
                 if (isBuiltIn == true)
                 {
-                    _builtInTypeUmap.insert(std::make_pair(typeStack.back(), typeTableIndex));
+                    _builtInTypeUmap.insert(typeStack.back(), typeTableIndex);
                 }
-                _typeTableUmap.insert(std::make_pair(typeFullIdentifier_, typeTableIndex));
+                _typeTableUmap.insert(typeFullIdentifier_, typeTableIndex);
             }
         }
 
@@ -1666,14 +1667,14 @@ namespace fs
 
             const std::string typeFullIdentifier = getTypeFullIdentifier(namespaceNode, type.getTypeName());
             auto found = _typeTableUmap.find(typeFullIdentifier);
-            if (found == _typeTableUmap.end())
+            if (found.isValid() == false)
             {
                 _typeTable.push_back(type);
                 const uint32 typeTableIndex = _typeTable.size() - 1;
-                _typeTableUmap.insert(std::make_pair(typeFullIdentifier, typeTableIndex));
+                _typeTableUmap.insert(typeFullIdentifier, typeTableIndex);
                 return typeTableIndex;
             }
-            return found->second;
+            return *found._value;
         }
 
         std::string CppHlslParser::getTypeFullIdentifier(const TreeNodeAccessor<SyntaxTreeItem>& namespaceNode, const std::string& typeIdentifier) const noexcept
@@ -1702,12 +1703,12 @@ namespace fs
         const bool CppHlslParser::registerTypeAlias(const std::string& typeAlias, const uint32 typeIndex)
         {
             auto found = _typeAliasTableUmap.find(typeAlias);
-            if (found != _typeAliasTableUmap.end())
+            if (found.isValid() == true)
             {
                 reportError(kInvalidGrammarSymbol, ErrorType::RepetitionOfCode, (typeAlias + "는 이미 alias 가 등록되어 있습니다!").c_str());
                 return false;
             }
-            _typeAliasTableUmap.insert(std::make_pair(typeAlias, typeIndex));
+            _typeAliasTableUmap.insert(typeAlias, typeIndex);
             return true;
         }
 
@@ -1752,20 +1753,20 @@ namespace fs
 
         const bool CppHlslParser::isBuiltInTypeXXX(const std::string& symbolString) const noexcept
         {
-            return (_builtInTypeUmap.find(symbolString) != _builtInTypeUmap.end());
+            return (_builtInTypeUmap.find(symbolString).isValid() == true);
         }
 
         const bool CppHlslParser::isUserDefinedTypeXXX(const std::string& typeFullIdentifier) const noexcept
         {
-            return (_typeTableUmap.find(typeFullIdentifier) != _typeTableUmap.end());
+            return (_typeTableUmap.find(typeFullIdentifier).isValid() == true);
         }
 
         const std::string& CppHlslParser::getUnaliasedSymbolStringXXX(const SymbolTableItem& symbol) const noexcept
         {
             auto found = _typeAliasTableUmap.find(symbol._symbolString);
-            if (found != _typeAliasTableUmap.end())
+            if (found.isValid() == true)
             {
-                return _typeTable[found->second].getTypeName();
+                return _typeTable[*found._value].getTypeName();
             }
             return symbol._symbolString;
         }
@@ -1810,11 +1811,11 @@ namespace fs
         const CppHlslTypeInfo& CppHlslParser::getTypeInfo(const std::string& typeName) const noexcept
         {
             auto found = _typeInfoUmap.find(typeName);
-            if (found == _typeInfoUmap.end())
+            if (found.isValid() == false)
             {
                 return CppHlslTypeInfo::kInvalidTypeInfo;
             }
-            return _typeInfoArray[found->second];
+            return _typeInfoArray[*found._value];
         }
 
         const uint32 CppHlslParser::getTypeInfoCount() const noexcept

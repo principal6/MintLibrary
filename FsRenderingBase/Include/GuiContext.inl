@@ -796,9 +796,9 @@ namespace fs
 
         FS_INLINE void GuiContext::ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
         {
-            if (childWindowControlData._controlType == ControlType::Window && _childWindowHashKeyMap.find(childWindowControlData._hashKey) == _childWindowHashKeyMap.end())
+            if (childWindowControlData._controlType == ControlType::Window && _childWindowHashKeyMap.find(childWindowControlData._hashKey).isValid() == false)
             {
-                _childWindowHashKeyMap.insert(std::make_pair(childWindowControlData._hashKey, true));
+                _childWindowHashKeyMap.insert(childWindowControlData._hashKey, true);
             }
         }
 
@@ -807,7 +807,7 @@ namespace fs
             _childWindowHashKeyMap.erase(childWindowHashKey);
         }
 
-        FS_INLINE const std::unordered_map<uint64, bool>& GuiContext::ControlData::getChildWindowHashKeyMap() const noexcept
+        FS_INLINE const fs::HashMap<uint64, bool>& GuiContext::ControlData::getChildWindowHashKeyMap() const noexcept
         {
             return _childWindowHashKeyMap;
         }
@@ -904,9 +904,9 @@ namespace fs
             if (_controlStackPerFrame.empty() == false)
             {
                 auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
-                if (found != _controlIdMap.end())
+                if (found.isValid() == true)
                 {
-                    return found->second;
+                    return *found._value;
                 }
             }
             return _rootControlData;
@@ -917,9 +917,9 @@ namespace fs
             if (_controlStackPerFrame.empty() == false)
             {
                 auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
-                if (found != _controlIdMap.end())
+                if (found.isValid() == true)
                 {
-                    return found->second;
+                    return *found._value;
                 }
             }
             return _rootControlData;
@@ -928,9 +928,9 @@ namespace fs
         FS_INLINE GuiContext::ControlData& GuiContext::getControlData(const uint64 hashKey) noexcept
         {
             auto found = _controlIdMap.find(hashKey);
-            if (found != _controlIdMap.end())
+            if (found.isValid() == true)
             {
-                return found->second;
+                return *found._value;
             }
             return _rootControlData;
         }
@@ -938,9 +938,9 @@ namespace fs
         FS_INLINE const GuiContext::ControlData& GuiContext::getControlData(const uint64 hashKey) const noexcept
         {
             auto found = _controlIdMap.find(hashKey);
-            if (found != _controlIdMap.end())
+            if (found.isValid() == true)
             {
-                return found->second;
+                return *found._value;
             }
 
             //FS_ASSERT("김장원", false, "hashKey 가 존재하지 않는 ControlData 입니다!!!");

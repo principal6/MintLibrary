@@ -9,6 +9,7 @@
 
 #include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/StringUtil.h>
+#include <FsContainer/Include/HashMap.h>
 
 
 //#define FS_USE_TOKEN_STRING_IN_RELEASE
@@ -43,8 +44,8 @@ namespace fs
             uint64                          _totalTimeMs;
 
         private:
-            std::unordered_map<char, int8>  _delimiterUmap;
-            std::unordered_map<char, int8>  _tokenIdentifierUmap;
+            fs::HashMap<char, int8>         _delimiterUmap;
+            fs::HashMap<char, int8>         _tokenIdentifierUmap;
         
         private:
             fs::Vector<fs::StringRange>     _tokenArray;

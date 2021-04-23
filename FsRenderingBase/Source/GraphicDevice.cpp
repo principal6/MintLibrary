@@ -11,6 +11,7 @@
 #include <FsPlatform/Include/WindowsWindow.h>
 
 #include <FsContainer/Include/ScopeString.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 #include <FsRenderingBase/Include/LowLevelRenderer.hpp>
 

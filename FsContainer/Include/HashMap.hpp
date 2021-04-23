@@ -15,6 +15,71 @@
 namespace fs
 {
     template<typename Key, typename Value>
+    inline Bucket<Key, Value>::Bucket()
+        : _isUsed{ false }
+    {
+        __noop;
+    }
+
+    template<typename Key, typename Value>
+    inline Bucket<Key, Value>::Bucket(const Bucket& rhs)
+        : _hopInfo{ rhs._hopInfo }
+        , _isUsed{ rhs._isUsed }
+        , _key{ rhs._key }
+    {
+        _value = rhs._value;
+    }
+
+
+    template<typename Key, typename Value>
+    inline BucketViewer<Key, Value>::BucketViewer(const HashMap<Key, Value>* const hashMap)
+        : _hashMap{ hashMap }
+        , _bucketIndex{ 0 }
+    {
+        const int32 bucketArraySize = static_cast<int32>(_hashMap->_bucketArray.size());
+        for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
+        {
+            if (_hashMap->_bucketArray[bucketIndex]._isUsed == true)
+            {
+                _bucketIndex = bucketIndex;
+                break;
+            }
+        }
+    }
+
+    template<typename Key, typename Value>
+    inline const bool BucketViewer<Key, Value>::isValid() const noexcept
+    {
+        return static_cast<uint32>(_bucketIndex) < _hashMap->_bucketArray.size();
+    }
+
+    template<typename Key, typename Value>
+    inline void BucketViewer<Key, Value>::next() noexcept
+    {
+        const int32 bucketArraySize = static_cast<int32>(_hashMap->_bucketArray.size());
+        for (int32 bucketIndex = _bucketIndex + 1; bucketIndex < bucketArraySize; ++bucketIndex)
+        {
+            if (_hashMap->_bucketArray[bucketIndex]._isUsed == true)
+            {
+                _bucketIndex = bucketIndex;
+                return;
+            }
+        }
+        _bucketIndex = -1;
+    }
+
+    template<typename Key, typename Value>
+    inline KeyValuePairConst<Key, Value> BucketViewer<Key, Value>::view() noexcept
+    {
+        const Bucket<Key, Value>& bucket = _hashMap->_bucketArray[_bucketIndex];
+        KeyValuePairConst<Key, Value> keyValuePairConst;
+        keyValuePairConst._key = &bucket._key;
+        keyValuePairConst._value = &bucket._value;
+        return keyValuePairConst;
+    }
+
+
+    template<typename Key, typename Value>
     inline HashMap<Key, Value>::HashMap()
         : _bucketArray{ kSegmentLength }
         , _bucketCount{ 0 }
@@ -126,11 +191,25 @@ namespace fs
             if (startBucket._hopInfo.get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
             {
                 keyValuePair._key = &_bucketArray[startBucketIndex + hopAt]._key;
-                keyValuePair._value = &_bucketArray[startBucketIndex + hopAt]._value;
+                keyValuePair._value = const_cast<Value*>(&_bucketArray[startBucketIndex + hopAt]._value);
                 break;
             }
         }
         return keyValuePair;
+    }
+
+    template<typename Key, typename Value>
+    inline const Value& HashMap<Key, Value>::at(const Key& key) const noexcept
+    {
+        const Value* const value = find(key)._value;
+        return (value == nullptr) ? getInvalidValue() : *value;
+    }
+
+    template<typename Key, typename Value>
+    inline Value& HashMap<Key, Value>::at(const Key& key) noexcept
+    {
+        Value* const value = find(key)._value;
+        return (value == nullptr) ? getInvalidValue() : *value;
     }
 
     template<typename Key, typename Value>
@@ -168,12 +247,37 @@ namespace fs
     }
 
     template<typename Key, typename Value>
+    inline BucketViewer<Key, Value> HashMap<Key, Value>::getBucketViewer() const noexcept
+    {
+        return BucketViewer<Key, Value>(this);
+    }
+
+    template<typename Key, typename Value>
+    inline Value& HashMap<Key, Value>::getInvalidValue() noexcept
+    {
+        static Value invalidValue;
+        return invalidValue;
+    }
+
+    template<typename Key, typename Value>
+    inline const uint32 HashMap<Key, Value>::size() const noexcept
+    {
+        return _bucketCount;
+    }
+
+    template<typename Key, typename Value>
+    inline const bool HashMap<Key, Value>::empty() const noexcept
+    {
+        return 0 == _bucketCount;
+    }
+
+    template<typename Key, typename Value>
     inline void HashMap<Key, Value>::resize() noexcept
     {
         const float load = static_cast<float>(_bucketCount) / static_cast<float>(_bucketArray.size());
         FS_LOG("±èÀå¿ø", "HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.size());
 
-        fs::Vector<Bucket> oldBucketArray = _bucketArray;
+        fs::Vector<Bucket<Key, Value>> oldBucketArray = _bucketArray;
 
         _bucketCount = 0;
 
@@ -249,7 +353,6 @@ namespace fs
     inline const uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
     {
         return (kSegmentLength * computeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
-        //return keyHash % _bucketArray.size();
     }
 }
 

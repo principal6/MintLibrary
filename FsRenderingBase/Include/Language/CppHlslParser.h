@@ -7,6 +7,8 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
+#include <FsContainer/Include/HashMap.h>
+
 #include <FsRenderingBase/Include/Language/IParser.h>
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>
 
@@ -340,16 +342,16 @@ namespace fs
 
         private:
             fs::Vector<CppHlslTypeTableItem>            _typeTable;
-            std::unordered_map<std::string, uint32>     _typeTableUmap;
+            fs::HashMap<std::string, uint32>            _typeTableUmap;
 
-            std::unordered_map<std::string, uint32>     _typeAliasTableUmap;
+            fs::HashMap<std::string, uint32>            _typeAliasTableUmap;
             
         private:
             fs::Vector<CppHlslTypeInfo>                 _typeInfoArray;
-            std::unordered_map<std::string, uint32>     _typeInfoUmap;
+            fs::HashMap<std::string, uint32>            _typeInfoUmap;
         
         private:
-            std::unordered_map<std::string, uint32>     _builtInTypeUmap;
+            fs::HashMap<std::string, uint32>            _builtInTypeUmap;
         
         private:
             static const SymbolTableItem                kInitializerListSymbol;

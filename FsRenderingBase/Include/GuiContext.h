@@ -13,6 +13,7 @@
 
 #include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/IId.h>
+#include <FsContainer/Include/HashMap.h>
 
 #include <FsPlatform/Include/IWindow.h>
 
@@ -429,7 +430,7 @@ namespace fs
             public:
                 void                                        connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
                 void                                        disconnectChildWindow(const uint64 childWindowHashKey) noexcept;
-                const std::unordered_map<uint64, bool>&     getChildWindowHashKeyMap() const noexcept;
+                const fs::HashMap<uint64, bool>&            getChildWindowHashKeyMap() const noexcept;
 
             public:
                 void                                        setVisibleState(const VisibleState visibleState) noexcept;
@@ -479,7 +480,7 @@ namespace fs
                 fs::Vector<uint64>                          _childControlDataHashKeyArray;
                 fs::Vector<uint64>                          _previousChildControlDataHashKeyArray;
                 uint16                                      _previousMaxChildControlCount;
-                std::unordered_map<uint64, bool>            _childWindowHashKeyMap;
+                fs::HashMap<uint64, bool>                   _childWindowHashKeyMap;
                 DockDatum                                   _dockData[static_cast<uint32>(DockingMethod::COUNT)];
                 uint64                                      _dockControlHashKey;
                 DockingStateContext                         _dokcingStateContext;
@@ -772,7 +773,7 @@ namespace fs
 #pragma endregion
         
         private:
-            std::unordered_map<uint64, ControlData>             _controlIdMap;
+            fs::HashMap<uint64, ControlData>                    _controlIdMap;
 
 
 #pragma region Next-states

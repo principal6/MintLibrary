@@ -4,6 +4,7 @@
 #include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 #include <FsRenderingBase/Include/GraphicDevice.h>
 
@@ -293,9 +294,10 @@ namespace fs
 
             // ParentControlData 가 Root 거나 Window 일 때만 여기에 온다.
             const auto& childWindowHashKeyMap = parentControlData.getChildWindowHashKeyMap();
-            for (const auto& iter : childWindowHashKeyMap)
+            fs::BucketViewer bucketViewer = childWindowHashKeyMap.getBucketViewer();
+            for (; bucketViewer.isValid(); bucketViewer.next())
             {
-                const ControlData& childWindowControlData = getControlData(iter.first);
+                const ControlData& childWindowControlData = getControlData(*bucketViewer.view()._key);
                 if (isInControlInteractionArea(screenPosition, childWindowControlData) == true)
                 {
                     return true;
@@ -2382,16 +2384,16 @@ namespace fs
         {
             const uint64 hashKey = generateControlHashKeyXXX((hashGenerationKeyOverride == nullptr) ? text : hashGenerationKeyOverride, controlType);
             auto found = _controlIdMap.find(hashKey);
-            if (found == _controlIdMap.end())
+            if (found.isValid() == false)
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
                 ControlData newControlData{ hashKey, stackTopControlData.getHashKey(), controlType };
                 newControlData._text = text;
 
-                _controlIdMap[hashKey] = newControlData;
+                _controlIdMap.insert(hashKey, newControlData);
             }
 
-            ControlData& controlData = _controlIdMap[hashKey];
+            ControlData& controlData = _controlIdMap.at(hashKey);
             if (controlData._updateCount < 3)
             {
                 ++controlData._updateCount;

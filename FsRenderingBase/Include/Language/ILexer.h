@@ -8,6 +8,7 @@
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/Vector.h>
+#include <FsContainer/Include/HashMap.h>
 
 #include <FsRenderingBase/Include/Language/LanguageCommon.h>
 
@@ -200,30 +201,30 @@ namespace fs
             char                                    _statementTerminator;
 
         protected:
-            std::unordered_map<char, int8>          _delimiterUmap;
+            fs::HashMap<char, int8>                 _delimiterUmap;
 
         protected:
             fs::Vector<LineSkipperTableItem>        _lineSkipperTable;
-            std::unordered_map<uint64, uint32>      _lineSkipperUmap;
+            fs::HashMap<uint64, uint32>             _lineSkipperUmap;
 
         protected:
             fs::Vector<std::string>                 _keywordTable;
-            std::unordered_map<uint64, uint32>      _keywordUmap;
+            fs::HashMap<uint64, uint32>             _keywordUmap;
 
         protected:
             fs::Vector<GrouperTableItem>            _grouperTable;
-            std::unordered_map<char, uint32>        _grouperUmap;
+            fs::HashMap<char, uint32>               _grouperUmap;
 
         protected:
-            std::unordered_map<char, int8>          _stringQuoteUmap;
+            fs::HashMap<char, int8>                 _stringQuoteUmap;
 
         protected:
             fs::Vector<std::string>                 _punctuatorTable;
-            std::unordered_map<uint64, uint32>      _punctuatorUmap;
+            fs::HashMap<uint64, uint32>             _punctuatorUmap;
 
         protected:
             fs::Vector<OperatorTableItem>           _operatorTable;
-            std::unordered_map<uint64, uint32>      _operatorUmap;
+            fs::HashMap<uint64, uint32>             _operatorUmap;
 
         protected:
             fs::Vector<SymbolTableItem>             _symbolTable;

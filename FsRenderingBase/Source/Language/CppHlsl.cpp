@@ -2,6 +2,7 @@
 #include <FsRenderingBase/Include/Language/CppHlsl.h>
 
 #include <FsContainer/Include/Vector.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 #include <FsPlatform/Include/TextFile.h>
 

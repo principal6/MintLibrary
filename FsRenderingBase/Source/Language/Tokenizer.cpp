@@ -2,6 +2,7 @@
 #include <FsRenderingBase/Include/Language/Tokenizer.h>
 
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 
 namespace fs
@@ -10,17 +11,17 @@ namespace fs
     {
         void Tokenizer::insertDelimiter(const char delimiter)
         {
-            _delimiterUmap.insert(std::make_pair(delimiter, 1));
+            _delimiterUmap.insert(delimiter, 1);
         }
 
         void Tokenizer::insertTokenIdentifier(const char tokenIdentifier)
         {
-            _tokenIdentifierUmap.insert(std::make_pair(tokenIdentifier, 1));
+            _tokenIdentifierUmap.insert(tokenIdentifier, 1);
         }
 
         const uint32 Tokenizer::getDelimiterCount() const noexcept
         {
-            return static_cast<uint32>(_delimiterUmap.size());
+            return _delimiterUmap.size();
         }
 
         void Tokenizer::tokenize()
@@ -47,7 +48,7 @@ namespace fs
                 const char sourceChar = _source[sourceAt];
 
                 auto tokenIdentifierFound = _tokenIdentifierUmap.find(sourceChar);
-                if (tokenIdentifierFound != _tokenIdentifierUmap.end())
+                if (tokenIdentifierFound.isValid() == true)
                 {
                     if (sourcePrevAt < sourceAt)
                     {
@@ -64,7 +65,7 @@ namespace fs
                 }
 
                 auto delimiterFound = _delimiterUmap.find(sourceChar);
-                if (delimiterFound != _delimiterUmap.end())
+                if (delimiterFound.isValid() == true)
                 {
                     if (sourcePrevAt < sourceAt)
                     {

@@ -2,6 +2,7 @@
 #include <FsRenderingBase/Include/Language/CppHlslLexer.h>
 
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 
 namespace fs

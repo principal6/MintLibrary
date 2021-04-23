@@ -4,6 +4,7 @@
 #include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/Vector.hpp>
 #include <FsContainer/Include/StringUtil.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 
 namespace fs
@@ -35,9 +36,9 @@ namespace fs
 
         void ILexer::registerDelimiter(const char delimiter)
         {
-            if (_delimiterUmap.find(delimiter) == _delimiterUmap.end())
+            if (_delimiterUmap.find(delimiter).isValid() == false)
             {
-                _delimiterUmap.insert(std::make_pair(delimiter, 1));
+                _delimiterUmap.insert(delimiter, 1);
             }
         }
 
@@ -55,11 +56,11 @@ namespace fs
             if (fs::StringUtil::strcmp(lineSkipperOpen, lineSkipperClose) == true)
             {
                 const uint64 keyOpenClose = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
-                if (_lineSkipperUmap.find(keyOpenClose) == _lineSkipperUmap.end())
+                if (_lineSkipperUmap.find(keyOpenClose).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenCloseMarker, 0));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
-                    _lineSkipperUmap.insert(std::make_pair(keyOpenClose, lineSkipperIndex));
+                    _lineSkipperUmap.insert(keyOpenClose, lineSkipperIndex);
                 }
                 return;
             }
@@ -68,19 +69,19 @@ namespace fs
             {
                 const uint16 nextGroupId = LineSkipperTableItem::getNextGroupId();
                 const uint64 keyOpen = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
-                if (_lineSkipperUmap.find(keyOpen) == _lineSkipperUmap.end())
+                if (_lineSkipperUmap.find(keyOpen).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenMarker, nextGroupId));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
-                    _lineSkipperUmap.insert(std::make_pair(keyOpen, lineSkipperIndex));
+                    _lineSkipperUmap.insert(keyOpen, lineSkipperIndex);
                 }
 
                 const uint64 keyClose = (1 == lengthClose) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
-                if (_lineSkipperUmap.find(keyClose) == _lineSkipperUmap.end())
+                if (_lineSkipperUmap.find(keyClose).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, LineSkipperClassifier::CloseMarker, nextGroupId));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
-                    _lineSkipperUmap.insert(std::make_pair(keyClose, lineSkipperIndex));
+                    _lineSkipperUmap.insert(keyClose, lineSkipperIndex);
                 }
             }
         }
@@ -95,41 +96,41 @@ namespace fs
             }
 
             const uint64 key = (1 == length) ? lineSkipper[0] : static_cast<uint64>(lineSkipper[1]) * 255 + lineSkipper[0];
-            if (_lineSkipperUmap.find(key) == _lineSkipperUmap.end())
+            if (_lineSkipperUmap.find(key).isValid() == false)
             {
                 _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipper, LineSkipperClassifier::SingleMarker, 0));
                 const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
-                _lineSkipperUmap.insert(std::make_pair(key, lineSkipperIndex));
+                _lineSkipperUmap.insert(key, lineSkipperIndex);
             }
         }
 
         void ILexer::registerKeyword(const char* const keyword)
         {
             const uint64 hash = fs::computeHash(keyword);
-            if (_keywordUmap.find(hash) == _keywordUmap.end())
+            if (_keywordUmap.find(hash).isValid() == false)
             {
                 _keywordTable.push_back(keyword);
                 const uint32 keywordIndex = _keywordTable.size() - 1;
-                _keywordUmap.insert(std::make_pair(hash, keywordIndex));
+                _keywordUmap.insert(hash, keywordIndex);
             }
         }
 
         void ILexer::registerGrouper(const char grouper, const GrouperClassifier grouperClassifier)
         {
-            if (_grouperUmap.find(grouper) == _grouperUmap.end())
+            if (_grouperUmap.find(grouper).isValid() == false)
             {
                 _grouperTable.push_back(GrouperTableItem(grouper, grouperClassifier));
                 const uint32 grouperIndex = _grouperTable.size() - 1;
 
-                _grouperUmap.insert(std::make_pair(grouper, grouperIndex));
+                _grouperUmap.insert(grouper, grouperIndex);
             }
         }
 
         void ILexer::registerStringQuote(const char stringQuote)
         {
-            if (_stringQuoteUmap.find(stringQuote) == _stringQuoteUmap.end())
+            if (_stringQuoteUmap.find(stringQuote).isValid() == false)
             {
-                _stringQuoteUmap.insert(std::make_pair(stringQuote, 1));
+                _stringQuoteUmap.insert(stringQuote, 1);
             }
         }
 
@@ -143,12 +144,12 @@ namespace fs
             }
 
             const uint64 key = fs::computeHash(punctuator);
-            if (_punctuatorUmap.find(key) == _punctuatorUmap.end())
+            if (_punctuatorUmap.find(key).isValid() == false)
             {
                 _punctuatorTable.push_back(punctuator);
 
                 const uint32 punctuatorIndex = _punctuatorTable.size() - 1;
-                _punctuatorUmap.insert(std::make_pair(key, punctuatorIndex));
+                _punctuatorUmap.insert(key, punctuatorIndex);
             }
         }
         
@@ -167,11 +168,11 @@ namespace fs
             }
 
             const uint64 key = (1 == length) ? operator_[0] : static_cast<uint64>(operator_[1]) * 255 + operator_[0];
-            if (_operatorUmap.find(key) == _operatorUmap.end())
+            if (_operatorUmap.find(key).isValid() == false)
             {
                 _operatorTable.push_back(OperatorTableItem(operator_, operatorClassifier));
                 const uint32 operatorIndex = _operatorTable.size() - 1;
-                _operatorUmap.insert(std::make_pair(key, operatorIndex));
+                _operatorUmap.insert(key, operatorIndex);
             }
         }
 
@@ -340,7 +341,7 @@ namespace fs
 
         const bool ILexer::isDelimiter(const char input) const noexcept
         {
-            return _delimiterUmap.find(input) != _delimiterUmap.end();
+            return _delimiterUmap.find(input).isValid() == true;
         }
 
         const bool ILexer::isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
@@ -349,19 +350,19 @@ namespace fs
             // 아니라면 길이 1 LineSkipper 인지 확인
             const uint64 key = static_cast<uint64>(ch1) * 255 + ch0;
             auto found = _lineSkipperUmap.find(key);
-            if (found == _lineSkipperUmap.end())
+            if (found.isValid() == false)
             {
                 auto found0 = _lineSkipperUmap.find(ch0);
-                if (found0 == _lineSkipperUmap.end())
+                if (found0.isValid() == false)
                 {
                     return false;
                 }
 
-                out = _lineSkipperTable[found0->second];
+                out = _lineSkipperTable[*found0._value];
                 return true;
             }
 
-            out = _lineSkipperTable[found->second];
+            out = _lineSkipperTable[*found._value];
             return true;
         }
 
@@ -373,18 +374,18 @@ namespace fs
         const bool ILexer::isGrouper(const char input, GrouperTableItem& out) const noexcept
         {
             auto found = _grouperUmap.find(input);
-            if (found == _grouperUmap.end())
+            if (found.isValid() == false)
             {
                 return false;
             }
 
-            out = _grouperTable[found->second];
+            out = _grouperTable[*found._value];
             return true;
         }
 
         const bool ILexer::isStringQuote(const char input) const noexcept
         {
-            return _stringQuoteUmap.find(input) != _stringQuoteUmap.end();
+            return _stringQuoteUmap.find(input).isValid() == true;
         }
 
         const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
@@ -392,7 +393,7 @@ namespace fs
             const char keyString3[4]{ ch0, ch1, ch2, '\0' };
             const uint64 key3 = fs::computeHash(keyString3);
             auto found3 = _punctuatorUmap.find(key3);
-            if (found3 != _punctuatorUmap.end())
+            if (found3.isValid() == true)
             {
                 outAdvance = 3;
                 return true;
@@ -401,7 +402,7 @@ namespace fs
             const char keyString2[3]{ ch0, ch1, '\0' };
             const uint64 key2 = fs::computeHash(keyString2);
             auto found2 = _punctuatorUmap.find(key2);
-            if (found2 != _punctuatorUmap.end())
+            if (found2.isValid() == true)
             {
                 outAdvance = 2;
                 return true;
@@ -410,7 +411,7 @@ namespace fs
             const char keyString1[2]{ ch0, '\0' };
             const uint64 key1 = fs::computeHash(keyString1);
             auto found1 = _punctuatorUmap.find(key1);
-            if (found1 != _punctuatorUmap.end())
+            if (found1.isValid() == true)
             {
                 outAdvance = 1;
                 return true;
@@ -426,19 +427,19 @@ namespace fs
             // 아니라면 길이 1 Operator 인지 확인
             const uint64 key = static_cast<uint64>(ch1) * 255 + ch0;
             auto found = _operatorUmap.find(key);
-            if (found == _operatorUmap.end())
+            if (found.isValid() == false)
             {
                 auto found0 = _operatorUmap.find(ch0);
-                if (found0 == _operatorUmap.end())
+                if (found0.isValid() == false)
                 {
                     return false;
                 }
 
-                out = _operatorTable[found0->second];
+                out = _operatorTable[*found0._value];
                 return true;
             }
 
-            out = _operatorTable[found->second];
+            out = _operatorTable[*found._value];
             return true;
         }
 
@@ -473,7 +474,7 @@ namespace fs
 
         const bool ILexer::isKeyword(const std::string& input) const noexcept
         {
-            return _keywordUmap.find(fs::computeHash(input.c_str())) != _keywordUmap.end();
+            return _keywordUmap.find(fs::computeHash(input.c_str())).isValid() == true;
         }
 
         const uint32 ILexer::getSymbolCount() const noexcept
