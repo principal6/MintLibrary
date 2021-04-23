@@ -50,8 +50,16 @@ namespace fs
         return computeHash(str, length);
     }
 
+    template <typename T>
+    FS_INLINE typename std::enable_if<std::is_pointer<T>::value, const uint64>::type computeHash(const T value) noexcept
+    {
+        const char* const str = reinterpret_cast<const char*>(&value);
+        const uint32 length = sizeof(value);
+        return computeHash(str, length);
+    }
+
     template<typename T>
-    inline typename std::enable_if<std::is_arithmetic<T>::value, const uint64>::type Hasher<T>::operator()(const T& value) const noexcept
+    inline const uint64 Hasher<T>::operator()(const T& value) const noexcept
     {
         return fs::computeHash<T>(value);
         //return uint64(value); // ### FOR TEST ###

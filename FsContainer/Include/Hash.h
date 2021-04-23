@@ -17,11 +17,14 @@ namespace fs
     template <typename T>
     typename std::enable_if<std::is_arithmetic<T>::value, const uint64>::type computeHash(const T value) noexcept;
 
+    template <typename T>
+    typename std::enable_if<std::is_pointer<T>::value, const uint64>::type computeHash(const T value) noexcept;
+
 
     template <typename T>
     struct Hasher final
     {
-        typename std::enable_if<std::is_arithmetic<T>::value, const uint64>::type operator()(const T& value) const noexcept;
+        const uint64 operator()(const T& value) const noexcept;
     };
 
     template <>
