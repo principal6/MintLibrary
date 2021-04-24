@@ -118,6 +118,10 @@ namespace fs
         typename std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
                                             insert(const Key& key, V&& value) noexcept;
 
+    private:
+        const bool                          existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
+
+    public:
         const KeyValuePair<Key, Value>      find(const Key& key) const noexcept;
         const Value&                        at(const Key& key) const noexcept;
         Value&                              at(const Key& key) noexcept;

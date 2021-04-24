@@ -148,24 +148,8 @@ namespace fs
             return;
         }
 
-        // Find empty slot!!!
-        bool foundEmptySlot = false;
-        uint32 hopDistance = 0;
-        for (; hopDistance < kAddRange; ++hopDistance)
-        {
-            if (_bucketArray.size() <= startBucketIndex + hopDistance)
-            {
-                break;
-            }
-
-            if (_bucketArray[startBucketIndex + hopDistance]._isUsed == false)
-            {
-                foundEmptySlot = true;
-                break;
-            }
-        }
-
-        if (foundEmptySlot == true)
+        uint32 hopDistance;
+        if (existsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
         {
             // Check if it is closest
             
@@ -214,24 +198,8 @@ namespace fs
             return;
         }
 
-        // Find empty slot!!!
-        bool foundEmptySlot = false;
-        uint32 hopDistance = 0;
-        for (; hopDistance < kAddRange; ++hopDistance)
-        {
-            if (_bucketArray.size() <= startBucketIndex + hopDistance)
-            {
-                break;
-            }
-
-            if (_bucketArray[startBucketIndex + hopDistance]._isUsed == false)
-            {
-                foundEmptySlot = true;
-                break;
-            }
-        }
-
-        if (foundEmptySlot == true)
+        uint32 hopDistance;
+        if (existsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
         {
             // Check if it is closest
 
@@ -258,6 +226,25 @@ namespace fs
 
         resize();
         insert(key, std::move(value));
+    }
+
+    template<typename Key, typename Value>
+    inline const bool HashMap<Key, Value>::existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept
+    {
+        hopDistance = 0;
+        for (; hopDistance < kAddRange; ++hopDistance)
+        {
+            if (_bucketArray.size() <= startBucketIndex + hopDistance)
+            {
+                break;
+            }
+
+            if (_bucketArray[startBucketIndex + hopDistance]._isUsed == false)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     template<typename Key, typename Value>
@@ -418,7 +405,7 @@ namespace fs
         else
         {
             _bucketArray[bucketIndex + hopDistance]._value.~Value();
-            FS_PLACEMNT_NEW(&_bucketArray[bucketIndex + hopDistance]._value, Value(value));
+            FS_PLACEMNT_NEW(&_bucketArray[bucketIndex + hopDistance]._value, Value(std::move(value)));
         }
 
         ++_bucketCount;
