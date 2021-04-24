@@ -22,12 +22,25 @@ namespace fs
     }
 
     template<typename Key, typename Value>
-    inline Bucket<Key, Value>::Bucket(const Bucket& rhs)
+    template<typename B>
+    inline Bucket<Key, Value>::Bucket(typename std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs)
         : _hopInfo{ rhs._hopInfo }
         , _isUsed{ rhs._isUsed }
         , _key{ rhs._key }
+        , _value{ rhs._value }
     {
-        _value = rhs._value;
+        __noop;
+    }
+
+    template<typename Key, typename Value>
+    template<typename B>
+    inline Bucket<Key, Value>::Bucket(typename std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs)
+        : _hopInfo{ rhs._hopInfo }
+        , _isUsed{ rhs._isUsed }
+        , _key{ rhs._key }
+        , _value{ std::move(rhs._value) }
+    {
+        __noop;
     }
 
 
@@ -116,7 +129,9 @@ namespace fs
     }
 
     template<typename Key, typename Value>
-    inline void HashMap<Key, Value>::insert(const Key& key, const Value& value) noexcept
+    template<typename V>
+    inline typename std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
+    HashMap<Key, Value>::insert(const Key& key, const V& value) noexcept
     {
         const uint64 keyHash = Hasher<Key>()(key);
         const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
@@ -177,6 +192,72 @@ namespace fs
 
         resize();
         insert(key, value);
+    }
+
+    template<typename Key, typename Value>
+    template<typename V>
+    inline typename std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
+    HashMap<Key, Value>::insert(const Key& key, V&& value) noexcept
+    {
+        const uint64 keyHash = Hasher<Key>()(key);
+        const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
+
+        if (containsInternal(startBucketIndex, key) == true)
+        {
+            return;
+        }
+
+        auto& startBucket = _bucketArray[startBucketIndex];
+        if (false == startBucket._isUsed)
+        {
+            setBucket(startBucketIndex, 0, key, std::move(value));
+            return;
+        }
+
+        // Find empty slot!!!
+        bool foundEmptySlot = false;
+        uint32 hopDistance = 0;
+        for (; hopDistance < kAddRange; ++hopDistance)
+        {
+            if (_bucketArray.size() <= startBucketIndex + hopDistance)
+            {
+                break;
+            }
+
+            if (_bucketArray[startBucketIndex + hopDistance]._isUsed == false)
+            {
+                foundEmptySlot = true;
+                break;
+            }
+        }
+
+        if (foundEmptySlot == true)
+        {
+            // Check if it is closest
+
+            if (hopDistance < kHopRange)
+            {
+                setBucket(startBucketIndex, 0, key, std::move(value));
+                return;
+            }
+
+            do
+            {
+                if (displace(startBucketIndex, hopDistance) == false)
+                {
+                    break;
+                }
+            } while (kHopRange <= hopDistance);
+
+            if (hopDistance < kHopRange)
+            {
+                setBucket(startBucketIndex, 0, key, std::move(value));
+                return;
+            }
+        }
+
+        resize();
+        insert(key, std::move(value));
     }
 
     template<typename Key, typename Value>
@@ -289,7 +370,14 @@ namespace fs
         {
             if (oldBucketArray[oldBucketIndex]._isUsed == true)
             {
-                insert(oldBucketArray[oldBucketIndex]._key, oldBucketArray[oldBucketIndex]._value);
+                if constexpr (std::is_copy_constructible<Value>::value == true)
+                {
+                    insert(oldBucketArray[oldBucketIndex]._key, oldBucketArray[oldBucketIndex]._value);
+                }
+                else
+                {
+                    insert(oldBucketArray[oldBucketIndex]._key, std::move(oldBucketArray[oldBucketIndex]._value));
+                }
             }
         }
     }
@@ -301,7 +389,37 @@ namespace fs
 
         _bucketArray[bucketIndex + hopDistance]._isUsed = true;
         _bucketArray[bucketIndex + hopDistance]._key = key;
-        _bucketArray[bucketIndex + hopDistance]._value = value;
+
+        if constexpr (std::is_copy_assignable<Value>::value == true)
+        {
+            _bucketArray[bucketIndex + hopDistance]._value = value;
+        }
+        else
+        {
+            _bucketArray[bucketIndex + hopDistance]._value.~Value();
+            FS_PLACEMNT_NEW(&_bucketArray[bucketIndex + hopDistance]._value, Value(value));
+        }
+
+        ++_bucketCount;
+    }
+
+    template<typename Key, typename Value>
+    inline void HashMap<Key, Value>::setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept
+    {
+        _bucketArray[bucketIndex]._hopInfo.set(hopDistance, true);
+
+        _bucketArray[bucketIndex + hopDistance]._isUsed = true;
+        _bucketArray[bucketIndex + hopDistance]._key = key;
+
+        if constexpr (std::is_move_assignable<Value>::value == true)
+        {
+            _bucketArray[bucketIndex + hopDistance]._value = std::move(value);
+        }
+        else
+        {
+            _bucketArray[bucketIndex + hopDistance]._value.~Value();
+            FS_PLACEMNT_NEW(&_bucketArray[bucketIndex + hopDistance]._value, Value(value));
+        }
 
         ++_bucketCount;
     }
@@ -340,7 +458,16 @@ namespace fs
         
         bucketB._isUsed = true;
         bucketB._key = std::move(bucketA._key);
-        bucketB._value = std::move(bucketA._value);
+
+        if constexpr (std::is_move_assignable<Value>::value == true)
+        {
+            bucketB._value = std::move(bucketA._value);
+        }
+        else
+        {
+            bucketB._value.~Value();
+            FS_PLACEMNT_NEW(&bucketB._value, Value(std::move(bucketA._value)));
+        }
     }
 
     template<typename Key, typename Value>

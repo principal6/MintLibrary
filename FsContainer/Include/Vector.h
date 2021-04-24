@@ -39,7 +39,9 @@ namespace fs
         void            shrink_to_fit() noexcept;
 
     private:
-        static void     freeRawPointer(T*& rawPointer, const uint32 size) noexcept;
+        T*              allocateMemoryInternal(const uint32 size) noexcept;
+        void            deallocateMemoryInternal(T*& rawPointer, const uint32 size) noexcept;
+        void            copyElementInternal(T& to, const T& from, const bool destroyBeforePlacement) noexcept;
 
     public:
         void            clear() noexcept;

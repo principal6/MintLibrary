@@ -2390,7 +2390,7 @@ namespace fs
                 ControlData newControlData{ hashKey, stackTopControlData.getHashKey(), controlType };
                 newControlData._text = text;
 
-                _controlIdMap.insert(hashKey, newControlData);
+                _controlIdMap.insert(hashKey, std::move(newControlData));
             }
 
             ControlData& controlData = _controlIdMap.at(hashKey);

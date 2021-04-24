@@ -3,6 +3,7 @@
 
 #include <FsContainer/Include/Hash.hpp>
 #include <FsContainer/Include/StringUtil.h>
+#include <FsContainer/Include/HashMap.hpp>
 
 
 namespace fs
@@ -63,9 +64,9 @@ namespace fs
         const uint64 hash = fs::computeHash(rawString);
         {
             auto found = _registrationMap.find(hash);
-            if (found != _registrationMap.end())
+            if (found.isValid() == true)
             {
-                return found->second;
+                return *found._value;
             }
         }
 
@@ -81,7 +82,7 @@ namespace fs
 
         _totalLength += lengthNullIncluded;
         ++_uniqueStringCount;
-        _registrationMap.insert(std::make_pair(hash, newId));
+        _registrationMap.insert(hash, newId);
 
         return newId;
     }
@@ -92,13 +93,21 @@ namespace fs
 
         if (_rawCapacity < rawCapacity)
         {
-            char* temp = FS_NEW_ARRAY(char, _rawCapacity);
-            memcpy(temp, _rawMemory, sizeof(char) * _rawCapacity);
+            char* temp = nullptr;
+            if (0 < _rawCapacity)
+            {
+                temp = FS_NEW_ARRAY(char, _rawCapacity);
+                memcpy(temp, _rawMemory, sizeof(char) * _rawCapacity);
+            }
+            
             FS_DELETE_ARRAY(_rawMemory);
 
             _rawMemory = FS_NEW_ARRAY(char, rawCapacity);
-            memcpy(_rawMemory, temp, sizeof(char) * _rawCapacity);
-            FS_DELETE_ARRAY(temp);
+            if (0 < _rawCapacity)
+            {
+                memcpy(_rawMemory, temp, sizeof(char) * _rawCapacity);
+                FS_DELETE_ARRAY(temp);
+            }
 
             _rawCapacity = rawCapacity;
             _offsetArray.resize(_rawCapacity);

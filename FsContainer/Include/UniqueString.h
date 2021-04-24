@@ -8,6 +8,7 @@
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/Vector.h>
+#include <FsContainer/Include/HashMap.h>
 
 
 //#define FS_UNIQUE_STRING_EXPOSE_ID
@@ -28,12 +29,12 @@ namespace fs
     private:
         static constexpr uint32     kInvalidRawId = kUint32Max;
     
-#if defined FS_UNIQUE_STRING_EXPOSE_ID
     public:
-#else
+                                    UniqueStringAId();
+
+#if !defined FS_UNIQUE_STRING_EXPOSE_ID
     private:
 #endif
-                                    UniqueStringAId();
                                     UniqueStringAId(const uint32 newRawId);
 
     public:
@@ -124,7 +125,7 @@ namespace fs
 
     private:
         std::mutex                                      _mutex;
-        std::unordered_map<uint64, UniqueStringAId>     _registrationMap;
+        fs::HashMap<uint64, UniqueStringAId>            _registrationMap;
 
     private:
         fs::Vector<uint32>                              _offsetArray;

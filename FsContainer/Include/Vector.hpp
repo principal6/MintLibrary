@@ -5,6 +5,9 @@
 #define FS_VECTOR_HPP
 
 
+#pragma optimize("", off)
+
+
 #include <FsContainer/Include/Vector.h>
 
 
@@ -45,9 +48,23 @@ namespace fs
     {
         resize(rhs._size);
 
-        for (uint32 index = 0; index < _size; ++index)
+        if constexpr (std::is_copy_assignable<T>::value == false)
         {
-            _rawPointer[index] = rhs._rawPointer[index];
+            for (uint32 index = 0; index < _size; ++index)
+            {
+                _rawPointer[index].~T();
+            }
+            for (uint32 index = 0; index < _size; ++index)
+            {
+                FS_PLACEMNT_NEW(&_rawPointer[index], T(rhs._rawPointer[index]));
+            }
+        }
+        else
+        {
+            for (uint32 index = 0; index < _size; ++index)
+            {
+                _rawPointer[index] = rhs._rawPointer[index];
+            }
         }
     }
 
@@ -63,7 +80,7 @@ namespace fs
     template<typename T>
     inline Vector<T>::~Vector()
     {
-        freeRawPointer(_rawPointer, _size);
+        deallocateMemoryInternal(_rawPointer, _size);
     }
 
     template<typename T>
@@ -86,7 +103,7 @@ namespace fs
     {
         if (this != &rhs)
         {
-            freeRawPointer(_rawPointer, _size);
+            deallocateMemoryInternal(_rawPointer, _size);
 
             _rawPointer = rhs._rawPointer;
             _capacity = std::move(rhs._capacity);
@@ -125,28 +142,28 @@ namespace fs
         T* temp = nullptr;
         if (0 < _size)
         {
-            temp = FS_MALLOC(T, _size);
+            temp = allocateMemoryInternal(_size);
 
             for (uint32 index = 0; index < _size; ++index)
             {
-                FS_PLACEMNT_NEW(&temp[index], T(_rawPointer[index]));
+                copyElementInternal(temp[index], _rawPointer[index], false);
             }
         }
 
-        freeRawPointer(_rawPointer, _size);
+        deallocateMemoryInternal(_rawPointer, _size);
 
-        _rawPointer = FS_MALLOC(T, capacity);
+        _rawPointer = allocateMemoryInternal(capacity);
 
         if (0 < _size)
         {
             for (uint32 index = 0; index < _size; ++index)
             {
-                FS_PLACEMNT_NEW(&_rawPointer[index], T(temp[index]));
+                copyElementInternal(_rawPointer[index], temp[index], false);
             }
-
-            freeRawPointer(temp, _size);
         }
-        
+
+        deallocateMemoryInternal(temp, _size);
+
         _capacity = capacity;
     }
 
@@ -155,19 +172,30 @@ namespace fs
     {
         reserve(size);
 
-        if (_size < size)
+        if constexpr (std::is_copy_constructible<T>::value == true)
         {
-            for (uint32 index = _size; index < size; ++index)
+            if (_size < size)
             {
-                FS_PLACEMNT_NEW(&_rawPointer[index], T());
+                for (uint32 index = _size; index < size; ++index)
+                {
+                    FS_PLACEMNT_NEW(&_rawPointer[index], T());
+                }
+            }
+            else if (size < _size)
+            {
+                for (uint32 index = size; index < _size; ++index)
+                {
+                    _rawPointer[index].~T();
+                }
             }
         }
-        else if (size < _size)
+        else if constexpr (std::is_default_constructible<T>::value == true)
         {
-            for (uint32 index = size; index < _size; ++index)
-            {
-                _rawPointer[index].~T();
-            }
+            __noop;
+        }
+        else
+        {
+            static_assert(false, "What...");
         }
 
         _size = size;
@@ -178,40 +206,87 @@ namespace fs
     {
         if (_size < _capacity)
         {
-            T* temp = FS_MALLOC(T, _size);
+            T* temp = allocateMemoryInternal(_size);
             for (uint32 index = 0; index < _size; ++index)
             {
-                FS_PLACEMNT_NEW(&temp[index], T(_rawPointer[index]));
+                copyElementInternal(temp[index], _rawPointer[index], false);
             }
 
-            freeRawPointer(_rawPointer, _size);
-            _rawPointer = FS_MALLOC(T, _size);
+            deallocateMemoryInternal(_rawPointer, _size);
+            _rawPointer = allocateMemoryInternal(_size);
 
             for (uint32 index = 0; index < _size; ++index)
             {
-                FS_PLACEMNT_NEW(&_rawPointer[index], T(temp[index]));
+                copyElementInternal(_rawPointer[index], temp[index], false);
             }
 
-            freeRawPointer(temp, _size);
-
+            deallocateMemoryInternal(temp, _size);
+            
             _capacity = _size;
         }
     }
 
     template<typename T>
-    inline void Vector<T>::freeRawPointer(T*& rawPointer, const uint32 size) noexcept
+    inline T* Vector<T>::allocateMemoryInternal(const uint32 size) noexcept
+    {
+        if constexpr (std::is_copy_constructible<T>::value == true)
+        {
+            return FS_MALLOC(T, size);
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            return FS_NEW_ARRAY(T, size);
+        }
+        else
+        {
+            static_assert(false, "What...");
+        }
+        return nullptr;
+    }
+
+    template<typename T>
+    inline void Vector<T>::deallocateMemoryInternal(T*& rawPointer, const uint32 size) noexcept
     {
         if (rawPointer == nullptr)
         {
             return;
         }
 
-        for (uint32 index = 0; index < size; ++index)
+        if constexpr (std::is_copy_constructible<T>::value == true)
         {
-            rawPointer[index].~T();
-        }
+            for (uint32 index = 0; index < size; ++index)
+            {
+                rawPointer[index].~T();
+            }
 
-        FS_FREE(rawPointer);
+            FS_FREE(rawPointer);
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            FS_DELETE_ARRAY(rawPointer);
+        }
+        else
+        {
+            static_assert(false, "What...");
+        }
+    }
+
+    template<typename T>
+    FS_INLINE void Vector<T>::copyElementInternal(T& to, const T& from, const bool destroyBeforePlacement) noexcept
+    {
+        if constexpr (std::is_copy_constructible<T>::value == true)
+        {
+            if (destroyBeforePlacement == true)
+            {
+                to.~T();
+            }
+
+            FS_PLACEMNT_NEW(&to, T(from));
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            to = from;
+        }
     }
 
     template<typename T>
@@ -228,7 +303,18 @@ namespace fs
     {
         expandCapacityIfNecessary();
 
-        FS_PLACEMNT_NEW(&_rawPointer[_size], T(newEntry));
+        if constexpr (std::is_copy_constructible<T>::value == true)
+        {
+            FS_PLACEMNT_NEW(&_rawPointer[_size], T(newEntry));
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            _rawPointer[_size] = newEntry;
+        }
+        else
+        {
+            static_assert(false, "What...");
+        }
 
         ++_size;
     }
@@ -238,7 +324,18 @@ namespace fs
     {
         expandCapacityIfNecessary();
 
-        FS_PLACEMNT_NEW(&_rawPointer[_size], T(std::move(newEntry)));
+        if constexpr (std::is_copy_constructible<T>::value == true)
+        {
+            FS_PLACEMNT_NEW(&_rawPointer[_size], T(std::move(newEntry)));
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            _rawPointer[_size] = std::move(newEntry);
+        }
+        else
+        {
+            static_assert(false, "What...");
+        }
 
         ++_size;
     }
@@ -251,7 +348,19 @@ namespace fs
             return;
         }
         
-        _rawPointer[_size - 1].~T();
+        if constexpr (std::is_copy_constructible<T>::value == true)
+        {
+            _rawPointer[_size - 1].~T();
+        }
+        else if constexpr (std::is_default_constructible<T>::value == true)
+        {
+            __noop;
+        }
+        else
+        {
+            static_assert(false, "What...");
+        }
+        
 
         --_size;
     }

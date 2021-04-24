@@ -2,6 +2,7 @@
 
 #include <FsContainer/Include/StringUtil.hpp>
 #include <FsContainer/Include/Vector.hpp>
+#include <FsContainer/Include/HashMap.hpp>
 
 #include <FsMath/Include/Rect.h>
 
@@ -29,16 +30,16 @@ namespace fs
             static std::mutex mutex;
             std::lock_guard<std::mutex> lock{ mutex };
 
-            if (_hWndMap.find(hWnd) == _hWndMap.end())
+            if (_hWndMap.find(hWnd).isValid() == false)
             {
                 _windowArray.push_back(windowsWindow);
-                _hWndMap[hWnd] = static_cast<uint8>(_windowArray.size() - 1);
+                _hWndMap.insert(hWnd, static_cast<uint8>(_windowArray.size() - 1));
             }
         }
 
         LRESULT WindowsWindowPool::redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
         {
-            if (_hWndMap.find(hWnd) != _hWndMap.end())
+            if (_hWndMap.find(hWnd).isValid() == true)
             {
                 const uint8 at = _hWndMap.at(hWnd);
                 return _windowArray[at]->processDefaultMessage(Msg, wParam, lParam);

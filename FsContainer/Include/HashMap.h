@@ -48,7 +48,13 @@ namespace fs
     {
     public:
                                         Bucket();
-                                        Bucket(const Bucket& rhs);
+
+                                        template <typename B = Bucket>
+                                        Bucket(typename std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs);
+
+                                        template <typename B = Bucket>
+                                        Bucket(typename std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs);
+
                                         ~Bucket() = default;
 
     public:
@@ -104,7 +110,14 @@ namespace fs
         const bool                          containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
 
     public:
-        void                                insert(const Key& key, const Value& value) noexcept;
+        template <typename V = Value>
+        typename std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
+                                            insert(const Key& key, const V& value) noexcept;
+        
+        template <typename V = Value>
+        typename std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
+                                            insert(const Key& key, V&& value) noexcept;
+
         const KeyValuePair<Key, Value>      find(const Key& key) const noexcept;
         const Value&                        at(const Key& key) const noexcept;
         Value&                              at(const Key& key) noexcept;
@@ -124,6 +137,7 @@ namespace fs
     
     private:
         void                                setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
+        void                                setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
         const bool                          displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
         void                                displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
 

@@ -8,6 +8,7 @@
 #include <FsPlatform/Include/IWindow.h>
 
 #include <FsContainer/Include/Vector.h>
+#include <FsContainer/Include/HashMap.h>
 
 
 namespace fs
@@ -28,7 +29,7 @@ namespace fs
 
         private:
             fs::Vector<WindowsWindow*>          _windowArray;
-            std::unordered_map<HWND, uint8>     _hWndMap;
+            fs::HashMap<HWND, uint8>            _hWndMap;
         };
 #pragma endregion
 
