@@ -205,7 +205,7 @@ namespace fs
 
             if (hopDistance < kHopRange)
             {
-                setBucket(startBucketIndex, 0, key, std::move(value));
+                setBucket(startBucketIndex, hopDistance, key, std::move(value));
                 return;
             }
 
@@ -219,7 +219,7 @@ namespace fs
 
             if (hopDistance < kHopRange)
             {
-                setBucket(startBucketIndex, 0, key, std::move(value));
+                setBucket(startBucketIndex, hopDistance, key, std::move(value));
                 return;
             }
         }
