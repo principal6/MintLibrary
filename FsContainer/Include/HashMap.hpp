@@ -23,7 +23,7 @@ namespace fs
 
     template<typename Key, typename Value>
     template<typename B>
-    inline Bucket<Key, Value>::Bucket(typename std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs)
+    inline Bucket<Key, Value>::Bucket(std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs)
         : _hopInfo{ rhs._hopInfo }
         , _isUsed{ rhs._isUsed }
         , _key{ rhs._key }
@@ -34,7 +34,7 @@ namespace fs
 
     template<typename Key, typename Value>
     template<typename B>
-    inline Bucket<Key, Value>::Bucket(typename std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs)
+    inline Bucket<Key, Value>::Bucket(std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs)
         : _hopInfo{ rhs._hopInfo }
         , _isUsed{ rhs._isUsed }
         , _key{ rhs._key }
@@ -130,7 +130,7 @@ namespace fs
 
     template<typename Key, typename Value>
     template<typename V>
-    inline typename std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
+    inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
     HashMap<Key, Value>::insert(const Key& key, const V& value) noexcept
     {
         const uint64 keyHash = Hasher<Key>()(key);
@@ -180,7 +180,7 @@ namespace fs
 
     template<typename Key, typename Value>
     template<typename V>
-    inline typename std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
+    inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
     HashMap<Key, Value>::insert(const Key& key, V&& value) noexcept
     {
         const uint64 keyHash = Hasher<Key>()(key);

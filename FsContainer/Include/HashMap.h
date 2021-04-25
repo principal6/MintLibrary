@@ -50,10 +50,10 @@ namespace fs
                                         Bucket();
 
                                         template <typename B = Bucket>
-                                        Bucket(typename std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs);
+                                        Bucket(std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs);
 
                                         template <typename B = Bucket>
-                                        Bucket(typename std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs);
+                                        Bucket(std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs);
 
                                         ~Bucket() = default;
 
@@ -111,11 +111,11 @@ namespace fs
 
     public:
         template <typename V = Value>
-        typename std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
+        std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
                                             insert(const Key& key, const V& value) noexcept;
         
         template <typename V = Value>
-        typename std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
+        std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
                                             insert(const Key& key, V&& value) noexcept;
 
     private:

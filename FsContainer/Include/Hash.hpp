@@ -43,7 +43,7 @@ namespace fs
     }
 
     template <typename T>
-    FS_INLINE typename std::enable_if<std::is_arithmetic<T>::value, const uint64>::type computeHash(const T value) noexcept
+    FS_INLINE std::enable_if_t<std::is_arithmetic<T>::value, const uint64> computeHash(const T value) noexcept
     {
         const char* const str = reinterpret_cast<const char*>(&value);
         const uint32 length = sizeof(value);
@@ -51,7 +51,7 @@ namespace fs
     }
 
     template <typename T>
-    FS_INLINE typename std::enable_if<std::is_pointer<T>::value, const uint64>::type computeHash(const T value) noexcept
+    FS_INLINE std::enable_if_t<std::is_pointer<T>::value, const uint64> computeHash(const T value) noexcept
     {
         const char* const str = reinterpret_cast<const char*>(&value);
         const uint32 length = sizeof(value);

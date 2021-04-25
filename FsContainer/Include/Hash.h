@@ -15,10 +15,10 @@ namespace fs
     const uint64    computeHash(const wchar_t* const rawString) noexcept;
 
     template <typename T>
-    typename std::enable_if<std::is_arithmetic<T>::value, const uint64>::type computeHash(const T value) noexcept;
+    std::enable_if_t<std::is_arithmetic<T>::value, const uint64> computeHash(const T value) noexcept;
 
     template <typename T>
-    typename std::enable_if<std::is_pointer<T>::value, const uint64>::type computeHash(const T value) noexcept;
+    std::enable_if_t<std::is_pointer<T>::value, const uint64> computeHash(const T value) noexcept;
 
 
     template <typename T>
