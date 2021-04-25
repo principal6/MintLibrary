@@ -46,7 +46,7 @@ namespace fs
             virtual void                            initializeShaders() noexcept override;
             virtual void                            flushData() noexcept override;
             virtual const bool                      hasData() const noexcept override;
-            virtual void                            render() noexcept;
+            virtual void                            renderAndFlush() noexcept;
 
         public:
             void                                    setBorderColor(const fs::RenderingBase::Color& borderColor) noexcept;

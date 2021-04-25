@@ -92,7 +92,7 @@ namespace fs
             return _lowLevelRenderer.isRenderable();
         }
 
-        void RectangleRendererContext::render() noexcept
+        void RectangleRendererContext::renderAndFlush() noexcept
         {
             if (_lowLevelRenderer.isRenderable() == true)
             {

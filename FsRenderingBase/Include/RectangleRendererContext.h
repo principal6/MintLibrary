@@ -27,7 +27,7 @@ namespace fs
             virtual void                        initializeShaders() noexcept override final;
             virtual void                        flushData() noexcept override final;
             virtual const bool                  hasData() const noexcept override final;
-            virtual void                        render() noexcept final;
+            virtual void                        renderAndFlush() noexcept final;
 
         public:
             FS_INLINE void                      setSize(const fs::Float2& size) { _size = size; }

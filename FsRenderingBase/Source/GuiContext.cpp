@@ -3617,9 +3617,9 @@ namespace fs
             _graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayPerFrame.size()), &_scissorRectangleArrayPerFrame[0]);
 
             // Background => Foreground => TopMost
-            _shapeFontRendererContextBackground.render();
-            _shapeFontRendererContextForeground.render();
-            _shapeFontRendererContextTopMost.render();
+            _shapeFontRendererContextBackground.renderAndFlush();
+            _shapeFontRendererContextForeground.renderAndFlush();
+            _shapeFontRendererContextTopMost.renderAndFlush();
             
             // Viewport setting
             _graphicDevice->useFullScreenViewport();

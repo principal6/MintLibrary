@@ -23,7 +23,7 @@ namespace fs
             virtual void                                initializeShaders() noexcept override final;
             virtual void                                flushData() noexcept override final;
             virtual const bool                          hasData() const noexcept override final;
-            virtual void                                render() noexcept final;
+            virtual void                                renderAndFlush() noexcept final;
             virtual void                                setViewportIndex(const uint32 viewportIndex) noexcept override final;
 
         public:

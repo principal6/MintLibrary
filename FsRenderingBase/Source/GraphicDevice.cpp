@@ -377,10 +377,10 @@ namespace fs
 #pragma region Renderer Contexts
             useFullScreenViewport();
 
-            _rectangleRendererContext.render();
-            _shapeRendererContext.render();
+            _rectangleRendererContext.renderAndFlush();
+            _shapeRendererContext.renderAndFlush();
             _guiContext.render();
-            _fontRendererContext.render();
+            _fontRendererContext.renderAndFlush();
 #pragma endregion
 
             _swapChain->Present(0, 0);

@@ -119,7 +119,7 @@ namespace fs
             virtual void                        initializeShaders() noexcept override final;
             virtual void                        flushData() noexcept override final;
             virtual const bool                  hasData() const noexcept override final;
-            virtual void                        render() noexcept final;
+            virtual void                        renderAndFlush() noexcept final;
 
         public:
             void                                drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);

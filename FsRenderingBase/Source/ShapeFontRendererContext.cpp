@@ -185,11 +185,11 @@ namespace fs
             return _lowLevelRenderer->isRenderable();
         }
 
-        void ShapeFontRendererContext::render() noexcept
+        void ShapeFontRendererContext::renderAndFlush() noexcept
         {
             _graphicDevice->getResourcePool().bindToShader(_fontRendererContext.getFontTextureId(), fs::RenderingBase::DxShaderType::PixelShader, 0);
 
-            __super::render();
+            __super::renderAndFlush();
 
             flushData();
         }

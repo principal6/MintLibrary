@@ -572,7 +572,7 @@ namespace fs
             return _lowLevelRenderer->isRenderable();
         }
 
-        void FontRendererContext::render() noexcept
+        void FontRendererContext::renderAndFlush() noexcept
         {
             if (_lowLevelRenderer->isRenderable() == true)
             {

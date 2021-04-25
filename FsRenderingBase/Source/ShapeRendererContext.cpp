@@ -150,7 +150,7 @@ namespace fs
             return _lowLevelRenderer->isRenderable();
         }
 
-        void ShapeRendererContext::render() noexcept
+        void ShapeRendererContext::renderAndFlush() noexcept
         {
             if (_lowLevelRenderer->isRenderable() == true)
             {

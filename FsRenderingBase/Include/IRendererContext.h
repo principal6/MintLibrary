@@ -154,7 +154,7 @@ namespace fs
             virtual void                            initializeShaders() noexcept abstract;
             virtual void                            flushData() noexcept abstract;
             virtual const bool                      hasData() const noexcept abstract;
-            virtual void                            render() noexcept abstract;
+            virtual void                            renderAndFlush() noexcept abstract;
         
         public:
             void                                    setUseMultipleViewports() noexcept;
