@@ -176,6 +176,8 @@ namespace fs
                     shaderPool.unbindShader(DxShaderType::GeometryShader);
                 }
             }
+
+            flushData();
         }
 
         void ShapeRendererContext::setBorderColor(const fs::RenderingBase::Color& borderColor) noexcept

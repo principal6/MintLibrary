@@ -595,6 +595,8 @@ namespace fs
                     shaderPool.unbindShader(DxShaderType::GeometryShader);
                 }
             }
+
+            flushData();
         }
 
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)

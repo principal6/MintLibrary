@@ -3624,10 +3624,6 @@ namespace fs
             // Viewport setting
             _graphicDevice->useFullScreenViewport();
 
-            _shapeFontRendererContextBackground.flushData();
-            _shapeFontRendererContextForeground.flushData();
-            _shapeFontRendererContextTopMost.flushData();
-
             resetPerFrameStates();
         }
 

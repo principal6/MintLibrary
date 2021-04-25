@@ -190,6 +190,8 @@ namespace fs
             _graphicDevice->getResourcePool().bindToShader(_fontRendererContext.getFontTextureId(), fs::RenderingBase::DxShaderType::PixelShader, 0);
 
             __super::render();
+
+            flushData();
         }
 
         void ShapeFontRendererContext::setViewportIndex(const uint32 viewportIndex) noexcept

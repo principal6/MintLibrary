@@ -101,6 +101,8 @@ namespace fs
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
                 _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
             }
+
+            flushData();
         }
 
         void RectangleRendererContext::drawColored()
