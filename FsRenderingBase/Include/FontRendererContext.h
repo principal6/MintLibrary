@@ -67,6 +67,34 @@ namespace fs
             wchar_t                 _endWchar;
         };
 
+        struct FontRenderingOption
+        {
+            FontRenderingOption()
+                : FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward, 1.0f)
+            {
+                __noop;
+            }
+            FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert)
+                : FontRenderingOption(directionHorz, directionVert, 1.0f)
+            {
+                __noop;
+            }
+            FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale)
+                : _directionHorz{ directionHorz }
+                , _directionVert{ directionVert }
+                , _scale{ scale }
+                , _drawShade{ false }
+            {
+                __noop;
+            }
+
+            const TextRenderDirectionHorz   _directionHorz;
+            const TextRenderDirectionVert   _directionVert;
+            const float                     _scale;
+            const bool                      _drawShade;
+            fs::Float4x4                    _transformMatrix;
+        };
+
         class FontRendererContext final : public IRendererContext
         {
             static constexpr int16                                              kSpaceBottomForVisibility = 1;
@@ -123,13 +151,13 @@ namespace fs
             virtual void                        renderAndFlush() noexcept final;
 
         public:
-            void                                drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
-            void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
+            void                                drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const FontRenderingOption& fontRenderingOption);
             const float                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
         
         public:
-            void                                pushTransformToBuffer(const fs::Float4& position);
+            void                                pushTransformToBuffer(const fs::Float4& position, fs::Float4x4 transformMatrix);
             const DxObjectId&                   getFontTextureId() const noexcept;
 
         private:

@@ -720,7 +720,8 @@ namespace fs
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
-            shapeFontRendererContext.drawDynamicText(text, controlCenterPosition, fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB);
+            shapeFontRendererContext.drawDynamicText(text, controlCenterPosition, 
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB));
 
             if (isClicked == true)
             {
@@ -763,7 +764,8 @@ namespace fs
             }
 
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * fs::RenderingBase::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
-            shapeFontRendererContext.drawDynamicText(text, controlCenterPosition + fs::Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB);
+            shapeFontRendererContext.drawDynamicText(text, controlCenterPosition + fs::Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), 
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kFontScaleB));
 
             if (isClicked == true)
             {
@@ -826,7 +828,7 @@ namespace fs
                 }
             }
             shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
-            shapeFontRendererContext.drawDynamicText(text, textPosition, textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
+            shapeFontRendererContext.drawDynamicText(text, textPosition, fs::RenderingBase::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB));
         }
 
         const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue)
@@ -1342,18 +1344,21 @@ namespace fs
                 if (outText.empty() == false)
                 {
                     shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+                    shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset, 
+                        fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
                 }
 
                 // Input Candidate 렌더링
                 shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                shapeFontRendererContext.drawDynamicText(inputCandidate, fs::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+                shapeFontRendererContext.drawDynamicText(inputCandidate, fs::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset, 
+                    fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
 
                 // Text 렌더링 (Caret 이후)
                 if (outText.empty() == false)
                 {
                     shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + fs::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+                    shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + fs::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset, 
+                        fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
                 }
 
                 // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
@@ -1373,7 +1378,8 @@ namespace fs
                 if (outText.empty() == false)
                 {
                     shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+                    shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset, 
+                        fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
                 }
 
                 // Caret 렌더링
@@ -1533,7 +1539,7 @@ namespace fs
             const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0),
-                fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
         }
 
         const bool GuiContext::beginMenuBar(const wchar_t* const name)
@@ -1663,8 +1669,8 @@ namespace fs
 
             const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(menuBarItem);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
-            shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f,
-                controlLeftCenterPosition._y, 0, 0), fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered);
+            shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f, controlLeftCenterPosition._y, 0, 0),
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Centered, fs::RenderingBase::TextRenderDirectionVert::Centered));
 
             const bool isMeSelected = (menuBarSelectedItemIndex == myIndex);
             const bool result = (isClicked || isMeSelected || (isParentAncestorPressed && wasMeSelected));
@@ -1754,8 +1760,8 @@ namespace fs
 
             const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(menuItem);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
-            shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + menuItem.getInnerPadding().left(),
-                controlLeftCenterPosition._y, 0, 0), fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered);
+            shapeFontRendererContext.drawDynamicText(text, fs::Float4(controlLeftCenterPosition._x + menuItem.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0), 
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered));
 
             // (previousMaxChildCount) 최초 업데이트 시 Child 가 다 등록되어야 하므로 controlData._updateCount 를 이용한다.
             const bool result = (isToggled || isPresssed || menuItem._updateCount <= 1);
@@ -2262,7 +2268,8 @@ namespace fs
             {
                 shapeFontRendererContext.setTextColor((needToColorFocused_ == true) ? getNamedColor(NamedColor::LightFont) : getNamedColor(NamedColor::DarkFont));
             }
-            shapeFontRendererContext.drawDynamicText(windowTitle, titleBarTextPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, 0.9375f);
+            shapeFontRendererContext.drawDynamicText(windowTitle, titleBarTextPosition, 
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, 0.9375f));
 
             _controlStackPerFrame.push_back(ControlStackData(controlData));
 
@@ -2353,7 +2360,8 @@ namespace fs
             const fs::Float4& textPosition = fs::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + fs::Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
             shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
-            shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale);
+            shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, 
+                fs::RenderingBase::FontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
         const wchar_t* GuiContext::generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept

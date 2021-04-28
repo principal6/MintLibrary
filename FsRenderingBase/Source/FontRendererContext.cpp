@@ -624,35 +624,35 @@ namespace fs
             flush();
         }
 
-        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             const uint32 textLength = fs::StringUtil::wcslen(wideText);
-            drawDynamicText(wideText, textLength, position, directionHorz, directionVert, scale, drawShade);
+            drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
-        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
-            const float scaledFontSize = _fontSize * scale;
+            const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledFontSize = _fontSize * fontRenderingOption._scale;
             
             fs::Float4 textPosition = position;
-            if (directionHorz != TextRenderDirectionHorz::Rightward)
+            if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
             {
-                textPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+                textPosition._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
             }
-            if (directionVert != TextRenderDirectionVert::Centered)
+            if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
             {
-                textPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+                textPosition._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
             }
             textPosition._y += (-scaledFontSize * 0.5f - 1.0f);
 
             fs::Float2 glyphPosition = fs::Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
-                drawGlyph(wideText[at], glyphPosition, scale, drawShade);
+                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade);
             }
 
-            pushTransformToBuffer(textPosition);
+            pushTransformToBuffer(textPosition, fontRenderingOption._transformMatrix);
         }
 
         const float FontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
@@ -689,11 +689,11 @@ namespace fs
             return textLength;
         }
 
-        void FontRendererContext::pushTransformToBuffer(const fs::Float4& position)
+        void FontRendererContext::pushTransformToBuffer(const fs::Float4& position, fs::Float4x4 transformMatrix)
         {
             fs::RenderingBase::SB_Transform transform;
-            //transform._transformMatrix = fs::Float4x4::rotationMatrixZ(fs::Math::kPiOverTwo);
-            transform._transformMatrix.preTranslate(position._x, position._y, position._z);
+            transform._transformMatrix.setTranslation(position._x, position._y, position._z);
+            transform._transformMatrix *= transformMatrix;
             _sbTransformData.push_back(transform);
         }
 

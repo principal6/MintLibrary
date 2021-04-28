@@ -74,14 +74,14 @@ namespace fs
             return _fontRendererContext.getFontData();
         }
 
-        void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+        void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            _fontRendererContext.drawDynamicText(wideText, position, directionHorz, directionVert, scale, drawShade);
+            _fontRendererContext.drawDynamicText(wideText, position, fontRenderingOption);
         }
 
-        void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
+        void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            _fontRendererContext.drawDynamicText(wideText, textLength, position, directionHorz, directionVert, scale, drawShade);
+            _fontRendererContext.drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
         const float ShapeFontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept

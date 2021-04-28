@@ -32,8 +32,8 @@ namespace fs
         public:
             const bool                                  initializeFontData(const FontRendererContext::FontData& fontData) noexcept;
             const FontRendererContext::FontData&        getFontData() const noexcept;
-            void                                        drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
-            void                                        drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const TextRenderDirectionHorz directionHorz = TextRenderDirectionHorz::Rightward, const TextRenderDirectionVert directionVert = TextRenderDirectionVert::Downward, const float scale = 1.0f, const bool drawShade = false);
+            void                                        drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                        drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const fs::Float4& position, const FontRenderingOption& fontRenderingOption);
             const float                                 calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                                calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
             void                                        setTextColor(const fs::RenderingBase::Color& textColor) noexcept;
