@@ -117,8 +117,9 @@ namespace fs
 
         public:
             virtual void                        initializeShaders() noexcept override final;
-            virtual void                        flushData() noexcept override final;
             virtual const bool                  hasData() const noexcept override final;
+            virtual void                        flush() noexcept override final;
+            virtual void                        render() noexcept final;
             virtual void                        renderAndFlush() noexcept final;
 
         public:
@@ -128,10 +129,11 @@ namespace fs
             const uint32                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
         
         public:
+            void                                pushTransformToBuffer(const fs::Float4& position);
             const DxObjectId&                   getFontTextureId() const noexcept;
 
         private:
-            void                                drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade);
+            void                                drawGlyph(const wchar_t wideChar, fs::Float2& glyphPosition, const float scale, const bool drawShade);
 
         private:
             void                                prepareIndexArray();

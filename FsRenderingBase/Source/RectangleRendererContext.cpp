@@ -82,17 +82,19 @@ namespace fs
             }
         }
 
-        void RectangleRendererContext::flushData() noexcept
-        {
-            _lowLevelRenderer.flush();
-        }
-
         const bool RectangleRendererContext::hasData() const noexcept
         {
             return _lowLevelRenderer.isRenderable();
         }
 
-        void RectangleRendererContext::renderAndFlush() noexcept
+        void RectangleRendererContext::flush() noexcept
+        {
+            _lowLevelRenderer.flush();
+
+            flushTransformBuffer();
+        }
+
+        void RectangleRendererContext::render() noexcept
         {
             if (_lowLevelRenderer.isRenderable() == true)
             {
@@ -101,8 +103,13 @@ namespace fs
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
                 _lowLevelRenderer.render(fs::RenderingBase::RenderingPrimitive::TriangleList);
             }
+        }
 
-            flushData();
+        void RectangleRendererContext::renderAndFlush() noexcept
+        {
+            render();
+
+            flush();
         }
 
         void RectangleRendererContext::drawColored()

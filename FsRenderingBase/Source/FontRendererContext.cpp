@@ -492,15 +492,22 @@ namespace fs
                     R"(
                     #include <ShaderStructDefinitions>
                     #include <ShaderConstantBuffers>
-
+                    #include <ShaderStructuredBufferDefinitions>
+                    
+                    StructuredBuffer<SB_Transform> sbTransform : register(t0);
+                    
                     VS_OUTPUT_SHAPE main(VS_INPUT_SHAPE input)
                     {
                         const uint packedInfo       = asuint(input._info.y);
                         const uint drawShade        = (packedInfo >> 30) & 3;
                         const uint transformIndex   = packedInfo & 0x3FFFFFFF;
                         
+                        float4 transformedPosition = float4(input._position.xyz, 1.0);
+                        transformedPosition = float4(mul(transformedPosition, sbTransform[transformIndex]._transformMatrix).xyz, 1.0);
+                        transformedPosition = float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);
+                        
                         VS_OUTPUT_SHAPE result  = (VS_OUTPUT_SHAPE)0;
-                        result._position        = mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
+                        result._position        = transformedPosition;
                         result._color           = input._color;
                         result._texCoord        = input._texCoord;
                         result._info            = input._info;
@@ -568,22 +575,26 @@ namespace fs
             }
         }
 
-        void FontRendererContext::flushData() noexcept
-        {
-            _lowLevelRenderer->flush();
-        }
-
         const bool FontRendererContext::hasData() const noexcept
         {
             return _lowLevelRenderer->isRenderable();
         }
 
-        void FontRendererContext::renderAndFlush() noexcept
+        void FontRendererContext::flush() noexcept
+        {
+            _lowLevelRenderer->flush();
+
+            flushTransformBuffer();
+        }
+
+        void FontRendererContext::render() noexcept
         {
             if (_lowLevelRenderer->isRenderable() == true)
             {
+                prepareTransformBuffer();
+
                 _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, fs::RenderingBase::DxShaderType::PixelShader, 0);
-                
+
                 fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
@@ -594,6 +605,9 @@ namespace fs
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
+                fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+                resourcePool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
+
                 _lowLevelRenderer->render(fs::RenderingBase::RenderingPrimitive::TriangleList);
 
                 if (getUseMultipleViewports() == true)
@@ -601,8 +615,13 @@ namespace fs
                     shaderPool.unbindShader(DxShaderType::GeometryShader);
                 }
             }
+        }
 
-            flushData();
+        void FontRendererContext::renderAndFlush() noexcept
+        {
+            render();
+
+            flush();
         }
 
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const fs::Float4& position, const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale, const bool drawShade)
@@ -615,19 +634,25 @@ namespace fs
         {
             const float scaledTextWidth = calculateTextWidth(wideText, textLength) * scale;
             const float scaledFontSize = _fontSize * scale;
-            fs::Float4 currentPosition = position + fs::Float4(0.0f, -scaledFontSize * 0.5f - 1.0f, 0.0f, 0.0f);
+            
+            fs::Float4 textPosition = position;
             if (directionHorz != TextRenderDirectionHorz::Rightward)
             {
-                currentPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+                textPosition._x -= (directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
             }
             if (directionVert != TextRenderDirectionVert::Centered)
             {
-                currentPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+                textPosition._y += (directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
             }
+            textPosition._y += (-scaledFontSize * 0.5f - 1.0f);
+
+            fs::Float2 glyphPosition = fs::Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
-                drawGlyph(wideText[at], currentPosition, scale, drawShade);
+                drawGlyph(wideText[at], glyphPosition, scale, drawShade);
             }
+
+            pushTransformToBuffer(textPosition);
         }
 
         const float FontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
@@ -664,20 +689,28 @@ namespace fs
             return textLength;
         }
 
+        void FontRendererContext::pushTransformToBuffer(const fs::Float4& position)
+        {
+            fs::RenderingBase::SB_Transform transform;
+            //transform._transformMatrix = fs::Float4x4::rotationMatrixZ(fs::Math::kPiOverTwo);
+            transform._transformMatrix.preTranslate(position._x, position._y, position._z);
+            _sbTransformData.push_back(transform);
+        }
+
         const DxObjectId& FontRendererContext::getFontTextureId() const noexcept
         {
             return _fontData._fontTextureId;
         }
 
-        void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float4& position, const float scale, const bool drawShade)
+        void FontRendererContext::drawGlyph(const wchar_t wideChar, fs::Float2& glyphPosition, const float scale, const bool drawShade)
         {
             const uint32 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
             const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
             fs::Rect glyphRect;
-            glyphRect.left(position._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
+            glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
             glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
-            glyphRect.top(position._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+            glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
             glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
             if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
             {
@@ -686,12 +719,12 @@ namespace fs
                 fs::RenderingBase::VS_INPUT_SHAPE v;
                 v._position._x = glyphRect.left();
                 v._position._y = glyphRect.top();
-                v._position._z = position._z;
+                v._position._z = 0.0f;
                 v._color = _defaultColor;
                 v._texCoord._x = glyphInfo._uv0._x;
                 v._texCoord._y = glyphInfo._uv0._y;
                 v._info._x = _viewportIndex;
-                v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, 0);
+                v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
                 v._info._z = 1.0f; // used by ShapeFontRendererContext
                 vertexArray.push_back(v);
 
@@ -714,7 +747,7 @@ namespace fs
                 prepareIndexArray();
             }
 
-            position._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+            glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
         }
 
         void FontRendererContext::prepareIndexArray()

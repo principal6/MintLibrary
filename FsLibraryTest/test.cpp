@@ -771,6 +771,26 @@ const bool testWindow()
         // Rendering
         {
             graphicDevice.beginRendering();
+
+#if 0
+            fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
+            shapeFontRendererContext.setTextColor(fs::RenderingBase::Color::kBlack);
+            shapeFontRendererContext.setPosition(fs::Float4(0, 0, 0, 1));
+            shapeFontRendererContext.drawDynamicText(L"abc", fs::Float4(0, 0, 0, 1), 
+                fs::RenderingBase::TextRenderDirectionHorz::Rightward,
+                fs::RenderingBase::TextRenderDirectionVert::Downward,
+                1.0f,
+                false);
+
+            shapeFontRendererContext.setPosition(fs::Float4(100, 100, 0, 1));
+            shapeFontRendererContext.setColor(fs::RenderingBase::Color(1.0f, 0.5f, 0.25f));
+            shapeFontRendererContext.drawCircle(20.0f);
+
+            shapeFontRendererContext.setPosition(fs::Float4(300, 100, 0, 1));
+            shapeFontRendererContext.drawRectangle(fs::Float2(100, 60), 1.0f, 0.0f);
+#endif
+
+#if 1
             {
                 static fs::Gui::VisibleState testWindowVisibleState = fs::Gui::VisibleState::Invisible;
                 guiContext.testWindow(testWindowVisibleState);
@@ -840,6 +860,7 @@ const bool testWindow()
             graphicDevice.updateViewProjectionMatrix();
 
             meshRenderer.render(objectPool);
+#endif
 
             graphicDevice.endRendering();
         }

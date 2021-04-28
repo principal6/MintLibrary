@@ -42,8 +42,9 @@ namespace fs
 
         public:
             virtual void                            initializeShaders() noexcept override;
-            virtual void                            flushData() noexcept override;
             virtual const bool                      hasData() const noexcept override;
+            virtual void                            flush() noexcept override;
+            virtual void                            render() noexcept;
             virtual void                            renderAndFlush() noexcept;
 
         public:

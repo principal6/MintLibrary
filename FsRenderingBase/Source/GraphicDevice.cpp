@@ -365,10 +365,10 @@ namespace fs
             _deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
             _deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-            _rectangleRendererContext.flushData();
-            _shapeRendererContext.flushData();
-            _fontRendererContext.flushData();
-            _shapeFontRendererContext.flushData();
+            _rectangleRendererContext.flush();
+            _shapeRendererContext.flush();
+            _fontRendererContext.flush();
+            _shapeFontRendererContext.flush();
         }
 
         void GraphicDevice::endRendering()

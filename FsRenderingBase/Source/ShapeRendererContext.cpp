@@ -138,19 +138,19 @@ namespace fs
             }
         }
 
-        void ShapeRendererContext::flushData() noexcept
+        const bool ShapeRendererContext::hasData() const noexcept
+        {
+            return _lowLevelRenderer->isRenderable();
+        }
+
+        void ShapeRendererContext::flush() noexcept
         {
             _lowLevelRenderer->flush();
 
             flushTransformBuffer();
         }
 
-        const bool ShapeRendererContext::hasData() const noexcept
-        {
-            return _lowLevelRenderer->isRenderable();
-        }
-
-        void ShapeRendererContext::renderAndFlush() noexcept
+        void ShapeRendererContext::render() noexcept
         {
             if (_lowLevelRenderer->isRenderable() == true)
             {
@@ -176,8 +176,13 @@ namespace fs
                     shaderPool.unbindShader(DxShaderType::GeometryShader);
                 }
             }
+        }
 
-            flushData();
+        void ShapeRendererContext::renderAndFlush() noexcept
+        {
+            render();
+
+            flush();
         }
 
         void ShapeRendererContext::setBorderColor(const fs::RenderingBase::Color& borderColor) noexcept
