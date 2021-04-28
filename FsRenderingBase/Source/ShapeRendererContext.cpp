@@ -41,12 +41,12 @@ namespace fs
                     
                     VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
                     {
-                        const uint shapeInfo = asuint(input._info.y);
-                        const uint shapeType = (shapeInfo >> 30) & 3;
-                        const uint shapeIndex = shapeInfo & 0x3FFFFFFF;
+                        const uint packedInfo       = asuint(input._info.y);
+                        const uint shapeType        = (packedInfo >> 30) & 3;
+                        const uint transformIndex   = packedInfo & 0x3FFFFFFF;
                         
                         float4 transformedPosition = float4(input._position.xyz, 1.0);
-                        transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
+                        transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
                         
                         VS_OUTPUT_SHAPE result  = (VS_OUTPUT_SHAPE)0;
                         result._position        = float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);

@@ -495,11 +495,16 @@ namespace fs
 
                     VS_OUTPUT_SHAPE main(VS_INPUT_SHAPE input)
                     {
+                        const uint packedInfo       = asuint(input._info.y);
+                        const uint drawShade        = (packedInfo >> 30) & 3;
+                        const uint transformIndex   = packedInfo & 0x3FFFFFFF;
+                        
                         VS_OUTPUT_SHAPE result  = (VS_OUTPUT_SHAPE)0;
                         result._position        = mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
                         result._color           = input._color;
                         result._texCoord        = input._texCoord;
                         result._info            = input._info;
+                        result._info.x          = (float)drawShade;
                         result._viewportIndex   = (uint)input._info.x;
                         return result;
                     }
@@ -544,7 +549,8 @@ namespace fs
                         const float sampled = texture0.Sample(sampler0, input._texCoord.xy);
                         float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
                         
-                        if (input._info.y == 1.0)
+                        const bool drawShade = (input._info.y == 1.0);
+                        if (true == drawShade)
                         {
                             const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
                             const float rbSampled = texture0.Sample(sampler0, rbCoord);
@@ -685,7 +691,7 @@ namespace fs
                 v._texCoord._x = glyphInfo._uv0._x;
                 v._texCoord._y = glyphInfo._uv0._y;
                 v._info._x = _viewportIndex;
-                v._info._y = (drawShade == true) ? 1.0f : 0.0f;
+                v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, 0);
                 v._info._z = 1.0f; // used by ShapeFontRendererContext
                 vertexArray.push_back(v);
 

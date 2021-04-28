@@ -40,19 +40,19 @@ namespace fs
                     
                     VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
                     {
-                        const uint shapeInfo = asuint(input._info.y);
-                        const uint shapeType = (shapeInfo >> 30) & 3;
-                        const uint shapeIndex = shapeInfo & 0x3FFFFFFF;
+                        const uint packedInfo           = asuint(input._info.y);
+                        const uint shapeTypeOrDrawShade = (packedInfo >> 30) & 3;
+                        const uint transformIndex       = packedInfo & 0x3FFFFFFF;
                         
                         float4 transformedPosition = float4(input._position.xyz, 1.0);
-                        transformedPosition = mul(transformedPosition, sbTransform[shapeIndex]._transformMatrix);
+                        transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
                         
                         VS_OUTPUT_SHAPE result  = (VS_OUTPUT_SHAPE)0;
                         result._position        = float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);
                         result._color           = input._color;
                         result._texCoord        = input._texCoord;
                         result._info            = input._info;
-                        result._info.x          = (float)shapeType;
+                        result._info.x          = (float)shapeTypeOrDrawShade;
                         result._viewportIndex   = (uint)input._info.x;
                         
                         return result;
@@ -107,7 +107,8 @@ namespace fs
                             const float sampled = texture0.Sample(sampler0, input._texCoord.xy);
                             float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
                         
-                            if (input._info.y == 1.0)
+                            const bool drawShade = (input._info.x != 0.0);
+                            if (true == drawShade)
                             {
                                 const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
                                 const float rbSampled = texture0.Sample(sampler0, rbCoord);
