@@ -275,5 +275,11 @@ namespace fs
             const uint32 colorCount = static_cast<uint32>(_colorArray.size());
             return (colorCount <= index) ? _defaultColor : _colorArray[index];
         }
+        
+        FS_INLINE const float IRendererContext::packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept
+        {
+            const uint32 packedUint = (_2bits << 30) | (_30bits);
+            return *reinterpret_cast<const float*>(&packedUint);
+        }
     }
 }

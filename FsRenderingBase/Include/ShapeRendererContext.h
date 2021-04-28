@@ -109,7 +109,7 @@ namespace fs
 
         protected:
             void                                    flushShapeTransform();
-            const float                             getShapeInfoAsFloat(const ShapeType shapeType) const noexcept;
+            const float                             packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept;
             void                                    pushShapeTransform(const float rotationAngle, const bool applyInternalPosition = true);
             void                                    prepareStructuredBuffer();
 

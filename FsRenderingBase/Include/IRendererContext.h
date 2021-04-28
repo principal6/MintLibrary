@@ -169,7 +169,8 @@ namespace fs
 
         protected:
             const fs::Float4&                       getColorInternal(const uint32 index) const noexcept;
-        
+            static const float                      packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+
         protected:
             fs::RenderingBase::GraphicDevice*       _graphicDevice;
         
