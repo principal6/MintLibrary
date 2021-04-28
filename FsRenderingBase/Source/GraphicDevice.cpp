@@ -35,6 +35,7 @@ namespace fs
             , _rectangleRendererContext{ this }
             , _shapeRendererContext{ this }
             , _fontRendererContext{ this }
+            , _shapeFontRendererContext{ this }
             , _needEndRenderingCall{ false }
             , _guiContext{ this }
         {
@@ -154,6 +155,8 @@ namespace fs
                 FS_LOG_ERROR("김장원", "폰트 데이터를 로드하지 못했습니다!");
                 return false;
             }
+
+            _shapeFontRendererContext.initializeFontData(_fontRendererContext.getFontData());
 
             return true;
         }
@@ -288,6 +291,7 @@ namespace fs
             _rectangleRendererContext.initializeShaders();
             _shapeRendererContext.initializeShaders();
             _fontRendererContext.initializeShaders();
+            _shapeFontRendererContext.initializeShaders();
         }
 
         void GraphicDevice::initializeSamplerStates()
@@ -364,6 +368,7 @@ namespace fs
             _rectangleRendererContext.flushData();
             _shapeRendererContext.flushData();
             _fontRendererContext.flushData();
+            _shapeFontRendererContext.flushData();
         }
 
         void GraphicDevice::endRendering()
@@ -379,8 +384,9 @@ namespace fs
 
             _rectangleRendererContext.renderAndFlush();
             _shapeRendererContext.renderAndFlush();
-            _guiContext.render();
             _fontRendererContext.renderAndFlush();
+            _shapeFontRendererContext.renderAndFlush();
+            _guiContext.render();
 #pragma endregion
 
             _swapChain->Present(0, 0);

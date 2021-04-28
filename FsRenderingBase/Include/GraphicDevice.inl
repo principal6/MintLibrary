@@ -1,3 +1,4 @@
+#include "GraphicDevice.h"
 #pragma once
 
 
@@ -39,6 +40,11 @@ namespace fs
         FS_INLINE fs::RenderingBase::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
         {
             return _fontRendererContext;
+        }
+
+        FS_INLINE fs::RenderingBase::ShapeFontRendererContext& GraphicDevice::getShapeFontRendererContext() noexcept
+        {
+            return _shapeFontRendererContext;
         }
 
         FS_INLINE fs::Gui::GuiContext& GraphicDevice::getGuiContext() noexcept

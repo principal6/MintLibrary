@@ -89,6 +89,7 @@ namespace fs
             fs::RenderingBase::RectangleRendererContext&        getRectangleRendererContext() noexcept;
             fs::RenderingBase::ShapeRendererContext&            getShapeRendererContext() noexcept;
             fs::RenderingBase::FontRendererContext&             getFontRendererContext() noexcept;
+            fs::RenderingBase::ShapeFontRendererContext&        getShapeFontRendererContext() noexcept;
             fs::Gui::GuiContext&                                getGuiContext() noexcept;
             const fs::Language::CppHlsl&                        getCppHlslSteamData() const noexcept;
             const fs::Language::CppHlsl&                        getCppHlslConstantBuffers() const noexcept;
@@ -156,6 +157,7 @@ namespace fs
             fs::RenderingBase::RectangleRendererContext         _rectangleRendererContext;
             fs::RenderingBase::ShapeRendererContext             _shapeRendererContext;
             fs::RenderingBase::FontRendererContext              _fontRendererContext;
+            fs::RenderingBase::ShapeFontRendererContext         _shapeFontRendererContext;
             bool                                                _needEndRenderingCall;
 
         private:
