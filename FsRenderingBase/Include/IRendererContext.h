@@ -16,6 +16,8 @@
 
 #include <FsRenderingBase/Include/IDxObject.h>
 
+#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
+
 
 namespace fs
 {
@@ -157,6 +159,10 @@ namespace fs
             virtual void                            renderAndFlush() noexcept abstract;
         
         public:
+            void                                    flushTransformBuffer() noexcept;
+            void                                    prepareTransformBuffer() noexcept;
+
+        public:
             void                                    setUseMultipleViewports() noexcept;
             const bool                              getUseMultipleViewports() const noexcept;
 
@@ -179,7 +185,11 @@ namespace fs
             fs::Vector<RenderingBase::Color>        _colorArray;
             fs::RenderingBase::Color                _defaultColor;
             float                                   _viewportIndex;
-        
+
+        protected:
+            fs::Vector<SB_Transform>                _sbTransformData;
+            DxObjectId                              _sbTransformBufferId;
+
         private:
             bool                                    _useMultipleViewports;
         };

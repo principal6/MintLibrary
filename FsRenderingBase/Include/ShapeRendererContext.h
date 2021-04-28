@@ -14,8 +14,6 @@
 
 #include <FsMath/Include/Int2.h>
 
-#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
-
 
 namespace fs
 {
@@ -108,10 +106,8 @@ namespace fs
             void                                    drawLine(const fs::Float2& p0, const fs::Float2& p1, const float thickness);
 
         protected:
-            void                                    flushShapeTransform();
             const float                             packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept;
-            void                                    pushShapeTransform(const float rotationAngle, const bool applyInternalPosition = true);
-            void                                    prepareStructuredBuffer();
+            void                                    pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
 
         public:
             // This function is slow...!!!
@@ -123,10 +119,6 @@ namespace fs
             DxObjectId                              _geometryShaderId;
             DxObjectId                              _pixelShaderId;
 
-        protected:
-            fs::Vector<SB_Transform>                _sbTransformData;
-            DxObjectId                              _sbTransformBufferId;
-        
         protected:
             fs::RenderingBase::Color                _borderColor;
         };

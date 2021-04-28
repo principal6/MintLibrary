@@ -142,7 +142,7 @@ namespace fs
         {
             _lowLevelRenderer->flush();
 
-            flushShapeTransform();
+            flushTransformBuffer();
         }
 
         const bool ShapeRendererContext::hasData() const noexcept
@@ -154,7 +154,7 @@ namespace fs
         {
             if (_lowLevelRenderer->isRenderable() == true)
             {
-                prepareStructuredBuffer();
+                prepareTransformBuffer();
 
                 fs::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
@@ -189,7 +189,7 @@ namespace fs
         {
             drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
 
-            pushShapeTransform(0.0f, false);
+            pushTransformToBuffer(0.0f, false);
         }
 
         void ShapeRendererContext::drawQuadraticBezierInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& controlPoint, const fs::RenderingBase::Color& color, const bool validate)
@@ -243,7 +243,7 @@ namespace fs
         {
             drawSolidTriangleInternal(pointA, pointB, pointC, _defaultColor);
 
-            pushShapeTransform(0.0f, false);
+            pushTransformToBuffer(0.0f, false);
         }
 
         void ShapeRendererContext::drawSolidTriangleInternal(const fs::Float2& pointA, const fs::Float2& pointB, const fs::Float2& pointC, const fs::RenderingBase::Color& color)
@@ -316,7 +316,7 @@ namespace fs
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
             
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawQuarterCircle(const float radius, const float rotationAngle)
@@ -325,7 +325,7 @@ namespace fs
             
             drawQuarterCircleInternal(fs::Float2::kZero, halfRadius, _defaultColor);
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawQuarterCircleInternal(const fs::Float2& offset, const float halfRadius, const fs::RenderingBase::Color& color)
@@ -449,7 +449,7 @@ namespace fs
                 indexArray.push_back(vertexOffset + 2);
             }
 
-            pushShapeTransform(0.0f);
+            pushTransformToBuffer(0.0f);
         }
 
         void ShapeRendererContext::drawCircularArc(const float radius, const float arcAngle, const float rotationAngle)
@@ -530,7 +530,7 @@ namespace fs
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 5);
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle)
@@ -693,7 +693,7 @@ namespace fs
             indexArray.push_back(vertexOffset + 5);
             indexArray.push_back(vertexOffset + 12);
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRectangle(const fs::Float2& size, const float borderThickness, const float rotationAngle)
@@ -713,7 +713,7 @@ namespace fs
 
             drawRectangleInternal(fs::Float2::kZero, halfSize, _defaultColor);
             
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRectangleInternal(const fs::Float2& offset, const fs::Float2& halfSize, const fs::RenderingBase::Color& color)
@@ -804,7 +804,7 @@ namespace fs
                 indexArray.push_back(vertexOffset + 2);
             }
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRoundedRectangle(const fs::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
@@ -881,7 +881,7 @@ namespace fs
 
             drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawHalfRoundedRectangle(const fs::Float2& size, const float roundness, const float rotationAngle)
@@ -898,7 +898,7 @@ namespace fs
 
             drawHalfRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
-            pushShapeTransform(rotationAngle);
+            pushTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const fs::Float2& halfSize, const float roundness, const fs::RenderingBase::Color& color)
@@ -1074,12 +1074,7 @@ namespace fs
             indexArray.push_back(vertexOffset + 3);
             indexArray.push_back(vertexOffset + 2);
 
-            pushShapeTransform(0.0f, false);
-        }
-
-        void ShapeRendererContext::flushShapeTransform()
-        {
-            _sbTransformData.clear();
+            pushTransformToBuffer(0.0f, false);
         }
 
         const float ShapeRendererContext::packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept
@@ -1087,7 +1082,7 @@ namespace fs
             return packBits2_30AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }
 
-        void ShapeRendererContext::pushShapeTransform(const float rotationAngle, const bool applyInternalPosition)
+        void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
         {
             fs::RenderingBase::SB_Transform transform;
             transform._transformMatrix = fs::Float4x4::rotationMatrixZ(-rotationAngle);
@@ -1095,23 +1090,6 @@ namespace fs
             transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
             //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
             _sbTransformData.push_back(transform);
-        }
-
-        void ShapeRendererContext::prepareStructuredBuffer()
-        {
-            fs::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-
-            const uint32 elementCount = static_cast<uint32>(_sbTransformData.size());
-            if (_sbTransformBufferId.isValid() == false && 0 < elementCount)
-            {
-                _sbTransformBufferId = resourcePool.pushStructuredBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), sizeof(_sbTransformData[0]), elementCount);
-            }
-            
-            if (_sbTransformBufferId.isValid() == true)
-            {
-                fs::RenderingBase::DxResource& structuredBuffer = resourcePool.getResource(_sbTransformBufferId);
-                structuredBuffer.updateBuffer(reinterpret_cast<byte*>(&_sbTransformData[0]), elementCount);
-            }
         }
 
         void ShapeRendererContext::drawColorPallete(const float radius)

@@ -170,7 +170,7 @@ namespace fs
         {
             _lowLevelRenderer->flush();
 
-            flushShapeTransform();
+            flushTransformBuffer();
 
             // @Áß¿ä
             // Identity SB_Transform for font rendering!!

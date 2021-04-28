@@ -238,6 +238,7 @@
     <ClCompile Include="Source\GraphicDevice.cpp" />
     <ClCompile Include="Source\GuiContext.cpp" />
     <ClCompile Include="Source\IDxObject.cpp" />
+    <ClCompile Include="Source\IRendererContext.cpp" />
     <ClCompile Include="Source\Language\CppHlsl.cpp" />
     <ClCompile Include="Source\Language\CppHlslLexer.cpp" />
     <ClCompile Include="Source\Language\CppHlslParser.cpp" />
