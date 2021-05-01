@@ -30,6 +30,7 @@
     <ClInclude Include="Include\Object.h" />
     <ClInclude Include="Include\IObjectComponent.h" />
     <ClInclude Include="Include\ObjectPool.h" />
+    <ClInclude Include="Include\Plotter.h" />
     <ClInclude Include="Include\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +41,7 @@
     <ClCompile Include="Source\MeshRenderer.cpp" />
     <ClCompile Include="Source\Object.cpp" />
     <ClCompile Include="Source\IObjectComponent.cpp" />
+    <ClCompile Include="Source\Plotter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\GsNormal.hlsl">

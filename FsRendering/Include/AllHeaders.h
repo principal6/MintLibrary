@@ -14,5 +14,7 @@
 #include <FsRendering/Include/MeshRenderer.h>
 #include <FsRendering/Include/DeltaTimer.h>
 
+#include <FsRendering/Include/Plotter.h>
+
 
 #endif // !FS_RENDERING_ALL_HEADERS_H

@@ -7,72 +7,6 @@ namespace fs
 {
     const Float4 Float4::kZero = Float4(0.0f);
 
-    Float4& Float4::operator+=(const Float4& rhs)
-    {
-        _x += rhs._x;
-        _y += rhs._y;
-        _z += rhs._z;
-        _w += rhs._w;
-        return *this;
-    }
-
-    Float4& Float4::operator-=(const Float4& rhs)
-    {
-        _x -= rhs._x;
-        _y -= rhs._y;
-        _z -= rhs._z;
-        _w -= rhs._w;
-        return *this;
-    }
-
-    Float4& Float4::operator*=(const float s)
-    {
-        _x *= s;
-        _y *= s;
-        _z *= s;
-        _w *= s;
-        return *this;
-    }
-
-    Float4& Float4::operator/=(const float s)
-    {
-        _x /= s;
-        _y /= s;
-        _z /= s;
-        _w /= s;
-        return *this;
-    }
-
-    const Float4& Float4::operator+() const noexcept
-    {
-        return *this;
-    }
-
-    Float4 Float4::operator-() const noexcept
-    {
-        return Float4(-_x, -_y, -_z, -_w);
-    }
-
-    Float4 Float4::operator+(const Float4& rhs) const noexcept
-    {
-        return Float4(_x + rhs._x, _y + rhs._y, _z + rhs._z, _w + rhs._w);
-    }
-
-    Float4 Float4::operator-(const Float4& rhs) const noexcept
-    {
-        return Float4(_x - rhs._x, _y - rhs._y, _z - rhs._z, _w - rhs._w);
-    }
-
-    Float4 Float4::operator*(const float s) const noexcept
-    {
-        return Float4(_x * s, _y * s, _z * s, _w * s);
-    }
-
-    Float4 Float4::operator/(const float s) const noexcept
-    {
-        return Float4(_x / s, _y / s, _z / s, _w / s);
-    }
-
     float& Float4::operator[](const uint32 index) noexcept
     {
         FS_ASSERT("김장원", index < 4, "범위를 벗어난 접근입니다.");
@@ -83,16 +17,6 @@ namespace fs
     {
         FS_ASSERT("김장원", index < 4, "범위를 벗어난 접근입니다.");
         return (&_x)[index];
-    }
-
-    constexpr const bool Float4::operator==(const Float4& rhs) const noexcept
-    {
-        return (_x == rhs._x && _y == rhs._y && _z == rhs._z && _w == rhs._w);
-    }
-
-    constexpr const bool Float4::operator!=(const Float4& rhs) const noexcept
-    {
-        return !(*this == rhs);
     }
 
     const float Float4::dotProductRaw(const float* const a, const float* const b)

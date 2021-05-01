@@ -18,6 +18,7 @@ namespace fs
         static constexpr float kPiOverEight     = kPiOverFour * 0.5f;
         static constexpr float kTwoPi           = kPi * 2.0f;
         static constexpr float kSqrtOfTwo       = 1.4142135624f;
+        static constexpr float kFloatMax        = 3.402823466e+38f;
 
 
         FS_INLINE constexpr uint32 pow2_ui32(const uint32 exponent)

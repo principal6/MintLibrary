@@ -88,11 +88,11 @@ namespace fs
                 __noop;
             }
 
-            const TextRenderDirectionHorz   _directionHorz;
-            const TextRenderDirectionVert   _directionVert;
-            const float                     _scale;
-            const bool                      _drawShade;
-            fs::Float4x4                    _transformMatrix;
+            TextRenderDirectionHorz     _directionHorz;
+            TextRenderDirectionVert     _directionVert;
+            float                       _scale;
+            bool                        _drawShade;
+            fs::Float4x4                _transformMatrix;
         };
 
         class FontRendererContext final : public IRendererContext
@@ -157,7 +157,7 @@ namespace fs
             const uint32                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
         
         public:
-            void                                pushTransformToBuffer(const fs::Float4& position, fs::Float4x4 transformMatrix);
+            void                                pushTransformToBuffer(const fs::Float4& preTranslation, fs::Float4x4 transformMatrix, const fs::Float4& postTranslation);
             const DxObjectId&                   getFontTextureId() const noexcept;
 
         private:

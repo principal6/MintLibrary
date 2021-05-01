@@ -635,16 +635,16 @@ namespace fs
             const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontSize * fontRenderingOption._scale;
             
-            fs::Float4 textPosition = position;
+            fs::Float4 postTranslation;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
             {
-                textPosition._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+                postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
             }
             if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
             {
-                textPosition._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+                postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
             }
-            textPosition._y += (-scaledFontSize * 0.5f - 1.0f);
+            postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
 
             fs::Float2 glyphPosition = fs::Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
@@ -652,7 +652,8 @@ namespace fs
                 drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade);
             }
 
-            pushTransformToBuffer(textPosition, fontRenderingOption._transformMatrix);
+            const fs::Float4& preTranslation = position;
+            pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
         const float FontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
@@ -689,10 +690,11 @@ namespace fs
             return textLength;
         }
 
-        void FontRendererContext::pushTransformToBuffer(const fs::Float4& position, fs::Float4x4 transformMatrix)
+        void FontRendererContext::pushTransformToBuffer(const fs::Float4& preTranslation, fs::Float4x4 transformMatrix, const fs::Float4& postTranslation)
         {
             fs::RenderingBase::SB_Transform transform;
-            transform._transformMatrix.setTranslation(position._x, position._y, position._z);
+            transform._transformMatrix.preTranslate(preTranslation.getXyz());
+            transform._transformMatrix.postTranslate(postTranslation.getXyz());
             transform._transformMatrix *= transformMatrix;
             _sbTransformData.push_back(transform);
         }

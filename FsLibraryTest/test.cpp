@@ -774,18 +774,21 @@ const bool testWindow()
 
 #if 0
             fs::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
-            shapeFontRendererContext.setTextColor(fs::RenderingBase::Color::kBlack);
-            shapeFontRendererContext.setPosition(fs::Float4(0, 0, 0, 1));
-            fs::RenderingBase::FontRenderingOption fontRenderingOption(fs::RenderingBase::TextRenderDirectionHorz::Rightward, fs::RenderingBase::TextRenderDirectionVert::Downward);
-            fontRenderingOption._transformMatrix = fs::Float4x4::rotationMatrixZ(-fs::Math::kPiOverTwo);
-            shapeFontRendererContext.drawDynamicText(L"abc", fs::Float4(20, 60, 0, 1), fontRenderingOption);
+            fs::Rendering::Plotter plotter(shapeFontRendererContext);
+            plotter.xLabel(L"weight");
+            plotter.yLabel(L"length");
+            
+            fs::Vector<float> xData{  1.0f,  2.0f,  4.0f,  8.0f, 16.0f, 32.0f };
+            fs::Vector<float> yData{ 10.0f, 11.0f, 12.0f, 13.0f, 14.0f, 15.0f };
+            plotter.plotType(fs::Rendering::Plotter::PlotType::Circle);
+            plotter.scatter(xData, yData);
 
-            shapeFontRendererContext.setPosition(fs::Float4(100, 100, 0, 1));
-            shapeFontRendererContext.setColor(fs::RenderingBase::Color(1.0f, 0.5f, 0.25f));
-            shapeFontRendererContext.drawCircle(20.0f);
+            fs::Vector<float> xData1{ 21.0f, 22.0f, 24.0f, 28.0f, 26.0f, 22.0f };
+            fs::Vector<float> yData1{ -2.0f, -3.0f, -8.0f, -1.0f, 50.0f, 30.0f };
+            plotter.plotType(fs::Rendering::Plotter::PlotType::Triangle);
+            plotter.scatter(xData1, yData1);
 
-            shapeFontRendererContext.setPosition(fs::Float4(300, 100, 0, 1));
-            shapeFontRendererContext.drawRectangle(fs::Float2(100, 60), 1.0f, 0.0f);
+            plotter.render();
 #endif
 #if 1
             {
