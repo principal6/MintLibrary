@@ -354,6 +354,22 @@ namespace fs
             = _m[2][0] = _m[2][1] = _m[2][3] = _m[3][0] = _m[3][1] = _m[3][2] = 0.0f;
     }
 
+    Float4x4& Float4x4::power(const uint32 exponent) noexcept
+    {
+        if (exponent == 0)
+        {
+            setIdentity();
+            return *this;
+        }
+
+        const fs::Float4x4 original = *this;
+        for (uint32 iter = 0; iter < exponent; ++iter)
+        {
+            *this *= original;
+        }
+        return *this;
+    }
+
     void Float4x4::preScale(const float x, const float y, const float z) noexcept
     {
         _row[0] *= x;

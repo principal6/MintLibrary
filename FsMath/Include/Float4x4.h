@@ -89,6 +89,9 @@ namespace fs
         void                    setIdentity() noexcept;
 
     public:
+        Float4x4&               power(const uint32 exponent) noexcept;
+
+    public:
         void                    preScale(const float x, const float y, const float z) noexcept;
         void                    postScale(const float x, const float y, const float z) noexcept;
         void                    preScale(const fs::Float3& scale) noexcept;

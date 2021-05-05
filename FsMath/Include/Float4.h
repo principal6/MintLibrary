@@ -10,6 +10,9 @@
 
 namespace fs
 {
+    class Float4x4;
+
+
     class alignas(16) Float4 final
     {
     public:
@@ -65,6 +68,9 @@ namespace fs
         static Float4           cross(const Float4& lhs, const Float4& rhs) noexcept;
         static Float4           crossNormalize(const Float4& lhs, const Float4& rhs) noexcept;
         static Float4           normalize(const Float4& float4) noexcept;
+
+    public:
+        Float4&                 transform(const Float4x4& matrix) noexcept;
     
     public:
         void                    normalize() noexcept;
@@ -76,6 +82,8 @@ namespace fs
         Float4                  getXyz0() const noexcept;
         Float4                  getXyz1() const noexcept;
         Float3                  getXyz() const noexcept;
+        const float             maxComponent() const noexcept;
+        const float             minComponent() const noexcept;
 
     public:
         const float             lengthSqaure() const noexcept;

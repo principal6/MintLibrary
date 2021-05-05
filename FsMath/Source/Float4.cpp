@@ -2,6 +2,8 @@
 
 #include <FsCommon/Include/Logger.h>
 
+#include <FsMath/Include/Float4x4.h>
+
 
 namespace fs
 {
@@ -53,6 +55,12 @@ namespace fs
     Float4 Float4::normalize(const Float4& float4) noexcept
     {
         return (float4 / float4.length());
+    }
+
+    Float4& Float4::transform(const Float4x4& matrix) noexcept
+    {
+        *this = matrix * (*this);
+        return *this;
     }
 
     void Float4::normalize() noexcept

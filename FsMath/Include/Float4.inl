@@ -105,4 +105,14 @@ namespace fs
     {
         return !(*this == rhs);
     }
+
+    FS_INLINE const float Float4::maxComponent() const noexcept
+    {
+        return fs::max(fs::max(_x, _y), fs::max(_z, _w));
+    }
+
+    FS_INLINE const float Float4::minComponent() const noexcept
+    {
+        return fs::min(fs::min(_x, _y), fs::min(_z, _w));
+    }
 }
