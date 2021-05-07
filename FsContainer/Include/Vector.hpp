@@ -5,9 +5,6 @@
 #define FS_VECTOR_HPP
 
 
-#pragma optimize("", off)
-
-
 #include <FsContainer/Include/Vector.h>
 
 

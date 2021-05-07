@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Float2.h" />
     <ClInclude Include="Include\Float2x2.h" />
     <ClInclude Include="Include\Float3.h" />
@@ -28,6 +29,8 @@
     <ClInclude Include="Include\Int2.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\MathCommon.h" />
+    <ClInclude Include="Include\Matrix.h" />
+    <ClInclude Include="Include\Matrix.hpp" />
     <ClInclude Include="Include\Quaternion.h" />
     <ClCompile Include="Source\Float2.cpp" />
     <ClCompile Include="Source\Float2x2.cpp" />
@@ -39,6 +42,8 @@
     <ClCompile Include="Source\MathCommon.cpp" />
     <ClCompile Include="Source\Quaternion.cpp" />
     <ClInclude Include="Include\Rect.h" />
+    <ClInclude Include="Include\VectorR.h" />
+    <ClInclude Include="Include\VectorR.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Float2.inl" />

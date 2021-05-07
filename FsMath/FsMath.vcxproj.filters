@@ -42,6 +42,21 @@
     <ClInclude Include="Include\Rect.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Matrix.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Matrix.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\VectorR.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\VectorR.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">

@@ -9,6 +9,8 @@
 
 #include <FsContainer/Include/AllHpps.h>
 
+#include <FsMath/Include/AllHpps.h>
+
 #include <FsPlatform/Include/AllHpps.h>
 
 #include <FsRenderingBase/Include/AllHpps.h>

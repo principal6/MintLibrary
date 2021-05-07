@@ -15,6 +15,8 @@
 #include <FsMath/Include/Float4x4.h>
 #include <FsMath/Include/Int2.h>
 #include <FsMath/Include/Quaternion.h>
+#include <FsMath/Include/VectorR.h>
+#include <FsMath/Include/Matrix.h>
 
 
 #endif // !FS_MATH_ALL_HEADERS_H
