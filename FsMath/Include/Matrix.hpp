@@ -212,6 +212,124 @@ namespace fs
             return result;
         }
 
+        template<int32 M, int32 N>
+        FS_INLINE constexpr const bool Matrix<M, N>::isSquareMatrix() const noexcept
+        {
+            return (M == N);
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isDiagonalMatrix() const noexcept
+        {
+            if (isSquareMatrix() == false)
+            {
+                return false;
+            }
+
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    if (columnIndex != rowIndex)
+                    {
+                        if (_m[rowIndex][columnIndex] != 0.0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isScalarMatrix() const noexcept
+        {
+            if (isSquareMatrix() == false)
+            {
+                return false;
+            }
+            
+            const double scale = _m[0][0];
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? scale : 0.0))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isIdentityMatrix() const noexcept
+        {
+            if (isSquareMatrix() == false)
+            {
+                return false;
+            }
+
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? 1.0 : 0.0))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isZeroMatrix() const noexcept
+        {
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    if (_m[rowIndex][columnIndex] != 0.0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE void Matrix<M, N>::setIdentity() noexcept
+        {
+            if (isSquareMatrix() == false)
+            {
+                FS_LOG_ERROR("±èÀå¿ø", "Non-square matrix is set to identity!");
+            }
+
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    _m[rowIndex][columnIndex] = (columnIndex == rowIndex) ? 1.0 : 0.0;
+                }
+            }
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE void Matrix<M, N>::setZero() noexcept
+        {
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    _m[rowIndex][columnIndex] = 0.0;
+                }
+            }
+        }
+
 
         template<int32 M, int32 N>
         FS_INLINE Matrix<M, N> operator*(const double scalar, const Matrix<M, N>& matrix) noexcept

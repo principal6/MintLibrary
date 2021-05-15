@@ -35,6 +35,14 @@ namespace fs
         }
 
         template<int32 N>
+        inline VectorR<N> VectorR<N>::standardUnitVector(const int32 math_i) noexcept
+        {
+            VectorR<N> result;
+            result.setComponent(math_i - 1, 1.0);
+            return result;
+        }
+
+        template<int32 N>
         FS_INLINE const double VectorR<N>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
         {
             double result = 0.0;
@@ -43,6 +51,43 @@ namespace fs
                 result += (lhs._c[index] * rhs._c[index]);
             }
             return result;
+        }
+
+        template<int32 N>
+        FS_INLINE VectorR<3> VectorR<N>::cross(const VectorR<3>& lhs, const VectorR<3>& rhs) noexcept
+        {
+            return VectorR<3>
+                (
+                    {
+                        lhs._c[1] * rhs._c[2] - lhs._c[2] * rhs._c[1],
+                        lhs._c[2] * rhs._c[0] - lhs._c[0] * rhs._c[2],
+                        lhs._c[0] * rhs._c[1] - lhs._c[1] * rhs._c[0]
+                    }
+            );
+        }
+
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::distance(const VectorR& lhs, const VectorR& rhs) noexcept
+        {
+            return (rhs - lhs).norm();
+        }
+
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::angle(const VectorR& lhs, const VectorR& rhs) noexcept
+        {
+            return ::acos(lhs.normalize().dot(rhs.normalize()));
+        }
+
+        template<int32 N>
+        FS_INLINE const bool VectorR<N>::isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
+        {
+            return fs::Math::equals(lhs.dot(rhs), 0.0);
+        }
+
+        template<int32 N>
+        FS_INLINE VectorR<N> VectorR<N>::projectUOntoV(const VectorR& u, const VectorR& v) noexcept
+        {
+            return (u.dot(v) / u.dot(u)) * u;
         }
 
         template<int32 N>
@@ -233,41 +278,31 @@ namespace fs
         template<>
         inline VectorR<3> VectorR<3>::cross(const VectorR<3>& rhs) const noexcept
         {
-            return VectorR<3>
-            (
-                {
-                    _c[1] * rhs._c[2] - _c[2] * rhs._c[1],
-                    _c[2] * rhs._c[0] - _c[0] * rhs._c[2],
-                    _c[0] * rhs._c[1] - _c[1] * rhs._c[0]
-                }
-            );
+            return cross(*this, rhs);
         }
 
         template<int32 N>
         FS_INLINE const double VectorR<N>::distance(const VectorR& rhs) const noexcept
         {
-            return (rhs - *this).norm();
+            return distance(*this, rhs);
         }
 
         template<int32 N>
         FS_INLINE const double VectorR<N>::angle(const VectorR& rhs) const noexcept
         {
-            return ::acos(normalize().dot(rhs.normalize()));
+            return angle(*this, rhs);
         }
 
         template<int32 N>
         FS_INLINE const bool VectorR<N>::isOrthogonalTo(const VectorR& rhs) const noexcept
         {
-            return fs::Math::equals(dot(rhs), 0.0);
+            return isOrthogonal(*this, rhs);
         }
 
         template<int32 N>
         FS_INLINE VectorR<N> VectorR<N>::projectOnto(const VectorR& rhs) const noexcept
         {
-            // (u * v)
-            // ------- u
-            // (u * u)
-            return (this->dot(rhs) / this->dot(*this)) * (*this);
+            return projectUOntoV(*this, rhs);
         }
 
 

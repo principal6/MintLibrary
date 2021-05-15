@@ -610,6 +610,7 @@ const bool testAlgorithm()
     return true;
 }
 
+//#pragma optimize("", off)
 const bool testLinearAlgebra()
 {
     fs::Math::VectorR<3> vec0{ 1, 1, 0 };
@@ -623,10 +624,27 @@ const bool testLinearAlgebra()
     const bool orthogonality = vec1.isOrthogonalTo(vec2);
 
     fs::Math::VectorR<1> vec3{ 3 };
-    fs::Math::Matrix<1, 3> mat;
-    mat.setRow(0, fs::Math::VectorR<3>{ 4, 5, 6 });
+    fs::Math::Matrix<1, 3> mat0;
+    mat0.setRow(0, fs::Math::VectorR<3>{ 4, 5, 6 });
+    constexpr bool isMat0Square = mat0.isSquareMatrix();
+    
+    fs::Math::Matrix<3, 3> mat1;
+    mat1.setRow(0, fs::Math::VectorR<3>{ 3, 0, 0 });
+    mat1.setRow(1, fs::Math::VectorR<3>{ 0, 3, 0 });
+    mat1.setRow(2, fs::Math::VectorR<3>{ 0, 0, 3 });
+    const bool isMat1Scalar = mat1.isScalarMatrix();
+    mat1.setIdentity();
+    const bool isMat1Identity = mat1.isIdentityMatrix();
+    mat1.setZero();
+    const bool isMat1Zero = mat1.isZeroMatrix();
 
-    vec0 = vec3 * mat;
+    mat1.setRow(0, fs::Math::VectorR<3>{ 1, 2, 3 });
+    mat1.setRow(1, fs::Math::VectorR<3>{ 4, 5, 6 });
+    mat1.setRow(2, fs::Math::VectorR<3>{ 7, 8, 9 });
+    fs::Math::VectorR<3> e1 = fs::Math::VectorR<3>::standardUnitVector(1);
+    fs::Math::VectorR<3> row1 = e1 * mat1;
+    fs::Math::VectorR<3> col1 = mat1 * e1;
+    vec0 = vec3 * mat0;
     return true;
 }
 
