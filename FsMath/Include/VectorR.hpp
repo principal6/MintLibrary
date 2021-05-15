@@ -3,89 +3,91 @@
 
 #include <FsMath/Include/VectorR.h>
 
+#include <FsMath/Include/MathCommon.h>
+
 
 namespace fs
 {
     namespace Math
     {
-        template<uint8 N>
+        template<int32 N>
         inline VectorR<N>::VectorR()
             : _c{}
         {
             __noop;
         }
 
-        template<uint8 N>
+        template<int32 N>
         inline VectorR<N>::VectorR(const std::initializer_list<double>& initializerList)
         {
-            const uint8 count = fs::min(static_cast<uint8>(initializerList.size()), N);
+            const int32 count = fs::min(static_cast<int32>(initializerList.size()), N);
             const double* const first = initializerList.begin();
-            for (uint8 index = 0; index < count; ++index)
+            for (int32 index = 0; index < count; ++index)
             {
                 _c[index] = *(first + index);
             }
         }
 
-        template<uint8 N>
+        template<int32 N>
         inline VectorR<N>::~VectorR()
         {
             __noop;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE const double VectorR<N>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
         {
             double result = 0.0;
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 result += (lhs._c[index] * rhs._c[index]);
             }
             return result;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N>& VectorR<N>::operator*=(const double scalar) noexcept
         {
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 _c[index] *= scalar;
             }
             return *this;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N>& VectorR<N>::operator/=(const double scalar) noexcept
         {
             FS_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
 
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 _c[index] /= scalar;
             }
             return *this;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N>& VectorR<N>::operator+=(const VectorR& rhs) noexcept
         {
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 _c[index] += rhs._c[index];
             }
             return *this;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N>& VectorR<N>::operator-=(const VectorR& rhs) noexcept
         {
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 _c[index] -= rhs._c[index];
             }
             return *this;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N> VectorR<N>::operator*(const double scalar) const noexcept
         {
             VectorR result = *this;
@@ -93,7 +95,7 @@ namespace fs
             return result;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N> VectorR<N>::operator/(const double scalar) const noexcept
         {
             VectorR result = *this;
@@ -101,7 +103,7 @@ namespace fs
             return result;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N> VectorR<N>::operator+(const VectorR& rhs) const noexcept
         {
             VectorR result = *this;
@@ -109,7 +111,7 @@ namespace fs
             return result;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE VectorR<N> VectorR<N>::operator-(const VectorR& rhs) const noexcept
         {
             VectorR result = *this;
@@ -117,50 +119,50 @@ namespace fs
             return result;
         }
 
-        template<uint8 N>
-        FS_INLINE double& VectorR<N>::operator[](const uint8 index) noexcept
+        template<int32 N>
+        FS_INLINE double& VectorR<N>::operator[](const uint32 index) noexcept
         {
-            FS_ASSERT("김장원", index < N, "범위를 벗어난 접근입니다!");
+            FS_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
             return _c[index];
         }
 
-        template<uint8 N>
-        FS_INLINE const double& VectorR<N>::operator[](const uint8 index) const noexcept
+        template<int32 N>
+        FS_INLINE const double& VectorR<N>::operator[](const uint32 index) const noexcept
         {
-            FS_ASSERT("김장원", index < N, "범위를 벗어난 접근입니다!");
+            FS_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
             return _c[index];
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE void VectorR<N>::setZero() noexcept
         {
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 _c[index] = 0.0;
             }
         }
 
-        template<uint8 N>
-        FS_INLINE void fs::Math::VectorR<N>::setComponent(const uint8 index, const double value) noexcept
+        template<int32 N>
+        FS_INLINE void fs::Math::VectorR<N>::setComponent(const uint32 index, const double value) noexcept
         {
-            if (index < N)
+            if (index < static_cast<uint32>(N))
             {
                 _c[index] = value;
             }
         }
         
-        template<uint8 N>
-        FS_INLINE const double VectorR<N>::getComponent(const uint8 index) const noexcept
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::getComponent(const uint32 index) const noexcept
         {
-            FS_ASSERT("김장원", index < N, "범위를 벗어난 접근입니다!");
+            FS_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
             return _c[index];
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE const double VectorR<N>::maxComponent() const noexcept
         {
             double result = 1.0e-323;
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 if (result < _c[index])
                 {
@@ -170,11 +172,11 @@ namespace fs
             return result;
         }
 
-        template<uint8 N>
+        template<int32 N>
         FS_INLINE const double VectorR<N>::minComponent() const noexcept
         {
             double result = 1.0e+308;
-            for (uint8 index = 0; index < N; ++index)
+            for (int32 index = 0; index < N; ++index)
             {
                 if (_c[index] < result)
                 {
@@ -184,28 +186,95 @@ namespace fs
             return result;
         }
         
-        template<uint8 N>
-        FS_INLINE const double VectorR<N>::norm() const noexcept
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::normSquared() const noexcept
         {
             double result = 0.0;
-            for (uint8 i = 0; i < N; ++i)
+            for (int32 index = 0; index < N; ++index)
             {
-                result += (_c[i] * _c[i]);
+                result += (_c[index] * _c[index]);
             }
             return result;
         }
-        
-        template<uint8 N>
-        FS_INLINE void VectorR<N>::normalize() noexcept
+
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::norm() const noexcept
         {
-            const double norm = norm();
-            *this /= norm;
+            return ::sqrt(normSquared());
+        }
+        
+        template<int32 N>
+        FS_INLINE VectorR<N>& VectorR<N>::setNormalized() noexcept
+        {
+            const double norm_ = norm();
+            *this /= norm_;
+            return *this;
         }
 
-        template<uint8 N>
+        template<int32 N>
+        FS_INLINE VectorR<N> VectorR<N>::normalize() const noexcept
+        {
+            VectorR<N> result = *this;
+            return result.setNormalized();
+        }
+
+        template<int32 N>
+        FS_INLINE const bool VectorR<N>::isUnitVector() const noexcept
+        {
+            return fs::Math::equals(normSquared(), 1.0);
+        }
+
+        template<int32 N>
         FS_INLINE const double VectorR<N>::dot(const VectorR& rhs) const noexcept
         {
             return dot(*this, rhs);
+        }
+
+        template<>
+        inline VectorR<3> VectorR<3>::cross(const VectorR<3>& rhs) const noexcept
+        {
+            return VectorR<3>
+            (
+                {
+                    _c[1] * rhs._c[2] - _c[2] * rhs._c[1],
+                    _c[2] * rhs._c[0] - _c[0] * rhs._c[2],
+                    _c[0] * rhs._c[1] - _c[1] * rhs._c[0]
+                }
+            );
+        }
+
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::distance(const VectorR& rhs) const noexcept
+        {
+            return (rhs - *this).norm();
+        }
+
+        template<int32 N>
+        FS_INLINE const double VectorR<N>::angle(const VectorR& rhs) const noexcept
+        {
+            return ::acos(normalize().dot(rhs.normalize()));
+        }
+
+        template<int32 N>
+        FS_INLINE const bool VectorR<N>::isOrthogonalTo(const VectorR& rhs) const noexcept
+        {
+            return fs::Math::equals(dot(rhs), 0.0);
+        }
+
+        template<int32 N>
+        FS_INLINE VectorR<N> VectorR<N>::projectOnto(const VectorR& rhs) const noexcept
+        {
+            // (u * v)
+            // ------- u
+            // (u * u)
+            return (this->dot(rhs) / this->dot(*this)) * (*this);
+        }
+
+
+        template<int32 N>
+        FS_INLINE VectorR<N> operator*(const double scalar, const VectorR<N>& vector) noexcept
+        {
+            return (vector * scalar);
         }
     }
 }

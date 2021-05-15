@@ -610,6 +610,26 @@ const bool testAlgorithm()
     return true;
 }
 
+const bool testLinearAlgebra()
+{
+    fs::Math::VectorR<3> vec0{ 1, 1, 0 };
+    vec0 = 5 * vec0;
+    fs::Math::VectorR<3> vec1{ 0, 3, 0 };
+    fs::Math::VectorR<3> vec2 = vec0.cross(vec1).setNormalized();
+    const bool trueValue = vec2.isUnitVector();
+    const bool falseValue = fs::Math::equals(1.00002f, 1.0f);
+    const double distance = vec1.normalize().distance(vec2);
+    const double theta = vec1.angle(vec2);
+    const bool orthogonality = vec1.isOrthogonalTo(vec2);
+
+    fs::Math::VectorR<1> vec3{ 3 };
+    fs::Math::Matrix<1, 3> mat;
+    mat.setRow(0, fs::Math::VectorR<3>{ 4, 5, 6 });
+
+    vec0 = vec3 * mat;
+    return true;
+}
+
 const bool testWindow()
 {
     using namespace fs;
@@ -908,6 +928,8 @@ const bool testAll()
     testLanguage();
 
     testAlgorithm();
+
+    testLinearAlgebra();
 
     return true;
 }

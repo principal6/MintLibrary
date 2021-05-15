@@ -19,6 +19,8 @@ namespace fs
         static constexpr float kTwoPi           = kPi * 2.0f;
         static constexpr float kSqrtOfTwo       = 1.4142135624f;
         static constexpr float kFloatMax        = 3.402823466e+38f;
+        static constexpr float kFloatEpsilon    = 0.0000152587890625f;
+        static constexpr double kDoubleEpsilon  = 0.0000152587890625;
 
 
         FS_INLINE constexpr uint32 pow2_ui32(const uint32 exponent)
@@ -98,6 +100,15 @@ namespace fs
             return radian;
         }
 
+        FS_INLINE const bool equals(const float a, const float b, const float epsilon = kFloatEpsilon)
+        {
+            return (::abs(a - b) < epsilon);
+        }
+
+        FS_INLINE const bool equals(const double a, const double b, const double epsilon = kDoubleEpsilon)
+        {
+            return (::abs(a - b) < epsilon);
+        }
     }
 }
 

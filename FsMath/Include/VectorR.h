@@ -14,11 +14,14 @@ namespace fs
 {
     namespace Math
     {
-        template <uint8 N>
+        template <int32 N>
         class VectorR
         {
+            static_assert(0 < N, "N must be greater than 0!");
+
         public:
             static const double     dot(const VectorR& lhs, const VectorR& rhs) noexcept;
+            //VectorR                 operator*(const double scalar, const VectorR& vector) noexcept;
 
         public:
                                     VectorR();
@@ -44,26 +47,38 @@ namespace fs
             VectorR                 operator-(const VectorR& rhs) const noexcept;
 
         public:
-            double&                 operator[](const uint8 index) noexcept;
-            const double&           operator[](const uint8 index) const noexcept;
+            double&                 operator[](const uint32 index) noexcept;
+            const double&           operator[](const uint32 index) const noexcept;
 
         public:
             void                    setZero() noexcept;
-            void                    setComponent(const uint8 index, const double value) noexcept;
-            const double            getComponent(const uint8 index) const noexcept;
+            void                    setComponent(const uint32 index, const double value) noexcept;
+            const double            getComponent(const uint32 index) const noexcept;
             const double            maxComponent() const noexcept;
             const double            minComponent() const noexcept;
 
         public:
+            const double            normSquared() const noexcept;
             const double            norm() const noexcept;
-            void                    normalize() noexcept;
+            VectorR<N>&             setNormalized() noexcept;
+            VectorR<N>              normalize() const noexcept;
+            const bool              isUnitVector() const noexcept;
 
         public:
             const double            dot(const VectorR& rhs) const noexcept;
+            VectorR<3>              cross(const VectorR<3>& rhs) const noexcept;
+            const double            distance(const VectorR& rhs) const noexcept;
+            const double            angle(const VectorR& rhs) const noexcept;
+            const bool              isOrthogonalTo(const VectorR& rhs) const noexcept;
+            VectorR<N>              projectOnto(const VectorR& rhs) const noexcept;
 
         private:
             double                  _c[N];
         };
+
+
+        template <int32 N>
+        VectorR<N>                  operator*(const double scalar, const VectorR<N>& vector) noexcept;
     }
 }
 
