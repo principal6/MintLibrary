@@ -7,13 +7,15 @@
 
 #include <FsCommon/Include/CommonDefinitions.h>
 
-#include <FsMath/Include/VectorR.h>
-
 
 namespace fs
 {
     namespace Math
     {
+        template <int32 N>
+        class VectorR;
+
+
         template <int32 M, int32 N>
         class Matrix
         {
@@ -53,11 +55,15 @@ namespace fs
             VectorR<M>              multiplyColumnVector(const VectorR<N>& columnVector) const noexcept;
 
         public:
+            Matrix<N, M>            transpose() const noexcept;
+
+        public:
             constexpr const bool    isSquareMatrix() const noexcept;
             const bool              isDiagonalMatrix() const noexcept;
             const bool              isScalarMatrix() const noexcept;
             const bool              isIdentityMatrix() const noexcept;
             const bool              isZeroMatrix() const noexcept;
+            const bool              isSymmetricMatrix() const noexcept;
 
             void                    setIdentity() noexcept;
             void                    setZero() noexcept;

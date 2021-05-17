@@ -213,6 +213,20 @@ namespace fs
         }
 
         template<int32 M, int32 N>
+        FS_INLINE Matrix<N, M> Matrix<M, N>::transpose() const noexcept
+        {
+            Matrix<N, M> result;
+            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                {
+                    result.setElement(columnIndex, rowIndex, _m[rowIndex][columnIndex]);
+                }
+            }
+            return result;
+        }
+
+        template<int32 M, int32 N>
         FS_INLINE constexpr const bool Matrix<M, N>::isSquareMatrix() const noexcept
         {
             return (M == N);
@@ -293,6 +307,27 @@ namespace fs
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
                     if (_m[rowIndex][columnIndex] != 0.0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isSymmetricMatrix() const noexcept
+        {
+            if (false == isSquareMatrix())
+            {
+                return false;
+            }
+
+            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                {
+                    if (_m[rowIndex][columnIndex] != _m[columnIndex][rowIndex])
                     {
                         return false;
                     }

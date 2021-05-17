@@ -5,6 +5,8 @@
 
 #include <FsMath/Include/MathCommon.h>
 
+#include <FsMath/Include/Matrix.hpp>
+
 
 namespace fs
 {
@@ -13,6 +15,14 @@ namespace fs
         template<int32 N>
         inline VectorR<N>::VectorR()
             : _c{}
+        {
+            __noop;
+        }
+
+        template<int32 N>
+        template <class ...Args>
+        inline VectorR<N>::VectorR(Args... args)
+            : _c{ args... }
         {
             __noop;
         }

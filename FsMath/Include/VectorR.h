@@ -14,6 +14,10 @@ namespace fs
 {
     namespace Math
     {
+        template <int32 M, int32 N>
+        class Matrix;
+
+
         template <int32 N>
         class VectorR
         {
@@ -30,6 +34,8 @@ namespace fs
 
         public:
                                             VectorR();
+                                            template <class ...Args>
+                                            VectorR(Args ... args);
                                             VectorR(const std::initializer_list<double>& initializerList);
                                             VectorR(const VectorR& rhs) = default;
                                             VectorR(VectorR&& rhs) noexcept = default;
@@ -44,7 +50,7 @@ namespace fs
             VectorR&                        operator/=(const double scalar) noexcept;
             VectorR&                        operator+=(const VectorR& rhs) noexcept;
             VectorR&                        operator-=(const VectorR& rhs) noexcept;
-
+            
         public:
             VectorR                         operator*(const double scalar) const noexcept;
             VectorR                         operator/(const double scalar) const noexcept;
