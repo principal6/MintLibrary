@@ -27,10 +27,15 @@ namespace fs
                                     ~Matrix();
 
         public:
+            const bool              operator==(const Matrix& rhs) const noexcept;
+            const bool              operator!=(const Matrix& rhs) const noexcept;
+
+        public:
             Matrix&                 operator*=(const double scalar) noexcept;
             Matrix&                 operator/=(const double scalar) noexcept;
             Matrix&                 operator+=(const Matrix& rhs) noexcept;
             Matrix&                 operator-=(const Matrix& rhs) noexcept;
+            Matrix&                 operator*=(const Matrix<N, N>& rhs) noexcept;
 
         public:
             Matrix                  operator*(const double scalar) noexcept;
@@ -56,6 +61,10 @@ namespace fs
 
         public:
             Matrix<N, M>            transpose() const noexcept;
+            const double            trace() const noexcept;
+
+        public:
+            void                    factorizeLu(Matrix<N, N>& l, Matrix<N, N>& u) const noexcept;
 
         public:
             constexpr const bool    isSquareMatrix() const noexcept;
@@ -64,6 +73,9 @@ namespace fs
             const bool              isIdentityMatrix() const noexcept;
             const bool              isZeroMatrix() const noexcept;
             const bool              isSymmetricMatrix() const noexcept;
+            const bool              isSkewSymmetricMatrix() const noexcept;
+            const bool              isUpperTriangularMatrix() const noexcept;
+            const bool              isIdempotentMatrix() const noexcept;
 
             void                    setIdentity() noexcept;
             void                    setZero() noexcept;

@@ -651,10 +651,18 @@ const bool testLinearAlgebra()
     mat1.setRow(2, fs::Math::VectorR<3>(3.0, 6.0, 9.0));
     const bool isMat1Symmetric = mat1.isSymmetricMatrix();
 
+    mat1.setRow(1, fs::Math::VectorR<3>(-2.0, 5.0, 6.0));
+    mat1.setRow(2, fs::Math::VectorR<3>(-3.0, -6.0, 9.0));
+    const bool isMat1SkewSymmetric = mat1.isSkewSymmetricMatrix();
+
     fs::Math::Matrix<2, 3> mat2;
     mat2.setRow(0, fs::Math::VectorR<3>(0.0, 1.0, 2.0));
     mat2.setRow(1, fs::Math::VectorR<3>(3.0, 4.0, 5.0));
     fs::Math::Matrix<3, 2> mat2Transpose = mat2.transpose();
+
+    fs::Math::Matrix<2, 2> mat3;
+    const bool isMat3Idempotent = mat3.isIdempotentMatrix();
+
     return true;
 }
 

@@ -24,6 +24,28 @@ namespace fs
         }
 
         template<int32 M, int32 N>
+        inline const bool Matrix<M, N>::operator==(const Matrix& rhs) const noexcept
+        {
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    if (_m[rowIndex][columnIndex] != rhs._m[rowIndex][columnIndex])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        inline const bool Matrix<M, N>::operator!=(const Matrix& rhs) const noexcept
+        {
+            return !(*this == rhs);
+        }
+
+        template<int32 M, int32 N>
         FS_INLINE Matrix<M, N>& Matrix<M, N>::operator*=(const double scalar) noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
@@ -72,6 +94,21 @@ namespace fs
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
                     _m[rowIndex][columnIndex] -= rhs._m[rowIndex][columnIndex];
+                }
+            }
+            return *this;
+        }
+
+        template<int32 M, int32 N>
+        inline Matrix<M, N>& Matrix<M, N>::operator*=(const Matrix<N, N>& rhs) noexcept
+        {
+            static_assert(M == N, "Power of non-square matrix!!!");
+
+            for (int32 rowIndex = 0; rowIndex < N; ++rowIndex)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
+                {
+                    _m[rowIndex][columnIndex] = fs::Math::VectorR<N>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
                 }
             }
             return *this;
@@ -227,6 +264,23 @@ namespace fs
         }
 
         template<int32 M, int32 N>
+        FS_INLINE const double Matrix<M, N>::trace() const noexcept
+        {
+            if (isSquareMatrix() == false)
+            {
+                FS_LOG_ERROR("±èÀå¿ø", "Tried to calculate trace from a non-square matrix!");
+            }
+
+            double trace = 0.0;
+            const int32 safeSize = fs::min(M, N);
+            for (int32 index = 0; index < safeSize; index++)
+            {
+                trace += _m[index][index];
+            }
+            return trace;
+        }
+
+        template<int32 M, int32 N>
         FS_INLINE constexpr const bool Matrix<M, N>::isSquareMatrix() const noexcept
         {
             return (M == N);
@@ -327,6 +381,11 @@ namespace fs
             {
                 for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
                 {
+                    if (rowIndex == columnIndex)
+                    {
+                        continue;
+                    }
+
                     if (_m[rowIndex][columnIndex] != _m[columnIndex][rowIndex])
                     {
                         return false;
@@ -334,6 +393,62 @@ namespace fs
                 }
             }
             return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isSkewSymmetricMatrix() const noexcept
+        {
+            if (false == isSquareMatrix())
+            {
+                return false;
+            }
+
+            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            {
+                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                {
+                    if (rowIndex == columnIndex)
+                    {
+                        continue;
+                    }
+
+                    if (_m[rowIndex][columnIndex] != -_m[columnIndex][rowIndex])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isUpperTriangularMatrix() const noexcept
+        {
+            if (false == isSquareMatrix())
+            {
+                return false;
+            }
+
+            for (int32 rowIndex = 1; rowIndex < M; rowIndex++)
+            {
+                for (int32 columnIndex = 0; columnIndex < rowIndex; columnIndex++)
+                {
+                    if (_m[rowIndex][columnIndex] != 0.0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        template<int32 M, int32 N>
+        FS_INLINE const bool Matrix<M, N>::isIdempotentMatrix() const noexcept
+        {
+            Matrix<M, N> squared = *this;
+            squared *= *this;
+            return (squared == *this);
         }
 
         template<int32 M, int32 N>
