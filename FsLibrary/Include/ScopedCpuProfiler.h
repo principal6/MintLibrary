@@ -5,6 +5,8 @@
 #define FS_SCOPED_CPU_PROFILER_H
 
 
+#include <vector>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 

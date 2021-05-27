@@ -11,6 +11,7 @@
 #include <queue>
 #include <unordered_map>
 #include <type_traits>
+#include <cmath>
 
 
 #pragma region Platform

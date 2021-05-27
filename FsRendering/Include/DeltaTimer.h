@@ -5,6 +5,11 @@
 #define FS_DELTA_TIMER_H
 
 
+#include <mutex>
+
+#include <FsCommon/Include/CommonDefinitions.h>
+
+
 namespace fs
 {
     namespace Rendering

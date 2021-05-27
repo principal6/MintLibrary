@@ -14,7 +14,6 @@
 
 
 #include <cstdint>
-#include <stdafx.h>
 
 
 namespace fs
@@ -98,9 +97,35 @@ namespace fs
     #define FS_NEW_ARRAY_USING_BYTE(type, size) reinterpret_cast<type*>(new byte[sizeof(type) * size]{})
     #define FS_DELETE(obj) if (obj != nullptr) { delete obj; obj = nullptr; }
     #define FS_DELETE_ARRAY(obj) if (obj != nullptr) { delete[] obj; obj = nullptr; }
-    #define FS_MALLOC(type, count) reinterpret_cast<type*>(malloc(sizeof(type) * count))
-    #define FS_FREE(pointer) free(pointer); pointer = nullptr
+    #define FS_MALLOC(type, count) reinterpret_cast<type*>(::malloc(sizeof(type) * count))
+    #define FS_FREE(pointer) ::free(pointer); pointer = nullptr
 #endif
+
+
+    namespace fs
+    {
+        template<typename T>
+        class Safe
+        {
+        public:
+                                Safe() : _ptr{ nullptr } { __noop; }
+                                Safe(T* const ptr) : _ptr{ ptr } { __noop; }
+                                ~Safe() { release(); }
+
+        public:
+            T*                  operator&() const noexcept { return _ptr; }
+            T&                  operator*() noexcept { return *_ptr; }
+            T*                  operator->() noexcept { return _ptr; }
+
+        public:
+            void                assign(T* const ptr) { release(); _ptr = ptr; }
+            void                release() { FS_DELETE(_ptr); }
+            constexpr uint64    size() { return sizeof(T); }
+
+        private:
+            T*                  _ptr;
+        };
+    }
 
 
 #endif // !FS_COMMON_DEFINITIONS_H

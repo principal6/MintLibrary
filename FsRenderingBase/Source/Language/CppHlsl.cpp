@@ -15,6 +15,7 @@ namespace fs
     {
         CppHlsl::CppHlsl()
             : _parser{ _lexer }
+            , _fileType{}
         {
             __noop;
         }

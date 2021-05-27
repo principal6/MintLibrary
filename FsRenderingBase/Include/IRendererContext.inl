@@ -1,6 +1,10 @@
 #pragma once
 
 
+#undef max
+#undef min
+
+
 namespace fs
 {
     namespace RenderingBase
@@ -37,7 +41,7 @@ namespace fs
             {
                 return;
             }
-
+            
             const int32 beginX = fs::max(position._x, 0);
             const int32 beginY = fs::max(position._y, 0);
             if (_size._x <= beginX || _size._y <= beginY)

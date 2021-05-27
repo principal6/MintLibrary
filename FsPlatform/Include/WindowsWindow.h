@@ -5,10 +5,34 @@
 #define FS_WINDOWS_WINDOW_H
 
 
+//#include <Windows.h>
+
 #include <FsPlatform/Include/IWindow.h>
 
 #include <FsContainer/Include/Vector.h>
 #include <FsContainer/Include/HashMap.h>
+
+
+struct HWND__;
+using HWND = HWND__*;
+
+struct HINSTANCE__;
+using HINSTANCE = HINSTANCE__*;
+
+struct HICON__;
+using HICON = HICON__*;
+using HCURSOR = HICON;
+
+struct tagMSG;
+using MSG = tagMSG;
+
+using LRESULT = long long;
+using LPARAM = long long;
+using WPARAM = unsigned long long;
+using UINT = unsigned int;
+using BYTE = unsigned char;
+
+constexpr uint32 kRawInputByteSize = 48;
 
 
 namespace fs
@@ -95,12 +119,12 @@ namespace fs
             uint32                              _windowStyle;
             HWND                                _hWnd;
             HINSTANCE                           _hInstance;
-            MSG                                 _msg;
+            fs::Safe<MSG>                       _msg;
         
         private:
             HCURSOR                             _cursorArray[static_cast<uint32>(CursorType::COUNT)];
             fs::Vector<WparamKeyCodePair>       _wParamKeyCodePairArray;
-            BYTE                                _byteArrayForRawInput[sizeof(RAWINPUT)];
+            BYTE                                _byteArrayForRawInput[kRawInputByteSize];
         };
 #pragma endregion
     }

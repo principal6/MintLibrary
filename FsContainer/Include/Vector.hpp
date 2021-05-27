@@ -5,6 +5,10 @@
 #define FS_VECTOR_HPP
 
 
+#include <type_traits>
+
+#include <FsCommon/Include/Logger.h>
+
 #include <FsContainer/Include/Vector.h>
 
 

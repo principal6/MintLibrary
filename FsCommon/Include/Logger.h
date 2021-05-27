@@ -5,8 +5,6 @@
 #define FS_LOGGER_H
 
 
-#include <FsCommon/Include/CommonDefinitions.h>
-
 #include <mutex>
 #include <string>
 

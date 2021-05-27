@@ -13,6 +13,41 @@
 
 namespace fs
 {
+    template <uint32 Size>
+    FS_INLINE void formatString(char(&buffer)[Size], const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vsprintf_s(buffer, format, args);
+        va_end(args);
+    }
+
+    FS_INLINE void formatString(char* const buffer, const uint32 bufferSize, const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vsprintf_s(buffer, bufferSize, format, args);
+        va_end(args);
+    }
+
+    template <uint32 Size>
+    FS_INLINE void formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vswprintf_s(buffer, format, args);
+        va_end(args);
+    }
+
+    FS_INLINE void formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vswprintf_s(buffer, bufferSize, format, args);
+        va_end(args);
+    }
+
+
     inline StringRange::StringRange()
         : _offset{ 0 }
         , _length{ kUint32Max }

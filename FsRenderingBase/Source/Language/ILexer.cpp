@@ -188,12 +188,12 @@ namespace fs
 
         const char ILexer::getCh1(const uint32 sourceAt) const noexcept
         {
-            return (sourceAt + 1 < _source.length()) ? _source.at(sourceAt + 1) : 0;
+            return (static_cast<uint64>(sourceAt) + 1 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 1) : 0;
         }
 
         const char ILexer::getCh2(const uint32 sourceAt) const noexcept
         {
-            return (sourceAt + 2 < _source.length()) ? _source.at(sourceAt + 2) : 0;
+            return (static_cast<uint64>(sourceAt) + 2 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 2) : 0;
         }
 
         void ILexer::executeDefault(uint32& prevSourceAt, uint32& sourceAt)

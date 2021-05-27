@@ -5,6 +5,9 @@
 #define FS_I_WINDOW_H
 
 
+#include <string>
+#include <queue>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsPlatform/Include/PlatformCommon.h>

@@ -5,6 +5,8 @@
 #define FS_UNIQUE_STRING_H
 
 
+#include <mutex>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/Vector.h>

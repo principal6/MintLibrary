@@ -5,6 +5,8 @@
 #define FS_I_RENDERER_CONTEXT_H
 
 
+#include <FsCommon/Include/CommonDefinitions.h>
+
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>
 
 #include <FsContainer/Include/Vector.h>

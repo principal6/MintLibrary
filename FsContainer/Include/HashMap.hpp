@@ -17,6 +17,8 @@ namespace fs
     template<typename Key, typename Value>
     inline Bucket<Key, Value>::Bucket()
         : _isUsed{ false }
+        , _key{}
+        , _value{}
     {
         __noop;
     }

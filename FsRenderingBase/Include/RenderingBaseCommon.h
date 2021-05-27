@@ -5,6 +5,10 @@
 #define FS_SIMPLE_RENDERING_COMMON_H
 
 
+#include <d3d11.h>
+#include <wrl.h>
+
+
 namespace fs
 {
     namespace RenderingBase

@@ -5,6 +5,9 @@
 #define FS_HASH_H
 
 
+#include <type_traits>
+#include <string>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 

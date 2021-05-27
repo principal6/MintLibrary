@@ -15,6 +15,7 @@ namespace fs
         MeshComponent::MeshComponent()
             : TransformComponent(ObjectComponentType::MeshComponent)
             , _shouldDrawNormals{ false }
+            , _shouldDrawEdges{ false }
         {
             MeshGenerator::GeoSpherePram geosphereParam;
             geosphereParam._radius = 1.0f;

@@ -5,6 +5,8 @@
 #define FS_MATH_COMMON_H
 
 
+#include <cmath>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 

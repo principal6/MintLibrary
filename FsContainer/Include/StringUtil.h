@@ -5,6 +5,8 @@
 #define FS_STRING_UTIL_H
 
 
+#include <string>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsContainer/Include/Vector.h>

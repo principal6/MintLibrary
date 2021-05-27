@@ -51,6 +51,7 @@ namespace fs
             , _elementStride{ 0 }
             , _elementCount{ 0 }
             , _elementOffset{ 0 }
+            , _textureFormat{ DxTextureFormat::INVALID }
             , _textureWidth{ 0 }
             , _textureHeight{ 0 }
             , _registerIndex{ 0 }

@@ -2,6 +2,8 @@
 
 #include <FsMath/Include/Float3x3.h>
 
+#include <cstring>
+
 
 namespace fs
 {
@@ -343,7 +345,7 @@ namespace fs
 
     void Float4x4::setZero() noexcept
     {
-        memset(_m, 0, sizeof(float) * 16);
+        ::memset(_m, 0, sizeof(float) * 16);
     }
 
     void Float4x4::setIdentity() noexcept

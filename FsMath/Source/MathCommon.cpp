@@ -1,6 +1,7 @@
 #include <FsMath/Include/MathCommon.h>
 
 #include <cmath>
+#include <cfloat>
 
 
 namespace fs

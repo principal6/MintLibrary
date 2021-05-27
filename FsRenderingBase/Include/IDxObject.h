@@ -5,6 +5,8 @@
 #define FS_I_DX_BASE_H
 
 
+#include <atomic>
+
 #include <FsCommon/Include/CommonDefinitions.h>
 
 #include <FsRenderingBase/Include/RenderingBaseCommon.h>

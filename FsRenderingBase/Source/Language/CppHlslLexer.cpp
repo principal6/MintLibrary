@@ -239,7 +239,7 @@ namespace fs
                                 uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
-                                    if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
+                                    if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
                                     {
                                         if (closeLineSkipperTableItem._string == lineSkipperTableItem._string)
                                         {
@@ -256,7 +256,7 @@ namespace fs
                                 uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
-                                    if (isLineSkipper(_source.at(sourceIter), _source.at(sourceIter + 1), closeLineSkipperTableItem) == true)
+                                    if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
                                     {
                                         if (closeLineSkipperTableItem._lineSkipperGroupId == lineSkipperTableItem._lineSkipperGroupId)
                                         {

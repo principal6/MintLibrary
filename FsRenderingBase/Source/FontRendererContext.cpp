@@ -452,8 +452,8 @@ namespace fs
                 GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
                 glyphInfo._uv0._x = static_cast<float>(static_cast<double>(glyphInfo._uv0._x) / textureWidthF);
                 glyphInfo._uv0._y = static_cast<float>(static_cast<double>(glyphInfo._uv0._y) / textureHeightF);
-                glyphInfo._uv1._x = glyphInfo._uv0._x + static_cast<float>(static_cast<double>(glyphInfo._width) / textureWidthF);
-                glyphInfo._uv1._y = glyphInfo._uv0._y + static_cast<float>(static_cast<double>(glyphInfo._height + kSpaceBottomForVisibility) / textureHeightF);
+                glyphInfo._uv1._x = static_cast<float>(static_cast<double>(glyphInfo._uv0._x) + (static_cast<double>(glyphInfo._width) / textureWidthF));
+                glyphInfo._uv1._y = static_cast<float>(static_cast<double>(glyphInfo._uv0._y) + (static_cast<double>(glyphInfo._height) + kSpaceBottomForVisibility) / textureHeightF);
             }
         }
 

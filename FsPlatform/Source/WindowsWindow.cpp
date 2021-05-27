@@ -69,7 +69,7 @@ namespace fs
             , _windowStyle{}
             , _hWnd{}
             , _hInstance{}
-            , _msg{}
+            , _msg{ FS_NEW(MSG) }
             , _cursorArray{}
             , _byteArrayForRawInput{}
         {
@@ -251,15 +251,15 @@ namespace fs
 
         bool WindowsWindow::isRunning() noexcept
         {
-            if (PeekMessageW(&_msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
+            if (::PeekMessageW(&_msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
             {
-                if (_msg.message == WM_QUIT)
+                if (_msg->message == WM_QUIT)
                 {
                     destroy();
                 }
 
-                TranslateMessage(&_msg);
-                DispatchMessageW(&_msg);
+                ::TranslateMessage(&_msg);
+                ::DispatchMessageW(&_msg);
             }
             return __super::isRunning();
         }
