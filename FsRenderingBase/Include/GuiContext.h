@@ -594,10 +594,15 @@ namespace fs
             const bool                                          beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
             void                                                endSlider() { endControlInternal(ControlType::Slider); }
 
+        public:
             // [TextBox]
             const bool                                          beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
             void                                                endTextBox() { endControlInternal(ControlType::TextBox); }
 
+        private:
+
+
+        public:
             // [ListView]
             const bool                                          beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
             void                                                endListView();
