@@ -5,21 +5,27 @@
 #define FS_LOGGER_H
 
 
+#include <FsCommon/Include/CommonDefinitions.h>
+
 #include <mutex>
 #include <string>
 
 
-using int32 = int32_t;
-using uint32 = uint32_t;
-
-
 namespace fs
 {
+    static constexpr int32 kErrorExitCode = -1;
+
 #pragma region Logging
+    #if defined FS_DEBUG
+        #define _FS_LOG_ERROR_ACTION DebugBreak()
+    #else
+        #define _FS_LOG_ERROR_ACTION exit(kErrorExitCode)
+    #endif
+
+    #define FS_LOG_UNTAGGED(author, format, ...)            fs::Logger::getInstance().log(nullptr, author, nullptr, nullptr, 0, format, __VA_ARGS__)
     #define FS_LOG(author, format, ...)                     fs::Logger::getInstance().log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-    #define FS_LOG_PURE(author, format, ...)                fs::Logger::getInstance().log(nullptr, author, nullptr, nullptr, 0, format, __VA_ARGS__)
     #define FS_LOG_ALERT(author, format, ...)               fs::Logger::getInstance().logAlert(" ALERT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-    #define FS_LOG_ERROR(author, format, ...)               fs::Logger::getInstance().logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+    #define FS_LOG_ERROR(author, format, ...)               fs::Logger::getInstance().logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); _FS_LOG_ERROR_ACTION
 #pragma endregion
 
 

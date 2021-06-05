@@ -71,7 +71,6 @@ namespace fs
 
     void Logger::logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
     {
-        static constexpr int32 kErrorExitCode = -1;
         static char finalBuffer[kFinalBufferSize]{};
         static char content[kFinalBufferSize]{};
 
@@ -91,7 +90,6 @@ namespace fs
 
     void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
     {
-        static constexpr int32 kErrorExitCode = -1;
         static char finalBuffer[kFinalBufferSize]{};
         static char content[kFinalBufferSize]{};
 
@@ -107,12 +105,6 @@ namespace fs
 
         printf(finalBuffer);
         ::MessageBoxA(nullptr, finalBuffer, "LOG ERROR", MB_ICONERROR);
-
-#if defined FS_DEBUG
-        DebugBreak();
-#else
-        exit(kErrorExitCode);
-#endif
     }
 
     void Logger::logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize])

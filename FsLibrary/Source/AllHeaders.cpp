@@ -19,7 +19,7 @@ namespace fs
 
     void FsLibraryVersion::printVersion() noexcept
     {
-        FS_LOG_PURE("FsLibrary", "> This is FsLibrary", fs::FsLibraryVersion::getVersionMajor(), fs::FsLibraryVersion::getVersionMinor());
-        FS_LOG_PURE("FsLibrary", "> Version %d.%02d\n", fs::FsLibraryVersion::getVersionMajor(), fs::FsLibraryVersion::getVersionMinor());
+        FS_LOG_UNTAGGED("FsLibrary", "> This is FsLibrary");
+        FS_LOG_UNTAGGED("FsLibrary", "> Version %d.%02d\n", fs::FsLibraryVersion::getVersionMajor(), fs::FsLibraryVersion::getVersionMinor());
     }
 }
