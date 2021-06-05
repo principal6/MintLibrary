@@ -1401,10 +1401,10 @@ namespace fs
             const uint16 caretState = controlData._controlValue.getCaretState();
             const fs::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
             const fs::Float4 textRenderPosition = fs::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            if (isFocused == true && 32 <= _wcharInputCandiate)
+            const bool needToRenderCaret = (isFocused == true && caretState == 0);
+            const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
+            if (needToRenderInputCandidate == true)
             {
-                // InputCandidate ·»´õ¸µ ÇÊ¿ä!
-
                 // Text ·»´õ¸µ (Caret ÀÌÀü)
                 if (outText.empty() == false)
                 {
@@ -1427,7 +1427,7 @@ namespace fs
                 }
 
                 // Caret ·»´õ¸µ (Input Candidate ÀÇ ¹Ù·Î µÚ¿¡!)
-                if (0 == caretState)
+                if (needToRenderCaret == true)
                 {
                     const float caretHeight = _fontSize;
                     const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
@@ -1437,8 +1437,6 @@ namespace fs
             }
             else
             {
-                // InputCandidate ·»´õ¸µ ºÒÇÊ¿ä
-
                 // Text ÀüÃ¼ ·»´õ¸µ
                 if (outText.empty() == false)
                 {
@@ -1448,7 +1446,7 @@ namespace fs
                 }
 
                 // Caret ·»´õ¸µ
-                if (isFocused == true && caretState == 0)
+                if (needToRenderCaret == true)
                 {
                     const float caretHeight = _fontSize;
                     const fs::Float2& p0 = fs::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
