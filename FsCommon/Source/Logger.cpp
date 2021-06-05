@@ -5,7 +5,6 @@
 #include <fstream>
 #include <filesystem>
 #include <cstdarg>
-#include "..\Include\Logger.h"
 
 
 namespace fs
