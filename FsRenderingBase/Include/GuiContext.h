@@ -39,6 +39,37 @@ namespace fs
     {
         class GuiContext;
 
+        static constexpr float          kDefaultIntervalX = 5.0f;
+        static constexpr float          kDefaultIntervalY = 5.0f;
+        static constexpr float          kDefaultRoundnessInPixel = 8.0f;
+        static constexpr float          kDefaultFocusedAlpha = 0.875f;
+        static constexpr float          kDefaultOutOfFocusAlpha = 0.5f;
+        static constexpr float          kDefaultRoundButtonRadius = 7.0f;
+        static constexpr float          kControlDisplayMinWidth = 10.0f;
+        static constexpr float          kControlDisplayMinHeight = 10.0f;
+        static constexpr float          kFontScaleA = 1.0f;
+        static constexpr float          kFontScaleB = 0.875f;
+        static constexpr float          kFontScaleC = 0.8125f;
+        static constexpr fs::Rect       kWindowInnerPadding = fs::Rect(4.0f);
+        static constexpr float          kScrollBarThickness = 8.0f;
+        static constexpr fs::Rect       kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
+        static constexpr fs::Float2     kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
+        static constexpr fs::Float2     kMenuBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + 8.0f);
+        static constexpr float          kMenuBarItemTextSpace = 24.0f;
+        static constexpr float          kMenuItemSpaceLeft = 16.0f;
+        static constexpr float          kMenuItemSpaceRight = 48.0f;
+        static constexpr float          kHalfBorderThickness = 5.0f;
+        static constexpr float          kSliderTrackThicknes = 6.0f;
+        static constexpr float          kSliderThumbRadius = 8.0f;
+        static constexpr float          kDockingInteractionShort = 30.0f;
+        static constexpr float          kDockingInteractionLong = 40.0f;
+        static constexpr float          kDockingInteractionDisplayBorderThickness = 2.0f;
+        static constexpr float          kDockingInteractionOffset = 5.0f;
+        static constexpr fs::Float2     kCheckBoxSize = fs::Float2(16.0f, 16.0f);
+        static constexpr float          kMouseWheelScrollScale = -8.0f;
+        static constexpr float          kTextBoxBackSpaceStride = 48.0f;
+        static constexpr uint32         kTextBoxMaxTextLength = 2048;
+
         enum class ViewportUsage
         {
             Parent,
@@ -46,9 +77,17 @@ namespace fs
             Child,
         };
 
+        struct CommonControlParam
+        {
+            CommonControlParam() = default;
+            CommonControlParam(const fs::Float2& size) : _size{ size } { __noop; }
+            fs::Float2          _size = fs::Float2::kZero;
+            fs::Float2          _offset = fs::Float2::kZero;
+        };
+
         struct WindowParam
         {
-            fs::Float2          _size                   = fs::Float2(180, 100);
+            CommonControlParam  _common                 = CommonControlParam(fs::Float2(180, 100));
             fs::Float2          _position               = fs::Float2(100, 100);
             ScrollBarType       _scrollBarType          = ScrollBarType::None;
             DockingMethod       _initialDockingMethod   = DockingMethod::COUNT;
@@ -60,27 +99,29 @@ namespace fs
         {
             fs::RenderingBase::Color    _backgroundColor    = fs::RenderingBase::Color::kTransparent;
             fs::RenderingBase::Color    _fontColor          = fs::RenderingBase::Color::kTransparent;
-            fs::Float2                  _size               = fs::Float2::kZero;
+            CommonControlParam          _common             = CommonControlParam(fs::Float2::kZero);
+            fs::Float2                  _paddingForAutoSize = fs::Float2(24, 12);
             TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Center;
             TextAlignmentVert           _alignmentVert      = TextAlignmentVert::Middle;
         };
 
         struct SliderParam
         {
-            //uint32        _stepCount      = 0; // If stepcount is 0, the value is treated as real number
-            //float         _min            = 0.0f;
-            //float         _max            = 1.0f;
-            //float         _stride         = 0.1f; // Only applies when (_stepCount == 0)
-            //bool          _isVertical     = false; // Horizontal if false
-            fs::Float2      _size           = fs::Float2(128.0f, 0.0f);
+            //uint32            _stepCount      = 0; // If stepcount is 0, the value is treated as real number
+            //float             _min            = 0.0f;
+            //float             _max            = 1.0f;
+            //float             _stride         = 0.1f; // Only applies when (_stepCount == 0)
+            //bool              _isVertical     = false; // Horizontal if false
+            CommonControlParam  _common         = CommonControlParam(fs::Float2(128.0f, 0.0f));
         };
         
         struct TextBoxParam
         {
-            fs::Float2                  _size               = fs::Float2(128.0f, 0.0f);
+            CommonControlParam          _common             = CommonControlParam(fs::Float2(128.0f, 0.0f));
             TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Left;
             fs::RenderingBase::Color    _backgroundColor    = fs::RenderingBase::Color::kWhite;
             fs::RenderingBase::Color    _fontColor          = fs::RenderingBase::Color::kBlack;
+            float                       _roundnessInPixel   = kDefaultRoundnessInPixel;
         };
 
         struct ListViewParam
@@ -90,8 +131,8 @@ namespace fs
 
         struct ScrollBarTrackParam
         {
-            fs::Float2  _size = fs::Float2(180, 100);
-            fs::Float2  _positionInParent = fs::Float2(100, 100);
+            CommonControlParam  _common             = CommonControlParam(fs::Float2(180.0f, 100.0f));
+            fs::Float2          _positionInParent   = fs::Float2(100, 100);
         };
 
 
@@ -252,38 +293,6 @@ namespace fs
             friend fs::RenderingBase::GraphicDevice;
 
         private:
-            static constexpr float                      kDefaultIntervalX = 5.0f;
-            static constexpr float                      kDefaultIntervalY = 5.0f;
-            static constexpr float                      kDefaultRoundnessInPixel = 8.0f;
-            static constexpr float                      kDefaultFocusedAlpha = 0.875f;
-            static constexpr float                      kDefaultOutOfFocusAlpha = 0.5f;
-            static constexpr float                      kDefaultRoundButtonRadius = 7.0f;
-            static constexpr float                      kControlDisplayMinWidth = 10.0f;
-            static constexpr float                      kControlDisplayMinHeight = 10.0f;
-            static constexpr float                      kFontScaleA = 1.0f;
-            static constexpr float                      kFontScaleB = 0.875f;
-            static constexpr float                      kFontScaleC = 0.8125f;
-            static constexpr fs::Rect                   kWindowInnerPadding = fs::Rect(4.0f);
-            static constexpr float                      kScrollBarThickness = 8.0f;
-            static constexpr fs::Rect                   kTitleBarInnerPadding = fs::Rect(12.0f, 6.0f, 6.0f, 6.0f);
-            static constexpr fs::Float2                 kTitleBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
-            static constexpr fs::Float2                 kMenuBarBaseSize = fs::Float2(0.0f, fs::RenderingBase::kDefaultFontSize + 8.0f);
-            static constexpr float                      kMenuBarItemTextSpace = 24.0f;
-            static constexpr float                      kMenuItemSpaceLeft = 16.0f;
-            static constexpr float                      kMenuItemSpaceRight = 48.0f;
-            static constexpr float                      kHalfBorderThickness = 5.0f;
-            static constexpr float                      kSliderTrackThicknes = 6.0f;
-            static constexpr float                      kSliderThumbRadius = 8.0f;
-            static constexpr float                      kDockingInteractionShort = 30.0f;
-            static constexpr float                      kDockingInteractionLong = 40.0f;
-            static constexpr float                      kDockingInteractionDisplayBorderThickness = 2.0f;
-            static constexpr float                      kDockingInteractionOffset = 5.0f;
-            static constexpr fs::Float2                 kCheckBoxSize = fs::Float2(16.0f, 16.0f);
-            static constexpr float                      kMouseWheelScrollScale = -8.0f;
-            static constexpr float                      kTextBoxBackSpaceStride = 48.0f;
-            static constexpr uint32                     kTextBoxMaxTextLength = 2048;
-
-        private:
             class DockDatum
             {
             public:
@@ -353,6 +362,7 @@ namespace fs
                 fs::Rect            _innerPadding;
                 fs::Float2          _initialDisplaySize;
                 ResizingMask        _initialResizingMask;
+                fs::Float2          _offset                         = fs::Float2::kZero;
                 fs::Float2          _desiredPositionInParent        = fs::Float2::kNan;
                 fs::Float2          _deltaInteractionSize           = fs::Float2::kZero;
                 fs::Float2          _deltaInteractionSizeByDock     = fs::Float2::kZero;
@@ -447,8 +457,8 @@ namespace fs
                 uint8                                       _updateCount;
                 fs::Float2                                  _displaySize;
                 fs::Float2                                  _position; // In screen space, at left-top corner
-                fs::Float2                                  _deltaPosition;
-                fs::Float2                                  _displayOffset; // Used for scrolling child controls (of Window control)
+                fs::Float2                                  _currentFrameDeltaPosition; // Used for dragging
+                fs::Float2                                  _childDisplayOffset; // Used for scrolling child controls (of Window control)
                 bool                                        _isFocusable;
                 bool                                        _isDraggable;
                 bool                                        _isInteractableOutsideParent;
@@ -524,6 +534,7 @@ namespace fs
         public:
             void                                                nextSameLine();
             void                                                nextControlSize(const fs::Float2& size, const bool force = false);
+            void                                                nextNoInterval();
             void                                                nextNoAutoPositioned();
             void                                                nextControlSizeNonContrainedToParent();
             // Only works if NoAutoPositioned!
@@ -782,6 +793,7 @@ namespace fs
             fs::Float2                                          _nextDesiredControlSize;
             bool                                                _nextSizingForced;
             bool                                                _nextControlSizeNonContrainedToParent;
+            bool                                                _nextNoInterval;
             bool                                                _nextNoAutoPositioned;
             fs::Float2                                          _nextControlPosition;
             const wchar_t*                                      _nextTooltipText;

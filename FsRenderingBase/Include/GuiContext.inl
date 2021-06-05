@@ -1,3 +1,4 @@
+#include "GuiContext.h"
 #pragma once
 
 
@@ -417,7 +418,7 @@ namespace fs
             _nextChildOffset.setZero();
             _previousContentAreaSize = _contentAreaSize;
             _contentAreaSize.setZero();
-            _deltaPosition.setZero();
+            _currentFrameDeltaPosition.setZero();
         }
 
         FS_INLINE void GuiContext::ControlData::updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData) noexcept
@@ -868,6 +869,11 @@ namespace fs
             _nextSizingForced = force;
         }
 
+        FS_INLINE void GuiContext::nextNoInterval()
+        {
+            _nextNoInterval = true;
+        }
+
         FS_INLINE void GuiContext::nextNoAutoPositioned()
         {
             _nextNoAutoPositioned = true;
@@ -894,6 +900,7 @@ namespace fs
             _nextDesiredControlSize.setZero();
             _nextSizingForced = false;
             _nextControlSizeNonContrainedToParent = false;
+            _nextNoInterval = false;
             _nextNoAutoPositioned = false;
             _nextControlPosition.setZero();
             _nextTooltipText = nullptr;

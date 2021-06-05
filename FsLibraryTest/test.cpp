@@ -884,7 +884,7 @@ const bool testWindow()
                 }
 
                 fs::Gui::WindowParam inspectorWindowParam;
-                inspectorWindowParam._size = fs::Float2(320.0f, 400.0f);
+                inspectorWindowParam._common._size = fs::Float2(320.0f, 400.0f);
                 inspectorWindowParam._position = fs::Float2(20.0f, 50.0f);
                 inspectorWindowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
@@ -892,21 +892,78 @@ const bool testWindow()
                 if (guiContext.beginWindow(L"Inspector", inspectorWindowParam, inspectorVisibleState) == true)
                 {
                     wchar_t tempBuffer[256];
-                    fs::Gui::LabelParam fpsLabelParam;
-                    fpsLabelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);
-                    fpsLabelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Left;
+                    fs::Gui::LabelParam labelParam;
+                    labelParam._fontColor = fs::RenderingBase::Color(200, 220, 255, 255);
+                    labelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Left;
                     
                     fs::formatString(tempBuffer, L" FPS: %d", fs::Profiler::FpsCounter::getFps());
-                    guiContext.pushLabel(L"FPS_Label", tempBuffer, fpsLabelParam);
+                    guiContext.pushLabel(L"FPS_Label", tempBuffer, labelParam);
 
                     fs::formatString(tempBuffer, L" CPU: %d ms", fs::Profiler::FpsCounter::getFrameTimeMs());
-                    guiContext.pushLabel(L"CPU_Label", tempBuffer, fpsLabelParam);
+                    guiContext.pushLabel(L"CPU_Label", tempBuffer, labelParam);
                     
                     fs::formatString(tempBuffer, L" Camera Position: %.3f, %.3f, %.3f", 
                         testCameraObject->getObjectTransformSrt()._translation._x,
                         testCameraObject->getObjectTransformSrt()._translation._y, 
                         testCameraObject->getObjectTransformSrt()._translation._z);
-                    guiContext.pushLabel(L"Camera Position", tempBuffer, fpsLabelParam);
+                    guiContext.pushLabel(L"Camera Position", tempBuffer, labelParam);
+                    
+                    {
+                        fs::formatString(tempBuffer, L"X");
+                        labelParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Center;
+                        labelParam._backgroundColor.r(1.0f);
+                        labelParam._backgroundColor.a(0.75f);
+                        labelParam._fontColor = fs::RenderingBase::Color::kWhite;
+                        labelParam._common._size._x = 16.0f;
+                        labelParam._common._size._y = 24.0f;
+                        guiContext.pushLabel(L"PositionX", tempBuffer, labelParam);
+
+                        guiContext.nextSameLine();
+                        guiContext.nextNoInterval();
+
+                        static std::wstring textPositionX;
+                        fs::Gui::TextBoxParam textBoxParam;
+                        textBoxParam._common._size._x = 70.0f;
+                        textBoxParam._common._size._y = 24.0f;
+                        textBoxParam._roundnessInPixel = 0.0f;
+                        if (guiContext.beginTextBox(L"PositionX", textBoxParam, textPositionX) == true)
+                        {
+                            guiContext.endTextBox();
+                        }
+
+                        guiContext.nextSameLine();
+
+                        fs::formatString(tempBuffer, L"Y");
+                        labelParam._backgroundColor.r(0.0f);
+                        labelParam._backgroundColor.g(0.875f);
+                        guiContext.pushLabel(L"PositionY", tempBuffer, labelParam);
+
+                        guiContext.nextSameLine();
+                        guiContext.nextNoInterval();
+
+                        static std::wstring textPositionY;
+                        if (guiContext.beginTextBox(L"PositionY", textBoxParam, textPositionY) == true)
+                        {
+                            guiContext.endTextBox();
+                        }
+
+                        guiContext.nextSameLine();
+
+                        fs::formatString(tempBuffer, L"Z");
+                        labelParam._backgroundColor.g(0.0f);
+                        labelParam._backgroundColor.b(1.0f);
+                        guiContext.pushLabel(L"PositionZ", tempBuffer, labelParam);
+
+                        guiContext.nextSameLine();
+                        guiContext.nextNoInterval();
+
+                        static std::wstring textPositionZ;
+                        if (guiContext.beginTextBox(L"PositionZ", textBoxParam, textPositionZ) == true)
+                        {
+                            guiContext.endTextBox();
+                        }
+                    }
+                    
                     guiContext.endWindow();
                 }
             }

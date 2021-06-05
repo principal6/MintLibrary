@@ -309,7 +309,7 @@ namespace fs
         void GuiContext::testWindow(VisibleState& inoutVisibleState)
         {
             fs::Gui::WindowParam windowParam;
-            windowParam._size = fs::Float2(500.0f, 500.0f);
+            windowParam._common._size = fs::Float2(500.0f, 500.0f);
             windowParam._position = fs::Float2(200.0f, 50.0f);
             windowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
             if (beginWindow(L"TestWindow", windowParam, inoutVisibleState) == true)
@@ -386,7 +386,7 @@ namespace fs
 
                 {
                     fs::Gui::SliderParam sliderParam;
-                    sliderParam._size._y = 32.0f;
+                    sliderParam._common._size._y = 32.0f;
                     float value = 0.0f;
                     if (beginSlider(L"Slider0", sliderParam, value) == true)
                     {
@@ -420,8 +420,8 @@ namespace fs
                 static std::wstring textBoxContent;
                 {
                     fs::Gui::TextBoxParam textBoxParam;
-                    textBoxParam._size._x = 240.0f;
-                    textBoxParam._size._y = 24.0f;
+                    textBoxParam._common._size._x = 240.0f;
+                    textBoxParam._common._size._y = 24.0f;
                     textBoxParam._alignmentHorz = fs::Gui::TextAlignmentHorz::Center;
                     if (beginTextBox(L"TextBox", textBoxParam, textBoxContent) == true)
                     {
@@ -445,7 +445,7 @@ namespace fs
 
                 {
                     fs::Gui::WindowParam testWindowParam;
-                    testWindowParam._size = fs::Float2(200.0f, 240.0f);
+                    testWindowParam._common._size = fs::Float2(200.0f, 240.0f);
                     testWindowParam._scrollBarType = fs::Gui::ScrollBarType::Both;
                     testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
                     if (beginWindow(L"1ST", testWindowParam, inoutVisibleState))
@@ -461,7 +461,7 @@ namespace fs
 
                 {
                     fs::Gui::WindowParam testWindowParam;
-                    testWindowParam._size = fs::Float2(100.0f, 100.0f);
+                    testWindowParam._common._size = fs::Float2(100.0f, 100.0f);
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
                     testWindowParam._initialDockingMethod = fs::Gui::DockingMethod::BottomSide;
@@ -483,7 +483,7 @@ namespace fs
         void GuiContext::testDockedWindow(VisibleState& inoutVisibleState)
         {
             fs::Gui::WindowParam windowParam;
-            windowParam._size = fs::Float2(300.0f, 400.0f);
+            windowParam._common._size = fs::Float2(300.0f, 400.0f);
             windowParam._position = fs::Float2(20.0f, 50.0f);
             windowParam._initialDockingMethod = fs::Gui::DockingMethod::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
@@ -547,7 +547,7 @@ namespace fs
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float titleWidth = calculateTextWidth(title, fs::StringUtil::wcslen(title));
-                prepareControlDataParam._initialDisplaySize = windowParam._size;
+                prepareControlDataParam._initialDisplaySize = windowParam._common._size;
                 prepareControlDataParam._initialResizingMask.setAllTrue();
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
@@ -565,8 +565,8 @@ namespace fs
             const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
             if (isParentAlsoWindow == true)
             {
-                windowControlData._position += parentControlData._deltaPosition;
-                windowControlData._deltaPosition = parentControlData._deltaPosition; // 계층 가장 아래 Window 까지 전파되도록
+                windowControlData._position += parentControlData._currentFrameDeltaPosition;
+                windowControlData._currentFrameDeltaPosition = parentControlData._currentFrameDeltaPosition; // 계층 가장 아래 Window 까지 전파되도록
             }
 
 
@@ -782,7 +782,9 @@ namespace fs
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, fs::StringUtil::wcslen(text));
-                prepareControlDataParam._initialDisplaySize = (labelParam._size == fs::Float2::kZero) ? fs::Float2(textWidth + 24, _fontSize + 12) : labelParam._size;
+                prepareControlDataParam._initialDisplaySize = ((labelParam._common._size == fs::Float2::kZero)
+                    ? fs::Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y)
+                    : labelParam._common._size);
             }
             prepareControlData(controlData, prepareControlDataParam);
             
@@ -840,8 +842,8 @@ namespace fs
             
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                prepareControlDataParamForTrack._initialDisplaySize._x = sliderParam._size._x;
-                prepareControlDataParamForTrack._initialDisplaySize._y = (0.0f == sliderParam._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._size._y;
+                prepareControlDataParamForTrack._initialDisplaySize._x = sliderParam._common._size._x;
+                prepareControlDataParamForTrack._initialDisplaySize._y = (0.0f == sliderParam._common._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._common._size._y;
             }
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
             
@@ -851,7 +853,7 @@ namespace fs
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-                const float sliderValidLength = sliderParam._size._x - kSliderThumbRadius * 2.0f;
+                const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
                 const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
@@ -892,7 +894,7 @@ namespace fs
                 // Draw track
                 {
                     const float trackRadius = kSliderTrackThicknes * 0.5f;
-                    const float trackRectLength = sliderParam._size._x - trackRadius * 2.0f;
+                    const float trackRectLength = sliderParam._common._size._x - trackRadius * 2.0f;
                     const float trackRectLeftLength = thumbAt * sliderValidLength;
                     const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
@@ -945,12 +947,14 @@ namespace fs
             controlData._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._initialDisplaySize._x = textBoxParam._size._x;
-                prepareControlDataParam._initialDisplaySize._y = fs::max(_fontSize, textBoxParam._size._y);
+                prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
+                prepareControlDataParam._initialDisplaySize._y = fs::max(_fontSize, textBoxParam._common._size._y);
+                prepareControlDataParam._offset = textBoxParam._common._offset;
             }
             prepareControlData(controlData, prepareControlDataParam);
-
+            
             fs::RenderingBase::Color finalBackgroundColor;
+            const bool wasFocused = isControlFocused(controlData);
             const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
@@ -991,12 +995,12 @@ namespace fs
                     swprintf_s(errorMessage.data(), 1024, L"텍스트 길이가 %d 자를 넘을 수 없습니다!", kTextBoxMaxTextLength);
                     isFirstCalled = false;
                 }
-                static std::function fnRefreshCaret = [](const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs)
+                std::function fnRefreshCaret = [](const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs)
                 {
                     lastCaretBlinkTimeMs = currentTimeMs;
                     caretState = 0;
                 };
-                static std::function fnEraseSelection = [&]()
+                std::function fnEraseSelection = [&]()
                 {
                     const uint16 selectionLength = controlData._controlValue.getSelectionLength();
                     const uint16 selectionStart = controlData._controlValue.getSelectionStart();
@@ -1008,7 +1012,7 @@ namespace fs
 
                     controlData._controlValue.getSelectionLength() = 0;
                 };
-                static std::function fnInsertWchar = [&](uint16& caretAt, const wchar_t input)
+                std::function fnInsertWchar = [&](uint16& caretAt, const wchar_t input)
                 {
                     if (outText.length() < kTextBoxMaxTextLength)
                     {
@@ -1021,7 +1025,7 @@ namespace fs
                         _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
                     }
                 };
-                static std::function fnInsertWstring = [&](uint16& caretAt, const std::wstring& input)
+                std::function fnInsertWstring = [&](uint16& caretAt, const std::wstring& input)
                 {
                     const uint32 oldLength = static_cast<uint32>(outText.length());
                     if (oldLength < kTextBoxMaxTextLength)
@@ -1042,7 +1046,7 @@ namespace fs
                         _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), fs::Window::MessageBoxType::Error);
                     }
                 };
-                static std::function fnProcessSelection = [&](const uint16 oldCaretAt, const uint16 caretAt)
+                std::function fnProcessSelection = [&](const uint16 oldCaretAt, const uint16 caretAt)
                 {
                     uint16& selectionStart = controlData._controlValue.getSelectionStart();
                     uint16& selectionLength = controlData._controlValue.getSelectionLength();
@@ -1295,6 +1299,11 @@ namespace fs
                         selectionLength = 0;
                     }
                 }
+
+                if (wasFocused == false)
+                {
+                    fnRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                }
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
@@ -1329,7 +1338,7 @@ namespace fs
             
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
-            shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
 
             // Text 및 Caret 렌더링
@@ -1787,8 +1796,8 @@ namespace fs
                 const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
 
                 ScrollBarTrackParam scrollBarTrackParam;
-                scrollBarTrackParam._size._x = kScrollBarThickness;
-                scrollBarTrackParam._size._y = parentWindowPureDisplayHeight;
+                scrollBarTrackParam._common._size._x = kScrollBarThickness;
+                scrollBarTrackParam._common._size._y = parentWindowPureDisplayHeight;
                 const float titleBarOffsetX = (parent.isTypeOf(fs::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
                 scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
                 scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
@@ -1804,7 +1813,7 @@ namespace fs
                 {
                     parent._controlValue.disableScrollBar(ScrollBarType::Vert);
 
-                    parent._displayOffset._y = 0.0f; // Scrolling!
+                    parent._childDisplayOffset._y = 0.0f; // Scrolling!
                 }
             }
 
@@ -1815,8 +1824,8 @@ namespace fs
                 const fs::Float2& menuBarThicknes = parent.getMenuBarThickness();
 
                 ScrollBarTrackParam scrollBarTrackParam;
-                scrollBarTrackParam._size._x = parentWindowPureDisplayWidth;
-                scrollBarTrackParam._size._y = kScrollBarThickness;
+                scrollBarTrackParam._common._size._x = parentWindowPureDisplayWidth;
+                scrollBarTrackParam._common._size._y = kScrollBarThickness;
                 scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
                 scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
                 bool hasExtraSize = false;
@@ -1831,7 +1840,7 @@ namespace fs
                 {
                     parent._controlValue.disableScrollBar(ScrollBarType::Horz);
 
-                    parent._displayOffset._x = 0.0f; // Scrolling!
+                    parent._childDisplayOffset._x = 0.0f; // Scrolling!
                 }
             }
         }
@@ -1851,7 +1860,7 @@ namespace fs
 
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                prepareControlDataParamForTrack._initialDisplaySize = scrollBarTrackParam._size;
+                prepareControlDataParamForTrack._initialDisplaySize = scrollBarTrackParam._common._size;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
@@ -2004,7 +2013,7 @@ namespace fs
                 const float mouseWheelScroll = getMouseWheelScroll(scrollBarParent);
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
                 thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-                scrollBarParent._displayOffset._y = -thumbAtRatio * (totalLength - visibleLength); // Scrolling!
+                scrollBarParent._childDisplayOffset._y = -thumbAtRatio * (totalLength - visibleLength); // Scrolling!
 
                 // Rendering thumb
                 {
@@ -2069,7 +2078,7 @@ namespace fs
 
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : fs::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
                 thumbControlData._controlValue.setThumbAt(thumbAtRatio);
-                scrollBarParent._displayOffset._x = -thumbAtRatio * (totalLength - visibleLength + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
+                scrollBarParent._childDisplayOffset._x = -thumbAtRatio * (totalLength - visibleLength + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
                 // Rendering thumb
                 {
@@ -2497,22 +2506,24 @@ namespace fs
             }
 
             // Position, Parent offset, Parent child at, Parent content area size
-            if (_nextNoAutoPositioned == false)
+            const bool isAutoPositioned = (_nextNoAutoPositioned == false);
+            if (isAutoPositioned == true)
             {
-                // Auto-positioned
-
                 fs::Float2& parentControlChildAt = const_cast<fs::Float2&>(parentControlData.getChildAt());
                 fs::Float2& parentControlNextChildOffset = const_cast<fs::Float2&>(parentControlData.getNextChildOffset());
                 const float parentControlPreviousNextChildOffsetX = parentControlNextChildOffset._x;
-                if (_nextSameLine == true)
+
+                const bool isSameLineAsPreviousControl = (_nextSameLine == true);
+                if (isSameLineAsPreviousControl == true)
                 {
-                    parentControlChildAt._x += (parentControlNextChildOffset._x + kDefaultIntervalX);
+                    const float intervalX = (true == _nextNoInterval) ? 0.0f : kDefaultIntervalX;
+                    parentControlChildAt._x += (parentControlNextChildOffset._x + intervalX);
 
                     parentControlNextChildOffset = controlData._displaySize;
                 }
                 else
                 {
-                    parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._displayOffset._x; // @중요
+                    parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._childDisplayOffset._x; // @중요
                     parentControlChildAt._x += parentControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x;
 
                     parentControlChildAt._y += parentControlNextChildOffset._y;
@@ -2523,7 +2534,8 @@ namespace fs
                 const bool addIntervalY = (_nextNoAutoPositioned == false && prepareControlDataParam._noIntervalForNextSibling == false);
                 if (addIntervalY == true)
                 {
-                    parentControlNextChildOffset._y += kDefaultIntervalY;
+                    const float intervalY = (true == _nextNoInterval) ? 0.0f : kDefaultIntervalY;
+                    parentControlNextChildOffset._y += intervalY;
                 }
 
                 // Parent content area size
@@ -2545,6 +2557,7 @@ namespace fs
                 }
 
                 controlData._position = parentControlChildAt;
+                controlData._position += prepareControlDataParam._offset;
             }
             else
             {
@@ -2573,7 +2586,7 @@ namespace fs
         {
             const MenuBarType currentMenuBarType = controlData._controlValue.getCurrentMenuBarType();
             fs::Float2& controlChildAt = const_cast<fs::Float2&>(controlData.getChildAt());
-            controlChildAt = controlData._position + controlData._displayOffset +
+            controlChildAt = controlData._position + controlData._childDisplayOffset +
                 ((_nextNoAutoPositioned == false)
                     ? fs::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
                     : fs::Float2::kZero) +
@@ -2713,7 +2726,7 @@ namespace fs
 
         void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone) noexcept
         {
-            static std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 
+            std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 
             {
                 if (controlHashKey == _hoveredControlHashKey)
                 {
@@ -2724,7 +2737,7 @@ namespace fs
                 }
             };
 
-            static std::function fnResetPressDataIfMe = [&](const uint64 controlHashKey) 
+            std::function fnResetPressDataIfMe = [&](const uint64 controlHashKey) 
             {
                 if (controlHashKey == _pressedControlHashKey)
                 {
@@ -3008,7 +3021,7 @@ namespace fs
                 else
                 {
                     // Set delta position
-                    changeTargetControlData._deltaPosition = changeTargetControlData._position - originalPosition;
+                    changeTargetControlData._currentFrameDeltaPosition = changeTargetControlData._position - originalPosition;
                 }
 
                 _isMouseInteractionDonePerFrame = true;
@@ -3021,7 +3034,7 @@ namespace fs
             const bool isDragging = isControlBeingDragged(controlData);
 
             static constexpr fs::RenderingBase::Color color = fs::RenderingBase::Color(100, 110, 160);
-            static std::function fnRenderDockingBox = [&](const fs::Rect& boxRect, const ControlData& parentControlData)
+            std::function fnRenderDockingBox = [&](const fs::Rect& boxRect, const ControlData& parentControlData)
             {
                 const fs::Float4& parentControlCenterPosition = getControlCenterPosition(parentControlData);
                 fs::Float4 renderPosition = parentControlCenterPosition;
@@ -3034,7 +3047,7 @@ namespace fs
                 _shapeFontRendererContextTopMost.setPosition(renderPosition);
                 _shapeFontRendererContextTopMost.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
             };
-            static std::function fnRenderPreview = [&](const fs::Rect& previewRect)
+            std::function fnRenderPreview = [&](const fs::Rect& previewRect)
             {
                 _shapeFontRendererContextTopMost.setViewportIndex(0);
                 _shapeFontRendererContextTopMost.setColor(color.scaledA(0.5f));
