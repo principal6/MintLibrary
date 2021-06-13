@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="mint::Vector&lt;*&gt;">
+        <DisplayString>{{ size = {_size} capacity = {_capacity} }}</DisplayString>
+        <Expand>
+            <Item Name="[Size]" ExcludeView="simple">_size</Item>
+            <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
+            <ArrayItems>
+                <Size>_size</Size>
+                <ValuePointer>_rawPointer</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="mint::StaticBitArray&lt;*&gt;">
+        <DisplayString>{{{$T1} Bits, Byte[0] = {_byteArray[0], b}}}</DisplayString>
+        <Expand>
+            <Item Name="[Bits]" ExcludeView="simple">$T1</Item>
+            <Item Name="[Bytes]" ExcludeView="simple">kByteCount</Item>
+            <ArrayItems>
+                <Size>kByteCount</Size>
+                <ValuePointer>_byteArray</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="mint::Memory::Accessor&lt;*&gt;">
+    <DisplayString Condition="_id == kMemoryBlockIdInvalid">{{ INVALID }}</DisplayString>
+    <DisplayString>{{ ID = {_id} }}</DisplayString>
+    <Expand>
+      <Item Name="[ID]" ExcludeView="simple">_id</Item>
+      <Item Name="[BlockOffset]" ExcludeView="simple">_blockOffset</Item>
+      <Item Name="[Value]" Condition="0 &lt; _memoryAllocator->_memoryBlockArray[_blockOffset]._referenceCount">($T1*)(_memoryAllocator->_rawMemory + (_memoryAllocator->kTypeSize * _blockOffset))</Item>
+      <Item Name="[MemoryBlock]">(_memoryAllocator->_memoryBlockArray[_blockOffset])</Item>
+      <Item Name="[MemoryAllocator]">_memoryAllocator</Item>
+    </Expand>
+  </Type>
+    
+<!-- @@@ Tree BEGINS @@@ -->
+  <Type Name="mint::TreeNode&lt;*&gt;">
+    <DisplayString>{{ Node Data = { _data } }}</DisplayString>
+    <Expand>
+      <Item Name="[Node ID]">_nodeId</Item>
+      <ExpandedItem>_data</ExpandedItem>
+      <Item Name="[Parent Node]" Condition="_parentNodeAccessor._nodeId != kUint32Max">_parentNodeAccessor</Item>
+      <Item Name="[Child Nodes]" Condition="_childNodeAccessorArray._size > 0">_childNodeAccessorArray</Item>
+    </Expand>
+  </Type>
+  
+  <Type Name="mint::TreeNodeAccessor&lt;*&gt;">
+    <DisplayString>{{ Node ID [{ _nodeId }] { ((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data } }}</DisplayString>
+    <Expand>
+      <Item Name="[Node ID]">_nodeId</Item>
+      <ExpandedItem>((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data</ExpandedItem>
+      <Item Name="[Parent Node]" Condition="((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor</Item>
+      <Item Name="[Child Nodes]" Condition="((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray._size > 0">((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray</Item>
+    </Expand>
+  </Type>
+<!-- @@@ Tree ENDS @@@ -->
+
+</AutoVisualizer>

@@ -348,5 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-_output/Debug/FsLibraryTest/FsLibraryTest.exe.lastcodeanalysissucceeded
-_output/Debug/FsLibrary/FsLibrary.lib.lastcodeanalysissucceeded
+_output/Debug/MintLibraryTest/MintLibraryTest.exe.lastcodeanalysissucceeded
+_output/Debug/MintLibrary/MintLibrary.lib.lastcodeanalysissucceeded

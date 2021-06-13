@@ -1,14 +1,14 @@
 #pragma once
 
 
-#ifndef FS_CPP_HLSL_STRUCTURED_BUFFER_H
-#define FS_CPP_HLSL_STRUCTURED_BUFFER_H
+#ifndef MINT_CPP_HLSL_STRUCTURED_BUFFER_H
+#define MINT_CPP_HLSL_STRUCTURED_BUFFER_H
 
 
-#include <FsRenderingBase/Include/Language/CppHlslTypes.h>
+#include <MintRenderingBase/Include/Language/CppHlslTypes.h>
 
 
-namespace fs
+namespace mint
 {
     namespace RenderingBase
     {
@@ -20,4 +20,4 @@ namespace fs
 }
 
 
-#endif // !FS_CPP_HLSL_STRUCTURED_BUFFER_H
+#endif // !MINT_CPP_HLSL_STRUCTURED_BUFFER_H

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef FS_STDAFX_H
-#define FS_STDAFX_H
+#ifndef MINT_STDAFX_H
+#define MINT_STDAFX_H
 
 
 #include <cstdio>
@@ -27,8 +27,8 @@
 #pragma endregion
 
 
-#pragma region FS Library
-#include <FsCommon/Include/Logger.h>
+#pragma region MintLibrary
+#include <MintCommon/Include/Logger.h>
 #pragma endregion
 
 
