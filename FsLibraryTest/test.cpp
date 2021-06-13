@@ -701,10 +701,8 @@ const bool testWindow()
     testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
     {
         testObject->attachComponent(objectPool.createMeshComponent());
-
-        fs::Rendering::TransformComponent* transformComponent = static_cast<fs::Rendering::TransformComponent*>(testObject->getComponent(fs::Rendering::ObjectComponentType::TransformComponent));
-        transformComponent->_srt._translation._z = 4.0f;
-        //transformComponent->_srt._rotation.setAxisAngle(fs::Float3(1.0f, 1.0f, 0.0f), fs::Math::kPiOverEight);
+        testObject->getObjectTransformSrt()._translation._z = 4.0f;
+        //testObject->getObjectTransformSrt()._rotation.setAxisAngle(fs::Float3(1.0f, 1.0f, 0.0f), fs::Math::kPiOverEight);
     }
     testCameraObject->rotatePitch(0.125f);
 

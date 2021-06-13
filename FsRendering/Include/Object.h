@@ -51,7 +51,10 @@ namespace fs
             const ObjectType                getType() const noexcept;
             const bool                      isTypeOf(const ObjectType objectType) const noexcept;
             const uint32                    getComponentCount() const noexcept;
-            IObjectComponent*                getComponent(const ObjectComponentType type) const noexcept;
+            IObjectComponent*               getComponent(const ObjectComponentType type) const noexcept;
+
+        public:
+            void                            setObjectTransform(const fs::Rendering::Srt& srt) noexcept;
             fs::Rendering::Srt&             getObjectTransformSrt() noexcept;
             const fs::Rendering::Srt&       getObjectTransformSrt() const noexcept;
             fs::Float4x4                    getObjectTransformMatrix() const noexcept;

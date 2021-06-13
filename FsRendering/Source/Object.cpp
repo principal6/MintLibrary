@@ -93,6 +93,11 @@ namespace fs
             return nullptr;
         }
 
+        void Object::setObjectTransform(const fs::Rendering::Srt& srt) noexcept
+        {
+            getObjectTransformComponent()->_srt = srt;
+        }
+
         fs::Rendering::Srt& Object::getObjectTransformSrt() noexcept
         {
             return getObjectTransformComponent()->_srt;
