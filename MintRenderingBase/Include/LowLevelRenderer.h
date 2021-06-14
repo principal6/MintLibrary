@@ -19,6 +19,7 @@ namespace mint
     namespace RenderingBase
     {
         class GraphicDevice;
+        struct MeshData;
 
 
         enum class RenderingPrimitive
@@ -36,8 +37,15 @@ namespace mint
                                                         ~LowLevelRenderer() = default;
 
         public:
-            mint::Vector<T>&                              vertexArray() noexcept;
-            mint::Vector<IndexElementType>&               indexArray() noexcept;
+            mint::Vector<T>&                            vertices() noexcept;
+            mint::Vector<IndexElementType>&             indices() noexcept;
+        
+        public:
+            void                                        pushMesh(const mint::RenderingBase::MeshData& meshData) noexcept;
+
+        public:
+            void                                        setIndexBase(const IndexElementType base) noexcept;
+            const IndexElementType                      getIndexBase() const noexcept;
 
         public:
             void                                        flush() noexcept;
@@ -48,15 +56,16 @@ namespace mint
             void                                        prepareBuffers() noexcept;
 
         private:
-            mint::RenderingBase::GraphicDevice* const     _graphicDevice;
+            mint::RenderingBase::GraphicDevice* const   _graphicDevice;
             const uint32                                _vertexStride;
         
         private:
-            mint::Vector<T>                               _vertexArray;
+            mint::Vector<T>                             _vertices;
             DxObjectId                                  _vertexBufferId;
 
         private:
-            mint::Vector<IndexElementType>                _indexArray;
+            mint::Vector<IndexElementType>              _indices;
+            IndexElementType                            _indexBase;
             DxObjectId                                  _indexBufferId;
         };
     }

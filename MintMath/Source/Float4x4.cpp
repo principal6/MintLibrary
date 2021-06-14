@@ -7,6 +7,8 @@
 
 namespace mint
 {
+    const Float4x4 Float4x4::kIdentity = Float4x4();
+
     Float4 Float4x4::mul(const Float4x4& m, const Float4& v) noexcept
     {
         return m.mul(v);
@@ -414,6 +416,13 @@ namespace mint
         _34 = z;
     }
 
+    void Float4x4::setTranslation(const mint::Float3& translation) noexcept
+    {
+        _14 = translation._x;
+        _24 = translation._y;
+        _34 = translation._z;
+    }
+
     void Float4x4::preTranslate(const float x, const float y, const float z) noexcept
     {
         _14 += x;
@@ -441,6 +450,11 @@ namespace mint
     void Float4x4::postTranslate(const mint::Float3& translation) noexcept
     {
         postTranslate(translation._x, translation._y, translation._z);
+    }
+
+    mint::Float3 Float4x4::getTranslation() const noexcept
+    {
+        return mint::Float3(_14, _24, _34);
     }
 
     void Float4x4::decomposeSrt(mint::Float3& outScale, mint::Float4x4& outRotationMatrix, mint::Float3& outTranslation) const noexcept
@@ -576,6 +590,21 @@ namespace mint
             Float4::dotProductRaw(_row[3]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
             Float4::dotProductRaw(_row[3]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3])
         );
+    }
+
+    void Float4x4::mulAssignReverse(const Float4x4& lhs) noexcept
+    {
+        static constexpr uint32 kRowCount = 4;
+        static constexpr uint32 kColumnCount = 4;
+
+        mint::Float4x4 copy = *this;
+        for (uint32 rowIndex = 0; rowIndex < kRowCount; rowIndex++)
+        {
+            for (uint32 columnIndex = 0; columnIndex < kColumnCount; columnIndex++)
+            {
+                _row[rowIndex][columnIndex] = Float4::dotProductRaw(lhs._row[rowIndex]._f, copy._m[0][columnIndex], copy._m[1][columnIndex], copy._m[2][columnIndex], copy._m[3][columnIndex]);
+            }
+        }
     }
 
     Float4 Float4x4::mul(const Float4& v) const noexcept

@@ -114,7 +114,7 @@ namespace mint
 
         void RectangleRendererContext::drawColored()
         {
-            auto& vertexArray = _lowLevelRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertices();
             mint::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -127,7 +127,7 @@ namespace mint
 
         void RectangleRendererContext::drawTextured(const mint::Float2& texturePosition, const mint::Float2& textureSize)
         {
-            auto& vertexArray = _lowLevelRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertices();
             mint::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -143,7 +143,7 @@ namespace mint
 
         void RectangleRendererContext::drawColoredTextured(const mint::Float2& texturePosition, const mint::Float2& textureSize)
         {
-            auto& vertexArray = _lowLevelRenderer.vertexArray();
+            auto& vertexArray = _lowLevelRenderer.vertices();
             mint::RenderingBase::VS_INPUT_SHAPE vertex;
             for (uint32 iter = 0; iter < kVertexCountPerRectangle; iter++)
             {
@@ -160,10 +160,10 @@ namespace mint
 
         void RectangleRendererContext::prepareIndexArray()
         {
-            const auto& vertexArray = _lowLevelRenderer.vertexArray();
+            const auto& vertexArray = _lowLevelRenderer.vertices();
             const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-            auto& indexArray = _lowLevelRenderer.indexArray();
+            auto& indexArray = _lowLevelRenderer.indices();
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 0);
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 1);
             indexArray.push_back((currentTotalTriangleVertexCount - kVertexCountPerRectangle) + 2);

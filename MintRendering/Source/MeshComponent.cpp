@@ -5,8 +5,6 @@
 
 #include <MintRenderingBase/Include/DxResource.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
-
 
 namespace mint
 {
@@ -29,24 +27,29 @@ namespace mint
             __noop;
         }
 
+        const mint::RenderingBase::MeshData& MeshComponent::getMeshData() const noexcept
+        {
+            return _meshData;
+        }
+
         const uint32 MeshComponent::getVertexCount() const noexcept
         {
-            return static_cast<uint32>(_meshData._vertexArray.size());
+            return _meshData.getVertexCount();
         }
 
         const mint::RenderingBase::VS_INPUT* MeshComponent::getVertices() const noexcept
         {
-            return (_meshData._vertexArray.empty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
+            return (_meshData._vertexArray.empty()) ? &mint::RenderingBase::MeshData::kNullVertex : &_meshData._vertexArray[0];
         }
 
         const uint32 MeshComponent::getIndexCount() const noexcept
         {
-            return static_cast<uint32>(_meshData._faceArray.size() * mint::RenderingBase::Face::kIndexCountPerFace);
+            return _meshData.getIndexCount();
         }
 
         const mint::RenderingBase::IndexElementType* MeshComponent::getIndices() const noexcept
         {
-            return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
+            return (_meshData._faceArray.empty() == true) ? &mint::RenderingBase::MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
         }
         
         void MeshComponent::shouldDrawNormals(const bool shouldDrawNormals) noexcept

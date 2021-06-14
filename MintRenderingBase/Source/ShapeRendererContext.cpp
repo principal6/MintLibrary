@@ -201,7 +201,7 @@ namespace mint
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const mint::Float2(&pointArray)[2] = { pointA, pointB };
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             uint8 flip = 0;
             if (validate == true)
@@ -238,7 +238,7 @@ namespace mint
             vertexArray.push_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -256,7 +256,7 @@ namespace mint
             static constexpr uint32 kDeltaVertexCount = 3;
             
             RenderingBase::VS_INPUT_SHAPE v;
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
                 v._position = _position;
@@ -276,7 +276,7 @@ namespace mint
             }
             
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -289,7 +289,7 @@ namespace mint
             static constexpr uint32 kDeltaVertexCount = 3;
             const float halfRadius = radius * 0.5f;
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
             
             RenderingBase::VS_INPUT_SHAPE v;
             v._color = _defaultColor;
@@ -316,7 +316,7 @@ namespace mint
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -337,7 +337,7 @@ namespace mint
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
             RenderingBase::VS_INPUT_SHAPE v;
             {
                 v._color = color;
@@ -369,7 +369,7 @@ namespace mint
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -404,7 +404,7 @@ namespace mint
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             RenderingBase::VS_INPUT_SHAPE v;
             {
@@ -441,7 +441,7 @@ namespace mint
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             {
                 // Body left upper
                 indexArray.push_back(vertexOffset + 0);
@@ -464,7 +464,7 @@ namespace mint
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             RenderingBase::VS_INPUT_SHAPE v;
             
@@ -518,7 +518,7 @@ namespace mint
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);
@@ -546,7 +546,7 @@ namespace mint
             const float cosHalfArcAngle = cos(halfArcAngle);
             const float tanHalfArcAngle = tan(halfArcAngle);
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             RenderingBase::VS_INPUT_SHAPE v;
 
@@ -656,7 +656,7 @@ namespace mint
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             
             // Right outer arc section
             indexArray.push_back(vertexOffset + 0);
@@ -725,7 +725,7 @@ namespace mint
         {
             static constexpr uint32 kDeltaVertexCount = 4;
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             RenderingBase::VS_INPUT_SHAPE v;
             {
@@ -752,7 +752,7 @@ namespace mint
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
 
             // Body left upper
             indexArray.push_back(vertexOffset + 0);
@@ -773,7 +773,7 @@ namespace mint
             const float horizontalOffsetL = horizontalSpace * bias;
             const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
             RenderingBase::VS_INPUT_SHAPE v;
             {
                 v._color = _defaultColor;
@@ -798,7 +798,7 @@ namespace mint
             }
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             {
                 indexArray.push_back(vertexOffset + 0);
                 indexArray.push_back(vertexOffset + 1);
@@ -1046,7 +1046,7 @@ namespace mint
             const mint::Float2 v2 = p0 + normal * halfThickness;
             const mint::Float2 v3 = p1 + normal * halfThickness;
 
-            auto& vertexArray = _lowLevelRenderer->vertexArray();
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             RenderingBase::VS_INPUT_SHAPE v;
             v._color = _defaultColor;
@@ -1070,7 +1070,7 @@ namespace mint
             vertexArray.push_back(v);
 
             const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexOffset + 0);
             indexArray.push_back(vertexOffset + 1);
             indexArray.push_back(vertexOffset + 2);

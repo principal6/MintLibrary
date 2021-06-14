@@ -169,7 +169,7 @@ namespace mint
         const uint32                            getAvailableNodeSlot();
 
     private:
-        mint::Vector<TreeNode<T>>                 _nodeArray;
+        mint::Vector<TreeNode<T>>               _nodeArray;
         uint32                                  _nextNodeId;
         uint32                                  _nodeCount;
     };

@@ -47,6 +47,9 @@ namespace mint
         const uint32    wcslen(const wchar_t* const rawWideString);
         const uint32    find(const char* const source, const char* const target, const uint32 offset = 0);
         const bool      strcmp(const char* const a, const char* const b);
+        
+        template <uint32 DestSize>
+        void            strcpy(char(&dest)[DestSize], const char* const source);
 
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);

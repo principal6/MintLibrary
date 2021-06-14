@@ -59,8 +59,6 @@ namespace mint
                 cbTransform.bindToShader(mint::RenderingBase::DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
             }
 
-            auto& trVertexArray = _lowLevelRenderer.vertexArray();
-            auto& trIndexArray = _lowLevelRenderer.indexArray();
             const uint32 meshComponentCount = meshComponents.size();
             for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
             {
@@ -69,20 +67,9 @@ namespace mint
                 cbTransform.updateBuffer(reinterpret_cast<const byte*>(&_cbTransformData), 1);
 
                 _lowLevelRenderer.flush();
-
-                const uint32 vertexCount = meshComponent->getVertexCount();
-                const uint32 indexCount = meshComponent->getIndexCount();
-                const mint::RenderingBase::VS_INPUT* const vertices = meshComponent->getVertices();
-                const mint::RenderingBase::IndexElementType* const indices = meshComponent->getIndices();
-                for (uint32 vertexIter = 0; vertexIter < vertexCount; vertexIter++)
-                {
-                    trVertexArray.push_back(vertices[vertexIter]);
-                }
-                for (uint32 indexIter = 0; indexIter < indexCount; indexIter++)
-                {
-                    trIndexArray.push_back(indices[indexIter]);
-                }
-
+                
+                _lowLevelRenderer.pushMesh(meshComponent->getMeshData());
+                
                 shaderPool.bindShaderIfNot(mint::RenderingBase::DxShaderType::PixelShader, _psDefaultId);
                 shaderPool.unbindShader(mint::RenderingBase::DxShaderType::GeometryShader);
                 _lowLevelRenderer.render(mint::RenderingBase::RenderingPrimitive::TriangleList);

@@ -12,57 +12,7 @@ namespace mint
 {
     namespace Rendering
     {
-        const mint::RenderingBase::VS_INPUT           MeshData::kNullVertex = mint::RenderingBase::VS_INPUT();
-        const mint::RenderingBase::IndexElementType   MeshData::kNullIndex = 0;
-
-        MeshData::MeshData()
-        {
-            __noop;
-        }
-
-        void MeshData::clear() noexcept
-        {
-            _positionArray.clear();
-            _vertexToPositionTable.clear();
-            _vertexArray.clear();
-            _faceArray.clear();
-        }
-
-        void MeshData::shrinkToFit() noexcept
-        {
-            _positionArray.shrink_to_fit();
-            _vertexToPositionTable.shrink_to_fit();
-            _vertexArray.shrink_to_fit();
-            _faceArray.shrink_to_fit();
-        }
-
-        void MeshData::updateVertexFromPositions() noexcept
-        {
-            const uint32 vertexCount = getVertexCount();
-            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
-            {
-                const uint32 positionIndex = _vertexToPositionTable[vertexIndex];
-                _vertexArray[vertexIndex]._positionU.setXyz(_positionArray[positionIndex]);
-            }
-        }
-
-        const uint32 MeshData::getPositionCount() const noexcept
-        {
-            return static_cast<uint32>(_positionArray.size());
-        }
-
-        const uint32 MeshData::getVertexCount() const noexcept
-        {
-            return static_cast<uint32>(_vertexArray.size());
-        }
-
-        const uint32 MeshData::getFaceCount() const noexcept
-        {
-            return static_cast<uint32>(_faceArray.size());
-        }
-
-
-        MINT_INLINE void MeshGenerator::pushVertexWithPositionXXX(const uint32 positionIndex, MeshData& meshData) noexcept
+        MINT_INLINE void MeshGenerator::pushVertexWithPositionXXX(const uint32 positionIndex, mint::RenderingBase::MeshData& meshData) noexcept
         {
             mint::RenderingBase::VS_INPUT vertex;
             vertex._positionU = meshData._positionArray[positionIndex];
@@ -70,7 +20,7 @@ namespace mint
             meshData._vertexToPositionTable.push_back(positionIndex);
         }
 
-        MINT_INLINE void MeshGenerator::setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
+        MINT_INLINE void MeshGenerator::setVertexUv(mint::RenderingBase::MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
         {
             meshData._vertexArray[vertexIndex]._positionU._w = u;
             meshData._vertexArray[vertexIndex]._tangentV._w = v;
@@ -87,52 +37,52 @@ namespace mint
             return mint::Float2(inoutVertex._positionU._w, inoutVertex._tangentV._w);
         }
 
-        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex0(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[0]];
         }
 
-        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex1(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[1]];
         }
 
-        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex2(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::RenderingBase::VS_INPUT& MeshGenerator::getFaceVertex2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexArray[face._vertexIndexArray[2]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex0(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[0]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex1(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[1]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex2(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[2]];
         }
 
-        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition0(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._positionArray[getFaceVertexPositionIndex0(face, meshData)];
         }
 
-        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition1(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._positionArray[getFaceVertexPositionIndex1(face, meshData)];
         }
 
-        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition2(const mint::RenderingBase::Face& face, MeshData& meshData) noexcept
+        MINT_INLINE mint::Float4& MeshGenerator::getFaceVertexPosition2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept
         {
             return meshData._positionArray[getFaceVertexPositionIndex2(face, meshData)];
         }
 
-        void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
+        void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, mint::RenderingBase::MeshData& meshData) noexcept
         {
             mint::RenderingBase::Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
@@ -142,7 +92,7 @@ namespace mint
             meshData._faceArray.push_back(face);
         }
 
-        void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
+        void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, mint::RenderingBase::MeshData& meshData) noexcept
         {
             mint::RenderingBase::Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
@@ -230,7 +180,7 @@ namespace mint
             v2._bitangentW.setXyz(bitangent);
         }
 
-        void MeshGenerator::smoothNormals(MeshData& meshData) noexcept
+        void MeshGenerator::smoothNormals(mint::RenderingBase::MeshData& meshData) noexcept
         {
             const uint32 vertexCount = meshData.getVertexCount();
             const uint32 faceCount = meshData.getFaceCount();
@@ -275,7 +225,7 @@ namespace mint
             normalArray.clear();
         }
         
-        void MeshGenerator::generateCube(MeshData& meshData) noexcept
+        void MeshGenerator::generateCube(mint::RenderingBase::MeshData& meshData) noexcept
         {
             static constexpr float kHalfSize = 0.5f;
 
@@ -301,7 +251,7 @@ namespace mint
             pushQuad({ 3, 2, 6, 7 }, meshData, uvs); // Bottom
         }
 
-        void MeshGenerator::generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept
+        void MeshGenerator::generateCone(const ConeParam& coneParam, mint::RenderingBase::MeshData& meshData) noexcept
         {
             meshData.clear();
 
@@ -350,7 +300,7 @@ namespace mint
             }
         }
 
-        void MeshGenerator::generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept
+        void MeshGenerator::generateCylinder(const CylinderParam& cylinderParam, mint::RenderingBase::MeshData& meshData) noexcept
         {
             meshData.clear();
 
@@ -419,7 +369,7 @@ namespace mint
             }
         }
 
-        void MeshGenerator::generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept
+        void MeshGenerator::generateOctahedron(const RadiusParam& radiusParam, mint::RenderingBase::MeshData& meshData) noexcept
         {
             meshData.clear();
 
@@ -427,10 +377,10 @@ namespace mint
             {
                 meshData._positionArray.reserve(6);
                 pushPosition({ 0.0f, +radiusParam._radius, 0.0f }, meshData);
-                pushPosition({ ::cos(mint::Math::kTwoPi * 0.0f  + radiusParam._radius), 0.0f, ::sin(mint::Math::kTwoPi * 0.0f  + radiusParam._radius) }, meshData);
-                pushPosition({ ::cos(mint::Math::kTwoPi * 0.25f + radiusParam._radius), 0.0f, ::sin(mint::Math::kTwoPi * 0.25f + radiusParam._radius) }, meshData);
-                pushPosition({ ::cos(mint::Math::kTwoPi * 0.5f  + radiusParam._radius), 0.0f, ::sin(mint::Math::kTwoPi * 0.5f  + radiusParam._radius) }, meshData);
-                pushPosition({ ::cos(mint::Math::kTwoPi * 0.75f + radiusParam._radius), 0.0f, ::sin(mint::Math::kTwoPi * 0.75f + radiusParam._radius) }, meshData);
+                pushPosition({ ::cos(mint::Math::kTwoPi * 0.0f ) * radiusParam._radius, 0.0f, ::sin(mint::Math::kTwoPi * 0.0f ) * radiusParam._radius }, meshData);
+                pushPosition({ ::cos(mint::Math::kTwoPi * 0.25f) * radiusParam._radius, 0.0f, ::sin(mint::Math::kTwoPi * 0.25f) * radiusParam._radius }, meshData);
+                pushPosition({ ::cos(mint::Math::kTwoPi * 0.5f ) * radiusParam._radius, 0.0f, ::sin(mint::Math::kTwoPi * 0.5f ) * radiusParam._radius }, meshData);
+                pushPosition({ ::cos(mint::Math::kTwoPi * 0.75f) * radiusParam._radius, 0.0f, ::sin(mint::Math::kTwoPi * 0.75f) * radiusParam._radius }, meshData);
                 pushPosition({ 0.0f, -radiusParam._radius, 0.0f }, meshData);
             }
             const int32 positionIndexTopCenter = 0;
@@ -463,7 +413,7 @@ namespace mint
             }
         }
 
-        void MeshGenerator::generateGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept
+        void MeshGenerator::generateGeoSphere(const GeoSpherePram& geoSpherePram, mint::RenderingBase::MeshData& meshData) noexcept
         {
             RadiusParam radiusParam;
             radiusParam._radius = geoSpherePram._radius;
@@ -484,7 +434,7 @@ namespace mint
             }
         }
 
-        void MeshGenerator::transformMeshData(MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept
+        void MeshGenerator::transformMeshData(mint::RenderingBase::MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept
         {
             const uint32 positionCount = meshData.getPositionCount();
             for (uint32 positionIndex = 0; positionIndex < positionCount; ++positionIndex)
@@ -495,14 +445,14 @@ namespace mint
             meshData.updateVertexFromPositions();
         }
 
-        void MeshGenerator::mergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept
+        void MeshGenerator::mergeMeshData(const mint::RenderingBase::MeshData& meshDataA, const mint::RenderingBase::MeshData& meshDataB, mint::RenderingBase::MeshData& outMeshData) noexcept
         {
             outMeshData = meshDataA;
 
             mergeMeshData(meshDataB, outMeshData);
         }
 
-        void MeshGenerator::mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept
+        void MeshGenerator::mergeMeshData(const mint::RenderingBase::MeshData& sourceMeshData, mint::RenderingBase::MeshData& inoutTargetMeshData) noexcept
         {
             const uint32 oldPositionCount = inoutTargetMeshData.getPositionCount();
             const uint32 deltaPositionCount = sourceMeshData.getPositionCount();
@@ -535,17 +485,17 @@ namespace mint
             }
         }
         
-        MINT_INLINE void MeshGenerator::pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept
+        MINT_INLINE void MeshGenerator::pushPosition(const float(&xyz)[3], mint::RenderingBase::MeshData& meshData) noexcept
         {
             meshData._positionArray.push_back(mint::Float4(xyz[0], xyz[1], xyz[2], 1.0f));
         }
 
-        MINT_INLINE void MeshGenerator::pushPosition(const mint::Float4& xyzw, MeshData& meshData) noexcept
+        MINT_INLINE void MeshGenerator::pushPosition(const mint::Float4& xyzw, mint::RenderingBase::MeshData& meshData) noexcept
         {
             meshData._positionArray.push_back(xyzw);
         }
 
-        void MeshGenerator::pushTri(const int32(&positionIndices)[3], MeshData& meshData, const mint::Float2(&uvs)[3]) noexcept
+        void MeshGenerator::pushTri(const int32(&positionIndices)[3], mint::RenderingBase::MeshData& meshData, const mint::Float2(&uvs)[3]) noexcept
         {
             const uint32 vertexCountOld = meshData.getVertexCount();
 
@@ -560,7 +510,7 @@ namespace mint
             pushTriFaceXXX(vertexCountOld, meshData);
         }
 
-        void MeshGenerator::pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const mint::Float2(&uvsInClockwise)[4]) noexcept
+        void MeshGenerator::pushQuad(const int32(&positionIndicesInClockwise)[4], mint::RenderingBase::MeshData& meshData, const mint::Float2(&uvsInClockwise)[4]) noexcept
         {
             const uint32 vertexCountOld = meshData.getVertexCount();
 
@@ -577,9 +527,9 @@ namespace mint
             pushQuadFaceXXX(vertexCountOld, meshData);
         }
         
-        void MeshGenerator::subdivideTriByMidpoints(MeshData& oldMeshData) noexcept
+        void MeshGenerator::subdivideTriByMidpoints(mint::RenderingBase::MeshData& oldMeshData) noexcept
         {
-            MeshData newMeshData;
+            mint::RenderingBase::MeshData newMeshData;
             newMeshData._positionArray = oldMeshData._positionArray;
             newMeshData._positionArray.reserve((newMeshData._positionArray.size() - 2) * 4 + 2);
             newMeshData._vertexArray.reserve(oldMeshData.getVertexCount() * 4);
@@ -639,7 +589,7 @@ namespace mint
 
             private:
                 int32               _positionCount = 0;
-                mint::Vector<int32>   _edgeTable;
+                mint::Vector<int32> _edgeTable;
             };
 
             PositionEdgeGraph positionEdgeGraph;
@@ -737,7 +687,7 @@ namespace mint
             std::swap(oldMeshData, newMeshData);
         }
 
-        void MeshGenerator::projectVerticesToSphere(const RadiusParam& radiusParam, MeshData& meshData) noexcept
+        void MeshGenerator::projectVerticesToSphere(const RadiusParam& radiusParam, mint::RenderingBase::MeshData& meshData) noexcept
         {
             mint::Float4 vertexNormals[3];
             mint::Float4 faceNormal;

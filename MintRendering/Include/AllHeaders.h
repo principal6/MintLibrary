@@ -12,6 +12,7 @@
 
 #include <MintRendering/Include/ObjectPool.h>
 #include <MintRendering/Include/MeshRenderer.h>
+#include <MintRendering/Include/InstantRenderer.h>
 #include <MintRendering/Include/DeltaTimer.h>
 
 #include <MintRendering/Include/Plotter.h>

@@ -108,6 +108,9 @@
     <ClInclude Include="Include\LowLevelRenderer.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\MeshData.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -182,6 +185,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\IRendererContext.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshData.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

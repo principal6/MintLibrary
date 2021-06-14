@@ -213,6 +213,7 @@
     <ClInclude Include="Include\Language\Language.h" />
     <ClInclude Include="Include\Language\LanguageCommon.h" />
     <ClInclude Include="Include\Language\Tokenizer.h" />
+    <ClInclude Include="Include\MeshData.h" />
     <ClInclude Include="Include\RectangleRendererContext.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Source\Language\ILexer.cpp" />
     <ClCompile Include="Source\Language\IParser.cpp" />
     <ClCompile Include="Source\Language\Tokenizer.cpp" />
+    <ClCompile Include="Source\MeshData.cpp" />
     <ClCompile Include="Source\RectangleRendererContext.cpp" />
     <ClCompile Include="Source\ShapeFontRendererContext.cpp" />
     <ClCompile Include="Source\ShapeRendererContext.cpp" />

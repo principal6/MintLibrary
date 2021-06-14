@@ -36,6 +36,11 @@
   <ItemGroup>
     <ClCompile Include="Source\AllHeaders.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MintGame\MintGame.vcxproj">
+      <Project>{4d507120-3ff8-4f58-bcd9-db6f72cd014d}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -130,6 +135,10 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -150,6 +159,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -171,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -195,7 +208,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintPlatform.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

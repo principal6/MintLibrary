@@ -705,6 +705,20 @@ const bool testWindow()
         //testObject->getObjectTransformSrt()._rotation.setAxisAngle(mint::Float3(1.0f, 1.0f, 0.0f), mint::Math::kPiOverEight);
     }
     testCameraObject->rotatePitch(0.125f);
+    
+    Rendering::InstantRenderer instantRenderer{ &graphicDevice };
+    instantRenderer.initialize();
+
+    Game::Skeleton testSkeleton;
+    mint::Float4x4 testSkeletonWorldTm;
+    testSkeletonWorldTm.setTranslation(1.0f, 0.0f, 4.0f);
+    mint::Float4x4 bindPoseLocalTm;
+    testSkeleton.createJoint(-1, "Root", bindPoseLocalTm);
+    bindPoseLocalTm.setTranslation(1.0f, 0.0f, 0.0f);
+    testSkeleton.createJoint(0, "Elbow", bindPoseLocalTm);
+    bindPoseLocalTm.setTranslation(1.0f, 0.0f, 0.0f);
+    testSkeleton.createJoint(1, "Tip", bindPoseLocalTm);
+    testSkeleton.calculateBindPoseModelTms();
 
     uint64 previousFrameTimeMs = 0;
     while (window.isRunning() == true)
@@ -966,11 +980,14 @@ const bool testWindow()
                 }
             }
 
+            testSkeleton.renderSkeleton(&instantRenderer, testSkeletonWorldTm);
+
             graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
             graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());
             graphicDevice.updateViewProjectionMatrix();
 
             meshRenderer.render(objectPool);
+            instantRenderer.render();
 #endif
 
             graphicDevice.endRendering();

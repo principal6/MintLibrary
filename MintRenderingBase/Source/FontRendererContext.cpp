@@ -716,7 +716,7 @@ namespace mint
             glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
             if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
             {
-                auto& vertexArray = _lowLevelRenderer->vertexArray();
+                auto& vertexArray = _lowLevelRenderer->vertices();
 
                 mint::RenderingBase::VS_INPUT_SHAPE v;
                 v._position._x = glyphRect.left();
@@ -754,10 +754,10 @@ namespace mint
 
         void FontRendererContext::prepareIndexArray()
         {
-            const auto& vertexArray = _lowLevelRenderer->vertexArray();
+            const auto& vertexArray = _lowLevelRenderer->vertices();
             const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
-            auto& indexArray = _lowLevelRenderer->indexArray();
+            auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);

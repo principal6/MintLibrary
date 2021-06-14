@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintRenderingBase/Include/MeshData.h>
 
 #include <MintRendering/Include/TransformComponent.h>
 #include <MintRendering/Include/MeshGenerator.h>
@@ -24,10 +25,11 @@ namespace mint
             virtual                                         ~MeshComponent();
 
         public:
+            const mint::RenderingBase::MeshData&            getMeshData() const noexcept;
             const uint32                                    getVertexCount() const noexcept;
-            const mint::RenderingBase::VS_INPUT*              getVertices() const noexcept;
+            const mint::RenderingBase::VS_INPUT*            getVertices() const noexcept;
             const uint32                                    getIndexCount() const noexcept;
-            const mint::RenderingBase::IndexElementType*      getIndices() const noexcept;
+            const mint::RenderingBase::IndexElementType*    getIndices() const noexcept;
 
         public:
             void                                            shouldDrawNormals(const bool shouldDrawNormals) noexcept;
@@ -36,7 +38,7 @@ namespace mint
             const bool                                      shouldDrawEdges() const noexcept;
 
         private:
-            MeshData                                        _meshData;
+            mint::RenderingBase::MeshData                   _meshData;
             bool                                            _shouldDrawNormals;
             bool                                            _shouldDrawEdges;
         };

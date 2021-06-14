@@ -54,6 +54,9 @@
     <ClInclude Include="Include\Plotter.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\InstantRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -78,6 +81,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Plotter.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InstantRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

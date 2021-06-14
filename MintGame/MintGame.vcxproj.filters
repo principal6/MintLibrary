@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{ce73f98d-345b-429f-8983-f8a942615baf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{cfad2942-7a20-4757-b17b-3f3e215f8bd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Animation">
+      <UniqueIdentifier>{b06a3a1f-d031-49be-9da4-5d3f6fa06a9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Animation">
+      <UniqueIdentifier>{6e132b3d-105c-45df-b627-1128061b562a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\AllHeaders.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Animation\AnimationCore.h">
+      <Filter>Include\Animation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Animation\AnimationCore.cpp">
+      <Filter>Source\Animation</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

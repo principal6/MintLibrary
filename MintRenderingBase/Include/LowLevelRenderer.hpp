@@ -6,6 +6,7 @@
 #include <MintContainer/Include/Vector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/MeshData.h>
 
 
 namespace mint
@@ -17,34 +18,70 @@ namespace mint
             : _graphicDevice{ graphicDevice }
             , _vertexStride{ sizeof(T) }
             , _vertexBufferId{}
+            , _indexBase{ 0 }
             , _indexBufferId{}
         {
             __noop;
         }
 
         template <typename T>
-        MINT_INLINE mint::Vector<T>& LowLevelRenderer<T>::vertexArray() noexcept
+        MINT_INLINE mint::Vector<T>& LowLevelRenderer<T>::vertices() noexcept
         {
-            return _vertexArray;
+            return _vertices;
         }
 
         template <typename T>
-        MINT_INLINE mint::Vector<IndexElementType>& LowLevelRenderer<T>::indexArray() noexcept
+        MINT_INLINE mint::Vector<IndexElementType>& LowLevelRenderer<T>::indices() noexcept
         {
-            return _indexArray;
+            return _indices;
+        }
+
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::pushMesh(const mint::RenderingBase::MeshData& meshData) noexcept
+        {
+            const uint32 vertexCount = meshData.getVertexCount();
+            const uint32 indexCount = meshData.getIndexCount();
+            const mint::RenderingBase::VS_INPUT* const meshVertices = meshData.getVertices();
+            const mint::RenderingBase::IndexElementType* const meshIndices = meshData.getIndices();
+            for (uint32 vertexIter = 0; vertexIter < vertexCount; vertexIter++)
+            {
+                _vertices.push_back(meshVertices[vertexIter]);
+            }
+
+            // 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
+            // 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
+            mint::RenderingBase::IndexElementType indexBase = getIndexBase();
+            for (uint32 indexIter = 0; indexIter < indexCount; indexIter++)
+            {
+                _indices.push_back(indexBase + meshIndices[indexIter]);
+            }
+            setIndexBase(indexBase + vertexCount);
+        }
+
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::setIndexBase(const IndexElementType base) noexcept
+        {
+            _indexBase = base;
+        }
+
+        template<typename T>
+        MINT_INLINE const IndexElementType LowLevelRenderer<T>::getIndexBase() const noexcept
+        {
+            return _indexBase;
         }
 
         template <typename T>
         MINT_INLINE void LowLevelRenderer<T>::flush() noexcept
         {
-            _vertexArray.clear();
-            _indexArray.clear();
+            _vertices.clear();
+            _indices.clear();
+            _indexBase = 0;
         }
 
         template<typename T>
         MINT_INLINE const bool LowLevelRenderer<T>::isRenderable() const noexcept
         {
-            return _vertexArray.empty() == false;
+            return _vertices.empty() == false;
         }
 
         template <typename T>
@@ -63,8 +100,8 @@ namespace mint
             vertexBuffer.bindAsInput();
             indexBuffer.bindAsInput();
 
-            const uint32 vertexCount = static_cast<uint32>(_vertexArray.size());
-            const uint32 indexCount = static_cast<uint32>(_indexArray.size());
+            const uint32 vertexCount = static_cast<uint32>(_vertices.size());
+            const uint32 indexCount = static_cast<uint32>(_indices.size());
             switch (renderingPrimitive)
             {
             case mint::RenderingBase::RenderingPrimitive::LineList:
@@ -85,28 +122,28 @@ namespace mint
         {
             DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             
-            const uint32 vertexCount = static_cast<uint32>(_vertexArray.size());
+            const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             if (_vertexBufferId.isValid() == false && 0 < vertexCount)
             {
-                _vertexBufferId = resourcePool.pushVertexBuffer(reinterpret_cast<byte*>(&_vertexArray[0]), _vertexStride, vertexCount);
+                _vertexBufferId = resourcePool.pushVertexBuffer(reinterpret_cast<byte*>(&_vertices[0]), _vertexStride, vertexCount);
             }
 
             if (_vertexBufferId.isValid() == true)
             {
                 DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
-                vertexBuffer.updateBuffer(reinterpret_cast<byte*>(&_vertexArray[0]), vertexCount);
+                vertexBuffer.updateBuffer(reinterpret_cast<byte*>(&_vertices[0]), vertexCount);
             }
 
-            const uint32 indexCount = static_cast<uint32>(_indexArray.size());
+            const uint32 indexCount = static_cast<uint32>(_indices.size());
             if (_indexBufferId.isValid() == false && 0 < indexCount)
             {
-                _indexBufferId = resourcePool.pushIndexBuffer(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
+                _indexBufferId = resourcePool.pushIndexBuffer(reinterpret_cast<byte*>(&_indices[0]), indexCount);
             }
 
             if (_indexBufferId.isValid() == true)
             {
                 DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
-                indexBuffer.updateBuffer(reinterpret_cast<byte*>(&_indexArray[0]), indexCount);
+                indexBuffer.updateBuffer(reinterpret_cast<byte*>(&_indices[0]), indexCount);
             }
         }
     }

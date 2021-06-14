@@ -121,7 +121,7 @@ namespace mint
             DxObjectId                              _pixelShaderId;
 
         protected:
-            mint::RenderingBase::Color                _borderColor;
+            mint::RenderingBase::Color              _borderColor;
         };
     }
 }

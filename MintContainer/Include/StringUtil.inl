@@ -80,5 +80,11 @@ namespace mint
         {
             return (0 == ::strcmp(a, b));
         }
+
+        template<uint32 DestSize>
+        MINT_INLINE void strcpy(char(&dest)[DestSize], const char* const source)
+        {
+            ::strcpy_s(dest, source);
+        }
     }
 }

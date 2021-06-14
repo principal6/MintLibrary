@@ -38,19 +38,19 @@ namespace mint
             void                                        render(const mint::Rendering::ObjectPool& objectPool) noexcept;
 
         private:
-            mint::RenderingBase::GraphicDevice* const     _graphicDevice;
+            mint::RenderingBase::GraphicDevice* const   _graphicDevice;
 
         private:
             mint::RenderingBase::LowLevelRenderer<mint::RenderingBase::VS_INPUT>    _lowLevelRenderer;
-            mint::RenderingBase::CB_Transform                                     _cbTransformData;
-            mint::RenderingBase::DxObjectId                                       _cbTransformId;
+            mint::RenderingBase::CB_Transform                                       _cbTransformData;
+            mint::RenderingBase::DxObjectId                                         _cbTransformId;
 
         private:
-            mint::RenderingBase::DxObjectId               _vsDefaultId;
-            mint::RenderingBase::DxObjectId               _psDefaultId;
-            mint::RenderingBase::DxObjectId               _gsNormalId;
-            mint::RenderingBase::DxObjectId               _gsTriangleEdgeId;
-            mint::RenderingBase::DxObjectId               _psTexCoordAsColorId;
+            mint::RenderingBase::DxObjectId             _vsDefaultId;
+            mint::RenderingBase::DxObjectId             _gsNormalId;
+            mint::RenderingBase::DxObjectId             _gsTriangleEdgeId;
+            mint::RenderingBase::DxObjectId             _psDefaultId;
+            mint::RenderingBase::DxObjectId             _psTexCoordAsColorId;
         };
     }
 }

@@ -20,6 +20,9 @@ namespace mint
     // Mostly for column vector
     class Float4x4 final
     {
+    public:
+        static const Float4x4   kIdentity;
+
 #pragma region Static Functions
     public:
         static Float4           mul(const Float4x4& m, const Float4& v) noexcept;
@@ -99,12 +102,14 @@ namespace mint
 
     public:
         void                    setTranslation(const float x, const float y, const float z) noexcept;
+        void                    setTranslation(const mint::Float3& translation) noexcept;
         void                    preTranslate(const float x, const float y, const float z) noexcept;
         void                    postTranslate(const float x, const float y, const float z) noexcept;
         void                    preTranslate(const mint::Float3& translation) noexcept;
         void                    postTranslate(const mint::Float3& translation) noexcept;
 
     public:
+        mint::Float3            getTranslation() const noexcept;
         void                    decomposeSrt(mint::Float3& outScale, mint::Float4x4& outRotationMatrix, mint::Float3& outTranslation) const noexcept;
 
     public:
@@ -117,6 +122,8 @@ namespace mint
 
     public:
         Float4x4                mul(const Float4x4& rhs) const noexcept;
+        void                    mulAssignReverse(const Float4x4& lhs) noexcept;
+
         // matrix * (column) vector
         Float4                  mul(const Float4& v) const noexcept;
         // matrix * (column) vector
