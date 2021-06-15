@@ -59,7 +59,7 @@ namespace mint
             __noop;
         }
 
-        const bool DxResource::createBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        const bool DxResource::createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             switch (_resourceType)
             {
@@ -158,7 +158,7 @@ namespace mint
             return false;
         }
 
-        const bool DxResource::createTexture(const DxTextureFormat format, const byte* const resourceContent, const uint32 width, const uint32 height)
+        const bool DxResource::createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height)
         {
             switch (_resourceType)
             {
@@ -215,31 +215,36 @@ namespace mint
             return (_resource.Get() != nullptr);
         }
 
-        void DxResource::updateBuffer(const byte* const resourceContent, const uint32 elementCount)
+        void DxResource::updateBuffer(const void* const resourceContent)
+        {
+            updateBuffer(resourceContent, _elementStride, _elementCount);
+        }
+
+        void DxResource::updateBuffer(const void* const resourceContent, const uint32 elementCount)
         {
             updateBuffer(resourceContent, _elementStride, elementCount);
         }
 
-        void DxResource::updateBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        void DxResource::updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             MINT_ASSERT("±èÀå¿ø", _resourceType < DxResourceType::Texture2D, "");
 
             updateContentInternal(resourceContent, elementStride, elementCount, 0);
         }
 
-        void DxResource::updateTexture(const byte* const resourceContent)
+        void DxResource::updateTexture(const void* const resourceContent)
         {
             updateTexture(resourceContent, _textureWidth, _textureHeight);
         }
 
-        void DxResource::updateTexture(const byte* const resourceContent, const uint32 width, const uint32 height)
+        void DxResource::updateTexture(const void* const resourceContent, const uint32 width, const uint32 height)
         {
             MINT_ASSERT("±èÀå¿ø", DxResourceType::Texture2D <= _resourceType, "");
 
             updateContentInternal(resourceContent, _elementStride, width * height, width);
         }
 
-        void DxResource::updateContentInternal(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width)
+        void DxResource::updateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width)
         {
             if (resourceContent == nullptr)
             {
@@ -360,7 +365,7 @@ namespace mint
             __noop;
         }
 
-        const DxObjectId& DxResourcePool::pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
+        const DxObjectId& DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::ConstantBuffer;
@@ -376,7 +381,7 @@ namespace mint
             return DxObjectId::kInvalidObjectId;
         }
 
-        const DxObjectId& DxResourcePool::pushVertexBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        const DxObjectId& DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::VertexBuffer;
@@ -391,7 +396,7 @@ namespace mint
             return DxObjectId::kInvalidObjectId;
         }
 
-        const DxObjectId& DxResourcePool::pushIndexBuffer(const byte* const resourceContent, const uint32 elementCount)
+        const DxObjectId& DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::IndexBuffer;
@@ -406,7 +411,7 @@ namespace mint
             return DxObjectId::kInvalidObjectId;
         }
 
-        const DxObjectId& DxResourcePool::pushStructuredBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        const DxObjectId& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::StructuredBuffer;

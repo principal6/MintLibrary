@@ -63,22 +63,23 @@ namespace mint
             virtual                         ~DxResource() = default;
 
         private:
-            const bool                      createBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const bool                      createTexture(const DxTextureFormat format, const byte* const resourceContent, const uint32 width, const uint32 height);
+            const bool                      createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const bool                      createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
         public:
             const bool                      isValid() const noexcept;
         
         public:
-            void                            updateBuffer(const byte* const resourceContent, const uint32 elementCount);
-            void                            updateBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            void                            updateBuffer(const void* const resourceContent);
+            void                            updateBuffer(const void* const resourceContent, const uint32 elementCount);
+            void                            updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
         
         public:
-            void                            updateTexture(const byte* const resourceContent);
-            void                            updateTexture(const byte* const resourceContent, const uint32 width, const uint32 height);
+            void                            updateTexture(const void* const resourceContent);
+            void                            updateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
         
         private:
-            void                            updateContentInternal(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
+            void                            updateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
 
         public:
             void                            setOffset(const uint32 elementOffset);
@@ -121,10 +122,10 @@ namespace mint
             virtual                         ~DxResourcePool() = default;
 
         public:
-            const DxObjectId&               pushConstantBuffer(const byte* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-            const DxObjectId&               pushVertexBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const DxObjectId&               pushIndexBuffer(const byte* const resourceContent, const uint32 elementCount);
-            const DxObjectId&               pushStructuredBuffer(const byte* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const DxObjectId&               pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+            const DxObjectId&               pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const DxObjectId&               pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+            const DxObjectId&               pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
 
         public:
             const DxObjectId&               pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);

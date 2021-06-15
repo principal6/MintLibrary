@@ -125,25 +125,25 @@ namespace mint
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             if (_vertexBufferId.isValid() == false && 0 < vertexCount)
             {
-                _vertexBufferId = resourcePool.pushVertexBuffer(reinterpret_cast<byte*>(&_vertices[0]), _vertexStride, vertexCount);
+                _vertexBufferId = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
             }
 
             if (_vertexBufferId.isValid() == true)
             {
                 DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
-                vertexBuffer.updateBuffer(reinterpret_cast<byte*>(&_vertices[0]), vertexCount);
+                vertexBuffer.updateBuffer(&_vertices[0], vertexCount);
             }
 
             const uint32 indexCount = static_cast<uint32>(_indices.size());
             if (_indexBufferId.isValid() == false && 0 < indexCount)
             {
-                _indexBufferId = resourcePool.pushIndexBuffer(reinterpret_cast<byte*>(&_indices[0]), indexCount);
+                _indexBufferId = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
             }
 
             if (_indexBufferId.isValid() == true)
             {
                 DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
-                indexBuffer.updateBuffer(reinterpret_cast<byte*>(&_indices[0]), indexCount);
+                indexBuffer.updateBuffer(&_indices[0], indexCount);
             }
         }
     }

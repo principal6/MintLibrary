@@ -36,7 +36,7 @@ namespace mint
 
             mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             const mint::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
-            _cbTransformId = resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbTransformData), sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
+            _cbTransformId = resourcePool.pushConstantBuffer(&_cbTransformData, sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
         }
 
         void InstantRenderer::drawLine(const mint::Float3& a, const mint::Float3& b) noexcept
@@ -87,7 +87,7 @@ namespace mint
             }
 
             _cbTransformData._cbWorldMatrix.setIdentity();
-            cbTransform.updateBuffer(reinterpret_cast<const byte*>(&_cbTransformData), 1);
+            cbTransform.updateBuffer(&_cbTransformData);
 
             _lowLevelRendererLine.render(mint::RenderingBase::RenderingPrimitive::LineList);
             _lowLevelRendererLine.flush();

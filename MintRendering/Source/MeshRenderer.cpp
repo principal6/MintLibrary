@@ -42,7 +42,7 @@ namespace mint
             
             mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             const mint::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
-            _cbTransformId = resourcePool.pushConstantBuffer(reinterpret_cast<const byte*>(&_cbTransformData), sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
+            _cbTransformId = resourcePool.pushConstantBuffer(&_cbTransformData, sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
         }
 
         void MeshRenderer::render(const mint::Rendering::ObjectPool& objectPool) noexcept
@@ -64,7 +64,7 @@ namespace mint
             {
                 const MeshComponent* const meshComponent = meshComponents[meshCompnentIndex];
                 _cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->getObjectTransformMatrix() * meshComponent->_srt.toMatrix();
-                cbTransform.updateBuffer(reinterpret_cast<const byte*>(&_cbTransformData), 1);
+                cbTransform.updateBuffer(&_cbTransformData);
 
                 _lowLevelRenderer.flush();
                 
