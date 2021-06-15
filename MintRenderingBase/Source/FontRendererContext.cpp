@@ -606,7 +606,8 @@ namespace mint
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
                 mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                resourcePool.bindToShader(_sbTransformBufferId, DxShaderType::VertexShader, 0);
+                mint::RenderingBase::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->render(mint::RenderingBase::RenderingPrimitive::TriangleList);
 

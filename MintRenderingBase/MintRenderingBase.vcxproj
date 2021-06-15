@@ -248,6 +248,7 @@
     <ClCompile Include="Source\Language\Tokenizer.cpp" />
     <ClCompile Include="Source\MeshData.cpp" />
     <ClCompile Include="Source\RectangleRendererContext.cpp" />
+    <ClCompile Include="Source\RenderingBaseCommon.cpp" />
     <ClCompile Include="Source\ShapeFontRendererContext.cpp" />
     <ClCompile Include="Source\ShapeRendererContext.cpp" />
   </ItemGroup>

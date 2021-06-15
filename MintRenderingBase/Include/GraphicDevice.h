@@ -27,6 +27,7 @@
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>
 #include <Assets/CppHlsl/CppHlslConstantBuffers.h>
+#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
 
 
 namespace mint
@@ -84,15 +85,20 @@ namespace mint
             const D3D11_RECT&                                   getFullScreenScissorRectangle() const noexcept;
 
         public:
-            mint::RenderingBase::DxShaderPool&                    getShaderPool() noexcept;
-            mint::RenderingBase::DxResourcePool&                  getResourcePool() noexcept;
-            mint::RenderingBase::RectangleRendererContext&        getRectangleRendererContext() noexcept;
-            mint::RenderingBase::ShapeRendererContext&            getShapeRendererContext() noexcept;
-            mint::RenderingBase::FontRendererContext&             getFontRendererContext() noexcept;
-            mint::RenderingBase::ShapeFontRendererContext&        getShapeFontRendererContext() noexcept;
-            mint::Gui::GuiContext&                                getGuiContext() noexcept;
-            const mint::Language::CppHlsl&                        getCppHlslSteamData() const noexcept;
-            const mint::Language::CppHlsl&                        getCppHlslConstantBuffers() const noexcept;
+            mint::RenderingBase::DxShaderPool&                  getShaderPool() noexcept;
+            mint::RenderingBase::DxResourcePool&                getResourcePool() noexcept;
+            mint::RenderingBase::RectangleRendererContext&      getRectangleRendererContext() noexcept;
+            mint::RenderingBase::ShapeRendererContext&          getShapeRendererContext() noexcept;
+            mint::RenderingBase::FontRendererContext&           getFontRendererContext() noexcept;
+            mint::RenderingBase::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
+            mint::Gui::GuiContext&                              getGuiContext() noexcept;
+            const mint::Language::CppHlsl&                      getCppHlslSteamData() const noexcept;
+            const mint::Language::CppHlsl&                      getCppHlslConstantBuffers() const noexcept;
+
+        public: // Common buffers
+            DxObjectId                                          getCommonCbTransformId() const noexcept;
+            DxObjectId                                          getCommonSbTransformId() const noexcept;
+            DxObjectId                                          getCommonSbMaterialId() const noexcept;
 
         public:
             void                                                initialize2DProjectionMatrix(const mint::Float2& windowSize) noexcept;
@@ -103,15 +109,15 @@ namespace mint
         public:
             ID3D11Device*                                       getDxDevice() noexcept;
             ID3D11DeviceContext*                                getDxDeviceContext() noexcept;
-            const mint::Int2&                                     getWindowSize() const noexcept;
-            mint::Float2                                          getWindowSizeFloat2() const noexcept;
-            mint::Window::IWindow*                                getWindow() noexcept;
+            const mint::Int2&                                   getWindowSize() const noexcept;
+            mint::Float2                                        getWindowSizeFloat2() const noexcept;
+            mint::Window::IWindow*                              getWindow() noexcept;
 
         private:
-            mint::Window::IWindow*                                _window;
+            mint::Window::IWindow*                              _window;
 
         private:
-            mint::RenderingBase::Color                            _clearColor;
+            mint::RenderingBase::Color                          _clearColor;
 
     #pragma region DirectX
         private:
@@ -140,8 +146,13 @@ namespace mint
             DxResourcePool                                      _resourcePool;
 
         private:
-            mint::RenderingBase::CB_View                          _cbViewData;
+            mint::RenderingBase::CB_View                        _cbViewData;
             DxObjectId                                          _cbViewId;
+
+        private: // Common buffers
+            DxObjectId                                          _cbTransformId;
+            DxObjectId                                          _sbTransformId;
+            DxObjectId                                          _sbMaterialId;
 
         private:
             ComPtr<ID3D11SamplerState>                          _samplerState;
@@ -149,19 +160,19 @@ namespace mint
     #pragma endregion
 
         private:
-            mint::Language::CppHlsl                               _cppHlslStreamData;
-            mint::Language::CppHlsl                               _cppHlslConstantBuffers;
-            mint::Language::CppHlsl                               _cppHlslStructuredBuffers;
+            mint::Language::CppHlsl                             _cppHlslStreamData;
+            mint::Language::CppHlsl                             _cppHlslConstantBuffers;
+            mint::Language::CppHlsl                             _cppHlslStructuredBuffers;
 
         private:
-            mint::RenderingBase::RectangleRendererContext         _rectangleRendererContext;
-            mint::RenderingBase::ShapeRendererContext             _shapeRendererContext;
-            mint::RenderingBase::FontRendererContext              _fontRendererContext;
-            mint::RenderingBase::ShapeFontRendererContext         _shapeFontRendererContext;
+            mint::RenderingBase::RectangleRendererContext       _rectangleRendererContext;
+            mint::RenderingBase::ShapeRendererContext           _shapeRendererContext;
+            mint::RenderingBase::FontRendererContext            _fontRendererContext;
+            mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContext;
             bool                                                _needEndRenderingCall;
 
         private:
-            mint::Gui::GuiContext                                 _guiContext;
+            mint::Gui::GuiContext                               _guiContext;
         };
     }
 }

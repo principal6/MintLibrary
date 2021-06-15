@@ -114,19 +114,19 @@ namespace mint
             for (JointIndexType jointIndex = 0; jointIndex < jointCount; jointIndex++)
             {
                 const SkeletonJoint& joint = _joints[jointIndex];
+                mint::Float4x4 jointWorldTm = worldTm;
+                jointWorldTm *= joint._bindPoseModelTm;
+
                 if (joint.hasParent() == true)
                 {
-                    mint::Float4x4 jointWorldTm = worldTm;
-                    jointWorldTm *= joint._bindPoseModelTm;
-
                     const SkeletonJoint& parentJoint = _joints[joint._parentIndex];
                     mint::Float4x4 parentJointWorldTm = worldTm;
                     parentJointWorldTm *= parentJoint._bindPoseModelTm;
 
-                    instantRenderer->drawLine(jointWorldTm.getTranslation(), parentJointWorldTm.getTranslation());
-                    instantRenderer->drawSphere(jointWorldTm.getTranslation(), 0.03125f, 1);
-                    instantRenderer->drawSphere(parentJointWorldTm.getTranslation(), 0.03125f, 1);
+                    instantRenderer->drawLine(jointWorldTm.getTranslation(), parentJointWorldTm.getTranslation(), mint::RenderingBase::Color::kCyan);
                 }
+
+                instantRenderer->drawSphere(jointWorldTm.getTranslation(), 0.03125f, 1, mint::RenderingBase::Color::kMagenta);
             }
         }
 

@@ -103,6 +103,9 @@
     <FxCompile Include="..\Assets\Hlsl\GsTriangleEdge.hlsl">
       <Filter>Assets\Hlsl</Filter>
     </FxCompile>
+    <FxCompile Include="..\Assets\Hlsl\PsColor.hlsl">
+      <Filter>Assets\Hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Object.inl">

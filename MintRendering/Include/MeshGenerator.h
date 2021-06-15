@@ -61,6 +61,7 @@ namespace mint
             static void                             generateGeoSphere(const GeoSpherePram& geoSpherePram, mint::RenderingBase::MeshData& meshData) noexcept;
 
         public:
+            static void                             setMaterialId(mint::RenderingBase::MeshData& meshData, const uint32 materialId) noexcept;
             static void                             transformMeshData(mint::RenderingBase::MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept;
             static void                             mergeMeshData(const mint::RenderingBase::MeshData& meshDataA, const mint::RenderingBase::MeshData& meshDataB, mint::RenderingBase::MeshData& outMeshData) noexcept;
             static void                             mergeMeshData(const mint::RenderingBase::MeshData& sourceMeshData, mint::RenderingBase::MeshData& inoutTargetMeshData) noexcept;

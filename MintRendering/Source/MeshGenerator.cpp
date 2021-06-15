@@ -434,6 +434,15 @@ namespace mint
             }
         }
 
+        void MeshGenerator::setMaterialId(mint::RenderingBase::MeshData& meshData, const uint32 materialId) noexcept
+        {
+            const uint32 vertexCount = meshData._vertexArray.size();
+            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+            {
+                meshData._vertexArray[vertexIndex]._materialId = materialId;
+            }
+        }
+
         void MeshGenerator::transformMeshData(mint::RenderingBase::MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept
         {
             const uint32 positionCount = meshData.getPositionCount();

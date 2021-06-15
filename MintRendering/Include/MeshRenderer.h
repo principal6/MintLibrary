@@ -19,6 +19,7 @@ namespace mint
     namespace RenderingBase
     {
         class GraphicDevice;
+        struct SB_Material;
     }
 
 
@@ -43,7 +44,7 @@ namespace mint
         private:
             mint::RenderingBase::LowLevelRenderer<mint::RenderingBase::VS_INPUT>    _lowLevelRenderer;
             mint::RenderingBase::CB_Transform                                       _cbTransformData;
-            mint::RenderingBase::DxObjectId                                         _cbTransformId;
+            mint::Vector<mint::RenderingBase::SB_Material>                          _sbMaterialDatas;
 
         private:
             mint::RenderingBase::DxObjectId             _vsDefaultId;

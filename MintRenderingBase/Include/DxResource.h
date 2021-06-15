@@ -125,7 +125,7 @@ namespace mint
             const DxObjectId&               pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
             const DxObjectId&               pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
             const DxObjectId&               pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-            const DxObjectId&               pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const DxObjectId&               pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
         public:
             const DxObjectId&               pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);

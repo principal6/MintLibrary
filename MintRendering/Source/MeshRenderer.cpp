@@ -39,10 +39,6 @@ namespace mint
             _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", mint::RenderingBase::DxShaderType::GeometryShader, "Assets/HlslBinary/");
             _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", mint::RenderingBase::DxShaderType::GeometryShader, "Assets/HlslBinary/");
             _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", mint::RenderingBase::DxShaderType::PixelShader, "Assets/HlslBinary/");
-            
-            mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            const mint::Language::CppHlslTypeInfo& cbTransformDataTypeInfo = _graphicDevice->getCppHlslConstantBuffers().getTypeInfo(typeid(_cbTransformData));
-            _cbTransformId = resourcePool.pushConstantBuffer(&_cbTransformData, sizeof(_cbTransformData), cbTransformDataTypeInfo.getRegisterIndex());
         }
 
         void MeshRenderer::render(const mint::Rendering::ObjectPool& objectPool) noexcept
@@ -53,12 +49,18 @@ namespace mint
             shaderPool.bindShaderIfNot(mint::RenderingBase::DxShaderType::VertexShader, _vsDefaultId);
 
             mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            mint::RenderingBase::DxResource& cbTransform = resourcePool.getResource(_cbTransformId);
+            mint::RenderingBase::DxResource& cbTransform = resourcePool.getResource(_graphicDevice->getCommonCbTransformId());
             {
                 cbTransform.bindToShader(mint::RenderingBase::DxShaderType::VertexShader, cbTransform.getRegisterIndex());
                 cbTransform.bindToShader(mint::RenderingBase::DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
             }
 
+            mint::RenderingBase::DxResource& sbMaterial = resourcePool.getResource(_graphicDevice->getCommonSbMaterialId());
+            {
+                sbMaterial.bindToShader(mint::RenderingBase::DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
+            }
+
+            mint::RenderingBase::SB_Material sbMaterialData;
             const uint32 meshComponentCount = meshComponents.size();
             for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
             {
@@ -69,6 +71,9 @@ namespace mint
                 _lowLevelRenderer.flush();
                 
                 _lowLevelRenderer.pushMesh(meshComponent->getMeshData());
+
+                sbMaterialData._diffuseColor = mint::RenderingBase::Color::kBlue;
+                sbMaterial.updateBuffer(&sbMaterialData);
                 
                 shaderPool.bindShaderIfNot(mint::RenderingBase::DxShaderType::PixelShader, _psDefaultId);
                 shaderPool.unbindShader(mint::RenderingBase::DxShaderType::GeometryShader);

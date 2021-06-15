@@ -17,6 +17,8 @@ namespace mint
     namespace RenderingBase
     {
         class GraphicDevice;
+        struct SB_Material;
+        struct Color;
     }
 
 
@@ -32,8 +34,8 @@ namespace mint
             void                                        initialize() noexcept;
 
         public:
-            void                                        drawLine(const mint::Float3& a, const mint::Float3& b) noexcept;
-            void                                        drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration) noexcept;
+            void                                        drawLine(const mint::Float3& a, const mint::Float3& b, const mint::RenderingBase::Color& color) noexcept;
+            void                                        drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration, const mint::RenderingBase::Color& color) noexcept;
 
         public:
             void                                        render() noexcept;
@@ -46,10 +48,11 @@ namespace mint
             mint::RenderingBase::LowLevelRenderer<mint::RenderingBase::VS_INPUT>    _lowLevelRendererMesh;
 
         private:
-            mint::RenderingBase::CB_Transform           _cbTransformData;
-            mint::RenderingBase::DxObjectId             _cbTransformId;
-            mint::RenderingBase::DxObjectId             _vsDefaultId;
-            mint::RenderingBase::DxObjectId             _psDefaultId;
+            mint::RenderingBase::CB_Transform               _cbTransformData;
+            mint::Vector<mint::RenderingBase::SB_Material>  _sbMaterialDatas;
+            mint::RenderingBase::DxObjectId                 _vsDefaultId;
+            mint::RenderingBase::DxObjectId                 _psDefaultId;
+            mint::RenderingBase::DxObjectId                 _psColorId;
         };
     }
 }

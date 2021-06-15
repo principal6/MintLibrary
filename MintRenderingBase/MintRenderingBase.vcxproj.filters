@@ -190,5 +190,8 @@
     <ClCompile Include="Source\MeshData.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\RenderingBaseCommon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

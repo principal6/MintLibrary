@@ -261,11 +261,11 @@ namespace mint
 
             // Constant buffers
             {
+                _cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
+                _cppHlslConstantBuffers.generateHlslString(mint::Language::CppHlslFileType::ConstantBuffers);
+                _shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
+
                 {
-                    _cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
-                    _cppHlslConstantBuffers.generateHlslString(mint::Language::CppHlslFileType::ConstantBuffers);
-                    _shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
-                    
                     const mint::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(_cbViewData));
                     _cbViewId = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), cppHlslTypeInfo.getRegisterIndex());
                     
@@ -273,6 +273,12 @@ namespace mint
                     cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::GeometryShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
+                }
+
+                {
+                    mint::RenderingBase::CB_Transform cbTransformData;
+                    const mint::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslConstantBuffers.getTypeInfo(typeid(cbTransformData));
+                    _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), cppHlslTypeInfo.getRegisterIndex());
                 }
 
                 initialize2DProjectionMatrix(mint::Float2(windowSize));
@@ -283,6 +289,18 @@ namespace mint
                 _cppHlslStructuredBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslStructuredBuffers.h");
                 _cppHlslStructuredBuffers.generateHlslString(mint::Language::CppHlslFileType::StructuredBuffers);
                 _shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
+
+                {
+                    mint::RenderingBase::SB_Transform sbTransformData;
+                    const mint::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslStructuredBuffers.getTypeInfo(typeid(sbTransformData));
+                    _sbTransformId = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, cppHlslTypeInfo.getRegisterIndex());
+                }
+
+                {
+                    mint::RenderingBase::SB_Material sbMaterialData;
+                    const mint::Language::CppHlslTypeInfo& cppHlslTypeInfo = _cppHlslStructuredBuffers.getTypeInfo(typeid(sbMaterialData));
+                    _sbMaterialId = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, cppHlslTypeInfo.getRegisterIndex());
+                }
             }
         }
 

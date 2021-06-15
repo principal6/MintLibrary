@@ -411,13 +411,15 @@ namespace mint
             return DxObjectId::kInvalidObjectId;
         }
 
-        const DxObjectId& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        const DxObjectId& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::StructuredBuffer;
             if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
             {
                 resource.assignIdXXX();
+                resource._registerIndex = registerIndex;
+
                 _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getId();
             }

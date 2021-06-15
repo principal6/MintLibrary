@@ -12,9 +12,14 @@ namespace mint
 {
     namespace RenderingBase
     {
-        struct SB_Transform
+        struct SB_Transform CPP_HLSL_REGISTER_INDEX(0)
         {
             float4x4    _transformMatrix;
+        };
+
+        struct SB_Material CPP_HLSL_REGISTER_INDEX(1)
+        {
+            float4      _diffuseColor;
         };
     }
 }

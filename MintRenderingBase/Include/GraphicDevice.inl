@@ -62,6 +62,21 @@ namespace mint
             return _cppHlslConstantBuffers;
         }
 
+        MINT_INLINE DxObjectId GraphicDevice::getCommonCbTransformId() const noexcept
+        {
+            return _cbTransformId;
+        }
+
+        MINT_INLINE DxObjectId GraphicDevice::getCommonSbTransformId() const noexcept
+        {
+            return _sbTransformId;
+        }
+
+        MINT_INLINE DxObjectId GraphicDevice::getCommonSbMaterialId() const noexcept
+        {
+            return _sbMaterialId;
+        }
+
         MINT_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept
         {
             return _device.Get();
