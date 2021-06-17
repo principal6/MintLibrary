@@ -21,7 +21,7 @@
 
 #include <MintRenderingBase/Include/GuiContext.h>
 
-#include <MintRenderingBase/Include/Language/CppHlsl.h>
+#include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
 #include <MintMath/Include/Float4x4.h>
 
@@ -92,8 +92,8 @@ namespace mint
             mint::RenderingBase::FontRendererContext&           getFontRendererContext() noexcept;
             mint::RenderingBase::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
             mint::Gui::GuiContext&                              getGuiContext() noexcept;
-            const mint::Language::CppHlsl&                      getCppHlslSteamData() const noexcept;
-            const mint::Language::CppHlsl&                      getCppHlslConstantBuffers() const noexcept;
+            const mint::CppHlsl::Interpreter&                   getCppHlslSteamData() const noexcept;
+            const mint::CppHlsl::Interpreter&                   getCppHlslConstantBuffers() const noexcept;
 
         public: // Common buffers
             DxObjectId                                          getCommonCbTransformId() const noexcept;
@@ -160,9 +160,9 @@ namespace mint
     #pragma endregion
 
         private:
-            mint::Language::CppHlsl                             _cppHlslStreamData;
-            mint::Language::CppHlsl                             _cppHlslConstantBuffers;
-            mint::Language::CppHlsl                             _cppHlslStructuredBuffers;
+            mint::CppHlsl::Interpreter                          _cppHlslStreamData;
+            mint::CppHlsl::Interpreter                          _cppHlslConstantBuffers;
+            mint::CppHlsl::Interpreter                          _cppHlslStructuredBuffers;
 
         private:
             mint::RenderingBase::RectangleRendererContext       _rectangleRendererContext;

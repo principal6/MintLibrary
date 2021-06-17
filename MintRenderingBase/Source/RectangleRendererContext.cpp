@@ -49,8 +49,8 @@ namespace mint
                     }
                     )"
                 };
-                const Language::CppHlslTypeInfo& typeInfo = _graphicDevice->getCppHlslSteamData().getTypeInfo(typeid(mint::RenderingBase::VS_INPUT_SHAPE));
-                _vertexShaderId = shaderPool.pushVertexShaderFromMemory("RectangleRendererVS", kShaderString, "main", &typeInfo);
+                const CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::RenderingBase::VS_INPUT_SHAPE));
+                _vertexShaderId = shaderPool.pushVertexShaderFromMemory("RectangleRendererVS", kShaderString, "main", &typeMetaData);
             }
 
             // Compile pixel shader

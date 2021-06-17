@@ -7,9 +7,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{3d5693c6-ad40-43e0-82d9-15bc53da638f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Language">
-      <UniqueIdentifier>{80dbbf42-4860-4cfb-b2d6-0d7e24ce5a7a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Language">
       <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
@@ -18,6 +15,9 @@
     </Filter>
     <Filter Include="Assets\CppHlsl">
       <UniqueIdentifier>{ba152108-72e8-49ec-879a-8e468507b31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\CppHlsl">
+      <UniqueIdentifier>{80dbbf42-4860-4cfb-b2d6-0d7e24ce5a7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,33 +54,6 @@
     <ClInclude Include="Include\RenderingBaseCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Language\CppHlsl.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\CppHlslLexer.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\CppHlslParser.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\CppHlslTypes.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\ILexer.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\IParser.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\Language.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\LanguageCommon.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Language\Tokenizer.h">
-      <Filter>Include\Language</Filter>
-    </ClInclude>
     <ClInclude Include="Include\GuiCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -111,6 +84,33 @@
     <ClInclude Include="Include\MeshData.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Interpreter.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Lexer.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Parser.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\ILexer.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\IParser.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Language.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\LanguageCommon.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\CppHlsl\Tokenizer.h">
+      <Filter>Include\CppHlsl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -119,20 +119,20 @@
     <None Include="Include\IRendererContext.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\Language\CppHlslParser.inl">
-      <Filter>Include\Language</Filter>
-    </None>
-    <None Include="Include\Language\ILexer.inl">
-      <Filter>Include\Language</Filter>
-    </None>
-    <None Include="Include\Language\IParser.inl">
-      <Filter>Include\Language</Filter>
-    </None>
-    <None Include="Include\Language\LanguageCommon.inl">
-      <Filter>Include\Language</Filter>
-    </None>
     <None Include="Include\GuiContext.inl">
       <Filter>Include</Filter>
+    </None>
+    <None Include="Include\CppHlsl\Parser.inl">
+      <Filter>Include\CppHlsl</Filter>
+    </None>
+    <None Include="Include\CppHlsl\ILexer.inl">
+      <Filter>Include\CppHlsl</Filter>
+    </None>
+    <None Include="Include\CppHlsl\IParser.inl">
+      <Filter>Include\CppHlsl</Filter>
+    </None>
+    <None Include="Include\CppHlsl\LanguageCommon.inl">
+      <Filter>Include\CppHlsl</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -163,24 +163,6 @@
     <ClCompile Include="Source\ShapeRendererContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Language\CppHlsl.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Language\CppHlslLexer.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Language\CppHlslParser.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Language\ILexer.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Language\IParser.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Language\Tokenizer.cpp">
-      <Filter>Source\Language</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GuiContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -192,6 +174,24 @@
     </ClCompile>
     <ClCompile Include="Source\RenderingBaseCommon.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
+      <Filter>Source\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Lexer.cpp">
+      <Filter>Source\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Parser.cpp">
+      <Filter>Source\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\ILexer.cpp">
+      <Filter>Source\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\IParser.cpp">
+      <Filter>Source\Language</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CppHlsl\Tokenizer.cpp">
+      <Filter>Source\Language</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

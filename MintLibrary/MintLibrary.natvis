@@ -48,13 +48,13 @@
   </Type>
   
   <Type Name="mint::TreeNodeAccessor&lt;*&gt;">
-    <DisplayString>{{ Node ID [{ _nodeId }] { ((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data } }}</DisplayString>
-    <Expand>
-      <Item Name="[Node ID]">_nodeId</Item>
-      <ExpandedItem>((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_data</ExpandedItem>
-      <Item Name="[Parent Node]" Condition="((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_parentNodeAccessor</Item>
-      <Item Name="[Child Nodes]" Condition="((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray._size > 0">((mint::TreeNode&lt;$T1&gt;*)((_tree->_nodeArray._memoryAccessor._memoryAllocator->_rawMemory + (_tree->_nodeArray._memoryAccessor._memoryAllocator->kTypeSize * _tree->_nodeArray._memoryAccessor._blockOffset))) + _slotIndex)->_childNodeAccessorArray</Item>
-    </Expand>
+    <DisplayString>{{ Node ID [{ _nodeId }] { (_tree->_nodeArray._rawPointer + _slotIndex)->_data } }}</DisplayString>
+      <Expand>
+          <Item Name="[Node ID]">_nodeId</Item>
+          <ExpandedItem>(_tree->_nodeArray._rawPointer + _slotIndex)->_data</ExpandedItem>
+          <Item Name="[Parent Node]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor</Item>
+          <Item Name="[Child Nodes]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray._size > 0">(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray</Item>
+      </Expand>
   </Type>
 <!-- @@@ Tree ENDS @@@ -->
 

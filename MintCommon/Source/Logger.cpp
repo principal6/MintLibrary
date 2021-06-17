@@ -85,7 +85,7 @@ namespace mint
         logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
         printf(finalBuffer);
-        ::MessageBoxA(nullptr, finalBuffer, "LOG ALERT", MB_ICONEXCLAMATION);
+        ::MessageBoxA(nullptr, content, "LOG ALERT", MB_ICONEXCLAMATION);
     }
 
     void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
@@ -104,7 +104,7 @@ namespace mint
         logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
         printf(finalBuffer);
-        ::MessageBoxA(nullptr, finalBuffer, "LOG ERROR", MB_ICONERROR);
+        ::MessageBoxA(nullptr, content, "LOG ERROR", MB_ICONERROR);
     }
 
     void Logger::logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize])

@@ -567,10 +567,10 @@ const bool testLanguage()
     TextFileReader textFileReader;
     textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
     
-    Language::CppHlslLexer cppHlslLexer{ textFileReader.get() };
+    CppHlsl::Lexer cppHlslLexer{ textFileReader.get() };
     cppHlslLexer.execute();
     
-    Language::CppHlslParser cppHlslParser{ cppHlslLexer };
+    CppHlsl::Parser cppHlslParser{ cppHlslLexer };
     cppHlslParser.execute();
 
     struct TestStruct
@@ -588,10 +588,10 @@ const bool testLanguage()
     TestStruct ts;
     uint64 tss = sizeof(TestStruct);
 
-    std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-    const mint::Language::CppHlslTypeInfo& typeInfo0 = cppHlslParser.getTypeInfo("VS_INPUT_SHAPE");
-    const mint::Language::CppHlslTypeInfo& typeInfo1 = cppHlslParser.getTypeInfo(1);
-    const mint::Language::CppHlslTypeInfo& typeInfo2 = cppHlslParser.getTypeInfo(2);
+    //std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
+    //const mint::CppHlsl::TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
+    //const mint::CppHlsl::TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
+    //const mint::CppHlsl::TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
     return true;
 }
 

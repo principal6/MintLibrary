@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -149,7 +149,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -195,6 +195,15 @@
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
     <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="Include\AllHpps.h" />
+    <ClInclude Include="Include\CppHlsl\Interpreter.h" />
+    <ClInclude Include="Include\CppHlsl\Lexer.h" />
+    <ClInclude Include="Include\CppHlsl\Parser.h" />
+    <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
+    <ClInclude Include="Include\CppHlsl\ILexer.h" />
+    <ClInclude Include="Include\CppHlsl\IParser.h" />
+    <ClInclude Include="Include\CppHlsl\Language.h" />
+    <ClInclude Include="Include\CppHlsl\LanguageCommon.h" />
+    <ClInclude Include="Include\CppHlsl\Tokenizer.h" />
     <ClInclude Include="Include\DxResource.h" />
     <ClInclude Include="Include\DxShader.h" />
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
@@ -204,15 +213,6 @@
     <ClInclude Include="Include\GuiContext.h" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
-    <ClInclude Include="Include\Language\CppHlsl.h" />
-    <ClInclude Include="Include\Language\CppHlslLexer.h" />
-    <ClInclude Include="Include\Language\CppHlslParser.h" />
-    <ClInclude Include="Include\Language\CppHlslTypes.h" />
-    <ClInclude Include="Include\Language\ILexer.h" />
-    <ClInclude Include="Include\Language\IParser.h" />
-    <ClInclude Include="Include\Language\Language.h" />
-    <ClInclude Include="Include\Language\LanguageCommon.h" />
-    <ClInclude Include="Include\Language\Tokenizer.h" />
     <ClInclude Include="Include\MeshData.h" />
     <ClInclude Include="Include\RectangleRendererContext.h" />
     <ClInclude Include="Include\AllHeaders.h" />
@@ -223,15 +223,21 @@
     <ClInclude Include="Include\LowLevelRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Include\CppHlsl\Parser.inl" />
+    <None Include="Include\CppHlsl\ILexer.inl" />
+    <None Include="Include\CppHlsl\IParser.inl" />
+    <None Include="Include\CppHlsl\LanguageCommon.inl" />
     <None Include="Include\GraphicDevice.inl" />
     <None Include="Include\GuiContext.inl" />
     <None Include="Include\IRendererContext.inl" />
-    <None Include="Include\Language\CppHlslParser.inl" />
-    <None Include="Include\Language\ILexer.inl" />
-    <None Include="Include\Language\IParser.inl" />
-    <None Include="Include\Language\LanguageCommon.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\CppHlsl\Interpreter.cpp" />
+    <ClCompile Include="Source\CppHlsl\Lexer.cpp" />
+    <ClCompile Include="Source\CppHlsl\Parser.cpp" />
+    <ClCompile Include="Source\CppHlsl\ILexer.cpp" />
+    <ClCompile Include="Source\CppHlsl\IParser.cpp" />
+    <ClCompile Include="Source\CppHlsl\Tokenizer.cpp" />
     <ClCompile Include="Source\DxResource.cpp" />
     <ClCompile Include="Source\DxShader.cpp" />
     <ClCompile Include="Source\DxShaderHeaderMemory.cpp" />
@@ -240,12 +246,6 @@
     <ClCompile Include="Source\GuiContext.cpp" />
     <ClCompile Include="Source\IDxObject.cpp" />
     <ClCompile Include="Source\IRendererContext.cpp" />
-    <ClCompile Include="Source\Language\CppHlsl.cpp" />
-    <ClCompile Include="Source\Language\CppHlslLexer.cpp" />
-    <ClCompile Include="Source\Language\CppHlslParser.cpp" />
-    <ClCompile Include="Source\Language\ILexer.cpp" />
-    <ClCompile Include="Source\Language\IParser.cpp" />
-    <ClCompile Include="Source\Language\Tokenizer.cpp" />
     <ClCompile Include="Source\MeshData.cpp" />
     <ClCompile Include="Source\RectangleRendererContext.cpp" />
     <ClCompile Include="Source\RenderingBaseCommon.cpp" />

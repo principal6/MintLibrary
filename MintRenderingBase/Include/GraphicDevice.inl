@@ -52,12 +52,12 @@ namespace mint
             return _guiContext;
         }
 
-        MINT_INLINE const mint::Language::CppHlsl& GraphicDevice::getCppHlslSteamData() const noexcept
+        MINT_INLINE const mint::CppHlsl::Interpreter& GraphicDevice::getCppHlslSteamData() const noexcept
         {
             return _cppHlslStreamData;
         }
 
-        MINT_INLINE const mint::Language::CppHlsl& GraphicDevice::getCppHlslConstantBuffers() const noexcept
+        MINT_INLINE const mint::CppHlsl::Interpreter& GraphicDevice::getCppHlslConstantBuffers() const noexcept
         {
             return _cppHlslConstantBuffers;
         }

@@ -5,7 +5,7 @@
 #define MINT_CPP_HLSL_CONSTANT_BUFFERS_H
 
 
-#include <MintRenderingBase/Include/Language/CppHlslTypes.h>
+#include <MintRenderingBase/Include/CppHlsl/CppHlslTypes.h>
 
 
 namespace mint
