@@ -47,9 +47,9 @@ namespace mint
         DxResource::DxResource(GraphicDevice* const graphicDevice)
             : IDxObject(graphicDevice, DxObjectType::Resource)
             , _resourceType{ DxResourceType::INVALID }
-            , _resourceSize{ 0 }
+            , _resourceCapacity{ 0 }
             , _elementStride{ 0 }
-            , _elementCount{ 0 }
+            , _elementMaxCount{ 0 }
             , _elementOffset{ 0 }
             , _textureFormat{ DxTextureFormat::INVALID }
             , _textureWidth{ 0 }
@@ -82,9 +82,9 @@ namespace mint
 
                 if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
-                    _resourceSize = bufferDescriptor.ByteWidth;
+                    _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
-                    _elementCount = elementCount;
+                    _elementMaxCount = elementCount;
 
                     std::swap(_resource, newResource);
                     return true;
@@ -109,9 +109,9 @@ namespace mint
 
                 if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
-                    _resourceSize = bufferDescriptor.ByteWidth;
+                    _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
-                    _elementCount = elementCount;
+                    _elementMaxCount = elementCount;
 
                     std::swap(_resource, newResource);
                     return true;
@@ -135,9 +135,9 @@ namespace mint
 
                 if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
-                    _resourceSize = bufferDescriptor.ByteWidth;
+                    _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
-                    _elementCount = elementCount;
+                    _elementMaxCount = elementCount;
 
                     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDescriptor;
                     shaderResourceViewDescriptor.Format = DXGI_FORMAT::DXGI_FORMAT_UNKNOWN;
@@ -186,8 +186,8 @@ namespace mint
                 if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateTexture2D(&texture2DDescriptor, &subResource, reinterpret_cast<ID3D11Texture2D**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _elementStride = colorCount;
-                    _elementCount = texture2DDescriptor.Width * texture2DDescriptor.Height;
-                    _resourceSize = _elementStride * _elementCount;
+                    _elementMaxCount = texture2DDescriptor.Width * texture2DDescriptor.Height;
+                    _resourceCapacity = _elementStride * _elementMaxCount;
                     
                     _textureFormat = format;
                     _textureWidth = width;
@@ -213,11 +213,6 @@ namespace mint
         const bool DxResource::isValid() const noexcept
         {
             return (_resource.Get() != nullptr);
-        }
-
-        void DxResource::updateBuffer(const void* const resourceContent)
-        {
-            updateBuffer(resourceContent, _elementStride, _elementCount);
         }
 
         void DxResource::updateBuffer(const void* const resourceContent, const uint32 elementCount)
@@ -252,7 +247,7 @@ namespace mint
                 return;
             }
 
-            const bool needToReset = (_elementStride != elementStride) || (_elementCount < elementCount);
+            const bool needToReset = (_elementStride != elementStride) || (_elementMaxCount < elementCount);
             if (needToReset == true)
             {
                 // elementStride => 자료형이 달라진 경우
@@ -279,7 +274,7 @@ namespace mint
                 D3D11_MAPPED_SUBRESOURCE mappedVertexResource{};
                 if (_graphicDevice->getDxDeviceContext()->Map(_resource.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexResource) == S_OK)
                 {
-                    memcpy(mappedVertexResource.pData, resourceContent, _resourceSize);
+                    memcpy(mappedVertexResource.pData, resourceContent, _elementStride * elementCount);
 
                     _graphicDevice->getDxDeviceContext()->Unmap(_resource.Get(), 0);
                 }

@@ -70,7 +70,6 @@ namespace mint
             const bool                      isValid() const noexcept;
         
         public:
-            void                            updateBuffer(const void* const resourceContent);
             void                            updateBuffer(const void* const resourceContent, const uint32 elementCount);
             void                            updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
         
@@ -97,10 +96,10 @@ namespace mint
 
         private:
             DxResourceType                  _resourceType;
-            uint32                          _resourceSize;
+            uint32                          _resourceCapacity;
 
             uint32                          _elementStride;
-            uint32                          _elementCount;
+            uint32                          _elementMaxCount;
             uint32                          _elementOffset;
 
             DxTextureFormat                 _textureFormat;

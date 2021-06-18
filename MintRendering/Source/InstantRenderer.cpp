@@ -99,7 +99,7 @@ namespace mint
                 cbTransform.bindToShader(mint::RenderingBase::DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
 
                 _cbTransformData._cbWorldMatrix.setIdentity();
-                cbTransform.updateBuffer(&_cbTransformData);
+                cbTransform.updateBuffer(&_cbTransformData, 1);
             }
 
             mint::RenderingBase::DxResource& sbMaterial = resourcePool.getResource(_graphicDevice->getCommonSbMaterialId());

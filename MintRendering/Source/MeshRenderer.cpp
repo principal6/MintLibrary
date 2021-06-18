@@ -66,14 +66,14 @@ namespace mint
             {
                 const MeshComponent* const meshComponent = meshComponents[meshCompnentIndex];
                 _cbTransformData._cbWorldMatrix = meshComponent->getOwnerObject()->getObjectTransformMatrix() * meshComponent->_srt.toMatrix();
-                cbTransform.updateBuffer(&_cbTransformData);
+                cbTransform.updateBuffer(&_cbTransformData, 1);
 
                 _lowLevelRenderer.flush();
                 
                 _lowLevelRenderer.pushMesh(meshComponent->getMeshData());
 
                 sbMaterialData._diffuseColor = mint::RenderingBase::Color::kBlue;
-                sbMaterial.updateBuffer(&sbMaterialData);
+                sbMaterial.updateBuffer(&sbMaterialData, 1);
                 
                 shaderPool.bindShaderIfNot(mint::RenderingBase::DxShaderType::PixelShader, _psDefaultId);
                 shaderPool.unbindShader(mint::RenderingBase::DxShaderType::GeometryShader);

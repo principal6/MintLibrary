@@ -453,7 +453,7 @@ namespace mint
             _cbViewData._cb2DProjectionMatrix = mint::Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 
             DxResource& cbView = _resourcePool.getResource(_cbViewId);
-            cbView.updateBuffer(&_cbViewData);
+            cbView.updateBuffer(&_cbViewData, 1);
         }
 
         void GraphicDevice::setViewMatrix(const mint::Float4x4& viewMatrix) noexcept
@@ -461,7 +461,7 @@ namespace mint
             _cbViewData._cbViewMatrix = viewMatrix;
             
             DxResource& cbView = _resourcePool.getResource(_cbViewId);
-            cbView.updateBuffer(&_cbViewData);
+            cbView.updateBuffer(&_cbViewData, 1);
         }
 
         void GraphicDevice::setProjectionMatrix(const mint::Float4x4& projectionMatrix) noexcept
@@ -469,7 +469,7 @@ namespace mint
             _cbViewData._cb3DProjectionMatrix = projectionMatrix;
 
             DxResource& cbView = _resourcePool.getResource(_cbViewId);
-            cbView.updateBuffer(&_cbViewData);
+            cbView.updateBuffer(&_cbViewData, 1);
         }
 
         void GraphicDevice::updateViewProjectionMatrix() noexcept
@@ -477,7 +477,7 @@ namespace mint
             _cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
             DxResource& cbView = _resourcePool.getResource(_cbViewId);
-            cbView.updateBuffer(&_cbViewData);
+            cbView.updateBuffer(&_cbViewData, 1);
         }
 
         const mint::Int2& GraphicDevice::getWindowSize() const noexcept
