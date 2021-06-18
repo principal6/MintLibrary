@@ -52,7 +52,7 @@ namespace mint
                         continue;
                     }
 
-                    _hlslString.append(CppHlsl::Parser::serializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
+                    _hlslString.append(_parser.serializeCppHlslTypeToHlslStructuredBufferDefinition(typeMetaData));
                 }
             }
 
@@ -68,11 +68,11 @@ namespace mint
 
                 if (_fileType == CppHlslFileType::StreamData)
                 {
-                    _hlslString.append(CppHlsl::Parser::serializeCppHlslTypeToHlslStreamDatum(typeMetaData));
+                    _hlslString.append(_parser.serializeCppHlslTypeToHlslStreamDatum(typeMetaData));
                 }
                 else if (_fileType == CppHlslFileType::ConstantBuffers)
                 {
-                    _hlslString.append(CppHlsl::Parser::serializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
+                    _hlslString.append(_parser.serializeCppHlslTypeToHlslConstantBuffer(typeMetaData, bufferIndex));
 
                     ++bufferIndex;
                 }

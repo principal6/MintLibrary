@@ -55,7 +55,7 @@ namespace mint
             const uint32 indexCount = meshData.getIndexCount();
             const mint::RenderingBase::VS_INPUT* const meshVertices = meshData.getVertices();
             const mint::RenderingBase::IndexElementType* const meshIndices = meshData.getIndices();
-            for (uint32 vertexIter = 0; vertexIter < vertexCount; vertexIter++)
+            for (uint32 vertexIter = 0; vertexIter < vertexCount; ++vertexIter)
             {
                 _vertices.push_back(meshVertices[vertexIter]);
             }
@@ -63,7 +63,7 @@ namespace mint
             // 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
             // 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
             mint::RenderingBase::IndexElementType indexBase = getIndexBaseXXX();
-            for (uint32 indexIter = 0; indexIter < indexCount; indexIter++)
+            for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
             {
                 _indices.push_back(indexBase + meshIndices[indexIter]);
             }

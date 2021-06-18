@@ -102,6 +102,7 @@ namespace mint
         
         private:
             const bool                  createVertexShaderInternal(DxShader& shader, const mint::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            void                        pushInputElement(DxInputElementSet& inputElementSet, const mint::CppHlsl::TypeMetaData& memberTypeMetaData, const int32 memberIndex);
             const bool                  createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
 
         private:

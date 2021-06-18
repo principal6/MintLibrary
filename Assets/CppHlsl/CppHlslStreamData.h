@@ -15,8 +15,6 @@ namespace mint
         // Position
         // Tangent & Bitangent => Normal
         // TexCoord
-        // Material ID
-        // Instance ID
         struct VS_INPUT
         {
             float4              _positionU;       // position  + texCoord[0]
@@ -25,6 +23,12 @@ namespace mint
             uint                _materialId{ 0 };
             uint                _instanceId{ 0 };
         };
+
+        //struct VS_INPUT1
+        //{
+        //    uint                _materialIdTest{ 0 };
+        //    uint                _instanceIdTest{ 0 };
+        //};
 
         struct VS_INPUT_SHAPE
         {

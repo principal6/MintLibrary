@@ -58,7 +58,9 @@ namespace mint
             void                            setByteOffset(const uint32 byteOffset);
             void                            setSemanticName(const std::string& semanticName);
             void                            setRegisterIndex(const uint32 registerIndex);
+            void                            setInputSlot(const uint32 inputSlot);
             void                            pushMember(const TypeMetaData& member);
+            void                            pushSlottedStreamData(const TypeMetaData& slottedStreamData);
 
         public:
             const bool                      isBuiltIn() const noexcept;
@@ -71,8 +73,11 @@ namespace mint
             const uint32                    getByteOffset() const noexcept;
             const std::string&              getSemanticName() const noexcept;
             const uint32                    getRegisterIndex() const noexcept;
+            const uint32                    getInputSlot() const noexcept;
             const uint32                    getMemberCount() const noexcept;
             const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
+            const uint32                    getSlottedStreamDataCount() const noexcept;
+            const TypeMetaData&             getSlottedStreamData(const uint32 inputSlot) const noexcept;
         
         public:
             static const TypeMetaData       kInvalidTypeMetaData;
@@ -86,9 +91,11 @@ namespace mint
             std::string                     _declName;
             std::string                     _semanticName;
             uint32                          _registerIndex;
+            uint32                          _inputSlot;
             uint32                          _size;          // Byte count
             uint32                          _byteOffset;
             mint::Vector<TypeMetaData>      _memberArray;   // Member variables
+            mint::Vector<TypeMetaData>      _slottedStreamDatas;
         };
 
 
@@ -100,9 +107,6 @@ namespace mint
 
         public:
             virtual const bool                          execute() override final;
-
-        private:
-            static std::string                          extractPureTypeName(const std::string& typeFullName) noexcept;
 
         private:
             void                                        registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn = false) noexcept;
@@ -123,13 +127,27 @@ namespace mint
             const uint32                                getTypeMetaDataCount() const noexcept;
             const TypeMetaData&                         getTypeMetaData(const std::string& typeName) const noexcept;
             const TypeMetaData&                         getTypeMetaData(const int32 typeIndex) const noexcept;
+        
+        private:
+            TypeMetaData&                               getTypeMetaData(const std::string& typeName) noexcept;
+
+        private:
+            const int32                                 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
+            const bool                                  existsTypeMetaData(const std::string& typeName) const noexcept;
 
         public:
             static std::string                          convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
             static const DXGI_FORMAT                    convertCppHlslTypeToDxgiFormat(const TypeMetaData& typeMetaData);
-            static std::string                          serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData& typeMetaData);
-            static std::string                          serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData& typeMetaData, const uint32 bufferIndex);
-            static std::string                          serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData& typeMetaData);
+
+        public:
+            std::string                                 serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData& typeMetaData);
+
+        private:
+            std::string                                 serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData& typeMetaData);
+
+        public:
+            std::string                                 serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData& typeMetaData, const uint32 bufferIndex);
+            std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData& typeMetaData);
 
         private:
             mint::Tree<SyntaxTreeItem>                  _syntaxTree;

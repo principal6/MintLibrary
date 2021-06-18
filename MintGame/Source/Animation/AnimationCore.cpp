@@ -88,7 +88,7 @@ namespace mint
         void Skeleton::calculateBindPoseModelTms() noexcept
         {
             const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
-            for (JointIndexType jointIndex = 0; jointIndex < jointCount; jointIndex++)
+            for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
             {
                 SkeletonJoint& joint = _joints[jointIndex];
                 joint._bindPoseModelTm = joint._bindPoseLocalTm;
@@ -111,7 +111,7 @@ namespace mint
             }
 
             const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
-            for (JointIndexType jointIndex = 0; jointIndex < jointCount; jointIndex++)
+            for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
             {
                 const SkeletonJoint& joint = _joints[jointIndex];
                 mint::Float4x4 jointWorldTm = worldTm;

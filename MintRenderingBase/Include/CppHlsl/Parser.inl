@@ -46,9 +46,19 @@ namespace mint
             _registerIndex = registerIndex;
         }
 
+        MINT_INLINE void TypeMetaData::setInputSlot(const uint32 inputSlot)
+        {
+            _inputSlot = inputSlot;
+        }
+
         MINT_INLINE void TypeMetaData::pushMember(const TypeMetaData& member)
         {
             _memberArray.push_back(member);
+        }
+
+        MINT_INLINE void TypeMetaData::pushSlottedStreamData(const TypeMetaData& slottedStreamData)
+        {
+            _slottedStreamDatas.push_back(slottedStreamData);
         }
 
         MINT_INLINE const bool TypeMetaData::isBuiltIn() const noexcept
@@ -91,14 +101,29 @@ namespace mint
             return _registerIndex;
         }
 
+        MINT_INLINE const uint32 TypeMetaData::getInputSlot() const noexcept
+        {
+            return _inputSlot;
+        }
+
         MINT_INLINE const uint32 TypeMetaData::getMemberCount() const noexcept
         {
-            return static_cast<uint32>(_memberArray.size());
+            return _memberArray.size();
         }
 
         MINT_INLINE const TypeMetaData& TypeMetaData::getMember(const uint32 memberIndex) const noexcept
         {
             return (memberIndex < getMemberCount()) ? _memberArray[memberIndex] : kInvalidTypeMetaData;
+        }
+
+        MINT_INLINE const uint32 TypeMetaData::getSlottedStreamDataCount() const noexcept
+        {
+            return _slottedStreamDatas.size();
+        }
+
+        MINT_INLINE const TypeMetaData& TypeMetaData::getSlottedStreamData(const uint32 inputSlot) const noexcept
+        {
+            return (inputSlot < getSlottedStreamDataCount()) ? _slottedStreamDatas[inputSlot] : kInvalidTypeMetaData;
         }
     }
 }

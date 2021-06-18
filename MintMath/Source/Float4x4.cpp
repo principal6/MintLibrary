@@ -598,9 +598,9 @@ namespace mint
         static constexpr uint32 kColumnCount = 4;
 
         mint::Float4x4 copy = *this;
-        for (uint32 rowIndex = 0; rowIndex < kRowCount; rowIndex++)
+        for (uint32 rowIndex = 0; rowIndex < kRowCount; ++rowIndex)
         {
-            for (uint32 columnIndex = 0; columnIndex < kColumnCount; columnIndex++)
+            for (uint32 columnIndex = 0; columnIndex < kColumnCount; ++columnIndex)
             {
                 _row[rowIndex][columnIndex] = Float4::dotProductRaw(lhs._row[rowIndex]._f, copy._m[0][columnIndex], copy._m[1][columnIndex], copy._m[2][columnIndex], copy._m[3][columnIndex]);
             }

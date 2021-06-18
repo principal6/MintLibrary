@@ -253,9 +253,9 @@ namespace mint
         MINT_INLINE Matrix<N, M> Matrix<M, N>::transpose() const noexcept
         {
             Matrix<N, M> result;
-            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
-                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
                     result.setElement(columnIndex, rowIndex, _m[rowIndex][columnIndex]);
                 }
@@ -273,7 +273,7 @@ namespace mint
 
             double trace = 0.0;
             const int32 safeSize = mint::min(M, N);
-            for (int32 index = 0; index < safeSize; index++)
+            for (int32 index = 0; index < safeSize; ++index)
             {
                 trace += _m[index][index];
             }
@@ -377,9 +377,9 @@ namespace mint
                 return false;
             }
 
-            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
-                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
                     if (rowIndex == columnIndex)
                     {
@@ -403,9 +403,9 @@ namespace mint
                 return false;
             }
 
-            for (int32 rowIndex = 0; rowIndex < M; rowIndex++)
+            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
-                for (int32 columnIndex = 0; columnIndex < N; columnIndex++)
+                for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
                     if (rowIndex == columnIndex)
                     {
@@ -429,9 +429,9 @@ namespace mint
                 return false;
             }
 
-            for (int32 rowIndex = 1; rowIndex < M; rowIndex++)
+            for (int32 rowIndex = 1; rowIndex < M; ++rowIndex)
             {
-                for (int32 columnIndex = 0; columnIndex < rowIndex; columnIndex++)
+                for (int32 columnIndex = 0; columnIndex < rowIndex; ++columnIndex)
                 {
                     if (_m[rowIndex][columnIndex] != 0.0)
                     {

@@ -55,7 +55,7 @@ namespace mint
 
             int32 foundComponentIndex = -1;
             const int32 componentCount = static_cast<int32>(_componentArray.size());
-            for (int32 componentIndex = 0; componentIndex < componentCount; componentIndex++)
+            for (int32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
             {
                 if (_componentArray[componentIndex] == objectComponent)
                 {
@@ -83,7 +83,7 @@ namespace mint
         IObjectComponent* Object::getComponent(const ObjectComponentType type) const noexcept
         {
             const uint32 componentCount = getComponentCount();
-            for (uint32 componentIndex = 0; componentIndex < componentCount; componentIndex++)
+            for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
             {
                 if (_componentArray[componentIndex]->getType() == type)
                 {

@@ -199,26 +199,30 @@ namespace mint
             // Input Layer
             if (inputElementTypeMetaData != nullptr)
             {
-                const uint32 memberCount = inputElementTypeMetaData->getMemberCount();
                 shader._inputElementSet._semanticNameArray.clear();
-                shader._inputElementSet._semanticNameArray.reserve(memberCount);
                 shader._inputElementSet._inputElementDescriptorArray.clear();
-                shader._inputElementSet._inputElementDescriptorArray.reserve(memberCount);
-                for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
-                {
-                    const CppHlsl::TypeMetaData& memberType = inputElementTypeMetaData->getMember(memberIndex);
-                    shader._inputElementSet._semanticNameArray.push_back(CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
 
-                    D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-                    inputElementDescriptor.SemanticName = shader._inputElementSet._semanticNameArray[memberIndex].c_str();
-                    inputElementDescriptor.SemanticIndex = 0;
-                    inputElementDescriptor.Format = CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberType);
-                    inputElementDescriptor.InputSlot = 0;
-                    inputElementDescriptor.AlignedByteOffset = memberType.getByteOffset();
-                    inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-                    inputElementDescriptor.InstanceDataStepRate = 0;
-                    shader._inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
+                {
+                    const uint32 memberCount = inputElementTypeMetaData->getMemberCount();
+                    for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+                    {
+                        const CppHlsl::TypeMetaData& memberTypeMetaData = inputElementTypeMetaData->getMember(memberIndex);
+                        pushInputElement(shader._inputElementSet, memberTypeMetaData, memberIndex);
+                    }
                 }
+                
+
+                const uint32 slottedStreamDataCount = inputElementTypeMetaData->getSlottedStreamDataCount();
+                for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
+                {
+                    const CppHlsl::TypeMetaData& slottedStreamData = inputElementTypeMetaData->getSlottedStreamData(slottedStreamDataIndex);
+                    const uint32 memberCount = slottedStreamData.getMemberCount();
+                    for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+                    {
+                        pushInputElement(shader._inputElementSet, slottedStreamData.getMember(memberIndex), slottedStreamDataIndex);
+                    }
+                }
+
                 if (FAILED(_graphicDevice->getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
                     shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
                 {
@@ -228,6 +232,21 @@ namespace mint
             }
 
             return true;
+        }
+
+        void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const mint::CppHlsl::TypeMetaData& memberTypeMetaData, const int32 memberIndex)
+        {
+            inputElementSet._semanticNameArray.push_back(CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
+
+            D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
+            inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray[memberIndex].c_str();
+            inputElementDescriptor.SemanticIndex = 0;
+            inputElementDescriptor.Format = CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
+            inputElementDescriptor.InputSlot = memberTypeMetaData.getInputSlot();
+            inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
+            inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
+            inputElementDescriptor.InstanceDataStepRate = 0;
+            inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
         }
 
         const bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
@@ -369,7 +388,7 @@ namespace mint
         void DxShaderPool::recompileAllShaders()
         {
             const uint32 shaderTypeCount = static_cast<uint32>(mint::RenderingBase::DxShaderType::COUNT);
-            for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; shaderTypeIndex++)
+            for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
                 const mint::RenderingBase::DxShaderType shaderType = static_cast<mint::RenderingBase::DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
@@ -403,7 +422,7 @@ namespace mint
                 createNonVertexShaderInternal(shader, mint::RenderingBase::DxShaderType::PixelShader);
             }
 
-            for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; shaderTypeIndex++)
+            for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
                 const mint::RenderingBase::DxShaderType shaderType = static_cast<mint::RenderingBase::DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];

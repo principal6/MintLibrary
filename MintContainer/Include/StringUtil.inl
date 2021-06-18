@@ -50,7 +50,7 @@ namespace mint
             uint32 result = kStringNPos;
             uint32 targetIter = 0;
             bool isFound = false;
-            for (uint32 sourceIter = 0; sourceIter < sourceLength; sourceIter++)
+            for (uint32 sourceIter = 0; sourceIter < sourceLength; ++sourceIter)
             {
                 if (source[sourceIter] == target[targetIter])
                 {

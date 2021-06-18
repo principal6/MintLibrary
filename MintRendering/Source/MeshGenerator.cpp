@@ -186,7 +186,7 @@ namespace mint
             const uint32 faceCount = meshData.getFaceCount();
             const uint32 positionCount = meshData.getPositionCount();
             mint::Vector<mint::Float4> normalArray(positionCount);
-            for (uint32 faceIndex = 0; faceIndex < faceCount; faceIndex++)
+            for (uint32 faceIndex = 0; faceIndex < faceCount; ++faceIndex)
             {
                 const uint16 v0Index = meshData._faceArray[faceIndex]._vertexIndexArray[0];
                 const uint16 v1Index = meshData._faceArray[faceIndex]._vertexIndexArray[1];
@@ -204,7 +204,7 @@ namespace mint
             }
 
             // Average normals
-            for (uint32 positionIndex = 0; positionIndex < positionCount; positionIndex++)
+            for (uint32 positionIndex = 0; positionIndex < positionCount; ++positionIndex)
             {
                 normalArray[positionIndex] /= normalArray[positionIndex]._w;
                 normalArray[positionIndex]._w = 0.0f;
@@ -212,7 +212,7 @@ namespace mint
             }
 
             // Recalculate tangent, bitangent
-            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
             {
                 const mint::Float4& normal = normalArray[meshData._vertexToPositionTable[vertexIndex]];
 
@@ -437,7 +437,7 @@ namespace mint
         void MeshGenerator::setMaterialId(mint::RenderingBase::MeshData& meshData, const uint32 materialId) noexcept
         {
             const uint32 vertexCount = meshData._vertexArray.size();
-            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++)
+            for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
             {
                 meshData._vertexArray[vertexIndex]._materialId = materialId;
             }

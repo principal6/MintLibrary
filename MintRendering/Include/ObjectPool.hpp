@@ -39,7 +39,7 @@ namespace mint
         MINT_INLINE void ObjectPool::destroyObjects()
         {
             const uint32 objectCount = getObjectCount();
-            for (uint32 objectIndex = 0; objectIndex < objectCount; objectIndex++)
+            for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
             {
                 if (_objectArray[objectIndex] != nullptr)
                 {
@@ -73,7 +73,7 @@ namespace mint
         MINT_INLINE void ObjectPool::destroyObjectComponents(Object& object)
         {
             const uint32 componentCount = static_cast<uint32>(object._componentArray.size());
-            for (uint32 componentIndex = 0; componentIndex < componentCount; componentIndex++)
+            for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
             {
                 IObjectComponent*& component = object._componentArray[componentIndex];
                 if (component != nullptr)
@@ -97,7 +97,7 @@ namespace mint
             }
 
             const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.size());
-            for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; meshComponentIndex++)
+            for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
             {
                 if (_meshComponentArray[meshComponentIndex]->getId() == meshComponent->getId())
                 {
@@ -117,7 +117,7 @@ namespace mint
 
             int32 foundIndex = -1;
             const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.size());
-            for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; meshComponentIndex++)
+            for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
             {
                 if (_meshComponentArray[meshComponentIndex]->getId() == meshComponent->getId())
                 {
