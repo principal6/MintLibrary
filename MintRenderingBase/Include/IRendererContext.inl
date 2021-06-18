@@ -12,7 +12,6 @@ namespace mint
         inline IRendererContext::IRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _defaultColor{ Color::kWhite }
-            , _viewportIndex{ 0.0f }
             , _useMultipleViewports{ false }
         {
             MINT_ASSERT("김장원", nullptr != _graphicDevice, "GraphicDevice 가 nullptr 이면 안 됩니다!");
@@ -54,9 +53,9 @@ namespace mint
             }
         }
 
-        MINT_INLINE void IRendererContext::setViewportIndex(const uint32 viewportIndex) noexcept
+        MINT_INLINE void IRendererContext::setClipRect(const mint::Rect& clipRect) noexcept
         {
-            _viewportIndex = static_cast<float>(viewportIndex);
+            _clipRect = clipRect;
         }
 
         MINT_INLINE const mint::Float4& IRendererContext::getColorInternal(const uint32 index) const noexcept

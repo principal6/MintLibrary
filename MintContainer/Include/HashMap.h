@@ -150,7 +150,7 @@ namespace mint
         const uint32                        computeStartBucketIndex(const uint64 keyHash) const noexcept;
 
     private:
-        mint::Vector<Bucket<Key, Value>>      _bucketArray;
+        mint::Vector<Bucket<Key, Value>>    _bucketArray;
         uint32                              _bucketCount;
     };
 }

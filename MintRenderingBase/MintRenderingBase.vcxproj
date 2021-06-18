@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <Optimization>Disabled</Optimization>
+      <Optimization>Full</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -149,7 +149,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <Optimization>Disabled</Optimization>
+      <Optimization>Full</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -214,7 +214,6 @@
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
-    <ClInclude Include="Include\RectangleRendererContext.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\ShapeFontRendererContext.h" />
     <ClInclude Include="Include\ShapeRendererContext.h" />
@@ -247,7 +246,6 @@
     <ClCompile Include="Source\IDxObject.cpp" />
     <ClCompile Include="Source\IRendererContext.cpp" />
     <ClCompile Include="Source\MeshData.cpp" />
-    <ClCompile Include="Source\RectangleRendererContext.cpp" />
     <ClCompile Include="Source\RenderingBaseCommon.cpp" />
     <ClCompile Include="Source\ShapeFontRendererContext.cpp" />
     <ClCompile Include="Source\ShapeRendererContext.cpp" />

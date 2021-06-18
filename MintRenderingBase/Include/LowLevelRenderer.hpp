@@ -37,6 +37,18 @@ namespace mint
         }
 
         template<typename T>
+        MINT_INLINE const uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
+        {
+            return _vertices.size();
+        }
+
+        template<typename T>
+        MINT_INLINE const uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
+        {
+            return _indices.size();
+        }
+
+        template<typename T>
         MINT_INLINE void LowLevelRenderer<T>::pushMesh(const mint::RenderingBase::MeshData& meshData) noexcept
         {
             const uint32 vertexCount = meshData.getVertexCount();
@@ -50,22 +62,22 @@ namespace mint
 
             // 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
             // 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
-            mint::RenderingBase::IndexElementType indexBase = getIndexBase();
+            mint::RenderingBase::IndexElementType indexBase = getIndexBaseXXX();
             for (uint32 indexIter = 0; indexIter < indexCount; indexIter++)
             {
                 _indices.push_back(indexBase + meshIndices[indexIter]);
             }
-            setIndexBase(indexBase + vertexCount);
+            setIndexBaseXXX(indexBase + vertexCount);
         }
 
         template<typename T>
-        MINT_INLINE void LowLevelRenderer<T>::setIndexBase(const IndexElementType base) noexcept
+        MINT_INLINE void LowLevelRenderer<T>::setIndexBaseXXX(const IndexElementType base) noexcept
         {
             _indexBase = base;
         }
 
         template<typename T>
-        MINT_INLINE const IndexElementType LowLevelRenderer<T>::getIndexBase() const noexcept
+        MINT_INLINE const IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
         {
             return _indexBase;
         }
@@ -117,6 +129,56 @@ namespace mint
             }
         }
         
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const mint::Rect& clipRect) noexcept
+        {
+            RenderCommand newRenderCommand;
+            newRenderCommand._primitive = primitive;
+            newRenderCommand._clipRect = clipRect;
+            newRenderCommand._vertexOffset = vertexOffset;
+            newRenderCommand._vertexCount = 0;
+            newRenderCommand._indexOffset = indexOffset;
+            newRenderCommand._indexCount = indexCount;
+            _renderCommands.push_back(newRenderCommand);
+        }
+
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::executeRenderCommands() noexcept
+        {
+            prepareBuffers();
+
+            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
+            DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+            vertexBuffer.bindAsInput();
+            indexBuffer.bindAsInput();
+
+            const uint32 renderCommandCount = _renderCommands.size();
+            for (uint32 renderCommandIndex = 0; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
+            {
+                const RenderCommand& renderCommand = _renderCommands[renderCommandIndex];
+
+                D3D11_RECT scissorRect = mint::RenderingBase::rectToD3dRect(renderCommand._clipRect);
+                _graphicDevice->getDxDeviceContext()->RSSetScissorRects(1, &scissorRect);
+
+                switch (renderCommand._primitive)
+                {
+                case mint::RenderingBase::RenderingPrimitive::LineList:
+                    _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+                    _graphicDevice->getDxDeviceContext()->Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+                    break;
+                case mint::RenderingBase::RenderingPrimitive::TriangleList:
+                    _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                    _graphicDevice->getDxDeviceContext()->DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            _renderCommands.clear();
+        }
+
         template <typename T>
         inline void LowLevelRenderer<T>::prepareBuffers() noexcept
         {

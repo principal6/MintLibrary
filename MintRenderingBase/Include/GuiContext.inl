@@ -399,9 +399,6 @@ namespace mint
             , _parentHashKey{ parentHashKey }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
-            , _viewportIndex{ 0 }
-            , _viewportIndexForChildren{ 0 }
-            , _viewportIndexForDocks{ 0 }
             , _previousMaxChildControlCount{ 0 }
             , _dockControlHashKey{ 0 }
         {
@@ -445,13 +442,13 @@ namespace mint
             switch (prepareControlDataParam._viewportUsage)
             {
             case mint::Gui::ViewportUsage::Parent:
-                setViewportIndexXXX(parentControlData.getViewportIndex());
+                setClipRectXXX(parentControlData.getClipRect());
                 break;
             case mint::Gui::ViewportUsage::ParentDock:
-                setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
+                setClipRectXXX(parentControlData.getClipRectForDocks());
                 break;
             case mint::Gui::ViewportUsage::Child:
-                setViewportIndexXXX(parentControlData.getViewportIndexForChildren());
+                setClipRectXXX(parentControlData.getClipRectForChildren());
                 break;
             default:
                 break;
@@ -576,19 +573,19 @@ namespace mint
             return (_visibleState != VisibleState::Invisible);
         }
 
-        MINT_INLINE const uint32 GuiContext::ControlData::getViewportIndex() const noexcept
+        MINT_INLINE const mint::Rect& GuiContext::ControlData::getClipRect() const noexcept
         {
-            return _viewportIndex;
+            return _clipRect;
         }
 
-        MINT_INLINE const uint32 GuiContext::ControlData::getViewportIndexForChildren() const noexcept
+        MINT_INLINE const mint::Rect& GuiContext::ControlData::getClipRectForChildren() const noexcept
         {
-            return _viewportIndexForChildren;
+            return _clipRectForChildren;
         }
 
-        MINT_INLINE const uint32 GuiContext::ControlData::getViewportIndexForDocks() const noexcept
+        MINT_INLINE const mint::Rect& GuiContext::ControlData::getClipRectForDocks() const noexcept
         {
-            return _viewportIndexForDocks;
+            return _clipRectForDocks;
         }
 
         MINT_INLINE const mint::Vector<uint64>& GuiContext::ControlData::getChildControlDataHashKeyArray() const noexcept
@@ -834,19 +831,19 @@ namespace mint
             _nextChildOffset._y = offsetY;
         }
 
-        MINT_INLINE void GuiContext::ControlData::setViewportIndexXXX(const uint32 viewportIndex) noexcept
+        MINT_INLINE void GuiContext::ControlData::setClipRectXXX(const mint::Rect& clipRect) noexcept
         {
-            _viewportIndex = viewportIndex;
+            _clipRect = clipRect;
         }
 
-        MINT_INLINE void GuiContext::ControlData::setViewportIndexForChildrenXXX(const uint32 viewportIndex) noexcept
+        MINT_INLINE void GuiContext::ControlData::setClipRectForChildrenXXX(const mint::Rect& clipRect) noexcept
         {
-            _viewportIndexForChildren = viewportIndex;
+            _clipRectForChildren = clipRect;
         }
 
-        MINT_INLINE void GuiContext::ControlData::setViewportIndexForDocksXXX(const uint32 viewportIndex) noexcept
+        MINT_INLINE void GuiContext::ControlData::setClipRectForDocksXXX(const mint::Rect& clipRect) noexcept
         {
-            _viewportIndexForDocks = viewportIndex;
+            _clipRectForDocks = clipRect;
         }
 
 

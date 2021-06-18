@@ -15,6 +15,7 @@
 #include <MintMath/Include/Float3.h>
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Int2.h>
+#include <MintMath/Include/Rect.h>
 
 #include <MintRenderingBase/Include/IDxObject.h>
 
@@ -55,7 +56,7 @@ namespace mint
             void                                    setPositionZ(const float s) noexcept;
             void                                    setColor(const mint::RenderingBase::Color& color) noexcept;
             void                                    setColor(const mint::Vector<mint::RenderingBase::Color>& colorArray) noexcept;
-            virtual void                            setViewportIndex(const uint32 viewportIndex) noexcept;
+            virtual void                            setClipRect(const mint::Rect& clipRect) noexcept;
 
         protected:
             const mint::Float4&                     getColorInternal(const uint32 index) const noexcept;
@@ -68,7 +69,7 @@ namespace mint
             mint::Float4                            _position;
             mint::Vector<RenderingBase::Color>      _colorArray;
             mint::RenderingBase::Color              _defaultColor;
-            float                                   _viewportIndex;
+            mint::Rect                              _clipRect;
 
         protected:
             mint::Vector<SB_Transform>              _sbTransformData;

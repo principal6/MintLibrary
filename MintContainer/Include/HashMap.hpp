@@ -460,13 +460,13 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const uint32 HashMap<Key, Value>::computeSegmentIndex(const uint64 keyHash) const noexcept
+    MINT_INLINE const uint32 HashMap<Key, Value>::computeSegmentIndex(const uint64 keyHash) const noexcept
     {
-        return keyHash % (_bucketArray.size() / kSegmentLength);
+        return keyHash % (_bucketArray.capacity() / kSegmentLength);
     }
 
     template<typename Key, typename Value>
-    inline const uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
+    MINT_INLINE const uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
     {
         return (kSegmentLength * computeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
     }

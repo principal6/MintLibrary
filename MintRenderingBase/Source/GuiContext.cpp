@@ -374,16 +374,16 @@ namespace mint
             }
         }
 
-        MINT_INLINE void constraintInnerRect(D3D11_RECT& targetInnerRect, const D3D11_RECT& outerRect)
+        MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
         {
-            targetInnerRect.left = mint::max(targetInnerRect.left, outerRect.left);
-            targetInnerRect.right = mint::min(targetInnerRect.right, outerRect.right);
-            targetInnerRect.top = mint::max(targetInnerRect.top, outerRect.top);
-            targetInnerRect.bottom = mint::min(targetInnerRect.bottom, outerRect.bottom);
+            targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
+            targetInnerRect.right(mint::min(targetInnerRect.right(), outerRect.right()));
+            targetInnerRect.top(mint::max(targetInnerRect.top(), outerRect.top()));
+            targetInnerRect.bottom(mint::min(targetInnerRect.bottom(), outerRect.bottom()));
 
             // Rect Size 가 음수가 되지 않도록 방지!! (중요)
-            targetInnerRect.right = mint::max(targetInnerRect.left, targetInnerRect.right);
-            targetInnerRect.bottom = mint::max(targetInnerRect.top, targetInnerRect.bottom);
+            targetInnerRect.right(mint::max(targetInnerRect.left(), targetInnerRect.right()));
+            targetInnerRect.bottom(mint::max(targetInnerRect.top(), targetInnerRect.bottom()));
         }
 
         MINT_INLINE mint::Float2 getControlLeftCenterPosition(const GuiContext::ControlData& controlData)
@@ -491,9 +491,13 @@ namespace mint
 
         void GuiContext::updateScreenSize(const mint::Float2& newScreenSize)
         {
-            _rootControlData._displaySize = newScreenSize;
             _viewportFullScreen = _graphicDevice->getFullScreenViewport();
-            _scissorRectangleFullScreen = _graphicDevice->getFullScreenScissorRectangle();
+            _clipRectFullScreen = _graphicDevice->getFullScreenClipRect();
+
+            _rootControlData._displaySize = newScreenSize;
+            _rootControlData.setClipRectXXX(_clipRectFullScreen);
+            _rootControlData.setClipRectForChildrenXXX(_clipRectFullScreen);
+            _rootControlData.setClipRectForDocksXXX(_clipRectFullScreen);
 
             _updateScreenSizeCounter = 2;
         }
@@ -952,46 +956,46 @@ namespace mint
                     const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
                     const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
                     {
-                        D3D11_RECT scissorRectangleForMe = mint::RenderingBase::rectToD3dRect(windowControlData.getControlRect());
-                        scissorRectangleForMe.top -= static_cast<LONG>(kTitleBarBaseSize._y);
+                        mint::Rect clipRectForMe = windowControlData.getControlRect();
+                        clipRectForMe.top(clipRectForMe.top() - static_cast<LONG>(kTitleBarBaseSize._y));
                         if (isParentAlsoWindow == true)
                         {
-                            const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
-                            constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
+                            const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
+                            constraintInnerClipRect(clipRectForMe, parentClipRect);
                         }
-                        pushScissorRectangleForMe(windowControlData, scissorRectangleForMe);
+                        setClipRectForMe(windowControlData, clipRectForMe);
                     }
                     {
-                        D3D11_RECT scissorRectangleForDocks = mint::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
-                        scissorRectangleForDocks.top += static_cast<LONG>(kTitleBarBaseSize._y);
+                        mint::Rect clipRectForDocks = windowControlData.getControlPaddedRect();
+                        clipRectForDocks.top(clipRectForDocks.top() + static_cast<LONG>(kTitleBarBaseSize._y));
                         if (isParentAlsoWindow == true)
                         {
-                            const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForDocks()];
-                            constraintInnerRect(scissorRectangleForDocks, parentScissorRectangle);
+                            const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
+                            constraintInnerClipRect(clipRectForDocks, parentClipRect);
 
                         }
-                        pushScissorRectangleForDocks(windowControlData, scissorRectangleForDocks);
+                        setClipRectForDocks(windowControlData, clipRectForDocks);
                     }
                     {
-                        D3D11_RECT scissorRectangleForChildren = mint::RenderingBase::rectToD3dRect(windowControlData.getControlPaddedRect());
-                        scissorRectangleForChildren.top += static_cast<LONG>(
-                            windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
-                        scissorRectangleForChildren.left += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
-                        scissorRectangleForChildren.right -= static_cast<LONG>(
-                            ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
-                        scissorRectangleForChildren.bottom -= static_cast<LONG>(
-                            ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
+                        mint::Rect clipRectForChildren = windowControlData.getControlPaddedRect();
+                        clipRectForChildren.top(clipRectForChildren.top() + static_cast<LONG>(
+                            windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y));
+                        clipRectForChildren.left(clipRectForChildren.left() + static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x));
+                        clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(
+                            ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x));
+                        clipRectForChildren.bottom(clipRectForChildren.bottom() - static_cast<LONG>(
+                            ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y));
                         if (isParentAlsoWindow == true)
                         {
-                            const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndex()];
-                            constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
+                            const mint::Rect& parentClipRect = parentControlData.getClipRect();
+                            constraintInnerClipRect(clipRectForChildren, parentClipRect);
                         }
-                        pushScissorRectangleForChildren(windowControlData, scissorRectangleForChildren);
+                        setClipRectForChildren(windowControlData, clipRectForChildren);
                     }
                 }
 
 
-                shapeFontRendererContext.setViewportIndex(windowControlData.getViewportIndex());
+                shapeFontRendererContext.setClipRect(windowControlData.getClipRect());
 
                 const mint::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
                 shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1067,7 +1071,7 @@ namespace mint
             const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), finalBackgroundColor);
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1102,7 +1106,7 @@ namespace mint
             outIsChecked = controlData._controlValue.getIsToggled();
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1148,7 +1152,7 @@ namespace mint
 
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(labelParam._backgroundColor);
@@ -1257,7 +1261,7 @@ namespace mint
                     mint::Float4 trackRenderPosition = trackCenterPosition - mint::Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
 
                     // Left(or Upper) half circle
-                    shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
+                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRect());
                     shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor));
                     shapeFontRendererContext.setPosition(trackRenderPosition);
                     shapeFontRendererContext.drawHalfCircle(trackRadius, +mint::Math::kPiOverTwo);
@@ -1313,13 +1317,13 @@ namespace mint
             const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
-                D3D11_RECT scissorRectangleForMe = mint::RenderingBase::rectToD3dRect(controlData.getControlRect());
+                mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
-                    const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
-                    constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
+                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
+                    constraintInnerClipRect(clipRectForMe, parentClipRect);
                 }
-                pushScissorRectangleForMe(controlData, scissorRectangleForMe);
+                setClipRectForMe(controlData, clipRectForMe);
             }
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
@@ -1390,7 +1394,7 @@ namespace mint
             
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
@@ -1500,30 +1504,30 @@ namespace mint
 
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
-                D3D11_RECT scissorRectangleForMe = mint::RenderingBase::rectToD3dRect(controlData.getControlRect());
+                mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
-                    const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
-                    constraintInnerRect(scissorRectangleForMe, parentScissorRectangle);
+                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
+                    constraintInnerClipRect(clipRectForMe, parentClipRect);
                 }
-                pushScissorRectangleForMe(controlData, scissorRectangleForMe);
+                setClipRectForMe(controlData, clipRectForMe);
             }
             {
-                D3D11_RECT scissorRectangleForChildren = mint::RenderingBase::rectToD3dRect(controlData.getControlRect());
+                mint::Rect clipRectForChildren = controlData.getControlRect();
                 const float halfRoundnessInPixel = kDefaultRoundnessInPixel * 0.5f;
                 const float quarterRoundnessInPixel = halfRoundnessInPixel * 0.5f;
-                scissorRectangleForChildren.left += static_cast<LONG>(quarterRoundnessInPixel);
-                scissorRectangleForChildren.right -= static_cast<LONG>(halfRoundnessInPixel);
+                clipRectForChildren.left(clipRectForChildren.left() + static_cast<LONG>(quarterRoundnessInPixel));
+                clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(halfRoundnessInPixel));
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
-                    const D3D11_RECT& parentScissorRectangle = _scissorRectangleArrayPerFrame[parentControlData.getViewportIndexForChildren()];
-                    constraintInnerRect(scissorRectangleForChildren, parentScissorRectangle);
+                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
+                    constraintInnerClipRect(clipRectForChildren, parentClipRect);
                 }
-                pushScissorRectangleForChildren(controlData, scissorRectangleForChildren);
+                setClipRectForChildren(controlData, clipRectForChildren);
             }
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1592,7 +1596,7 @@ namespace mint
             }
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(finalColor);
@@ -1657,7 +1661,7 @@ namespace mint
             }
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-            shapeFontRendererContext.setViewportIndex(menuBar.getViewportIndex());
+            shapeFontRendererContext.setClipRect(menuBar.getClipRect());
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBar);
             shapeFontRendererContext.setColor(color);
@@ -1723,7 +1727,7 @@ namespace mint
             }
             
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-            shapeFontRendererContext.setViewportIndex(menuBarItem.getViewportIndex());
+            shapeFontRendererContext.setClipRect(menuBarItem.getClipRect());
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBarItem);
             shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1803,7 +1807,7 @@ namespace mint
             menuItem._controlValue.setIsToggled(isMeSelected);
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-            shapeFontRendererContext.setViewportIndex(menuItem.getViewportIndex());
+            shapeFontRendererContext.setClipRect(menuItem.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(menuItem);
             shapeFontRendererContext.setColor(finalBackgroundColor);
@@ -1950,7 +1954,7 @@ namespace mint
                     mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
                     {
                         const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
-                        shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+                        shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
                         shapeFontRendererContext.setColor(trackColor);
 
                         mint::Float4 trackRenderPosition = mint::Float4(trackControlData._position._x, trackControlData._position._y + radius, 0.0f, 1.0f);
@@ -1990,7 +1994,7 @@ namespace mint
                     mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
                     {
                         const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
-                        shapeFontRendererContext.setViewportIndex(trackControlData.getViewportIndex());
+                        shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
                         shapeFontRendererContext.setColor(trackColor);
 
                         mint::Float4 trackRenderPosition = mint::Float4(trackControlData._position._x + radius, trackControlData._position._y, 0.0f, 1.0f);
@@ -2072,7 +2076,7 @@ namespace mint
                 // Rendering thumb
                 {
                     const float rectLength = thumbSize - radius * 2.0f;
-                    shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
+                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRect());
                     shapeFontRendererContext.setColor(thumbColor);
 
                     mint::Float4 thumbRenderPosition = mint::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
@@ -2137,7 +2141,7 @@ namespace mint
                 // Rendering thumb
                 {
                     const float rectLength = thumbSize - radius * 2.0f;
-                    shapeFontRendererContext.setViewportIndex(thumbControlData.getViewportIndex());
+                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRect());
                     shapeFontRendererContext.setColor(thumbColor);
 
                     mint::Float4 thumbRenderPosition = mint::Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
@@ -2187,7 +2191,7 @@ namespace mint
                                 }
                             }
                         }
-                        shapeFontRendererContext.setViewportIndex(controlData.getViewportIndexForDocks());
+                        shapeFontRendererContext.setClipRect(controlData.getClipRectForDocks());
                         
                         shapeFontRendererContext.setColor(getNamedColor(NamedColor::Dock));
                         shapeFontRendererContext.setPosition(mint::Float4(dockPosition._x + dockSize._x * 0.5f, dockPosition._y + dockSize._y * 0.5f, 0, 0));
@@ -2204,41 +2208,32 @@ namespace mint
             _controlStackPerFrame.pop_back();
         }
 
-        void GuiContext::pushScissorRectangleForMe(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+        void GuiContext::setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect)
         {
-            controlData.setViewportIndexXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
-            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
-            _viewportArrayPerFrame.push_back(_viewportFullScreen);
+            controlData.setClipRectXXX(clipRect);
 
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             if (parentControlData.isTypeOf(ControlType::Window) == true && controlData.isTypeOf(ControlType::Window) == true)
             {
                 if (controlData.isDocking() == true)
                 {
-                    controlData.setViewportIndexXXX(parentControlData.getViewportIndexForDocks());
+                    controlData.setClipRectXXX(parentControlData.getClipRectForDocks());
                 }
                 else
                 {
-                    controlData.setViewportIndexXXX(parentControlData.getViewportIndex());
+                    controlData.setClipRectXXX(parentControlData.getClipRect());
                 }
             }
         }
 
-        void GuiContext::pushScissorRectangleForDocks(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+        void GuiContext::setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect)
         {
-            controlData.setViewportIndexForDocksXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
-            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
-            _viewportArrayPerFrame.push_back(_viewportFullScreen);
+            controlData.setClipRectForDocksXXX(clipRect);
         }
 
-        void GuiContext::pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle)
+        void GuiContext::setClipRectForChildren(ControlData& controlData, const mint::Rect& clipRect)
         {
-            controlData.setViewportIndexForChildrenXXX(static_cast<uint32>(_viewportArrayPerFrame.size()));
-
-            _scissorRectangleArrayPerFrame.push_back(scissorRectangle);
-            _viewportArrayPerFrame.push_back(_viewportFullScreen);
+            controlData.setClipRectForChildrenXXX(clipRect);
         }
 
         mint::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const mint::Float2& titleBarSize, const mint::Rect& innerPadding, VisibleState& inoutParentVisibleState)
@@ -2290,7 +2285,7 @@ namespace mint
 
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
 
             shapeFontRendererContext.setPosition(getControlCenterPosition(controlData));
             if (isParentControlDocking == true)
@@ -2380,7 +2375,7 @@ namespace mint
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(controlColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawCircle(radius);
@@ -2413,7 +2408,7 @@ namespace mint
             processShowOnlyControl(controlData, dummyColor);
 
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             shapeFontRendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
@@ -2421,7 +2416,7 @@ namespace mint
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
 
             const mint::Float4& textPosition = mint::Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + mint::Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
-            shapeFontRendererContext.setViewportIndex(controlData.getViewportIndex());
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             shapeFontRendererContext.drawDynamicText(tooltipText, textPosition, 
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered, kTooltipFontScale));
@@ -2535,6 +2530,11 @@ namespace mint
                 if (isNewData == true)
                 {
                     controlData._resizingMask = prepareControlDataParam._initialResizingMask;
+
+                    // 중요!!!
+                    controlData.setClipRectXXX(_clipRectFullScreen);
+                    controlData.setClipRectForChildrenXXX(_clipRectFullScreen);
+                    controlData.setClipRectForDocksXXX(_clipRectFullScreen);
                 }
             }
 
@@ -3094,7 +3094,7 @@ namespace mint
                 mint::Float4 renderPosition = parentControlCenterPosition;
                 renderPosition._x = boxRect.center()._x;
                 renderPosition._y = boxRect.center()._y;
-                _shapeFontRendererContextTopMost.setViewportIndex(parentControlData.getViewportIndex());
+                _shapeFontRendererContextTopMost.setClipRect(parentControlData.getClipRect());
 
                 const bool isMouseInBoxRect = boxRect.contains(_mousePosition);
                 _shapeFontRendererContextTopMost.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
@@ -3103,7 +3103,7 @@ namespace mint
             };
             std::function fnRenderPreview = [&](const mint::Rect& previewRect)
             {
-                _shapeFontRendererContextTopMost.setViewportIndex(0);
+                _shapeFontRendererContextTopMost.setClipRect(0);
                 _shapeFontRendererContextTopMost.setColor(color.scaledA(0.5f));
                 _shapeFontRendererContextTopMost.setPosition(mint::Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
                 _shapeFontRendererContextTopMost.drawRectangle(previewRect.size(), 0.0f, 0.0f);
@@ -3687,9 +3687,8 @@ namespace mint
             }
 
             // Viewport setting
-            _graphicDevice->useScissorRectanglesWithMultipleViewports();
-            _graphicDevice->getDxDeviceContext()->RSSetViewports(static_cast<UINT>(_viewportArrayPerFrame.size()), &_viewportArrayPerFrame[0]);
-            _graphicDevice->getDxDeviceContext()->RSSetScissorRects(static_cast<UINT>(_scissorRectangleArrayPerFrame.size()), &_scissorRectangleArrayPerFrame[0]);
+            _graphicDevice->useScissorRectangles();
+            _graphicDevice->getDxDeviceContext()->RSSetViewports(1, &_viewportFullScreen);
 
             // Background => Foreground => TopMost
             _shapeFontRendererContextBackground.renderAndFlush();
@@ -3710,13 +3709,6 @@ namespace mint
             _controlStackPerFrame.clear();
 
             _rootControlData.clearPerFrameData();
-
-            _viewportArrayPerFrame.clear();
-            _scissorRectangleArrayPerFrame.clear();
-
-            // FullScreen Viewport & ScissorRectangle is at index 0!
-            _viewportArrayPerFrame.push_back(_viewportFullScreen);
-            _scissorRectangleArrayPerFrame.push_back(_scissorRectangleFullScreen);
 
             if (_resizedControlHashKey == 0)
             {

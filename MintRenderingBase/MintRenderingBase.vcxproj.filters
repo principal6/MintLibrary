@@ -42,9 +42,6 @@
     <ClInclude Include="Include\IRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\RectangleRendererContext.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\ShapeFontRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -152,9 +149,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\IDxObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\RectangleRendererContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShapeFontRendererContext.cpp">

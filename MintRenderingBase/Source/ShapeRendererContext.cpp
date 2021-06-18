@@ -27,6 +27,8 @@ namespace mint
 
         void ShapeRendererContext::initializeShaders() noexcept
         {
+            _clipRect = _graphicDevice->getFullScreenClipRect();
+
             mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             {
@@ -53,7 +55,7 @@ namespace mint
                         result._color           = input._color;
                         result._texCoord        = input._texCoord;
                         result._info.x          = (float)shapeType;
-                        result._viewportIndex   = (uint)input._info.x;
+                        result._viewportIndex   = 0;
                         
                         return result;
                     }
@@ -170,7 +172,7 @@ namespace mint
                 mint::RenderingBase::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
-                _lowLevelRenderer->render(mint::RenderingBase::RenderingPrimitive::TriangleList);
+                _lowLevelRenderer->executeRenderCommands();
 
                 if (getUseMultipleViewports() == true)
                 {
@@ -202,8 +204,9 @@ namespace mint
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const mint::Float2(&pointArray)[2] = { pointA, pointB };
-            auto& vertexArray = _lowLevelRenderer->vertices();
-
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+            
             uint8 flip = 0;
             if (validate == true)
             {
@@ -215,6 +218,7 @@ namespace mint
             }
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = color;
             v._position = _position;
             v._position._x = pointArray[0 ^ flip]._x;
@@ -222,7 +226,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 0.0f;
             v._texCoord._w = abs(pointA._x - pointB._x);
-            v._info._x = _viewportIndex;
+            //v._info._x = _viewportIndex;
             v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::QuadraticBezierTriangle);
             vertexArray.push_back(v);
 
@@ -238,11 +242,14 @@ namespace mint
             v._texCoord._y = 1.0f;
             vertexArray.push_back(v);
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indices();
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawSolidTriangle(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC)
@@ -255,7 +262,9 @@ namespace mint
         void ShapeRendererContext::drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::RenderingBase::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
-            
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
             RenderingBase::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
@@ -263,7 +272,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = pointA._x;
                 v._position._y = pointA._y;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
@@ -276,23 +285,27 @@ namespace mint
                 vertexArray.push_back(v);
             }
             
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indices();
             {
-                indexArray.push_back(vertexOffset + 0);
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 2);
             }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const float halfRadius = radius * 0.5f;
-
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
             
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
             v._position._x = -halfRadius;
@@ -300,7 +313,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 1.0f;
             v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
-            v._info._x = _viewportIndex;
+            //v._info._x = _viewportIndex;
             v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
             vertexArray.push_back(v);
 
@@ -315,12 +328,15 @@ namespace mint
             v._texCoord._y = 0.0f;
             vertexArray.push_back(v);
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
             auto& indexArray = _lowLevelRenderer->indices();
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
             
             pushTransformToBuffer(rotationAngle);
         }
@@ -337,9 +353,11 @@ namespace mint
         void ShapeRendererContext::drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::RenderingBase::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            auto& vertexArray = _lowLevelRenderer->vertices();
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
                 v._position = _position;
@@ -349,7 +367,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = halfRadius * 2.0f;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
@@ -369,17 +387,20 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - 4;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - 4;
             auto& indexArray = _lowLevelRenderer->indices();
             {
-                indexArray.push_back(vertexOffset + 0);
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 2);
 
-                indexArray.push_back(vertexOffset + 0);
-                indexArray.push_back(vertexOffset + 2);
-                indexArray.push_back(vertexOffset + 3);
+                indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 2);
+                indexArray.push_back(vertexBase + 3);
             }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawHalfCircle(const float radius, const float rotationAngle)
@@ -404,10 +425,11 @@ namespace mint
         void ShapeRendererContext::drawCircle(const float radius, const bool insideOut)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
-
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
                 v._position = _position;
@@ -417,7 +439,7 @@ namespace mint
                 v._texCoord._y = +1.0f;
                 v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
                 v._texCoord._w = radius;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circle);
                 vertexArray.push_back(v);
 
@@ -440,20 +462,23 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             
             auto& indexArray = _lowLevelRenderer->indices();
             {
                 // Body left upper
-                indexArray.push_back(vertexOffset + 0);
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 2);
 
                 // Body right lower
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 3);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 3);
+                indexArray.push_back(vertexBase + 2);
             }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(0.0f);
         }
@@ -464,10 +489,11 @@ namespace mint
             const float halfArcAngle = mint::Math::clamp(arcAngle, 0.0f, mint::Math::kPi) * 0.5f;
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
-
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             
             // Right arc section
             {
@@ -479,7 +505,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = radius;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
@@ -517,24 +543,27 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
             auto& indexArray = _lowLevelRenderer->indices();
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
 
-            indexArray.push_back(vertexOffset + 3);
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 4);
+            indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 4);
 
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 2);
-            indexArray.push_back(vertexOffset + 5);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 5);
 
-            indexArray.push_back(vertexOffset + 4);
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 5);
+            indexArray.push_back(vertexBase + 4);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 5);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -546,10 +575,11 @@ namespace mint
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
             const float tanHalfArcAngle = tan(halfArcAngle);
-
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
 
             // Right outer arc section
             {
@@ -561,7 +591,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = +1.0f; // @IMPORTANT
                 v._texCoord._w = outerRadius;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
@@ -655,49 +685,52 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
             auto& indexArray = _lowLevelRenderer->indices();
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             
             // Right outer arc section
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
 
             // Left outer arc section
-            indexArray.push_back(vertexOffset + 3);
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 4);
+            indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 4);
 
             // Middle-right
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 2);
-            indexArray.push_back(vertexOffset + 5);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 5);
 
             // Middle-left
-            indexArray.push_back(vertexOffset + 4);
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 5);
+            indexArray.push_back(vertexBase + 4);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 5);
 
             // Right inner arc section
-            indexArray.push_back(vertexOffset + 6);
-            indexArray.push_back(vertexOffset + 7);
-            indexArray.push_back(vertexOffset + 8);
+            indexArray.push_back(vertexBase + 6);
+            indexArray.push_back(vertexBase + 7);
+            indexArray.push_back(vertexBase + 8);
 
             // Left inner arc section
-            indexArray.push_back(vertexOffset + 9);
-            indexArray.push_back(vertexOffset + 6);
-            indexArray.push_back(vertexOffset + 10);
+            indexArray.push_back(vertexBase + 9);
+            indexArray.push_back(vertexBase + 6);
+            indexArray.push_back(vertexBase + 10);
 
             // Right side
-            indexArray.push_back(vertexOffset + 5);
-            indexArray.push_back(vertexOffset + 2);
-            indexArray.push_back(vertexOffset + 11);
+            indexArray.push_back(vertexBase + 5);
+            indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 11);
 
             // Left side
-            indexArray.push_back(vertexOffset + 4);
-            indexArray.push_back(vertexOffset + 5);
-            indexArray.push_back(vertexOffset + 12);
+            indexArray.push_back(vertexBase + 4);
+            indexArray.push_back(vertexBase + 5);
+            indexArray.push_back(vertexBase + 12);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -725,16 +758,17 @@ namespace mint
         void ShapeRendererContext::drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::RenderingBase::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
-
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
                 v._position = _position;
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y - halfSize._y;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
@@ -751,19 +785,22 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
             auto& indexArray = _lowLevelRenderer->indices();
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 
             // Body left upper
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
 
             // Body right lower
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 3);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 2);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawTaperedRectangle(const mint::Float2& size, const float tapering, const float bias, const float rotationAngle)
@@ -773,15 +810,17 @@ namespace mint
             static constexpr uint32 kDeltaVertexCount = 4;
             const float horizontalOffsetL = horizontalSpace * bias;
             const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            auto& vertexArray = _lowLevelRenderer->vertices();
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
                 v._position = _position;
                 v._position._x = -halfSize._x + horizontalOffsetL;
                 v._position._y = -halfSize._y;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
@@ -798,17 +837,20 @@ namespace mint
                 vertexArray.push_back(v);
             }
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indices();
             {
-                indexArray.push_back(vertexOffset + 0);
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 2);
 
-                indexArray.push_back(vertexOffset + 1);
-                indexArray.push_back(vertexOffset + 3);
-                indexArray.push_back(vertexOffset + 2);
+                indexArray.push_back(vertexBase + 1);
+                indexArray.push_back(vertexBase + 3);
+                indexArray.push_back(vertexBase + 2);
             }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -1047,14 +1089,16 @@ namespace mint
             const mint::Float2 v2 = p0 + normal * halfThickness;
             const mint::Float2 v3 = p1 + normal * halfThickness;
 
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             RenderingBase::VS_INPUT_SHAPE v;
+            auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
             v._position._x = v0._x;
             v._position._y = v0._y;
-            v._info._x = _viewportIndex;
+            //v._info._x = _viewportIndex;
             v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
             vertexArray.push_back(v);
 
@@ -1070,15 +1114,18 @@ namespace mint
             v._position._y = v3._y;
             vertexArray.push_back(v);
 
-            const uint32 vertexOffset = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indices();
-            indexArray.push_back(vertexOffset + 0);
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 2);
 
-            indexArray.push_back(vertexOffset + 1);
-            indexArray.push_back(vertexOffset + 3);
-            indexArray.push_back(vertexOffset + 2);
+            indexArray.push_back(vertexBase + 1);
+            indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 2);
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(0.0f, false);
         }

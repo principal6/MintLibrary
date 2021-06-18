@@ -47,8 +47,8 @@ namespace mint
             GlyphMetricType         _horiBearingX;
             GlyphMetricType         _horiBearingY;
             GlyphMetricType         _horiAdvance;
-            mint::Float2              _uv0;
-            mint::Float2              _uv1;
+            mint::Float2            _uv0;
+            mint::Float2            _uv1;
         };
 
         class GlyphRange
@@ -92,7 +92,7 @@ namespace mint
             TextRenderDirectionVert     _directionVert;
             float                       _scale;
             bool                        _drawShade;
-            mint::Float4x4                _transformMatrix;
+            mint::Float4x4              _transformMatrix;
         };
 
         class FontRendererContext final : public IRendererContext
@@ -103,13 +103,15 @@ namespace mint
             static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
             static constexpr const char* const                                  kFontFileExtension = ".fnt";
             static constexpr const char* const                                  kFontFileMagicNumber = "FNT";
+            static constexpr int32                                              kVertexCountPerGlyph = 4;
+            static constexpr int32                                              kIndexCountPerGlyph = 6;
 
         public:
             struct FontData
             {
-                mint::Vector<GlyphInfo>   _glyphInfoArray;
-                mint::Vector<uint32>      _charCodeToGlyphIndexMap;
-                DxObjectId              _fontTextureId;
+                mint::Vector<GlyphInfo>     _glyphInfoArray;
+                mint::Vector<uint32>        _charCodeToGlyphIndexMap;
+                DxObjectId                  _fontTextureId;
             };
 
         public:
@@ -170,7 +172,7 @@ namespace mint
             FT_Library                          _ftLibrary;
             FT_Face                             _ftFace;
             int16                               _fontSize;
-            mint::Vector<GlyphRange>              _glyphRangeArray;
+            mint::Vector<GlyphRange>            _glyphRangeArray;
         
         private:
             FontData                            _fontData;

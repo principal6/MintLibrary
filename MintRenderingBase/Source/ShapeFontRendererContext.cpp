@@ -57,11 +57,11 @@ namespace mint
             flush();
         }
 
-        void ShapeFontRendererContext::setViewportIndex(const uint32 viewportIndex) noexcept
+        void ShapeFontRendererContext::setClipRect(const mint::Rect& clipRect) noexcept
         {
-            __super::setViewportIndex(viewportIndex);
+            __super::setClipRect(clipRect);
 
-            _fontRendererContext.setViewportIndex(viewportIndex);
+            _fontRendererContext.setClipRect(clipRect);
         }
 
         const bool ShapeFontRendererContext::initializeFontData(const FontRendererContext::FontData& fontData) noexcept

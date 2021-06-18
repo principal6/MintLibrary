@@ -16,7 +16,6 @@
 #include <MintRenderingBase/Include/GuiContext.h>
 #include <MintRenderingBase/Include/IDxObject.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
-#include <MintRenderingBase/Include/RectangleRendererContext.h>
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>

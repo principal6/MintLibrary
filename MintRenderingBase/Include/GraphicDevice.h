@@ -15,7 +15,6 @@
 #include <MintRenderingBase/Include/DxShader.h>
 #include <MintRenderingBase/Include/DxResource.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
-#include <MintRenderingBase/Include/RectangleRendererContext.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/FontRendererContext.h>
 
@@ -76,18 +75,17 @@ namespace mint
             void                                                endRendering();
 
         public:
-            void                                                useScissorRectanglesWithMultipleViewports() noexcept;
+            void                                                useScissorRectangles() noexcept;
             void                                                useFullScreenViewport() noexcept;
             void                                                useWireFrameNoCullingRasterizer() noexcept;
             void                                                useWireFrameCullBackRasterizer() noexcept;
             void                                                useSolidCullBackRasterizer() noexcept;
             const D3D11_VIEWPORT&                               getFullScreenViewport() const noexcept;
-            const D3D11_RECT&                                   getFullScreenScissorRectangle() const noexcept;
+            const mint::Rect&                                   getFullScreenClipRect() const noexcept;
 
         public:
             mint::RenderingBase::DxShaderPool&                  getShaderPool() noexcept;
             mint::RenderingBase::DxResourcePool&                getResourcePool() noexcept;
-            mint::RenderingBase::RectangleRendererContext&      getRectangleRendererContext() noexcept;
             mint::RenderingBase::ShapeRendererContext&          getShapeRendererContext() noexcept;
             mint::RenderingBase::FontRendererContext&           getFontRendererContext() noexcept;
             mint::RenderingBase::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
@@ -138,7 +136,7 @@ namespace mint
             ComPtr<ID3D11RasterizerState>                       _rasterizerStateWireFrameCullBack;
             ComPtr<ID3D11RasterizerState>                       _rasterizerStateScissorRectangles;
             D3D11_VIEWPORT                                      _fullScreenViewport;
-            D3D11_RECT                                          _fullScreenScissorRectangle;
+            mint::Rect                                          _fullScreenClipRect;
 
         private:
             DxShaderHeaderMemory                                _shaderHeaderMemory;
@@ -165,7 +163,6 @@ namespace mint
             mint::CppHlsl::Interpreter                          _cppHlslStructuredBuffers;
 
         private:
-            mint::RenderingBase::RectangleRendererContext       _rectangleRendererContext;
             mint::RenderingBase::ShapeRendererContext           _shapeRendererContext;
             mint::RenderingBase::FontRendererContext            _fontRendererContext;
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContext;

@@ -27,11 +27,6 @@ namespace mint
             return _resourcePool;
         }
 
-        MINT_INLINE mint::RenderingBase::RectangleRendererContext& GraphicDevice::getRectangleRendererContext() noexcept
-        {
-            return _rectangleRendererContext; 
-        }
-
         MINT_INLINE mint::RenderingBase::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
         {
             return _shapeRendererContext;

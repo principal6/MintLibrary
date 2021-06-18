@@ -27,7 +27,7 @@ namespace mint
             virtual void                                renderAndFlush() noexcept final;
 
         public:
-            virtual void                                setViewportIndex(const uint32 viewportIndex) noexcept override final;
+            virtual void                                setClipRect(const mint::Rect& clipRect) noexcept override final;
 
         public:
             const bool                                  initializeFontData(const FontRendererContext::FontData& fontData) noexcept;

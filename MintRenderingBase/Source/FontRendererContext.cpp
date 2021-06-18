@@ -483,6 +483,8 @@ namespace mint
 
         void FontRendererContext::initializeShaders() noexcept
         {
+            _clipRect = _graphicDevice->getFullScreenClipRect();
+
             mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             // Compile vertex shader and create input layer
@@ -512,7 +514,7 @@ namespace mint
                         result._texCoord        = input._texCoord;
                         result._info            = input._info;
                         result._info.x          = (float)drawShade;
-                        result._viewportIndex   = (uint)input._info.x;
+                        result._viewportIndex   = 0;
                         return result;
                     }
                     )"
@@ -609,7 +611,7 @@ namespace mint
                 mint::RenderingBase::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
-                _lowLevelRenderer->render(mint::RenderingBase::RenderingPrimitive::TriangleList);
+                _lowLevelRenderer->executeRenderCommands();
 
                 if (getUseMultipleViewports() == true)
                 {
@@ -647,11 +649,17 @@ namespace mint
             }
             postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
 
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
             mint::Float2 glyphPosition = mint::Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
                 drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade);
             }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
             const mint::Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
@@ -726,7 +734,7 @@ namespace mint
                 v._color = _defaultColor;
                 v._texCoord._x = glyphInfo._uv0._x;
                 v._texCoord._y = glyphInfo._uv0._y;
-                v._info._x = _viewportIndex;
+                //v._info._x = _viewportIndex;
                 v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
                 v._info._z = 1.0f; // used by ShapeFontRendererContext
                 vertexArray.push_back(v);

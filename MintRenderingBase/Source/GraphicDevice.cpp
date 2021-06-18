@@ -29,10 +29,8 @@ namespace mint
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
             , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
-            , _fullScreenScissorRectangle{}
             , _shaderPool{ this, &_shaderHeaderMemory, mint::RenderingBase::DxShaderVersion::v_5_0 }
             , _resourcePool{ this }
-            , _rectangleRendererContext{ this }
             , _shapeRendererContext{ this }
             , _fontRendererContext{ this }
             , _shapeFontRendererContext{ this }
@@ -306,7 +304,6 @@ namespace mint
 
         void GraphicDevice::initializeShaders()
         {
-            _rectangleRendererContext.initializeShaders();
             _shapeRendererContext.initializeShaders();
             _fontRendererContext.initializeShaders();
             _shapeFontRendererContext.initializeShaders();
@@ -358,10 +355,10 @@ namespace mint
             _fullScreenViewport.TopLeftX = 0.0f;
             _fullScreenViewport.TopLeftY = 0.0f;
 
-            _fullScreenScissorRectangle.left = 0;
-            _fullScreenScissorRectangle.right = 0;
-            _fullScreenScissorRectangle.right = windowSize._x;
-            _fullScreenScissorRectangle.bottom = windowSize._y;
+            _fullScreenClipRect.left(0);
+            _fullScreenClipRect.right(static_cast<float>(windowSize._x));
+            _fullScreenClipRect.top(0);
+            _fullScreenClipRect.bottom(static_cast<float>(windowSize._y));
         }
 
         void GraphicDevice::setDefaultRenderTargetsAndDepthStencil()
@@ -383,7 +380,6 @@ namespace mint
             _deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);
             _deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-            _rectangleRendererContext.flush();
             _shapeRendererContext.flush();
             _fontRendererContext.flush();
             _shapeFontRendererContext.flush();
@@ -400,7 +396,6 @@ namespace mint
 #pragma region Renderer Contexts
             useFullScreenViewport();
 
-            _rectangleRendererContext.renderAndFlush();
             _shapeRendererContext.renderAndFlush();
             _fontRendererContext.renderAndFlush();
             _shapeFontRendererContext.renderAndFlush();
@@ -412,7 +407,7 @@ namespace mint
             _needEndRenderingCall = false;
         }
 
-        void GraphicDevice::useScissorRectanglesWithMultipleViewports() noexcept
+        void GraphicDevice::useScissorRectangles() noexcept
         {
             _deviceContext->RSSetState(_rasterizerStateScissorRectangles.Get());
         }
@@ -443,9 +438,9 @@ namespace mint
             return _fullScreenViewport;
         }
 
-        const D3D11_RECT& GraphicDevice::getFullScreenScissorRectangle() const noexcept
+        const mint::Rect& GraphicDevice::getFullScreenClipRect() const noexcept
         {
-            return _fullScreenScissorRectangle;
+            return _fullScreenClipRect;
         }
         
         void GraphicDevice::initialize2DProjectionMatrix(const mint::Float2& windowSize) noexcept

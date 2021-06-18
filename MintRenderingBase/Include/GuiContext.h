@@ -408,9 +408,9 @@ namespace mint
                 const bool                                  isRootControl() const noexcept;
                 const bool                                  isVisibleState(const VisibleState visibleState) const noexcept;
                 const bool                                  isControlVisible() const noexcept;
-                const uint32                                getViewportIndex() const noexcept;
-                const uint32                                getViewportIndexForChildren() const noexcept;
-                const uint32                                getViewportIndexForDocks() const noexcept;
+                const mint::Rect&                           getClipRect() const noexcept;
+                const mint::Rect&                           getClipRectForChildren() const noexcept;
+                const mint::Rect&                           getClipRectForDocks() const noexcept;
                 const mint::Vector<uint64>&                 getChildControlDataHashKeyArray() const noexcept;
                 const mint::Vector<uint64>&                 getPreviousChildControlDataHashKeyArray() const noexcept;
                 const uint16                                getPreviousChildControlCount() const noexcept;
@@ -449,9 +449,9 @@ namespace mint
             public:
                 void                                        setParentHashKeyXXX(const uint64 parentHashKey) noexcept;
                 void                                        setOffsetY_XXX(const float offsetY) noexcept;
-                void                                        setViewportIndexXXX(const uint32 viewportIndex) noexcept;
-                void                                        setViewportIndexForChildrenXXX(const uint32 viewportIndex) noexcept;
-                void                                        setViewportIndexForDocksXXX(const uint32 viewportIndex) noexcept;
+                void                                        setClipRectXXX(const mint::Rect& clipRect) noexcept;
+                void                                        setClipRectForChildrenXXX(const mint::Rect& clipRect) noexcept;
+                void                                        setClipRectForDocksXXX(const mint::Rect& clipRect) noexcept;
 
             public:
                 uint8                                       _updateCount;
@@ -484,9 +484,9 @@ namespace mint
                 mint::Float2                                _nextChildOffset; // Every new child sets this offset to calculate next _childAt
                 ControlType                                 _controlType;
                 VisibleState                                _visibleState;
-                uint32                                      _viewportIndex;
-                uint32                                      _viewportIndexForChildren; // Used by window
-                uint32                                      _viewportIndexForDocks;
+                mint::Rect                                  _clipRect;
+                mint::Rect                                  _clipRectForChildren; // Used by window
+                mint::Rect                                  _clipRectForDocks;
                 mint::Vector<uint64>                        _childControlDataHashKeyArray;
                 mint::Vector<uint64>                        _previousChildControlDataHashKeyArray;
                 uint16                                      _previousMaxChildControlCount;
@@ -644,9 +644,9 @@ namespace mint
         private:
             void                                                processDock(const ControlData& controlData, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
             void                                                endControlInternal(const ControlType controlType);
-            void                                                pushScissorRectangleForMe(ControlData& controlData, const D3D11_RECT& scissorRectangle);
-            void                                                pushScissorRectangleForDocks(ControlData& controlData, const D3D11_RECT& scissorRectangle);
-            void                                                pushScissorRectangleForChildren(ControlData& controlData, const D3D11_RECT& scissorRectangle);
+            void                                                setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect);
+            void                                                setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect);
+            void                                                setClipRectForChildren(ControlData& controlData, const mint::Rect& clipRect);
 
         private:
             const ControlData&                                  getControlStackTopXXX() const noexcept;
@@ -748,11 +748,8 @@ namespace mint
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextForeground;
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextTopMost;
 
-            mint::Vector<D3D11_VIEWPORT>                        _viewportArrayPerFrame;
-            mint::Vector<D3D11_RECT>                            _scissorRectangleArrayPerFrame;
-
             D3D11_VIEWPORT                                      _viewportFullScreen;
-            D3D11_RECT                                          _scissorRectangleFullScreen;
+            mint::Rect                                          _clipRectFullScreen;
 
             int8                                                _updateScreenSizeCounter;
 
