@@ -64,7 +64,6 @@ namespace mint
 
         void InstantRenderer::drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration, const mint::RenderingBase::Color& color) noexcept
         {
-
             mint::Rendering::MeshGenerator::GeoSpherePram geosphereParam;
             geosphereParam._radius = radius;
             geosphereParam._subdivisionIteration = subdivisionIteration;
