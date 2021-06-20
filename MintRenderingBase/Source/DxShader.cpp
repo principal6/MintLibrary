@@ -207,11 +207,11 @@ namespace mint
                     for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                     {
                         const CppHlsl::TypeMetaData& memberTypeMetaData = inputElementTypeMetaData->getMember(memberIndex);
-                        pushInputElement(shader._inputElementSet, memberTypeMetaData, memberIndex);
+                        pushInputElement(shader._inputElementSet, *inputElementTypeMetaData, memberTypeMetaData);
                     }
                 }
                 
-
+                // Input slot Ã³¸®
                 const uint32 slottedStreamDataCount = inputElementTypeMetaData->getSlottedStreamDataCount();
                 for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
                 {
@@ -219,7 +219,7 @@ namespace mint
                     const uint32 memberCount = slottedStreamData.getMemberCount();
                     for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                     {
-                        pushInputElement(shader._inputElementSet, slottedStreamData.getMember(memberIndex), slottedStreamDataIndex);
+                        pushInputElement(shader._inputElementSet, slottedStreamData, slottedStreamData.getMember(memberIndex));
                     }
                 }
 
@@ -234,18 +234,23 @@ namespace mint
             return true;
         }
 
-        void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const mint::CppHlsl::TypeMetaData& memberTypeMetaData, const int32 memberIndex)
+        void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const mint::CppHlsl::TypeMetaData& outerDataTypeMetaData, const mint::CppHlsl::TypeMetaData& memberTypeMetaData)
         {
             inputElementSet._semanticNameArray.push_back(CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
 
             D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-            inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray[memberIndex].c_str();
+            inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.back().c_str();
             inputElementDescriptor.SemanticIndex = 0;
             inputElementDescriptor.Format = CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
             inputElementDescriptor.InputSlot = memberTypeMetaData.getInputSlot();
             inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
             inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-            inputElementDescriptor.InstanceDataStepRate = 0;
+            inputElementDescriptor.InstanceDataStepRate = outerDataTypeMetaData.getInstanceDataStepRate();
+            if (0 < inputElementDescriptor.InstanceDataStepRate)
+            {
+                inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
+            }
+            
             inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
         }
 

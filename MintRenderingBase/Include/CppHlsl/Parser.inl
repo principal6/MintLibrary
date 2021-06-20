@@ -9,6 +9,8 @@ namespace mint
         inline TypeMetaData::TypeMetaData()
             : _isBuiltIn{ false }
             , _registerIndex{ kInvalidRegisterIndex }
+            , _inputSlot{ 0 }
+            , _instanceDataStepRate{ 0 }
             , _size{ 0 }
             , _byteOffset{ 0 }
         {
@@ -49,6 +51,11 @@ namespace mint
         MINT_INLINE void TypeMetaData::setInputSlot(const uint32 inputSlot)
         {
             _inputSlot = inputSlot;
+        }
+
+        MINT_INLINE void TypeMetaData::setInstanceDataStepRate(const uint32 instanceDataStepRate)
+        {
+            _instanceDataStepRate = instanceDataStepRate;
         }
 
         MINT_INLINE void TypeMetaData::pushMember(const TypeMetaData& member)
@@ -104,6 +111,11 @@ namespace mint
         MINT_INLINE const uint32 TypeMetaData::getInputSlot() const noexcept
         {
             return _inputSlot;
+        }
+
+        MINT_INLINE const uint32 TypeMetaData::getInstanceDataStepRate() const noexcept
+        {
+            return _instanceDataStepRate;
         }
 
         MINT_INLINE const uint32 TypeMetaData::getMemberCount() const noexcept

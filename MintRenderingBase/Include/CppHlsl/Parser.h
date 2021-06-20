@@ -30,6 +30,7 @@ namespace mint
 
             SemanticName,
             RegisterIndex,
+            InstanceData,
         };
 
         struct SyntaxTreeItem
@@ -59,6 +60,7 @@ namespace mint
             void                            setSemanticName(const std::string& semanticName);
             void                            setRegisterIndex(const uint32 registerIndex);
             void                            setInputSlot(const uint32 inputSlot);
+            void                            setInstanceDataStepRate(const uint32 instanceDataStepRate);
             void                            pushMember(const TypeMetaData& member);
             void                            pushSlottedStreamData(const TypeMetaData& slottedStreamData);
 
@@ -74,6 +76,7 @@ namespace mint
             const std::string&              getSemanticName() const noexcept;
             const uint32                    getRegisterIndex() const noexcept;
             const uint32                    getInputSlot() const noexcept;
+            const uint32                    getInstanceDataStepRate() const noexcept;
             const uint32                    getMemberCount() const noexcept;
             const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
             const uint32                    getSlottedStreamDataCount() const noexcept;
@@ -92,6 +95,7 @@ namespace mint
             std::string                     _semanticName;
             uint32                          _registerIndex;
             uint32                          _inputSlot;
+            uint32                          _instanceDataStepRate;
             uint32                          _size;          // Byte count
             uint32                          _byteOffset;
             mint::Vector<TypeMetaData>      _memberArray;   // Member variables

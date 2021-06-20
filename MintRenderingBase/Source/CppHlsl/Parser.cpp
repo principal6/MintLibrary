@@ -245,6 +245,13 @@ namespace mint
                 TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
                 outAdvanceCount += 3 + 1;
             }
+            else if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_INSTANCE_DATA")
+            {
+                syntaxTreeItem._classifier = SyntaxClassifier::InstanceData;
+                syntaxTreeItem._value = _symbolTable[symbolPosition + 2]._symbolString;
+                TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                outAdvanceCount += 3 + 1;
+            }
             else
             {
                 MINT_NEVER;
@@ -326,6 +333,11 @@ namespace mint
                 {
                     const int32 registerIndex = std::stoi(childNodeData._value);
                     typeMetaData.setRegisterIndex(registerIndex);
+                }
+                else if (childNodeData._classifier == SyntaxClassifier::InstanceData)
+                {
+                    const int32 instanceDataStepRate = std::stoi(childNodeData._value);
+                    typeMetaData.setInstanceDataStepRate(instanceDataStepRate);
                 }
                 else
                 {

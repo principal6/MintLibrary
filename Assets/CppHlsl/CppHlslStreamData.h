@@ -21,13 +21,12 @@ namespace mint
             float4              _tangentV;        // tangent   + texCoord[1]
             float4              _bitangentW;      // bitangent + texCoord[2]
             uint                _materialId{ 0 };
-            uint                _instanceId{ 0 };
         };
 
+        // ### VS_INPUT on input slot 1
         //struct VS_INPUT1
         //{
         //    uint                _materialIdTest{ 0 };
-        //    uint                _instanceIdTest{ 0 };
         //};
 
         struct VS_INPUT_SHAPE

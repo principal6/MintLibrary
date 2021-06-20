@@ -123,6 +123,7 @@ namespace mint
             case mint::RenderingBase::RenderingPrimitive::TriangleList:
                 _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                 _graphicDevice->getDxDeviceContext()->DrawIndexed(indexCount, 0, 0);
+
                 break;
             default:
                 break;

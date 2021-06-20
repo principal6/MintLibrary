@@ -14,6 +14,7 @@ namespace mint
 {
 #define CPP_HLSL_SEMANTIC_NAME(SemanticName)
 #define CPP_HLSL_REGISTER_INDEX(Index)
+#define CPP_HLSL_INSTANCE_DATA(DataStepRate)
 
 
     using uint              = uint32;
