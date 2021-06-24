@@ -26,6 +26,7 @@ namespace mint
 
         enum class RenderingPrimitive
         {
+            INVALID,
             LineList,
             TriangleList,
         };

@@ -114,15 +114,16 @@ namespace mint
 
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             const uint32 indexCount = static_cast<uint32>(_indices.size());
+
+            _graphicDevice->getStateManager().setIaRenderingPrimitive(renderingPrimitive);
+
             switch (renderingPrimitive)
             {
             case mint::RenderingBase::RenderingPrimitive::LineList:
-                _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-                _graphicDevice->getDxDeviceContext()->Draw(vertexCount, 0);
+                _graphicDevice->draw(vertexCount, 0);
                 break;
             case mint::RenderingBase::RenderingPrimitive::TriangleList:
-                _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                _graphicDevice->getDxDeviceContext()->DrawIndexed(indexCount, 0, 0);
+                _graphicDevice->drawIndexed(indexCount, 0, 0);
 
                 break;
             default:
@@ -160,17 +161,17 @@ namespace mint
                 const RenderCommand& renderCommand = _renderCommands[renderCommandIndex];
 
                 D3D11_RECT scissorRect = mint::RenderingBase::rectToD3dRect(renderCommand._clipRect);
-                _graphicDevice->getDxDeviceContext()->RSSetScissorRects(1, &scissorRect);
+                _graphicDevice->getStateManager().setRsScissorRectangle(scissorRect);
+
+                _graphicDevice->getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
 
                 switch (renderCommand._primitive)
                 {
                 case mint::RenderingBase::RenderingPrimitive::LineList:
-                    _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-                    _graphicDevice->getDxDeviceContext()->Draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+                    _graphicDevice->draw(renderCommand._vertexCount, renderCommand._vertexOffset);
                     break;
                 case mint::RenderingBase::RenderingPrimitive::TriangleList:
-                    _graphicDevice->getDxDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-                    _graphicDevice->getDxDeviceContext()->DrawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+                    _graphicDevice->drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
                     break;
                 default:
                     break;

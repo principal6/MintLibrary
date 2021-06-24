@@ -984,7 +984,7 @@ const bool testWindow()
 
             graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
             graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());
-            graphicDevice.updateViewProjectionMatrix();
+            graphicDevice.updateCbView();
 
             meshRenderer.render(objectPool);
             instantRenderer.render();

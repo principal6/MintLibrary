@@ -49,67 +49,73 @@ namespace mint
         {
             friend DxResourcePool;
 
-            static constexpr uint32         kIndexBufferElementStride = sizeof(IndexElementType);
-            static constexpr DXGI_FORMAT    kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
+            static constexpr uint32             kIndexBufferElementStride = sizeof(IndexElementType);
+            static constexpr DXGI_FORMAT        kIndexBufferFormat = DXGI_FORMAT::DXGI_FORMAT_R16_UINT;
 
         private:
-            static DXGI_FORMAT              getDxgiFormat(const DxTextureFormat format);
-            static const uint32             getColorCount(const DxTextureFormat format);
+            static DXGI_FORMAT                  getDxgiFormat(const DxTextureFormat format);
+            static const uint32                 getColorCount(const DxTextureFormat format);
 
         private:
-                                            DxResource(GraphicDevice* const graphicDevice);
+                                                DxResource(GraphicDevice* const graphicDevice);
 
         public:
-            virtual                         ~DxResource() = default;
+            virtual                             ~DxResource() = default;
 
         private:
-            const bool                      createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const bool                      createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
+            const bool                          createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const bool                          createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
         public:
-            const bool                      isValid() const noexcept;
+            const bool                          isValid() const noexcept;
         
         public:
-            void                            updateBuffer(const void* const resourceContent, const uint32 elementCount);
-            void                            updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            void                                updateBuffer(const void* const resourceContent, const uint32 elementCount);
+            void                                updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
         
         public:
-            void                            updateTexture(const void* const resourceContent);
-            void                            updateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
+            void                                updateTexture(const void* const resourceContent);
+            void                                updateTexture(const void* const resourceContent, const uint32 width, const uint32 height);
         
         private:
-            void                            updateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
+            void                                updateContentInternal(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 width);
 
         public:
-            void                            setOffset(const uint32 elementOffset);
+            void                                setOffset(const uint32 elementOffset);
         
         public:
-            const uint32                    getRegisterIndex() const noexcept;
+            const uint32                        getRegisterIndex() const noexcept;
+            ID3D11Buffer* const*                getBuffer() const noexcept;
+            ID3D11ShaderResourceView* const*    getResourceView() const noexcept;
         
         public:
-            void                            bindAsInput() const noexcept;
-            void                            bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
+            const bool                          needToBind() const noexcept;
+            void                                bindAsInput() const noexcept;
+            void                                bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
 
         private:
-            ComPtr<ID3D11Resource>          _resource;
-            ComPtr<ID3D11View>              _view;
+            ComPtr<ID3D11Resource>              _resource;
+            ComPtr<ID3D11View>                  _view;
 
         private:
-            DxResourceType                  _resourceType;
-            uint32                          _resourceCapacity;
+            DxResourceType                      _resourceType;
+            uint32                              _resourceCapacity;
 
-            uint32                          _elementStride;
-            uint32                          _elementMaxCount;
-            uint32                          _elementOffset;
+            uint32                              _elementStride;
+            uint32                              _elementMaxCount;
+            uint32                              _elementOffset;
 
-            DxTextureFormat                 _textureFormat;
-            uint16                          _textureWidth;
-            uint16                          _textureHeight;
+            DxTextureFormat                     _textureFormat;
+            uint16                              _textureWidth;
+            uint16                              _textureHeight;
 
-            uint16                          _registerIndex;
+            uint16                              _registerIndex;
 
         private:
-            static DxResource               s_invalidInstance;
+            mutable bool                        _needToBind;
+
+        private:
+            static DxResource                   s_invalidInstance;
         };
 
 
@@ -137,7 +143,7 @@ namespace mint
             DxResource&                     getResource(const DxObjectId& objectId);
 
         private:
-            mint::Vector<DxResource>          _resourceArray{};
+            mint::Vector<DxResource>        _resourceArray{};
         };
     }
 }

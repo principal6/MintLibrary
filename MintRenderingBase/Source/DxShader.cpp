@@ -67,16 +67,16 @@ namespace mint
         {
             if (_shaderType == DxShaderType::VertexShader)
             {
-                _graphicDevice->getDxDeviceContext()->VSSetShader(static_cast<ID3D11VertexShader*>(_shader.Get()), nullptr, 0);
-                _graphicDevice->getDxDeviceContext()->IASetInputLayout(_inputLayout.Get());
+                _graphicDevice->getStateManager().setVsShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
+                _graphicDevice->getStateManager().setIaInputLayout(_inputLayout.Get());
             }
             else if (_shaderType == DxShaderType::GeometryShader)
             {
-                _graphicDevice->getDxDeviceContext()->GSSetShader(static_cast<ID3D11GeometryShader*>(_shader.Get()), nullptr, 0);
+                _graphicDevice->getStateManager().setGsShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
             }
             else if (_shaderType == DxShaderType::PixelShader)
             {
-                _graphicDevice->getDxDeviceContext()->PSSetShader(static_cast<ID3D11PixelShader*>(_shader.Get()), nullptr, 0);
+                _graphicDevice->getStateManager().setPsShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
             }
         }
 
@@ -84,16 +84,16 @@ namespace mint
         {
             if (_shaderType == DxShaderType::VertexShader)
             {
-                _graphicDevice->getDxDeviceContext()->VSSetShader(nullptr, nullptr, 0);
-                _graphicDevice->getDxDeviceContext()->IASetInputLayout(nullptr);
+                _graphicDevice->getStateManager().setVsShader(nullptr);
+                _graphicDevice->getStateManager().setIaInputLayout(nullptr);
             }
             else if (_shaderType == DxShaderType::GeometryShader)
             {
-                _graphicDevice->getDxDeviceContext()->GSSetShader(nullptr, nullptr, 0);
+                _graphicDevice->getStateManager().setGsShader(nullptr);
             }
             else if (_shaderType == DxShaderType::PixelShader)
             {
-                _graphicDevice->getDxDeviceContext()->PSSetShader(nullptr, nullptr, 0);
+                _graphicDevice->getStateManager().setPsShader(nullptr);
             }
         }
 

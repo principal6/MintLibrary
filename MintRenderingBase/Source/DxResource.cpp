@@ -55,6 +55,7 @@ namespace mint
             , _textureWidth{ 0 }
             , _textureHeight{ 0 }
             , _registerIndex{ 0 }
+            , _needToBind{ true }
         {
             __noop;
         }
@@ -268,15 +269,15 @@ namespace mint
 
                     createTexture(_textureFormat, resourceContent, width, elementCount / width);
                 }
+
+                _needToBind = true;
             }
             else
             {
-                D3D11_MAPPED_SUBRESOURCE mappedVertexResource{};
-                if (_graphicDevice->getDxDeviceContext()->Map(_resource.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexResource) == S_OK)
+                RenderingBase::SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
+                if (safeResourceMapper.isValid() == true)
                 {
-                    memcpy(mappedVertexResource.pData, resourceContent, _elementStride * elementCount);
-
-                    _graphicDevice->getDxDeviceContext()->Unmap(_resource.Get(), 0);
+                    safeResourceMapper.set(resourceContent, _elementStride * elementCount);
                 }
             }
         }
@@ -291,20 +292,37 @@ namespace mint
             return _registerIndex;
         }
 
+        ID3D11Buffer* const* DxResource::getBuffer() const noexcept
+        {
+            return reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf());
+        }
+
+        ID3D11ShaderResourceView* const* DxResource::getResourceView() const noexcept
+        {
+            return reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf());
+        }
+
+        const bool DxResource::needToBind() const noexcept
+        {
+            return _needToBind;
+        }
+
         void DxResource::bindAsInput() const noexcept
         {
             if (_resourceType == DxResourceType::VertexBuffer)
             {
-                _graphicDevice->getDxDeviceContext()->IASetVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
+                _graphicDevice->getStateManager().setIaVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
             }
             else if (_resourceType == DxResourceType::IndexBuffer)
             {
-                _graphicDevice->getDxDeviceContext()->IASetIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
+                _graphicDevice->getStateManager().setIaIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
             }
             else
             {
                 MINT_LOG_ERROR("김장원", "bindToShader 를 호출해야 합니다!");
             }
+
+            _needToBind = false;
         }
 
         void DxResource::bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept
@@ -313,15 +331,15 @@ namespace mint
             {
                 if (shaderType == DxShaderType::VertexShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->VSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
+                    _graphicDevice->getStateManager().setVsConstantBuffers(*this);
                 }
                 else if (shaderType == DxShaderType::GeometryShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->GSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
+                    _graphicDevice->getStateManager().setGsConstantBuffers(*this);
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->PSSetConstantBuffers(bindingSlot, 1, reinterpret_cast<ID3D11Buffer* const*>(_resource.GetAddressOf()));
+                    _graphicDevice->getStateManager().setPsConstantBuffers(*this);
                 }
                 else
                 {
@@ -332,15 +350,15 @@ namespace mint
             {
                 if (shaderType == DxShaderType::VertexShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->VSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const *>(_view.GetAddressOf()));
+                    _graphicDevice->getStateManager().setVsResources(*this);
                 }
                 else if (shaderType == DxShaderType::GeometryShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->GSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf()));
+                    _graphicDevice->getStateManager().setGsResources(*this);
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
-                    _graphicDevice->getDxDeviceContext()->PSSetShaderResources(bindingSlot, 1, reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf()));
+                    _graphicDevice->getStateManager().setPsResources(*this);
                 }
                 else
                 {
@@ -351,6 +369,8 @@ namespace mint
             {
                 MINT_LOG_ERROR("김장원", "bindAsInpt 을 호출해야 합니다!");
             }
+
+            _needToBind = false;
         }
 
 

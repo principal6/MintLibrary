@@ -3688,7 +3688,6 @@ namespace mint
 
             // Viewport setting
             _graphicDevice->useScissorRectangles();
-            _graphicDevice->getDxDeviceContext()->RSSetViewports(1, &_viewportFullScreen);
 
             // Background => Foreground => TopMost
             _shapeFontRendererContextBackground.renderAndFlush();

@@ -57,6 +57,11 @@ namespace mint
             return _cppHlslConstantBuffers;
         }
 
+        MINT_INLINE GraphicDevice::StateManager& GraphicDevice::getStateManager() noexcept
+        {
+            return _stateManager;
+        }
+
         MINT_INLINE DxObjectId GraphicDevice::getCommonCbTransformId() const noexcept
         {
             return _cbTransformId;
@@ -75,11 +80,6 @@ namespace mint
         MINT_INLINE ID3D11Device* GraphicDevice::getDxDevice() noexcept
         {
             return _device.Get();
-        }
-        
-        MINT_INLINE ID3D11DeviceContext* GraphicDevice::getDxDeviceContext() noexcept
-        {
-            return _deviceContext.Get();
         }
     }
 }
