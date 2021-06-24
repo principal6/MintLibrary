@@ -353,11 +353,14 @@ namespace mint
                         // Selection
                         if (isShiftKeyDown == true && param._keyCode != mint::Window::EventData::KeyCode::NONE)
                         {
-                            TextBoxHelpers::processSelection(caretAt, caretAt, controlData);
+                            TextBoxHelpers::processSelection(oldCaretAt, caretAt, controlData);
                         }
                     }
 
-                    if (isShiftKeyDown == false && param._keyCode != mint::Window::EventData::KeyCode::NONE && param._keyCode != mint::Window::EventData::KeyCode::Control && param._keyCode != mint::Window::EventData::KeyCode::Alt)
+                    if (isShiftKeyDown == false && isControlKeyDown == false &&
+                        param._keyCode != mint::Window::EventData::KeyCode::NONE &&
+                        param._keyCode != mint::Window::EventData::KeyCode::Control &&
+                        param._keyCode != mint::Window::EventData::KeyCode::Alt)
                     {
                         // Selection «ÿ¡¶
                         uint16& selectionLength = controlData._controlValue.getSelectionLength();
@@ -405,6 +408,8 @@ namespace mint
             , _shapeFontRendererContextTopMost{ _graphicDevice }
             , _focusedControlHashKey{ 0 }
             , _hoveredControlHashKey{ 0 }
+            , _pressedControlHashKey{ 0 }
+            , _clickedControlHashKeyPerFrame{ 0 }
             , _hoverStartTimeMs{ 0 }
             , _hoverStarted{ false }
             , _isDragBegun{ false }
@@ -2816,10 +2821,13 @@ namespace mint
                 return;
             }
 
+            const bool isRootControl =  controlData.isRootControl();
             const bool shouldIgnoreInteraction_ = shouldIgnoreInteraction(_mousePosition, controlData);
             const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mousePosition, parentControlData);
             const bool isMouseInInteractionArea = isInControlInteractionArea(_mousePosition, controlData);
-            if ((controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && isMouseInInteractionArea == true && shouldIgnoreInteraction_ == false)
+            if ((controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && 
+                isMouseInInteractionArea == true && 
+                (shouldIgnoreInteraction_ == false || true == isRootControl))
             {
                 // Hovered (at least)
 
@@ -3702,6 +3710,17 @@ namespace mint
 
         void GuiContext::resetPerFrameStates()
         {
+            if (_mouseDownUp == true)
+            {
+                if (_pressedControlHashKey == 1)
+                {
+                    _focusedControlHashKey = 0;
+                }
+
+                _pressedControlHashKey = 0;
+            }
+            
+
             _isMouseInteractionDonePerFrame = false;
             _clickedControlHashKeyPerFrame = 0;
 
