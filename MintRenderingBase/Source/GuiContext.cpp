@@ -377,28 +377,31 @@ namespace mint
             }
         }
 
-        MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
+        namespace ControlCommonHelpers
         {
-            targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
-            targetInnerRect.right(mint::min(targetInnerRect.right(), outerRect.right()));
-            targetInnerRect.top(mint::max(targetInnerRect.top(), outerRect.top()));
-            targetInnerRect.bottom(mint::min(targetInnerRect.bottom(), outerRect.bottom()));
+            MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
+            {
+                targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
+                targetInnerRect.right(mint::min(targetInnerRect.right(), outerRect.right()));
+                targetInnerRect.top(mint::max(targetInnerRect.top(), outerRect.top()));
+                targetInnerRect.bottom(mint::min(targetInnerRect.bottom(), outerRect.bottom()));
 
-            // Rect Size 가 음수가 되지 않도록 방지!! (중요)
-            targetInnerRect.right(mint::max(targetInnerRect.left(), targetInnerRect.right()));
-            targetInnerRect.bottom(mint::max(targetInnerRect.top(), targetInnerRect.bottom()));
+                // Rect Size 가 음수가 되지 않도록 방지!! (중요)
+                targetInnerRect.right(mint::max(targetInnerRect.left(), targetInnerRect.right()));
+                targetInnerRect.bottom(mint::max(targetInnerRect.top(), targetInnerRect.bottom()));
+            }
+
+            MINT_INLINE mint::Float2 getControlLeftCenterPosition(const GuiContext::ControlData& controlData)
+            {
+                return mint::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
+            };
+
+            MINT_INLINE mint::Float2 getControlRightCenterPosition(const GuiContext::ControlData& controlData)
+            {
+                return mint::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
+            };
         }
-
-        MINT_INLINE mint::Float2 getControlLeftCenterPosition(const GuiContext::ControlData& controlData)
-        {
-            return mint::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
-        };
-
-        MINT_INLINE mint::Float2 getControlRightCenterPosition(const GuiContext::ControlData& controlData)
-        {
-            return mint::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
-        };
-
+        
 
         GuiContext::GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
@@ -406,6 +409,8 @@ namespace mint
             , _shapeFontRendererContextBackground{ _graphicDevice }
             , _shapeFontRendererContextForeground{ _graphicDevice }
             , _shapeFontRendererContextTopMost{ _graphicDevice }
+            , _updateScreenSizeCounter{ 0 }
+            , _isMouseInteractionDoneThisFrame{ false }
             , _focusedControlHashKey{ 0 }
             , _hoveredControlHashKey{ 0 }
             , _pressedControlHashKey{ 0 }
@@ -417,36 +422,33 @@ namespace mint
             , _isResizeBegun{ false }
             , _resizedControlHashKey{ 0 }
             , _resizingMethod{ ResizingMethod::ResizeOnly }
-            , _mouseButtonDown{ false }
-            , _mouseDownUp{ false }
-            , _cursorType{ mint::Window::CursorType::Arrow }
             , _caretBlinkIntervalMs{ 0 }
             , _wcharInput{ L'\0'}
             , _wcharInputCandiate{ L'\0'}
             , _keyCode{ mint::Window::EventData::KeyCode::NONE }
             , _tooltipTextFinal{ nullptr }
         {
-            getNamedColor(NamedColor::NormalState) = mint::RenderingBase::Color(45, 47, 49);
-            getNamedColor(NamedColor::HoverState) = getNamedColor(NamedColor::NormalState).addedRgb(0.25f);
-            getNamedColor(NamedColor::PressedState) = mint::RenderingBase::Color(80, 100, 120);
+            setNamedColor(NamedColor::NormalState, mint::RenderingBase::Color(45, 47, 49));
+            setNamedColor(NamedColor::HoverState, getNamedColor(NamedColor::NormalState).addedRgb(0.25f));
+            setNamedColor(NamedColor::PressedState, mint::RenderingBase::Color(80, 100, 120));
 
-            getNamedColor(NamedColor::WindowFocused) = mint::RenderingBase::Color(3, 5, 7);
-            getNamedColor(NamedColor::WindowOutOfFocus) = getNamedColor(NamedColor::WindowFocused);
-            getNamedColor(NamedColor::Dock) = getNamedColor(NamedColor::NormalState);
-            getNamedColor(NamedColor::ShownInDock) = mint::RenderingBase::Color(23, 25, 27);
-            getNamedColor(NamedColor::HighlightColor) = mint::RenderingBase::Color(100, 180, 255);
+            setNamedColor(NamedColor::WindowFocused, mint::RenderingBase::Color(3, 5, 7));
+            setNamedColor(NamedColor::WindowOutOfFocus, getNamedColor(NamedColor::WindowFocused));
+            setNamedColor(NamedColor::Dock, getNamedColor(NamedColor::NormalState));
+            setNamedColor(NamedColor::ShownInDock, mint::RenderingBase::Color(23, 25, 27));
+            setNamedColor(NamedColor::HighlightColor, mint::RenderingBase::Color(100, 180, 255));
 
-            getNamedColor(NamedColor::TitleBarFocused) = getNamedColor(NamedColor::WindowFocused);
-            getNamedColor(NamedColor::TitleBarOutOfFocus) = getNamedColor(NamedColor::WindowOutOfFocus);
+            setNamedColor(NamedColor::TitleBarFocused, getNamedColor(NamedColor::WindowFocused));
+            setNamedColor(NamedColor::TitleBarOutOfFocus, getNamedColor(NamedColor::WindowOutOfFocus));
 
-            getNamedColor(NamedColor::TooltipBackground) = mint::RenderingBase::Color(200, 255, 220);
+            setNamedColor(NamedColor::TooltipBackground, mint::RenderingBase::Color(200, 255, 220));
 
-            getNamedColor(NamedColor::ScrollBarTrack) = mint::RenderingBase::Color(80, 82, 84);
-            getNamedColor(NamedColor::ScrollBarThumb) = getNamedColor(NamedColor::ScrollBarTrack).addedRgb(0.25f);
+            setNamedColor(NamedColor::ScrollBarTrack, mint::RenderingBase::Color(80, 82, 84));
+            setNamedColor(NamedColor::ScrollBarThumb, getNamedColor(NamedColor::ScrollBarTrack).addedRgb(0.25f));
 
-            getNamedColor(NamedColor::LightFont) = mint::RenderingBase::Color(233, 235, 237);
-            getNamedColor(NamedColor::DarkFont) = getNamedColor(NamedColor::LightFont).addedRgb(-0.75f);
-            getNamedColor(NamedColor::ShownInDockFont) = getNamedColor(NamedColor::HighlightColor);
+            setNamedColor(NamedColor::LightFont, mint::RenderingBase::Color(233, 235, 237));
+            setNamedColor(NamedColor::DarkFont, getNamedColor(NamedColor::LightFont).addedRgb(-0.75f));
+            setNamedColor(NamedColor::ShownInDockFont, getNamedColor(NamedColor::HighlightColor));
         }
 
         GuiContext::~GuiContext()
@@ -457,6 +459,9 @@ namespace mint
         void GuiContext::initialize(const char* const font)
         {
             _fontSize = static_cast<float>(_graphicDevice->getFontRendererContext().getFontSize());
+            
+            _caretBlinkIntervalMs = _graphicDevice->getWindow()->getCaretBlinkIntervalMs();
+
             const mint::RenderingBase::FontRendererContext::FontData& fontData = _graphicDevice->getFontRendererContext().getFontData();
             if (_shapeFontRendererContextBackground.initializeFontData(fontData) == false)
             {
@@ -482,21 +487,18 @@ namespace mint
             _shapeFontRendererContextTopMost.initializeShaders();
             _shapeFontRendererContextTopMost.setUseMultipleViewports();
 
-            _caretBlinkIntervalMs = _graphicDevice->getWindow()->getCaretBlinkIntervalMs();
-            
             const mint::Float2& windowSize = mint::Float2(_graphicDevice->getWindowSize());
             _rootControlData = ControlData(1, 0, mint::Gui::ControlType::ROOT, windowSize);
             _rootControlData._isFocusable = false;
 
             updateScreenSize(windowSize);
 
-            resetNextStates();
+            _nextControlStates.reset();
             resetPerFrameStates();
         }
 
         void GuiContext::updateScreenSize(const mint::Float2& newScreenSize)
         {
-            _viewportFullScreen = _graphicDevice->getFullScreenViewport();
             _clipRectFullScreen = _graphicDevice->getFullScreenClipRect();
 
             _rootControlData._displaySize = newScreenSize;
@@ -510,8 +512,7 @@ namespace mint
         void GuiContext::handleEvents(const mint::Window::IWindow* const window)
         {
             // 초기화
-            _mouseDownUp = false;
-            _mouseButtonDownFirst = false;
+            _mouseStates.resetPerFrame();
 
             const mint::Window::WindowsWindow* const windowsWindow = static_cast<const mint::Window::WindowsWindow*>(window);
             if (windowsWindow->hasEvent() == true)
@@ -519,15 +520,14 @@ namespace mint
                 const mint::Window::EventData& eventData = windowsWindow->peekEvent();
                 if (eventData._type == mint::Window::EventType::MouseMove)
                 {
-                    _mousePosition = eventData._value.getMousePosition();
+                    _mouseStates.setPosition(eventData._value.getMousePosition());
                 }
                 else if (eventData._type == mint::Window::EventType::MouseDown)
                 {
                     MINT_LOG("김장원", "Event: MouseDown");
 
-                    _mouseDownPosition = eventData._value.getMousePosition();
-                    _mouseButtonDown = true;
-                    _mouseButtonDownFirst = true;
+                    _mouseStates.setButtonDown();
+                    _mouseStates.setButtonDownPosition(eventData._value.getMousePosition());
                 }
                 else if (eventData._type == mint::Window::EventType::MouseUp)
                 {
@@ -538,16 +538,12 @@ namespace mint
                         updateDockDatum(_taskWhenMouseUp.getUpdateDockDatum());
                     }
 
-                    _mouseUpPosition = eventData._value.getMousePosition();
-                    if (_mouseButtonDown == true)
-                    {
-                        _mouseDownUp = true;
-                    }
-                    _mouseButtonDown = false;
+                    _mouseStates.setButtonUp();
+                    _mouseStates.setButtonUpPosition(eventData._value.getMousePosition());
                 }
                 else if (eventData._type == mint::Window::EventType::MouseWheel)
                 {
-                    _mouseWheel = eventData._value.getMouseWheel();
+                    _mouseStates._mouseWheel = eventData._value.getMouseWheel();
                 }
                 else if (eventData._type == mint::Window::EventType::KeyStroke)
                 {
@@ -566,7 +562,7 @@ namespace mint
             }
 
             // Root 컨트롤의 Interaction 이 가장 먼저 처리되어야 한다!
-            processControlInteractionInternal(_rootControlData, true);
+            processControlInteractionInternal(_rootControlData, false);
         }
 
         const bool GuiContext::isInControlInternal(const mint::Float2& screenPosition, const mint::Float2& controlPosition, const mint::Float2& controlPositionOffset, const mint::Float2& interactionSize) const noexcept
@@ -966,7 +962,7 @@ namespace mint
                         if (isParentAlsoWindow == true)
                         {
                             const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
-                            constraintInnerClipRect(clipRectForMe, parentClipRect);
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
                         }
                         setClipRectForMe(windowControlData, clipRectForMe);
                     }
@@ -976,7 +972,7 @@ namespace mint
                         if (isParentAlsoWindow == true)
                         {
                             const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
-                            constraintInnerClipRect(clipRectForDocks, parentClipRect);
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForDocks, parentClipRect);
 
                         }
                         setClipRectForDocks(windowControlData, clipRectForDocks);
@@ -993,7 +989,7 @@ namespace mint
                         if (isParentAlsoWindow == true)
                         {
                             const mint::Rect& parentClipRect = parentControlData.getClipRect();
-                            constraintInnerClipRect(clipRectForChildren, parentClipRect);
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentClipRect);
                         }
                         setClipRectForChildren(windowControlData, clipRectForChildren);
                     }
@@ -1212,7 +1208,7 @@ namespace mint
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
             
             mint::RenderingBase::Color trackbColor = getNamedColor(NamedColor::HoverState);
-            processShowOnlyControl(trackControlData, trackbColor, true);
+            processShowOnlyControl(trackControlData, trackbColor, false);
 
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
@@ -1326,7 +1322,7 @@ namespace mint
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
                     const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    constraintInnerClipRect(clipRectForMe, parentClipRect);
+                    ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
                 }
                 setClipRectForMe(controlData, clipRectForMe);
             }
@@ -1355,7 +1351,7 @@ namespace mint
                 processInputParam._currentTimeMs = mint::Profiler::getCurrentTimeMs();
                 processInputParam._caretBlinkIntervalMs = _caretBlinkIntervalMs;
                 processInputParam._keyCode = _keyCode;
-                processInputParam._mousePosition = _mousePosition;
+                processInputParam._mousePosition = _mouseStates.getPosition();
                 processInputParam._wasFocused = wasFocused;
                 processInputParam._wcharInput = _wcharInput;
                 processInputParam._wcharInputCandiate = _wcharInputCandiate;
@@ -1408,7 +1404,7 @@ namespace mint
 
             // Text 및 Caret 렌더링
             const uint16 caretState = controlData._controlValue.getCaretState();
-            const mint::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
             const bool needToRenderCaret = (isFocused == true && caretState == 0);
             const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
@@ -1505,7 +1501,7 @@ namespace mint
             outSelectedListItemIndex = controlData._controlValue.getSelectedItemIndex();
 
             mint::RenderingBase::Color finalBackgroundColor = getNamedColor(NamedColor::LightFont);
-            processShowOnlyControl(controlData, finalBackgroundColor, true);
+            processShowOnlyControl(controlData, finalBackgroundColor, false);
 
             const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
@@ -1513,7 +1509,7 @@ namespace mint
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
                     const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    constraintInnerClipRect(clipRectForMe, parentClipRect);
+                    ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
                 }
                 setClipRectForMe(controlData, clipRectForMe);
             }
@@ -1526,7 +1522,7 @@ namespace mint
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 {
                     const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    constraintInnerClipRect(clipRectForChildren, parentClipRect);
+                    ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentClipRect);
                 }
                 setClipRectForChildren(controlData, clipRectForChildren);
             }
@@ -1608,7 +1604,7 @@ namespace mint
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            const mint::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(controlData);
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             shapeFontRendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0),
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -1643,7 +1639,7 @@ namespace mint
             prepareControlData(menuBar, prepareControlDataParam);
 
             const bool wasToggled = menuBar._controlValue.getIsToggled();
-            if (_pressedControlHashKey != 0 && isInControlInternal(_mousePosition, menuBar._position, mint::Float2::kZero, mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y)) == false)
+            if (_pressedControlHashKey != 0 && isInControlInternal(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y)) == false)
             {
                 menuBar._controlValue.setIsToggled(false);
             }
@@ -1659,7 +1655,7 @@ namespace mint
             }
 
             mint::RenderingBase::Color color = getNamedColor(NamedColor::NormalState);
-            processShowOnlyControl(menuBar, color, true);
+            processShowOnlyControl(menuBar, color, false);
             if (isMenuBarParentRoot == true)
             {
                 color.a(1.0f);
@@ -1739,7 +1735,7 @@ namespace mint
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(menuBarItem._displaySize, 0.0f, 0.0f, 0.0f);
 
-            const mint::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(menuBarItem);
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(menuBarItem);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
             shapeFontRendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f, controlLeftCenterPosition._y, 0, 0),
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Centered, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -1822,7 +1818,7 @@ namespace mint
             const uint16 previousMaxChildCount = menuItem.getPreviousMaxChildControlCount();
             if (0 < previousMaxChildCount)
             {
-                const mint::Float2& controlRightCenterPosition = getControlRightCenterPosition(menuItem);
+                const mint::Float2& controlRightCenterPosition = ControlCommonHelpers::getControlRightCenterPosition(menuItem);
                 mint::Float2 a = controlRightCenterPosition + mint::Float2(-14, -5);
                 mint::Float2 b = controlRightCenterPosition + mint::Float2( -4,  0);
                 mint::Float2 c = controlRightCenterPosition + mint::Float2(-14, +5);
@@ -1830,7 +1826,7 @@ namespace mint
                 shapeFontRendererContext.drawSolidTriangle(a, b, c);
             }
 
-            const mint::Float2& controlLeftCenterPosition = getControlLeftCenterPosition(menuItem);
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(menuItem);
             shapeFontRendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
             shapeFontRendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + menuItem.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0), 
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -1945,7 +1941,7 @@ namespace mint
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
 
             mint::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
-            processShowOnlyControl(trackControlData, trackColor, true);
+            processShowOnlyControl(trackControlData, trackColor, false);
 
             // Vertical Track
             if (isVert == true)
@@ -2186,9 +2182,9 @@ namespace mint
                         const mint::Float2& dockSize = controlData.getDockSize(dockingMethodIter);
                         const mint::Float2& dockPosition = controlData.getDockPosition(dockingMethodIter);
 
-                        if (_mouseButtonDownFirst == true)
+                        if (_mouseStates.isButtonDownThisFrame() == true)
                         {
-                            if (isInControlInternal(_mouseDownPosition, dockPosition, mint::Float2::kZero, dockSize) == true)
+                            if (isInControlInternal(_mouseStates.getButtonDownPosition(), dockPosition, mint::Float2::kZero, dockSize) == true)
                             {
                                 if (isDescendantControlInclusive(controlData, _focusedControlHashKey) == false)
                                 {
@@ -2549,33 +2545,39 @@ namespace mint
             // Display size
             if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
             {
-                const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
-                if (_nextControlSizeNonContrainedToParent == true)
+                const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+                if (_nextControlStates._nextControlSizeNonContrainedToParent == true)
                 {
-                    controlData._displaySize._x = (_nextDesiredControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextDesiredControlSize._x;
-                    controlData._displaySize._y = (_nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextDesiredControlSize._y;
+                    controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextControlStates._nextDesiredControlSize._x;
+                    controlData._displaySize._y = (_nextControlStates._nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextControlStates._nextDesiredControlSize._y;
                 }
                 else
                 {
-                    controlData._displaySize._x = (_nextDesiredControlSize._x <= 0.0f) ? mint::min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) :
-                        ((_nextSizingForced == true) ? _nextDesiredControlSize._x : mint::min(maxDisplaySizeX, _nextDesiredControlSize._x));
-                    controlData._displaySize._y = (_nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y :
-                        ((_nextSizingForced == true) ? _nextDesiredControlSize._y : mint::max(prepareControlDataParam._initialDisplaySize._y, _nextDesiredControlSize._y));
+                    controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) 
+                        ? mint::min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) 
+                        : ((_nextControlStates._nextSizingForced == true) 
+                            ? _nextControlStates._nextDesiredControlSize._x 
+                            : mint::min(maxDisplaySizeX, _nextControlStates._nextDesiredControlSize._x));
+                    controlData._displaySize._y = (_nextControlStates._nextDesiredControlSize._y <= 0.0f)
+                        ? prepareControlDataParam._initialDisplaySize._y 
+                        : ((_nextControlStates._nextSizingForced == true) 
+                            ? _nextControlStates._nextDesiredControlSize._y 
+                            : mint::max(prepareControlDataParam._initialDisplaySize._y, _nextControlStates._nextDesiredControlSize._y));
                 }
             }
 
             // Position, Parent offset, Parent child at, Parent content area size
-            const bool isAutoPositioned = (_nextNoAutoPositioned == false);
+            const bool isAutoPositioned = (_nextControlStates._nextNoAutoPositioned == false);
             if (isAutoPositioned == true)
             {
                 mint::Float2& parentControlChildAt = const_cast<mint::Float2&>(parentControlData.getChildAt());
                 mint::Float2& parentControlNextChildOffset = const_cast<mint::Float2&>(parentControlData.getNextChildOffset());
                 const float parentControlPreviousNextChildOffsetX = parentControlNextChildOffset._x;
 
-                const bool isSameLineAsPreviousControl = (_nextSameLine == true);
+                const bool isSameLineAsPreviousControl = (_nextControlStates._nextSameLine == true);
                 if (isSameLineAsPreviousControl == true)
                 {
-                    const float intervalX = (true == _nextNoInterval) ? 0.0f : kDefaultIntervalX;
+                    const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
                     parentControlChildAt._x += (parentControlNextChildOffset._x + intervalX);
 
                     parentControlNextChildOffset = controlData._displaySize;
@@ -2590,10 +2592,10 @@ namespace mint
                     parentControlNextChildOffset = controlData._displaySize;
                 }
 
-                const bool addIntervalY = (_nextNoAutoPositioned == false && prepareControlDataParam._noIntervalForNextSibling == false);
+                const bool addIntervalY = (_nextControlStates._nextNoAutoPositioned == false && prepareControlDataParam._noIntervalForNextSibling == false);
                 if (addIntervalY == true)
                 {
-                    const float intervalY = (true == _nextNoInterval) ? 0.0f : kDefaultIntervalY;
+                    const float intervalY = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalY;
                     parentControlNextChildOffset._y += intervalY;
                 }
 
@@ -2601,7 +2603,7 @@ namespace mint
                 mint::Float2& parentControlContentAreaSize = const_cast<mint::Float2&>(parentControlData.getContentAreaSize());
                 if (prepareControlDataParam._ignoreMeForContentAreaSize == false)
                 {
-                    if (true == _nextSameLine)
+                    if (true == _nextControlStates._nextSameLine)
                     {
                         if (parentControlContentAreaSize._x == 0.0f)
                         {
@@ -2611,7 +2613,7 @@ namespace mint
                         parentControlContentAreaSize._x += controlData._displaySize._x + kDefaultIntervalX;
                     }
 
-                    parentControlContentAreaSize._y += (true == _nextSameLine) ? 0.0f : controlData._displaySize._y;
+                    parentControlContentAreaSize._y += (true == _nextControlStates._nextSameLine) ? 0.0f : controlData._displaySize._y;
                     parentControlContentAreaSize._y += (true == addIntervalY) ? kDefaultIntervalY : 0.0f;
                 }
 
@@ -2628,7 +2630,7 @@ namespace mint
 
                     if (prepareControlDataParam._desiredPositionInParent.isNan() == true)
                     {
-                        controlData._position += _nextControlPosition;
+                        controlData._position += _nextControlStates._nextControlPosition;
                     }
                     else
                     {
@@ -2646,7 +2648,7 @@ namespace mint
             const MenuBarType currentMenuBarType = controlData._controlValue.getCurrentMenuBarType();
             mint::Float2& controlChildAt = const_cast<mint::Float2&>(controlData.getChildAt());
             controlChildAt = controlData._position + controlData._childDisplayOffset +
-                ((_nextNoAutoPositioned == false)
+                ((_nextControlStates._nextNoAutoPositioned == false)
                     ? mint::Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
                     : mint::Float2::kZero) +
                 mint::Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
@@ -2688,13 +2690,13 @@ namespace mint
 
         const bool GuiContext::processFocusControl(ControlData& controlData, const mint::RenderingBase::Color& focusedColor, const mint::RenderingBase::Color& nonFocusedColor, mint::RenderingBase::Color& outBackgroundColor) noexcept
         {
-            processControlInteractionInternal(controlData, true);
+            processControlInteractionInternal(controlData, false);
 
             const uint64 controlHashKey = (0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey();
 
             // Check new focus
             if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true &&
-                (_mouseButtonDownFirst == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true)))
+                (_mouseStates.isButtonDownThisFrame() == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true)))
             {
                 // Focus entered
                 setControlFocused(controlData);
@@ -2720,9 +2722,9 @@ namespace mint
             return isControlFocused(controlData);
         }
 
-        void GuiContext::processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone) noexcept
+        void GuiContext::processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool setMouseInteractionDone) noexcept
         {
-            processControlInteractionInternal(controlData, doNotSetMouseInteractionDone);
+            processControlInteractionInternal(controlData, setMouseInteractionDone);
 
             if (needToColorFocused(controlData) == true)
             {
@@ -2783,7 +2785,7 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone) noexcept
+        void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
             std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 
             {
@@ -2814,7 +2816,7 @@ namespace mint
             }
 
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-            if (_isMouseInteractionDonePerFrame == true)
+            if (_isMouseInteractionDoneThisFrame == true)
             {
                 fnResetHoverDataIfMe(controlHashKey);
                 fnResetPressDataIfMe(controlHashKey);
@@ -2822,21 +2824,21 @@ namespace mint
             }
 
             const bool isRootControl =  controlData.isRootControl();
-            const bool shouldIgnoreInteraction_ = shouldIgnoreInteraction(_mousePosition, controlData);
-            const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mousePosition, parentControlData);
-            const bool isMouseInInteractionArea = isInControlInteractionArea(_mousePosition, controlData);
+            const bool shouldIgnoreInteraction_ = shouldIgnoreInteraction(_mouseStates.getPosition(), controlData);
+            const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
+            const bool isMouseInInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), controlData);
             if ((controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && 
                 isMouseInInteractionArea == true && 
                 (shouldIgnoreInteraction_ == false || true == isRootControl))
             {
                 // Hovered (at least)
 
-                if (doNotSetMouseInteractionDone == false)
+                if (setMouseInteractionDone == true)
                 {
-                    _isMouseInteractionDonePerFrame = true;
+                    _isMouseInteractionDoneThisFrame = true;
                 }
 
-                const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseDownPosition, controlData);
+                const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
 
                 if (_hoveredControlHashKey != controlHashKey && controlData._isFocusable == false)
                 {
@@ -2850,7 +2852,7 @@ namespace mint
                 }
 
                 // Click Event 가 발생했을 때도 Pressed 상태 유지!
-                if (_mouseDownUp == false && _mouseButtonDown == false)
+                if (_mouseStates.isButtonDownUp() == false && _mouseStates.isButtonDown() == false)
                 {
                     fnResetPressDataIfMe(controlHashKey);
                 }
@@ -2858,7 +2860,7 @@ namespace mint
                 const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
 
                 // Pressed (Mouse down)
-                if (_mouseButtonDown == true && isMouseDownInInteractionArea == true)
+                if (_mouseStates.isButtonDown() == true && isMouseDownInInteractionArea == true)
                 {
                     fnResetHoverDataIfMe(controlHashKey);
 
@@ -2873,7 +2875,7 @@ namespace mint
                 }
 
                 // Clicked (only in interaction area)
-                if (_mouseDownUp == true && isMouseDownInInteractionArea == true)
+                if (_mouseStates.isButtonDownUp() == true && isMouseDownInInteractionArea == true)
                 {
                     if (_pressedControlHashKey == controlHashKey)
                     {
@@ -2901,7 +2903,7 @@ namespace mint
             processControlDraggingInternal(controlData);
             processControlDockingInternal(controlData);
 
-            resetNextStates();
+            _nextControlStates.reset();
         }
 
         void GuiContext::checkControlResizing(ControlData& controlData) noexcept
@@ -2911,13 +2913,13 @@ namespace mint
                 mint::Window::CursorType newCursorType;
                 ResizingMask resizingMask;
                 const bool isResizable = controlData.isResizable();
-                if (controlData.isResizable() == true && isInControlBorderArea(_mousePosition, controlData, newCursorType, resizingMask, _resizingMethod) == true)
+                if (controlData.isResizable() == true && isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
                 {
                     if (controlData._resizingMask.overlaps(resizingMask) == true)
                     {
-                        _cursorType = newCursorType;
+                        _mouseStates._cursorType = newCursorType;
 
-                        _isMouseInteractionDonePerFrame = true;
+                        _isMouseInteractionDoneThisFrame = true;
                     }
                 }
             }
@@ -2926,12 +2928,12 @@ namespace mint
         void GuiContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
         {
             const bool isHovered = isControlHovered(controlData);
-            if (_nextTooltipText != nullptr && isHovered == true && _hoverStartTimeMs + 1000 < mint::Profiler::getCurrentTimeMs())
+            if (_nextControlStates._nextTooltipText != nullptr && isHovered == true && _hoverStartTimeMs + 1000 < mint::Profiler::getCurrentTimeMs())
             {
                 if (_hoverStarted == true)
                 {
-                    _tooltipTextFinal = _nextTooltipText;
-                    _tooltipPosition = _mousePosition;
+                    _tooltipTextFinal = _nextControlStates._nextTooltipText;
+                    _tooltipPosition = _mouseStates.getPosition();
                     _tooltipParentWindowHashKey = getParentWindowControlData(controlData).getHashKey();
 
                     _hoverStarted = false;
@@ -2955,13 +2957,13 @@ namespace mint
 
                 mint::Float2& changeTargetControlDisplaySize = const_cast<mint::Float2&>(changeTargetControlData._displaySize);
 
-                const mint::Float2 mouseDeltaPosition = _mousePosition - _mouseDownPosition;
+                const mint::Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
                 const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
                 const float flipVert = (_resizingMethod == ResizingMethod::RepositionVert || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
-                if (_cursorType != mint::Window::CursorType::SizeVert)
+                if (_mouseStates.isCursor(mint::Window::CursorType::SizeVert) == false)
                 {
-                    const float newPositionX = _resizedControlInitialPosition._x - mouseDeltaPosition._x * flipHorz;
-                    const float newDisplaySizeX = _resizedControlInitialDisplaySize._x + mouseDeltaPosition._x * flipHorz;
+                    const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
+                    const float newDisplaySizeX = _resizedControlInitialDisplaySize._x + mouseDragDelta._x * flipHorz;
 
                     if (changeTargetControlData.getDisplaySizeMin()._x + changeTargetControlData.getHorzDockSizeSum() < newDisplaySizeX)
                     {
@@ -2972,10 +2974,10 @@ namespace mint
                         changeTargetControlDisplaySize._x = newDisplaySizeX;
                     }
                 }
-                if (_cursorType != mint::Window::CursorType::SizeHorz)
+                if (_mouseStates.isCursor(mint::Window::CursorType::SizeHorz) == false)
                 {
-                    const float newPositionY = _resizedControlInitialPosition._y - mouseDeltaPosition._y * flipVert;
-                    const float newDisplaySizeY = _resizedControlInitialDisplaySize._y + mouseDeltaPosition._y * flipVert;
+                    const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
+                    const float newDisplaySizeY = _resizedControlInitialDisplaySize._y + mouseDragDelta._y * flipVert;
 
                     if (changeTargetControlData.getDisplaySizeMin()._y + changeTargetControlData.getVertDockSizeSum() < newDisplaySizeY)
                     {
@@ -3003,7 +3005,7 @@ namespace mint
                     updateDockDatum(changeTargetControlData.getHashKey());
                 }
 
-                _isMouseInteractionDonePerFrame = true;
+                _isMouseInteractionDoneThisFrame = true;
             }
         }
 
@@ -3020,15 +3022,15 @@ namespace mint
                     _isDragBegun = false;
                 }
 
-                const mint::Float2 mouseDeltaPosition = _mousePosition - _mouseDownPosition;
+                const mint::Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
                 const mint::Float2 originalPosition = changeTargetControlData._position;
                 if (changeTargetControlData._draggingConstraints.isNan() == true)
                 {
-                    changeTargetControlData._position = _draggedControlInitialPosition + mouseDeltaPosition;
+                    changeTargetControlData._position = _draggedControlInitialPosition + mouseDragDelta;
                 }
                 else
                 {
-                    const mint::Float2& naivePosition = _draggedControlInitialPosition + mouseDeltaPosition;
+                    const mint::Float2& naivePosition = _draggedControlInitialPosition + mouseDragDelta;
                     changeTargetControlData._position._x = mint::min(mint::max(changeTargetControlData._draggingConstraints.left(), naivePosition._x), changeTargetControlData._draggingConstraints.right());
                     changeTargetControlData._position._y = mint::min(mint::max(changeTargetControlData._draggingConstraints.top(), naivePosition._y), changeTargetControlData._draggingConstraints.bottom());
                 }
@@ -3045,14 +3047,14 @@ namespace mint
                     const mint::Float2& dockPosition = dockControlData.getDockPosition(changeTargetControlData._lastDockingMethod);
                     const mint::Rect dockRect{ dockPosition, dockSize };
                     bool needToDisconnectFromDock = true;
-                    if (dockRect.contains(_mousePosition) == true)
+                    if (dockRect.contains(_mouseStates.getPosition()) == true)
                     {
                         needToDisconnectFromDock = false;
 
                         const mint::Rect dockTitleBarAreaRect{ dockPosition, mint::Float2(dockSize._x, kTitleBarBaseSize._y) };
-                        if (dockTitleBarAreaRect.contains(_mousePosition) == true)
+                        if (dockTitleBarAreaRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            const float titleBarOffset = _mousePosition._x - dockTitleBarAreaRect.left();
+                            const float titleBarOffset = _mouseStates.getPosition()._x - dockTitleBarAreaRect.left();
                             const int32 targetDockedControlindex = dockDatum.getDockedControlIndexByMousePosition(titleBarOffset);
                             if (0 <= targetDockedControlindex)
                             {
@@ -3086,7 +3088,7 @@ namespace mint
                     changeTargetControlData._currentFrameDeltaPosition = changeTargetControlData._position - originalPosition;
                 }
 
-                _isMouseInteractionDonePerFrame = true;
+                _isMouseInteractionDoneThisFrame = true;
             }
         }
 
@@ -3104,7 +3106,7 @@ namespace mint
                 renderPosition._y = boxRect.center()._y;
                 _shapeFontRendererContextTopMost.setClipRect(parentControlData.getClipRect());
 
-                const bool isMouseInBoxRect = boxRect.contains(_mousePosition);
+                const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
                 _shapeFontRendererContextTopMost.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
                 _shapeFontRendererContextTopMost.setPosition(renderPosition);
                 _shapeFontRendererContextTopMost.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
@@ -3121,7 +3123,7 @@ namespace mint
             if ((changeTargetControlData.hasChildWindow() == false) && 
                 (changeTargetControlData._dockingControlType == DockingControlType::Docker || changeTargetControlData._dockingControlType == DockingControlType::DockerDock) &&
                 (parentControlData._dockingControlType == DockingControlType::Dock || parentControlData._dockingControlType == DockingControlType::DockerDock) &&
-                isInControlInteractionArea(_mousePosition, changeTargetControlData) == true)
+                isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
                 const mint::Float4& parentControlCenterPosition = getControlCenterPosition(parentControlData);
                 const float previewShortLengthMax = 160.0f;
@@ -3131,7 +3133,7 @@ namespace mint
                 mint::Rect previewRect;
                 
                 // 초기화
-                if (_mouseDownUp == false)
+                if (_mouseStates.isButtonDownUp() == false)
                 {
                     changeTargetControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
                 }
@@ -3153,7 +3155,7 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::TopSide);
-                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mousePosition) == true)
+                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
                             changeTargetControlData._lastDockingMethodCandidate = DockingMethod::TopSide;
 
@@ -3191,7 +3193,7 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::BottomSide);
-                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mousePosition) == true)
+                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
                             changeTargetControlData._lastDockingMethodCandidate = DockingMethod::BottomSide;
 
@@ -3229,7 +3231,7 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::LeftSide);
-                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mousePosition) == true)
+                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
                             changeTargetControlData._lastDockingMethodCandidate = DockingMethod::LeftSide;
                             
@@ -3267,7 +3269,7 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::RightSide);
-                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mousePosition) == true)
+                        if (changeTargetControlData._lastDockingMethodCandidate == DockingMethod::COUNT && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
                             changeTargetControlData._lastDockingMethodCandidate = DockingMethod::RightSide;
 
@@ -3288,7 +3290,7 @@ namespace mint
                     }
                 }
 
-                if (_mouseDownUp == true && changeTargetControlData._lastDockingMethodCandidate != DockingMethod::COUNT)
+                if (_mouseStates.isButtonDownUp() == true && changeTargetControlData._lastDockingMethodCandidate != DockingMethod::COUNT)
                 {
                     if (changeTargetControlData.isDocking() == false)
                     {
@@ -3413,7 +3415,7 @@ namespace mint
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
                 const ControlData& focusedControlData = getControlData(_focusedControlHashKey);
-                if (isInControlInteractionArea(_mousePosition, focusedControlData) == true || isInControlBorderArea(_mousePosition, focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
+                if (isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true || isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
                     // 마우스가 Focus Control 과 상호작용할 경우 나와는 상호작용하지 않는것으로 판단!!
                     return false;
@@ -3424,7 +3426,7 @@ namespace mint
 
         const bool GuiContext::isControlBeingDragged(const ControlData& controlData) const noexcept
         {
-            if (_mouseButtonDown == false)
+            if (_mouseStates.isButtonDown() == false)
             {
                 _draggedControlHashKey = 0;
                 return false;
@@ -3437,7 +3439,8 @@ namespace mint
                     return false;
                 }
 
-                if (_mouseButtonDown == true && isInControlInteractionArea(_mousePosition, controlData) == true && isInControlInteractionArea(_mouseDownPosition, controlData) == true)
+                if (_mouseStates.isButtonDown() == true && isInControlInteractionArea(_mouseStates.getPosition(), controlData) == true
+                    && isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     // Drag 시작
                     _isDragBegun = true;
@@ -3457,7 +3460,7 @@ namespace mint
 
         const bool GuiContext::isControlBeingResized(const ControlData& controlData) const noexcept
         {
-            if (_mouseButtonDown == false)
+            if (_mouseStates.isButtonDown() == false)
             {
                 _resizedControlHashKey = 0;
                 return false;
@@ -3472,13 +3475,15 @@ namespace mint
 
                 mint::Window::CursorType newCursorType;
                 ResizingMask resizingMask;
-                if (_mouseButtonDown == true && isInControlBorderArea(_mousePosition, controlData, newCursorType, resizingMask, _resizingMethod) == true && isInControlBorderArea(_mouseDownPosition, controlData, newCursorType, resizingMask, _resizingMethod) == true)
+                if (_mouseStates.isButtonDown() == true 
+                    && isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true
+                    && isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
                 {
                     if (controlData._resizingMask.overlaps(resizingMask) == true)
                     {
                         _resizedControlHashKey = controlData.getHashKey();
                         _isResizeBegun = true;
-                        _cursorType = newCursorType;
+                        _mouseStates._cursorType = newCursorType;
                         return true;
                     }
                 }
@@ -3687,7 +3692,7 @@ namespace mint
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
 
-            _graphicDevice->getWindow()->setCursorType(_cursorType);
+            _graphicDevice->getWindow()->setCursorType(_mouseStates._cursorType);
 
             if (_tooltipParentWindowHashKey != 0)
             {
@@ -3710,7 +3715,7 @@ namespace mint
 
         void GuiContext::resetPerFrameStates()
         {
-            if (_mouseDownUp == true)
+            if (_mouseStates.isButtonDownUp() == true)
             {
                 if (_pressedControlHashKey == 1)
                 {
@@ -3721,7 +3726,7 @@ namespace mint
             }
             
 
-            _isMouseInteractionDonePerFrame = false;
+            _isMouseInteractionDoneThisFrame = false;
             _clickedControlHashKeyPerFrame = 0;
 
             _controlStackPerFrame.clear();
@@ -3730,7 +3735,7 @@ namespace mint
 
             if (_resizedControlHashKey == 0)
             {
-                _cursorType = mint::Window::CursorType::Arrow;
+                _mouseStates._cursorType = mint::Window::CursorType::Arrow;
             }
 
             _keyCode = mint::Window::EventData::KeyCode::NONE;

@@ -855,43 +855,12 @@ namespace mint
         }
 
 
-        MINT_INLINE void GuiContext::nextSameLine()
+        inline GuiContext::NextControlStates::NextControlStates()
         {
-            _nextSameLine = true;
+            reset();
         }
 
-        MINT_INLINE void GuiContext::nextControlSize(const mint::Float2& size, const bool force)
-        {
-            _nextDesiredControlSize = size;
-            _nextSizingForced = force;
-        }
-
-        MINT_INLINE void GuiContext::nextNoInterval()
-        {
-            _nextNoInterval = true;
-        }
-
-        MINT_INLINE void GuiContext::nextNoAutoPositioned()
-        {
-            _nextNoAutoPositioned = true;
-        }
-
-        MINT_INLINE void GuiContext::nextControlSizeNonContrainedToParent()
-        {
-            _nextControlSizeNonContrainedToParent = true;
-        }
-
-        MINT_INLINE void GuiContext::nextControlPosition(const mint::Float2& position)
-        {
-            _nextControlPosition = position;
-        }
-
-        MINT_INLINE void GuiContext::nextTooltip(const wchar_t* const tooltipText)
-        {
-            _nextTooltipText = tooltipText;
-        }
-
-        MINT_INLINE void GuiContext::resetNextStates()
+        MINT_INLINE void GuiContext::NextControlStates::reset() noexcept
         {
             _nextSameLine = false;
             _nextDesiredControlSize.setZero();
@@ -901,6 +870,120 @@ namespace mint
             _nextNoAutoPositioned = false;
             _nextControlPosition.setZero();
             _nextTooltipText = nullptr;
+        }
+
+
+        MINT_INLINE void GuiContext::MouseStates::resetPerFrame() noexcept
+        {
+            _isButtonDownUp = false;
+            _isButtonDownThisFrame = false;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::setPosition(const mint::Float2& position) noexcept
+        {
+            _mousePosition = position;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::setButtonDownPosition(const mint::Float2& position) noexcept
+        {
+            _mouseDownPosition = position;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::setButtonUpPosition(const mint::Float2& position) noexcept
+        {
+            _mouseUpPosition = position;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::setButtonDown() noexcept
+        {
+            _isButtonDown = true;
+            _isButtonDownThisFrame = true;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::setButtonUp() noexcept
+        {
+            if (_isButtonDown == true)
+            {
+                _isButtonDownUp = true;
+            }
+            _isButtonDown = false;
+        }
+
+        MINT_INLINE const mint::Float2& GuiContext::MouseStates::getPosition() const noexcept
+        {
+            return _mousePosition;
+        }
+
+        MINT_INLINE const mint::Float2& GuiContext::MouseStates::getButtonDownPosition() const noexcept
+        {
+            return _mouseDownPosition;
+        }
+
+        MINT_INLINE const mint::Float2& GuiContext::MouseStates::getButtonUpPosition() const noexcept
+        {
+            return _mouseUpPosition;
+        }
+
+        MINT_INLINE const mint::Float2 GuiContext::MouseStates::getMouseDragDelta() const noexcept
+        {
+            return _mousePosition - _mouseDownPosition;
+        }
+
+        MINT_INLINE const bool GuiContext::MouseStates::isButtonDown() const noexcept
+        {
+            return _isButtonDown;
+        }
+
+        MINT_INLINE const bool GuiContext::MouseStates::isButtonDownThisFrame() const noexcept
+        {
+            return _isButtonDownThisFrame;
+        }
+
+        MINT_INLINE const bool GuiContext::MouseStates::isButtonDownUp() const noexcept
+        {
+            return _isButtonDownUp;
+        }
+
+        MINT_INLINE const bool GuiContext::MouseStates::isCursor(const mint::Window::CursorType cursorType) const noexcept
+        {
+            return _cursorType == cursorType;
+        }
+
+
+        MINT_INLINE void GuiContext::nextSameLine()
+        {
+            _nextControlStates._nextSameLine = true;
+        }
+
+        MINT_INLINE void GuiContext::nextControlSize(const mint::Float2& size, const bool force)
+        {
+            _nextControlStates._nextDesiredControlSize = size;
+            _nextControlStates._nextSizingForced = force;
+        }
+
+        MINT_INLINE void GuiContext::nextNoInterval()
+        {
+            _nextControlStates._nextNoInterval = true;
+        }
+
+        MINT_INLINE void GuiContext::nextNoAutoPositioned()
+        {
+            _nextControlStates._nextNoAutoPositioned = true;
+        }
+
+        MINT_INLINE void GuiContext::nextControlSizeNonContrainedToParent()
+        {
+            _nextControlStates._nextControlSizeNonContrainedToParent = true;
+        }
+
+        MINT_INLINE void GuiContext::nextControlPosition(const mint::Float2& position)
+        {
+            _nextControlStates._nextControlPosition = position;
+        }
+
+        MINT_INLINE void GuiContext::nextTooltip(const wchar_t* const tooltipText)
+        {
+            _nextControlStates._nextTooltipText = tooltipText;
         }
 
         MINT_INLINE const GuiContext::ControlData& GuiContext::getControlStackTopXXX() const noexcept
@@ -986,18 +1069,18 @@ namespace mint
             return _namedColors[static_cast<uint32>(namedColor)];
         }
 
-        MINT_INLINE mint::RenderingBase::Color& GuiContext::getNamedColor(const NamedColor namedColor) noexcept
+        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const mint::RenderingBase::Color& color) noexcept
         {
-            return _namedColors[static_cast<uint32>(namedColor)];
+            _namedColors[static_cast<uint32>(namedColor)] = color;
         }
 
         MINT_INLINE const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
         {
             float result = 0.0f;
-            if (0.0f != _mouseWheel && isInControlInteractionArea(_mousePosition, scrollParentControlData) == true)
+            if (0.0f != _mouseStates._mouseWheel && isInControlInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
             {
-                result = _mouseWheel * kMouseWheelScrollScale;
-                _mouseWheel = 0.0f;
+                result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
+                _mouseStates._mouseWheel = 0.0f;
             }
             return result;
         }

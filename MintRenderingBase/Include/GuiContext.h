@@ -509,6 +509,60 @@ namespace mint
                 uint64              _hashKey;
             };
 
+            struct NextControlStates
+            {
+            public:
+                                                                NextControlStates();
+
+            public:
+                void                                            reset() noexcept;
+
+            public:
+                bool                                            _nextSameLine;
+                mint::Float2                                    _nextDesiredControlSize;
+                bool                                            _nextSizingForced;
+                bool                                            _nextControlSizeNonContrainedToParent;
+                bool                                            _nextNoInterval;
+                bool                                            _nextNoAutoPositioned;
+                mint::Float2                                    _nextControlPosition;
+                const wchar_t*                                  _nextTooltipText;
+            };
+
+            struct MouseStates
+            {
+            public:
+                void                                            resetPerFrame() noexcept;
+
+            public:
+                void                                            setPosition(const mint::Float2& position) noexcept;
+                void                                            setButtonDownPosition(const mint::Float2& position) noexcept;
+                void                                            setButtonUpPosition(const mint::Float2& position) noexcept;
+                void                                            setButtonDown() noexcept;
+                void                                            setButtonUp() noexcept;
+
+            public:
+                const mint::Float2&                             getPosition() const noexcept;
+                const mint::Float2&                             getButtonDownPosition() const noexcept;
+                const mint::Float2&                             getButtonUpPosition() const noexcept;
+                const mint::Float2                              getMouseDragDelta() const noexcept;
+                const bool                                      isButtonDown() const noexcept;
+                const bool                                      isButtonDownThisFrame() const noexcept;
+                const bool                                      isButtonDownUp() const noexcept;
+                const bool                                      isCursor(const mint::Window::CursorType cursorType) const noexcept;
+
+            private:
+                mint::Float2                                    _mousePosition;
+                mint::Float2                                    _mouseDownPosition;
+                mint::Float2                                    _mouseUpPosition;
+                bool                                            _isButtonDown = false;
+                bool                                            _isButtonDownThisFrame = false;
+                bool                                            _isButtonDownUp = false;
+
+            public:
+                mutable float                                   _mouseWheel;
+                mutable mint::Window::CursorType                _cursorType = mint::Window::CursorType::Arrow; // per frame
+            };
+
         
         private:
                                                                 GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
@@ -540,9 +594,6 @@ namespace mint
             // Only works if NoAutoPositioned!
             void                                                nextControlPosition(const mint::Float2& position);
             void                                                nextTooltip(const wchar_t* const tooltipText);
-
-        private:
-            void                                                resetNextStates();
 #pragma endregion
 
 
@@ -681,11 +732,11 @@ namespace mint
 
             const bool                                          processClickControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& pressedColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
             const bool                                          processFocusControl(ControlData& controlData, const mint::RenderingBase::Color& focusedColor, const mint::RenderingBase::Color& nonFocusedColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
-            void                                                processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool doNotSetMouseInteractionDone = false) noexcept;
+            void                                                processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool setMouseInteractionDone = true) noexcept;
             const bool                                          processScrollableControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& dragColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
             const bool                                          processToggleControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& toggledColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
             
-            void                                                processControlInteractionInternal(ControlData& controlData, const bool doNotSetMouseInteractionDone = false) noexcept;
+            void                                                processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
             void                                                processControlCommon(ControlData& controlData) noexcept;
             void                                                checkControlResizing(ControlData& controlData) noexcept;
             void                                                checkControlHoveringForTooltip(ControlData& controlData) noexcept;
@@ -729,7 +780,7 @@ namespace mint
             const bool                                          hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
             const mint::RenderingBase::Color&                   getNamedColor(const NamedColor namedColor) const noexcept;
-            mint::RenderingBase::Color&                         getNamedColor(const NamedColor namedColor) noexcept;
+            void                                                setNamedColor(const NamedColor namedColor, const mint::RenderingBase::Color& color) noexcept;
 
             const float                                         getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
             const float                                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
@@ -743,25 +794,23 @@ namespace mint
         private:
             mint::RenderingBase::GraphicDevice* const           _graphicDevice;
 
+        private: // these are set externally
             float                                               _fontSize;
+            uint32                                              _caretBlinkIntervalMs;
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextBackground;
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextForeground;
             mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextTopMost;
 
-            D3D11_VIEWPORT                                      _viewportFullScreen;
+        private: // screen size
+            int8                                                _updateScreenSizeCounter;
             mint::Rect                                          _clipRectFullScreen;
 
-            int8                                                _updateScreenSizeCounter;
-
         private:
-            const ControlData                                   kNullControlData;
             ControlData                                         _rootControlData;
-        
-        private:
             mint::Vector<ControlStackData>                      _controlStackPerFrame;
 
         private:
-            mutable bool                                        _isMouseInteractionDonePerFrame;
+            mutable bool                                        _isMouseInteractionDoneThisFrame;
             mutable uint64                                      _focusedControlHashKey;
             mutable uint64                                      _hoveredControlHashKey;
             mutable uint64                                      _pressedControlHashKey;
@@ -788,35 +837,12 @@ namespace mint
         private:
             mint::HashMap<uint64, ControlData>                  _controlIdMap;
 
-
-#pragma region Next-states
         private:
-            bool                                                _nextSameLine;
-            mint::Float2                                        _nextDesiredControlSize;
-            bool                                                _nextSizingForced;
-            bool                                                _nextControlSizeNonContrainedToParent;
-            bool                                                _nextNoInterval;
-            bool                                                _nextNoAutoPositioned;
-            mint::Float2                                        _nextControlPosition;
-            const wchar_t*                                      _nextTooltipText;
-#pragma endregion
-
-
-#pragma region Mouse states
-        private:
-            mint::Float2                                        _mousePosition;
-            mint::Float2                                        _mouseDownPosition;
-            mint::Float2                                        _mouseUpPosition;
-            bool                                                _mouseButtonDown;
-            bool                                                _mouseButtonDownFirst;
-            bool                                                _mouseDownUp;
-            mutable float                                       _mouseWheel;
-            mutable mint::Window::CursorType                    _cursorType; // per frame
-#pragma endregion
+            NextControlStates                                   _nextControlStates;
+            MouseStates                                         _mouseStates;
 
 #pragma region Key Character Input
         private:
-            uint32                                              _caretBlinkIntervalMs;
             wchar_t                                             _wcharInput;
             wchar_t                                             _wcharInputCandiate;
             mint::Window::EventData::KeyCode                    _keyCode;
