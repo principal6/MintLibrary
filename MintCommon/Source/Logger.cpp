@@ -13,15 +13,11 @@ namespace mint
         : _basePathOffset{ 0 }
     {
         std::filesystem::path currentPath = std::filesystem::current_path();
-        if (currentPath.has_parent_path())
-        {
-            currentPath = currentPath.parent_path();
-        }
-        if (currentPath.has_parent_path())
-        {
-            currentPath = currentPath.parent_path();
-        }
-        _basePathOffset = static_cast<uint32>(currentPath.string().length());
+        //if (currentPath.has_parent_path())
+        //{
+        //    currentPath = currentPath.parent_path();
+        //}
+        _basePathOffset = static_cast<uint32>(currentPath.string().length()) + 1;
     }
 
     Logger::~Logger()
@@ -124,7 +120,8 @@ namespace mint
             }
             else
             {
-                sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s[%d] %s()\n", logTag, timeBuffer, author, content, fileName + _basePathOffset, lineNumber, functionName);
+                //sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s(%d) %s()\n", logTag, timeBuffer, author, content, fileName + _basePathOffset, lineNumber, functionName);
+                sprintf_s(outBuffer, kFinalBufferSize, "%s(%d): %s() - [%s] %s [%s] %s \n", fileName + _basePathOffset, lineNumber, functionName, logTag, timeBuffer, author, content);
             }
 
             OutputDebugStringA(outBuffer);

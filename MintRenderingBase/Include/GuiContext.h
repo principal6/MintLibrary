@@ -578,10 +578,9 @@ namespace mint
             void                                                handleEvents(const mint::Window::IWindow* const window);
 
         private:
-            const bool                                          isInControlInternal(const mint::Float2& screenPosition, const mint::Float2& controlPosition, const mint::Float2& controlPositionOffset, const mint::Float2& interactionSize) const noexcept;
             const bool                                          isInControlInteractionArea(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
             const bool                                          isInControlBorderArea(const mint::Float2& screenPosition, const ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept;
-            const bool                                          shouldIgnoreInteraction(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
+            const bool                                          shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
 
 
 #pragma region Next-states
@@ -722,7 +721,10 @@ namespace mint
             const bool                                          isFocusedControlTextBox() const noexcept;
 
         private:
-            void                                                setControlFocused(const ControlData& control) noexcept;
+            void                                                setControlFocused(const ControlData& controlData) noexcept;
+            void                                                setControlHovered(const ControlData& controlData) noexcept;
+            void                                                setControlPressed(const ControlData& controlData) noexcept;
+            void                                                setControlClicked(const ControlData& controlData) noexcept;
 
 
 #pragma region Before drawing controls
@@ -737,6 +739,9 @@ namespace mint
             const bool                                          processToggleControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& toggledColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
             
             void                                                processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
+            void                                                resetHoverDataIfMe(const uint64 controlHashKey) noexcept;
+            void                                                resetPressDataIfMe(const uint64 controlHashKey) noexcept;
+
             void                                                processControlCommon(ControlData& controlData) noexcept;
             void                                                checkControlResizing(ControlData& controlData) noexcept;
             void                                                checkControlHoveringForTooltip(ControlData& controlData) noexcept;

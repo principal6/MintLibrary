@@ -379,6 +379,17 @@ namespace mint
 
         namespace ControlCommonHelpers
         {
+            MINT_INLINE const bool isInControl(const mint::Float2& screenPosition, const mint::Float2& controlPosition, const mint::Float2& controlPositionOffset, const mint::Float2& interactionSize) noexcept
+            {
+                const mint::Float2 max = controlPosition + controlPositionOffset + interactionSize;
+                if (controlPosition._x + controlPositionOffset._x <= screenPosition._x && screenPosition._x <= max._x &&
+                    controlPosition._y + controlPositionOffset._y <= screenPosition._y && screenPosition._y <= max._y)
+                {
+                    return true;
+                }
+                return false;
+            }
+
             MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
             {
                 targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
@@ -401,7 +412,7 @@ namespace mint
                 return mint::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
             };
         }
-        
+
 
         GuiContext::GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
@@ -565,25 +576,14 @@ namespace mint
             processControlInteractionInternal(_rootControlData, false);
         }
 
-        const bool GuiContext::isInControlInternal(const mint::Float2& screenPosition, const mint::Float2& controlPosition, const mint::Float2& controlPositionOffset, const mint::Float2& interactionSize) const noexcept
-        {
-            const mint::Float2 max = controlPosition + controlPositionOffset + interactionSize;
-            if (controlPosition._x + controlPositionOffset._x <= screenPosition._x && screenPosition._x <= max._x &&
-                controlPosition._y + controlPositionOffset._y <= screenPosition._y && screenPosition._y <= max._y)
-            {
-                return true;
-            }
-            return false;
-        }
-
         const bool GuiContext::isInControlInteractionArea(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept
         {
             if (controlData.isDockHosting() == true)
             {
                 const mint::Float2 positionOffset{ controlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x, controlData.getDockSizeIfHosting(DockingMethod::TopSide)._y };
-                return isInControlInternal(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
+                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
             }
-            return isInControlInternal(screenPosition, controlData._position, mint::Float2::kZero, controlData.getInteractionSize());
+            return ControlCommonHelpers::isInControl(screenPosition, controlData._position, mint::Float2::kZero, controlData.getInteractionSize());
         }
 
         const bool GuiContext::isInControlBorderArea(const mint::Float2& screenPosition, const ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept
@@ -591,7 +591,7 @@ namespace mint
             const mint::Float2 extendedPosition = controlData._position - mint::Float2(kHalfBorderThickness);
             const mint::Float2 extendedInteractionSize = controlData.getInteractionSize() + mint::Float2(kHalfBorderThickness * 2.0f);
             const mint::Float2 originalMax = controlData._position + controlData.getInteractionSize();
-            if (isInControlInternal(screenPosition, extendedPosition, mint::Float2::kZero, extendedInteractionSize) == true)
+            if (ControlCommonHelpers::isInControl(screenPosition, extendedPosition, mint::Float2::kZero, extendedInteractionSize) == true)
             {
                 outResizingMask.setAllFalse();
 
@@ -643,13 +643,13 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::shouldIgnoreInteraction(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept
+        const bool GuiContext::shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept
         {
             const ControlType controlType = controlData.getControlType();
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             if (controlType == ControlType::Window || parentControlData.hasChildWindow() == false)
             {
-                return false;
+                return true;
             }
 
             // ParentControlData 가 Root 거나 Window 일 때만 여기에 온다.
@@ -660,10 +660,10 @@ namespace mint
                 const ControlData& childWindowControlData = getControlData(*bucketViewer.view()._key);
                 if (isInControlInteractionArea(screenPosition, childWindowControlData) == true)
                 {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
         void GuiContext::testWindow(VisibleState& inoutVisibleState)
@@ -1639,7 +1639,7 @@ namespace mint
             prepareControlData(menuBar, prepareControlDataParam);
 
             const bool wasToggled = menuBar._controlValue.getIsToggled();
-            if (_pressedControlHashKey != 0 && isInControlInternal(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y)) == false)
+            if (_pressedControlHashKey != 0 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y)) == false)
             {
                 menuBar._controlValue.setIsToggled(false);
             }
@@ -2184,7 +2184,7 @@ namespace mint
 
                         if (_mouseStates.isButtonDownThisFrame() == true)
                         {
-                            if (isInControlInternal(_mouseStates.getButtonDownPosition(), dockPosition, mint::Float2::kZero, dockSize) == true)
+                            if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, mint::Float2::kZero, dockSize) == true)
                             {
                                 if (isDescendantControlInclusive(controlData, _focusedControlHashKey) == false)
                                 {
@@ -2511,11 +2511,47 @@ namespace mint
             return (_focusedControlHashKey == 0) ? false : getControlData(_focusedControlHashKey).isTypeOf(ControlType::TextBox);
         }
 
-        void GuiContext::setControlFocused(const ControlData& control) noexcept
+        void GuiContext::setControlFocused(const ControlData& controlData) noexcept
         {
-            if (control._isFocusable == true)
+            if (controlData._isFocusable == true)
             {
-                _focusedControlHashKey = control.getHashKey();
+                _focusedControlHashKey = controlData.getHashKey();
+            }
+        }
+
+        void GuiContext::setControlHovered(const ControlData& controlData) noexcept
+        {
+            resetHoverDataIfMe(_hoveredControlHashKey);
+
+            _hoveredControlHashKey = controlData.getHashKey();
+            if (_hoverStarted == false)
+            {
+                _hoverStarted = true;
+            }
+        }
+
+        void GuiContext::setControlPressed(const ControlData& controlData) noexcept
+        {
+            resetHoverDataIfMe(controlData.getHashKey());
+
+            if (_pressedControlHashKey != controlData.getHashKey())
+            {
+                _pressedControlHashKey = controlData.getHashKey();
+                _pressedControlInitialPosition = controlData._position;
+
+                const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
+                setControlFocused(closestFocusableAncestor);
+            }
+        }
+        
+        void GuiContext::setControlClicked(const ControlData& controlData) noexcept
+        {
+            if (_pressedControlHashKey == controlData.getHashKey())
+            {
+                _clickedControlHashKeyPerFrame = controlData.getHashKey();
+
+                const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
+                setControlFocused(closestFocusableAncestor);
             }
         }
 
@@ -2784,52 +2820,23 @@ namespace mint
             processControlCommon(controlData);
             return isClicked;
         }
-
+        
         void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
-            std::function fnResetHoverDataIfMe = [&](const uint64 controlHashKey) 
-            {
-                if (controlHashKey == _hoveredControlHashKey)
-                {
-                    _hoveredControlHashKey = 0;
-                    _hoverStartTimeMs = mint::Profiler::getCurrentTimeMs();
-                    _tooltipPosition.setZero();
-                    _tooltipParentWindowHashKey = 0;
-                }
-            };
-
-            std::function fnResetPressDataIfMe = [&](const uint64 controlHashKey) 
-            {
-                if (controlHashKey == _pressedControlHashKey)
-                {
-                    _pressedControlHashKey = 0;
-                    _pressedControlInitialPosition.setZero();
-                }
-            };
-
             const uint64 controlHashKey = controlData.getHashKey();
-            if (isInteractingInternal(controlData) == false)
+            if (isInteractingInternal(controlData) == false || _isMouseInteractionDoneThisFrame == true)
             {
-                fnResetHoverDataIfMe(controlHashKey);
-                fnResetPressDataIfMe(controlHashKey);
+                resetHoverDataIfMe(controlHashKey);
+                resetPressDataIfMe(controlHashKey);
                 return;
             }
 
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-            if (_isMouseInteractionDoneThisFrame == true)
-            {
-                fnResetHoverDataIfMe(controlHashKey);
-                fnResetPressDataIfMe(controlHashKey);
-                return;
-            }
-
-            const bool isRootControl =  controlData.isRootControl();
-            const bool shouldIgnoreInteraction_ = shouldIgnoreInteraction(_mouseStates.getPosition(), controlData);
             const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
             const bool isMouseInInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), controlData);
-            if ((controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && 
-                isMouseInInteractionArea == true && 
-                (shouldIgnoreInteraction_ == false || true == isRootControl))
+            const bool meetsAreaCondition = (controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
+            const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
+            if (meetsAreaCondition == true && meetsInteractionCondition == true)
             {
                 // Hovered (at least)
 
@@ -2838,50 +2845,30 @@ namespace mint
                     _isMouseInteractionDoneThisFrame = true;
                 }
 
-                const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
-
-                if (_hoveredControlHashKey != controlHashKey && controlData._isFocusable == false)
+                if (isControlHovered(controlData) == false && controlData._isFocusable == false)
                 {
-                    fnResetHoverDataIfMe(_hoveredControlHashKey);
-
-                    _hoveredControlHashKey = controlHashKey;
-                    if (_hoverStarted == false)
-                    {
-                        _hoverStarted = true;
-                    }
+                    setControlHovered(controlData);
                 }
 
                 // Click Event 가 발생했을 때도 Pressed 상태 유지!
                 if (_mouseStates.isButtonDownUp() == false && _mouseStates.isButtonDown() == false)
                 {
-                    fnResetPressDataIfMe(controlHashKey);
+                    resetPressDataIfMe(controlHashKey);
                 }
                 
-                const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
-
                 // Pressed (Mouse down)
-                if (_mouseStates.isButtonDown() == true && isMouseDownInInteractionArea == true)
+                const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
+                if (isMouseDownInInteractionArea == true)
                 {
-                    fnResetHoverDataIfMe(controlHashKey);
-
-                    if (_pressedControlHashKey != controlHashKey)
+                    if (_mouseStates.isButtonDown() == true)
                     {
-                        _pressedControlHashKey = controlHashKey;
-
-                        _pressedControlInitialPosition = controlData._position;
-
-                        setControlFocused(closestFocusableAncestor);
+                        setControlPressed(controlData);
                     }
-                }
 
-                // Clicked (only in interaction area)
-                if (_mouseStates.isButtonDownUp() == true && isMouseDownInInteractionArea == true)
-                {
-                    if (_pressedControlHashKey == controlHashKey)
+                    // Clicked (only in interaction area)
+                    if (_mouseStates.isButtonDownUp() == true)
                     {
-                        _clickedControlHashKeyPerFrame = controlHashKey;
-
-                        setControlFocused(closestFocusableAncestor);
+                        setControlClicked(controlData);
                     }
                 }
             }
@@ -2889,8 +2876,28 @@ namespace mint
             {
                 // Not interacting
 
-                fnResetHoverDataIfMe(controlHashKey);
-                fnResetPressDataIfMe(controlHashKey);
+                resetHoverDataIfMe(controlHashKey);
+                resetPressDataIfMe(controlHashKey);
+            }
+        }
+
+        void GuiContext::resetHoverDataIfMe(const uint64 controlHashKey) noexcept
+        {
+            if (controlHashKey == _hoveredControlHashKey)
+            {
+                _hoveredControlHashKey = 0;
+                _hoverStartTimeMs = mint::Profiler::getCurrentTimeMs();
+                _tooltipPosition.setZero();
+                _tooltipParentWindowHashKey = 0;
+            }
+        }
+        
+        void GuiContext::resetPressDataIfMe(const uint64 controlHashKey) noexcept
+        {
+            if (controlHashKey == _pressedControlHashKey)
+            {
+                _pressedControlHashKey = 0;
+                _pressedControlInitialPosition.setZero();
             }
         }
 
