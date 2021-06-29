@@ -633,7 +633,7 @@ namespace mint
 
             // [CheckBox]
             // Return 'true' if toggle state has changed
-            const bool                                          beginCheckBox(const wchar_t* const text, bool& outIsChecked);
+            const bool                                          beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                                endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
             // [Label]
@@ -697,6 +697,7 @@ namespace mint
             void                                                setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect);
             void                                                setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect);
             void                                                setClipRectForChildren(ControlData& controlData, const mint::Rect& clipRect);
+            mint::RenderingBase::ShapeFontRendererContext&      getRendererContextForChildControl(const ControlData& controlData) noexcept;
 
         private:
             const ControlData&                                  getControlStackTopXXX() const noexcept;

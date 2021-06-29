@@ -375,6 +375,32 @@ namespace mint
 
                 return result;
             }
+
+            MINT_INLINE void updateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, GuiContext::ControlData& controlData) noexcept
+            {
+                const uint16 caretAt = controlData._controlValue.getCaretAt();
+                float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+                {
+                    const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
+                    if (0.0f < deltaTextDisplayOffsetRight)
+                    {
+                        textDisplayOffset += deltaTextDisplayOffsetRight;
+                    }
+
+                    const float deltaTextDisplayOffsetLeft = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset);
+                    if (deltaTextDisplayOffsetLeft < 0.0f)
+                    {
+                        textDisplayOffset -= kTextBoxBackSpaceStride;
+
+                        textDisplayOffset = mint::max(textDisplayOffset, 0.0f);
+                    }
+
+                    if (textWidthTillCaret + inputCandidateWidth < controlData._displaySize._x)
+                    {
+                        textDisplayOffset = 0.0f;
+                    }
+                }
+            }
         }
 
         namespace ControlCommonHelpers
@@ -736,12 +762,9 @@ namespace mint
                     endButton();
                 }
 
+                if (beginCheckBox(L"체크박스") == true)
                 {
-                    bool isChecked = false;
-                    if (beginCheckBox(L"체크박스", isChecked) == true)
-                    {
-                        endCheckBox();
-                    }
+                    endCheckBox();
                 }
 
                 {
@@ -1070,11 +1093,10 @@ namespace mint
         
             mint::RenderingBase::Color finalBackgroundColor;
             const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), finalBackgroundColor);
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), 0.0f, 0.0f);
@@ -1090,7 +1112,7 @@ namespace mint
             return isClicked;
         }
 
-        const bool GuiContext::beginCheckBox(const wchar_t* const text, bool& outIsChecked)
+        const bool GuiContext::beginCheckBox(const wchar_t* const text, bool* const outIsChecked)
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
@@ -1103,23 +1125,24 @@ namespace mint
 
             mint::RenderingBase::Color finalBackgroundColor;
             const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            outIsChecked = controlData._controlValue.getIsToggled();
+            const bool isChecked = controlData._controlValue.getIsToggled();
+            if (nullptr != outIsChecked)
+            {
+                *outIsChecked = isChecked;
+            }
 
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setClipRect(controlData.getClipRect());
-            
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            if (outIsChecked == true)
+            if (isChecked == true)
             {
-                shapeFontRendererContext.setColor(getNamedColor(NamedColor::LightFont));
                 mint::Float2 p0 = mint::Float2(controlCenterPosition._x - 1.0f, controlCenterPosition._y + 4.0f);
+                shapeFontRendererContext.setColor(getNamedColor(NamedColor::LightFont));
                 shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(-4.0f, -5.0f), 2.0f);
-
                 shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(+7.0f, -8.0f), 2.0f);
             }
 
@@ -1151,11 +1174,9 @@ namespace mint
             mint::RenderingBase::Color colorWithAlpha = mint::RenderingBase::Color(255, 255, 255);
             processShowOnlyControl(controlData, colorWithAlpha);
 
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setClipRect(controlData.getClipRect());
-            
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(labelParam._backgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
@@ -1248,9 +1269,8 @@ namespace mint
                 trackControlData._controlValue.setThumbAt(thumbAt);
                 outValue = thumbAt;
 
-                const bool isAncestorFocused = isAncestorControlFocused(trackControlData);
-                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
 
+                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(trackControlData);
                 // Draw track
                 {
                     const float trackRadius = kSliderTrackThicknes * 0.5f;
@@ -1291,6 +1311,7 @@ namespace mint
                     shapeFontRendererContext.setPosition(thumbCenterPosition);
                     shapeFontRendererContext.setColor(mint::RenderingBase::Color::kWhite.scaledA(thumbColor.a()));
                     shapeFontRendererContext.drawCircle(kSliderThumbRadius);
+
                     shapeFontRendererContext.setColor(thumbColor);
                     shapeFontRendererContext.drawCircle(kSliderThumbRadius - 2.0f);
                 }
@@ -1316,7 +1337,6 @@ namespace mint
             mint::RenderingBase::Color finalBackgroundColor;
             const bool wasFocused = isControlFocused(controlData);
             const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
                 mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
@@ -1370,41 +1390,20 @@ namespace mint
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
             const uint16 textLength = static_cast<uint16>(outText.length());
             const uint16 caretAt = controlData._controlValue.getCaretAt();
-            float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
             const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
-            {
-                const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
-                if (0.0f < deltaTextDisplayOffsetRight)
-                {
-                    textDisplayOffset += deltaTextDisplayOffsetRight;
-                }
+            TextBoxHelpers::updateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
 
-                const float deltaTextDisplayOffsetLeft = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset);
-                if (deltaTextDisplayOffsetLeft < 0.0f)
-                {
-                    textDisplayOffset -= kTextBoxBackSpaceStride;
-
-                    textDisplayOffset = mint::max(textDisplayOffset, 0.0f);
-                }
-
-                if (textWidthTillCaret + inputCandidateWidth < controlData._displaySize._x)
-                {
-                    textDisplayOffset = 0.0f;
-                }
-            }
-            
-
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+            // Box 렌더링
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData); 
             shapeFontRendererContext.setClipRect(controlData.getClipRect());
-            
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-
             // Text 및 Caret 렌더링
             const uint16 caretState = controlData._controlValue.getCaretState();
             const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
+            const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
             const bool needToRenderCaret = (isFocused == true && caretState == 0);
             const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
@@ -1503,7 +1502,6 @@ namespace mint
             mint::RenderingBase::Color finalBackgroundColor = getNamedColor(NamedColor::LightFont);
             processShowOnlyControl(controlData, finalBackgroundColor, false);
 
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
             {
                 mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
@@ -1527,10 +1525,9 @@ namespace mint
                 setClipRectForChildren(controlData, clipRectForChildren);
             }
 
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setClipRect(controlData.getClipRect());
-
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
@@ -1595,11 +1592,10 @@ namespace mint
             {
                 parentControlData._controlValue.setSelectedItemIndex(myIndex);
             }
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-            shapeFontRendererContext.setClipRect(controlData.getClipRect());
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
+            shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(finalColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
@@ -1616,7 +1612,6 @@ namespace mint
 
             ControlData& menuBar = createOrGetControlData(name, controlType);
             ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
-            const ControlType menuBarParentType = menuBarParent.getControlType();
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
             const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
             if (isMenuBarParentRoot == false && isMenuBarParentWindow == false)
@@ -1749,12 +1744,14 @@ namespace mint
             return result;
         }
 
+#pragma optimize("", off)
         const bool GuiContext::beginMenuItem(const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
             ControlData& menuItem = createOrGetControlData(text, controlType);
             menuItem._isInteractableOutsideParent = true;
+
             ControlData& menuItemParent = getControlData(menuItem.getParentHashKey());
             const ControlType parentControlType = menuItemParent.getControlType();
             const bool isParentControlMenuItem = (parentControlType == ControlType::MenuItem);
@@ -2237,6 +2234,12 @@ namespace mint
             controlData.setClipRectForChildrenXXX(clipRect);
         }
 
+        mint::RenderingBase::ShapeFontRendererContext& GuiContext::getRendererContextForChildControl(const ControlData& controlData) noexcept
+        {
+            const bool isAncestorFocused = isAncestorControlFocused(controlData);
+            return (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+        }
+
         mint::Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const mint::Float2& titleBarSize, const mint::Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
@@ -2284,10 +2287,8 @@ namespace mint
                 }
             }
 
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
             shapeFontRendererContext.setClipRect(controlData.getClipRect());
-
             shapeFontRendererContext.setPosition(getControlCenterPosition(controlData));
             if (isParentControlDocking == true)
             {
@@ -2372,10 +2373,8 @@ namespace mint
             mint::RenderingBase::Color controlColor;
             const bool isClicked = processClickControl(controlData, color, color.scaledRgb(1.5f), color.scaledRgb(0.75f), controlColor);
 
-            const bool isAncestorFocused = isAncestorControlFocused(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isAncestorFocused == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
             shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(controlColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
@@ -2860,7 +2859,7 @@ namespace mint
                 const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
                 if (isMouseDownInInteractionArea == true)
                 {
-                    if (_mouseStates.isButtonDown() == true)
+                    if (_mouseStates.isButtonDownThisFrame() == true)
                     {
                         setControlPressed(controlData);
                     }
