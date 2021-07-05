@@ -1286,8 +1286,8 @@ namespace mint
             }
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
             
-            mint::RenderingBase::Color trackbColor = getNamedColor(NamedColor::HoverState);
-            processShowOnlyControl(trackControlData, trackbColor, false);
+            mint::RenderingBase::Color trackColor = getNamedColor(NamedColor::HoverState);
+            processShowOnlyControl(trackControlData, trackColor, false);
 
             bool isChanged = false;
             {
@@ -1296,8 +1296,6 @@ namespace mint
                 nextNoAutoPositioned();
 
                 const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
-                const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
-
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue.getThumbAt() * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
@@ -1306,9 +1304,10 @@ namespace mint
                 thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
                 thumbControlData._draggingConstraints.left(trackControlData._position._x);
                 thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + sliderValidLength);
-
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
+                    const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
+
                     prepareControlDataParamForThumb._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
                     prepareControlDataParamForThumb._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
                     prepareControlDataParamForThumb._alwaysResetPosition = false;
@@ -1328,56 +1327,67 @@ namespace mint
                 }
                 trackControlData._controlValue.setThumbAt(thumbAt);
                 outValue = thumbAt;
-
-
-                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(trackControlData);
-                // Draw track
-                {
-                    const float trackRadius = kSliderTrackThicknes * 0.5f;
-                    const float trackRectLength = sliderParam._common._size._x - trackRadius * 2.0f;
-                    const float trackRectLeftLength = thumbAt * sliderValidLength;
-                    const float trackRectRightLength = trackRectLength - trackRectLeftLength;
-
-                    const mint::Float4& trackCenterPosition = getControlCenterPosition(trackControlData);
-                    mint::Float4 trackRenderPosition = trackCenterPosition - mint::Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
-
-                    // Left(or Upper) half circle
-                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRect());
-                    shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor));
-                    shapeFontRendererContext.setPosition(trackRenderPosition);
-                    shapeFontRendererContext.drawHalfCircle(trackRadius, +mint::Math::kPiOverTwo);
-
-                    // Left rect
-                    trackRenderPosition._x += trackRectLeftLength * 0.5f;
-                    shapeFontRendererContext.setPosition(trackRenderPosition);
-                    shapeFontRendererContext.drawRectangle(mint::Float2(trackRectLeftLength, kSliderTrackThicknes), 0.0f, 0.0f);
-                    trackRenderPosition._x += trackRectLeftLength * 0.5f;
-
-                    // Right rect
-                    shapeFontRendererContext.setColor(trackbColor);
-                    trackRenderPosition._x += trackRectRightLength * 0.5f;
-                    shapeFontRendererContext.setPosition(trackRenderPosition);
-                    shapeFontRendererContext.drawRectangle(mint::Float2(trackRectRightLength, kSliderTrackThicknes), 0.0f, 0.0f);
-                    trackRenderPosition._x += trackRectRightLength * 0.5f;
-
-                    // Right(or Lower) half circle
-                    shapeFontRendererContext.setPosition(trackRenderPosition);
-                    shapeFontRendererContext.drawHalfCircle(trackRadius, -mint::Math::kPiOverTwo);
-                }
-
-                // Draw thumb
-                {
-                    const mint::Float4& thumbCenterPosition = getControlCenterPosition(thumbControlData);
-                    shapeFontRendererContext.setPosition(thumbCenterPosition);
-                    shapeFontRendererContext.setColor(mint::RenderingBase::Color::kWhite.scaledA(thumbColor.a()));
-                    shapeFontRendererContext.drawCircle(kSliderThumbRadius);
-
-                    shapeFontRendererContext.setColor(thumbColor);
-                    shapeFontRendererContext.drawCircle(kSliderThumbRadius - 2.0f);
-                }
+                
+                // 반드시 thumbAt 이 갱신된 이후에 draw 를 한다.
+                drawSliderTrack(sliderParam, trackControlData, trackColor);
+                drawSliderThumb(sliderParam, thumbControlData, thumbColor);
             }
             
             return isChanged;
+        }
+
+        void GuiContext::drawSliderTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept
+        {
+            MINT_ASSERT("김장원", trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
+
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(trackControlData);
+            const float trackRadius = kSliderTrackThicknes * 0.5f;
+            const float trackRectLength = sliderParam._common._size._x - trackRadius * 2.0f;
+
+            const float thumbAt = trackControlData._controlValue.getThumbAt();
+            const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
+            const float trackRectLeftLength = thumbAt * sliderValidLength;
+            const float trackRectRightLength = trackRectLength - trackRectLeftLength;
+
+            const mint::Float4& trackCenterPosition = getControlCenterPosition(trackControlData);
+            mint::Float4 trackRenderPosition = trackCenterPosition - mint::Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
+
+            // Left(or Upper) half circle
+            shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
+            shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor));
+            shapeFontRendererContext.setPosition(trackRenderPosition);
+            shapeFontRendererContext.drawHalfCircle(trackRadius, +mint::Math::kPiOverTwo);
+
+            // Left rect
+            trackRenderPosition._x += trackRectLeftLength * 0.5f;
+            shapeFontRendererContext.setPosition(trackRenderPosition);
+            shapeFontRendererContext.drawRectangle(mint::Float2(trackRectLeftLength, kSliderTrackThicknes), 0.0f, 0.0f);
+            trackRenderPosition._x += trackRectLeftLength * 0.5f;
+
+            // Right rect
+            shapeFontRendererContext.setColor(trackColor);
+            trackRenderPosition._x += trackRectRightLength * 0.5f;
+            shapeFontRendererContext.setPosition(trackRenderPosition);
+            shapeFontRendererContext.drawRectangle(mint::Float2(trackRectRightLength, kSliderTrackThicknes), 0.0f, 0.0f);
+            trackRenderPosition._x += trackRectRightLength * 0.5f;
+
+            // Right(or Lower) half circle
+            shapeFontRendererContext.setPosition(trackRenderPosition);
+            shapeFontRendererContext.drawHalfCircle(trackRadius, -mint::Math::kPiOverTwo);
+        }
+
+        void GuiContext::drawSliderThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept
+        {
+            MINT_ASSERT("김장원", thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
+
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(thumbControlData);
+            const mint::Float4& thumbCenterPosition = getControlCenterPosition(thumbControlData);
+            shapeFontRendererContext.setPosition(thumbCenterPosition);
+            shapeFontRendererContext.setColor(mint::RenderingBase::Color::kWhite.scaledA(thumbColor.a()));
+            shapeFontRendererContext.drawCircle(kSliderThumbRadius);
+
+            shapeFontRendererContext.setColor(thumbColor);
+            shapeFontRendererContext.drawCircle(kSliderThumbRadius - 2.0f);
         }
 
         const bool GuiContext::beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText)

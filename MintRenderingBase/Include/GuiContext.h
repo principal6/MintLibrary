@@ -651,13 +651,14 @@ namespace mint
             const bool                                          beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
             void                                                endSlider() { endControlInternal(ControlType::Slider); }
 
+        private:
+            void                                                drawSliderTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept;
+            void                                                drawSliderThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
+
         public:
             // [TextBox]
             const bool                                          beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
             void                                                endTextBox() { endControlInternal(ControlType::TextBox); }
-
-        private:
-
 
         public:
             // [ListView]
