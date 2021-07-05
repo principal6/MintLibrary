@@ -1940,80 +1940,90 @@ namespace mint
 
         void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
         {
-            static constexpr ControlType trackControlType = ControlType::ScrollBar;
-            
-            ControlData& parent = getControlStackTopXXX();
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
-            const mint::Float2& parentControlPreviousContentAreaSize = parent.getPreviousContentAreaSize();
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
-
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
             {
-                const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
-
-                ScrollBarTrackParam scrollBarTrackParam;
-                scrollBarTrackParam._common._size._x = kScrollBarThickness;
-                scrollBarTrackParam._common._size._y = parentWindowPureDisplayHeight;
-                const float titleBarOffsetX = (parent.isTypeOf(mint::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
-                scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
-                scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
-                bool hasExtraSize = false;
-                ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, hasExtraSize);
-                if (hasExtraSize == true)
-                {
-                    parent._controlValue.enableScrollBar(ScrollBarType::Vert);
-
-                    pushScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, shapeFontRendererContext);
-                }
-                else
-                {
-                    parent._controlValue.disableScrollBar(ScrollBarType::Vert);
-
-                    parent._childDisplayOffset._y = 0.0f; // Scrolling!
-                }
+                pushScrollBarVert();
             }
 
             const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
             if (useHorizontal == true)
             {
-                const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
-                const mint::Float2& menuBarThicknes = parent.getMenuBarThickness();
-
-                ScrollBarTrackParam scrollBarTrackParam;
-                scrollBarTrackParam._common._size._x = parentWindowPureDisplayWidth;
-                scrollBarTrackParam._common._size._y = kScrollBarThickness;
-                scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
-                scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
-                bool hasExtraSize = false;
-                ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, hasExtraSize);
-                if (hasExtraSize == true)
-                {
-                    parent._controlValue.enableScrollBar(ScrollBarType::Horz);
-
-                    pushScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, shapeFontRendererContext);
-                }
-                else
-                {
-                    parent._controlValue.disableScrollBar(ScrollBarType::Horz);
-
-                    parent._childDisplayOffset._x = 0.0f; // Scrolling!
-                }
+                pushScrollBarHorz();
             }
         }
 
-        GuiContext::ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, bool& outHasExtraSize)
+        void GuiContext::pushScrollBarVert() noexcept
+        {
+            ControlData& parent = getControlStackTopXXX();
+            const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
+            const float titleBarOffsetX = (parent.isTypeOf(mint::Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+
+            ScrollBarTrackParam scrollBarTrackParam;
+            scrollBarTrackParam._common._size._x = kScrollBarThickness;
+            scrollBarTrackParam._common._size._y = parentWindowPureDisplayHeight;
+            scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
+            scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
+            
+            bool hasExtraSize = false;
+            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+            ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, shapeFontRendererContext, hasExtraSize);
+            if (hasExtraSize == true)
+            {
+                parent._controlValue.enableScrollBar(ScrollBarType::Vert);
+
+                pushScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, shapeFontRendererContext);
+            }
+            else
+            {
+                parent._controlValue.disableScrollBar(ScrollBarType::Vert);
+
+                parent._childDisplayOffset._y = 0.0f; // Scrolling!
+            }
+        }
+
+        void GuiContext::pushScrollBarHorz() noexcept
+        {
+            ControlData& parent = getControlStackTopXXX();
+            const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
+            const mint::Float2& menuBarThicknes = parent.getMenuBarThickness();
+
+            ScrollBarTrackParam scrollBarTrackParam;
+            scrollBarTrackParam._common._size._x = parentWindowPureDisplayWidth;
+            scrollBarTrackParam._common._size._y = kScrollBarThickness;
+            scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
+            scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
+
+            bool hasExtraSize = false;
+            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+            ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, shapeFontRendererContext, hasExtraSize);
+            if (hasExtraSize == true)
+            {
+                parent._controlValue.enableScrollBar(ScrollBarType::Horz);
+
+                pushScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, shapeFontRendererContext);
+            }
+            else
+            {
+                parent._controlValue.disableScrollBar(ScrollBarType::Horz);
+
+                parent._childDisplayOffset._x = 0.0f; // Scrolling!
+            }
+        }
+
+        GuiContext::ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
-
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
-            ControlData& parentControlData = getControlStackTopXXX();
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
-            const bool isVert = (scrollBarType == ScrollBarType::Vert);
-
-            ControlData& trackControlData = createOrGetControlData(generateControlKeyString((isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
             outHasExtraSize = false;
+            nextNoAutoPositioned();
+
+            const bool isVert = (scrollBarType == ScrollBarType::Vert);
+            ControlData& parentControlData = getControlStackTopXXX();
+            ControlData& trackControlData = createOrGetControlData(generateControlKeyString((isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
 
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
@@ -2035,7 +2045,6 @@ namespace mint
                 prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
                 prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
             }
-            nextNoAutoPositioned();
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
 
             mint::RenderingBase::Color trackColor = getNamedColor(NamedColor::ScrollBarTrack);
@@ -2050,7 +2059,6 @@ namespace mint
                 {
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
-                    mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
                     {
                         const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
                         shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
@@ -2090,7 +2098,6 @@ namespace mint
                 {
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
-                    mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isParentAncestorFocusedInclusive == true) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
                     {
                         const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
                         shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
@@ -2129,6 +2136,9 @@ namespace mint
         void GuiContext::pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
+            
+            nextNoAutoPositioned();
+
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
             const float thumbSize = visibleLength * thumbSizeRatio - radius * 2.0f;
@@ -2157,7 +2167,6 @@ namespace mint
                     thumbControlData._draggingConstraints.top(scrollBarTrack._position._y);
                     thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top() + trackRemnantSize);
                 }
-                nextNoAutoPositioned();
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
                 // @중요
@@ -2223,7 +2232,6 @@ namespace mint
                     thumbControlData._draggingConstraints.top(scrollBarTrack._position._y - kScrollBarThickness * 0.5f);
                     thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
                 }
-                nextNoAutoPositioned();
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
                 // @중요

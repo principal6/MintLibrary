@@ -701,8 +701,10 @@ namespace mint
             // [ScrollBar]
             // Return 'true' if value was changed
             void                                                pushScrollBar(const ScrollBarType scrollBarType);
+            void                                                pushScrollBarVert() noexcept;
+            void                                                pushScrollBarHorz() noexcept;
 
-            ControlData&                                        pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, bool& outHasExtraSize);
+            ControlData&                                        pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
             void                                                pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
 
         private:
