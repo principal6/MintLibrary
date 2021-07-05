@@ -177,6 +177,7 @@ namespace mint
             void                    setCurrentMenuBarType(const MenuBarType menuBarType) noexcept;
             void                    setThumbAt(const float thumbAt) noexcept;
             void                    setSelectedItemIndex(const int16 itemIndex) noexcept;
+            void                    resetSelectedItemIndex() noexcept;
             void                    setIsToggled(const bool isToggled) noexcept;
             void                    setItemSizeX(const float itemSizeX) noexcept;
             void                    setItemSizeY(const float itemSizeY) noexcept;

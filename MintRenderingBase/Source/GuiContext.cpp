@@ -1609,7 +1609,7 @@ namespace mint
 
             if (controlData.getPreviousChildControlCount() == 0)
             {
-                controlData._controlValue.setSelectedItemIndex(-1);
+                controlData._controlValue.resetSelectedItemIndex();
             }
             outSelectedListItemIndex = controlData._controlValue.getSelectedItemIndex();
 
@@ -1686,17 +1686,8 @@ namespace mint
             ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             const int16 parentSelectedItemIndex = parentControlData._controlValue.getSelectedItemIndex();
             const int16 myIndex = static_cast<int16>(parentControlData.getChildControlDataHashKeyArray().size() - 1);
-            mint::RenderingBase::Color inputColor;
-            if (parentSelectedItemIndex == myIndex)
-            {
-                inputColor = getNamedColor(NamedColor::HighlightColor);
-            }
-            else
-            {
-                inputColor = getNamedColor(NamedColor::LightFont);
-            }
-
             mint::RenderingBase::Color finalColor;
+            const mint::RenderingBase::Color inputColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::HighlightColor) : getNamedColor(NamedColor::LightFont);
             const bool isClicked = processClickControl(controlData, inputColor, inputColor, inputColor, finalColor);
             if (isClicked == true)
             {
@@ -1720,6 +1711,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
+            nextNoAutoPositioned();
+
             ControlData& menuBar = createOrGetControlData(name, controlType);
             ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
@@ -1740,11 +1733,11 @@ namespace mint
                 prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseSize._y : 0.0f;
                 prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
             }
-            nextNoAutoPositioned();
             prepareControlData(menuBar, prepareControlDataParam);
 
             const bool wasToggled = menuBar._controlValue.getIsToggled();
-            if (_pressedControlHashKey != 0 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y)) == false)
+            const mint::Float2 interactionSize = mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y);
+            if (_pressedControlHashKey != 0 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, interactionSize) == false)
             {
                 menuBar._controlValue.setIsToggled(false);
             }
@@ -1756,7 +1749,7 @@ namespace mint
             {
                 // wasToggled 덕분에 다음 프레임에 -1 로 세팅된다. 한 번은 자식 함수들이 쭉 호출된다는 뜻!
 
-                menuBar._controlValue.setSelectedItemIndex(-1);
+                menuBar._controlValue.resetSelectedItemIndex();
             }
 
             mint::RenderingBase::Color color = getNamedColor(NamedColor::NormalState);
@@ -1766,10 +1759,9 @@ namespace mint
                 color.a(1.0f);
             }
 
+            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBar);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
             shapeFontRendererContext.setClipRect(menuBar.getClipRect());
-
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBar);
             shapeFontRendererContext.setColor(color);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(menuBar._displaySize, 0.0f, 0.0f, 0.0f);
@@ -1781,6 +1773,8 @@ namespace mint
         const bool GuiContext::beginMenuBarItem(const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
+
+            nextNoAutoPositioned();
 
             ControlData& menuBar = getControlStackTopXXX();
             ControlData& menuBarItem = createOrGetControlData(text, controlType, generateControlKeyString(menuBar, text, controlType));
@@ -1800,7 +1794,6 @@ namespace mint
                 prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
             }
-            nextNoAutoPositioned();
             prepareControlData(menuBarItem, prepareControlDataParam);
             menuBar._controlValue.addItemSizeX(menuBarItem._displaySize._x);
             menuBarItem._controlValue.setItemSizeY(0.0f);
@@ -1825,17 +1818,16 @@ namespace mint
             else if (wasMeSelected == true && isParentAncestorPressed == true)
             {
                 menuBar._controlValue.setIsToggled(false);
-                menuBar._controlValue.setSelectedItemIndex(-1);
+                menuBar._controlValue.resetSelectedItemIndex();
             }
             if (isControlHovered(menuBarItem) == true && isParentControlToggled == true)
             {
                 menuBar._controlValue.setSelectedItemIndex(myIndex);
             }
             
+            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBarItem);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
             shapeFontRendererContext.setClipRect(menuBarItem.getClipRect());
-
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBarItem);
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(menuBarItem._displaySize, 0.0f, 0.0f, 0.0f);
@@ -1854,10 +1846,12 @@ namespace mint
             return result;
         }
 
-#pragma optimize("", off)
         const bool GuiContext::beginMenuItem(const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
+
+            nextNoAutoPositioned();
+            nextControlSizeNonContrainedToParent();
 
             ControlData& menuItem = createOrGetControlData(text, controlType);
             menuItem._isInteractableOutsideParent = true;
@@ -1880,8 +1874,6 @@ namespace mint
                 prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._displaySize._x : 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue.getItemSizeY() + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._initialDisplaySize._y);
             }
-            nextNoAutoPositioned();
-            nextControlSizeNonContrainedToParent();
             prepareControlData(menuItem, prepareControlDataParam);
 
             const uint32 textLength = mint::StringUtil::wcslen(text);
@@ -1910,14 +1902,13 @@ namespace mint
             }
             else if (isHovered == false && isDescendantHovered  == false && isToggled == true)
             {
-                menuItemParent._controlValue.setSelectedItemIndex(-1);
+                menuItemParent._controlValue.resetSelectedItemIndex();
             }
             menuItem._controlValue.setIsToggled(isMeSelected);
 
+            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuItem);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
             shapeFontRendererContext.setClipRect(menuItem.getClipRect());
-            
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuItem);
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(menuItem._displaySize, 0.0f, 0.0f, 0.0f);

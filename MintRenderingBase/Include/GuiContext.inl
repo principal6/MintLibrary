@@ -124,6 +124,11 @@ namespace mint
             _hi[4] = itemIndex;
         }
 
+        MINT_INLINE void ControlValue::resetSelectedItemIndex() noexcept
+        {
+            setSelectedItemIndex(-1);
+        }
+
         MINT_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
         {
             //_hi[5] = (isToggled == true) ? 1 : 0;
