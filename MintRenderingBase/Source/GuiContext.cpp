@@ -2816,7 +2816,7 @@ namespace mint
             {
                 outBackgroundColor = hoverColor;
             }
-            else if (isControlPressed(controlData) == true || isClicked == true)
+            if (isControlPressed(controlData) == true || isClicked == true)
             {
                 outBackgroundColor = pressedColor;
             }
