@@ -416,6 +416,73 @@ namespace mint
                 return false;
             }
 
+            MINT_INLINE const bool isInControlInteractionArea(const mint::Float2& screenPosition, const GuiContext::ControlData& controlData) noexcept
+            {
+                if (controlData.isDockHosting() == true)
+                {
+                    const mint::Float2 positionOffset{ controlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x, controlData.getDockSizeIfHosting(DockingMethod::TopSide)._y };
+                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
+                }
+                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, mint::Float2::kZero, controlData.getInteractionSize());
+            }
+
+            MINT_INLINE const bool isInControlBorderArea(const mint::Float2& screenPosition, const GuiContext::ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) noexcept
+            {
+                const mint::Float2 extendedPosition = controlData._position - mint::Float2(kHalfBorderThickness);
+                const mint::Float2 extendedInteractionSize = controlData.getInteractionSize() + mint::Float2(kHalfBorderThickness * 2.0f);
+                const mint::Float2 originalMax = controlData._position + controlData.getInteractionSize();
+                if (ControlCommonHelpers::isInControl(screenPosition, extendedPosition, mint::Float2::kZero, extendedInteractionSize) == true)
+                {
+                    outResizingMask.setAllFalse();
+
+                    outResizingMask._left = (screenPosition._x <= controlData._position._x + kHalfBorderThickness);
+                    outResizingMask._right = (originalMax._x - kHalfBorderThickness <= screenPosition._x);
+                    outResizingMask._top = (screenPosition._y <= controlData._position._y + kHalfBorderThickness);
+                    outResizingMask._bottom = (originalMax._y - kHalfBorderThickness <= screenPosition._y);
+
+                    const bool leftOrRight = outResizingMask._left || outResizingMask._right;
+                    const bool topOrBottom = outResizingMask._top || outResizingMask._bottom;
+                    const bool topLeftOrBottomRight = (outResizingMask.topLeft() || outResizingMask.bottomRight());
+                    const bool bottomLeftOrTopRight = (outResizingMask.bottomLeft() || outResizingMask.topRight());
+
+                    outResizingMethod = ResizingMethod::ResizeOnly;
+                    if (outResizingMask._left == true)
+                    {
+                        outResizingMethod = ResizingMethod::RepositionHorz;
+                    }
+                    if (outResizingMask._top == true)
+                    {
+                        outResizingMethod = ResizingMethod::RepositionVert;
+
+                        if (outResizingMask._left == true)
+                        {
+                            outResizingMethod = ResizingMethod::RepositionBoth;
+                        }
+                    }
+
+                    if (topLeftOrBottomRight == true)
+                    {
+                        outCursorType = mint::Window::CursorType::SizeLeftTilted;
+                    }
+                    else if (bottomLeftOrTopRight == true)
+                    {
+                        outCursorType = mint::Window::CursorType::SizeRightTilted;
+                    }
+                    else if (leftOrRight == true)
+                    {
+                        outCursorType = mint::Window::CursorType::SizeHorz;
+                    }
+                    else if (topOrBottom == true)
+                    {
+                        outCursorType = mint::Window::CursorType::SizeVert;
+                    }
+
+                    const bool result = (leftOrRight || topOrBottom);
+                    return result;
+                }
+                return false;
+            }
+
             MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
             {
                 targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
@@ -602,73 +669,6 @@ namespace mint
             processControlInteractionInternal(_rootControlData, false);
         }
 
-        const bool GuiContext::isInControlInteractionArea(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept
-        {
-            if (controlData.isDockHosting() == true)
-            {
-                const mint::Float2 positionOffset{ controlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x, controlData.getDockSizeIfHosting(DockingMethod::TopSide)._y };
-                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
-            }
-            return ControlCommonHelpers::isInControl(screenPosition, controlData._position, mint::Float2::kZero, controlData.getInteractionSize());
-        }
-
-        const bool GuiContext::isInControlBorderArea(const mint::Float2& screenPosition, const ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept
-        {
-            const mint::Float2 extendedPosition = controlData._position - mint::Float2(kHalfBorderThickness);
-            const mint::Float2 extendedInteractionSize = controlData.getInteractionSize() + mint::Float2(kHalfBorderThickness * 2.0f);
-            const mint::Float2 originalMax = controlData._position + controlData.getInteractionSize();
-            if (ControlCommonHelpers::isInControl(screenPosition, extendedPosition, mint::Float2::kZero, extendedInteractionSize) == true)
-            {
-                outResizingMask.setAllFalse();
-
-                outResizingMask._left = (screenPosition._x <= controlData._position._x + kHalfBorderThickness);
-                outResizingMask._right = (originalMax._x - kHalfBorderThickness <= screenPosition._x);
-                outResizingMask._top = (screenPosition._y <= controlData._position._y + kHalfBorderThickness);
-                outResizingMask._bottom = (originalMax._y - kHalfBorderThickness <= screenPosition._y);
-                
-                const bool leftOrRight = outResizingMask._left || outResizingMask._right;
-                const bool topOrBottom = outResizingMask._top || outResizingMask._bottom;
-                const bool topLeftOrBottomRight = (outResizingMask.topLeft() || outResizingMask.bottomRight());
-                const bool bottomLeftOrTopRight = (outResizingMask.bottomLeft() || outResizingMask.topRight());
-                
-                outResizingMethod = ResizingMethod::ResizeOnly;
-                if (outResizingMask._left == true)
-                {
-                    outResizingMethod = ResizingMethod::RepositionHorz;
-                }
-                if (outResizingMask._top == true)
-                {
-                    outResizingMethod = ResizingMethod::RepositionVert;
-
-                    if (outResizingMask._left == true)
-                    {
-                        outResizingMethod = ResizingMethod::RepositionBoth;
-                    }
-                }
-
-                if (topLeftOrBottomRight == true)
-                {
-                    outCursorType = mint::Window::CursorType::SizeLeftTilted;
-                }
-                else if (bottomLeftOrTopRight == true)
-                {
-                    outCursorType = mint::Window::CursorType::SizeRightTilted;
-                }
-                else if (leftOrRight == true)
-                {
-                    outCursorType = mint::Window::CursorType::SizeHorz;
-                }
-                else if (topOrBottom == true)
-                {
-                    outCursorType = mint::Window::CursorType::SizeVert;
-                }
-
-                const bool result = (leftOrRight || topOrBottom);
-                return result;
-            }
-            return false;
-        }
-
         const bool GuiContext::shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept
         {
             const ControlType controlType = controlData.getControlType();
@@ -684,7 +684,7 @@ namespace mint
             for (; bucketViewer.isValid(); bucketViewer.next())
             {
                 const ControlData& childWindowControlData = getControlData(*bucketViewer.view()._key);
-                if (isInControlInteractionArea(screenPosition, childWindowControlData) == true)
+                if (ControlCommonHelpers::isInControlInteractionArea(screenPosition, childWindowControlData) == true)
                 {
                     return false;
                 }
@@ -909,18 +909,18 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Window;
             
+            nextNoAutoPositioned();
+
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._isFocusable = true;
             windowControlData._controlValue.setItemSizeX(kTitleBarBaseSize._x);
             windowControlData._controlValue.setItemSizeY(kTitleBarBaseSize._y);
-            if (windowControlData.isVisibleState(inoutVisibleState) == false)
+            if (windowControlData.visibleStateEquals(inoutVisibleState) == false)
             {
                 windowControlData.setVisibleState(inoutVisibleState);
 
-                const bool isVisible = windowControlData.isControlVisible();
-                const bool isDocking = windowControlData.isDocking();
-                if (isVisible == true)
+                if (windowControlData.isControlVisible() == true)
                 {
                     setControlFocused(windowControlData);
                 }
@@ -941,83 +941,60 @@ namespace mint
                 prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
                 prepareControlDataParam._deltaInteractionSizeByDock._y = -windowControlData.getVertDockSizeSum();
             }
-            nextNoAutoPositioned();
             prepareControlData(windowControlData, prepareControlDataParam);
 
-            const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
-            const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
-            if (isParentAlsoWindow == true)
-            {
-                windowControlData._position += parentControlData._currentFrameDeltaPosition;
-                windowControlData._currentFrameDeltaPosition = parentControlData._currentFrameDeltaPosition; // 계층 가장 아래 Window 까지 전파되도록
-            }
+            updateWindowPositionByParentWindow(windowControlData);
+            
+            updateDockingWindowDisplay(windowControlData);
 
-
-            const bool isVisible = windowControlData.isControlVisible();
-            const bool isDocking = windowControlData.isDocking();
-            bool needToProcessControl = isVisible;
-            if (isDocking == true)
-            {
-                const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
-                const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
-                if (0 < _updateScreenSizeCounter)
-                {
-                    windowControlData._position = dockControlData.getDockPosition(windowControlData._lastDockingMethod);
-                    windowControlData._displaySize = dockControlData.getDockSize(windowControlData._lastDockingMethod);
-                }
-                needToProcessControl &= (isDocking && isShownInDock);
-            }
-
+            const bool needToProcessControl = needToProcessWindowControl(windowControlData);
             if (needToProcessControl == true)
             {
                 mint::RenderingBase::Color finalBackgroundColor;
                 const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor);
                 const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
-                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused) ? _shapeFontRendererContextForeground : _shapeFontRendererContextBackground;
+                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused) 
+                    ? _shapeFontRendererContextForeground
+                    : _shapeFontRendererContextBackground;
 
                 // Viewport & Scissor rectangle
                 {
-                    const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
-                    const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
+                    const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
+                    const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
                     {
                         mint::Rect clipRectForMe = windowControlData.getControlRect();
-                        clipRectForMe.top(clipRectForMe.top() - static_cast<LONG>(kTitleBarBaseSize._y));
+                        clipRectForMe.top() -= static_cast<LONG>(kTitleBarBaseSize._y);
                         if (isParentAlsoWindow == true)
                         {
-                            const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForDocks());
                         }
                         setClipRectForMe(windowControlData, clipRectForMe);
                     }
                     {
                         mint::Rect clipRectForDocks = windowControlData.getControlPaddedRect();
-                        clipRectForDocks.top(clipRectForDocks.top() + static_cast<LONG>(kTitleBarBaseSize._y));
+                        clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseSize._y);
                         if (isParentAlsoWindow == true)
                         {
-                            const mint::Rect& parentClipRect = parentControlData.getClipRectForDocks();
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForDocks, parentClipRect);
-
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForDocks, parentControlData.getClipRectForDocks());
                         }
                         setClipRectForDocks(windowControlData, clipRectForDocks);
                     }
                     {
+                        const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
+                        const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
+
                         mint::Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top(clipRectForChildren.top() + static_cast<LONG>(
-                            windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y));
-                        clipRectForChildren.left(clipRectForChildren.left() + static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x));
-                        clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(
-                            ((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x));
-                        clipRectForChildren.bottom(clipRectForChildren.bottom() - static_cast<LONG>(
-                            ((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y));
+                        clipRectForChildren.top() += static_cast<LONG>(windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
+                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
+                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
+                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
                         if (isParentAlsoWindow == true)
                         {
-                            const mint::Rect& parentClipRect = parentControlData.getClipRect();
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentClipRect);
+                            ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentControlData.getClipRect());
                         }
                         setClipRectForChildren(windowControlData, clipRectForChildren);
                     }
                 }
-
 
                 shapeFontRendererContext.setClipRect(windowControlData.getClipRect());
 
@@ -1040,11 +1017,12 @@ namespace mint
                 _controlStackPerFrame.push_back(ControlStackData(windowControlData));
             }
             
-            if (isVisible == true)
+            if (windowControlData.isControlVisible() == true)
             {
                 windowControlData._controlValue.setItemSizeX(windowControlData._displaySize._x);
                 {
                     nextNoAutoPositioned(); // 중요
+
                     beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
@@ -1060,6 +1038,8 @@ namespace mint
 
         void GuiContext::dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const mint::Float2& initialDockingSize)
         {
+            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+
             // Initial docking
             if (windowControlData._updateCount == 2 && dockingMethod != DockingMethod::COUNT)
             {
@@ -1077,6 +1057,52 @@ namespace mint
 
                 dock(windowControlData.getHashKey(), parentControlData.getHashKey());
             }
+        }
+
+        void GuiContext::updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept
+        {
+            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+
+            const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
+            const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
+            if (isParentAlsoWindow == true)
+            {
+                // 부모 윈도우가 이동한 만큼 내 위치도 이동!
+                windowControlData._position += parentControlData._currentFrameDeltaPosition;
+
+                // 계층 가장 아래 Window 까지 전파되도록
+                windowControlData._currentFrameDeltaPosition = parentControlData._currentFrameDeltaPosition;
+            }
+        }
+
+        void GuiContext::updateDockingWindowDisplay(ControlData& windowControlData) noexcept
+        {
+            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+
+            if (windowControlData.isDocking() == true)
+            {
+                const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
+                if (0 < _updateScreenSizeCounter)
+                {
+                    windowControlData._position = dockControlData.getDockPosition(windowControlData._lastDockingMethod);
+                    windowControlData._displaySize = dockControlData.getDockSize(windowControlData._lastDockingMethod);
+                }
+            }
+        }
+
+        const bool GuiContext::needToProcessWindowControl(const ControlData& windowControlData) const noexcept
+        {
+            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+
+            const bool isDocking = windowControlData.isDocking();
+            bool needToProcessControl = windowControlData.isControlVisible();
+            if (isDocking == true)
+            {
+                const ControlData& dockControlData = getControlData(windowControlData.getDockControlHashKey());
+                const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
+                needToProcessControl &= (isDocking && isShownInDock);
+            }
+            return needToProcessControl;
         }
 
         const bool GuiContext::beginButton(const wchar_t* const text)
@@ -2831,8 +2857,8 @@ namespace mint
             }
 
             const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-            const bool isMouseInParentInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
-            const bool isMouseInInteractionArea = isInControlInteractionArea(_mouseStates.getPosition(), controlData);
+            const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
+            const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData);
             const bool meetsAreaCondition = (controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
             const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
             if (meetsAreaCondition == true && meetsInteractionCondition == true)
@@ -2856,7 +2882,7 @@ namespace mint
                 }
                 
                 // Pressed (Mouse down)
-                const bool isMouseDownInInteractionArea = isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
+                const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
                 if (isMouseDownInInteractionArea == true)
                 {
                     if (_mouseStates.isButtonDownThisFrame() == true)
@@ -2919,7 +2945,8 @@ namespace mint
                 mint::Window::CursorType newCursorType;
                 ResizingMask resizingMask;
                 const bool isResizable = controlData.isResizable();
-                if (controlData.isResizable() == true && isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
+                if (controlData.isResizable() == true 
+                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
                 {
                     if (controlData._resizingMask.overlaps(resizingMask) == true)
                     {
@@ -3129,7 +3156,7 @@ namespace mint
             if ((changeTargetControlData.hasChildWindow() == false) && 
                 (changeTargetControlData._dockingControlType == DockingControlType::Docker || changeTargetControlData._dockingControlType == DockingControlType::DockerDock) &&
                 (parentControlData._dockingControlType == DockingControlType::Dock || parentControlData._dockingControlType == DockingControlType::DockerDock) &&
-                isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
+                ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
                 const mint::Float4& parentControlCenterPosition = getControlCenterPosition(parentControlData);
                 const float previewShortLengthMax = 160.0f;
@@ -3421,7 +3448,8 @@ namespace mint
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
                 const ControlData& focusedControlData = getControlData(_focusedControlHashKey);
-                if (isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true || isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
+                if (ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
+                    || ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
                     // 마우스가 Focus Control 과 상호작용할 경우 나와는 상호작용하지 않는것으로 판단!!
                     return false;
@@ -3445,8 +3473,9 @@ namespace mint
                     return false;
                 }
 
-                if (_mouseStates.isButtonDown() == true && isInControlInteractionArea(_mouseStates.getPosition(), controlData) == true
-                    && isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                if (_mouseStates.isButtonDown() == true 
+                    && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData) == true
+                    && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     // Drag 시작
                     _isDragBegun = true;
@@ -3482,8 +3511,8 @@ namespace mint
                 mint::Window::CursorType newCursorType;
                 ResizingMask resizingMask;
                 if (_mouseStates.isButtonDown() == true 
-                    && isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true
-                    && isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
+                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true
+                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
                 {
                     if (controlData._resizingMask.overlaps(resizingMask) == true)
                     {
@@ -3692,6 +3721,18 @@ namespace mint
             }
 
             return hasDockingAncestorControlInclusive(getControlData(controlData.getParentHashKey()));
+        }
+
+        const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
+        {
+            float result = 0.0f;
+            if (0.0f != _mouseStates._mouseWheel 
+                && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
+            {
+                result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
+                _mouseStates._mouseWheel = 0.0f;
+            }
+            return result;
         }
 
         void GuiContext::render()

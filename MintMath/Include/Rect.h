@@ -40,14 +40,19 @@ namespace mint
         constexpr const float           horz() const noexcept;
         constexpr const float           vert() const noexcept;
 
+        float&                          left() noexcept;
+        float&                          right() noexcept;
+        float&                          top() noexcept;
+        float&                          bottom() noexcept;
+
         constexpr void                  left(const float s) noexcept;
         constexpr void                  right(const float s) noexcept;
         constexpr void                  top(const float s) noexcept;
         constexpr void                  bottom(const float s) noexcept;
 
-        constexpr const mint::Float2      center() const noexcept;
-        constexpr const mint::Float2      size() const noexcept;
-        constexpr const mint::Float2      position() const noexcept;
+        constexpr const mint::Float2    center() const noexcept;
+        constexpr const mint::Float2    size() const noexcept;
+        constexpr const mint::Float2    position() const noexcept;
         constexpr void                  position(const mint::Float2& position) noexcept;
 
     public:
@@ -57,7 +62,7 @@ namespace mint
         void                            setNan() noexcept;
 
     private:
-        mint::Float4                      _raw;
+        mint::Float4                    _raw;
     };
 }
 

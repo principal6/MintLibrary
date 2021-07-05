@@ -406,7 +406,7 @@ namespace mint
                 const bool                                  isTypeOf(const ControlType controlType) const noexcept;
                 const wchar_t*                              getText() const noexcept;
                 const bool                                  isRootControl() const noexcept;
-                const bool                                  isVisibleState(const VisibleState visibleState) const noexcept;
+                const bool                                  visibleStateEquals(const VisibleState visibleState) const noexcept;
                 const bool                                  isControlVisible() const noexcept;
                 const mint::Rect&                           getClipRect() const noexcept;
                 const mint::Rect&                           getClipRectForChildren() const noexcept;
@@ -578,8 +578,6 @@ namespace mint
             void                                                handleEvents(const mint::Window::IWindow* const window);
 
         private:
-            const bool                                          isInControlInteractionArea(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
-            const bool                                          isInControlBorderArea(const mint::Float2& screenPosition, const ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) const noexcept;
             const bool                                          shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
 
 
@@ -624,6 +622,9 @@ namespace mint
 
         private:
             void                                                dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const mint::Float2& initialDockingSize);
+            void                                                updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
+            void                                                updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
+            const bool                                          needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
 
         public:
             // [Button]

@@ -1,3 +1,4 @@
+#include "Rect.h"
 #pragma once
 
 
@@ -76,6 +77,26 @@ namespace mint
     MINT_INLINE constexpr const float Rect::vert() const noexcept
     {
         return top() + bottom();
+    }
+
+    MINT_INLINE float& Rect::left() noexcept
+    {
+        return _raw._x;
+    }
+
+    MINT_INLINE float& Rect::right() noexcept
+    {
+        return _raw._y;
+    }
+
+    MINT_INLINE float& Rect::top() noexcept
+    {
+        return _raw._z;
+    }
+
+    MINT_INLINE float& Rect::bottom() noexcept
+    {
+        return _raw._w;
     }
 
     MINT_INLINE constexpr void Rect::left(const float s) noexcept

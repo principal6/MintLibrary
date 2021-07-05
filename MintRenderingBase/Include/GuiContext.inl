@@ -563,7 +563,7 @@ namespace mint
             return _controlType == ControlType::ROOT;
         }
 
-        MINT_INLINE const bool GuiContext::ControlData::isVisibleState(const VisibleState visibleState) const noexcept
+        MINT_INLINE const bool GuiContext::ControlData::visibleStateEquals(const VisibleState visibleState) const noexcept
         {
             return visibleState == _visibleState;
         }
@@ -1074,17 +1074,6 @@ namespace mint
             _namedColors[static_cast<uint32>(namedColor)] = color;
         }
 
-        MINT_INLINE const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
-        {
-            float result = 0.0f;
-            if (0.0f != _mouseStates._mouseWheel && isInControlInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
-            {
-                result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
-                _mouseStates._mouseWheel = 0.0f;
-            }
-            return result;
-        }
-        
         MINT_INLINE const float GuiContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
             return _shapeFontRendererContextTopMost.calculateTextWidth(wideText, textLength);
