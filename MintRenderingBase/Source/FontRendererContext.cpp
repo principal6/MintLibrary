@@ -76,6 +76,12 @@ namespace mint
         }
 
 
+        const uint32 FontRendererContext::FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
+        {
+            return (_charCodeToGlyphIndexMap.size() <= static_cast<uint32>(wideChar)) ? 0 : _charCodeToGlyphIndexMap[wideChar];
+        }
+
+
         FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
             : FontRendererContext(graphicDevice, MINT_NEW(RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice))
         {
@@ -672,7 +678,7 @@ namespace mint
             {
                 const wchar_t& wideChar = wideText[textAt];
                 
-                const uint32 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
+                const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
                 const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
                 totalWidth += glyphInfo._horiAdvance;
             }
@@ -687,7 +693,7 @@ namespace mint
             {
                 const wchar_t& wideChar = wideText[textAt];
 
-                const uint32 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
+                const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
                 const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
                 totalWidth += glyphInfo._horiAdvance;
 
@@ -715,7 +721,7 @@ namespace mint
 
         void FontRendererContext::drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade)
         {
-            const uint32 glyphIndex = _fontData._charCodeToGlyphIndexMap[wideChar];
+            const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
             const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
             mint::Rect glyphRect;

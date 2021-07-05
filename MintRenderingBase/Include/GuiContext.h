@@ -660,6 +660,11 @@ namespace mint
             const bool                                          beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
             void                                                endTextBox() { endControlInternal(ControlType::TextBox); }
 
+        private:
+            void                                                drawTextBoxTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                drawTextBoxTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                drawTextBoxSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+
         public:
             // [ListView]
             const bool                                          beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);

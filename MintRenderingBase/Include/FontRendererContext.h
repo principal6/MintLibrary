@@ -109,6 +109,8 @@ namespace mint
         public:
             struct FontData
             {
+                const uint32                getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
+
                 mint::Vector<GlyphInfo>     _glyphInfoArray;
                 mint::Vector<uint32>        _charCodeToGlyphIndexMap;
                 DxObjectId                  _fontTextureId;

@@ -1396,6 +1396,7 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
+
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
@@ -1408,16 +1409,12 @@ namespace mint
             const bool wasFocused = isControlFocused(controlData);
             const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             {
-                mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-                {
-                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
-                }
+                mint::Rect clipRectForMe = controlData.getControlRect();
+                ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForChildren());
                 setClipRectForMe(controlData, clipRectForMe);
             }
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
             const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             mint::Float4 textRenderOffset;
@@ -1446,6 +1443,7 @@ namespace mint
                 processInputParam._wcharInput = _wcharInput;
                 processInputParam._wcharInputCandiate = _wcharInputCandiate;
                 processInputParam._window = _graphicDevice->getWindow();
+
                 TextBoxHelpers::ProcessInputResult processInputResult = TextBoxHelpers::processInput(processInputParam, controlData, textRenderOffset, outText);
                 if (processInputResult._clearKeyCode == true)
                 {
@@ -1459,96 +1457,140 @@ namespace mint
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
             const uint16 textLength = static_cast<uint16>(outText.length());
-            const uint16 caretAt = controlData._controlValue.getCaretAt();
-            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
+            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(controlData._controlValue.getCaretAt(), textLength));
             TextBoxHelpers::updateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
 
             // Box 렌더링
-            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData); 
+            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(controlData);
             shapeFontRendererContext.setClipRect(controlData.getClipRect());
             shapeFontRendererContext.setColor(finalBackgroundColor);
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
             // Text 및 Caret 렌더링
-            const uint16 caretState = controlData._controlValue.getCaretState();
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
-            const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-            const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            const bool needToRenderCaret = (isFocused == true && caretState == 0);
             const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
             if (needToRenderInputCandidate == true)
             {
-                // Text 렌더링 (Caret 이전)
-                if (outText.empty() == false)
-                {
-                    shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset, 
-                        mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-                }
-
-                // Input Candidate 렌더링
-                shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                shapeFontRendererContext.drawDynamicText(inputCandidate, mint::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset, 
-                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-
-                // Text 렌더링 (Caret 이후)
-                if (outText.empty() == false)
-                {
-                    shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + mint::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset, 
-                        mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-                }
-
-                // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
-                if (needToRenderCaret == true)
-                {
-                    const float caretHeight = _fontSize;
-                    const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
-                    shapeFontRendererContext.setColor(mint::RenderingBase::Color::kBlack);
-                    shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
-                }
+                drawTextBoxTextWithInputCandidate(textBoxParam, textRenderOffset, controlData, outText);
             }
             else
             {
-                // Text 전체 렌더링
-                if (outText.empty() == false)
-                {
-                    shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
-                    shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset, 
-                        mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-                }
-
-                // Caret 렌더링
-                if (needToRenderCaret == true)
-                {
-                    const float caretHeight = _fontSize;
-                    const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
-                    shapeFontRendererContext.setColor(mint::RenderingBase::Color::kBlack);
-                    shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
-                }
+                drawTextBoxTextWithoutInputCandidate(textBoxParam, textRenderOffset, controlData, outText);
             }
 
             // Selection 렌더링
-            if (isFocused == true)
-            {
-                const uint16 selectionStart = controlData._controlValue.getSelectionStart();
-                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-                const uint16 selectionEnd = selectionStart + selectionLength;
-                if (0 < selectionLength)
-                {
-                    const float textWidthTillSelectionStart = calculateTextWidth(outText.c_str(), selectionStart);
-                    const float textWidthTillSelectionEnd = calculateTextWidth(outText.c_str(), selectionEnd);
-                    const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
-
-                    const mint::Float4 selectionRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
-                    shapeFontRendererContext.setPosition(selectionRenderPosition + textRenderOffset);
-                    shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f));
-                    shapeFontRendererContext.drawRectangle(mint::Float2(textWidthSelection, _fontSize * 1.25f), 0.0f, 0.0f);
-                }
-            }
+            drawTextBoxSelection(textRenderOffset, controlData, outText);
 
             return false;
+        }
+
+        void GuiContext::drawTextBoxTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        {
+            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
+            const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+            const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(textBoxControlData);
+
+            // Text 렌더링 (Caret 이전)
+            const uint16 caretAt = textBoxControlData._controlValue.getCaretAt();
+            if (outText.empty() == false)
+            {
+                shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+                shapeFontRendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset,
+                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
+            }
+
+            // Input Candidate 렌더링
+            const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
+            const uint16 textLength = static_cast<uint16>(outText.length());
+            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
+            shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+            shapeFontRendererContext.drawDynamicText(inputCandidate, mint::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset,
+                mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
+
+            // Text 렌더링 (Caret 이후)
+            const bool isFocused = isControlFocused(textBoxControlData);
+            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            if (outText.empty() == false)
+            {
+                shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+                shapeFontRendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + mint::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset,
+                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
+            }
+
+            // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
+            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue.getCaretState() == 0);
+            if (needToRenderCaret == true)
+            {
+                const float caretHeight = _fontSize;
+                const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
+                shapeFontRendererContext.setColor(mint::RenderingBase::Color::kBlack);
+                shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
+            }
+        }
+
+        void GuiContext::drawTextBoxTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        {
+            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
+            const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+            const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
+            mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(textBoxControlData);
+
+            // Text 전체 렌더링
+            if (outText.empty() == false)
+            {
+                shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
+                shapeFontRendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset,
+                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
+            }
+
+            // Caret 렌더링
+            const bool isFocused = isControlFocused(textBoxControlData);
+            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue.getCaretState() == 0);
+            if (needToRenderCaret == true)
+            {
+                const uint16 caretAt = textBoxControlData._controlValue.getCaretAt();
+                const uint16 textLength = static_cast<uint16>(outText.length());
+                const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
+                const float caretHeight = _fontSize;
+                const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
+                shapeFontRendererContext.setColor(mint::RenderingBase::Color::kBlack);
+                shapeFontRendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
+            }
+        }
+
+        void GuiContext::drawTextBoxSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        {
+            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+
+            const bool isFocused = isControlFocused(textBoxControlData);
+            if (isFocused == false)
+            {
+                return;
+            }
+
+            const uint16 selectionStart = textBoxControlData._controlValue.getSelectionStart();
+            const uint16 selectionLength = textBoxControlData._controlValue.getSelectionLength();
+            const uint16 selectionEnd = selectionStart + selectionLength;
+            if (0 < selectionLength)
+            {
+                const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
+                const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+                const float textWidthTillSelectionStart = calculateTextWidth(outText.c_str(), selectionStart);
+                const float textWidthTillSelectionEnd = calculateTextWidth(outText.c_str(), selectionEnd);
+                const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
+                
+                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(textBoxControlData);
+                const mint::Float4 selectionRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
+                shapeFontRendererContext.setPosition(selectionRenderPosition + textRenderOffset);
+                shapeFontRendererContext.setColor(getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f));
+                shapeFontRendererContext.drawRectangle(mint::Float2(textWidthSelection, _fontSize * 1.25f), 0.0f, 0.0f);
+            }
         }
 
         const bool GuiContext::beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
@@ -1557,12 +1599,14 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = false;
+
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._initialDisplaySize._x = 160.0f;
                 prepareControlDataParam._initialDisplaySize._y = 100.0f;
             }
             prepareControlData(controlData, prepareControlDataParam);
+
             if (controlData.getPreviousChildControlCount() == 0)
             {
                 controlData._controlValue.setSelectedItemIndex(-1);
@@ -1573,12 +1617,9 @@ namespace mint
             processShowOnlyControl(controlData, finalBackgroundColor, false);
 
             {
-                mint::Rect clipRectForMe = controlData.getControlRect();
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-                {
-                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentClipRect);
-                }
+                mint::Rect clipRectForMe = controlData.getControlRect();
+                ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForChildren());
                 setClipRectForMe(controlData, clipRectForMe);
             }
             {
@@ -1587,11 +1628,10 @@ namespace mint
                 const float quarterRoundnessInPixel = halfRoundnessInPixel * 0.5f;
                 clipRectForChildren.left(clipRectForChildren.left() + static_cast<LONG>(quarterRoundnessInPixel));
                 clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(halfRoundnessInPixel));
+
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-                {
-                    const mint::Rect& parentClipRect = parentControlData.getClipRectForChildren();
-                    ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentClipRect);
-                }
+                ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentControlData.getClipRectForChildren());
+
                 setClipRectForChildren(controlData, clipRectForChildren);
             }
 
