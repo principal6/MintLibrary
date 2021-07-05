@@ -1207,19 +1207,56 @@ namespace mint
             shapeFontRendererContext.setPosition(controlCenterPosition);
             shapeFontRendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
 
-            mint::Float4 textPosition = controlCenterPosition;
+            shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
+            const mint::Float4 textPosition = calculateLabelTextPosition(labelParam, controlData);
+            const mint::RenderingBase::FontRenderingOption fontRenderingOption = getLabelFontRenderingOption(labelParam, controlData);
+            shapeFontRendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
+        }
+
+        mint::Float4 GuiContext::calculateLabelTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        {
+            MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
+
+            mint::Float4 textPosition = getControlCenterPosition(labelControlData);
+            if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
+            {
+                if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
+                {
+                    textPosition._x = labelControlData._position._x;
+                }
+                else
+                {
+                    textPosition._x = labelControlData._position._x + labelControlData._displaySize._x;
+                }
+            }
+            if (labelParam._alignmentVert != TextAlignmentVert::Middle)
+            {
+                if (labelParam._alignmentVert == TextAlignmentVert::Top)
+                {
+                    textPosition._y = labelControlData._position._y;
+                }
+                else
+                {
+                    textPosition._y = labelControlData._position._y + labelControlData._displaySize._y;
+                }
+            }
+            return textPosition;
+        }
+
+        mint::RenderingBase::FontRenderingOption GuiContext::getLabelFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        {
+            MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
+
             mint::RenderingBase::TextRenderDirectionHorz textRenderDirectionHorz = mint::RenderingBase::TextRenderDirectionHorz::Centered;
             mint::RenderingBase::TextRenderDirectionVert textRenderDirectionVert = mint::RenderingBase::TextRenderDirectionVert::Centered;
             if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
             {
                 if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
                 {
-                    textPosition._x = controlData._position._x;
                     textRenderDirectionHorz = mint::RenderingBase::TextRenderDirectionHorz::Rightward;
                 }
                 else
                 {
-                    textPosition._x = controlData._position._x + controlData._displaySize._x;
                     textRenderDirectionHorz = mint::RenderingBase::TextRenderDirectionHorz::Leftward;
                 }
             }
@@ -1227,26 +1264,21 @@ namespace mint
             {
                 if (labelParam._alignmentVert == TextAlignmentVert::Top)
                 {
-                    textPosition._y = controlData._position._y;
                     textRenderDirectionVert = mint::RenderingBase::TextRenderDirectionVert::Downward;
                 }
                 else
                 {
-                    textPosition._y = controlData._position._y + controlData._displaySize._y;
                     textRenderDirectionVert = mint::RenderingBase::TextRenderDirectionVert::Upward;
                 }
             }
-            shapeFontRendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
-            shapeFontRendererContext.drawDynamicText(text, textPosition, mint::RenderingBase::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB));
+            return mint::RenderingBase::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
         }
 
         const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue)
         {
             static constexpr ControlType trackControlType = ControlType::Slider;
 
-            bool isChanged = false;
             ControlData& trackControlData = createOrGetControlData(name, trackControlType);
-            
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
                 prepareControlDataParamForTrack._initialDisplaySize._x = sliderParam._common._size._x;
@@ -1257,8 +1289,11 @@ namespace mint
             mint::RenderingBase::Color trackbColor = getNamedColor(NamedColor::HoverState);
             processShowOnlyControl(trackControlData, trackbColor, false);
 
+            bool isChanged = false;
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
+
+                nextNoAutoPositioned();
 
                 const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
                 const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
@@ -1279,7 +1314,6 @@ namespace mint
                     prepareControlDataParamForThumb._alwaysResetPosition = false;
                     prepareControlDataParamForThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
                 }
-                nextNoAutoPositioned();
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
                 
                 mint::RenderingBase::Color thumbColor;

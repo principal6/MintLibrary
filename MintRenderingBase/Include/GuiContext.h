@@ -637,9 +637,15 @@ namespace mint
             const bool                                          beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                                endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
+        public:
             // [Label]
             void                                                pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
+        private:
+            mint::Float4                                        calculateLabelTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            mint::RenderingBase::FontRenderingOption            getLabelFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+
+        public:
             // [Slider]
             // Return 'true' if value was changed
             const bool                                          beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
