@@ -86,6 +86,9 @@
     <ClCompile Include="Source\InstantRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Assets\Hlsl\VsDefault.hlsl">

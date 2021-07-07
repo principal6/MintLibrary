@@ -187,5 +187,8 @@
     <ClCompile Include="Source\CppHlsl\Tokenizer.cpp">
       <Filter>Source\Language</Filter>
     </ClCompile>
+    <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

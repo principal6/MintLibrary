@@ -56,5 +56,8 @@
     <ClCompile Include="Source\IWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

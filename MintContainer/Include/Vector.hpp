@@ -32,6 +32,7 @@ namespace mint
 
     template<typename T>
     inline Vector<T>::Vector(const std::initializer_list<T>& initializerList)
+        : Vector()
     {
         const uint32 count = static_cast<uint32>(initializerList.size());
         resize(count);

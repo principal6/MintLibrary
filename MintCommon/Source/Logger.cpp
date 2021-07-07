@@ -120,8 +120,9 @@ namespace mint
             }
             else
             {
+                const uint32 fileNameLength = static_cast<uint32>(::strlen(fileName));
                 //sprintf_s(outBuffer, kFinalBufferSize, "[%s] %s [%s] %s : %s(%d) %s()\n", logTag, timeBuffer, author, content, fileName + _basePathOffset, lineNumber, functionName);
-                sprintf_s(outBuffer, kFinalBufferSize, "%s(%d): %s() - [%s] %s [%s] %s \n", fileName + _basePathOffset, lineNumber, functionName, logTag, timeBuffer, author, content);
+                sprintf_s(outBuffer, kFinalBufferSize, "%s(%d): %s() - [%s] %s [%s] %s \n", (_basePathOffset < fileNameLength) ? fileName + _basePathOffset : fileName, lineNumber, functionName, logTag, timeBuffer, author, content);
             }
 
             OutputDebugStringA(outBuffer);

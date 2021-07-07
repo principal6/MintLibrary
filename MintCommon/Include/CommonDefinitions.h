@@ -8,7 +8,7 @@
 #define MINT_INLINE __forceinline
 
 
-#if defined DEBUG or defined _DEBUG
+#if defined(DEBUG) | defined(_DEBUG)
 #define MINT_DEBUG
 #endif
 

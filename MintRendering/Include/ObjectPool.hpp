@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <stdafx.h>
 #include <MintRendering/Include/ObjectPool.h>
 
