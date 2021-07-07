@@ -121,54 +121,54 @@ namespace mint
             class EventValue
             {
             public:
-                                            EventValue();
-                                            EventValue(const EventValue& rhs);
-                                            ~EventValue() = default;
+                                                EventValue();
+                                                EventValue(const EventValue& rhs);
+                                                ~EventValue() = default;
 
             public:
-                void                        setKeyCode(const EventData::KeyCode keyCode) noexcept;
-                const EventData::KeyCode    getKeyCode() const noexcept;
-                const bool                  isKeyCode(const EventData::KeyCode keyCode) const noexcept;
+                void                            setKeyCode(const EventData::KeyCode keyCode) noexcept;
+                const EventData::KeyCode        getKeyCode() const noexcept;
+                const bool                      isKeyCode(const EventData::KeyCode keyCode) const noexcept;
 
-                void                        setMousePosition(const mint::Float2& mousePosition) noexcept;
-                void                        setMouseDeltaPosition(const mint::Float2& mouseDeltaPosition) noexcept;
-                const mint::Float2&           getMousePosition() const noexcept;
-                const mint::Float2            getAndClearMouseDeltaPosition() const noexcept;
+                void                            setMousePosition(const mint::Float2& mousePosition) noexcept;
+                void                            setMouseDeltaPosition(const mint::Float2& mouseDeltaPosition) noexcept;
+                const mint::Float2&             getMousePosition() const noexcept;
+                const mint::Float2              getAndClearMouseDeltaPosition() const noexcept;
 
-                void                        setMouseWheel(const float mouseWheel) noexcept;
-                const float                 getMouseWheel() const noexcept;
+                void                            setMouseWheel(const float mouseWheel) noexcept;
+                const float                     getMouseWheel() const noexcept;
+        
+                void                            setInputWchar(const wchar_t inputWchar) noexcept;
+                const wchar_t                   getInputWchar() const noexcept;
 
-                void                        setInputWchar(const wchar_t inputWchar) noexcept;
-                const wchar_t               getInputWchar() const noexcept;
-
-                void                        setSize(const mint::Float2& size) noexcept;
-                const mint::Float2&           getSize() const noexcept;
+                void                            setSize(const mint::Float2& size) noexcept;
+                const mint::Float2&             getSize() const noexcept;
 
             private:
                 union
                 {
-                    uint64                  _raw[3]{};
+                    uint64                      _raw[3]{};
                     struct
                     {
-                        mint::Float2          _mousePosition;
-                        mutable mint::Float2  _mouseDeltaPosition;
-                        MouseButton         _mouseButton;
-                        float               _mouseInfoF;
+                        mint::Float2            _mousePosition;
+                        mutable mint::Float2    _mouseDeltaPosition;
+                        MouseButton             _mouseButton;
+                        float                   _mouseInfoF;
                     };
                     struct
                     {
-                        KeyCode             _keyCode;
-                        wchar_t             _inputWchar;
+                        KeyCode                 _keyCode;
+                        wchar_t                 _inputWchar;
                     };
                     struct
                     {
-                        mint::Float2          _size;
+                        mint::Float2            _size;
                     };
                 };
             };
 
-            EventType               _type{ EventType::None };
-            EventValue              _value{};
+            EventType                           _type{ EventType::None };
+            EventValue                          _value{};
         };
 
         enum class CursorType
@@ -229,7 +229,7 @@ namespace mint
             virtual void                    setPosition(const Int2& newPosition) abstract;
             const Int2&                     getPosition() const noexcept { return _creationData._position; }
             
-            const mint::Float3&               getBackgroundColor() const noexcept { return _creationData._bgColor; }
+            const mint::Float3&             getBackgroundColor() const noexcept { return _creationData._bgColor; }
 
             virtual void                    setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
             const CursorType                getCursorType() const noexcept { return _currentCursorType; }
@@ -250,16 +250,16 @@ namespace mint
 
         protected:
             bool                            _isRunning;
-            mint::Platform::PlatformType      _platformType;
+            mint::Platform::PlatformType    _platformType;
             CreationData                    _creationData;
-            mint::Int2                        _entireSize;
+            mint::Int2                      _entireSize;
             CreationError                   _creationError;
 
         private:
             std::queue<EventData>           _eventQueue;
         
         protected:
-            mint::Float2                      _previousMousePosition;
+            mint::Float2                    _previousMousePosition;
 
         protected:
             CursorType                      _currentCursorType;
