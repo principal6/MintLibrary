@@ -727,7 +727,7 @@ const bool testWindow()
 
         // Events
         {
-            guiContext.handleEvents(&window);
+            guiContext.processEvent(&window);
 
             if (window.hasEvent() == true)
             {

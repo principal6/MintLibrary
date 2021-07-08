@@ -613,15 +613,16 @@ namespace mint
             _updateScreenSizeCounter = 2;
         }
 
-        void GuiContext::handleEvents(const mint::Window::IWindow* const window)
+        void GuiContext::processEvent(mint::Window::IWindow* const window) noexcept
         {
+            MINT_ASSERT("김장원", window != nullptr, "window 가 nullptr 이면 안 됩니다!");
+            
             // 초기화
             _mouseStates.resetPerFrame();
-
-            const mint::Window::WindowsWindow* const windowsWindow = static_cast<const mint::Window::WindowsWindow*>(window);
-            if (windowsWindow->hasEvent() == true)
+            
+            if (window->hasEvent() == true)
             {
-                const mint::Window::EventData& eventData = windowsWindow->peekEvent();
+                const mint::Window::EventData& eventData = window->peekEvent();
                 if (eventData._type == mint::Window::EventType::MouseMove)
                 {
                     _mouseStates.setPosition(eventData._value.getMousePosition());
@@ -662,6 +663,12 @@ namespace mint
                 else if (eventData._type == mint::Window::EventType::KeyDown)
                 {
                     _keyCode = eventData._value.getKeyCode();
+                    
+                    if (isFocusedControlTextBox() == true && mint::Window::EventData::isKeyCodeAlnum(_keyCode) == true)
+                    {
+                        _keyCode = mint::Window::EventData::KeyCode::NONE;
+                        window->popEvent();
+                    }
                 }
             }
 

@@ -85,20 +85,32 @@ namespace mint
                 Shift,
                 Control,
                 Alt,
-                Q,
-                W,
-                E,
-                R,
-                T,
-                Y,
                 A,
-                S,
-                D,
-                F,
-                Z,
-                X,
+                B,
                 C,
+                D,
+                E,
+                F,
+                G,
+                H,
+                I,
+                J,
+                K,
+                L,
+                M,
+                N,
+                O,
+                P,
+                Q,
+                R,
+                S,
+                T,
+                U,
                 V,
+                W,
+                X,
+                Y,
+                Z,
                 Num0,
                 Num1,
                 Num2,
@@ -110,6 +122,10 @@ namespace mint
                 Num8,
                 Num9,
             };
+            static const bool isKeyCodeAlnum(const KeyCode keyCode) noexcept
+            {
+                return (KeyCode::A <= keyCode && keyCode <= KeyCode::Num9);
+            }
 
             enum class MouseButton : int32
             {
@@ -193,7 +209,7 @@ namespace mint
         public:
             virtual bool                    create(const CreationData& creationData) noexcept abstract;
             virtual void                    destroy() noexcept { _isRunning = false; }
-
+        
         public:
             virtual bool                    isRunning() noexcept { return _isRunning; }
             bool                            hasEvent() const noexcept { return (0 < _eventQueue.size()); }
@@ -213,6 +229,10 @@ namespace mint
                 return event;
             }
             const EventData&                peekEvent() const
+            {
+                return _eventQueue.front();
+            }
+            EventData&                      peekEvent()
             {
                 return _eventQueue.front();
             }

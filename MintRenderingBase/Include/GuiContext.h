@@ -576,7 +576,7 @@ namespace mint
             void                                                updateScreenSize(const mint::Float2& newScreenSize);
 
         public:
-            void                                                handleEvents(const mint::Window::IWindow* const window);
+            void                                                processEvent(mint::Window::IWindow* const window) noexcept;
 
         private:
             const bool                                          shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
