@@ -709,17 +709,18 @@ const bool testWindow()
     Rendering::InstantRenderer instantRenderer{ &graphicDevice };
     instantRenderer.initialize();
 
-    Game::Skeleton testSkeleton;
-    mint::Float4x4 testSkeletonWorldTm;
-    testSkeletonWorldTm.setTranslation(1.0f, 0.0f, 4.0f);
-    mint::Float4x4 bindPoseLocalTm;
-    testSkeleton.createJoint(-1, "Root", bindPoseLocalTm);
-    bindPoseLocalTm.setTranslation(1.0f, 0.0f, 0.0f);
-    testSkeleton.createJoint(0, "Elbow", bindPoseLocalTm);
-    bindPoseLocalTm.setTranslation(1.0f, 0.0f, 0.0f);
-    testSkeleton.createJoint(1, "Tip", bindPoseLocalTm);
-    testSkeleton.calculateBindPoseModelTms();
-
+    Game::SkeletonGenerator testSkeletonGenerator;
+    mint::Float4x4 testSkeletonWorldMatrix;
+    testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, 4.0f);
+    mint::Float4x4 bindPoseLocalMatrix;
+    testSkeletonGenerator.createJoint(-1, "Root", bindPoseLocalMatrix);
+    bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
+    testSkeletonGenerator.createJoint(0, "Elbow", bindPoseLocalMatrix);
+    bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
+    testSkeletonGenerator.createJoint(1, "Tip", bindPoseLocalMatrix);
+    testSkeletonGenerator.buildBindPoseModelSpace();
+    Game::Skeleton testSkeleton(testSkeletonGenerator);
+    
     uint64 previousFrameTimeMs = 0;
     while (window.isRunning() == true)
     {
@@ -980,7 +981,7 @@ const bool testWindow()
                 }
             }
 
-            testSkeleton.renderSkeleton(&instantRenderer, testSkeletonWorldTm);
+            testSkeleton.renderSkeleton(&instantRenderer, testSkeletonWorldMatrix);
 
             graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
             graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());

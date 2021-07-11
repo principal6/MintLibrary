@@ -29,32 +29,56 @@ namespace mint
         using JointIndexType = int16;
 
         class SkeletonJoint;
+        class SkeletonGenerator;
         class Skeleton;
 
 
         class SkeletonJoint
         {
+            friend SkeletonGenerator;
             friend Skeleton;
 
-            static constexpr uint32         kBoneNameLengthMax = 32;
-            static constexpr JointIndexType kJointIndexInvalid = -1;
+        public:
+            static constexpr uint32         kJointNameLengthMax = 32;
+            static constexpr JointIndexType kInvalidJointIndex = -1;
 
         public:
                                         SkeletonJoint();
+                                        SkeletonJoint(const char* const jointName);
                                         ~SkeletonJoint();
 
         public:
             const char*                 getName() const noexcept;
             const bool                  hasParent() const noexcept;
             const JointIndexType        getParentIndex() const noexcept;
-            const mint::Float4x4&       getBindPoseLocalTm() const noexcept;
-            const mint::Float4x4&       getBindPoseModelTm() const noexcept;
+            const mint::Float4x4&       getBindPoseLocalMatrix() const noexcept;
+            const mint::Float4x4&       getBindPoseModelMatrix() const noexcept;
 
         private:
-            char                        _name[kBoneNameLengthMax];
+            char                        _name[kJointNameLengthMax];
             JointIndexType              _parentIndex;
-            mint::Float4x4              _bindPoseLocalTm;
-            mint::Float4x4              _bindPoseModelTm; // TODO: 여기 있는 게 맞을지 Skeleton 으로 옮길지?
+            mint::Float4x4              _bindPoseLocalMatrix;
+            mint::Float4x4              _bindPoseModelMatrix; // TODO: 여기 있는 게 맞을지 Skeleton 으로 옮길지?
+
+        public:
+            static const SkeletonJoint  kInvalidSkeletonJoint;
+        };
+
+
+        class SkeletonGenerator
+        {
+        public:
+                                                SkeletonGenerator();
+                                                ~SkeletonGenerator();
+
+        public:
+            JointIndexType                      createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalMatrix) noexcept;
+            const SkeletonJoint*                getJoint(const JointIndexType jointIndex) const noexcept;
+            const mint::Vector<SkeletonJoint>&  getJoints() const noexcept;
+            void                                buildBindPoseModelSpace() noexcept;
+
+        private:
+            mint::Vector<SkeletonJoint>         _joints;
         };
 
 
@@ -62,17 +86,17 @@ namespace mint
         {
         public:
                                                 Skeleton();
+                                                Skeleton(const SkeletonGenerator& skeletonGenerator);
                                                 ~Skeleton();
 
         public:
-            JointIndexType                      createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalTm) noexcept;
-            const SkeletonJoint*                getJoint(const JointIndexType jointIndex) const noexcept;
+            const bool                          createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
 
         public:
-            void                                calculateBindPoseModelTms() noexcept;
+            const SkeletonJoint&                getJoint(const JointIndexType jointIndex) const noexcept;
 
         public:
-            void                                renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldTm) const noexcept;
+            void                                renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldMatrix) const noexcept;
 
         private:
             mint::Vector<SkeletonJoint>         _joints;

@@ -9,8 +9,8 @@ VS_OUTPUT main(VS_INPUT input)
     float4 inputPosition = float4(input._positionU.xyz, 1.0);
     output._worldPosition = mul(inputPosition, _cbWorldMatrix);
 
-    float4x4 finalTm = mul(_cbWorldMatrix, _cbViewProjectionMatrix);
-    output._screenPosition = mul(inputPosition, finalTm);
+    float4x4 finalMatrix = mul(_cbWorldMatrix, _cbViewProjectionMatrix);
+    output._screenPosition = mul(inputPosition, finalMatrix);
     if (0.0f < output._screenPosition.w)
     {
         output._screenPosition /= output._screenPosition.w;

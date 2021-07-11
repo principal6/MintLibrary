@@ -11,11 +11,18 @@ namespace mint
 {
     namespace Game
     {
+        const SkeletonJoint SkeletonJoint::kInvalidSkeletonJoint = SkeletonJoint("INVALID_JOINT");
         SkeletonJoint::SkeletonJoint()
             : _name{}
-            , _parentIndex{ kJointIndexInvalid }
+            , _parentIndex{ kInvalidJointIndex }
         {
             __noop;
+        }
+
+        SkeletonJoint::SkeletonJoint(const char* const jointName)
+            : _parentIndex{ kInvalidJointIndex }
+        {
+            mint::StringUtil::strcpy(_name, jointName);
         }
 
         SkeletonJoint::~SkeletonJoint()
@@ -38,19 +45,84 @@ namespace mint
             return _parentIndex;
         }
 
-        const mint::Float4x4& SkeletonJoint::getBindPoseLocalTm() const noexcept
+        const mint::Float4x4& SkeletonJoint::getBindPoseLocalMatrix() const noexcept
         {
-            return _bindPoseLocalTm;
+            return _bindPoseLocalMatrix;
         }
 
-        const mint::Float4x4& SkeletonJoint::getBindPoseModelTm() const noexcept
+        const mint::Float4x4& SkeletonJoint::getBindPoseModelMatrix() const noexcept
         {
-            return _bindPoseModelTm;
+            return _bindPoseModelMatrix;
         }
+
+
+        SkeletonGenerator::SkeletonGenerator()
+        {
+            __noop;
+        }
+
+        SkeletonGenerator::~SkeletonGenerator()
+        {
+            __noop;
+        }
+
+        JointIndexType SkeletonGenerator::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalMatrix) noexcept
+        {
+            if (_joints.empty() == false && parentJointIndex < 0)
+            {
+                MINT_LOG_ERROR("김장원", "이미 RootJoint 가 있는데 또 만들 수 없습니다!");
+                return SkeletonJoint::kInvalidJointIndex;
+            }
+
+            if (_joints.empty() == false && _joints.size() <= static_cast<uint32>(parentJointIndex))
+            {
+                MINT_LOG_ERROR("김장원", "Parent Joint Index 가 잘못되었습니다!");
+                return SkeletonJoint::kInvalidJointIndex;
+            }
+
+            SkeletonJoint newJoint;
+            mint::StringUtil::strcpy(newJoint._name, jointName);
+            newJoint._parentIndex = parentJointIndex;
+            newJoint._bindPoseLocalMatrix = bindPoseLocalMatrix;
+            _joints.push_back(newJoint);
+            return static_cast<JointIndexType>(_joints.size() - 1);
+        }
+
+        const SkeletonJoint* SkeletonGenerator::getJoint(const JointIndexType jointIndex) const noexcept
+        {
+            return (static_cast<uint32>(jointIndex) < _joints.size()) ? &_joints[jointIndex] : nullptr;
+        }
+
+        const mint::Vector<SkeletonJoint>& SkeletonGenerator::getJoints() const noexcept
+        {
+            return _joints;
+        }
+
+        void SkeletonGenerator::buildBindPoseModelSpace() noexcept
+        {
+            const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
+            for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
+            {
+                SkeletonJoint& joint = _joints[jointIndex];
+                joint._bindPoseModelMatrix = joint._bindPoseLocalMatrix;
+
+                if (0 <= joint._parentIndex)
+                {
+                    SkeletonJoint& parentJoint = _joints[joint._parentIndex];
+                    joint._bindPoseModelMatrix.mulAssignReverse(parentJoint._bindPoseModelMatrix);
+                }
+            }
+        }
+
 
         Skeleton::Skeleton()
         {
             __noop;
+        }
+
+        Skeleton::Skeleton(const SkeletonGenerator& skeletonGenerator)
+        {
+            createFromGenerator(skeletonGenerator);
         }
 
         Skeleton::~Skeleton()
@@ -58,52 +130,18 @@ namespace mint
             __noop;
         }
 
-        JointIndexType Skeleton::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalTm) noexcept
+        const bool Skeleton::createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept
         {
-            if (_joints.empty() == false && parentJointIndex < 0)
-            {
-                MINT_LOG_ERROR("김장원", "이미 RootJoint 가 있는데 또 만들 수 없습니다!");
-                return SkeletonJoint::kJointIndexInvalid;
-            }
-
-            if (_joints.empty() == false && _joints.size() <= static_cast<uint32>(parentJointIndex))
-            {
-                MINT_LOG_ERROR("김장원", "Parent Joint Index 가 잘못되었습니다!");
-                return SkeletonJoint::kJointIndexInvalid;
-            }
-
-            SkeletonJoint newJoint;
-            mint::StringUtil::strcpy(newJoint._name, jointName);
-            newJoint._parentIndex = parentJointIndex;
-            newJoint._bindPoseLocalTm = bindPoseLocalTm;
-            _joints.push_back(newJoint);
-            return static_cast<JointIndexType>(_joints.size() - 1);
+            _joints = skeletonGenerator.getJoints();
+            return true;
         }
 
-        const SkeletonJoint* Skeleton::getJoint(const JointIndexType jointIndex) const noexcept
+        const SkeletonJoint& Skeleton::getJoint(const JointIndexType jointIndex) const noexcept
         {
-            return (static_cast<uint32>(jointIndex) < _joints.size()) ? &_joints[jointIndex] : nullptr;
+            return (static_cast<uint32>(jointIndex) < _joints.size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
         }
 
-        void Skeleton::calculateBindPoseModelTms() noexcept
-        {
-            const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
-            for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
-            {
-                SkeletonJoint& joint = _joints[jointIndex];
-                joint._bindPoseModelTm = joint._bindPoseLocalTm;
-
-                JointIndexType parentAt = joint._parentIndex;
-                while (0 <= parentAt)
-                {
-                    SkeletonJoint& parentJoint = _joints[parentAt];
-                    joint._bindPoseModelTm.mulAssignReverse(parentJoint._bindPoseLocalTm);
-                    parentAt = parentJoint._parentIndex;
-                }
-            }
-        }
-
-        void Skeleton::renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldTm) const noexcept
+        void Skeleton::renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldMatrix) const noexcept
         {
             if (_joints.empty() == true)
             {
@@ -114,19 +152,19 @@ namespace mint
             for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
             {
                 const SkeletonJoint& joint = _joints[jointIndex];
-                mint::Float4x4 jointWorldTm = worldTm;
-                jointWorldTm *= joint._bindPoseModelTm;
+                mint::Float4x4 jointWorldMatrix = worldMatrix;
+                jointWorldMatrix *= joint._bindPoseModelMatrix;
 
                 if (joint.hasParent() == true)
                 {
                     const SkeletonJoint& parentJoint = _joints[joint._parentIndex];
-                    mint::Float4x4 parentJointWorldTm = worldTm;
-                    parentJointWorldTm *= parentJoint._bindPoseModelTm;
+                    mint::Float4x4 parentJointWorldMatrix = worldMatrix;
+                    parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-                    instantRenderer->drawLine(jointWorldTm.getTranslation(), parentJointWorldTm.getTranslation(), mint::RenderingBase::Color::kCyan);
+                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), mint::RenderingBase::Color::kCyan);
                 }
 
-                instantRenderer->drawSphere(jointWorldTm.getTranslation(), 0.03125f, 1, mint::RenderingBase::Color::kMagenta);
+                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, mint::RenderingBase::Color::kMagenta);
             }
         }
 
