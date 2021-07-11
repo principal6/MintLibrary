@@ -76,7 +76,7 @@ namespace mint
                 return result;
             }
 
-            MINT_INLINE void processSelection(const uint16 oldCaretAt, const uint16 caretAt, GuiContext::ControlData& controlData)
+            MINT_INLINE void updateSelection(const uint16 oldCaretAt, const uint16 caretAt, GuiContext::ControlData& controlData)
             {
                 uint16& selectionStart = controlData._controlValue.getSelectionStart();
                 uint16& selectionLength = controlData._controlValue.getSelectionLength();
@@ -132,15 +132,15 @@ namespace mint
             {
                 ProcessInputParam(mint::RenderingBase::ShapeFontRendererContext* const rendererContext) : _rendererContext{ rendererContext } { __noop; }
 
-                const mint::Window::IWindow*                      _window;
-                mint::RenderingBase::ShapeFontRendererContext*    _rendererContext;
-                mint::Window::EventData::KeyCode                  _keyCode;
-                wchar_t                                         _wcharInput;
-                wchar_t                                         _wcharInputCandiate;
-                mint::Float2                                      _mousePosition;
-                uint64                                          _currentTimeMs;
-                uint64                                          _caretBlinkIntervalMs;
-                bool                                            _wasFocused;
+                const mint::Window::IWindow*                        _window;
+                mint::RenderingBase::ShapeFontRendererContext*      _rendererContext;
+                mint::Window::EventData::KeyCode                    _keyCode;
+                wchar_t                                             _wcharInput;
+                wchar_t                                             _wcharInputCandiate;
+                mint::Float2                                        _mousePosition;
+                uint64                                              _currentTimeMs;
+                uint64                                              _caretBlinkIntervalMs;
+                bool                                                _wasFocused;
             };
 
             struct ProcessInputResult
@@ -193,7 +193,7 @@ namespace mint
                     {
                         if (newCaretAt != caretAt)
                         {
-                            TextBoxHelpers::processSelection(caretAt, newCaretAt, controlData);
+                            TextBoxHelpers::updateSelection(caretAt, newCaretAt, controlData);
 
                             caretAt = newCaretAt;
                         }
@@ -353,7 +353,7 @@ namespace mint
                         // Selection
                         if (isShiftKeyDown == true && param._keyCode != mint::Window::EventData::KeyCode::NONE)
                         {
-                            TextBoxHelpers::processSelection(oldCaretAt, caretAt, controlData);
+                            TextBoxHelpers::updateSelection(oldCaretAt, caretAt, controlData);
                         }
                     }
 
