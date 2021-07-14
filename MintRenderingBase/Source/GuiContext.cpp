@@ -128,12 +128,43 @@ namespace mint
                 }
             }
 
+            MINT_INLINE const bool isValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept
+            {
+                bool result = false;
+                if (textInputMode == TextInputMode::General)
+                {
+                    result = true;
+                }
+                else if (textInputMode == TextInputMode::NumberOnly)
+                {
+                    const wchar_t kPointSign = L'.';
+                    const wchar_t kMinusSign = L'-';
+                    const wchar_t kZero = L'0';
+                    const wchar_t kNine = L'9';
+                    result = (kZero <= input && input <= kNine);
+                    if (kPointSign == input)
+                    {
+                        if (text.find(input) == std::wstring::npos)
+                        {
+                            result = true;
+                        }
+                    }
+                    else if (kMinusSign == input)
+                    {
+                        if (text.find(input) == std::wstring::npos && caretAt == 0)
+                        {
+                            result = true;
+                        }
+                    }
+                }
+
+                return result;
+            }
+
             struct ProcessInputParam
             {
-                ProcessInputParam(mint::RenderingBase::ShapeFontRendererContext* const rendererContext) : _rendererContext{ rendererContext } { __noop; }
-
-                const mint::Window::IWindow*                        _window;
-                mint::RenderingBase::ShapeFontRendererContext*      _rendererContext;
+                const mint::Window::IWindow*                        _window = nullptr;
+                mint::RenderingBase::ShapeFontRendererContext*      _rendererContext = nullptr;
                 mint::Window::EventData::KeyCode                    _keyCode;
                 wchar_t                                             _wcharInput;
                 wchar_t                                             _wcharInputCandiate;
@@ -141,6 +172,7 @@ namespace mint
                 uint64                                              _currentTimeMs;
                 uint64                                              _caretBlinkIntervalMs;
                 bool                                                _wasFocused;
+                TextInputMode                                       _textInputMode;
             };
 
             struct ProcessInputResult
@@ -151,14 +183,19 @@ namespace mint
 
             MINT_INLINE ProcessInputResult processInput(const ProcessInputParam& param, GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText)
             {
+                ProcessInputResult result;
+                if (param._window == nullptr || param._rendererContext == nullptr)
+                {
+                    MINT_LOG_ERROR("김장원", "ProcessInputParam 에 _window 와 _renderContext 를 제대로 채워주세요!");
+                    return result;
+                }
+
                 static std::wstring errorMessage;
                 if (true == errorMessage.empty())
                 {
                     errorMessage.resize(1024);
                     mint::formatString(errorMessage.data(), 1024, L"텍스트 길이가 %d 자를 넘을 수 없습니다!", kTextBoxMaxTextLength);
                 }
-
-                ProcessInputResult result;
 
                 uint16& caretAt = controlData._controlValue.getCaretAt();
                 uint16& caretState = controlData._controlValue.getCaretState();
@@ -217,17 +254,21 @@ namespace mint
                     {
                         // 글자 입력 or 키 입력
 
-                        if (32 <= param._wcharInput)
+                        const bool isInputCharacter = (32 <= param._wcharInput);
+                        if (isInputCharacter == true)
                         {
-                            const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-                            if (0 < selectionLength)
+                            if (isValidInput(param._wcharInput, caretAt, param._textInputMode, outText) == true)
                             {
-                                TextBoxHelpers::eraseSelection(controlData, outText);
-                            }
+                                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+                                if (0 < selectionLength)
+                                {
+                                    TextBoxHelpers::eraseSelection(controlData, outText);
+                                }
 
-                            if (false == TextBoxHelpers::insertWchar(param._wcharInput, caretAt, outText))
-                            {
-                                param._window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
+                                if (false == TextBoxHelpers::insertWchar(param._wcharInput, caretAt, outText))
+                                {
+                                    param._window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
+                                }
                             }
                         }
                         else
@@ -1441,7 +1482,9 @@ namespace mint
             // Input 처리
             if (isFocused == true)
             {
-                TextBoxHelpers::ProcessInputParam processInputParam(&_shapeFontRendererContextTopMost);
+                TextBoxHelpers::ProcessInputParam processInputParam;
+                processInputParam._window = _graphicDevice->getWindow();
+                processInputParam._rendererContext = &_shapeFontRendererContextTopMost;
                 processInputParam._currentTimeMs = mint::Profiler::getCurrentTimeMs();
                 processInputParam._caretBlinkIntervalMs = _caretBlinkIntervalMs;
                 processInputParam._keyCode = _keyCode;
@@ -1449,7 +1492,7 @@ namespace mint
                 processInputParam._wasFocused = wasFocused;
                 processInputParam._wcharInput = _wcharInput;
                 processInputParam._wcharInputCandiate = _wcharInputCandiate;
-                processInputParam._window = _graphicDevice->getWindow();
+                processInputParam._textInputMode = textBoxParam._textInputMode;
 
                 TextBoxHelpers::ProcessInputResult processInputResult = TextBoxHelpers::processInput(processInputParam, controlData, textRenderOffset, outText);
                 if (processInputResult._clearKeyCode == true)

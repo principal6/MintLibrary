@@ -77,6 +77,12 @@ namespace mint
             Child,
         };
 
+        enum class TextInputMode
+        {
+            General,
+            NumberOnly,
+        };
+
         struct CommonControlParam
         {
             CommonControlParam() = default;
@@ -122,6 +128,7 @@ namespace mint
             mint::RenderingBase::Color  _backgroundColor    = mint::RenderingBase::Color::kWhite;
             mint::RenderingBase::Color  _fontColor          = mint::RenderingBase::Color::kBlack;
             float                       _roundnessInPixel   = kDefaultRoundnessInPixel;
+            TextInputMode               _textInputMode      = TextInputMode::General;
         };
 
         struct ListViewParam

@@ -939,6 +939,7 @@ const bool testWindow()
                         textBoxParam._common._size._x = 70.0f;
                         textBoxParam._common._size._y = 24.0f;
                         textBoxParam._roundnessInPixel = 0.0f;
+                        textBoxParam._textInputMode = mint::Gui::TextInputMode::NumberOnly;
                         if (guiContext.beginTextBox(L"PositionX", textBoxParam, textPositionX) == true)
                         {
                             guiContext.endTextBox();
