@@ -30,6 +30,11 @@ namespace mint
             MINT_INLINE void eraseSelection(GuiContext::ControlData& controlData, std::wstring& outText) noexcept
             {
                 const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+                if (selectionLength == 0)
+                {
+                    return;
+                }
+
                 const uint16 selectionStart = controlData._controlValue.getSelectionStart();
                 outText.erase(selectionStart, selectionLength);
 
@@ -181,6 +186,100 @@ namespace mint
                 bool    _clearKeyCode       = false;
             };
 
+            MINT_INLINE void processInputInternalMouse(const ProcessInputParam& param, GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, ProcessInputResult& result)
+            {
+                uint16& caretAt = controlData._controlValue.getCaretAt();
+                const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+                const float positionInText = param._mousePosition._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
+                const uint16 textLength = static_cast<uint16>(outText.length());
+                const uint32 newCaretAt = param._rendererContext->calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
+                const bool isMouseLeftDownFirst = param._window->isMouseDownFirst(mint::Window::EventData::MouseButton::Left);
+                if (isMouseLeftDownFirst == true)
+                {
+                    caretAt = newCaretAt;
+
+                    controlData._controlValue.getSelectionLength() = 0;
+                    controlData._controlValue.getSelectionStart() = caretAt;
+                }
+                else
+                {
+                    if (newCaretAt != caretAt)
+                    {
+                        TextBoxHelpers::updateSelection(caretAt, newCaretAt, controlData);
+
+                        caretAt = newCaretAt;
+                    }
+                }
+
+                result._clearWcharInput = true;
+                result._clearKeyCode = true;
+            }
+
+            MINT_INLINE void processInputKeyBackSpace(GuiContext::ControlData& controlData, std::wstring& outText)
+            {
+                uint16& caretAt = controlData._controlValue.getCaretAt();
+                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+                if (0 < selectionLength)
+                {
+                    TextBoxHelpers::eraseSelection(controlData, outText);
+                }
+                else
+                {
+                    if (outText.empty() == false && 0 < caretAt)
+                    {
+                        outText.erase(outText.begin() + caretAt - 1);
+
+                        caretAt = mint::max(caretAt - 1, 0);
+                    }
+                }
+            }
+
+            MINT_INLINE void processInputKeySelectAll(GuiContext::ControlData& controlData, std::wstring& outText)
+            {
+                uint16& caretAt = controlData._controlValue.getCaretAt();
+                controlData._controlValue.getSelectionStart() = 0;
+                controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
+                caretAt = controlData._controlValue.getSelectionLength();
+            }
+            
+            MINT_INLINE void processInputKeyCopy(const ProcessInputParam& param, GuiContext::ControlData& controlData, std::wstring& outText)
+            {
+                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+                if (selectionLength == 0)
+                {
+                    return;
+                }
+
+                const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+                param._window->textToClipboard(&outText[selectionStart], selectionLength);
+            }
+
+            MINT_INLINE void processInputKeyCut(const ProcessInputParam& param, GuiContext::ControlData& controlData, std::wstring& outText)
+            {
+                processInputKeyCopy(param, controlData, outText);
+
+                eraseSelection(controlData, outText);
+            }
+
+            MINT_INLINE void processInputKeyPaste(const std::wstring& errorMessage, const ProcessInputParam& param, GuiContext::ControlData& controlData, std::wstring& outText)
+            {
+                std::wstring fromClipboard;
+                param._window->textFromClipboard(fromClipboard);
+
+                if (fromClipboard.empty() == true)
+                {
+                    return;
+                }
+
+                TextBoxHelpers::eraseSelection(controlData, outText);
+
+                uint16& caretAt = controlData._controlValue.getCaretAt();
+                if (false == TextBoxHelpers::insertWstring(fromClipboard, caretAt, outText))
+                {
+                    param._window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
+                }
+            }
+            
             MINT_INLINE ProcessInputResult processInput(const ProcessInputParam& param, GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText)
             {
                 ProcessInputResult result;
@@ -210,45 +309,19 @@ namespace mint
                 const bool isShiftKeyDown = param._window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
                 const bool isControlKeyDown = param._window->isKeyDown(mint::Window::EventData::KeyCode::Control);
 
-                // 마우스 입력 처리
                 const bool isMouseLeftDown = param._window->isMouseDown(mint::Window::EventData::MouseButton::Left);
                 const bool isMouseLeftDownFirst = param._window->isMouseDownFirst(mint::Window::EventData::MouseButton::Left);
                 if (isMouseLeftDown == true || isMouseLeftDownFirst == true)
                 {
-                    const uint16 textLength = static_cast<uint16>(outText.length());
-                    const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
-                    const float positionInText = param._mousePosition._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
-                    const uint32 newCaretAt = param._rendererContext->calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
-                    if (isMouseLeftDownFirst == true)
-                    {
-                        caretAt = newCaretAt;
-
-                        controlData._controlValue.getSelectionLength() = 0;
-                        controlData._controlValue.getSelectionStart() = caretAt;
-                    }
-                    else
-                    {
-                        if (newCaretAt != caretAt)
-                        {
-                            TextBoxHelpers::updateSelection(caretAt, newCaretAt, controlData);
-
-                            caretAt = newCaretAt;
-                        }
-                    }
-
-                    result._clearWcharInput = true;
-                    result._clearKeyCode = true;
+                    // 마우스 입력 처리
+                    processInputInternalMouse(param, controlData, textRenderOffset, outText, result);
                 }
                 else
                 {
                     const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
                     if (32 <= param._wcharInputCandiate)
                     {
-                        const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-                        if (0 < selectionLength)
-                        {
-                            TextBoxHelpers::eraseSelection(controlData, outText);
-                        }
+                        TextBoxHelpers::eraseSelection(controlData, outText);
                     }
                     else if (param._wcharInput != L'\0')
                     {
@@ -259,11 +332,7 @@ namespace mint
                         {
                             if (isValidInput(param._wcharInput, caretAt, param._textInputMode, outText) == true)
                             {
-                                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-                                if (0 < selectionLength)
-                                {
-                                    TextBoxHelpers::eraseSelection(controlData, outText);
-                                }
+                                TextBoxHelpers::eraseSelection(controlData, outText);
 
                                 if (false == TextBoxHelpers::insertWchar(param._wcharInput, caretAt, outText))
                                 {
@@ -277,62 +346,23 @@ namespace mint
 
                             if (param._wcharInput == VK_BACK) // BackSpace
                             {
-                                const uint16 selectionLength = controlData._controlValue.getSelectionLength();
-                                if (0 < selectionLength)
-                                {
-                                    TextBoxHelpers::eraseSelection(controlData, outText);
-                                }
-                                else
-                                {
-                                    if (outText.empty() == false && 0 < caretAt)
-                                    {
-                                        outText.erase(outText.begin() + caretAt - 1);
-
-                                        caretAt = mint::max(caretAt - 1, 0);
-                                    }
-                                }
+                                processInputKeyBackSpace(controlData, outText);
                             }
                             else if (isControlKeyDown == true && param._wcharInput == 0x01) // Ctrl + A
                             {
-                                controlData._controlValue.getSelectionStart() = 0;
-                                controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
-                                caretAt = controlData._controlValue.getSelectionLength();
+                                processInputKeySelectAll(controlData, outText);
                             }
                             else if (isControlKeyDown == true && param._wcharInput == 0x03) // Ctrl + C
                             {
-                                if (0 < selectionLength)
-                                {
-                                    const uint16 selectionStart = controlData._controlValue.getSelectionStart();
-                                    param._window->textToClipboard(&outText[selectionStart], selectionLength);
-                                }
-                            }
-                            else if (isControlKeyDown == true && param._wcharInput == 0x16) // Ctrl + V
-                            {
-                                std::wstring fromClipboard;
-                                param._window->textFromClipboard(fromClipboard);
-
-                                if (fromClipboard.empty() == false)
-                                {
-                                    if (0 < selectionLength)
-                                    {
-                                        TextBoxHelpers::eraseSelection(controlData, outText);
-                                    }
-
-                                    if (false == TextBoxHelpers::insertWstring(fromClipboard, caretAt, outText))
-                                    {
-                                        param._window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
-                                    }
-                                }
+                                processInputKeyCopy(param, controlData, outText);
                             }
                             else if (isControlKeyDown == true && param._wcharInput == 0x18) // Ctrl + X
                             {
-                                if (0 < selectionLength)
-                                {
-                                    const uint16 selectionStart = controlData._controlValue.getSelectionStart();
-                                    param._window->textToClipboard(&outText[selectionStart], selectionLength);
-
-                                    TextBoxHelpers::eraseSelection(controlData, outText);
-                                }
+                                processInputKeyCut(param, controlData, outText);
+                            }
+                            else if (isControlKeyDown == true && param._wcharInput == 0x16) // Ctrl + V
+                            {
+                                processInputKeyPaste(errorMessage, param, controlData, outText);
                             }
                         }
 
