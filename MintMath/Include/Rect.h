@@ -5,6 +5,8 @@
 #define MINT_RECT_H
 
 
+#include <MintCommon/Include/CommonDefinitions.h>
+
 #include <MintMath/Include/Float4.h>
 
 
@@ -56,6 +58,7 @@ namespace mint
         constexpr void                  position(const mint::Float2& position) noexcept;
 
     public:
+        void                            clipBy(const Rect& outerRect) noexcept;
         constexpr const bool            contains(const mint::Float2& position) const noexcept;
         constexpr const bool            contains(const Rect& rhs) const noexcept;
         const bool                      isNan() const noexcept;

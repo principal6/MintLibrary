@@ -1,4 +1,3 @@
-#include "Rect.h"
 #pragma once
 
 
@@ -138,6 +137,18 @@ namespace mint
     {
         left(position._x);
         top(position._y);
+    }
+
+    MINT_INLINE void Rect::clipBy(const Rect& outerRect) noexcept
+    {
+        left(max(left(), outerRect.left()));
+        right(min(right(), outerRect.right()));
+        top(max(top(), outerRect.top()));
+        bottom(min(bottom(), outerRect.bottom()));
+
+        // Rect Size 가 음수가 되지 않도록 방지!! (중요)
+        right(max(left(), right()));
+        bottom(max(top(), bottom()));
     }
 
     MINT_INLINE constexpr const bool Rect::contains(const mint::Float2& position) const noexcept
