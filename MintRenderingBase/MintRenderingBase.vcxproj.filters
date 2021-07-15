@@ -7,9 +7,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{3d5693c6-ad40-43e0-82d9-15bc53da638f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Language">
-      <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{8569bdf1-fd70-4ad8-8105-57184550e826}</UniqueIdentifier>
     </Filter>
@@ -18,6 +15,9 @@
     </Filter>
     <Filter Include="Include\CppHlsl">
       <UniqueIdentifier>{80dbbf42-4860-4cfb-b2d6-0d7e24ce5a7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CppHlsl">
+      <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -170,22 +170,22 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Interpreter.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Lexer.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Parser.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\ILexer.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\IParser.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Tokenizer.cpp">
-      <Filter>Source\Language</Filter>
+      <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
