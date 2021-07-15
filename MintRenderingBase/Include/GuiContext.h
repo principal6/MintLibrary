@@ -571,6 +571,11 @@ namespace mint
                 mutable mint::Window::CursorType                _cursorType = mint::Window::CursorType::Arrow; // per frame
             };
 
+            struct TextBoxProcessInputResult
+            {
+                bool    _clearWcharInput = false;
+                bool    _clearKeyCode = false;
+            };
         
         private:
                                                                 GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
@@ -624,7 +629,7 @@ namespace mint
 
         public:
             // [Window | Control with ID]
-            // title is used as unique id for windows
+            // \param title [Used as unique id for windows]
             const bool                                          beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
             void                                                endWindow() { endControlInternal(ControlType::Window); }
 
@@ -635,13 +640,17 @@ namespace mint
             const bool                                          needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
 
         public:
-            // [Button]
-            // Return 'true' if clicked
+            
+            // A simple button control
+            // \param text [Text to display on the button]
+            // \returns true, if clicked
             const bool                                          beginButton(const wchar_t* const text);
+            
+            
             void                                                endButton() { endControlInternal(ControlType::Button); }
 
             // [CheckBox]
-            // Return 'true' if toggle state has changed
+            // \return true, if toggle state has changed
             const bool                                          beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                                endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
@@ -653,25 +662,54 @@ namespace mint
             mint::Float4                                        calculateLabelTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
             mint::RenderingBase::FontRenderingOption            getLabelFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
 
+    #pragma region Controls - Slider
         public:
-            // [Slider]
-            // Return 'true' if value was changed
+            // \return true, if value has been changed
             const bool                                          beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
             void                                                endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
             void                                                drawSliderTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept;
             void                                                drawSliderThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
+    #pragma endregion
 
+    #pragma region Controls - TextBox
         public:
-            // [TextBox]
+            // \param name [Unique name to distinguish control]
+            // \param textBoxParam [Various options]
+            // \param outText [The content of the textbox]
+            // \return true, if the content has changed
             const bool                                          beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
             void                                                endTextBox() { endControlInternal(ControlType::TextBox); }
 
         private:
-            void                                                drawTextBoxTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
-            void                                                drawTextBoxTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
-            void                                                drawTextBoxSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept;
+        
+        private:
+            void                                                textBoxProcessInputMouse(GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result);
+            void                                                textBoxProcessInputKeyDeleteBefore(GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeyDeleteAfter(GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeySelectAll(GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeyCopy(GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeyCut(GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeyPaste(const std::wstring& errorMessage, GuiContext::ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputCaretToPrev(GuiContext::ControlData& controlData);
+            void                                                textBoxProcessInputCaretToNext(GuiContext::ControlData& controlData, const std::wstring& text);
+            void                                                textBoxProcessInputCaretToHead(GuiContext::ControlData& controlData);
+            void                                                textBoxProcessInputCaretToTail(GuiContext::ControlData& controlData, const std::wstring& text);
+            void                                                textBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) noexcept;
+            void                                                textBoxEraseSelection(GuiContext::ControlData& controlData, std::wstring& outText) noexcept;
+            const bool                                          textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText);
+            const bool                                          textBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText);
+            void                                                textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, GuiContext::ControlData& controlData);
+            const bool                                          textBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept;
+        
+        private:
+            void                                                textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, GuiContext::ControlData& controlData) noexcept;
+            void                                                textBoxDrawTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                textBoxDrawTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                textBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+    #pragma endregion
 
         public:
             // [ListView]
@@ -695,7 +733,7 @@ namespace mint
 
 
         private:
-            // Returns size of titlebar
+            // \return Size of titlebar
             mint::Float2                                        beginTitleBar(const wchar_t* const windowTitle, const mint::Float2& titleBarSize, const mint::Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                                endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
@@ -706,7 +744,6 @@ namespace mint
             void                                                pushTooltipWindow(const wchar_t* const tooltipText, const mint::Float2& position);
 
             // [ScrollBar]
-            // Return 'true' if value was changed
             void                                                pushScrollBar(const ScrollBarType scrollBarType);
             void                                                pushScrollBarVert() noexcept;
             void                                                pushScrollBarHorz() noexcept;
