@@ -16,9 +16,6 @@
 #include <functional>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace Gui
