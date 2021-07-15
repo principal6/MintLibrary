@@ -100,18 +100,6 @@ namespace mint
                 return false;
             }
 
-            MINT_INLINE void constraintInnerClipRect(mint::Rect& targetInnerRect, const mint::Rect& outerRect)
-            {
-                targetInnerRect.left(mint::max(targetInnerRect.left(), outerRect.left()));
-                targetInnerRect.right(mint::min(targetInnerRect.right(), outerRect.right()));
-                targetInnerRect.top(mint::max(targetInnerRect.top(), outerRect.top()));
-                targetInnerRect.bottom(mint::min(targetInnerRect.bottom(), outerRect.bottom()));
-
-                // Rect Size 가 음수가 되지 않도록 방지!! (중요)
-                targetInnerRect.right(mint::max(targetInnerRect.left(), targetInnerRect.right()));
-                targetInnerRect.bottom(mint::max(targetInnerRect.top(), targetInnerRect.bottom()));
-            }
-
             MINT_INLINE mint::Float2 getControlLeftCenterPosition(const ControlData& controlData)
             {
                 return mint::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
@@ -599,10 +587,9 @@ namespace mint
                     const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
                     {
                         mint::Rect clipRectForMe = windowControlData.getControlRect();
-                        clipRectForMe.top() -= static_cast<LONG>(kTitleBarBaseSize._y);
                         if (isParentAlsoWindow == true)
                         {
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForDocks());
+                            clipRectForMe.clipBy(parentControlData.getClipRectForDocks());
                         }
                         setClipRectForMe(windowControlData, clipRectForMe);
                     }
@@ -611,7 +598,7 @@ namespace mint
                         clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseSize._y);
                         if (isParentAlsoWindow == true)
                         {
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForDocks, parentControlData.getClipRectForDocks());
+                            clipRectForDocks.clipBy(parentControlData.getClipRectForDocks());
                         }
                         setClipRectForDocks(windowControlData, clipRectForDocks);
                     }
@@ -626,7 +613,7 @@ namespace mint
                         clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
                         if (isParentAlsoWindow == true)
                         {
-                            ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentControlData.getClipRect());
+                            clipRectForChildren.clipBy(parentControlData.getClipRect());
                         }
                         setClipRectForChildren(windowControlData, clipRectForChildren);
                     }
@@ -1047,7 +1034,7 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 mint::Rect clipRectForMe = controlData.getControlRect();
-                ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForChildren());
+                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
                 setClipRectForMe(controlData, clipRectForMe);
             }
 
@@ -1701,7 +1688,7 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 mint::Rect clipRectForMe = controlData.getControlRect();
-                ControlCommonHelpers::constraintInnerClipRect(clipRectForMe, parentControlData.getClipRectForChildren());
+                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
                 setClipRectForMe(controlData, clipRectForMe);
             }
             {
@@ -1712,8 +1699,7 @@ namespace mint
                 clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(halfRoundnessInPixel));
 
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
-                ControlCommonHelpers::constraintInnerClipRect(clipRectForChildren, parentControlData.getClipRectForChildren());
-
+                clipRectForChildren.clipBy(parentControlData.getClipRectForChildren());
                 setClipRectForChildren(controlData, clipRectForChildren);
             }
 
