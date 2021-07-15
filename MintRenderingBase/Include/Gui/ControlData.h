@@ -197,7 +197,7 @@ namespace mint
             bool                _alwaysResetPosition            = true;
             bool                _ignoreMeForContentAreaSize     = false;
             bool                _noIntervalForNextSibling       = false;
-            ClipRectUsage       _clipRectUsage                  = ClipRectUsage::Own;
+            ClipRectUsage       _clipRectUsage                  = ClipRectUsage::ParentsChild;
         };
 
 
