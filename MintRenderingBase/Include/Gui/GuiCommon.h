@@ -92,16 +92,13 @@ namespace mint
             COUNT
         };
 
-
-        enum class ViewportUsage
+        enum class ClipRectUsage
         {
-            Parent,
-            ParentDock,
-            Child,
+            ParentsOwn,
+            ParentsChild,
+            ParentsDock,
+            Own,
         };
-
-        
-
 
         enum class TextAlignmentHorz
         {

@@ -300,16 +300,16 @@ namespace mint
                 _position._y = mint::min(mint::max(_draggingConstraints.top(), _position._y), _draggingConstraints.bottom());
             }
 
-            switch (prepareControlDataParam._viewportUsage)
+            switch (prepareControlDataParam._clipRectUsage)
             {
-            case mint::Gui::ViewportUsage::Parent:
+            case mint::Gui::ClipRectUsage::ParentsOwn:
                 setClipRectXXX(parentControlData.getClipRect());
                 break;
-            case mint::Gui::ViewportUsage::ParentDock:
-                setClipRectXXX(parentControlData.getClipRectForDocks());
-                break;
-            case mint::Gui::ViewportUsage::Child:
+            case mint::Gui::ClipRectUsage::ParentsChild:
                 setClipRectXXX(parentControlData.getClipRectForChildren());
+                break;
+            case mint::Gui::ClipRectUsage::ParentsDock:
+                setClipRectXXX(parentControlData.getClipRectForDocks());
                 break;
             default:
                 break;

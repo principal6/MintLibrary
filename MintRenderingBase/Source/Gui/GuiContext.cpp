@@ -576,7 +576,7 @@ namespace mint
                 prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
                 prepareControlDataParam._displaySizeMin._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
                 prepareControlDataParam._alwaysResetPosition = false;
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent; // ROOT
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
                 prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
                 prepareControlDataParam._deltaInteractionSizeByDock._y = -windowControlData.getVertDockSizeSum();
             }
@@ -587,15 +587,12 @@ namespace mint
             updateDockingWindowDisplay(windowControlData);
 
             const bool needToProcessControl = needToProcessWindowControl(windowControlData);
-            if (needToProcessControl == true)
             {
                 mint::RenderingBase::Color finalBackgroundColor;
-                const bool isFocused = processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor);
-                const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
-                mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused) 
-                    ? _shapeFontRendererContextForeground
-                    : _shapeFontRendererContextBackground;
-
+                const bool isFocused = (needToProcessControl == true) 
+                    ? processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor)
+                    : false;
+                
                 // Viewport & Scissor rectangle
                 {
                     const ControlData& parentControlData = getControlData(windowControlData.getParentHashKey());
@@ -635,25 +632,32 @@ namespace mint
                     }
                 }
 
-                shapeFontRendererContext.setClipRect(windowControlData.getClipRect());
-
-                const mint::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
-                shapeFontRendererContext.setColor(finalBackgroundColor);
-                shapeFontRendererContext.setPosition(windowCenterPosition + mint::Float4(0, windowControlData._controlValue._windowData._titleBarSize._y * 0.5f, 0, 0));
-                if (windowControlData.isDocking() == true)
+                if (needToProcessControl == true)
                 {
-                    mint::RenderingBase::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
-                    inDockColor.a(finalBackgroundColor.a());
-                    shapeFontRendererContext.setColor(inDockColor);
-                    shapeFontRendererContext.drawRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), 0.0f, 0.0f);
-                }
-                else
-                {
-                    shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
-                }
+                    const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
+                    mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = (isFocused || isAncestorFocused)
+                        ? _shapeFontRendererContextForeground
+                        : _shapeFontRendererContextBackground;
+                    shapeFontRendererContext.setClipRect(windowControlData.getClipRect());
 
-                processDock(windowControlData, shapeFontRendererContext);
-                _controlStackPerFrame.push_back(ControlStackData(windowControlData));
+                    const mint::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
+                    shapeFontRendererContext.setColor(finalBackgroundColor);
+                    shapeFontRendererContext.setPosition(windowCenterPosition + mint::Float4(0, windowControlData._controlValue._windowData._titleBarSize._y * 0.5f, 0, 0));
+                    if (windowControlData.isDocking() == true)
+                    {
+                        mint::RenderingBase::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
+                        inDockColor.a(finalBackgroundColor.a());
+                        shapeFontRendererContext.setColor(inDockColor);
+                        shapeFontRendererContext.drawRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), 0.0f, 0.0f);
+                    }
+                    else
+                    {
+                        shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
+                    }
+
+                    processDock(windowControlData, shapeFontRendererContext);
+                    _controlStackPerFrame.push_back(ControlStackData(windowControlData));
+                }
             }
             
             if (windowControlData.isControlVisible() == true)
@@ -1758,7 +1762,7 @@ namespace mint
                 prepareControlDataParam._initialDisplaySize._y = _fontSize + 12.0f;
                 prepareControlDataParam._innerPadding.left(prepareControlDataParam._initialDisplaySize._y * 0.25f);
                 prepareControlDataParam._noIntervalForNextSibling = true;
-                prepareControlDataParam._viewportUsage = mint::Gui::ViewportUsage::Child;
+                prepareControlDataParam._clipRectUsage = mint::Gui::ClipRectUsage::ParentsChild;
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -1809,7 +1813,7 @@ namespace mint
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseSize._y : 0.0f;
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(menuBar, prepareControlDataParam);
 
@@ -1870,7 +1874,7 @@ namespace mint
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = menuBar._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._desiredPositionInParent._y = 0.0f;
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(menuBarItem, prepareControlDataParam);
             menuBar._controlValue._itemData._itemSize._x += menuBarItem._displaySize._x;
@@ -2121,7 +2125,7 @@ namespace mint
                 prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
                 prepareControlDataParamForTrack._alwaysResetPosition = true;
                 prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
-                prepareControlDataParamForTrack._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParamForTrack._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
 
@@ -2237,7 +2241,7 @@ namespace mint
 
                     prepareControlDataParamForThumb._parentHashKeyOverride = scrollBarParent.getHashKey();
                     prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
-                    prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
+                    prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
                     thumbControlData._isDraggable = true;
                     thumbControlData._draggingConstraints.left(scrollBarTrack._position._x - kScrollBarThickness * 0.5f);
@@ -2302,7 +2306,7 @@ namespace mint
 
                     prepareControlDataParamForThumb._parentHashKeyOverride = scrollBarParent.getHashKey();
                     prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
-                    prepareControlDataParamForThumb._viewportUsage = ViewportUsage::Parent;
+                    prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
                     thumbControlData._isDraggable = true;
                     thumbControlData._draggingConstraints.left(scrollBarTrack._position._x);
@@ -2456,7 +2460,7 @@ namespace mint
                 }
                 prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._alwaysResetPosition = true;
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(controlData, prepareControlDataParam);
             
@@ -2553,7 +2557,7 @@ namespace mint
             {
                 prepareControlDataParam._parentHashKeyOverride = parentWindowData.getHashKey();
                 prepareControlDataParam._initialDisplaySize = mint::Float2(radius * 2.0f);
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(controlData, prepareControlDataParam);
             
@@ -2586,7 +2590,7 @@ namespace mint
                 prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._alwaysResetPosition = true;
                 prepareControlDataParam._parentHashKeyOverride = _tooltipParentWindowHashKey; // ROOT
-                prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
+                prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             nextNoAutoPositioned();
             prepareControlData(controlData, prepareControlDataParam);
