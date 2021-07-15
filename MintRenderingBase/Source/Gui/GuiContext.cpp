@@ -16,6 +16,9 @@
 #include <functional>
 
 
+#pragma optimize("", off)
+
+
 namespace mint
 {
     namespace Gui
@@ -554,8 +557,7 @@ namespace mint
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._isFocusable = true;
-            windowControlData._controlValue.setItemSizeX(kTitleBarBaseSize._x);
-            windowControlData._controlValue.setItemSizeY(kTitleBarBaseSize._y);
+            windowControlData._controlValue._windowData._titleBarSize = kTitleBarBaseSize;
             if (windowControlData.visibleStateEquals(inoutVisibleState) == false)
             {
                 windowControlData.setVisibleState(inoutVisibleState);
@@ -620,8 +622,8 @@ namespace mint
                         setClipRectForDocks(windowControlData, clipRectForDocks);
                     }
                     {
-                        const bool hasScrollBarVert = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
-                        const bool hasScrollBarHorz = windowControlData._controlValue.isScrollBarEnabled(ScrollBarType::Horz);
+                        const bool hasScrollBarVert = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
+                        const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
 
                         mint::Rect clipRectForChildren = windowControlData.getControlPaddedRect();
                         clipRectForChildren.top() += static_cast<LONG>(windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
@@ -640,17 +642,17 @@ namespace mint
 
                 const mint::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
                 shapeFontRendererContext.setColor(finalBackgroundColor);
-                shapeFontRendererContext.setPosition(windowCenterPosition + mint::Float4(0, windowControlData._controlValue.getItemSizeY() * 0.5f, 0, 0));
+                shapeFontRendererContext.setPosition(windowCenterPosition + mint::Float4(0, windowControlData._controlValue._windowData._titleBarSize._y * 0.5f, 0, 0));
                 if (windowControlData.isDocking() == true)
                 {
                     mint::RenderingBase::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
                     inDockColor.a(finalBackgroundColor.a());
                     shapeFontRendererContext.setColor(inDockColor);
-                    shapeFontRendererContext.drawRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue.getItemSizeY()), 0.0f, 0.0f);
+                    shapeFontRendererContext.drawRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), 0.0f, 0.0f);
                 }
                 else
                 {
-                    shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue.getItemSizeY()), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
+                    shapeFontRendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - mint::Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
                 }
 
                 processDock(windowControlData, shapeFontRendererContext);
@@ -659,11 +661,11 @@ namespace mint
             
             if (windowControlData.isControlVisible() == true)
             {
-                windowControlData._controlValue.setItemSizeX(windowControlData._displaySize._x);
+                windowControlData._controlValue._windowData._titleBarSize._x = windowControlData._displaySize._x;
                 {
                     nextNoAutoPositioned(); // 중요
 
-                    beginTitleBar(title, windowControlData._controlValue.getItemSize(), kTitleBarInnerPadding, inoutVisibleState);
+                    beginTitleBar(title, windowControlData._controlValue._windowData._titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
 
@@ -791,7 +793,7 @@ namespace mint
 
             mint::RenderingBase::Color finalBackgroundColor;
             const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
-            const bool isChecked = controlData._controlValue.getIsToggled();
+            const bool isChecked = controlData._controlValue._booleanData.get();
             if (nullptr != outIsChecked)
             {
                 *outIsChecked = isChecked;
@@ -937,7 +939,7 @@ namespace mint
 
                 const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
-                thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue.getThumbAt() * sliderValidLength;
+                thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
                 thumbControlData._isDraggable = true;
                 thumbControlData._draggingConstraints.top(thumbControlData._position._y);
@@ -959,13 +961,13 @@ namespace mint
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
 
                 const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
-                if (trackControlData._controlValue.getThumbAt() != thumbAt)
+                if (trackControlData._controlValue._thumbData._thumbAt != thumbAt)
                 {
                     _controlStackPerFrame.push_back(ControlStackData(trackControlData));
 
                     isChanged = true;
                 }
-                trackControlData._controlValue.setThumbAt(thumbAt);
+                trackControlData._controlValue._thumbData._thumbAt = thumbAt;
                 outValue = thumbAt;
                 
                 // 반드시 thumbAt 이 갱신된 이후에 draw 를 한다.
@@ -984,7 +986,7 @@ namespace mint
             const float trackRadius = kSliderTrackThicknes * 0.5f;
             const float trackRectLength = sliderParam._common._size._x - trackRadius * 2.0f;
 
-            const float thumbAt = trackControlData._controlValue.getThumbAt();
+            const float thumbAt = trackControlData._controlValue._thumbData._thumbAt;
             const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
             const float trackRectLeftLength = thumbAt * sliderValidLength;
             const float trackRectRightLength = trackRectLength - trackRectLeftLength;
@@ -1051,7 +1053,7 @@ namespace mint
             const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
             const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             mint::Float4 textRenderOffset;
-            if (controlData._controlValue.getTextDisplayOffset() == 0)
+            if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
             {
                 const float fullTextWidth = calculateTextWidth(outText.c_str(), static_cast<uint32>(outText.length()));
                 if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
@@ -1072,7 +1074,7 @@ namespace mint
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
             const uint16 textLength = static_cast<uint16>(outText.length());
-            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(controlData._controlValue.getCaretAt(), textLength));
+            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
             textBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
 
             // Box 렌더링
@@ -1110,9 +1112,9 @@ namespace mint
             }
 
             TextBoxProcessInputResult result;
-            uint16& caretAt = controlData._controlValue.getCaretAt();
-            uint16& caretState = controlData._controlValue.getCaretState();
-            uint64& lastCaretBlinkTimeMs = controlData._controlValue.getInternalTimeMs();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
+            uint16& caretState = controlData._controlValue._textBoxData._caretState;
+            uint64& lastCaretBlinkTimeMs = controlData._controlValue._textBoxData._lastCaretBlinkTimeMs;
             const uint64 currentTimeMs = mint::Profiler::getCurrentTimeMs();
             if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
             {
@@ -1133,7 +1135,7 @@ namespace mint
             {
                 const bool isShiftKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
                 const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
-                const uint16 oldCaretAt = controlData._controlValue.getCaretAt();
+                const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
                 if (32 <= _wcharInputCandiate)
                 {
                     textBoxEraseSelection(controlData, outText);
@@ -1157,7 +1159,7 @@ namespace mint
                     }
                     else
                     {
-                        const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+                        const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
 
                         if (_wcharInput == VK_BACK) // BackSpace
                         {
@@ -1227,7 +1229,7 @@ namespace mint
                     _keyCode != mint::Window::EventData::KeyCode::Alt)
                 {
                     // Selection 해제
-                    uint16& selectionLength = controlData._controlValue.getSelectionLength();
+                    uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
                     selectionLength = 0;
                 }
             }
@@ -1249,8 +1251,8 @@ namespace mint
 
         void GuiContext::textBoxProcessInputMouse(ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result)
         {
-            uint16& caretAt = controlData._controlValue.getCaretAt();
-            const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
+            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const float positionInText = _mouseStates.getPosition()._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
             const uint16 textLength = static_cast<uint16>(outText.length());
             const uint32 newCaretAt = calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
@@ -1259,8 +1261,8 @@ namespace mint
             {
                 caretAt = newCaretAt;
 
-                controlData._controlValue.getSelectionLength() = 0;
-                controlData._controlValue.getSelectionStart() = caretAt;
+                controlData._controlValue._textBoxData._selectionLength = 0;
+                controlData._controlValue._textBoxData._selectionStart = caretAt;
             }
             else
             {
@@ -1278,8 +1280,8 @@ namespace mint
 
         void GuiContext::textBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText)
         {
-            uint16& caretAt = controlData._controlValue.getCaretAt();
-            const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
+            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (0 < selectionLength)
             {
                 textBoxEraseSelection(controlData, outText);
@@ -1297,7 +1299,7 @@ namespace mint
         
         void GuiContext::textBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText)
         {
-            const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (0 < selectionLength)
             {
                 textBoxEraseSelection(controlData, outText);
@@ -1305,7 +1307,7 @@ namespace mint
             else
             {
                 const uint16 textLength = static_cast<uint16>(outText.length());
-                uint16& caretAt = controlData._controlValue.getCaretAt();
+                uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
                 if (0 < textLength && caretAt < textLength)
                 {
                     outText.erase(outText.begin() + caretAt);
@@ -1317,21 +1319,20 @@ namespace mint
         
         void GuiContext::textBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText)
         {
-            uint16& caretAt = controlData._controlValue.getCaretAt();
-            controlData._controlValue.getSelectionStart() = 0;
-            controlData._controlValue.getSelectionLength() = static_cast<uint16>(outText.length());
-            caretAt = controlData._controlValue.getSelectionLength();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
+            controlData._controlValue._textBoxData._selectionStart = 0;
+            caretAt = controlData._controlValue._textBoxData._selectionLength = static_cast<uint16>(outText.length());
         }
 
         void GuiContext::textBoxProcessInputKeyCopy(ControlData& controlData, std::wstring& outText)
         {
-            const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
             {
                 return;
             }
 
-            const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+            const uint16 selectionStart = controlData._controlValue._textBoxData._selectionStart;
             _graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
         }
 
@@ -1354,7 +1355,7 @@ namespace mint
 
             textBoxEraseSelection(controlData, outText);
 
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             if (false == textBoxInsertWstring(fromClipboard, caretAt, outText))
             {
                 _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
@@ -1363,33 +1364,33 @@ namespace mint
 
         void GuiContext::textBoxProcessInputCaretToPrev(ControlData& controlData)
         {
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = mint::max(caretAt - 1, 0);
         }
 
         void GuiContext::textBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text)
         {
             const uint16 textLength = static_cast<uint16>(text.length());
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = mint::min(caretAt + 1, static_cast<int32>(textLength));
         }
 
         void GuiContext::textBoxProcessInputCaretToHead(ControlData& controlData)
         {
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = 0;
 
-            float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             textDisplayOffset = 0.0f;
         }
 
         void GuiContext::textBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text)
         {
             const uint16 textLength = static_cast<uint16>(text.length());
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = textLength;
 
-            float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const float textWidth = calculateTextWidth(text.c_str(), textLength);
             textDisplayOffset = mint::max(0.0f, textWidth - controlData._displaySize._x);
         }
@@ -1402,20 +1403,20 @@ namespace mint
 
         void GuiContext::textBoxEraseSelection(ControlData& controlData, std::wstring& outText) noexcept
         {
-            const uint16 selectionLength = controlData._controlValue.getSelectionLength();
+            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
             {
                 return;
             }
 
-            const uint16 selectionStart = controlData._controlValue.getSelectionStart();
+            const uint16 selectionStart = controlData._controlValue._textBoxData._selectionStart;
             outText.erase(selectionStart, selectionLength);
 
             const uint16 textLength = static_cast<uint16>(outText.length());
-            uint16& caretAt = controlData._controlValue.getCaretAt();
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = mint::min(static_cast<uint16>(caretAt - selectionLength), textLength);
 
-            controlData._controlValue.getSelectionLength() = 0;
+            controlData._controlValue._textBoxData._selectionLength = 0;
         }
 
         const bool GuiContext::textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText)
@@ -1456,8 +1457,8 @@ namespace mint
 
         void GuiContext::textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData)
         {
-            uint16& selectionStart = controlData._controlValue.getSelectionStart();
-            uint16& selectionLength = controlData._controlValue.getSelectionLength();
+            uint16& selectionStart = controlData._controlValue._textBoxData._selectionStart;
+            uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
 
             if (selectionLength == 0)
             {
@@ -1541,8 +1542,8 @@ namespace mint
 
         void GuiContext::textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept
         {
-            const uint16 caretAt = controlData._controlValue.getCaretAt();
-            float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
+            const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
+            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             {
                 const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
                 if (0.0f < deltaTextDisplayOffsetRight)
@@ -1570,12 +1571,12 @@ namespace mint
             MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
             const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-            const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+            const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(textBoxControlData);
 
             // Text 렌더링 (Caret 이전)
-            const uint16 caretAt = textBoxControlData._controlValue.getCaretAt();
+            const uint16 caretAt = textBoxControlData._controlValue._textBoxData._caretAt;
             if (outText.empty() == false)
             {
                 shapeFontRendererContext.setTextColor(textBoxParam._fontColor);
@@ -1602,7 +1603,7 @@ namespace mint
             }
 
             // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
-            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue.getCaretState() == 0);
+            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue._textBoxData._caretState == 0);
             if (needToRenderCaret == true)
             {
                 const float caretHeight = _fontSize;
@@ -1617,7 +1618,7 @@ namespace mint
             MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
             const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-            const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+            const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = getRendererContextForChildControl(textBoxControlData);
 
@@ -1631,10 +1632,10 @@ namespace mint
 
             // Caret 렌더링
             const bool isFocused = isControlFocused(textBoxControlData);
-            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue.getCaretState() == 0);
+            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue._textBoxData._caretState == 0);
             if (needToRenderCaret == true)
             {
-                const uint16 caretAt = textBoxControlData._controlValue.getCaretAt();
+                const uint16 caretAt = textBoxControlData._controlValue._textBoxData._caretAt;
                 const uint16 textLength = static_cast<uint16>(outText.length());
                 const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
                 const float caretHeight = _fontSize;
@@ -1654,13 +1655,13 @@ namespace mint
                 return;
             }
 
-            const uint16 selectionStart = textBoxControlData._controlValue.getSelectionStart();
-            const uint16 selectionLength = textBoxControlData._controlValue.getSelectionLength();
+            const uint16 selectionStart = textBoxControlData._controlValue._textBoxData._selectionStart;
+            const uint16 selectionLength = textBoxControlData._controlValue._textBoxData._selectionLength;
             const uint16 selectionEnd = selectionStart + selectionLength;
             if (0 < selectionLength)
             {
                 const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-                const float textDisplayOffset = textBoxControlData._controlValue.getTextDisplayOffset();
+                const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
                 const float textWidthTillSelectionStart = calculateTextWidth(outText.c_str(), selectionStart);
                 const float textWidthTillSelectionEnd = calculateTextWidth(outText.c_str(), selectionEnd);
                 const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
@@ -1689,9 +1690,9 @@ namespace mint
 
             if (controlData.getPreviousChildControlCount() == 0)
             {
-                controlData._controlValue.resetSelectedItemIndex();
+                controlData._controlValue._itemData.deselect();
             }
-            outSelectedListItemIndex = controlData._controlValue.getSelectedItemIndex();
+            outSelectedListItemIndex = controlData._controlValue._itemData.getSelectedItemIndex();
 
             mint::RenderingBase::Color finalBackgroundColor = getNamedColor(NamedColor::LightFont);
             processShowOnlyControl(controlData, finalBackgroundColor, false);
@@ -1724,11 +1725,11 @@ namespace mint
             
             if (listViewParam._useScrollBar == true)
             {
-                controlData._controlValue.enableScrollBar(mint::Gui::ScrollBarType::Vert);
+                controlData._controlValue._commonData.enableScrollBar(mint::Gui::ScrollBarType::Vert);
             }
             else
             {
-                controlData._controlValue.disableScrollBar(mint::Gui::ScrollBarType::Vert);
+                controlData._controlValue._commonData.disableScrollBar(mint::Gui::ScrollBarType::Vert);
             }
             _controlStackPerFrame.push_back(ControlStackData(controlData));
             return true;
@@ -1737,7 +1738,7 @@ namespace mint
         void GuiContext::endListView()
         {
             ControlData& controlData = getControlStackTopXXX();
-            const bool hasScrollBarVert = controlData._controlValue.isScrollBarEnabled(ScrollBarType::Vert);
+            const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
                 pushScrollBar(mint::Gui::ScrollBarType::Vert);
@@ -1764,14 +1765,14 @@ namespace mint
             }
             prepareControlData(controlData, prepareControlDataParam);
 
-            const int16 parentSelectedItemIndex = parentControlData._controlValue.getSelectedItemIndex();
+            const int16 parentSelectedItemIndex = parentControlData._controlValue._itemData.getSelectedItemIndex();
             const int16 myIndex = static_cast<int16>(parentControlData.getChildControlDataHashKeyArray().size() - 1);
             mint::RenderingBase::Color finalColor;
             const mint::RenderingBase::Color inputColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::HighlightColor) : getNamedColor(NamedColor::LightFont);
             const bool isClicked = processClickControl(controlData, inputColor, inputColor, inputColor, finalColor);
             if (isClicked == true)
             {
-                parentControlData._controlValue.setSelectedItemIndex(myIndex);
+                parentControlData._controlValue._itemData.select(myIndex);
             }
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
@@ -1802,7 +1803,7 @@ namespace mint
                 MINT_LOG_ERROR("김장원", "MenuBar 는 Window 나 Root 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
-            menuBarParent._controlValue.setCurrentMenuBarType(MenuBarType::Top); // TODO...
+            menuBarParent._controlValue._commonData._menuBarType = MenuBarType::Top; // TODO...
 
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -1815,21 +1816,21 @@ namespace mint
             }
             prepareControlData(menuBar, prepareControlDataParam);
 
-            const bool wasToggled = menuBar._controlValue.getIsToggled();
-            const mint::Float2 interactionSize = mint::Float2(menuBar._controlValue.getItemSizeX(), menuBar.getInteractionSize()._y);
+            const bool wasToggled = menuBar._controlValue._booleanData.get();
+            const mint::Float2 interactionSize = mint::Float2(menuBar._controlValue._itemData._itemSize._x, menuBar.getInteractionSize()._y);
             if (_pressedControlHashKey != 0 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, interactionSize) == false)
             {
-                menuBar._controlValue.setIsToggled(false);
+                menuBar._controlValue._booleanData.set(false);
             }
-            menuBar._controlValue.setItemSizeX(0.0f);
+            menuBar._controlValue._itemData._itemSize._x = 0.0f;
 
-            const bool isToggled = menuBar._controlValue.getIsToggled();
+            const bool isToggled = menuBar._controlValue._booleanData.get();
             const uint32 previousChildCount = static_cast<uint32>(menuBar.getPreviousChildControlDataHashKeyArray().size());
             if ((previousChildCount == 0 || isToggled == false) && wasToggled == false)
             {
                 // wasToggled 덕분에 다음 프레임에 -1 로 세팅된다. 한 번은 자식 함수들이 쭉 호출된다는 뜻!
 
-                menuBar._controlValue.resetSelectedItemIndex();
+                menuBar._controlValue._itemData.deselect();
             }
 
             mint::RenderingBase::Color color = getNamedColor(NamedColor::NormalState);
@@ -1870,15 +1871,15 @@ namespace mint
                 const float textWidth = calculateTextWidth(text, textLength);
                 prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
-                prepareControlDataParam._desiredPositionInParent._x = menuBar._controlValue.getItemSizeX();
+                prepareControlDataParam._desiredPositionInParent._x = menuBar._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 prepareControlDataParam._viewportUsage = ViewportUsage::Parent;
             }
             prepareControlData(menuBarItem, prepareControlDataParam);
-            menuBar._controlValue.addItemSizeX(menuBarItem._displaySize._x);
-            menuBarItem._controlValue.setItemSizeY(0.0f);
+            menuBar._controlValue._itemData._itemSize._x += menuBarItem._displaySize._x;
+            menuBarItem._controlValue._itemData._itemSize._y = 0.0f;
 
-            const int16& menuBarSelectedItemIndex = menuBar._controlValue.getSelectedItemIndex();
+            const int16 menuBarSelectedItemIndex = menuBar._controlValue._itemData.getSelectedItemIndex();
             const int16 myIndex = static_cast<int16>(menuBar.getChildControlDataHashKeyArray().size() - 1);
             const bool wasMeSelected = (menuBarSelectedItemIndex == myIndex);
             mint::RenderingBase::Color finalBackgroundColor;
@@ -1888,21 +1889,21 @@ namespace mint
             const bool isClicked = processClickControl(menuBarItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
             const bool isParentAncestorPressed = isAncestorControlPressed(menuBar);
             const bool isDescendantHovered = isDescendantControlHovered(menuBarItem);
-            const bool& isParentControlToggled = menuBar._controlValue.getIsToggled();
+            const bool& isParentControlToggled = menuBar._controlValue._booleanData.get();
             const bool wasParentControlToggled = isParentControlToggled;
             if (isClicked == true)
             {    
-                menuBar._controlValue.setIsToggled(!isParentControlToggled);
-                menuBar._controlValue.setSelectedItemIndex(myIndex);
+                menuBar._controlValue._booleanData.set(!isParentControlToggled);
+                menuBar._controlValue._itemData.select(myIndex);
             }
             else if (wasMeSelected == true && isParentAncestorPressed == true)
             {
-                menuBar._controlValue.setIsToggled(false);
-                menuBar._controlValue.resetSelectedItemIndex();
+                menuBar._controlValue._booleanData.set(false);
+                menuBar._controlValue._itemData.deselect();
             }
             if (isControlHovered(menuBarItem) == true && isParentControlToggled == true)
             {
-                menuBar._controlValue.setSelectedItemIndex(myIndex);
+                menuBar._controlValue._itemData.select(myIndex);
             }
             
             const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBarItem);
@@ -1948,19 +1949,19 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._alwaysResetDisplaySize = true;
-                prepareControlDataParam._initialDisplaySize._x = menuItemParent._controlValue.getItemSizeX();
+                prepareControlDataParam._initialDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
                 prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._displaySize._x : 0.0f;
-                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue.getItemSizeY() + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._initialDisplaySize._y);
+                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._initialDisplaySize._y);
             }
             prepareControlData(menuItem, prepareControlDataParam);
 
             const uint32 textLength = mint::StringUtil::wcslen(text);
             const float textWidth = calculateTextWidth(text, textLength);
-            menuItemParent._controlValue.setItemSizeX(mint::max(menuItemParent._controlValue.getItemSizeX(), textWidth + kMenuItemSpaceRight));
-            menuItemParent._controlValue.addItemSizeY(menuItem._displaySize._y);
-            menuItem._controlValue.setItemSizeY(0.0f);
+            menuItemParent._controlValue._itemData._itemSize._x = mint::max(menuItemParent._controlValue._itemData._itemSize._x, textWidth + kMenuItemSpaceRight);
+            menuItemParent._controlValue._itemData._itemSize._y += menuItem._displaySize._y;
+            menuItem._controlValue._itemData._itemSize._y = 0.0f;
 
             const bool isDescendantHovered = isDescendantControlHoveredInclusive(menuItem);
             mint::RenderingBase::Color finalBackgroundColor;
@@ -1973,18 +1974,18 @@ namespace mint
             }
             const bool isHovered = isControlHovered(menuItem);
             const bool isPresssed = isControlPressed(menuItem);
-            const bool& isToggled = menuItem._controlValue.getIsToggled();
+            const bool& isToggled = menuItem._controlValue._booleanData.get();
             const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlDataHashKeyArray().size() - 1);
-            const bool isMeSelected = (menuItemParent._controlValue.getSelectedItemIndex() == myIndex);
+            const bool isMeSelected = (menuItemParent._controlValue._itemData.isSelected(myIndex));
             if (isHovered == true)
             {
-                menuItemParent._controlValue.setSelectedItemIndex(myIndex);
+                menuItemParent._controlValue._itemData.select(myIndex);
             }
             else if (isHovered == false && isDescendantHovered  == false && isToggled == true)
             {
-                menuItemParent._controlValue.resetSelectedItemIndex();
+                menuItemParent._controlValue._itemData.deselect();
             }
-            menuItem._controlValue.setIsToggled(isMeSelected);
+            menuItem._controlValue._booleanData.set(isMeSelected);
 
             const mint::Float4& controlCenterPosition = getControlCenterPosition(menuItem);
             mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = _shapeFontRendererContextTopMost;
@@ -2051,13 +2052,13 @@ namespace mint
             ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, shapeFontRendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
-                parent._controlValue.enableScrollBar(ScrollBarType::Vert);
+                parent._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
                 pushScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, shapeFontRendererContext);
             }
             else
             {
-                parent._controlValue.disableScrollBar(ScrollBarType::Vert);
+                parent._controlValue._commonData.disableScrollBar(ScrollBarType::Vert);
 
                 parent._childDisplayOffset._y = 0.0f; // Scrolling!
             }
@@ -2081,13 +2082,13 @@ namespace mint
             ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, shapeFontRendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
-                parent._controlValue.enableScrollBar(ScrollBarType::Horz);
+                parent._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
                 pushScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, shapeFontRendererContext);
             }
             else
             {
-                parent._controlValue.disableScrollBar(ScrollBarType::Horz);
+                parent._controlValue._commonData.disableScrollBar(ScrollBarType::Horz);
 
                 parent._childDisplayOffset._x = 0.0f; // Scrolling!
             }
@@ -2251,14 +2252,14 @@ namespace mint
 
                 // @중요
                 // Calculate position from internal value
-                thumbControlData._position._y = scrollBarTrack._position._y + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+                thumbControlData._position._y = scrollBarTrack._position._y + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 mint::RenderingBase::Color thumbColor;
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
                 const float mouseWheelScroll = getMouseWheelScroll(scrollBarParent);
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : mint::Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
-                thumbControlData._controlValue.setThumbAt(thumbAtRatio);
+                thumbControlData._controlValue._thumbData._thumbAt = thumbAtRatio;
                 scrollBarParent._childDisplayOffset._y = -thumbAtRatio * (totalLength - visibleLength); // Scrolling!
 
                 // Rendering thumb
@@ -2316,13 +2317,13 @@ namespace mint
 
                 // @중요
                 // Calculate position from internal value
-                thumbControlData._position._x = scrollBarTrack._position._x + (thumbControlData._controlValue.getThumbAt() * trackRemnantSize);
+                thumbControlData._position._x = scrollBarTrack._position._x + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 mint::RenderingBase::Color thumbColor;
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : mint::Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
-                thumbControlData._controlValue.setThumbAt(thumbAtRatio);
+                thumbControlData._controlValue._thumbData._thumbAt = thumbAtRatio;
                 scrollBarParent._childDisplayOffset._x = -thumbAtRatio * (totalLength - visibleLength + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
                 // Rendering thumb
@@ -2869,7 +2870,7 @@ namespace mint
 
         void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
         {
-            const MenuBarType currentMenuBarType = controlData._controlValue.getCurrentMenuBarType();
+            const MenuBarType currentMenuBarType = controlData._controlValue._commonData._menuBarType;
             mint::Float2& controlChildAt = const_cast<mint::Float2&>(controlData.getChildAt());
             controlChildAt = controlData._position + controlData._childDisplayOffset +
                 ((_nextControlStates._nextNoAutoPositioned == false)
@@ -2993,10 +2994,10 @@ namespace mint
             const bool isClicked = isControlClicked(controlData);
             if (isClicked == true)
             {
-                controlData._controlValue.setIsToggled(!controlData._controlValue.getIsToggled());
+                controlData._controlValue._booleanData.toggle();
             }
 
-            const bool isToggled = controlData._controlValue.getIsToggled();
+            const bool isToggled = controlData._controlValue._booleanData.get();
             const bool isHovered = isControlHovered(controlData);
             outBackgroundColor = (isToggled == true) ? toggledColor : (isHovered == true) ? hoverColor : normalColor;
 

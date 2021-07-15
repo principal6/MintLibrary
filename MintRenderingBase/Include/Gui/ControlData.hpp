@@ -8,201 +8,71 @@ namespace mint
     {
 #pragma region ControlValue
         inline ControlValue::ControlValue()
-            : _i{}
         {
             __noop;
         }
 
-        MINT_INLINE void ControlValue::enableScrollBar(const ScrollBarType scrollBarType) noexcept
+        MINT_INLINE void mint::Gui::ControlValue::CommonData::enableScrollBar(const ScrollBarType scrollBarType) noexcept
         {
-            const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
-            if (currentScrollBarType != ScrollBarType::Both && scrollBarType != ScrollBarType::None)
+            if (_scrollBarType != ScrollBarType::Both && scrollBarType != ScrollBarType::None)
             {
-                if (currentScrollBarType == ScrollBarType::Horz && scrollBarType != ScrollBarType::Horz)
+                if (_scrollBarType == ScrollBarType::Horz && scrollBarType != ScrollBarType::Horz)
                 {
-                    setCurrentScrollBarType(ScrollBarType::Both);
+                    _scrollBarType = ScrollBarType::Both;
                 }
-                else if (currentScrollBarType == ScrollBarType::Vert && scrollBarType != ScrollBarType::Vert)
+                else if (_scrollBarType == ScrollBarType::Vert && scrollBarType != ScrollBarType::Vert)
                 {
-                    setCurrentScrollBarType(ScrollBarType::Both);
+                    _scrollBarType = ScrollBarType::Both;
                 }
                 else
                 {
-                    setCurrentScrollBarType(scrollBarType);
+                    _scrollBarType = scrollBarType;
                 }
             }
         }
 
-        MINT_INLINE void ControlValue::disableScrollBar(const ScrollBarType scrollBarType) noexcept
+        MINT_INLINE void ControlValue::CommonData::disableScrollBar(const ScrollBarType scrollBarType) noexcept
         {
-            const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
-            if (currentScrollBarType != ScrollBarType::None && scrollBarType != ScrollBarType::None)
+            if (_scrollBarType != ScrollBarType::None && scrollBarType != ScrollBarType::None)
             {
                 if (scrollBarType == ScrollBarType::Both)
                 {
-                    setCurrentScrollBarType(ScrollBarType::None);
+                    _scrollBarType = ScrollBarType::None;
                 }
                 else if (scrollBarType == ScrollBarType::Vert)
                 {
-                    if (currentScrollBarType == ScrollBarType::Vert)
+                    if (_scrollBarType == ScrollBarType::Vert)
                     {
-                        setCurrentScrollBarType(ScrollBarType::None);
+                        _scrollBarType = ScrollBarType::None;
                     }
                     else
                     {
-                        setCurrentScrollBarType(ScrollBarType::Horz);
+                        _scrollBarType = ScrollBarType::Horz;
                     }
                 }
                 else if (scrollBarType == ScrollBarType::Horz)
                 {
-                    if (currentScrollBarType == ScrollBarType::Horz)
+                    if (_scrollBarType == ScrollBarType::Horz)
                     {
-                        setCurrentScrollBarType(ScrollBarType::None);
+                        _scrollBarType = ScrollBarType::None;
                     }
                     else
                     {
-                        setCurrentScrollBarType(ScrollBarType::Vert);
+                        _scrollBarType = ScrollBarType::Vert;
                     }
                 }
             }
         }
 
-        MINT_INLINE const bool ControlValue::isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept
+        MINT_INLINE const bool ControlValue::CommonData::isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept
         {
             MINT_ASSERT("김장원", scrollBarType != ScrollBarType::None, "잘못된 질문입니다.");
 
-            const ScrollBarType currentScrollBarType = getCurrentScrollBarType();
-            if (currentScrollBarType == ScrollBarType::Both)
+            if (_scrollBarType == ScrollBarType::Both)
             {
                 return true;
             }
-            return (currentScrollBarType == scrollBarType);
-        }
-
-        MINT_INLINE void ControlValue::setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept
-        {
-            _hi[0] = static_cast<int16>(scrollBarType);
-        }
-
-        MINT_INLINE const ScrollBarType& ControlValue::getCurrentScrollBarType() const noexcept
-        {
-            return *reinterpret_cast<const ScrollBarType*>(&_hi[0]);
-        }
-
-        MINT_INLINE void ControlValue::setCurrentMenuBarType(const MenuBarType menuBarType) noexcept
-        {
-            _hi[1] = static_cast<int16>(menuBarType);
-        }
-
-        MINT_INLINE void ControlValue::setThumbAt(const float thumbAt) noexcept
-        {
-            _f[1] = thumbAt;
-        }
-
-        MINT_INLINE void ControlValue::setSelectedItemIndex(const int16 itemIndex) noexcept
-        {
-            _hi[4] = itemIndex;
-        }
-
-        MINT_INLINE void ControlValue::resetSelectedItemIndex() noexcept
-        {
-            setSelectedItemIndex(-1);
-        }
-
-        MINT_INLINE void ControlValue::setIsToggled(const bool isToggled) noexcept
-        {
-            //_hi[5] = (isToggled == true) ? 1 : 0;
-            _c[5 * 2] = (isToggled == true) ? 1 : 0;
-        }
-
-        MINT_INLINE void ControlValue::setItemSizeX(const float itemSizeX) noexcept
-        {
-            _f[3] = itemSizeX;
-        }
-
-        MINT_INLINE void ControlValue::setItemSizeY(const float itemSizeY) noexcept
-        {
-            _f[4] = itemSizeY;
-        }
-
-        MINT_INLINE void ControlValue::addItemSizeX(const float itemSizeX) noexcept
-        {
-            _f[3] += itemSizeX;
-        }
-
-        MINT_INLINE void ControlValue::addItemSizeY(const float itemSizeY) noexcept
-        {
-            _f[4] += itemSizeY;
-        }
-
-        MINT_INLINE void ControlValue::setInternalTimeMs(const uint64 internalTimeMs) noexcept
-        {
-            _lui[3] = internalTimeMs;
-        }
-
-        MINT_INLINE const MenuBarType& ControlValue::getCurrentMenuBarType() const noexcept
-        {
-            return *reinterpret_cast<const MenuBarType*>(&_hi[1]);
-        }
-
-        MINT_INLINE const float ControlValue::getThumbAt() const noexcept
-        {
-            return _f[1];
-        }
-
-        MINT_INLINE int16& ControlValue::getSelectedItemIndex() noexcept
-        {
-            return _hi[4];
-        }
-
-        MINT_INLINE const bool& ControlValue::getIsToggled() const noexcept
-        {
-            return *reinterpret_cast<const bool*>(&_c[5 * 2]); // (_hi[5] != 0);
-        }
-
-        MINT_INLINE const float ControlValue::getItemSizeX() const noexcept
-        {
-            return _f[3];
-        }
-
-        MINT_INLINE const float ControlValue::getItemSizeY() const noexcept
-        {
-            return _f[4];
-        }
-
-        MINT_INLINE const mint::Float2 ControlValue::getItemSize() const noexcept
-        {
-            return mint::Float2(getItemSizeX(), getItemSizeY());
-        }
-
-        MINT_INLINE uint16& ControlValue::getCaretAt() noexcept
-        {
-            return _hui[2];
-        }
-
-        MINT_INLINE uint16& ControlValue::getCaretState() noexcept
-        {
-            return _hui[3];
-        }
-
-        MINT_INLINE uint16& ControlValue::getSelectionStart() noexcept
-        {
-            return _hui[4];
-        }
-
-        MINT_INLINE uint16& ControlValue::getSelectionLength() noexcept
-        {
-            return _hui[5];
-        }
-
-        MINT_INLINE float& ControlValue::getTextDisplayOffset() noexcept
-        {
-            return _f[3];
-        }
-
-        MINT_INLINE uint64& ControlValue::getInternalTimeMs() noexcept
-        {
-            return _lui[3];
+            return (_scrollBarType == scrollBarType);
         }
 #pragma endregion
 
@@ -487,7 +357,7 @@ namespace mint
             return mint::max(
                 0.0f,
                 _displaySize._x - getHorzDockSizeSum() - _innerPadding.horz()
-                - ((_controlValue.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - menuBarThicknes._x
             );
         }
@@ -499,7 +369,7 @@ namespace mint
             return mint::max(
                 0.0f,
                 _displaySize._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
-                - ((_controlValue.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - menuBarThicknes._y
             );
         }
@@ -721,7 +591,7 @@ namespace mint
         MINT_INLINE const mint::Float2 ControlData::getMenuBarThickness() const noexcept
         {
             mint::Float2 result;
-            const MenuBarType currentMenuBarType = _controlValue.getCurrentMenuBarType();
+            const MenuBarType currentMenuBarType = _controlValue._commonData._menuBarType;
             if (currentMenuBarType == MenuBarType::Top || currentMenuBarType == MenuBarType::Bottom)
             {
                 result._y = kMenuBarBaseSize._y;

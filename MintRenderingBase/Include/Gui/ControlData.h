@@ -23,26 +23,62 @@ namespace mint
         static constexpr float          kControlDisplayMinHeight = 10.0f;
 
 
-        //             |        CASE 0       |        CASE 1       |
-        //             |---------------------|---------------------|
-        // hi00 i0 li0 |               ScrollBarType               |
-        // hi01        |                MenuBarType                |
-        // hi02 i1     | CaretAt             | ThumbAt             |
-        // hi03        | CaretStete          |  ..                 |
-        // hi04 i2 li1 | SelectionStart      | SelectedItemIndex   |
-        // hi05        | SelectionLength     | IsToggled           |
-        // hi06 i3     | TextDisplayOffset   | ItemSizeX           | == TitleBarSizeX
-        // hi07        |  ..                 |  ..                 |
-        // hi08 i4 li2 |                     | ItemSizeY           | == TitleBarSizeY
-        // hi09        |                     |  ..                 |
-        // hi10 i5     |                     |                     |
-        // hi11        |                     |                     |
-        // hi12 i6 li3 | InternalTimeMs      |                     |
-        // hi13        |  ..                 |                     |
-        // hi14 i7     |  ..                 |                     |
-        // hi15        |  ..                 |                     |
         class ControlValue
         {
+        public:
+            struct CommonData
+            {
+                MenuBarType     _menuBarType;
+                void            enableScrollBar(const ScrollBarType scrollBarType) noexcept;
+                void            disableScrollBar(const ScrollBarType scrollBarType) noexcept;
+                const bool      isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept;
+
+            private:
+                ScrollBarType   _scrollBarType;
+            };
+
+            struct TextBoxData
+            {
+                uint16      _caretAt = 0;
+                uint16      _caretState = 0;
+                uint16      _selectionStart = 0;
+                uint16      _selectionLength = 0;
+                float       _textDisplayOffset = 0.0f;
+                uint64      _lastCaretBlinkTimeMs = 0;
+            };
+
+            struct WindowData
+            {
+                Float2      _titleBarSize;
+            };
+
+            struct ThumbData
+            {
+                float       _thumbAt = 0.0f;
+            };
+
+            struct ItemData
+            {
+                Float2                  _itemSize;
+                MINT_INLINE void        select(const int16 itemIndex) noexcept { _selectedItemIndex = itemIndex; }
+                MINT_INLINE void        deselect() noexcept { _selectedItemIndex = -1; }
+                MINT_INLINE const bool  isSelected(const int16 itemIndex) const noexcept { return (_selectedItemIndex == itemIndex); }
+                MINT_INLINE int16       getSelectedItemIndex() const noexcept { return _selectedItemIndex; }
+
+            private:
+                int16                   _selectedItemIndex = 0;
+            };
+
+            struct BooleanData
+            {
+                MINT_INLINE void        toggle() noexcept { _value = !_value; }
+                MINT_INLINE void        set(const bool value) noexcept { _value = value; }
+                MINT_INLINE bool&       get() noexcept { return _value; }
+
+            private:
+                bool                    _value = false;
+            };
+
         public:
                                     ControlValue();
                                     ~ControlValue()                         = default;
@@ -52,72 +88,16 @@ namespace mint
             ControlValue&           operator=(ControlValue&& rhs) noexcept  = default;
 
         public:
-            void                    enableScrollBar(const ScrollBarType scrollBarType) noexcept;
-            void                    disableScrollBar(const ScrollBarType scrollBarType) noexcept;
-            const bool              isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept;
-
-        private:
-            void                    setCurrentScrollBarType(const ScrollBarType scrollBarType) noexcept;
-            const ScrollBarType&    getCurrentScrollBarType() const noexcept;
-        
-        public:
-            void                    setCurrentMenuBarType(const MenuBarType menuBarType) noexcept;
-            void                    setThumbAt(const float thumbAt) noexcept;
-            void                    setSelectedItemIndex(const int16 itemIndex) noexcept;
-            void                    resetSelectedItemIndex() noexcept;
-            void                    setIsToggled(const bool isToggled) noexcept;
-            void                    setItemSizeX(const float itemSizeX) noexcept;
-            void                    setItemSizeY(const float itemSizeY) noexcept;
-            void                    addItemSizeX(const float itemSizeX) noexcept;
-            void                    addItemSizeY(const float itemSizeY) noexcept;
-            void                    setInternalTimeMs(const uint64 internalTimeMs) noexcept;
-
-        public:
-            const MenuBarType&      getCurrentMenuBarType() const noexcept;
-            const float             getThumbAt() const noexcept; // [Slider], [ScrollBar]
-            int16&                  getSelectedItemIndex() noexcept; // [ListView]
-            const bool&             getIsToggled() const noexcept; // [CheckBox]
-            const float             getItemSizeX() const noexcept;
-            const float             getItemSizeY() const noexcept;
-            const mint::Float2      getItemSize() const noexcept;
-            uint16&                 getCaretAt() noexcept;
-            uint16&                 getCaretState() noexcept;
-            uint16&                 getSelectionStart() noexcept;
-            uint16&                 getSelectionLength() noexcept;
-            float&                  getTextDisplayOffset() noexcept;
-            uint64&                 getInternalTimeMs() noexcept;
-
-        private:
-            static constexpr uint32 kSize64 = 4;
+            CommonData              _commonData;
             union
             {
-                struct
+                TextBoxData         _textBoxData;
+                WindowData          _windowData;
+                ThumbData           _thumbData;
+                struct // 아래 두 개는 동시에 쓰이는 경우가 있기 때문에 이렇게 struct 로 묶어둬야 메모리 침범을 하지 않는다.
                 {
-                    uint64  _lui[kSize64];
-                };
-                struct
-                {
-                    int64   _li[kSize64];
-                };
-                struct
-                {
-                    int32   _i[kSize64 * 2];
-                };                
-                struct
-                {
-                    float   _f[kSize64 * 2];
-                };
-                struct
-                {
-                    uint16  _hui[kSize64 * 4];
-                };
-                struct
-                {
-                    int16   _hi[kSize64 * 4];
-                };
-                struct
-                {
-                    int8    _c[kSize64 * 8];
+                    ItemData        _itemData;
+                    BooleanData     _booleanData;
                 };
             };
         };
