@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GuiContext.h>
+#include <MintRenderingBase/Include/Gui/GuiContext.h>
 
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/Vector.hpp>

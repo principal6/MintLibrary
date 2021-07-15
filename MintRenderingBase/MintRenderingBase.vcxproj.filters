@@ -19,6 +19,12 @@
     <Filter Include="Source\CppHlsl">
       <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include\Gui">
+      <UniqueIdentifier>{83c1bdb0-bf77-4546-8c67-a8f1e58dcdfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Gui">
+      <UniqueIdentifier>{e1cc7fd8-c15d-4f82-be33-76c921770f9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\DxResource.h">
@@ -49,12 +55,6 @@
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\RenderingBaseCommon.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GuiCommon.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GuiContext.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
@@ -108,15 +108,18 @@
     <ClInclude Include="Include\CppHlsl\Tokenizer.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Gui\GuiCommon.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Gui\GuiContext.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
       <Filter>Include</Filter>
     </None>
     <None Include="Include\IRendererContext.inl">
-      <Filter>Include</Filter>
-    </None>
-    <None Include="Include\GuiContext.inl">
       <Filter>Include</Filter>
     </None>
     <None Include="Include\CppHlsl\Parser.inl">
@@ -130,6 +133,9 @@
     </None>
     <None Include="Include\CppHlsl\LanguageCommon.inl">
       <Filter>Include\CppHlsl</Filter>
+    </None>
+    <None Include="Include\Gui\GuiContext.inl">
+      <Filter>Include\Gui</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +161,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShapeRendererContext.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GuiContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\IRendererContext.cpp">
@@ -189,6 +192,9 @@
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Gui\GuiContext.cpp">
+      <Filter>Source\Gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

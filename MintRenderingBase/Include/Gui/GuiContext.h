@@ -7,9 +7,8 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/GuiCommon.h>
-
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
+#include <MintRenderingBase/Include/Gui/GuiCommon.h>
 
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/IId.h>
@@ -931,7 +930,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/GuiContext.inl>
+#include <MintRenderingBase/Include/Gui/GuiContext.inl>
 
 
 #endif // !MINT_GUI_CONTEXT_H

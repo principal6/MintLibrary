@@ -3,7 +3,6 @@
 #include <MintRenderingBase/Source/DxShaderHeaderMemory.cpp>
 #include <MintRenderingBase/Source/FontRendererContext.cpp>
 #include <MintRenderingBase/Source/GraphicDevice.cpp>
-#include <MintRenderingBase/Source/GuiContext.cpp>
 #include <MintRenderingBase/Source/IDxObject.cpp>
 #include <MintRenderingBase/Source/IRendererContext.cpp>
 #include <MintRenderingBase/Source/MeshData.cpp>
@@ -16,3 +15,4 @@
 #include <MintRenderingBase/Source/CppHlsl/Lexer.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Parser.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Tokenizer.cpp>
+#include <MintRenderingBase/Source/Gui/GuiContext.cpp>

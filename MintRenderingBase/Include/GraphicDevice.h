@@ -18,7 +18,7 @@
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/FontRendererContext.h>
 
-#include <MintRenderingBase/Include/GuiContext.h>
+#include <MintRenderingBase/Include/Gui/GuiContext.h>
 
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 

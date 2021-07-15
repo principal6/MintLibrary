@@ -12,8 +12,8 @@
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/FontRendererContext.h>
 #include <MintRenderingBase/Include/GraphicDevice.h>
-#include <MintRenderingBase/Include/GuiCommon.h>
-#include <MintRenderingBase/Include/GuiContext.h>
+#include <MintRenderingBase/Include/Gui/GuiCommon.h>
+#include <MintRenderingBase/Include/Gui/GuiContext.h>
 #include <MintRenderingBase/Include/IDxObject.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
