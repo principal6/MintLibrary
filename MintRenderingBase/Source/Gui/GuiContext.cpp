@@ -7,6 +7,7 @@
 #include <MintContainer/Include/HashMap.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/Gui/ControlData.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
 
@@ -32,7 +33,7 @@ namespace mint
                 return false;
             }
 
-            MINT_INLINE const bool isInControlInteractionArea(const mint::Float2& screenPosition, const GuiContext::ControlData& controlData) noexcept
+            MINT_INLINE const bool isInControlInteractionArea(const mint::Float2& screenPosition, const ControlData& controlData) noexcept
             {
                 if (controlData.isDockHosting() == true)
                 {
@@ -42,7 +43,7 @@ namespace mint
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, mint::Float2::kZero, controlData.getInteractionSize());
             }
 
-            MINT_INLINE const bool isInControlBorderArea(const mint::Float2& screenPosition, const GuiContext::ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) noexcept
+            MINT_INLINE const bool isInControlBorderArea(const mint::Float2& screenPosition, const ControlData& controlData, mint::Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) noexcept
             {
                 const mint::Float2 extendedPosition = controlData._position - mint::Float2(kHalfBorderThickness);
                 const mint::Float2 extendedInteractionSize = controlData.getInteractionSize() + mint::Float2(kHalfBorderThickness * 2.0f);
@@ -111,27 +112,32 @@ namespace mint
                 targetInnerRect.bottom(mint::max(targetInnerRect.top(), targetInnerRect.bottom()));
             }
 
-            MINT_INLINE mint::Float2 getControlLeftCenterPosition(const GuiContext::ControlData& controlData)
+            MINT_INLINE mint::Float2 getControlLeftCenterPosition(const ControlData& controlData)
             {
                 return mint::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
             };
 
-            MINT_INLINE mint::Float2 getControlRightCenterPosition(const GuiContext::ControlData& controlData)
+            MINT_INLINE mint::Float2 getControlRightCenterPosition(const ControlData& controlData)
             {
                 return mint::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
             };
         }
 
-        GuiContext::PrepareControlDataParam GuiContext::PrepareControlDataParam::textBox(const TextBoxParam& textBoxParam, const float fontSize) noexcept
+
+        namespace PrepareControlDataUtils
         {
-            PrepareControlDataParam prepareControlDataParam;
+            PrepareControlDataParam prepareTextBox(const TextBoxParam& textBoxParam, const float fontSize) noexcept
             {
-                prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
-                prepareControlDataParam._initialDisplaySize._y = mint::max(fontSize, textBoxParam._common._size._y);
-                prepareControlDataParam._offset = textBoxParam._common._offset;
+                PrepareControlDataParam prepareControlDataParam;
+                {
+                    prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
+                    prepareControlDataParam._initialDisplaySize._y = mint::max(fontSize, textBoxParam._common._size._y);
+                    prepareControlDataParam._offset = textBoxParam._common._offset;
+                }
+                return prepareControlDataParam;
             }
-            return prepareControlDataParam;
         }
+        
 
 
         GuiContext::GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
@@ -1030,7 +1036,7 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
-            prepareControlData(controlData, PrepareControlDataParam::textBox(textBoxParam, _fontSize));
+            prepareControlData(controlData, PrepareControlDataUtils::prepareTextBox(textBoxParam, _fontSize));
             
             mint::RenderingBase::Color finalBackgroundColor;
             const bool wasFocused = isControlFocused(controlData);
@@ -1094,7 +1100,7 @@ namespace mint
             return false;
         }
         
-        void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept
+        void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept
         {
             static std::wstring errorMessage;
             if (true == errorMessage.empty())
@@ -1241,7 +1247,7 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxProcessInputMouse(GuiContext::ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result)
+        void GuiContext::textBoxProcessInputMouse(ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result)
         {
             uint16& caretAt = controlData._controlValue.getCaretAt();
             const float textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
@@ -1270,7 +1276,7 @@ namespace mint
             result._clearKeyCode = true;
         }
 
-        void GuiContext::textBoxProcessInputKeyDeleteBefore(GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText)
         {
             uint16& caretAt = controlData._controlValue.getCaretAt();
             const uint16 selectionLength = controlData._controlValue.getSelectionLength();
@@ -1289,7 +1295,7 @@ namespace mint
             }
         }
         
-        void GuiContext::textBoxProcessInputKeyDeleteAfter(GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText)
         {
             const uint16 selectionLength = controlData._controlValue.getSelectionLength();
             if (0 < selectionLength)
@@ -1309,7 +1315,7 @@ namespace mint
             }
         }
         
-        void GuiContext::textBoxProcessInputKeySelectAll(GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText)
         {
             uint16& caretAt = controlData._controlValue.getCaretAt();
             controlData._controlValue.getSelectionStart() = 0;
@@ -1317,7 +1323,7 @@ namespace mint
             caretAt = controlData._controlValue.getSelectionLength();
         }
 
-        void GuiContext::textBoxProcessInputKeyCopy(GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyCopy(ControlData& controlData, std::wstring& outText)
         {
             const uint16 selectionLength = controlData._controlValue.getSelectionLength();
             if (selectionLength == 0)
@@ -1329,14 +1335,14 @@ namespace mint
             _graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
         }
 
-        void GuiContext::textBoxProcessInputKeyCut(GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyCut(ControlData& controlData, std::wstring& outText)
         {
             textBoxProcessInputKeyCopy(controlData, outText);
 
             textBoxEraseSelection(controlData, outText);
         }
 
-        void GuiContext::textBoxProcessInputKeyPaste(const std::wstring& errorMessage, GuiContext::ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyPaste(const std::wstring& errorMessage, ControlData& controlData, std::wstring& outText)
         {
             std::wstring fromClipboard;
             _graphicDevice->getWindow()->textFromClipboard(fromClipboard);
@@ -1355,20 +1361,20 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxProcessInputCaretToPrev(GuiContext::ControlData& controlData)
+        void GuiContext::textBoxProcessInputCaretToPrev(ControlData& controlData)
         {
             uint16& caretAt = controlData._controlValue.getCaretAt();
             caretAt = mint::max(caretAt - 1, 0);
         }
 
-        void GuiContext::textBoxProcessInputCaretToNext(GuiContext::ControlData& controlData, const std::wstring& text)
+        void GuiContext::textBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text)
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue.getCaretAt();
             caretAt = mint::min(caretAt + 1, static_cast<int32>(textLength));
         }
 
-        void GuiContext::textBoxProcessInputCaretToHead(GuiContext::ControlData& controlData)
+        void GuiContext::textBoxProcessInputCaretToHead(ControlData& controlData)
         {
             uint16& caretAt = controlData._controlValue.getCaretAt();
             caretAt = 0;
@@ -1377,7 +1383,7 @@ namespace mint
             textDisplayOffset = 0.0f;
         }
 
-        void GuiContext::textBoxProcessInputCaretToTail(GuiContext::ControlData& controlData, const std::wstring& text)
+        void GuiContext::textBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text)
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue.getCaretAt();
@@ -1394,7 +1400,7 @@ namespace mint
             caretState = 0;
         }
 
-        void GuiContext::textBoxEraseSelection(GuiContext::ControlData& controlData, std::wstring& outText) noexcept
+        void GuiContext::textBoxEraseSelection(ControlData& controlData, std::wstring& outText) noexcept
         {
             const uint16 selectionLength = controlData._controlValue.getSelectionLength();
             if (selectionLength == 0)
@@ -1448,7 +1454,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, GuiContext::ControlData& controlData)
+        void GuiContext::textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData)
         {
             uint16& selectionStart = controlData._controlValue.getSelectionStart();
             uint16& selectionLength = controlData._controlValue.getSelectionLength();
@@ -1533,7 +1539,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, GuiContext::ControlData& controlData) noexcept
+        void GuiContext::textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept
         {
             const uint16 caretAt = controlData._controlValue.getCaretAt();
             float& textDisplayOffset = controlData._controlValue.getTextDisplayOffset();
@@ -2087,7 +2093,7 @@ namespace mint
             }
         }
 
-        GuiContext::ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -2629,7 +2635,7 @@ namespace mint
             return mint::computeHash(hashKeyWstring.c_str());
         }
 
-        GuiContext::ControlData& GuiContext::createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride) noexcept
+        ControlData& GuiContext::createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride) noexcept
         {
             const uint64 hashKey = generateControlHashKeyXXX((hashGenerationKeyOverride == nullptr) ? text : hashGenerationKeyOverride, controlType);
             auto found = _controlIdMap.find(hashKey);
@@ -2650,19 +2656,19 @@ namespace mint
             return controlData;
         }
 
-        const GuiContext::ControlData& GuiContext::getParentWindowControlData() const noexcept
+        const ControlData& GuiContext::getParentWindowControlData() const noexcept
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.empty() == false, "Control 스택이 비어있을 때 호출되면 안 됩니다!!!");
 
             return getParentWindowControlData(getControlData(_controlStackPerFrame.back()._hashKey));
         }
 
-        const GuiContext::ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept
+        const ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept
         {
             return getParentWindowControlDataInternal(controlData.getParentHashKey());
         }
 
-        const GuiContext::ControlData& GuiContext::getParentWindowControlDataInternal(const uint64 hashKey) const noexcept
+        const ControlData& GuiContext::getParentWindowControlDataInternal(const uint64 hashKey) const noexcept
         {
             if (hashKey == 0)
             {
@@ -3848,7 +3854,7 @@ namespace mint
             return false;
         }
 
-        const GuiContext::ControlData& GuiContext::getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept
+        const ControlData& GuiContext::getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept
         {
             if (controlData.getHashKey() <= 1)
             {

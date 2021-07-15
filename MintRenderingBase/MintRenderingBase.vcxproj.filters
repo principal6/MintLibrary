@@ -114,6 +114,12 @@
     <ClInclude Include="Include\Gui\GuiContext.h">
       <Filter>Include\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Gui\ControlData.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Gui\ControlData.hpp">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">

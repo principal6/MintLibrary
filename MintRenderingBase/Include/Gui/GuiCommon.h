@@ -93,6 +93,13 @@ namespace mint
         };
 
 
+        enum class ViewportUsage
+        {
+            Parent,
+            ParentDock,
+            Child,
+        };
+
         
 
 
