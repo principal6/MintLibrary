@@ -122,6 +122,17 @@ namespace mint
             };
         }
 
+        GuiContext::PrepareControlDataParam GuiContext::PrepareControlDataParam::textBox(const TextBoxParam& textBoxParam, const float fontSize) noexcept
+        {
+            PrepareControlDataParam prepareControlDataParam;
+            {
+                prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
+                prepareControlDataParam._initialDisplaySize._y = mint::max(fontSize, textBoxParam._common._size._y);
+                prepareControlDataParam._offset = textBoxParam._common._offset;
+            }
+            return prepareControlDataParam;
+        }
+
 
         GuiContext::GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
@@ -1019,14 +1030,7 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
-
-            PrepareControlDataParam prepareControlDataParam;
-            {
-                prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
-                prepareControlDataParam._initialDisplaySize._y = mint::max(_fontSize, textBoxParam._common._size._y);
-                prepareControlDataParam._offset = textBoxParam._common._offset;
-            }
-            prepareControlData(controlData, prepareControlDataParam);
+            prepareControlData(controlData, PrepareControlDataParam::textBox(textBoxParam, _fontSize));
             
             mint::RenderingBase::Color finalBackgroundColor;
             const bool wasFocused = isControlFocused(controlData);
@@ -1743,9 +1747,10 @@ namespace mint
             ControlData& controlData = createOrGetControlData(text, controlType);
             controlData._isFocusable = false;
 
+            ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._initialDisplaySize._x = 160.0f;
+                prepareControlDataParam._initialDisplaySize._x = parentControlData._displaySize._x;
                 prepareControlDataParam._initialDisplaySize._y = _fontSize + 12.0f;
                 prepareControlDataParam._innerPadding.left(prepareControlDataParam._initialDisplaySize._y * 0.25f);
                 prepareControlDataParam._noIntervalForNextSibling = true;
@@ -1753,7 +1758,6 @@ namespace mint
             }
             prepareControlData(controlData, prepareControlDataParam);
 
-            ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             const int16 parentSelectedItemIndex = parentControlData._controlValue.getSelectedItemIndex();
             const int16 myIndex = static_cast<int16>(parentControlData.getChildControlDataHashKeyArray().size() - 1);
             mint::RenderingBase::Color finalColor;

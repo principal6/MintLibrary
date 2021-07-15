@@ -367,6 +367,10 @@ namespace mint
         public:
             struct PrepareControlDataParam
             {
+            public:
+                static PrepareControlDataParam      textBox(const TextBoxParam& textBoxParam, const float fontSize) noexcept;
+
+            public:
                 mint::Rect          _innerPadding;
                 mint::Float2        _initialDisplaySize;
                 ResizingMask        _initialResizingMask;
