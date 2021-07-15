@@ -352,10 +352,3 @@ MigrationBackup/
 .ionide/
 _output/Debug/MintLibraryTest/MintLibraryTest.exe.lastcodeanalysissucceeded
 _output/Debug/MintLibrary/MintLibrary.lib.lastcodeanalysissucceeded
-_output/Release/MintLibrary.lib
-_output/Debug/MintRenderingBase.lib
-_output/Debug/MintRendering.lib
-_output/Debug/MintLibraryTest.exe
-_output/Debug/MintLibrary.lib
-_output/Release/MintRenderingBase.lib
-_output/Release/MintRendering.lib
