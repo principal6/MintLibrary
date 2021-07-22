@@ -313,6 +313,10 @@ namespace mint
             windowParam._scrollBarType = mint::Gui::ScrollBarType::Both;
             if (beginWindow(L"TestWindow", windowParam, inoutVisibleState) == true)
             {
+                static VisibleState childWindowVisibleState0;
+                static VisibleState childWindowVisibleState1;
+
+
                 if (beginMenuBar(L"메뉴테스트1") == true)
                 {
                     if (beginMenuBarItem(L"파일") == true)
@@ -392,14 +396,18 @@ namespace mint
 
 
                 nextSameLine();
-                if (beginButton(L"테스트A") == true)
+                if (beginButton(L"ChildWindow0") == true)
                 {
+                    childWindowVisibleState0 = VisibleState::VisibleOpen;
+
                     endButton();
                 }
 
                 nextSameLine();
-                if (beginButton(L"테스트B") == true)
+                if (beginButton(L"ChildWindow1") == true)
                 {
+                    childWindowVisibleState1 = VisibleState::VisibleOpen;
+
                     endButton();
                 }
 
@@ -444,7 +452,7 @@ namespace mint
                     testWindowParam._common._size = mint::Float2(200.0f, 240.0f);
                     testWindowParam._scrollBarType = mint::Gui::ScrollBarType::Both;
                     testWindowParam._initialDockingMethod = mint::Gui::DockingMethod::BottomSide;
-                    if (beginWindow(L"1ST", testWindowParam, inoutVisibleState))
+                    if (beginWindow(L"1ST", testWindowParam, childWindowVisibleState0))
                     {
                         if (beginButton(L"테스트!!") == true)
                         {
@@ -461,7 +469,7 @@ namespace mint
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
                     testWindowParam._initialDockingMethod = mint::Gui::DockingMethod::BottomSide;
-                    if (beginWindow(L"2NDDD", testWindowParam, inoutVisibleState))
+                    if (beginWindow(L"2NDDD", testWindowParam, childWindowVisibleState1))
                     {
                         if (beginButton(L"YEAH") == true)
                         {
@@ -2502,7 +2510,6 @@ namespace mint
                 if (pushRoundButton(windowTitle, mint::RenderingBase::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
                     inoutParentVisibleState = mint::Gui::VisibleState::Invisible;
-                    //parentControlData.setVisibleState(mint::Gui::VisibleState::Invisible);
                 }
             }
 
