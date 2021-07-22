@@ -607,10 +607,6 @@ namespace mint
                 if (needToProcessControl == true)
                 {
                     const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
-                    if (isFocused || isAncestorFocused)
-                    {
-
-                    }
                     windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
                     
                     mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
