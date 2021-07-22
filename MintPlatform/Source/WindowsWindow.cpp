@@ -107,7 +107,7 @@ namespace mint
             windowClass.lpfnWndProc = WndProc;
             windowClass.lpszClassName = L"WindowsWindow";
             windowClass.lpszMenuName = nullptr;
-            windowClass.style = CS_VREDRAW | CS_HREDRAW;
+            windowClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
             RegisterClassExW(&windowClass);
 
             _windowStyle = WS_OVERLAPPED;

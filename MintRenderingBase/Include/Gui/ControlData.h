@@ -229,6 +229,7 @@ namespace mint
             const mint::Float2&                         getNextChildOffset() const noexcept;
             const ControlType                           getControlType() const noexcept;
             const bool                                  isTypeOf(const ControlType controlType) const noexcept;
+            const bool                                  isInputBoxType() const noexcept;
             const wchar_t*                              getText() const noexcept;
             const bool                                  isRootControl() const noexcept;
             const bool                                  visibleStateEquals(const VisibleState visibleState) const noexcept;
@@ -285,6 +286,7 @@ namespace mint
             mint::Float2                                _currentFrameDeltaPosition; // Used for dragging
             mint::Float2                                _childDisplayOffset; // Used for scrolling child controls (of Window control)
             bool                                        _isFocusable;
+            bool                                        _needDoubleClickToFocus;
             bool                                        _isDraggable;
             bool                                        _isInteractableOutsideParent;
             ResizingMask                                _resizingMask;

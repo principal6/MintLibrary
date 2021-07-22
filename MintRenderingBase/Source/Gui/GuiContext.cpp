@@ -13,7 +13,8 @@
 
 #include <MintLibrary/Include/ScopedCpuProfiler.h>
 
-#include <functional>
+
+#pragma optimize("", off)
 
 
 namespace mint
@@ -114,13 +115,13 @@ namespace mint
 
         namespace PrepareControlDataUtils
         {
-            PrepareControlDataParam prepareTextBox(const TextBoxParam& textBoxParam, const float fontSize) noexcept
+            PrepareControlDataParam prepareInputBox(const CommonControlParam& common, const float fontSize) noexcept
             {
                 PrepareControlDataParam prepareControlDataParam;
                 {
-                    prepareControlDataParam._initialDisplaySize._x = textBoxParam._common._size._x;
-                    prepareControlDataParam._initialDisplaySize._y = mint::max(fontSize, textBoxParam._common._size._y);
-                    prepareControlDataParam._offset = textBoxParam._common._offset;
+                    prepareControlDataParam._initialDisplaySize._x = common._size._x;
+                    prepareControlDataParam._initialDisplaySize._y = mint::max(fontSize, common._size._y);
+                    prepareControlDataParam._offset = common._offset;
                 }
                 return prepareControlDataParam;
             }
@@ -374,6 +375,11 @@ namespace mint
                 {
                     _mouseStates._mouseWheel = eventData._value.getMouseWheel();
                 }
+                else if (eventData._type == mint::Window::EventType::MouseDoubleClicked)
+                {
+                    _mouseStates.setDoubleClicked();
+                    _mouseStates.setButtonDownPosition(eventData._value.getMousePosition());
+                }
                 else if (eventData._type == mint::Window::EventType::KeyStroke)
                 {
                     _wcharInputCandiate = L'\0';
@@ -388,7 +394,7 @@ namespace mint
                 {
                     _keyCode = eventData._value.getKeyCode();
                     
-                    if (isFocusedControlTextBox() == true && mint::Window::EventData::isKeyCodeAlnum(_keyCode) == true)
+                    if (isFocusedControlInputBox() == true && mint::Window::EventData::isKeyCodeAlnum(_keyCode) == true)
                     {
                         _keyCode = mint::Window::EventData::KeyCode::NONE;
                         window->popEvent();
@@ -935,6 +941,7 @@ namespace mint
                 prepareControlDataParam._initialDisplaySize = ((labelParam._common._size == mint::Float2::kZero)
                     ? mint::Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y)
                     : labelParam._common._size);
+                prepareControlDataParam._offset = labelParam._common._offset;
             }
             prepareControlData(controlData, prepareControlDataParam);
             
@@ -944,11 +951,11 @@ namespace mint
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
-            rendererContext.setColor(labelParam._backgroundColor);
+            rendererContext.setColor(labelParam._common._backgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
 
-            rendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
+            rendererContext.setTextColor((labelParam._common._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._common._fontColor);
             const mint::Float4 textPosition = labelCalculateTextPosition(labelParam, controlData);
             const mint::RenderingBase::FontRenderingOption fontRenderingOption = labelGetFontRenderingOption(labelParam, controlData);
             rendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
@@ -1137,11 +1144,11 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
-            prepareControlData(controlData, PrepareControlDataUtils::prepareTextBox(textBoxParam, _fontSize));
+            prepareControlData(controlData, PrepareControlDataUtils::prepareInputBox(textBoxParam._common, _fontSize));
             
             mint::RenderingBase::Color finalBackgroundColor;
             const bool wasFocused = _controlInteractionStates.isControlFocused(controlData);
-            const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
+            const bool isFocused = processFocusControl(controlData, textBoxParam._common._backgroundColor, textBoxParam._common._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
                 mint::Rect clipRectForMe = controlData.getControlRect();
@@ -1151,10 +1158,11 @@ namespace mint
 
             const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
             const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const uint16 textLength = static_cast<uint16>(outText.length());
             mint::Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
             {
-                const float fullTextWidth = calculateTextWidth(outText.c_str(), static_cast<uint32>(outText.length()));
+                const float fullTextWidth = calculateTextWidth(outText.c_str(), textLength);
                 if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
                 {
                     textRenderOffset._x = (controlData._displaySize._x - fullTextWidth - inputCandidateWidth) * 0.5f;
@@ -1172,9 +1180,8 @@ namespace mint
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            const uint16 textLength = static_cast<uint16>(outText.length());
             const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
-            textBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
+            inputBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
 
             // Box 렌더링
             const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
@@ -1188,15 +1195,15 @@ namespace mint
             const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
             if (needToRenderInputCandidate == true)
             {
-                textBoxDrawTextWithInputCandidate(textBoxParam, textRenderOffset, controlData, outText);
+                textBoxDrawTextWithInputCandidate(textBoxParam._common, textRenderOffset, controlData, outText);
             }
             else
             {
-                textBoxDrawTextWithoutInputCandidate(textBoxParam, textRenderOffset, controlData, outText);
+                inputBoxDrawTextWithoutInputCandidate(textBoxParam._common, textRenderOffset, true, controlData, outText);
             }
 
             // Selection 렌더링
-            textBoxDrawSelection(textRenderOffset, controlData, outText);
+            inputBoxDrawSelection(textRenderOffset, controlData, outText);
 
             return false;
         }
@@ -1266,7 +1273,7 @@ namespace mint
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
                         {
-                            textBoxProcessInputKeySelectAll(controlData, outText);
+                            inputBoxProcessInputKeySelectAll(controlData, outText);
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
                         {
@@ -1278,7 +1285,7 @@ namespace mint
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
                         {
-                            textBoxProcessInputKeyPaste(errorMessage, controlData, outText);
+                            textBoxProcessInputKeyPaste(controlData, outText, errorMessage.c_str());
                         }
                     }
 
@@ -1387,6 +1394,8 @@ namespace mint
             }
             else
             {
+                caretAt = mint::min(caretAt, static_cast<uint16>(outText.length()));
+
                 if (outText.empty() == false && 0 < caretAt)
                 {
                     outText.erase(outText.begin() + caretAt - 1);
@@ -1416,7 +1425,7 @@ namespace mint
             }
         }
         
-        void GuiContext::textBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText)
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             controlData._controlValue._textBoxData._selectionStart = 0;
@@ -1442,7 +1451,7 @@ namespace mint
             textBoxEraseSelection(controlData, outText);
         }
 
-        void GuiContext::textBoxProcessInputKeyPaste(const std::wstring& errorMessage, ControlData& controlData, std::wstring& outText)
+        void GuiContext::textBoxProcessInputKeyPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage)
         {
             std::wstring fromClipboard;
             _graphicDevice->getWindow()->textFromClipboard(fromClipboard);
@@ -1457,7 +1466,10 @@ namespace mint
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             if (false == textBoxInsertWstring(fromClipboard, caretAt, outText))
             {
-                _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
+                if (errorMessage != nullptr)
+                {
+                    _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage, mint::Window::MessageBoxType::Error);
+                }
             }
         }
 
@@ -1522,6 +1534,8 @@ namespace mint
         {
             if (outText.length() < kTextBoxMaxTextLength)
             {
+                caretAt = mint::min(caretAt, static_cast<uint16>(outText.length()));
+
                 outText.insert(outText.begin() + caretAt, input);
 
                 ++caretAt;
@@ -1639,7 +1653,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept
+        void GuiContext::inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept
         {
             const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -1665,20 +1679,20 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxDrawTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        void GuiContext::textBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept
         {
-            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT("김장원", controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-            const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
+            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(textBoxControlData);
+            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
 
             // Text 렌더링 (Caret 이전)
-            const uint16 caretAt = textBoxControlData._controlValue._textBoxData._caretAt;
+            const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             if (outText.empty() == false)
             {
-                rendererContext.setTextColor(textBoxParam._fontColor);
+                rendererContext.setTextColor(commonControlParam._fontColor);
                 rendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset,
                     mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
             }
@@ -1687,22 +1701,22 @@ namespace mint
             const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
             const uint16 textLength = static_cast<uint16>(outText.length());
             const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
-            rendererContext.setTextColor(textBoxParam._fontColor);
+            rendererContext.setTextColor(commonControlParam._fontColor);
             rendererContext.drawDynamicText(inputCandidate, mint::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset,
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
 
             // Text 렌더링 (Caret 이후)
-            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
+            const bool isFocused = _controlInteractionStates.isControlFocused(controlData);
             const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             if (outText.empty() == false)
             {
-                rendererContext.setTextColor(textBoxParam._fontColor);
+                rendererContext.setTextColor(commonControlParam._fontColor);
                 rendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + mint::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset,
                     mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
             }
 
             // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
-            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue._textBoxData._caretState == 0);
+            const bool needToRenderCaret = (isFocused == true && controlData._controlValue._textBoxData._caretState == 0);
             if (needToRenderCaret == true)
             {
                 const float caretHeight = _fontSize;
@@ -1712,29 +1726,29 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxDrawTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        void GuiContext::inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept
         {
-            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT("김장원", controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-            const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
+            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
+            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(textBoxControlData);
+            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
 
             // Text 전체 렌더링
             if (outText.empty() == false)
             {
-                rendererContext.setTextColor(textBoxParam._fontColor);
+                rendererContext.setTextColor(commonControlParam._fontColor);
                 rendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset,
                     mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
             }
 
             // Caret 렌더링
-            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
-            const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue._textBoxData._caretState == 0);
-            if (needToRenderCaret == true)
+            const bool isFocused = _controlInteractionStates.isControlFocused(controlData);
+            const bool needToRenderCaret = (isFocused == true && controlData._controlValue._textBoxData._caretState == 0);
+            if (renderCaret == true && needToRenderCaret == true)
             {
-                const uint16 caretAt = textBoxControlData._controlValue._textBoxData._caretAt;
+                const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
                 const uint16 textLength = static_cast<uint16>(outText.length());
                 const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
                 const float caretHeight = _fontSize;
@@ -1744,9 +1758,9 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
+        void GuiContext::inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
         {
-            MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT("김장원", textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 
             const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
             if (isFocused == false)
@@ -1773,6 +1787,229 @@ namespace mint
             }
         }
 
+        const bool GuiContext::beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        {
+            static constexpr ControlType controlType = ControlType::ValueSliderFloat;
+
+            ControlData& controlData = createOrGetControlData(name, controlType);
+            controlData._isFocusable = true;
+            controlData._needDoubleClickToFocus = true;
+            prepareControlData(controlData, PrepareControlDataUtils::prepareInputBox(commonControlParam, _fontSize));
+
+            mint::RenderingBase::Color finalBackgroundColor;
+            const bool wasFocused = _controlInteractionStates.isControlFocused(controlData);
+            const bool isFocused = processFocusControl(controlData, commonControlParam._backgroundColor, commonControlParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
+            {
+                const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
+                mint::Rect clipRectForMe = controlData.getControlRect();
+                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
+                setClipRectForMe(controlData, clipRectForMe);
+            }
+
+            constexpr uint32 kTextBufferSize = 255;
+            wchar_t format[kTextBufferSize];
+            wchar_t buffer[kTextBufferSize];
+            mint::formatString(format, L"%%.%df", decimalDigits);
+            mint::formatString(buffer, format, value);
+            std::wstring text(buffer);
+            const uint16 textLength = static_cast<uint16>(text.length());
+            mint::Float4 textRenderOffset;
+            if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
+            {
+                const float fullTextWidth = calculateTextWidth(text.c_str(), textLength);
+                
+                // 가운데 정렬!
+                textRenderOffset._x = (controlData._displaySize._x - fullTextWidth) * 0.5f;
+            }
+
+            // Input 처리
+            valueSliderFloatProcessInput(wasFocused, controlData, textRenderOffset, value, text);
+
+            if (wasFocused == false && isFocused == true)
+            {
+                inputBoxProcessInputKeySelectAll(controlData, text);
+            }
+
+            // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
+            const float textWidthTillCaret = calculateTextWidth(text.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
+            inputBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, 0.0f, controlData);
+
+            // Box 렌더링
+            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            rendererContext.setClipRect(controlData.getClipRect());
+            rendererContext.setColor(finalBackgroundColor);
+            rendererContext.setPosition(controlCenterPosition);
+            rendererContext.drawRoundedRectangle(controlData._displaySize, (roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+
+            // Text 렌더링
+            inputBoxDrawTextWithoutInputCandidate(commonControlParam, textRenderOffset, isFocused, controlData, text);
+
+            // Selection 렌더링
+            inputBoxDrawSelection(textRenderOffset, controlData, text);
+
+            return false;
+        }
+
+        void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, mint::Float4& textRenderOffset, float& value, std::wstring& outText) noexcept
+        {
+            const TextInputMode textInputMode = TextInputMode::NumberOnly;
+
+            TextBoxProcessInputResult result;
+            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
+            uint16& caretState = controlData._controlValue._textBoxData._caretState;
+            uint64& lastCaretBlinkTimeMs = controlData._controlValue._textBoxData._lastCaretBlinkTimeMs;
+            const uint64 currentTimeMs = mint::Profiler::getCurrentTimeMs();
+            if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
+            {
+                lastCaretBlinkTimeMs = currentTimeMs;
+
+                caretState ^= 1;
+            }
+
+            if (_controlInteractionStates.isControlFocused(controlData) == true)
+            {
+                if (_mouseStates.isButtonDownThisFrame() == true)
+                {
+                    // 마우스 입력 처리
+                    textBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
+                }
+                else
+                {
+                    const mint::Window::IWindow* const window = _graphicDevice->getWindow();
+                    const bool isShiftKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
+                    const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
+                    const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
+                    if (32 <= _wcharInputCandiate)
+                    {
+                        textBoxEraseSelection(controlData, outText);
+                    }
+                    else if (_wcharInput != L'\0')
+                    {
+                        // 글자 입력 or 키 입력
+
+                        const bool isInputCharacter = (32 <= _wcharInput);
+                        if (isInputCharacter == true)
+                        {
+                            if (textBoxIsValidInput(_wcharInput, caretAt, textInputMode, outText) == true)
+                            {
+                                textBoxEraseSelection(controlData, outText);
+
+                                textBoxInsertWchar(_wcharInput, caretAt, outText);
+                            }
+                        }
+                        else
+                        {
+                            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
+
+                            if (_wcharInput == VK_BACK) // BackSpace
+                            {
+                                textBoxProcessInputKeyDeleteBefore(controlData, outText);
+                            }
+                            else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
+                            {
+                                inputBoxProcessInputKeySelectAll(controlData, outText);
+                            }
+                            else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
+                            {
+                                textBoxProcessInputKeyCopy(controlData, outText);
+                            }
+                            else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
+                            {
+                                textBoxProcessInputKeyCut(controlData, outText);
+                            }
+                            else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
+                            {
+                                textBoxProcessInputKeyPaste(controlData, outText);
+                            }
+                        }
+
+                        result._clearWcharInput = true;
+                    }
+                    else
+                    {
+                        // 키 눌림 처리
+
+                        if (_keyCode == mint::Window::EventData::KeyCode::Left)
+                        {
+                            textBoxProcessInputCaretToPrev(controlData);
+                        }
+                        else if (_keyCode == mint::Window::EventData::KeyCode::Right)
+                        {
+                            textBoxProcessInputCaretToNext(controlData, outText);
+                        }
+                        else if (_keyCode == mint::Window::EventData::KeyCode::Home)
+                        {
+                            textBoxProcessInputCaretToHead(controlData);
+                        }
+                        else if (_keyCode == mint::Window::EventData::KeyCode::End)
+                        {
+                            textBoxProcessInputCaretToTail(controlData, outText);
+                        }
+                        else if (_keyCode == mint::Window::EventData::KeyCode::Delete)
+                        {
+                            textBoxProcessInputKeyDeleteAfter(controlData, outText);
+                        }
+                    }
+
+                    // Caret 위치가 바뀐 경우 refresh
+                    if (oldCaretAt != caretAt)
+                    {
+                        textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+
+                        // Selection
+                        if (isShiftKeyDown == true && _keyCode != mint::Window::EventData::KeyCode::NONE)
+                        {
+                            textBoxUpdateSelection(oldCaretAt, caretAt, controlData);
+                        }
+                    }
+
+                    if (isShiftKeyDown == false && isControlKeyDown == false &&
+                        _keyCode != mint::Window::EventData::KeyCode::NONE &&
+                        _keyCode != mint::Window::EventData::KeyCode::Control &&
+                        _keyCode != mint::Window::EventData::KeyCode::Alt)
+                    {
+                        // Selection 해제
+                        uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
+                        selectionLength = 0;
+                    }
+                }
+
+                if (wasControlFocused == false)
+                {
+                    textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                }
+
+                if (result._clearKeyCode == true)
+                {
+                    _keyCode = mint::Window::EventData::KeyCode::NONE;
+                }
+                if (result._clearWcharInput == true)
+                {
+                    _wcharInput = L'\0';
+                }
+
+                if (outText.empty() == true)
+                {
+                    value = 0.0f;
+                }
+                else
+                {
+                    value = std::stof(outText);
+                }
+            }
+            else
+            {
+                if (_mouseStates.isButtonDown() == true && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                {
+                    const mint::Float2 dragDelta = _mouseStates.getMouseDragDelta();
+                    value += (dragDelta._x - dragDelta._y) * 0.1f;
+
+                    _mouseStates.setButtonDownPositionCopy(_mouseStates.getPosition());
+                }
+            }
+        }
+        
         const bool GuiContext::beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
         {
             static constexpr ControlType controlType = ControlType::ListView;
@@ -2785,16 +3022,26 @@ namespace mint
             return _controlInteractionStates.isControlPressed(getControlStackTopXXX());
         }
 
-        const bool GuiContext::isFocusedControlTextBox() const noexcept
+        const bool GuiContext::isFocusedControlInputBox() const noexcept
         {
-            return (_controlInteractionStates.hasFocusedControl()) ? getControlData(_controlInteractionStates.getFocusedControlHashKey()).isTypeOf(ControlType::TextBox) : false;
+            return (_controlInteractionStates.hasFocusedControl()) ? getControlData(_controlInteractionStates.getFocusedControlHashKey()).isInputBoxType() : false;
         }
 
         void GuiContext::setControlFocused(const ControlData& controlData) noexcept
         {
             if (controlData._isFocusable == true)
             {
-                _controlInteractionStates.setControlFocused(controlData);
+                if (controlData._needDoubleClickToFocus == true)
+                {
+                    if (_mouseStates.isDoubleClicked() == true)
+                    {
+                        _controlInteractionStates.setControlFocused(controlData);
+                    }
+                }
+                else
+                {
+                    _controlInteractionStates.setControlFocused(controlData);
+                }
             }
         }
 
@@ -3004,8 +3251,19 @@ namespace mint
                 (_mouseStates.isButtonDownThisFrame() == true 
                     && (_controlInteractionStates.isControlPressed(controlData) == true || _controlInteractionStates.isControlClicked(controlData) == true)))
             {
-                // Focus entered
-                setControlFocused(controlData);
+                if (controlData._needDoubleClickToFocus == true)
+                {
+                    if (_mouseStates.isDoubleClicked() == true)
+                    {
+                        // Focus entered
+                        setControlFocused(controlData);
+                    }
+                }
+                else
+                {
+                    // Focus entered
+                    setControlFocused(controlData);
+                }
             }
 
             if (needToColorFocused(controlData) == true)
@@ -3130,7 +3388,7 @@ namespace mint
                 const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
                 if (isMouseDownInInteractionArea == true)
                 {
-                    if (_mouseStates.isButtonDownThisFrame() == true)
+                    if (_mouseStates.isButtonDownThisFrame() == true || _mouseStates.isDoubleClicked() == true)
                     {
                         setControlPressed(controlData);
                     }

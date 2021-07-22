@@ -247,6 +247,7 @@ namespace mint
             , _interactionSize{ size }
             , _nonDockInteractionSize{ size }
             , _isFocusable{ false }
+            , _needDoubleClickToFocus{ false }
             , _isDraggable{ false }
             , _isInteractableOutsideParent{ false }
             , _displaySize{ size }
@@ -412,6 +413,11 @@ namespace mint
         MINT_INLINE const bool ControlData::isTypeOf(const ControlType controlType) const noexcept
         {
             return (controlType == _controlType);
+        }
+
+        MINT_INLINE const bool ControlData::isInputBoxType() const noexcept
+        {
+            return (ControlType::TextBox == _controlType) || (ControlType::ValueSliderFloat == _controlType);
         }
 
         MINT_INLINE const wchar_t* ControlData::getText() const noexcept

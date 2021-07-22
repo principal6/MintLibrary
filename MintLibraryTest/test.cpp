@@ -804,7 +804,7 @@ const bool testWindow()
         }
 
         // Dynamic Keyboard Inputs
-        if (guiContext.isFocusedControlTextBox() == false)
+        if (guiContext.isFocusedControlInputBox() == false)
         {
             if (window.isKeyDown(EventData::KeyCode::Q) == true)
             {
@@ -906,7 +906,7 @@ const bool testWindow()
                 {
                     wchar_t tempBuffer[256];
                     mint::Gui::LabelParam labelParam;
-                    labelParam._fontColor = mint::RenderingBase::Color(200, 220, 255, 255);
+                    labelParam._common._fontColor = mint::RenderingBase::Color(200, 220, 255, 255);
                     labelParam._alignmentHorz = mint::Gui::TextAlignmentHorz::Left;
                     
                     mint::formatString(tempBuffer, L" FPS: %d", mint::Profiler::FpsCounter::getFps());
@@ -915,66 +915,61 @@ const bool testWindow()
                     mint::formatString(tempBuffer, L" CPU: %d ms", mint::Profiler::FpsCounter::getFrameTimeMs());
                     guiContext.pushLabel(L"CPU_Label", tempBuffer, labelParam);
                     
-                    mint::formatString(tempBuffer, L" Camera Position: %.3f, %.3f, %.3f", 
-                        testCameraObject->getObjectTransformSrt()._translation._x,
-                        testCameraObject->getObjectTransformSrt()._translation._y, 
-                        testCameraObject->getObjectTransformSrt()._translation._z);
+                    mint::Float3& cameraPosition = testCameraObject->getObjectTransformSrt()._translation;
+                    mint::formatString(tempBuffer, L" Camera Position:");
                     guiContext.pushLabel(L"Camera Position", tempBuffer, labelParam);
                     
                     {
                         mint::formatString(tempBuffer, L"X");
                         labelParam._alignmentHorz = mint::Gui::TextAlignmentHorz::Center;
-                        labelParam._backgroundColor.r(1.0f);
-                        labelParam._backgroundColor.a(0.75f);
-                        labelParam._fontColor = mint::RenderingBase::Color::kWhite;
+                        labelParam._common._backgroundColor.r(1.0f);
+                        labelParam._common._backgroundColor.a(0.75f);
+                        labelParam._common._fontColor = mint::RenderingBase::Color::kWhite;
                         labelParam._common._size._x = 16.0f;
                         labelParam._common._size._y = 24.0f;
+                        labelParam._common._offset._x = 16.0f;
                         guiContext.pushLabel(L"PositionX", tempBuffer, labelParam);
 
                         guiContext.nextSameLine();
                         guiContext.nextNoInterval();
 
-                        static std::wstring textPositionX;
-                        mint::Gui::TextBoxParam textBoxParam;
-                        textBoxParam._common._size._x = 70.0f;
-                        textBoxParam._common._size._y = 24.0f;
-                        textBoxParam._roundnessInPixel = 0.0f;
-                        textBoxParam._textInputMode = mint::Gui::TextInputMode::NumberOnly;
-                        if (guiContext.beginTextBox(L"PositionX", textBoxParam, textPositionX) == true)
+                        mint::Gui::CommonControlParam commonControlParam;
+                        commonControlParam._size._x = 72.0f;
+                        commonControlParam._size._y = 24.0f;
+                        commonControlParam._offset = labelParam._common._offset;
+                        if (guiContext.beginValueSliderFloat(L"PositionX", commonControlParam, 0.0f, 3, cameraPosition._x) == true)
                         {
-                            guiContext.endTextBox();
+                            guiContext.endValueSliderFloat();
                         }
 
                         guiContext.nextSameLine();
 
                         mint::formatString(tempBuffer, L"Y");
-                        labelParam._backgroundColor.r(0.0f);
-                        labelParam._backgroundColor.g(0.875f);
+                        labelParam._common._backgroundColor.r(0.0f);
+                        labelParam._common._backgroundColor.g(0.875f);
                         guiContext.pushLabel(L"PositionY", tempBuffer, labelParam);
 
                         guiContext.nextSameLine();
                         guiContext.nextNoInterval();
 
-                        static std::wstring textPositionY;
-                        if (guiContext.beginTextBox(L"PositionY", textBoxParam, textPositionY) == true)
+                        if (guiContext.beginValueSliderFloat(L"PositionY", commonControlParam, 0.0f, 3, cameraPosition._y) == true)
                         {
-                            guiContext.endTextBox();
+                            guiContext.endValueSliderFloat();
                         }
 
                         guiContext.nextSameLine();
 
                         mint::formatString(tempBuffer, L"Z");
-                        labelParam._backgroundColor.g(0.0f);
-                        labelParam._backgroundColor.b(1.0f);
+                        labelParam._common._backgroundColor.g(0.0f);
+                        labelParam._common._backgroundColor.b(1.0f);
                         guiContext.pushLabel(L"PositionZ", tempBuffer, labelParam);
 
                         guiContext.nextSameLine();
                         guiContext.nextNoInterval();
 
-                        static std::wstring textPositionZ;
-                        if (guiContext.beginTextBox(L"PositionZ", textBoxParam, textPositionZ) == true)
+                        if (guiContext.beginValueSliderFloat(L"PositionZ", commonControlParam, 0.0f, 3, cameraPosition._z) == true)
                         {
-                            guiContext.endTextBox();
+                            guiContext.endValueSliderFloat();
                         }
                     }
                     

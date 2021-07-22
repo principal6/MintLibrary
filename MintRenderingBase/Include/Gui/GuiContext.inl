@@ -1,3 +1,4 @@
+#include "GuiContext.h"
 #pragma once
 
 
@@ -56,16 +57,28 @@ namespace mint
         {
             _isButtonDownUp = false;
             _isButtonDownThisFrame = false;
+            _isDoubleClicked = false;
         }
 
         MINT_INLINE void GuiContext::MouseStates::setPosition(const mint::Float2& position) noexcept
         {
             _mousePosition = position;
+
+            calculateMouseDragDelta();
         }
 
         MINT_INLINE void GuiContext::MouseStates::setButtonDownPosition(const mint::Float2& position) noexcept
         {
-            _mouseDownPosition = position;
+            _mouseDownPositionCopy = _mouseDownPosition = position;
+
+            calculateMouseDragDelta();
+        }
+
+        inline void GuiContext::MouseStates::setButtonDownPositionCopy(const mint::Float2& position) noexcept
+        {
+            _mouseDownPositionCopy = position;
+
+            calculateMouseDragDelta();
         }
 
         MINT_INLINE void GuiContext::MouseStates::setButtonUpPosition(const mint::Float2& position) noexcept
@@ -88,6 +101,16 @@ namespace mint
             _isButtonDown = false;
         }
 
+        MINT_INLINE void GuiContext::MouseStates::setDoubleClicked() noexcept
+        {
+            _isDoubleClicked = true;
+        }
+
+        MINT_INLINE void GuiContext::MouseStates::calculateMouseDragDelta() noexcept
+        {
+            _mouseDragDelta = _mousePosition - _mouseDownPositionCopy;
+        }
+
         MINT_INLINE const mint::Float2& GuiContext::MouseStates::getPosition() const noexcept
         {
             return _mousePosition;
@@ -103,9 +126,9 @@ namespace mint
             return _mouseUpPosition;
         }
 
-        MINT_INLINE const mint::Float2 GuiContext::MouseStates::getMouseDragDelta() const noexcept
+        MINT_INLINE const mint::Float2& GuiContext::MouseStates::getMouseDragDelta() const noexcept
         {
-            return _mousePosition - _mouseDownPosition;
+            return _mouseDragDelta;
         }
 
         MINT_INLINE const bool GuiContext::MouseStates::isButtonDown() const noexcept
@@ -121,6 +144,11 @@ namespace mint
         MINT_INLINE const bool GuiContext::MouseStates::isButtonDownUp() const noexcept
         {
             return _isButtonDownUp;
+        }
+
+        MINT_INLINE const bool GuiContext::MouseStates::isDoubleClicked() const noexcept
+        {
+            return _isDoubleClicked;
         }
 
         MINT_INLINE const bool GuiContext::MouseStates::isCursor(const mint::Window::CursorType cursorType) const noexcept

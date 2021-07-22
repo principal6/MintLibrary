@@ -77,10 +77,15 @@ namespace mint
 
         struct CommonControlParam
         {
-            CommonControlParam() = default;
-            CommonControlParam(const mint::Float2& size) : _size{ size } { __noop; }
-            mint::Float2        _size = mint::Float2::kZero;
-            mint::Float2        _offset = mint::Float2::kZero;
+                                        CommonControlParam() : CommonControlParam(mint::Float2::kZero) { __noop; }
+                                        CommonControlParam(const mint::Float2& size) : CommonControlParam(size, mint::RenderingBase::Color::kWhite, mint::RenderingBase::Color::kBlack) { __noop; }
+                                        CommonControlParam(const mint::Float2& size, const mint::RenderingBase::Color& backgroundColor, const mint::RenderingBase::Color& fontColor) 
+                                            : _size{ size }, _offset{ mint::Float2::kZero }, _backgroundColor{ backgroundColor }, _fontColor{ fontColor } { __noop; }
+
+            mint::Float2                _size;
+            mint::Float2                _offset;
+            mint::RenderingBase::Color  _backgroundColor;
+            mint::RenderingBase::Color  _fontColor;
         };
 
         struct WindowParam
@@ -95,9 +100,7 @@ namespace mint
         // If no value is set, default values will be used properly
         struct LabelParam
         {
-            mint::RenderingBase::Color  _backgroundColor    = mint::RenderingBase::Color::kTransparent;
-            mint::RenderingBase::Color  _fontColor          = mint::RenderingBase::Color::kTransparent;
-            CommonControlParam          _common             = CommonControlParam(mint::Float2::kZero);
+            CommonControlParam          _common             = CommonControlParam(mint::Float2::kZero, mint::RenderingBase::Color::kTransparent, mint::RenderingBase::Color::kTransparent);
             mint::Float2                _paddingForAutoSize = mint::Float2(24, 12);
             TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Center;
             TextAlignmentVert           _alignmentVert      = TextAlignmentVert::Middle;
@@ -117,8 +120,6 @@ namespace mint
         {
             CommonControlParam          _common             = CommonControlParam(mint::Float2(128.0f, 0.0f));
             TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Left;
-            mint::RenderingBase::Color  _backgroundColor    = mint::RenderingBase::Color::kWhite;
-            mint::RenderingBase::Color  _fontColor          = mint::RenderingBase::Color::kBlack;
             float                       _roundnessInPixel   = kDefaultRoundnessInPixel;
             TextInputMode               _textInputMode      = TextInputMode::General;
         };
@@ -219,27 +220,36 @@ namespace mint
             public:
                 void                                            setPosition(const mint::Float2& position) noexcept;
                 void                                            setButtonDownPosition(const mint::Float2& position) noexcept;
+                void                                            setButtonDownPositionCopy(const mint::Float2& position) noexcept;
                 void                                            setButtonUpPosition(const mint::Float2& position) noexcept;
                 void                                            setButtonDown() noexcept;
                 void                                            setButtonUp() noexcept;
+                void                                            setDoubleClicked() noexcept;
+
+            private:
+                void                                            calculateMouseDragDelta() noexcept;
 
             public:
                 const mint::Float2&                             getPosition() const noexcept;
                 const mint::Float2&                             getButtonDownPosition() const noexcept;
                 const mint::Float2&                             getButtonUpPosition() const noexcept;
-                const mint::Float2                              getMouseDragDelta() const noexcept;
+                const mint::Float2&                             getMouseDragDelta() const noexcept;
                 const bool                                      isButtonDown() const noexcept;
                 const bool                                      isButtonDownThisFrame() const noexcept;
                 const bool                                      isButtonDownUp() const noexcept;
+                const bool                                      isDoubleClicked() const noexcept;
                 const bool                                      isCursor(const mint::Window::CursorType cursorType) const noexcept;
 
             private:
                 mint::Float2                                    _mousePosition;
                 mint::Float2                                    _mouseDownPosition;
+                mint::Float2                                    _mouseDownPositionCopy;
                 mint::Float2                                    _mouseUpPosition;
+                mint::Float2                                    _mouseDragDelta;
                 bool                                            _isButtonDown = false;
                 bool                                            _isButtonDownThisFrame = false;
                 bool                                            _isButtonDownUp = false;
+                bool                                            _isDoubleClicked = false;
 
             public:
                 mutable float                                   _mouseWheel;
@@ -405,7 +415,7 @@ namespace mint
             void                                                sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
     #pragma endregion
 
-    #pragma region Controls - TextBox
+    #pragma region Controls - TextBox & InputBox(General)
         public:
             // \param name [Unique name to distinguish control]
             // \param textBoxParam [Various options]
@@ -421,10 +431,10 @@ namespace mint
             void                                                textBoxProcessInputMouse(ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result);
             void                                                textBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText);
             void                                                textBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText);
+            void                                                inputBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText);
             void                                                textBoxProcessInputKeyCopy(ControlData& controlData, std::wstring& outText);
             void                                                textBoxProcessInputKeyCut(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeyPaste(const std::wstring& errorMessage, ControlData& controlData, std::wstring& outText);
+            void                                                textBoxProcessInputKeyPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage = nullptr);
             void                                                textBoxProcessInputCaretToPrev(ControlData& controlData);
             void                                                textBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text);
             void                                                textBoxProcessInputCaretToHead(ControlData& controlData);
@@ -437,10 +447,19 @@ namespace mint
             const bool                                          textBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept;
         
         private:
-            void                                                textBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept;
-            void                                                textBoxDrawTextWithInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
-            void                                                textBoxDrawTextWithoutInputCandidate(const TextBoxParam& textBoxParam, const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
-            void                                                textBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            void                                                inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept;
+            void                                                textBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept;
+            void                                                inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
+            void                                                inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+    #pragma endregion
+
+    #pragma region Controls - Slider
+        public:
+            const bool                                          beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            void                                                endValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
+
+        private:
+            void                                                valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, mint::Float4& textRenderOffset, float& value, std::wstring& outText) noexcept;
     #pragma endregion
 
         public:
@@ -509,7 +528,7 @@ namespace mint
 
         public:
             const bool                                          isThisControlPressed() const noexcept;
-            const bool                                          isFocusedControlTextBox() const noexcept;
+            const bool                                          isFocusedControlInputBox() const noexcept;
 
         private:
             void                                                setControlFocused(const ControlData& controlData) noexcept;
