@@ -949,12 +949,12 @@ namespace mint
             rendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
 
             rendererContext.setTextColor((labelParam._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._fontColor);
-            const mint::Float4 textPosition = calculateLabelTextPosition(labelParam, controlData);
-            const mint::RenderingBase::FontRenderingOption fontRenderingOption = getLabelFontRenderingOption(labelParam, controlData);
+            const mint::Float4 textPosition = labelCalculateTextPosition(labelParam, controlData);
+            const mint::RenderingBase::FontRenderingOption fontRenderingOption = labelGetFontRenderingOption(labelParam, controlData);
             rendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
         }
 
-        mint::Float4 GuiContext::calculateLabelTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        mint::Float4 GuiContext::labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
@@ -984,7 +984,7 @@ namespace mint
             return textPosition;
         }
 
-        mint::RenderingBase::FontRenderingOption GuiContext::getLabelFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        mint::RenderingBase::FontRenderingOption GuiContext::labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
@@ -1070,14 +1070,14 @@ namespace mint
                 outValue = thumbAt;
                 
                 // 반드시 thumbAt 이 갱신된 이후에 draw 를 한다.
-                drawSliderTrack(sliderParam, trackControlData, trackColor);
-                drawSliderThumb(sliderParam, thumbControlData, thumbColor);
+                sliderDrawTrack(sliderParam, trackControlData, trackColor);
+                sliderDrawThumb(sliderParam, thumbControlData, thumbColor);
             }
             
             return isChanged;
         }
 
-        void GuiContext::drawSliderTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept
+        void GuiContext::sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept
         {
             MINT_ASSERT("김장원", trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
 
@@ -1117,7 +1117,7 @@ namespace mint
             rendererContext.drawHalfCircle(trackRadius, -mint::Math::kPiOverTwo);
         }
 
-        void GuiContext::drawSliderThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept
+        void GuiContext::sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept
         {
             MINT_ASSERT("김장원", thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
 

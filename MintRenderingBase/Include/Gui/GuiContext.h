@@ -385,13 +385,14 @@ namespace mint
             const bool                                          beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                                endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
+    #pragma region Controls - Label
         public:
-            // [Label]
             void                                                pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
-            mint::Float4                                        calculateLabelTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
-            mint::RenderingBase::FontRenderingOption            getLabelFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            mint::Float4                                        labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            mint::RenderingBase::FontRenderingOption            labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+    #pragma endregion
 
     #pragma region Controls - Slider
         public:
@@ -400,8 +401,8 @@ namespace mint
             void                                                endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
-            void                                                drawSliderTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept;
-            void                                                drawSliderThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
+            void                                                sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept;
+            void                                                sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
     #pragma endregion
 
     #pragma region Controls - TextBox
