@@ -255,31 +255,43 @@ namespace mint
             class ControlInteractionStates
             {
             public:
+                void                        setControlHovered(const ControlData& controlData) noexcept;
                 const bool                  setControlPressed(const ControlData& controlData) noexcept;
-                MINT_INLINE void            setControlFocused(const uint64 controlHashKey) noexcept { _focusedControlHashKey = controlHashKey; }
-                void                        setControlHovered(const uint64 controlHashKey) noexcept;
                 const bool                  setControlClicked(const ControlData& controlData) noexcept;
-                MINT_INLINE const bool      hasFocusedControl() const noexcept { return (0 != _focusedControlHashKey); }
+                void                        setControlFocused(const ControlData& controlData) noexcept;
+            
+            public:
                 MINT_INLINE const bool      hasPressedControl() const noexcept { return (0 != _pressedControlHashKey); }
                 MINT_INLINE const bool      hasClickedControl() const noexcept { return (0 != _clickedControlHashKeyPerFrame); }
+                MINT_INLINE const bool      hasFocusedControl() const noexcept { return (0 != _focusedControlHashKey); }
+            
+            public:
                 const bool                  isControlHovered(const ControlData& controlData) const noexcept;
                 const bool                  isControlPressed(const ControlData& controlData) const noexcept;
                 const bool                  isControlClicked(const ControlData& controlData) const noexcept;
                 const bool                  isControlFocused(const ControlData& controlData) const noexcept;
+                const bool                  isHoveringMoreThan(const uint64 durationMs) const noexcept;
+            
+            public:
                 MINT_INLINE const uint64    getHoveredControlHashKey() const noexcept { return _hoveredControlHashKey; }
-                MINT_INLINE const uint64    getFocusedControlHashKey() const noexcept { return _focusedControlHashKey; }
                 MINT_INLINE const uint64    getPressedControlHashKey() const noexcept { return _pressedControlHashKey; }
-                MINT_INLINE const uint64    getTooltipParentWindowHashKey() const noexcept { return _tooltipParentWindowHashKey; }
+                MINT_INLINE const uint64    getFocusedControlHashKey() const noexcept { return _focusedControlHashKey; }
+
+            public:
                 void                        resetPerFrameStates(const MouseStates& mouseStates) noexcept;
                 void                        resetHover() noexcept;
                 void                        resetHoverIf(const ControlData& controlData) noexcept;
                 void                        resetPressIf(const ControlData& controlData) noexcept;
-                const bool                  isHoveringMoreThan(const uint64 durationMs) const noexcept;
+            
+            public:
                 MINT_INLINE void            setMouseInteractionDoneThisFrame() noexcept { _isMouseInteractionDoneThisFrame = true; }
                 MINT_INLINE const bool      isMouseInteractionDoneThisFrame() const noexcept { return _isMouseInteractionDoneThisFrame; }
+
+            public:
                 MINT_INLINE const bool      needToShowTooltip() const noexcept { return (0 != _tooltipParentWindowHashKey); }
                 MINT_INLINE const wchar_t*  getTooltipText() const noexcept { return _tooltipTextFinal; }
                 const mint::Float2          getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
+                MINT_INLINE const uint64    getTooltipParentWindowHashKey() const noexcept { return _tooltipParentWindowHashKey; }
                 void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowHashKey) noexcept;
 
             private:

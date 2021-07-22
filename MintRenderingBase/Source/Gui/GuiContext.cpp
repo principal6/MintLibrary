@@ -127,6 +127,18 @@ namespace mint
         }
         
 
+        void GuiContext::ControlInteractionStates::setControlHovered(const ControlData& controlData) noexcept
+        {
+            resetHover();
+
+            _hoveredControlHashKey = controlData.getHashKey();
+
+            if (_hoverStarted == false)
+            {
+                _hoverStarted = true;
+            }
+        }
+
         const bool GuiContext::ControlInteractionStates::setControlPressed(const ControlData& controlData) noexcept
         {
             if (isControlHovered(controlData) == true)
@@ -145,18 +157,6 @@ namespace mint
             return false;
         }
 
-        void GuiContext::ControlInteractionStates::setControlHovered(const uint64 controlHashKey) noexcept
-        {
-            resetHover();
-
-            _hoveredControlHashKey = controlHashKey;
-
-            if (_hoverStarted == false)
-            {
-                _hoverStarted = true;
-            }
-        }
-
         const bool GuiContext::ControlInteractionStates::setControlClicked(const ControlData& controlData) noexcept
         {
             if (_pressedControlHashKey == controlData.getHashKey())
@@ -166,6 +166,11 @@ namespace mint
                 return true;
             }
             return false;
+        }
+
+        void GuiContext::ControlInteractionStates::setControlFocused(const ControlData& controlData) noexcept
+        {
+            _focusedControlHashKey = controlData.getHashKey();
         }
 
         const bool GuiContext::ControlInteractionStates::isControlHovered(const ControlData& controlData) const noexcept
@@ -186,6 +191,11 @@ namespace mint
         const bool GuiContext::ControlInteractionStates::isControlFocused(const ControlData& controlData) const noexcept
         {
             return (controlData.getHashKey() == _focusedControlHashKey);
+        }
+
+        const bool GuiContext::ControlInteractionStates::isHoveringMoreThan(const uint64 durationMs) const noexcept
+        {
+            return (_hoverStarted == true && _hoverStartTimeMs + durationMs < mint::Profiler::getCurrentTimeMs());
         }
 
         void GuiContext::ControlInteractionStates::resetPerFrameStates(const MouseStates& mouseStates) noexcept
@@ -227,11 +237,6 @@ namespace mint
                 _pressedControlHashKey = 0;
                 _pressedControlInitialPosition.setZero();
             }
-        }
-
-        const bool GuiContext::ControlInteractionStates::isHoveringMoreThan(const uint64 durationMs) const noexcept
-        {
-            return (_hoverStarted == true && _hoverStartTimeMs + durationMs < mint::Profiler::getCurrentTimeMs());
         }
 
         const mint::Float2 GuiContext::ControlInteractionStates::getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept
@@ -2789,13 +2794,13 @@ namespace mint
         {
             if (controlData._isFocusable == true)
             {
-                _controlInteractionStates.setControlFocused(controlData.getHashKey());
+                _controlInteractionStates.setControlFocused(controlData);
             }
         }
 
         void GuiContext::setControlHovered(const ControlData& controlData) noexcept
         {
-            _controlInteractionStates.setControlHovered(controlData.getHashKey());
+            _controlInteractionStates.setControlHovered(controlData);
         }
 
         void GuiContext::setControlPressed(const ControlData& controlData) noexcept
