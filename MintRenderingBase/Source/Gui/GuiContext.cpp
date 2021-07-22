@@ -127,19 +127,133 @@ namespace mint
         }
         
 
+        const bool GuiContext::ControlInteractionStates::setControlPressed(const ControlData& controlData) noexcept
+        {
+            if (isControlHovered(controlData) == true)
+            {
+                resetHover();
+            }
+
+            if (_pressedControlHashKey != controlData.getHashKey())
+            {
+                _pressedControlHashKey = controlData.getHashKey();
+                _pressedControlInitialPosition = controlData._position;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        void GuiContext::ControlInteractionStates::setControlHovered(const uint64 controlHashKey) noexcept
+        {
+            resetHover();
+
+            _hoveredControlHashKey = controlHashKey;
+
+            if (_hoverStarted == false)
+            {
+                _hoverStarted = true;
+            }
+        }
+
+        const bool GuiContext::ControlInteractionStates::setControlClicked(const ControlData& controlData) noexcept
+        {
+            if (_pressedControlHashKey == controlData.getHashKey())
+            {
+                _clickedControlHashKeyPerFrame = controlData.getHashKey();
+
+                return true;
+            }
+            return false;
+        }
+
+        const bool GuiContext::ControlInteractionStates::isControlHovered(const ControlData& controlData) const noexcept
+        {
+            return (controlData.getHashKey() == _hoveredControlHashKey);
+        }
+
+        const bool GuiContext::ControlInteractionStates::isControlPressed(const ControlData& controlData) const noexcept
+        {
+            return (controlData.getHashKey() == _pressedControlHashKey);
+        }
+
+        const bool GuiContext::ControlInteractionStates::isControlClicked(const ControlData& controlData) const noexcept
+        {
+            return (controlData.getHashKey() == _clickedControlHashKeyPerFrame);
+        }
+
+        const bool GuiContext::ControlInteractionStates::isControlFocused(const ControlData& controlData) const noexcept
+        {
+            return (controlData.getHashKey() == _focusedControlHashKey);
+        }
+
+        void GuiContext::ControlInteractionStates::resetPerFrameStates(const MouseStates& mouseStates) noexcept
+        {
+            if (mouseStates.isButtonDownUp() == true)
+            {
+                if (_pressedControlHashKey == 1)
+                {
+                    _focusedControlHashKey = 0;
+                }
+
+                _pressedControlHashKey = 0;
+            }
+
+            _isMouseInteractionDoneThisFrame = false;
+            _clickedControlHashKeyPerFrame = 0;
+        }
+
+        void GuiContext::ControlInteractionStates::resetHover() noexcept
+        {
+            _hoveredControlHashKey = 0;
+            _hoverStartTimeMs = mint::Profiler::getCurrentTimeMs();
+            _tooltipPosition.setZero();
+            _tooltipParentWindowHashKey = 0;
+        }
+
+        void GuiContext::ControlInteractionStates::resetHoverIf(const ControlData& controlData) noexcept
+        {
+            if (controlData.getHashKey() == _hoveredControlHashKey)
+            {
+                resetHover();
+            }
+        }
+
+        void GuiContext::ControlInteractionStates::resetPressIf(const ControlData& controlData) noexcept
+        {
+            if (controlData.getHashKey() == _pressedControlHashKey)
+            {
+                _pressedControlHashKey = 0;
+                _pressedControlInitialPosition.setZero();
+            }
+        }
+
+        const bool GuiContext::ControlInteractionStates::isHoveringMoreThan(const uint64 durationMs) const noexcept
+        {
+            return (_hoverStarted == true && _hoverStartTimeMs + durationMs < mint::Profiler::getCurrentTimeMs());
+        }
+
+        const mint::Float2 GuiContext::ControlInteractionStates::getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept
+        {
+            return _tooltipPosition - tooltipParentWindow._position + mint::Float2(12.0f, -16.0f);
+        }
+
+        void GuiContext::ControlInteractionStates::setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowHashKey) noexcept
+        {
+            _tooltipTextFinal = tooltipText;
+            _tooltipPosition = mouseStates.getPosition();
+            _tooltipParentWindowHashKey = tooltipParentWindowHashKey;
+
+            _hoverStarted = false;
+        }
+
 
         GuiContext::GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _fontSize{ 0.0f }
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
             , _updateScreenSizeCounter{ 0 }
-            , _isMouseInteractionDoneThisFrame{ false }
-            , _focusedControlHashKey{ 0 }
-            , _hoveredControlHashKey{ 0 }
-            , _pressedControlHashKey{ 0 }
-            , _clickedControlHashKeyPerFrame{ 0 }
-            , _hoverStartTimeMs{ 0 }
-            , _hoverStarted{ false }
             , _isDragBegun{ false }
             , _draggedControlHashKey{ 0 }
             , _isResizeBegun{ false }
@@ -149,7 +263,6 @@ namespace mint
             , _wcharInput{ L'\0'}
             , _wcharInputCandiate{ L'\0'}
             , _keyCode{ mint::Window::EventData::KeyCode::NONE }
-            , _tooltipTextFinal{ nullptr }
         {
             setNamedColor(NamedColor::NormalState, mint::RenderingBase::Color(45, 47, 49));
             setNamedColor(NamedColor::HoverState, getNamedColor(NamedColor::NormalState).addedRgb(0.25f));
@@ -1022,7 +1135,7 @@ namespace mint
             prepareControlData(controlData, PrepareControlDataUtils::prepareTextBox(textBoxParam, _fontSize));
             
             mint::RenderingBase::Color finalBackgroundColor;
-            const bool wasFocused = isControlFocused(controlData);
+            const bool wasFocused = _controlInteractionStates.isControlFocused(controlData);
             const bool isFocused = processFocusControl(controlData, textBoxParam._backgroundColor, textBoxParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentHashKey());
@@ -1574,7 +1687,7 @@ namespace mint
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
 
             // Text 렌더링 (Caret 이후)
-            const bool isFocused = isControlFocused(textBoxControlData);
+            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
             const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             if (outText.empty() == false)
             {
@@ -1612,7 +1725,7 @@ namespace mint
             }
 
             // Caret 렌더링
-            const bool isFocused = isControlFocused(textBoxControlData);
+            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
             const bool needToRenderCaret = (isFocused == true && textBoxControlData._controlValue._textBoxData._caretState == 0);
             if (needToRenderCaret == true)
             {
@@ -1630,7 +1743,7 @@ namespace mint
         {
             MINT_ASSERT("김장원", textBoxControlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
-            const bool isFocused = isControlFocused(textBoxControlData);
+            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
             if (isFocused == false)
             {
                 return;
@@ -1798,7 +1911,8 @@ namespace mint
 
             const bool wasToggled = menuBar._controlValue._booleanData.get();
             const mint::Float2 interactionSize = mint::Float2(menuBar._controlValue._itemData._itemSize._x, menuBar.getInteractionSize()._y);
-            if (_pressedControlHashKey != 0 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, interactionSize) == false)
+            if (true == _controlInteractionStates.hasPressedControl() 
+                && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, mint::Float2::kZero, interactionSize) == false)
             {
                 menuBar._controlValue._booleanData.set(false);
             }
@@ -1882,7 +1996,7 @@ namespace mint
                 menuBar._controlValue._booleanData.set(false);
                 menuBar._controlValue._itemData.deselect();
             }
-            if (isControlHovered(menuBarItem) == true && isParentControlToggled == true)
+            if (_controlInteractionStates.isControlHovered(menuBarItem) == true && isParentControlToggled == true)
             {
                 menuBar._controlValue._itemData.select(myIndex);
             }
@@ -1954,8 +2068,8 @@ namespace mint
                 processClickControl(menuItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
                 finalBackgroundColor.a(1.0f);
             }
-            const bool isHovered = isControlHovered(menuItem);
-            const bool isPresssed = isControlPressed(menuItem);
+            const bool isHovered = _controlInteractionStates.isControlHovered(menuItem);
+            const bool isPresssed = _controlInteractionStates.isControlPressed(menuItem);
             const bool& isToggled = menuItem._controlValue._booleanData.get();
             const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlDataHashKeyArray().size() - 1);
             const bool isMeSelected = (menuItemParent._controlValue._itemData.isSelected(myIndex));
@@ -2355,7 +2469,7 @@ namespace mint
                         {
                             if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, mint::Float2::kZero, dockSize) == true)
                             {
-                                if (isDescendantControlInclusive(controlData, _focusedControlHashKey) == false)
+                                if (isDescendantControlInclusive(controlData, _controlInteractionStates.getFocusedControlHashKey()) == false)
                                 {
                                     setControlFocused(controlData);
                                 }
@@ -2444,7 +2558,7 @@ namespace mint
             const bool isFocused = processFocusControl(controlData, getNamedColor(NamedColor::TitleBarFocused), getNamedColor(NamedColor::TitleBarOutOfFocus), finalBackgroundColor);
             if (isParentControlDocking == true)
             {
-                if (isControlPressed(controlData) == true)
+                if (_controlInteractionStates.isControlPressed(controlData) == true)
                 {
                     ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
                     DockDatum& dockDatum = dockControlData.getDockDatum(parentControlData._lastDockingMethod);
@@ -2461,7 +2575,7 @@ namespace mint
             {
                 const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
                 const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentControlData);
-                if (isControlHovered(controlData) == true)
+                if (_controlInteractionStates.isControlHovered(controlData) == true)
                 {
                     rendererContext.setColor(((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(32)));
                 }
@@ -2564,7 +2678,7 @@ namespace mint
                 prepareControlDataParam._alwaysResetParent = true;
                 prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._alwaysResetPosition = true;
-                prepareControlDataParam._parentHashKeyOverride = _tooltipParentWindowHashKey; // ROOT
+                prepareControlDataParam._parentHashKeyOverride = _controlInteractionStates.getTooltipParentWindowHashKey();
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             nextNoAutoPositioned();
@@ -2661,49 +2775,33 @@ namespace mint
             return getParentWindowControlDataInternal(controlData.getParentHashKey());
         }
 
-        const bool GuiContext::isControlClicked() const noexcept
+        const bool GuiContext::isThisControlPressed() const noexcept
         {
-            return isControlClicked(getControlStackTopXXX());
-        }
-
-        const bool GuiContext::isControlPressed() const noexcept
-        {
-            return isControlPressed(getControlStackTopXXX());
+            return _controlInteractionStates.isControlPressed(getControlStackTopXXX());
         }
 
         const bool GuiContext::isFocusedControlTextBox() const noexcept
         {
-            return (_focusedControlHashKey == 0) ? false : getControlData(_focusedControlHashKey).isTypeOf(ControlType::TextBox);
+            return (_controlInteractionStates.hasFocusedControl()) ? getControlData(_controlInteractionStates.getFocusedControlHashKey()).isTypeOf(ControlType::TextBox) : false;
         }
 
         void GuiContext::setControlFocused(const ControlData& controlData) noexcept
         {
             if (controlData._isFocusable == true)
             {
-                _focusedControlHashKey = controlData.getHashKey();
+                _controlInteractionStates.setControlFocused(controlData.getHashKey());
             }
         }
 
         void GuiContext::setControlHovered(const ControlData& controlData) noexcept
         {
-            resetHoverDataIfMe(_hoveredControlHashKey);
-
-            _hoveredControlHashKey = controlData.getHashKey();
-            if (_hoverStarted == false)
-            {
-                _hoverStarted = true;
-            }
+            _controlInteractionStates.setControlHovered(controlData.getHashKey());
         }
 
         void GuiContext::setControlPressed(const ControlData& controlData) noexcept
         {
-            resetHoverDataIfMe(controlData.getHashKey());
-
-            if (_pressedControlHashKey != controlData.getHashKey())
+            if (_controlInteractionStates.setControlPressed(controlData) == true)
             {
-                _pressedControlHashKey = controlData.getHashKey();
-                _pressedControlInitialPosition = controlData._position;
-
                 const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
                 setControlFocused(closestFocusableAncestor);
             }
@@ -2711,10 +2809,8 @@ namespace mint
         
         void GuiContext::setControlClicked(const ControlData& controlData) noexcept
         {
-            if (_pressedControlHashKey == controlData.getHashKey())
+            if (_controlInteractionStates.setControlClicked(controlData) == true)
             {
-                _clickedControlHashKeyPerFrame = controlData.getHashKey();
-
                 const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
                 setControlFocused(closestFocusableAncestor);
             }
@@ -2871,12 +2967,12 @@ namespace mint
 
             outBackgroundColor = normalColor;
 
-            const bool isClicked = isControlClicked(controlData);
-            if (isControlHovered(controlData) == true)
+            const bool isClicked = _controlInteractionStates.isControlClicked(controlData);
+            if (_controlInteractionStates.isControlHovered(controlData) == true)
             {
                 outBackgroundColor = hoverColor;
             }
-            if (isControlPressed(controlData) == true || isClicked == true)
+            if (_controlInteractionStates.isControlPressed(controlData) == true || isClicked == true)
             {
                 outBackgroundColor = pressedColor;
             }
@@ -2900,7 +2996,8 @@ namespace mint
 
             // Check new focus
             if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true &&
-                (_mouseStates.isButtonDownThisFrame() == true && (isControlPressed(controlData) == true || isControlClicked(controlData) == true)))
+                (_mouseStates.isButtonDownThisFrame() == true 
+                    && (_controlInteractionStates.isControlPressed(controlData) == true || _controlInteractionStates.isControlClicked(controlData) == true)))
             {
                 // Focus entered
                 setControlFocused(controlData);
@@ -2923,7 +3020,7 @@ namespace mint
 
             processControlCommon(controlData);
 
-            return isControlFocused(controlData);
+            return _controlInteractionStates.isControlFocused(controlData);
         }
 
         void GuiContext::processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool setMouseInteractionDone) noexcept
@@ -2948,8 +3045,8 @@ namespace mint
 
             outBackgroundColor = normalColor;
 
-            const bool isHovered = isControlHovered(controlData);
-            const bool isPressed = isControlPressed(controlData);
+            const bool isHovered = _controlInteractionStates.isControlHovered(controlData);
+            const bool isPressed = _controlInteractionStates.isControlPressed(controlData);
             const bool isDragging = isControlBeingDragged(controlData);
             if (isHovered == true || isPressed == true || isDragging == true)
             {
@@ -2970,14 +3067,14 @@ namespace mint
         {
             processControlInteractionInternal(controlData);
 
-            const bool isClicked = isControlClicked(controlData);
+            const bool isClicked = _controlInteractionStates.isControlClicked(controlData);
             if (isClicked == true)
             {
                 controlData._controlValue._booleanData.toggle();
             }
 
             const bool isToggled = controlData._controlValue._booleanData.get();
-            const bool isHovered = isControlHovered(controlData);
+            const bool isHovered = _controlInteractionStates.isControlHovered(controlData);
             outBackgroundColor = (isToggled == true) ? toggledColor : (isHovered == true) ? hoverColor : normalColor;
 
             if (needToColorFocused(controlData) == false)
@@ -2992,10 +3089,10 @@ namespace mint
         void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
             const uint64 controlHashKey = controlData.getHashKey();
-            if (isInteractingInternal(controlData) == false || _isMouseInteractionDoneThisFrame == true)
+            if (isInteractingInternal(controlData) == false || _controlInteractionStates.isMouseInteractionDoneThisFrame() == true)
             {
-                resetHoverDataIfMe(controlHashKey);
-                resetPressDataIfMe(controlHashKey);
+                _controlInteractionStates.resetHoverIf(controlData);
+                _controlInteractionStates.resetPressIf(controlData);
                 return;
             }
 
@@ -3010,10 +3107,10 @@ namespace mint
 
                 if (setMouseInteractionDone == true)
                 {
-                    _isMouseInteractionDoneThisFrame = true;
+                    _controlInteractionStates.setMouseInteractionDoneThisFrame();
                 }
 
-                if (isControlHovered(controlData) == false && controlData._isFocusable == false)
+                if (_controlInteractionStates.isControlHovered(controlData) == false && controlData._isFocusable == false)
                 {
                     setControlHovered(controlData);
                 }
@@ -3021,7 +3118,7 @@ namespace mint
                 // Click Event 가 발생했을 때도 Pressed 상태 유지!
                 if (_mouseStates.isButtonDownUp() == false && _mouseStates.isButtonDown() == false)
                 {
-                    resetPressDataIfMe(controlHashKey);
+                    _controlInteractionStates.resetPressIf(controlData);
                 }
                 
                 // Pressed (Mouse down)
@@ -3044,28 +3141,8 @@ namespace mint
             {
                 // Not interacting
 
-                resetHoverDataIfMe(controlHashKey);
-                resetPressDataIfMe(controlHashKey);
-            }
-        }
-
-        void GuiContext::resetHoverDataIfMe(const uint64 controlHashKey) noexcept
-        {
-            if (controlHashKey == _hoveredControlHashKey)
-            {
-                _hoveredControlHashKey = 0;
-                _hoverStartTimeMs = mint::Profiler::getCurrentTimeMs();
-                _tooltipPosition.setZero();
-                _tooltipParentWindowHashKey = 0;
-            }
-        }
-        
-        void GuiContext::resetPressDataIfMe(const uint64 controlHashKey) noexcept
-        {
-            if (controlHashKey == _pressedControlHashKey)
-            {
-                _pressedControlHashKey = 0;
-                _pressedControlInitialPosition.setZero();
+                _controlInteractionStates.resetHoverIf(controlData);
+                _controlInteractionStates.resetPressIf(controlData);
             }
         }
 
@@ -3095,7 +3172,7 @@ namespace mint
                     {
                         _mouseStates._cursorType = newCursorType;
 
-                        _isMouseInteractionDoneThisFrame = true;
+                        _controlInteractionStates.setMouseInteractionDoneThisFrame();
                     }
                 }
             }
@@ -3103,17 +3180,11 @@ namespace mint
 
         void GuiContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
         {
-            const bool isHovered = isControlHovered(controlData);
-            if (_nextControlStates._nextTooltipText != nullptr && isHovered == true && _hoverStartTimeMs + 1000 < mint::Profiler::getCurrentTimeMs())
+            const bool isHovered = _controlInteractionStates.isControlHovered(controlData);
+            if (_nextControlStates._nextTooltipText != nullptr && isHovered == true 
+                && _controlInteractionStates.isHoveringMoreThan(1000) == true)
             {
-                if (_hoverStarted == true)
-                {
-                    _tooltipTextFinal = _nextControlStates._nextTooltipText;
-                    _tooltipPosition = _mouseStates.getPosition();
-                    _tooltipParentWindowHashKey = getParentWindowControlData(controlData).getHashKey();
-
-                    _hoverStarted = false;
-                }
+                _controlInteractionStates.setTooltipData(_mouseStates, _nextControlStates._nextTooltipText, getParentWindowControlData(controlData).getHashKey());
             }
         }
 
@@ -3181,7 +3252,7 @@ namespace mint
                     updateDockDatum(changeTargetControlData.getHashKey());
                 }
 
-                _isMouseInteractionDoneThisFrame = true;
+                _controlInteractionStates.setMouseInteractionDoneThisFrame();
             }
         }
 
@@ -3264,7 +3335,7 @@ namespace mint
                     changeTargetControlData._currentFrameDeltaPosition = changeTargetControlData._position - originalPosition;
                 }
 
-                _isMouseInteractionDoneThisFrame = true;
+                _controlInteractionStates.setMouseInteractionDoneThisFrame();
             }
         }
 
@@ -3510,7 +3581,7 @@ namespace mint
             updateDockDatum(dockControlHashKey);
 
             // 내가 Focus 였다면 Dock 을 가진 컨트롤로 옮기자!
-            if (isControlFocused(dockedControlData) == true)
+            if (_controlInteractionStates.isControlFocused(dockedControlData) == true)
             {
                 setControlFocused(dockControlData);
             }
@@ -3584,14 +3655,14 @@ namespace mint
 
         const bool GuiContext::isInteractingInternal(const ControlData& controlData) const noexcept
         {
-            if (_focusedControlHashKey != 0 && isAncestorControlFocusedInclusiveXXX(controlData) == false)
+            if (_controlInteractionStates.hasFocusedControl() == true && isAncestorControlFocusedInclusiveXXX(controlData) == false)
             {
                 // Focus 가 있는 Control 이 존재하지만 내가 Focus 는 아닌 경우
 
                 mint::Window::CursorType dummyCursorType;
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
-                const ControlData& focusedControlData = getControlData(_focusedControlHashKey);
+                const ControlData& focusedControlData = getControlData(_controlInteractionStates.getFocusedControlHashKey());
                 if (ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
                     || ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
@@ -3679,7 +3750,7 @@ namespace mint
         
         const bool GuiContext::isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept
         {
-            if (_focusedControlHashKey == controlData.getHashKey())
+            if (_controlInteractionStates.isControlFocused(controlData) == true)
             {
                 return true;
             }
@@ -3742,12 +3813,12 @@ namespace mint
 
         const bool GuiContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
         {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _focusedControlHashKey);
+            return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _controlInteractionStates.getFocusedControlHashKey());
         }
 
         const bool GuiContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
         {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _pressedControlHashKey);
+            return isAncestorControlTargetRecursiveXXX(controlData.getParentHashKey(), _controlInteractionStates.getPressedControlHashKey());
         }
 
         const bool GuiContext::isAncestorControlTargetRecursiveXXX(const uint64 hashKey, const uint64 targetHashKey) const noexcept
@@ -3777,7 +3848,7 @@ namespace mint
 
             // #1. Focused
             const ControlData& closestFocusableAncestorInclusive = getClosestFocusableAncestorControlInclusive(controlData);
-            const bool isFocused = isControlFocused(closestFocusableAncestorInclusive);
+            const bool isFocused = _controlInteractionStates.isControlFocused(closestFocusableAncestorInclusive);
             if (isFocused == true)
             {
                 return true;
@@ -3793,22 +3864,22 @@ namespace mint
             // #3. Docking
             const bool isDocking = closestFocusableAncestorInclusive.isDocking();
             const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlHashKey());
-            return (isDocking == true && (dockControlData.isRootControl() == true || isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
+            return (isDocking == true && (dockControlData.isRootControl() == true || _controlInteractionStates.isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
         }
 
         const bool GuiContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _focusedControlHashKey);
+            return isDescendantControlInclusive(controlData, _controlInteractionStates.getFocusedControlHashKey());
         }
 
         const bool GuiContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _hoveredControlHashKey);
+            return isDescendantControlInclusive(controlData, _controlInteractionStates.getHoveredControlHashKey());
         }
 
         const bool GuiContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _pressedControlHashKey);
+            return isDescendantControlInclusive(controlData, _controlInteractionStates.getPressedControlHashKey());
         }
 
         const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
@@ -3818,7 +3889,7 @@ namespace mint
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
                 const uint64 previousChildControlHashKey = previousChildControlDataHashKeyArray[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _pressedControlHashKey) == true)
+                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _controlInteractionStates.getPressedControlHashKey()) == true)
                 {
                     return true;
                 }
@@ -3833,7 +3904,7 @@ namespace mint
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
                 const uint64 previousChildControlHashKey = previousChildControlDataHashKeyArray[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _hoveredControlHashKey) == true)
+                if (isDescendantControlRecursiveXXX(previousChildControlHashKey, _controlInteractionStates.getHoveredControlHashKey()) == true)
                 {
                     return true;
                 }
@@ -3907,9 +3978,10 @@ namespace mint
 
             _graphicDevice->getWindow()->setCursorType(_mouseStates._cursorType);
 
-            if (_tooltipParentWindowHashKey != 0)
+            if (_controlInteractionStates.needToShowTooltip() == true)
             {
-                pushTooltipWindow(_tooltipTextFinal, _tooltipPosition - getControlData(_tooltipParentWindowHashKey)._position + mint::Float2(12.0f, -16.0f));
+                pushTooltipWindow(_controlInteractionStates.getTooltipText()
+                    , _controlInteractionStates.getTooltipWindowPosition(getControlData(_controlInteractionStates.getTooltipParentWindowHashKey())));
             }
 
             // Viewport setting
@@ -3929,19 +4001,7 @@ namespace mint
 
         void GuiContext::resetPerFrameStates()
         {
-            if (_mouseStates.isButtonDownUp() == true)
-            {
-                if (_pressedControlHashKey == 1)
-                {
-                    _focusedControlHashKey = 0;
-                }
-
-                _pressedControlHashKey = 0;
-            }
-            
-
-            _isMouseInteractionDoneThisFrame = false;
-            _clickedControlHashKeyPerFrame = 0;
+            _controlInteractionStates.resetPerFrameStates(_mouseStates);
 
             _controlStackPerFrame.clear();
 

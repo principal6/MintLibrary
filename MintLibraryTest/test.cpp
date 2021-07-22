@@ -869,7 +869,7 @@ const bool testWindow()
                     {
                         if (guiContext.beginMenuItem(L"종료") == true)
                         {
-                            if (guiContext.isControlPressed() == true)
+                            if (guiContext.isThisControlPressed() == true)
                             {
                                 window.destroy();
                             }
@@ -882,7 +882,7 @@ const bool testWindow()
                     {
                         if (guiContext.beginMenuItem(L"TestWindow") == true)
                         {
-                            if (guiContext.isControlPressed() == true)
+                            if (guiContext.isThisControlPressed() == true)
                             {
                                 testWindowVisibleState = mint::Gui::VisibleState::VisibleOpen;
                             }

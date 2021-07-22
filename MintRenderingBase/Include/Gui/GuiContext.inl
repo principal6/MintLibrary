@@ -223,26 +223,6 @@ namespace mint
             return controlData._position - getControlData(controlData.getParentHashKey())._position;
         }
 
-        MINT_INLINE const bool GuiContext::isControlHovered(const ControlData& controlData) const noexcept
-        {
-            return (_hoveredControlHashKey == controlData.getHashKey());
-        }
-
-        MINT_INLINE const bool GuiContext::isControlPressed(const ControlData& controlData) const noexcept
-        {
-            return (_pressedControlHashKey == controlData.getHashKey());
-        }
-
-        MINT_INLINE const bool GuiContext::isControlClicked(const ControlData& controlData) const noexcept
-        {
-            return (_clickedControlHashKeyPerFrame == controlData.getHashKey());
-        }
-
-        MINT_INLINE const bool GuiContext::isControlFocused(const ControlData& controlData) const noexcept
-        {
-            return (_focusedControlHashKey == ((0 != controlData._delegateHashKey) ? controlData._delegateHashKey : controlData.getHashKey()));
-        }
-
         MINT_INLINE const mint::RenderingBase::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
         {
             return _namedColors[static_cast<uint32>(namedColor)];

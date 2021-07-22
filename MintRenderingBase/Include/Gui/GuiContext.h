@@ -251,6 +251,48 @@ namespace mint
                 bool    _clearWcharInput = false;
                 bool    _clearKeyCode = false;
             };
+
+            struct ControlInteractionStates
+            {
+                const bool                  setControlPressed(const ControlData& controlData) noexcept;
+                MINT_INLINE void            setControlFocused(const uint64 controlHashKey) noexcept { _focusedControlHashKey = controlHashKey; }
+                void                        setControlHovered(const uint64 controlHashKey) noexcept;
+                const bool                  setControlClicked(const ControlData& controlData) noexcept;
+                MINT_INLINE const bool      hasFocusedControl() const noexcept { return (0 != _focusedControlHashKey); }
+                MINT_INLINE const bool      hasPressedControl() const noexcept { return (0 != _pressedControlHashKey); }
+                MINT_INLINE const bool      hasClickedControl() const noexcept { return (0 != _clickedControlHashKeyPerFrame); }
+                const bool                  isControlHovered(const ControlData& controlData) const noexcept;
+                const bool                  isControlPressed(const ControlData& controlData) const noexcept;
+                const bool                  isControlClicked(const ControlData& controlData) const noexcept;
+                const bool                  isControlFocused(const ControlData& controlData) const noexcept;
+                MINT_INLINE const uint64    getHoveredControlHashKey() const noexcept { return _hoveredControlHashKey; }
+                MINT_INLINE const uint64    getFocusedControlHashKey() const noexcept { return _focusedControlHashKey; }
+                MINT_INLINE const uint64    getPressedControlHashKey() const noexcept { return _pressedControlHashKey; }
+                MINT_INLINE const uint64    getTooltipParentWindowHashKey() const noexcept { return _tooltipParentWindowHashKey; }
+                void                        resetPerFrameStates(const MouseStates& mouseStates) noexcept;
+                void                        resetHover() noexcept;
+                void                        resetHoverIf(const ControlData& controlData) noexcept;
+                void                        resetPressIf(const ControlData& controlData) noexcept;
+                const bool                  isHoveringMoreThan(const uint64 durationMs) const noexcept;
+                MINT_INLINE void            setMouseInteractionDoneThisFrame() noexcept { _isMouseInteractionDoneThisFrame = true; }
+                MINT_INLINE const bool      isMouseInteractionDoneThisFrame() const noexcept { return _isMouseInteractionDoneThisFrame; }
+                MINT_INLINE const bool      needToShowTooltip() const noexcept { return (0 != _tooltipParentWindowHashKey); }
+                MINT_INLINE const wchar_t*  getTooltipText() const noexcept { return _tooltipTextFinal; }
+                const mint::Float2          getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
+                void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowHashKey) noexcept;
+
+                bool                        _isMouseInteractionDoneThisFrame = false;
+                uint64                      _hoveredControlHashKey = 0;
+                uint64                      _focusedControlHashKey = 0;
+                uint64                      _pressedControlHashKey = 0;
+                mint::Float2                _pressedControlInitialPosition;
+                uint64                      _clickedControlHashKeyPerFrame = 0;
+                uint64                      _hoverStartTimeMs = 0;
+                bool                        _hoverStarted = false;
+                mint::Float2                _tooltipPosition;
+                uint64                      _tooltipParentWindowHashKey = 0;
+                const wchar_t*              _tooltipTextFinal = nullptr;
+            };
         
         private:
                                                                 GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
@@ -451,8 +493,7 @@ namespace mint
 
 
         public:
-            const bool                                          isControlClicked() const noexcept;
-            const bool                                          isControlPressed() const noexcept;
+            const bool                                          isThisControlPressed() const noexcept;
             const bool                                          isFocusedControlTextBox() const noexcept;
 
         private:
@@ -474,8 +515,6 @@ namespace mint
             const bool                                          processToggleControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& toggledColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
             
             void                                                processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
-            void                                                resetHoverDataIfMe(const uint64 controlHashKey) noexcept;
-            void                                                resetPressDataIfMe(const uint64 controlHashKey) noexcept;
 
             void                                                processControlCommon(ControlData& controlData) noexcept;
             void                                                checkControlResizing(ControlData& controlData) noexcept;
@@ -493,10 +532,6 @@ namespace mint
             // These functions must be called after process- functions
             const bool                                          isControlBeingDragged(const ControlData& controlData) const noexcept;
             const bool                                          isControlBeingResized(const ControlData& controlData) const noexcept;
-            const bool                                          isControlHovered(const ControlData& controlData) const noexcept;
-            const bool                                          isControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                          isControlClicked(const ControlData& controlData) const noexcept;
-            const bool                                          isControlFocused(const ControlData& controlData) const noexcept;
 
             // RendererContext 고를 때 사용
             const bool                                          isAncestorControlFocused(const ControlData& controlData) const noexcept;
@@ -554,15 +589,7 @@ namespace mint
             mint::Vector<ControlStackData>                      _controlStackPerFrame;
 
         private:
-            mutable bool                                        _isMouseInteractionDoneThisFrame;
-            mutable uint64                                      _focusedControlHashKey;
-            mutable uint64                                      _hoveredControlHashKey;
-            mutable uint64                                      _pressedControlHashKey;
-            mutable mint::Float2                                _pressedControlInitialPosition;
-            mutable uint64                                      _clickedControlHashKeyPerFrame;
-            uint64                                              _hoverStartTimeMs;
-            bool                                                _hoverStarted;
-        
+            mutable ControlInteractionStates                    _controlInteractionStates;
 
 #pragma region Mouse Capture States
         private:
@@ -593,9 +620,6 @@ namespace mint
 #pragma endregion
 
         private:
-            mint::Float2                                        _tooltipPosition;
-            uint64                                              _tooltipParentWindowHashKey;
-            const wchar_t*                                      _tooltipTextFinal;
             TaskWhenMouseUp                                     _taskWhenMouseUp;
 
         private:
