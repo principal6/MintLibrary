@@ -252,8 +252,9 @@ namespace mint
                 bool    _clearKeyCode = false;
             };
 
-            struct ControlInteractionStates
+            class ControlInteractionStates
             {
+            public:
                 const bool                  setControlPressed(const ControlData& controlData) noexcept;
                 MINT_INLINE void            setControlFocused(const uint64 controlHashKey) noexcept { _focusedControlHashKey = controlHashKey; }
                 void                        setControlHovered(const uint64 controlHashKey) noexcept;
@@ -281,6 +282,7 @@ namespace mint
                 const mint::Float2          getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
                 void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowHashKey) noexcept;
 
+            private:
                 bool                        _isMouseInteractionDoneThisFrame = false;
                 uint64                      _hoveredControlHashKey = 0;
                 uint64                      _focusedControlHashKey = 0;
