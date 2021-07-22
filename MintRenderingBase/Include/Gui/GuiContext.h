@@ -68,6 +68,7 @@ namespace mint
         static constexpr float          kTextBoxBackSpaceStride = 48.0f;
         static constexpr uint32         kTextBoxMaxTextLength = 2048;
 
+
         enum class TextInputMode
         {
             General,
@@ -431,7 +432,6 @@ namespace mint
             void                                                setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect);
             void                                                setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect);
             void                                                setClipRectForChildren(ControlData& controlData, const mint::Rect& clipRect);
-            mint::RenderingBase::ShapeFontRendererContext&      getRendererContextForChildControl(const ControlData& controlData) noexcept;
 
         private:
             const ControlData&                                  getControlStackTopXXX() const noexcept;
@@ -509,6 +509,8 @@ namespace mint
             const bool                                          isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
             const bool                                          isDescendantControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
 
+            const bool                                          isParentControlRoot(const ControlData& controlData) const noexcept;
+
             // Focus, Out-of-focus 색 정할 때 사용
             const bool                                          needToColorFocused(const ControlData& controlData) const noexcept;
             const bool                                          isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
@@ -528,6 +530,10 @@ namespace mint
 #pragma endregion
 
         private:
+            mint::RenderingBase::ShapeFontRendererContext&      getRendererContext(const ControlData& controlData) noexcept;
+            mint::RenderingBase::ShapeFontRendererContext&      getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
+            // TopMost 는 제외!!
+            const RendererContextLayer                          getUpperRendererContextLayer(const ControlData& controlData) noexcept;
             void                                                render();
             void                                                resetPerFrameStates();
 
@@ -537,9 +543,7 @@ namespace mint
         private: // these are set externally
             float                                               _fontSize;
             uint32                                              _caretBlinkIntervalMs;
-            mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextBackground;
-            mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextForeground;
-            mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContextTopMost;
+            mint::RenderingBase::ShapeFontRendererContext       _rendererContexts[getRendererContextLayerCount()];
 
         private: // screen size
             int8                                                _updateScreenSizeCounter;

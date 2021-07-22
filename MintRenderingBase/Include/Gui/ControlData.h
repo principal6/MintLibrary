@@ -295,6 +295,7 @@ namespace mint
             DockingMethod                               _lastDockingMethodCandidate;
             std::wstring                                _text;
             ControlValue                                _controlValue;
+            RendererContextLayer                        _rendererContextLayer;
 
         private:
             uint64                                      _hashKey;

@@ -255,12 +255,12 @@ namespace mint
 
         MINT_INLINE const float GuiContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
-            return _shapeFontRendererContextTopMost.calculateTextWidth(wideText, textLength);
+            return _rendererContexts[0].calculateTextWidth(wideText, textLength);
         }
 
         MINT_INLINE const uint32 GuiContext::calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
         {
-            return _shapeFontRendererContextTopMost.calculateIndexFromPositionInText(wideText, textLength, positionInText);
+            return _rendererContexts[0].calculateIndexFromPositionInText(wideText, textLength, positionInText);
         }
     }
 }

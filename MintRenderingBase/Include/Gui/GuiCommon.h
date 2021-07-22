@@ -92,6 +92,21 @@ namespace mint
             COUNT
         };
 
+        enum class RendererContextLayer
+        {
+            Background,
+            BackgroundTop,
+            Foreground,
+            ForegroundTop,
+            TopMost,
+
+            COUNT,
+        };
+        MINT_INLINE constexpr int32 getRendererContextLayerCount() noexcept
+        {
+            return static_cast<int32>(RendererContextLayer::COUNT);
+        }
+
         enum class ClipRectUsage
         {
             ParentsOwn,
