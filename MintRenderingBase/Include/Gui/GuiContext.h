@@ -428,27 +428,27 @@ namespace mint
             void                                                textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept;
         
         private:
-            void                                                textBoxProcessInputMouse(ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result);
-            void                                                textBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText);
-            void                                                inputBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeyCopy(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeyCut(ControlData& controlData, std::wstring& outText);
-            void                                                textBoxProcessInputKeyPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage = nullptr);
-            void                                                textBoxProcessInputCaretToPrev(ControlData& controlData);
-            void                                                textBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text);
-            void                                                textBoxProcessInputCaretToHead(ControlData& controlData);
-            void                                                textBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text);
-            void                                                textBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) noexcept;
-            void                                                textBoxEraseSelection(ControlData& controlData, std::wstring& outText) noexcept;
-            uint16                                              textBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept;
-            const bool                                          textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText);
-            const bool                                          textBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText);
-            void                                                textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData);
-            const bool                                          textBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept;
+            void                                                inputBoxProcessInputMouse(ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) const noexcept;
+            void                                                inputBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText) const noexcept;
+            void                                                inputBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText) const noexcept;
+            void                                                inputBoxProcessInputKeyControlFunctionSelectAll(ControlData& controlData, const std::wstring& outText) const noexcept;
+            void                                                inputBoxProcessInputKeyControlFunctionCopy(ControlData& controlData, const std::wstring& outText) const noexcept;
+            void                                                inputBoxProcessInputKeyControlFunctionCut(ControlData& controlData, std::wstring& outText) const noexcept;
+            void                                                inputBoxProcessInputKeyControlFunctionPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage = nullptr) const noexcept;
+            void                                                inputBoxProcessInputCaretToPrev(ControlData& controlData) const noexcept;
+            void                                                inputBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text) const noexcept;
+            void                                                inputBoxProcessInputCaretToHead(ControlData& controlData) const noexcept;
+            void                                                inputBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text) const noexcept;
+            void                                                inputBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) const noexcept;
+            void                                                inputBoxEraseSelection(ControlData& controlData, std::wstring& outText) const noexcept;
+            uint16                                              inputBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept;
+            const bool                                          inputBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) const noexcept;
+            const bool                                          inputBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText) const noexcept;
+            void                                                inputBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) const noexcept;
+            const bool                                          inputBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) const noexcept;
         
         private:
-            void                                                inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept;
+            void                                                inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept;
             void                                                textBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept;
             void                                                inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
             void                                                inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;

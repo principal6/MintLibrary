@@ -1235,7 +1235,7 @@ namespace mint
             if (isMouseLeftDown == true || isMouseLeftDownFirst == true)
             {
                 // 마우스 입력 처리
-                textBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
+                inputBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
             }
             else
             {
@@ -1244,7 +1244,7 @@ namespace mint
                 const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
                 if (32 <= _wcharInputCandiate)
                 {
-                    textBoxEraseSelection(controlData, outText);
+                    inputBoxEraseSelection(controlData, outText);
                 }
                 else if (_wcharInput != L'\0')
                 {
@@ -1253,12 +1253,12 @@ namespace mint
                     const bool isInputCharacter = (32 <= _wcharInput);
                     if (isInputCharacter == true)
                     {
-                        const uint16 futureCaretAt = textBoxCalculateCaretAtIfErasedSelection(controlData, outText);
-                        if (textBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
+                        const uint16 futureCaretAt = inputBoxCalculateCaretAtIfErasedSelection(controlData, outText);
+                        if (inputBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
                         {
-                            textBoxEraseSelection(controlData, outText);
+                            inputBoxEraseSelection(controlData, outText);
 
-                            if (textBoxInsertWchar(_wcharInput, caretAt, outText) == false)
+                            if (inputBoxInsertWchar(_wcharInput, caretAt, outText) == false)
                             {
                                 window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
                             }
@@ -1270,23 +1270,23 @@ namespace mint
 
                         if (_wcharInput == VK_BACK) // BackSpace
                         {
-                            textBoxProcessInputKeyDeleteBefore(controlData, outText);
+                            inputBoxProcessInputKeyDeleteBefore(controlData, outText);
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
                         {
-                            inputBoxProcessInputKeySelectAll(controlData, outText);
+                            inputBoxProcessInputKeyControlFunctionSelectAll(controlData, outText);
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
                         {
-                            textBoxProcessInputKeyCopy(controlData, outText);
+                            inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
                         {
-                            textBoxProcessInputKeyCut(controlData, outText);
+                            inputBoxProcessInputKeyControlFunctionCut(controlData, outText);
                         }
                         else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
                         {
-                            textBoxProcessInputKeyPaste(controlData, outText, errorMessage.c_str());
+                            inputBoxProcessInputKeyControlFunctionPaste(controlData, outText, errorMessage.c_str());
                         }
                     }
 
@@ -1298,35 +1298,35 @@ namespace mint
 
                     if (_keyCode == mint::Window::EventData::KeyCode::Left)
                     {
-                        textBoxProcessInputCaretToPrev(controlData);
+                        inputBoxProcessInputCaretToPrev(controlData);
                     }
                     else if (_keyCode == mint::Window::EventData::KeyCode::Right)
                     {
-                        textBoxProcessInputCaretToNext(controlData, outText);
+                        inputBoxProcessInputCaretToNext(controlData, outText);
                     }
                     else if (_keyCode == mint::Window::EventData::KeyCode::Home)
                     {
-                        textBoxProcessInputCaretToHead(controlData);
+                        inputBoxProcessInputCaretToHead(controlData);
                     }
                     else if (_keyCode == mint::Window::EventData::KeyCode::End)
                     {
-                        textBoxProcessInputCaretToTail(controlData, outText);
+                        inputBoxProcessInputCaretToTail(controlData, outText);
                     }
                     else if (_keyCode == mint::Window::EventData::KeyCode::Delete)
                     {
-                        textBoxProcessInputKeyDeleteAfter(controlData, outText);
+                        inputBoxProcessInputKeyDeleteAfter(controlData, outText);
                     }
                 }
 
                 // Caret 위치가 바뀐 경우 refresh
                 if (oldCaretAt != caretAt)
                 {
-                    textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                    inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
 
                     // Selection
                     if (isShiftKeyDown == true && _keyCode != mint::Window::EventData::KeyCode::NONE)
                     {
-                        textBoxUpdateSelection(oldCaretAt, caretAt, controlData);
+                        inputBoxUpdateSelection(oldCaretAt, caretAt, controlData);
                     }
                 }
 
@@ -1343,7 +1343,7 @@ namespace mint
 
             if (wasControlFocused == false)
             {
-                textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
             }
 
             if (result._clearKeyCode == true)
@@ -1356,7 +1356,7 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxProcessInputMouse(ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result)
+        void GuiContext::inputBoxProcessInputMouse(ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) const noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -1375,7 +1375,7 @@ namespace mint
             {
                 if (newCaretAt != caretAt)
                 {
-                    textBoxUpdateSelection(caretAt, newCaretAt, controlData);
+                    inputBoxUpdateSelection(caretAt, newCaretAt, controlData);
 
                     caretAt = newCaretAt;
                 }
@@ -1385,13 +1385,13 @@ namespace mint
             result._clearKeyCode = true;
         }
 
-        void GuiContext::textBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText) const noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (0 < selectionLength)
             {
-                textBoxEraseSelection(controlData, outText);
+                inputBoxEraseSelection(controlData, outText);
             }
             else
             {
@@ -1406,12 +1406,12 @@ namespace mint
             }
         }
         
-        void GuiContext::textBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText) const noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (0 < selectionLength)
             {
-                textBoxEraseSelection(controlData, outText);
+                inputBoxEraseSelection(controlData, outText);
             }
             else
             {
@@ -1426,14 +1426,14 @@ namespace mint
             }
         }
         
-        void GuiContext::inputBoxProcessInputKeySelectAll(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeyControlFunctionSelectAll(ControlData& controlData, const std::wstring& outText) const noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             controlData._controlValue._textBoxData._selectionStart = 0;
             caretAt = controlData._controlValue._textBoxData._selectionLength = static_cast<uint16>(outText.length());
         }
 
-        void GuiContext::textBoxProcessInputKeyCopy(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeyControlFunctionCopy(ControlData& controlData, const std::wstring& outText) const noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
@@ -1445,14 +1445,14 @@ namespace mint
             _graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
         }
 
-        void GuiContext::textBoxProcessInputKeyCut(ControlData& controlData, std::wstring& outText)
+        void GuiContext::inputBoxProcessInputKeyControlFunctionCut(ControlData& controlData, std::wstring& outText) const noexcept
         {
-            textBoxProcessInputKeyCopy(controlData, outText);
+            inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
 
-            textBoxEraseSelection(controlData, outText);
+            inputBoxEraseSelection(controlData, outText);
         }
 
-        void GuiContext::textBoxProcessInputKeyPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage)
+        void GuiContext::inputBoxProcessInputKeyControlFunctionPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage) const noexcept
         {
             std::wstring fromClipboard;
             _graphicDevice->getWindow()->textFromClipboard(fromClipboard);
@@ -1462,10 +1462,10 @@ namespace mint
                 return;
             }
 
-            textBoxEraseSelection(controlData, outText);
+            inputBoxEraseSelection(controlData, outText);
 
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            if (false == textBoxInsertWstring(fromClipboard, caretAt, outText))
+            if (false == inputBoxInsertWstring(fromClipboard, caretAt, outText))
             {
                 if (errorMessage != nullptr)
                 {
@@ -1474,20 +1474,20 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxProcessInputCaretToPrev(ControlData& controlData)
+        void GuiContext::inputBoxProcessInputCaretToPrev(ControlData& controlData) const noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = mint::max(caretAt - 1, 0);
         }
 
-        void GuiContext::textBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text)
+        void GuiContext::inputBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text) const noexcept
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = mint::min(caretAt + 1, static_cast<int32>(textLength));
         }
 
-        void GuiContext::textBoxProcessInputCaretToHead(ControlData& controlData)
+        void GuiContext::inputBoxProcessInputCaretToHead(ControlData& controlData) const noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             caretAt = 0;
@@ -1496,7 +1496,7 @@ namespace mint
             textDisplayOffset = 0.0f;
         }
 
-        void GuiContext::textBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text)
+        void GuiContext::inputBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text) const noexcept
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -1507,13 +1507,13 @@ namespace mint
             textDisplayOffset = mint::max(0.0f, textWidth - controlData._displaySize._x);
         }
 
-        void GuiContext::textBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) noexcept
+        void GuiContext::inputBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) const noexcept
         {
             lastCaretBlinkTimeMs = currentTimeMs;
             caretState = 0;
         }
 
-        void GuiContext::textBoxEraseSelection(ControlData& controlData, std::wstring& outText) noexcept
+        void GuiContext::inputBoxEraseSelection(ControlData& controlData, std::wstring& outText) const noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
@@ -1531,7 +1531,7 @@ namespace mint
             controlData._controlValue._textBoxData._selectionLength = 0;
         }
 
-        uint16 GuiContext::textBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept
+        uint16 GuiContext::inputBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept
         {
             uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
@@ -1543,7 +1543,7 @@ namespace mint
             return caretAt;
         }
 
-        const bool GuiContext::textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText)
+        const bool GuiContext::inputBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) const noexcept
         {
             if (outText.length() < kTextBoxMaxTextLength)
             {
@@ -1558,7 +1558,7 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::textBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText)
+        const bool GuiContext::inputBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText)  const noexcept
         {
             bool result = false;
             const uint32 oldLength = static_cast<uint32>(outText.length());
@@ -1581,7 +1581,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData)
+        void GuiContext::inputBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) const noexcept
         {
             uint16& selectionStart = controlData._controlValue._textBoxData._selectionStart;
             uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
@@ -1633,7 +1633,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::textBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept
+        const bool GuiContext::inputBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) const noexcept
         {
             bool result = false;
             if (textInputMode == TextInputMode::General)
@@ -1666,7 +1666,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) noexcept
+        void GuiContext::inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept
         {
             const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -1843,7 +1843,7 @@ namespace mint
 
             if (wasFocused == false && isFocused == true)
             {
-                inputBoxProcessInputKeySelectAll(controlData, controlData._text);
+                inputBoxProcessInputKeyControlFunctionSelectAll(controlData, controlData._text);
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
@@ -1888,7 +1888,7 @@ namespace mint
                 if (_mouseStates.isButtonDownThisFrame() == true)
                 {
                     // 마우스 입력 처리
-                    textBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
+                    inputBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
                 }
                 else
                 {
@@ -1898,7 +1898,7 @@ namespace mint
                     const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
                     if (32 <= _wcharInputCandiate)
                     {
-                        textBoxEraseSelection(controlData, outText);
+                        inputBoxEraseSelection(controlData, outText);
                     }
                     else if (_wcharInput != L'\0')
                     {
@@ -1907,12 +1907,12 @@ namespace mint
                         const bool isInputCharacter = (32 <= _wcharInput);
                         if (isInputCharacter == true)
                         {
-                            const uint16 futureCaretAt = textBoxCalculateCaretAtIfErasedSelection(controlData, outText);
-                            if (textBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
+                            const uint16 futureCaretAt = inputBoxCalculateCaretAtIfErasedSelection(controlData, outText);
+                            if (inputBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
                             {
-                                textBoxEraseSelection(controlData, outText);
+                                inputBoxEraseSelection(controlData, outText);
 
-                                textBoxInsertWchar(_wcharInput, caretAt, outText);
+                                inputBoxInsertWchar(_wcharInput, caretAt, outText);
                             }
                         }
                         else
@@ -1921,23 +1921,23 @@ namespace mint
 
                             if (_wcharInput == VK_BACK) // BackSpace
                             {
-                                textBoxProcessInputKeyDeleteBefore(controlData, outText);
+                                inputBoxProcessInputKeyDeleteBefore(controlData, outText);
                             }
                             else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
                             {
-                                inputBoxProcessInputKeySelectAll(controlData, outText);
+                                inputBoxProcessInputKeyControlFunctionSelectAll(controlData, outText);
                             }
                             else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
                             {
-                                textBoxProcessInputKeyCopy(controlData, outText);
+                                inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
                             }
                             else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
                             {
-                                textBoxProcessInputKeyCut(controlData, outText);
+                                inputBoxProcessInputKeyControlFunctionCut(controlData, outText);
                             }
                             else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
                             {
-                                textBoxProcessInputKeyPaste(controlData, outText);
+                                inputBoxProcessInputKeyControlFunctionPaste(controlData, outText);
                             }
                         }
 
@@ -1949,35 +1949,35 @@ namespace mint
 
                         if (_keyCode == mint::Window::EventData::KeyCode::Left)
                         {
-                            textBoxProcessInputCaretToPrev(controlData);
+                            inputBoxProcessInputCaretToPrev(controlData);
                         }
                         else if (_keyCode == mint::Window::EventData::KeyCode::Right)
                         {
-                            textBoxProcessInputCaretToNext(controlData, outText);
+                            inputBoxProcessInputCaretToNext(controlData, outText);
                         }
                         else if (_keyCode == mint::Window::EventData::KeyCode::Home)
                         {
-                            textBoxProcessInputCaretToHead(controlData);
+                            inputBoxProcessInputCaretToHead(controlData);
                         }
                         else if (_keyCode == mint::Window::EventData::KeyCode::End)
                         {
-                            textBoxProcessInputCaretToTail(controlData, outText);
+                            inputBoxProcessInputCaretToTail(controlData, outText);
                         }
                         else if (_keyCode == mint::Window::EventData::KeyCode::Delete)
                         {
-                            textBoxProcessInputKeyDeleteAfter(controlData, outText);
+                            inputBoxProcessInputKeyDeleteAfter(controlData, outText);
                         }
                     }
 
                     // Caret 위치가 바뀐 경우 refresh
                     if (oldCaretAt != caretAt)
                     {
-                        textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                        inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
 
                         // Selection
                         if (isShiftKeyDown == true && _keyCode != mint::Window::EventData::KeyCode::NONE)
                         {
-                            textBoxUpdateSelection(oldCaretAt, caretAt, controlData);
+                            inputBoxUpdateSelection(oldCaretAt, caretAt, controlData);
                         }
                     }
 
@@ -1994,7 +1994,7 @@ namespace mint
 
                 if (wasControlFocused == false)
                 {
-                    textBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                    inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
                 }
 
                 if (result._clearKeyCode == true)
