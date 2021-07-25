@@ -132,6 +132,8 @@ namespace mint
                 Left,
                 Middle,
                 Right,
+
+                COUNT,
             };
 
             class EventValue
@@ -148,8 +150,10 @@ namespace mint
 
                 void                            setMousePosition(const mint::Float2& mousePosition) noexcept;
                 void                            setMouseDeltaPosition(const mint::Float2& mouseDeltaPosition) noexcept;
+                void                            setMouseButton(const MouseButton mouseButton) noexcept;
                 const mint::Float2&             getMousePosition() const noexcept;
                 const mint::Float2              getAndClearMouseDeltaPosition() const noexcept;
+                const MouseButton               getMouseButton() const noexcept;
 
                 void                            setMouseWheel(const float mouseWheel) noexcept;
                 const float                     getMouseWheel() const noexcept;

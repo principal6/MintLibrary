@@ -7,19 +7,20 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
-#include <MintRenderingBase/Include/Gui/GuiCommon.h>
-#include <MintRenderingBase/Include/Gui/ControlData.h>
-
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/IId.h>
 #include <MintContainer/Include/HashMap.h>
 
-#include <MintPlatform/Include/IWindow.h>
-
 #include <MintMath/Include/Float2.h>
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Rect.h>
+
+#include <MintPlatform/Include/IWindow.h>
+
+#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
+#include <MintRenderingBase/Include/Gui/GuiCommon.h>
+#include <MintRenderingBase/Include/Gui/ControlData.h>
+#include <MintRenderingBase/Include/Gui/InputHelpers.h>
 
 
 namespace mint
@@ -68,12 +69,6 @@ namespace mint
         static constexpr float          kTextBoxBackSpaceStride = 48.0f;
         static constexpr uint32         kTextBoxMaxTextLength = 2048;
 
-
-        enum class TextInputMode
-        {
-            General,
-            NumberOnly,
-        };
 
         struct CommonControlParam
         {
@@ -212,55 +207,6 @@ namespace mint
                 const wchar_t*                                  _nextTooltipText;
             };
 
-            struct MouseStates
-            {
-            public:
-                void                                            resetPerFrame() noexcept;
-
-            public:
-                void                                            setPosition(const mint::Float2& position) noexcept;
-                void                                            setButtonDownPosition(const mint::Float2& position) noexcept;
-                void                                            setButtonDownPositionCopy(const mint::Float2& position) noexcept;
-                void                                            setButtonUpPosition(const mint::Float2& position) noexcept;
-                void                                            setButtonDown() noexcept;
-                void                                            setButtonUp() noexcept;
-                void                                            setDoubleClicked() noexcept;
-
-            private:
-                void                                            calculateMouseDragDelta() noexcept;
-
-            public:
-                const mint::Float2&                             getPosition() const noexcept;
-                const mint::Float2&                             getButtonDownPosition() const noexcept;
-                const mint::Float2&                             getButtonUpPosition() const noexcept;
-                const mint::Float2&                             getMouseDragDelta() const noexcept;
-                const bool                                      isButtonDown() const noexcept;
-                const bool                                      isButtonDownThisFrame() const noexcept;
-                const bool                                      isButtonDownUp() const noexcept;
-                const bool                                      isDoubleClicked() const noexcept;
-                const bool                                      isCursor(const mint::Window::CursorType cursorType) const noexcept;
-
-            private:
-                mint::Float2                                    _mousePosition;
-                mint::Float2                                    _mouseDownPosition;
-                mint::Float2                                    _mouseDownPositionCopy;
-                mint::Float2                                    _mouseUpPosition;
-                mint::Float2                                    _mouseDragDelta;
-                bool                                            _isButtonDown = false;
-                bool                                            _isButtonDownThisFrame = false;
-                bool                                            _isButtonDownUp = false;
-                bool                                            _isDoubleClicked = false;
-
-            public:
-                mutable float                                   _mouseWheel;
-                mutable mint::Window::CursorType                _cursorType = mint::Window::CursorType::Arrow; // per frame
-            };
-
-            struct TextBoxProcessInputResult
-            {
-                bool    _clearWcharInput = false;
-                bool    _clearKeyCode = false;
-            };
 
             class ControlInteractionStates
             {
@@ -428,28 +374,8 @@ namespace mint
             void                                                textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept;
         
         private:
-            void                                                inputBoxProcessInputMouse(ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) const noexcept;
-            void                                                inputBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText) const noexcept;
-            void                                                inputBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText) const noexcept;
-            void                                                inputBoxProcessInputKeyControlFunctionSelectAll(ControlData& controlData, const std::wstring& outText) const noexcept;
-            void                                                inputBoxProcessInputKeyControlFunctionCopy(ControlData& controlData, const std::wstring& outText) const noexcept;
-            void                                                inputBoxProcessInputKeyControlFunctionCut(ControlData& controlData, std::wstring& outText) const noexcept;
-            void                                                inputBoxProcessInputKeyControlFunctionPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage = nullptr) const noexcept;
-            void                                                inputBoxProcessInputCaretToPrev(ControlData& controlData) const noexcept;
-            void                                                inputBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text) const noexcept;
-            void                                                inputBoxProcessInputCaretToHead(ControlData& controlData) const noexcept;
-            void                                                inputBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text) const noexcept;
-            void                                                inputBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) const noexcept;
-            void                                                inputBoxEraseSelection(ControlData& controlData, std::wstring& outText) const noexcept;
-            uint16                                              inputBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept;
-            const bool                                          inputBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) const noexcept;
-            const bool                                          inputBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText) const noexcept;
-            void                                                inputBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) const noexcept;
-            const bool                                          inputBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) const noexcept;
-        
-        private:
             void                                                inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept;
-            void                                                textBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept;
+            void                                                inputBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept;
             void                                                inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
             void                                                inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
     #pragma endregion
@@ -650,7 +576,7 @@ namespace mint
 #pragma region Key Character Input
         private:
             wchar_t                                             _wcharInput;
-            wchar_t                                             _wcharInputCandiate;
+            wchar_t                                             _wcharInputCandidate;
             mint::Window::EventData::KeyCode                    _keyCode;
 #pragma endregion
 

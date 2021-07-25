@@ -520,6 +520,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseDown;
                 eventData._value.setMousePosition(mousePosition);
+                eventData._value.setMouseButton(EventData::MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));
@@ -529,6 +530,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseUp;
                 eventData._value.setMousePosition(mousePosition);
+                eventData._value.setMouseButton(EventData::MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));
@@ -538,6 +540,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseDoubleClicked;
                 eventData._value.setMousePosition(mousePosition);
+                eventData._value.setMouseButton(EventData::MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));

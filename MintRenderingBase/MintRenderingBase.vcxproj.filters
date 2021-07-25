@@ -48,9 +48,6 @@
     <ClInclude Include="Include\IRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ShapeFontRendererContext.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\ShapeRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -119,6 +116,15 @@
     </ClInclude>
     <ClInclude Include="Include\Gui\ControlData.hpp">
       <Filter>Include\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Gui\InputHelpers.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Gui\InputHelpers.hpp">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ShapeFontRendererContext.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

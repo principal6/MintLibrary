@@ -1,3 +1,6 @@
+#pragma once
+
+
 #include <stdafx.h>
 #include <MintRenderingBase/Include/Gui/ControlData.h>
 

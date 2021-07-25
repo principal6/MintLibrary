@@ -8,6 +8,7 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/Gui/ControlData.hpp>
+#include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
 
@@ -267,7 +268,7 @@ namespace mint
             , _resizingMethod{ ResizingMethod::ResizeOnly }
             , _caretBlinkIntervalMs{ 0 }
             , _wcharInput{ L'\0'}
-            , _wcharInputCandiate{ L'\0'}
+            , _wcharInputCandidate{ L'\0'}
             , _keyCode{ mint::Window::EventData::KeyCode::NONE }
         {
             setNamedColor(NamedColor::NormalState, mint::RenderingBase::Color(45, 47, 49));
@@ -382,13 +383,13 @@ namespace mint
                 }
                 else if (eventData._type == mint::Window::EventType::KeyStroke)
                 {
-                    _wcharInputCandiate = L'\0';
+                    _wcharInputCandidate = L'\0';
 
                     _wcharInput = eventData._value.getInputWchar();
                 }
                 else if (eventData._type == mint::Window::EventType::KeyStrokeCandidate)
                 {
-                    _wcharInputCandiate = eventData._value.getInputWchar();
+                    _wcharInputCandidate = eventData._value.getInputWchar();
                 }
                 else if (eventData._type == mint::Window::EventType::KeyDown)
                 {
@@ -1156,8 +1157,8 @@ namespace mint
                 setClipRectForMe(controlData, clipRectForMe);
             }
 
-            const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
-            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const wchar_t inputCandidate[2]{ _wcharInputCandidate, L'\0' };
+            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandidate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             const uint16 textLength = static_cast<uint16>(outText.length());
             mint::Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
@@ -1192,17 +1193,16 @@ namespace mint
             rendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
             // Text 및 Caret 렌더링
-            const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandiate);
+            const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandidate);
             if (needToRenderInputCandidate == true)
             {
-                textBoxDrawTextWithInputCandidate(textBoxParam._common, textRenderOffset, controlData, outText);
+                inputBoxDrawTextWithInputCandidate(textBoxParam._common, textRenderOffset, controlData, outText);
             }
             else
             {
                 inputBoxDrawTextWithoutInputCandidate(textBoxParam._common, textRenderOffset, true, controlData, outText);
             }
 
-            // Selection 렌더링
             inputBoxDrawSelection(textRenderOffset, controlData, outText);
 
             return false;
@@ -1210,140 +1210,27 @@ namespace mint
         
         void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept
         {
-            static std::wstring errorMessage;
-            if (true == errorMessage.empty())
-            {
-                errorMessage.resize(1024);
-                mint::formatString(errorMessage.data(), 1024, L"텍스트 길이가 %d 자를 넘을 수 없습니다!", kTextBoxMaxTextLength);
-            }
+            mint::Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
             TextBoxProcessInputResult result;
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            uint16& caretState = controlData._controlValue._textBoxData._caretState;
-            uint64& lastCaretBlinkTimeMs = controlData._controlValue._textBoxData._lastCaretBlinkTimeMs;
-            const uint64 currentTimeMs = mint::Profiler::getCurrentTimeMs();
-            if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
+            if (_mouseStates.isButtonDown() == true || _mouseStates.isButtonDownThisFrame() == true)
             {
-                lastCaretBlinkTimeMs = currentTimeMs;
-
-                caretState ^= 1;
+                mint::Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
             }
-
-            const mint::Window::IWindow* const window = _graphicDevice->getWindow();
-            const bool isMouseLeftDown = window->isMouseDown(mint::Window::EventData::MouseButton::Left);
-            const bool isMouseLeftDownFirst = window->isMouseDownFirst(mint::Window::EventData::MouseButton::Left);
-            if (isMouseLeftDown == true || isMouseLeftDownFirst == true)
+            else if (_mouseStates.isDoubleClicked() == true)
             {
-                // 마우스 입력 처리
-                inputBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
+                mint::Gui::InputBoxHelpers::selectAll(controlData, outText);
             }
             else
             {
-                const bool isShiftKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
-                const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
-                const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
-                if (32 <= _wcharInputCandiate)
-                {
-                    inputBoxEraseSelection(controlData, outText);
-                }
-                else if (_wcharInput != L'\0')
-                {
-                    // 글자 입력 or 키 입력
-
-                    const bool isInputCharacter = (32 <= _wcharInput);
-                    if (isInputCharacter == true)
-                    {
-                        const uint16 futureCaretAt = inputBoxCalculateCaretAtIfErasedSelection(controlData, outText);
-                        if (inputBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
-                        {
-                            inputBoxEraseSelection(controlData, outText);
-
-                            if (inputBoxInsertWchar(_wcharInput, caretAt, outText) == false)
-                            {
-                                window->showMessageBox(L"오류", errorMessage.c_str(), mint::Window::MessageBoxType::Error);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-
-                        if (_wcharInput == VK_BACK) // BackSpace
-                        {
-                            inputBoxProcessInputKeyDeleteBefore(controlData, outText);
-                        }
-                        else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
-                        {
-                            inputBoxProcessInputKeyControlFunctionSelectAll(controlData, outText);
-                        }
-                        else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
-                        {
-                            inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
-                        }
-                        else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
-                        {
-                            inputBoxProcessInputKeyControlFunctionCut(controlData, outText);
-                        }
-                        else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
-                        {
-                            inputBoxProcessInputKeyControlFunctionPaste(controlData, outText, errorMessage.c_str());
-                        }
-                    }
-
-                    result._clearWcharInput = true;
-                }
-                else
-                {
-                    // 키 눌림 처리
-
-                    if (_keyCode == mint::Window::EventData::KeyCode::Left)
-                    {
-                        inputBoxProcessInputCaretToPrev(controlData);
-                    }
-                    else if (_keyCode == mint::Window::EventData::KeyCode::Right)
-                    {
-                        inputBoxProcessInputCaretToNext(controlData, outText);
-                    }
-                    else if (_keyCode == mint::Window::EventData::KeyCode::Home)
-                    {
-                        inputBoxProcessInputCaretToHead(controlData);
-                    }
-                    else if (_keyCode == mint::Window::EventData::KeyCode::End)
-                    {
-                        inputBoxProcessInputCaretToTail(controlData, outText);
-                    }
-                    else if (_keyCode == mint::Window::EventData::KeyCode::Delete)
-                    {
-                        inputBoxProcessInputKeyDeleteAfter(controlData, outText);
-                    }
-                }
-
-                // Caret 위치가 바뀐 경우 refresh
-                if (oldCaretAt != caretAt)
-                {
-                    inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
-
-                    // Selection
-                    if (isShiftKeyDown == true && _keyCode != mint::Window::EventData::KeyCode::NONE)
-                    {
-                        inputBoxUpdateSelection(oldCaretAt, caretAt, controlData);
-                    }
-                }
-
-                if (isShiftKeyDown == false && isControlKeyDown == false &&
-                    _keyCode != mint::Window::EventData::KeyCode::NONE &&
-                    _keyCode != mint::Window::EventData::KeyCode::Control &&
-                    _keyCode != mint::Window::EventData::KeyCode::Alt)
-                {
-                    // Selection 해제
-                    uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
-                    selectionLength = 0;
-                }
+                const mint::Window::IWindow* const window = _graphicDevice->getWindow();
+                mint::Gui::InputBoxHelpers::processDefaultKeyboardInputs(window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
+                    _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
             }
 
             if (wasControlFocused == false)
             {
-                inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                mint::Gui::InputBoxHelpers::refreshCaret(controlData);
             }
 
             if (result._clearKeyCode == true)
@@ -1354,316 +1241,6 @@ namespace mint
             {
                 _wcharInput = L'\0';
             }
-        }
-
-        void GuiContext::inputBoxProcessInputMouse(ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) const noexcept
-        {
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            const float positionInText = _mouseStates.getPosition()._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
-            const uint16 textLength = static_cast<uint16>(outText.length());
-            const uint32 newCaretAt = calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
-            const bool isMouseLeftDownFirst = _graphicDevice->getWindow()->isMouseDownFirst(mint::Window::EventData::MouseButton::Left);
-            if (isMouseLeftDownFirst == true)
-            {
-                caretAt = newCaretAt;
-
-                controlData._controlValue._textBoxData._selectionLength = 0;
-                controlData._controlValue._textBoxData._selectionStart = caretAt;
-            }
-            else
-            {
-                if (newCaretAt != caretAt)
-                {
-                    inputBoxUpdateSelection(caretAt, newCaretAt, controlData);
-
-                    caretAt = newCaretAt;
-                }
-            }
-
-            result._clearWcharInput = true;
-            result._clearKeyCode = true;
-        }
-
-        void GuiContext::inputBoxProcessInputKeyDeleteBefore(ControlData& controlData, std::wstring& outText) const noexcept
-        {
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
-            {
-                inputBoxEraseSelection(controlData, outText);
-            }
-            else
-            {
-                caretAt = mint::min(caretAt, static_cast<uint16>(outText.length()));
-
-                if (outText.empty() == false && 0 < caretAt)
-                {
-                    outText.erase(outText.begin() + caretAt - 1);
-
-                    caretAt = mint::max(caretAt - 1, 0);
-                }
-            }
-        }
-        
-        void GuiContext::inputBoxProcessInputKeyDeleteAfter(ControlData& controlData, std::wstring& outText) const noexcept
-        {
-            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
-            {
-                inputBoxEraseSelection(controlData, outText);
-            }
-            else
-            {
-                const uint16 textLength = static_cast<uint16>(outText.length());
-                uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-                if (0 < textLength && caretAt < textLength)
-                {
-                    outText.erase(outText.begin() + caretAt);
-
-                    caretAt = mint::min(caretAt, textLength);
-                }
-            }
-        }
-        
-        void GuiContext::inputBoxProcessInputKeyControlFunctionSelectAll(ControlData& controlData, const std::wstring& outText) const noexcept
-        {
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            controlData._controlValue._textBoxData._selectionStart = 0;
-            caretAt = controlData._controlValue._textBoxData._selectionLength = static_cast<uint16>(outText.length());
-        }
-
-        void GuiContext::inputBoxProcessInputKeyControlFunctionCopy(ControlData& controlData, const std::wstring& outText) const noexcept
-        {
-            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (selectionLength == 0)
-            {
-                return;
-            }
-
-            const uint16 selectionStart = controlData._controlValue._textBoxData._selectionStart;
-            _graphicDevice->getWindow()->textToClipboard(&outText[selectionStart], selectionLength);
-        }
-
-        void GuiContext::inputBoxProcessInputKeyControlFunctionCut(ControlData& controlData, std::wstring& outText) const noexcept
-        {
-            inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
-
-            inputBoxEraseSelection(controlData, outText);
-        }
-
-        void GuiContext::inputBoxProcessInputKeyControlFunctionPaste(ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage) const noexcept
-        {
-            std::wstring fromClipboard;
-            _graphicDevice->getWindow()->textFromClipboard(fromClipboard);
-
-            if (fromClipboard.empty() == true)
-            {
-                return;
-            }
-
-            inputBoxEraseSelection(controlData, outText);
-
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            if (false == inputBoxInsertWstring(fromClipboard, caretAt, outText))
-            {
-                if (errorMessage != nullptr)
-                {
-                    _graphicDevice->getWindow()->showMessageBox(L"오류", errorMessage, mint::Window::MessageBoxType::Error);
-                }
-            }
-        }
-
-        void GuiContext::inputBoxProcessInputCaretToPrev(ControlData& controlData) const noexcept
-        {
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            caretAt = mint::max(caretAt - 1, 0);
-        }
-
-        void GuiContext::inputBoxProcessInputCaretToNext(ControlData& controlData, const std::wstring& text) const noexcept
-        {
-            const uint16 textLength = static_cast<uint16>(text.length());
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            caretAt = mint::min(caretAt + 1, static_cast<int32>(textLength));
-        }
-
-        void GuiContext::inputBoxProcessInputCaretToHead(ControlData& controlData) const noexcept
-        {
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            caretAt = 0;
-
-            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            textDisplayOffset = 0.0f;
-        }
-
-        void GuiContext::inputBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text) const noexcept
-        {
-            const uint16 textLength = static_cast<uint16>(text.length());
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            caretAt = textLength;
-
-            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            const float textWidth = calculateTextWidth(text.c_str(), textLength);
-            textDisplayOffset = mint::max(0.0f, textWidth - controlData._displaySize._x);
-        }
-
-        void GuiContext::inputBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) const noexcept
-        {
-            lastCaretBlinkTimeMs = currentTimeMs;
-            caretState = 0;
-        }
-
-        void GuiContext::inputBoxEraseSelection(ControlData& controlData, std::wstring& outText) const noexcept
-        {
-            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (selectionLength == 0)
-            {
-                return;
-            }
-
-            const uint16 selectionStart = controlData._controlValue._textBoxData._selectionStart;
-            outText.erase(selectionStart, selectionLength);
-
-            const uint16 textLength = static_cast<uint16>(outText.length());
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            caretAt = mint::min(static_cast<uint16>(caretAt - selectionLength), textLength);
-
-            controlData._controlValue._textBoxData._selectionLength = 0;
-        }
-
-        uint16 GuiContext::inputBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept
-        {
-            uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
-            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
-            {
-                const uint16 textLength = static_cast<uint16>(outText.length() - selectionLength);
-                caretAt = mint::min(static_cast<uint16>(caretAt - selectionLength), textLength);
-            }
-            return caretAt;
-        }
-
-        const bool GuiContext::inputBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) const noexcept
-        {
-            if (outText.length() < kTextBoxMaxTextLength)
-            {
-                caretAt = mint::min(caretAt, static_cast<uint16>(outText.length()));
-
-                outText.insert(outText.begin() + caretAt, input);
-
-                ++caretAt;
-
-                return true;
-            }
-            return false;
-        }
-
-        const bool GuiContext::inputBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText)  const noexcept
-        {
-            bool result = false;
-            const uint32 oldLength = static_cast<uint32>(outText.length());
-            if (oldLength < kTextBoxMaxTextLength)
-            {
-                uint32 deltaLength = static_cast<uint32>(input.length());
-                if (kTextBoxMaxTextLength < oldLength + input.length())
-                {
-                    deltaLength = kTextBoxMaxTextLength - oldLength;
-                }
-                else
-                {
-                    result = true;
-                }
-
-                outText.insert(caretAt, input.substr(0, deltaLength));
-
-                caretAt += static_cast<uint16>(deltaLength);
-            }
-            return result;
-        }
-
-        void GuiContext::inputBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) const noexcept
-        {
-            uint16& selectionStart = controlData._controlValue._textBoxData._selectionStart;
-            uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
-
-            if (selectionLength == 0)
-            {
-                // 새 Selection
-                selectionStart = mint::min(caretAt, oldCaretAt);
-                selectionLength = mint::max(caretAt, oldCaretAt) - selectionStart;
-            }
-            else
-            {
-                // 기존에 Selection 있음
-                const bool isLeftWard = caretAt < oldCaretAt;
-                const uint16 oldSelectionStart = selectionStart;
-                const uint16 oldSelectionEnd = selectionStart + selectionLength;
-                const bool fromHead = (oldSelectionStart == oldCaretAt);
-                if (((oldSelectionEnd == oldCaretAt) && (caretAt < oldSelectionStart)) || ((oldSelectionStart == oldCaretAt && oldSelectionEnd < caretAt)))
-                {
-                    // 새 caretAt 위치가 급격히 달라진 경우
-                    if (caretAt < oldSelectionStart)
-                    {
-                        selectionStart = caretAt;
-                        selectionLength = oldSelectionStart - caretAt;
-                    }
-                    else
-                    {
-                        selectionStart = oldSelectionEnd;
-                        selectionLength = caretAt - selectionStart;
-                    }
-                }
-                else
-                {
-                    if (fromHead == true)
-                    {
-                        // from Head
-                        const uint16 selectionEnd = oldSelectionEnd;
-                        selectionStart = (isLeftWard == true) ? mint::min(selectionStart, caretAt) : mint::max(selectionStart, caretAt);
-                        selectionLength = selectionEnd - selectionStart;
-                    }
-                    else
-                    {
-                        // from Tail
-                        const uint16 selectionEnd = (isLeftWard == true) ? mint::min(oldSelectionEnd, caretAt) : mint::max(oldSelectionEnd, caretAt);
-                        selectionStart = mint::min(selectionStart, caretAt);
-                        selectionLength = selectionEnd - selectionStart;
-                    }
-                }
-            }
-        }
-
-        const bool GuiContext::inputBoxIsValidInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) const noexcept
-        {
-            bool result = false;
-            if (textInputMode == TextInputMode::General)
-            {
-                result = true;
-            }
-            else if (textInputMode == TextInputMode::NumberOnly)
-            {
-                const wchar_t kPointSign = L'.';
-                const wchar_t kMinusSign = L'-';
-                const wchar_t kZero = L'0';
-                const wchar_t kNine = L'9';
-                result = (kZero <= input && input <= kNine);
-                if (kPointSign == input)
-                {
-                    if (text.find(input) == std::wstring::npos)
-                    {
-                        result = true;
-                    }
-                }
-                else if (kMinusSign == input)
-                {
-                    if (text.find(input) == std::wstring::npos && caretAt == 0)
-                    {
-                        result = true;
-                    }
-                }
-            }
-
-            return result;
         }
 
         void GuiContext::inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept
@@ -1692,7 +1269,7 @@ namespace mint
             }
         }
 
-        void GuiContext::textBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept
+        void GuiContext::inputBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept
         {
             MINT_ASSERT("김장원", controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
@@ -1711,7 +1288,7 @@ namespace mint
             }
 
             // Input Candidate 렌더링
-            const wchar_t inputCandidate[2]{ _wcharInputCandiate, L'\0' };
+            const wchar_t inputCandidate[2]{ _wcharInputCandidate, L'\0' };
             const uint16 textLength = static_cast<uint16>(outText.length());
             const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
             rendererContext.setTextColor(commonControlParam._fontColor);
@@ -1720,7 +1297,7 @@ namespace mint
 
             // Text 렌더링 (Caret 이후)
             const bool isFocused = _controlInteractionStates.isControlFocused(controlData);
-            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandiate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandidate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             if (outText.empty() == false)
             {
                 rendererContext.setTextColor(commonControlParam._fontColor);
@@ -1843,7 +1420,7 @@ namespace mint
 
             if (wasFocused == false && isFocused == true)
             {
-                inputBoxProcessInputKeyControlFunctionSelectAll(controlData, controlData._text);
+                mint::Gui::InputBoxHelpers::selectAll(controlData, controlData._text);
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
@@ -1858,10 +1435,7 @@ namespace mint
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            // Text 렌더링
             inputBoxDrawTextWithoutInputCandidate(commonControlParam, textRenderOffset, isFocused, controlData, controlData._text);
-
-            // Selection 렌더링
             inputBoxDrawSelection(textRenderOffset, controlData, controlData._text);
 
             return false;
@@ -1869,132 +1443,26 @@ namespace mint
 
         void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, mint::Float4& textRenderOffset, float& value, std::wstring& outText) noexcept
         {
-            const TextInputMode textInputMode = TextInputMode::NumberOnly;
-
-            TextBoxProcessInputResult result;
-            uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            uint16& caretState = controlData._controlValue._textBoxData._caretState;
-            uint64& lastCaretBlinkTimeMs = controlData._controlValue._textBoxData._lastCaretBlinkTimeMs;
-            const uint64 currentTimeMs = mint::Profiler::getCurrentTimeMs();
-            if (lastCaretBlinkTimeMs + _caretBlinkIntervalMs < currentTimeMs)
-            {
-                lastCaretBlinkTimeMs = currentTimeMs;
-
-                caretState ^= 1;
-            }
+            mint::Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
             if (_controlInteractionStates.isControlFocused(controlData) == true)
             {
-                if (_mouseStates.isButtonDownThisFrame() == true)
+                const mint::Window::IWindow* const window = _graphicDevice->getWindow();
+                TextBoxProcessInputResult result;
+                if (_mouseStates.isButtonDown() == true || _mouseStates.isButtonDownThisFrame() == true)
                 {
-                    // 마우스 입력 처리
-                    inputBoxProcessInputMouse(controlData, textRenderOffset, outText, result);
+                    mint::Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
                 }
                 else
                 {
-                    const mint::Window::IWindow* const window = _graphicDevice->getWindow();
-                    const bool isShiftKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
-                    const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
-                    const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
-                    if (32 <= _wcharInputCandiate)
-                    {
-                        inputBoxEraseSelection(controlData, outText);
-                    }
-                    else if (_wcharInput != L'\0')
-                    {
-                        // 글자 입력 or 키 입력
-
-                        const bool isInputCharacter = (32 <= _wcharInput);
-                        if (isInputCharacter == true)
-                        {
-                            const uint16 futureCaretAt = inputBoxCalculateCaretAtIfErasedSelection(controlData, outText);
-                            if (inputBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
-                            {
-                                inputBoxEraseSelection(controlData, outText);
-
-                                inputBoxInsertWchar(_wcharInput, caretAt, outText);
-                            }
-                        }
-                        else
-                        {
-                            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-
-                            if (_wcharInput == VK_BACK) // BackSpace
-                            {
-                                inputBoxProcessInputKeyDeleteBefore(controlData, outText);
-                            }
-                            else if (isControlKeyDown == true && _wcharInput == 0x01) // Ctrl + A
-                            {
-                                inputBoxProcessInputKeyControlFunctionSelectAll(controlData, outText);
-                            }
-                            else if (isControlKeyDown == true && _wcharInput == 0x03) // Ctrl + C
-                            {
-                                inputBoxProcessInputKeyControlFunctionCopy(controlData, outText);
-                            }
-                            else if (isControlKeyDown == true && _wcharInput == 0x18) // Ctrl + X
-                            {
-                                inputBoxProcessInputKeyControlFunctionCut(controlData, outText);
-                            }
-                            else if (isControlKeyDown == true && _wcharInput == 0x16) // Ctrl + V
-                            {
-                                inputBoxProcessInputKeyControlFunctionPaste(controlData, outText);
-                            }
-                        }
-
-                        result._clearWcharInput = true;
-                    }
-                    else
-                    {
-                        // 키 눌림 처리
-
-                        if (_keyCode == mint::Window::EventData::KeyCode::Left)
-                        {
-                            inputBoxProcessInputCaretToPrev(controlData);
-                        }
-                        else if (_keyCode == mint::Window::EventData::KeyCode::Right)
-                        {
-                            inputBoxProcessInputCaretToNext(controlData, outText);
-                        }
-                        else if (_keyCode == mint::Window::EventData::KeyCode::Home)
-                        {
-                            inputBoxProcessInputCaretToHead(controlData);
-                        }
-                        else if (_keyCode == mint::Window::EventData::KeyCode::End)
-                        {
-                            inputBoxProcessInputCaretToTail(controlData, outText);
-                        }
-                        else if (_keyCode == mint::Window::EventData::KeyCode::Delete)
-                        {
-                            inputBoxProcessInputKeyDeleteAfter(controlData, outText);
-                        }
-                    }
-
-                    // Caret 위치가 바뀐 경우 refresh
-                    if (oldCaretAt != caretAt)
-                    {
-                        inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
-
-                        // Selection
-                        if (isShiftKeyDown == true && _keyCode != mint::Window::EventData::KeyCode::NONE)
-                        {
-                            inputBoxUpdateSelection(oldCaretAt, caretAt, controlData);
-                        }
-                    }
-
-                    if (isShiftKeyDown == false && isControlKeyDown == false &&
-                        _keyCode != mint::Window::EventData::KeyCode::NONE &&
-                        _keyCode != mint::Window::EventData::KeyCode::Control &&
-                        _keyCode != mint::Window::EventData::KeyCode::Alt)
-                    {
-                        // Selection 해제
-                        uint16& selectionLength = controlData._controlValue._textBoxData._selectionLength;
-                        selectionLength = 0;
-                    }
+                    const TextInputMode kTextInputMode = TextInputMode::NumberOnly;
+                    mint::Gui::InputBoxHelpers::processDefaultKeyboardInputs(window, getRendererContext(controlData), controlData, kTextInputMode, kTextBoxMaxTextLength, _keyCode,
+                        _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
                 }
 
                 if (wasControlFocused == false)
                 {
-                    inputBoxRefreshCaret(currentTimeMs, caretState, lastCaretBlinkTimeMs);
+                    mint::Gui::InputBoxHelpers::refreshCaret(controlData);
                 }
 
                 if (result._clearKeyCode == true)

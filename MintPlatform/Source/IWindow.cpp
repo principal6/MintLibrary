@@ -41,6 +41,11 @@ namespace mint
             _mouseDeltaPosition = mouseDeltaPosition;
         }
 
+        void EventData::EventValue::setMouseButton(const MouseButton mouseButton) noexcept
+        {
+            _mouseButton = mouseButton;
+        }
+
         const mint::Float2& EventData::EventValue::getMousePosition() const noexcept
         {
             return _mousePosition;
@@ -51,6 +56,11 @@ namespace mint
             mint::Float2 result = _mouseDeltaPosition;
             _mouseDeltaPosition.setZero();
             return result;
+        }
+
+        const EventData::MouseButton EventData::EventValue::getMouseButton() const noexcept
+        {
+            return _mouseButton;
         }
         
         void EventData::EventValue::setMouseWheel(const float mouseWheel) noexcept

@@ -116,6 +116,12 @@ namespace mint
             Own,
         };
 
+        enum class TextInputMode
+        {
+            General,
+            NumberOnly,
+        };
+
         enum class TextAlignmentHorz
         {
             Left,

@@ -213,6 +213,8 @@
     <ClInclude Include="Include\Gui\ControlData.hpp" />
     <ClInclude Include="Include\Gui\GuiCommon.h" />
     <ClInclude Include="Include\Gui\GuiContext.h" />
+    <ClInclude Include="Include\Gui\InputHelpers.h" />
+    <ClInclude Include="Include\Gui\InputHelpers.hpp" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
