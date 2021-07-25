@@ -1253,7 +1253,8 @@ namespace mint
                     const bool isInputCharacter = (32 <= _wcharInput);
                     if (isInputCharacter == true)
                     {
-                        if (textBoxIsValidInput(_wcharInput, caretAt, textInputMode, outText) == true)
+                        const uint16 futureCaretAt = textBoxCalculateCaretAtIfErasedSelection(controlData, outText);
+                        if (textBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
                         {
                             textBoxEraseSelection(controlData, outText);
 
@@ -1528,6 +1529,18 @@ namespace mint
             caretAt = mint::min(static_cast<uint16>(caretAt - selectionLength), textLength);
 
             controlData._controlValue._textBoxData._selectionLength = 0;
+        }
+
+        uint16 GuiContext::textBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept
+        {
+            uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
+            const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
+            if (0 < selectionLength)
+            {
+                const uint16 textLength = static_cast<uint16>(outText.length() - selectionLength);
+                caretAt = mint::min(static_cast<uint16>(caretAt - selectionLength), textLength);
+            }
+            return caretAt;
         }
 
         const bool GuiContext::textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText)
@@ -1807,31 +1820,34 @@ namespace mint
             }
 
             constexpr uint32 kTextBufferSize = 255;
-            wchar_t format[kTextBufferSize];
-            wchar_t buffer[kTextBufferSize];
-            mint::formatString(format, L"%%.%df", decimalDigits);
-            mint::formatString(buffer, format, value);
-            std::wstring text(buffer);
-            const uint16 textLength = static_cast<uint16>(text.length());
+            if (isFocused == false)
+            {
+                wchar_t format[kTextBufferSize];
+                wchar_t buffer[kTextBufferSize];
+                mint::formatString(format, L"%%.%df", decimalDigits);
+                mint::formatString(buffer, format, value);
+                controlData._text = buffer;
+            }
+            const uint16 textLength = static_cast<uint16>(controlData._text.length());
             mint::Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
             {
-                const float fullTextWidth = calculateTextWidth(text.c_str(), textLength);
+                const float fullTextWidth = calculateTextWidth(controlData._text.c_str(), textLength);
                 
                 // 가운데 정렬!
                 textRenderOffset._x = (controlData._displaySize._x - fullTextWidth) * 0.5f;
             }
 
             // Input 처리
-            valueSliderFloatProcessInput(wasFocused, controlData, textRenderOffset, value, text);
+            valueSliderFloatProcessInput(wasFocused, controlData, textRenderOffset, value, controlData._text);
 
             if (wasFocused == false && isFocused == true)
             {
-                inputBoxProcessInputKeySelectAll(controlData, text);
+                inputBoxProcessInputKeySelectAll(controlData, controlData._text);
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            const float textWidthTillCaret = calculateTextWidth(text.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
+            const float textWidthTillCaret = calculateTextWidth(controlData._text.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
             inputBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, 0.0f, controlData);
 
             // Box 렌더링
@@ -1843,10 +1859,10 @@ namespace mint
             rendererContext.drawRoundedRectangle(controlData._displaySize, (roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
             // Text 렌더링
-            inputBoxDrawTextWithoutInputCandidate(commonControlParam, textRenderOffset, isFocused, controlData, text);
+            inputBoxDrawTextWithoutInputCandidate(commonControlParam, textRenderOffset, isFocused, controlData, controlData._text);
 
             // Selection 렌더링
-            inputBoxDrawSelection(textRenderOffset, controlData, text);
+            inputBoxDrawSelection(textRenderOffset, controlData, controlData._text);
 
             return false;
         }
@@ -1891,7 +1907,8 @@ namespace mint
                         const bool isInputCharacter = (32 <= _wcharInput);
                         if (isInputCharacter == true)
                         {
-                            if (textBoxIsValidInput(_wcharInput, caretAt, textInputMode, outText) == true)
+                            const uint16 futureCaretAt = textBoxCalculateCaretAtIfErasedSelection(controlData, outText);
+                            if (textBoxIsValidInput(_wcharInput, futureCaretAt, textInputMode, outText) == true)
                             {
                                 textBoxEraseSelection(controlData, outText);
 
@@ -1995,7 +2012,14 @@ namespace mint
                 }
                 else
                 {
-                    value = std::stof(outText);
+                    try
+                    {
+                        value = std::stof(outText);
+                    }
+                    catch (std::invalid_argument e)
+                    {
+                        __noop;
+                    }
                 }
             }
             else

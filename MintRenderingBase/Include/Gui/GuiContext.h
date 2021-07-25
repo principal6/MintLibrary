@@ -441,6 +441,7 @@ namespace mint
             void                                                textBoxProcessInputCaretToTail(ControlData& controlData, const std::wstring& text);
             void                                                textBoxRefreshCaret(const uint64 currentTimeMs, uint16& caretState, uint64& lastCaretBlinkTimeMs) noexcept;
             void                                                textBoxEraseSelection(ControlData& controlData, std::wstring& outText) noexcept;
+            uint16                                              textBoxCalculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) const noexcept;
             const bool                                          textBoxInsertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText);
             const bool                                          textBoxInsertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText);
             void                                                textBoxUpdateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData);
