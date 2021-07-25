@@ -137,11 +137,6 @@ namespace mint
             return _rootControlData;
         }
         
-        MINT_INLINE mint::Float4 GuiContext::getControlCenterPosition(const ControlData& controlData) const noexcept
-        {
-            return mint::Float4(controlData._position._x + controlData._displaySize._x * 0.5f, controlData._position._y + controlData._displaySize._y * 0.5f, 0.0f, 1.0f);
-        }
-
         MINT_INLINE mint::Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
             return controlData._position - getControlData(controlData.getParentHashKey())._position;

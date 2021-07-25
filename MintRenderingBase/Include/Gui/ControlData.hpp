@@ -715,6 +715,21 @@ namespace mint
         {
             _clipRectForDocks = clipRect;
         }
+
+        MINT_INLINE const mint::Float4 ControlData::getControlCenterPosition() const noexcept
+        {
+            return mint::Float4(_position._x + _displaySize._x * 0.5f, _position._y + _displaySize._y * 0.5f, 0.0f, 1.0f);
+        }
+
+        MINT_INLINE const mint::Float2 ControlData::getControlLeftCenterPosition() const noexcept
+        {
+            return mint::Float2(_position._x, _position._y + _displaySize._y * 0.5f);
+        }
+
+        MINT_INLINE const mint::Float2 ControlData::getControlRightCenterPosition() const noexcept
+        {
+            return mint::Float2(_position._x + _displaySize._x, _position._y + _displaySize._y * 0.5f);
+        }
 #pragma endregion
     }
 }

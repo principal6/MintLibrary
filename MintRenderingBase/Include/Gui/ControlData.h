@@ -280,6 +280,11 @@ namespace mint
             void                                        setClipRectForDocksXXX(const mint::Rect& clipRect) noexcept;
 
         public:
+            const mint::Float4                          getControlCenterPosition() const noexcept;
+            const mint::Float2                          getControlLeftCenterPosition() const noexcept;
+            const mint::Float2                          getControlRightCenterPosition() const noexcept;
+
+        public:
             uint8                                       _updateCount;
             mint::Float2                                _displaySize;
             mint::Float2                                _position; // In screen space, at left-top corner

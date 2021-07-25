@@ -138,6 +138,16 @@ namespace mint
 
         public:
             static const wchar_t*   getLengthErrorMessage(const uint32 maxLength) noexcept;
+
+        public:
+            static void             updateTextDisplayOffset(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
+                const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth = 0.0f) noexcept;
+            static void             drawTextWithInputCandidate(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, std::wstring& outText) noexcept;
+            static void             drawTextWithoutInputCandidate(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
+                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
+            static void             drawSelection(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
+                const bool isFocused, const float fontSize, const mint::RenderingBase::Color& selectionColor, ControlData& textBoxControlData, std::wstring& outText) noexcept;
         };
     }
 }

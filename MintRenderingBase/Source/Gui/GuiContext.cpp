@@ -15,9 +15,6 @@
 #include <MintLibrary/Include/ScopedCpuProfiler.h>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace Gui
@@ -101,16 +98,6 @@ namespace mint
                 }
                 return false;
             }
-
-            MINT_INLINE mint::Float2 getControlLeftCenterPosition(const ControlData& controlData)
-            {
-                return mint::Float2(controlData._position._x, controlData._position._y + controlData._displaySize._y * 0.5f);
-            };
-
-            MINT_INLINE mint::Float2 getControlRightCenterPosition(const ControlData& controlData)
-            {
-                return mint::Float2(controlData._position._x + controlData._displaySize._x, controlData._position._y + controlData._displaySize._y * 0.5f);
-            };
         }
 
 
@@ -745,7 +732,7 @@ namespace mint
                     mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
                     rendererContext.setClipRect(windowControlData.getClipRect());
 
-                    const mint::Float4& windowCenterPosition = getControlCenterPosition(windowControlData);
+                    const mint::Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
                     rendererContext.setColor(finalBackgroundColor);
                     rendererContext.setPosition(windowCenterPosition + mint::Float4(0, windowControlData._controlValue._windowData._titleBarSize._y * 0.5f, 0, 0));
                     if (windowControlData.isDocking() == true)
@@ -868,7 +855,7 @@ namespace mint
             mint::RenderingBase::Color finalBackgroundColor;
             const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), finalBackgroundColor);
             
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
@@ -905,7 +892,7 @@ namespace mint
                 *outIsChecked = isChecked;
             }
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
@@ -949,7 +936,7 @@ namespace mint
             mint::RenderingBase::Color colorWithAlpha = mint::RenderingBase::Color(255, 255, 255);
             processShowOnlyControl(controlData, colorWithAlpha);
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(labelParam._common._backgroundColor);
@@ -966,7 +953,7 @@ namespace mint
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
-            mint::Float4 textPosition = getControlCenterPosition(labelControlData);
+            mint::Float4 textPosition = labelControlData.getControlCenterPosition();
             if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
             {
                 if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
@@ -1098,7 +1085,7 @@ namespace mint
             const float trackRectLeftLength = thumbAt * sliderValidLength;
             const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
-            const mint::Float4& trackCenterPosition = getControlCenterPosition(trackControlData);
+            const mint::Float4& trackCenterPosition = trackControlData.getControlCenterPosition();
             mint::Float4 trackRenderPosition = trackCenterPosition - mint::Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
 
             // Left(or Upper) half circle
@@ -1130,7 +1117,7 @@ namespace mint
             MINT_ASSERT("김장원", thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
 
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(thumbControlData);
-            const mint::Float4& thumbCenterPosition = getControlCenterPosition(thumbControlData);
+            const mint::Float4& thumbCenterPosition = thumbControlData.getControlCenterPosition();
             rendererContext.setPosition(thumbCenterPosition);
             rendererContext.setColor(mint::RenderingBase::Color::kWhite.scaledA(thumbColor.a()));
             rendererContext.drawCircle(kSliderThumbRadius);
@@ -1181,29 +1168,27 @@ namespace mint
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
-            inputBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, inputCandidateWidth, controlData);
+            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            mint::Gui::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData, inputCandidateWidth);
 
             // Box 렌더링
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            // Text 및 Caret 렌더링
+            // Text, Caret, Selection 렌더링
             const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandidate);
             if (needToRenderInputCandidate == true)
             {
-                inputBoxDrawTextWithInputCandidate(textBoxParam._common, textRenderOffset, controlData, outText);
+                mint::Gui::InputBoxHelpers::drawTextWithInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, _wcharInputCandidate, controlData, outText);
             }
             else
             {
-                inputBoxDrawTextWithoutInputCandidate(textBoxParam._common, textRenderOffset, true, controlData, outText);
+                mint::Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, true, controlData, outText);
             }
-
-            inputBoxDrawSelection(textRenderOffset, controlData, outText);
+            mint::Gui::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, outText);
 
             return false;
         }
@@ -1240,140 +1225,6 @@ namespace mint
             if (result._clearWcharInput == true)
             {
                 _wcharInput = L'\0';
-            }
-        }
-
-        void GuiContext::inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept
-        {
-            const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
-            float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            {
-                const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
-                if (0.0f < deltaTextDisplayOffsetRight)
-                {
-                    textDisplayOffset += deltaTextDisplayOffsetRight;
-                }
-
-                const float deltaTextDisplayOffsetLeft = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset);
-                if (deltaTextDisplayOffsetLeft < 0.0f)
-                {
-                    textDisplayOffset -= kTextBoxBackSpaceStride;
-
-                    textDisplayOffset = mint::max(textDisplayOffset, 0.0f);
-                }
-
-                if (textWidthTillCaret + inputCandidateWidth < controlData._displaySize._x)
-                {
-                    textDisplayOffset = 0.0f;
-                }
-            }
-        }
-
-        void GuiContext::inputBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept
-        {
-            MINT_ASSERT("김장원", controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
-
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
-            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-
-            // Text 렌더링 (Caret 이전)
-            const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
-            if (outText.empty() == false)
-            {
-                rendererContext.setTextColor(commonControlParam._fontColor);
-                rendererContext.drawDynamicText(outText.c_str(), caretAt, textRenderPosition + textRenderOffset,
-                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-            }
-
-            // Input Candidate 렌더링
-            const wchar_t inputCandidate[2]{ _wcharInputCandidate, L'\0' };
-            const uint16 textLength = static_cast<uint16>(outText.length());
-            const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
-            rendererContext.setTextColor(commonControlParam._fontColor);
-            rendererContext.drawDynamicText(inputCandidate, mint::Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset,
-                mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-
-            // Text 렌더링 (Caret 이후)
-            const bool isFocused = _controlInteractionStates.isControlFocused(controlData);
-            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandidate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
-            if (outText.empty() == false)
-            {
-                rendererContext.setTextColor(commonControlParam._fontColor);
-                rendererContext.drawDynamicText(outText.c_str() + caretAt, textLength - caretAt, textRenderPosition + mint::Float4(textWidthTillCaret + inputCandidateWidth, 0, 0, 0) + textRenderOffset,
-                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-            }
-
-            // Caret 렌더링 (Input Candidate 의 바로 뒤에!)
-            const bool needToRenderCaret = (isFocused == true && controlData._controlValue._textBoxData._caretState == 0);
-            if (needToRenderCaret == true)
-            {
-                const float caretHeight = _fontSize;
-                const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret + inputCandidateWidth - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
-                rendererContext.setColor(mint::RenderingBase::Color::kBlack);
-                rendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
-            }
-        }
-
-        void GuiContext::inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept
-        {
-            MINT_ASSERT("김장원", controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
-
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
-            const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            const mint::Float4 textRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset, controlLeftCenterPosition._y, 0, 0);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-
-            // Text 전체 렌더링
-            if (outText.empty() == false)
-            {
-                rendererContext.setTextColor(commonControlParam._fontColor);
-                rendererContext.drawDynamicText(outText.c_str(), textRenderPosition + textRenderOffset,
-                    mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
-            }
-
-            // Caret 렌더링
-            const bool isFocused = _controlInteractionStates.isControlFocused(controlData);
-            const bool needToRenderCaret = (isFocused == true && controlData._controlValue._textBoxData._caretState == 0);
-            if (renderCaret == true && needToRenderCaret == true)
-            {
-                const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
-                const uint16 textLength = static_cast<uint16>(outText.length());
-                const float textWidthTillCaret = calculateTextWidth(outText.c_str(), mint::min(caretAt, textLength));
-                const float caretHeight = _fontSize;
-                const mint::Float2& p0 = mint::Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
-                rendererContext.setColor(mint::RenderingBase::Color::kBlack);
-                rendererContext.drawLine(p0, p0 + mint::Float2(0.0f, caretHeight), 2.0f);
-            }
-        }
-
-        void GuiContext::inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept
-        {
-            MINT_ASSERT("김장원", textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
-
-            const bool isFocused = _controlInteractionStates.isControlFocused(textBoxControlData);
-            if (isFocused == false)
-            {
-                return;
-            }
-
-            const uint16 selectionStart = textBoxControlData._controlValue._textBoxData._selectionStart;
-            const uint16 selectionLength = textBoxControlData._controlValue._textBoxData._selectionLength;
-            const uint16 selectionEnd = selectionStart + selectionLength;
-            if (0 < selectionLength)
-            {
-                const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(textBoxControlData);
-                const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
-                const float textWidthTillSelectionStart = calculateTextWidth(outText.c_str(), selectionStart);
-                const float textWidthTillSelectionEnd = calculateTextWidth(outText.c_str(), selectionEnd);
-                const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
-                
-                mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(textBoxControlData);
-                const mint::Float4 selectionRenderPosition = mint::Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);
-                rendererContext.setPosition(selectionRenderPosition + textRenderOffset);
-                rendererContext.setColor(getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f));
-                rendererContext.drawRectangle(mint::Float2(textWidthSelection, _fontSize * 1.25f), 0.0f, 0.0f);
             }
         }
 
@@ -1424,20 +1275,19 @@ namespace mint
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            const float textWidthTillCaret = calculateTextWidth(controlData._text.c_str(), mint::min(controlData._controlValue._textBoxData._caretAt, textLength));
-            inputBoxUpdateTextDisplayOffset(textLength, textWidthTillCaret, 0.0f, controlData);
+            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            mint::Gui::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData);
 
             // Box 렌더링
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
-            mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            inputBoxDrawTextWithoutInputCandidate(commonControlParam, textRenderOffset, isFocused, controlData, controlData._text);
-            inputBoxDrawSelection(textRenderOffset, controlData, controlData._text);
-
+            // Text, Caret, Selection 렌더링
+            mint::Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
+            mint::Gui::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, controlData._text);
             return false;
         }
 
@@ -1543,7 +1393,7 @@ namespace mint
                 setClipRectForChildren(controlData, clipRectForChildren);
             }
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
@@ -1602,14 +1452,14 @@ namespace mint
                 parentControlData._controlValue._itemData.select(myIndex);
             }
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(controlData);
+            const mint::Float2& controlLeftCenterPosition = controlData.getControlLeftCenterPosition();
             rendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             rendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + controlData.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0),
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -1668,7 +1518,7 @@ namespace mint
                 color.a(1.0f);
             }
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBar);
+            const mint::Float4& controlCenterPosition = menuBar.getControlCenterPosition();
             menuBar._rendererContextLayer = getUpperRendererContextLayer(menuBarParent);
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(menuBar);
             rendererContext.setClipRect(menuBar.getClipRect());
@@ -1735,7 +1585,7 @@ namespace mint
                 menuBar._controlValue._itemData.select(myIndex);
             }
             
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuBarItem);
+            const mint::Float4& controlCenterPosition = menuBarItem.getControlCenterPosition();
             
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(menuBarItem);
             rendererContext.setClipRect(menuBarItem.getClipRect());
@@ -1743,7 +1593,7 @@ namespace mint
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(menuBarItem._displaySize, 0.0f, 0.0f, 0.0f);
 
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(menuBarItem);
+            const mint::Float2& controlLeftCenterPosition = menuBarItem.getControlLeftCenterPosition();
             rendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
             rendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f, controlLeftCenterPosition._y, 0, 0),
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Centered, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -1817,7 +1667,7 @@ namespace mint
             }
             menuItem._controlValue._booleanData.set(isMeSelected);
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(menuItem);
+            const mint::Float4& controlCenterPosition = menuItem.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(menuItem);
             rendererContext.setClipRect(menuItem.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
@@ -1827,7 +1677,7 @@ namespace mint
             const uint16 previousMaxChildCount = menuItem.getPreviousMaxChildControlCount();
             if (0 < previousMaxChildCount)
             {
-                const mint::Float2& controlRightCenterPosition = ControlCommonHelpers::getControlRightCenterPosition(menuItem);
+                const mint::Float2& controlRightCenterPosition = menuItem.getControlRightCenterPosition();
                 mint::Float2 a = controlRightCenterPosition + mint::Float2(-14, -5);
                 mint::Float2 b = controlRightCenterPosition + mint::Float2( -4,  0);
                 mint::Float2 c = controlRightCenterPosition + mint::Float2(-14, +5);
@@ -1835,7 +1685,7 @@ namespace mint
                 rendererContext.drawSolidTriangle(a, b, c);
             }
 
-            const mint::Float2& controlLeftCenterPosition = ControlCommonHelpers::getControlLeftCenterPosition(menuItem);
+            const mint::Float2& controlLeftCenterPosition = menuItem.getControlLeftCenterPosition();
             rendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
             rendererContext.drawDynamicText(text, mint::Float4(controlLeftCenterPosition._x + menuItem.getInnerPadding().left(), controlLeftCenterPosition._y, 0, 0), 
                 mint::RenderingBase::FontRenderingOption(mint::RenderingBase::TextRenderDirectionHorz::Rightward, mint::RenderingBase::TextRenderDirectionVert::Centered));
@@ -2304,7 +2154,7 @@ namespace mint
 
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
-            rendererContext.setPosition(getControlCenterPosition(controlData));
+            rendererContext.setPosition(controlData.getControlCenterPosition());
             if (isParentControlDocking == true)
             {
                 const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
@@ -2387,7 +2237,7 @@ namespace mint
             mint::RenderingBase::Color controlColor;
             const bool isClicked = processClickControl(controlData, color, color.scaledRgb(1.5f), color.scaledRgb(0.75f), controlColor);
 
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(controlColor);
@@ -2424,7 +2274,7 @@ namespace mint
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(controlData.getClipRect());
             
-            const mint::Float4& controlCenterPosition = getControlCenterPosition(controlData);
+            const mint::Float4& controlCenterPosition = controlData.getControlCenterPosition();
             rendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
@@ -3103,7 +2953,7 @@ namespace mint
             mint::RenderingBase::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             std::function fnRenderDockingBox = [&](const mint::Rect& boxRect, const ControlData& parentControlData)
             {
-                const mint::Float4& parentControlCenterPosition = getControlCenterPosition(parentControlData);
+                const mint::Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
                 mint::Float4 renderPosition = parentControlCenterPosition;
                 renderPosition._x = boxRect.center()._x;
                 renderPosition._y = boxRect.center()._y;
@@ -3128,7 +2978,7 @@ namespace mint
                 (parentControlData._dockingControlType == DockingControlType::Dock || parentControlData._dockingControlType == DockingControlType::DockerDock) &&
                 ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
-                const mint::Float4& parentControlCenterPosition = getControlCenterPosition(parentControlData);
+                const mint::Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
                 const float previewShortLengthMax = 160.0f;
                 const float previewShortLength = mint::min(parentControlData._displaySize._x * 0.5f, previewShortLengthMax);
 

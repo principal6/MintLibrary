@@ -70,19 +70,6 @@ namespace mint
         static constexpr uint32         kTextBoxMaxTextLength = 2048;
 
 
-        struct CommonControlParam
-        {
-                                        CommonControlParam() : CommonControlParam(mint::Float2::kZero) { __noop; }
-                                        CommonControlParam(const mint::Float2& size) : CommonControlParam(size, mint::RenderingBase::Color::kWhite, mint::RenderingBase::Color::kBlack) { __noop; }
-                                        CommonControlParam(const mint::Float2& size, const mint::RenderingBase::Color& backgroundColor, const mint::RenderingBase::Color& fontColor) 
-                                            : _size{ size }, _offset{ mint::Float2::kZero }, _backgroundColor{ backgroundColor }, _fontColor{ fontColor } { __noop; }
-
-            mint::Float2                _size;
-            mint::Float2                _offset;
-            mint::RenderingBase::Color  _backgroundColor;
-            mint::RenderingBase::Color  _fontColor;
-        };
-
         struct WindowParam
         {
             CommonControlParam  _common                 = CommonControlParam(mint::Float2(180, 100));
@@ -372,12 +359,6 @@ namespace mint
 
         private:
             void                                                textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept;
-        
-        private:
-            void                                                inputBoxUpdateTextDisplayOffset(const uint16 textLength, const float textWidthTillCaret, const float inputCandidateWidth, ControlData& controlData) const noexcept;
-            void                                                inputBoxDrawTextWithInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, ControlData& controlData, std::wstring& outText) noexcept;
-            void                                                inputBoxDrawTextWithoutInputCandidate(const CommonControlParam& commonControlParam, const mint::Float4& textRenderOffset, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
-            void                                                inputBoxDrawSelection(const mint::Float4& textRenderOffset, ControlData& textBoxControlData, std::wstring& outText) noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
@@ -441,7 +422,6 @@ namespace mint
             ControlData&                                        getControlStackTopXXX() noexcept;
             ControlData&                                        getControlData(const uint64 hashKey) noexcept;
             const ControlData&                                  getControlData(const uint64 hashKey) const noexcept;
-            mint::Float4                                        getControlCenterPosition(const ControlData& controlData) const noexcept;
             mint::Float2                                        getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
             const wchar_t*                                      generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept;
             const wchar_t*                                      generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept;
