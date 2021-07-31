@@ -68,6 +68,19 @@ namespace mint
             WindowResized,
         };
 
+        enum class MouseButton : int32
+        {
+            Left,
+            Middle,
+            Right,
+
+            COUNT,
+        };
+        MINT_INLINE constexpr uint32 getMouseButtonCount() noexcept
+        {
+            return static_cast<uint32>(MouseButton::COUNT);
+        }
+
         struct EventData
         {
             enum class KeyCode : uint64
@@ -127,14 +140,6 @@ namespace mint
                 return (KeyCode::A <= keyCode && keyCode <= KeyCode::Num9);
             }
 
-            enum class MouseButton : int32
-            {
-                Left,
-                Middle,
-                Right,
-
-                COUNT,
-            };
 
             class EventValue
             {
@@ -262,8 +267,8 @@ namespace mint
 
             virtual const bool              isKeyDown(const EventData::KeyCode keyCode) const noexcept abstract;
             virtual const bool              isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept abstract;
-            virtual const bool              isMouseDown(const EventData::MouseButton mouseButton) const noexcept abstract;
-            virtual const bool              isMouseDownFirst(const EventData::MouseButton mouseButton) const noexcept abstract;
+            virtual const bool              isMouseDown(const MouseButton mouseButton) const noexcept abstract;
+            virtual const bool              isMouseDownFirst(const MouseButton mouseButton) const noexcept abstract;
 
             virtual void                    textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
             virtual void                    textFromClipboard(std::wstring& outText) const noexcept abstract;

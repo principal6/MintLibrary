@@ -347,28 +347,28 @@ namespace mint
             return (0 < virtualKey) ? ((::GetAsyncKeyState(static_cast<int>(virtualKey)) & 1) != 0) : false;
         }
 
-        const bool WindowsWindow::isMouseDown(const EventData::MouseButton mouseButton) const noexcept
+        const bool WindowsWindow::isMouseDown(const MouseButton mouseButton) const noexcept
         {
             WPARAM virtualKey = VK_LBUTTON;
-            if (mouseButton == EventData::MouseButton::Middle)
+            if (mouseButton == MouseButton::Middle)
             {
                 virtualKey = VK_MBUTTON;
             }
-            else if (mouseButton == EventData::MouseButton::Right)
+            else if (mouseButton == MouseButton::Right)
             {
                 virtualKey = VK_RBUTTON;
             }
             return (::GetKeyState(static_cast<int>(virtualKey)) < 0);
         }
 
-        const bool WindowsWindow::isMouseDownFirst(const EventData::MouseButton mouseButton) const noexcept
+        const bool WindowsWindow::isMouseDownFirst(const MouseButton mouseButton) const noexcept
         {
             WPARAM virtualKey = VK_LBUTTON;
-            if (mouseButton == EventData::MouseButton::Middle)
+            if (mouseButton == MouseButton::Middle)
             {
                 virtualKey = VK_MBUTTON;
             }
-            else if (mouseButton == EventData::MouseButton::Right)
+            else if (mouseButton == MouseButton::Right)
             {
                 virtualKey = VK_RBUTTON;
             }
@@ -520,7 +520,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseDown;
                 eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(EventData::MouseButton::Left);
+                eventData._value.setMouseButton(MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));
@@ -530,7 +530,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseUp;
                 eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(EventData::MouseButton::Left);
+                eventData._value.setMouseButton(MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));
@@ -540,7 +540,7 @@ namespace mint
             {
                 eventData._type = EventType::MouseDoubleClicked;
                 eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(EventData::MouseButton::Left);
+                eventData._value.setMouseButton(MouseButton::Left);
                 _previousMousePosition = mousePosition;
 
                 pushEvent(std::move(eventData));

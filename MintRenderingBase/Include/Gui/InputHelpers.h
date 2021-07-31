@@ -25,6 +25,16 @@ namespace mint
 
         struct MouseStates
         {
+            struct PerButtonStates
+            {
+                void                            resetPerFrame() noexcept;
+
+                bool                            _isButtonDown = false;
+                bool                            _isButtonDownThisFrame = false;
+                bool                            _isButtonDownUp = false;
+                bool                            _isDoubleClicked = false;
+            };
+
         public:
             void                                resetPerFrame() noexcept;
 
@@ -33,9 +43,9 @@ namespace mint
             void                                setButtonDownPosition(const mint::Float2& position) noexcept;
             void                                setButtonDownPositionCopy(const mint::Float2& position) noexcept;
             void                                setButtonUpPosition(const mint::Float2& position) noexcept;
-            void                                setButtonDown() noexcept;
-            void                                setButtonUp() noexcept;
-            void                                setDoubleClicked() noexcept;
+            void                                setButtonDown(const mint::Window::MouseButton mouseButton) noexcept;
+            void                                setButtonUp(const mint::Window::MouseButton mouseButton) noexcept;
+            void                                setDoubleClicked(const mint::Window::MouseButton mouseButton) noexcept;
 
         private:
             void                                calculateMouseDragDelta() noexcept;
@@ -45,10 +55,10 @@ namespace mint
             const mint::Float2&                 getButtonDownPosition() const noexcept;
             const mint::Float2&                 getButtonUpPosition() const noexcept;
             const mint::Float2&                 getMouseDragDelta() const noexcept;
-            const bool                          isButtonDown() const noexcept;
-            const bool                          isButtonDownThisFrame() const noexcept;
-            const bool                          isButtonDownUp() const noexcept;
-            const bool                          isDoubleClicked() const noexcept;
+            const bool                          isButtonDown(const mint::Window::MouseButton mouseButton) const noexcept;
+            const bool                          isButtonDownThisFrame(const mint::Window::MouseButton mouseButton) const noexcept;
+            const bool                          isButtonDownUp(const mint::Window::MouseButton mouseButton) const noexcept;
+            const bool                          isDoubleClicked(const mint::Window::MouseButton mouseButton) const noexcept;
             const bool                          isCursor(const mint::Window::CursorType cursorType) const noexcept;
 
         private:
@@ -57,10 +67,7 @@ namespace mint
             mint::Float2                        _mouseDownPositionCopy;
             mint::Float2                        _mouseUpPosition;
             mint::Float2                        _mouseDragDelta;
-            bool                                _isButtonDown = false;
-            bool                                _isButtonDownThisFrame = false;
-            bool                                _isButtonDownUp = false;
-            bool                                _isDoubleClicked = false;
+            PerButtonStates                     _perButtonStates[mint::Window::getMouseButtonCount()];
 
         public:
             mutable float                       _mouseWheel;

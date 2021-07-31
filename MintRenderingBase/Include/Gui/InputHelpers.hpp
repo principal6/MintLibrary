@@ -16,11 +16,19 @@ namespace mint
     namespace Gui
     {
 #pragma region MouseStates
-        MINT_INLINE void MouseStates::resetPerFrame() noexcept
+        MINT_INLINE void MouseStates::PerButtonStates::resetPerFrame() noexcept
         {
             _isButtonDownUp = false;
             _isButtonDownThisFrame = false;
             _isDoubleClicked = false;
+        }
+
+        MINT_INLINE void MouseStates::resetPerFrame() noexcept
+        {
+            for (uint32 buttonIndex = 0; buttonIndex < mint::Window::getMouseButtonCount(); buttonIndex++)
+            {
+                _perButtonStates[buttonIndex].resetPerFrame();
+            }
         }
 
         MINT_INLINE void MouseStates::setPosition(const mint::Float2& position) noexcept
@@ -49,24 +57,24 @@ namespace mint
             _mouseUpPosition = position;
         }
 
-        MINT_INLINE void MouseStates::setButtonDown() noexcept
+        MINT_INLINE void MouseStates::setButtonDown(const mint::Window::MouseButton mouseButton) noexcept
         {
-            _isButtonDown = true;
-            _isButtonDownThisFrame = true;
+            _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown = true;
+            _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownThisFrame = true;
         }
 
-        MINT_INLINE void MouseStates::setButtonUp() noexcept
+        MINT_INLINE void MouseStates::setButtonUp(const mint::Window::MouseButton mouseButton) noexcept
         {
-            if (_isButtonDown == true)
+            if (_perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown == true)
             {
-                _isButtonDownUp = true;
+                _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownUp = true;
             }
-            _isButtonDown = false;
+            _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown = false;
         }
 
-        MINT_INLINE void MouseStates::setDoubleClicked() noexcept
+        MINT_INLINE void MouseStates::setDoubleClicked(const mint::Window::MouseButton mouseButton) noexcept
         {
-            _isDoubleClicked = true;
+            _perButtonStates[static_cast<uint32>(mouseButton)]._isDoubleClicked = true;
         }
 
         MINT_INLINE void MouseStates::calculateMouseDragDelta() noexcept
@@ -94,24 +102,24 @@ namespace mint
             return _mouseDragDelta;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDown() const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDown(const mint::Window::MouseButton mouseButton) const noexcept
         {
-            return _isButtonDown;
+            return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDownThisFrame() const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDownThisFrame(const mint::Window::MouseButton mouseButton) const noexcept
         {
-            return _isButtonDownThisFrame;
+            return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownThisFrame;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDownUp() const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDownUp(const mint::Window::MouseButton mouseButton) const noexcept
         {
-            return _isButtonDownUp;
+            return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownUp;
         }
 
-        MINT_INLINE const bool MouseStates::isDoubleClicked() const noexcept
+        MINT_INLINE const bool MouseStates::isDoubleClicked(const mint::Window::MouseButton mouseButton) const noexcept
         {
-            return _isDoubleClicked;
+            return _perButtonStates[static_cast<uint32>(mouseButton)]._isDoubleClicked;
         }
 
         MINT_INLINE const bool MouseStates::isCursor(const mint::Window::CursorType cursorType) const noexcept
@@ -150,7 +158,7 @@ namespace mint
             const float positionInText = mouseStates.getPosition()._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
             const uint16 textLength = static_cast<uint16>(outText.length());
             const uint32 newCaretAt = rendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
-            if (mouseStates.isButtonDownThisFrame() == true)
+            if (mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true)
             {
                 caretAt = newCaretAt;
 

@@ -58,7 +58,7 @@ namespace mint
             return result;
         }
 
-        const EventData::MouseButton EventData::EventValue::getMouseButton() const noexcept
+        const MouseButton EventData::EventValue::getMouseButton() const noexcept
         {
             return _mouseButton;
         }

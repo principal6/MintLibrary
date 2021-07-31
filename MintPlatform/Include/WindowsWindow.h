@@ -102,8 +102,8 @@ namespace mint
             virtual const uint32                getCaretBlinkIntervalMs() const noexcept override final;
             virtual const bool                  isKeyDown(const EventData::KeyCode keyCode) const noexcept override final;
             virtual const bool                  isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept override final;
-            virtual const bool                  isMouseDown(const EventData::MouseButton mouseButton) const noexcept override final;
-            virtual const bool                  isMouseDownFirst(const EventData::MouseButton mouseButton) const noexcept override final;
+            virtual const bool                  isMouseDown(const MouseButton mouseButton) const noexcept override final;
+            virtual const bool                  isMouseDownFirst(const MouseButton mouseButton) const noexcept override final;
 
         public:
             virtual void                        textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;

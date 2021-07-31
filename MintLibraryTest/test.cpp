@@ -787,7 +787,7 @@ const bool testWindow()
                 }
                 else if (event._type == EventType::MouseMoveDelta)
                 {
-                    if (window.isMouseDown(mint::Window::EventData::MouseButton::Right) == true)
+                    if (window.isMouseDown(mint::Window::MouseButton::Right) == true)
                     {
                         const mint::Float2& mouseDeltaPosition = event._value.getAndClearMouseDeltaPosition();
                         testCameraObject->rotatePitch(mouseDeltaPosition._y);
