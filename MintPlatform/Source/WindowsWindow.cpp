@@ -44,13 +44,13 @@ namespace mint
                 const uint8 at = _hWndMap.at(hWnd);
                 return _windowArray[at]->processDefaultMessage(Msg, wParam, lParam);
             }
-            return DefWindowProcW(hWnd, Msg, wParam, lParam);
+            return ::DefWindowProcW(hWnd, Msg, wParam, lParam);
         }
 #pragma endregion
 
 
 #pragma region Windows Window
-        LRESULT WINAPI WndProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
+        LRESULT WINAPI wndProc(_In_ HWND hWnd, _In_ UINT Msg, _In_ WPARAM wParam, _In_ LPARAM lParam)
         {
             return windowsWindowPool.redirectMessage(hWnd, Msg, wParam, lParam);
         }
@@ -80,7 +80,7 @@ namespace mint
         {
             _creationData = creationData;
 
-            _hInstance = GetModuleHandleW(nullptr);
+            _hInstance = ::GetModuleHandleW(nullptr);
             if (_hInstance == nullptr)
             {
                 MINT_WINDOW_RETURN_FAIL(CreationError::FailedToGetInstanceHandle);
@@ -100,15 +100,15 @@ namespace mint
             windowClass.cbClsExtra = 0;
             windowClass.cbSize = sizeof(windowClass);
             windowClass.cbWndExtra = 0;
-            windowClass.hbrBackground = CreateSolidBrush(backgroundColor);
+            windowClass.hbrBackground = ::CreateSolidBrush(backgroundColor);
             windowClass.hCursor = nullptr;
-            windowClass.hIconSm = windowClass.hIcon = LoadIconW(nullptr, IDI_SHIELD);
+            windowClass.hIconSm = windowClass.hIcon = ::LoadIconW(nullptr, IDI_SHIELD);
             windowClass.hInstance = _hInstance;
-            windowClass.lpfnWndProc = WndProc;
+            windowClass.lpfnWndProc = wndProc;
             windowClass.lpszClassName = L"WindowsWindow";
             windowClass.lpszMenuName = nullptr;
             windowClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-            RegisterClassExW(&windowClass);
+            ::RegisterClassExW(&windowClass);
 
             _windowStyle = WS_OVERLAPPED;
             switch (_creationData._style)
@@ -128,7 +128,7 @@ namespace mint
 
             const int32 x = (_creationData._position._x == kInt32Min) ? CW_USEDEFAULT : _creationData._position._x;
             const int32 y = (_creationData._position._y == kInt32Min) ? CW_USEDEFAULT : _creationData._position._y;
-            _hWnd = CreateWindowExW(0, windowClass.lpszClassName, _creationData._title, _windowStyle, x, y,
+            _hWnd = ::CreateWindowExW(0, windowClass.lpszClassName, _creationData._title, _windowStyle, x, y,
                 _creationData._size._x, _creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
             if (_hWnd == nullptr)
             {
@@ -141,7 +141,7 @@ namespace mint
 
             setSize(_creationData._size);
 
-            ShowWindow(_hWnd, SW_SHOWDEFAULT);
+            ::ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
             _isRunning = true;
 
@@ -178,7 +178,7 @@ namespace mint
         {
             __super::destroy();
 
-            DestroyWindow(_hWnd);
+            ::DestroyWindow(_hWnd);
         }
 
         void WindowsWindow::buildWparamKeyCodePairArray() noexcept
@@ -279,7 +279,8 @@ namespace mint
         void WindowsWindow::setSize(const Int2& newSize)
         {
             setSizeData(newSize);
-            SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
+            
+            ::SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
         }
 
         void WindowsWindow::setSizeData(const Int2& newSize)
@@ -291,7 +292,7 @@ namespace mint
             windowRect.top = _creationData._position._y;
             windowRect.bottom = windowRect.top + newSize._y;
             windowRect.right = windowRect.left + newSize._x;
-            AdjustWindowRect(&windowRect, _windowStyle, FALSE);
+            ::AdjustWindowRect(&windowRect, _windowStyle, FALSE);
 
             _entireSize = Int2(windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
         }
@@ -300,7 +301,7 @@ namespace mint
         {
             _creationData._position = newPosition;
 
-            SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
+            ::SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
         }
 
         HWND WindowsWindow::getHandle() const noexcept
@@ -385,16 +386,16 @@ namespace mint
             ::OpenClipboard(_hWnd);
             
             const uint32 bufferSize = (textLength + 1) * sizeof(wchar_t);
-            const HGLOBAL hGlobalText = GlobalAlloc(GMEM_MOVEABLE, bufferSize); // Clipboard 에 넘어간 데이터는 System 이 관리하므로 GlobalFree 를 호출하지 않는다!!!
+            const HGLOBAL hGlobalText = ::GlobalAlloc(GMEM_MOVEABLE, bufferSize); // Clipboard 에 넘어간 데이터는 System 이 관리하므로 GlobalFree 를 호출하지 않는다!!!
             if (hGlobalText != nullptr)
             {
-                wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(GlobalLock(hGlobalText));
+                wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(::GlobalLock(hGlobalText));
                 if (lockedWstring != nullptr)
                 {
-                    memcpy(lockedWstring, text, bufferSize);
+                    ::memcpy(lockedWstring, text, bufferSize);
                     lockedWstring[textLength] = L'\0';
 
-                    GlobalUnlock(hGlobalText);
+                    ::GlobalUnlock(hGlobalText);
                 }
             }
             ::SetClipboardData(CF_UNICODETEXT, hGlobalText);
@@ -409,12 +410,12 @@ namespace mint
             const HANDLE hClipboardData = ::GetClipboardData(CF_UNICODETEXT);
             if (hClipboardData != nullptr)
             {
-                wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(GlobalLock(hClipboardData));
+                wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(::GlobalLock(hClipboardData));
                 if (lockedWstring != nullptr)
                 {
                     const uint32 textLength = mint::StringUtil::wcslen(lockedWstring);
                     outText = lockedWstring;
-                    GlobalUnlock(hClipboardData);
+                    ::GlobalUnlock(hClipboardData);
                 }
             }
 
@@ -449,7 +450,7 @@ namespace mint
             {
             case WM_DESTROY:
             {
-                PostQuitMessage(0);
+                ::PostQuitMessage(0);
                 return 0;
             }
             case WM_CHAR:
@@ -473,12 +474,12 @@ namespace mint
                 if (lParam & GCS_COMPSTR)
                 {
                     const HIMC hInputMethodContext{ ImmGetContext(_hWnd) };
-                    const LONG length{ ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, NULL, 0) };
+                    const LONG length{ ::ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, NULL, 0) };
                     
                     wchar_t wcharArray[3]{};
-                    ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, wcharArray, length);
+                    ::ImmGetCompositionStringW(hInputMethodContext, GCS_COMPSTR, wcharArray, length);
                     
-                    ImmReleaseContext(_hWnd, hInputMethodContext);
+                    ::ImmReleaseContext(_hWnd, hInputMethodContext);
 
                     eventData._type = EventType::KeyStrokeCandidate;
                     eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
@@ -561,7 +562,8 @@ namespace mint
             case WM_INPUT:
             {
                 UINT byteCount = sizeof(RAWINPUT);
-                GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, _byteArrayForRawInput, &byteCount, sizeof(RAWINPUTHEADER));
+                ::GetRawInputData(reinterpret_cast<HRAWINPUT>(lParam), RID_INPUT, _byteArrayForRawInput, &byteCount, sizeof(RAWINPUTHEADER));
+                
                 const RAWINPUT& rawInput = *reinterpret_cast<RAWINPUT*>(_byteArrayForRawInput);
                 if (rawInput.header.dwType == RIM_TYPEMOUSE)
                 {
@@ -590,7 +592,7 @@ namespace mint
             default:
                 break;
             }
-            return DefWindowProcW(_hWnd, Msg, wParam, lParam);
+            return ::DefWindowProcW(_hWnd, Msg, wParam, lParam);
         }
 #pragma endregion
     }
