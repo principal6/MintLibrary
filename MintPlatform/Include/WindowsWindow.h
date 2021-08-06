@@ -52,8 +52,8 @@ namespace mint
             LRESULT                             redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
         private:
-            mint::Vector<WindowsWindow*>          _windowArray;
-            mint::HashMap<HWND, uint8>            _hWndMap;
+            mint::Vector<WindowsWindow*>        _windowArray;
+            mint::HashMap<HWND, uint8>          _hWndMap;
         };
 #pragma endregion
 
@@ -119,11 +119,11 @@ namespace mint
             uint32                              _windowStyle;
             HWND                                _hWnd;
             HINSTANCE                           _hInstance;
-            mint::Safe<MSG>                       _msg;
+            mint::Safe<MSG>                     _msg;
         
         private:
             HCURSOR                             _cursorArray[static_cast<uint32>(CursorType::COUNT)];
-            mint::Vector<WparamKeyCodePair>       _wParamKeyCodePairArray;
+            mint::Vector<WparamKeyCodePair>     _wParamKeyCodePairArray;
             BYTE                                _byteArrayForRawInput[kRawInputByteSize];
         };
 #pragma endregion
