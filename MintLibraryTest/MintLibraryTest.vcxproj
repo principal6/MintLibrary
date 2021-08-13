@@ -186,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="TestContainers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MintLibrary\MintLibrary.vcxproj">

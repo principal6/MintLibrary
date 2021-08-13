@@ -16,6 +16,7 @@
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/IId.h>
 #include <MintContainer/Include/HashMap.h>
+#include <MintContainer/Include/Queue.h>
 
 
 #endif // !MINT_CONTAINER_ALL_HEADERS_H

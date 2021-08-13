@@ -84,6 +84,12 @@
     <ClInclude Include="Include\MemoryRaw.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Queue.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Queue.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">
@@ -103,5 +109,8 @@
     <ClCompile Include="Source\UniqueString.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="MintContainer.natvis" />
   </ItemGroup>
 </Project>

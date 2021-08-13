@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-    <Type Name="mint::Vector&lt;*&gt;">
-        <DisplayString>{{ size = {_size} capacity = {_capacity} }}</DisplayString>
-        <Expand>
-            <Item Name="[Size]" ExcludeView="simple">_size</Item>
-            <Item Name="[Capacity]" ExcludeView="simple">_capacity</Item>
-            <ArrayItems>
-                <Size>_size</Size>
-                <ValuePointer>_rawPointer</ValuePointer>
-            </ArrayItems>
-        </Expand>
-    </Type>
-
-    <Type Name="mint::StaticBitArray&lt;*&gt;">
-        <DisplayString>{{{$T1} Bits, Byte[0] = {_byteArray[0], b}}}</DisplayString>
-        <Expand>
-            <Item Name="[Bits]" ExcludeView="simple">$T1</Item>
-            <Item Name="[Bytes]" ExcludeView="simple">kByteCount</Item>
-            <ArrayItems>
-                <Size>kByteCount</Size>
-                <ValuePointer>_byteArray</ValuePointer>
-            </ArrayItems>
-        </Expand>
-    </Type>
-
     <Type Name="mint::Memory::Accessor&lt;*&gt;">
     <DisplayString Condition="_id == kMemoryBlockIdInvalid">{{ INVALID }}</DisplayString>
     <DisplayString>{{ ID = {_id} }}</DisplayString>
@@ -35,27 +11,4 @@
       <Item Name="[MemoryAllocator]">_memoryAllocator</Item>
     </Expand>
   </Type>
-    
-<!-- @@@ Tree BEGINS @@@ -->
-  <Type Name="mint::TreeNode&lt;*&gt;">
-    <DisplayString>{{ Node Data = { _data } }}</DisplayString>
-    <Expand>
-      <Item Name="[Node ID]">_nodeId</Item>
-      <ExpandedItem>_data</ExpandedItem>
-      <Item Name="[Parent Node]" Condition="_parentNodeAccessor._nodeId != kUint32Max">_parentNodeAccessor</Item>
-      <Item Name="[Child Nodes]" Condition="_childNodeAccessorArray._size > 0">_childNodeAccessorArray</Item>
-    </Expand>
-  </Type>
-  
-  <Type Name="mint::TreeNodeAccessor&lt;*&gt;">
-    <DisplayString>{{ Node ID [{ _nodeId }] { (_tree->_nodeArray._rawPointer + _slotIndex)->_data } }}</DisplayString>
-      <Expand>
-          <Item Name="[Node ID]">_nodeId</Item>
-          <ExpandedItem>(_tree->_nodeArray._rawPointer + _slotIndex)->_data</ExpandedItem>
-          <Item Name="[Parent Node]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor</Item>
-          <Item Name="[Child Nodes]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray._size > 0">(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray</Item>
-      </Expand>
-  </Type>
-<!-- @@@ Tree ENDS @@@ -->
-
 </AutoVisualizer>
