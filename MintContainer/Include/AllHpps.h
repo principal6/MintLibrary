@@ -5,6 +5,7 @@
 #define MINT_CONTAINER_ALL_HPPS_H
 
 
+#include <MintContainer/Include/MemoryRaw.hpp>
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/ScopeString.hpp>
 #include <MintContainer/Include/StackHolder.hpp>

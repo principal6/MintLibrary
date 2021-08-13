@@ -34,14 +34,9 @@ namespace mint
         const T&        operator[](const uint32 index) const noexcept;
 
     public:
-        void            reserve(uint32 capacity) noexcept;
-        void            resize(const uint32 size) noexcept;
+        void            reserve(const uint32 capacity) noexcept;
+        void            resize(const uint32 size) noexcept; // default-constructible 의 경우에만 호출 가능하다!
         void            shrink_to_fit() noexcept;
-
-    private:
-        T*              allocateMemoryInternal(const uint32 size) noexcept;
-        void            deallocateMemoryInternal(T*& rawPointer, const uint32 size) noexcept;
-        void            copyElementInternal(T& to, const T& from, const bool destroyBeforePlacement) noexcept;
 
     public:
         void            clear() noexcept;
@@ -49,6 +44,7 @@ namespace mint
         void            push_back(T&& newEntry) noexcept;
         void            pop_back() noexcept;
         void            insert(const T& newEntry, const uint32 at) noexcept;
+        void            insert(T&& newEntry, const uint32 at) noexcept;
         void            erase(const uint32 at) noexcept;
 
     private:

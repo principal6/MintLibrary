@@ -78,6 +78,12 @@
     <ClInclude Include="Include\Hash.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\MemoryRaw.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\MemoryRaw.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">

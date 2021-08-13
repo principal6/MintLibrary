@@ -5,11 +5,10 @@
 #define MINT_VECTOR_HPP
 
 
-#include <type_traits>
-
 #include <MintCommon/Include/Logger.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/MemoryRaw.hpp>
 
 
 namespace mint
@@ -35,12 +34,12 @@ namespace mint
         : Vector()
     {
         const uint32 count = static_cast<uint32>(initializerList.size());
-        resize(count);
-
-        const T* const first = initializerList.begin();
+        reserve(count);
+        
+        const T* const rawPointer = initializerList.begin();
         for (uint32 index = 0; index < count; ++index)
         {
-            _rawPointer[index] = *(first + index);
+            push_back(rawPointer[index]);
         }
     }
 
@@ -48,25 +47,11 @@ namespace mint
     inline Vector<T>::Vector(const Vector& rhs) noexcept
         : Vector()
     {
-        resize(rhs._size);
+        reserve(rhs._size);
 
-        if constexpr (std::is_copy_assignable<T>::value == false)
+        for (uint32 index = 0; index < rhs._size; ++index)
         {
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                _rawPointer[index].~T();
-            }
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                MINT_PLACEMNT_NEW(&_rawPointer[index], T(rhs._rawPointer[index]));
-            }
-        }
-        else
-        {
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                _rawPointer[index] = rhs._rawPointer[index];
-            }
+            push_back(rhs._rawPointer[index]);
         }
     }
 
@@ -82,7 +67,7 @@ namespace mint
     template<typename T>
     inline Vector<T>::~Vector()
     {
-        deallocateMemoryInternal(_rawPointer, _size);
+        MemoryRaw::destructDeallocateMemory<T>(_rawPointer, _size);
     }
 
     template<typename T>
@@ -90,11 +75,13 @@ namespace mint
     {
         if (this != &rhs)
         {
-            resize(rhs._size);
+            clear();
 
-            for (uint32 index = 0; index < _size; ++index)
+            reserve(rhs._size);
+
+            for (uint32 index = 0; index < rhs._size; ++index)
             {
-                _rawPointer[index] = rhs._rawPointer[index];
+                push_back(rhs._rawPointer[index]);
             }
         }
         return *this;
@@ -105,7 +92,7 @@ namespace mint
     {
         if (this != &rhs)
         {
-            deallocateMemoryInternal(_rawPointer, _size);
+            MemoryRaw::destructDeallocateMemory<T>(_rawPointer, _size);
 
             _rawPointer = rhs._rawPointer;
             _capacity = std::move(rhs._capacity);
@@ -131,7 +118,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void Vector<T>::reserve(uint32 capacity) noexcept
+    MINT_INLINE void Vector<T>::reserve(const uint32 capacity) noexcept
     {
         if (capacity <= _capacity)
         {
@@ -139,34 +126,24 @@ namespace mint
         }
 
         // 잦은 reserve 시 성능 최적화!!!
-        capacity = mint::max(capacity, _capacity * 2);
+        _capacity = mint::max(capacity, _capacity * 2);
 
-        T* temp = nullptr;
-        if (0 < _size)
+        if (_size == 0)
         {
-            temp = allocateMemoryInternal(_size);
-
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                copyElementInternal(temp[index], _rawPointer[index], false);
-            }
+            MemoryRaw::deallocateMemory<T>(_rawPointer);
+            _rawPointer = MemoryRaw::allocateMemory<T>(_capacity);
         }
-
-        deallocateMemoryInternal(_rawPointer, _size);
-
-        _rawPointer = allocateMemoryInternal(capacity);
-
-        if (0 < _size)
+        else
         {
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                copyElementInternal(_rawPointer[index], temp[index], false);
-            }
+            T* temp = MemoryRaw::allocateMemory<T>(_size);
+            MemoryRaw::moveMemory<T>(temp, _rawPointer, _size);
+
+            MemoryRaw::deallocateMemory<T>(_rawPointer);
+            _rawPointer = MemoryRaw::allocateMemory<T>(_capacity);
+
+            MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
+            MemoryRaw::deallocateMemory<T>(temp);
         }
-
-        deallocateMemoryInternal(temp, _size);
-
-        _capacity = capacity;
     }
 
     template<typename T>
@@ -174,30 +151,19 @@ namespace mint
     {
         reserve(size);
 
-        if constexpr (std::is_copy_constructible<T>::value == true)
+        if (_size < size)
         {
-            if (_size < size)
+            for (uint32 index = _size; index < size; ++index)
             {
-                for (uint32 index = _size; index < size; ++index)
-                {
-                    MINT_PLACEMNT_NEW(&_rawPointer[index], T());
-                }
-            }
-            else if (size < _size)
-            {
-                for (uint32 index = size; index < _size; ++index)
-                {
-                    _rawPointer[index].~T();
-                }
+                MemoryRaw::construct(_rawPointer[index]);
             }
         }
-        else if constexpr (std::is_default_constructible<T>::value == true)
+        else if (size < _size)
         {
-            __noop;
-        }
-        else
-        {
-            static_assert(false, "What...");
+            for (uint32 index = size; index < _size; ++index)
+            {
+                pop_back();
+            }
         }
 
         _size = size;
@@ -206,89 +172,21 @@ namespace mint
     template<typename T>
     MINT_INLINE void Vector<T>::shrink_to_fit() noexcept
     {
-        if (_size < _capacity)
-        {
-            T* temp = allocateMemoryInternal(_size);
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                copyElementInternal(temp[index], _rawPointer[index], false);
-            }
-
-            deallocateMemoryInternal(_rawPointer, _size);
-            _rawPointer = allocateMemoryInternal(_size);
-
-            for (uint32 index = 0; index < _size; ++index)
-            {
-                copyElementInternal(_rawPointer[index], temp[index], false);
-            }
-
-            deallocateMemoryInternal(temp, _size);
-            
-            _capacity = _size;
-        }
-    }
-
-    template<typename T>
-    inline T* Vector<T>::allocateMemoryInternal(const uint32 size) noexcept
-    {
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            return MINT_MALLOC(T, size);
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            return MINT_NEW_ARRAY(T, size);
-        }
-        else
-        {
-            static_assert(false, "What...");
-        }
-        return nullptr;
-    }
-
-    template<typename T>
-    inline void Vector<T>::deallocateMemoryInternal(T*& rawPointer, const uint32 size) noexcept
-    {
-        if (rawPointer == nullptr)
+        if (_capacity <= _size)
         {
             return;
         }
 
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            for (uint32 index = 0; index < size; ++index)
-            {
-                rawPointer[index].~T();
-            }
+        T* temp = MemoryRaw::allocateMemory<T>(_size);
+        MemoryRaw::moveMemory<T>(temp, _rawPointer, _size);
 
-            MINT_FREE(rawPointer);
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            MINT_DELETE_ARRAY(rawPointer);
-        }
-        else
-        {
-            static_assert(false, "What...");
-        }
-    }
+        MemoryRaw::deallocateMemory<T>(_rawPointer);
+        _rawPointer = MemoryRaw::allocateMemory<T>(_size);
 
-    template<typename T>
-    MINT_INLINE void Vector<T>::copyElementInternal(T& to, const T& from, const bool destroyBeforePlacement) noexcept
-    {
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            if (destroyBeforePlacement == true)
-            {
-                to.~T();
-            }
+        MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
+        MemoryRaw::deallocateMemory<T>(temp);
 
-            MINT_PLACEMNT_NEW(&to, T(from));
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            to = from;
-        }
+        _capacity = _size;
     }
 
     template<typename T>
@@ -305,19 +203,8 @@ namespace mint
     {
         expandCapacityIfNecessary();
 
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            MINT_PLACEMNT_NEW(&_rawPointer[_size], T(newEntry));
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            _rawPointer[_size] = newEntry;
-        }
-        else
-        {
-            static_assert(false, "What...");
-        }
-
+        MemoryRaw::copyConstruct<T>(_rawPointer[_size], newEntry);
+        
         ++_size;
     }
 
@@ -326,19 +213,8 @@ namespace mint
     {
         expandCapacityIfNecessary();
 
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            MINT_PLACEMNT_NEW(&_rawPointer[_size], T(std::move(newEntry)));
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            _rawPointer[_size] = std::move(newEntry);
-        }
-        else
-        {
-            static_assert(false, "What...");
-        }
-
+        MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(newEntry));
+        
         ++_size;
     }
 
@@ -350,20 +226,11 @@ namespace mint
             return;
         }
         
-        if constexpr (std::is_copy_constructible<T>::value == true)
-        {
-            _rawPointer[_size - 1].~T();
-        }
-        else if constexpr (std::is_default_constructible<T>::value == true)
-        {
-            __noop;
-        }
-        else
-        {
-            static_assert(false, "What...");
-        }
+        // valid 한 범위 내 [0, _size - 1] element 는
+        // 모두 ctor 의 호출이 보장되었으므로
+        // 반드시 destroy() 를 호출해야 한다.
+        MemoryRaw::destroy<T>(_rawPointer[_size - 1]);
         
-
         --_size;
     }
 
@@ -378,11 +245,64 @@ namespace mint
         {
             expandCapacityIfNecessary();
 
-            for (uint32 iter = _size; iter > at; --iter)
+            if constexpr (MemoryRaw::isMovable<T>() == true)
             {
-                _rawPointer[iter] = std::move(_rawPointer[iter - 1]);
+                MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+
+                for (uint32 iter = _size - 1; iter > at; --iter)
+                {
+                    MemoryRaw::moveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+                }
             }
-            _rawPointer[at] = newEntry;
+            else // 비효율적이지만 동작은 하도록 한다.
+            {
+                MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+
+                for (uint32 iter = _size - 1; iter > at; --iter)
+                {
+                    MemoryRaw::copyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+                }
+            }
+
+            MemoryRaw::copyAssign<T>(_rawPointer[at], newEntry);
+
+            ++_size;
+        }
+    }
+
+    template<typename T>
+    MINT_INLINE void Vector<T>::insert(T&& newEntry, const uint32 at) noexcept
+    {
+        if (_size <= at)
+        {
+            push_back(newEntry);
+        }
+        else
+        {
+            expandCapacityIfNecessary();
+
+            if constexpr (MemoryRaw::isMovable<T>() == true)
+            {
+                MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+
+                for (uint32 iter = _size - 1; iter > at; --iter)
+                {
+                    MemoryRaw::moveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+                }
+
+                MemoryRaw::moveAssign<T>(_rawPointer[at], std::move(newEntry));
+            }
+            else // 비효율적이지만 동작은 하도록 한다.
+            {
+                MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+                
+                for (uint32 iter = _size - 1; iter > at; --iter)
+                {
+                    MemoryRaw::copyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+                }
+                
+                MemoryRaw::copyAssign<T>(_rawPointer[at], newEntry);
+            }
 
             ++_size;
         }
@@ -402,11 +322,22 @@ namespace mint
         }
         else
         {
-            const uint32 beginIndex = at + 1;
-            for (uint32 iter = beginIndex; iter < _size; ++iter)
+            if constexpr (MemoryRaw::isMovable<T>() == true)
             {
-                _rawPointer[iter - 1] = std::move(_rawPointer[iter]);
+                for (uint32 iter = at + 1; iter < _size; ++iter)
+                {
+                    MemoryRaw::moveAssign<T>(_rawPointer[iter - 1], std::move(_rawPointer[iter]));
+                }
             }
+            else // 비효율적이지만 동작은 하도록 한다.
+            {
+                for (uint32 iter = at + 1; iter < _size; ++iter)
+                {
+                    MemoryRaw::copyAssign<T>(_rawPointer[iter - 1], _rawPointer[iter]);
+                }
+            }
+
+            MemoryRaw::destroy<T>(_rawPointer[_size - 1]);
 
             --_size;
         }

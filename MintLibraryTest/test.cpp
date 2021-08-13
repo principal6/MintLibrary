@@ -2,6 +2,9 @@
 #include <MintLibrary/Include/AllHpps.h>
 
 
+#include <MintLibraryTest/TestContainers.h>
+
+
 #ifdef MINT_DEBUG
     #define _CRTDBG_MAP_ALLOC
     #include <stdlib.h>
@@ -440,6 +443,40 @@ const bool testStringTypes()
 
 const bool testVector()
 {
+    using namespace mint::TestContainers;
+
+#if defined (TEST_CONSTRUCTORS)
+    {
+        Notable notableA(11);
+        Notable notableB = std::move(notableA);
+    }
+
+    /*
+    mint::Vector<Uncopiable> uncopiables(4);
+    Uncopiable uncopiableNewEntry(999);
+    uncopiables.push_back(std::move(uncopiableNewEntry));
+    uncopiables.pop_back();
+    */
+
+    std::vector<Notable> strVector;
+    strVector.reserve(5);
+    strVector.push_back(Notable(0));
+    strVector.push_back(Notable(1));
+    strVector.push_back(Notable(2));
+    strVector.push_back(Notable(3));
+    //strVector.erase(t.begin() + 1);
+    strVector.insert(strVector.begin() + 1, Notable(4));
+
+    mint::Vector<Notable> mintVector;
+    mintVector.reserve(5);
+    mintVector.push_back(Notable(0));
+    mintVector.push_back(Notable(1));
+    mintVector.push_back(Notable(2));
+    mintVector.push_back(Notable(3));
+    //mintVector.erase(1);
+    mintVector.insert(Notable(4), 1);
+#endif
+
     mint::Vector<uint32> a(5);
     a.push_back(1);
     a.push_back(2);
