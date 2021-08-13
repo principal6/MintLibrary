@@ -260,6 +260,7 @@ namespace mint
             , _dockingControlType{ DockingControlType::None }
             , _lastDockingMethod{ DockingMethod::COUNT }
             , _lastDockingMethodCandidate{ DockingMethod::COUNT }
+            , _rendererContextLayer{ RendererContextLayer::Background }
             , _hashKey{ hashKey }
             , _parentHashKey{ parentHashKey }
             , _controlType{ controlType }
