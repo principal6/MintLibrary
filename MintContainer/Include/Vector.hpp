@@ -67,7 +67,11 @@ namespace mint
     template<typename T>
     inline Vector<T>::~Vector()
     {
-        MemoryRaw::destructDeallocateMemory<T>(_rawPointer, _size);
+        for (uint32 index = 0; index < _size; ++index)
+        {
+            MemoryRaw::destroy<T>(_rawPointer[index]);
+        }
+        MemoryRaw::deallocateMemory<T>(_rawPointer);
     }
 
     template<typename T>
@@ -92,7 +96,11 @@ namespace mint
     {
         if (this != &rhs)
         {
-            MemoryRaw::destructDeallocateMemory<T>(_rawPointer, _size);
+            for (uint32 index = 0; index < _size; ++index)
+            {
+                MemoryRaw::destroy<T>(_rawPointer[index]);
+            }
+            MemoryRaw::deallocateMemory<T>(_rawPointer);
 
             _rawPointer = rhs._rawPointer;
             _capacity = std::move(rhs._capacity);

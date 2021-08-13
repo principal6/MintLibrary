@@ -91,9 +91,7 @@ namespace mint
 
         template<typename T>
         // dtor 를 호출하지 않고 메모리만 해제한다!!
-        // dtor 를 호출해야 한다면
-        //  (1) 이 함수 호출 전에 명시적으로 dtor 를 호출한다.
-        //  (2) destructDeallocateMemory() 를 사용한다.
+        // 이 함수 호출 전에 명시적으로 dtor 를 호출했어야 한다!
         MINT_INLINE void deallocateMemory(T*& rawPointer) noexcept
         {
             if (rawPointer == nullptr)
@@ -102,32 +100,6 @@ namespace mint
             }
 
             MINT_FREE(rawPointer);
-        }
-
-        template<typename T>
-        // size 만큼 dtor 를 호출해준다!!!
-        // dtor 호출을 원하지 않으면 deallocateMemory() 를 사용한다.
-        MINT_INLINE void destructDeallocateMemory(T*& rawPointer, const uint32 size) noexcept
-        {
-            if (rawPointer == nullptr)
-            {
-                return;
-            }
-
-            if constexpr (isConstructible<T>() == true)
-            {
-                // deallocateMemory() 에서는 ctor 가 호출된 element 에 대해 반드시 destroy() 가 호출되어야 한다.
-                for (uint32 index = 0; index < size; ++index)
-                {
-                    destroy<T>(rawPointer[index]);
-                }
-
-                MINT_FREE(rawPointer);
-            }
-            else
-            {
-                static_assert(false, "Not constructible type!!!");
-            }
         }
 
         template<typename T>

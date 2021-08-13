@@ -48,9 +48,6 @@ namespace mint
         template<typename T>
         void    deallocateMemory(T*& rawPointer) noexcept;
 
-        template<typename T>
-        void    destructDeallocateMemory(T*& rawPointer, const uint32 size) noexcept;
-
 
         template<typename T>
         void    construct(T& at) noexcept;

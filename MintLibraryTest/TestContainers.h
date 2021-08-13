@@ -40,6 +40,28 @@ namespace mint
             ~Teller() { MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Dtor", _i); }
 
         public:
+            Teller& operator=(const Teller& rhs)
+            { 
+                if (this != &rhs)
+                {
+                    ::strcpy_s(_className, rhs._className); 
+                    _i = rhs._i; 
+                    MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, kTellerAtString[static_cast<uint32>(TellerAt::CopyAssignment)], _i);
+                }
+                return *this;
+            }
+            Teller& operator=(Teller&& rhs) noexcept 
+            {
+                if (this != &rhs)
+                {
+                    ::strcpy_s(_className, rhs._className);
+                    _i = rhs._i; rhs._i = 0; 
+                    MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, kTellerAtString[static_cast<uint32>(TellerAt::MoveAssignment)], _i);
+                }
+                return *this;
+            }
+
+        public:
             void tell(const TellerAt tellerAt) { MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, kTellerAtString[static_cast<uint32>(tellerAt)], _i); }
 
         private:
@@ -53,36 +75,16 @@ namespace mint
             static constexpr const char* const kClassName = "Notable";
 
         public:
-            Notable() : _i{ 111 }, _teller{ kClassName, TellerAt::DefaultCtor, _i } { __noop; }
+            Notable() : _i{ 0 }, _teller{ kClassName, TellerAt::DefaultCtor, _i } { __noop; }
             Notable(const int32 i) : _i{ i }, _teller{ kClassName, TellerAt::CtorWithInitialization, _i } { __noop; }
-            Notable(const Notable& rhs) : _i{ rhs._i }, _teller{ rhs._teller } { __noop; }
-            Notable(Notable&& rhs) noexcept : _i{ rhs._i }, _teller{ std::move(rhs._teller) } { rhs._i = 0; }
+            Notable(const Notable& rhs) = default;
+            Notable(Notable&& rhs) noexcept = default;
             ~Notable() = default;
 
         public:
-            Notable& operator=(const Notable& rhs)
-            {
-                _teller.tell(TellerAt::CopyAssignment);
-
-                if (this != &rhs)
-                {
-                    _i = rhs._i;
-                }
-                return *this;
-            }
-
-            Notable& operator=(Notable&& rhs) noexcept
-            {
-                _teller.tell(TellerAt::MoveAssignment);
-
-                if (this != &rhs)
-                {
-                    _i = rhs._i;
-                    rhs._i = 0;
-                }
-                return *this;
-            }
-
+            Notable& operator=(const Notable& rhs) = default;
+            Notable& operator=(Notable&& rhs) noexcept = default;
+            
         private:
             int32   _i;
             Teller  _teller;
@@ -97,21 +99,12 @@ namespace mint
             Uncopiable() : _teller{ kClassName, TellerAt::DefaultCtor } { __noop; }
             Uncopiable(const int32 i) : _teller{ kClassName, TellerAt::CtorWithInitialization }, _notable{ i } { __noop; }
             Uncopiable(const Uncopiable& rhs) = delete;
-            Uncopiable(Uncopiable&& rhs) noexcept : _teller{ kClassName, TellerAt::MoveCtor }, _notable{ std::move(rhs._notable) } { __noop; }
+            Uncopiable(Uncopiable&& rhs) noexcept = default;
             ~Uncopiable() = default;
 
         public:
             Uncopiable& operator=(const Uncopiable& rhs) = delete;
-            Uncopiable& operator=(Uncopiable&& rhs) noexcept
-            {
-                _teller.tell(TellerAt::MoveAssignment);
-
-                if (this != &rhs)
-                {
-                    _notable = std::move(rhs._notable);
-                }
-                return *this;
-            };
+            Uncopiable& operator=(Uncopiable&& rhs) noexcept = default;
 
         private:
             Teller  _teller;
@@ -126,21 +119,12 @@ namespace mint
         public:
             Unmovable() : _teller{ kClassName, TellerAt::DefaultCtor } { __noop; }
             Unmovable(const int32 i) : _teller{ kClassName, TellerAt::CtorWithInitialization }, _notable{ i } { __noop; }
-            Unmovable(const Unmovable& rhs) : _teller{ kClassName, TellerAt::CopyCtor }, _notable{ rhs._notable } { __noop; }
+            Unmovable(const Unmovable& rhs) = default;
             Unmovable(Unmovable&& rhs) noexcept = delete;
             ~Unmovable() = default;
 
         public:
-            Unmovable& operator=(const Unmovable& rhs)
-            {
-                _teller.tell(TellerAt::CopyAssignment);
-
-                if (this != &rhs)
-                {
-                    _notable = rhs._notable;
-                }
-                return *this;
-            };
+            Unmovable& operator=(const Unmovable& rhs) = default;
             Unmovable& operator=(Unmovable&& rhs) noexcept = delete;
 
         private:
