@@ -42,6 +42,9 @@
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\InputContext.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\BinaryFile.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

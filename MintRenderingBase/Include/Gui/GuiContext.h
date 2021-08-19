@@ -557,7 +557,7 @@ namespace mint
         private:
             wchar_t                                             _wcharInput;
             wchar_t                                             _wcharInputCandidate;
-            mint::Window::EventData::KeyCode                    _keyCode;
+            mint::Platform::KeyCode                             _keyCode;
 #pragma endregion
 
         private:

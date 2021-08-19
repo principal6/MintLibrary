@@ -5,8 +5,6 @@
 #define MINT_WINDOWS_WINDOW_H
 
 
-//#include <Windows.h>
-
 #include <MintPlatform/Include/IWindow.h>
 
 #include <MintContainer/Include/Vector.h>
@@ -66,10 +64,10 @@ namespace mint
             struct WparamKeyCodePair
             {
                 WparamKeyCodePair() = default;
-                WparamKeyCodePair(const WPARAM wParam, const EventData::KeyCode keyCode);
+                WparamKeyCodePair(const WPARAM wParam, const Platform::KeyCode keyCode);
 
-                WPARAM                _wParam;
-                EventData::KeyCode    _keyCode;
+                WPARAM              _wParam;
+                Platform::KeyCode   _keyCode;
             };
 
         public:
@@ -82,28 +80,27 @@ namespace mint
 
         private:
             void                                buildWparamKeyCodePairArray() noexcept;
-            EventData::KeyCode                  convertWparamToKeyCode(const WPARAM wParam) const noexcept;
-            WPARAM                              convertKeyCodeToWparam(const EventData::KeyCode keyCode) const noexcept;
+            Platform::KeyCode                   convertWparamToKeyCode(const WPARAM wParam) const noexcept;
+            WPARAM                              convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
 
         public:
             virtual bool                        isRunning() noexcept override;
 
         public:
-            virtual void                        setSize(const Int2& newSize) override final;
+            virtual void                        setSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
+
+        private:
             void                                setSizeData(const Int2& newSize);
+
+        public:
             virtual void                        setPosition(const Int2& newPosition) override final;
             HWND                                getHandle() const noexcept;
 
         public:
             virtual void                        setCursorType(const CursorType cursorType) noexcept override final;
-            void                                setCursorTypeIfMouseInClient(const CursorType cursorType, const mint::Float2& mousePosition) noexcept;
         
         public:
             virtual const uint32                getCaretBlinkIntervalMs() const noexcept override final;
-            virtual const bool                  isKeyDown(const EventData::KeyCode keyCode) const noexcept override final;
-            virtual const bool                  isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept override final;
-            virtual const bool                  isMouseDown(const MouseButton mouseButton) const noexcept override final;
-            virtual const bool                  isMouseDownFirst(const MouseButton mouseButton) const noexcept override final;
 
         public:
             virtual void                        textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;

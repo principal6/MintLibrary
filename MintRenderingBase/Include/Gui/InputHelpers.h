@@ -43,9 +43,9 @@ namespace mint
             void                                setButtonDownPosition(const mint::Float2& position) noexcept;
             void                                setButtonDownPositionCopy(const mint::Float2& position) noexcept;
             void                                setButtonUpPosition(const mint::Float2& position) noexcept;
-            void                                setButtonDown(const mint::Window::MouseButton mouseButton) noexcept;
-            void                                setButtonUp(const mint::Window::MouseButton mouseButton) noexcept;
-            void                                setDoubleClicked(const mint::Window::MouseButton mouseButton) noexcept;
+            void                                setButtonDown(const mint::Platform::MouseButton mouseButton) noexcept;
+            void                                setButtonUp(const mint::Platform::MouseButton mouseButton) noexcept;
+            void                                setDoubleClicked(const mint::Platform::MouseButton mouseButton) noexcept;
 
         private:
             void                                calculateMouseDragDelta() noexcept;
@@ -55,10 +55,10 @@ namespace mint
             const mint::Float2&                 getButtonDownPosition() const noexcept;
             const mint::Float2&                 getButtonUpPosition() const noexcept;
             const mint::Float2&                 getMouseDragDelta() const noexcept;
-            const bool                          isButtonDown(const mint::Window::MouseButton mouseButton) const noexcept;
-            const bool                          isButtonDownThisFrame(const mint::Window::MouseButton mouseButton) const noexcept;
-            const bool                          isButtonDownUp(const mint::Window::MouseButton mouseButton) const noexcept;
-            const bool                          isDoubleClicked(const mint::Window::MouseButton mouseButton) const noexcept;
+            const bool                          isButtonDown(const mint::Platform::MouseButton mouseButton) const noexcept;
+            const bool                          isButtonDownThisFrame(const mint::Platform::MouseButton mouseButton) const noexcept;
+            const bool                          isButtonDownUp(const mint::Platform::MouseButton mouseButton) const noexcept;
+            const bool                          isDoubleClicked(const mint::Platform::MouseButton mouseButton) const noexcept;
             const bool                          isCursor(const mint::Window::CursorType cursorType) const noexcept;
 
         private:
@@ -67,7 +67,7 @@ namespace mint
             mint::Float2                        _mouseDownPositionCopy;
             mint::Float2                        _mouseUpPosition;
             mint::Float2                        _mouseDragDelta;
-            PerButtonStates                     _perButtonStates[mint::Window::getMouseButtonCount()];
+            PerButtonStates                     _perButtonStates[mint::Platform::getMouseButtonCount()];
 
         public:
             mutable float                       _mouseWheel;
@@ -99,7 +99,7 @@ namespace mint
 #pragma region Keyboard
         public:
             static void             processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::RenderingBase::ShapeFontRendererContext& rendererContext, 
-                ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Window::EventData::KeyCode& keyCode,
+                ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
                 wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
 
@@ -118,7 +118,7 @@ namespace mint
 
 #pragma region Keyboard - Caret movements
         public:
-            static void             processKeyCodeCaretMovements(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Window::EventData::KeyCode keyCode, 
+            static void             processKeyCodeCaretMovements(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
                 ControlData& controlData, std::wstring& outText) noexcept;
         
         public:

@@ -217,6 +217,7 @@ const bool testWindow()
     graphicDevice.initialize(&window);
 
     mint::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+    Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
     Rendering::MeshRenderer meshRenderer{ &graphicDevice };
     meshRenderer.initialize();
@@ -256,55 +257,55 @@ const bool testWindow()
 
         // Events
         {
+            inputContext.processEvents();
+
             guiContext.processEvent(&window);
 
-            if (window.hasEvent() == true)
             {
-                EventData event = window.popEvent();
-                if (event._type == EventType::KeyDown)
+                if (inputContext.isKeyPressed() == true)
                 {
-                    if (event._value.isKeyCode(EventData::KeyCode::Enter) == true)
+                    if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
                     {
                         graphicDevice.getShaderPool().recompileAllShaders();
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Num1) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
                     {
                         graphicDevice.useSolidCullBackRasterizer();
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Num2) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
                     {
                         graphicDevice.useWireFrameCullBackRasterizer();
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Num3) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
                     {
                         graphicDevice.useWireFrameNoCullingRasterizer();
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Num4) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
                     {
                         mint::Rendering::MeshComponent* const meshComponent = static_cast<mint::Rendering::MeshComponent*>(testObject->getComponent(mint::Rendering::ObjectComponentType::MeshComponent));
                         meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Num5) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
                     {
                         mint::Rendering::MeshComponent* const meshComponent = static_cast<mint::Rendering::MeshComponent*>(testObject->getComponent(mint::Rendering::ObjectComponentType::MeshComponent));
                         meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
                     }
-                    else if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
+                    else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
                     {
                         testCameraObject->setIsBoostMode(true);
                     }
                 }
-                else if (event._type == EventType::KeyUp)
+                else if (inputContext.isKeyReleased() == true)
                 {
-                    if (event._value.isKeyCode(EventData::KeyCode::Shift) == true)
+                    if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
                     {
                         testCameraObject->setIsBoostMode(false);
                     }
                 }
-                else if (event._type == EventType::MouseWheel)
+                else if (inputContext.isMouseWheelScrolled() == true)
                 {
-                    const float mouseWheel = event._value.getMouseWheel();
-                    if (0.0f < mouseWheel)
+                    const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+                    if (0.0f < mouseWheelScroll)
                     {
                         testCameraObject->increaseMoveSpeed();
                     }
@@ -313,16 +314,16 @@ const bool testWindow()
                         testCameraObject->decreaseMoveSpeed();
                     }
                 }
-                else if (event._type == EventType::MouseMoveDelta)
+                else if (inputContext.isMousePointerMoved() == true)
                 {
-                    if (window.isMouseDown(mint::Window::MouseButton::Right) == true)
+                    if (inputContext.isMouseButtonDown(mint::Platform::MouseButton::Right) == true)
                     {
-                        const mint::Float2& mouseDeltaPosition = event._value.getAndClearMouseDeltaPosition();
+                        const mint::Float2& mouseDeltaPosition = inputContext.getMouseDeltaPosition();
                         testCameraObject->rotatePitch(mouseDeltaPosition._y);
                         testCameraObject->rotateYaw(mouseDeltaPosition._x);
                     }
                 }
-                else if (event._type == EventType::WindowResized)
+                else if (window.isResized() == true)
                 {
                     graphicDevice.updateScreenSize();
                     guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
@@ -334,32 +335,32 @@ const bool testWindow()
         // Dynamic Keyboard Inputs
         if (guiContext.isFocusedControlInputBox() == false)
         {
-            if (window.isKeyDown(EventData::KeyCode::Q) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::Q) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Upward);
             }
 
-            if (window.isKeyDown(EventData::KeyCode::E) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::E) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Downward);
             }
 
-            if (window.isKeyDown(EventData::KeyCode::W) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::W) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Forward);
             }
 
-            if (window.isKeyDown(EventData::KeyCode::S) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::S) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Backward);
             }
 
-            if (window.isKeyDown(EventData::KeyCode::A) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::A) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Leftward);
             }
 
-            if (window.isKeyDown(EventData::KeyCode::D) == true)
+            if (inputContext.isKeyDown(Platform::KeyCode::D) == true)
             {
                 testCameraObject->move(mint::Rendering::CameraObject::MoveDirection::Rightward);
             }

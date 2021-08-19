@@ -8,6 +8,8 @@
 
 #include <MintRenderingBase/Include/Gui/ControlData.hpp>
 
+#include <MintPlatform/Include/InputContext.h>
+
 #include <MintLibrary/Include/Profiler.h>
 
 
@@ -25,7 +27,7 @@ namespace mint
 
         MINT_INLINE void MouseStates::resetPerFrame() noexcept
         {
-            for (uint32 buttonIndex = 0; buttonIndex < mint::Window::getMouseButtonCount(); buttonIndex++)
+            for (uint32 buttonIndex = 0; buttonIndex < mint::Platform::getMouseButtonCount(); buttonIndex++)
             {
                 _perButtonStates[buttonIndex].resetPerFrame();
             }
@@ -57,13 +59,13 @@ namespace mint
             _mouseUpPosition = position;
         }
 
-        MINT_INLINE void MouseStates::setButtonDown(const mint::Window::MouseButton mouseButton) noexcept
+        MINT_INLINE void MouseStates::setButtonDown(const mint::Platform::MouseButton mouseButton) noexcept
         {
             _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown = true;
             _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownThisFrame = true;
         }
 
-        MINT_INLINE void MouseStates::setButtonUp(const mint::Window::MouseButton mouseButton) noexcept
+        MINT_INLINE void MouseStates::setButtonUp(const mint::Platform::MouseButton mouseButton) noexcept
         {
             if (_perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown == true)
             {
@@ -72,7 +74,7 @@ namespace mint
             _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown = false;
         }
 
-        MINT_INLINE void MouseStates::setDoubleClicked(const mint::Window::MouseButton mouseButton) noexcept
+        MINT_INLINE void MouseStates::setDoubleClicked(const mint::Platform::MouseButton mouseButton) noexcept
         {
             _perButtonStates[static_cast<uint32>(mouseButton)]._isDoubleClicked = true;
         }
@@ -102,22 +104,22 @@ namespace mint
             return _mouseDragDelta;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDown(const mint::Window::MouseButton mouseButton) const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDown(const mint::Platform::MouseButton mouseButton) const noexcept
         {
             return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDown;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDownThisFrame(const mint::Window::MouseButton mouseButton) const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDownThisFrame(const mint::Platform::MouseButton mouseButton) const noexcept
         {
             return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownThisFrame;
         }
 
-        MINT_INLINE const bool MouseStates::isButtonDownUp(const mint::Window::MouseButton mouseButton) const noexcept
+        MINT_INLINE const bool MouseStates::isButtonDownUp(const mint::Platform::MouseButton mouseButton) const noexcept
         {
             return _perButtonStates[static_cast<uint32>(mouseButton)]._isButtonDownUp;
         }
 
-        MINT_INLINE const bool MouseStates::isDoubleClicked(const mint::Window::MouseButton mouseButton) const noexcept
+        MINT_INLINE const bool MouseStates::isDoubleClicked(const mint::Platform::MouseButton mouseButton) const noexcept
         {
             return _perButtonStates[static_cast<uint32>(mouseButton)]._isDoubleClicked;
         }
@@ -158,7 +160,7 @@ namespace mint
             const float positionInText = mouseStates.getPosition()._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
             const uint16 textLength = static_cast<uint16>(outText.length());
             const uint32 newCaretAt = rendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
-            if (mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true)
+            if (mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true)
             {
                 caretAt = newCaretAt;
 
@@ -180,12 +182,13 @@ namespace mint
         }
 
         inline void InputBoxHelpers::processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::RenderingBase::ShapeFontRendererContext& rendererContext,
-            ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Window::EventData::KeyCode& keyCode,
+            ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
             wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result) noexcept
         {
+            Platform::InputContext& inputContext = Platform::InputContext::getInstance();
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            const bool isShiftKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Shift);
-            const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
+            const bool isShiftKeyDown = inputContext.isKeyDown(mint::Platform::KeyCode::Shift);
+            const bool isControlKeyDown = inputContext.isKeyDown(mint::Platform::KeyCode::Control);
             const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
             if (32 <= wcharInputCandidate)
             {
@@ -227,16 +230,16 @@ namespace mint
                 mint::Gui::InputBoxHelpers::refreshCaret(controlData);
 
                 // Selection
-                if (isShiftKeyDown == true && keyCode != mint::Window::EventData::KeyCode::NONE)
+                if (isShiftKeyDown == true && keyCode != mint::Platform::KeyCode::NONE)
                 {
                     mint::Gui::InputBoxHelpers::updateSelection(oldCaretAt, caretAt, controlData);
                 }
             }
 
             if (isShiftKeyDown == false && isControlKeyDown == false &&
-                keyCode != mint::Window::EventData::KeyCode::NONE &&
-                keyCode != mint::Window::EventData::KeyCode::Control &&
-                keyCode != mint::Window::EventData::KeyCode::Alt)
+                keyCode != mint::Platform::KeyCode::NONE &&
+                keyCode != mint::Platform::KeyCode::Control &&
+                keyCode != mint::Platform::KeyCode::Alt)
             {
                 mint::Gui::InputBoxHelpers::deselect(controlData);
             }
@@ -265,7 +268,8 @@ namespace mint
 
         MINT_INLINE void InputBoxHelpers::processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, std::wstring& outText) noexcept
         {
-            const bool isControlKeyDown = window->isKeyDown(mint::Window::EventData::KeyCode::Control);
+            Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+            const bool isControlKeyDown = inputContext.isKeyDown(mint::Platform::KeyCode::Control);
             if (asciiCode == VK_BACK) // BackSpace
             {
                 mint::Gui::InputBoxHelpers::eraseBefore(controlData, outText);
@@ -356,26 +360,26 @@ namespace mint
             }
         }
 
-        MINT_INLINE void InputBoxHelpers::processKeyCodeCaretMovements(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Window::EventData::KeyCode keyCode,
+        MINT_INLINE void InputBoxHelpers::processKeyCodeCaretMovements(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
             ControlData& controlData, std::wstring& outText) noexcept
         {
-            if (keyCode == mint::Window::EventData::KeyCode::Left)
+            if (keyCode == mint::Platform::KeyCode::Left)
             {
                 mint::Gui::InputBoxHelpers::moveCaretToPrev(controlData);
             }
-            else if (keyCode == mint::Window::EventData::KeyCode::Right)
+            else if (keyCode == mint::Platform::KeyCode::Right)
             {
                 mint::Gui::InputBoxHelpers::moveCaretToNext(controlData, outText);
             }
-            else if (keyCode == mint::Window::EventData::KeyCode::Home)
+            else if (keyCode == mint::Platform::KeyCode::Home)
             {
                 mint::Gui::InputBoxHelpers::moveCaretToHead(controlData);
             }
-            else if (keyCode == mint::Window::EventData::KeyCode::End)
+            else if (keyCode == mint::Platform::KeyCode::End)
             {
                 mint::Gui::InputBoxHelpers::moveCaretToTail(rendererContext, controlData, outText);
             }
-            else if (keyCode == mint::Window::EventData::KeyCode::Delete)
+            else if (keyCode == mint::Platform::KeyCode::Delete)
             {
                 mint::Gui::InputBoxHelpers::eraseAfter(controlData, outText);
             }

@@ -11,6 +11,7 @@
 #include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
+#include <MintPlatform/Include/InputContext.h>
 
 #include <MintLibrary/Include/ScopedCpuProfiler.h>
 
@@ -189,7 +190,7 @@ namespace mint
 
         void GuiContext::ControlInteractionStates::resetPerFrameStates(const MouseStates& mouseStates) noexcept
         {
-            if (mouseStates.isButtonDownUp(mint::Window::MouseButton::Left) == true)
+            if (mouseStates.isButtonDownUp(mint::Platform::MouseButton::Left) == true)
             {
                 if (_pressedControlHashKey == 1)
                 {
@@ -256,7 +257,7 @@ namespace mint
             , _caretBlinkIntervalMs{ 0 }
             , _wcharInput{ L'\0'}
             , _wcharInputCandidate{ L'\0'}
-            , _keyCode{ mint::Window::EventData::KeyCode::NONE }
+            , _keyCode{ mint::Platform::KeyCode::NONE }
         {
             setNamedColor(NamedColor::NormalState, mint::RenderingBase::Color(45, 47, 49));
             setNamedColor(NamedColor::HoverState, getNamedColor(NamedColor::NormalState).addedRgb(0.25f));
@@ -333,60 +334,60 @@ namespace mint
             // 초기화
             _mouseStates.resetPerFrame();
             
-            if (window->hasEvent() == true)
+            Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+            if (inputContext.isMousePointerMoved() == true)
             {
-                const mint::Window::EventData& eventData = window->peekEvent();
-                if (eventData._type == mint::Window::EventType::MouseMove)
-                {
-                    _mouseStates.setPosition(eventData._value.getMousePosition());
-                }
-                else if (eventData._type == mint::Window::EventType::MouseDown)
-                {
-                    MINT_LOG("김장원", "Event: MouseDown");
+                _mouseStates.setPosition(inputContext.getMousePosition());
+            }
+            else if (inputContext.isMouseButtonPressed() == true)
+            {
+                const Platform::MouseState mouseState = inputContext.getMouseState();
+                MINT_LOG("김장원", "Event: Mouse Pressed");
 
-                    _mouseStates.setButtonDown(eventData._value.getMouseButton());
-                    _mouseStates.setButtonDownPosition(eventData._value.getMousePosition());
-                }
-                else if (eventData._type == mint::Window::EventType::MouseUp)
-                {
-                    MINT_LOG("김장원", "Event: MouseUp");
+                _mouseStates.setButtonDown(mouseState._pressedButton);
+                _mouseStates.setButtonDownPosition(inputContext.getMousePosition());
+            }
+            else if (inputContext.isMouseButtonReleased() == true)
+            {
+                const Platform::MouseState mouseState = inputContext.getMouseState();
+                MINT_LOG("김장원", "Event: Mouse Released");
 
-                    if (_taskWhenMouseUp.isSet())
-                    {
-                        updateDockDatum(_taskWhenMouseUp.getUpdateDockDatum());
-                    }
+                if (_taskWhenMouseUp.isSet())
+                {
+                    updateDockDatum(_taskWhenMouseUp.getUpdateDockDatum());
+                }
 
-                    _mouseStates.setButtonUp(eventData._value.getMouseButton());
-                    _mouseStates.setButtonUpPosition(eventData._value.getMousePosition());
-                }
-                else if (eventData._type == mint::Window::EventType::MouseWheel)
-                {
-                    _mouseStates._mouseWheel = eventData._value.getMouseWheel();
-                }
-                else if (eventData._type == mint::Window::EventType::MouseDoubleClicked)
-                {
-                    _mouseStates.setDoubleClicked(eventData._value.getMouseButton());
-                    _mouseStates.setButtonDownPosition(eventData._value.getMousePosition());
-                }
-                else if (eventData._type == mint::Window::EventType::KeyStroke)
-                {
-                    _wcharInputCandidate = L'\0';
+                _mouseStates.setButtonUp(mouseState._releasedButton);
+                _mouseStates.setButtonUpPosition(inputContext.getMousePosition());
+            }
+            else if (inputContext.isMouseWheelScrolled() == true)
+            {
+                _mouseStates._mouseWheel = inputContext.getMouseWheelScroll();
+            }
+            else if (inputContext.isMouseButtonDoubleClicked() == true)
+            {
+                const Platform::MouseState mouseState = inputContext.getMouseState();
+                _mouseStates.setDoubleClicked(mouseState._doubleClickedButton);
+                _mouseStates.setButtonDownPosition(inputContext.getMousePosition());
+            }
+            else if (inputContext.isKeyInputCharacter() == true)
+            {
+                _wcharInputCandidate = L'\0';
 
-                    _wcharInput = eventData._value.getInputWchar();
-                }
-                else if (eventData._type == mint::Window::EventType::KeyStrokeCandidate)
+                _wcharInput = inputContext.getKeyboardState()._character;
+            }
+            else if (inputContext.isKeyInputCharacterCandidate() == true)
+            {
+                _wcharInputCandidate = inputContext.getKeyboardState()._characterCandidate;
+            }
+            else if (inputContext.isKeyPressed() == true)
+            {
+                _keyCode = inputContext.getKeyboardState()._pressedKeyCode;
+
+                if (isFocusedControlInputBox() == true && mint::Platform::isKeyCodeAlnum(_keyCode) == true)
                 {
-                    _wcharInputCandidate = eventData._value.getInputWchar();
-                }
-                else if (eventData._type == mint::Window::EventType::KeyDown)
-                {
-                    _keyCode = eventData._value.getKeyCode();
-                    
-                    if (isFocusedControlInputBox() == true && mint::Window::EventData::isKeyCodeAlnum(_keyCode) == true)
-                    {
-                        _keyCode = mint::Window::EventData::KeyCode::NONE;
-                        window->popEvent();
-                    }
+                    _keyCode = mint::Platform::KeyCode::NONE;
+                    //window->popEvent();
                 }
             }
 
@@ -1198,11 +1199,11 @@ namespace mint
             mint::Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
             TextBoxProcessInputResult result;
-            if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true)
+            if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true)
             {
                 mint::Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
             }
-            else if (_mouseStates.isDoubleClicked(mint::Window::MouseButton::Left) == true)
+            else if (_mouseStates.isDoubleClicked(mint::Platform::MouseButton::Left) == true)
             {
                 mint::Gui::InputBoxHelpers::selectAll(controlData, outText);
             }
@@ -1220,7 +1221,7 @@ namespace mint
 
             if (result._clearKeyCode == true)
             {
-                _keyCode = mint::Window::EventData::KeyCode::NONE;
+                _keyCode = mint::Platform::KeyCode::NONE;
             }
             if (result._clearWcharInput == true)
             {
@@ -1299,7 +1300,7 @@ namespace mint
             {
                 const mint::Window::IWindow* const window = _graphicDevice->getWindow();
                 TextBoxProcessInputResult result;
-                if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true)
+                if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true)
                 {
                     mint::Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
                 }
@@ -1317,7 +1318,7 @@ namespace mint
 
                 if (result._clearKeyCode == true)
                 {
-                    _keyCode = mint::Window::EventData::KeyCode::NONE;
+                    _keyCode = mint::Platform::KeyCode::NONE;
                 }
                 if (result._clearWcharInput == true)
                 {
@@ -1342,7 +1343,7 @@ namespace mint
             }
             else
             {
-                if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == true 
+                if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == true 
                     && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     const mint::Float2 dragDelta = _mouseStates.getMouseDragDelta();
@@ -2050,7 +2051,7 @@ namespace mint
                         const mint::Float2& dockSize = controlData.getDockSize(dockingMethodIter);
                         const mint::Float2& dockPosition = controlData.getDockPosition(dockingMethodIter);
 
-                        if (_mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true)
+                        if (_mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true)
                         {
                             if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, mint::Float2::kZero, dockSize) == true)
                             {
@@ -2376,7 +2377,7 @@ namespace mint
             {
                 if (controlData._needDoubleClickToFocus == true)
                 {
-                    if (_mouseStates.isDoubleClicked(mint::Window::MouseButton::Left) == true)
+                    if (_mouseStates.isDoubleClicked(mint::Platform::MouseButton::Left) == true)
                     {
                         _controlInteractionStates.setControlFocused(controlData);
                     }
@@ -2591,12 +2592,12 @@ namespace mint
 
             // Check new focus
             if (_draggedControlHashKey == 0 && _resizedControlHashKey == 0 && controlData._isFocusable == true &&
-                (_mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true
+                (_mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true
                     && (_controlInteractionStates.isControlPressed(controlData) == true || _controlInteractionStates.isControlClicked(controlData) == true)))
             {
                 if (controlData._needDoubleClickToFocus == true)
                 {
-                    if (_mouseStates.isDoubleClicked(mint::Window::MouseButton::Left) == true)
+                    if (_mouseStates.isDoubleClicked(mint::Platform::MouseButton::Left) == true)
                     {
                         // Focus entered
                         setControlFocused(controlData);
@@ -2722,8 +2723,8 @@ namespace mint
                 }
 
                 // Click Event 가 발생했을 때도 Pressed 상태 유지!
-                if (_mouseStates.isButtonDownUp(mint::Window::MouseButton::Left) == false 
-                    && _mouseStates.isButtonDown(mint::Window::MouseButton::Left) == false)
+                if (_mouseStates.isButtonDownUp(mint::Platform::MouseButton::Left) == false 
+                    && _mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == false)
                 {
                     _controlInteractionStates.resetPressIf(controlData);
                 }
@@ -2732,14 +2733,14 @@ namespace mint
                 const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
                 if (isMouseDownInInteractionArea == true)
                 {
-                    if (_mouseStates.isButtonDownThisFrame(mint::Window::MouseButton::Left) == true 
-                        || _mouseStates.isDoubleClicked(mint::Window::MouseButton::Left) == true)
+                    if (_mouseStates.isButtonDownThisFrame(mint::Platform::MouseButton::Left) == true 
+                        || _mouseStates.isDoubleClicked(mint::Platform::MouseButton::Left) == true)
                     {
                         setControlPressed(controlData);
                     }
 
                     // Clicked (only in interaction area)
-                    if (_mouseStates.isButtonDownUp(mint::Window::MouseButton::Left) == true)
+                    if (_mouseStates.isButtonDownUp(mint::Platform::MouseButton::Left) == true)
                     {
                         setControlClicked(controlData);
                     }
@@ -2989,7 +2990,7 @@ namespace mint
                 mint::Rect previewRect;
                 
                 // 초기화
-                if (_mouseStates.isButtonDownUp(mint::Window::MouseButton::Left) == false)
+                if (_mouseStates.isButtonDownUp(mint::Platform::MouseButton::Left) == false)
                 {
                     changeTargetControlData._lastDockingMethodCandidate = DockingMethod::COUNT;
                 }
@@ -3146,7 +3147,7 @@ namespace mint
                     }
                 }
 
-                if (_mouseStates.isButtonDownUp(mint::Window::MouseButton::Left) == true 
+                if (_mouseStates.isButtonDownUp(mint::Platform::MouseButton::Left) == true 
                     && changeTargetControlData._lastDockingMethodCandidate != DockingMethod::COUNT)
                 {
                     if (changeTargetControlData.isDocking() == false)
@@ -3284,7 +3285,7 @@ namespace mint
 
         const bool GuiContext::isControlBeingDragged(const ControlData& controlData) const noexcept
         {
-            if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == false)
+            if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == false)
             {
                 _draggedControlHashKey = 0;
                 return false;
@@ -3297,7 +3298,7 @@ namespace mint
                     return false;
                 }
 
-                if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == true
+                if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == true
                     && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData) == true
                     && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
@@ -3319,7 +3320,7 @@ namespace mint
 
         const bool GuiContext::isControlBeingResized(const ControlData& controlData) const noexcept
         {
-            if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == false)
+            if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == false)
             {
                 _resizedControlHashKey = 0;
                 return false;
@@ -3334,7 +3335,7 @@ namespace mint
 
                 mint::Window::CursorType newCursorType;
                 ResizingMask resizingMask;
-                if (_mouseStates.isButtonDown(mint::Window::MouseButton::Left) == true
+                if (_mouseStates.isButtonDown(mint::Platform::MouseButton::Left) == true
                     && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true
                     && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
                 {
@@ -3621,7 +3622,7 @@ namespace mint
                 _mouseStates._cursorType = mint::Window::CursorType::Arrow;
             }
 
-            _keyCode = mint::Window::EventData::KeyCode::NONE;
+            _keyCode = mint::Platform::KeyCode::NONE;
 
             // 다음 프레임에서 가장 먼저 렌더링 되는 것!!
             processDock(_rootControlData, getRendererContext(RendererContextLayer::Background));

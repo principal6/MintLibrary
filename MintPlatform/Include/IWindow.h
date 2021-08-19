@@ -6,7 +6,6 @@
 
 
 #include <string>
-#include <queue>
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
@@ -52,150 +51,6 @@ namespace mint
             Float3              _bgColor{ 1.0f, 1.0f, 1.0f };
         };
 
-        enum class EventType
-        {
-            None,
-            KeyDown,
-            KeyUp,
-            KeyStroke,
-            KeyStrokeCandidate,
-            MouseMove,
-            MouseMoveDelta,
-            MouseDown,
-            MouseUp,
-            MouseDoubleClicked,
-            MouseWheel,
-            WindowResized,
-        };
-
-        enum class MouseButton : int32
-        {
-            Left,
-            Middle,
-            Right,
-
-            COUNT,
-        };
-        MINT_INLINE constexpr uint32 getMouseButtonCount() noexcept
-        {
-            return static_cast<uint32>(MouseButton::COUNT);
-        }
-
-        struct EventData
-        {
-            enum class KeyCode : uint64
-            {
-                NONE,
-                Escape,
-                Enter,
-                Up,
-                Down,
-                Left,
-                Right,
-                Delete,
-                Home,
-                End,
-                Shift,
-                Control,
-                Alt,
-                A,
-                B,
-                C,
-                D,
-                E,
-                F,
-                G,
-                H,
-                I,
-                J,
-                K,
-                L,
-                M,
-                N,
-                O,
-                P,
-                Q,
-                R,
-                S,
-                T,
-                U,
-                V,
-                W,
-                X,
-                Y,
-                Z,
-                Num0,
-                Num1,
-                Num2,
-                Num3,
-                Num4,
-                Num5,
-                Num6,
-                Num7,
-                Num8,
-                Num9,
-            };
-            static const bool isKeyCodeAlnum(const KeyCode keyCode) noexcept
-            {
-                return (KeyCode::A <= keyCode && keyCode <= KeyCode::Num9);
-            }
-
-
-            class EventValue
-            {
-            public:
-                                                EventValue();
-                                                EventValue(const EventValue& rhs);
-                                                ~EventValue() = default;
-
-            public:
-                void                            setKeyCode(const EventData::KeyCode keyCode) noexcept;
-                const EventData::KeyCode        getKeyCode() const noexcept;
-                const bool                      isKeyCode(const EventData::KeyCode keyCode) const noexcept;
-
-                void                            setMousePosition(const mint::Float2& mousePosition) noexcept;
-                void                            setMouseDeltaPosition(const mint::Float2& mouseDeltaPosition) noexcept;
-                void                            setMouseButton(const MouseButton mouseButton) noexcept;
-                const mint::Float2&             getMousePosition() const noexcept;
-                const mint::Float2              getAndClearMouseDeltaPosition() const noexcept;
-                const MouseButton               getMouseButton() const noexcept;
-
-                void                            setMouseWheel(const float mouseWheel) noexcept;
-                const float                     getMouseWheel() const noexcept;
-        
-                void                            setInputWchar(const wchar_t inputWchar) noexcept;
-                const wchar_t                   getInputWchar() const noexcept;
-
-                void                            setSize(const mint::Float2& size) noexcept;
-                const mint::Float2&             getSize() const noexcept;
-
-            private:
-                union
-                {
-                    uint64                      _raw[3]{};
-                    struct
-                    {
-                        mint::Float2            _mousePosition;
-                        mutable mint::Float2    _mouseDeltaPosition;
-                        MouseButton             _mouseButton;
-                        float                   _mouseInfoF;
-                    };
-                    struct
-                    {
-                        KeyCode                 _keyCode;
-                        wchar_t                 _inputWchar;
-                    };
-                    struct
-                    {
-                        mint::Float2            _size;
-                    };
-                };
-            };
-
-            EventType                           _type{ EventType::None };
-            EventValue                          _value{};
-        };
-
         enum class CursorType
         {
             Arrow,
@@ -220,38 +75,16 @@ namespace mint
             virtual void                    destroy() noexcept { _isRunning = false; }
         
         public:
-            virtual bool                    isRunning() noexcept { return _isRunning; }
-            bool                            hasEvent() const noexcept { return (0 < _eventQueue.size()); }
-            void                            pushEvent(EventData&& eventData)
-            {
-                if (_eventQueue.size() == kEventQueueCapacity)
-                {
-                    // 처리되지 않은 Event 에 대해 손실 발생!!!
-                    _eventQueue.pop();
-                }
-                _eventQueue.push(std::move(eventData));
-            }
-            EventData                       popEvent()
-            {
-                EventData event = _eventQueue.front();
-                _eventQueue.pop();
-                return event;
-            }
-            const EventData&                peekEvent() const
-            {
-                return _eventQueue.front();
-            }
-            EventData&                      peekEvent()
-            {
-                return _eventQueue.front();
-            }
+            virtual bool                    isRunning() noexcept { resetPerFrameStates(); return _isRunning; }
+            void                            resetPerFrameStates() noexcept;
 
         public:
             CreationError                   getCreationError() const noexcept { return _creationError; }
 
         public:
-            virtual void                    setSize(const Int2& newSize) abstract;
+            virtual void                    setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true;  }
             const Int2&                     getSize() const noexcept { return _creationData._size; }
+            MINT_INLINE const bool          isResized() const noexcept { return _isWindowResized; }
             
             const Int2&                     getEntireSize() const noexcept { return _entireSize; }
 
@@ -264,11 +97,6 @@ namespace mint
             const CursorType                getCursorType() const noexcept { return _currentCursorType; }
 
             virtual const uint32            getCaretBlinkIntervalMs() const noexcept abstract;
-
-            virtual const bool              isKeyDown(const EventData::KeyCode keyCode) const noexcept abstract;
-            virtual const bool              isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept abstract;
-            virtual const bool              isMouseDown(const MouseButton mouseButton) const noexcept abstract;
-            virtual const bool              isMouseDownFirst(const MouseButton mouseButton) const noexcept abstract;
 
             virtual void                    textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
             virtual void                    textFromClipboard(std::wstring& outText) const noexcept abstract;
@@ -285,10 +113,7 @@ namespace mint
             CreationError                   _creationError;
 
         private:
-            std::queue<EventData>           _eventQueue;
-        
-        protected:
-            mint::Float2                    _previousMousePosition;
+            bool                            _isWindowResized;
 
         protected:
             CursorType                      _currentCursorType;

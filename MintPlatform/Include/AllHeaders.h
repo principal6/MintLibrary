@@ -12,6 +12,7 @@
 #include <MintPlatform/Include/BinaryFile.h>
 #include <MintPlatform/Include/TextFile.h>
 #include <MintPlatform/Include/FileUtil.h>
+#include <MintPlatform/Include/InputContext.h>
 
 
 #endif // !MINT_PLATFORM_ALL_HEADERS_H

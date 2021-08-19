@@ -6,6 +6,8 @@
 
 #include <MintMath/Include/Rect.h>
 
+#include <MintPlatform/Include/InputContext.h>
+
 #include <immdev.h>
 #include <windowsx.h>
 #include <hidusage.h>
@@ -56,7 +58,7 @@ namespace mint
         }
 
 
-        WindowsWindow::WparamKeyCodePair::WparamKeyCodePair(const WPARAM wParam, const EventData::KeyCode keyCode)
+        WindowsWindow::WparamKeyCodePair::WparamKeyCodePair(const WPARAM wParam, const Platform::KeyCode keyCode)
             : _wParam{ wParam }
             , _keyCode{ keyCode }
         {
@@ -139,7 +141,7 @@ namespace mint
             ::GetWindowRect(_hWnd, &rawWindowRect);
             _creationData._position.set(rawWindowRect.left, rawWindowRect.top);
 
-            setSize(_creationData._size);
+            setSize(_creationData._size, false);
 
             ::ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -185,57 +187,57 @@ namespace mint
         {
             _wParamKeyCodePairArray.clear();
             
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_ESCAPE, EventData::KeyCode::Escape));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RETURN, EventData::KeyCode::Enter));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_UP, EventData::KeyCode::Up));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DOWN, EventData::KeyCode::Down));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_LEFT, EventData::KeyCode::Left));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RIGHT, EventData::KeyCode::Right));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DELETE, EventData::KeyCode::Delete));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_HOME, EventData::KeyCode::Home));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_END, EventData::KeyCode::End));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SHIFT, EventData::KeyCode::Shift));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_CONTROL, EventData::KeyCode::Control));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_MENU, EventData::KeyCode::Alt));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('A', EventData::KeyCode::A));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('B', EventData::KeyCode::B));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('C', EventData::KeyCode::C));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('D', EventData::KeyCode::D));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('E', EventData::KeyCode::E));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('F', EventData::KeyCode::F));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('G', EventData::KeyCode::G));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('H', EventData::KeyCode::H));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('I', EventData::KeyCode::I));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('J', EventData::KeyCode::J));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('K', EventData::KeyCode::K));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('L', EventData::KeyCode::L));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('M', EventData::KeyCode::M));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('N', EventData::KeyCode::N));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('O', EventData::KeyCode::O));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('P', EventData::KeyCode::P));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Q', EventData::KeyCode::Q));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('R', EventData::KeyCode::R));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('S', EventData::KeyCode::S));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('T', EventData::KeyCode::T));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('U', EventData::KeyCode::U));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('V', EventData::KeyCode::V));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('W', EventData::KeyCode::W));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('X', EventData::KeyCode::X));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Y', EventData::KeyCode::Y));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Z', EventData::KeyCode::Z));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('0', EventData::KeyCode::Num0));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('1', EventData::KeyCode::Num1));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('2', EventData::KeyCode::Num2));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('3', EventData::KeyCode::Num3));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('4', EventData::KeyCode::Num4));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('5', EventData::KeyCode::Num5));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('6', EventData::KeyCode::Num6));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('7', EventData::KeyCode::Num7));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('8', EventData::KeyCode::Num8));
-            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('9', EventData::KeyCode::Num9));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_ESCAPE, Platform::KeyCode::Escape));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RETURN, Platform::KeyCode::Enter));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_UP, Platform::KeyCode::Up));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DOWN, Platform::KeyCode::Down));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_LEFT, Platform::KeyCode::Left));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RIGHT, Platform::KeyCode::Right));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DELETE, Platform::KeyCode::Delete));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_HOME, Platform::KeyCode::Home));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_END, Platform::KeyCode::End));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SHIFT, Platform::KeyCode::Shift));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_CONTROL, Platform::KeyCode::Control));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_MENU, Platform::KeyCode::Alt));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('A', Platform::KeyCode::A));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('B', Platform::KeyCode::B));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('C', Platform::KeyCode::C));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('D', Platform::KeyCode::D));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('E', Platform::KeyCode::E));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('F', Platform::KeyCode::F));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('G', Platform::KeyCode::G));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('H', Platform::KeyCode::H));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('I', Platform::KeyCode::I));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('J', Platform::KeyCode::J));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('K', Platform::KeyCode::K));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('L', Platform::KeyCode::L));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('M', Platform::KeyCode::M));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('N', Platform::KeyCode::N));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('O', Platform::KeyCode::O));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('P', Platform::KeyCode::P));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Q', Platform::KeyCode::Q));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('R', Platform::KeyCode::R));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('S', Platform::KeyCode::S));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('T', Platform::KeyCode::T));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('U', Platform::KeyCode::U));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('V', Platform::KeyCode::V));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('W', Platform::KeyCode::W));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('X', Platform::KeyCode::X));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Y', Platform::KeyCode::Y));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('Z', Platform::KeyCode::Z));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('0', Platform::KeyCode::Num0));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('1', Platform::KeyCode::Num1));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('2', Platform::KeyCode::Num2));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('3', Platform::KeyCode::Num3));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('4', Platform::KeyCode::Num4));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('5', Platform::KeyCode::Num5));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('6', Platform::KeyCode::Num6));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('7', Platform::KeyCode::Num7));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('8', Platform::KeyCode::Num8));
+            _wParamKeyCodePairArray.push_back(WparamKeyCodePair('9', Platform::KeyCode::Num9));
         }
 
-        EventData::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
+        Platform::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
         {
             const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
             for (uint32 iter = 0; iter < count; ++iter)
@@ -245,10 +247,10 @@ namespace mint
                     return _wParamKeyCodePairArray[iter]._keyCode;
                 }
             }
-            return EventData::KeyCode::NONE;
+            return Platform::KeyCode::NONE;
         }
 
-        WPARAM WindowsWindow::convertKeyCodeToWparam(const EventData::KeyCode keyCode) const noexcept
+        WPARAM WindowsWindow::convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept
         {
             const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
             for (uint32 iter = 0; iter < count; ++iter)
@@ -276,10 +278,17 @@ namespace mint
             return __super::isRunning();
         }
 
-        void WindowsWindow::setSize(const Int2& newSize)
+        void WindowsWindow::setSize(const Int2& newSize, const bool onlyUpdateData) noexcept
         {
+            __super::setSize(newSize, onlyUpdateData);
+
             setSizeData(newSize);
             
+            if (true == onlyUpdateData)
+            {
+                return;
+            }
+
             ::SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
         }
 
@@ -334,46 +343,6 @@ namespace mint
         const uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
         {
             return ::GetCaretBlinkTime();
-        }
-
-        const bool WindowsWindow::isKeyDown(const EventData::KeyCode keyCode) const noexcept
-        {
-            const WPARAM virtualKey = convertKeyCodeToWparam(keyCode);
-            return (0 < virtualKey) ? (::GetKeyState(static_cast<int>(virtualKey)) < 0) : false;
-        }
-
-        const bool WindowsWindow::isKeyDownFirst(const EventData::KeyCode keyCode) const noexcept
-        {
-            const WPARAM virtualKey = convertKeyCodeToWparam(keyCode);
-            return (0 < virtualKey) ? ((::GetAsyncKeyState(static_cast<int>(virtualKey)) & 1) != 0) : false;
-        }
-
-        const bool WindowsWindow::isMouseDown(const MouseButton mouseButton) const noexcept
-        {
-            WPARAM virtualKey = VK_LBUTTON;
-            if (mouseButton == MouseButton::Middle)
-            {
-                virtualKey = VK_MBUTTON;
-            }
-            else if (mouseButton == MouseButton::Right)
-            {
-                virtualKey = VK_RBUTTON;
-            }
-            return (::GetKeyState(static_cast<int>(virtualKey)) < 0);
-        }
-
-        const bool WindowsWindow::isMouseDownFirst(const MouseButton mouseButton) const noexcept
-        {
-            WPARAM virtualKey = VK_LBUTTON;
-            if (mouseButton == MouseButton::Middle)
-            {
-                virtualKey = VK_MBUTTON;
-            }
-            else if (mouseButton == MouseButton::Right)
-            {
-                virtualKey = VK_RBUTTON;
-            }
-            return ((::GetAsyncKeyState(static_cast<int>(virtualKey)) & 1) != 0);
         }
 
         void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
@@ -445,7 +414,8 @@ namespace mint
         {
             const mint::Float2& mousePosition = mint::Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
 
-            EventData eventData;
+            Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+            Platform::InputEvent inputEvent;
             switch (Msg)
             {
             case WM_DESTROY:
@@ -455,18 +425,18 @@ namespace mint
             }
             case WM_CHAR:
             {
-                eventData._type = EventType::KeyStroke;
-                eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Keyboard;
+                inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInput;
+                inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_IME_CHAR:
             {
-                eventData._type = EventType::KeyStroke;
-                eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Keyboard;
+                inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInput;
+                inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_IME_COMPOSITION:
@@ -481,82 +451,125 @@ namespace mint
                     
                     ::ImmReleaseContext(_hWnd, hInputMethodContext);
 
-                    eventData._type = EventType::KeyStrokeCandidate;
-                    eventData._value.setInputWchar(static_cast<wchar_t>(wParam));
-
-                    pushEvent(std::move(eventData));
+                    inputEvent._type = Platform::InputEventType::Keyboard;
+                    inputEvent._keyboardData._type = Platform::InputKeyboardEventType::CharacterInputCandidate;
+                    inputEvent._keyboardData._character = static_cast<wchar_t>(wParam);
+                    inputContext.pushInputEvent(inputEvent);
                     return 0;
                 }
                 break;
             }    
             case WM_KEYDOWN:
             {
-                eventData._type = EventType::KeyDown;
-                eventData._value.setKeyCode(convertWparamToKeyCode(wParam));
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Keyboard;
+                inputEvent._keyboardData._type = Platform::InputKeyboardEventType::KeyPressed;
+                inputEvent._keyboardData._keyCode = convertWparamToKeyCode(wParam);
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_KEYUP:
             {
-                eventData._type = EventType::KeyUp;
-                eventData._value.setKeyCode(convertWparamToKeyCode(wParam));
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Keyboard;
+                inputEvent._keyboardData._type = Platform::InputKeyboardEventType::KeyReleased;
+                inputEvent._keyboardData._keyCode = convertWparamToKeyCode(wParam);
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_MOUSEMOVE:
             {
-                eventData._type = EventType::MouseMove;
                 //int32 mouseInfo = 0;
                 //if (wParam == MK_LBUTTON)
                 //{
                 //    mouseInfo = 1;
                 //}
-                eventData._value.setMousePosition(mousePosition);
-                _previousMousePosition = mousePosition;
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMoved;
+                inputEvent._mouseData._position = mousePosition;
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_LBUTTONDOWN:
             {
-                eventData._type = EventType::MouseDown;
-                eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(MouseButton::Left);
-                _previousMousePosition = mousePosition;
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
+                inputEvent._mouseData._button = Platform::MouseButton::Left;
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_LBUTTONUP:
             {
-                eventData._type = EventType::MouseUp;
-                eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(MouseButton::Left);
-                _previousMousePosition = mousePosition;
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
+                inputEvent._mouseData._button = Platform::MouseButton::Left;
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_LBUTTONDBLCLK:
             {
-                eventData._type = EventType::MouseDoubleClicked;
-                eventData._value.setMousePosition(mousePosition);
-                eventData._value.setMouseButton(MouseButton::Left);
-                _previousMousePosition = mousePosition;
-
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
+                inputEvent._mouseData._button = Platform::MouseButton::Left;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_MBUTTONDOWN:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
+                inputEvent._mouseData._button = Platform::MouseButton::Middle;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_MBUTTONUP:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
+                inputEvent._mouseData._button = Platform::MouseButton::Middle;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_MBUTTONDBLCLK:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
+                inputEvent._mouseData._button = Platform::MouseButton::Middle;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_RBUTTONDOWN:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonPressed;
+                inputEvent._mouseData._button = Platform::MouseButton::Right;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_RBUTTONUP:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonReleased;
+                inputEvent._mouseData._button = Platform::MouseButton::Right;
+                inputContext.pushInputEvent(inputEvent);
+                return 0;
+            }
+            case WM_RBUTTONDBLCLK:
+            {
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::ButtonDoubleClicked;
+                inputEvent._mouseData._button = Platform::MouseButton::Right;
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_MOUSEWHEEL:
             {
-                WORD fwKeys = GET_KEYSTATE_WPARAM(wParam);
-                eventData._type = EventType::MouseWheel;
+                //const WORD fwKeys = GET_KEYSTATE_WPARAM(wParam);
                 //(fwKeys & MK_MBUTTON) ? 1 : 0;
-                eventData._value.setMouseWheel(static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA);
-                eventData._value.setMousePosition(mousePosition);
-                _previousMousePosition = mousePosition;
 
-                pushEvent(std::move(eventData));
+                inputEvent._type = Platform::InputEventType::Mouse;
+                inputEvent._mouseData._type = Platform::InputMouseEventType::WheelScrolled;
+                inputEvent._mouseData._wheelScroll = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wParam)) / WHEEL_DELTA;
+                inputEvent._mouseData._position = mousePosition;
+                inputContext.pushInputEvent(inputEvent);
                 return 0;
             }
             case WM_INPUT:
@@ -570,11 +583,10 @@ namespace mint
                     const RAWMOUSE& rawMouse = rawInput.data.mouse;
                     if ((rawMouse.usFlags & MOUSE_MOVE_RELATIVE) == MOUSE_MOVE_RELATIVE)
                     {
-                        eventData._type = EventType::MouseMoveDelta;
-
-                        eventData._value.setMouseDeltaPosition(mint::Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY)));
-
-                        pushEvent(std::move(eventData));
+                        inputEvent._type = Platform::InputEventType::Mouse;
+                        inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMovedDelta;
+                        inputEvent._mouseData._position = mint::Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY));
+                        inputContext.pushInputEvent(inputEvent);
                     }
                 }
                 return 0;
@@ -582,11 +594,7 @@ namespace mint
             case WM_SIZE:
             {
                 const mint::Int2 size{ LOWORD(lParam), HIWORD(lParam) };
-                setSizeData(size);
-                
-                eventData._type = EventType::WindowResized;
-                eventData._value.setSize(mint::Float2(size));
-                pushEvent(std::move(eventData));
+                setSize(size, true);
                 return 0;
             }
             default:
