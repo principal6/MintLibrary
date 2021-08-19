@@ -52,26 +52,30 @@ namespace mint
             T* temp = MemoryRaw::allocateMemory<T>(_size);
             if (_headAt < _tailAt)
             {
-                MemoryRaw::moveMemory(temp, &_rawPointer[_headAt], _size);
+                MemoryRaw::moveMemory<T>(temp, &_rawPointer[_headAt], _size);
             }
             else
             {
                 // Head part
                 const uint32 headPartLength = _capacity - _headAt;
-                MemoryRaw::moveMemory(&temp[0], &_rawPointer[_headAt], headPartLength);
+                MemoryRaw::moveMemory<T>(&temp[0], &_rawPointer[_headAt], headPartLength);
 
                 // Tail part
                 if (headPartLength < _size)
                 {
-                    MemoryRaw::moveMemory(&temp[headPartLength], &_rawPointer[0], _tailAt + 1);
+                    MemoryRaw::moveMemory<T>(&temp[headPartLength], &_rawPointer[0], _tailAt + 1);
                 }
             }
 
             MemoryRaw::deallocateMemory<T>(_rawPointer);
             _rawPointer = MemoryRaw::allocateMemory<T>(capacity);
 
-            MemoryRaw::moveMemory(_rawPointer, temp, _size);
+            MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
             MemoryRaw::deallocateMemory<T>(temp);
+
+            // Reset head and tail position!!!
+            _headAt = 0;
+            _tailAt = _size - 1;
         }
 
         _capacity = capacity;
@@ -128,15 +132,17 @@ namespace mint
     template<typename T>
     MINT_INLINE void Queue<T>::pop() noexcept
     {
+        if (empty() == true)
+        {
+            return;
+        }
+
         MemoryRaw::destroy<T>(_rawPointer[_headAt]);
+        ++_headAt;
 
         if (_headAt == _capacity)
         {
             _headAt = 0;
-        }
-        else
-        {
-            ++_headAt;
         }
 
         --_size;
