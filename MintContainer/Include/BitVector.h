@@ -36,6 +36,7 @@ namespace mint
         void                        set(const uint32 bitAt, const bool value) noexcept;
         void                        set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept;
         void                        setByte(const uint32 byteAt, const uint8 byte) noexcept;
+        void                        fill(const bool value) noexcept;
         void                        swap(const uint32 aBitAt, const uint32 bBitAt) noexcept;
 
     public:

@@ -60,8 +60,8 @@ namespace mint
             return;
         }
 
-        const uint32 newByteCapacity = getByteAtByBitAt(newBitCount);
-        if (_byteCapacity != newByteCapacity)
+        const uint32 newByteCapacity = (newBitCount + kBitsPerByte - 1) / kBitsPerByte;
+        if (_byteCapacity < newByteCapacity)
         {
             uint8* temp = nullptr;
 
@@ -180,6 +180,15 @@ namespace mint
         MINT_ASSERT("김장원", byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
         
         _byteArray[byteAt] = byte;
+    }
+
+    MINT_INLINE void BitVector::fill(const bool value) noexcept
+    {
+        const uint8 byteValue = (value == true) ? 255 : 0;
+        for (uint32 byteAt = 0; byteAt < _byteCapacity; ++byteAt)
+        {
+            _byteArray[byteAt] = byteValue;
+        }
     }
 
     MINT_INLINE void BitVector::swap(const uint32 aBitAt, const uint32 bBitAt) noexcept
