@@ -82,9 +82,10 @@ namespace mint
                 MINT_DELETE_ARRAY(temp);
             }
 
-            _bitCount = newBitCount;
             _byteCapacity = newByteCapacity;
         }
+
+        _bitCount = newBitCount;
     }
 
     MINT_INLINE void BitVector::reserveByteCapacity(const uint32 newByteCapacity)
