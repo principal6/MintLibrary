@@ -69,6 +69,21 @@ namespace mint
         __noop;
     }
 
+    // 나중에 string 구현하고 나면 없앨 것!!!
+    inline StringRange::StringRange(const uint64 offset, const uint32 length)
+        : _offset{ static_cast<uint32>(offset) }
+        , _length{ length }
+    {
+    }
+
+    // 나중에 string 구현하고 나면 없앨 것!!!
+    inline StringRange::StringRange(const uint64 offset, const uint64 length)
+        : _offset{ static_cast<uint32>(offset) }
+        , _length{ static_cast<uint32>(length) }
+    {
+        __noop;
+    }
+
     MINT_INLINE const bool StringRange::isLengthSet() const noexcept
     {
         return _length;

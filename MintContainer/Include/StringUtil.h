@@ -19,6 +19,8 @@ namespace mint
                         StringRange();
                         StringRange(const uint32 offset);
                         StringRange(const uint32 offset, const uint32 length);
+                        StringRange(const uint64 offset, const uint32 length);
+                        StringRange(const uint64 offset, const uint64 length);
 
     public:
         const bool      isLengthSet() const noexcept;
