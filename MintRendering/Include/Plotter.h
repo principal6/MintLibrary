@@ -53,14 +53,14 @@ namespace mint
 
         private:
             void                    plotScatter(const PlotType plotType, const float x, const float y, const mint::RenderingBase::Color& color);
-            mint::Float2              computeOrigin() const noexcept;
-            mint::Float2              computeInFramePlotPosition(const float x, const float y) const noexcept;
-            mint::Float2              computePlotPosition(const float x, const float y) const noexcept;
+            mint::Float2            computeOrigin() const noexcept;
+            mint::Float2            computeInFramePlotPosition(const float x, const float y) const noexcept;
+            mint::Float2            computePlotPosition(const float x, const float y) const noexcept;
             void                    drawFrame(const mint::Float4& frameCenterPosition) noexcept;
             void                    drawLabels(const mint::Float4& frameCenterPosition) noexcept;
 
         private:
-            mint::RenderingBase::ShapeFontRendererContext* const _shapeFontRendererContext;
+            mint::RenderingBase::ShapeFontRendererContext* const    _shapeFontRendererContext;
         
         private:
             mint::Vector<mint::Vector<float>>           _xDataSets;
@@ -68,24 +68,24 @@ namespace mint
             mint::Vector<mint::RenderingBase::Color>    _colorArray;
         
         private:
-            mint::Vector<PlotType>    _plotTypeArray;
-            PlotType                _nextPlotType;
+            mint::Vector<PlotType>      _plotTypeArray;
+            PlotType                    _nextPlotType;
         
         private:
-            mint::Float2              _min;
-            mint::Float2              _max;
-            mint::Float2              _range;
-            mint::Float2              _framePadding;
-            mint::Float2              _frameMin;
-            mint::Float2              _frameMax;
-            mint::Float2              _frameRange;
+            mint::Float2                _min;
+            mint::Float2                _max;
+            mint::Float2                _range;
+            mint::Float2                _framePadding;
+            mint::Float2                _frameMin;
+            mint::Float2                _frameMax;
+            mint::Float2                _frameRange;
 
         private:
-            std::wstring            _xLabel;
-            std::wstring            _yLabel;
-            mint::Float2              _position;
-            mint::Float2              _size;
-            mint::Float2              _frameOffset;
+            std::wstring                _xLabel;
+            std::wstring                _yLabel;
+            mint::Float2                _position;
+            mint::Float2                _size;
+            mint::Float2                _frameOffset;
         };
     }
 }
