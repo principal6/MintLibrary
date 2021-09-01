@@ -62,7 +62,7 @@ namespace mint
         ILexer::ILexer()
             : _totalTimeMs{ 0 }
             , _escaper{ '\\' }
-            , _statementTerminator{ ';' }
+            , _statementTerminator{ '\0' }
             , _lineSkipperNextGroupId{ 0 }
         {
             __noop;
