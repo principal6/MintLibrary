@@ -7,49 +7,52 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
-        Lexer::Lexer()
-            : ILexer()
+        namespace CppHlsl
         {
-            setStatementTerminator(';');
-            setEscaper('\\');
+            Lexer::Lexer()
+                : ILexer()
+            {
+                setStatementTerminator(';');
+                setEscaper('\\');
 
-            registerDelimiter(' ');
-            registerDelimiter('\t');
-            registerDelimiter('\r');
-            registerDelimiter('\n');
+                registerDelimiter(' ');
+                registerDelimiter('\t');
+                registerDelimiter('\r');
+                registerDelimiter('\n');
 
-            registerLineSkipper("#", LineSkipperSemantic::Preprocessor);
-            registerLineSkipper("//", LineSkipperSemantic::Comment);
-            registerLineSkipper("/*", "*/", LineSkipperSemantic::Comment);
+                registerLineSkipper("#", LineSkipperSemantic::Preprocessor);
+                registerLineSkipper("//", LineSkipperSemantic::Comment);
+                registerLineSkipper("/*", "*/", LineSkipperSemantic::Comment);
 
-            registerGrouper('(', ')');
-            registerGrouper('{', '}');
-            registerGrouper('[', ']');
+                registerGrouper('(', ')');
+                registerGrouper('{', '}');
+                registerGrouper('[', ']');
 
-            registerStringQuote('\'');
-            registerStringQuote('\"');
+                registerStringQuote('\'');
+                registerStringQuote('\"');
 
-            registerPunctuator(",");
-            registerPunctuator("#");
-            registerPunctuator("::");
+                registerPunctuator(",");
+                registerPunctuator("#");
+                registerPunctuator("::");
 
-            registerKeyword("struct");
-            registerKeyword("using");
-            registerKeyword("namespace");
-            registerKeyword("alignas");
-        }
+                registerKeyword("struct");
+                registerKeyword("using");
+                registerKeyword("namespace");
+                registerKeyword("alignas");
+            }
 
-        Lexer::Lexer(const std::string& source)
-            : Lexer()
-        {
-            setSource(source);
-        }
+            Lexer::Lexer(const std::string& source)
+                : Lexer()
+            {
+                setSource(source);
+            }
 
-        const bool Lexer::execute() noexcept
-        {
-            return __super::executeDefault();
+            const bool Lexer::execute() noexcept
+            {
+                return __super::executeDefault();
+            }
         }
     }
 }

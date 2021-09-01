@@ -7,7 +7,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         IParser::IParser(ILexer& lexer)
             : _lexer{ lexer }

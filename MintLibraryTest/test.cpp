@@ -91,6 +91,7 @@ const bool testFiles()
 const bool testLanguage()
 {
     using namespace mint;
+    using namespace mint::Language;
     
     TextFileReader textFileReader;
     textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
@@ -103,23 +104,23 @@ const bool testLanguage()
 
     struct TestStruct
     {
-        mint::float1 _a           = 1.0f;                             // v[0]
-        mint::float1 _b           = 2.0f;
-        mint::float2 _padding0    = mint::float2(4.0f, 8.0f);
-        mint::float3 _c           = mint::float3(16.0f, 32.0f, 64.0f);  // v[1]
-        mint::float1 _padding1    = 128.0f;
+        float1 _a           = 1.0f;                         // v[0]
+        float1 _b           = 2.0f;
+        float2 _padding0    = float2(4.0f, 8.0f);
+        float3 _c           = float3(16.0f, 32.0f, 64.0f);  // v[1]
+        float1 _padding1    = 128.0f;
     };
-    mint::RenderingBase::VS_INPUT_SHAPE vsInput;
-    uint64 a = sizeof(mint::RenderingBase::VS_INPUT_SHAPE);
-    uint64 b = sizeof(mint::RenderingBase::VS_OUTPUT_SHAPE);
-    uint64 c = sizeof(mint::RenderingBase::CB_View);
+    RenderingBase::VS_INPUT_SHAPE vsInput;
+    uint64 a = sizeof(RenderingBase::VS_INPUT_SHAPE);
+    uint64 b = sizeof(RenderingBase::VS_OUTPUT_SHAPE);
+    uint64 c = sizeof(RenderingBase::CB_View);
     TestStruct ts;
     uint64 tss = sizeof(TestStruct);
 
     //std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-    //const mint::CppHlsl::TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
-    //const mint::CppHlsl::TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
-    //const mint::CppHlsl::TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
+    //const CppHlsl::TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
+    //const CppHlsl::TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
+    //const CppHlsl::TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
     return true;
 }
 

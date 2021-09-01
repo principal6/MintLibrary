@@ -9,7 +9,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         GrouperTableItem::GrouperTableItem()
             : _input{ '\0' }
@@ -42,21 +42,20 @@ namespace mint
 
 
         LineSkipperTableItem::LineSkipperTableItem()
-            : _length{ 0 }
-            , _lineSkipperGroupId{ kUint16Max }
+            : _groupId{ kUint16Max }
             , _lineSkipperSemantic{ LineSkipperSemantic::COUNT }
             , _lineSkipperClassifier{ LineSkipperClassifier::COUNT }
         {
             __noop;
         }
 
-        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId)
+        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupId)
             : _string{ string }
-            , _lineSkipperGroupId{ lineSkipperGroupId }
+            , _groupId{ groupId }
             , _lineSkipperSemantic{ lineSkipperSemantic }
             , _lineSkipperClassifier{ lineSkipperClassifier }
         {
-            _length = static_cast<uint32>(_string.length());
+            __noop;
         }
 
 
@@ -259,7 +258,7 @@ namespace mint
                     if (isLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
                     {
                         bool isSuccess = false;
-                        if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::SingleMarker)
+                        if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::SingleMarker) == true)
                         {
                             std::string prev = _source.substr(prevSourceAt, sourceAt - prevSourceAt);
 
@@ -313,12 +312,12 @@ namespace mint
                                 }
                             }
 
-                            if (lineSkipperTableItem._lineSkipperSemantic == LineSkipperSemantic::Preprocessor)
+                            if (lineSkipperTableItem.checkSemantic(LineSkipperSemantic::Preprocessor) == true)
                             {
                                 // Preprocessor
                                 //line;
                             }
-                            else if (lineSkipperTableItem._lineSkipperSemantic == LineSkipperSemantic::Comment)
+                            else if (lineSkipperTableItem.checkSemantic(LineSkipperSemantic::Comment) == true)
                             {
                                 // Comment
                                 preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
@@ -332,14 +331,14 @@ namespace mint
                         else
                         {
                             LineSkipperTableItem closeLineSkipperTableItem;
-                            if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenCloseMarker)
+                            if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::OpenCloseMarker) == true)
                             {
                                 uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
                                     if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
                                     {
-                                        if (closeLineSkipperTableItem._string == lineSkipperTableItem._string)
+                                        if (closeLineSkipperTableItem.isSameString(lineSkipperTableItem) == true)
                                         {
                                             isSuccess = true;
                                             prevSourceAt = sourceAt = sourceIter + 2;
@@ -349,14 +348,14 @@ namespace mint
                                     ++sourceIter;
                                 }
                             }
-                            else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenMarker)
+                            else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::OpenMarker) == true)
                             {
                                 uint32 sourceIter = sourceAt + 2;
                                 while (continueExecution(sourceIter + 1) == true)
                                 {
                                     if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
                                     {
-                                        if (closeLineSkipperTableItem._lineSkipperGroupId == lineSkipperTableItem._lineSkipperGroupId)
+                                        if (closeLineSkipperTableItem.isSameGroup(lineSkipperTableItem) == true)
                                         {
                                             isSuccess = true;
                                             prevSourceAt = sourceAt = sourceIter + 2;
@@ -366,7 +365,7 @@ namespace mint
                                     ++sourceIter;
                                 }
                             }
-                            else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::CloseMarker)
+                            else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::CloseMarker) == true)
                             {
                                 MINT_LOG_ERROR("김장원", "Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
                                 return false;
@@ -375,7 +374,7 @@ namespace mint
 
                         if (isSuccess == false)
                         {
-                            MINT_LOG_ERROR("김장원", "실패!! lineSkipperClassifier[%d] sourceAt[%d]", (int)lineSkipperTableItem._lineSkipperClassifier, sourceAt);
+                            MINT_LOG_ERROR("김장원", "실패!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
                             return false;
                         }
                     }
@@ -438,7 +437,7 @@ namespace mint
             }
             else if (isGrouper(ch0, grouperTableItem) == true)
             {
-                symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem._grouperClassifier);
+                symbolClassifier = getSymbolClassifierFromGrouperClassifier(grouperTableItem.getClassifier());
                 advance = 1;
             }
             else if (isStringQuote(ch0) == true)
@@ -457,8 +456,8 @@ namespace mint
             }
             else if (isOperator(ch0, ch1, operatorTableItem) == true)
             {
-                symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem._operatorClassifier);
-                advance = operatorTableItem._length;
+                symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem.getClassifier());
+                advance = operatorTableItem.getLength();
             }
 
             advanceExecution(symbolClassifier, advance, prevSourceAt, sourceAt);

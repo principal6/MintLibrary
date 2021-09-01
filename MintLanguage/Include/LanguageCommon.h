@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         class ILexer;
 

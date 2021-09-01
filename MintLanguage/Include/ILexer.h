@@ -15,7 +15,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         class ILexer;
         class IParser;
@@ -68,38 +68,51 @@ namespace mint
         struct GrouperTableItem
         {
         public:
-                                    GrouperTableItem();
-                                    GrouperTableItem(const char input, const GrouperClassifier grouperClassifier);
+                                                    GrouperTableItem();
+                                                    GrouperTableItem(const char input, const GrouperClassifier grouperClassifier);
 
         public:
-            char                    _input;
-            GrouperClassifier       _grouperClassifier;
+            MINT_INLINE const GrouperClassifier     getClassifier() const noexcept { return _grouperClassifier; }
+
+        private:
+            char                                    _input;
+            GrouperClassifier                       _grouperClassifier;
         };
 
-        struct OperatorTableItem
+        class OperatorTableItem
         {
         public:
-                                    OperatorTableItem();
-                                    OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier);
+                                                    OperatorTableItem();
+                                                    OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier);
 
         public:
-            std::string             _string;
-            uint32                  _length;
-            OperatorClassifier      _operatorClassifier;
+            MINT_INLINE const uint32                getLength() const noexcept { return _length; }
+            MINT_INLINE const OperatorClassifier    getClassifier() const noexcept { return _operatorClassifier; }
+
+        private:
+            std::string                             _string;
+            uint32                                  _length;
+            OperatorClassifier                      _operatorClassifier;
         };
 
-        struct LineSkipperTableItem
+        class LineSkipperTableItem
         {
         public:
-                                    LineSkipperTableItem();
-                                    LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId);
+                                                    LineSkipperTableItem();
+                                                    LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupId);
 
         public:
-            std::string             _string;
-            uint32                  _length;
-            uint16                  _lineSkipperGroupId;
-            LineSkipperSemantic     _lineSkipperSemantic;
-            LineSkipperClassifier   _lineSkipperClassifier;
+            MINT_INLINE const bool                  isSameString(const LineSkipperTableItem& rhs) const noexcept { return _string == rhs._string; }
+            MINT_INLINE const bool                  isSameGroup(const LineSkipperTableItem& rhs) const noexcept { return _groupId == rhs._groupId; }
+            MINT_INLINE const bool                  checkSemantic(const LineSkipperSemantic lineSkipperSemantic) const noexcept { return _lineSkipperSemantic == lineSkipperSemantic; }
+            MINT_INLINE const bool                  checkClassifier(const LineSkipperClassifier lineSkipperClassifier) const noexcept { return _lineSkipperClassifier == lineSkipperClassifier; }
+            MINT_INLINE const LineSkipperClassifier getClassifier() const noexcept { return _lineSkipperClassifier; }
+
+        private:
+            std::string                             _string;
+            uint16                                  _groupId;
+            LineSkipperSemantic                     _lineSkipperSemantic;
+            LineSkipperClassifier                   _lineSkipperClassifier;
         };
 
 

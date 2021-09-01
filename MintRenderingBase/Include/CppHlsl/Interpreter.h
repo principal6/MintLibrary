@@ -13,44 +13,47 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
-        enum class CppHlslFileType
+        namespace CppHlsl
         {
-            StreamData,
-            ConstantBuffers,
-            StructuredBuffers,
-        };
+            enum class CppHlslFileType
+            {
+                StreamData,
+                ConstantBuffers,
+                StructuredBuffers,
+            };
 
-        class Interpreter
-        {
-        public:
-                                        Interpreter();
-                                        ~Interpreter() = default;
+            class Interpreter
+            {
+            public:
+                                            Interpreter();
+                                            ~Interpreter() = default;
 
-        public:
-            void                        parseCppHlslFile(const char* const fileName);
+            public:
+                void                        parseCppHlslFile(const char* const fileName);
         
-        public:
-            void                        generateHlslString(const CppHlslFileType fileType);
+            public:
+                void                        generateHlslString(const CppHlslFileType fileType);
         
-        public:
-            const char*                 getHlslString() const noexcept;
+            public:
+                const char*                 getHlslString() const noexcept;
 
-        public:
-            const uint32                getTypeMetaDataCount() const noexcept;
-            const TypeMetaData&         getTypeMetaData(const uint32 typeIndex) const noexcept;
-            const TypeMetaData&         getTypeMetaData(const std::string& typeName) const noexcept;
-            const TypeMetaData&         getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
+            public:
+                const uint32                getTypeMetaDataCount() const noexcept;
+                const TypeMetaData&         getTypeMetaData(const uint32 typeIndex) const noexcept;
+                const TypeMetaData&         getTypeMetaData(const std::string& typeName) const noexcept;
+                const TypeMetaData&         getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
         
-        private:
-            Lexer                       _lexer;
-            Parser                      _parser;
+            private:
+                Lexer                       _lexer;
+                Parser                      _parser;
 
-        private:
-            CppHlslFileType             _fileType;
-            std::string                 _hlslString;
-        };
+            private:
+                CppHlslFileType             _fileType;
+                std::string                 _hlslString;
+            };
+        }
     }
 }
 

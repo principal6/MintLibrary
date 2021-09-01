@@ -3,7 +3,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         MINT_INLINE static constexpr const SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier)
         {

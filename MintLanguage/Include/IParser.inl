@@ -3,7 +3,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         MINT_INLINE constexpr const char* IParser::convertErrorTypeToTypeString(const ErrorType errorType)
         {

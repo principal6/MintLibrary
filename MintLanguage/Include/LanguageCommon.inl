@@ -3,7 +3,7 @@
 
 namespace mint
 {
-    namespace CppHlsl
+    namespace Language
     {
         inline SymbolTableItem::SymbolTableItem()
             : _symbolClassifier{ SymbolClassifier::Identifier }
