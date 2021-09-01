@@ -31,6 +31,7 @@ namespace mint
 
 
         SyntaxTreeItem::SyntaxTreeItem()
+            : _classifier{ SyntaxClassifier::ROOT }
         {
             __noop;
         }

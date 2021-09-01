@@ -44,14 +44,16 @@ namespace mint
         LineSkipperTableItem::LineSkipperTableItem()
             : _length{ 0 }
             , _lineSkipperGroupId{ kUint16Max }
+            , _lineSkipperSemantic{ LineSkipperSemantic::COUNT }
             , _lineSkipperClassifier{ LineSkipperClassifier::COUNT }
         {
             __noop;
         }
 
-        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId)
+        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId)
             : _string{ string }
             , _lineSkipperGroupId{ lineSkipperGroupId }
+            , _lineSkipperSemantic{ lineSkipperSemantic }
             , _lineSkipperClassifier{ lineSkipperClassifier }
         {
             _length = static_cast<uint32>(_string.length());
@@ -90,7 +92,7 @@ namespace mint
             }
         }
 
-        void ILexer::registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose)
+        void ILexer::registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic)
         {
             const uint32 lengthOpen = mint::StringUtil::strlen(lineSkipperOpen);
             const uint32 lengthClose = mint::StringUtil::strlen(lineSkipperClose);
@@ -106,7 +108,7 @@ namespace mint
                 const uint64 keyOpenClose = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpenClose).isValid() == false)
                 {
-                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenCloseMarker, 0));
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenCloseMarker, 0));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(keyOpenClose, lineSkipperIndex);
                 }
@@ -119,7 +121,7 @@ namespace mint
                 const uint64 keyOpen = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpen).isValid() == false)
                 {
-                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, LineSkipperClassifier::OpenMarker, nextGroupId));
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenMarker, nextGroupId));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(keyOpen, lineSkipperIndex);
                 }
@@ -127,14 +129,14 @@ namespace mint
                 const uint64 keyClose = (1 == lengthClose) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
                 if (_lineSkipperUmap.find(keyClose).isValid() == false)
                 {
-                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, LineSkipperClassifier::CloseMarker, nextGroupId));
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, lineSkipperSemantic, LineSkipperClassifier::CloseMarker, nextGroupId));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(keyClose, lineSkipperIndex);
                 }
             }
         }
 
-        void ILexer::registerLineSkipper(const char* const lineSkipper)
+        void ILexer::registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic)
         {
             const uint32 length = mint::StringUtil::strlen(lineSkipper);
             if (0 == length || 2 < length)
@@ -146,7 +148,7 @@ namespace mint
             const uint64 key = (1 == length) ? lineSkipper[0] : static_cast<uint64>(lineSkipper[1]) * 255 + lineSkipper[0];
             if (_lineSkipperUmap.find(key).isValid() == false)
             {
-                _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipper, LineSkipperClassifier::SingleMarker, 0));
+                _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipper, lineSkipperSemantic, LineSkipperClassifier::SingleMarker, 0));
                 const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                 _lineSkipperUmap.insert(key, lineSkipperIndex);
             }
@@ -237,6 +239,167 @@ namespace mint
             return result;
         }
 
+        const bool ILexer::executeDefault() noexcept
+        {
+            // Preprocessor
+            // line 단위 parsing
+            // comment 도 거르기!
+            {
+                std::string preprocessedSource;
+
+                uint32 prevSourceAt = 0;
+                uint32 sourceAt = 0;
+
+                while (continueExecution(sourceAt) == true)
+                {
+                    const char ch0 = getCh0(sourceAt);
+                    const char ch1 = getCh1(sourceAt);
+
+                    LineSkipperTableItem lineSkipperTableItem;
+                    if (isLineSkipper(ch0, ch1, lineSkipperTableItem) == true)
+                    {
+                        bool isSuccess = false;
+                        if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::SingleMarker)
+                        {
+                            std::string prev = _source.substr(prevSourceAt, sourceAt - prevSourceAt);
+
+                            // Trim
+                            {
+                                // Front
+                                uint32 trimFront = 0;
+                                while (trimFront < prev.size())
+                                {
+                                    if (prev[trimFront] == '\r' || prev[trimFront] == '\n')
+                                    {
+                                        ++trimFront;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                prev = prev.substr(trimFront);
+
+                                // Back
+                                while (0 < prev.size())
+                                {
+                                    if (prev.back() == '\r' || prev.back() == '\n')
+                                    {
+                                        prev.pop_back();
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            preprocessedSource.append(prev);
+
+                            std::string line;
+                            for (uint32 sourceIter = sourceAt + 2; continueExecution(sourceIter) == true; ++sourceIter)
+                            {
+                                if (_source.at(sourceIter) == '\n')
+                                {
+                                    line = _source.substr(prevSourceAt, sourceIter - prevSourceAt);
+                                    if (line.back() == '\r')
+                                    {
+                                        line.pop_back();
+                                    }
+
+                                    isSuccess = true;
+                                    prevSourceAt = sourceAt = sourceIter;
+                                    break;
+                                }
+                            }
+
+                            if (lineSkipperTableItem._lineSkipperSemantic == LineSkipperSemantic::Preprocessor)
+                            {
+                                // Preprocessor
+                                //line;
+                            }
+                            else if (lineSkipperTableItem._lineSkipperSemantic == LineSkipperSemantic::Comment)
+                            {
+                                // Comment
+                                preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
+                            }
+                            else
+                            {
+                                MINT_ASSERT("김장원", false, "아직 지원되지 않는 LineSkipperSemantic 입니다!!!");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            LineSkipperTableItem closeLineSkipperTableItem;
+                            if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenCloseMarker)
+                            {
+                                uint32 sourceIter = sourceAt + 2;
+                                while (continueExecution(sourceIter + 1) == true)
+                                {
+                                    if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+                                    {
+                                        if (closeLineSkipperTableItem._string == lineSkipperTableItem._string)
+                                        {
+                                            isSuccess = true;
+                                            prevSourceAt = sourceAt = sourceIter + 2;
+                                            break;
+                                        }
+                                    }
+                                    ++sourceIter;
+                                }
+                            }
+                            else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::OpenMarker)
+                            {
+                                uint32 sourceIter = sourceAt + 2;
+                                while (continueExecution(sourceIter + 1) == true)
+                                {
+                                    if (isLineSkipper(_source.at(sourceIter), _source.at(static_cast<uint64>(sourceIter) + 1), closeLineSkipperTableItem) == true)
+                                    {
+                                        if (closeLineSkipperTableItem._lineSkipperGroupId == lineSkipperTableItem._lineSkipperGroupId)
+                                        {
+                                            isSuccess = true;
+                                            prevSourceAt = sourceAt = sourceIter + 2;
+                                            break;
+                                        }
+                                    }
+                                    ++sourceIter;
+                                }
+                            }
+                            else if (lineSkipperTableItem._lineSkipperClassifier == LineSkipperClassifier::CloseMarker)
+                            {
+                                MINT_LOG_ERROR("김장원", "Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
+                                return false;
+                            }
+                        }
+
+                        if (isSuccess == false)
+                        {
+                            MINT_LOG_ERROR("김장원", "실패!! lineSkipperClassifier[%d] sourceAt[%d]", (int)lineSkipperTableItem._lineSkipperClassifier, sourceAt);
+                            return false;
+                        }
+                    }
+
+                    ++sourceAt;
+                }
+
+                preprocessedSource.append(_source.substr(prevSourceAt, sourceAt - prevSourceAt));
+
+                std::swap(_source, preprocessedSource);
+            }
+
+
+            uint32 prevSourceAt = 0;
+            uint32 sourceAt = 0;
+            while (continueExecution(sourceAt) == true)
+            {
+                executeInternalScanning(prevSourceAt, sourceAt);
+            }
+
+            endExecution();
+            return true;
+        }
+
         const bool ILexer::continueExecution(const uint32 sourceAt) const noexcept
         {
             return sourceAt < _source.length();
@@ -257,7 +420,7 @@ namespace mint
             return (static_cast<uint64>(sourceAt) + 2 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 2) : 0;
         }
 
-        void ILexer::executeDefault(uint32& prevSourceAt, uint32& sourceAt)
+        void ILexer::executeInternalScanning(uint32& prevSourceAt, uint32& sourceAt)
         {
             const char ch0 = getCh0(sourceAt);
             const char ch1 = getCh1(sourceAt);

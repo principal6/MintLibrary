@@ -52,6 +52,14 @@ namespace mint
             COUNT,
         };
 
+        enum class LineSkipperSemantic : uint8
+        {
+            Comment,
+            Preprocessor,
+
+            COUNT,
+        };
+
         static_assert(static_cast<uint32>(SymbolClassifier::OPERATOR_ENDS) - (static_cast<uint32>(SymbolClassifier::OPERATOR_BEGINS) + 1) == static_cast<uint32>(OperatorClassifier::COUNT));
         static_assert(static_cast<uint32>(SymbolClassifier::GROUPER_ENDS ) - (static_cast<uint32>(SymbolClassifier::GROUPER_BEGINS ) + 1) == static_cast<uint32>(GrouperClassifier::COUNT));
         static constexpr const SymbolClassifier getSymbolClassifierFromOperatorClassifier(const OperatorClassifier operatorClassifier);
@@ -84,12 +92,13 @@ namespace mint
         {
         public:
                                     LineSkipperTableItem();
-                                    LineSkipperTableItem(const char* const string, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId);
+                                    LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId);
 
         public:
             std::string             _string;
             uint32                  _length;
             uint16                  _lineSkipperGroupId;
+            LineSkipperSemantic     _lineSkipperSemantic;
             LineSkipperClassifier   _lineSkipperClassifier;
         };
 
@@ -112,8 +121,8 @@ namespace mint
             void                                    setEscaper(const char escaper);
             void                                    setStatementTerminator(const char statementTerminator);
             void                                    registerDelimiter(const char delimiter);
-            void                                    registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose);
-            void                                    registerLineSkipper(const char* const lineSkipper);
+            void                                    registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic);
+            void                                    registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic);
             void                                    registerKeyword(const char* const keyword);
             void                                    registerGrouper(const char grouperOpen, const char grouperClose);
             void                                    registerStringQuote(const char stringQuote);
@@ -124,14 +133,15 @@ namespace mint
             const uint16                            getLineSkipperNextGroupId() noexcept;
 
         protected:
-            virtual const bool                      execute() abstract;
+            virtual const bool                      execute() noexcept abstract;
+            const bool                              executeDefault() noexcept;
         
         protected:
             const bool                              continueExecution(const uint32 sourceAt) const noexcept;
             const char                              getCh0(const uint32 sourceAt) const noexcept;
             const char                              getCh1(const uint32 sourceAt) const noexcept;
             const char                              getCh2(const uint32 sourceAt) const noexcept;
-            void                                    executeDefault(uint32& prevSourceAt, uint32& sourceAt);
+            void                                    executeInternalScanning(uint32& prevSourceAt, uint32& sourceAt);
             
         private:
             void                                    advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt);
