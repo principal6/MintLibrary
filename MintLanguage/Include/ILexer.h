@@ -175,6 +175,9 @@ namespace mint
             const bool                              isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept;
             const bool                              isNumber(const std::string& input) const noexcept;
             const bool                              isKeyword(const std::string& input) const noexcept;
+            const bool                              isEscaper(const char input) const noexcept;
+            MINT_INLINE void                        setParsePlainEscaper(const bool value) noexcept { _parsePlainEscaper = value; }
+            MINT_INLINE const bool                  parsePlainEscaper() const noexcept { return _parsePlainEscaper; }
 
         public:
             const mint::Vector<SymbolTableItem>&    getSymbolTable() const noexcept;
@@ -186,9 +189,10 @@ namespace mint
             std::string                             _source;
             uint32                                  _totalTimeMs;
 
-        protected:
+        private:
             char                                    _escaper;
             char                                    _statementTerminator;
+            bool                                    _parsePlainEscaper;
 
         protected:
             mint::HashMap<char, int8>               _delimiterUmap;

@@ -63,6 +63,7 @@ namespace mint
             : _totalTimeMs{ 0 }
             , _escaper{ '\\' }
             , _statementTerminator{ '\0' }
+            , _parsePlainEscaper{ false }
             , _lineSkipperNextGroupId{ 0 }
         {
             __noop;
@@ -395,6 +396,13 @@ namespace mint
                 executeInternalScanning(prevSourceAt, sourceAt);
             }
 
+            if (prevSourceAt < sourceAt)
+            {
+                const uint32 tokenLength = sourceAt - prevSourceAt;
+                std::string tokenString = _source.substr(prevSourceAt, tokenLength);
+                _symbolTable.push_back(SymbolTableItem(SymbolClassifier::Identifier, tokenString, sourceAt));
+            }
+
             endExecution();
             return true;
         }
@@ -458,6 +466,11 @@ namespace mint
             {
                 symbolClassifier = getSymbolClassifierFromOperatorClassifier(operatorTableItem.getClassifier());
                 advance = operatorTableItem.getLength();
+            }
+            else if (parsePlainEscaper() == true && isEscaper(ch0) == true)
+            {
+                symbolClassifier = SymbolClassifier::Escaper;
+                advance = 1;
             }
 
             advanceExecution(symbolClassifier, advance, prevSourceAt, sourceAt);
@@ -698,6 +711,11 @@ namespace mint
         const bool ILexer::isKeyword(const std::string& input) const noexcept
         {
             return _keywordUmap.find(mint::computeHash(input.c_str())).isValid() == true;
+        }
+
+        const bool ILexer::isEscaper(const char input) const noexcept
+        {
+            return _escaper == input;
         }
 
         const uint32 ILexer::getSymbolCount() const noexcept
