@@ -6,8 +6,6 @@
 
 #include <MintPlatform/Include/TextFile.h>
 
-#include <typeindex>
-
 
 namespace mint
 {
@@ -114,6 +112,5 @@ namespace mint
             }
             return getTypeMetaData(stdTypeName);
         }
-
     }
 }

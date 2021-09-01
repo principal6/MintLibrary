@@ -44,8 +44,8 @@ namespace mint
             const TypeMetaData&         getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
         
         private:
-            Lexer                _lexer;
-            Parser               _parser;
+            Lexer                       _lexer;
+            Parser                      _parser;
 
         private:
             CppHlslFileType             _fileType;
