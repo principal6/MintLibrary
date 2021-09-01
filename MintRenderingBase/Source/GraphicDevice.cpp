@@ -22,7 +22,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         #define MINT_CHECK_STATE(a, b) if (a == b) { return; } a = b;
         #define MINT_CHECK_TWO_STATES(a, aa, b, bb) if ((a == aa) && (b == bb)) { return; } a = aa; b = bb;
@@ -86,13 +86,13 @@ namespace mint
             
             switch (iaRenderingPrimitive)
             {
-            case mint::RenderingBase::RenderingPrimitive::INVALID:
+            case mint::Rendering::RenderingPrimitive::INVALID:
                 MINT_NEVER;
                 break;
-            case mint::RenderingBase::RenderingPrimitive::LineList:
+            case mint::Rendering::RenderingPrimitive::LineList:
                 _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
                 break;
-            case mint::RenderingBase::RenderingPrimitive::TriangleList:
+            case mint::Rendering::RenderingPrimitive::TriangleList:
                 _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                 break;
             default:
@@ -254,7 +254,7 @@ namespace mint
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
             , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
-            , _shaderPool{ this, &_shaderHeaderMemory, mint::RenderingBase::DxShaderVersion::v_5_0 }
+            , _shaderPool{ this, &_shaderHeaderMemory, mint::Rendering::DxShaderVersion::v_5_0 }
             , _resourcePool{ this }
             , _stateManager{ this }
             , _shapeRendererContext{ this }
@@ -365,8 +365,8 @@ namespace mint
         {
             if (_fontRendererContext.existsFontData(kDefaultFont) == false)
             {
-                _fontRendererContext.pushGlyphRange(mint::RenderingBase::GlyphRange(0, 0x33DD));
-                _fontRendererContext.pushGlyphRange(mint::RenderingBase::GlyphRange(L'가', L'힣'));
+                _fontRendererContext.pushGlyphRange(mint::Rendering::GlyphRange(0, 0x33DD));
+                _fontRendererContext.pushGlyphRange(mint::Rendering::GlyphRange(L'가', L'힣'));
                 if (_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1) == false)
                 {
                     MINT_LOG_ERROR("김장원", "폰트 데이터를 Bake 하는 데 실패했습니다!");
@@ -493,14 +493,14 @@ namespace mint
                     const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(_cbViewData));
                     _cbViewId = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData.getRegisterIndex());
                     
-                    mint::RenderingBase::DxResource& cbView = _resourcePool.getResource(_cbViewId);
+                    mint::Rendering::DxResource& cbView = _resourcePool.getResource(_cbViewId);
                     cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::GeometryShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
                 }
 
                 {
-                    mint::RenderingBase::CB_Transform cbTransformData;
+                    mint::Rendering::CB_Transform cbTransformData;
                     const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(cbTransformData));
                     _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData.getRegisterIndex());
                 }
@@ -515,13 +515,13 @@ namespace mint
                 _shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
 
                 {
-                    mint::RenderingBase::SB_Transform sbTransformData;
+                    mint::Rendering::SB_Transform sbTransformData;
                     const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbTransformData));
                     _sbTransformId = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData.getRegisterIndex());
                 }
 
                 {
-                    mint::RenderingBase::SB_Material sbMaterialData;
+                    mint::Rendering::SB_Material sbMaterialData;
                     const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbMaterialData));
                     _sbMaterialId = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData.getRegisterIndex());
                 }

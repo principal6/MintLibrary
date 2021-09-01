@@ -142,12 +142,12 @@ namespace mint
             return controlData._position - getControlData(controlData.getParentHashKey())._position;
         }
 
-        MINT_INLINE const mint::RenderingBase::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
+        MINT_INLINE const mint::Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
         {
             return _namedColors[static_cast<uint32>(namedColor)];
         }
 
-        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const mint::RenderingBase::Color& color) noexcept
+        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const mint::Rendering::Color& color) noexcept
         {
             _namedColors[static_cast<uint32>(namedColor)] = color;
         }

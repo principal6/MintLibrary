@@ -25,7 +25,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class GraphicDevice;
     }
@@ -52,8 +52,8 @@ namespace mint
         static constexpr mint::Rect     kWindowInnerPadding = mint::Rect(4.0f);
         static constexpr float          kScrollBarThickness = 8.0f;
         static constexpr mint::Rect     kTitleBarInnerPadding = mint::Rect(12.0f, 6.0f, 6.0f, 6.0f);
-        static constexpr mint::Float2   kTitleBarBaseSize = mint::Float2(0.0f, mint::RenderingBase::kDefaultFontSize + kTitleBarInnerPadding.vert());
-        static constexpr mint::Float2   kMenuBarBaseSize = mint::Float2(0.0f, mint::RenderingBase::kDefaultFontSize + 8.0f);
+        static constexpr mint::Float2   kTitleBarBaseSize = mint::Float2(0.0f, mint::Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert());
+        static constexpr mint::Float2   kMenuBarBaseSize = mint::Float2(0.0f, mint::Rendering::kDefaultFontSize + 8.0f);
         static constexpr float          kMenuBarItemTextSpace = 24.0f;
         static constexpr float          kMenuItemSpaceLeft = 16.0f;
         static constexpr float          kMenuItemSpaceRight = 48.0f;
@@ -82,7 +82,7 @@ namespace mint
         // If no value is set, default values will be used properly
         struct LabelParam
         {
-            CommonControlParam          _common             = CommonControlParam(mint::Float2::kZero, mint::RenderingBase::Color::kTransparent, mint::RenderingBase::Color::kTransparent);
+            CommonControlParam          _common             = CommonControlParam(mint::Float2::kZero, mint::Rendering::Color::kTransparent, mint::Rendering::Color::kTransparent);
             mint::Float2                _paddingForAutoSize = mint::Float2(24, 12);
             TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Center;
             TextAlignmentVert           _alignmentVert      = TextAlignmentVert::Middle;
@@ -133,7 +133,7 @@ namespace mint
 
         class GuiContext final
         {
-            friend mint::RenderingBase::GraphicDevice;
+            friend mint::Rendering::GraphicDevice;
 
         private:
             enum class NamedColor
@@ -252,7 +252,7 @@ namespace mint
             };
         
         private:
-                                                                GuiContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                                GuiContext(mint::Rendering::GraphicDevice* const graphicDevice);
 
         public:
                                                                 ~GuiContext();
@@ -334,7 +334,7 @@ namespace mint
 
         private:
             mint::Float4                                        labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
-            mint::RenderingBase::FontRenderingOption            labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            mint::Rendering::FontRenderingOption            labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
@@ -344,8 +344,8 @@ namespace mint
             void                                                endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
-            void                                                sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::RenderingBase::Color& trackColor) noexcept;
-            void                                                sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::RenderingBase::Color& thumbColor) noexcept;
+            void                                                sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::Rendering::Color& trackColor) noexcept;
+            void                                                sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::Rendering::Color& thumbColor) noexcept;
     #pragma endregion
 
     #pragma region Controls - TextBox & InputBox(General)
@@ -396,7 +396,7 @@ namespace mint
             mint::Float2                                        beginTitleBar(const wchar_t* const windowTitle, const mint::Float2& titleBarSize, const mint::Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                                endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
-            const bool                                          pushRoundButton(const wchar_t* const windowTitle, const mint::RenderingBase::Color& color);
+            const bool                                          pushRoundButton(const wchar_t* const windowTitle, const mint::Rendering::Color& color);
 
             // [Tooltip]
             // Unique control
@@ -407,11 +407,11 @@ namespace mint
             void                                                pushScrollBarVert() noexcept;
             void                                                pushScrollBarHorz() noexcept;
 
-            ControlData&                                        pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                                pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
+            ControlData&                                        pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                                pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext);
 
         private:
-            void                                                processDock(const ControlData& controlData, mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                                processDock(const ControlData& controlData, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext);
             void                                                endControlInternal(const ControlType controlType);
             void                                                setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect);
             void                                                setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect);
@@ -449,11 +449,11 @@ namespace mint
             void                                                prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
             void                                                calculateControlChildAt(ControlData& controlData) noexcept;
 
-            const bool                                          processClickControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& pressedColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
-            const bool                                          processFocusControl(ControlData& controlData, const mint::RenderingBase::Color& focusedColor, const mint::RenderingBase::Color& nonFocusedColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
-            void                                                processShowOnlyControl(ControlData& controlData, mint::RenderingBase::Color& outBackgroundColor, const bool setMouseInteractionDone = true) noexcept;
-            const bool                                          processScrollableControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& dragColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
-            const bool                                          processToggleControl(ControlData& controlData, const mint::RenderingBase::Color& normalColor, const mint::RenderingBase::Color& hoverColor, const mint::RenderingBase::Color& toggledColor, mint::RenderingBase::Color& outBackgroundColor) noexcept;
+            const bool                                          processClickControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& hoverColor, const mint::Rendering::Color& pressedColor, mint::Rendering::Color& outBackgroundColor) noexcept;
+            const bool                                          processFocusControl(ControlData& controlData, const mint::Rendering::Color& focusedColor, const mint::Rendering::Color& nonFocusedColor, mint::Rendering::Color& outBackgroundColor) noexcept;
+            void                                                processShowOnlyControl(ControlData& controlData, mint::Rendering::Color& outBackgroundColor, const bool setMouseInteractionDone = true) noexcept;
+            const bool                                          processScrollableControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& dragColor, mint::Rendering::Color& outBackgroundColor) noexcept;
+            const bool                                          processToggleControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& hoverColor, const mint::Rendering::Color& toggledColor, mint::Rendering::Color& outBackgroundColor) noexcept;
             
             void                                                processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
 
@@ -497,8 +497,8 @@ namespace mint
             const ControlData&                                  getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
             const bool                                          hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
-            const mint::RenderingBase::Color&                   getNamedColor(const NamedColor namedColor) const noexcept;
-            void                                                setNamedColor(const NamedColor namedColor, const mint::RenderingBase::Color& color) noexcept;
+            const mint::Rendering::Color&                   getNamedColor(const NamedColor namedColor) const noexcept;
+            void                                                setNamedColor(const NamedColor namedColor, const mint::Rendering::Color& color) noexcept;
 
             const float                                         getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
             const float                                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
@@ -506,20 +506,20 @@ namespace mint
 #pragma endregion
 
         private:
-            mint::RenderingBase::ShapeFontRendererContext&      getRendererContext(const ControlData& controlData) noexcept;
-            mint::RenderingBase::ShapeFontRendererContext&      getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
+            mint::Rendering::ShapeFontRendererContext&      getRendererContext(const ControlData& controlData) noexcept;
+            mint::Rendering::ShapeFontRendererContext&      getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
             // TopMost ´Â Á¦¿Ü!!
             const RendererContextLayer                          getUpperRendererContextLayer(const ControlData& controlData) noexcept;
             void                                                render();
             void                                                resetPerFrameStates();
 
         private:
-            mint::RenderingBase::GraphicDevice* const           _graphicDevice;
+            mint::Rendering::GraphicDevice* const           _graphicDevice;
 
         private: // these are set externally
             float                                               _fontSize;
             uint32                                              _caretBlinkIntervalMs;
-            mint::RenderingBase::ShapeFontRendererContext       _rendererContexts[getRendererContextLayerCount()];
+            mint::Rendering::ShapeFontRendererContext       _rendererContexts[getRendererContextLayerCount()];
 
         private: // screen size
             int8                                                _updateScreenSizeCounter;
@@ -564,7 +564,7 @@ namespace mint
             TaskWhenMouseUp                                     _taskWhenMouseUp;
 
         private:
-            mint::RenderingBase::Color                          _namedColors[static_cast<uint32>(NamedColor::COUNT)];
+            mint::Rendering::Color                          _namedColors[static_cast<uint32>(NamedColor::COUNT)];
         };
     }
 }

@@ -10,7 +10,7 @@ namespace mint
 {
     namespace Rendering
     {
-        Plotter::Plotter(mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext)
+        Plotter::Plotter(mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext)
             : _shapeFontRendererContext{ &shapeFontRendererContext }
             , _nextPlotType{ PlotType::Circle }
             , _size{ kDefaultSize }
@@ -42,7 +42,7 @@ namespace mint
             
             updateFrameValues();
 
-            _colorArray.push_back(mint::RenderingBase::Color::kTransparent);
+            _colorArray.push_back(mint::Rendering::Color::kTransparent);
             _plotTypeArray.push_back(_nextPlotType);
         }
 
@@ -75,9 +75,9 @@ namespace mint
             const uint32 setCount = _xDataSets.size();
             for (uint32 setIndex = 0; setIndex < setCount; ++setIndex)
             {
-                const bool useAutoColor = (_colorArray[setIndex] == mint::RenderingBase::Color::kTransparent);
+                const bool useAutoColor = (_colorArray[setIndex] == mint::Rendering::Color::kTransparent);
                 const PlotType plotType = _plotTypeArray[setIndex];
-                const mint::RenderingBase::Color& color = (useAutoColor == true) ? kAutoColorArray[autoColorIndex] : _colorArray[setIndex];
+                const mint::Rendering::Color& color = (useAutoColor == true) ? kAutoColorArray[autoColorIndex] : _colorArray[setIndex];
 
                 const uint32 dataCount = _xDataSets[setIndex].size();
                 for (uint32 dataIndex = 0; dataIndex < dataCount; ++dataIndex)
@@ -101,7 +101,7 @@ namespace mint
             _shapeFontRendererContext->renderAndFlush();
         }
         
-        void Plotter::plotScatter(const PlotType plotType, const float x, const float y, const mint::RenderingBase::Color& color)
+        void Plotter::plotScatter(const PlotType plotType, const float x, const float y, const mint::Rendering::Color& color)
         {
             const mint::Float2 plotPosition2 = computePlotPosition(x, y);
             
@@ -163,8 +163,8 @@ namespace mint
 
         void Plotter::drawFrame(const mint::Float4& frameCenterPosition) noexcept
         {
-            _shapeFontRendererContext->setBorderColor(mint::RenderingBase::Color::kBlack);
-            _shapeFontRendererContext->setColor(mint::RenderingBase::Color::kWhite);
+            _shapeFontRendererContext->setBorderColor(mint::Rendering::Color::kBlack);
+            _shapeFontRendererContext->setColor(mint::Rendering::Color::kWhite);
             _shapeFontRendererContext->setPosition(frameCenterPosition);
             _shapeFontRendererContext->drawRectangle(_size, 1.0f, 0.0f);
         }
@@ -173,9 +173,9 @@ namespace mint
         {
             const float paddingY = 10.0f;
             mint::Float4 labelPosition = mint::Float4(frameCenterPosition._x, frameCenterPosition._y + _size._y * 0.5f + paddingY, 0.0f, 1.0f);
-            mint::RenderingBase::FontRenderingOption labelRenderingOption;
-            labelRenderingOption._directionHorz = mint::RenderingBase::TextRenderDirectionHorz::Centered;
-            _shapeFontRendererContext->setTextColor(mint::RenderingBase::Color::kBlack);
+            mint::Rendering::FontRenderingOption labelRenderingOption;
+            labelRenderingOption._directionHorz = mint::Rendering::TextRenderDirectionHorz::Centered;
+            _shapeFontRendererContext->setTextColor(mint::Rendering::Color::kBlack);
             _shapeFontRendererContext->drawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
 
             const float paddingX = -2.0f;

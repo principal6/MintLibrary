@@ -27,7 +27,7 @@ namespace mint
             __noop;
         }
 
-        const mint::RenderingBase::MeshData& MeshComponent::getMeshData() const noexcept
+        const mint::Rendering::MeshData& MeshComponent::getMeshData() const noexcept
         {
             return _meshData;
         }
@@ -37,9 +37,9 @@ namespace mint
             return _meshData.getVertexCount();
         }
 
-        const mint::RenderingBase::VS_INPUT* MeshComponent::getVertices() const noexcept
+        const mint::Rendering::VS_INPUT* MeshComponent::getVertices() const noexcept
         {
-            return (_meshData._vertexArray.empty()) ? &mint::RenderingBase::MeshData::kNullVertex : &_meshData._vertexArray[0];
+            return (_meshData._vertexArray.empty()) ? &mint::Rendering::MeshData::kNullVertex : &_meshData._vertexArray[0];
         }
 
         const uint32 MeshComponent::getIndexCount() const noexcept
@@ -47,9 +47,9 @@ namespace mint
             return _meshData.getIndexCount();
         }
 
-        const mint::RenderingBase::IndexElementType* MeshComponent::getIndices() const noexcept
+        const mint::Rendering::IndexElementType* MeshComponent::getIndices() const noexcept
         {
-            return (_meshData._faceArray.empty() == true) ? &mint::RenderingBase::MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
+            return (_meshData._faceArray.empty() == true) ? &mint::Rendering::MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
         }
         
         void MeshComponent::shouldDrawNormals(const bool shouldDrawNormals) noexcept

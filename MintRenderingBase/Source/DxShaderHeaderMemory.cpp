@@ -7,7 +7,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         void DxShaderHeaderMemory::pushHeader(const char* const name, const char* const content)
         {

@@ -8,7 +8,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         void IRendererContext::flushTransformBuffer() noexcept
         {
@@ -17,8 +17,8 @@ namespace mint
 
         void IRendererContext::prepareTransformBuffer() noexcept
         {
-            mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            mint::RenderingBase::DxResource& sbTransform = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+            mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            mint::Rendering::DxResource& sbTransform = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
             sbTransform.updateBuffer(&_sbTransformData[0], _sbTransformData.size());
         }
     }

@@ -11,12 +11,12 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class ShapeFontRendererContext final : public ShapeRendererContext
         {
         public:
-                                                        ShapeFontRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                        ShapeFontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
             virtual                                     ~ShapeFontRendererContext();
 
         public:
@@ -44,10 +44,10 @@ namespace mint
             void                                        drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
             const float                                 calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                                calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
-            void                                        setTextColor(const mint::RenderingBase::Color& textColor) noexcept;
+            void                                        setTextColor(const mint::Rendering::Color& textColor) noexcept;
 
         private:
-            mint::RenderingBase::FontRendererContext    _fontRendererContext;
+            mint::Rendering::FontRendererContext    _fontRendererContext;
         };
     }
 }

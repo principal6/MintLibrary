@@ -12,14 +12,9 @@
 
 namespace mint
 {
-    namespace RenderingBase
-    {
-        class GraphicDevice;
-    }
-
-
     namespace Rendering
     {
+        class GraphicDevice;
         struct LatexParser;
         class MathExpressionRenderer;
 
@@ -67,7 +62,7 @@ namespace mint
         class MathExpressionRenderer
         {
         public:
-                                MathExpressionRenderer(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                MathExpressionRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
                                 ~MathExpressionRenderer() = default;
 
         public:
@@ -81,7 +76,7 @@ namespace mint
                 { "Assets/cmu_s_italic", "Assets/cmu_s_bold", "Assets/cmu_s_bold_italic", "Assets/cmu_s_roman" };
 
         private:
-            mint::RenderingBase::ShapeFontRendererContext   _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
+            mint::Rendering::ShapeFontRendererContext   _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
             mint::BitVector                                 _bitFlagsArray[MathExpression::getModifierTypeCount()];
         };
     }

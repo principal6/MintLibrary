@@ -11,10 +11,10 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         template <typename T>
-        inline LowLevelRenderer<T>::LowLevelRenderer(mint::RenderingBase::GraphicDevice* const graphicDevice)
+        inline LowLevelRenderer<T>::LowLevelRenderer(mint::Rendering::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _vertexStride{ sizeof(T) }
             , _vertexBufferId{}
@@ -49,12 +49,12 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE void LowLevelRenderer<T>::pushMesh(const mint::RenderingBase::MeshData& meshData) noexcept
+        MINT_INLINE void LowLevelRenderer<T>::pushMesh(const mint::Rendering::MeshData& meshData) noexcept
         {
             const uint32 vertexCount = meshData.getVertexCount();
             const uint32 indexCount = meshData.getIndexCount();
-            const mint::RenderingBase::VS_INPUT* const meshVertices = meshData.getVertices();
-            const mint::RenderingBase::IndexElementType* const meshIndices = meshData.getIndices();
+            const mint::Rendering::VS_INPUT* const meshVertices = meshData.getVertices();
+            const mint::Rendering::IndexElementType* const meshIndices = meshData.getIndices();
             for (uint32 vertexIter = 0; vertexIter < vertexCount; ++vertexIter)
             {
                 _vertices.push_back(meshVertices[vertexIter]);
@@ -62,7 +62,7 @@ namespace mint
 
             // 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
             // 바로 이전 메시의 마지막 vertex index 이후부터 시작되도록 보장한다.
-            mint::RenderingBase::IndexElementType indexBase = getIndexBaseXXX();
+            mint::Rendering::IndexElementType indexBase = getIndexBaseXXX();
             for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
             {
                 _indices.push_back(indexBase + meshIndices[indexIter]);
@@ -119,10 +119,10 @@ namespace mint
 
             switch (renderingPrimitive)
             {
-            case mint::RenderingBase::RenderingPrimitive::LineList:
+            case mint::Rendering::RenderingPrimitive::LineList:
                 _graphicDevice->draw(vertexCount, 0);
                 break;
-            case mint::RenderingBase::RenderingPrimitive::TriangleList:
+            case mint::Rendering::RenderingPrimitive::TriangleList:
                 _graphicDevice->drawIndexed(indexCount, 0, 0);
 
                 break;
@@ -166,17 +166,17 @@ namespace mint
                     continue;
                 }
 
-                D3D11_RECT scissorRect = mint::RenderingBase::rectToD3dRect(renderCommand._clipRect);
+                D3D11_RECT scissorRect = mint::Rendering::rectToD3dRect(renderCommand._clipRect);
                 _graphicDevice->getStateManager().setRsScissorRectangle(scissorRect);
 
                 _graphicDevice->getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
 
                 switch (renderCommand._primitive)
                 {
-                case mint::RenderingBase::RenderingPrimitive::LineList:
+                case mint::Rendering::RenderingPrimitive::LineList:
                     _graphicDevice->draw(renderCommand._vertexCount, renderCommand._vertexOffset);
                     break;
-                case mint::RenderingBase::RenderingPrimitive::TriangleList:
+                case mint::Rendering::RenderingPrimitive::TriangleList:
                     _graphicDevice->drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
                     break;
                 default:
@@ -234,14 +234,14 @@ namespace mint
                 {
                     switch (prevRenderCommand._primitive)
                     {
-                    case mint::RenderingBase::RenderingPrimitive::LineList:
+                    case mint::Rendering::RenderingPrimitive::LineList:
                         if (prevRenderCommand._vertexOffset + prevRenderCommand._vertexCount == currRenderCommand._vertexOffset)
                         {
                             areTwoCommandsHomogeneous = true;
                             mergePrimitiveCount += prevRenderCommand._vertexCount;
                         }
                         break;
-                    case mint::RenderingBase::RenderingPrimitive::TriangleList:
+                    case mint::Rendering::RenderingPrimitive::TriangleList:
                         if (prevRenderCommand._indexOffset + prevRenderCommand._indexCount == currRenderCommand._indexOffset)
                         {
                             areTwoCommandsHomogeneous = true;
@@ -264,10 +264,10 @@ namespace mint
                         const RenderCommand& mergeEndRenderCommand = _renderCommands[mergeEndIndex];
                         switch (mergeBeginRenderCommand._primitive)
                         {
-                        case mint::RenderingBase::RenderingPrimitive::LineList:
+                        case mint::Rendering::RenderingPrimitive::LineList:
                             mergeBeginRenderCommand._vertexCount = mergePrimitiveCount + mergeEndRenderCommand._vertexCount;
                             break;
-                        case mint::RenderingBase::RenderingPrimitive::TriangleList:
+                        case mint::Rendering::RenderingPrimitive::TriangleList:
                             mergeBeginRenderCommand._indexCount = mergePrimitiveCount + mergeEndRenderCommand._indexCount;
                             break;
                         default:

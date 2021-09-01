@@ -12,14 +12,9 @@
 
 namespace mint
 {
-    namespace RenderingBase
-    {
-        class GraphicDevice;
-    }
-
-
     namespace Rendering
     {
+        class GraphicDevice;
         class TransformComponent;
         class MeshComponent;
         class CameraObject;

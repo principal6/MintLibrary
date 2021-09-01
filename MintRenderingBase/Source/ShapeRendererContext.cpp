@@ -10,14 +10,14 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
-        ShapeRendererContext::ShapeRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
+        ShapeRendererContext::ShapeRendererContext(mint::Rendering::GraphicDevice* const graphicDevice)
             : IRendererContext(graphicDevice)
             , _lowLevelRenderer{ nullptr }
-            , _borderColor{ mint::RenderingBase::Color(1.0f, 1.0f, 1.0f) }
+            , _borderColor{ mint::Rendering::Color(1.0f, 1.0f, 1.0f) }
         {
-            _lowLevelRenderer = MINT_NEW(RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice);
+            _lowLevelRenderer = MINT_NEW(Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>, graphicDevice);
         }
 
         ShapeRendererContext::~ShapeRendererContext()
@@ -29,7 +29,7 @@ namespace mint
         {
             _clipRect = _graphicDevice->getFullScreenClipRect();
 
-            mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             {
                 static constexpr const char kShaderString[]
@@ -61,7 +61,7 @@ namespace mint
                     }
                     )"
                 };
-                const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::RenderingBase::VS_INPUT_SHAPE));
+                const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
             }
 
@@ -158,7 +158,7 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -168,8 +168,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                mint::RenderingBase::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+                mint::Rendering::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -188,7 +188,7 @@ namespace mint
             flush();
         }
 
-        void ShapeRendererContext::setBorderColor(const mint::RenderingBase::Color& borderColor) noexcept
+        void ShapeRendererContext::setBorderColor(const mint::Rendering::Color& borderColor) noexcept
         {
             _borderColor = borderColor;
         }
@@ -200,7 +200,7 @@ namespace mint
             pushTransformToBuffer(0.0f, false);
         }
 
-        void ShapeRendererContext::drawQuadraticBezierInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const mint::RenderingBase::Color& color, const bool validate)
+        void ShapeRendererContext::drawQuadraticBezierInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const mint::Rendering::Color& color, const bool validate)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const mint::Float2(&pointArray)[2] = { pointA, pointB };
@@ -217,7 +217,7 @@ namespace mint
                 flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
             }
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = color;
             v._position = _position;
@@ -259,13 +259,13 @@ namespace mint
             pushTransformToBuffer(0.0f, false);
         }
 
-        void ShapeRendererContext::drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::RenderingBase::Color& color)
+        void ShapeRendererContext::drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::Rendering::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -304,7 +304,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
             
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
@@ -350,13 +350,13 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::RenderingBase::Color& color)
+        void ShapeRendererContext::drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::Rendering::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -428,7 +428,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
@@ -492,7 +492,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             
             // Right arc section
@@ -578,7 +578,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
 
             // Right outer arc section
@@ -755,13 +755,13 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::RenderingBase::Color& color)
+        void ShapeRendererContext::drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::Rendering::Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -813,7 +813,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
@@ -949,7 +949,7 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::RenderingBase::Color& color)
+        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color)
         {
             const mint::Float2& halfCoreSize = halfSize - mint::Float2(radius);
 
@@ -1019,7 +1019,7 @@ namespace mint
             }
         }
 
-        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::RenderingBase::Color& color)
+        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color)
         {
             const mint::Float2& halfCoreSize = halfSize - mint::Float2(radius);
 
@@ -1092,7 +1092,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            RenderingBase::VS_INPUT_SHAPE v;
+            Rendering::VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
@@ -1137,7 +1137,7 @@ namespace mint
 
         void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
         {
-            mint::RenderingBase::SB_Transform transform;
+            mint::Rendering::SB_Transform transform;
             transform._transformMatrix = mint::Float4x4::rotationMatrixZ(-rotationAngle);
             transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
             transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
@@ -1148,24 +1148,24 @@ namespace mint
         void ShapeRendererContext::drawColorPallete(const float radius)
         {
             static constexpr uint32 colorCount = 12;
-            static const mint::RenderingBase::Color colorArray[colorCount] = {
+            static const mint::Rendering::Color colorArray[colorCount] = {
                 // Red => Green
-                mint::RenderingBase::Color(1.0f, 0.0f, 0.0f, 1.0f),
-                mint::RenderingBase::Color(1.0f, 0.25f, 0.0f, 1.0f),
-                mint::RenderingBase::Color(1.0f, 0.5f, 0.0f, 1.0f),
-                mint::RenderingBase::Color(1.0f, 0.75f, 0.0f, 1.0f),
-                mint::RenderingBase::Color(1.0f, 1.0f, 0.0f, 1.0f),
-                mint::RenderingBase::Color(0.5f, 1.0f, 0.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 0.0f, 0.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 0.25f, 0.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 0.5f, 0.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 0.75f, 0.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 1.0f, 0.0f, 1.0f),
+                mint::Rendering::Color(0.5f, 1.0f, 0.0f, 1.0f),
 
                 // Gren => Blue
-                mint::RenderingBase::Color(0.0f, 0.875f, 0.125f, 1.0f),
-                mint::RenderingBase::Color(0.0f, 0.666f, 1.0f, 1.0f),
-                mint::RenderingBase::Color(0.0f, 0.333f, 1.0f, 1.0f),
-                mint::RenderingBase::Color(0.0f, 0.0f, 1.0f, 1.0f),
+                mint::Rendering::Color(0.0f, 0.875f, 0.125f, 1.0f),
+                mint::Rendering::Color(0.0f, 0.666f, 1.0f, 1.0f),
+                mint::Rendering::Color(0.0f, 0.333f, 1.0f, 1.0f),
+                mint::Rendering::Color(0.0f, 0.0f, 1.0f, 1.0f),
 
                 // Blue => Red
-                mint::RenderingBase::Color(0.5f, 0.0f, 1.0f, 1.0f),
-                mint::RenderingBase::Color(1.0f, 0.0f, 0.5f, 1.0f),
+                mint::Rendering::Color(0.5f, 0.0f, 1.0f, 1.0f),
+                mint::Rendering::Color(1.0f, 0.0f, 0.5f, 1.0f),
             };
 
             static constexpr uint32 outerStepSmoothingOffset = 4;
@@ -1182,19 +1182,19 @@ namespace mint
                 const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
                 
                 int32 colorIndexCorrected = colorIndex;
-                const mint::RenderingBase::Color& stepsColor = colorArray[colorIndexCorrected];
+                const mint::Rendering::Color& stepsColor = colorArray[colorIndexCorrected];
 
                 // Outer steps
                 for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
                 {
                     const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
-                    setColor(stepsColor * outerStepRatio + mint::RenderingBase::Color(0.0f, 0.0f, 0.0f, 1.0f));
+                    setColor(stepsColor * outerStepRatio + mint::Rendering::Color(0.0f, 0.0f, 0.0f, 1.0f));
 
                     drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
                 }
 
                 // Inner steps
-                const mint::RenderingBase::Color deltaColor = mint::RenderingBase::Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
+                const mint::Rendering::Color deltaColor = mint::Rendering::Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
                 for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
                 {
                     setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));

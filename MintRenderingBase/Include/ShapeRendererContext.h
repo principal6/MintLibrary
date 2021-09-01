@@ -17,7 +17,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class ShapeRendererContext : public IRendererContext
         {
@@ -37,7 +37,7 @@ namespace mint
             static constexpr uint8                  kInfoCircular           = 2;
 
         public:
-                                                    ShapeRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                    ShapeRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
             virtual                                 ~ShapeRendererContext();
 
         public:
@@ -48,7 +48,7 @@ namespace mint
             virtual void                            renderAndFlush() noexcept;
 
         public:
-            void                                    setBorderColor(const mint::RenderingBase::Color& borderColor) noexcept;
+            void                                    setBorderColor(const mint::Rendering::Color& borderColor) noexcept;
 
         public:
             // Independent from internal position set by setPosition() call
@@ -56,7 +56,7 @@ namespace mint
             void                                    drawQuadraticBezier(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const bool validate = true);
 
         protected:
-            void                                    drawQuadraticBezierInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const mint::RenderingBase::Color& color, const bool validate = true);
+            void                                    drawQuadraticBezierInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const mint::Rendering::Color& color, const bool validate = true);
             
         public:
             // Independent from internal position set by setPosition() call
@@ -64,14 +64,14 @@ namespace mint
             void                                    drawSolidTriangle(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC);
 
         protected:
-            void                                    drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::RenderingBase::Color& color);
+            void                                    drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::Rendering::Color& color);
 
         public:
             void                                    drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
             void                                    drawQuarterCircle(const float radius, const float rotationAngle);
         
         protected:
-            void                                    drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::RenderingBase::Color& color);
+            void                                    drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::Rendering::Color& color);
 
         public:
             // This function Interprets internal positon as the center of the entire circle (= center root of half circle)
@@ -90,7 +90,7 @@ namespace mint
             void                                    drawRectangle(const mint::Float2& size, const float borderThickness, const float rotationAngle);
 
         protected:
-            void                                    drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::RenderingBase::Color& color);
+            void                                    drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::Rendering::Color& color);
 
         public:
             void                                    drawTaperedRectangle(const mint::Float2& size, const float tapering, const float bias, const float rotationAngle);
@@ -98,8 +98,8 @@ namespace mint
             void                                    drawHalfRoundedRectangle(const mint::Float2& size, const float roundness, const float rotationAngle);
 
         protected:
-            void                                    drawRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::RenderingBase::Color& color);
-            void                                    drawHalfRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::RenderingBase::Color& color);
+            void                                    drawRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color);
+            void                                    drawHalfRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color);
 
         public:
             // Independent from internal position set by setPosition() call
@@ -121,7 +121,7 @@ namespace mint
             DxObjectId                              _pixelShaderId;
 
         protected:
-            mint::RenderingBase::Color              _borderColor;
+            mint::Rendering::Color              _borderColor;
         };
     }
 }

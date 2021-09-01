@@ -35,7 +35,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         GlyphInfo::GlyphInfo()
             : _charCode{}
@@ -87,12 +87,12 @@ namespace mint
 
 
         FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
-            : FontRendererContext(graphicDevice, MINT_NEW(RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>, graphicDevice))
+            : FontRendererContext(graphicDevice, MINT_NEW(Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>, graphicDevice))
         {
             _ownTriangleRenderer = true;
         }
 
-        FontRendererContext::FontRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice, mint::RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer)
+        FontRendererContext::FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice, mint::Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>* const triangleRenderer)
             : IRendererContext(graphicDevice)
             , _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
@@ -120,7 +120,7 @@ namespace mint
             const uint32 glyphRangeCount = _glyphRangeArray.size();
             if (2 <= glyphRangeCount)
             {
-                mint::quickSort(_glyphRangeArray, mint::ComparatorAscending<mint::RenderingBase::GlyphRange>());
+                mint::quickSort(_glyphRangeArray, mint::ComparatorAscending<mint::Rendering::GlyphRange>());
 
                 mint::Vector<uint32> deletionList;
                 for (uint32 glyphRangeIndex = 1; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
@@ -242,8 +242,8 @@ namespace mint
             }
 #endif
             
-            mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            _fontData._fontTextureId = resourcePool.pushTexture2D(mint::RenderingBase::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
+            mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            _fontData._fontTextureId = resourcePool.pushTexture2D(mint::Rendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
             return true;
         }
 
@@ -506,7 +506,7 @@ namespace mint
         {
             _clipRect = _graphicDevice->getFullScreenClipRect();
 
-            mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             // Compile vertex shader and create input layer
             {
@@ -540,7 +540,7 @@ namespace mint
                     }
                     )"
                 };
-                const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::RenderingBase::VS_INPUT_SHAPE));
+                const mint::Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
             }
 
@@ -616,9 +616,9 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, mint::RenderingBase::DxShaderType::PixelShader, 0);
+                _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, mint::Rendering::DxShaderType::PixelShader, 0);
 
-                mint::RenderingBase::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -628,8 +628,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                mint::RenderingBase::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                mint::RenderingBase::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+                mint::Rendering::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -760,7 +760,7 @@ namespace mint
 
         void FontRendererContext::pushTransformToBuffer(const mint::Float4& preTranslation, mint::Float4x4 transformMatrix, const mint::Float4& postTranslation)
         {
-            mint::RenderingBase::SB_Transform transform;
+            mint::Rendering::SB_Transform transform;
             transform._transformMatrix.preTranslate(preTranslation.getXyz());
             transform._transformMatrix.postTranslate(postTranslation.getXyz());
             transform._transformMatrix *= transformMatrix;
@@ -790,7 +790,7 @@ namespace mint
                 {
                     auto& vertexArray = _lowLevelRenderer->vertices();
 
-                    mint::RenderingBase::VS_INPUT_SHAPE v;
+                    mint::Rendering::VS_INPUT_SHAPE v;
                     v._position._x = glyphRect.left();
                     v._position._y = glyphRect.top();
                     v._position._z = 0.0f;

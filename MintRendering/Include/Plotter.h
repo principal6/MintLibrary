@@ -19,11 +19,11 @@ namespace mint
         class Plotter
         {
             static constexpr mint::Float2 kDefaultSize = mint::Float2(400, 300);
-            static constexpr mint::RenderingBase::Color kAutoColorArray[]{
-                mint::RenderingBase::Color(    0.0f,    0.5f,    1.0f),
-                mint::RenderingBase::Color(    1.0f,  0.125f, 0.0625f),
-                mint::RenderingBase::Color(    1.0f,  0.625f,    0.0f),
-                mint::RenderingBase::Color(  0.125f,   0.75f,   0.15f),
+            static constexpr mint::Rendering::Color kAutoColorArray[]{
+                mint::Rendering::Color(    0.0f,    0.5f,    1.0f),
+                mint::Rendering::Color(    1.0f,  0.125f, 0.0625f),
+                mint::Rendering::Color(    1.0f,  0.625f,    0.0f),
+                mint::Rendering::Color(  0.125f,   0.75f,   0.15f),
             };
             static constexpr uint32 kAutoColorCount = _countof(kAutoColorArray);
 
@@ -36,7 +36,7 @@ namespace mint
             };
 
         public:
-                                    Plotter(mint::RenderingBase::ShapeFontRendererContext& shapeFontRendererContext);
+                                    Plotter(mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext);
                                     ~Plotter() = default;
 
         public:
@@ -52,7 +52,7 @@ namespace mint
             void                    render() noexcept;
 
         private:
-            void                    plotScatter(const PlotType plotType, const float x, const float y, const mint::RenderingBase::Color& color);
+            void                    plotScatter(const PlotType plotType, const float x, const float y, const mint::Rendering::Color& color);
             mint::Float2            computeOrigin() const noexcept;
             mint::Float2            computeInFramePlotPosition(const float x, const float y) const noexcept;
             mint::Float2            computePlotPosition(const float x, const float y) const noexcept;
@@ -60,12 +60,12 @@ namespace mint
             void                    drawLabels(const mint::Float4& frameCenterPosition) noexcept;
 
         private:
-            mint::RenderingBase::ShapeFontRendererContext* const    _shapeFontRendererContext;
+            mint::Rendering::ShapeFontRendererContext* const    _shapeFontRendererContext;
         
         private:
             mint::Vector<mint::Vector<float>>           _xDataSets;
             mint::Vector<mint::Vector<float>>           _yDataSets;
-            mint::Vector<mint::RenderingBase::Color>    _colorArray;
+            mint::Vector<mint::Rendering::Color>    _colorArray;
         
         private:
             mint::Vector<PlotType>      _plotTypeArray;

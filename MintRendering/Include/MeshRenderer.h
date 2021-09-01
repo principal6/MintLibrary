@@ -16,22 +16,17 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class GraphicDevice;
         struct SB_Material;
-    }
-
-
-    namespace Rendering
-    {
         class MeshComponent;
 
 
         class MeshRenderer final
         {
         public:
-                                                        MeshRenderer(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                        MeshRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
                                                         ~MeshRenderer();
         
         public:
@@ -39,19 +34,19 @@ namespace mint
             void                                        render(const mint::Rendering::ObjectPool& objectPool) noexcept;
 
         private:
-            mint::RenderingBase::GraphicDevice* const   _graphicDevice;
+            mint::Rendering::GraphicDevice* const   _graphicDevice;
 
         private:
-            mint::RenderingBase::LowLevelRenderer<mint::RenderingBase::VS_INPUT>    _lowLevelRenderer;
-            mint::RenderingBase::CB_Transform                                       _cbTransformData;
-            mint::Vector<mint::RenderingBase::SB_Material>                          _sbMaterialDatas;
+            mint::Rendering::LowLevelRenderer<mint::Rendering::VS_INPUT>    _lowLevelRenderer;
+            mint::Rendering::CB_Transform                                       _cbTransformData;
+            mint::Vector<mint::Rendering::SB_Material>                          _sbMaterialDatas;
 
         private:
-            mint::RenderingBase::DxObjectId             _vsDefaultId;
-            mint::RenderingBase::DxObjectId             _gsNormalId;
-            mint::RenderingBase::DxObjectId             _gsTriangleEdgeId;
-            mint::RenderingBase::DxObjectId             _psDefaultId;
-            mint::RenderingBase::DxObjectId             _psTexCoordAsColorId;
+            mint::Rendering::DxObjectId             _vsDefaultId;
+            mint::Rendering::DxObjectId             _gsNormalId;
+            mint::Rendering::DxObjectId             _gsTriangleEdgeId;
+            mint::Rendering::DxObjectId             _psDefaultId;
+            mint::Rendering::DxObjectId             _psTexCoordAsColorId;
         };
     }
 }

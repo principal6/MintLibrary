@@ -24,7 +24,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class GraphicDevice;
 
@@ -33,7 +33,7 @@ namespace mint
         {
         public:
                                                     IRendererContext() = default;
-                                                    IRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                    IRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
             virtual                                 ~IRendererContext() = default;
 
         public:
@@ -54,8 +54,8 @@ namespace mint
         public:
             void                                    setPosition(const mint::Float4& position) noexcept;
             void                                    setPositionZ(const float s) noexcept;
-            void                                    setColor(const mint::RenderingBase::Color& color) noexcept;
-            void                                    setColor(const mint::Vector<mint::RenderingBase::Color>& colorArray) noexcept;
+            void                                    setColor(const mint::Rendering::Color& color) noexcept;
+            void                                    setColor(const mint::Vector<mint::Rendering::Color>& colorArray) noexcept;
             virtual void                            setClipRect(const mint::Rect& clipRect) noexcept;
 
         protected:
@@ -63,12 +63,12 @@ namespace mint
             static const float                      packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
 
         protected:
-            mint::RenderingBase::GraphicDevice*     _graphicDevice;
+            mint::Rendering::GraphicDevice*     _graphicDevice;
         
         protected:
             mint::Float4                            _position;
-            mint::Vector<RenderingBase::Color>      _colorArray;
-            mint::RenderingBase::Color              _defaultColor;
+            mint::Vector<Rendering::Color>      _colorArray;
+            mint::Rendering::Color              _defaultColor;
             mint::Rect                              _clipRect;
 
         protected:

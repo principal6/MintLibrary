@@ -26,7 +26,7 @@ typedef struct FT_FaceRec_*         FT_Face;
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class GraphicDevice;
         class FontRendererContext;
@@ -118,8 +118,8 @@ namespace mint
             };
 
         public:
-                                                FontRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice);
-                                                FontRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice, mint::RenderingBase::LowLevelRenderer<RenderingBase::VS_INPUT_SHAPE>* const triangleRenderer);
+                                                FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
+                                                FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice, mint::Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>* const triangleRenderer);
             virtual                             ~FontRendererContext();
 
         public:

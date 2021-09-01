@@ -54,50 +54,50 @@ namespace mint
             };
 
         public:
-            static void                             generateCube(mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             generateCone(const ConeParam& coneParam, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             generateCylinder(const CylinderParam& cylinderParam, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             generateOctahedron(const RadiusParam& radiusParam, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             generateGeoSphere(const GeoSpherePram& geoSpherePram, mint::RenderingBase::MeshData& meshData) noexcept;
+            static void                             generateCube(mint::Rendering::MeshData& meshData) noexcept;
+            static void                             generateCone(const ConeParam& coneParam, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             generateCylinder(const CylinderParam& cylinderParam, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             generateOctahedron(const RadiusParam& radiusParam, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             generateGeoSphere(const GeoSpherePram& geoSpherePram, mint::Rendering::MeshData& meshData) noexcept;
 
         public:
-            static void                             setMaterialId(mint::RenderingBase::MeshData& meshData, const uint32 materialId) noexcept;
-            static void                             transformMeshData(mint::RenderingBase::MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept;
-            static void                             mergeMeshData(const mint::RenderingBase::MeshData& meshDataA, const mint::RenderingBase::MeshData& meshDataB, mint::RenderingBase::MeshData& outMeshData) noexcept;
-            static void                             mergeMeshData(const mint::RenderingBase::MeshData& sourceMeshData, mint::RenderingBase::MeshData& inoutTargetMeshData) noexcept;
+            static void                             setMaterialId(mint::Rendering::MeshData& meshData, const uint32 materialId) noexcept;
+            static void                             transformMeshData(mint::Rendering::MeshData& meshData, const mint::Float4x4& transformationMatrix) noexcept;
+            static void                             mergeMeshData(const mint::Rendering::MeshData& meshDataA, const mint::Rendering::MeshData& meshDataB, mint::Rendering::MeshData& outMeshData) noexcept;
+            static void                             mergeMeshData(const mint::Rendering::MeshData& sourceMeshData, mint::Rendering::MeshData& inoutTargetMeshData) noexcept;
 
         private:
-            static void                             pushPosition(const float(&xyz)[3], mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             pushPosition(const mint::Float4& xyzw, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             pushTri(const int32(&positionIndices)[3], mint::RenderingBase::MeshData& meshData, const mint::Float2(&uvs)[3]) noexcept;
-            static void                             pushQuad(const int32(&positionIndicesInClockwise)[4], mint::RenderingBase::MeshData& meshData, const mint::Float2(&uvsInClockwise)[4]) noexcept;
+            static void                             pushPosition(const float(&xyz)[3], mint::Rendering::MeshData& meshData) noexcept;
+            static void                             pushPosition(const mint::Float4& xyzw, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             pushTri(const int32(&positionIndices)[3], mint::Rendering::MeshData& meshData, const mint::Float2(&uvs)[3]) noexcept;
+            static void                             pushQuad(const int32(&positionIndicesInClockwise)[4], mint::Rendering::MeshData& meshData, const mint::Float2(&uvsInClockwise)[4]) noexcept;
         
         private:
-            static void                             subdivideTriByMidpoints(mint::RenderingBase::MeshData& oldMeshData) noexcept;
-            static void                             projectVerticesToSphere(const RadiusParam& radiusParam, mint::RenderingBase::MeshData& meshData) noexcept;
+            static void                             subdivideTriByMidpoints(mint::Rendering::MeshData& oldMeshData) noexcept;
+            static void                             projectVerticesToSphere(const RadiusParam& radiusParam, mint::Rendering::MeshData& meshData) noexcept;
 
         private:
-            static void                             pushVertexWithPositionXXX(const uint32 positionIndex, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             setVertexUv(mint::RenderingBase::MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept;
-            static void                             setVertexUv(mint::RenderingBase::VS_INPUT& vertex, const mint::Float2& uv) noexcept;
-            static mint::Float2                     getVertexUv(const mint::RenderingBase::VS_INPUT& inoutVertex) noexcept;
-            static mint::RenderingBase::VS_INPUT&   getFaceVertex0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static mint::RenderingBase::VS_INPUT&   getFaceVertex1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static mint::RenderingBase::VS_INPUT&   getFaceVertex2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static const uint32                     getFaceVertexPositionIndex0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static const uint32                     getFaceVertexPositionIndex1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static const uint32                     getFaceVertexPositionIndex2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static mint::Float4&                    getFaceVertexPosition0(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static mint::Float4&                    getFaceVertexPosition1(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static mint::Float4&                    getFaceVertexPosition2(const mint::RenderingBase::Face& face, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             pushTriFaceXXX(const uint32 vertexOffset, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             pushQuadFaceXXX(const uint32 vertexOffset, mint::RenderingBase::MeshData& meshData) noexcept;
-            static void                             recalculateTangentBitangentFromNormal(const mint::Float4& normal, mint::RenderingBase::VS_INPUT& vertex) noexcept;
-            static mint::Float4                     computeNormalFromTangentBitangent(const mint::RenderingBase::VS_INPUT& vertex) noexcept;
+            static void                             pushVertexWithPositionXXX(const uint32 positionIndex, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             setVertexUv(mint::Rendering::MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept;
+            static void                             setVertexUv(mint::Rendering::VS_INPUT& vertex, const mint::Float2& uv) noexcept;
+            static mint::Float2                     getVertexUv(const mint::Rendering::VS_INPUT& inoutVertex) noexcept;
+            static mint::Rendering::VS_INPUT&   getFaceVertex0(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static mint::Rendering::VS_INPUT&   getFaceVertex1(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static mint::Rendering::VS_INPUT&   getFaceVertex2(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex0(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex1(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static const uint32                     getFaceVertexPositionIndex2(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static mint::Float4&                    getFaceVertexPosition0(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static mint::Float4&                    getFaceVertexPosition1(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static mint::Float4&                    getFaceVertexPosition2(const mint::Rendering::Face& face, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             pushTriFaceXXX(const uint32 vertexOffset, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             pushQuadFaceXXX(const uint32 vertexOffset, mint::Rendering::MeshData& meshData) noexcept;
+            static void                             recalculateTangentBitangentFromNormal(const mint::Float4& normal, mint::Rendering::VS_INPUT& vertex) noexcept;
+            static mint::Float4                     computeNormalFromTangentBitangent(const mint::Rendering::VS_INPUT& vertex) noexcept;
 
         public:
-            static void                             calculateTangentBitangent(const mint::RenderingBase::Face& face, mint::Vector<mint::RenderingBase::VS_INPUT>& inoutVertexArray) noexcept;
-            static void                             smoothNormals(mint::RenderingBase::MeshData& meshData) noexcept;
+            static void                             calculateTangentBitangent(const mint::Rendering::Face& face, mint::Vector<mint::Rendering::VS_INPUT>& inoutVertexArray) noexcept;
+            static void                             smoothNormals(mint::Rendering::MeshData& meshData) noexcept;
         };
     }
 }

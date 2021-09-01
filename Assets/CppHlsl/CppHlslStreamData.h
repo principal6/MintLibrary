@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         // Position
         // Tangent & Bitangent => Normal

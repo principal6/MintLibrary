@@ -18,7 +18,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class GraphicDevice;
         struct MeshData;
@@ -47,7 +47,7 @@ namespace mint
             };
 
         public:
-                                                        LowLevelRenderer(mint::RenderingBase::GraphicDevice* const graphicDevice);
+                                                        LowLevelRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
                                                         ~LowLevelRenderer() = default;
 
         public:
@@ -57,7 +57,7 @@ namespace mint
             const uint32                                getIndexCount() const noexcept;
         
         public:
-            void                                        pushMesh(const mint::RenderingBase::MeshData& meshData) noexcept;
+            void                                        pushMesh(const mint::Rendering::MeshData& meshData) noexcept;
 
         public:
             void                                        setIndexBaseXXX(const IndexElementType base) noexcept;
@@ -77,7 +77,7 @@ namespace mint
             void                                        optimizeRenderCommands() noexcept;
 
         private:
-            mint::RenderingBase::GraphicDevice* const   _graphicDevice;
+            mint::Rendering::GraphicDevice* const   _graphicDevice;
             const uint32                                _vertexStride;
         
         private:

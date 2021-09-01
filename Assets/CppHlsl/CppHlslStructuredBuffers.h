@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         // 128 비트의 배수로 struct 사이즈를 맞출 것!!
 

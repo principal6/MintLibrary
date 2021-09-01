@@ -110,10 +110,10 @@ const bool testLanguage()
         float3 _c           = float3(16.0f, 32.0f, 64.0f);  // v[1]
         float1 _padding1    = 128.0f;
     };
-    RenderingBase::VS_INPUT_SHAPE vsInput;
-    uint64 a = sizeof(RenderingBase::VS_INPUT_SHAPE);
-    uint64 b = sizeof(RenderingBase::VS_OUTPUT_SHAPE);
-    uint64 c = sizeof(RenderingBase::CB_View);
+    Rendering::VS_INPUT_SHAPE vsInput;
+    uint64 a = sizeof(Rendering::VS_INPUT_SHAPE);
+    uint64 b = sizeof(Rendering::VS_OUTPUT_SHAPE);
+    uint64 c = sizeof(Rendering::CB_View);
     TestStruct ts;
     uint64 tss = sizeof(TestStruct);
 
@@ -214,7 +214,7 @@ const bool testWindow()
         return false;
     }
 
-    RenderingBase::GraphicDevice graphicDevice;
+    Rendering::GraphicDevice graphicDevice;
     graphicDevice.initialize(&window);
 
     //mint::Rendering::MathExpressionRenderer mathExpressionRenderer(&graphicDevice);
@@ -437,7 +437,7 @@ const bool testWindow()
                 {
                     wchar_t tempBuffer[256];
                     mint::Gui::LabelParam labelParam;
-                    labelParam._common._fontColor = mint::RenderingBase::Color(200, 220, 255, 255);
+                    labelParam._common._fontColor = mint::Rendering::Color(200, 220, 255, 255);
                     labelParam._alignmentHorz = mint::Gui::TextAlignmentHorz::Left;
                     
                     mint::formatString(tempBuffer, L" FPS: %d", mint::Profiler::FpsCounter::getFps());
@@ -455,7 +455,7 @@ const bool testWindow()
                         labelParam._alignmentHorz = mint::Gui::TextAlignmentHorz::Center;
                         labelParam._common._backgroundColor.r(1.0f);
                         labelParam._common._backgroundColor.a(0.75f);
-                        labelParam._common._fontColor = mint::RenderingBase::Color::kWhite;
+                        labelParam._common._fontColor = mint::Rendering::Color::kWhite;
                         labelParam._common._size._x = 16.0f;
                         labelParam._common._size._y = 24.0f;
                         labelParam._common._offset._x = 16.0f;

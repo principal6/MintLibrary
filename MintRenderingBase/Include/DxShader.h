@@ -23,7 +23,7 @@ namespace mint
     }
 
 
-    namespace RenderingBase
+    namespace Rendering
     {
         class DxShaderHeaderMemory;
         class GraphicDevice;

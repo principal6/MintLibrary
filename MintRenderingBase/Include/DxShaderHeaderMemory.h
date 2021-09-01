@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class DxShaderHeaderMemory : public ID3DInclude
         {

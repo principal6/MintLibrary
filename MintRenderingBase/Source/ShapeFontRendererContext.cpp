@@ -10,9 +10,9 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
-        ShapeFontRendererContext::ShapeFontRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
+        ShapeFontRendererContext::ShapeFontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice)
             : ShapeRendererContext(graphicDevice)
             , _fontRendererContext{ graphicDevice }
         {
@@ -124,7 +124,7 @@ namespace mint
             return _fontRendererContext.calculateIndexFromPositionInText(wideText, textLength, positionInText);
         }
 
-        void ShapeFontRendererContext::setTextColor(const mint::RenderingBase::Color& textColor) noexcept
+        void ShapeFontRendererContext::setTextColor(const mint::Rendering::Color& textColor) noexcept
         {
             _fontRendererContext.setColor(textColor);
         }

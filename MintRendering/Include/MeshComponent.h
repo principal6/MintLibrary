@@ -25,11 +25,11 @@ namespace mint
             virtual                                         ~MeshComponent();
 
         public:
-            const mint::RenderingBase::MeshData&            getMeshData() const noexcept;
+            const mint::Rendering::MeshData&            getMeshData() const noexcept;
             const uint32                                    getVertexCount() const noexcept;
-            const mint::RenderingBase::VS_INPUT*            getVertices() const noexcept;
+            const mint::Rendering::VS_INPUT*            getVertices() const noexcept;
             const uint32                                    getIndexCount() const noexcept;
-            const mint::RenderingBase::IndexElementType*    getIndices() const noexcept;
+            const mint::Rendering::IndexElementType*    getIndices() const noexcept;
 
         public:
             void                                            shouldDrawNormals(const bool shouldDrawNormals) noexcept;
@@ -38,7 +38,7 @@ namespace mint
             const bool                                      shouldDrawEdges() const noexcept;
 
         private:
-            mint::RenderingBase::MeshData                   _meshData;
+            mint::Rendering::MeshData                   _meshData;
             bool                                            _shouldDrawNormals;
             bool                                            _shouldDrawEdges;
         };

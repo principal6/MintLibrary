@@ -92,13 +92,13 @@ namespace mint
 
 #pragma region Mouse
         public:
-            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const mint::RenderingBase::ShapeFontRendererContext& rendererContext, 
+            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
                 ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
         
 #pragma region Keyboard
         public:
-            static void             processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::RenderingBase::ShapeFontRendererContext& rendererContext, 
+            static void             processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
                 ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
                 wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
@@ -118,14 +118,14 @@ namespace mint
 
 #pragma region Keyboard - Caret movements
         public:
-            static void             processKeyCodeCaretMovements(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
+            static void             processKeyCodeCaretMovements(const mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
                 ControlData& controlData, std::wstring& outText) noexcept;
         
         public:
             static void             moveCaretToPrev(ControlData& controlData) noexcept;
             static void             moveCaretToNext(ControlData& controlData, const std::wstring& text) noexcept;
             static void             moveCaretToHead(ControlData& controlData) noexcept;
-            static void             moveCaretToTail(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, ControlData& controlData, const std::wstring& text) noexcept;
+            static void             moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const std::wstring& text) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Character input
@@ -147,14 +147,14 @@ namespace mint
             static const wchar_t*   getLengthErrorMessage(const uint32 maxLength) noexcept;
 
         public:
-            static void             updateTextDisplayOffset(const mint::RenderingBase::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
+            static void             updateTextDisplayOffset(const mint::Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
                 const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth = 0.0f) noexcept;
-            static void             drawTextWithInputCandidate(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+            static void             drawTextWithInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
                 const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, std::wstring& outText) noexcept;
-            static void             drawTextWithoutInputCandidate(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
+            static void             drawTextWithoutInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
                 const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
-            static void             drawSelection(mint::RenderingBase::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
-                const bool isFocused, const float fontSize, const mint::RenderingBase::Color& selectionColor, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+            static void             drawSelection(mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
+                const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, std::wstring& outText) noexcept;
         };
     }
 }

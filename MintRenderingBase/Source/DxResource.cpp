@@ -10,16 +10,16 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         DxResource DxResource::s_invalidInstance(nullptr);
         DXGI_FORMAT DxResource::getDxgiFormat(const DxTextureFormat format)
         {
             switch (format)
             {
-            case mint::RenderingBase::DxTextureFormat::R8_UNORM:
+            case mint::Rendering::DxTextureFormat::R8_UNORM:
                 return DXGI_FORMAT::DXGI_FORMAT_R8_UNORM;
-            case mint::RenderingBase::DxTextureFormat::R8G8B8A8_UNORM:
+            case mint::Rendering::DxTextureFormat::R8G8B8A8_UNORM:
                 return DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM;
             default:
                 break;
@@ -32,9 +32,9 @@ namespace mint
         {
             switch (format)
             {
-            case mint::RenderingBase::DxTextureFormat::R8_UNORM:
+            case mint::Rendering::DxTextureFormat::R8_UNORM:
                 return 1;
-            case mint::RenderingBase::DxTextureFormat::R8G8B8A8_UNORM:
+            case mint::Rendering::DxTextureFormat::R8G8B8A8_UNORM:
                 return 4;
             default:
                 break;
@@ -64,9 +64,9 @@ namespace mint
         {
             switch (_resourceType)
             {
-            case mint::RenderingBase::DxResourceType::INVALID:
+            case mint::Rendering::DxResourceType::INVALID:
                 break;
-            case mint::RenderingBase::DxResourceType::ConstantBuffer:
+            case mint::Rendering::DxResourceType::ConstantBuffer:
             {
                 ComPtr<ID3D11Resource> newResource;
 
@@ -92,8 +92,8 @@ namespace mint
                 }
                 break;
             }
-            case mint::RenderingBase::DxResourceType::VertexBuffer:
-            case mint::RenderingBase::DxResourceType::IndexBuffer:
+            case mint::Rendering::DxResourceType::VertexBuffer:
+            case mint::Rendering::DxResourceType::IndexBuffer:
             {
                 ComPtr<ID3D11Resource> newResource;
 
@@ -119,7 +119,7 @@ namespace mint
                 }
                 break;
             }
-            case mint::RenderingBase::DxResourceType::StructuredBuffer:
+            case mint::Rendering::DxResourceType::StructuredBuffer:
             {
                 ComPtr<ID3D11Resource> newResource;
 
@@ -163,7 +163,7 @@ namespace mint
         {
             switch (_resourceType)
             {
-            case mint::RenderingBase::DxResourceType::Texture2D:
+            case mint::Rendering::DxResourceType::Texture2D:
             {
                 ComPtr<ID3D11Resource> newResource;
 
@@ -274,7 +274,7 @@ namespace mint
             }
             else
             {
-                RenderingBase::SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
+                Rendering::SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
                 if (safeResourceMapper.isValid() == true)
                 {
                     safeResourceMapper.set(resourceContent, _elementStride * elementCount);

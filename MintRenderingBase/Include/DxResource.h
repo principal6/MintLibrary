@@ -14,7 +14,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         class DxResourcePool;
 

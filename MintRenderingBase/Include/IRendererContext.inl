@@ -7,9 +7,9 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
-        inline IRendererContext::IRendererContext(mint::RenderingBase::GraphicDevice* const graphicDevice)
+        inline IRendererContext::IRendererContext(mint::Rendering::GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _defaultColor{ Color::kWhite }
             , _useMultipleViewports{ false }
@@ -37,13 +37,13 @@ namespace mint
             _position._z = s;
         }
 
-        MINT_INLINE void IRendererContext::setColor(const mint::RenderingBase::Color& color) noexcept
+        MINT_INLINE void IRendererContext::setColor(const mint::Rendering::Color& color) noexcept
         {
             _colorArray.clear();
             _defaultColor = color;
         }
 
-        MINT_INLINE void IRendererContext::setColor(const mint::Vector<mint::RenderingBase::Color>& colorArray) noexcept
+        MINT_INLINE void IRendererContext::setColor(const mint::Vector<mint::Rendering::Color>& colorArray) noexcept
         {
             _colorArray = colorArray;
 

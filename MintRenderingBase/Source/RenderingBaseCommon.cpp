@@ -6,7 +6,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         const Color Color::kTransparent = Color(0, 0, 0, 0);
         const Color Color::kWhite = Color(255, 255, 255, 255);

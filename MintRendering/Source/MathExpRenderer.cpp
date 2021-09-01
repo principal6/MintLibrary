@@ -116,10 +116,10 @@ namespace mint
         }
 
 
-        MathExpressionRenderer::MathExpressionRenderer(mint::RenderingBase::GraphicDevice* const graphicDevice)
+        MathExpressionRenderer::MathExpressionRenderer(mint::Rendering::GraphicDevice* const graphicDevice)
             : _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
         {
-            using namespace mint::RenderingBase;
+            using namespace mint::Rendering;
 
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
@@ -138,7 +138,7 @@ namespace mint
 
         void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const mint::Float2& screenPosition) noexcept
         {
-            using namespace mint::RenderingBase;
+            using namespace mint::Rendering;
 
             const uint32 plainStringLength = mathExpression.getPlainStringLength();
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
@@ -173,7 +173,7 @@ namespace mint
 
         void MathExpressionRenderer::render() noexcept
         {
-            using namespace mint::RenderingBase;
+            using namespace mint::Rendering;
 
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {

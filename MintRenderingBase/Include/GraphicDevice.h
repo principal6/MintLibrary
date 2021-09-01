@@ -36,7 +36,7 @@ namespace mint
         class IWindow;
     }
 
-    namespace RenderingBase
+    namespace Rendering
     {
         using Microsoft::WRL::ComPtr;
 
@@ -168,11 +168,11 @@ namespace mint
             const mint::Rect&                                   getFullScreenClipRect() const noexcept;
 
         public:
-            mint::RenderingBase::DxShaderPool&                  getShaderPool() noexcept;
-            mint::RenderingBase::DxResourcePool&                getResourcePool() noexcept;
-            mint::RenderingBase::ShapeRendererContext&          getShapeRendererContext() noexcept;
-            mint::RenderingBase::FontRendererContext&           getFontRendererContext() noexcept;
-            mint::RenderingBase::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
+            mint::Rendering::DxShaderPool&                  getShaderPool() noexcept;
+            mint::Rendering::DxResourcePool&                getResourcePool() noexcept;
+            mint::Rendering::ShapeRendererContext&          getShapeRendererContext() noexcept;
+            mint::Rendering::FontRendererContext&           getFontRendererContext() noexcept;
+            mint::Rendering::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
             mint::Gui::GuiContext&                              getGuiContext() noexcept;
             const mint::Language::CppHlsl::Interpreter&         getCppHlslSteamData() const noexcept;
             const mint::Language::CppHlsl::Interpreter&         getCppHlslConstantBuffers() const noexcept;
@@ -199,7 +199,7 @@ namespace mint
             mint::Window::IWindow*                              _window;
 
         private:
-            mint::RenderingBase::Color                          _clearColor;
+            mint::Rendering::Color                          _clearColor;
 
     #pragma region DirectX
         private:
@@ -228,7 +228,7 @@ namespace mint
             DxResourcePool                                      _resourcePool;
 
         private:
-            mint::RenderingBase::CB_View                        _cbViewData;
+            mint::Rendering::CB_View                        _cbViewData;
             DxObjectId                                          _cbViewId;
 
         private: // Common buffers
@@ -250,9 +250,9 @@ namespace mint
             mint::Language::CppHlsl::Interpreter                _cppHlslStructuredBuffers;
 
         private:
-            mint::RenderingBase::ShapeRendererContext           _shapeRendererContext;
-            mint::RenderingBase::FontRendererContext            _fontRendererContext;
-            mint::RenderingBase::ShapeFontRendererContext       _shapeFontRendererContext;
+            mint::Rendering::ShapeRendererContext           _shapeRendererContext;
+            mint::Rendering::FontRendererContext            _fontRendererContext;
+            mint::Rendering::ShapeFontRendererContext       _shapeFontRendererContext;
             bool                                                _needEndRenderingCall;
 
         private:

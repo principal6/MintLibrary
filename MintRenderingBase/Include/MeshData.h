@@ -19,7 +19,7 @@ namespace mint
     class Float4;
 
 
-    namespace RenderingBase
+    namespace Rendering
     {
         struct VS_INPUT;
         struct Face;
@@ -38,18 +38,18 @@ namespace mint
             const uint32        getVertexCount() const noexcept;
             const uint32        getFaceCount() const noexcept;
             const uint32        getIndexCount() const noexcept;
-            const mint::RenderingBase::VS_INPUT*            getVertices() const noexcept;
-            const mint::RenderingBase::IndexElementType*    getIndices() const noexcept;
+            const mint::Rendering::VS_INPUT*            getVertices() const noexcept;
+            const mint::Rendering::IndexElementType*    getIndices() const noexcept;
 
         public:
-            static const mint::RenderingBase::VS_INPUT          kNullVertex;
-            static const mint::RenderingBase::IndexElementType  kNullIndex;
+            static const mint::Rendering::VS_INPUT          kNullVertex;
+            static const mint::Rendering::IndexElementType  kNullIndex;
 
         public:
             mint::Vector<mint::Float4>                          _positionArray;
             mint::Vector<uint32>                                _vertexToPositionTable;
-            mint::Vector<mint::RenderingBase::VS_INPUT>         _vertexArray;
-            mint::Vector<mint::RenderingBase::Face>             _faceArray;
+            mint::Vector<mint::Rendering::VS_INPUT>         _vertexArray;
+            mint::Vector<mint::Rendering::Face>             _faceArray;
         };
     }
 }

@@ -161,10 +161,10 @@ namespace mint
                     mint::Float4x4 parentJointWorldMatrix = worldMatrix;
                     parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), mint::RenderingBase::Color::kCyan);
+                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), mint::Rendering::Color::kCyan);
                 }
 
-                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, mint::RenderingBase::Color::kMagenta);
+                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, mint::Rendering::Color::kMagenta);
             }
         }
 

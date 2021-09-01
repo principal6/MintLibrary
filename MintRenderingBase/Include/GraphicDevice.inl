@@ -4,7 +4,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         MINT_INLINE D3D11_RECT rectToD3dRect(const Rect& rect) noexcept
         {
@@ -17,27 +17,27 @@ namespace mint
         }
 
 
-        MINT_INLINE mint::RenderingBase::DxShaderPool& GraphicDevice::getShaderPool() noexcept
+        MINT_INLINE mint::Rendering::DxShaderPool& GraphicDevice::getShaderPool() noexcept
         {
             return _shaderPool;
         }
 
-        MINT_INLINE mint::RenderingBase::DxResourcePool& GraphicDevice::getResourcePool() noexcept
+        MINT_INLINE mint::Rendering::DxResourcePool& GraphicDevice::getResourcePool() noexcept
         {
             return _resourcePool;
         }
 
-        MINT_INLINE mint::RenderingBase::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
+        MINT_INLINE mint::Rendering::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
         {
             return _shapeRendererContext;
         }
 
-        MINT_INLINE mint::RenderingBase::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
+        MINT_INLINE mint::Rendering::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
         {
             return _fontRendererContext;
         }
 
-        MINT_INLINE mint::RenderingBase::ShapeFontRendererContext& GraphicDevice::getShapeFontRendererContext() noexcept
+        MINT_INLINE mint::Rendering::ShapeFontRendererContext& GraphicDevice::getShapeFontRendererContext() noexcept
         {
             return _shapeFontRendererContext;
         }

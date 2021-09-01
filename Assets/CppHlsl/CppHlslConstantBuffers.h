@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         struct CB_View CPP_HLSL_REGISTER_INDEX(0)
         {

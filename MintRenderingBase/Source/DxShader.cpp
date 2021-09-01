@@ -23,7 +23,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
 #pragma region Static function definitions
         template<uint32 BufferSize>
@@ -392,10 +392,10 @@ namespace mint
 
         void DxShaderPool::recompileAllShaders()
         {
-            const uint32 shaderTypeCount = static_cast<uint32>(mint::RenderingBase::DxShaderType::COUNT);
+            const uint32 shaderTypeCount = static_cast<uint32>(mint::Rendering::DxShaderType::COUNT);
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const mint::RenderingBase::DxShaderType shaderType = static_cast<mint::RenderingBase::DxShaderType>(shaderTypeIndex);
+                const mint::Rendering::DxShaderType shaderType = static_cast<mint::Rendering::DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
                 if (objectId.isValid() == true)
                 {
@@ -416,7 +416,7 @@ namespace mint
             {
                 DxShader& shader = _geometryShaderArray[geometryShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, mint::RenderingBase::DxShaderType::GeometryShader);
+                createNonVertexShaderInternal(shader, mint::Rendering::DxShaderType::GeometryShader);
             }
 
             const uint32 pixelShaderCount = _pixelShaderArray.size();
@@ -424,12 +424,12 @@ namespace mint
             {
                 DxShader& shader = _pixelShaderArray[pixelShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, mint::RenderingBase::DxShaderType::PixelShader);
+                createNonVertexShaderInternal(shader, mint::Rendering::DxShaderType::PixelShader);
             }
 
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const mint::RenderingBase::DxShaderType shaderType = static_cast<mint::RenderingBase::DxShaderType>(shaderTypeIndex);
+                const mint::Rendering::DxShaderType shaderType = static_cast<mint::Rendering::DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
                 if (objectId.isValid() == true)
                 {

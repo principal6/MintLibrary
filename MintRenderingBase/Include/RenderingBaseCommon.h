@@ -17,7 +17,7 @@
 
 namespace mint
 {
-    namespace RenderingBase
+    namespace Rendering
     {
         enum class TextRenderDirectionHorz
         {
@@ -43,7 +43,7 @@ namespace mint
         {
             static constexpr uint8                  kIndexCountPerFace = 3;
 
-            mint::RenderingBase::IndexElementType     _vertexIndexArray[kIndexCountPerFace];
+            mint::Rendering::IndexElementType     _vertexIndexArray[kIndexCountPerFace];
         };
 
         struct Color
