@@ -4,9 +4,6 @@
 #include <MintContainer/Include/StringUtil.hpp>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace Rendering

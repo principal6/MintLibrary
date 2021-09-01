@@ -7,6 +7,8 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/StringUtil.h>
+
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 
 
