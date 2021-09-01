@@ -90,9 +90,6 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CppHlsl\Tokenizer.h">
-      <Filter>Include\CppHlsl</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Gui\GuiCommon.h">
       <Filter>Include\Gui</Filter>
     </ClInclude>
@@ -170,9 +167,6 @@
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Parser.cpp">
-      <Filter>Source\CppHlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CppHlsl\Tokenizer.cpp">
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
