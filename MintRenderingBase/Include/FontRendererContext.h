@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/BitVector.h>
 
 #include <MintMath/Include/Float2.h>
 
@@ -122,10 +123,10 @@ namespace mint
             virtual                             ~FontRendererContext();
 
         public:
-            void                                pushGlyphRange(const GlyphRange& glyphRange);
+            void                                pushGlyphRange(const GlyphRange& glyphRange) noexcept;
 
         public:
-            const bool                          existsFontData(const char* const fontFileName);
+            const bool                          existsFontData(const char* const fontFileName) const noexcept;
 
         private:
             const std::string                   getFontDataFileNameWithExtension(const char* const fontFileName) const noexcept;
@@ -157,6 +158,8 @@ namespace mint
         public:
             void                                drawDynamicText(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
             void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
+            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
             const float                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
         
@@ -165,7 +168,7 @@ namespace mint
             const DxObjectId&                   getFontTextureId() const noexcept;
 
         private:
-            void                                drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade);
+            void                                drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
         private:
             void                                prepareIndexArray();

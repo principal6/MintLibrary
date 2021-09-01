@@ -17,6 +17,7 @@
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintPlatform/Include/BinaryFile.hpp>
@@ -27,6 +28,9 @@
 
 //#define MINT_FONT_RENDERER_SAVE_PNG_FOR_TEST
 #define MINT_FONT_RENDERER_COMPRESS_AS_PNG
+
+
+#pragma optimize("", off)
 
 
 namespace mint
@@ -109,7 +113,7 @@ namespace mint
             deinitializeFreeType();
         }
 
-        void FontRendererContext::pushGlyphRange(const GlyphRange& glyphRange)
+        void FontRendererContext::pushGlyphRange(const GlyphRange& glyphRange) noexcept
         {
             _glyphRangeArray.push_back(glyphRange);
 
@@ -141,7 +145,7 @@ namespace mint
             }
         }
 
-        const bool FontRendererContext::existsFontData(const char* const fontFileName)
+        const bool FontRendererContext::existsFontData(const char* const fontFileName) const noexcept
         {
             std::string fontFileNameWithExtension = getFontDataFileNameWithExtension(fontFileName);
             return existsFontDataInternal(fontFileNameWithExtension.c_str());
@@ -292,6 +296,12 @@ namespace mint
             int16 pixelY{ 0 };
             wchar_t maxCharCode = 0;
             const uint32 glyphRangeCount = _glyphRangeArray.size();
+            if (0 == glyphRangeCount)
+            {
+                MINT_LOG_ERROR("김장원", "glyphRangeCount 가 0 입니다!! pushGlyphRange() 함수를 먼저 호출해주세요!");
+                return false;
+            }
+
             for (uint32 glyphRangeIndex = 0; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
             {
                 const GlyphRange& glyphRange = _glyphRangeArray[glyphRangeIndex];
@@ -400,7 +410,7 @@ namespace mint
 
         const bool FontRendererContext::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, mint::Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
         {
-            if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_LOAD_FORCE_AUTOHINT))
+            if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
             {
                 MINT_LOG_ERROR("김장원", "FreeType - Glyph 를 불러오는 데 실패했습니다.");
                 return false;
@@ -440,6 +450,11 @@ namespace mint
             GlyphInfo glyphInfo{ wch, &_ftFace->glyph->metrics };
             glyphInfo._uv0._x = static_cast<float>(spaceLeft + pixelPositionX);
             glyphInfo._uv0._y = static_cast<float>(spaceTop + pixelPositionY);
+            //if (wch == L' ' && glyphInfo._width == 0) // 띄어쓰기 렌더링이 안 되는 경우 예외 처리...
+            //{
+            //    glyphInfo._width = glyphInfo._horiAdvance;
+            //    glyphInfo._horiAdvance = _fontData._glyphInfoArray.front()._horiAdvance;
+            //}
             _fontData._glyphInfoArray.push_back(glyphInfo);
             _fontData._charCodeToGlyphIndexMap[wch] = _fontData._glyphInfoArray.size() - 1;
             
@@ -661,7 +676,45 @@ namespace mint
             mint::Float2 glyphPosition = mint::Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
-                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade);
+                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
+            }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+
+            const mint::Float4& preTranslation = position;
+            pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+        }
+
+        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        {
+            const uint32 textLength = mint::StringUtil::wcslen(wideText);
+            drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
+        }
+
+        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        {
+            const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledFontSize = _fontSize * fontRenderingOption._scale;
+
+            mint::Float4 postTranslation;
+            if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+            {
+                postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+            }
+            if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+            {
+                postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+            }
+            postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
+
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+            mint::Float2 glyphPosition = mint::Float2(0.0f, 0.0f);
+            for (uint32 at = 0; at < textLength; ++at)
+            {
+                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.get(at));
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
@@ -719,51 +772,56 @@ namespace mint
             return _fontData._fontTextureId;
         }
 
-        void FontRendererContext::drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade)
+        void FontRendererContext::drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
         {
             const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-            const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
-            mint::Rect glyphRect;
-            glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
-            glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
-            glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
-            glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
-            if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+            if (false == leaveOnlySpace)
             {
-                auto& vertexArray = _lowLevelRenderer->vertices();
+                const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 
-                mint::RenderingBase::VS_INPUT_SHAPE v;
-                v._position._x = glyphRect.left();
-                v._position._y = glyphRect.top();
-                v._position._z = 0.0f;
-                v._color = _defaultColor;
-                v._texCoord._x = glyphInfo._uv0._x;
-                v._texCoord._y = glyphInfo._uv0._y;
-                //v._info._x = _viewportIndex;
-                v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
-                v._info._z = 1.0f; // used by ShapeFontRendererContext
-                vertexArray.push_back(v);
+                mint::Rect glyphRect;
+                glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
+                glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
+                glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+                glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
+                if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x
+                    && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+                {
+                    auto& vertexArray = _lowLevelRenderer->vertices();
 
-                v._position._x = glyphRect.right();
-                v._texCoord._x = glyphInfo._uv1._x;
-                v._texCoord._y = glyphInfo._uv0._y;
-                vertexArray.push_back(v);
+                    mint::RenderingBase::VS_INPUT_SHAPE v;
+                    v._position._x = glyphRect.left();
+                    v._position._y = glyphRect.top();
+                    v._position._z = 0.0f;
+                    v._color = _defaultColor;
+                    v._texCoord._x = glyphInfo._uv0._x;
+                    v._texCoord._y = glyphInfo._uv0._y;
+                    //v._info._x = _viewportIndex;
+                    v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
+                    v._info._z = 1.0f; // used by ShapeFontRendererContext
+                    vertexArray.push_back(v);
 
-                v._position._x = glyphRect.left();
-                v._position._y = glyphRect.bottom();
-                v._texCoord._x = glyphInfo._uv0._x;
-                v._texCoord._y = glyphInfo._uv1._y;
-                vertexArray.push_back(v);
+                    v._position._x = glyphRect.right();
+                    v._texCoord._x = glyphInfo._uv1._x;
+                    v._texCoord._y = glyphInfo._uv0._y;
+                    vertexArray.push_back(v);
 
-                v._position._x = glyphRect.right();
-                v._texCoord._x = glyphInfo._uv1._x;
-                v._texCoord._y = glyphInfo._uv1._y;
-                vertexArray.push_back(v);
+                    v._position._x = glyphRect.left();
+                    v._position._y = glyphRect.bottom();
+                    v._texCoord._x = glyphInfo._uv0._x;
+                    v._texCoord._y = glyphInfo._uv1._y;
+                    vertexArray.push_back(v);
 
-                prepareIndexArray();
+                    v._position._x = glyphRect.right();
+                    v._texCoord._x = glyphInfo._uv1._x;
+                    v._texCoord._y = glyphInfo._uv1._y;
+                    vertexArray.push_back(v);
+
+                    prepareIndexArray();
+                }
             }
-
+           
             glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
         }
 

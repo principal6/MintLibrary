@@ -7,3 +7,4 @@
 #include <MintRendering/Source/MeshRenderer.cpp>
 #include <MintRendering/Source/Object.cpp>
 #include <MintRendering/Source/Plotter.cpp>
+#include <MintRendering/Source/MathExpRenderer.cpp>

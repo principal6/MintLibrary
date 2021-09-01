@@ -16,6 +16,6 @@
 #include <MintRendering/Include/DeltaTimer.h>
 
 #include <MintRendering/Include/Plotter.h>
-
+#include <MintRendering/Include/MathExpRenderer.h>
 
 #endif // !MINT_RENDERING_ALL_HEADERS_H

@@ -57,6 +57,9 @@
     <ClInclude Include="Include\InstantRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\MathExpRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -87,6 +90,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MathExpRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -31,15 +31,23 @@ namespace mint
 
         public:
             const bool                                  initializeFontData(const FontRendererContext::FontData& fontData) noexcept;
+            const bool                                  initializeFontData(const char* const fontFileName) noexcept;
+            const bool                                  existsFontData(const char* const fontFileName) const noexcept;
+            void                                        pushGlyphRange(const GlyphRange& glyphRange) noexcept;
+            const bool                                  bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
             const FontRendererContext::FontData&        getFontData() const noexcept;
+
+        public:
             void                                        drawDynamicText(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
             void                                        drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                        drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
+            void                                        drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
             const float                                 calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                                calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
             void                                        setTextColor(const mint::RenderingBase::Color& textColor) noexcept;
 
         private:
-            mint::RenderingBase::FontRendererContext      _fontRendererContext;
+            mint::RenderingBase::FontRendererContext    _fontRendererContext;
         };
     }
 }

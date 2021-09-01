@@ -216,6 +216,7 @@ const bool testWindow()
     RenderingBase::GraphicDevice graphicDevice;
     graphicDevice.initialize(&window);
 
+    //mint::Rendering::MathExpressionRenderer mathExpressionRenderer(&graphicDevice);
     mint::Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
     Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
@@ -514,6 +515,9 @@ const bool testWindow()
 
             meshRenderer.render(objectPool);
             instantRenderer.render();
+
+            //mathExpressionRenderer.drawMathExpression(mint::Rendering::MathExpression(L"\\bold{aba} is it even possibile? AB=C"), mint::Float2(100, 100));
+            //mathExpressionRenderer.render();
 #endif
 
             graphicDevice.endRendering();

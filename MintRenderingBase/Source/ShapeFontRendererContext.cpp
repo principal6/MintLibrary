@@ -69,6 +69,26 @@ namespace mint
             return _fontRendererContext.loadFontData(fontData);
         }
 
+        const bool ShapeFontRendererContext::initializeFontData(const char* const fontFileName) noexcept
+        {
+            return _fontRendererContext.loadFontData(fontFileName);
+        }
+
+        const bool ShapeFontRendererContext::existsFontData(const char* const fontFileName) const noexcept
+        {
+            return _fontRendererContext.existsFontData(fontFileName);
+        }
+
+        void ShapeFontRendererContext::pushGlyphRange(const GlyphRange& glyphRange) noexcept
+        {
+            _fontRendererContext.pushGlyphRange(glyphRange);
+        }
+
+        const bool ShapeFontRendererContext::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
+        {
+            return _fontRendererContext.bakeFontData(fontFaceFileName, fontSize, outputFileName, textureWidth, spaceLeft, spaceTop);
+        }
+
         const FontRendererContext::FontData& ShapeFontRendererContext::getFontData() const noexcept
         {
             return _fontRendererContext.getFontData();
@@ -82,6 +102,16 @@ namespace mint
         void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             _fontRendererContext.drawDynamicText(wideText, textLength, position, fontRenderingOption);
+        }
+
+        void ShapeFontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        {
+            _fontRendererContext.drawDynamicTextBitFlagged(wideText, position, fontRenderingOption, bitFlags);
+        }
+
+        void ShapeFontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        {
+            _fontRendererContext.drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 
         const float ShapeFontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
