@@ -100,7 +100,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/CppHlsl/LanguageCommon.inl>
+#include <MintLanguage/Include/LanguageCommon.inl>
 
 
 #endif // !MINT_LANGUAGE_COMMON_H

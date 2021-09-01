@@ -9,7 +9,6 @@ namespace mint
 {
     namespace CppHlsl
     {
-        uint16 LineSkipperTableItem::_lineSkipperNextGroupId = 0;
         Lexer::Lexer()
             : ILexer()
         {

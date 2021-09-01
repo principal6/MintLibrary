@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_I_PARSER_H
-#define MINT_I_PARSER_H
+#ifndef MINT_LANGUAGE_I_PARSER_H
+#define MINT_LANGUAGE_I_PARSER_H
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -10,7 +10,7 @@
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/Tree.h>
 
-#include <MintRenderingBase/Include/CppHlsl/LanguageCommon.h>
+#include <MintLanguage/Include/LanguageCommon.h>
 
 
 namespace mint
@@ -106,13 +106,12 @@ namespace mint
         private:
             uint32                                          _symbolAt;
             mint::Vector<ErrorMessage>                      _errorMessageArray;
-            static const SymbolTableItem                    kRootSymbol;
         };
     }
 }
 
 
-#include <MintRenderingBase/Include/CppHlsl/IParser.inl>
+#include <MintLanguage/Include/IParser.inl>
 
 
-#endif // !MINT_I_PARSER_H
+#endif // !MINT_LANGUAGE_I_PARSER_H

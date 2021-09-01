@@ -1,7 +1,7 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/CppHlsl/IParser.h>
+#include <MintLanguage/Include/IParser.h>
 
-#include <MintRenderingBase/Include/CppHlsl/ILexer.h>
+#include <MintLanguage/Include/ILexer.h>
 #include <MintContainer/Include/Tree.hpp>
 
 

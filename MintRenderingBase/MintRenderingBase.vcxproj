@@ -199,10 +199,6 @@
     <ClInclude Include="Include\CppHlsl\Lexer.h" />
     <ClInclude Include="Include\CppHlsl\Parser.h" />
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h" />
-    <ClInclude Include="Include\CppHlsl\ILexer.h" />
-    <ClInclude Include="Include\CppHlsl\IParser.h" />
-    <ClInclude Include="Include\CppHlsl\Language.h" />
-    <ClInclude Include="Include\CppHlsl\LanguageCommon.h" />
     <ClInclude Include="Include\CppHlsl\Tokenizer.h" />
     <ClInclude Include="Include\DxResource.h" />
     <ClInclude Include="Include\DxShader.h" />
@@ -227,9 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
-    <None Include="Include\CppHlsl\ILexer.inl" />
-    <None Include="Include\CppHlsl\IParser.inl" />
-    <None Include="Include\CppHlsl\LanguageCommon.inl" />
     <None Include="Include\GraphicDevice.inl" />
     <None Include="Include\Gui\GuiContext.inl" />
     <None Include="Include\IRendererContext.inl" />
@@ -248,18 +241,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Parser.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Source\CppHlsl\ILexer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Source\CppHlsl\IParser.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

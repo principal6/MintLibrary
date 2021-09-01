@@ -90,18 +90,6 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CppHlsl\ILexer.h">
-      <Filter>Include\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\CppHlsl\IParser.h">
-      <Filter>Include\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\CppHlsl\Language.h">
-      <Filter>Include\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\CppHlsl\LanguageCommon.h">
-      <Filter>Include\CppHlsl</Filter>
-    </ClInclude>
     <ClInclude Include="Include\CppHlsl\Tokenizer.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
@@ -135,15 +123,6 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\CppHlsl\Parser.inl">
-      <Filter>Include\CppHlsl</Filter>
-    </None>
-    <None Include="Include\CppHlsl\ILexer.inl">
-      <Filter>Include\CppHlsl</Filter>
-    </None>
-    <None Include="Include\CppHlsl\IParser.inl">
-      <Filter>Include\CppHlsl</Filter>
-    </None>
-    <None Include="Include\CppHlsl\LanguageCommon.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
     <None Include="Include\Gui\GuiContext.inl">
@@ -191,12 +170,6 @@
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Parser.cpp">
-      <Filter>Source\CppHlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CppHlsl\ILexer.cpp">
-      <Filter>Source\CppHlsl</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CppHlsl\IParser.cpp">
       <Filter>Source\CppHlsl</Filter>
     </ClCompile>
     <ClCompile Include="Source\CppHlsl\Tokenizer.cpp">

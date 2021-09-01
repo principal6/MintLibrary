@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/CppHlsl/ILexer.h>
+#include <MintLanguage/Include/ILexer.h>
 
 
 namespace mint

@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/CppHlsl/ILexer.h>
+#include <MintLanguage/Include/ILexer.h>
 
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/Vector.hpp>
@@ -11,10 +11,58 @@ namespace mint
 {
     namespace CppHlsl
     {
+        GrouperTableItem::GrouperTableItem()
+            : _input{ '\0' }
+            , _grouperClassifier{ GrouperClassifier::COUNT }
+        {
+            __noop;
+        }
+
+        GrouperTableItem::GrouperTableItem(const char input, const GrouperClassifier grouperClassifier)
+            : _input{ input }
+            , _grouperClassifier{ grouperClassifier }
+        {
+            __noop;
+        }
+
+
+        OperatorTableItem::OperatorTableItem()
+            : _length{ 0 }
+            , _operatorClassifier{ OperatorClassifier::COUNT }
+        {
+            __noop;
+        }
+
+        OperatorTableItem::OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier)
+            : _string{ string }
+            , _operatorClassifier{ operatorClassifier }
+        {
+            _length = static_cast<uint32>(_string.length());
+        }
+
+
+        LineSkipperTableItem::LineSkipperTableItem()
+            : _length{ 0 }
+            , _lineSkipperGroupId{ kUint16Max }
+            , _lineSkipperClassifier{ LineSkipperClassifier::COUNT }
+        {
+            __noop;
+        }
+
+        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId)
+            : _string{ string }
+            , _lineSkipperGroupId{ lineSkipperGroupId }
+            , _lineSkipperClassifier{ lineSkipperClassifier }
+        {
+            _length = static_cast<uint32>(_string.length());
+        }
+
+
         ILexer::ILexer()
             : _totalTimeMs{ 0 }
             , _escaper{ '\\' }
             , _statementTerminator{ ';' }
+            , _lineSkipperNextGroupId{ 0 }
         {
             __noop;
         }
@@ -67,7 +115,7 @@ namespace mint
 
             // Open & Close
             {
-                const uint16 nextGroupId = LineSkipperTableItem::getNextGroupId();
+                const uint16 nextGroupId = getLineSkipperNextGroupId();
                 const uint64 keyOpen = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpen).isValid() == false)
                 {
@@ -180,6 +228,13 @@ namespace mint
                 const uint32 operatorIndex = _operatorTable.size() - 1;
                 _operatorUmap.insert(key, operatorIndex);
             }
+        }
+
+        const uint16 ILexer::getLineSkipperNextGroupId() noexcept
+        {
+            const uint16 result = _lineSkipperNextGroupId;
+            ++_lineSkipperNextGroupId;
+            return result;
         }
 
         const bool ILexer::continueExecution(const uint32 sourceAt) const noexcept

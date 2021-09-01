@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_I_LEXER_H
-#define MINT_I_LEXER_H
+#ifndef MINT_LANGUAGE_I_LEXER_H
+#define MINT_LANGUAGE_I_LEXER_H
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -10,13 +10,14 @@
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/HashMap.h>
 
-#include <MintRenderingBase/Include/CppHlsl/LanguageCommon.h>
+#include <MintLanguage/Include/LanguageCommon.h>
 
 
 namespace mint
 {
     namespace CppHlsl
     {
+        class ILexer;
         class IParser;
 
 
@@ -58,38 +59,22 @@ namespace mint
 
         struct GrouperTableItem
         {
-                                    GrouperTableItem()
-                                        : _input{ '\0' }
-                                        , _grouperClassifier{ GrouperClassifier::COUNT }
-                                    {
-                                        __noop;
-                                    }
-                                    GrouperTableItem(const char input, const GrouperClassifier grouperClassifier)
-                                        : _input{ input }
-                                        , _grouperClassifier { grouperClassifier }
-                                    {
-                                        __noop;
-                                    }
+        public:
+                                    GrouperTableItem();
+                                    GrouperTableItem(const char input, const GrouperClassifier grouperClassifier);
 
+        public:
             char                    _input;
             GrouperClassifier       _grouperClassifier;
         };
 
         struct OperatorTableItem
         {
-                                    OperatorTableItem()
-                                        : _length{ 0 }
-                                        , _operatorClassifier{ OperatorClassifier::COUNT }
-                                    {
-                                        __noop;
-                                    }
-                                    OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier) 
-                                        : _string{ string }
-                                        , _operatorClassifier{ operatorClassifier }
-                                    {
-                                        _length = static_cast<uint32>(_string.length());
-                                    }
+        public:
+                                    OperatorTableItem();
+                                    OperatorTableItem(const char* const string, const OperatorClassifier operatorClassifier);
 
+        public:
             std::string             _string;
             uint32                  _length;
             OperatorClassifier      _operatorClassifier;
@@ -97,43 +82,21 @@ namespace mint
 
         struct LineSkipperTableItem
         {
-                                    LineSkipperTableItem()
-                                        : _length{ 0 }
-                                        , _lineSkipperGroupId{ kUint16Max }
-                                        , _lineSkipperClassifier{ LineSkipperClassifier::COUNT }
-                                    {
-                                        __noop;
-                                    }
+        public:
+                                    LineSkipperTableItem();
+                                    LineSkipperTableItem(const char* const string, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId);
 
-                                    LineSkipperTableItem(const char* const string, const LineSkipperClassifier lineSkipperClassifier, const uint16 lineSkipperGroupId)
-                                        : _string{ string }
-                                        , _lineSkipperGroupId{ lineSkipperGroupId }
-                                        , _lineSkipperClassifier{ lineSkipperClassifier }
-                                    {
-                                        _length = static_cast<uint32>(_string.length());
-                                    }
-
-            static const uint16     getNextGroupId()
-            {
-                const uint16 result = _lineSkipperNextGroupId;
-                ++_lineSkipperNextGroupId;
-                return result;
-            }
-
+        public:
             std::string             _string;
             uint32                  _length;
             uint16                  _lineSkipperGroupId;
             LineSkipperClassifier   _lineSkipperClassifier;
-
-        private:
-            static uint16           _lineSkipperNextGroupId;
         };
 
 
         // Lexical Analyzer
         // Tokens of lexeme
         // Also known as Scanner
-        // Uses STL (vector, string, unordered_map)
         class ILexer
         {
             friend IParser;
@@ -156,6 +119,9 @@ namespace mint
             void                                    registerStringQuote(const char stringQuote);
             void                                    registerPunctuator(const char* const punctuator);
             void                                    registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
+
+        private:
+            const uint16                            getLineSkipperNextGroupId() noexcept;
 
         protected:
             virtual const bool                      execute() abstract;
@@ -207,6 +173,7 @@ namespace mint
         protected:
             mint::Vector<LineSkipperTableItem>      _lineSkipperTable;
             mint::HashMap<uint64, uint32>           _lineSkipperUmap;
+            uint16                                  _lineSkipperNextGroupId;
 
         protected:
             mint::Vector<std::string>               _keywordTable;
@@ -235,7 +202,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/CppHlsl/ILexer.inl>
+#include <MintLanguage/Include/ILexer.inl>
 
 
-#endif // !MINT_I_LEXER_H
+#endif // !MINT_LANGUAGE_I_LEXER_H

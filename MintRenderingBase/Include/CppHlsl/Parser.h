@@ -10,8 +10,8 @@
 #include <MintContainer/Include/HashMap.h>
 #include <MintContainer/Include/BitVector.h>
 
-#include <MintRenderingBase/Include/CppHlsl/IParser.h>
-#include <MintRenderingBase/Include/CppHlsl/LanguageCommon.h>
+#include <MintLanguage/Include/LanguageCommon.h>
+#include <MintLanguage/Include/IParser.h>
 
 
 namespace mint

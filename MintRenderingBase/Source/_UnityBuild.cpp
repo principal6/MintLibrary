@@ -9,9 +9,7 @@
 #include <MintRenderingBase/Source/RenderingBaseCommon.cpp>
 #include <MintRenderingBase/Source/ShapeFontRendererContext.cpp>
 #include <MintRenderingBase/Source/ShapeRendererContext.cpp>
-#include <MintRenderingBase/Source/CppHlsl/ILexer.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Interpreter.cpp>
-#include <MintRenderingBase/Source/CppHlsl/IParser.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Lexer.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Parser.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Tokenizer.cpp>

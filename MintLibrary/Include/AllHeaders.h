@@ -34,6 +34,8 @@ namespace mint
 
 #include <MintRenderingBase/Include/AllHeaders.h>
 
+#include <MintLanguage/Include/AllHeaders.h>
+
 #include <MintRendering/Include/AllHeaders.h>
 
 #include <MintGame/Include/AllHeaders.h>

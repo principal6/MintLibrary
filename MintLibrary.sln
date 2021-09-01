@@ -28,6 +28,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintRendering", "MintRender
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintGame", "MintGame\MintGame.vcxproj", "{4D507120-3FF8-4F58-BCD9-DB6F72CD014D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintLanguage", "MintLanguage\MintLanguage.vcxproj", "{2386002C-4036-4DF9-8E17-31BB497EC3A4}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MintCommon.vcxitems*{08274c87-6720-46da-b1df-dba3a406ef4a}*SharedItemsImports = 9
@@ -104,6 +106,14 @@ Global
 		{4D507120-3FF8-4F58-BCD9-DB6F72CD014D}.Release|x64.Build.0 = Release|x64
 		{4D507120-3FF8-4F58-BCD9-DB6F72CD014D}.Release|x86.ActiveCfg = Release|Win32
 		{4D507120-3FF8-4F58-BCD9-DB6F72CD014D}.Release|x86.Build.0 = Release|Win32
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Debug|x64.ActiveCfg = Debug|x64
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Debug|x64.Build.0 = Debug|x64
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Debug|x86.ActiveCfg = Debug|Win32
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Debug|x86.Build.0 = Debug|Win32
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Release|x64.ActiveCfg = Release|x64
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Release|x64.Build.0 = Release|x64
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Release|x86.ActiveCfg = Release|Win32
+		{2386002C-4036-4DF9-8E17-31BB497EC3A4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

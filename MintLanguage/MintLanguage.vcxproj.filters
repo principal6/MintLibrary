@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{f57cf22e-a371-40b1-aae6-fb1d49c51fb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{82acadb0-4585-488d-9356-ead72f2fa009}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\AllHeaders.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\ILexer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\IParser.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\LanguageCommon.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Include\ILexer.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\IParser.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\LanguageCommon.inl">
+      <Filter>Include</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\ILexer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\IParser.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

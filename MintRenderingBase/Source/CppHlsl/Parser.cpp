@@ -7,7 +7,7 @@
 #include <MintContainer/Include/Tree.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 
-#include <MintRenderingBase/Include/CppHlsl/ILexer.h>
+#include <MintLanguage/Include/ILexer.h>
 
 #include <functional>
 
