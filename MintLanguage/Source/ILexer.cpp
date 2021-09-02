@@ -539,35 +539,38 @@ namespace mint
 
         void ILexer::endExecution()
         {
-            // StringQuote 사이에 있는 SymbolClassifier 를 _defaultSymbolClassifier 에서 StringLiteral 로 바꿔준다!!
-            {
-                uint32 symbolIndex = 0;
-                const uint32 symbolCount = _symbolTable.size();
-                while (symbolIndex < symbolCount)
-                {
-                    if (_symbolTable[symbolIndex]._symbolClassifier == SymbolClassifier::StringQuote)
-                    {
-                        if (symbolIndex + 2 < symbolCount)
-                        {
-                            if (_symbolTable[symbolIndex + 2]._symbolClassifier == SymbolClassifier::StringQuote &&
-                                _symbolTable[symbolIndex + 1]._symbolClassifier == _defaultSymbolClassifier)
-                            {
-                                _symbolTable[symbolIndex + 1]._symbolClassifier = SymbolClassifier::StringLiteral;
+            setStringLiterals();
 
-                                symbolIndex += 3;
-                                continue;
-                            }
-                        }
-                    }
-
-                    ++symbolIndex;
-                }
-            }
-
-            updateSymbolIndex();
+            setSymbolIndices();
         }
 
-        void ILexer::updateSymbolIndex()
+        void ILexer::setStringLiterals()
+        {
+            // StringQuote 사이에 있는 SymbolClassifier 를 _defaultSymbolClassifier 에서 StringLiteral 로 바꿔준다!!
+            const uint32 symbolCount = _symbolTable.size();
+            uint32 symbolIndex = 0;
+            while (symbolIndex < symbolCount)
+            {
+                if (_symbolTable[symbolIndex]._symbolClassifier == SymbolClassifier::StringQuote)
+                {
+                    if (symbolIndex + 2 < symbolCount)
+                    {
+                        if (_symbolTable[symbolIndex + 2]._symbolClassifier == SymbolClassifier::StringQuote &&
+                            _symbolTable[symbolIndex + 1]._symbolClassifier == _defaultSymbolClassifier)
+                        {
+                            _symbolTable[symbolIndex + 1]._symbolClassifier = SymbolClassifier::StringLiteral;
+
+                            symbolIndex += 3;
+                            continue;
+                        }
+                    }
+                }
+
+                ++symbolIndex;
+            }
+        }
+
+        void ILexer::setSymbolIndices()
         {
             const uint32 symbolCount = _symbolTable.size();
             for (uint32 symbolIndex = 0; symbolIndex < symbolCount; ++symbolIndex)

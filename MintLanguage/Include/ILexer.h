@@ -162,8 +162,9 @@ namespace mint
         protected:
             void                                    endExecution();
         
-        protected:
-            void                                    updateSymbolIndex();
+        private:
+            void                                    setStringLiterals();
+            void                                    setSymbolIndices();
 
         protected:
             const bool                              isDelimiter(const char input) const noexcept;
