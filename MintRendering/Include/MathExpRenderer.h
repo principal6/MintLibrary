@@ -78,7 +78,7 @@ namespace mint
                 { "Assets/cmu_s_italic", "Assets/cmu_s_bold", "Assets/cmu_s_bold_italic", "Assets/cmu_s_roman" };
 
         private:
-            mint::Rendering::ShapeFontRendererContext   _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
+            mint::Rendering::ShapeFontRendererContext       _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
             mint::BitVector                                 _bitFlagsArray[MathExpression::getModifierTypeCount()];
         };
     }
