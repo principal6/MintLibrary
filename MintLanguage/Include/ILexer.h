@@ -178,6 +178,7 @@ namespace mint
             const bool                              isEscaper(const char input) const noexcept;
             MINT_INLINE void                        setParsePlainEscaper(const bool value) noexcept { _parsePlainEscaper = value; }
             MINT_INLINE const bool                  parsePlainEscaper() const noexcept { return _parsePlainEscaper; }
+            MINT_INLINE void                        setDefaultSymbolClassifier(const SymbolClassifier defaultSymbolClassifier) noexcept { _defaultSymbolClassifier = defaultSymbolClassifier; }
 
         public:
             const mint::Vector<SymbolTableItem>&    getSymbolTable() const noexcept;
@@ -193,6 +194,7 @@ namespace mint
             char                                    _escaper;
             char                                    _statementTerminator;
             bool                                    _parsePlainEscaper;
+            SymbolClassifier                        _defaultSymbolClassifier;
 
         protected:
             mint::HashMap<char, int8>               _delimiterUmap;

@@ -64,6 +64,7 @@ namespace mint
             , _escaper{ '\\' }
             , _statementTerminator{ '\0' }
             , _parsePlainEscaper{ false }
+            , _defaultSymbolClassifier{ SymbolClassifier::Identifier }
             , _lineSkipperNextGroupId{ 0 }
         {
             __noop;
@@ -400,7 +401,7 @@ namespace mint
             {
                 const uint32 tokenLength = sourceAt - prevSourceAt;
                 std::string tokenString = _source.substr(prevSourceAt, tokenLength);
-                _symbolTable.push_back(SymbolTableItem(SymbolClassifier::Identifier, tokenString, sourceAt));
+                _symbolTable.push_back(SymbolTableItem(_defaultSymbolClassifier, tokenString, sourceAt));
             }
 
             endExecution();
@@ -434,7 +435,7 @@ namespace mint
             const char ch2 = getCh2(sourceAt);
             
             uint32 advance = 0;
-            SymbolClassifier symbolClassifier = SymbolClassifier::Identifier;
+            SymbolClassifier symbolClassifier = _defaultSymbolClassifier;
             OperatorTableItem operatorTableItem;
             GrouperTableItem grouperTableItem;
 
@@ -507,7 +508,7 @@ namespace mint
                 if (0 < tokenLength)
                 {
                     std::string tokenString = _source.substr(prevSourceAt, tokenLength);
-                    SymbolClassifier tokenSymbolClassifier = SymbolClassifier::Identifier;
+                    SymbolClassifier tokenSymbolClassifier = _defaultSymbolClassifier;
                     if (isNumber(tokenString) == true)
                     {
                         tokenSymbolClassifier = SymbolClassifier::NumberLiteral;
@@ -538,7 +539,7 @@ namespace mint
 
         void ILexer::endExecution()
         {
-            // String Literal
+            // StringQuote 사이에 있는 SymbolClassifier 를 _defaultSymbolClassifier 에서 StringLiteral 로 바꿔준다!!
             {
                 uint32 symbolIndex = 0;
                 const uint32 symbolCount = _symbolTable.size();
@@ -549,7 +550,7 @@ namespace mint
                         if (symbolIndex + 2 < symbolCount)
                         {
                             if (_symbolTable[symbolIndex + 2]._symbolClassifier == SymbolClassifier::StringQuote &&
-                                _symbolTable[symbolIndex + 1]._symbolClassifier == SymbolClassifier::Identifier)
+                                _symbolTable[symbolIndex + 1]._symbolClassifier == _defaultSymbolClassifier)
                             {
                                 _symbolTable[symbolIndex + 1]._symbolClassifier = SymbolClassifier::StringLiteral;
 
