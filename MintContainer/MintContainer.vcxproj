@@ -186,6 +186,7 @@
     <ClInclude Include="Include\IId.h" />
     <ClInclude Include="Include\MemoryRaw.h" />
     <ClInclude Include="Include\MemoryRaw.hpp" />
+    <ClInclude Include="Include\OwnPtr.h" />
     <ClInclude Include="Include\Queue.h" />
     <ClInclude Include="Include\Queue.hpp" />
     <ClInclude Include="Include\ScopeString.h" />

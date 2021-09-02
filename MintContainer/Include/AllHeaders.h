@@ -17,6 +17,7 @@
 #include <MintContainer/Include/IId.h>
 #include <MintContainer/Include/HashMap.h>
 #include <MintContainer/Include/Queue.h>
+#include <MintContainer/Include/OwnPtr.h>
 
 
 #endif // !MINT_CONTAINER_ALL_HEADERS_H

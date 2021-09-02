@@ -90,6 +90,9 @@
     <ClInclude Include="Include\Queue.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\OwnPtr.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">
