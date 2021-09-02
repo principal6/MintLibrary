@@ -19,6 +19,7 @@ namespace mint
         class GraphicDevice;
         struct LatexParser;
         class MathExpressionRenderer;
+        class LatexLexer;
 
 
         class MathExpression
@@ -49,11 +50,16 @@ namespace mint
                                         ~MathExpression() = default;
 
         public:
+            void                        evaluate() const noexcept;
+            MINT_INLINE const bool      isEvaluated() const noexcept { return _isEvaluated; }
+
+        public:
             const wchar_t* const        getPlainString() const noexcept;
             const uint32                getPlainStringLength() const noexcept;
 
         private:
             std::wstring                _latexExpression;
+            mutable bool                _isEvaluated;
 
         private:
             mint::Vector<Modifier>      _modifiers;
@@ -65,7 +71,7 @@ namespace mint
         {
         public:
                                 MathExpressionRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
-                                ~MathExpressionRenderer() = default;
+                                ~MathExpressionRenderer();
 
         public:
             void                drawMathExpression(const MathExpression& mathExpression, const mint::Float2& screenPosition) noexcept;

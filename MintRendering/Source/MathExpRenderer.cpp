@@ -3,11 +3,50 @@
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
+#include <MintLanguage/Include/ILexer.h>
+#include <MintLanguage/Include/IParser.h>
+
 
 namespace mint
 {
     namespace Rendering
     {
+        using Language::ILexer;
+        using Language::IParser;
+
+
+        class LatexLexer : public ILexer
+        {
+        public:
+            LatexLexer() : ILexer()
+            {
+                setEscaper('\\');
+                setParsePlainEscaper(true);
+                setDefaultSymbolClassifier(Language::SymbolClassifier::StringLiteral);
+
+                registerDelimiter(' ');
+                registerDelimiter('\t');
+                registerDelimiter('\r');
+                registerDelimiter('\n');
+
+                registerGrouper('(', ')');
+                registerGrouper('{', '}');
+                registerGrouper('[', ']');
+
+                registerPunctuator(",");
+
+                registerKeyword("bold");
+                registerKeyword("begin");
+                registerKeyword("end");
+            }
+
+            virtual const bool execute() noexcept override final
+            {
+                return __super::executeDefault();
+            }
+        };
+
+
         struct LatexParser
         {
             using StringType = std::wstring;
@@ -96,10 +135,28 @@ namespace mint
         };
 
         MathExpression::MathExpression(std::wstring latexString)
+            : _latexExpression{ latexString }
+            , _isEvaluated{ false }
         {
-            _latexExpression = latexString;
+            __noop;
+        }
 
-            LatexParser::parse(*this);
+        void MathExpression::evaluate() const noexcept
+        {
+            if (isEvaluated() == true)
+            {
+                return;
+            }
+
+            LatexLexer lexer;
+            std::string latexExpressionStr;
+            StringUtil::convertWideStringToString(_latexExpression, latexExpressionStr);
+            lexer.setSource(latexExpressionStr);
+            lexer.execute();
+
+            LatexParser::parse(const_cast<MathExpression&>(*this));
+
+            _isEvaluated = true;
         }
 
         const wchar_t* const MathExpression::getPlainString() const noexcept
@@ -133,9 +190,16 @@ namespace mint
             }
         }
 
+        MathExpressionRenderer::~MathExpressionRenderer()
+        {
+            __noop;
+        }
+
         void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const mint::Float2& screenPosition) noexcept
         {
             using namespace mint::Rendering;
+
+            mathExpression.evaluate();
 
             const uint32 plainStringLength = mathExpression.getPlainStringLength();
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
