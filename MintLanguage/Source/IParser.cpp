@@ -9,6 +9,34 @@ namespace mint
 {
     namespace Language
     {
+        IParser::ErrorMessage::ErrorMessage()
+            : _sourceAt{ 0 }
+        {
+            __noop;
+        }
+
+        IParser::ErrorMessage::ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType)
+            : _sourceAt{ symbolTableItem._sourceAt }
+        {
+            _message = "ERROR[";
+            _message += convertErrorTypeToTypeString(errorType);
+            _message += "] ";
+            _message += convertErrorTypeToContentString(errorType);
+            _message += " \'";
+            _message += symbolTableItem._symbolString;
+            _message += "\' #[";
+            _message += std::to_string(_sourceAt);
+            _message += "]";
+        }
+
+        IParser::ErrorMessage::ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation)
+            : ErrorMessage(symbolTableItem, errorType)
+        {
+            _message += ": ";
+            _message += additionalExplanation;
+        }
+
+
         IParser::IParser(ILexer& lexer)
             : _lexer{ lexer }
             , _symbolTable{ lexer._symbolTable }
@@ -139,34 +167,6 @@ namespace mint
         const bool IParser::hasReportedErrors() const noexcept
         {
             return !_errorMessageArray.empty();
-        }
-
-
-        IParser::ErrorMessage::ErrorMessage()
-            : _sourceAt{ 0 }
-        {
-            __noop;
-        }
-
-        IParser::ErrorMessage::ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType)
-            : _sourceAt{ symbolTableItem._sourceAt }
-        {
-            _message = "ERROR[";
-            _message += convertErrorTypeToTypeString(errorType);
-            _message += "] ";
-            _message += convertErrorTypeToContentString(errorType);
-            _message += " \'";
-            _message += symbolTableItem._symbolString;
-            _message += "\' #[";
-            _message += std::to_string(_sourceAt);
-            _message += "]";
-        }
-
-        IParser::ErrorMessage::ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation)
-            : ErrorMessage(symbolTableItem, errorType)
-        {
-            _message += ": ";
-            _message += additionalExplanation;
         }
     }
 }
