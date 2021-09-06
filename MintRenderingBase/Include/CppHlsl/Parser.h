@@ -49,6 +49,41 @@ namespace mint
             };
 
 
+            class TypeCustomData
+            {
+            public:
+                                                TypeCustomData();
+                                                ~TypeCustomData() = default;
+
+            public:
+                void                            setSemanticName(const std::string& semanticName);
+                void                            setRegisterIndex(const uint32 registerIndex);
+                void                            setInputSlot(const uint32 inputSlot);
+                void                            setInstanceDataStepRate(const uint32 instanceDataStepRate);
+                void                            pushSlottedStreamData(const TypeMetaData& slottedStreamData);
+
+            public:
+                const bool                      isRegisterIndexValid() const noexcept;
+
+            public:
+                const std::string&              getSemanticName() const noexcept;
+                const uint32                    getRegisterIndex() const noexcept;
+                const uint32                    getInputSlot() const noexcept;
+                const uint32                    getInstanceDataStepRate() const noexcept;
+                const uint32                    getSlottedStreamDataCount() const noexcept;
+                const TypeMetaData&             getSlottedStreamData(const uint32 inputSlot) const noexcept;
+
+            private:
+                static constexpr uint32         kInvalidRegisterIndex = kUint32Max;
+
+            private:
+                std::string                     _semanticName;
+                uint32                          _registerIndex;
+                uint32                          _inputSlot;
+                uint32                          _instanceDataStepRate;
+                mint::Vector<TypeMetaData>      _slottedStreamDatas;
+            };
+
             class TypeMetaData final
             {
             public:
@@ -56,53 +91,36 @@ namespace mint
                                                 ~TypeMetaData() = default;
 
             public:
+                static const TypeMetaData&      getInvalid() noexcept;
+
+            public:
                 void                            setBaseData(const std::string& typeName, const bool isBuiltIn);
                 void                            setDeclName(const std::string& declName);
                 void                            setSize(const uint32 size);
                 void                            setByteOffset(const uint32 byteOffset);
-                void                            setSemanticName(const std::string& semanticName);
-                void                            setRegisterIndex(const uint32 registerIndex);
-                void                            setInputSlot(const uint32 inputSlot);
-                void                            setInstanceDataStepRate(const uint32 instanceDataStepRate);
                 void                            pushMember(const TypeMetaData& member);
-                void                            pushSlottedStreamData(const TypeMetaData& slottedStreamData);
 
             public:
                 const bool                      isBuiltIn() const noexcept;
-                const bool                      isRegisterIndexValid() const noexcept;
 
             public:
                 const std::string&              getTypeName() const noexcept;
                 const std::string&              getDeclName() const noexcept;
                 const uint32                    getSize() const noexcept;
                 const uint32                    getByteOffset() const noexcept;
-                const std::string&              getSemanticName() const noexcept;
-                const uint32                    getRegisterIndex() const noexcept;
-                const uint32                    getInputSlot() const noexcept;
-                const uint32                    getInstanceDataStepRate() const noexcept;
                 const uint32                    getMemberCount() const noexcept;
                 const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
-                const uint32                    getSlottedStreamDataCount() const noexcept;
-                const TypeMetaData&             getSlottedStreamData(const uint32 inputSlot) const noexcept;
-        
-            public:
-                static const TypeMetaData       kInvalidTypeMetaData;
-
-            private:
-                static constexpr uint32         kInvalidRegisterIndex = kUint32Max;
 
             private:
                 bool                            _isBuiltIn;
                 std::string                     _typeName;      // namespace + name
                 std::string                     _declName;
-                std::string                     _semanticName;
-                uint32                          _registerIndex;
-                uint32                          _inputSlot;
-                uint32                          _instanceDataStepRate;
                 uint32                          _size;          // Byte count
                 uint32                          _byteOffset;
                 mint::Vector<TypeMetaData>      _memberArray;   // Member variables
-                mint::Vector<TypeMetaData>      _slottedStreamDatas;
+
+            public:
+                TypeCustomData                  _customData;
             };
 
 

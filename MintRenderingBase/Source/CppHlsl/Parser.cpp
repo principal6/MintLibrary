@@ -44,7 +44,6 @@ namespace mint
             }
 
 
-            const TypeMetaData TypeMetaData::kInvalidTypeMetaData;
             Parser::Parser(ILexer& lexer)
                 : IParser(lexer)
             {
@@ -313,7 +312,7 @@ namespace mint
                         memberTypeMetaData.setByteOffset(structSize);
                         structSize += memberTypeMetaData.getSize();
                         memberTypeMetaData.setDeclName(childNodeData._identifier);
-                        memberTypeMetaData.setInputSlot(inputSlot);
+                        memberTypeMetaData._customData.setInputSlot(inputSlot);
 
                         if (2 <= attributeCount)
                         {
@@ -322,7 +321,7 @@ namespace mint
                             const SyntaxTreeItem& attribute1Data = attribute1.getNodeData();
                             if (attribute1Data._classifier == SyntaxClassifier::SemanticName)
                             {
-                                memberTypeMetaData.setSemanticName(attribute1Data._identifier);
+                                memberTypeMetaData._customData.setSemanticName(attribute1Data._identifier);
                             }
                             else
                             {
@@ -335,12 +334,12 @@ namespace mint
                     else if (childNodeData._classifier == SyntaxClassifier::RegisterIndex)
                     {
                         const int32 registerIndex = std::stoi(childNodeData._value);
-                        typeMetaData.setRegisterIndex(registerIndex);
+                        typeMetaData._customData.setRegisterIndex(registerIndex);
                     }
                     else if (childNodeData._classifier == SyntaxClassifier::InstanceData)
                     {
                         const int32 instanceDataStepRate = std::stoi(childNodeData._value);
-                        typeMetaData.setInstanceDataStepRate(instanceDataStepRate);
+                        typeMetaData._customData.setInstanceDataStepRate(instanceDataStepRate);
                     }
                     else
                     {
@@ -355,7 +354,7 @@ namespace mint
                 if (0 < inputSlot)
                 {
                     TypeMetaData& streamDataForSlots = getTypeMetaData(streamDataTypeNameForSlots);
-                    streamDataForSlots.pushSlottedStreamData(typeMetaData);
+                    streamDataForSlots._customData.pushSlottedStreamData(typeMetaData);
                 }
             }
 
@@ -513,13 +512,13 @@ namespace mint
                     result.append(" ");
                     result.append(memberType.getDeclName());
                     result.append(" : ");
-                    if (memberType.getSemanticName().empty() == true)
+                    if (memberType._customData.getSemanticName().empty() == true)
                     {
                         result.append(convertDeclarationNameToHlslSemanticName(memberType.getDeclName()));
                     }
                     else
                     {
-                        result.append(memberType.getSemanticName());
+                        result.append(memberType._customData.getSemanticName());
                     }
                     result.append(";\n");
                 }
@@ -534,7 +533,7 @@ namespace mint
                 std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
                 result.append(pureTypeName);
                 result.append(" : register(");
-                result.append("b" + std::to_string((typeMetaData.isRegisterIndexValid() == true) ? typeMetaData.getRegisterIndex() : bufferIndex));
+                result.append("b" + std::to_string((typeMetaData._customData.isRegisterIndexValid() == true) ? typeMetaData._customData.getRegisterIndex() : bufferIndex));
                 result.append(")\n{\n");
 
                 const uint32 memberCount = typeMetaData.getMemberCount();

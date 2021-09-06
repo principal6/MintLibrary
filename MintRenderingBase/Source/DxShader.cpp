@@ -212,10 +212,10 @@ namespace mint
                 }
                 
                 // Input slot Ã³¸®
-                const uint32 slottedStreamDataCount = inputElementTypeMetaData->getSlottedStreamDataCount();
+                const uint32 slottedStreamDataCount = inputElementTypeMetaData->_customData.getSlottedStreamDataCount();
                 for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
                 {
-                    const Language::CppHlsl::TypeMetaData& slottedStreamData = inputElementTypeMetaData->getSlottedStreamData(slottedStreamDataIndex);
+                    const Language::CppHlsl::TypeMetaData& slottedStreamData = inputElementTypeMetaData->_customData.getSlottedStreamData(slottedStreamDataIndex);
                     const uint32 memberCount = slottedStreamData.getMemberCount();
                     for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                     {
@@ -242,10 +242,10 @@ namespace mint
             inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.back().c_str();
             inputElementDescriptor.SemanticIndex = 0;
             inputElementDescriptor.Format = Language::CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
-            inputElementDescriptor.InputSlot = memberTypeMetaData.getInputSlot();
+            inputElementDescriptor.InputSlot = memberTypeMetaData._customData.getInputSlot();
             inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
             inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
-            inputElementDescriptor.InstanceDataStepRate = outerDataTypeMetaData.getInstanceDataStepRate();
+            inputElementDescriptor.InstanceDataStepRate = outerDataTypeMetaData._customData.getInstanceDataStepRate();
             if (0 < inputElementDescriptor.InstanceDataStepRate)
             {
                 inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;

@@ -491,7 +491,7 @@ namespace mint
 
                 {
                     const Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(_cbViewData));
-                    _cbViewId = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData.getRegisterIndex());
+                    _cbViewId = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
                     
                     mint::Rendering::DxResource& cbView = _resourcePool.getResource(_cbViewId);
                     cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
@@ -502,7 +502,7 @@ namespace mint
                 {
                     mint::Rendering::CB_Transform cbTransformData;
                     const Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(cbTransformData));
-                    _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData.getRegisterIndex());
+                    _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
                 }
 
                 initialize2DProjectionMatrix(mint::Float2(windowSize));
@@ -517,13 +517,13 @@ namespace mint
                 {
                     mint::Rendering::SB_Transform sbTransformData;
                     const Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbTransformData));
-                    _sbTransformId = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData.getRegisterIndex());
+                    _sbTransformId = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
                 }
 
                 {
                     mint::Rendering::SB_Material sbMaterialData;
                     const Language::CppHlsl::TypeMetaData& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbMaterialData));
-                    _sbMaterialId = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData.getRegisterIndex());
+                    _sbMaterialId = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
                 }
             }
         }
