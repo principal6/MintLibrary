@@ -68,7 +68,7 @@ namespace mint
             std::string                     _declName;
             uint32                          _size;          // Byte count
             uint32                          _byteOffset;
-            Vector<TypeMetaData>      _memberArray;   // Member variables
+            Vector<TypeMetaData>            _memberArray;   // Member variables
 
         public:
             CustomDataType                  _customData;
