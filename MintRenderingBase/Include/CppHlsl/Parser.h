@@ -36,18 +36,6 @@ namespace mint
                 InstanceData,
             };
 
-            struct SyntaxTreeItem
-            {
-            public:
-                                        SyntaxTreeItem();
-                                        ~SyntaxTreeItem();
-
-            //private:
-                SyntaxClassifier        _classifier;
-                std::string             _identifier;
-                std::string             _value;
-            };
-
 
             class TypeCustomData
             {
@@ -98,16 +86,16 @@ namespace mint
                 void                                        registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn = false) noexcept;
 
             private:
-                const bool                                  parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
 
             private:
-                const bool                                  parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStruct(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStructMember(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseCustomSyntax(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseStruct(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseStructMember(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseCustomSyntax(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
         
             private:
-                void                                        buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem>& structNode) noexcept;
+                void                                        buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& structNode) noexcept;
 
             public:
                 const uint32                                getTypeMetaDataCount() const noexcept;
@@ -136,7 +124,7 @@ namespace mint
                 std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             private:
-                mint::Tree<SyntaxTreeItem>                  _syntaxTree;
+                mint::Tree<SyntaxTreeItem<SyntaxClassifier>>                  _syntaxTree;
 
             private:
                 mint::Vector<TypeMetaData<TypeCustomData>>  _typeMetaDatas;

@@ -5,7 +5,23 @@ namespace mint
 {
     namespace Language
     {
-#pragma region TypeMetaData<CustomDataType>
+#pragma region SyntaxTreeItem
+        template <typename ClassifierType>
+        inline SyntaxTreeItem<ClassifierType>::SyntaxTreeItem()
+            : _classifier{}
+        {
+            __noop;
+        }
+
+        template <typename ClassifierType>
+        inline SyntaxTreeItem<ClassifierType>::~SyntaxTreeItem()
+        {
+            __noop;
+        }
+#pragma endregion
+
+
+#pragma region TypeMetaData
         template <typename CustomDataType>
         inline TypeMetaData<CustomDataType>::TypeMetaData()
             : _isBuiltIn{ false }

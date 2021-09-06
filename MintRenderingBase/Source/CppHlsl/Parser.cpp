@@ -32,18 +32,6 @@ namespace mint
             }        
 
 
-            SyntaxTreeItem::SyntaxTreeItem()
-                : _classifier{ SyntaxClassifier::ROOT }
-            {
-                __noop;
-            }
-
-            SyntaxTreeItem::~SyntaxTreeItem()
-            {
-                __noop;
-            }
-
-
             Parser::Parser(ILexer& lexer)
                 : IParser(lexer)
             {
@@ -77,10 +65,10 @@ namespace mint
                 reset();
 
                 uint32 advanceCount = 0;
-                SyntaxTreeItem rootItem;
+                SyntaxTreeItem<SyntaxClassifier> rootItem;
                 rootItem._classifier = SyntaxClassifier::ROOT;
                 rootItem._identifier = "ROOT";
-                TreeNodeAccessor<SyntaxTreeItem> syntaxTreeRootNode = _syntaxTree.createRootNode(rootItem);
+                TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> syntaxTreeRootNode = _syntaxTree.createRootNode(rootItem);
                 while (continueParsing() == true)
                 {
                     if (parseCode(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == false)
@@ -112,7 +100,7 @@ namespace mint
                 _typeMetaDataMap.insert(typeFullName, _typeMetaDatas.size() - 1);
             }
 
-            const bool Parser::parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept
+            const bool Parser::parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 if (_symbolTable[symbolPosition]._symbolClassifier == SymbolClassifier::Keyword)
                 {
@@ -139,23 +127,23 @@ namespace mint
                 return false;
             }
 
-            const bool Parser::parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept
+            const bool Parser::parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 MINT_ASSURE(hasSymbol(symbolPosition + 3));
                 MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
                 MINT_ASSURE(IParser::findNextDepthMatchingGrouperCloseSymbol(symbolPosition + 2));
 
-                SyntaxTreeItem syntaxTreeItem;
+                SyntaxTreeItem<SyntaxClassifier> syntaxTreeItem;
                 syntaxTreeItem._classifier = SyntaxClassifier::Namespace;
                 syntaxTreeItem._identifier = _symbolTable[symbolPosition + 1]._symbolString;
-                TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                 currentNode = newNode;
             
                 outAdvanceCount += 2 + 1;
                 return true;
             }
 
-            const bool Parser::parseStruct(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept
+            const bool Parser::parseStruct(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 MINT_ASSURE(hasSymbol(symbolPosition + 4)); // ; 까지!
                 MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
@@ -170,10 +158,10 @@ namespace mint
                     hasCustomSyntax = true;
                 }
 
-                SyntaxTreeItem syntaxTreeItem;
+                SyntaxTreeItem<SyntaxClassifier> syntaxTreeItem;
                 syntaxTreeItem._classifier = SyntaxClassifier::Struct;
                 syntaxTreeItem._identifier = _symbolTable[symbolPosition + 1]._symbolString;
-                TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                 currentNode = newNode;
                 outAdvanceCount += 2 + 1;
 
@@ -192,19 +180,19 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseStructMember(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept
+            const bool Parser::parseStructMember(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 const uint32 kSemicolonMinOffset = 2;
                 MINT_ASSURE_SILENT(_symbolTable[symbolPosition]._symbolClassifier != SymbolClassifier::Grouper_Close); // 최우선 검사
                 MINT_ASSURE(hasSymbol(symbolPosition + kSemicolonMinOffset));
 
-                SyntaxTreeItem syntaxTreeItem;
+                SyntaxTreeItem<SyntaxClassifier> syntaxTreeItem;
                 syntaxTreeItem._classifier = SyntaxClassifier::Variable;
                 syntaxTreeItem._identifier = _symbolTable[symbolPosition + 1]._symbolString;
-                TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                 {
                     // DataType 은 Variable Identifier 노드의 자식!
-                    SyntaxTreeItem syntaxTreeItemChild;
+                    SyntaxTreeItem<SyntaxClassifier> syntaxTreeItemChild;
                     syntaxTreeItemChild._classifier = SyntaxClassifier::DataType;
                     syntaxTreeItemChild._identifier = _symbolTable[symbolPosition]._symbolString;
                     newNode.insertChildNode(syntaxTreeItemChild);
@@ -226,32 +214,32 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseCustomSyntax(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem>& currentNode, uint32& outAdvanceCount) noexcept
+            const bool Parser::parseCustomSyntax(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 const uint32 kCloseParenthesisMinOffset = 3;
                 MINT_ASSURE(hasSymbol(symbolPosition + kCloseParenthesisMinOffset));
                 MINT_ASSURE(findNextDepthMatchingGrouperCloseSymbol(symbolPosition + 1) == true);
 
-                SyntaxTreeItem syntaxTreeItem;
+                SyntaxTreeItem<SyntaxClassifier> syntaxTreeItem;
                 if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_SEMANTIC_NAME")
                 {
                     syntaxTreeItem._classifier = SyntaxClassifier::SemanticName;
                     syntaxTreeItem._identifier = _symbolTable[symbolPosition + 2]._symbolString;
-                    TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                    TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                     outAdvanceCount += 3 + 1;
                 }
                 else if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_REGISTER_INDEX")
                 {
                     syntaxTreeItem._classifier = SyntaxClassifier::RegisterIndex;
                     syntaxTreeItem._value = _symbolTable[symbolPosition + 2]._symbolString;
-                    TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                    TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                     outAdvanceCount += 3 + 1;
                 }
                 else if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_INSTANCE_DATA")
                 {
                     syntaxTreeItem._classifier = SyntaxClassifier::InstanceData;
                     syntaxTreeItem._value = _symbolTable[symbolPosition + 2]._symbolString;
-                    TreeNodeAccessor<SyntaxTreeItem> newNode = currentNode.insertChildNode(syntaxTreeItem);
+                    TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> newNode = currentNode.insertChildNode(syntaxTreeItem);
                     outAdvanceCount += 3 + 1;
                 }
                 else
@@ -262,10 +250,10 @@ namespace mint
                 return true;
             }
 
-            void Parser::buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem>& structNode) noexcept
+            void Parser::buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& structNode) noexcept
             {
                 mint::Vector<std::string> namespaceStack;
-                TreeNodeAccessor<SyntaxTreeItem> parentNode = structNode.getParentNode();
+                TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> parentNode = structNode.getParentNode();
                 while (parentNode.isValid() == true)
                 {
                     if (parentNode.getNodeData()._classifier == SyntaxClassifier::ROOT)
@@ -284,7 +272,7 @@ namespace mint
                     fullTypeName += "::";
                     namespaceStack.pop_back();
                 }
-                const SyntaxTreeItem& structNodeSyntaxTreeItem = structNode.getNodeData();
+                const SyntaxTreeItem<SyntaxClassifier>& structNodeSyntaxTreeItem = structNode.getNodeData();
                 fullTypeName += structNodeSyntaxTreeItem._identifier;
 
                 KeyValuePair found = _typeMetaDataMap.find(fullTypeName);
@@ -302,12 +290,12 @@ namespace mint
                 const uint32 childNodeCount = structNode.getChildNodeCount();
                 for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
                 {
-                    TreeNodeAccessor<SyntaxTreeItem> childNode = structNode.getChildNode(childNodeIndex);
-                    const SyntaxTreeItem& childNodeData = childNode.getNodeData();
+                    TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> childNode = structNode.getChildNode(childNodeIndex);
+                    const SyntaxTreeItem<SyntaxClassifier>& childNodeData = childNode.getNodeData();
                     if (childNodeData._classifier == SyntaxClassifier::Variable)
                     {
                         const uint32 attributeCount = childNode.getChildNodeCount();
-                        TreeNodeAccessor<SyntaxTreeItem> dataTypeNode = childNode.getChildNode(0);
+                        TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> dataTypeNode = childNode.getChildNode(0);
                         TypeMetaData<TypeCustomData> memberTypeMetaData = getTypeMetaData(dataTypeNode.getNodeData()._identifier);
                         memberTypeMetaData.setByteOffset(structSize);
                         structSize += memberTypeMetaData.getSize();
@@ -317,8 +305,8 @@ namespace mint
                         if (2 <= attributeCount)
                         {
                             // SemanticName
-                            TreeNodeAccessor<SyntaxTreeItem> attribute1 = childNode.getChildNode(1);
-                            const SyntaxTreeItem& attribute1Data = attribute1.getNodeData();
+                            TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>> attribute1 = childNode.getChildNode(1);
+                            const SyntaxTreeItem<SyntaxClassifier>& attribute1Data = attribute1.getNodeData();
                             if (attribute1Data._classifier == SyntaxClassifier::SemanticName)
                             {
                                 memberTypeMetaData._customData.setSemanticName(attribute1Data._identifier);

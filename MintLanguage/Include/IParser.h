@@ -20,6 +20,20 @@ namespace mint
         class ILexer;
 
 
+        template <typename ClassifierType>
+        struct SyntaxTreeItem
+        {
+        public:
+                                    SyntaxTreeItem();
+                                    ~SyntaxTreeItem();
+
+        //private:
+            ClassifierType          _classifier;
+            std::string             _identifier;
+            std::string             _value;
+        };
+
+
         template <typename CustomDataType>
         class TypeMetaData final
         {
