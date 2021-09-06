@@ -68,7 +68,7 @@ namespace mint
             std::string                     _declName;
             uint32                          _size;          // Byte count
             uint32                          _byteOffset;
-            mint::Vector<TypeMetaData>      _memberArray;   // Member variables
+            Vector<TypeMetaData>      _memberArray;   // Member variables
 
         public:
             CustomDataType                  _customData;
@@ -78,6 +78,11 @@ namespace mint
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
         class IParser abstract
         {
+        protected:
+            using SyntaxTreeNodeData        = SyntaxTreeItem<SyntaxClassifierType>;
+            using SyntaxTreeNode            = TreeNodeAccessor<SyntaxTreeNodeData>;
+            using SyntaxTree                = Tree<SyntaxTreeNodeData>;
+
         protected:
             enum class ErrorType
             {
@@ -164,27 +169,27 @@ namespace mint
             const TypeMetaData<TypeCustomDataType>&             getTypeMetaData(const int32 typeIndex) const noexcept;
 
         protected:
-            void                                                pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
             const bool                                          existsTypeMetaData(const std::string& typeName) const noexcept;
-            TypeMetaData<TypeCustomDataType>&                   getTypeMetaData(const std::string& typeName) noexcept;
+            void                                                pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
+            TypeMetaData<TypeCustomDataType>&                   accessTypeMetaData(const std::string& typeName) noexcept;
 
         protected:
             ILexer&                                             _lexer;
-            mint::Vector<SymbolTableItem>&                      _symbolTable;
+            Vector<SymbolTableItem>&                            _symbolTable;
 
         private:
             uint32                                              _symbolAt;
-            mint::Vector<ErrorMessage>                          _errorMessageArray;
+            Vector<ErrorMessage>                                _errorMessageArray;
 
         protected:
-            mint::Tree<SyntaxTreeItem<SyntaxClassifierType>>    _syntaxTree;
+            SyntaxTree                                          _syntaxTree;
 
         protected:
-            mint::Vector<TypeMetaData<TypeCustomDataType>>      _typeMetaDatas;
-            mint::HashMap<std::string, uint32>                  _typeMetaDataMap;
+            Vector<TypeMetaData<TypeCustomDataType>>            _typeMetaDatas;
+            HashMap<std::string, uint32>                        _typeMetaDataMap;
 
         protected:
-            mint::HashMap<std::string, uint32>                  _builtInTypeUmap;
+            HashMap<std::string, uint32>                        _builtInTypeUmap;
         };
     }
 }

@@ -337,20 +337,20 @@ namespace mint
         }
 
         template<typename TypeCustomDataType, typename SyntaxClassifierType>
+        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::existsTypeMetaData(const std::string& typeName) const noexcept
+        {
+            return _typeMetaDataMap.find(typeName).isValid();
+        }
+
+        template<typename TypeCustomDataType, typename SyntaxClassifierType>
         inline void IParser<TypeCustomDataType, SyntaxClassifierType>::pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept
         {
             _typeMetaDatas.push_back(typeMetaData);
             _typeMetaDataMap.insert(typeName, _typeMetaDatas.size() - 1);
         }
 
-        template<typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::existsTypeMetaData(const std::string& typeName) const noexcept
-        {
-            return _typeMetaDataMap.find(typeName).isValid();
-        }
-
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaData(const std::string& typeName) noexcept
+        inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::accessTypeMetaData(const std::string& typeName) noexcept
         {
             KeyValuePair found = _typeMetaDataMap.find(typeName);
             MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());

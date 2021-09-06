@@ -69,7 +69,7 @@ namespace mint
                 uint32                                      _registerIndex;
                 uint32                                      _inputSlot;
                 uint32                                      _instanceDataStepRate;
-                mint::Vector<TypeMetaData<TypeCustomData>>  _slottedStreamDatas;
+                Vector<TypeMetaData<TypeCustomData>>        _slottedStreamDatas;
             };
 
 
@@ -83,16 +83,16 @@ namespace mint
                 virtual const bool                          execute() override final;
 
             private:
-                const bool                                  parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
 
             private:
-                const bool                                  parseNamespace(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStruct(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStructMember(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseCustomSyntax(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                const bool                                  parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
         
             private:
-                void                                        buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& structNode) noexcept;
+                void                                        buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
 
             private:
                 const int32                                 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
