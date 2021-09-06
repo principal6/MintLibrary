@@ -61,6 +61,7 @@ namespace mint
         };
 
 
+        template <typename CustomDataType>
         class IParser abstract
         {
         protected:

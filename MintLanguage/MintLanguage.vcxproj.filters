@@ -37,9 +37,6 @@
     <ClCompile Include="Source\ILexer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IParser.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>

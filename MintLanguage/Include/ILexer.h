@@ -18,6 +18,8 @@ namespace mint
     namespace Language
     {
         class ILexer;
+
+        template <typename CustomDataType>
         class IParser;
 
 
@@ -121,7 +123,8 @@ namespace mint
         // Also known as Scanner
         class ILexer
         {
-            friend IParser;
+            template <typename CustomDataType>
+            friend class IParser;
 
         public:
                                                     ILexer();

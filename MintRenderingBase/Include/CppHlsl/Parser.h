@@ -85,7 +85,7 @@ namespace mint
             };
 
 
-            class Parser final : public IParser
+            class Parser final : public IParser<TypeCustomData>
             {
             public:
                                                             Parser(ILexer& lexer);
