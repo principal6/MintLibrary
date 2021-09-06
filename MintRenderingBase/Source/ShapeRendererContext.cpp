@@ -61,7 +61,9 @@ namespace mint
                     }
                     )"
                 };
-                const Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
+
+                using namespace Language;
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
             }
 

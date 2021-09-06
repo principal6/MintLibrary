@@ -20,6 +20,47 @@ namespace mint
         class ILexer;
 
 
+        template <typename CustomDataType>
+        class TypeMetaData final
+        {
+        public:
+                                            TypeMetaData();
+                                            ~TypeMetaData() = default;
+
+        public:
+            static const TypeMetaData&      getInvalid() noexcept;
+
+        public:
+            void                            setBaseData(const std::string& typeName, const bool isBuiltIn);
+            void                            setDeclName(const std::string& declName);
+            void                            setSize(const uint32 size);
+            void                            setByteOffset(const uint32 byteOffset);
+            void                            pushMember(const TypeMetaData& member);
+
+        public:
+            const bool                      isBuiltIn() const noexcept;
+
+        public:
+            const std::string&              getTypeName() const noexcept;
+            const std::string&              getDeclName() const noexcept;
+            const uint32                    getSize() const noexcept;
+            const uint32                    getByteOffset() const noexcept;
+            const uint32                    getMemberCount() const noexcept;
+            const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
+
+        private:
+            bool                            _isBuiltIn;
+            std::string                     _typeName;      // namespace + name
+            std::string                     _declName;
+            uint32                          _size;          // Byte count
+            uint32                          _byteOffset;
+            mint::Vector<TypeMetaData>      _memberArray;   // Member variables
+
+        public:
+            CustomDataType                  _customData;
+        };
+
+
         class IParser abstract
         {
         protected:

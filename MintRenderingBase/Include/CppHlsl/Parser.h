@@ -52,75 +52,36 @@ namespace mint
             class TypeCustomData
             {
             public:
-                                                TypeCustomData();
-                                                ~TypeCustomData() = default;
+                                                            TypeCustomData();
+                                                            ~TypeCustomData() = default;
 
             public:
-                void                            setSemanticName(const std::string& semanticName);
-                void                            setRegisterIndex(const uint32 registerIndex);
-                void                            setInputSlot(const uint32 inputSlot);
-                void                            setInstanceDataStepRate(const uint32 instanceDataStepRate);
-                void                            pushSlottedStreamData(const TypeMetaData& slottedStreamData);
+                void                                        setSemanticName(const std::string& semanticName);
+                void                                        setRegisterIndex(const uint32 registerIndex);
+                void                                        setInputSlot(const uint32 inputSlot);
+                void                                        setInstanceDataStepRate(const uint32 instanceDataStepRate);
+                void                                        pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData);
 
             public:
-                const bool                      isRegisterIndexValid() const noexcept;
+                const bool                                  isRegisterIndexValid() const noexcept;
 
             public:
-                const std::string&              getSemanticName() const noexcept;
-                const uint32                    getRegisterIndex() const noexcept;
-                const uint32                    getInputSlot() const noexcept;
-                const uint32                    getInstanceDataStepRate() const noexcept;
-                const uint32                    getSlottedStreamDataCount() const noexcept;
-                const TypeMetaData&             getSlottedStreamData(const uint32 inputSlot) const noexcept;
+                const std::string&                          getSemanticName() const noexcept;
+                const uint32                                getRegisterIndex() const noexcept;
+                const uint32                                getInputSlot() const noexcept;
+                const uint32                                getInstanceDataStepRate() const noexcept;
+                const uint32                                getSlottedStreamDataCount() const noexcept;
+                const TypeMetaData<TypeCustomData>&         getSlottedStreamData(const uint32 inputSlot) const noexcept;
 
             private:
-                static constexpr uint32         kInvalidRegisterIndex = kUint32Max;
+                static constexpr uint32                     kInvalidRegisterIndex = kUint32Max;
 
             private:
-                std::string                     _semanticName;
-                uint32                          _registerIndex;
-                uint32                          _inputSlot;
-                uint32                          _instanceDataStepRate;
-                mint::Vector<TypeMetaData>      _slottedStreamDatas;
-            };
-
-            class TypeMetaData final
-            {
-            public:
-                                                TypeMetaData();
-                                                ~TypeMetaData() = default;
-
-            public:
-                static const TypeMetaData&      getInvalid() noexcept;
-
-            public:
-                void                            setBaseData(const std::string& typeName, const bool isBuiltIn);
-                void                            setDeclName(const std::string& declName);
-                void                            setSize(const uint32 size);
-                void                            setByteOffset(const uint32 byteOffset);
-                void                            pushMember(const TypeMetaData& member);
-
-            public:
-                const bool                      isBuiltIn() const noexcept;
-
-            public:
-                const std::string&              getTypeName() const noexcept;
-                const std::string&              getDeclName() const noexcept;
-                const uint32                    getSize() const noexcept;
-                const uint32                    getByteOffset() const noexcept;
-                const uint32                    getMemberCount() const noexcept;
-                const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
-
-            private:
-                bool                            _isBuiltIn;
-                std::string                     _typeName;      // namespace + name
-                std::string                     _declName;
-                uint32                          _size;          // Byte count
-                uint32                          _byteOffset;
-                mint::Vector<TypeMetaData>      _memberArray;   // Member variables
-
-            public:
-                TypeCustomData                  _customData;
+                std::string                                 _semanticName;
+                uint32                                      _registerIndex;
+                uint32                                      _inputSlot;
+                uint32                                      _instanceDataStepRate;
+                mint::Vector<TypeMetaData<TypeCustomData>>  _slottedStreamDatas;
             };
 
 
@@ -150,11 +111,11 @@ namespace mint
 
             public:
                 const uint32                                getTypeMetaDataCount() const noexcept;
-                const TypeMetaData&                         getTypeMetaData(const std::string& typeName) const noexcept;
-                const TypeMetaData&                         getTypeMetaData(const int32 typeIndex) const noexcept;
-        
+                const TypeMetaData<TypeCustomData>&         getTypeMetaData(const std::string& typeName) const noexcept;
+                const TypeMetaData<TypeCustomData>&         getTypeMetaData(const int32 typeIndex) const noexcept;
+
             private:
-                TypeMetaData&                               getTypeMetaData(const std::string& typeName) noexcept;
+                TypeMetaData<TypeCustomData>&               getTypeMetaData(const std::string& typeName) noexcept;
 
             private:
                 const int32                                 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
@@ -162,23 +123,23 @@ namespace mint
 
             public:
                 static std::string                          convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
-                static const DXGI_FORMAT                    convertCppHlslTypeToDxgiFormat(const TypeMetaData& typeMetaData);
+                static const DXGI_FORMAT                    convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             public:
-                std::string                                 serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData& typeMetaData);
+                std::string                                 serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             private:
-                std::string                                 serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData& typeMetaData);
+                std::string                                 serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             public:
-                std::string                                 serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData& typeMetaData, const uint32 bufferIndex);
-                std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData& typeMetaData);
+                std::string                                 serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
+                std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             private:
                 mint::Tree<SyntaxTreeItem>                  _syntaxTree;
 
             private:
-                mint::Vector<TypeMetaData>                  _typeMetaDatas;
+                mint::Vector<TypeMetaData<TypeCustomData>>  _typeMetaDatas;
                 mint::HashMap<std::string, uint32>          _typeMetaDataMap;
         
             private:

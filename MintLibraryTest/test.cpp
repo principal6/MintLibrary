@@ -118,9 +118,9 @@ const bool testLanguage()
     uint64 tss = sizeof(TestStruct);
 
     //std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-    //const CppHlsl::TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
-    //const CppHlsl::TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
-    //const CppHlsl::TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
+    //const TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
+    //const TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
+    //const TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
     return true;
 }
 

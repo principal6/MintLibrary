@@ -46,7 +46,7 @@ namespace mint
                 {
                     for (uint32 typeMetaDataIndex = 0; typeMetaDataIndex < typeMetaDataCount; ++typeMetaDataIndex)
                     {
-                        const TypeMetaData& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
+                        const TypeMetaData<TypeCustomData>& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
                         if (typeMetaData.isBuiltIn() == true)
                         {
                             continue;
@@ -60,7 +60,7 @@ namespace mint
                 uint32 structuredBufferIndex = 0;
                 for (uint32 typeMetaDataIndex = 0; typeMetaDataIndex < typeMetaDataCount; ++typeMetaDataIndex)
                 {
-                    const TypeMetaData& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
+                    const TypeMetaData<TypeCustomData>& typeMetaData = _parser.getTypeMetaData(typeMetaDataIndex);
                     if (typeMetaData.isBuiltIn() == true)
                     {
                         continue;
@@ -94,17 +94,17 @@ namespace mint
                 return _parser.getTypeMetaDataCount();
             }
 
-            const TypeMetaData& Interpreter::getTypeMetaData(const uint32 typeIndex) const noexcept
+            const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const uint32 typeIndex) const noexcept
             {
                 return _parser.getTypeMetaData(typeIndex);
             }
 
-            const TypeMetaData& Interpreter::getTypeMetaData(const std::string& typeName) const noexcept
+            const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const std::string& typeName) const noexcept
             {
                 return _parser.getTypeMetaData(typeName);
             }
 
-            const TypeMetaData& Interpreter::getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept
+            const TypeMetaData<TypeCustomData>& Interpreter::getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept
             {
                 std::string stdTypeName = stdTypeInfo.name();
                 const uint64 firstSpacePosition = stdTypeName.find(' ');

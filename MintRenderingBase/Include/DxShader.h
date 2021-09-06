@@ -16,9 +16,13 @@ namespace mint
 {
     namespace Language
     {
+        template <typename CustomDataType>
+        class TypeMetaData;
+
+
         namespace CppHlsl
         {
-            class TypeMetaData;
+            class TypeCustomData;
         }
     }
 
@@ -85,6 +89,11 @@ namespace mint
 
         class DxShaderPool final : public IDxObject
         {
+            template <typename CustomDataType>
+            using TypeMetaData = Language::TypeMetaData<CustomDataType>;
+            using TypeCustomData = Language::CppHlsl::TypeCustomData;
+
+
             static constexpr const char* const  kCompiledShaderFileExtension = ".hlslbin";
 
         public:
@@ -93,20 +102,20 @@ namespace mint
             virtual                     ~DxShaderPool() = default;
 
         public:
-            const DxObjectId&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            const DxObjectId&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
             const DxObjectId&           pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
         public:
-            const DxObjectId&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
+            const DxObjectId&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
             const DxObjectId&           pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
-            const DxObjectId&           pushVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            const DxObjectId&           pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
             const DxObjectId&           pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
         
         private:
-            const bool                  createVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
-            void                        pushInputElement(DxInputElementSet& inputElementSet, const Language::CppHlsl::TypeMetaData& outerDataTypeMetaData, const Language::CppHlsl::TypeMetaData& memberTypeMetaData);
+            const bool                  createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            void                        pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
             const bool                  createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
 
         private:

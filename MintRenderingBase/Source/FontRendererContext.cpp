@@ -506,7 +506,7 @@ namespace mint
         {
             _clipRect = _graphicDevice->getFullScreenClipRect();
 
-            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             // Compile vertex shader and create input layer
             {
@@ -540,7 +540,9 @@ namespace mint
                     }
                     )"
                 };
-                const Language::CppHlsl::TypeMetaData& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
+
+                using namespace Language;
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
             }
 

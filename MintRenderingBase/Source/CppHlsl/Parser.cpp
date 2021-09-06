@@ -105,7 +105,7 @@ namespace mint
 
             void Parser::registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn) noexcept
             {
-                TypeMetaData typeMetaData;
+                TypeMetaData<TypeCustomData> typeMetaData;
                 typeMetaData.setBaseData(TypeUtils::extractPureTypeName(typeFullName), isBuiltIn);
                 typeMetaData.setSize(typeSize);
                 _typeMetaDatas.push_back(typeMetaData);
@@ -293,7 +293,7 @@ namespace mint
                     return;
                 }
 
-                TypeMetaData typeMetaData;
+                TypeMetaData<TypeCustomData> typeMetaData;
                 typeMetaData.setBaseData(fullTypeName, false);
             
                 uint32 structSize = 0;
@@ -308,7 +308,7 @@ namespace mint
                     {
                         const uint32 attributeCount = childNode.getChildNodeCount();
                         TreeNodeAccessor<SyntaxTreeItem> dataTypeNode = childNode.getChildNode(0);
-                        TypeMetaData memberTypeMetaData = getTypeMetaData(dataTypeNode.getNodeData()._identifier);
+                        TypeMetaData<TypeCustomData> memberTypeMetaData = getTypeMetaData(dataTypeNode.getNodeData()._identifier);
                         memberTypeMetaData.setByteOffset(structSize);
                         structSize += memberTypeMetaData.getSize();
                         memberTypeMetaData.setDeclName(childNodeData._identifier);
@@ -353,7 +353,7 @@ namespace mint
 
                 if (0 < inputSlot)
                 {
-                    TypeMetaData& streamDataForSlots = getTypeMetaData(streamDataTypeNameForSlots);
+                    TypeMetaData<TypeCustomData>& streamDataForSlots = getTypeMetaData(streamDataTypeNameForSlots);
                     streamDataForSlots._customData.pushSlottedStreamData(typeMetaData);
                 }
             }
@@ -379,7 +379,7 @@ namespace mint
                 return _typeMetaDatas.size();
             }
 
-            const TypeMetaData& Parser::getTypeMetaData(const std::string& typeName) const noexcept
+            const TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const std::string& typeName) const noexcept
             {
                 KeyValuePair found = _typeMetaDataMap.find(typeName);
                 MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
@@ -388,12 +388,12 @@ namespace mint
                 return _typeMetaDatas[typeIndex];
             }
 
-            const TypeMetaData& Parser::getTypeMetaData(const int32 typeIndex) const noexcept
+            const TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const int32 typeIndex) const noexcept
             {
                 return _typeMetaDatas[typeIndex];
             }
 
-            TypeMetaData& Parser::getTypeMetaData(const std::string& typeName) noexcept
+            TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const std::string& typeName) noexcept
             {
                 KeyValuePair found = _typeMetaDataMap.find(typeName);
                 MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
@@ -428,7 +428,7 @@ namespace mint
                 return _typeMetaDataMap.find(typeName).isValid();
             }
 
-            const DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData& typeMetaData)
+            const DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData)
             {
                 const std::string& typeName = typeMetaData.getTypeName();
                 if (typeName == "float" || typeName == "float1")
@@ -467,12 +467,12 @@ namespace mint
                 return DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
             }
 
-            std::string Parser::serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData& typeMetaData)
+            std::string Parser::serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData)
             {
                 std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
 
                 // inputSlot 0 은 나 자신이다!
-                mint::Vector<TypeMetaData> slottedDatas;
+                mint::Vector<TypeMetaData<TypeCustomData>> slottedDatas;
                 for (int32 inputSlot = 1; inputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT; ++inputSlot)
                 {
                     std::string typeName = typeMetaData.getTypeName() + std::to_string(inputSlot);
@@ -500,13 +500,13 @@ namespace mint
                 return result;
             }
 
-            std::string Parser::serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData& typeMetaData)
+            std::string Parser::serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData)
             {
                 std::string result;
                 const uint32 memberCount = typeMetaData.getMemberCount();
                 for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                 {
-                    const TypeMetaData& memberType = typeMetaData.getMember(memberIndex);
+                    const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
                     result.append("\t");
                     result.append(memberType.getTypeName());
                     result.append(" ");
@@ -525,7 +525,7 @@ namespace mint
                 return result;
             }
 
-            std::string Parser::serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData& typeMetaData, const uint32 bufferIndex)
+            std::string Parser::serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex)
             {
                 std::string result;
 
@@ -539,7 +539,7 @@ namespace mint
                 const uint32 memberCount = typeMetaData.getMemberCount();
                 for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                 {
-                    const TypeMetaData& memberType = typeMetaData.getMember(memberIndex);
+                    const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
                     result.append("\t");
                     result.append(memberType.getTypeName());
                     result.append(" ");
@@ -550,7 +550,7 @@ namespace mint
                 return result;
             }
 
-            std::string Parser::serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData& typeMetaData)
+            std::string Parser::serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData)
             {
                 std::string result;
 
@@ -561,7 +561,7 @@ namespace mint
                 const uint32 memberCount = typeMetaData.getMemberCount();
                 for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                 {
-                    const TypeMetaData& memberType = typeMetaData.getMember(memberIndex);
+                    const TypeMetaData<TypeCustomData>& memberType = typeMetaData.getMember(memberIndex);
                     result.append("\t");
                     result.append(memberType.getTypeName());
                     result.append(" ");

@@ -29,10 +29,11 @@ namespace mint
 
         void MeshRenderer::initialize() noexcept
         {
-            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-            const Language::CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
-            const Language::CppHlsl::TypeMetaData& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(mint::Rendering::VS_INPUT));
+            using namespace Language;
+            const CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
+            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(mint::Rendering::VS_INPUT));
 
+            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
             _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
             _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", mint::Rendering::DxShaderType::PixelShader, "Assets/HlslBinary/");
             

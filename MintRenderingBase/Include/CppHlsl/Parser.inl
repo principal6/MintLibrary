@@ -36,7 +36,7 @@ namespace mint
                 _instanceDataStepRate = instanceDataStepRate;
             }
 
-            MINT_INLINE void TypeCustomData::pushSlottedStreamData(const TypeMetaData& slottedStreamData)
+            MINT_INLINE void TypeCustomData::pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData)
             {
                 _slottedStreamDatas.push_back(slottedStreamData);
             }
@@ -71,87 +71,9 @@ namespace mint
                 return _slottedStreamDatas.size();
             }
 
-            MINT_INLINE const TypeMetaData& TypeCustomData::getSlottedStreamData(const uint32 inputSlot) const noexcept
+            MINT_INLINE const TypeMetaData<TypeCustomData>& TypeCustomData::getSlottedStreamData(const uint32 inputSlot) const noexcept
             {
-                return (inputSlot < getSlottedStreamDataCount()) ? _slottedStreamDatas[inputSlot] : TypeMetaData::getInvalid();
-            }
-#pragma endregion
-
-
-#pragma region TypeMetaData
-            inline TypeMetaData::TypeMetaData()
-                : _isBuiltIn{ false }
-                , _size{ 0 }
-                , _byteOffset{ 0 }
-            {
-                __noop;
-            }
-
-            MINT_INLINE const TypeMetaData& TypeMetaData::getInvalid() noexcept
-            {
-                static const TypeMetaData kInvalid;
-                return kInvalid;
-            }
-
-            MINT_INLINE void TypeMetaData::setBaseData(const std::string& typeName, const bool isBuiltIn)
-            {
-                _typeName = typeName;
-                _isBuiltIn = isBuiltIn;
-            }
-
-            MINT_INLINE void TypeMetaData::setDeclName(const std::string& declName)
-            {
-                _declName = declName;
-            }
-
-            MINT_INLINE void TypeMetaData::setSize(const uint32 size)
-            {
-                _size = size;
-            }
-
-            MINT_INLINE void TypeMetaData::setByteOffset(const uint32 byteOffset)
-            {
-                _byteOffset = byteOffset;
-            }
-
-            MINT_INLINE void TypeMetaData::pushMember(const TypeMetaData& member)
-            {
-                _memberArray.push_back(member);
-            }
-
-            MINT_INLINE const bool TypeMetaData::isBuiltIn() const noexcept
-            {
-                return _isBuiltIn;
-            }
-
-            MINT_INLINE const std::string& TypeMetaData::getTypeName() const noexcept
-            {
-                return _typeName;
-            }
-
-            MINT_INLINE const std::string& TypeMetaData::getDeclName() const noexcept
-            {
-                return _declName;
-            }
-
-            MINT_INLINE const uint32 TypeMetaData::getSize() const noexcept
-            {
-                return _size;
-            }
-
-            MINT_INLINE const uint32 TypeMetaData::getByteOffset() const noexcept
-            {
-                return _byteOffset;
-            }
-
-            MINT_INLINE const uint32 TypeMetaData::getMemberCount() const noexcept
-            {
-                return _memberArray.size();
-            }
-
-            MINT_INLINE const TypeMetaData& TypeMetaData::getMember(const uint32 memberIndex) const noexcept
-            {
-                return (memberIndex < getMemberCount()) ? _memberArray[memberIndex] : TypeMetaData::getInvalid();
+                return (inputSlot < getSlottedStreamDataCount()) ? _slottedStreamDatas[inputSlot] : TypeMetaData<TypeCustomData>::getInvalid();
             }
 #pragma endregion
         }
