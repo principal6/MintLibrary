@@ -73,7 +73,7 @@ namespace mint
             };
 
 
-            class Parser final : public IParser<TypeCustomData>
+            class Parser final : public IParser<TypeCustomData, SyntaxClassifier>
             {
             public:
                                                             Parser(ILexer& lexer);
@@ -81,9 +81,6 @@ namespace mint
 
             public:
                 virtual const bool                          execute() override final;
-
-            private:
-                void                                        registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn = false) noexcept;
 
             private:
                 const bool                                  parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept;
@@ -97,17 +94,8 @@ namespace mint
             private:
                 void                                        buildTypeMetaData(const TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& structNode) noexcept;
 
-            public:
-                const uint32                                getTypeMetaDataCount() const noexcept;
-                const TypeMetaData<TypeCustomData>&         getTypeMetaData(const std::string& typeName) const noexcept;
-                const TypeMetaData<TypeCustomData>&         getTypeMetaData(const int32 typeIndex) const noexcept;
-
-            private:
-                TypeMetaData<TypeCustomData>&               getTypeMetaData(const std::string& typeName) noexcept;
-
             private:
                 const int32                                 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
-                const bool                                  existsTypeMetaData(const std::string& typeName) const noexcept;
 
             public:
                 static std::string                          convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
@@ -122,16 +110,6 @@ namespace mint
             public:
                 std::string                                 serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
                 std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
-
-            private:
-                mint::Tree<SyntaxTreeItem<SyntaxClassifier>>                  _syntaxTree;
-
-            private:
-                mint::Vector<TypeMetaData<TypeCustomData>>  _typeMetaDatas;
-                mint::HashMap<std::string, uint32>          _typeMetaDataMap;
-        
-            private:
-                mint::HashMap<std::string, uint32>          _builtInTypeUmap;
             };
         }
     }

@@ -91,15 +91,6 @@ namespace mint
                 return true;
             }
 
-            void Parser::registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn) noexcept
-            {
-                TypeMetaData<TypeCustomData> typeMetaData;
-                typeMetaData.setBaseData(TypeUtils::extractPureTypeName(typeFullName), isBuiltIn);
-                typeMetaData.setSize(typeSize);
-                _typeMetaDatas.push_back(typeMetaData);
-                _typeMetaDataMap.insert(typeFullName, _typeMetaDatas.size() - 1);
-            }
-
             const bool Parser::parseCode(const uint32 symbolPosition, TreeNodeAccessor<SyntaxTreeItem<SyntaxClassifier>>& currentNode, uint32& outAdvanceCount) noexcept
             {
                 if (_symbolTable[symbolPosition]._symbolClassifier == SymbolClassifier::Keyword)
@@ -336,8 +327,7 @@ namespace mint
                 }
                 typeMetaData.setSize(structSize);
             
-                _typeMetaDatas.push_back(typeMetaData);
-                _typeMetaDataMap.insert(fullTypeName, _typeMetaDatas.size() - 1);
+                pushTypeMetaData(fullTypeName, typeMetaData);
 
                 if (0 < inputSlot)
                 {
@@ -362,34 +352,6 @@ namespace mint
                 return semanticName;
             }
 
-            const uint32 Parser::getTypeMetaDataCount() const noexcept
-            {
-                return _typeMetaDatas.size();
-            }
-
-            const TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const std::string& typeName) const noexcept
-            {
-                KeyValuePair found = _typeMetaDataMap.find(typeName);
-                MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
-
-                const uint32 typeIndex = *found._value;
-                return _typeMetaDatas[typeIndex];
-            }
-
-            const TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const int32 typeIndex) const noexcept
-            {
-                return _typeMetaDatas[typeIndex];
-            }
-
-            TypeMetaData<TypeCustomData>& Parser::getTypeMetaData(const std::string& typeName) noexcept
-            {
-                KeyValuePair found = _typeMetaDataMap.find(typeName);
-                MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
-
-                const uint32 typeIndex = *found._value;
-                return _typeMetaDatas[typeIndex];
-            }
-
             const int32 Parser::getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept
             {
                 // 0 은 자기 자신을 의미하므로
@@ -409,11 +371,6 @@ namespace mint
                     return inputSlot;
                 }
                 return 0;
-            }
-
-            const bool Parser::existsTypeMetaData(const std::string& typeName) const noexcept
-            {
-                return _typeMetaDataMap.find(typeName).isValid();
             }
 
             const DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData)

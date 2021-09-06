@@ -75,7 +75,7 @@ namespace mint
         };
 
 
-        template <typename CustomDataType>
+        template <typename TypeCustomDataType, typename SyntaxClassifierType>
         class IParser abstract
         {
         protected:
@@ -108,60 +108,83 @@ namespace mint
 
         protected:
             static_assert(static_cast<uint32>(ErrorType::COUNT) == ARRAYSIZE(kErrorTypeStringArray));
-            static constexpr const char*                    convertErrorTypeToTypeString(const ErrorType errorType);
-            static constexpr const char*                    convertErrorTypeToContentString(const ErrorType errorType);
+            static constexpr const char*                        convertErrorTypeToTypeString(const ErrorType errorType);
+            static constexpr const char*                        convertErrorTypeToContentString(const ErrorType errorType);
 
             class ErrorMessage
             {
             public:
-                                                            ErrorMessage();
-                                                            ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
-                                                            ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
+                                                                ErrorMessage();
+                                                                ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
+                                                                ErrorMessage(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
 
             private:
-                const uint32                                _sourceAt;
-                std::string                                 _message;
+                const uint32                                    _sourceAt;
+                std::string                                     _message;
             };
 
         public:
-                                                            IParser(ILexer& lexer);
-            virtual                                         ~IParser() = default;
+                                                                IParser(ILexer& lexer);
+            virtual                                             ~IParser() = default;
+
+        protected:
+            void                                                registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn = false) noexcept;
 
         public:
-            virtual const bool                              execute() abstract;
+            virtual const bool                                  execute() abstract;
 
         protected:
-            void                                            reset();
+            void                                                reset();
 
         protected:
-            const bool                                      continueParsing() const noexcept;
+            const bool                                          continueParsing() const noexcept;
 
         protected:
-            void                                            advanceSymbolPositionXXX(const uint32 advanceCount);
+            void                                                advanceSymbolPositionXXX(const uint32 advanceCount);
 
         protected:
-            const bool                                      hasSymbol(const uint32 symbolPosition) const noexcept;
-            const uint32                                    getSymbolPosition() const noexcept;
-            SymbolTableItem&                                getSymbol(const uint32 symbolPosition) const noexcept;
+            const bool                                          hasSymbol(const uint32 symbolPosition) const noexcept;
+            const uint32                                        getSymbolPosition() const noexcept;
+            SymbolTableItem&                                    getSymbol(const uint32 symbolPosition) const noexcept;
 
         protected:
-            const bool                                      findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept;
-            const bool                                      findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept;
-            const bool                                      findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept;
-            const bool                                      findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition = nullptr) const noexcept;
+            const bool                                          findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept;
+            const bool                                          findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept;
+            const bool                                          findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept;
+            const bool                                          findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition = nullptr) const noexcept;
         
         protected:
-            void                                            reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
-            void                                            reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
-            const bool                                      hasReportedErrors() const noexcept;
+            void                                                reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
+            void                                                reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
+            const bool                                          hasReportedErrors() const noexcept;
+            
+        public:
+            const uint32                                        getTypeMetaDataCount() const noexcept;
+            const TypeMetaData<TypeCustomDataType>&             getTypeMetaData(const std::string& typeName) const noexcept;
+            const TypeMetaData<TypeCustomDataType>&             getTypeMetaData(const int32 typeIndex) const noexcept;
 
         protected:
-            ILexer&                                         _lexer;
-            mint::Vector<SymbolTableItem>&                  _symbolTable;
+            void                                                pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
+            const bool                                          existsTypeMetaData(const std::string& typeName) const noexcept;
+            TypeMetaData<TypeCustomDataType>&                   getTypeMetaData(const std::string& typeName) noexcept;
+
+        protected:
+            ILexer&                                             _lexer;
+            mint::Vector<SymbolTableItem>&                      _symbolTable;
 
         private:
-            uint32                                          _symbolAt;
-            mint::Vector<ErrorMessage>                      _errorMessageArray;
+            uint32                                              _symbolAt;
+            mint::Vector<ErrorMessage>                          _errorMessageArray;
+
+        protected:
+            mint::Tree<SyntaxTreeItem<SyntaxClassifierType>>    _syntaxTree;
+
+        protected:
+            mint::Vector<TypeMetaData<TypeCustomDataType>>      _typeMetaDatas;
+            mint::HashMap<std::string, uint32>                  _typeMetaDataMap;
+
+        protected:
+            mint::HashMap<std::string, uint32>                  _builtInTypeUmap;
         };
     }
 }

@@ -19,7 +19,7 @@ namespace mint
     {
         class ILexer;
 
-        template <typename CustomDataType>
+        template <typename TypeCustomDataType, typename SyntaxClassifierType>
         class IParser;
 
 
@@ -123,7 +123,7 @@ namespace mint
         // Also known as Scanner
         class ILexer
         {
-            template <typename CustomDataType>
+            template <typename TypeCustomDataType, typename SyntaxClassifierType>
             friend class IParser;
 
         public:
