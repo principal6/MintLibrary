@@ -30,8 +30,8 @@ namespace mint
         void InstantRenderer::initialize() noexcept
         {
             mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-            const mint::Language::CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
-            const mint::Language::CppHlsl::TypeMetaData& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(mint::Rendering::VS_INPUT));
+            const Language::CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
+            const Language::CppHlsl::TypeMetaData& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(mint::Rendering::VS_INPUT));
 
             _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
             _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", mint::Rendering::DxShaderType::PixelShader, "Assets/HlslBinary/");

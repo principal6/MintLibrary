@@ -93,20 +93,20 @@ namespace mint
             virtual                     ~DxShaderPool() = default;
 
         public:
-            const DxObjectId&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            const DxObjectId&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
             const DxObjectId&           pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
         public:
-            const DxObjectId&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
+            const DxObjectId&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
             const DxObjectId&           pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
-            const DxObjectId&           pushVertexShaderInternal(DxShader& shader, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            const DxObjectId&           pushVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
             const DxObjectId&           pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
         
         private:
-            const bool                  createVertexShaderInternal(DxShader& shader, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
-            void                        pushInputElement(DxInputElementSet& inputElementSet, const mint::Language::CppHlsl::TypeMetaData& outerDataTypeMetaData, const mint::Language::CppHlsl::TypeMetaData& memberTypeMetaData);
+            const bool                  createVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData);
+            void                        pushInputElement(DxInputElementSet& inputElementSet, const Language::CppHlsl::TypeMetaData& outerDataTypeMetaData, const Language::CppHlsl::TypeMetaData& memberTypeMetaData);
             const bool                  createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
 
         private:

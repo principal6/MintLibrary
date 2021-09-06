@@ -106,7 +106,7 @@ namespace mint
             __noop;
         }
 
-        const DxObjectId& DxShaderPool::pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
+        const DxObjectId& DxShaderPool::pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
         {
             DxShader shader(_graphicDevice, DxShaderType::VertexShader);
 
@@ -138,7 +138,7 @@ namespace mint
             return pushNonVertexShaderInternal(shader, shaderType);
         }
 
-        const DxObjectId& DxShaderPool::pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData, const char* const outputDirectory)
+        const DxObjectId& DxShaderPool::pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData, const char* const outputDirectory)
         {
             DxShader shader(_graphicDevice, DxShaderType::VertexShader);
             if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, DxShaderType::VertexShader, false, shader) == false)
@@ -158,7 +158,7 @@ namespace mint
             return pushNonVertexShaderInternal(shader, shaderType);
         }
 
-        const DxObjectId& DxShaderPool::pushVertexShaderInternal(DxShader& shader, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
+        const DxObjectId& DxShaderPool::pushVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
         {
             if (createVertexShaderInternal(shader, inputElementTypeMetaData) == true)
             {
@@ -189,7 +189,7 @@ namespace mint
             return DxObjectId::kInvalidObjectId;
         }
 
-        const bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const mint::Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
+        const bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const Language::CppHlsl::TypeMetaData* const inputElementTypeMetaData)
         {
             if (FAILED(_graphicDevice->getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
             {
@@ -206,7 +206,7 @@ namespace mint
                     const uint32 memberCount = inputElementTypeMetaData->getMemberCount();
                     for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                     {
-                        const mint::Language::CppHlsl::TypeMetaData& memberTypeMetaData = inputElementTypeMetaData->getMember(memberIndex);
+                        const Language::CppHlsl::TypeMetaData& memberTypeMetaData = inputElementTypeMetaData->getMember(memberIndex);
                         pushInputElement(shader._inputElementSet, *inputElementTypeMetaData, memberTypeMetaData);
                     }
                 }
@@ -215,7 +215,7 @@ namespace mint
                 const uint32 slottedStreamDataCount = inputElementTypeMetaData->getSlottedStreamDataCount();
                 for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
                 {
-                    const mint::Language::CppHlsl::TypeMetaData& slottedStreamData = inputElementTypeMetaData->getSlottedStreamData(slottedStreamDataIndex);
+                    const Language::CppHlsl::TypeMetaData& slottedStreamData = inputElementTypeMetaData->getSlottedStreamData(slottedStreamDataIndex);
                     const uint32 memberCount = slottedStreamData.getMemberCount();
                     for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
                     {
@@ -234,14 +234,14 @@ namespace mint
             return true;
         }
 
-        void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const mint::Language::CppHlsl::TypeMetaData& outerDataTypeMetaData, const mint::Language::CppHlsl::TypeMetaData& memberTypeMetaData)
+        void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const Language::CppHlsl::TypeMetaData& outerDataTypeMetaData, const Language::CppHlsl::TypeMetaData& memberTypeMetaData)
         {
-            inputElementSet._semanticNameArray.push_back(mint::Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
+            inputElementSet._semanticNameArray.push_back(Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
 
             D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
             inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.back().c_str();
             inputElementDescriptor.SemanticIndex = 0;
-            inputElementDescriptor.Format = mint::Language::CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
+            inputElementDescriptor.Format = Language::CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
             inputElementDescriptor.InputSlot = memberTypeMetaData.getInputSlot();
             inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
             inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;

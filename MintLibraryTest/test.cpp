@@ -91,7 +91,7 @@ const bool testFiles()
 const bool testLanguage()
 {
     using namespace mint;
-    using namespace mint::Language;
+    using namespace Language;
     
     TextFileReader textFileReader;
     textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");

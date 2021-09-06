@@ -174,8 +174,8 @@ namespace mint
             mint::Rendering::FontRendererContext&           getFontRendererContext() noexcept;
             mint::Rendering::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
             mint::Gui::GuiContext&                              getGuiContext() noexcept;
-            const mint::Language::CppHlsl::Interpreter&         getCppHlslSteamData() const noexcept;
-            const mint::Language::CppHlsl::Interpreter&         getCppHlslConstantBuffers() const noexcept;
+            const Language::CppHlsl::Interpreter&         getCppHlslSteamData() const noexcept;
+            const Language::CppHlsl::Interpreter&         getCppHlslConstantBuffers() const noexcept;
             StateManager&                                       getStateManager() noexcept;
 
         public: // Common buffers
@@ -245,9 +245,9 @@ namespace mint
             StateManager                                        _stateManager;
 
         private:
-            mint::Language::CppHlsl::Interpreter                _cppHlslStreamData;
-            mint::Language::CppHlsl::Interpreter                _cppHlslConstantBuffers;
-            mint::Language::CppHlsl::Interpreter                _cppHlslStructuredBuffers;
+            Language::CppHlsl::Interpreter                _cppHlslStreamData;
+            Language::CppHlsl::Interpreter                _cppHlslConstantBuffers;
+            Language::CppHlsl::Interpreter                _cppHlslStructuredBuffers;
 
         private:
             mint::Rendering::ShapeRendererContext           _shapeRendererContext;
