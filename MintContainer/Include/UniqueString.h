@@ -127,10 +127,10 @@ namespace mint
 
     private:
         std::mutex                                      _mutex;
-        mint::HashMap<uint64, UniqueStringAId>            _registrationMap;
+        mint::HashMap<uint64, UniqueStringAId>          _registrationMap;
 
     private:
-        mint::Vector<uint32>                              _offsetArray;
+        mint::Vector<uint32>                            _offsetArray;
         char*                                           _rawMemory;
         uint32                                          _rawCapacity;
         uint32                                          _totalLength;
