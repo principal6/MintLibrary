@@ -48,8 +48,8 @@ namespace mint
             GlyphMetricType         _horiBearingX;
             GlyphMetricType         _horiBearingY;
             GlyphMetricType         _horiAdvance;
-            mint::Float2            _uv0;
-            mint::Float2            _uv1;
+            Float2                  _uv0;
+            Float2                  _uv1;
         };
 
         class GlyphRange
@@ -93,7 +93,7 @@ namespace mint
             TextRenderDirectionVert     _directionVert;
             float                       _scale;
             bool                        _drawShade;
-            mint::Float4x4              _transformMatrix;
+            Float4x4                    _transformMatrix;
         };
 
         class FontRendererContext final : public IRendererContext
@@ -112,14 +112,14 @@ namespace mint
             {
                 const uint32                getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
 
-                mint::Vector<GlyphInfo>     _glyphInfoArray;
-                mint::Vector<uint32>        _charCodeToGlyphIndexMap;
+                Vector<GlyphInfo>           _glyphInfoArray;
+                Vector<uint32>              _charCodeToGlyphIndexMap;
                 DxObjectId                  _fontTextureId;
             };
 
         public:
-                                                FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
-                                                FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice, mint::Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>* const triangleRenderer);
+                                                FontRendererContext(Rendering::GraphicDevice* const graphicDevice);
+                                                FontRendererContext(Rendering::GraphicDevice* const graphicDevice, Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>* const triangleRenderer);
             virtual                             ~FontRendererContext();
 
         public:
@@ -144,9 +144,9 @@ namespace mint
             const bool                          deinitializeFreeType();
         
         private:
-            const bool                          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, mint::Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
+            const bool                          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
             void                                completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
-            void                                writeMetaData(const int16 textureWidth, const int16 textureHeight, mint::BinaryFileWriter& binaryFileWriter) const noexcept;
+            void                                writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept;
 
         public:
             virtual void                        initializeShaders() noexcept override final;
@@ -156,19 +156,19 @@ namespace mint
             virtual void                        renderAndFlush() noexcept final;
 
         public:
-            void                                drawDynamicText(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
-            void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption);
-            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
-            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags);
+            void                                drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
             const float                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
             const uint32                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
         
         public:
-            void                                pushTransformToBuffer(const mint::Float4& preTranslation, mint::Float4x4 transformMatrix, const mint::Float4& postTranslation);
+            void                                pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
             const DxObjectId&                   getFontTextureId() const noexcept;
 
         private:
-            void                                drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
+            void                                drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
         private:
             void                                prepareIndexArray();
@@ -177,7 +177,7 @@ namespace mint
             FT_Library                          _ftLibrary;
             FT_Face                             _ftFace;
             int16                               _fontSize;
-            mint::Vector<GlyphRange>            _glyphRangeArray;
+            Vector<GlyphRange>                  _glyphRangeArray;
         
         private:
             FontData                            _fontData;
