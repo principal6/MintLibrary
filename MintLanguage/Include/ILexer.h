@@ -5,8 +5,6 @@
 #define MINT_LANGUAGE_I_LEXER_H
 
 
-#include <MintCommon/Include/CommonDefinitions.h>
-
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/HashMap.h>
 
