@@ -5,6 +5,8 @@
 #define MINT_VECTOR_HPP
 
 
+#include <initializer_list>
+
 #include <MintCommon/Include/Logger.h>
 
 #include <MintContainer/Include/Vector.h>

@@ -7,7 +7,12 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <initializer_list>
+
+namespace std
+{
+    template <class _Elem>
+    class initializer_list;
+}
 
 
 namespace mint
