@@ -7,16 +7,11 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/Vector.h>
-#include <MintContainer/Include/BitVector.h>
-
 #include <MintMath/Include/Float2.h>
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
-
-#include <MintPlatform/Include/BinaryFile.h>
 
 
 typedef struct FT_Glyph_Metrics_    FT_Glyph_Metrics;
@@ -26,11 +21,19 @@ typedef struct FT_FaceRec_*         FT_Face;
 
 namespace mint
 {
+#pragma region Forward declaration
+    class BitVector;
+    class BinaryFileWriter;
+
+    template <typename T>
+    class Vector;
+#pragma endregion
+
+
     namespace Rendering
     {
         class GraphicDevice;
         class FontRendererContext;
-
 
         using GlyphMetricType = int8;
         class GlyphInfo
