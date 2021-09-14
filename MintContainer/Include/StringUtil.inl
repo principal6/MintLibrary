@@ -49,8 +49,7 @@ namespace mint
 
             uint32 result = kStringNPos;
             uint32 targetIter = 0;
-            bool isFound = false;
-            for (uint32 sourceIter = 0; sourceIter < sourceLength; ++sourceIter)
+            for (uint32 sourceIter = offset; sourceIter < sourceLength; ++sourceIter)
             {
                 if (source[sourceIter] == target[targetIter])
                 {
@@ -62,7 +61,6 @@ namespace mint
                     ++targetIter;
                     if (targetIter == targetLength)
                     {
-                        isFound = true;
                         break;
                     }
                 }
@@ -73,7 +71,7 @@ namespace mint
                 }
             }
 
-            return (isFound == true) ? result : kStringNPos;
+            return result;
         }
 
         MINT_INLINE const bool strcmp(const char* const a, const char* const b)
