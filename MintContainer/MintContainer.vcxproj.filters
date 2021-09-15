@@ -93,6 +93,12 @@
     <ClInclude Include="Include\OwnPtr.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\String.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\String.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IId.inl">

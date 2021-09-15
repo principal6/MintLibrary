@@ -16,6 +16,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 #include <MintContainer/Include/Queue.hpp>
+#include <MintContainer/Include/String.hpp>
 
 
 #endif // !MINT_CONTAINER_ALL_HPPS_H

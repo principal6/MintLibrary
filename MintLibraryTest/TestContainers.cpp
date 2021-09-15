@@ -476,6 +476,32 @@ namespace mint
 #endif
 #pragma endregion
 
+            StringA stringA = StringA("Hello, there! My friend!!!");
+            stringA += "I'm testing...";
+
+            StringA stringSmallA = StringA("abcde");
+            stringSmallA.resize(3);
+            stringSmallA += "+testing...";
+            stringSmallA += "+testing..!";
+            stringSmallA.clear();
+
+            StringW stringW = StringW(L"Hello, there!");
+            stringW += L" I'm testing...";
+
+            StringW stringW1 = StringW(L"TestStringW1");
+            stringW1 += L" ";
+            stringW1 += stringW;
+
+            StringW ss = stringW1.substr(4, 6);
+
+            const uint32 found = stringW1.find(L"Str", 3);
+            stringW1.resize(3);
+            stringW1.resize(10, 'z');
+            const uint64 hash = stringW1.computeHash();
+
+            const bool cmp0 = (ss == stringW1);
+            const bool cmp1 = (ss == StringW(L"String"));
+
             return true;
         }
 
