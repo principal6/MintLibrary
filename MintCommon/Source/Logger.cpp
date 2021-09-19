@@ -9,6 +9,72 @@
 
 namespace mint
 {
+#pragma region LoggerString
+    LoggerString::LoggerString()
+        : _capacity{ 0 }
+        , _size{ 0 }
+        , _rawPointer{ nullptr }
+    {
+        reserve(2048);
+    }
+
+    LoggerString::~LoggerString()
+    {
+        release();
+    }
+
+    LoggerString& LoggerString::operator=(const char* const rhs)
+    {
+        const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
+        reserve(rhsLength + 1);
+        ::strcpy_s(_rawPointer, _capacity, rhs);
+        return *this;
+    }
+
+    LoggerString& LoggerString::operator+=(const char* const rhs)
+    {
+        const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
+        reserve(max(_capacity * 2, _size + rhsLength + 1));
+        ::strcpy_s(&_rawPointer[_size], rhsLength + 1, rhs);
+        return *this;
+    }
+
+    void LoggerString::reserve(const uint32 newCapacity) noexcept
+    {
+        if (newCapacity <= _capacity)
+        {
+            return;
+        }
+
+        char* temp = nullptr;
+        if (0 < _size)
+        {
+            temp = MINT_NEW_ARRAY(char, _size + 1);
+            ::strcpy_s(temp, _size + 1, _rawPointer);
+        }
+        
+        MINT_DELETE_ARRAY(_rawPointer);
+        _rawPointer = MINT_NEW_ARRAY(char, newCapacity);
+        
+        if (0 < _size)
+        {
+            ::strcpy_s(_rawPointer, _size + 1, temp);
+            MINT_DELETE_ARRAY(temp);
+        }
+
+        _capacity = newCapacity;
+    }
+
+    void LoggerString::release() noexcept
+    {
+        MINT_DELETE_ARRAY(_rawPointer);
+        _capacity = 0;
+        _size = 0;
+    }
+#pragma endregion
+
+
+#pragma region Logger
     Logger::Logger()
         : _basePathOffset{ 0 }
     {
@@ -127,7 +193,8 @@ namespace mint
 
             OutputDebugStringA(outBuffer);
 
-            _history.append(outBuffer);
+            _history += outBuffer;
         }
     }
+#pragma endregion
 }

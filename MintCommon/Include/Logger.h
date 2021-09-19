@@ -8,7 +8,6 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <mutex>
-#include <string>
 
 
 //#define MINT_LOG_FOR_ASSURE_SILENT
@@ -53,6 +52,32 @@ namespace mint
 #pragma endregion
 
 
+    class LoggerString
+    {
+    public:
+                                    LoggerString();
+                                    ~LoggerString();
+
+    public:
+        LoggerString&               operator=(const char* const rhs);
+        LoggerString&               operator+=(const char* const rhs);
+
+    public:
+        MINT_INLINE const bool      empty() const noexcept { return _size == 0; }
+        MINT_INLINE const char*     c_str() const noexcept { return _rawPointer; }
+        MINT_INLINE const uint32    length() const noexcept { return _size; }
+
+    private:
+        void                        reserve(const uint32 newCapacity) noexcept;
+        void                        release() noexcept;
+
+    private:
+        uint32                      _capacity;
+        uint32                      _size;
+        char*                       _rawPointer;
+    };
+
+
     class Logger
     {
     private:
@@ -78,8 +103,8 @@ namespace mint
     private:
         uint32          _basePathOffset;
         std::mutex      _mutex;
-        std::string     _history;
-        std::string     _outputFileName;
+        LoggerString    _history;
+        LoggerString    _outputFileName;
     };
 }
 
