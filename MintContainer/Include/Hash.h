@@ -10,6 +10,8 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/String.h>
+
 
 namespace mint
 {
@@ -34,6 +36,12 @@ namespace mint
     struct Hasher<std::string> final
     {
         const uint64 operator()(const std::string& value) const noexcept;
+    };
+
+    template <typename T>
+    struct Hasher<String<T>> final
+    {
+        const uint64 operator()(const String<T>& value) const noexcept;
     };
 }
 

@@ -3,6 +3,7 @@
 
 #include <MintContainer/Include/Hash.h>
 
+#include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringUtil.h>
 
 
@@ -68,5 +69,11 @@ namespace mint
     inline const uint64 Hasher<std::string>::operator()(const std::string& value) const noexcept
     {
         return computeHash(value.c_str(), static_cast<uint32>(value.length()));
+    }
+
+    template<typename T>
+    inline const uint64 Hasher<String<T>>::operator()(const String<T>& value) const noexcept
+    {
+        return value.computeHash();
     }
 }
