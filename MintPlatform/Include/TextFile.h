@@ -37,7 +37,7 @@ namespace mint
         const char*                 get() const noexcept;
         
     private:
-        mint::Vector<byte>            _byteArray;
+        mint::Vector<byte>          _byteArray;
         TextFileEncoding            _encoding = TextFileEncoding::ASCII;
     };
 
@@ -61,7 +61,7 @@ namespace mint
         void                        write(const char* const text) noexcept;
 
     private:
-        mint::Vector<byte>            _byteArray;
+        mint::Vector<byte>          _byteArray;
         TextFileEncoding            _encoding = TextFileEncoding::ASCII;
     };
 }
