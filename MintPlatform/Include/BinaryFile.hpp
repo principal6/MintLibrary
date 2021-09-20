@@ -80,7 +80,7 @@ namespace mint
         _writeInternal(in, currentSize, deltaSize);
     }
 
-    inline void BinaryFileWriter::write(const void* const in, const uint32 byteCount) noexcept
+    MINT_INLINE void BinaryFileWriter::write(const void* const in, const uint32 byteCount) noexcept
     {
         const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
         const uint32 deltaSize{ byteCount };
