@@ -10,14 +10,13 @@ namespace mint
 #pragma region Binary File Reader
     const bool BinaryFileReader::open(const char* const fileName)
     {
+        _byteArray.clear();
+        
         std::ifstream ifs{ fileName, std::ifstream::binary };
         if (ifs.is_open() == false)
         {
-            _byteArray.clear();
             return false;
         }
-
-        _byteArray.clear();
 
         ifs.seekg(0, ifs.end);
         const uint64 legth = ifs.tellg();
