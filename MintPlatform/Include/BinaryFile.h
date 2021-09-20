@@ -38,7 +38,7 @@ namespace mint
         const bool              canRead(const uint32 byteCount) const noexcept;
 
     private:
-        mint::Vector<byte>        _byteArray;
+        mint::Vector<byte>      _byteArray;
         mutable uint32          _at{ 0 };
     };
 
@@ -70,7 +70,7 @@ namespace mint
         void                    _writeInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept;
 
     private:
-        mint::Vector<byte>        _byteArray;
+        mint::Vector<byte>      _byteArray;
     };
 }
 
