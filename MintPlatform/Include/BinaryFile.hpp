@@ -62,8 +62,7 @@ namespace mint
     {
         const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
         const uint32 deltaSize{ static_cast<uint32>(sizeof(in)) };
-        _byteArray.resize(static_cast<uint64>(currentSize) + deltaSize);
-        memcpy(&_byteArray[currentSize], &in, deltaSize);
+        _writeInternal(&in, currentSize, deltaSize);
     }
 
     template <typename T>
@@ -71,16 +70,27 @@ namespace mint
     {
         const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
         const uint32 deltaSize{ static_cast<uint32>(sizeof(in)) };
-        _byteArray.resize(static_cast<uint64>(currentSize) + deltaSize);
-        memcpy(&_byteArray[currentSize], &in, deltaSize);
+        _writeInternal(&in, currentSize, deltaSize);
     }
 
     MINT_INLINE void BinaryFileWriter::write(const char* const in) noexcept
     {
         const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
         const uint32 deltaSize{ mint::StringUtil::strlen(in) + 1 };
+        _writeInternal(in, currentSize, deltaSize);
+    }
+
+    inline void BinaryFileWriter::write(const void* const in, const uint32 byteCount) noexcept
+    {
+        const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
+        const uint32 deltaSize{ byteCount };
+        _writeInternal(in, currentSize, deltaSize);
+    }
+
+    MINT_INLINE void BinaryFileWriter::_writeInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept
+    {
         _byteArray.resize(static_cast<uint64>(currentSize) + deltaSize);
-        memcpy(&_byteArray[currentSize], in, deltaSize);
+        ::memcpy(&_byteArray[currentSize], in, deltaSize);
     }
 #pragma endregion
 }

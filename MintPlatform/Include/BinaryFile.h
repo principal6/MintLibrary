@@ -64,6 +64,11 @@ namespace mint
 
         void                    write(const char* const in) noexcept;
 
+        void                    write(const void* const in, const uint32 byteCount) noexcept;
+
+    private:
+        void                    _writeInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept;
+
     private:
         mint::Vector<byte>        _byteArray;
     };
