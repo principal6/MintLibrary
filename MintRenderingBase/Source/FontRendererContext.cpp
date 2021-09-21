@@ -30,9 +30,6 @@
 #define MINT_FONT_RENDERER_COMPRESS_AS_PNG
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace Rendering
