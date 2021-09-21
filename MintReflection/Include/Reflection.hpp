@@ -88,13 +88,13 @@ namespace mint
 
 
 #pragma region SerializerScopedDepth
-    SerializerScopedDepth::SerializerScopedDepth(Serializer* const serializer)
+    inline SerializerScopedDepth::SerializerScopedDepth(Serializer* const serializer)
         : _serializer{ serializer }
     {
         ++_serializer->_depth;
     }
 
-    SerializerScopedDepth::~SerializerScopedDepth()
+    inline SerializerScopedDepth::~SerializerScopedDepth()
     {
         --_serializer->_depth;
     }

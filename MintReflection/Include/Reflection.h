@@ -85,27 +85,22 @@ namespace mint
     };
 
 
-#define REFLECTION_CTOR_DTOR(className) public: \
-    void onConstruction() noexcept;\
-    void onDestruction() noexcept;\
-    className() { \
-        static bool isReflectionDataBuilt = false; \
-        if (isReflectionDataBuilt == false) \
+#define REFLECTION_CLASS(className) \
+    private: \
+        void initializeReflection() noexcept \
         { \
-            __buildMemberReflectionData(); \
-            ReflectionData& reflectionData = const_cast<ReflectionData&>(getReflectionData()); \
-            reflectionData._typeData = MINT_NEW(TypeData<className>); \
-            reflectionData._typeData->_typeName = #className; \
-            reflectionData._typeData->_size = sizeof(className); \
-            reflectionData._typeData->_alignment = alignof(className); \
-            isReflectionDataBuilt = true; \
+            static bool isReflectionDataBuilt = false; \
+            if (isReflectionDataBuilt == false) \
+            { \
+                __buildMemberReflectionData(); \
+                ReflectionData& reflectionData = const_cast<ReflectionData&>(getReflectionData()); \
+                reflectionData._typeData = MINT_NEW(TypeData<className>); \
+                reflectionData._typeData->_typeName = #className; \
+                reflectionData._typeData->_size = sizeof(className); \
+                reflectionData._typeData->_alignment = alignof(className); \
+                isReflectionDataBuilt = true; \
+            } \
         } \
-        onConstruction(); \
-    } \
-    \
-    ~className() { \
-        onDestruction(); \
-    }\
     private: \
         using __classType = className; \
     public: \
@@ -157,8 +152,11 @@ namespace mint
 
     class ReflectionTesterInner
     {
+        REFLECTION_CLASS(ReflectionTesterInner);
+
     public:
-        REFLECTION_CTOR_DTOR(ReflectionTesterInner);
+        ReflectionTesterInner() { initializeReflection(); }
+        ~ReflectionTesterInner() = default;
 
     public:
         REFLECTION_MEMBER_INIT(uint32, _ui, 0xDDCCBBAA);
@@ -175,8 +173,11 @@ namespace mint
 
     class ReflectionTesterOuter
     {
+        REFLECTION_CLASS(ReflectionTesterOuter);
+
     public:
-        REFLECTION_CTOR_DTOR(ReflectionTesterOuter);
+        ReflectionTesterOuter() { initializeReflection(); }
+        ~ReflectionTesterOuter() = default;
 
     public:
         REFLECTION_MEMBER_INIT(uint32, _id, 0xFFFFFFFF);
