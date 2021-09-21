@@ -3,9 +3,6 @@
 #include <MintContainer/Include/AllHpps.h>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace TestContainers
