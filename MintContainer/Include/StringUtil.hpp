@@ -7,6 +7,7 @@
 
 #include <MintContainer/Include/StringUtil.h>
 
+#include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Tree.hpp>
 
@@ -30,6 +31,16 @@ namespace mint
         va_end(args);
     }
 
+    MINT_INLINE void formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...)
+    {
+        buffer.resize(bufferSize);
+
+        va_list args;
+        va_start(args, format);
+        ::vsprintf_s(&buffer[0], bufferSize, format, args);
+        va_end(args);
+    }
+
     template <uint32 Size>
     MINT_INLINE void formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...)
     {
@@ -44,6 +55,16 @@ namespace mint
         va_list args;
         va_start(args, format);
         ::vswprintf_s(buffer, bufferSize, format, args);
+        va_end(args);
+    }
+
+    MINT_INLINE void formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...)
+    {
+        buffer.resize(bufferSize);
+
+        va_list args;
+        va_start(args, format);
+        ::vswprintf_s(&buffer[0], bufferSize, format, args);
         va_end(args);
     }
 

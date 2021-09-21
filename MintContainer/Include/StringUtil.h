@@ -10,6 +10,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 
 
 namespace mint
@@ -34,10 +35,12 @@ namespace mint
     template <uint32 Size>
     void                formatString(char(&buffer)[Size], const char* format, ...);
     void                formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
+    void                formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...);
     
     template <uint32 Size>
     void                formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...);
     void                formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
+    void                formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
 
 
     namespace StringUtil
