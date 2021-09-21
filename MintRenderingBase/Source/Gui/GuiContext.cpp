@@ -2,6 +2,7 @@
 #include <MintRenderingBase/Include/Gui/GuiContext.h>
 
 #include <MintContainer/Include/Hash.hpp>
+#include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/HashMap.hpp>
@@ -14,6 +15,9 @@
 #include <MintPlatform/Include/InputContext.h>
 
 #include <MintLibrary/Include/ScopedCpuProfiler.h>
+
+
+#pragma optimize("", off)
 
 
 namespace mint
@@ -927,8 +931,10 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::wcslen(text));
-                prepareControlDataParam._initialDisplaySize = ((labelParam._common._size == Float2::kZero)
-                    ? Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y)
+                prepareControlDataParam._initialDisplaySize = ((labelParam._common._size.hasNegativeElement() == true)
+                    ? Float2(
+                        (labelParam._common._size._x < 0.0f) ? textWidth + labelParam._paddingForAutoSize._x : labelParam._common._size._x,
+                        (labelParam._common._size._y < 0.0f) ? _fontSize + labelParam._paddingForAutoSize._y : labelParam._common._size._y)
                     : labelParam._common._size);
                 prepareControlDataParam._offset = labelParam._common._offset;
             }
@@ -1290,6 +1296,26 @@ namespace mint
             Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
             Gui::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, controlData._text);
             return false;
+        }
+
+        const bool GuiContext::beginLabeledValueSliderFloat(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        {
+            StringW labelName = name;
+            labelName += L"_label";
+
+            LabelParam labelParamModified = labelParam;
+            labelParamModified._common._size._y = commonControlParam._size._y;
+            labelParamModified._alignmentHorz = Gui::TextAlignmentHorz::Center;
+            pushLabel(labelName.c_str(), labelText, labelParamModified);
+            
+            nextSameLine();
+            nextNoInterval();
+            
+            CommonControlParam sliderFloatParamModified = commonControlParam;
+            sliderFloatParamModified._size._x -= labelParamModified._common._size._x;
+            StringW sliderName = name;
+            sliderName += L"_slider_float";
+            return beginValueSliderFloat(sliderName.c_str(), sliderFloatParamModified, roundnessInPixel, decimalDigits, value);
         }
 
         void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, std::wstring& outText) noexcept
@@ -2107,6 +2133,19 @@ namespace mint
             controlData.setClipRectForChildrenXXX(clipRect);
         }
 
+        const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
+        {
+            const ControlData& parentControlData = getControlStackTopXXX();
+            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+            return maxDisplaySizeX;
+        }
+
+        const float GuiContext::getCurrentSameLineIntervalX() const noexcept
+        {
+            const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
+            return intervalX;
+        }
+
         Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
@@ -2441,7 +2480,7 @@ namespace mint
             // Display size
             if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
             {
-                const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+                const float maxDisplaySizeX = getCurrentAvailableDisplaySizeX();
                 if (_nextControlStates._nextControlSizeNonContrainedToParent == true)
                 {
                     controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextControlStates._nextDesiredControlSize._x;
@@ -2450,7 +2489,9 @@ namespace mint
                 else
                 {
                     controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) 
-                        ? min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x) 
+                        ? (prepareControlDataParam._initialDisplaySize._x < 0.0f)
+                            ? maxDisplaySizeX
+                            : min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x)
                         : ((_nextControlStates._nextSizingForced == true) 
                             ? _nextControlStates._nextDesiredControlSize._x 
                             : min(maxDisplaySizeX, _nextControlStates._nextDesiredControlSize._x));
@@ -2473,7 +2514,7 @@ namespace mint
                 const bool isSameLineAsPreviousControl = (_nextControlStates._nextSameLine == true);
                 if (isSameLineAsPreviousControl == true)
                 {
-                    const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
+                    const float intervalX = getCurrentSameLineIntervalX();
                     parentControlChildAt._x += (parentControlNextChildOffset._x + intervalX);
 
                     parentControlNextChildOffset = controlData._displaySize;

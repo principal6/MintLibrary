@@ -454,60 +454,39 @@ const bool testWindow()
                     guiContext.pushLabel(L"CPU_Label", tempBuffer, labelParam);
                     
                     Float3& cameraPosition = testCameraObject->getObjectTransformSrt()._translation;
-                    formatString(tempBuffer, L" Camera Position:");
-                    guiContext.pushLabel(L"Camera Position", tempBuffer, labelParam);
+                    guiContext.pushLabel(L"Camera Position", L" Camera Position:", labelParam);
                     
                     {
-                        formatString(tempBuffer, L"X");
-                        labelParam._alignmentHorz = Gui::TextAlignmentHorz::Center;
                         labelParam._common._backgroundColor.r(1.0f);
                         labelParam._common._backgroundColor.a(0.75f);
                         labelParam._common._fontColor = Rendering::Color::kWhite;
                         labelParam._common._size._x = 16.0f;
-                        labelParam._common._size._y = 24.0f;
-                        labelParam._common._offset._x = 16.0f;
-                        guiContext.pushLabel(L"PositionX", tempBuffer, labelParam);
-
-                        guiContext.nextSameLine();
-                        guiContext.nextNoInterval();
-
+                        
                         Gui::CommonControlParam commonControlParam;
-                        commonControlParam._size._x = 72.0f;
+                        const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
+                        commonControlParam._size._x = (maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f;
                         commonControlParam._size._y = 24.0f;
-                        commonControlParam._offset = labelParam._common._offset;
-                        if (guiContext.beginValueSliderFloat(L"PositionX", commonControlParam, 0.0f, 3, cameraPosition._x) == true)
+                        if (guiContext.beginLabeledValueSliderFloat(L"PositionX", L"X", labelParam, commonControlParam, 0.0f, 3, cameraPosition._x) == true)
                         {
-                            guiContext.endValueSliderFloat();
+                            guiContext.endLabeledValueSliderFloat();
                         }
 
                         guiContext.nextSameLine();
 
-                        formatString(tempBuffer, L"Y");
                         labelParam._common._backgroundColor.r(0.0f);
                         labelParam._common._backgroundColor.g(0.875f);
-                        guiContext.pushLabel(L"PositionY", tempBuffer, labelParam);
-
-                        guiContext.nextSameLine();
-                        guiContext.nextNoInterval();
-
-                        if (guiContext.beginValueSliderFloat(L"PositionY", commonControlParam, 0.0f, 3, cameraPosition._y) == true)
+                        if (guiContext.beginLabeledValueSliderFloat(L"PositionY", L"Y", labelParam, commonControlParam, 0.0f, 3, cameraPosition._y) == true)
                         {
-                            guiContext.endValueSliderFloat();
+                            guiContext.endLabeledValueSliderFloat();
                         }
 
                         guiContext.nextSameLine();
 
-                        formatString(tempBuffer, L"Z");
                         labelParam._common._backgroundColor.g(0.0f);
                         labelParam._common._backgroundColor.b(1.0f);
-                        guiContext.pushLabel(L"PositionZ", tempBuffer, labelParam);
-
-                        guiContext.nextSameLine();
-                        guiContext.nextNoInterval();
-
-                        if (guiContext.beginValueSliderFloat(L"PositionZ", commonControlParam, 0.0f, 3, cameraPosition._z) == true)
+                        if (guiContext.beginLabeledValueSliderFloat(L"PositionZ", L"Z", labelParam, commonControlParam, 0.0f, 3, cameraPosition._z) == true)
                         {
-                            guiContext.endValueSliderFloat();
+                            guiContext.endLabeledValueSliderFloat();
                         }
                     }
                     

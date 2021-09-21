@@ -7,9 +7,10 @@
 
 namespace mint
 {
-    const Float2 Float2::kZero  = mint::Float2(0.0f);
-    const Float2 Float2::kOne   = mint::Float2(1.0f);
-    const Float2 Float2::kNan   = mint::Float2(mint::Math::nan());
+    const Float2 Float2::kZero          = mint::Float2(0.0f);
+    const Float2 Float2::kOne           = mint::Float2(+1.0f);
+    const Float2 Float2::kNegativeOne   = mint::Float2(-1.0f);
+    const Float2 Float2::kNan           = mint::Float2(mint::Math::nan());
 
     Float2::Float2(const Int2& rhs)
         : Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
@@ -151,5 +152,10 @@ namespace mint
     const bool Float2::isNan() const noexcept
     {
         return (mint::Math::isNan(_x) || mint::Math::isNan(_y));
+    }
+
+    const bool Float2::hasNegativeElement() const noexcept
+    {
+        return (_x < 0.0f) || (_y < 0.0f);
     }
 }

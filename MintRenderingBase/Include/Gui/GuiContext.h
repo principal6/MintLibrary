@@ -82,7 +82,7 @@ namespace mint
         // If no value is set, default values will be used properly
         struct LabelParam
         {
-            CommonControlParam  _common                 = CommonControlParam(Float2::kZero, Rendering::Color::kTransparent, Rendering::Color::kTransparent);
+            CommonControlParam  _common                 = CommonControlParam(Float2::kNegativeOne, Rendering::Color::kTransparent, Rendering::Color::kTransparent);
             Float2              _paddingForAutoSize     = Float2(24, 12);
             TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Center;
             TextAlignmentVert   _alignmentVert          = TextAlignmentVert::Middle;
@@ -365,6 +365,9 @@ namespace mint
         public:
             const bool                                  beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
+            
+            const bool                                  beginLabeledValueSliderFloat(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            void                                        endLabeledValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
 
         private:
             void                                        valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, std::wstring& outText) noexcept;
@@ -416,6 +419,10 @@ namespace mint
             void                                        setClipRectForMe(ControlData& controlData, const Rect& clipRect);
             void                                        setClipRectForDocks(ControlData& controlData, const Rect& clipRect);
             void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
+
+        public:
+            const float                                 getCurrentAvailableDisplaySizeX() const noexcept;
+            const float                                 getCurrentSameLineIntervalX() const noexcept;
 
         private:
             const ControlData&                          getControlStackTopXXX() const noexcept;

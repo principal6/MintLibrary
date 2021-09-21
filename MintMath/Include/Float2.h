@@ -21,6 +21,7 @@ namespace mint
     public:
         static const Float2     kZero;
         static const Float2     kOne;
+        static const Float2     kNegativeOne;
         static const Float2     kNan;
 
     public:
@@ -78,6 +79,7 @@ namespace mint
 
     public:
         const bool              isNan() const noexcept;
+        const bool              hasNegativeElement() const noexcept;
 
     public:
         float                   _x;
