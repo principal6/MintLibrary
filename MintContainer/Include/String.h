@@ -34,6 +34,8 @@ namespace mint
     public:
         const bool                  operator==(const T* const rhs) const noexcept;
         const bool                  operator==(const String& rhs) const noexcept;
+        const bool                  operator!=(const T* const rhs) const noexcept;
+        const bool                  operator!=(const String& rhs) const noexcept;
 
     public:
         T&                          operator[](const uint32 at) noexcept;

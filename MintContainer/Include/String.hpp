@@ -103,6 +103,18 @@ namespace mint
     }
 
     template<typename T>
+    inline const bool String<T>::operator!=(const T* const rhs) const noexcept
+    {
+        return !compare(rhs);
+    }
+
+    template<typename T>
+    inline const bool String<T>::operator!=(const String& rhs) const noexcept
+    {
+        return !compare(rhs);
+    }
+
+    template<typename T>
     MINT_INLINE T& String<T>::operator[](const uint32 at) noexcept
     {
         return data()[at];
