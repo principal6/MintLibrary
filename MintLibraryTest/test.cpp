@@ -3,6 +3,7 @@
 
 
 #include <MintLibraryTest/TestContainers.h>
+#include <MintLibraryTest/TestReflection.h>
 
 
 #ifdef MINT_DEBUG
@@ -540,6 +541,8 @@ const bool testAll()
     testFloatTypes();
 
     TestContainers::testAll();
+
+    testReflection();
 
     MINT_LOG("김장원", "LOG %d", 1234);
     //MINT_ASSERT("김장원", false, "ASSERTION");
