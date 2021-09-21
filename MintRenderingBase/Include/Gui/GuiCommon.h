@@ -39,6 +39,33 @@ namespace mint
 
             COUNT
         };
+        static constexpr const wchar_t* const kControlTypeString[] =
+        {
+            L"Root",
+            L"Button",
+            L"TitleBar",
+            L"Round Button",
+            L"Window",
+            L"Tooltip Window",
+            L"Label",
+            L"ScrollBar",
+            L"ScrollBar Thumb",
+            L"Slider",
+            L"Slider Thumb",
+            L"CheckBox",
+            L"TextBox",
+            L"Value Slider",
+            L"ListView",
+            L"List Item",
+            L"MenuBar",
+            L"MenuBar Item",
+            L"Menu Item",
+        };
+        static_assert(static_cast<uint32>(ControlType::COUNT) == ARRAYSIZE(kControlTypeString), "ControlType String Array Size Is Wrong!!!");
+        static constexpr const wchar_t* getControlTypeWideString(const ControlType controlType) noexcept
+        {
+            return kControlTypeString[static_cast<uint32>(controlType)];
+        }
 
         enum class VisibleState
         {

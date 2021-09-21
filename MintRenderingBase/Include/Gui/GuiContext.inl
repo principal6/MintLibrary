@@ -89,6 +89,12 @@ namespace mint
             _nextControlStates._nextTooltipText = tooltipText;
         }
 
+        MINT_INLINE const bool GuiContext::isValidControlDataHashKey(const uint64 hashKey) const noexcept
+        {
+            const auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
+            return found.isValid();
+        }
+
         MINT_INLINE const ControlData& GuiContext::getControlStackTopXXX() const noexcept
         {
             if (_controlStackPerFrame.empty() == false)

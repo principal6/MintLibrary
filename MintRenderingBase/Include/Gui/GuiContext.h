@@ -84,7 +84,7 @@ namespace mint
         {
             CommonControlParam  _common                 = CommonControlParam(Float2::kNegativeOne, Rendering::Color::kTransparent, Rendering::Color::kTransparent);
             Float2              _paddingForAutoSize     = Float2(24, 12);
-            TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Center;
+            TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Left;
             TextAlignmentVert   _alignmentVert          = TextAlignmentVert::Middle;
         };
 
@@ -300,6 +300,7 @@ namespace mint
         public:
             void                                        testWindow(VisibleState& inoutVisibleState);
             void                                        testDockedWindow(VisibleState& inoutVisibleState);
+            void                                        debugControlDataViewer(VisibleState& inoutVisibleState);
 
         public:
             // [Window | Control with ID]
@@ -330,6 +331,7 @@ namespace mint
 
     #pragma region Controls - Label
         public:
+            void                                        pushLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
             void                                        pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
@@ -425,6 +427,7 @@ namespace mint
             const float                                 getCurrentSameLineIntervalX() const noexcept;
 
         private:
+            const bool                                  isValidControlDataHashKey(const uint64 hashKey) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                getControlStackTopXXX() noexcept;
             ControlData&                                getControlData(const uint64 hashKey) noexcept;
@@ -535,6 +538,7 @@ namespace mint
         private:
             ControlData                                 _rootControlData;
             Vector<ControlStackData>                    _controlStackPerFrame;
+            uint64                                      _viewerTargetControlDataHashKey;
 
         private:
             mutable ControlInteractionStates            _controlInteractionStates;

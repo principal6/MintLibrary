@@ -253,6 +253,7 @@ namespace mint
             , _fontSize{ 0.0f }
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
             , _updateScreenSizeCounter{ 0 }
+            , _viewerTargetControlDataHashKey{ 0 }
             , _isDragBegun{ false }
             , _draggedControlHashKey{ 0 }
             , _isResizeBegun{ false }
@@ -643,6 +644,39 @@ namespace mint
             }
         }
 
+        void GuiContext::debugControlDataViewer(VisibleState& inoutVisibleState)
+        {
+            Gui::WindowParam windowParam;
+            windowParam._common._size = Float2(300.0f, 400.0f);
+            windowParam._position = Float2(20.0f, 50.0f);
+            if (beginWindow(L"ControlData Viewer", windowParam, inoutVisibleState) == true)
+            {
+                if (isValidControlDataHashKey(_viewerTargetControlDataHashKey) == true)
+                {
+                    constexpr uint32 bufferSize = 300;
+                    StringW buffer;
+                    const ControlData& controlData = getControlData(_viewerTargetControlDataHashKey);
+                    
+                    formatString(buffer, bufferSize, L"HashKey: %llu", controlData.getHashKey());
+                    pushLabel(buffer.c_str());
+                    
+                    formatString(buffer, bufferSize, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
+                    pushLabel(buffer.c_str());
+                    
+                    formatString(buffer, bufferSize, L"Text: %s", controlData.getText());
+                    pushLabel(buffer.c_str());
+
+                    formatString(buffer, bufferSize, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
+                    pushLabel(buffer.c_str());
+
+                    formatString(buffer, bufferSize, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
+                    pushLabel(buffer.c_str());
+                }
+                
+                endWindow();
+            }
+        }
+
         const bool GuiContext::beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
         {
             static constexpr ControlType controlType = ControlType::Window;
@@ -921,6 +955,14 @@ namespace mint
                 _controlStackPerFrame.push_back(ControlStackData(controlData));
             }
             return isClicked;
+        }
+
+        void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
+        {
+            ScopeStringW<300> name;
+            name.assign(L"__label__");
+            name += text;
+            pushLabel(name.c_str(), text, labelParam);
         }
 
         void GuiContext::pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam)
@@ -2778,6 +2820,11 @@ namespace mint
                         || _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
                     {
                         setControlPressed(controlData);
+                    }
+
+                    if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Right) == true)
+                    {
+                        _viewerTargetControlDataHashKey = controlData.getHashKey();
                     }
 
                     // Clicked (only in interaction area)

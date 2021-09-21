@@ -400,7 +400,9 @@ const bool testWindow()
 #if 1
             {
                 static Gui::VisibleState testWindowVisibleState = Gui::VisibleState::Invisible;
+                static Gui::VisibleState debugControlDataViewerVisibleState = Gui::VisibleState::Invisible;
                 guiContext.testWindow(testWindowVisibleState);
+                guiContext.debugControlDataViewer(debugControlDataViewerVisibleState);
                 if (guiContext.beginMenuBar(L"MainMenuBar") == true)
                 {
                     if (guiContext.beginMenuBarItem(L"파일") == true)
@@ -425,6 +427,16 @@ const bool testWindow()
                                 testWindowVisibleState = Gui::VisibleState::VisibleOpen;
                             }
                             
+                            guiContext.endMenuItem();
+                        }
+
+                        if (guiContext.beginMenuItem(L"ControlData Viewer") == true)
+                        {
+                            if (guiContext.isThisControlPressed() == true)
+                            {
+                                debugControlDataViewerVisibleState = Gui::VisibleState::VisibleOpen;
+                            }
+
                             guiContext.endMenuItem();
                         }
 
