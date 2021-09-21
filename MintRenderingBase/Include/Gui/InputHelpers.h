@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <string>
+#include <MintContainer/Include/String.h>
 
 #include <MintRenderingBase/Include/Gui/GuiCommon.h>
 #include <MintPlatform/Include/IWindow.h>
@@ -93,53 +93,53 @@ namespace mint
 #pragma region Mouse
         public:
             static void             processDefaultMouseInputs(const MouseStates& mouseStates, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
-                ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) noexcept;
+                ControlData& controlData, const mint::Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
         
 #pragma region Keyboard
         public:
             static void             processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
                 ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
-                wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result) noexcept;
+                wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Control functions
         public:
-            static void             processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, std::wstring& outText) noexcept;
+            static void             processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, StringW& outText) noexcept;
 
         public:
-            static void             eraseAfter(ControlData& controlData, std::wstring& outText) noexcept;
-            static void             eraseBefore(ControlData& controlData, std::wstring& outText) noexcept;
-            static void             selectAll(ControlData& controlData, const std::wstring& outText) noexcept;
-            static void             copySelection(const mint::Window::IWindow* const window, ControlData& controlData, const std::wstring& outText) noexcept;
-            static void             cutSelection(const mint::Window::IWindow* const window, ControlData& controlData, std::wstring& outText) noexcept;
-            static void             paste(const mint::Window::IWindow* const window, ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage = nullptr) noexcept;
+            static void             eraseAfter(ControlData& controlData, StringW& outText) noexcept;
+            static void             eraseBefore(ControlData& controlData, StringW& outText) noexcept;
+            static void             selectAll(ControlData& controlData, const StringW& outText) noexcept;
+            static void             copySelection(const mint::Window::IWindow* const window, ControlData& controlData, const StringW& outText) noexcept;
+            static void             cutSelection(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText) noexcept;
+            static void             paste(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText, const wchar_t* const errorMessage = nullptr) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Caret movements
         public:
             static void             processKeyCodeCaretMovements(const mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
-                ControlData& controlData, std::wstring& outText) noexcept;
+                ControlData& controlData, StringW& outText) noexcept;
         
         public:
             static void             moveCaretToPrev(ControlData& controlData) noexcept;
-            static void             moveCaretToNext(ControlData& controlData, const std::wstring& text) noexcept;
+            static void             moveCaretToNext(ControlData& controlData, const StringW& text) noexcept;
             static void             moveCaretToHead(ControlData& controlData) noexcept;
-            static void             moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const std::wstring& text) noexcept;
+            static void             moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Character input
         public:
-            static const bool       insertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) noexcept;
-            static const bool       insertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText) noexcept;
-            static const bool       isValidCharacterInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept;
+            static const bool       insertWchar(const wchar_t input, uint16& caretAt, StringW& outText) noexcept;
+            static const bool       insertWstring(const StringW& input, uint16& caretAt, StringW& outText) noexcept;
+            static const bool       isValidCharacterInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const StringW& text) noexcept;
 #pragma endregion
 
 #pragma region Selection
         public:
             static void             deselect(ControlData& controlData) noexcept;
-            static void             eraseSelection(ControlData& controlData, std::wstring& outText) noexcept;
-            static const uint16     calculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) noexcept;
+            static void             eraseSelection(ControlData& controlData, StringW& outText) noexcept;
+            static const uint16     calculateCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept;
             static void             updateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) noexcept;
 #pragma endregion
 
@@ -150,11 +150,11 @@ namespace mint
             static void             updateTextDisplayOffset(const mint::Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
                 const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth = 0.0f) noexcept;
             static void             drawTextWithInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
-                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, std::wstring& outText) noexcept;
+                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept;
             static void             drawTextWithoutInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
-                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept;
+                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept;
             static void             drawSelection(mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
-                const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, std::wstring& outText) noexcept;
+                const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept;
         };
     }
 }

@@ -1,7 +1,8 @@
 ﻿#include <MintPlatform/Include/WindowsWindow.h>
 
-#include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/String.hpp>
+#include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 
 #include <MintMath/Include/Rect.h>
@@ -372,7 +373,7 @@ namespace mint
             ::CloseClipboard();
         }
 
-        void WindowsWindow::textFromClipboard(std::wstring& outText) const noexcept
+        void WindowsWindow::textFromClipboard(StringW& outText) const noexcept
         {
             ::OpenClipboard(_hWnd);
 

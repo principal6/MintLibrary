@@ -104,7 +104,7 @@ namespace mint
 
         public:
             virtual void                        textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
-            virtual void                        textFromClipboard(std::wstring& outText) const noexcept override final;
+            virtual void                        textFromClipboard(StringW& outText) const noexcept override final;
         
         public:
             virtual void                        showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;

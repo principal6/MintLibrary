@@ -4,6 +4,8 @@
 #include <stdafx.h>
 #include <MintRenderingBase/Include/Gui/ControlData.h>
 
+#include <MintContainer/Include/String.hpp>
+
 
 namespace mint
 {
@@ -247,7 +249,7 @@ namespace mint
         inline ControlData::ControlData()
             : ControlData(0, 0, ControlType::ROOT)
         {
-            __noop;
+            initializeReflection();
         }
 
         inline ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType)

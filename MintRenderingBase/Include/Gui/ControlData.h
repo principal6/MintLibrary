@@ -8,11 +8,14 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 #include <MintContainer/Include/HashMap.h>
 
 #include <MintMath/Include/Rect.h>
 
 #include <MintRenderingBase/Include/Gui/GuiCommon.h>
+
+#include <MintReflection/Include/Reflection.h>
 
 
 namespace mint
@@ -224,6 +227,7 @@ namespace mint
             };
 
         public:
+                                                REFLECTION_CLASS(ControlData);
                                                 ControlData();
                                                 ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType);
                                                 ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const Float2& size);
@@ -307,7 +311,10 @@ namespace mint
         public:
             uint8                               _updateCount;
             Float2                              _displaySize;
-            Float2                              _position; // In screen space, at left-top corner
+
+            // In screen space, at left-top corner
+            REFLECTION_MEMBER(Float2, _position);
+
             Float2                              _currentFrameDeltaPosition; // Used for dragging
             Float2                              _childDisplayOffset; // Used for scrolling child controls (of Window control)
             bool                                _isFocusable;
@@ -317,13 +324,13 @@ namespace mint
             ResizingMask                        _resizingMask;
             Rect                                _draggingConstraints; // MUST set all four values if want to limit dragging area
             uint64                              _delegateHashKey; // Used for drag, resize and focus
-            std::wstring                        _text;
+            REFLECTION_MEMBER(StringW, _text);
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;
             DockRelatedData                     _dockRelatedData;
 
         private:
-            uint64                              _hashKey;
+            REFLECTION_MEMBER(uint64, _hashKey);
             uint64                              _parentHashKey;
             Rect                                _innerPadding; // For child controls
             Float2                              _displaySizeMin;
@@ -342,6 +349,13 @@ namespace mint
             Vector<uint64>                      _previousChildControlDataHashKeyArray;
             uint16                              _previousMaxChildControlCount;
             HashMap<uint64, bool>               _childWindowHashKeyMap;
+
+        private:
+            REFLECTION_BIND_BEGIN;
+                REFLECTION_BIND(_position);
+                REFLECTION_BIND(_text);
+                REFLECTION_BIND(_hashKey);
+            REFLECTION_BIND_END;
         };
     }
 }

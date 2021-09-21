@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/String.h>
 #include <MintContainer/Include/IId.h>
 #include <MintContainer/Include/HashMap.h>
 
@@ -301,6 +302,7 @@ namespace mint
             void                                        testWindow(VisibleState& inoutVisibleState);
             void                                        testDockedWindow(VisibleState& inoutVisibleState);
             void                                        debugControlDataViewer(VisibleState& inoutVisibleState);
+            void                                        pushReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass);
 
         public:
             // [Window | Control with ID]
@@ -356,11 +358,11 @@ namespace mint
             // \param textBoxParam [Various options]
             // \param outText [The content of the textbox]
             // \return true, if the content has changed
-            const bool                                  beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
+            const bool                                  beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, StringW& outText);
             void                                        endTextBox() { endControlInternal(ControlType::TextBox); }
 
         private:
-            void                                        textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, std::wstring& outText) noexcept;
+            void                                        textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, StringW& outText) noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
@@ -372,7 +374,7 @@ namespace mint
             void                                        endLabeledValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
 
         private:
-            void                                        valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, std::wstring& outText) noexcept;
+            void                                        valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept;
     #pragma endregion
 
         public:

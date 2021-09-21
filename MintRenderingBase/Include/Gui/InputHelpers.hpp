@@ -4,6 +4,7 @@
 #include <stdafx.h>
 #include <MintRenderingBase/Include/Gui/InputHelpers.h>
 
+#include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintRenderingBase/Include/Gui/ControlData.hpp>
@@ -153,7 +154,7 @@ namespace mint
         }
 
         inline void InputBoxHelpers::processDefaultMouseInputs(const MouseStates& mouseStates, const mint::Rendering::ShapeFontRendererContext& rendererContext,
-            ControlData& controlData, const mint::Float4& textRenderOffset, const std::wstring& outText, TextBoxProcessInputResult& result) noexcept
+            ControlData& controlData, const mint::Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -183,7 +184,7 @@ namespace mint
 
         inline void InputBoxHelpers::processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::Rendering::ShapeFontRendererContext& rendererContext,
             ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
-            wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, std::wstring& outText, TextBoxProcessInputResult& result) noexcept
+            wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept
         {
             Platform::InputContext& inputContext = Platform::InputContext::getInstance();
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -245,7 +246,7 @@ namespace mint
             }
         }
 
-        inline void InputBoxHelpers::eraseBefore(ControlData& controlData, std::wstring& outText) noexcept
+        inline void InputBoxHelpers::eraseBefore(ControlData& controlData, StringW& outText) noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
@@ -259,14 +260,14 @@ namespace mint
 
                 if (outText.empty() == false && 0 < caretAt)
                 {
-                    outText.erase(outText.begin() + caretAt - 1);
+                    outText.erase(caretAt - 1);
 
                     caretAt = mint::max(caretAt - 1, 0);
                 }
             }
         }
 
-        MINT_INLINE void InputBoxHelpers::processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, std::wstring& outText) noexcept
+        MINT_INLINE void InputBoxHelpers::processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, StringW& outText) noexcept
         {
             Platform::InputContext& inputContext = Platform::InputContext::getInstance();
             const bool isControlKeyDown = inputContext.isKeyDown(mint::Platform::KeyCode::Control);
@@ -292,7 +293,7 @@ namespace mint
             }
         }
 
-        inline void InputBoxHelpers::eraseAfter(ControlData& controlData, std::wstring& outText) noexcept
+        inline void InputBoxHelpers::eraseAfter(ControlData& controlData, StringW& outText) noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (0 < selectionLength)
@@ -305,21 +306,21 @@ namespace mint
                 uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
                 if (0 < textLength && caretAt < textLength)
                 {
-                    outText.erase(outText.begin() + caretAt);
+                    outText.erase(caretAt);
 
                     caretAt = mint::min(caretAt, textLength);
                 }
             }
         }
 
-        MINT_INLINE void InputBoxHelpers::selectAll(ControlData& controlData, const std::wstring& outText) noexcept
+        MINT_INLINE void InputBoxHelpers::selectAll(ControlData& controlData, const StringW& outText) noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             controlData._controlValue._textBoxData._selectionStart = 0;
             caretAt = controlData._controlValue._textBoxData._selectionLength = static_cast<uint16>(outText.length());
         }
 
-        inline void InputBoxHelpers::copySelection(const mint::Window::IWindow* const window, ControlData& controlData, const std::wstring& outText) noexcept
+        inline void InputBoxHelpers::copySelection(const mint::Window::IWindow* const window, ControlData& controlData, const StringW& outText) noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
@@ -331,16 +332,16 @@ namespace mint
             window->textToClipboard(&outText[selectionStart], selectionLength);
         }
 
-        MINT_INLINE void InputBoxHelpers::cutSelection(const mint::Window::IWindow* const window, ControlData& controlData, std::wstring& outText) noexcept
+        MINT_INLINE void InputBoxHelpers::cutSelection(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText) noexcept
         {
             copySelection(window, controlData, outText);
 
             eraseSelection(controlData, outText);
         }
 
-        inline void InputBoxHelpers::paste(const mint::Window::IWindow* const window, ControlData& controlData, std::wstring& outText, const wchar_t* const errorMessage) noexcept
+        inline void InputBoxHelpers::paste(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText, const wchar_t* const errorMessage) noexcept
         {
-            std::wstring fromClipboard;
+            StringW fromClipboard;
             window->textFromClipboard(fromClipboard);
 
             if (fromClipboard.empty() == true)
@@ -361,7 +362,7 @@ namespace mint
         }
 
         MINT_INLINE void InputBoxHelpers::processKeyCodeCaretMovements(const mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
-            ControlData& controlData, std::wstring& outText) noexcept
+            ControlData& controlData, StringW& outText) noexcept
         {
             if (keyCode == mint::Platform::KeyCode::Left)
             {
@@ -391,7 +392,7 @@ namespace mint
             caretAt = mint::max(caretAt - 1, 0);
         }
 
-        MINT_INLINE void InputBoxHelpers::moveCaretToNext(ControlData& controlData, const std::wstring& text) noexcept
+        MINT_INLINE void InputBoxHelpers::moveCaretToNext(ControlData& controlData, const StringW& text) noexcept
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -407,7 +408,7 @@ namespace mint
             textDisplayOffset = 0.0f;
         }
 
-        MINT_INLINE void InputBoxHelpers::moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const std::wstring& text) noexcept
+        MINT_INLINE void InputBoxHelpers::moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -418,13 +419,13 @@ namespace mint
             textDisplayOffset = mint::max(0.0f, textWidth - controlData._displaySize._x);
         }
 
-        inline const bool InputBoxHelpers::insertWchar(const wchar_t input, uint16& caretAt, std::wstring& outText) noexcept
+        inline const bool InputBoxHelpers::insertWchar(const wchar_t input, uint16& caretAt, StringW& outText) noexcept
         {
             if (outText.length() < kTextBoxMaxTextLength)
             {
                 caretAt = mint::min(caretAt, static_cast<uint16>(outText.length()));
 
-                outText.insert(outText.begin() + caretAt, input);
+                outText.insert(caretAt, input);
 
                 ++caretAt;
 
@@ -433,7 +434,7 @@ namespace mint
             return false;
         }
 
-        inline const bool InputBoxHelpers::insertWstring(const std::wstring& input, uint16& caretAt, std::wstring& outText)  noexcept
+        inline const bool InputBoxHelpers::insertWstring(const StringW& input, uint16& caretAt, StringW& outText)  noexcept
         {
             bool result = false;
             const uint32 oldLength = static_cast<uint32>(outText.length());
@@ -456,7 +457,7 @@ namespace mint
             return result;
         }
 
-        inline const bool InputBoxHelpers::isValidCharacterInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const std::wstring& text) noexcept
+        inline const bool InputBoxHelpers::isValidCharacterInput(const wchar_t input, const uint16 caretAt, const TextInputMode textInputMode, const StringW& text) noexcept
         {
             bool result = false;
             if (textInputMode == TextInputMode::General)
@@ -472,14 +473,14 @@ namespace mint
                 result = (kZero <= input && input <= kNine);
                 if (kPointSign == input)
                 {
-                    if (text.find(input) == std::wstring::npos)
+                    if (text.find(input) == kStringNPos)
                     {
                         result = true;
                     }
                 }
                 else if (kMinusSign == input)
                 {
-                    if (text.find(input) == std::wstring::npos && caretAt == 0)
+                    if (text.find(input) == kStringNPos && caretAt == 0)
                     {
                         result = true;
                     }
@@ -495,7 +496,7 @@ namespace mint
             selectionLength = 0;
         }
 
-        inline void InputBoxHelpers::eraseSelection(ControlData& controlData, std::wstring& outText) noexcept
+        inline void InputBoxHelpers::eraseSelection(ControlData& controlData, StringW& outText) noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
             if (selectionLength == 0)
@@ -513,7 +514,7 @@ namespace mint
             controlData._controlValue._textBoxData._selectionLength = 0;
         }
 
-        MINT_INLINE const uint16 InputBoxHelpers::calculateCaretAtIfErasedSelection(const ControlData& controlData, const std::wstring& outText) noexcept
+        MINT_INLINE const uint16 InputBoxHelpers::calculateCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept
         {
             uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
@@ -612,7 +613,7 @@ namespace mint
         }
 
         inline void InputBoxHelpers::drawTextWithInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
-            const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, std::wstring& outText) noexcept
+            const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept
         {
             MINT_ASSERT("김장원", controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
@@ -658,7 +659,7 @@ namespace mint
         }
 
         inline void InputBoxHelpers::drawTextWithoutInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
-            const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, std::wstring& outText) noexcept
+            const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept
         {
             MINT_ASSERT("김장원", controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 
@@ -689,7 +690,7 @@ namespace mint
         }
 
         inline void InputBoxHelpers::drawSelection(mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
-            const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, std::wstring& outText) noexcept
+            const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept
         {
             MINT_ASSERT("김장원", textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 

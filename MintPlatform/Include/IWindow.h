@@ -9,6 +9,8 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/String.h>
+
 #include <MintPlatform/Include/PlatformCommon.h>
 
 #include <MintMath/Include/Int2.h>
@@ -99,7 +101,7 @@ namespace mint
             virtual const uint32            getCaretBlinkIntervalMs() const noexcept abstract;
 
             virtual void                    textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
-            virtual void                    textFromClipboard(std::wstring& outText) const noexcept abstract;
+            virtual void                    textFromClipboard(StringW& outText) const noexcept abstract;
             virtual void                    showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
         protected:

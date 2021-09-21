@@ -7,6 +7,8 @@
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 
+#include <MintReflection/Include/Reflection.hpp>
+
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/Gui/ControlData.hpp>
 #include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
@@ -539,7 +541,7 @@ namespace mint
                     endButton();
                 }
 
-                static std::wstring textBoxContent;
+                static StringW textBoxContent;
                 {
                     Gui::TextBoxParam textBoxParam;
                     textBoxParam._common._size._x = 240.0f;
@@ -670,9 +672,53 @@ namespace mint
 
                     formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
                     pushLabel(buffer.c_str());
+
+                    pushReflectionClass(controlData.getReflectionData(), &controlData);
                 }
                 
                 endWindow();
+            }
+        }
+
+        void GuiContext::pushReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass)
+        {
+            ScopeStringA<300> bufferA;
+            ScopeStringW<300> bufferW;
+
+            const uint32 memberCount = reflectionData._memberTypeDatas.size();
+            for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
+            {
+                TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
+                const char* const member = reinterpret_cast<const char*>(reflectionClass) + memberTypeData->_offset;
+                if (memberTypeData->_typeName == "Float2")
+                {
+                    const Float2& memberCasted = *reinterpret_cast<const Float2*>(member);
+                    formatString(bufferA, "%s: (%f, %f)", memberTypeData->_declarationName.c_str(), memberCasted._x, memberCasted._y);
+                    
+                    StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
+                    pushLabel(bufferW.c_str());
+                }
+                else if (memberTypeData->_typeName == "uint64")
+                {
+                    const uint64 memberCasted = *reinterpret_cast<const uint64*>(member);
+                    formatString(bufferA, "%s: %llu", memberTypeData->_declarationName.c_str(), memberCasted);
+                    
+                    StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
+                    pushLabel(bufferW.c_str());
+                }
+                else if (memberTypeData->_typeName == "StringW")
+                {
+                    const StringW& memberCasted = *reinterpret_cast<const StringW*>(member);
+                    ScopeStringW<300> bufferWTemp;
+                    bufferA = memberTypeData->_declarationName.c_str();
+                    StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferWTemp);
+                    formatString(bufferW, L"%s: %s", bufferWTemp.c_str(), memberCasted.c_str());
+                    pushLabel(bufferW.c_str());
+                }
+                else
+                {
+                    continue;
+                }
             }
         }
 
@@ -1174,7 +1220,7 @@ namespace mint
             rendererContext.drawCircle(kSliderThumbRadius - 2.0f);
         }
 
-        const bool GuiContext::beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText)
+        const bool GuiContext::beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, StringW& outText)
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
@@ -1241,7 +1287,7 @@ namespace mint
             return false;
         }
         
-        void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, std::wstring& outText) noexcept
+        void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, StringW& outText) noexcept
         {
             Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
@@ -1359,7 +1405,7 @@ namespace mint
             return beginValueSliderFloat(sliderName.c_str(), sliderFloatParamModified, roundnessInPixel, decimalDigits, value);
         }
 
-        void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, std::wstring& outText) noexcept
+        void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
         {
             Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
@@ -1400,7 +1446,7 @@ namespace mint
                 {
                     try
                     {
-                        value = std::stof(outText);
+                        value = StringUtil::convertStringWToFloat(outText);
                     }
                     catch (std::invalid_argument e)
                     {
@@ -2375,20 +2421,20 @@ namespace mint
 
         const wchar_t* GuiContext::generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept
         {
-            static std::wstring hashKeyWstring;
+            static StringW hashKeyWstring;
             hashKeyWstring.clear();
-            hashKeyWstring.append(std::to_wstring(parentControlData.getHashKey()));
+            hashKeyWstring.append(StringUtil::toStringW(parentControlData.getHashKey()));
             hashKeyWstring.append(name);
-            hashKeyWstring.append(std::to_wstring(static_cast<uint16>(controlType)));
+            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
             return hashKeyWstring.c_str();
         }
 
         const uint64 GuiContext::generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept
         {
-            static std::wstring hashKeyWstring;
+            static StringW hashKeyWstring;
             hashKeyWstring.clear();
             hashKeyWstring.append(text);
-            hashKeyWstring.append(std::to_wstring(static_cast<uint16>(controlType)));
+            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
             return computeHash(hashKeyWstring.c_str());
         }
 
