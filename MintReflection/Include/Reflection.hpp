@@ -271,7 +271,7 @@ namespace mint
         
         const uint32 length = *_reader.read<uint32>();
         to.reserve(length);
-        to = _reader.read<const char>(length + 1);
+        to = _reader.read<const T>(length + 1);
 
         return true;
     }
