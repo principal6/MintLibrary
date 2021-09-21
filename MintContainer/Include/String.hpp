@@ -349,6 +349,13 @@ namespace mint
     }
 
     template<typename T>
+    inline const uint32 String<T>::find(const T target, const uint32 offset) const noexcept
+    {
+        T targets[2] = { target, 0 };
+        return find(targets, offset);
+    }
+
+    template<typename T>
     inline String<T> String<T>::substr(const uint32 offset, const uint32 count) const noexcept
     {
         String result;

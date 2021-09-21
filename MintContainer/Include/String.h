@@ -63,6 +63,7 @@ namespace mint
         void                        clear() noexcept;
 
     public:
+        MINT_INLINE const bool      empty() const noexcept { return 0 == size(); }
         MINT_INLINE const uint32    size() const noexcept { return static_cast<uint32>(true == isSmallString() ? _short._size : _long._size); }
         MINT_INLINE const uint32    length() const noexcept { return size(); }
         MINT_INLINE const uint32    capacity() const noexcept { return static_cast<uint32>(true == isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
@@ -75,6 +76,7 @@ namespace mint
 
     public:
         const uint32                find(const T* const target, const uint32 offset = 0) const noexcept;
+        const uint32                find(const T target, const uint32 offset = 0) const noexcept;
         String                      substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
         const bool                  compare(const T* const rhs) const noexcept;
         const bool                  compare(const String& rhs) const noexcept;
