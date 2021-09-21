@@ -224,6 +224,25 @@ namespace mint
         return *this;
     }
 
+    template<typename T, uint32 BufferSize>
+    inline void ScopeString<T, BufferSize>::resize(const uint32 newSize) noexcept
+    {
+        const uint32 oldSize = length();
+        if (oldSize < newSize)
+        {
+            for (uint32 iter = oldSize; iter < newSize; ++iter)
+            {
+                _raw[iter] = 0;
+            }
+        }
+        else
+        {
+            _raw[newSize] = 0;
+        }
+
+        _length = newSize;
+    }
+
     template <typename T, uint32 BufferSize>
     inline ScopeString<T, BufferSize> ScopeString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
     {

@@ -60,6 +60,7 @@ namespace mint
         ScopeString&                        append(const ScopeString& rhs) noexcept;
         ScopeString&                        assign(const T* const rawString) noexcept;
         ScopeString&                        assign(const ScopeString& rhs) noexcept;
+        void                                resize(const uint32 newSize) noexcept;
 
     public:
         ScopeString                         substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
