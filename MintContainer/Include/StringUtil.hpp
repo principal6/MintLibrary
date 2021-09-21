@@ -45,10 +45,15 @@ namespace mint
     template <uint32 BufferSize>
     MINT_INLINE void formatString(ScopeStringA<BufferSize>& buffer, const char* format, ...)
     {
+        ScopeStringA<BufferSize> temp;
+
         va_list args;
         va_start(args, format);
-        ::vsprintf_s(buffer.data(), BufferSize, format, args);
+        ::vsprintf_s(temp.data(), BufferSize, format, args);
         va_end(args);
+
+        buffer.resize(temp.length());
+        buffer.assign(temp);
     }
 
     template <uint32 BufferSize>
@@ -142,6 +147,19 @@ namespace mint
         {
             destination.resize(source.length());
             ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()));
+        }
+
+        MINT_INLINE void convertStringAToStringW(const StringA& source, StringW& destination) noexcept
+        {
+            destination.resize(source.length());
+            ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
+        }
+
+        template<uint32 BufferSize>
+        inline void convertScopeStringAToScopeStringW(const ScopeStringA<BufferSize>& source, ScopeStringW<BufferSize>& destination) noexcept
+        {
+            destination.resize(source.length());
+            ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
         }
 
         MINT_INLINE const bool hasExtension(std::string& inoutText)
@@ -258,6 +276,36 @@ namespace mint
             {
                 outArray.push_back(inputString.substr(prevAt, length - prevAt));
             }
+        }
+
+        inline float convertStringWToFloat(const StringW& rhs)
+        {
+            float result = 0.0f;
+            try
+            {
+                result = std::stof(rhs.c_str());
+            }
+            catch (std::invalid_argument e)
+            {
+                throw(e);
+            }
+            return result;
+        }
+
+        template <typename T>
+        inline std::enable_if_t<std::is_integral_v<T>, StringW> toStringW(const T& rhs)
+        {
+            ScopeStringW<256> buffer;
+            formatString(buffer, L"%d", rhs);
+            return StringW(buffer.c_str());
+        }
+
+        template <typename T>
+        inline std::enable_if_t<std::is_floating_point_v<T>, StringW> toStringW(const T& rhs)
+        {
+            ScopeStringW<256> buffer;
+            formatString(buffer, L"%f", rhs);
+            return StringW(buffer.c_str());
         }
     }
 }

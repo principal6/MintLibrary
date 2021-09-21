@@ -64,11 +64,22 @@ namespace mint
 
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
+        void            convertStringAToStringW(const StringA& source, StringW& destination) noexcept;
+        template <uint32 BufferSize>
+        void            convertScopeStringAToScopeStringW(const ScopeStringA<BufferSize>& source, ScopeStringW<BufferSize>& destination) noexcept;
         void            excludeExtension(std::string& inoutText);
 
         static void     tokenize(const std::string& inputString, const char delimiter, mint::Vector<std::string>& outArray);
         static void     tokenize(const std::string& inputString, const mint::Vector<char>& delimiterArray, mint::Vector<std::string>& outArray);
         static void     tokenize(const std::string& inputString, const std::string& delimiterString, mint::Vector<std::string>& outArray);
+
+        template <typename T>
+        std::enable_if_t<std::is_integral_v<T>, StringW> toStringW(const T& rhs);
+        
+        template <typename T>
+        std::enable_if_t<std::is_floating_point_v<T>, StringW> toStringW(const T& rhs);
+
+        float           convertStringWToFloat(const StringW& rhs);
     }
 }
 
