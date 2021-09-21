@@ -265,6 +265,12 @@ namespace mint
         }
         dataPointer[newSize] = 0;
 
+        _setSize(newSize);
+    }
+
+    template<typename T>
+    inline void String<T>::_setSize(const uint32 newSize) noexcept
+    {
         if (isSmallString() == true)
         {
             _short._size = newSize;
@@ -278,15 +284,15 @@ namespace mint
     template<typename T>
     MINT_INLINE void String<T>::clear() noexcept
     {
+        _setSize(0);
+
         if (true == isSmallString())
         {
-            _short._size = 0;
             _short._smallString[0] = 0;
         }
         else
         {
             ::memset(_long._rawPointer, 0, kTypeSize);
-            _long._size = 0;
         }
     }
 
@@ -305,6 +311,11 @@ namespace mint
     template<typename T>
     MINT_INLINE void String<T>::__copyString(T* const destination, const T* const source, const uint64 length) noexcept
     {
+        if (length == 0)
+        {
+            return;
+        }
+
         ::memmove(destination, source, length * kTypeSize);
         destination[length] = 0;
     }
@@ -397,24 +408,27 @@ namespace mint
     inline void String<T>::insert(const uint32 at, const T* const str) noexcept
     {
         const uint32 rhsLength = __getStringLength(str);
-        const uint32 newLength = length() + rhsLength;
+        const uint32 oldLength = length();
+        const uint32 newLength = oldLength + rhsLength;
         if (capacity() <= newLength)
         {
-            resize(newLength + 1);
+            reserve(newLength + 1);
         }
 
-        if (length() <= at)
+        if (oldLength <= at)
         {
             append(str);
         }
         else
         {
-            const uint32 movedLength = length() - at;
-            __copyString(data() + at + newLength, data() + at, movedLength);
+            const uint32 movedLength = oldLength - at;
+            __copyString(data() + at + rhsLength, data() + at, movedLength);
             for (uint32 iter = 0; iter < rhsLength; ++iter)
             {
                 data()[at + iter] = str[iter];
             }
+
+            _setSize(newLength);
         }
     }
 
@@ -438,13 +452,26 @@ namespace mint
             return;
         }
 
-        if (size() - 1 <= at)
+        const uint32 lhsLength = size();
+        if (lhsLength - 1 <= at)
         {
-            data()[size()] = 0;
+            data()[lhsLength - 1] = 0;
+            _setSize(lhsLength - 1);
         }
         else
         {
-            __copyString(data() + at, data() + at + length, length);
+            uint32 newLength = 0;
+            if (at + length < lhsLength)
+            {
+                newLength = lhsLength - length;
+                __copyString(data() + at, data() + at + length, lhsLength - (at + length));
+            }
+            else
+            {
+                newLength = at;
+            }
+            data()[newLength] = 0;
+            _setSize(newLength);
         }
     }
 

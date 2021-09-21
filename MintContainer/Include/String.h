@@ -61,6 +61,9 @@ namespace mint
         void                        reserve(const uint32 newCapacity) noexcept;
         void                        resize(const uint32 newSize, const T fillCharacter = 0) noexcept;
 
+    private:
+        void                        _setSize(const uint32 newSize) noexcept;
+
     public:
         void                        clear() noexcept;
 
