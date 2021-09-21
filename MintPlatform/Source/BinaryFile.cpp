@@ -10,6 +10,7 @@ namespace mint
 #pragma region Binary File Reader
     const bool BinaryFileReader::open(const char* const fileName)
     {
+        _at = 0;
         _byteArray.clear();
         
         std::ifstream ifs{ fileName, std::ifstream::binary };
@@ -22,9 +23,14 @@ namespace mint
         const uint64 legth = ifs.tellg();
         ifs.seekg(0, ifs.beg);
         _byteArray.reserve(static_cast<uint32>(legth));
-        while (ifs.eof() == false)
+        while (true)
         {
-            byte readByte{ static_cast<byte>(ifs.get()) };
+            const byte readByte{ static_cast<byte>(ifs.get()) };
+            if (ifs.eof() == true)
+            {
+                break;
+            }
+
             _byteArray.push_back(readByte);
         }
         return true;
