@@ -11,64 +11,74 @@
 
 namespace mint
 {
-    template<uint32 BufferSize>
-    class ScopeStringA
+    template <typename T, uint32 BufferSize>
+    class ScopeString
     {
     public:
-                                            ScopeStringA();
-                                            ScopeStringA(const char* const rawString);
-                                            ScopeStringA(const ScopeStringA& rhs);
-                                            ScopeStringA(ScopeStringA&& rhs) noexcept;
-                                            ~ScopeStringA();
+                                            ScopeString();
+                                            ScopeString(const T* const rawString);
+                                            ScopeString(const ScopeString& rhs);
+                                            ScopeString(ScopeString&& rhs) noexcept;
+                                            ~ScopeString();
 
     public:
-        ScopeStringA&                       operator=(const ScopeStringA& rhs) noexcept;
-        ScopeStringA&                       operator=(ScopeStringA&& rhs) noexcept;
-        ScopeStringA&                       operator=(const char* const rawString) noexcept;
+        ScopeString&                        operator=(const ScopeString& rhs) noexcept;
+        ScopeString&                        operator=(ScopeString&& rhs) noexcept;
+        ScopeString&                        operator=(const T* const rawString) noexcept;
 
     public:
-        const bool                          operator==(const char* const rawString) const noexcept;
-        const bool                          operator==(const ScopeStringA& rhs) const noexcept;
-        const bool                          operator!=(const char* const rawString) const noexcept;
-        const bool                          operator!=(const ScopeStringA& rhs) const noexcept;
+        const bool                          operator==(const T* const rawString) const noexcept;
+        const bool                          operator==(const ScopeString& rhs) const noexcept;
+        const bool                          operator!=(const T* const rawString) const noexcept;
+        const bool                          operator!=(const ScopeString& rhs) const noexcept;
 
     public:
-        ScopeStringA&                       operator+=(const char* const rawString) noexcept;
-        ScopeStringA&                       operator+=(const ScopeStringA& rhs) noexcept;
+        ScopeString&                        operator+=(const T* const rawString) noexcept;
+        ScopeString&                        operator+=(const ScopeString& rhs) noexcept;
 
     public:
-        char&                               operator[](const uint32 at) noexcept;
-        const char&                         operator[](const uint32 at) const noexcept;
+        T&                                  operator[](const uint32 at) noexcept;
+        const T&                            operator[](const uint32 at) const noexcept;
 
     public:
         uint32                              capacity() const noexcept;
         uint32                              length() const noexcept;
-        const char*                         c_str() const noexcept;
+        const T*                            c_str() const noexcept;
+
+    private:
+        static const uint32                 _getRawStringLength(const T* const rawString) noexcept;
 
     public:
-        char*                               data() noexcept;
+        T*                                  data() noexcept;
 
     private:
         const bool                          canInsert(const uint32 insertLength) const noexcept;
 
     public:
         void                                clear() noexcept;
-        ScopeStringA&                       append(const char* const rawString) noexcept;
-        ScopeStringA&                       append(const ScopeStringA& rhs) noexcept;
-        ScopeStringA&                       assign(const char* const rawString) noexcept;
-        ScopeStringA&                       assign(const ScopeStringA& rhs) noexcept;
+        ScopeString&                        append(const T* const rawString) noexcept;
+        ScopeString&                        append(const ScopeString& rhs) noexcept;
+        ScopeString&                        assign(const T* const rawString) noexcept;
+        ScopeString&                        assign(const ScopeString& rhs) noexcept;
 
     public:
-        ScopeStringA                        substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
-        const uint32                        find(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
-        const uint32                        rfind(const char* const rawString, const uint32 offset = kStringNPos) const noexcept;
-        const bool                          compare(const char* const rawString) const noexcept;
-        const bool                          compare(const ScopeStringA& rhs) const noexcept;
+        ScopeString                         substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
+        const uint32                        find(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
+        const uint32                        rfind(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
+        const bool                          compare(const T* const rawString) const noexcept;
+        const bool                          compare(const ScopeString& rhs) const noexcept;
 
     private:
         uint32                              _length;
-        StaticArray<char, BufferSize>       _raw;
+        StaticArray<T, BufferSize>          _raw;
     };
+
+
+    template <uint32 BufferSize>
+    using ScopeStringA = ScopeString<char, BufferSize>;
+    
+    template <uint32 BufferSize>
+    using ScopeStringW = ScopeString<wchar_t, BufferSize>;
 }
 
 
