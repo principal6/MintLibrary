@@ -175,6 +175,13 @@ namespace mint
     }
 
     template<typename T>
+    inline String<T>& String<T>::append(const T ch) noexcept
+    {
+        T rawString[2] = { ch, 0 };
+        return append(rawString);
+    }
+
+    template<typename T>
     inline String<T>& String<T>::appendInternalSmallXXX(const T* const rawString) noexcept
     {
         const uint32 length = __getStringLength(rawString);
@@ -292,7 +299,7 @@ namespace mint
     template<typename T>
     MINT_INLINE void String<T>::__copyString(T* const destination, const T* const source, const uint64 length) noexcept
     {
-        ::memcpy(destination, source, length * kTypeSize);
+        ::memmove(destination, source, length * kTypeSize);
         destination[length] = 0;
     }
 
@@ -371,6 +378,68 @@ namespace mint
             }
         }
         return result;
+    }
+
+    template<typename T>
+    inline void String<T>::insert(const uint32 at, const T ch) noexcept
+    {
+        T str[2] = { ch, 0 };
+        insert(at, str);
+    }
+
+    template<typename T>
+    inline void String<T>::insert(const uint32 at, const T* const str) noexcept
+    {
+        const uint32 rhsLength = __getStringLength(str);
+        const uint32 newLength = length() + rhsLength;
+        if (capacity() <= newLength)
+        {
+            resize(newLength + 1);
+        }
+
+        if (length() <= at)
+        {
+            append(str);
+        }
+        else
+        {
+            const uint32 movedLength = length() - at;
+            __copyString(data() + at + newLength, data() + at, movedLength);
+            for (uint32 iter = 0; iter < rhsLength; ++iter)
+            {
+                data()[at + iter] = str[iter];
+            }
+        }
+    }
+
+    template<typename T>
+    inline void String<T>::insert(const uint32 at, const String& rhs) noexcept
+    {
+        insert(at, rhs.c_str());
+    }
+
+    template<typename T>
+    inline void String<T>::erase(const uint32 at) noexcept
+    {
+        erase(at, 1);
+    }
+
+    template<typename T>
+    inline void String<T>::erase(const uint32 at, const uint32 length) noexcept
+    {
+        if (empty() == true)
+        {
+            return;
+        }
+
+        if (size() - 1 <= at)
+        {
+            data()[size()] = 0;
+        }
+        else
+        {
+            __copyString(data() + at, data() + at + length, length);
+        }
     }
 
     template<typename T>

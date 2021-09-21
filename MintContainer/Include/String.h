@@ -50,6 +50,7 @@ namespace mint
 
     public:
         String&                     append(const T* const rawString) noexcept;
+        String&                     append(const T ch) noexcept;
 
     private:
         String&                     appendInternalSmallXXX(const T* const rawString) noexcept;
@@ -78,6 +79,11 @@ namespace mint
         const uint32                find(const T* const target, const uint32 offset = 0) const noexcept;
         const uint32                find(const T target, const uint32 offset = 0) const noexcept;
         String                      substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
+        void                        insert(const uint32 at, const T ch) noexcept;
+        void                        insert(const uint32 at, const T* const str) noexcept;
+        void                        insert(const uint32 at, const String& rhs) noexcept;
+        void                        erase(const uint32 at) noexcept;
+        void                        erase(const uint32 at, const uint32 length) noexcept;
         const bool                  compare(const T* const rhs) const noexcept;
         const bool                  compare(const String& rhs) const noexcept;
         const uint64                computeHash() const noexcept;
