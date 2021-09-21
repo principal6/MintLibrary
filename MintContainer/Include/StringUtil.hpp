@@ -8,14 +8,15 @@
 #include <MintContainer/Include/StringUtil.h>
 
 #include <MintContainer/Include/String.hpp>
+#include <MintContainer/Include/ScopeString.hpp>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Tree.hpp>
 
 
 namespace mint
 {
-    template <uint32 Size>
-    MINT_INLINE void formatString(char(&buffer)[Size], const char* format, ...)
+    template <uint32 BufferSize>
+    MINT_INLINE void formatString(char(&buffer)[BufferSize], const char* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -40,9 +41,18 @@ namespace mint
         ::vsprintf_s(&buffer[0], bufferSize, format, args);
         va_end(args);
     }
+    
+    template <uint32 BufferSize>
+    MINT_INLINE void formatString(ScopeStringA<BufferSize>& buffer, const char* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vsprintf_s(buffer.data(), BufferSize, format, args);
+        va_end(args);
+    }
 
-    template <uint32 Size>
-    MINT_INLINE void formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...)
+    template <uint32 BufferSize>
+    MINT_INLINE void formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...)
     {
         va_list args;
         va_start(args, format);
@@ -65,6 +75,15 @@ namespace mint
         va_list args;
         va_start(args, format);
         ::vswprintf_s(&buffer[0], bufferSize, format, args);
+        va_end(args);
+    }
+
+    template <uint32 BufferSize>
+    MINT_INLINE void formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...)
+    {
+        va_list args;
+        va_start(args, format);
+        ::vswprintf_s(buffer.data(), BufferSize, format, args);
         va_end(args);
     }
 

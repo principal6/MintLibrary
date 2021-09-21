@@ -11,6 +11,7 @@
 
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/String.h>
+#include <MintContainer/Include/ScopeString.h>
 
 
 namespace mint
@@ -32,15 +33,20 @@ namespace mint
     };
 
 
-    template <uint32 Size>
-    void                formatString(char(&buffer)[Size], const char* format, ...);
+    template <uint32 BufferSize>
+    void                formatString(char(&buffer)[BufferSize], const char* format, ...);
     void                formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
     void                formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...);
+    template <uint32 BufferSize>
+    void                formatString(ScopeStringA<BufferSize>& buffer, const char* format, ...);
     
-    template <uint32 Size>
-    void                formatString(wchar_t(&buffer)[Size], const wchar_t* format, ...);
+    template <uint32 BufferSize>
+    void                formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...);
     void                formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
     void                formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
+    
+    template <uint32 BufferSize>
+    void                formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...);
 
 
     namespace StringUtil
