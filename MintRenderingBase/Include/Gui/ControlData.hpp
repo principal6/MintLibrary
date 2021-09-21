@@ -232,6 +232,17 @@ namespace mint
 #pragma endregion
 
 
+#pragma region ControlData - DockRelatedData
+        inline ControlData::DockRelatedData::DockRelatedData(const ControlType controlType)
+            : _dockingControlType{ (controlType == ControlType::ROOT) ? DockingControlType::Dock : DockingControlType::None }
+            , _lastDockingMethod{ DockingMethod::COUNT }
+            , _lastDockingMethodCandidate{ DockingMethod::COUNT }
+            , _dockControlHashKey{ 0 }
+        {
+            __noop;
+        }
+#pragma endregion
+
 #pragma region ControlData
         inline ControlData::ControlData()
             : ControlData(0, 0, ControlType::ROOT)
@@ -257,23 +268,15 @@ namespace mint
             , _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
             , _childAt{ _innerPadding.left(), _innerPadding.top() }
             , _delegateHashKey{ 0 }
-            , _dockingControlType{ DockingControlType::None }
-            , _lastDockingMethod{ DockingMethod::COUNT }
-            , _lastDockingMethodCandidate{ DockingMethod::COUNT }
+            , _dockRelatedData{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
             , _hashKey{ hashKey }
             , _parentHashKey{ parentHashKey }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
             , _previousMaxChildControlCount{ 0 }
-            , _dockControlHashKey{ 0 }
         {
             _draggingConstraints.setNan();
-
-            if (controlType == ControlType::ROOT)
-            {
-                _dockingControlType = DockingControlType::Dock;
-            }
         }
 
         MINT_INLINE void ControlData::clearPerFrameData() noexcept
@@ -493,17 +496,17 @@ namespace mint
 
         MINT_INLINE DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
         {
-            return _dockData[static_cast<uint32>(dockingMethod)];
+            return _dockRelatedData._dockData[static_cast<uint32>(dockingMethod)];
         }
 
         MINT_INLINE const DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) const noexcept
         {
-            return _dockData[static_cast<uint32>(dockingMethod)];
+            return _dockRelatedData._dockData[static_cast<uint32>(dockingMethod)];
         }
 
         MINT_INLINE const bool ControlData::isShowingInDock(const ControlData& dockedControlData) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockedControlData._lastDockingMethod);
+            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
             return dockDatum.getDockedControlIndex(dockedControlData.getHashKey()) == dockDatum._dockedControlIndexShown;
         }
 
@@ -611,22 +614,22 @@ namespace mint
 
         MINT_INLINE void ControlData::connectToDock(const uint64 dockControlHashKey) noexcept
         {
-            _dockControlHashKey = dockControlHashKey;
+            _dockRelatedData._dockControlHashKey = dockControlHashKey;
         }
 
         MINT_INLINE void ControlData::disconnectFromDock() noexcept
         {
-            _dockControlHashKey = 0;
+            _dockRelatedData._dockControlHashKey = 0;
         }
 
         MINT_INLINE const uint64 ControlData::getDockControlHashKey() const noexcept
         {
-            return _dockControlHashKey;
+            return _dockRelatedData._dockControlHashKey;
         }
 
         MINT_INLINE const bool ControlData::isDocking() const noexcept
         {
-            return (_dockControlHashKey != 0);
+            return (_dockRelatedData._dockControlHashKey != 0);
         }
 
         MINT_INLINE const bool ControlData::isDockHosting() const noexcept
@@ -688,8 +691,8 @@ namespace mint
 
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept
         {
-            std::swap(_displaySize, _dokcingStateContext._displaySize);
-            std::swap(_resizingMask, _dokcingStateContext._resizingMask);
+            std::swap(_displaySize, _dockRelatedData._dokcingStateContext._displaySize);
+            std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
         }
 
         MINT_INLINE void ControlData::setParentHashKeyXXX(const uint64 parentHashKey) noexcept

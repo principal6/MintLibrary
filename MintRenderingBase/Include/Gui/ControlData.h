@@ -204,6 +204,26 @@ namespace mint
         class ControlData
         {
         public:
+            class DockRelatedData
+            {
+                friend class ControlData;
+
+            public:
+                                                DockRelatedData(const ControlType controlType);
+                                                ~DockRelatedData() = default;
+
+            public:
+                DockingControlType              _dockingControlType;
+                DockingMethod                   _lastDockingMethod;
+                DockingMethod                   _lastDockingMethodCandidate;
+
+            private:
+                DockDatum                       _dockData[static_cast<uint32>(DockingMethod::COUNT)];
+                uint64                          _dockControlHashKey;
+                DockingStateContext             _dokcingStateContext;
+            };
+
+        public:
                                                 ControlData();
                                                 ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType);
                                                 ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const Float2& size);
@@ -297,12 +317,10 @@ namespace mint
             ResizingMask                        _resizingMask;
             Rect                                _draggingConstraints; // MUST set all four values if want to limit dragging area
             uint64                              _delegateHashKey; // Used for drag, resize and focus
-            DockingControlType                  _dockingControlType;
-            DockingMethod                       _lastDockingMethod;
-            DockingMethod                       _lastDockingMethodCandidate;
             std::wstring                        _text;
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;
+            DockRelatedData                     _dockRelatedData;
 
         private:
             uint64                              _hashKey;
@@ -324,9 +342,6 @@ namespace mint
             Vector<uint64>                      _previousChildControlDataHashKeyArray;
             uint16                              _previousMaxChildControlCount;
             HashMap<uint64, bool>               _childWindowHashKeyMap;
-            DockDatum                           _dockData[static_cast<uint32>(DockingMethod::COUNT)];
-            uint64                              _dockControlHashKey;
-            DockingStateContext                 _dokcingStateContext;
         };
     }
 }
