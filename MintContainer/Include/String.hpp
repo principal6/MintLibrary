@@ -237,7 +237,7 @@ namespace mint
     {
         if (capacity() <= newSize)
         {
-            reserve(newSize);
+            reserve(newSize + 1);
         }
 
         T* const dataPointer = data();
