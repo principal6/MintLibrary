@@ -653,23 +653,22 @@ namespace mint
             {
                 if (isValidControlDataHashKey(_viewerTargetControlDataHashKey) == true)
                 {
-                    constexpr uint32 bufferSize = 300;
-                    StringW buffer;
+                    ScopeStringW<300> buffer;
                     const ControlData& controlData = getControlData(_viewerTargetControlDataHashKey);
                     
-                    formatString(buffer, bufferSize, L"HashKey: %llu", controlData.getHashKey());
+                    formatString(buffer, L"HashKey: %llu", controlData.getHashKey());
                     pushLabel(buffer.c_str());
                     
-                    formatString(buffer, bufferSize, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
+                    formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
                     pushLabel(buffer.c_str());
                     
-                    formatString(buffer, bufferSize, L"Text: %s", controlData.getText());
+                    formatString(buffer, L"Text: %s", controlData.getText());
                     pushLabel(buffer.c_str());
 
-                    formatString(buffer, bufferSize, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
+                    formatString(buffer, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
                     pushLabel(buffer.c_str());
 
-                    formatString(buffer, bufferSize, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
+                    formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
                     pushLabel(buffer.c_str());
                 }
                 
