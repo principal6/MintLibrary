@@ -49,11 +49,11 @@ namespace mint
         static constexpr float          kFontScaleA = 1.0f;
         static constexpr float          kFontScaleB = 0.875f;
         static constexpr float          kFontScaleC = 0.8125f;
-        static constexpr mint::Rect     kWindowInnerPadding = mint::Rect(4.0f);
+        static constexpr Rect           kWindowInnerPadding = Rect(4.0f);
         static constexpr float          kScrollBarThickness = 8.0f;
-        static constexpr mint::Rect     kTitleBarInnerPadding = mint::Rect(12.0f, 6.0f, 6.0f, 6.0f);
-        static constexpr mint::Float2   kTitleBarBaseSize = mint::Float2(0.0f, mint::Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert());
-        static constexpr mint::Float2   kMenuBarBaseSize = mint::Float2(0.0f, mint::Rendering::kDefaultFontSize + 8.0f);
+        static constexpr Rect           kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
+        static constexpr Float2         kTitleBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert());
+        static constexpr Float2         kMenuBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + 8.0f);
         static constexpr float          kMenuBarItemTextSpace = 24.0f;
         static constexpr float          kMenuItemSpaceLeft = 16.0f;
         static constexpr float          kMenuItemSpaceRight = 48.0f;
@@ -64,7 +64,7 @@ namespace mint
         static constexpr float          kDockingInteractionLong = 40.0f;
         static constexpr float          kDockingInteractionDisplayBorderThickness = 2.0f;
         static constexpr float          kDockingInteractionOffset = 5.0f;
-        static constexpr mint::Float2   kCheckBoxSize = mint::Float2(16.0f, 16.0f);
+        static constexpr Float2         kCheckBoxSize = Float2(16.0f, 16.0f);
         static constexpr float          kMouseWheelScrollScale = -8.0f;
         static constexpr float          kTextBoxBackSpaceStride = 48.0f;
         static constexpr uint32         kTextBoxMaxTextLength = 2048;
@@ -72,49 +72,49 @@ namespace mint
 
         struct WindowParam
         {
-            CommonControlParam  _common                 = CommonControlParam(mint::Float2(180, 100));
-            mint::Float2        _position               = mint::Float2(100, 100);
+            CommonControlParam  _common                 = CommonControlParam(Float2(180, 100));
+            Float2              _position               = Float2(100, 100);
             ScrollBarType       _scrollBarType          = ScrollBarType::None;
             DockingMethod       _initialDockingMethod   = DockingMethod::COUNT;
-            mint::Float2        _initialDockingSize     = mint::Float2(160);
+            Float2              _initialDockingSize     = Float2(160);
         };
 
         // If no value is set, default values will be used properly
         struct LabelParam
         {
-            CommonControlParam          _common             = CommonControlParam(mint::Float2::kZero, mint::Rendering::Color::kTransparent, mint::Rendering::Color::kTransparent);
-            mint::Float2                _paddingForAutoSize = mint::Float2(24, 12);
-            TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Center;
-            TextAlignmentVert           _alignmentVert      = TextAlignmentVert::Middle;
+            CommonControlParam  _common                 = CommonControlParam(Float2::kZero, Rendering::Color::kTransparent, Rendering::Color::kTransparent);
+            Float2              _paddingForAutoSize     = Float2(24, 12);
+            TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Center;
+            TextAlignmentVert   _alignmentVert          = TextAlignmentVert::Middle;
         };
 
         struct SliderParam
         {
-            //uint32            _stepCount      = 0; // If stepcount is 0, the value is treated as real number
-            //float             _min            = 0.0f;
-            //float             _max            = 1.0f;
-            //float             _stride         = 0.1f; // Only applies when (_stepCount == 0)
-            //bool              _isVertical     = false; // Horizontal if false
-            CommonControlParam  _common         = CommonControlParam(mint::Float2(128.0f, 0.0f));
+            //uint32            _stepCount              = 0; // If stepcount is 0, the value is treated as real number
+            //float             _min                    = 0.0f;
+            //float             _max                    = 1.0f;
+            //float             _stride                 = 0.1f; // Only applies when (_stepCount == 0)
+            //bool              _isVertical             = false; // Horizontal if false
+            CommonControlParam  _common                 = CommonControlParam(Float2(128.0f, 0.0f));
         };
         
         struct TextBoxParam
         {
-            CommonControlParam          _common             = CommonControlParam(mint::Float2(128.0f, 0.0f));
-            TextAlignmentHorz           _alignmentHorz      = TextAlignmentHorz::Left;
-            float                       _roundnessInPixel   = kDefaultRoundnessInPixel;
-            TextInputMode               _textInputMode      = TextInputMode::General;
+            CommonControlParam  _common                 = CommonControlParam(Float2(128.0f, 0.0f));
+            TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Left;
+            float               _roundnessInPixel       = kDefaultRoundnessInPixel;
+            TextInputMode       _textInputMode          = TextInputMode::General;
         };
 
         struct ListViewParam
         {
-            bool        _useScrollBar   = true;
+            bool                _useScrollBar           = true;
         };
 
         struct ScrollBarTrackParam
         {
-            CommonControlParam  _common             = CommonControlParam(mint::Float2(180.0f, 100.0f));
-            mint::Float2        _positionInParent   = mint::Float2(100, 100);
+            CommonControlParam  _common                 = CommonControlParam(Float2(180.0f, 100.0f));
+            Float2              _positionInParent       = Float2(100, 100);
         };
 
 
@@ -133,7 +133,7 @@ namespace mint
 
         class GuiContext final
         {
-            friend mint::Rendering::GraphicDevice;
+            friend Rendering::GraphicDevice;
 
         private:
             enum class NamedColor
@@ -178,20 +178,20 @@ namespace mint
             struct NextControlStates
             {
             public:
-                                                                NextControlStates();
+                                    NextControlStates();
 
             public:
-                void                                            reset() noexcept;
+                void                reset() noexcept;
 
             public:
-                bool                                            _nextSameLine;
-                mint::Float2                                    _nextDesiredControlSize;
-                bool                                            _nextSizingForced;
-                bool                                            _nextControlSizeNonContrainedToParent;
-                bool                                            _nextNoInterval;
-                bool                                            _nextNoAutoPositioned;
-                mint::Float2                                    _nextControlPosition;
-                const wchar_t*                                  _nextTooltipText;
+                bool                _nextSameLine;
+                Float2              _nextDesiredControlSize;
+                bool                _nextSizingForced;
+                bool                _nextControlSizeNonContrainedToParent;
+                bool                _nextNoInterval;
+                bool                _nextNoAutoPositioned;
+                Float2              _nextControlPosition;
+                const wchar_t*      _nextTooltipText;
             };
 
 
@@ -233,7 +233,7 @@ namespace mint
             public:
                 MINT_INLINE const bool      needToShowTooltip() const noexcept { return (0 != _tooltipParentWindowHashKey); }
                 MINT_INLINE const wchar_t*  getTooltipText() const noexcept { return _tooltipTextFinal; }
-                const mint::Float2          getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
+                const Float2                getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
                 MINT_INLINE const uint64    getTooltipParentWindowHashKey() const noexcept { return _tooltipParentWindowHashKey; }
                 void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowHashKey) noexcept;
 
@@ -242,42 +242,42 @@ namespace mint
                 uint64                      _hoveredControlHashKey = 0;
                 uint64                      _focusedControlHashKey = 0;
                 uint64                      _pressedControlHashKey = 0;
-                mint::Float2                _pressedControlInitialPosition;
+                Float2                      _pressedControlInitialPosition;
                 uint64                      _clickedControlHashKeyPerFrame = 0;
                 uint64                      _hoverStartTimeMs = 0;
                 bool                        _hoverStarted = false;
-                mint::Float2                _tooltipPosition;
+                Float2                      _tooltipPosition;
                 uint64                      _tooltipParentWindowHashKey = 0;
                 const wchar_t*              _tooltipTextFinal = nullptr;
             };
         
         private:
-                                                                GuiContext(mint::Rendering::GraphicDevice* const graphicDevice);
+                                                        GuiContext(Rendering::GraphicDevice* const graphicDevice);
 
         public:
-                                                                ~GuiContext();
+                                                        ~GuiContext();
 
         public:
-            void                                                initialize(const char* const font);
-            void                                                updateScreenSize(const mint::Float2& newScreenSize);
+            void                                        initialize(const char* const font);
+            void                                        updateScreenSize(const Float2& newScreenSize);
 
         public:
-            void                                                processEvent(mint::Window::IWindow* const window) noexcept;
+            void                                        processEvent(Window::IWindow* const window) noexcept;
 
         private:
-            const bool                                          shouldInteract(const mint::Float2& screenPosition, const ControlData& controlData) const noexcept;
+            const bool                                  shouldInteract(const Float2& screenPosition, const ControlData& controlData) const noexcept;
 
 
 #pragma region Next-states
         public:
-            void                                                nextSameLine();
-            void                                                nextControlSize(const mint::Float2& size, const bool force = false);
-            void                                                nextNoInterval();
-            void                                                nextNoAutoPositioned();
-            void                                                nextControlSizeNonContrainedToParent();
+            void                                        nextSameLine();
+            void                                        nextControlSize(const Float2& size, const bool force = false);
+            void                                        nextNoInterval();
+            void                                        nextNoAutoPositioned();
+            void                                        nextControlSizeNonContrainedToParent();
             // Only works if NoAutoPositioned!
-            void                                                nextControlPosition(const mint::Float2& position);
-            void                                                nextTooltip(const wchar_t* const tooltipText);
+            void                                        nextControlPosition(const Float2& position);
+            void                                        nextTooltip(const wchar_t* const tooltipText);
 #pragma endregion
 
 
@@ -298,54 +298,54 @@ namespace mint
             // Splitter
 
         public:
-            void                                                testWindow(VisibleState& inoutVisibleState);
-            void                                                testDockedWindow(VisibleState& inoutVisibleState);
+            void                                        testWindow(VisibleState& inoutVisibleState);
+            void                                        testDockedWindow(VisibleState& inoutVisibleState);
 
         public:
             // [Window | Control with ID]
             // \param title [Used as unique id for windows]
-            const bool                                          beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
-            void                                                endWindow() { endControlInternal(ControlType::Window); }
+            const bool                                  beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
+            void                                        endWindow() { endControlInternal(ControlType::Window); }
 
         private:
-            void                                                dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const mint::Float2& initialDockingSize);
-            void                                                updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
-            void                                                updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
-            const bool                                          needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
+            void                                        dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const Float2& initialDockingSize);
+            void                                        updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
+            void                                        updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
+            const bool                                  needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
 
         public:
             
             // A simple button control
             // \param text [Text to display on the button]
             // \returns true, if clicked
-            const bool                                          beginButton(const wchar_t* const text);
-            
-            
-            void                                                endButton() { endControlInternal(ControlType::Button); }
+            const bool                                  beginButton(const wchar_t* const text);
+    
+    
+            void                                        endButton() { endControlInternal(ControlType::Button); }
 
             // [CheckBox]
             // \return true, if toggle state has changed
-            const bool                                          beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
-            void                                                endCheckBox() { endControlInternal(ControlType::CheckBox); }
+            const bool                                  beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
+            void                                        endCheckBox() { endControlInternal(ControlType::CheckBox); }
 
     #pragma region Controls - Label
         public:
-            void                                                pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
+            void                                        pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
-            mint::Float4                                        labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
-            mint::Rendering::FontRenderingOption            labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            Float4                                      labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            Rendering::FontRenderingOption              labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
         public:
             // \return true, if value has been changed
-            const bool                                          beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
-            void                                                endSlider() { endControlInternal(ControlType::Slider); }
+            const bool                                  beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
+            void                                        endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
-            void                                                sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const mint::Rendering::Color& trackColor) noexcept;
-            void                                                sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const mint::Rendering::Color& thumbColor) noexcept;
+            void                                        sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const Rendering::Color& trackColor) noexcept;
+            void                                        sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const Rendering::Color& thumbColor) noexcept;
     #pragma endregion
 
     #pragma region Controls - TextBox & InputBox(General)
@@ -354,217 +354,217 @@ namespace mint
             // \param textBoxParam [Various options]
             // \param outText [The content of the textbox]
             // \return true, if the content has changed
-            const bool                                          beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
-            void                                                endTextBox() { endControlInternal(ControlType::TextBox); }
+            const bool                                  beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, std::wstring& outText);
+            void                                        endTextBox() { endControlInternal(ControlType::TextBox); }
 
         private:
-            void                                                textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, mint::Float4& textRenderOffset, std::wstring& outText) noexcept;
+            void                                        textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, std::wstring& outText) noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
         public:
-            const bool                                          beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
-            void                                                endValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
+            const bool                                  beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            void                                        endValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
 
         private:
-            void                                                valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, mint::Float4& textRenderOffset, float& value, std::wstring& outText) noexcept;
+            void                                        valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, std::wstring& outText) noexcept;
     #pragma endregion
 
         public:
             // [ListView]
-            const bool                                          beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
-            void                                                endListView();
+            const bool                                  beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
+            void                                        endListView();
 
             // [ListItem]
-            void                                                pushListItem(const wchar_t* const text);
+            void                                        pushListItem(const wchar_t* const text);
 
             // [MenuBar]
-            const bool                                          beginMenuBar(const wchar_t* const name);
-            void                                                endMenuBar() { endControlInternal(ControlType::MenuBar); }
+            const bool                                  beginMenuBar(const wchar_t* const name);
+            void                                        endMenuBar() { endControlInternal(ControlType::MenuBar); }
 
             // [MenuBarItem]
-            const bool                                          beginMenuBarItem(const wchar_t* const text);
-            void                                                endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
+            const bool                                  beginMenuBarItem(const wchar_t* const text);
+            void                                        endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
 
             // [MenuItem]
-            const bool                                          beginMenuItem(const wchar_t* const text);
-            void                                                endMenuItem() { endControlInternal(ControlType::MenuItem); }
+            const bool                                  beginMenuItem(const wchar_t* const text);
+            void                                        endMenuItem() { endControlInternal(ControlType::MenuItem); }
 
 
         private:
             // \return Size of titlebar
-            mint::Float2                                        beginTitleBar(const wchar_t* const windowTitle, const mint::Float2& titleBarSize, const mint::Rect& innerPadding, VisibleState& inoutParentVisibleState);
-            void                                                endTitleBar() { endControlInternal(ControlType::TitleBar); }
+            Float2                                      beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
+            void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
-            const bool                                          pushRoundButton(const wchar_t* const windowTitle, const mint::Rendering::Color& color);
+            const bool                                  pushRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color);
 
             // [Tooltip]
             // Unique control
-            void                                                pushTooltipWindow(const wchar_t* const tooltipText, const mint::Float2& position);
+            void                                        pushTooltipWindow(const wchar_t* const tooltipText, const Float2& position);
 
             // [ScrollBar]
-            void                                                pushScrollBar(const ScrollBarType scrollBarType);
-            void                                                pushScrollBarVert() noexcept;
-            void                                                pushScrollBarHorz() noexcept;
+            void                                        pushScrollBar(const ScrollBarType scrollBarType);
+            void                                        pushScrollBarVert() noexcept;
+            void                                        pushScrollBarHorz() noexcept;
 
-            ControlData&                                        pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                                pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext);
-
-        private:
-            void                                                processDock(const ControlData& controlData, mint::Rendering::ShapeFontRendererContext& shapeFontRendererContext);
-            void                                                endControlInternal(const ControlType controlType);
-            void                                                setClipRectForMe(ControlData& controlData, const mint::Rect& clipRect);
-            void                                                setClipRectForDocks(ControlData& controlData, const mint::Rect& clipRect);
-            void                                                setClipRectForChildren(ControlData& controlData, const mint::Rect& clipRect);
+            ControlData&                                pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                        pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
 
         private:
-            const ControlData&                                  getControlStackTopXXX() const noexcept;
-            ControlData&                                        getControlStackTopXXX() noexcept;
-            ControlData&                                        getControlData(const uint64 hashKey) noexcept;
-            const ControlData&                                  getControlData(const uint64 hashKey) const noexcept;
-            mint::Float2                                        getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
-            const wchar_t*                                      generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept;
-            const wchar_t*                                      generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept;
-            const uint64                                        generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
-            ControlData&                                        createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
-            const ControlData&                                  getParentWindowControlData() const noexcept;
-            const ControlData&                                  getParentWindowControlData(const ControlData& controlData) const noexcept;
-            const ControlData&                                  getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
+            void                                        processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        endControlInternal(const ControlType controlType);
+            void                                        setClipRectForMe(ControlData& controlData, const Rect& clipRect);
+            void                                        setClipRectForDocks(ControlData& controlData, const Rect& clipRect);
+            void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
+
+        private:
+            const ControlData&                          getControlStackTopXXX() const noexcept;
+            ControlData&                                getControlStackTopXXX() noexcept;
+            ControlData&                                getControlData(const uint64 hashKey) noexcept;
+            const ControlData&                          getControlData(const uint64 hashKey) const noexcept;
+            Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
+            const wchar_t*                              generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept;
+            const wchar_t*                              generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept;
+            const uint64                                generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
+            ControlData&                                createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride = nullptr) noexcept;
+            const ControlData&                          getParentWindowControlData() const noexcept;
+            const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
+            const ControlData&                          getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
 
 
         public:
-            const bool                                          isThisControlPressed() const noexcept;
-            const bool                                          isFocusedControlInputBox() const noexcept;
+            const bool                                  isThisControlPressed() const noexcept;
+            const bool                                  isFocusedControlInputBox() const noexcept;
 
         private:
-            void                                                setControlFocused(const ControlData& controlData) noexcept;
-            void                                                setControlHovered(const ControlData& controlData) noexcept;
-            void                                                setControlPressed(const ControlData& controlData) noexcept;
-            void                                                setControlClicked(const ControlData& controlData) noexcept;
+            void                                        setControlFocused(const ControlData& controlData) noexcept;
+            void                                        setControlHovered(const ControlData& controlData) noexcept;
+            void                                        setControlPressed(const ControlData& controlData) noexcept;
+            void                                        setControlClicked(const ControlData& controlData) noexcept;
 
 
 #pragma region Before drawing controls
         private:
-            void                                                prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
-            void                                                calculateControlChildAt(ControlData& controlData) noexcept;
+            void                                        prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
+            void                                        calculateControlChildAt(ControlData& controlData) noexcept;
 
-            const bool                                          processClickControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& hoverColor, const mint::Rendering::Color& pressedColor, mint::Rendering::Color& outBackgroundColor) noexcept;
-            const bool                                          processFocusControl(ControlData& controlData, const mint::Rendering::Color& focusedColor, const mint::Rendering::Color& nonFocusedColor, mint::Rendering::Color& outBackgroundColor) noexcept;
-            void                                                processShowOnlyControl(ControlData& controlData, mint::Rendering::Color& outBackgroundColor, const bool setMouseInteractionDone = true) noexcept;
-            const bool                                          processScrollableControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& dragColor, mint::Rendering::Color& outBackgroundColor) noexcept;
-            const bool                                          processToggleControl(ControlData& controlData, const mint::Rendering::Color& normalColor, const mint::Rendering::Color& hoverColor, const mint::Rendering::Color& toggledColor, mint::Rendering::Color& outBackgroundColor) noexcept;
-            
-            void                                                processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
+            const bool                                  processClickControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& pressedColor, Rendering::Color& outBackgroundColor) noexcept;
+            const bool                                  processFocusControl(ControlData& controlData, const Rendering::Color& focusedColor, const Rendering::Color& nonFocusedColor, Rendering::Color& outBackgroundColor) noexcept;
+            void                                        processShowOnlyControl(ControlData& controlData, Rendering::Color& outBackgroundColor, const bool setMouseInteractionDone = true) noexcept;
+            const bool                                  processScrollableControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& dragColor, Rendering::Color& outBackgroundColor) noexcept;
+            const bool                                  processToggleControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& toggledColor, Rendering::Color& outBackgroundColor) noexcept;
+    
+            void                                        processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
 
-            void                                                processControlCommon(ControlData& controlData) noexcept;
-            void                                                checkControlResizing(ControlData& controlData) noexcept;
-            void                                                checkControlHoveringForTooltip(ControlData& controlData) noexcept;
-            void                                                processControlResizingInternal(ControlData& controlData) noexcept;
-            void                                                processControlDraggingInternal(ControlData& controlData) noexcept;
-            void                                                processControlDockingInternal(ControlData& controlData) noexcept;
+            void                                        processControlCommon(ControlData& controlData) noexcept;
+            void                                        checkControlResizing(ControlData& controlData) noexcept;
+            void                                        checkControlHoveringForTooltip(ControlData& controlData) noexcept;
+            void                                        processControlResizingInternal(ControlData& controlData) noexcept;
+            void                                        processControlDraggingInternal(ControlData& controlData) noexcept;
+            void                                        processControlDockingInternal(ControlData& controlData) noexcept;
 
-            void                                                dock(const uint64 dockedControlHashKey, const uint64 dockControlHashKey) noexcept;
-            void                                                undock(const uint64 dockedControlHashKey) noexcept;
-            void                                                updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray = false) noexcept;
+            void                                        dock(const uint64 dockedControlHashKey, const uint64 dockControlHashKey) noexcept;
+            void                                        undock(const uint64 dockedControlHashKey) noexcept;
+            void                                        updateDockDatum(const uint64 dockControlHashKey, const bool dontUpdateWidthArray = false) noexcept;
 
-            const bool                                          isInteractingInternal(const ControlData& controlData) const noexcept;
+            const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
             
             // These functions must be called after process- functions
-            const bool                                          isControlBeingDragged(const ControlData& controlData) const noexcept;
-            const bool                                          isControlBeingResized(const ControlData& controlData) const noexcept;
+            const bool                                  isControlBeingDragged(const ControlData& controlData) const noexcept;
+            const bool                                  isControlBeingResized(const ControlData& controlData) const noexcept;
 
             // RendererContext 고를 때 사용
-            const bool                                          isAncestorControlFocused(const ControlData& controlData) const noexcept;
-            const bool                                          isAncestorControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                          isAncestorControlTargetRecursiveXXX(const uint64 hashKey, const uint64 targetHashKey) const noexcept;
-            const bool                                          isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
+            const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
+            const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
+            const bool                                  isAncestorControlTargetRecursiveXXX(const uint64 hashKey, const uint64 targetHashKey) const noexcept;
+            const bool                                  isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-            const bool                                          isAncestorControlInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
-            const bool                                          isAncestorControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
-            const bool                                          isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
-            const bool                                          isDescendantControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
+            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const uint64 ancestorCandidateHashKey) const noexcept;
+            const bool                                  isAncestorControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 ancestorCandidateHashKey) const noexcept;
+            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateHashKey) const noexcept;
+            const bool                                  isDescendantControlRecursiveXXX(const uint64 currentControlHashKey, const uint64 descendantCandidateHashKey) const noexcept;
 
-            const bool                                          isParentControlRoot(const ControlData& controlData) const noexcept;
+            const bool                                  isParentControlRoot(const ControlData& controlData) const noexcept;
 
             // Focus, Out-of-focus 색 정할 때 사용
-            const bool                                          needToColorFocused(const ControlData& controlData) const noexcept;
-            const bool                                          isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
-            const bool                                          isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept;
-            const bool                                          isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept;
-            const bool                                          isDescendantControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                          isDescendantControlHovered(const ControlData& controlData) const noexcept;
-            const ControlData&                                  getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
-            const bool                                          hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
+            const bool                                  needToColorFocused(const ControlData& controlData) const noexcept;
+            const bool                                  isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
+            const bool                                  isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept;
+            const bool                                  isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept;
+            const bool                                  isDescendantControlPressed(const ControlData& controlData) const noexcept;
+            const bool                                  isDescendantControlHovered(const ControlData& controlData) const noexcept;
+            const ControlData&                          getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
+            const bool                                  hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
 
-            const mint::Rendering::Color&                   getNamedColor(const NamedColor namedColor) const noexcept;
-            void                                                setNamedColor(const NamedColor namedColor, const mint::Rendering::Color& color) noexcept;
+            const Rendering::Color&                     getNamedColor(const NamedColor namedColor) const noexcept;
+            void                                        setNamedColor(const NamedColor namedColor, const Rendering::Color& color) noexcept;
 
-            const float                                         getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
-            const float                                         calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            const uint32                                        calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
+            const float                                 getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
+            const float                                 calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+            const uint32                                calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 #pragma endregion
 
         private:
-            mint::Rendering::ShapeFontRendererContext&      getRendererContext(const ControlData& controlData) noexcept;
-            mint::Rendering::ShapeFontRendererContext&      getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
+            Rendering::ShapeFontRendererContext&        getRendererContext(const ControlData& controlData) noexcept;
+            Rendering::ShapeFontRendererContext&        getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
             // TopMost 는 제외!!
-            const RendererContextLayer                          getUpperRendererContextLayer(const ControlData& controlData) noexcept;
-            void                                                render();
-            void                                                resetPerFrameStates();
+            const RendererContextLayer                  getUpperRendererContextLayer(const ControlData& controlData) noexcept;
+            void                                        render();
+            void                                        resetPerFrameStates();
 
         private:
-            mint::Rendering::GraphicDevice* const           _graphicDevice;
+            Rendering::GraphicDevice* const             _graphicDevice;
 
         private: // these are set externally
-            float                                               _fontSize;
-            uint32                                              _caretBlinkIntervalMs;
-            mint::Rendering::ShapeFontRendererContext       _rendererContexts[getRendererContextLayerCount()];
+            float                                       _fontSize;
+            uint32                                      _caretBlinkIntervalMs;
+            Rendering::ShapeFontRendererContext         _rendererContexts[getRendererContextLayerCount()];
 
         private: // screen size
-            int8                                                _updateScreenSizeCounter;
-            mint::Rect                                          _clipRectFullScreen;
+            int8                                        _updateScreenSizeCounter;
+            Rect                                        _clipRectFullScreen;
 
         private:
-            ControlData                                         _rootControlData;
-            mint::Vector<ControlStackData>                      _controlStackPerFrame;
+            ControlData                                 _rootControlData;
+            Vector<ControlStackData>                    _controlStackPerFrame;
 
         private:
-            mutable ControlInteractionStates                    _controlInteractionStates;
+            mutable ControlInteractionStates            _controlInteractionStates;
 
 #pragma region Mouse Capture States
         private:
-            mutable bool                                        _isDragBegun;
-            mutable uint64                                      _draggedControlHashKey;
-            mutable mint::Float2                                _draggedControlInitialPosition;
+            mutable bool                                _isDragBegun;
+            mutable uint64                              _draggedControlHashKey;
+            mutable Float2                              _draggedControlInitialPosition;
         
         private:
-            mutable bool                                        _isResizeBegun;
-            mutable uint64                                      _resizedControlHashKey;
-            mutable mint::Float2                                _resizedControlInitialPosition;
-            mutable mint::Float2                                _resizedControlInitialDisplaySize;
-            mutable ResizingMethod                              _resizingMethod;
+            mutable bool                                _isResizeBegun;
+            mutable uint64                              _resizedControlHashKey;
+            mutable Float2                              _resizedControlInitialPosition;
+            mutable Float2                              _resizedControlInitialDisplaySize;
+            mutable ResizingMethod                      _resizingMethod;
 #pragma endregion
         
         private:
-            mint::HashMap<uint64, ControlData>                  _controlIdMap;
+            HashMap<uint64, ControlData>                _controlIdMap;
 
         private:
-            NextControlStates                                   _nextControlStates;
-            MouseStates                                         _mouseStates;
+            NextControlStates                           _nextControlStates;
+            MouseStates                                 _mouseStates;
 
 #pragma region Key Character Input
         private:
-            wchar_t                                             _wcharInput;
-            wchar_t                                             _wcharInputCandidate;
-            mint::Platform::KeyCode                             _keyCode;
+            wchar_t                                     _wcharInput;
+            wchar_t                                     _wcharInputCandidate;
+            Platform::KeyCode                           _keyCode;
 #pragma endregion
 
         private:
-            TaskWhenMouseUp                                     _taskWhenMouseUp;
+            TaskWhenMouseUp                             _taskWhenMouseUp;
 
         private:
-            mint::Rendering::Color                          _namedColors[static_cast<uint32>(NamedColor::COUNT)];
+            Rendering::Color                            _namedColors[static_cast<uint32>(NamedColor::COUNT)];
         };
     }
 }
