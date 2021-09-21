@@ -182,6 +182,12 @@ namespace mint
     }
 
     template<typename T>
+    inline String<T>& String<T>::append(const String& rhs) noexcept
+    {
+        return append(rhs.c_str());
+    }
+
+    template<typename T>
     inline String<T>& String<T>::appendInternalSmallXXX(const T* const rawString) noexcept
     {
         const uint32 length = __getStringLength(rawString);

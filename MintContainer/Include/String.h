@@ -51,6 +51,7 @@ namespace mint
     public:
         String&                     append(const T* const rawString) noexcept;
         String&                     append(const T ch) noexcept;
+        String&                     append(const String& rhs) noexcept;
 
     private:
         String&                     appendInternalSmallXXX(const T* const rawString) noexcept;
