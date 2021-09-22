@@ -298,12 +298,15 @@ namespace mint
             // ComboBox
             // Splitter
 
+    #pragma region Controls - Presets
         public:
             void                                        makeTestWindow(VisibleState& inoutVisibleState);
             void                                        makeTestDockedWindow(VisibleState& inoutVisibleState);
             void                                        makeDebugControlDataViewer(VisibleState& inoutVisibleState);
             void                                        makeFromReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass);
+    #pragma endregion
 
+    #pragma region Controls - Window
         public:
             // [Window | Control with ID]
             // \param title [Used as unique id for windows]
@@ -315,21 +318,24 @@ namespace mint
             void                                        updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
             void                                        updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
             const bool                                  needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
+    #pragma endregion
 
+    #pragma region Controls - Button
         public:
-            
             // A simple button control
             // \param text [Text to display on the button]
             // \returns true, if clicked
             const bool                                  beginButton(const wchar_t* const text);
-    
-    
             void                                        endButton() { endControlInternal(ControlType::Button); }
+    #pragma endregion
 
+    #pragma region Controls - CheckBox
+        public:
             // [CheckBox]
             // \return true, if toggle state has changed
             const bool                                  beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                        endCheckBox() { endControlInternal(ControlType::CheckBox); }
+    #pragma endregion
 
     #pragma region Controls - Label
         public:
@@ -352,7 +358,7 @@ namespace mint
             void                                        sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const Rendering::Color& thumbColor) noexcept;
     #pragma endregion
 
-    #pragma region Controls - TextBox & InputBox(General)
+    #pragma region Controls - TextBox
         public:
             // \param name [Unique name to distinguish control]
             // \param textBoxParam [Various options]
@@ -377,27 +383,27 @@ namespace mint
             void                                        valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept;
     #pragma endregion
 
+    #pragma region Controls - List (ListView, ListItem)
         public:
-            // [ListView]
             const bool                                  beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
             void                                        endListView();
 
-            // [ListItem]
             void                                        makeListItem(const wchar_t* const text);
+    #pragma endregion
 
-            // [MenuBar]
+    #pragma region Controls - Menu (MenuBar, MenuBarItem, MenuItem)
+        public:
             const bool                                  beginMenuBar(const wchar_t* const name);
             void                                        endMenuBar() { endControlInternal(ControlType::MenuBar); }
 
-            // [MenuBarItem]
             const bool                                  beginMenuBarItem(const wchar_t* const text);
             void                                        endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
 
-            // [MenuItem]
             const bool                                  beginMenuItem(const wchar_t* const text);
             void                                        endMenuItem() { endControlInternal(ControlType::MenuItem); }
+    #pragma endregion
 
-
+    #pragma region Controls - Internal use
         private:
             // \return Size of titlebar
             Float2                                      beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
@@ -416,6 +422,7 @@ namespace mint
 
             ControlData&                                makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
             void                                        makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+    #pragma endregion
 
         private:
             void                                        processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
@@ -538,14 +545,24 @@ namespace mint
             Rect                                        _clipRectFullScreen;
 
         private:
+            Rendering::Color                            _namedColors[static_cast<uint32>(NamedColor::COUNT)];
+
+        private:
             ControlData                                 _rootControlData;
             Vector<ControlStackData>                    _controlStackPerFrame;
             uint64                                      _viewerTargetControlDataHashKey;
 
         private:
-            mutable ControlInteractionStates            _controlInteractionStates;
+            HashMap<uint64, ControlData>                _controlIdMap;
 
-#pragma region Mouse Capture States
+        private:
+            mutable ControlInteractionStates            _controlInteractionStates;
+            NextControlStates                           _nextControlStates;
+
+#pragma region Mouse
+        private:
+            MouseStates                                 _mouseStates;
+        
         private:
             mutable bool                                _isDragBegun;
             mutable uint64                              _draggedControlHashKey;
@@ -557,27 +574,17 @@ namespace mint
             mutable Float2                              _resizedControlInitialPosition;
             mutable Float2                              _resizedControlInitialDisplaySize;
             mutable ResizingMethod                      _resizingMethod;
+
+        private:
+            TaskWhenMouseUp                             _taskWhenMouseUp;
 #pragma endregion
         
-        private:
-            HashMap<uint64, ControlData>                _controlIdMap;
-
-        private:
-            NextControlStates                           _nextControlStates;
-            MouseStates                                 _mouseStates;
-
-#pragma region Key Character Input
+#pragma region Keyboard
         private:
             wchar_t                                     _wcharInput;
             wchar_t                                     _wcharInputCandidate;
             Platform::KeyCode                           _keyCode;
 #pragma endregion
-
-        private:
-            TaskWhenMouseUp                             _taskWhenMouseUp;
-
-        private:
-            Rendering::Color                            _namedColors[static_cast<uint32>(NamedColor::COUNT)];
         };
     }
 }
