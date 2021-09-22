@@ -1814,17 +1814,17 @@ namespace mint
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
             {
-                makeScrollBarVert();
+                _makeScrollBarVert();
             }
 
             const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
             if (useHorizontal == true)
             {
-                makeScrollBarHorz();
+                _makeScrollBarHorz();
             }
         }
 
-        void GuiContext::makeScrollBarVert() noexcept
+        void GuiContext::_makeScrollBarVert() noexcept
         {
             ControlData& parent = getControlStackTopXXX();
             const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
@@ -1839,12 +1839,12 @@ namespace mint
             bool hasExtraSize = false;
             const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = makeScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& scrollBarTrack = __makeScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
                 parent._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                makeScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1854,7 +1854,7 @@ namespace mint
             }
         }
 
-        void GuiContext::makeScrollBarHorz() noexcept
+        void GuiContext::_makeScrollBarHorz() noexcept
         {
             ControlData& parent = getControlStackTopXXX();
             const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
@@ -1869,12 +1869,12 @@ namespace mint
             bool hasExtraSize = false;
             const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = makeScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& scrollBarTrack = __makeScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
                 parent._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                makeScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1884,7 +1884,7 @@ namespace mint
             }
         }
 
-        ControlData& GuiContext::makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GuiContext::__makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -2004,7 +2004,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GuiContext::__makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             

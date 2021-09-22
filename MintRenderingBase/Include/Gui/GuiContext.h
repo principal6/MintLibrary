@@ -406,6 +406,7 @@ namespace mint
             Float2                                      beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
+            // [RoundButton]
             const bool                                  makeRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color);
 
             // [Tooltip]
@@ -414,11 +415,10 @@ namespace mint
 
             // [ScrollBar]
             void                                        makeScrollBar(const ScrollBarType scrollBarType);
-            void                                        makeScrollBarVert() noexcept;
-            void                                        makeScrollBarHorz() noexcept;
-
-            ControlData&                                makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                        makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        _makeScrollBarVert() noexcept;
+            void                                        _makeScrollBarHorz() noexcept;
+            ControlData&                                __makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                        __makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
     #pragma endregion
 
         private:
