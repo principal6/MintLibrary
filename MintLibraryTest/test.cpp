@@ -401,8 +401,8 @@ const bool testWindow()
             {
                 static Gui::VisibleState testWindowVisibleState = Gui::VisibleState::Invisible;
                 static Gui::VisibleState debugControlDataViewerVisibleState = Gui::VisibleState::Invisible;
-                guiContext.testWindow(testWindowVisibleState);
-                guiContext.debugControlDataViewer(debugControlDataViewerVisibleState);
+                guiContext.makeTestWindow(testWindowVisibleState);
+                guiContext.makeDebugControlDataViewer(debugControlDataViewerVisibleState);
                 if (guiContext.beginMenuBar(L"MainMenuBar") == true)
                 {
                     if (guiContext.beginMenuBarItem(L"파일") == true)
@@ -460,13 +460,13 @@ const bool testWindow()
                     labelParam._alignmentHorz = Gui::TextAlignmentHorz::Left;
                     
                     formatString(tempBuffer, L" FPS: %d", Profiler::FpsCounter::getFps());
-                    guiContext.pushLabel(L"FPS_Label", tempBuffer, labelParam);
+                    guiContext.makeLabel(L"FPS_Label", tempBuffer, labelParam);
 
                     formatString(tempBuffer, L" CPU: %d ms", Profiler::FpsCounter::getFrameTimeMs());
-                    guiContext.pushLabel(L"CPU_Label", tempBuffer, labelParam);
+                    guiContext.makeLabel(L"CPU_Label", tempBuffer, labelParam);
                     
                     Float3& cameraPosition = testCameraObject->getObjectTransformSrt()._translation;
-                    guiContext.pushLabel(L"Camera Position", L" Camera Position:", labelParam);
+                    guiContext.makeLabel(L"Camera Position", L" Camera Position:", labelParam);
                     
                     {
                         labelParam._common._backgroundColor.r(1.0f);

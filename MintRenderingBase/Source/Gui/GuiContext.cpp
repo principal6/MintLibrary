@@ -425,7 +425,7 @@ namespace mint
             return true;
         }
 
-        void GuiContext::testWindow(VisibleState& inoutVisibleState)
+        void GuiContext::makeTestWindow(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
             windowParam._common._size = Float2(500.0f, 500.0f);
@@ -557,12 +557,12 @@ namespace mint
                 int16 listViewSelectedItemIndex = 0;
                 if (beginListView(L"리스트뷰", listViewSelectedItemIndex, listViewParam) == true)
                 {
-                    pushListItem(L"아이템1");
-                    pushListItem(L"아이템2");
-                    pushListItem(L"아이템3");
-                    pushListItem(L"아이템4");
-                    pushListItem(L"아이템5");
-                    pushListItem(L"아이템6");
+                    makeListItem(L"아이템1");
+                    makeListItem(L"아이템2");
+                    makeListItem(L"아이템3");
+                    makeListItem(L"아이템4");
+                    makeListItem(L"아이템5");
+                    makeListItem(L"아이템6");
 
                     endListView();
                 }
@@ -604,7 +604,7 @@ namespace mint
             }
         }
 
-        void GuiContext::testDockedWindow(VisibleState& inoutVisibleState)
+        void GuiContext::makeTestDockedWindow(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
             windowParam._common._size = Float2(300.0f, 400.0f);
@@ -633,7 +633,7 @@ namespace mint
                     endButton();
                 }
 
-                pushLabel(L"TestLable00000", L"A label!");
+                makeLabel(L"TestLable00000", L"A label!");
 
                 nextSameLine();
 
@@ -646,7 +646,7 @@ namespace mint
             }
         }
 
-        void GuiContext::debugControlDataViewer(VisibleState& inoutVisibleState)
+        void GuiContext::makeDebugControlDataViewer(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
             windowParam._common._size = Float2(300.0f, 400.0f);
@@ -659,28 +659,28 @@ namespace mint
                     const ControlData& controlData = getControlData(_viewerTargetControlDataHashKey);
                     
                     formatString(buffer, L"HashKey: %llu", controlData.getHashKey());
-                    pushLabel(buffer.c_str());
+                    makeLabel(buffer.c_str());
                     
                     formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
-                    pushLabel(buffer.c_str());
+                    makeLabel(buffer.c_str());
                     
                     formatString(buffer, L"Text: %s", controlData.getText());
-                    pushLabel(buffer.c_str());
+                    makeLabel(buffer.c_str());
 
                     formatString(buffer, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
-                    pushLabel(buffer.c_str());
+                    makeLabel(buffer.c_str());
 
                     formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
-                    pushLabel(buffer.c_str());
+                    makeLabel(buffer.c_str());
 
-                    pushReflectionClass(controlData.getReflectionData(), &controlData);
+                    makeFromReflectionClass(controlData.getReflectionData(), &controlData);
                 }
                 
                 endWindow();
             }
         }
 
-        void GuiContext::pushReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass)
+        void GuiContext::makeFromReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass)
         {
             ScopeStringA<300> bufferA;
             ScopeStringW<300> bufferW;
@@ -696,7 +696,7 @@ namespace mint
                     formatString(bufferA, "%s: (%f, %f)", memberTypeData->_declarationName.c_str(), memberCasted._x, memberCasted._y);
                     
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
-                    pushLabel(bufferW.c_str());
+                    makeLabel(bufferW.c_str());
                 }
                 else if (memberTypeData->_typeName == "uint64")
                 {
@@ -704,7 +704,7 @@ namespace mint
                     formatString(bufferA, "%s: %llu", memberTypeData->_declarationName.c_str(), memberCasted);
                     
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
-                    pushLabel(bufferW.c_str());
+                    makeLabel(bufferW.c_str());
                 }
                 else if (memberTypeData->_typeName == "StringW")
                 {
@@ -713,7 +713,7 @@ namespace mint
                     bufferA = memberTypeData->_declarationName.c_str();
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferWTemp);
                     formatString(bufferW, L"%s: %s", bufferWTemp.c_str(), memberCasted.c_str());
-                    pushLabel(bufferW.c_str());
+                    makeLabel(bufferW.c_str());
                 }
                 else
                 {
@@ -843,7 +843,7 @@ namespace mint
 
                 if (windowParam._scrollBarType != ScrollBarType::None)
                 {
-                    pushScrollBar(windowParam._scrollBarType);
+                    makeScrollBar(windowParam._scrollBarType);
                 }
             }
             
@@ -997,15 +997,15 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::pushLabel(const wchar_t* const text, const LabelParam& labelParam)
+        void GuiContext::makeLabel(const wchar_t* const text, const LabelParam& labelParam)
         {
             ScopeStringW<300> name;
             name.assign(L"__label__");
             name += text;
-            pushLabel(name.c_str(), text, labelParam);
+            makeLabel(name.c_str(), text, labelParam);
         }
 
-        void GuiContext::pushLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam)
+        void GuiContext::makeLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam)
         {
             static constexpr ControlType controlType = ControlType::Label;
 
@@ -1388,7 +1388,7 @@ namespace mint
             LabelParam labelParamModified = labelParam;
             labelParamModified._common._size._y = commonControlParam._size._y;
             labelParamModified._alignmentHorz = Gui::TextAlignmentHorz::Center;
-            pushLabel(labelName.c_str(), labelText, labelParamModified);
+            makeLabel(labelName.c_str(), labelText, labelParamModified);
             
             nextSameLine();
             nextNoInterval();
@@ -1528,13 +1528,13 @@ namespace mint
             const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
-                pushScrollBar(Gui::ScrollBarType::Vert);
+                makeScrollBar(Gui::ScrollBarType::Vert);
             }
 
             endControlInternal(ControlType::ListView);
         }
 
-        void GuiContext::pushListItem(const wchar_t* const text)
+        void GuiContext::makeListItem(const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
@@ -1809,22 +1809,22 @@ namespace mint
             return result;
         }
 
-        void GuiContext::pushScrollBar(const ScrollBarType scrollBarType)
+        void GuiContext::makeScrollBar(const ScrollBarType scrollBarType)
         {
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
             {
-                pushScrollBarVert();
+                makeScrollBarVert();
             }
 
             const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
             if (useHorizontal == true)
             {
-                pushScrollBarHorz();
+                makeScrollBarHorz();
             }
         }
 
-        void GuiContext::pushScrollBarVert() noexcept
+        void GuiContext::makeScrollBarVert() noexcept
         {
             ControlData& parent = getControlStackTopXXX();
             const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
@@ -1839,12 +1839,12 @@ namespace mint
             bool hasExtraSize = false;
             const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& scrollBarTrack = makeScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
                 parent._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                pushScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
+                makeScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1854,7 +1854,7 @@ namespace mint
             }
         }
 
-        void GuiContext::pushScrollBarHorz() noexcept
+        void GuiContext::makeScrollBarHorz() noexcept
         {
             ControlData& parent = getControlStackTopXXX();
             const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
@@ -1869,12 +1869,12 @@ namespace mint
             bool hasExtraSize = false;
             const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = pushScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& scrollBarTrack = makeScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
                 parent._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                pushScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
+                makeScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1884,7 +1884,7 @@ namespace mint
             }
         }
 
-        ControlData& GuiContext::pushScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GuiContext::makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -2004,7 +2004,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::pushScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GuiContext::makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
@@ -2328,7 +2328,7 @@ namespace mint
                 nextAutoPositionOff();
                 nextControlPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
-                if (pushRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
+                if (makeRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
                     inoutParentVisibleState = Gui::VisibleState::Invisible;
                 }
@@ -2340,7 +2340,7 @@ namespace mint
             return titleBarSize;
         }
 
-        const bool GuiContext::pushRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color)
+        const bool GuiContext::makeRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color)
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
@@ -2370,7 +2370,7 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::pushTooltipWindow(const wchar_t* const tooltipText, const Float2& position)
+        void GuiContext::makeTooltipWindow(const wchar_t* const tooltipText, const Float2& position)
         {
             static constexpr ControlType controlType = ControlType::TooltipWindow;
             static constexpr float kTooltipFontScale = kFontScaleC;
@@ -3725,7 +3725,7 @@ namespace mint
 
             if (_controlInteractionStates.needToShowTooltip() == true)
             {
-                pushTooltipWindow(_controlInteractionStates.getTooltipText()
+                makeTooltipWindow(_controlInteractionStates.getTooltipText()
                     , _controlInteractionStates.getTooltipWindowPosition(getControlData(_controlInteractionStates.getTooltipParentWindowHashKey())));
             }
 
