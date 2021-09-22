@@ -190,7 +190,7 @@ namespace mint
                 bool                _nextSizingForced;
                 bool                _nextControlSizeNonContrainedToParent;
                 bool                _nextNoInterval;
-                bool                _nextNoAutoPositioned;
+                bool                _nextAutoPositionOff;
                 Float2              _nextControlPosition;
                 const wchar_t*      _nextTooltipText;
             };
@@ -274,7 +274,7 @@ namespace mint
             void                                        nextSameLine();
             void                                        nextControlSize(const Float2& size, const bool force = false);
             void                                        nextNoInterval();
-            void                                        nextNoAutoPositioned();
+            void                                        nextAutoPositionOff();
             void                                        nextControlSizeNonContrainedToParent();
             // Only works if NoAutoPositioned!
             void                                        nextControlPosition(const Float2& position);

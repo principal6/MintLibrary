@@ -47,7 +47,7 @@ namespace mint
             _nextSizingForced = false;
             _nextControlSizeNonContrainedToParent = false;
             _nextNoInterval = false;
-            _nextNoAutoPositioned = false;
+            _nextAutoPositionOff = false;
             _nextControlPosition.setZero();
             _nextTooltipText = nullptr;
         }
@@ -69,9 +69,9 @@ namespace mint
             _nextControlStates._nextNoInterval = true;
         }
 
-        MINT_INLINE void GuiContext::nextNoAutoPositioned()
+        MINT_INLINE void GuiContext::nextAutoPositionOff()
         {
-            _nextControlStates._nextNoAutoPositioned = true;
+            _nextControlStates._nextAutoPositionOff = true;
         }
 
         MINT_INLINE void GuiContext::nextControlSizeNonContrainedToParent()

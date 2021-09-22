@@ -726,7 +726,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Window;
             
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
 
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
@@ -840,7 +840,7 @@ namespace mint
             {
                 windowControlData._controlValue._windowData._titleBarSize._x = windowControlData._displaySize._x;
                 {
-                    nextNoAutoPositioned(); // 중요
+                    nextAutoPositionOff(); // 중요
 
                     beginTitleBar(title, windowControlData._controlValue._windowData._titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
@@ -1123,7 +1123,7 @@ namespace mint
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-                nextNoAutoPositioned();
+                nextAutoPositionOff();
 
                 const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
@@ -1584,7 +1584,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
 
             ControlData& menuBar = createOrGetControlData(name, controlType);
             ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
@@ -1649,7 +1649,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
 
             ControlData& menuBar = getControlStackTopXXX();
             ControlData& menuBarItem = createOrGetControlData(text, controlType, generateControlKeyString(menuBar, text, controlType));
@@ -1726,7 +1726,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
             nextControlSizeNonContrainedToParent();
 
             ControlData& menuItem = createOrGetControlData(text, controlType);
@@ -1895,7 +1895,7 @@ namespace mint
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
             outHasExtraSize = false;
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
 
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
             ControlData& parentControlData = getControlStackTopXXX();
@@ -2013,7 +2013,7 @@ namespace mint
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
 
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
@@ -2223,7 +2223,7 @@ namespace mint
         const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
         {
             const ControlData& parentControlData = getControlStackTopXXX();
-            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextNoAutoPositioned == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextAutoPositionOff == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
             return maxDisplaySizeX;
         }
 
@@ -2330,7 +2330,7 @@ namespace mint
             if (parentControlData.isDocking() == false)
             {
                 // 중요
-                nextNoAutoPositioned();
+                nextAutoPositionOff();
                 nextControlPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
                 if (pushRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
@@ -2393,7 +2393,7 @@ namespace mint
                 prepareControlDataParam._parentHashKeyOverride = _controlInteractionStates.getTooltipParentWindowHashKey();
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
-            nextNoAutoPositioned();
+            nextAutoPositionOff();
             prepareControlData(controlData, prepareControlDataParam);
             
             Rendering::Color dummyColor;
@@ -2591,7 +2591,7 @@ namespace mint
             }
 
             // Position, Parent offset, Parent child at, Parent content area size
-            const bool isAutoPositioned = (_nextControlStates._nextNoAutoPositioned == false);
+            const bool isAutoPositioned = (_nextControlStates._nextAutoPositionOff == false);
             if (isAutoPositioned == true)
             {
                 Float2& parentControlChildAt = const_cast<Float2&>(parentControlData.getChildAt());
@@ -2616,7 +2616,7 @@ namespace mint
                     parentControlNextChildOffset = controlData._displaySize;
                 }
 
-                const bool addIntervalY = (_nextControlStates._nextNoAutoPositioned == false && prepareControlDataParam._noIntervalForNextSibling == false);
+                const bool addIntervalY = (_nextControlStates._nextAutoPositionOff == false && prepareControlDataParam._noIntervalForNextSibling == false);
                 if (addIntervalY == true)
                 {
                     const float intervalY = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalY;
@@ -2672,7 +2672,7 @@ namespace mint
             const MenuBarType currentMenuBarType = controlData._controlValue._commonData._menuBarType;
             Float2& controlChildAt = const_cast<Float2&>(controlData.getChildAt());
             controlChildAt = controlData._position + controlData._childDisplayOffset +
-                ((_nextControlStates._nextNoAutoPositioned == false)
+                ((_nextControlStates._nextAutoPositionOff == false)
                     ? Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
                     : Float2::kZero) +
                 Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
