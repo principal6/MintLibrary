@@ -2411,18 +2411,9 @@ namespace mint
             return hashKeyWstring.c_str();
         }
 
-        const uint64 GuiContext::generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept
-        {
-            static StringW hashKeyWstring;
-            hashKeyWstring.clear();
-            hashKeyWstring.append(text);
-            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
-            return computeHash(hashKeyWstring.c_str());
-        }
-
         ControlData& GuiContext::createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const hashGenerationKeyOverride) noexcept
         {
-            const uint64 hashKey = generateControlHashKeyXXX((hashGenerationKeyOverride == nullptr) ? text : hashGenerationKeyOverride, controlType);
+            const uint64 hashKey = _generateControlHashKeyXXX((hashGenerationKeyOverride == nullptr) ? text : hashGenerationKeyOverride, controlType);
             auto found = _controlIdMap.find(hashKey);
             if (found.isValid() == false)
             {
@@ -2439,6 +2430,15 @@ namespace mint
                 ++controlData._updateCount;
             }
             return controlData;
+        }
+
+        const uint64 GuiContext::_generateControlHashKeyXXX(const wchar_t* const text, const ControlType controlType) const noexcept
+        {
+            static StringW hashKeyWstring;
+            hashKeyWstring.clear();
+            hashKeyWstring.append(text);
+            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
+            return computeHash(hashKeyWstring.c_str());
         }
 
         const ControlData& GuiContext::getParentWindowControlData() const noexcept
