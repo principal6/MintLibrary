@@ -732,14 +732,9 @@ namespace mint
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
-            if (windowControlData.visibleStateEquals(inoutVisibleState) == false)
+            if (windowControlData.updateVisibleState(inoutVisibleState) == true && windowControlData.isControlVisible() == true)
             {
-                windowControlData.setVisibleState(inoutVisibleState);
-
-                if (windowControlData.isControlVisible() == true)
-                {
-                    setControlFocused(windowControlData);
-                }
+                setControlFocused(windowControlData);
             }
             dockWindowOnceInitially(windowControlData, windowParam._initialDockingMethod, windowParam._initialDockingSize);
 

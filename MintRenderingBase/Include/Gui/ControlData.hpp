@@ -439,9 +439,14 @@ namespace mint
             return _controlType == ControlType::ROOT;
         }
 
-        MINT_INLINE const bool ControlData::visibleStateEquals(const VisibleState visibleState) const noexcept
+        MINT_INLINE const bool ControlData::updateVisibleState(const VisibleState visibleState) noexcept
         {
-            return visibleState == _visibleState;
+            if (visibleState != _visibleState)
+            {
+                _visibleState = visibleState;
+                return true;
+            }
+            return false;
         }
 
         MINT_INLINE const bool ControlData::isControlVisible() const noexcept
@@ -684,11 +689,6 @@ namespace mint
         MINT_INLINE const mint::HashMap<uint64, bool>& ControlData::getChildWindowHashKeyMap() const noexcept
         {
             return _childWindowHashKeyMap;
-        }
-
-        MINT_INLINE void ControlData::setVisibleState(const VisibleState visibleState) noexcept
-        {
-            _visibleState = visibleState;
         }
 
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept

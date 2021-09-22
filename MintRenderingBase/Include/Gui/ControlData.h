@@ -256,7 +256,7 @@ namespace mint
             const bool                          isInputBoxType() const noexcept;
             const wchar_t*                      getText() const noexcept;
             const bool                          isRootControl() const noexcept;
-            const bool                          visibleStateEquals(const VisibleState visibleState) const noexcept;
+            const bool                          updateVisibleState(const VisibleState visibleState) noexcept;
             const bool                          isControlVisible() const noexcept;
             const Rect&                         getClipRect() const noexcept;
             const Rect&                         getClipRectForChildren() const noexcept;
@@ -293,7 +293,6 @@ namespace mint
             const HashMap<uint64, bool>&        getChildWindowHashKeyMap() const noexcept;
 
         public:
-            void                                setVisibleState(const VisibleState visibleState) noexcept;
             void                                swapDockingStateContext() noexcept;
     
         public:
