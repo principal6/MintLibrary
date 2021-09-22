@@ -365,7 +365,7 @@ namespace mint
             void                                        textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, StringW& outText) noexcept;
     #pragma endregion
 
-    #pragma region Controls - Slider
+    #pragma region Controls - Value Slider
         public:
             const bool                                  beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endValueSlider() { endControlInternal(ControlType::ValueSlider); }
