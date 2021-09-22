@@ -426,7 +426,7 @@ namespace mint
 
         MINT_INLINE const bool ControlData::isInputBoxType() const noexcept
         {
-            return (ControlType::TextBox == _controlType) || (ControlType::ValueSliderFloat == _controlType);
+            return (ControlType::TextBox == _controlType) || (ControlType::ValueSlider == _controlType);
         }
 
         MINT_INLINE const wchar_t* ControlData::getText() const noexcept

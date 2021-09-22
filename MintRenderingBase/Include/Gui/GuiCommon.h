@@ -30,7 +30,7 @@ namespace mint
             SliderThumb, // PRIVATE
             CheckBox,
             TextBox,
-            ValueSliderFloat,
+            ValueSlider,
             ListView,
             ListItem,
             MenuBar,

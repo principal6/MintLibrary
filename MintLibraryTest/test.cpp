@@ -478,27 +478,27 @@ const bool testWindow()
                         const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
                         commonControlParam._size._x = (maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f;
                         commonControlParam._size._y = 24.0f;
-                        if (guiContext.beginLabeledValueSliderFloat(L"PositionX", L"X", labelParam, commonControlParam, 0.0f, 3, cameraPosition._x) == true)
+                        if (guiContext.beginLabeledValueSlider(L"PositionX", L"X", labelParam, commonControlParam, 0.0f, 3, cameraPosition._x) == true)
                         {
-                            guiContext.endLabeledValueSliderFloat();
+                            guiContext.endLabeledValueSlider();
                         }
 
                         guiContext.nextSameLine();
 
                         labelParam._common._backgroundColor.r(0.0f);
                         labelParam._common._backgroundColor.g(0.875f);
-                        if (guiContext.beginLabeledValueSliderFloat(L"PositionY", L"Y", labelParam, commonControlParam, 0.0f, 3, cameraPosition._y) == true)
+                        if (guiContext.beginLabeledValueSlider(L"PositionY", L"Y", labelParam, commonControlParam, 0.0f, 3, cameraPosition._y) == true)
                         {
-                            guiContext.endLabeledValueSliderFloat();
+                            guiContext.endLabeledValueSlider();
                         }
 
                         guiContext.nextSameLine();
 
                         labelParam._common._backgroundColor.g(0.0f);
                         labelParam._common._backgroundColor.b(1.0f);
-                        if (guiContext.beginLabeledValueSliderFloat(L"PositionZ", L"Z", labelParam, commonControlParam, 0.0f, 3, cameraPosition._z) == true)
+                        if (guiContext.beginLabeledValueSlider(L"PositionZ", L"Z", labelParam, commonControlParam, 0.0f, 3, cameraPosition._z) == true)
                         {
-                            guiContext.endLabeledValueSliderFloat();
+                            guiContext.endLabeledValueSlider();
                         }
                     }
                     

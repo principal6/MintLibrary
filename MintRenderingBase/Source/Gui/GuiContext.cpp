@@ -1317,9 +1317,9 @@ namespace mint
             }
         }
 
-        const bool GuiContext::beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GuiContext::beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
-            static constexpr ControlType controlType = ControlType::ValueSliderFloat;
+            static constexpr ControlType controlType = ControlType::ValueSlider;
 
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
@@ -1356,7 +1356,7 @@ namespace mint
             }
 
             // Input Ã³¸®
-            valueSliderFloatProcessInput(wasFocused, controlData, textRenderOffset, value, controlData._text);
+            valueSliderProcessInput(wasFocused, controlData, textRenderOffset, value, controlData._text);
 
             if (wasFocused == false && isFocused == true)
             {
@@ -1380,7 +1380,7 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::beginLabeledValueSliderFloat(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GuiContext::beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             StringW labelName = name;
             labelName += L"_label";
@@ -1393,14 +1393,14 @@ namespace mint
             nextSameLine();
             nextNoInterval();
             
-            CommonControlParam sliderFloatParamModified = commonControlParam;
-            sliderFloatParamModified._size._x -= labelParamModified._common._size._x;
+            CommonControlParam valueSliderParamModified = commonControlParam;
+            valueSliderParamModified._size._x -= labelParamModified._common._size._x;
             StringW sliderName = name;
-            sliderName += L"_slider_float";
-            return beginValueSliderFloat(sliderName.c_str(), sliderFloatParamModified, roundnessInPixel, decimalDigits, value);
+            sliderName += L"_value_slider";
+            return beginValueSlider(sliderName.c_str(), valueSliderParamModified, roundnessInPixel, decimalDigits, value);
         }
 
-        void GuiContext::valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
+        void GuiContext::valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
         {
             Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 

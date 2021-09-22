@@ -367,14 +367,14 @@ namespace mint
 
     #pragma region Controls - Slider
         public:
-            const bool                                  beginValueSliderFloat(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
-            void                                        endValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
+            const bool                                  beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            void                                        endValueSlider() { endControlInternal(ControlType::ValueSlider); }
             
-            const bool                                  beginLabeledValueSliderFloat(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
-            void                                        endLabeledValueSliderFloat() { endControlInternal(ControlType::ValueSliderFloat); }
+            const bool                                  beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            void                                        endLabeledValueSlider() { endControlInternal(ControlType::ValueSlider); }
 
         private:
-            void                                        valueSliderFloatProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept;
+            void                                        valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept;
     #pragma endregion
 
         public:
