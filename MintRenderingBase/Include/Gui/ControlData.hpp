@@ -346,14 +346,14 @@ namespace mint
             mint::Float2 result = mint::Float2(_displaySize._x - _innerPadding.horz(), _displaySize._y - _innerPadding.vert());
             if (_controlType == ControlType::Window)
             {
-                result._y -= kTitleBarBaseSize._y;
+                result._y -= kTitleBarBaseThickness;
             }
             return result;
         }
 
         MINT_INLINE const float ControlData::getTopOffsetToClientArea() const noexcept
         {
-            return ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y : 0.0f) + getMenuBarThickness()._y;
+            return ((_controlType == ControlType::Window) ? kTitleBarBaseThickness : 0.0f) + getMenuBarThickness()._y;
         }
 
         MINT_INLINE const mint::Float2& ControlData::getDisplaySizeMin() const noexcept
@@ -374,7 +374,7 @@ namespace mint
 
         MINT_INLINE const float ControlData::getPureDisplayHeight() const noexcept
         {
-            const float titleBarHeight = (_controlType == mint::Gui::ControlType::Window) ? kTitleBarBaseSize._y : 0.0f;
+            const float titleBarHeight = (_controlType == mint::Gui::ControlType::Window) ? kTitleBarBaseThickness : 0.0f;
             const mint::Float2& menuBarThicknes = getMenuBarThickness();
             return mint::max(
                 0.0f,
@@ -560,7 +560,7 @@ namespace mint
 
         MINT_INLINE const mint::Float2 ControlData::getDockOffsetSize() const noexcept
         {
-            return mint::Float2(0.0f, ((_controlType == ControlType::Window) ? kTitleBarBaseSize._y + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
+            return mint::Float2(0.0f, ((_controlType == ControlType::Window) ? kTitleBarBaseThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
         }
 
         MINT_INLINE const mint::Float2 ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept

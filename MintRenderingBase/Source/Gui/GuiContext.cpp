@@ -731,7 +731,7 @@ namespace mint
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._isFocusable = true;
-            windowControlData._controlValue._windowData._titleBarSize = kTitleBarBaseSize;
+            windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
             if (windowControlData.visibleStateEquals(inoutVisibleState) == false)
             {
                 windowControlData.setVisibleState(inoutVisibleState);
@@ -784,7 +784,7 @@ namespace mint
                     }
                     {
                         Rect clipRectForDocks = windowControlData.getControlPaddedRect();
-                        clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseSize._y);
+                        clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseThickness);
                         if (isParentAlsoWindow == true)
                         {
                             clipRectForDocks.clipBy(parentControlData.getClipRectForDocks());
@@ -818,17 +818,17 @@ namespace mint
 
                     const Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
                     rendererContext.setColor(finalBackgroundColor);
-                    rendererContext.setPosition(windowCenterPosition + Float4(0, windowControlData._controlValue._windowData._titleBarSize._y * 0.5f, 0, 0));
+                    rendererContext.setPosition(windowCenterPosition + Float4(0, windowControlData._controlValue._windowData._titleBarThickness * 0.5f, 0, 0));
                     if (windowControlData.isDocking() == true)
                     {
                         Rendering::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
                         inDockColor.a(finalBackgroundColor.a());
                         rendererContext.setColor(inDockColor);
-                        rendererContext.drawRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), 0.0f, 0.0f);
+                        rendererContext.drawRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), 0.0f, 0.0f);
                     }
                     else
                     {
-                        rendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarSize._y), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
+                        rendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
                     }
 
                     processDock(windowControlData, rendererContext);
@@ -838,11 +838,11 @@ namespace mint
             
             if (windowControlData.isControlVisible() == true)
             {
-                windowControlData._controlValue._windowData._titleBarSize._x = windowControlData._displaySize._x;
                 {
                     nextAutoPositionOff(); // Áß¿ä
 
-                    beginTitleBar(title, windowControlData._controlValue._windowData._titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
+                    const Float2 titleBarSize = Float2(windowControlData._displaySize._x, windowControlData._controlValue._windowData._titleBarThickness);
+                    beginTitleBar(title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
 
@@ -1603,7 +1603,7 @@ namespace mint
                 prepareControlDataParam._initialDisplaySize._x = menuBarParent._displaySize._x;
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
-                prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseSize._y : 0.0f;
+                prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseThickness : 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(menuBar, prepareControlDataParam);
@@ -3041,7 +3041,7 @@ namespace mint
                     {
                         needToDisconnectFromDock = false;
 
-                        const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockSize._x, kTitleBarBaseSize._y) };
+                        const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockSize._x, kTitleBarBaseThickness) };
                         if (dockTitleBarAreaRect.contains(_mouseStates.getPosition()) == true)
                         {
                             const float titleBarOffset = _mouseStates.getPosition()._x - dockTitleBarAreaRect.left();

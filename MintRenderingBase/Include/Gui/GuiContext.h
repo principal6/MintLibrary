@@ -53,7 +53,7 @@ namespace mint
         static constexpr Rect           kWindowInnerPadding = Rect(4.0f);
         static constexpr float          kScrollBarThickness = 8.0f;
         static constexpr Rect           kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
-        static constexpr Float2         kTitleBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert());
+        static constexpr float          kTitleBarBaseThickness = Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert();
         static constexpr Float2         kMenuBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + 8.0f);
         static constexpr float          kMenuBarItemTextSpace = 24.0f;
         static constexpr float          kMenuItemSpaceLeft = 16.0f;

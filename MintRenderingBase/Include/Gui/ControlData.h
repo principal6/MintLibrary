@@ -52,7 +52,7 @@ namespace mint
 
             struct WindowData
             {
-                Float2      _titleBarSize;
+                float       _titleBarThickness;
             };
 
             struct ThumbData
