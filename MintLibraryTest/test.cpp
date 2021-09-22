@@ -448,7 +448,6 @@ const bool testWindow()
 
                 Gui::WindowParam inspectorWindowParam;
                 inspectorWindowParam._common._size = Float2(320.0f, 400.0f);
-                inspectorWindowParam._position = Float2(20.0f, 50.0f);
                 inspectorWindowParam._initialDockingMethod = Gui::DockingMethod::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
                 static Gui::VisibleState inspectorVisibleState;
