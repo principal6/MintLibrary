@@ -8,8 +8,8 @@ namespace mint
 {
     namespace Rendering
     {
-        const mint::Rendering::VS_INPUT           MeshData::kNullVertex = mint::Rendering::VS_INPUT();
-        const mint::Rendering::IndexElementType   MeshData::kNullIndex = 0;
+        const Rendering::VS_INPUT           MeshData::kNullVertex = Rendering::VS_INPUT();
+        const Rendering::IndexElementType   MeshData::kNullIndex = 0;
 
         MeshData::MeshData()
         {
@@ -59,15 +59,15 @@ namespace mint
 
         const uint32 MeshData::getIndexCount() const noexcept
         {
-            return static_cast<uint32>(_faceArray.size() * mint::Rendering::Face::kIndexCountPerFace);
+            return static_cast<uint32>(_faceArray.size() * Rendering::Face::kIndexCountPerFace);
         }
 
-        const mint::Rendering::VS_INPUT* MeshData::getVertices() const noexcept
+        const Rendering::VS_INPUT* MeshData::getVertices() const noexcept
         {
             return (_vertexArray.empty()) ? &MeshData::kNullVertex : &_vertexArray[0];
         }
 
-        const mint::Rendering::IndexElementType* MeshData::getIndices() const noexcept
+        const Rendering::IndexElementType* MeshData::getIndices() const noexcept
         {
             return (_faceArray.empty() == true) ? &MeshData::kNullIndex : &_faceArray[0]._vertexIndexArray[0];
         }
