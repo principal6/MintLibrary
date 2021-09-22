@@ -47,6 +47,7 @@ namespace mint
         };
 
 
+        // TODO: IParser 상속해서 제대로 만들어 보기...
         struct LatexParser
         {
             using StringType = std::wstring;
