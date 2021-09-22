@@ -9,7 +9,6 @@
 
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/String.h>
-#include <MintContainer/Include/IId.h>
 #include <MintContainer/Include/HashMap.h>
 
 #include <MintMath/Include/Float2.h>
