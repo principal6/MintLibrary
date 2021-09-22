@@ -428,10 +428,6 @@ namespace mint
             void                                        setClipRectForDocks(ControlData& controlData, const Rect& clipRect);
             void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
 
-        public:
-            const float                                 getCurrentAvailableDisplaySizeX() const noexcept;
-            const float                                 getCurrentSameLineIntervalX() const noexcept;
-
         private:
             const bool                                  isValidControlDataHashKey(const uint64 hashKey) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
@@ -448,8 +444,9 @@ namespace mint
             const ControlData&                          getParentWindowControlDataInternal(const uint64 hashKey) const noexcept;
 #pragma endregion
 
-
         public:
+            const float                                 getCurrentAvailableDisplaySizeX() const noexcept;
+            const float                                 getCurrentSameLineIntervalX() const noexcept;
             const bool                                  isThisControlPressed() const noexcept;
             const bool                                  isFocusedControlInputBox() const noexcept;
 

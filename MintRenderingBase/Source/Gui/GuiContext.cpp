@@ -2215,19 +2215,6 @@ namespace mint
             controlData.setClipRectForChildrenXXX(clipRect);
         }
 
-        const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
-        {
-            const ControlData& parentControlData = getControlStackTopXXX();
-            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextAutoPositionOff == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
-            return maxDisplaySizeX;
-        }
-
-        const float GuiContext::getCurrentSameLineIntervalX() const noexcept
-        {
-            const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
-            return intervalX;
-        }
-
         Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
@@ -2480,6 +2467,19 @@ namespace mint
             }
 
             return getParentWindowControlDataInternal(controlData.getParentHashKey());
+        }
+
+        const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
+        {
+            const ControlData& parentControlData = getControlStackTopXXX();
+            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextAutoPositionOff == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+            return maxDisplaySizeX;
+        }
+
+        const float GuiContext::getCurrentSameLineIntervalX() const noexcept
+        {
+            const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
+            return intervalX;
         }
 
         const bool GuiContext::isThisControlPressed() const noexcept
