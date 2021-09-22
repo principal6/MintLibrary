@@ -16,8 +16,6 @@
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Rect.h>
 
-#include <MintPlatform/Include/IWindow.h>
-
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 #include <MintRenderingBase/Include/Gui/GuiCommon.h>
 #include <MintRenderingBase/Include/Gui/ControlData.h>
