@@ -58,7 +58,7 @@ namespace mint
             _nextControlStates._nextSameLine = true;
         }
 
-        MINT_INLINE void GuiContext::nextControlSize(const mint::Float2& size, const bool force)
+        MINT_INLINE void GuiContext::nextControlSize(const Float2& size, const bool force)
         {
             _nextControlStates._nextDesiredControlSize = size;
             _nextControlStates._nextSizingForced = force;
@@ -79,7 +79,7 @@ namespace mint
             _nextControlStates._nextControlSizeNonContrainedToParent = true;
         }
 
-        MINT_INLINE void GuiContext::nextControlPosition(const mint::Float2& position)
+        MINT_INLINE void GuiContext::nextControlPosition(const Float2& position)
         {
             _nextControlStates._nextControlPosition = position;
         }
@@ -143,17 +143,17 @@ namespace mint
             return _rootControlData;
         }
         
-        MINT_INLINE mint::Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
+        MINT_INLINE Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
             return controlData._position - getControlData(controlData.getParentHashKey())._position;
         }
 
-        MINT_INLINE const mint::Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
+        MINT_INLINE const Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
         {
             return _namedColors[static_cast<uint32>(namedColor)];
         }
 
-        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const mint::Rendering::Color& color) noexcept
+        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const Rendering::Color& color) noexcept
         {
             _namedColors[static_cast<uint32>(namedColor)] = color;
         }
