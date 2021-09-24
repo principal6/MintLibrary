@@ -506,7 +506,7 @@ namespace mint
         {
             const std::string testA{ "ab c   def g" };
             mint::Vector<std::string> testATokenized;
-            mint::StringUtil::tokenize(testA, ' ', testATokenized);
+            StringUtil::tokenize(testA, ' ', testATokenized);
 
             std::string testB{
                 R"(
@@ -526,7 +526,7 @@ namespace mint
             };
             const mint::Vector<char> delimiterArray{ ' ', '\t', '\n' };
             mint::Vector<std::string> testBTokenized;
-            mint::StringUtil::tokenize(testB, delimiterArray, testBTokenized);
+            StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
             return true;
         }

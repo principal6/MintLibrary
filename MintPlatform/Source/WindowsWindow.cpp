@@ -348,7 +348,7 @@ namespace mint
 
         void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
         {
-            if (mint::StringUtil::isNullOrEmpty(text) == true)
+            if (StringUtil::isNullOrEmpty(text) == true)
             {
                 return;
             }
@@ -383,7 +383,7 @@ namespace mint
                 wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(::GlobalLock(hClipboardData));
                 if (lockedWstring != nullptr)
                 {
-                    const uint32 textLength = mint::StringUtil::wcslen(lockedWstring);
+                    const uint32 textLength = StringUtil::length(lockedWstring);
                     outText = lockedWstring;
                     ::GlobalUnlock(hClipboardData);
                 }

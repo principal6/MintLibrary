@@ -22,7 +22,7 @@ namespace mint
         SkeletonJoint::SkeletonJoint(const char* const jointName)
             : _parentIndex{ kInvalidJointIndex }
         {
-            mint::StringUtil::strcpy(_name, jointName);
+            StringUtil::copy(_name, jointName);
         }
 
         SkeletonJoint::~SkeletonJoint()
@@ -81,7 +81,7 @@ namespace mint
             }
 
             SkeletonJoint newJoint;
-            mint::StringUtil::strcpy(newJoint._name, jointName);
+            StringUtil::copy(newJoint._name, jointName);
             newJoint._parentIndex = parentJointIndex;
             newJoint._bindPoseLocalMatrix = bindPoseLocalMatrix;
             _joints.push_back(newJoint);

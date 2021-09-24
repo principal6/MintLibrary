@@ -1,3 +1,4 @@
+#include "StringUtil.h"
 #pragma once
 
 
@@ -15,7 +16,7 @@ namespace mint
             return (nullptr == rawWideString || L'\0' == rawWideString[0]);
         }
 
-        MINT_INLINE const uint32 strlen(const char* const rawString)
+        MINT_INLINE const uint32 length(const char* const rawString)
         {
             if (isNullOrEmpty(rawString) == true)
             {
@@ -24,7 +25,7 @@ namespace mint
             return static_cast<uint32>(::strlen(rawString));
         }
 
-        MINT_INLINE const uint32 wcslen(const wchar_t* const rawWideString)
+        MINT_INLINE const uint32 length(const wchar_t* const rawWideString)
         {
             if (isNullOrEmpty(rawWideString) == true)
             {
@@ -33,15 +34,16 @@ namespace mint
             return static_cast<uint32>(::wcslen(rawWideString));
         }
 
-        MINT_INLINE const uint32 find(const char* const source, const char* const target, const uint32 offset)
+        template <typename T>
+        MINT_INLINE const uint32 find(const T* const source, const T* const target, const uint32 offset)
         {
             if (source == nullptr || target == nullptr)
             {
                 return kStringNPos;
             }
 
-            const uint32 sourceLength = mint::StringUtil::strlen(source);
-            const uint32 targetLength = mint::StringUtil::strlen(target);
+            const uint32 sourceLength = StringUtil::length(source);
+            const uint32 targetLength = StringUtil::length(target);
             if (sourceLength < offset + targetLength)
             {
                 return kStringNPos;
@@ -74,13 +76,24 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const bool strcmp(const char* const a, const char* const b)
+        MINT_INLINE const bool compare(const char* const a, const char* const b)
         {
             return (0 == ::strcmp(a, b));
         }
+        
+        MINT_INLINE const bool compare(const wchar_t* const a, const wchar_t* const b)
+        {
+            return (0 == ::wcscmp(a, b));
+        }
 
         template<uint32 DestSize>
-        MINT_INLINE void strcpy(char(&dest)[DestSize], const char* const source)
+        MINT_INLINE void copy(char(&dest)[DestSize], const char* const source)
+        {
+            ::strcpy_s(dest, source);
+        }
+
+        template<uint32 DestSize>
+        MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
         {
             ::strcpy_s(dest, source);
         }

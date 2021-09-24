@@ -289,7 +289,7 @@ namespace mint
             }
 
             std::string outputShaderFilePath{ inputShaderFileName };
-            mint::StringUtil::excludeExtension(outputShaderFilePath);
+            StringUtil::excludeExtension(outputShaderFilePath);
             if (outputDirectory != nullptr)
             {
                 if (mint::FileUtil::exists(outputDirectory) == false)
@@ -310,7 +310,7 @@ namespace mint
 
         const bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
         {
-            if (kStringNPos == mint::StringUtil::find(inputShaderFilePath, ".hlsl"))
+            if (kStringNPos == StringUtil::find(inputShaderFilePath, ".hlsl"))
             {
                 return false;
             }
@@ -328,7 +328,7 @@ namespace mint
             else
             {
                 std::wstring compiledShaderFileNameWide;
-                mint::StringUtil::convertStringToWideString(outputShaderFilePath, compiledShaderFileNameWide);
+                StringUtil::convertStringToWideString(outputShaderFilePath, compiledShaderFileNameWide);
                 if (FAILED(D3DReadFileToBlob(compiledShaderFileNameWide.c_str(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
                 {
                     return false;
@@ -366,7 +366,7 @@ namespace mint
             else
             {
                 content = compileParam._shaderTextContent;
-                contentLength = mint::StringUtil::strlen(compileParam._shaderTextContent);
+                contentLength = StringUtil::length(compileParam._shaderTextContent);
                 identifier = compileParam._shaderIdentifier;
             }
 
@@ -380,7 +380,7 @@ namespace mint
             if (compileParam._outputFileName != nullptr)
             {
                 std::wstring outputFileNameWideString;
-                mint::StringUtil::convertStringToWideString(compileParam._outputFileName, outputFileNameWideString);
+                StringUtil::convertStringToWideString(compileParam._outputFileName, outputFileNameWideString);
                 if (FAILED(D3DWriteBlobToFile(*outBlob, outputFileNameWideString.c_str(), TRUE)))
                 {
                     return false;

@@ -77,7 +77,6 @@ namespace mint
     private:
         T*                          data() noexcept;
         static void                 __copyString(T* const destination, const T* const source, const uint64 length) noexcept;
-        const uint32                __getStringLength(const T* const rawString) const noexcept;
 
     public:
         const uint32                find(const T* const target, const uint32 offset = 0) const noexcept;

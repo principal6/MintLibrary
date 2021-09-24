@@ -113,7 +113,7 @@ namespace mint
                         else
                         {
                             std::string modifierStr;
-                            mint::StringUtil::convertWideStringToString(modifierString, modifierStr);
+                            StringUtil::convertWideStringToString(modifierString, modifierStr);
                             MINT_LOG_ERROR("김장원", "아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.c_str());
                         }
                     }

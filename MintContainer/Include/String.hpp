@@ -137,7 +137,7 @@ namespace mint
     template<typename T>
     inline String<T>& String<T>::assignInternalXXX(const T* const rawString) noexcept
     {
-        const uint32 length = __getStringLength(rawString);
+        const uint32 length = StringUtil::length(rawString);
         if (length < Short::kSmallStringCapacity)
         {
             _short._size = length;
@@ -150,7 +150,7 @@ namespace mint
     template<typename T>
     inline String<T>& String<T>::assignInternalLongXXX(const T* const rawString) noexcept
     {
-        const uint32 length = __getStringLength(rawString);
+        const uint32 length = StringUtil::length(rawString);
         _long._size = length;
         _long._capacity = _long._size + 1;
 
@@ -190,7 +190,7 @@ namespace mint
     template<typename T>
     inline String<T>& String<T>::appendInternalSmallXXX(const T* const rawString) noexcept
     {
-        const uint32 length = __getStringLength(rawString);
+        const uint32 length = StringUtil::length(rawString);
         const uint64 newLength = _short._size + length;
         if (newLength < Short::kSmallStringCapacity)
         {
@@ -206,7 +206,7 @@ namespace mint
     template<typename T>
     inline String<T>& String<T>::appendInternalLongXXX(const T* const rawString) noexcept
     {
-        const uint32 length = __getStringLength(rawString);
+        const uint32 length = StringUtil::length(rawString);
         const uint64 newLength = _long._size + length;
         if (_long._capacity <= newLength)
         {
@@ -321,25 +321,10 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE const uint32 String<T>::__getStringLength(const T* const rawString) const noexcept
-    {
-        if constexpr (1 == kTypeSize)
-        {
-            return StringUtil::strlen(rawString);
-        }
-        else
-        {
-            return StringUtil::wcslen(rawString);
-        }
-
-        MINT_NEVER;
-    }
-
-    template<typename T>
     inline const uint32 String<T>::find(const T* const target, const uint32 offset) const noexcept
     {
         const uint32 sourceLength = length();
-        const uint32 targetLength = __getStringLength(target);
+        const uint32 targetLength = StringUtil::length(target);
         if (sourceLength < offset + targetLength)
         {
             return kStringNPos;
@@ -407,7 +392,7 @@ namespace mint
     template<typename T>
     inline void String<T>::insert(const uint32 at, const T* const str) noexcept
     {
-        const uint32 rhsLength = __getStringLength(str);
+        const uint32 rhsLength = StringUtil::length(str);
         const uint32 oldLength = length();
         const uint32 newLength = oldLength + rhsLength;
         if (capacity() <= newLength)
@@ -479,7 +464,7 @@ namespace mint
     inline const bool String<T>::compare(const T* const rhs) const noexcept
     {
         const uint32 lhsLength = length();
-        const uint32 rhsLength = __getStringLength(rhs);
+        const uint32 rhsLength = StringUtil::length(rhs);
         if (lhsLength != rhsLength)
         {
             return false;

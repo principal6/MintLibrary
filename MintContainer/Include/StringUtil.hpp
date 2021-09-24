@@ -177,7 +177,7 @@ namespace mint
             }
         }
 
-        inline void tokenize(const std::string& inputString, const char delimiter, mint::Vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const char delimiter, Vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -207,7 +207,7 @@ namespace mint
             }
         }
 
-        inline void tokenize(const std::string& inputString, const mint::Vector<char>& delimiterArray, mint::Vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const Vector<char>& delimiterArray, Vector<std::string>& outArray)
         {
             if (inputString.empty() == true)
             {
@@ -241,7 +241,7 @@ namespace mint
             }
         }
 
-        inline void tokenize(const std::string& inputString, const std::string& delimiterString, mint::Vector<std::string>& outArray)
+        inline void tokenize(const std::string& inputString, const std::string& delimiterString, Vector<std::string>& outArray)
         {
             if (inputString.empty() == true || delimiterString.empty() == true)
             {
@@ -293,7 +293,7 @@ namespace mint
         }
 
         template <typename T>
-        inline std::enable_if_t<std::is_integral_v<T>, StringW> toStringW(const T& rhs)
+        inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
         {
             ScopeStringW<256> buffer;
             formatString(buffer, L"%d", rhs);
@@ -301,7 +301,7 @@ namespace mint
         }
 
         template <typename T>
-        inline std::enable_if_t<std::is_floating_point_v<T>, StringW> toStringW(const T& rhs)
+        inline std::enable_if_t<std::is_floating_point_v<T>, StringW> convertToStringW(const T& rhs)
         {
             ScopeStringW<256> buffer;
             formatString(buffer, L"%f", rhs);

@@ -2,6 +2,7 @@
 
 
 #include <MintContainer/Include/ScopeString.h>
+#include <MintContainer/Include/StringUtil.h>
 
 
 namespace mint
@@ -138,14 +139,7 @@ namespace mint
     template<typename T, uint32 BufferSize>
     MINT_INLINE const uint32 ScopeString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
     {
-        if constexpr (sizeof(T) == 2)
-        {
-            return static_cast<uint32>(::wcslen(rawString));
-        }
-        else
-        {
-            return static_cast<uint32>(::strlen(rawString));
-        }
+        return StringUtil::length(rawString);
     }
 
     template <typename T, uint32 BufferSize>

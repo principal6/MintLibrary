@@ -44,7 +44,6 @@ namespace mint
     void                formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...);
     void                formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
     void                formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
-    
     template <uint32 BufferSize>
     void                formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...);
 
@@ -54,30 +53,38 @@ namespace mint
         const bool      isNullOrEmpty(const char* const rawString);
         const bool      isNullOrEmpty(const wchar_t* const rawWideString);
         
-        const uint32    strlen(const char* const rawString);
-        const uint32    wcslen(const wchar_t* const rawWideString);
-        const uint32    find(const char* const source, const char* const target, const uint32 offset = 0);
-        const bool      strcmp(const char* const a, const char* const b);
+        const uint32    length(const char* const rawString);
+        const uint32    length(const wchar_t* const rawWideString);
+
+        template <typename T>
+        const uint32    find(const T* const source, const T* const target, const uint32 offset = 0);
+
+        const bool      compare(const char* const a, const char* const b);
+        const bool      compare(const wchar_t* const a, const wchar_t* const b);
         
         template <uint32 DestSize>
-        void            strcpy(char(&dest)[DestSize], const char* const source);
+        void            copy(char(&dest)[DestSize], const char* const source);
+        template <uint32 DestSize>
+        void            copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
 
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
+        
         void            convertStringAToStringW(const StringA& source, StringW& destination) noexcept;
+        
         template <uint32 BufferSize>
         void            convertScopeStringAToScopeStringW(const ScopeStringA<BufferSize>& source, ScopeStringW<BufferSize>& destination) noexcept;
+        
         void            excludeExtension(std::string& inoutText);
 
-        static void     tokenize(const std::string& inputString, const char delimiter, mint::Vector<std::string>& outArray);
-        static void     tokenize(const std::string& inputString, const mint::Vector<char>& delimiterArray, mint::Vector<std::string>& outArray);
-        static void     tokenize(const std::string& inputString, const std::string& delimiterString, mint::Vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const char delimiter, Vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const Vector<char>& delimiterArray, Vector<std::string>& outArray);
+        static void     tokenize(const std::string& inputString, const std::string& delimiterString, Vector<std::string>& outArray);
 
         template <typename T>
-        std::enable_if_t<std::is_integral_v<T>, StringW> toStringW(const T& rhs);
-        
+        std::enable_if_t<std::is_integral_v<T>, StringW>        convertToStringW(const T& rhs);
         template <typename T>
-        std::enable_if_t<std::is_floating_point_v<T>, StringW> toStringW(const T& rhs);
+        std::enable_if_t<std::is_floating_point_v<T>, StringW>  convertToStringW(const T& rhs);
 
         float           convertStringWToFloat(const StringW& rhs);
     }

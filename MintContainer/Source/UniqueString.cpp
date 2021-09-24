@@ -70,7 +70,7 @@ namespace mint
             }
         }
 
-        const uint32 lengthNullIncluded = static_cast<uint32>(strlen(rawString) + 1);
+        const uint32 lengthNullIncluded = StringUtil::length(rawString) + 1;
         if (_rawCapacity < _totalLength + lengthNullIncluded)
         {
             reserve(_rawCapacity * 2);

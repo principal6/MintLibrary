@@ -13,7 +13,7 @@ namespace mint
     {
         // Hashing algorithm: FNV1a
 
-        if (mint::StringUtil::isNullOrEmpty(rawString) == true)
+        if (StringUtil::isNullOrEmpty(rawString) == true)
         {
             return kUint64Max;
         }
@@ -32,13 +32,13 @@ namespace mint
 
     MINT_INLINE const uint64 computeHash(const char* const rawString) noexcept
     {
-        const uint32 rawStringLength = mint::StringUtil::strlen(rawString);
+        const uint32 rawStringLength = StringUtil::length(rawString);
         return computeHash(rawString, rawStringLength);
     }
 
     MINT_INLINE const uint64 computeHash(const wchar_t* const rawString) noexcept
     {
-        const uint32 rawStringLength = mint::StringUtil::wcslen(rawString);
+        const uint32 rawStringLength = StringUtil::length(rawString);
         const char* const rawStringA = reinterpret_cast<const char*>(rawString);
         return computeHash(rawStringA, rawStringLength * 2);
     }

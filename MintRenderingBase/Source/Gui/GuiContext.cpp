@@ -740,7 +740,7 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float titleWidth = calculateTextWidth(title, StringUtil::wcslen(title));
+                const float titleWidth = calculateTextWidth(title, StringUtil::length(title));
                 prepareControlDataParam._initialDisplaySize = windowParam._common._size;
                 prepareControlDataParam._initialResizingMask.setAllTrue();
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
@@ -926,7 +926,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(text, controlType);
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float textWidth = calculateTextWidth(text, StringUtil::wcslen(text));
+                const float textWidth = calculateTextWidth(text, StringUtil::length(text));
                 prepareControlDataParam._initialDisplaySize = Float2(textWidth + 24, _fontSize + 12);
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -1012,7 +1012,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(text, controlType, generateControlKeyString(name, controlType));
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float textWidth = calculateTextWidth(text, StringUtil::wcslen(text));
+                const float textWidth = calculateTextWidth(text, StringUtil::length(text));
                 prepareControlDataParam._initialDisplaySize = ((labelParam._common._size.hasNegativeElement() == true)
                     ? Float2(
                         (labelParam._common._size._x < 0.0f) ? textWidth + labelParam._paddingForAutoSize._x : labelParam._common._size._x,
@@ -1656,7 +1656,7 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                const uint32 textLength = StringUtil::wcslen(text);
+                const uint32 textLength = StringUtil::length(text);
                 const float textWidth = calculateTextWidth(text, textLength);
                 prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
                 prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
@@ -1747,7 +1747,7 @@ namespace mint
             }
             prepareControlData(menuItem, prepareControlDataParam);
 
-            const uint32 textLength = StringUtil::wcslen(text);
+            const uint32 textLength = StringUtil::length(text);
             const float textWidth = calculateTextWidth(text, textLength);
             menuItemParent._controlValue._itemData._itemSize._x = max(menuItemParent._controlValue._itemData._itemSize._x, textWidth + kMenuItemSpaceRight);
             menuItemParent._controlValue._itemData._itemSize._y += menuItem._displaySize._y;
@@ -2231,7 +2231,7 @@ namespace mint
                     const ControlData& dockControlData = getControlData(parentControlData.getDockControlHashKey());
                     const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentControlData._dockRelatedData._lastDockingMethod);
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentControlData.getHashKey());
-                    const float textWidth = calculateTextWidth(windowTitle, StringUtil::wcslen(windowTitle));
+                    const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._displaySize._y);
                     prepareControlDataParam._initialDisplaySize = displaySizeOverride;
                     prepareControlDataParam._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
@@ -2366,7 +2366,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(tooltipText, controlType, L"TooltipWindow");
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::wcslen(tooltipText)) * kTooltipFontScale;
+                const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
                 prepareControlDataParam._initialDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
                 prepareControlDataParam._desiredPositionInParent = position;
                 prepareControlDataParam._alwaysResetParent = true;
@@ -2405,9 +2405,9 @@ namespace mint
         {
             static StringW hashKeyWstring;
             hashKeyWstring.clear();
-            hashKeyWstring.append(StringUtil::toStringW(parentControlData.getHashKey()));
+            hashKeyWstring.append(StringUtil::convertToStringW(parentControlData.getHashKey()));
             hashKeyWstring.append(name);
-            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
+            hashKeyWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return hashKeyWstring.c_str();
         }
 
@@ -2437,7 +2437,7 @@ namespace mint
             static StringW hashKeyWstring;
             hashKeyWstring.clear();
             hashKeyWstring.append(text);
-            hashKeyWstring.append(StringUtil::toStringW(static_cast<uint16>(controlType)));
+            hashKeyWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return computeHash(hashKeyWstring.c_str());
         }
 
@@ -3387,7 +3387,7 @@ namespace mint
                     dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
                     
                     const wchar_t* const title = dockedControlData.getText();
-                    const float titleBarWidth = calculateTextWidth(title, StringUtil::wcslen(title)) + 16.0f;
+                    const float titleBarWidth = calculateTextWidth(title, StringUtil::length(title)) + 16.0f;
                     dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
                     if (dontUpdateWidthArray == false)
                     {

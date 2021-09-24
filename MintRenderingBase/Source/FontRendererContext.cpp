@@ -151,7 +151,7 @@ namespace mint
         const std::string FontRendererContext::getFontDataFileNameWithExtension(const char* const fontFileName) const noexcept
         {
             std::string fontFileNameWithExtension = fontFileName;
-            mint::StringUtil::excludeExtension(fontFileNameWithExtension);
+            StringUtil::excludeExtension(fontFileNameWithExtension);
             fontFileNameWithExtension.append(kFontFileExtension);
             return fontFileNameWithExtension;
         }
@@ -178,7 +178,7 @@ namespace mint
             }
 
             const char kMagicNumber[4]{ *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>() };
-            if (mint::StringUtil::strcmp(kMagicNumber, kFontFileMagicNumber) == false)
+            if (StringUtil::compare(kMagicNumber, kFontFileMagicNumber) == false)
             {
                 MINT_LOG_ERROR("±Ë¿Âø¯", "%s ∆ƒ¿œ¿Ã æ∆¥’¥œ¥Ÿ!", kFontFileMagicNumber);
                 return false;
@@ -266,14 +266,14 @@ namespace mint
         const bool FontRendererContext::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
         {
             std::string fontFaceFileNameS = fontFaceFileName;
-            if (mint::StringUtil::hasExtension(fontFaceFileNameS) == false)
+            if (StringUtil::hasExtension(fontFaceFileNameS) == false)
             {
                 fontFaceFileNameS.append(".ttf");
             }
 
             if (mint::FileUtil::exists(fontFaceFileNameS.c_str()) == false)
             {
-                mint::StringUtil::excludeExtension(fontFaceFileNameS);
+                StringUtil::excludeExtension(fontFaceFileNameS);
                 fontFaceFileNameS.append(".otf");
             }
 
@@ -321,7 +321,7 @@ namespace mint
 
 #if defined MINT_FONT_RENDERER_SAVE_PNG_FOR_TEST
             std::string pngFileName = outputFileName;
-            mint::StringUtil::excludeExtension(pngFileName);
+            StringUtil::excludeExtension(pngFileName);
             pngFileName.append(".png");
             stbi_write_png(pngFileName.c_str(), textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
 #endif
@@ -354,7 +354,7 @@ namespace mint
 #endif
 
             std::string outputFileNameS = outputFileName;
-            mint::StringUtil::excludeExtension(outputFileNameS);
+            StringUtil::excludeExtension(outputFileNameS);
             outputFileNameS.append(kFontFileExtension);
 
             binaryFileWriter.save(outputFileNameS.c_str());
@@ -649,7 +649,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const uint32 textLength = mint::StringUtil::wcslen(wideText);
+            const uint32 textLength = StringUtil::length(wideText);
             drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
@@ -687,7 +687,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
         {
-            const uint32 textLength = mint::StringUtil::wcslen(wideText);
+            const uint32 textLength = StringUtil::length(wideText);
             drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 
