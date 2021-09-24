@@ -28,6 +28,7 @@ namespace mint
         class GraphicDevice;
     }
 
+
     namespace Window
     {
         class IWindow;
