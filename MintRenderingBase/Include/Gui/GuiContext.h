@@ -174,23 +174,50 @@ namespace mint
                 uint64              _hashKey;
             };
 
-            struct NextControlStates
+
+            class ControlMetaStateSet
             {
             public:
-                                    NextControlStates();
+                                    ControlMetaStateSet();
+                                    ~ControlMetaStateSet();
 
             public:
                 void                reset() noexcept;
 
             public:
-                bool                _nextSameLine;
-                Float2              _nextDesiredControlSize;
-                bool                _nextSizingForced;
-                bool                _nextControlSizeNonContrainedToParent;
-                bool                _nextNoInterval;
-                bool                _nextAutoPositionOff;
-                Float2              _nextControlPosition;
+                void                nextSameLine() noexcept;
+                void                nextSize(const Float2& size, const bool force) noexcept;
+                void                nextPosition(const Float2& position) noexcept;
+                void                nextTooltip(const wchar_t* const tooltipText) noexcept;
+
+            public: // 아래는 기본값이 true 라서 Off 함수만 있음...
+                void                nextOffInterval() noexcept;
+                void                nextOffAutoPosition() noexcept;
+                void                nextOffSizeContraintToParent() noexcept;
+
+            public:
+                const bool          getNextSameLine() const noexcept;
+                const Float2&       getNextDesiredSize() const noexcept;
+                const bool          getNextSizeForced() const noexcept;
+                const Float2&       getNextDesiredPosition() const noexcept;
+                const wchar_t*      getNextTooltipText() const noexcept;
+
+            public:
+                const bool          getNextUseInterval() const noexcept;
+                const bool          getNextUseAutoPosition() const noexcept;
+                const bool          getNextUseSizeConstraintToParent() const noexcept;
+
+            private:
+                bool                _sameLine;
+                Float2              _nextDesiredSize;
+                bool                _nextSizeForced;
+                Float2              _nextDesiredPosition;
                 const wchar_t*      _nextTooltipText;
+
+            private:
+                bool                _nextUseInterval;
+                bool                _nextUseAutoPosition;
+                bool                _nextUseSizeContraintToParent;
             };
 
 
@@ -267,16 +294,16 @@ namespace mint
             const bool                                  shouldInteract(const Float2& screenPosition, const ControlData& controlData) const noexcept;
 
 
-#pragma region Next-states
+#pragma region ControlMetaStateSet
         public:
-            void                                        nextSameLine();
-            void                                        nextControlSize(const Float2& size, const bool force = false);
-            void                                        nextNoInterval();
-            void                                        nextAutoPositionOff();
-            void                                        nextControlSizeNonContrainedToParent();
-            // Only works if NoAutoPositioned!
-            void                                        nextControlPosition(const Float2& position);
-            void                                        nextTooltip(const wchar_t* const tooltipText);
+            MINT_INLINE void                            nextSameLine() noexcept { _controlMetaStateSet.nextSameLine(); }
+            MINT_INLINE void                            nextSize(const Float2& size, const bool force = false) { _controlMetaStateSet.nextSize(size, force); }
+            // Only works if AutoPosition is off!
+            MINT_INLINE void                            nextPosition(const Float2& position) noexcept { _controlMetaStateSet.nextPosition(position); }
+            MINT_INLINE void                            nextTooltip(const wchar_t* const tooltipText) noexcept { _controlMetaStateSet.nextTooltip(tooltipText); }
+            MINT_INLINE void                            nextOffInterval() noexcept { _controlMetaStateSet.nextOffInterval(); }
+            MINT_INLINE void                            nextOffAutoPosition() noexcept { _controlMetaStateSet.nextOffAutoPosition(); }
+            MINT_INLINE void                            nextOffSizeContraintToParent() noexcept { _controlMetaStateSet.nextOffSizeContraintToParent(); }
 #pragma endregion
 
 
@@ -552,7 +579,7 @@ namespace mint
 
         private:
             mutable ControlInteractionStates            _controlInteractionStates;
-            NextControlStates                           _nextControlStates;
+            ControlMetaStateSet                         _controlMetaStateSet;
 
 #pragma region Mouse
         private:

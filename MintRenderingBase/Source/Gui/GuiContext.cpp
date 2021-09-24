@@ -318,7 +318,7 @@ namespace mint
 
             updateScreenSize(windowSize);
 
-            _nextControlStates.reset();
+            _controlMetaStateSet.reset();
             resetPerFrameStates();
         }
 
@@ -726,7 +726,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Window;
             
-            nextAutoPositionOff();
+            nextOffAutoPosition();
 
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
@@ -834,7 +834,7 @@ namespace mint
             if (windowControlData.isControlVisible() == true)
             {
                 {
-                    nextAutoPositionOff(); // 중요
+                    nextOffAutoPosition(); // 중요
 
                     const Float2 titleBarSize = Float2(windowControlData._displaySize._x, windowControlData._controlValue._windowData._titleBarThickness);
                     beginTitleBar(title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
@@ -1118,7 +1118,7 @@ namespace mint
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-                nextAutoPositionOff();
+                nextOffAutoPosition();
 
                 const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
@@ -1391,7 +1391,7 @@ namespace mint
             makeLabel(labelName.c_str(), labelText, labelParamModified);
             
             nextSameLine();
-            nextNoInterval();
+            nextOffInterval();
             
             CommonControlParam valueSliderParamModified = commonControlParam;
             valueSliderParamModified._size._x -= labelParamModified._common._size._x;
@@ -1579,7 +1579,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
-            nextAutoPositionOff();
+            nextOffAutoPosition();
 
             ControlData& menuBar = createOrGetControlData(name, controlType);
             ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
@@ -1644,7 +1644,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
-            nextAutoPositionOff();
+            nextOffAutoPosition();
 
             ControlData& menuBar = getControlStackTopXXX();
             ControlData& menuBarItem = createOrGetControlData(text, controlType, generateControlKeyString(menuBar, text, controlType));
@@ -1721,8 +1721,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
-            nextAutoPositionOff();
-            nextControlSizeNonContrainedToParent();
+            nextOffAutoPosition();
+            nextOffSizeContraintToParent();
 
             ControlData& menuItem = createOrGetControlData(text, controlType);
             menuItem._isInteractableOutsideParent = true;
@@ -1890,7 +1890,7 @@ namespace mint
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
             outHasExtraSize = false;
-            nextAutoPositionOff();
+            nextOffAutoPosition();
 
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
             ControlData& parentControlData = getControlStackTopXXX();
@@ -2008,7 +2008,7 @@ namespace mint
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
-            nextAutoPositionOff();
+            nextOffAutoPosition();
 
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
@@ -2312,8 +2312,8 @@ namespace mint
             if (parentControlData.isDocking() == false)
             {
                 // 중요
-                nextAutoPositionOff();
-                nextControlPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
+                nextOffAutoPosition();
+                nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
                 if (makeRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
@@ -2375,7 +2375,7 @@ namespace mint
                 prepareControlDataParam._parentHashKeyOverride = _controlInteractionStates.getTooltipParentWindowHashKey();
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
-            nextAutoPositionOff();
+            nextOffAutoPosition();
             prepareControlData(controlData, prepareControlDataParam);
             
             Rendering::Color dummyColor;
@@ -2472,13 +2472,15 @@ namespace mint
         const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
         {
             const ControlData& parentControlData = getControlStackTopXXX();
-            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_nextControlStates._nextAutoPositionOff == false) ? (parentControlData.getInnerPadding().left() * 2.0f) : 0.0f);
+            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_controlMetaStateSet.getNextUseAutoPosition() == true) 
+                ? parentControlData.getInnerPadding().left() * 2.0f 
+                : 0.0f);
             return maxDisplaySizeX;
         }
 
         const float GuiContext::getCurrentSameLineIntervalX() const noexcept
         {
-            const float intervalX = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalX;
+            const float intervalX = (_controlMetaStateSet.getNextUseInterval() == true) ? kDefaultIntervalX : 0.0f;
             return intervalX;
         }
 
@@ -2563,37 +2565,41 @@ namespace mint
             if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
             {
                 const float maxDisplaySizeX = getCurrentAvailableDisplaySizeX();
-                if (_nextControlStates._nextControlSizeNonContrainedToParent == true)
+                if (_controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
                 {
-                    controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) ? prepareControlDataParam._initialDisplaySize._x : _nextControlStates._nextDesiredControlSize._x;
-                    controlData._displaySize._y = (_nextControlStates._nextDesiredControlSize._y <= 0.0f) ? prepareControlDataParam._initialDisplaySize._y : _nextControlStates._nextDesiredControlSize._y;
+                    controlData._displaySize._x = (_controlMetaStateSet.getNextDesiredSize()._x <= 0.0f) 
+                        ? prepareControlDataParam._initialDisplaySize._x
+                        : _controlMetaStateSet.getNextDesiredSize()._x;
+                    controlData._displaySize._y = (_controlMetaStateSet.getNextDesiredSize()._y <= 0.0f)
+                        ? prepareControlDataParam._initialDisplaySize._y
+                        : _controlMetaStateSet.getNextDesiredSize()._y;
                 }
                 else
                 {
-                    controlData._displaySize._x = (_nextControlStates._nextDesiredControlSize._x <= 0.0f) 
+                    controlData._displaySize._x = (_controlMetaStateSet.getNextDesiredSize()._x <= 0.0f) 
                         ? (prepareControlDataParam._initialDisplaySize._x < 0.0f)
                             ? maxDisplaySizeX
                             : min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x)
-                        : ((_nextControlStates._nextSizingForced == true) 
-                            ? _nextControlStates._nextDesiredControlSize._x 
-                            : min(maxDisplaySizeX, _nextControlStates._nextDesiredControlSize._x));
-                    controlData._displaySize._y = (_nextControlStates._nextDesiredControlSize._y <= 0.0f)
+                        : ((_controlMetaStateSet.getNextSizeForced() == true) 
+                            ? _controlMetaStateSet.getNextDesiredSize()._x 
+                            : min(maxDisplaySizeX, _controlMetaStateSet.getNextDesiredSize()._x));
+                    controlData._displaySize._y = (_controlMetaStateSet.getNextDesiredSize()._y <= 0.0f)
                         ? prepareControlDataParam._initialDisplaySize._y 
-                        : ((_nextControlStates._nextSizingForced == true) 
-                            ? _nextControlStates._nextDesiredControlSize._y 
-                            : max(prepareControlDataParam._initialDisplaySize._y, _nextControlStates._nextDesiredControlSize._y));
+                        : ((_controlMetaStateSet.getNextSizeForced() == true) 
+                            ? _controlMetaStateSet.getNextDesiredSize()._y 
+                            : max(prepareControlDataParam._initialDisplaySize._y, _controlMetaStateSet.getNextDesiredSize()._y));
                 }
             }
 
             // Position, Parent offset, Parent child at, Parent content area size
-            const bool isAutoPositioned = (_nextControlStates._nextAutoPositionOff == false);
-            if (isAutoPositioned == true)
+            const bool useAutoPosition = (_controlMetaStateSet.getNextUseAutoPosition() == true);
+            if (useAutoPosition == true)
             {
                 Float2& parentControlChildAt = const_cast<Float2&>(parentControlData.getChildAt());
                 Float2& parentControlNextChildOffset = const_cast<Float2&>(parentControlData.getNextChildOffset());
                 const float parentControlPreviousNextChildOffsetX = parentControlNextChildOffset._x;
 
-                const bool isSameLineAsPreviousControl = (_nextControlStates._nextSameLine == true);
+                const bool isSameLineAsPreviousControl = (_controlMetaStateSet.getNextSameLine() == true);
                 if (isSameLineAsPreviousControl == true)
                 {
                     const float intervalX = getCurrentSameLineIntervalX();
@@ -2611,10 +2617,10 @@ namespace mint
                     parentControlNextChildOffset = controlData._displaySize;
                 }
 
-                const bool addIntervalY = (_nextControlStates._nextAutoPositionOff == false && prepareControlDataParam._noIntervalForNextSibling == false);
+                const bool addIntervalY = (_controlMetaStateSet.getNextUseAutoPosition() == true && prepareControlDataParam._noIntervalForNextSibling == false);
                 if (addIntervalY == true)
                 {
-                    const float intervalY = (true == _nextControlStates._nextNoInterval) ? 0.0f : kDefaultIntervalY;
+                    const float intervalY = (_controlMetaStateSet.getNextUseInterval() == true) ? kDefaultIntervalY : 0.0f;
                     parentControlNextChildOffset._y += intervalY;
                 }
 
@@ -2622,17 +2628,17 @@ namespace mint
                 Float2& parentControlContentAreaSize = const_cast<Float2&>(parentControlData.getContentAreaSize());
                 if (prepareControlDataParam._ignoreMeForContentAreaSize == false)
                 {
-                    if (true == _nextControlStates._nextSameLine)
+                    if (true == _controlMetaStateSet.getNextSameLine())
                     {
                         if (parentControlContentAreaSize._x == 0.0f)
                         {
-                            // 최초 _nextSameLine 시 바로 왼쪽 컨트롤의 크기도 추가해줘야 한다!
+                            // 최초 isSameLine() 시 바로 왼쪽 컨트롤의 크기도 추가해줘야 한다!
                             parentControlContentAreaSize._x = parentControlPreviousNextChildOffsetX;
                         }
                         parentControlContentAreaSize._x += controlData._displaySize._x + kDefaultIntervalX;
                     }
 
-                    parentControlContentAreaSize._y += (true == _nextControlStates._nextSameLine) ? 0.0f : controlData._displaySize._y;
+                    parentControlContentAreaSize._y += (true == _controlMetaStateSet.getNextSameLine()) ? 0.0f : controlData._displaySize._y;
                     parentControlContentAreaSize._y += (true == addIntervalY) ? kDefaultIntervalY : 0.0f;
                 }
 
@@ -2649,7 +2655,7 @@ namespace mint
 
                     if (prepareControlDataParam._desiredPositionInParent.isNan() == true)
                     {
-                        controlData._position += _nextControlStates._nextControlPosition;
+                        controlData._position += _controlMetaStateSet.getNextDesiredPosition();
                     }
                     else
                     {
@@ -2667,7 +2673,7 @@ namespace mint
             const MenuBarType currentMenuBarType = controlData._controlValue._commonData._menuBarType;
             Float2& controlChildAt = const_cast<Float2&>(controlData.getChildAt());
             controlChildAt = controlData._position + controlData._childDisplayOffset +
-                ((_nextControlStates._nextAutoPositionOff == false)
+                ((_controlMetaStateSet.getNextUseAutoPosition() == true)
                     ? Float2(controlData.getInnerPadding().left(), controlData.getInnerPadding().top())
                     : Float2::kZero) +
                 Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
@@ -2892,7 +2898,7 @@ namespace mint
             processControlDraggingInternal(controlData);
             processControlDockingInternal(controlData);
 
-            _nextControlStates.reset();
+            _controlMetaStateSet.reset();
         }
 
         void GuiContext::checkControlResizing(ControlData& controlData) noexcept
@@ -2918,10 +2924,10 @@ namespace mint
         void GuiContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
         {
             const bool isHovered = _controlInteractionStates.isControlHovered(controlData);
-            if (_nextControlStates._nextTooltipText != nullptr && isHovered == true 
+            if (_controlMetaStateSet.getNextTooltipText() != nullptr && isHovered == true
                 && _controlInteractionStates.isHoveringMoreThan(1000) == true)
             {
-                _controlInteractionStates.setTooltipData(_mouseStates, _nextControlStates._nextTooltipText, getParentWindowControlData(controlData).getHashKey());
+                _controlInteractionStates.setTooltipData(_mouseStates, _controlMetaStateSet.getNextTooltipText(), getParentWindowControlData(controlData).getHashKey());
             }
         }
 

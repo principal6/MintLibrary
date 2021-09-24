@@ -6,6 +6,7 @@ namespace mint
 {
     namespace Gui
     {
+#pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
         {
             _controlHashKeyForUpdateDockDatum = 0;
@@ -25,69 +26,120 @@ namespace mint
         {
             return _controlHashKeyForUpdateDockDatum;
         }
+#pragma endregion
 
 
+#pragma region GuiContext - ControlStackData
         inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
             : _controlType{ controlData.getControlType() }
             , _hashKey{ controlData.getHashKey() }
         {
             __noop;
         }
+#pragma endregion
 
 
-        inline GuiContext::NextControlStates::NextControlStates()
+#pragma region GuiContext - ControlMetaStateSet
+        inline GuiContext::ControlMetaStateSet::ControlMetaStateSet()
         {
             reset();
         }
 
-        MINT_INLINE void GuiContext::NextControlStates::reset() noexcept
+        inline GuiContext::ControlMetaStateSet::~ControlMetaStateSet()
         {
-            _nextSameLine = false;
-            _nextDesiredControlSize.setZero();
-            _nextSizingForced = false;
-            _nextControlSizeNonContrainedToParent = false;
-            _nextNoInterval = false;
-            _nextAutoPositionOff = false;
-            _nextControlPosition.setZero();
+            __noop;
+        }
+
+        MINT_INLINE void GuiContext::ControlMetaStateSet::reset() noexcept
+        {
+            _sameLine = false;
+            _nextDesiredSize.setZero();
+            _nextSizeForced = false;
+            _nextDesiredPosition.setZero();
             _nextTooltipText = nullptr;
+
+            _nextUseInterval = true;
+            _nextUseAutoPosition = true;
+            _nextUseSizeContraintToParent = true;
         }
 
-
-        MINT_INLINE void GuiContext::nextSameLine()
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextSameLine() noexcept
         {
-            _nextControlStates._nextSameLine = true;
+            _sameLine = true;
         }
 
-        MINT_INLINE void GuiContext::nextControlSize(const Float2& size, const bool force)
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextSize(const Float2& size, const bool force) noexcept
         {
-            _nextControlStates._nextDesiredControlSize = size;
-            _nextControlStates._nextSizingForced = force;
+            _nextDesiredSize = size;
+            _nextSizeForced = force;
         }
 
-        MINT_INLINE void GuiContext::nextNoInterval()
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextPosition(const Float2& position) noexcept
         {
-            _nextControlStates._nextNoInterval = true;
+            _nextDesiredPosition = position;
         }
 
-        MINT_INLINE void GuiContext::nextAutoPositionOff()
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextTooltip(const wchar_t* const tooltipText) noexcept
         {
-            _nextControlStates._nextAutoPositionOff = true;
+            _nextTooltipText = tooltipText;
         }
 
-        MINT_INLINE void GuiContext::nextControlSizeNonContrainedToParent()
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffInterval() noexcept
         {
-            _nextControlStates._nextControlSizeNonContrainedToParent = true;
+            _nextUseInterval = false;
         }
 
-        MINT_INLINE void GuiContext::nextControlPosition(const Float2& position)
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffAutoPosition() noexcept
         {
-            _nextControlStates._nextControlPosition = position;
+            _nextUseAutoPosition = false;
         }
 
-        MINT_INLINE void GuiContext::nextTooltip(const wchar_t* const tooltipText)
+        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffSizeContraintToParent() noexcept
         {
-            _nextControlStates._nextTooltipText = tooltipText;
+            _nextUseSizeContraintToParent = false;
         }
+
+        MINT_INLINE const bool GuiContext::ControlMetaStateSet::getNextSameLine() const noexcept
+        {
+            return _sameLine;
+        }
+
+        MINT_INLINE const Float2& GuiContext::ControlMetaStateSet::getNextDesiredSize() const noexcept
+        {
+            return _nextDesiredSize;
+        }
+
+        MINT_INLINE const bool GuiContext::ControlMetaStateSet::getNextSizeForced() const noexcept
+        {
+            return _nextSizeForced;
+        }
+
+        inline const Float2& GuiContext::ControlMetaStateSet::getNextDesiredPosition() const noexcept
+        {
+            return _nextDesiredPosition;
+        }
+
+        inline const wchar_t* GuiContext::ControlMetaStateSet::getNextTooltipText() const noexcept
+        {
+            return _nextTooltipText;
+        }
+
+        inline const bool GuiContext::ControlMetaStateSet::getNextUseInterval() const noexcept
+        {
+            return _nextUseInterval;
+        }
+
+        inline const bool GuiContext::ControlMetaStateSet::getNextUseAutoPosition() const noexcept
+        {
+            return _nextUseAutoPosition;
+        }
+
+        inline const bool GuiContext::ControlMetaStateSet::getNextUseSizeConstraintToParent() const noexcept
+        {
+            return _nextUseSizeContraintToParent;
+        }
+#pragma endregion
+
 
         MINT_INLINE const bool GuiContext::isValidControlDataHashKey(const uint64 hashKey) const noexcept
         {
