@@ -199,7 +199,6 @@ namespace mint
             uint64          _parentHashKeyOverride          = 0;
             bool            _alwaysResetPosition            = true;
             bool            _ignoreMeForContentAreaSize     = false;
-            bool            _noIntervalForNextSibling       = false;
             ClipRectUsage   _clipRectUsage                  = ClipRectUsage::ParentsChild;
         };
 

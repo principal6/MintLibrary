@@ -1536,8 +1536,8 @@ namespace mint
                 prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._displaySize._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize + 12.0f;
                 prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoCalculatedDisplaySize._y * 0.25f);
-                prepareControlDataParam._noIntervalForNextSibling = true;
                 prepareControlDataParam._clipRectUsage = Gui::ClipRectUsage::ParentsChild;
+                _controlMetaStateSet.nextOffInterval();
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -2596,11 +2596,10 @@ namespace mint
                     parentControlNextChildOffset = controlData._displaySize;
                 }
 
-                const bool addIntervalY = (_controlMetaStateSet.getNextUseAutoPosition() == true && prepareControlDataParam._noIntervalForNextSibling == false);
+                const bool addIntervalY = (_controlMetaStateSet.getNextUseAutoPosition() == true && _controlMetaStateSet.getNextUseInterval() == true);
                 if (addIntervalY == true)
                 {
-                    const float intervalY = (_controlMetaStateSet.getNextUseInterval() == true) ? kDefaultIntervalY : 0.0f;
-                    parentControlNextChildOffset._y += intervalY;
+                    parentControlNextChildOffset._y += kDefaultIntervalY;
                 }
 
                 // Parent content area size
