@@ -730,6 +730,7 @@ namespace mint
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
                 prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
                 prepareControlDataParam._displaySizeMin._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
+                prepareControlDataParam._alwaysResetDisplaySize = false; // Áß¿ä!!!
                 prepareControlDataParam._alwaysResetPosition = false;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
                 prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockSizeSum();
@@ -1582,7 +1583,6 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._autoCalculatedDisplaySize._x = menuBarParent._displaySize._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
@@ -1726,7 +1726,6 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._autoCalculatedDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
@@ -1897,7 +1896,6 @@ namespace mint
                     prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y;
                 }
                 prepareControlDataParamForTrack._parentHashKeyOverride = parentControlData.getHashKey();
-                prepareControlDataParamForTrack._alwaysResetDisplaySize = true;
                 prepareControlDataParamForTrack._alwaysResetPosition = true;
                 prepareControlDataParamForTrack._ignoreMeForContentAreaSize = true;
                 prepareControlDataParamForTrack._clipRectUsage = ClipRectUsage::ParentsOwn;
@@ -2007,7 +2005,6 @@ namespace mint
                 ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
-                    prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = thumbSize;
 
@@ -2072,7 +2069,6 @@ namespace mint
                 ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
-                    prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = kScrollBarThickness;
 
@@ -2228,7 +2224,6 @@ namespace mint
                     prepareControlDataParam._autoCalculatedDisplaySize = titleBarSize;
                     prepareControlDataParam._deltaInteractionSize = Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
                 }
-                prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._alwaysResetPosition = true;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
@@ -2356,7 +2351,6 @@ namespace mint
                 prepareControlDataParam._autoCalculatedDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
                 prepareControlDataParam._desiredPositionInParent = position;
                 prepareControlDataParam._alwaysResetParent = true;
-                prepareControlDataParam._alwaysResetDisplaySize = true;
                 prepareControlDataParam._alwaysResetPosition = true;
                 prepareControlDataParam._parentHashKeyOverride = _controlInteractionStates.getTooltipParentWindowHashKey();
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;

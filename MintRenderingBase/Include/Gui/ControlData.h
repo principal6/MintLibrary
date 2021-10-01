@@ -194,7 +194,7 @@ namespace mint
             Float2          _deltaInteractionSize           = Float2::kZero;
             Float2          _deltaInteractionSizeByDock     = Float2::kZero;
             Float2          _displaySizeMin                 = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-            bool            _alwaysResetDisplaySize         = false;
+            bool            _alwaysResetDisplaySize         = true;
             bool            _alwaysResetParent              = false;
             uint64          _parentHashKeyOverride          = 0;
             bool            _alwaysResetPosition            = true;

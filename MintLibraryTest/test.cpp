@@ -15,6 +15,8 @@
 
 #pragma comment(lib, "MintLibrary.lib")
 
+#pragma optimize("", off)
+
 
 //#define MINT_TEST_FAILURES
 //#define MINT_TEST_PERFORMANCE
@@ -475,7 +477,6 @@ const bool testWindow()
                         labelParam._common._fontColor = Rendering::Color::kWhite;
                         Gui::CommonControlParam valueSliderParam;
                         const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
-                        
                         const float labelWidth = 16.0f;
                         const Float2 valueSliderSize = Float2((maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f, 24.0f);
                         controlMetaStateSet.pushSize(valueSliderSize);
