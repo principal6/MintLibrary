@@ -29,28 +29,18 @@ namespace mint
 #pragma endregion
 
 
-#pragma region GuiContext - ControlStackData
-        inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
-            : _controlType{ controlData.getControlType() }
-            , _hashKey{ controlData.getHashKey() }
+#pragma region ControlMetaStateSet
+        inline ControlMetaStateSet::ControlMetaStateSet()
         {
-            __noop;
-        }
-#pragma endregion
-
-
-#pragma region GuiContext - ControlMetaStateSet
-        inline GuiContext::ControlMetaStateSet::ControlMetaStateSet()
-        {
-            reset();
+            resetPerFrame();
         }
 
-        inline GuiContext::ControlMetaStateSet::~ControlMetaStateSet()
+        inline ControlMetaStateSet::~ControlMetaStateSet()
         {
             __noop;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::reset() noexcept
+        MINT_INLINE void ControlMetaStateSet::resetPerFrame() noexcept
         {
             _sameLine = false;
             _nextDesiredSize.setZero();
@@ -63,80 +53,122 @@ namespace mint
             _nextUseSizeContraintToParent = true;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextSameLine() noexcept
+        MINT_INLINE void ControlMetaStateSet::pushSize(const Float2& size, const bool force) noexcept
+        {
+            _stackDesiredSize.push_back(size);
+            _stackSizeForced.push_back(force);
+        }
+
+        MINT_INLINE void ControlMetaStateSet::popSize() noexcept
+        {
+            _stackDesiredSize.pop_back();
+            _stackSizeForced.pop_back();
+        }
+
+        MINT_INLINE void ControlMetaStateSet::nextSameLine() noexcept
         {
             _sameLine = true;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextSize(const Float2& size, const bool force) noexcept
+        MINT_INLINE void ControlMetaStateSet::nextSize(const Float2& size, const bool force) noexcept
         {
             _nextDesiredSize = size;
             _nextSizeForced = force;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextPosition(const Float2& position) noexcept
+        MINT_INLINE void ControlMetaStateSet::nextPosition(const Float2& position) noexcept
         {
             _nextDesiredPosition = position;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextTooltip(const wchar_t* const tooltipText) noexcept
+        MINT_INLINE void ControlMetaStateSet::nextTooltip(const wchar_t* const tooltipText) noexcept
         {
             _nextTooltipText = tooltipText;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffInterval() noexcept
+        MINT_INLINE void ControlMetaStateSet::nextOffInterval() noexcept
         {
             _nextUseInterval = false;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffAutoPosition() noexcept
+        MINT_INLINE void ControlMetaStateSet::nextOffAutoPosition() noexcept
         {
             _nextUseAutoPosition = false;
         }
 
-        MINT_INLINE void GuiContext::ControlMetaStateSet::nextOffSizeContraintToParent() noexcept
+        MINT_INLINE void ControlMetaStateSet::nextOffSizeContraintToParent() noexcept
         {
             _nextUseSizeContraintToParent = false;
         }
 
-        MINT_INLINE const bool GuiContext::ControlMetaStateSet::getNextSameLine() const noexcept
+        MINT_INLINE const bool ControlMetaStateSet::getNextSameLine() const noexcept
         {
             return _sameLine;
         }
 
-        MINT_INLINE const Float2& GuiContext::ControlMetaStateSet::getNextDesiredSize() const noexcept
+        MINT_INLINE const Float2 ControlMetaStateSet::getNextDesiredSize() const noexcept
         {
-            return _nextDesiredSize;
+            Float2 result;
+            if (_stackDesiredSize.empty() == false)
+            {
+                result = _stackDesiredSize.back();
+            }
+            else
+            {
+                result = _nextDesiredSize;
+                _nextDesiredSize.setZero();
+            }
+            return result;
         }
 
-        MINT_INLINE const bool GuiContext::ControlMetaStateSet::getNextSizeForced() const noexcept
+        MINT_INLINE const bool ControlMetaStateSet::getNextSizeForced() const noexcept
         {
-            return _nextSizeForced;
+            bool result;
+            if (_stackSizeForced.isEmpty() == false)
+            {
+                result = _stackSizeForced.last();
+            }
+            else
+            {
+                result = _nextSizeForced;
+                _nextSizeForced = false;
+            }
+            return result;
         }
 
-        inline const Float2& GuiContext::ControlMetaStateSet::getNextDesiredPosition() const noexcept
+        inline const Float2& ControlMetaStateSet::getNextDesiredPosition() const noexcept
         {
             return _nextDesiredPosition;
         }
 
-        inline const wchar_t* GuiContext::ControlMetaStateSet::getNextTooltipText() const noexcept
+        inline const wchar_t* ControlMetaStateSet::getNextTooltipText() const noexcept
         {
             return _nextTooltipText;
         }
 
-        inline const bool GuiContext::ControlMetaStateSet::getNextUseInterval() const noexcept
+        inline const bool ControlMetaStateSet::getNextUseInterval() const noexcept
         {
             return _nextUseInterval;
         }
 
-        inline const bool GuiContext::ControlMetaStateSet::getNextUseAutoPosition() const noexcept
+        inline const bool ControlMetaStateSet::getNextUseAutoPosition() const noexcept
         {
             return _nextUseAutoPosition;
         }
 
-        inline const bool GuiContext::ControlMetaStateSet::getNextUseSizeConstraintToParent() const noexcept
+        inline const bool ControlMetaStateSet::getNextUseSizeConstraintToParent() const noexcept
         {
             return _nextUseSizeContraintToParent;
+        }
+#pragma endregion
+
+
+#pragma region GuiContext - ControlStackData
+        inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
+            : _controlType{ controlData.getControlType() }
+            , _hashKey{ controlData.getHashKey() }
+        {
+            __noop;
         }
 #pragma endregion
 

@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
+#include <MintContainer/Include/BitVector.h>
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/HashMap.h>
 
@@ -71,7 +72,7 @@ namespace mint
 
         struct WindowParam
         {
-            CommonControlParam  _common                 = CommonControlParam(Float2(180, 100));
+            CommonControlParam  _common;
             Float2              _position               = Float2(100, 100);
             ScrollBarType       _scrollBarType          = ScrollBarType::None;
             DockingMethod       _initialDockingMethod   = DockingMethod::COUNT;
@@ -81,7 +82,7 @@ namespace mint
         // If no value is set, default values will be used properly
         struct LabelParam
         {
-            CommonControlParam  _common                 = CommonControlParam(Float2::kNegativeOne, Rendering::Color::kTransparent, Rendering::Color::kTransparent);
+            CommonControlParam  _common                 = CommonControlParam(Rendering::Color::kTransparent, Rendering::Color::kTransparent);
             Float2              _paddingForAutoSize     = Float2(24, 12);
             TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Left;
             TextAlignmentVert   _alignmentVert          = TextAlignmentVert::Middle;
@@ -94,12 +95,12 @@ namespace mint
             //float             _max                    = 1.0f;
             //float             _stride                 = 0.1f; // Only applies when (_stepCount == 0)
             //bool              _isVertical             = false; // Horizontal if false
-            CommonControlParam  _common                 = CommonControlParam(Float2(128.0f, 0.0f));
+            CommonControlParam  _common;
         };
         
         struct TextBoxParam
         {
-            CommonControlParam  _common                 = CommonControlParam(Float2(128.0f, 0.0f));
+            CommonControlParam  _common;
             TextAlignmentHorz   _alignmentHorz          = TextAlignmentHorz::Left;
             float               _roundnessInPixel       = kDefaultRoundnessInPixel;
             TextInputMode       _textInputMode          = TextInputMode::General;
@@ -112,7 +113,7 @@ namespace mint
 
         struct ScrollBarTrackParam
         {
-            CommonControlParam  _common                 = CommonControlParam(Float2(180.0f, 100.0f));
+            CommonControlParam  _common;
             Float2              _positionInParent       = Float2(100, 100);
         };
 
@@ -127,6 +128,60 @@ namespace mint
 
         private:
             uint64              _controlHashKeyForUpdateDockDatum = 0;
+        };
+
+
+        class ControlMetaStateSet
+        {
+        public:
+                                        ControlMetaStateSet();
+                                        ~ControlMetaStateSet();
+
+        public:
+            void                        resetPerFrame() noexcept;
+
+        public:
+            void                        pushSize(const Float2& size, const bool force = false) noexcept;
+            void                        popSize() noexcept;
+
+        public:
+            void                        nextSameLine() noexcept;
+            void                        nextSize(const Float2& size, const bool force = false) noexcept;
+            void                        nextPosition(const Float2& position) noexcept;
+            void                        nextTooltip(const wchar_t* const tooltipText) noexcept;
+
+        public: // 아래는 기본값이 true 라서 Off 함수만 있음...
+            void                        nextOffInterval() noexcept;
+            void                        nextOffAutoPosition() noexcept;
+            void                        nextOffSizeContraintToParent() noexcept;
+
+        public:
+            const bool                  getNextSameLine() const noexcept;
+            const Float2                getNextDesiredSize() const noexcept;
+            const bool                  getNextSizeForced() const noexcept;
+            const Float2&               getNextDesiredPosition() const noexcept;
+            const wchar_t*              getNextTooltipText() const noexcept;
+
+        public:
+            const bool                  getNextUseInterval() const noexcept;
+            const bool                  getNextUseAutoPosition() const noexcept;
+            const bool                  getNextUseSizeConstraintToParent() const noexcept;
+
+        private:
+            Vector<Float2>              _stackDesiredSize;
+            BitVector                   _stackSizeForced;
+
+        private:
+            bool                        _sameLine;
+            mutable Float2              _nextDesiredSize;
+            mutable bool                _nextSizeForced;
+            Float2                      _nextDesiredPosition;
+            const wchar_t*              _nextTooltipText;
+
+        private:
+            bool                        _nextUseInterval;
+            bool                        _nextUseAutoPosition;
+            bool                        _nextUseSizeContraintToParent;
         };
 
 
@@ -173,53 +228,6 @@ namespace mint
                 ControlType         _controlType;
                 uint64              _hashKey;
             };
-
-
-            class ControlMetaStateSet
-            {
-            public:
-                                    ControlMetaStateSet();
-                                    ~ControlMetaStateSet();
-
-            public:
-                void                reset() noexcept;
-
-            public:
-                void                nextSameLine() noexcept;
-                void                nextSize(const Float2& size, const bool force) noexcept;
-                void                nextPosition(const Float2& position) noexcept;
-                void                nextTooltip(const wchar_t* const tooltipText) noexcept;
-
-            public: // 아래는 기본값이 true 라서 Off 함수만 있음...
-                void                nextOffInterval() noexcept;
-                void                nextOffAutoPosition() noexcept;
-                void                nextOffSizeContraintToParent() noexcept;
-
-            public:
-                const bool          getNextSameLine() const noexcept;
-                const Float2&       getNextDesiredSize() const noexcept;
-                const bool          getNextSizeForced() const noexcept;
-                const Float2&       getNextDesiredPosition() const noexcept;
-                const wchar_t*      getNextTooltipText() const noexcept;
-
-            public:
-                const bool          getNextUseInterval() const noexcept;
-                const bool          getNextUseAutoPosition() const noexcept;
-                const bool          getNextUseSizeConstraintToParent() const noexcept;
-
-            private:
-                bool                _sameLine;
-                Float2              _nextDesiredSize;
-                bool                _nextSizeForced;
-                Float2              _nextDesiredPosition;
-                const wchar_t*      _nextTooltipText;
-
-            private:
-                bool                _nextUseInterval;
-                bool                _nextUseAutoPosition;
-                bool                _nextUseSizeContraintToParent;
-            };
-
 
             class ControlInteractionStates
             {
@@ -296,14 +304,7 @@ namespace mint
 
 #pragma region ControlMetaStateSet
         public:
-            MINT_INLINE void                            nextSameLine() noexcept { _controlMetaStateSet.nextSameLine(); }
-            MINT_INLINE void                            nextSize(const Float2& size, const bool force = false) { _controlMetaStateSet.nextSize(size, force); }
-            // Only works if AutoPosition is off!
-            MINT_INLINE void                            nextPosition(const Float2& position) noexcept { _controlMetaStateSet.nextPosition(position); }
-            MINT_INLINE void                            nextTooltip(const wchar_t* const tooltipText) noexcept { _controlMetaStateSet.nextTooltip(tooltipText); }
-            MINT_INLINE void                            nextOffInterval() noexcept { _controlMetaStateSet.nextOffInterval(); }
-            MINT_INLINE void                            nextOffAutoPosition() noexcept { _controlMetaStateSet.nextOffAutoPosition(); }
-            MINT_INLINE void                            nextOffSizeContraintToParent() noexcept { _controlMetaStateSet.nextOffSizeContraintToParent(); }
+            MINT_INLINE ControlMetaStateSet&            getControlMetaStateSet() noexcept { return _controlMetaStateSet; }
 #pragma endregion
 
 
@@ -401,7 +402,7 @@ namespace mint
             const bool                                  beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endValueSlider() { endControlInternal(ControlType::ValueSlider); }
             
-            const bool                                  beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            const bool                                  beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endLabeledValueSlider() { endControlInternal(ControlType::ValueSlider); }
 
         private:

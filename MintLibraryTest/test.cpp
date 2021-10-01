@@ -399,6 +399,8 @@ const bool testWindow()
 #endif
 #if 1
             {
+                Gui::ControlMetaStateSet& controlMetaStateSet = guiContext.getControlMetaStateSet();
+
                 static Gui::VisibleState testWindowVisibleState = Gui::VisibleState::Invisible;
                 static Gui::VisibleState debugControlDataViewerVisibleState = Gui::VisibleState::Invisible;
                 guiContext.makeTestWindow(testWindowVisibleState);
@@ -447,7 +449,7 @@ const bool testWindow()
                 }
 
                 Gui::WindowParam inspectorWindowParam;
-                inspectorWindowParam._common._size = Float2(320.0f, 400.0f);
+                controlMetaStateSet.nextSize(Float2(320.0f, 400.0f));
                 inspectorWindowParam._initialDockingMethod = Gui::DockingMethod::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
                 static Gui::VisibleState inspectorVisibleState;
@@ -471,34 +473,38 @@ const bool testWindow()
                         labelParam._common._backgroundColor.r(1.0f);
                         labelParam._common._backgroundColor.a(0.75f);
                         labelParam._common._fontColor = Rendering::Color::kWhite;
-                        labelParam._common._size._x = 16.0f;
-                        
-                        Gui::CommonControlParam commonControlParam;
+                        Gui::CommonControlParam valueSliderParam;
                         const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
-                        commonControlParam._size._x = (maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f;
-                        commonControlParam._size._y = 24.0f;
-                        if (guiContext.beginLabeledValueSlider(L"PositionX", L"X", labelParam, commonControlParam, 0.0f, 3, cameraPosition._x) == true)
+                        
+                        // TODO: PUSH SIZE
+                        const float labelWidth = 16.0f;
+                        const Float2 valueSliderSize = Float2((maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f, 24.0f);
+                        controlMetaStateSet.pushSize(valueSliderSize);
                         {
-                            guiContext.endLabeledValueSlider();
+                            if (guiContext.beginLabeledValueSlider(L"PositionX", L"X", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._x) == true)
+                            {
+                                guiContext.endLabeledValueSlider();
+                            }
+
+                            controlMetaStateSet.nextSameLine();
+
+                            labelParam._common._backgroundColor.r(0.0f);
+                            labelParam._common._backgroundColor.g(0.875f);
+                            if (guiContext.beginLabeledValueSlider(L"PositionY", L"Y", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._y) == true)
+                            {
+                                guiContext.endLabeledValueSlider();
+                            }
+
+                            controlMetaStateSet.nextSameLine();
+
+                            labelParam._common._backgroundColor.g(0.0f);
+                            labelParam._common._backgroundColor.b(1.0f);
+                            if (guiContext.beginLabeledValueSlider(L"PositionZ", L"Z", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._z) == true)
+                            {
+                                guiContext.endLabeledValueSlider();
+                            }
                         }
-
-                        guiContext.nextSameLine();
-
-                        labelParam._common._backgroundColor.r(0.0f);
-                        labelParam._common._backgroundColor.g(0.875f);
-                        if (guiContext.beginLabeledValueSlider(L"PositionY", L"Y", labelParam, commonControlParam, 0.0f, 3, cameraPosition._y) == true)
-                        {
-                            guiContext.endLabeledValueSlider();
-                        }
-
-                        guiContext.nextSameLine();
-
-                        labelParam._common._backgroundColor.g(0.0f);
-                        labelParam._common._backgroundColor.b(1.0f);
-                        if (guiContext.beginLabeledValueSlider(L"PositionZ", L"Z", labelParam, commonControlParam, 0.0f, 3, cameraPosition._z) == true)
-                        {
-                            guiContext.endLabeledValueSlider();
-                        }
+                        controlMetaStateSet.popSize();
                     }
                     
                     guiContext.endWindow();

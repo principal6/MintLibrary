@@ -165,12 +165,10 @@ namespace mint
 
         struct CommonControlParam
         {
-            CommonControlParam() : CommonControlParam(Float2::kNegativeOne) { __noop; }
-            CommonControlParam(const Float2& size) : CommonControlParam(size, Rendering::Color::kWhite, Rendering::Color::kBlack) { __noop; }
-            CommonControlParam(const Float2& size, const Rendering::Color& backgroundColor, const Rendering::Color& fontColor)
-                : _size{ size }, _offset{ Float2::kNegativeOne }, _backgroundColor{ backgroundColor }, _fontColor{ fontColor } { __noop; }
+            CommonControlParam() : CommonControlParam(Rendering::Color::kWhite, Rendering::Color::kBlack) { __noop; }
+            CommonControlParam(const Rendering::Color& backgroundColor, const Rendering::Color& fontColor)
+                : _offset{ Float2::kNegativeOne }, _backgroundColor{ backgroundColor }, _fontColor{ fontColor } { __noop; }
 
-            Float2              _size;
             Float2              _offset;
             Rendering::Color    _backgroundColor;
             Rendering::Color    _fontColor;

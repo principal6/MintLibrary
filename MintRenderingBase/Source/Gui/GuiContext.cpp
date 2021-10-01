@@ -4,6 +4,7 @@
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 
@@ -106,22 +107,6 @@ namespace mint
                 return false;
             }
         }
-
-
-        namespace PrepareControlDataUtils
-        {
-            PrepareControlDataParam prepareInputBox(const CommonControlParam& common, const float fontSize) noexcept
-            {
-                PrepareControlDataParam prepareControlDataParam;
-                {
-                    prepareControlDataParam._initialDisplaySize._x = common._size._x;
-                    prepareControlDataParam._initialDisplaySize._y = max(fontSize, common._size._y);
-                    prepareControlDataParam._offset = common._offset;
-                }
-                return prepareControlDataParam;
-            }
-        }
-        
 
         void GuiContext::ControlInteractionStates::setControlHovered(const ControlData& controlData) noexcept
         {
@@ -318,7 +303,7 @@ namespace mint
 
             updateScreenSize(windowSize);
 
-            _controlMetaStateSet.reset();
+            _controlMetaStateSet.resetPerFrame();
             resetPerFrameStates();
         }
 
@@ -428,9 +413,9 @@ namespace mint
         void GuiContext::makeTestWindow(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
-            windowParam._common._size = Float2(500.0f, 500.0f);
             windowParam._position = Float2(200.0f, 50.0f);
             windowParam._scrollBarType = Gui::ScrollBarType::Both;
+            _controlMetaStateSet.nextSize(Float2(500.0f, 500.0f), true);
             if (beginWindow(L"TestWindow", windowParam, inoutVisibleState) == true)
             {
                 static VisibleState childWindowVisibleState0;
@@ -492,7 +477,7 @@ namespace mint
                     endMenuBar();
                 }
 
-                nextTooltip(L"툴팁 테스트!");
+                _controlMetaStateSet.nextTooltip(L"툴팁 테스트!");
 
                 if (beginButton(L"테스트") == true)
                 {
@@ -506,7 +491,7 @@ namespace mint
 
                 {
                     Gui::SliderParam sliderParam;
-                    sliderParam._common._size._y = 32.0f;
+                    _controlMetaStateSet.nextSize(Float2(32.0f, 0.0f));
                     float value = 0.0f;
                     if (beginSlider(L"Slider0", sliderParam, value) == true)
                     {
@@ -515,7 +500,7 @@ namespace mint
                 }
 
 
-                nextSameLine();
+                _controlMetaStateSet.nextSameLine();
                 if (beginButton(L"ChildWindow0") == true)
                 {
                     childWindowVisibleState0 = VisibleState::VisibleOpen;
@@ -523,7 +508,7 @@ namespace mint
                     endButton();
                 }
 
-                nextSameLine();
+                _controlMetaStateSet.nextSameLine();
                 if (beginButton(L"ChildWindow1") == true)
                 {
                     childWindowVisibleState1 = VisibleState::VisibleOpen;
@@ -544,8 +529,7 @@ namespace mint
                 static StringW textBoxContent;
                 {
                     Gui::TextBoxParam textBoxParam;
-                    textBoxParam._common._size._x = 240.0f;
-                    textBoxParam._common._size._y = 24.0f;
+                    _controlMetaStateSet.nextSize(Float2(240.0f, 24.0f));
                     textBoxParam._alignmentHorz = Gui::TextAlignmentHorz::Center;
                     if (beginTextBox(L"TextBox", textBoxParam, textBoxContent) == true)
                     {
@@ -569,7 +553,7 @@ namespace mint
 
                 {
                     Gui::WindowParam testWindowParam;
-                    testWindowParam._common._size = Float2(200.0f, 240.0f);
+                    _controlMetaStateSet.nextSize(Float2(200.0f, 240.0f), true);
                     testWindowParam._scrollBarType = Gui::ScrollBarType::Both;
                     testWindowParam._initialDockingMethod = Gui::DockingMethod::BottomSide;
                     if (beginWindow(L"1ST", testWindowParam, childWindowVisibleState0))
@@ -585,7 +569,7 @@ namespace mint
 
                 {
                     Gui::WindowParam testWindowParam;
-                    testWindowParam._common._size = Float2(100.0f, 100.0f);
+                    _controlMetaStateSet.nextSize(Float2(100.0f, 100.0f));
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
                     testWindowParam._initialDockingMethod = Gui::DockingMethod::BottomSide;
@@ -607,7 +591,7 @@ namespace mint
         void GuiContext::makeTestDockedWindow(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
-            windowParam._common._size = Float2(300.0f, 400.0f);
+            _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
             windowParam._initialDockingMethod = Gui::DockingMethod::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
@@ -619,9 +603,9 @@ namespace mint
                     endButton();
                 }
 
-                nextSameLine();
+                _controlMetaStateSet.nextSameLine();
 
-                nextTooltip(L"Button B Toolip!!");
+                _controlMetaStateSet.nextTooltip(L"Button B Toolip!!");
 
                 if (beginButton(L"Button B") == true)
                 {
@@ -635,7 +619,7 @@ namespace mint
 
                 makeLabel(L"TestLable00000", L"A label!");
 
-                nextSameLine();
+                _controlMetaStateSet.nextSameLine();
 
                 if (beginButton(L"Fourth") == true)
                 {
@@ -649,7 +633,7 @@ namespace mint
         void GuiContext::makeDebugControlDataViewer(VisibleState& inoutVisibleState)
         {
             Gui::WindowParam windowParam;
-            windowParam._common._size = Float2(300.0f, 400.0f);
+            _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
             if (beginWindow(L"ControlData Viewer", windowParam, inoutVisibleState) == true)
             {
@@ -726,7 +710,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Window;
             
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
 
             ControlData& windowControlData = createOrGetControlData(title, controlType);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
@@ -741,7 +725,6 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float titleWidth = calculateTextWidth(title, StringUtil::length(title));
-                prepareControlDataParam._initialDisplaySize = windowParam._common._size;
                 prepareControlDataParam._initialResizingMask.setAllTrue();
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
@@ -834,7 +817,7 @@ namespace mint
             if (windowControlData.isControlVisible() == true)
             {
                 {
-                    nextOffAutoPosition(); // 중요
+                    _controlMetaStateSet.nextOffAutoPosition(); // 중요
 
                     const Float2 titleBarSize = Float2(windowControlData._displaySize._x, windowControlData._controlValue._windowData._titleBarThickness);
                     beginTitleBar(title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
@@ -927,7 +910,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
-                prepareControlDataParam._initialDisplaySize = Float2(textWidth + 24, _fontSize + 12);
+                prepareControlDataParam._autoCalculatedDisplaySize = Float2(textWidth + 24, _fontSize + 12);
             }
             prepareControlData(controlData, prepareControlDataParam);
         
@@ -959,7 +942,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(text, controlType);
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._initialDisplaySize = kCheckBoxSize;
+                prepareControlDataParam._autoCalculatedDisplaySize = kCheckBoxSize;
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -1013,11 +996,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
-                prepareControlDataParam._initialDisplaySize = ((labelParam._common._size.hasNegativeElement() == true)
-                    ? Float2(
-                        (labelParam._common._size._x < 0.0f) ? textWidth + labelParam._paddingForAutoSize._x : labelParam._common._size._x,
-                        (labelParam._common._size._y < 0.0f) ? _fontSize + labelParam._paddingForAutoSize._y : labelParam._common._size._y)
-                    : labelParam._common._size);
+                prepareControlDataParam._autoCalculatedDisplaySize = Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y);
                 prepareControlDataParam._offset = labelParam._common._offset;
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -1106,8 +1085,7 @@ namespace mint
             ControlData& trackControlData = createOrGetControlData(name, trackControlType);
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                prepareControlDataParamForTrack._initialDisplaySize._x = sliderParam._common._size._x;
-                prepareControlDataParamForTrack._initialDisplaySize._y = (0.0f == sliderParam._common._size._y) ? kSliderThumbRadius * 2.0f : sliderParam._common._size._y;
+                prepareControlDataParamForTrack._autoCalculatedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
             }
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
             
@@ -1118,9 +1096,9 @@ namespace mint
             {
                 static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-                nextOffAutoPosition();
+                _controlMetaStateSet.nextOffAutoPosition();
 
-                const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
+                const float sliderValidLength = trackControlData._displaySize._x - kSliderThumbRadius * 2.0f;
                 ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
@@ -1133,8 +1111,8 @@ namespace mint
                 {
                     const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
-                    prepareControlDataParamForThumb._initialDisplaySize._x = kSliderThumbRadius * 2.0f;
-                    prepareControlDataParamForThumb._initialDisplaySize._y = kSliderThumbRadius * 2.0f;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kSliderThumbRadius * 2.0f;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = kSliderThumbRadius * 2.0f;
                     prepareControlDataParamForThumb._alwaysResetPosition = false;
                     prepareControlDataParamForThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
                 }
@@ -1167,10 +1145,10 @@ namespace mint
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(trackControlData);
             const float trackRadius = kSliderTrackThicknes * 0.5f;
-            const float trackRectLength = sliderParam._common._size._x - trackRadius * 2.0f;
+            const float trackRectLength = trackControlData._displaySize._x - trackRadius * 2.0f;
 
             const float thumbAt = trackControlData._controlValue._thumbData._thumbAt;
-            const float sliderValidLength = sliderParam._common._size._x - kSliderThumbRadius * 2.0f;
+            const float sliderValidLength = trackControlData._displaySize._x - kSliderThumbRadius * 2.0f;
             const float trackRectLeftLength = thumbAt * sliderValidLength;
             const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
@@ -1221,7 +1199,10 @@ namespace mint
             
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
-            prepareControlData(controlData, PrepareControlDataUtils::prepareInputBox(textBoxParam._common, _fontSize));
+            PrepareControlDataParam prepareControlDataParam;
+            prepareControlDataParam._offset = textBoxParam._common._offset;
+            prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
+            prepareControlData(controlData, prepareControlDataParam);
             
             Rendering::Color finalBackgroundColor;
             const bool wasFocused = _controlInteractionStates.isControlFocused(controlData);
@@ -1324,7 +1305,10 @@ namespace mint
             ControlData& controlData = createOrGetControlData(name, controlType);
             controlData._isFocusable = true;
             controlData._needDoubleClickToFocus = true;
-            prepareControlData(controlData, PrepareControlDataUtils::prepareInputBox(commonControlParam, _fontSize));
+            PrepareControlDataParam prepareControlDataParam;
+            prepareControlDataParam._offset = commonControlParam._offset;
+            prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
+            prepareControlData(controlData, prepareControlDataParam);
 
             Rendering::Color finalBackgroundColor;
             const bool wasFocused = _controlInteractionStates.isControlFocused(controlData);
@@ -1380,24 +1364,28 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GuiContext::beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             StringW labelName = name;
             labelName += L"_label";
 
             LabelParam labelParamModified = labelParam;
-            labelParamModified._common._size._y = commonControlParam._size._y;
             labelParamModified._alignmentHorz = Gui::TextAlignmentHorz::Center;
+            const Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
+            _controlMetaStateSet.pushSize(Float2(labelWidth, desiredSize._y));
             makeLabel(labelName.c_str(), labelText, labelParamModified);
+            _controlMetaStateSet.popSize();
             
-            nextSameLine();
-            nextOffInterval();
+            _controlMetaStateSet.nextSameLine();
+            _controlMetaStateSet.nextOffInterval();
             
-            CommonControlParam valueSliderParamModified = commonControlParam;
-            valueSliderParamModified._size._x -= labelParamModified._common._size._x;
             StringW sliderName = name;
             sliderName += L"_value_slider";
-            return beginValueSlider(sliderName.c_str(), valueSliderParamModified, roundnessInPixel, decimalDigits, value);
+            _controlMetaStateSet.pushSize(Float2(desiredSize._x - labelWidth, desiredSize._y));
+            const bool result = beginValueSlider(sliderName.c_str(), valueSliderParam, roundnessInPixel, decimalDigits, value);
+            _controlMetaStateSet.popSize();
+
+            return result;
         }
 
         void GuiContext::valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
@@ -1471,8 +1459,8 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._initialDisplaySize._x = 160.0f;
-                prepareControlDataParam._initialDisplaySize._y = 100.0f;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = 160.0f;
+                prepareControlDataParam._autoCalculatedDisplaySize._y = 100.0f;
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -1544,9 +1532,9 @@ namespace mint
             ControlData& parentControlData = getControlData(controlData.getParentHashKey());
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._initialDisplaySize._x = parentControlData._displaySize._x;
-                prepareControlDataParam._initialDisplaySize._y = _fontSize + 12.0f;
-                prepareControlDataParam._innerPadding.left(prepareControlDataParam._initialDisplaySize._y * 0.25f);
+                prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._displaySize._x;
+                prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize + 12.0f;
+                prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoCalculatedDisplaySize._y * 0.25f);
                 prepareControlDataParam._noIntervalForNextSibling = true;
                 prepareControlDataParam._clipRectUsage = Gui::ClipRectUsage::ParentsChild;
             }
@@ -1579,7 +1567,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
 
             ControlData& menuBar = createOrGetControlData(name, controlType);
             ControlData& menuBarParent = getControlData(menuBar.getParentHashKey());
@@ -1595,8 +1583,8 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._alwaysResetDisplaySize = true;
-                prepareControlDataParam._initialDisplaySize._x = menuBarParent._displaySize._x;
-                prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = menuBarParent._displaySize._x;
+                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseThickness : 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
@@ -1644,7 +1632,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
 
             ControlData& menuBar = getControlStackTopXXX();
             ControlData& menuBarItem = createOrGetControlData(text, controlType, generateControlKeyString(menuBar, text, controlType));
@@ -1658,8 +1646,8 @@ namespace mint
             {
                 const uint32 textLength = StringUtil::length(text);
                 const float textWidth = calculateTextWidth(text, textLength);
-                prepareControlDataParam._initialDisplaySize._x = textWidth + kMenuBarItemTextSpace;
-                prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = textWidth + kMenuBarItemTextSpace;
+                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = menuBar._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
@@ -1721,8 +1709,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
-            nextOffAutoPosition();
-            nextOffSizeContraintToParent();
+            _controlMetaStateSet.nextOffAutoPosition();
+            _controlMetaStateSet.nextOffSizeContraintToParent();
 
             ControlData& menuItem = createOrGetControlData(text, controlType);
             menuItem._isInteractableOutsideParent = true;
@@ -1739,11 +1727,11 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._alwaysResetDisplaySize = true;
-                prepareControlDataParam._initialDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
-                prepareControlDataParam._initialDisplaySize._y = kMenuBarBaseSize._y;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
+                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
                 prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._displaySize._x : 0.0f;
-                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._initialDisplaySize._y);
+                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._autoCalculatedDisplaySize._y);
             }
             prepareControlData(menuItem, prepareControlDataParam);
 
@@ -1831,8 +1819,7 @@ namespace mint
             const float titleBarOffsetX = (parent.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 
             ScrollBarTrackParam scrollBarTrackParam;
-            scrollBarTrackParam._common._size._x = kScrollBarThickness;
-            scrollBarTrackParam._common._size._y = parentWindowPureDisplayHeight;
+            _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowPureDisplayHeight));
             scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
             scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
             
@@ -1861,8 +1848,7 @@ namespace mint
             const Float2& menuBarThicknes = parent.getMenuBarThickness();
 
             ScrollBarTrackParam scrollBarTrackParam;
-            scrollBarTrackParam._common._size._x = parentWindowPureDisplayWidth;
-            scrollBarTrackParam._common._size._y = kScrollBarThickness;
+            _controlMetaStateSet.nextSize(Float2(parentWindowPureDisplayWidth, kScrollBarThickness));
             scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
             scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
 
@@ -1890,7 +1876,7 @@ namespace mint
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
             outHasExtraSize = false;
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
 
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
             ControlData& parentControlData = getControlStackTopXXX();
@@ -1898,7 +1884,7 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                prepareControlDataParamForTrack._initialDisplaySize = scrollBarTrackParam._common._size;
+                //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._displaySize;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
@@ -2008,7 +1994,7 @@ namespace mint
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
 
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
@@ -2022,8 +2008,8 @@ namespace mint
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
-                    prepareControlDataParamForThumb._initialDisplaySize._x = kScrollBarThickness;
-                    prepareControlDataParamForThumb._initialDisplaySize._y = thumbSize;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = thumbSize;
 
                     prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
                     prepareControlDataParamForThumb._desiredPositionInParent._x -= kScrollBarThickness * 0.5f;
@@ -2087,8 +2073,8 @@ namespace mint
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._alwaysResetDisplaySize = true;
-                    prepareControlDataParamForThumb._initialDisplaySize._x = thumbSize;
-                    prepareControlDataParamForThumb._initialDisplaySize._y = kScrollBarThickness;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
+                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = kScrollBarThickness;
 
                     prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
                     prepareControlDataParamForThumb._desiredPositionInParent._y -= kScrollBarThickness * 0.5f;
@@ -2233,13 +2219,13 @@ namespace mint
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentControlData.getHashKey());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._displaySize._y);
-                    prepareControlDataParam._initialDisplaySize = displaySizeOverride;
+                    prepareControlDataParam._autoCalculatedDisplaySize = displaySizeOverride;
                     prepareControlDataParam._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
                     prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 }
                 else
                 {
-                    prepareControlDataParam._initialDisplaySize = titleBarSize;
+                    prepareControlDataParam._autoCalculatedDisplaySize = titleBarSize;
                     prepareControlDataParam._deltaInteractionSize = Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
                 }
                 prepareControlDataParam._alwaysResetDisplaySize = true;
@@ -2312,8 +2298,8 @@ namespace mint
             if (parentControlData.isDocking() == false)
             {
                 // 중요
-                nextOffAutoPosition();
-                nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
+                _controlMetaStateSet.nextOffAutoPosition();
+                _controlMetaStateSet.nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
                 if (makeRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
@@ -2339,7 +2325,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._parentHashKeyOverride = parentWindowData.getHashKey();
-                prepareControlDataParam._initialDisplaySize = Float2(radius * 2.0f);
+                prepareControlDataParam._autoCalculatedDisplaySize = Float2(radius * 2.0f);
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -2367,7 +2353,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
-                prepareControlDataParam._initialDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
+                prepareControlDataParam._autoCalculatedDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
                 prepareControlDataParam._desiredPositionInParent = position;
                 prepareControlDataParam._alwaysResetParent = true;
                 prepareControlDataParam._alwaysResetDisplaySize = true;
@@ -2375,7 +2361,7 @@ namespace mint
                 prepareControlDataParam._parentHashKeyOverride = _controlInteractionStates.getTooltipParentWindowHashKey();
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
-            nextOffAutoPosition();
+            _controlMetaStateSet.nextOffAutoPosition();
             prepareControlData(controlData, prepareControlDataParam);
             
             Rendering::Color dummyColor;
@@ -2389,7 +2375,7 @@ namespace mint
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
 
-            const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._initialDisplaySize._y * 0.5f, 0.0f, 0.0f);
+            const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._autoCalculatedDisplaySize._y * 0.5f, 0.0f, 0.0f);
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             rendererContext.drawDynamicText(tooltipText, textPosition, 
@@ -2562,32 +2548,31 @@ namespace mint
             controlData._rendererContextLayer = parentControlData._rendererContextLayer;
             
             // Display size
+            Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
             if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
             {
                 const float maxDisplaySizeX = getCurrentAvailableDisplaySizeX();
+                if (desiredSize._x <= 0.0f)
+                {
+                    desiredSize._x = prepareControlDataParam._autoCalculatedDisplaySize._x;
+                }
+                if (desiredSize._y <= 0.0f)
+                {
+                    desiredSize._y = prepareControlDataParam._autoCalculatedDisplaySize._y;
+                }
+
                 if (_controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
                 {
-                    controlData._displaySize._x = (_controlMetaStateSet.getNextDesiredSize()._x <= 0.0f) 
-                        ? prepareControlDataParam._initialDisplaySize._x
-                        : _controlMetaStateSet.getNextDesiredSize()._x;
-                    controlData._displaySize._y = (_controlMetaStateSet.getNextDesiredSize()._y <= 0.0f)
-                        ? prepareControlDataParam._initialDisplaySize._y
-                        : _controlMetaStateSet.getNextDesiredSize()._y;
+                    controlData._displaySize = desiredSize;
                 }
                 else
                 {
-                    controlData._displaySize._x = (_controlMetaStateSet.getNextDesiredSize()._x <= 0.0f) 
-                        ? (prepareControlDataParam._initialDisplaySize._x < 0.0f)
-                            ? maxDisplaySizeX
-                            : min(maxDisplaySizeX, prepareControlDataParam._initialDisplaySize._x)
-                        : ((_controlMetaStateSet.getNextSizeForced() == true) 
-                            ? _controlMetaStateSet.getNextDesiredSize()._x 
-                            : min(maxDisplaySizeX, _controlMetaStateSet.getNextDesiredSize()._x));
-                    controlData._displaySize._y = (_controlMetaStateSet.getNextDesiredSize()._y <= 0.0f)
-                        ? prepareControlDataParam._initialDisplaySize._y 
-                        : ((_controlMetaStateSet.getNextSizeForced() == true) 
-                            ? _controlMetaStateSet.getNextDesiredSize()._y 
-                            : max(prepareControlDataParam._initialDisplaySize._y, _controlMetaStateSet.getNextDesiredSize()._y));
+                    if (_controlMetaStateSet.getNextSizeForced() == false)
+                    {
+                        desiredSize._x = min(maxDisplaySizeX, desiredSize._x);
+                    }
+
+                    controlData._displaySize = desiredSize;
                 }
             }
 
@@ -2898,7 +2883,7 @@ namespace mint
             processControlDraggingInternal(controlData);
             processControlDockingInternal(controlData);
 
-            _controlMetaStateSet.reset();
+            _controlMetaStateSet.resetPerFrame();
         }
 
         void GuiContext::checkControlResizing(ControlData& controlData) noexcept
