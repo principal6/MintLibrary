@@ -20,10 +20,5 @@ namespace mint
         {
             __noop;
         }
-        
-        void IWindow::resetPerFrameStates() noexcept
-        {
-            _isWindowResized = false;
-        }
     }
 }

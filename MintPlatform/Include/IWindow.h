@@ -77,8 +77,7 @@ namespace mint
             virtual void                    destroy() noexcept { _isRunning = false; }
         
         public:
-            virtual bool                    isRunning() noexcept { resetPerFrameStates(); return _isRunning; }
-            void                            resetPerFrameStates() noexcept;
+            virtual bool                    isRunning() noexcept { return _isRunning; }
 
         public:
             CreationError                   getCreationError() const noexcept { return _creationError; }
@@ -86,7 +85,7 @@ namespace mint
         public:
             virtual void                    setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true;  }
             const Int2&                     getSize() const noexcept { return _creationData._size; }
-            MINT_INLINE const bool          isResized() const noexcept { return _isWindowResized; }
+            MINT_INLINE const bool          isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
             
             const Int2&                     getEntireSize() const noexcept { return _entireSize; }
 
@@ -115,7 +114,7 @@ namespace mint
             CreationError                   _creationError;
 
         private:
-            bool                            _isWindowResized;
+            mutable bool                    _isWindowResized;
 
         protected:
             CursorType                      _currentCursorType;
