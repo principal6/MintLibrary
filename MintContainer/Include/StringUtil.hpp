@@ -52,8 +52,8 @@ namespace mint
         ::vsprintf_s(temp.data(), BufferSize, format, args);
         va_end(args);
 
-        buffer.resize(temp.length());
-        buffer.assign(temp);
+        buffer.resize(StringUtil::length(temp.c_str()));
+        buffer.assign(temp.c_str());
     }
 
     template <uint32 BufferSize>
@@ -86,10 +86,15 @@ namespace mint
     template <uint32 BufferSize>
     MINT_INLINE void formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...)
     {
+        ScopeStringW<BufferSize> temp;
+
         va_list args;
         va_start(args, format);
-        ::vswprintf_s(buffer.data(), BufferSize, format, args);
+        ::vswprintf_s(temp.data(), BufferSize, format, args);
         va_end(args);
+
+        buffer.resize(StringUtil::length(temp.c_str()));
+        buffer.assign(temp.c_str());
     }
 
 

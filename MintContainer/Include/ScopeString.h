@@ -47,6 +47,7 @@ namespace mint
 
     private:
         static const uint32                 _getRawStringLength(const T* const rawString) noexcept;
+        static void                         _copyString(T* const destination, const T* const source, const uint64 length) noexcept;
 
     public:
         T*                                  data() noexcept;

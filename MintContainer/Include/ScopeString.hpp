@@ -21,14 +21,14 @@ namespace mint
         , _raw{}
     {
         _length = min(static_cast<uint32>(_getRawStringLength(rawString)), BufferSize - 1);
-        memcpy(&_raw[0], rawString, _length);
+        _copyString(&_raw[0], rawString, _length);
     }
 
     template <typename T, uint32 BufferSize>
     inline ScopeString<T, BufferSize>::ScopeString(const ScopeString& rhs)
     {
         _length = rhs._length;
-        memcpy(&_raw[0], &rhs._raw[0], _length);
+        _copyString(&_raw[0], &rhs._raw[0], _length);
     }
 
     template <typename T, uint32 BufferSize>
@@ -48,7 +48,7 @@ namespace mint
     inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator=(const ScopeString& rhs) noexcept
     {
         _length = rhs._length;
-        memcpy(&_raw[0], &rhs._raw[0], _length);
+        _copyString(&_raw[0], &rhs._raw[0], _length);
         _raw[_length] = 0; // NULL
         return *this;
     }
@@ -142,6 +142,12 @@ namespace mint
         return StringUtil::length(rawString);
     }
 
+    template<typename T, uint32 BufferSize>
+    MINT_INLINE void ScopeString<T, BufferSize>::_copyString(T* const destination, const T* const source, const uint64 length) noexcept
+    {
+        ::memcpy(destination, source, sizeof(T) * length);
+    }
+
     template <typename T, uint32 BufferSize>
     MINT_INLINE T* ScopeString<T, BufferSize>::data() noexcept
     {
@@ -172,7 +178,7 @@ namespace mint
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (true == canInsert(rawStringLength))
         {
-            memcpy(&_raw[_length], rawString, rawStringLength);
+            _copyString(&_raw[_length], rawString, rawStringLength);
             _length += rawStringLength;
             _raw[_length] = 0; // NULL
             return *this;
@@ -185,7 +191,7 @@ namespace mint
     {
         if (true == canInsert(rhs._length))
         {
-            memcpy(&_raw[_length], &rhs._raw[0], rhs._length);
+            _copyString(&_raw[_length], &rhs._raw[0], rhs._length);
             _length += rhs._length;
             _raw[_length] = 0; // NULL
             return *this;
@@ -203,7 +209,7 @@ namespace mint
             rawStringLength = BufferSize - 1;
         }
         _length = rawStringLength;
-        memcpy(&_raw[0], rawString, _length);
+        _copyString(&_raw[0], rawString, _length);
         _raw[_length] = 0; // NULL
         return *this;
     }
@@ -242,7 +248,7 @@ namespace mint
     {
         ScopeString<T, BufferSize> result; // { &_raw[offset] };
         result._length = min(count, _length - offset - 1);
-        memcpy(&result._raw[0], &_raw[offset], result._length);
+        _copyString(&result._raw[0], &_raw[offset], result._length);
         return result;
     }
 
