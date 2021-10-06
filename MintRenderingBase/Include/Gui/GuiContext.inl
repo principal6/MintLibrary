@@ -9,22 +9,22 @@ namespace mint
 #pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
         {
-            _controlHashKeyForUpdateDockDatum = 0;
+            _controlIdForUpdateDockDatum = 0;
         }
 
         MINT_INLINE const bool TaskWhenMouseUp::isSet() const noexcept
         {
-            return _controlHashKeyForUpdateDockDatum != 0;
+            return _controlIdForUpdateDockDatum != 0;
         }
 
-        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const uint64 controlHashKey) noexcept
+        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const uint64 controlId) noexcept
         {
-            _controlHashKeyForUpdateDockDatum = controlHashKey;
+            _controlIdForUpdateDockDatum = controlId;
         }
 
         MINT_INLINE const uint64 TaskWhenMouseUp::getUpdateDockDatum() const noexcept
         {
-            return _controlHashKeyForUpdateDockDatum;
+            return _controlIdForUpdateDockDatum;
         }
 #pragma endregion
 
@@ -166,16 +166,16 @@ namespace mint
 #pragma region GuiContext - ControlStackData
         inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
             : _controlType{ controlData.getControlType() }
-            , _hashKey{ controlData.getHashKey() }
+            , _id{ controlData.getId() }
         {
             __noop;
         }
 #pragma endregion
 
 
-        MINT_INLINE const bool GuiContext::isValidControlDataHashKey(const uint64 hashKey) const noexcept
+        MINT_INLINE const bool GuiContext::isValidControlId(const uint64 id) const noexcept
         {
-            const auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
+            const auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
             return found.isValid();
         }
 
@@ -183,7 +183,7 @@ namespace mint
         {
             if (_controlStackPerFrame.empty() == false)
             {
-                auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
+                auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
                 if (found.isValid() == true)
                 {
                     return *found._value;
@@ -196,7 +196,7 @@ namespace mint
         {
             if (_controlStackPerFrame.empty() == false)
             {
-                auto found = _controlIdMap.find(_controlStackPerFrame.back()._hashKey);
+                auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
                 if (found.isValid() == true)
                 {
                     return *found._value;
@@ -205,9 +205,9 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::getControlData(const uint64 hashKey) noexcept
+        MINT_INLINE ControlData& GuiContext::getControlData(const uint64 id) noexcept
         {
-            auto found = _controlIdMap.find(hashKey);
+            auto found = _controlIdMap.find(id);
             if (found.isValid() == true)
             {
                 return *found._value;
@@ -215,21 +215,21 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE const ControlData& GuiContext::getControlData(const uint64 hashKey) const noexcept
+        MINT_INLINE const ControlData& GuiContext::getControlData(const uint64 id) const noexcept
         {
-            auto found = _controlIdMap.find(hashKey);
+            auto found = _controlIdMap.find(id);
             if (found.isValid() == true)
             {
                 return *found._value;
             }
 
-            //MINT_ASSERT("김장원", false, "hashKey 가 존재하지 않는 ControlData 입니다!!!");
+            //MINT_ASSERT("김장원", false, "id 가 존재하지 않는 ControlData 입니다!!!");
             return _rootControlData;
         }
         
         MINT_INLINE Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
-            return controlData._position - getControlData(controlData.getParentHashKey())._position;
+            return controlData._position - getControlData(controlData.getParentId())._position;
         }
 
         MINT_INLINE const Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept

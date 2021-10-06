@@ -168,7 +168,7 @@ namespace mint
 
         MINT_INLINE const bool DockDatum::hasDockedControls() const noexcept
         {
-            return !_dockedControlHashArray.empty();
+            return !_dockedControlIdArray.empty();
         }
 
         MINT_INLINE const bool DockDatum::isRawDockSizeSet() const noexcept
@@ -188,15 +188,15 @@ namespace mint
 
         MINT_INLINE void DockDatum::swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept
         {
-            std::swap(_dockedControlHashArray[indexA], _dockedControlHashArray[indexB]);
+            std::swap(_dockedControlIdArray[indexA], _dockedControlIdArray[indexB]);
         }
 
-        MINT_INLINE const int32 DockDatum::getDockedControlIndex(const uint64 dockedControlHashKey) const noexcept
+        MINT_INLINE const int32 DockDatum::getDockedControlIndex(const uint64 dockedControlId) const noexcept
         {
-            const int32 dockedControlCount = static_cast<int32>(_dockedControlHashArray.size());
+            const int32 dockedControlCount = static_cast<int32>(_dockedControlIdArray.size());
             for (int32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
             {
-                if (_dockedControlHashArray[dockedControlIndex] == dockedControlHashKey)
+                if (_dockedControlIdArray[dockedControlIndex] == dockedControlId)
                 {
                     return dockedControlIndex;
                 }
@@ -204,9 +204,9 @@ namespace mint
             return -1;
         }
 
-        MINT_INLINE const uint64 DockDatum::getDockedControlHashKey(const int32 dockedControlIndex) const noexcept
+        MINT_INLINE const uint64 DockDatum::getDockedControlId(const int32 dockedControlIndex) const noexcept
         {
-            return _dockedControlHashArray[dockedControlIndex];
+            return _dockedControlIdArray[dockedControlIndex];
         }
 
         MINT_INLINE const float DockDatum::getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept
@@ -239,7 +239,7 @@ namespace mint
             : _dockingControlType{ (controlType == ControlType::ROOT) ? DockingControlType::Dock : DockingControlType::None }
             , _lastDockingMethod{ DockingMethod::COUNT }
             , _lastDockingMethodCandidate{ DockingMethod::COUNT }
-            , _dockControlHashKey{ 0 }
+            , _dockControlId{ 0 }
         {
             __noop;
         }
@@ -252,13 +252,13 @@ namespace mint
             initializeReflection();
         }
 
-        inline ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType)
-            : ControlData(hashKey, parentHashKey, controlType, Float2::kNan)
+        inline ControlData::ControlData(const uint64 id, const uint64 parentId, const ControlType controlType)
+            : ControlData(id, parentId, controlType, Float2::kNan)
         {
             __noop;
         }
 
-        inline ControlData::ControlData(const uint64 hashKey, const uint64 parentHashKey, const ControlType controlType, const Float2& size)
+        inline ControlData::ControlData(const uint64 id, const uint64 parentId, const ControlType controlType, const Float2& size)
             : _updateCount{ 0 }
             , _interactionSize{ size }
             , _nonDockInteractionSize{ size }
@@ -269,11 +269,11 @@ namespace mint
             , _displaySize{ size }
             , _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
             , _childAt{ _innerPadding.left(), _innerPadding.top() }
-            , _delegateHashKey{ 0 }
+            , _delegateControlId{ 0 }
             , _dockRelatedData{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
-            , _hashKey{ hashKey }
-            , _parentHashKey{ parentHashKey }
+            , _id{ id }
+            , _parentId{ parentId }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
             , _previousMaxChildControlCount{ 0 }
@@ -293,9 +293,9 @@ namespace mint
         {
             clearPerFrameData();
 
-            prepareChildControlDataHashKeyArray();
+            prepareChildControlIds();
 
-            parentControlData._childControlDataHashKeyArray.push_back(_hashKey);
+            parentControlData._childControlIds.push_back(_id);
             parentControlData.connectChildWindowIfNot(*this);
 
             _displaySizeMin = prepareControlDataParam._displaySizeMin;
@@ -326,14 +326,14 @@ namespace mint
             }
         }
 
-        MINT_INLINE const uint64 ControlData::getHashKey() const noexcept
+        MINT_INLINE const uint64 ControlData::getId() const noexcept
         {
-            return _hashKey;
+            return _id;
         }
 
-        MINT_INLINE const uint64 ControlData::getParentHashKey() const noexcept
+        MINT_INLINE const uint64 ControlData::getParentId() const noexcept
         {
-            return _parentHashKey;
+            return _parentId;
         }
 
         MINT_INLINE const Rect& ControlData::getInnerPadding() const noexcept
@@ -469,19 +469,19 @@ namespace mint
             return _clipRectForDocks;
         }
 
-        MINT_INLINE const Vector<uint64>& ControlData::getChildControlDataHashKeyArray() const noexcept
+        MINT_INLINE const Vector<uint64>& ControlData::getChildControlIds() const noexcept
         {
-            return _childControlDataHashKeyArray;
+            return _childControlIds;
         }
 
-        MINT_INLINE const Vector<uint64>& ControlData::getPreviousChildControlDataHashKeyArray() const noexcept
+        MINT_INLINE const Vector<uint64>& ControlData::getPreviousChildControlIds() const noexcept
         {
-            return _previousChildControlDataHashKeyArray;
+            return _previousChildControlIds;
         }
 
         MINT_INLINE const uint16 ControlData::getPreviousChildControlCount() const noexcept
         {
-            return static_cast<uint16>(_previousChildControlDataHashKeyArray.size());
+            return static_cast<uint16>(_previousChildControlIds.size());
         }
 
         MINT_INLINE const uint16 ControlData::getPreviousMaxChildControlCount() const noexcept
@@ -489,16 +489,16 @@ namespace mint
             return _previousMaxChildControlCount;
         }
 
-        MINT_INLINE void ControlData::prepareChildControlDataHashKeyArray() noexcept
+        MINT_INLINE void ControlData::prepareChildControlIds() noexcept
         {
-            std::swap(_childControlDataHashKeyArray, _previousChildControlDataHashKeyArray);
-            _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlDataHashKeyArray.size()));
-            _childControlDataHashKeyArray.clear();
+            std::swap(_childControlIds, _previousChildControlIds);
+            _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlIds.size()));
+            _childControlIds.clear();
         }
 
         MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
         {
-            return !_childWindowHashKeyMap.empty();
+            return !_childWindowIdMap.empty();
         }
 
         MINT_INLINE DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
@@ -514,7 +514,7 @@ namespace mint
         MINT_INLINE const bool ControlData::isShowingInDock(const ControlData& dockedControlData) const noexcept
         {
             const DockDatum& dockDatum = getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
-            return dockDatum.getDockedControlIndex(dockedControlData.getHashKey()) == dockDatum._dockedControlIndexShown;
+            return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._dockedControlIndexShown;
         }
 
         MINT_INLINE void ControlData::setDockSize(const DockingMethod dockingMethod, const Float2& dockSize) noexcept
@@ -619,24 +619,24 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE void ControlData::connectToDock(const uint64 dockControlHashKey) noexcept
+        MINT_INLINE void ControlData::connectToDock(const uint64 dockControlId) noexcept
         {
-            _dockRelatedData._dockControlHashKey = dockControlHashKey;
+            _dockRelatedData._dockControlId = dockControlId;
         }
 
         MINT_INLINE void ControlData::disconnectFromDock() noexcept
         {
-            _dockRelatedData._dockControlHashKey = 0;
+            _dockRelatedData._dockControlId = 0;
         }
 
-        MINT_INLINE const uint64 ControlData::getDockControlHashKey() const noexcept
+        MINT_INLINE const uint64 ControlData::getDockControlId() const noexcept
         {
-            return _dockRelatedData._dockControlHashKey;
+            return _dockRelatedData._dockControlId;
         }
 
         MINT_INLINE const bool ControlData::isDocking() const noexcept
         {
-            return (_dockRelatedData._dockControlHashKey != 0);
+            return (_dockRelatedData._dockControlId != 0);
         }
 
         MINT_INLINE const bool ControlData::isDockHosting() const noexcept
@@ -675,20 +675,20 @@ namespace mint
 
         MINT_INLINE void ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
         {
-            if (childWindowControlData._controlType == ControlType::Window && _childWindowHashKeyMap.find(childWindowControlData._hashKey).isValid() == false)
+            if (childWindowControlData._controlType == ControlType::Window && _childWindowIdMap.find(childWindowControlData._id).isValid() == false)
             {
-                _childWindowHashKeyMap.insert(childWindowControlData._hashKey, true);
+                _childWindowIdMap.insert(childWindowControlData._id, true);
             }
         }
 
-        MINT_INLINE void ControlData::disconnectChildWindow(const uint64 childWindowHashKey) noexcept
+        MINT_INLINE void ControlData::disconnectChildWindow(const uint64 childWindowId) noexcept
         {
-            _childWindowHashKeyMap.erase(childWindowHashKey);
+            _childWindowIdMap.erase(childWindowId);
         }
 
-        MINT_INLINE const HashMap<uint64, bool>& ControlData::getChildWindowHashKeyMap() const noexcept
+        MINT_INLINE const HashMap<uint64, bool>& ControlData::getChildWindowIdMap() const noexcept
         {
-            return _childWindowHashKeyMap;
+            return _childWindowIdMap;
         }
 
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept
@@ -697,9 +697,9 @@ namespace mint
             std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
         }
 
-        MINT_INLINE void ControlData::setParentHashKeyXXX(const uint64 parentHashKey) noexcept
+        MINT_INLINE void ControlData::setParentIdXXX(const uint64 parentId) noexcept
         {
-            _parentHashKey = parentHashKey;
+            _parentId = parentId;
         }
 
         MINT_INLINE void ControlData::setOffsetY_XXX(const float offsetY) noexcept
