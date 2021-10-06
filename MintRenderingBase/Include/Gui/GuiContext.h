@@ -22,6 +22,10 @@
 #include <MintRenderingBase/Include/Gui/InputHelpers.h>
 
 
+// This macro makes arguments for begin-/make- functions of GuiContext
+#define MINT_GUI_CONTROL(params, ...) __FILE__, __LINE__, params, __VA_ARGS__
+
+
 namespace mint
 {
     namespace Rendering
@@ -336,7 +340,7 @@ namespace mint
         public:
             // [Window | Control with ID]
             // \param title [Used as unique id for windows]
-            const bool                                  beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
+            const bool                                  beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
             void                                        endWindow() { endControlInternal(ControlType::Window); }
 
         private:
@@ -351,7 +355,7 @@ namespace mint
             // A simple button control
             // \param text [Text to display on the button]
             // \returns true, if clicked
-            const bool                                  beginButton(const wchar_t* const text);
+            const bool                                  beginButton(const char* const file, const int line, const wchar_t* const text);
             void                                        endButton() { endControlInternal(ControlType::Button); }
     #pragma endregion
 
@@ -359,14 +363,13 @@ namespace mint
         public:
             // [CheckBox]
             // \return true, if toggle state has changed
-            const bool                                  beginCheckBox(const wchar_t* const text, bool* const outIsChecked = nullptr);
+            const bool                                  beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                        endCheckBox() { endControlInternal(ControlType::CheckBox); }
     #pragma endregion
 
     #pragma region Controls - Label
         public:
-            void                                        makeLabel(const wchar_t* const text, const LabelParam& labelParam = LabelParam());
-            void                                        makeLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
+            void                                        makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
             Float4                                      labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
@@ -376,7 +379,7 @@ namespace mint
     #pragma region Controls - Slider
         public:
             // \return true, if value has been changed
-            const bool                                  beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue);
+            const bool                                  beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue);
             void                                        endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
@@ -386,11 +389,10 @@ namespace mint
 
     #pragma region Controls - TextBox
         public:
-            // \param name [Unique name to distinguish control]
             // \param textBoxParam [Various options]
             // \param outText [The content of the textbox]
             // \return true, if the content has changed
-            const bool                                  beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, StringW& outText);
+            const bool                                  beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText);
             void                                        endTextBox() { endControlInternal(ControlType::TextBox); }
 
         private:
@@ -399,10 +401,10 @@ namespace mint
 
     #pragma region Controls - ValueSlider
         public:
-            const bool                                  beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            const bool                                  beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endValueSlider() { endControlInternal(ControlType::ValueSlider); }
             
-            const bool                                  beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            const bool                                  beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endLabeledValueSlider() { endControlInternal(ControlType::ValueSlider); }
 
         private:
@@ -411,43 +413,43 @@ namespace mint
 
     #pragma region Controls - List (ListView, ListItem)
         public:
-            const bool                                  beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
+            const bool                                  beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
             void                                        endListView();
 
-            void                                        makeListItem(const wchar_t* const text);
+            void                                        makeListItem(const char* const file, const int line, const wchar_t* const text);
     #pragma endregion
 
     #pragma region Controls - Menu (MenuBar, MenuBarItem, MenuItem)
         public:
-            const bool                                  beginMenuBar(const wchar_t* const name);
+            const bool                                  beginMenuBar(const char* const file, const int line, const wchar_t* const name);
             void                                        endMenuBar() { endControlInternal(ControlType::MenuBar); }
 
-            const bool                                  beginMenuBarItem(const wchar_t* const text);
+            const bool                                  beginMenuBarItem(const char* const file, const int line, const wchar_t* const text);
             void                                        endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
 
-            const bool                                  beginMenuItem(const wchar_t* const text);
+            const bool                                  beginMenuItem(const char* const file, const int line, const wchar_t* const text);
             void                                        endMenuItem() { endControlInternal(ControlType::MenuItem); }
     #pragma endregion
 
     #pragma region Controls - Internal use
         private:
             // \return Size of titlebar
-            Float2                                      beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
+            Float2                                      beginTitleBar(const ControlData& parentControlData, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
             // [RoundButton]
-            const bool                                  makeRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color);
+            const bool                                  makeRoundButton(const ControlData& parentControlData, const wchar_t* const windowTitle, const Rendering::Color& color);
 
             // [Tooltip]
             // Unique control
-            void                                        makeTooltipWindow(const wchar_t* const tooltipText, const Float2& position);
+            void                                        makeTooltipWindow(const ControlData& parentControlData, const wchar_t* const tooltipText, const Float2& position);
 
             // [ScrollBar]
-            void                                        makeScrollBar(const ScrollBarType scrollBarType);
-            void                                        _makeScrollBarVert() noexcept;
-            void                                        _makeScrollBarHorz() noexcept;
-            ControlData&                                __makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                        __makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        makeScrollBar(ControlData& parentControlData, const ScrollBarType scrollBarType);
+            void                                        _makeScrollBarVert(ControlData& parentControlData) noexcept;
+            void                                        _makeScrollBarHorz(ControlData& parentControlData) noexcept;
+            ControlData&                                __makeScrollBarTrack(ControlData& parentControlData, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                        __makeScrollBarThumb(const ControlData& parentControlData, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
     #pragma endregion
 
         private:
@@ -459,15 +461,16 @@ namespace mint
 
         private:
             const bool                                  isValidControlId(const uint64 id) const noexcept;
+            ControlData&                                createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
+            ControlData&                                createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
+            ControlData&                                _createOrGetControlDataInternalXXX(const uint64 controlId, const ControlType controlType, const wchar_t* const text) noexcept;
+            const uint64                                _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
+            const uint64                                _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                getControlStackTopXXX() noexcept;
             ControlData&                                getControlData(const uint64 id) noexcept;
             const ControlData&                          getControlData(const uint64 id) const noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
-            const wchar_t*                              generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept;
-            const wchar_t*                              generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept;
-            ControlData&                                createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const generationKeyOverride = nullptr) noexcept;
-            const uint64                                _generateControlIdXXX(const wchar_t* const text, const ControlType controlType) const noexcept;
             const ControlData&                          getParentWindowControlData() const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlDataInternal(const uint64 id) const noexcept;

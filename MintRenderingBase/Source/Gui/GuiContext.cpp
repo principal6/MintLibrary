@@ -20,9 +20,6 @@
 #include <MintLibrary/Include/ScopedCpuProfiler.h>
 
 
-#pragma optimize("", off)
-
-
 namespace mint
 {
     namespace Gui
@@ -416,24 +413,24 @@ namespace mint
             windowParam._position = Float2(200.0f, 50.0f);
             windowParam._scrollBarType = Gui::ScrollBarType::Both;
             _controlMetaStateSet.nextSize(Float2(500.0f, 500.0f), true);
-            if (beginWindow(L"TestWindow", windowParam, inoutVisibleState) == true)
+            if (beginWindow(MINT_GUI_CONTROL(L"TestWindow", windowParam, inoutVisibleState)) == true)
             {
                 static VisibleState childWindowVisibleState0;
                 static VisibleState childWindowVisibleState1;
 
 
-                if (beginMenuBar(L"메뉴테스트1") == true)
+                if (beginMenuBar(MINT_GUI_CONTROL(L"")) == true)
                 {
-                    if (beginMenuBarItem(L"파일") == true)
+                    if (beginMenuBarItem(MINT_GUI_CONTROL(L"파일")) == true)
                     {
-                        if (beginMenuItem(L"새로 만들기") == true)
+                        if (beginMenuItem(MINT_GUI_CONTROL(L"새로 만들기")) == true)
                         {
-                            if (beginMenuItem(L"T") == true)
+                            if (beginMenuItem(MINT_GUI_CONTROL(L"T")) == true)
                             {
                                 endMenuItem();
                             }
 
-                            if (beginMenuItem(L"TT") == true)
+                            if (beginMenuItem(MINT_GUI_CONTROL(L"TT")) == true)
                             {
                                 endMenuItem();
                             }
@@ -441,11 +438,11 @@ namespace mint
                             endMenuItem();
                         }
 
-                        if (beginMenuItem(L"불러오기") == true)
+                        if (beginMenuItem(MINT_GUI_CONTROL(L"불러오기")) == true)
                         {
-                            if (beginMenuItem(L"ABC") == true)
+                            if (beginMenuItem(MINT_GUI_CONTROL(L"ABC")) == true)
                             {
-                                if (beginMenuItem(L"Nest") == true)
+                                if (beginMenuItem(MINT_GUI_CONTROL(L"Nest")) == true)
                                 {
                                     endMenuItem();
                                 }
@@ -453,7 +450,7 @@ namespace mint
                                 endMenuItem();
                             }
 
-                            if (beginMenuItem(L"DEF") == true)
+                            if (beginMenuItem(MINT_GUI_CONTROL(L"DEF")) == true)
                             {
                                 endMenuItem();
                             }
@@ -461,7 +458,7 @@ namespace mint
                             endMenuItem();
                         }
 
-                        if (beginMenuItem(L"내보내기") == true)
+                        if (beginMenuItem(MINT_GUI_CONTROL(L"내보내기")) == true)
                         {
                             endMenuItem();
                         }
@@ -469,7 +466,7 @@ namespace mint
                         endMenuBarItem();
                     }
 
-                    if (beginMenuBarItem(L"도움말") == true)
+                    if (beginMenuBarItem(MINT_GUI_CONTROL(L"도움말")) == true)
                     {
                         endMenuBarItem();
                     }
@@ -479,12 +476,12 @@ namespace mint
 
                 _controlMetaStateSet.nextTooltip(L"툴팁 테스트!");
 
-                if (beginButton(L"테스트") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"테스트")) == true)
                 {
                     endButton();
                 }
 
-                if (beginCheckBox(L"체크박스") == true)
+                if (beginCheckBox(MINT_GUI_CONTROL(L"체크박스")) == true)
                 {
                     endCheckBox();
                 }
@@ -493,7 +490,7 @@ namespace mint
                     Gui::SliderParam sliderParam;
                     _controlMetaStateSet.nextSize(Float2(32.0f, 0.0f));
                     float value = 0.0f;
-                    if (beginSlider(L"Slider0", sliderParam, value) == true)
+                    if (beginSlider(MINT_GUI_CONTROL(sliderParam, value)) == true)
                     {
                         endSlider();
                     }
@@ -501,7 +498,7 @@ namespace mint
 
 
                 _controlMetaStateSet.nextSameLine();
-                if (beginButton(L"ChildWindow0") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"ChildWindow0")) == true)
                 {
                     childWindowVisibleState0 = VisibleState::VisibleOpen;
 
@@ -509,19 +506,19 @@ namespace mint
                 }
 
                 _controlMetaStateSet.nextSameLine();
-                if (beginButton(L"ChildWindow1") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"ChildWindow1")) == true)
                 {
                     childWindowVisibleState1 = VisibleState::VisibleOpen;
 
                     endButton();
                 }
 
-                if (beginButton(L"테스트2") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"테스트2")) == true)
                 {
                     endButton();
                 }
 
-                if (beginButton(L"테스트3") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"테스트3")) == true)
                 {
                     endButton();
                 }
@@ -531,7 +528,7 @@ namespace mint
                     Gui::TextBoxParam textBoxParam;
                     _controlMetaStateSet.nextSize(Float2(240.0f, 24.0f));
                     textBoxParam._alignmentHorz = Gui::TextAlignmentHorz::Center;
-                    if (beginTextBox(L"TextBox", textBoxParam, textBoxContent) == true)
+                    if (beginTextBox(MINT_GUI_CONTROL(textBoxParam, textBoxContent)) == true)
                     {
                         endTextBox();
                     }
@@ -539,14 +536,14 @@ namespace mint
 
                 Gui::ListViewParam listViewParam;
                 int16 listViewSelectedItemIndex = 0;
-                if (beginListView(L"리스트뷰", listViewSelectedItemIndex, listViewParam) == true)
+                if (beginListView(MINT_GUI_CONTROL(listViewSelectedItemIndex, listViewParam)) == true)
                 {
-                    makeListItem(L"아이템1");
-                    makeListItem(L"아이템2");
-                    makeListItem(L"아이템3");
-                    makeListItem(L"아이템4");
-                    makeListItem(L"아이템5");
-                    makeListItem(L"아이템6");
+                    makeListItem(MINT_GUI_CONTROL(L"아이템1"));
+                    makeListItem(MINT_GUI_CONTROL(L"아이템2"));
+                    makeListItem(MINT_GUI_CONTROL(L"아이템3"));
+                    makeListItem(MINT_GUI_CONTROL(L"아이템4"));
+                    makeListItem(MINT_GUI_CONTROL(L"아이템5"));
+                    makeListItem(MINT_GUI_CONTROL(L"아이템6"));
 
                     endListView();
                 }
@@ -556,9 +553,9 @@ namespace mint
                     _controlMetaStateSet.nextSize(Float2(200.0f, 240.0f), true);
                     testWindowParam._scrollBarType = Gui::ScrollBarType::Both;
                     testWindowParam._initialDockingMethod = Gui::DockingMethod::BottomSide;
-                    if (beginWindow(L"1ST", testWindowParam, childWindowVisibleState0))
+                    if (beginWindow(MINT_GUI_CONTROL(L"1ST", testWindowParam, childWindowVisibleState0)))
                     {
-                        if (beginButton(L"테스트!!") == true)
+                        if (beginButton(MINT_GUI_CONTROL(L"테스트!!")) == true)
                         {
                             endButton();
                         }
@@ -573,9 +570,9 @@ namespace mint
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
                     testWindowParam._initialDockingMethod = Gui::DockingMethod::BottomSide;
-                    if (beginWindow(L"2NDDD", testWindowParam, childWindowVisibleState1))
+                    if (beginWindow(MINT_GUI_CONTROL(L"2NDDD", testWindowParam, childWindowVisibleState1)))
                     {
-                        if (beginButton(L"YEAH") == true)
+                        if (beginButton(MINT_GUI_CONTROL(L"YEAH")) == true)
                         {
                             endButton();
                         }
@@ -595,9 +592,9 @@ namespace mint
             windowParam._position = Float2(20.0f, 50.0f);
             windowParam._initialDockingMethod = Gui::DockingMethod::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
-            if (beginWindow(L"TestDockedWindow", windowParam, inoutVisibleState) == true)
+            if (beginWindow(MINT_GUI_CONTROL(L"TestDockedWindow", windowParam, inoutVisibleState)) == true)
             {
-                if (beginButton(L"버튼이요") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"버튼이요")) == true)
                 {
                     bool a = true;
                     endButton();
@@ -607,21 +604,21 @@ namespace mint
 
                 _controlMetaStateSet.nextTooltip(L"Button B Toolip!!");
 
-                if (beginButton(L"Button B") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"Button B")) == true)
                 {
                     endButton();
                 }
 
-                if (beginButton(L"Another") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"Another")) == true)
                 {
                     endButton();
                 }
 
-                makeLabel(L"TestLable00000", L"A label!");
+                makeLabel(MINT_GUI_CONTROL(L"A label!"));
 
                 _controlMetaStateSet.nextSameLine();
 
-                if (beginButton(L"Fourth") == true)
+                if (beginButton(MINT_GUI_CONTROL(L"Fourth")) == true)
                 {
                     endButton();
                 }
@@ -635,27 +632,30 @@ namespace mint
             Gui::WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
-            if (beginWindow(L"ControlData Viewer", windowParam, inoutVisibleState) == true)
+            if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
                 if (isValidControlId(_viewerTargetControlId) == true)
                 {
                     ScopeStringW<300> buffer;
                     const ControlData& controlData = getControlData(_viewerTargetControlId);
                     
+                    formatString(buffer, L"Control ID Map Size: %u", _controlIdMap.size());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+
                     formatString(buffer, L"ID: %llu", controlData.getId());
-                    makeLabel(buffer.c_str());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
                     
                     formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
-                    makeLabel(buffer.c_str());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
                     
                     formatString(buffer, L"Text: %s", controlData.getText());
-                    makeLabel(buffer.c_str());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
-                    makeLabel(buffer.c_str());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
-                    makeLabel(buffer.c_str());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     makeFromReflectionClass(controlData.getReflectionData(), &controlData);
                 }
@@ -680,7 +680,7 @@ namespace mint
                     formatString(bufferA, "%s: (%f, %f)", memberTypeData->_declarationName.c_str(), memberCasted._x, memberCasted._y);
                     
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
-                    makeLabel(bufferW.c_str());
+                    makeLabel(MINT_GUI_CONTROL(bufferW.c_str()));
                 }
                 else if (memberTypeData->_typeName == "uint64")
                 {
@@ -688,7 +688,7 @@ namespace mint
                     formatString(bufferA, "%s: %llu", memberTypeData->_declarationName.c_str(), memberCasted);
                     
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferW);
-                    makeLabel(bufferW.c_str());
+                    makeLabel(MINT_GUI_CONTROL(bufferW.c_str()));
                 }
                 else if (memberTypeData->_typeName == "StringW")
                 {
@@ -697,7 +697,7 @@ namespace mint
                     bufferA = memberTypeData->_declarationName.c_str();
                     StringUtil::convertScopeStringAToScopeStringW(bufferA, bufferWTemp);
                     formatString(bufferW, L"%s: %s", bufferWTemp.c_str(), memberCasted.c_str());
-                    makeLabel(bufferW.c_str());
+                    makeLabel(MINT_GUI_CONTROL(bufferW.c_str()));
                 }
                 else
                 {
@@ -706,13 +706,13 @@ namespace mint
             }
         }
 
-        const bool GuiContext::beginWindow(const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
+        const bool GuiContext::beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
         {
             static constexpr ControlType controlType = ControlType::Window;
             
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& windowControlData = createOrGetControlData(title, controlType);
+            ControlData& windowControlData = createOrGetControlData(file, line, controlType, title);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
@@ -821,13 +821,13 @@ namespace mint
                     _controlMetaStateSet.nextOffAutoPosition(); // 중요
 
                     const Float2 titleBarSize = Float2(windowControlData._displaySize._x, windowControlData._controlValue._windowData._titleBarThickness);
-                    beginTitleBar(title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
+                    beginTitleBar(windowControlData, title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
 
                 if (windowParam._scrollBarType != ScrollBarType::None)
                 {
-                    makeScrollBar(windowParam._scrollBarType);
+                    makeScrollBar(windowControlData, windowParam._scrollBarType);
                 }
             }
             
@@ -903,11 +903,11 @@ namespace mint
             return needToProcessControl;
         }
 
-        const bool GuiContext::beginButton(const wchar_t* const text)
+        const bool GuiContext::beginButton(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::Button;
             
-            ControlData& controlData = createOrGetControlData(text, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
@@ -936,11 +936,11 @@ namespace mint
             return isClicked;
         }
 
-        const bool GuiContext::beginCheckBox(const wchar_t* const text, bool* const outIsChecked)
+        const bool GuiContext::beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked)
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
-            ControlData& controlData = createOrGetControlData(text, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._autoCalculatedDisplaySize = kCheckBoxSize;
@@ -981,19 +981,11 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::makeLabel(const wchar_t* const text, const LabelParam& labelParam)
-        {
-            ScopeStringW<300> name;
-            name.assign(L"__label__");
-            name += text;
-            makeLabel(name.c_str(), text, labelParam);
-        }
-
-        void GuiContext::makeLabel(const wchar_t* const name, const wchar_t* const text, const LabelParam& labelParam)
+        void GuiContext::makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam)
         {
             static constexpr ControlType controlType = ControlType::Label;
 
-            ControlData& controlData = createOrGetControlData(text, controlType, generateControlKeyString(name, controlType));
+            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
@@ -1079,11 +1071,11 @@ namespace mint
             return Rendering::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
         }
 
-        const bool GuiContext::beginSlider(const wchar_t* const name, const SliderParam& sliderParam, float& outValue)
+        const bool GuiContext::beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue)
         {
             static constexpr ControlType trackControlType = ControlType::Slider;
 
-            ControlData& trackControlData = createOrGetControlData(name, trackControlType);
+            ControlData& trackControlData = createOrGetControlData(file, line, trackControlType, nullptr);
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
                 prepareControlDataParamForTrack._autoCalculatedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
@@ -1100,7 +1092,7 @@ namespace mint
                 _controlMetaStateSet.nextOffAutoPosition();
 
                 const float sliderValidLength = trackControlData._displaySize._x - kSliderThumbRadius * 2.0f;
-                ControlData& thumbControlData = createOrGetControlData(name, thumbControlType);
+                ControlData& thumbControlData = createOrGetControlData(file, line, thumbControlType, nullptr);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
                 thumbControlData._isDraggable = true;
@@ -1194,11 +1186,11 @@ namespace mint
             rendererContext.drawCircle(kSliderThumbRadius - 2.0f);
         }
 
-        const bool GuiContext::beginTextBox(const wchar_t* const name, const TextBoxParam& textBoxParam, StringW& outText)
+        const bool GuiContext::beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText)
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
-            ControlData& controlData = createOrGetControlData(name, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
             controlData._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = textBoxParam._common._offset;
@@ -1299,11 +1291,11 @@ namespace mint
             }
         }
 
-        const bool GuiContext::beginValueSlider(const wchar_t* const name, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GuiContext::beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
-            ControlData& controlData = createOrGetControlData(name, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
             controlData._isFocusable = true;
             controlData._needDoubleClickToFocus = true;
             PrepareControlDataParam prepareControlDataParam;
@@ -1365,25 +1357,20 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::beginLabeledValueSlider(const wchar_t* const name, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GuiContext::beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
-            StringW labelName = name;
-            labelName += L"_label";
-
             LabelParam labelParamModified = labelParam;
             labelParamModified._alignmentHorz = Gui::TextAlignmentHorz::Center;
             const Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
             _controlMetaStateSet.pushSize(Float2(labelWidth, desiredSize._y));
-            makeLabel(labelName.c_str(), labelText, labelParamModified);
+            makeLabel(file, line, labelText, labelParamModified);
             _controlMetaStateSet.popSize();
             
             _controlMetaStateSet.nextSameLine();
             _controlMetaStateSet.nextOffInterval();
             
-            StringW sliderName = name;
-            sliderName += L"_value_slider";
             _controlMetaStateSet.pushSize(Float2(desiredSize._x - labelWidth, desiredSize._y));
-            const bool result = beginValueSlider(sliderName.c_str(), valueSliderParam, roundnessInPixel, decimalDigits, value);
+            const bool result = beginValueSlider(file, line, valueSliderParam, roundnessInPixel, decimalDigits, value);
             _controlMetaStateSet.popSize();
 
             return result;
@@ -1451,11 +1438,11 @@ namespace mint
             }
         }
         
-        const bool GuiContext::beginListView(const wchar_t* const name, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
+        const bool GuiContext::beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
-            ControlData& controlData = createOrGetControlData(name, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
             controlData._isFocusable = false;
 
             PrepareControlDataParam prepareControlDataParam;
@@ -1517,17 +1504,17 @@ namespace mint
             const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
-                makeScrollBar(Gui::ScrollBarType::Vert);
+                makeScrollBar(controlData, Gui::ScrollBarType::Vert);
             }
 
             endControlInternal(ControlType::ListView);
         }
 
-        void GuiContext::makeListItem(const wchar_t* const text)
+        void GuiContext::makeListItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
-            ControlData& controlData = createOrGetControlData(text, controlType);
+            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
             controlData._isFocusable = false;
 
             ControlData& parentControlData = getControlData(controlData.getParentId());
@@ -1564,13 +1551,13 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered));
         }
 
-        const bool GuiContext::beginMenuBar(const wchar_t* const name)
+        const bool GuiContext::beginMenuBar(const char* const file, const int line, const wchar_t* const name)
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& menuBar = createOrGetControlData(name, controlType);
+            ControlData& menuBar = createOrGetControlData(file, line, controlType, nullptr);
             ControlData& menuBarParent = getControlData(menuBar.getParentId());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
             const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
@@ -1628,14 +1615,14 @@ namespace mint
             return true;
         }
 
-        const bool GuiContext::beginMenuBarItem(const wchar_t* const text)
+        const bool GuiContext::beginMenuBarItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
             _controlMetaStateSet.nextOffAutoPosition();
 
             ControlData& menuBar = getControlStackTopXXX();
-            ControlData& menuBarItem = createOrGetControlData(text, controlType, generateControlKeyString(menuBar, text, controlType));
+            ControlData& menuBarItem = createOrGetControlData(file, line, controlType, text);
             if (menuBar.isTypeOf(ControlType::MenuBar) == false)
             {
                 MINT_LOG_ERROR("김장원", "MenuBarItem 은 MenuBar 컨트롤의 자식으로만 사용할 수 있습니다!");
@@ -1705,14 +1692,14 @@ namespace mint
             return result;
         }
 
-        const bool GuiContext::beginMenuItem(const wchar_t* const text)
+        const bool GuiContext::beginMenuItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
             _controlMetaStateSet.nextOffAutoPosition();
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
-            ControlData& menuItem = createOrGetControlData(text, controlType);
+            ControlData& menuItem = createOrGetControlData(file, line, controlType, text);
             menuItem._isInteractableOutsideParent = true;
 
             ControlData& menuItemParent = getControlData(menuItem.getParentId());
@@ -1796,80 +1783,78 @@ namespace mint
             return result;
         }
 
-        void GuiContext::makeScrollBar(const ScrollBarType scrollBarType)
+        void GuiContext::makeScrollBar(ControlData& parentControlData, const ScrollBarType scrollBarType)
         {
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
             {
-                _makeScrollBarVert();
+                _makeScrollBarVert(parentControlData);
             }
 
             const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
             if (useHorizontal == true)
             {
-                _makeScrollBarHorz();
+                _makeScrollBarHorz(parentControlData);
             }
         }
 
-        void GuiContext::_makeScrollBarVert() noexcept
+        void GuiContext::_makeScrollBarVert(ControlData& parentControlData) noexcept
         {
-            ControlData& parent = getControlStackTopXXX();
-            const float parentWindowPureDisplayHeight = parent.getPureDisplayHeight();
-            const float titleBarOffsetX = (parent.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+            const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+            const float titleBarOffsetX = (parentControlData.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 
             ScrollBarTrackParam scrollBarTrackParam;
             _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowPureDisplayHeight));
-            scrollBarTrackParam._positionInParent._x = parent._displaySize._x - titleBarOffsetX;
-            scrollBarTrackParam._positionInParent._y = parent.getTopOffsetToClientArea() + parent.getInnerPadding().top();
+            scrollBarTrackParam._positionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
+            scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
             
             bool hasExtraSize = false;
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = __makeScrollBarTrack(ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
+            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parentControlData);
+            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlData, ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
-                parent._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
+                parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                __makeScrollBarThumb(ScrollBarType::Vert, parentWindowPureDisplayHeight, parent.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlData, ScrollBarType::Vert, parentWindowPureDisplayHeight, parentControlData.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
             }
             else
             {
-                parent._controlValue._commonData.disableScrollBar(ScrollBarType::Vert);
+                parentControlData._controlValue._commonData.disableScrollBar(ScrollBarType::Vert);
 
-                parent._childDisplayOffset._y = 0.0f; // Scrolling!
+                parentControlData._childDisplayOffset._y = 0.0f; // Scrolling!
             }
         }
 
-        void GuiContext::_makeScrollBarHorz() noexcept
+        void GuiContext::_makeScrollBarHorz(ControlData& parentControlData) noexcept
         {
-            ControlData& parent = getControlStackTopXXX();
-            const float parentWindowPureDisplayWidth = parent.getPureDisplayWidth();
-            const Float2& menuBarThicknes = parent.getMenuBarThickness();
+            const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
+            const Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 
             ScrollBarTrackParam scrollBarTrackParam;
             _controlMetaStateSet.nextSize(Float2(parentWindowPureDisplayWidth, kScrollBarThickness));
-            scrollBarTrackParam._positionInParent._x = parent.getInnerPadding().left() + menuBarThicknes._x;
-            scrollBarTrackParam._positionInParent._y = parent._displaySize._y - kHalfBorderThickness * 2.0f;
+            scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
+            scrollBarTrackParam._positionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
 
             bool hasExtraSize = false;
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parent);
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parent);
-            ControlData& scrollBarTrack = __makeScrollBarTrack(ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
+            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parentControlData);
+            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlData, ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
             if (hasExtraSize == true)
             {
-                parent._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
+                parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                __makeScrollBarThumb(ScrollBarType::Horz, parentWindowPureDisplayWidth, parent.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlData, ScrollBarType::Horz, parentWindowPureDisplayWidth, parentControlData.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
             }
             else
             {
-                parent._controlValue._commonData.disableScrollBar(ScrollBarType::Horz);
+                parentControlData._controlValue._commonData.disableScrollBar(ScrollBarType::Horz);
 
-                parent._childDisplayOffset._x = 0.0f; // Scrolling!
+                parentControlData._childDisplayOffset._x = 0.0f; // Scrolling!
             }
         }
 
-        ControlData& GuiContext::__makeScrollBarTrack(const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GuiContext::__makeScrollBarTrack(ControlData& parentControlData, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -1877,11 +1862,9 @@ namespace mint
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const bool isVert = (scrollBarType == ScrollBarType::Vert);
-            ControlData& parentControlData = getControlStackTopXXX();
-            ControlData& trackControlData = createOrGetControlData(generateControlKeyString((isVert == true) ? L"ScrollBarVertTrack" : L"ScrollBarHorzTrack", trackControlType), trackControlType);
-
+            ControlData& trackControlData = createOrGetControlData(parentControlData, trackControlType, nullptr);
             PrepareControlDataParam prepareControlDataParamForTrack;
+            const bool isVert = (scrollBarType == ScrollBarType::Vert);
             {
                 //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._displaySize;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
@@ -1988,7 +1971,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::__makeScrollBarThumb(const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GuiContext::__makeScrollBarThumb(const ControlData& parentControlData, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
@@ -2002,7 +1985,7 @@ namespace mint
 
             if (scrollBarType == ScrollBarType::Vert)
             {
-                ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarVertThumb", thumbControlType), thumbControlType);
+                ControlData& thumbControlData = createOrGetControlData(parentControlData, thumbControlType, nullptr);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
@@ -2066,7 +2049,7 @@ namespace mint
             }
             else if (scrollBarType == ScrollBarType::Horz)
             {
-                ControlData& thumbControlData = createOrGetControlData(generateControlKeyString(scrollBarParent, L"ScrollBarHorzThumb", thumbControlType), thumbControlType);
+                ControlData& thumbControlData = createOrGetControlData(parentControlData, thumbControlType, nullptr);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
@@ -2197,22 +2180,22 @@ namespace mint
             controlData.setClipRectForChildrenXXX(clipRect);
         }
 
-        Float2 GuiContext::beginTitleBar(const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
+        Float2 GuiContext::beginTitleBar(const ControlData& parentControlData, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
-            ControlData& controlData = createOrGetControlData(windowTitle, controlType);
+            ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
             controlData._isDraggable = true;
             controlData._delegateControlId = controlData.getParentId();
-            ControlData& parentControlData = getControlData(controlData.getParentId());
-            const bool isParentControlDocking = parentControlData.isDocking();
+            ControlData& parentWindowControlData = getControlData(controlData.getParentId());
+            const bool isParentControlDocking = parentWindowControlData.isDocking();
             PrepareControlDataParam prepareControlDataParam;
             {
                 if (isParentControlDocking == true)
                 {
-                    const ControlData& dockControlData = getControlData(parentControlData.getDockControlId());
-                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentControlData._dockRelatedData._lastDockingMethod);
-                    const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentControlData.getId());
+                    const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
+                    const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._displaySize._y);
                     prepareControlDataParam._autoCalculatedDisplaySize = displaySizeOverride;
@@ -2235,9 +2218,9 @@ namespace mint
             {
                 if (_controlInteractionStates.isControlPressed(controlData) == true)
                 {
-                    ControlData& dockControlData = getControlData(parentControlData.getDockControlId());
-                    DockDatum& dockDatum = dockControlData.getDockDatum(parentControlData._dockRelatedData._lastDockingMethod);
-                    dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentControlData.getId());
+                    ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                    DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
+                    dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
                     setControlFocused(dockControlData);
                 }
@@ -2248,8 +2231,8 @@ namespace mint
             rendererContext.setPosition(controlData.getControlCenterPosition());
             if (isParentControlDocking == true)
             {
-                const ControlData& dockControlData = getControlData(parentControlData.getDockControlId());
-                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentControlData);
+                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
                 if (_controlInteractionStates.isControlHovered(controlData) == true)
                 {
                     rendererContext.setColor(((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(32)));
@@ -2272,11 +2255,11 @@ namespace mint
             }
 
             const Float4& titleBarTextPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
-            const bool needToColorFocused_ = needToColorFocused(parentControlData);
+            const bool needToColorFocused_ = needToColorFocused(parentWindowControlData);
             if (isParentControlDocking == true)
             {
-                const ControlData& dockControlData = getControlData(parentControlData.getDockControlId());
-                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentControlData);
+                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
 
                 rendererContext.setTextColor((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDockFont) : getNamedColor(NamedColor::LightFont));
             }
@@ -2290,32 +2273,32 @@ namespace mint
             _controlStackPerFrame.push_back(ControlStackData(controlData));
 
             // Close button
-            if (parentControlData.isDocking() == false)
+            if (parentWindowControlData.isDocking() == false)
             {
                 // 중요
                 _controlMetaStateSet.nextOffAutoPosition();
                 _controlMetaStateSet.nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
-                if (makeRoundButton(windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
+                if (makeRoundButton(controlData, windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
                     inoutParentVisibleState = Gui::VisibleState::Invisible;
                 }
             }
 
             // Window Offset 재조정!!
-            parentControlData.setOffsetY_XXX(titleBarSize._y + parentControlData.getInnerPadding().top());
+            parentWindowControlData.setOffsetY_XXX(titleBarSize._y + parentWindowControlData.getInnerPadding().top());
 
             return titleBarSize;
         }
 
-        const bool GuiContext::makeRoundButton(const wchar_t* const windowTitle, const Rendering::Color& color)
+        const bool GuiContext::makeRoundButton(const ControlData& parentControlData, const wchar_t* const windowTitle, const Rendering::Color& color)
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
             const ControlData& parentWindowData = getParentWindowControlData();
 
             const float radius = kDefaultRoundButtonRadius;
-            ControlData& controlData = createOrGetControlData(windowTitle, controlType);
+            ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
 
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -2338,13 +2321,13 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::makeTooltipWindow(const wchar_t* const tooltipText, const Float2& position)
+        void GuiContext::makeTooltipWindow(const ControlData& parentControlData, const wchar_t* const tooltipText, const Float2& position)
         {
             static constexpr ControlType controlType = ControlType::TooltipWindow;
             static constexpr float kTooltipFontScale = kFontScaleC;
             const float tooltipWindowPadding = 8.0f;
 
-            ControlData& controlData = createOrGetControlData(tooltipText, controlType, L"TooltipWindow");
+            ControlData& controlData = createOrGetControlData(parentControlData, controlType, tooltipText);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
@@ -2376,30 +2359,29 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        const wchar_t* GuiContext::generateControlKeyString(const wchar_t* const name, const ControlType controlType) const noexcept
+        ControlData& GuiContext::createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            return generateControlKeyString(getControlStackTopXXX(), name, controlType);
+            const uint64 controlId = _generateControlIdXXX(parentControlData, controlType);
+            return _createOrGetControlDataInternalXXX(controlId, controlType, text);
         }
 
-        const wchar_t* GuiContext::generateControlKeyString(const ControlData& parentControlData, const wchar_t* const name, const ControlType controlType) const noexcept
+        ControlData& GuiContext::createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            static StringW idWstring;
-            idWstring.clear();
-            idWstring.append(StringUtil::convertToStringW(parentControlData.getId()));
-            idWstring.append(name);
-            idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
-            return idWstring.c_str();
+            const uint64 controlId = _generateControlIdXXX(file, line, controlType);
+            return _createOrGetControlDataInternalXXX(controlId, controlType, text);
         }
 
-        ControlData& GuiContext::createOrGetControlData(const wchar_t* const text, const ControlType controlType, const wchar_t* const generationKeyOverride) noexcept
+        ControlData& GuiContext::_createOrGetControlDataInternalXXX(const uint64 controlId, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            const uint64 controlId = _generateControlIdXXX((generationKeyOverride == nullptr) ? text : generationKeyOverride, controlType);
             auto found = _controlIdMap.find(controlId);
             if (found.isValid() == false)
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
                 ControlData newControlData{ controlId, stackTopControlData.getId(), controlType };
-                newControlData._text = text;
+                if (nullptr != text)
+                {
+                    newControlData._text = text;
+                }
 
                 _controlIdMap.insert(controlId, std::move(newControlData));
             }
@@ -2412,11 +2394,21 @@ namespace mint
             return controlData;
         }
 
-        const uint64 GuiContext::_generateControlIdXXX(const wchar_t* const text, const ControlType controlType) const noexcept
+        const uint64 GuiContext::_generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
-            idWstring.append(text);
+            idWstring.append(StringUtil::convertToStringW(parentControlData.getId()));
+            idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
+            return computeHash(idWstring.c_str());
+        }
+
+        const uint64 GuiContext::_generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept
+        {
+            static StringW idWstring;
+            idWstring.clear();
+            StringUtil::convertStringAToStringW(file, idWstring);
+            idWstring.append(line);
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return computeHash(idWstring.c_str());
         }
@@ -3709,8 +3701,9 @@ namespace mint
 
             if (_controlInteractionStates.needToShowTooltip() == true)
             {
-                makeTooltipWindow(_controlInteractionStates.getTooltipText()
-                    , _controlInteractionStates.getTooltipWindowPosition(getControlData(_controlInteractionStates.getTooltipParentWindowId())));
+                makeTooltipWindow(_rootControlData, _controlInteractionStates.getTooltipText()
+                    , _controlInteractionStates.getTooltipWindowPosition(getControlData(_controlInteractionStates.getTooltipParentWindowId()))
+                );
             }
 
             // Viewport setting
