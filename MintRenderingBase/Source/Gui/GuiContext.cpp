@@ -2147,6 +2147,7 @@ namespace mint
         void GuiContext::endControlInternal(const ControlType controlType)
         {
             MINT_ASSERT("±èÀå¿ø", _controlStackPerFrame.back()._controlType == controlType, "begin °ú end ÀÇ ControlType ÀÌ ´Ù¸¨´Ï´Ù!!!");
+
             _controlStackPerFrame.pop_back();
         }
 
@@ -2457,6 +2458,11 @@ namespace mint
         const bool GuiContext::isThisControlPressed() const noexcept
         {
             return _controlInteractionStates.isControlPressed(getControlStackTopXXX());
+        }
+
+        const ControlAccessData& GuiContext::getThisControlAccessData() const noexcept
+        {
+            return getControlStackTopXXX()._controlAccessData;
         }
 
         const bool GuiContext::isFocusedControlInputBox() const noexcept

@@ -289,6 +289,8 @@ namespace mint
             , _previousMaxChildControlCount{ 0 }
         {
             _draggingConstraints.setNan();
+
+            _controlAccessData._controlId = _id;
         }
 
         MINT_INLINE void ControlData::clearPerFrameData() noexcept
@@ -504,6 +506,8 @@ namespace mint
             std::swap(_childControlIds, _previousChildControlIds);
             _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlIds.size()));
             _childControlIds.clear();
+
+            _controlAccessData._childControlIds = _previousChildControlIds;
         }
 
         MINT_INLINE const bool ControlData::hasChildWindow() const noexcept

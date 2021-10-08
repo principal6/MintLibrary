@@ -22,6 +22,9 @@ namespace mint
 {
     namespace Gui
     {
+        class ControlData;
+
+
         static constexpr float          kControlDisplayMinWidth = 10.0f;
         static constexpr float          kControlDisplayMinHeight = 10.0f;
 
@@ -222,6 +225,23 @@ namespace mint
             ClipRectUsage   _clipRectUsage                  = ClipRectUsage::ParentsChild;
         };
 
+        class ControlAccessData
+        {
+            friend ControlData;
+
+        public:
+                                                    ControlAccessData() = default;
+                                                    ~ControlAccessData() = default;
+
+        public:
+            MINT_INLINE const ControlId&            getControlId() const noexcept { return _controlId; }
+            MINT_INLINE const Vector<ControlId>&    getChildControlIds() const noexcept { return _childControlIds; }
+
+        private:
+            ControlId                               _controlId;
+            Vector<ControlId>                       _childControlIds;
+        };
+
 
         class ControlData
         {
@@ -346,6 +366,7 @@ namespace mint
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;
             DockRelatedData                     _dockRelatedData;
+            ControlAccessData                   _controlAccessData;
 
         private:
             REFLECTION_MEMBER(ControlId, _id);

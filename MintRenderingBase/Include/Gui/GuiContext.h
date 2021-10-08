@@ -480,6 +480,7 @@ namespace mint
             const float                                 getCurrentAvailableDisplaySizeX() const noexcept;
             const float                                 getCurrentSameLineIntervalX() const noexcept;
             const bool                                  isThisControlPressed() const noexcept;
+            const ControlAccessData&                    getThisControlAccessData() const noexcept;
             const bool                                  isFocusedControlInputBox() const noexcept;
 
         private:
