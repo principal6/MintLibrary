@@ -280,8 +280,8 @@ namespace mint
             const Rect&                         getClipRect() const noexcept;
             const Rect&                         getClipRectForChildren() const noexcept;
             const Rect&                         getClipRectForDocks() const noexcept;
-            const Vector<ControlId>&           getChildControlIds() const noexcept;
-            const Vector<ControlId>&           getPreviousChildControlIds() const noexcept;
+            const Vector<ControlId>&            getChildControlIds() const noexcept;
+            const Vector<ControlId>&            getPreviousChildControlIds() const noexcept;
             const uint16                        getPreviousChildControlCount() const noexcept;
             const uint16                        getPreviousMaxChildControlCount() const noexcept;
             void                                prepareChildControlIds() noexcept;
