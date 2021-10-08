@@ -1652,7 +1652,6 @@ namespace mint
             const Rendering::Color& pressedColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
             const bool isClicked = processClickControl(menuBarItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
             const bool isParentAncestorPressed = isAncestorControlPressed(menuBar);
-            const bool isDescendantHovered = isDescendantControlHovered(menuBarItem);
             const bool& isParentControlToggled = menuBar._controlValue._booleanData.get();
             const bool wasParentControlToggled = isParentControlToggled;
             if (isClicked == true)
