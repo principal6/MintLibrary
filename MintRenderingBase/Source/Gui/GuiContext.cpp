@@ -1588,7 +1588,7 @@ namespace mint
             menuBar._controlValue._itemData._itemSize._x = 0.0f;
 
             const bool isToggled = menuBar._controlValue._booleanData.get();
-            const uint32 previousChildCount = static_cast<uint32>(menuBar.getPreviousChildControlIds().size());
+            const uint32 previousChildCount = static_cast<uint32>(menuBar.getPreviousChildControlCount());
             if ((previousChildCount == 0 || isToggled == false) && wasToggled == false)
             {
                 // wasToggled 덕분에 다음 프레임에 -1 로 세팅된다. 한 번은 자식 함수들이 쭉 호출된다는 뜻!
