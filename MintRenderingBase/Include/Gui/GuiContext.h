@@ -467,9 +467,9 @@ namespace mint
             const ControlId                             _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
             const ControlId                             _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
-            ControlData&                                getControlStackTopXXX() noexcept;
-            ControlData&                                getControlData(const ControlId& id) noexcept;
+            ControlData&                                accessControlStackTopXXX() noexcept;
             const ControlData&                          getControlData(const ControlId& id) const noexcept;
+            ControlData&                                accessControlData(const ControlId& id) noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlData() const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;

@@ -842,7 +842,7 @@ namespace mint
             {
                 windowControlData._dockRelatedData._lastDockingMethodCandidate = dockingMethod;
 
-                ControlData& parentControlData = getControlData(windowControlData.getParentId());
+                ControlData& parentControlData = accessControlData(windowControlData.getParentId());
                 if (dockingMethod == DockingMethod::LeftSide || dockingMethod == DockingMethod::RightSide)
                 {
                     parentControlData.setDockSize(dockingMethod, Float2(initialDockingSize._x, parentControlData._displaySize._y));
@@ -1499,7 +1499,7 @@ namespace mint
 
         void GuiContext::endListView()
         {
-            ControlData& controlData = getControlStackTopXXX();
+            ControlData& controlData = accessControlStackTopXXX();
             const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
@@ -1516,7 +1516,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(file, line, controlType, text);
             controlData._isFocusable = false;
 
-            ControlData& parentControlData = getControlData(controlData.getParentId());
+            ControlData& parentControlData = accessControlData(controlData.getParentId());
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._displaySize._x;
@@ -1557,7 +1557,7 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
 
             ControlData& menuBar = createOrGetControlData(file, line, controlType, nullptr);
-            ControlData& menuBarParent = getControlData(menuBar.getParentId());
+            ControlData& menuBarParent = accessControlData(menuBar.getParentId());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
             const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
             if (isMenuBarParentRoot == false && isMenuBarParentWindow == false)
@@ -1620,14 +1620,14 @@ namespace mint
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& menuBar = getControlStackTopXXX();
-            ControlData& menuBarItem = createOrGetControlData(file, line, controlType, text);
+            ControlData& menuBar = accessControlStackTopXXX();
             if (menuBar.isTypeOf(ControlType::MenuBar) == false)
             {
                 MINT_LOG_ERROR("김장원", "MenuBarItem 은 MenuBar 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
 
+            ControlData& menuBarItem = createOrGetControlData(file, line, controlType, text);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const uint32 textLength = StringUtil::length(text);
@@ -1700,7 +1700,7 @@ namespace mint
             ControlData& menuItem = createOrGetControlData(file, line, controlType, text);
             menuItem._isInteractableOutsideParent = true;
 
-            ControlData& menuItemParent = getControlData(menuItem.getParentId());
+            ControlData& menuItemParent = accessControlData(menuItem.getParentId());
             const ControlType parentControlType = menuItemParent.getControlType();
             const bool isParentControlMenuItem = (parentControlType == ControlType::MenuItem);
             if (parentControlType != ControlType::MenuBarItem && isParentControlMenuItem == false)
@@ -1979,7 +1979,7 @@ namespace mint
             const float thumbSizeRatio = (visibleLength / totalLength);
             const float thumbSize = visibleLength * thumbSizeRatio - radius * 2.0f;
             const float trackRemnantSize = std::abs(visibleLength - thumbSize);
-            ControlData& scrollBarParent = getControlData(scrollBarTrack.getParentId());
+            ControlData& scrollBarParent = accessControlData(scrollBarTrack.getParentId());
 
             if (scrollBarType == ScrollBarType::Vert)
             {
@@ -2185,7 +2185,7 @@ namespace mint
             ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
             controlData._isDraggable = true;
             controlData._delegateControlId = controlData.getParentId();
-            ControlData& parentWindowControlData = getControlData(controlData.getParentId());
+            ControlData& parentWindowControlData = accessControlData(controlData.getParentId());
             const bool isParentControlDocking = parentWindowControlData.isDocking();
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -2216,7 +2216,7 @@ namespace mint
             {
                 if (_controlInteractionStates.isControlPressed(controlData) == true)
                 {
-                    ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                    ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlId());
                     DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
                     dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
@@ -2511,7 +2511,7 @@ namespace mint
             if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
-                const ControlId& parentId = (prepareControlDataParam._parentIdOverride.isValid() == false) ? stackTopControlData.getId() : prepareControlDataParam._parentIdOverride;
+                const ControlId& parentId = (prepareControlDataParam._parentIdOverride.isValid() == true) ? prepareControlDataParam._parentIdOverride : stackTopControlData.getId();
                 controlData.setParentIdXXX(parentId);
 
                 if (isNewData == true)
@@ -2525,7 +2525,7 @@ namespace mint
                 }
             }
 
-            ControlData& parentControlData = getControlData(controlData.getParentId());
+            ControlData& parentControlData = accessControlData(controlData.getParentId());
             controlData.updatePerFrameWithParent(isNewData, prepareControlDataParam, parentControlData);
 
             // 부모와 동일한 RendererContextLayer 가 되도록!
@@ -2901,7 +2901,7 @@ namespace mint
 
         void GuiContext::processControlResizingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : getControlData(controlData._delegateControlId);
+            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
             const bool isResizing = isControlBeingResized(changeTargetControlData);
             if (isResizing == true)
             {
@@ -2952,7 +2952,7 @@ namespace mint
                     // 내가 Docking 중인 컨트롤이라면 Dock Control 의 Dock 크기도 같이 변경해줘야 한다.
 
                     const ControlId& dockControlId = changeTargetControlData.getDockControlId();
-                    ControlData& dockControlData = getControlData(dockControlId);
+                    ControlData& dockControlData = accessControlData(dockControlId);
                     dockControlData.setDockSize(changeTargetControlData._dockRelatedData._lastDockingMethod, changeTargetControlDisplaySize);
                     updateDockDatum(dockControlId);
                 }
@@ -2970,7 +2970,7 @@ namespace mint
 
         void GuiContext::processControlDraggingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : getControlData(controlData._delegateControlId);
+            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
             const bool isDragging = isControlBeingDragged(controlData);
             if (isDragging == true)
             {
@@ -3000,7 +3000,7 @@ namespace mint
 
                     changeTargetControlData._position = originalPosition;
 
-                    ControlData& dockControlData = getControlData(changeTargetControlData.getDockControlId());
+                    ControlData& dockControlData = accessControlData(changeTargetControlData.getDockControlId());
                     DockDatum& dockDatum = dockControlData.getDockDatum(changeTargetControlData._dockRelatedData._lastDockingMethod);
                     const Float2& dockSize = dockControlData.getDockSize(changeTargetControlData._dockRelatedData._lastDockingMethod);
                     const Float2& dockPosition = dockControlData.getDockPosition(changeTargetControlData._dockRelatedData._lastDockingMethod);
@@ -3053,7 +3053,7 @@ namespace mint
 
         void GuiContext::processControlDockingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : getControlData(controlData._delegateControlId);
+            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
             const bool isDragging = isControlBeingDragged(controlData);
             
             static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
@@ -3079,7 +3079,7 @@ namespace mint
                 rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
             };
 
-            ControlData& parentControlData = getControlData(changeTargetControlData.getParentId());
+            ControlData& parentControlData = accessControlData(changeTargetControlData.getParentId());
             if ((changeTargetControlData.hasChildWindow() == false) 
                 && (changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::Docker 
                     || changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock) 
@@ -3273,7 +3273,7 @@ namespace mint
 
         void GuiContext::dock(const ControlId& dockedControlId, const ControlId& dockControlId) noexcept
         {
-            ControlData& dockedControlData = getControlData(dockedControlId);
+            ControlData& dockedControlData = accessControlData(dockedControlId);
             dockedControlData.swapDockingStateContext();
 
             if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
@@ -3283,7 +3283,7 @@ namespace mint
                 dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
             }
 
-            ControlData& dockControlData = getControlData(dockControlId);
+            ControlData& dockControlData = accessControlData(dockControlId);
             DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
             if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
             {
@@ -3308,8 +3308,8 @@ namespace mint
 
         void GuiContext::undock(const ControlId& dockedControlId) noexcept
         {
-            ControlData& dockedControlData = getControlData(dockedControlId);
-            ControlData& dockControlData = getControlData(dockedControlData.getDockControlId());
+            ControlData& dockedControlData = accessControlData(dockedControlId);
+            ControlData& dockControlData = accessControlData(dockedControlData.getDockControlId());
             DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
             const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlIdArray.size());
             int32 indexToErase = -1;
@@ -3345,7 +3345,7 @@ namespace mint
 
         void GuiContext::updateDockDatum(const ControlId& dockControlId, const bool dontUpdateWidthArray) noexcept
         {
-            ControlData& dockControlData = getControlData(dockControlId);
+            ControlData& dockControlData = accessControlData(dockControlId);
             for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
             {
                 DockDatum& dockDatum = dockControlData.getDockDatum(dockingMethodIter);
@@ -3356,7 +3356,7 @@ namespace mint
                 float titleBarWidthSum = 0.0f;
                 for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
                 {
-                    ControlData& dockedControlData = getControlData(dockDatum._dockedControlIdArray[dockedControlIndex]);
+                    ControlData& dockedControlData = accessControlData(dockDatum._dockedControlIdArray[dockedControlIndex]);
                     dockedControlData._displaySize = dockControlData.getDockSize(dockingMethodIter);
                     dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
                     

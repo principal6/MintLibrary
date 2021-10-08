@@ -192,27 +192,9 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::getControlStackTopXXX() noexcept
+        MINT_INLINE ControlData& GuiContext::accessControlStackTopXXX() noexcept
         {
-            if (_controlStackPerFrame.empty() == false)
-            {
-                auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
-                if (found.isValid() == true)
-                {
-                    return *found._value;
-                }
-            }
-            return _rootControlData;
-        }
-
-        MINT_INLINE ControlData& GuiContext::getControlData(const ControlId& id) noexcept
-        {
-            auto found = _controlIdMap.find(id);
-            if (found.isValid() == true)
-            {
-                return *found._value;
-            }
-            return _rootControlData;
+            return const_cast<ControlData&>(getControlStackTopXXX());
         }
 
         MINT_INLINE const ControlData& GuiContext::getControlData(const ControlId& id) const noexcept
@@ -222,11 +204,14 @@ namespace mint
             {
                 return *found._value;
             }
-
-            //MINT_ASSERT("김장원", false, "id 가 존재하지 않는 ControlData 입니다!!!");
             return _rootControlData;
         }
-        
+
+        MINT_INLINE ControlData& GuiContext::accessControlData(const ControlId& id) noexcept
+        {
+            return const_cast<ControlData&>(getControlData(id));
+        }
+
         MINT_INLINE Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
             return controlData._position - getControlData(controlData.getParentId())._position;
