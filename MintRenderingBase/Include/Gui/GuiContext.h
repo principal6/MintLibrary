@@ -127,11 +127,11 @@ namespace mint
         public:
             void                clear() noexcept;
             const bool          isSet() const noexcept;
-            void                setUpdateDockDatum(const uint64 controlId) noexcept;
-            const uint64        getUpdateDockDatum() const noexcept;
+            void                setUpdateDockDatum(const ControlId& controlId) noexcept;
+            const ControlId&    getUpdateDockDatum() const noexcept;
 
         private:
-            uint64              _controlIdForUpdateDockDatum = 0;
+            ControlId           _controlIdForUpdateDockDatum;
         };
 
 
@@ -230,7 +230,7 @@ namespace mint
 
             public:
                 ControlType         _controlType;
-                uint64              _id;
+                ControlId           _id;
             };
 
             class ControlInteractionStates
@@ -242,9 +242,9 @@ namespace mint
                 void                        setControlFocused(const ControlData& controlData) noexcept;
             
             public:
-                MINT_INLINE const bool      hasPressedControl() const noexcept { return (0 != _pressedControlId); }
-                MINT_INLINE const bool      hasClickedControl() const noexcept { return (0 != _clickedControlIdPerFrame); }
-                MINT_INLINE const bool      hasFocusedControl() const noexcept { return (0 != _focusedControlId); }
+                MINT_INLINE const bool      hasPressedControl() const noexcept { return _pressedControlId.isValid(); }
+                MINT_INLINE const bool      hasClickedControl() const noexcept { return _clickedControlIdPerFrame.isValid(); }
+                MINT_INLINE const bool      hasFocusedControl() const noexcept { return _focusedControlId.isValid(); }
             
             public:
                 const bool                  isControlHovered(const ControlData& controlData) const noexcept;
@@ -254,9 +254,9 @@ namespace mint
                 const bool                  isHoveringMoreThan(const uint64 durationMs) const noexcept;
             
             public:
-                MINT_INLINE const uint64    getHoveredControlId() const noexcept { return _hoveredControlId; }
-                MINT_INLINE const uint64    getPressedControlId() const noexcept { return _pressedControlId; }
-                MINT_INLINE const uint64    getFocusedControlId() const noexcept { return _focusedControlId; }
+                MINT_INLINE const ControlId&    getHoveredControlId() const noexcept { return _hoveredControlId; }
+                MINT_INLINE const ControlId&    getPressedControlId() const noexcept { return _pressedControlId; }
+                MINT_INLINE const ControlId&    getFocusedControlId() const noexcept { return _focusedControlId; }
 
             public:
                 void                        resetPerFrameStates(const MouseStates& mouseStates) noexcept;
@@ -269,23 +269,23 @@ namespace mint
                 MINT_INLINE const bool      isMouseInteractionDoneThisFrame() const noexcept { return _isMouseInteractionDoneThisFrame; }
 
             public:
-                MINT_INLINE const bool      needToShowTooltip() const noexcept { return (0 != _tooltipParentWindowId); }
+                MINT_INLINE const bool      needToShowTooltip() const noexcept { return _tooltipParentWindowId.isValid(); }
                 MINT_INLINE const wchar_t*  getTooltipText() const noexcept { return _tooltipTextFinal; }
                 const Float2                getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
-                MINT_INLINE const uint64    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
-                void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const uint64 tooltipParentWindowId) noexcept;
+                MINT_INLINE const ControlId&    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
+                void                        setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlId& tooltipParentWindowId) noexcept;
 
             private:
                 bool                        _isMouseInteractionDoneThisFrame = false;
-                uint64                      _hoveredControlId = 0;
-                uint64                      _focusedControlId = 0;
-                uint64                      _pressedControlId = 0;
+                ControlId                   _hoveredControlId;
+                ControlId                   _focusedControlId;
+                ControlId                   _pressedControlId;
                 Float2                      _pressedControlInitialPosition;
-                uint64                      _clickedControlIdPerFrame = 0;
+                ControlId                   _clickedControlIdPerFrame;
                 uint64                      _hoverStartTimeMs = 0;
                 bool                        _hoverStarted = false;
                 Float2                      _tooltipPosition;
-                uint64                      _tooltipParentWindowId = 0;
+                ControlId                   _tooltipParentWindowId;
                 const wchar_t*              _tooltipTextFinal = nullptr;
             };
         
@@ -333,7 +333,7 @@ namespace mint
             void                                        makeTestWindow(VisibleState& inoutVisibleState);
             void                                        makeTestDockedWindow(VisibleState& inoutVisibleState);
             void                                        makeDebugControlDataViewer(VisibleState& inoutVisibleState);
-            void                                        makeFromReflectionClass(const ReflectionData& reflectionData, const void* const reflectionClass);
+            void                                        makeFromReflectionClass(const char* const file, const int line, const ReflectionData& reflectionData, const void* const reflectionClass);
     #pragma endregion
 
     #pragma region Controls - Window
@@ -460,20 +460,20 @@ namespace mint
             void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
 
         private:
-            const bool                                  isValidControlId(const uint64 id) const noexcept;
+            const bool                                  isValidControlId(const ControlId& id) const noexcept;
             ControlData&                                createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
             ControlData&                                createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
-            ControlData&                                _createOrGetControlDataInternalXXX(const uint64 controlId, const ControlType controlType, const wchar_t* const text) noexcept;
-            const uint64                                _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
-            const uint64                                _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
+            ControlData&                                _createOrGetControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlId                             _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
+            const ControlId                             _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                getControlStackTopXXX() noexcept;
-            ControlData&                                getControlData(const uint64 id) noexcept;
-            const ControlData&                          getControlData(const uint64 id) const noexcept;
+            ControlData&                                getControlData(const ControlId& id) noexcept;
+            const ControlData&                          getControlData(const ControlId& id) const noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlData() const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
-            const ControlData&                          getParentWindowControlDataInternal(const uint64 id) const noexcept;
+            const ControlData&                          getParentWindowControlDataInternal(const ControlId& id) const noexcept;
 #pragma endregion
 
         public:
@@ -509,9 +509,9 @@ namespace mint
             void                                        processControlDraggingInternal(ControlData& controlData) noexcept;
             void                                        processControlDockingInternal(ControlData& controlData) noexcept;
 
-            void                                        dock(const uint64 dockedControlId, const uint64 dockControlId) noexcept;
-            void                                        undock(const uint64 dockedControlId) noexcept;
-            void                                        updateDockDatum(const uint64 dockControlId, const bool dontUpdateWidthArray = false) noexcept;
+            void                                        dock(const ControlId& dockedControlId, const ControlId& dockControlId) noexcept;
+            void                                        undock(const ControlId& dockedControlId) noexcept;
+            void                                        updateDockDatum(const ControlId& dockControlId, const bool dontUpdateWidthArray = false) noexcept;
 
             const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
             
@@ -522,13 +522,13 @@ namespace mint
             // RendererContext 고를 때 사용
             const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
             const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                  isAncestorControlTargetRecursiveXXX(const uint64 id, const uint64 targetId) const noexcept;
+            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlId& id, const ControlId& targetId) const noexcept;
             const bool                                  isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const uint64 ancestorCandidateId) const noexcept;
-            const bool                                  isAncestorControlRecursiveXXX(const uint64 currentControlId, const uint64 ancestorCandidateId) const noexcept;
-            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const uint64 descendantCandidateId) const noexcept;
-            const bool                                  isDescendantControlRecursiveXXX(const uint64 currentControlId, const uint64 descendantCandidateId) const noexcept;
+            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlId& ancestorCandidateId) const noexcept;
+            const bool                                  isAncestorControlRecursiveXXX(const ControlId& currentControlId, const ControlId& ancestorCandidateId) const noexcept;
+            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlId& descendantCandidateId) const noexcept;
+            const bool                                  isDescendantControlRecursiveXXX(const ControlId& currentControlId, const ControlId& descendantCandidateId) const noexcept;
 
             const bool                                  isParentControlRoot(const ControlData& controlData) const noexcept;
 
@@ -576,10 +576,10 @@ namespace mint
         private:
             ControlData                                 _rootControlData;
             Vector<ControlStackData>                    _controlStackPerFrame;
-            uint64                                      _viewerTargetControlId;
+            ControlId                                   _viewerTargetControlId;
 
         private:
-            HashMap<uint64, ControlData>                _controlIdMap;
+            HashMap<ControlId, ControlData>             _controlIdMap;
 
         private:
             mutable ControlInteractionStates            _controlInteractionStates;
@@ -591,12 +591,12 @@ namespace mint
         
         private:
             mutable bool                                _isDragBegun;
-            mutable uint64                              _draggedControlId;
+            mutable ControlId                           _draggedControlId;
             mutable Float2                              _draggedControlInitialPosition;
         
         private:
             mutable bool                                _isResizeBegun;
-            mutable uint64                              _resizedControlId;
+            mutable ControlId                           _resizedControlId;
             mutable Float2                              _resizedControlInitialPosition;
             mutable Float2                              _resizedControlInitialDisplaySize;
             mutable ResizingMethod                      _resizingMethod;

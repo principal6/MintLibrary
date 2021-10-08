@@ -5,10 +5,20 @@
 #include <MintRenderingBase/Include/Gui/ControlData.h>
 
 #include <MintContainer/Include/String.hpp>
+#include <MintContainer/Include/Hash.hpp>
 
 
 namespace mint
 {
+#pragma region ControlId
+    template <>
+    MINT_INLINE const uint64 computeHash(const Gui::ControlId& controlId) noexcept
+    {
+        return computeHash(controlId.getRawValue());
+    }
+#pragma endregion
+
+
     namespace Gui
     {
 #pragma region ControlValue
@@ -191,7 +201,7 @@ namespace mint
             std::swap(_dockedControlIdArray[indexA], _dockedControlIdArray[indexB]);
         }
 
-        MINT_INLINE const int32 DockDatum::getDockedControlIndex(const uint64 dockedControlId) const noexcept
+        MINT_INLINE const int32 DockDatum::getDockedControlIndex(const ControlId& dockedControlId) const noexcept
         {
             const int32 dockedControlCount = static_cast<int32>(_dockedControlIdArray.size());
             for (int32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
@@ -204,7 +214,7 @@ namespace mint
             return -1;
         }
 
-        MINT_INLINE const uint64 DockDatum::getDockedControlId(const int32 dockedControlIndex) const noexcept
+        MINT_INLINE const ControlId DockDatum::getDockedControlId(const int32 dockedControlIndex) const noexcept
         {
             return _dockedControlIdArray[dockedControlIndex];
         }
@@ -247,18 +257,18 @@ namespace mint
 
 #pragma region ControlData
         inline ControlData::ControlData()
-            : ControlData(0, 0, ControlType::ROOT)
+            : ControlData(ControlId(), ControlId(), ControlType::ROOT)
         {
             initializeReflection();
         }
 
-        inline ControlData::ControlData(const uint64 id, const uint64 parentId, const ControlType controlType)
+        inline ControlData::ControlData(const ControlId& id, const ControlId& parentId, const ControlType controlType)
             : ControlData(id, parentId, controlType, Float2::kNan)
         {
             __noop;
         }
 
-        inline ControlData::ControlData(const uint64 id, const uint64 parentId, const ControlType controlType, const Float2& size)
+        inline ControlData::ControlData(const ControlId& id, const ControlId& parentId, const ControlType controlType, const Float2& size)
             : _updateCount{ 0 }
             , _interactionSize{ size }
             , _nonDockInteractionSize{ size }
@@ -326,12 +336,12 @@ namespace mint
             }
         }
 
-        MINT_INLINE const uint64 ControlData::getId() const noexcept
+        MINT_INLINE const ControlId& ControlData::getId() const noexcept
         {
             return _id;
         }
 
-        MINT_INLINE const uint64 ControlData::getParentId() const noexcept
+        MINT_INLINE const ControlId& ControlData::getParentId() const noexcept
         {
             return _parentId;
         }
@@ -469,12 +479,12 @@ namespace mint
             return _clipRectForDocks;
         }
 
-        MINT_INLINE const Vector<uint64>& ControlData::getChildControlIds() const noexcept
+        MINT_INLINE const Vector<ControlId>& ControlData::getChildControlIds() const noexcept
         {
             return _childControlIds;
         }
 
-        MINT_INLINE const Vector<uint64>& ControlData::getPreviousChildControlIds() const noexcept
+        MINT_INLINE const Vector<ControlId>& ControlData::getPreviousChildControlIds() const noexcept
         {
             return _previousChildControlIds;
         }
@@ -619,24 +629,24 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE void ControlData::connectToDock(const uint64 dockControlId) noexcept
+        MINT_INLINE void ControlData::connectToDock(const ControlId& dockControlId) noexcept
         {
             _dockRelatedData._dockControlId = dockControlId;
         }
 
         MINT_INLINE void ControlData::disconnectFromDock() noexcept
         {
-            _dockRelatedData._dockControlId = 0;
+            _dockRelatedData._dockControlId.reset();
         }
 
-        MINT_INLINE const uint64 ControlData::getDockControlId() const noexcept
+        MINT_INLINE const ControlId& ControlData::getDockControlId() const noexcept
         {
             return _dockRelatedData._dockControlId;
         }
 
         MINT_INLINE const bool ControlData::isDocking() const noexcept
         {
-            return (_dockRelatedData._dockControlId != 0);
+            return _dockRelatedData._dockControlId.isValid();
         }
 
         MINT_INLINE const bool ControlData::isDockHosting() const noexcept
@@ -681,12 +691,12 @@ namespace mint
             }
         }
 
-        MINT_INLINE void ControlData::disconnectChildWindow(const uint64 childWindowId) noexcept
+        MINT_INLINE void ControlData::disconnectChildWindow(const ControlId& childWindowId) noexcept
         {
             _childWindowIdMap.erase(childWindowId);
         }
 
-        MINT_INLINE const HashMap<uint64, bool>& ControlData::getChildWindowIdMap() const noexcept
+        MINT_INLINE const HashMap<ControlId, bool>& ControlData::getChildWindowIdMap() const noexcept
         {
             return _childWindowIdMap;
         }
@@ -697,7 +707,7 @@ namespace mint
             std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
         }
 
-        MINT_INLINE void ControlData::setParentIdXXX(const uint64 parentId) noexcept
+        MINT_INLINE void ControlData::setParentIdXXX(const ControlId& parentId) noexcept
         {
             _parentId = parentId;
         }

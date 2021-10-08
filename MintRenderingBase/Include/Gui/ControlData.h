@@ -105,6 +105,26 @@ namespace mint
             };
         };
 
+        class ControlId
+        {
+        public:
+                                        ControlId() : _hash{ 0 } {}
+            explicit                    ControlId(const uint64 hash) : _hash{ hash } {}
+                                        ~ControlId() = default;
+
+        public:
+            void                        reset() noexcept { _hash = 0; }
+            MINT_INLINE const bool      isValid() const noexcept { return _hash != 0; }
+            MINT_INLINE const uint64    getRawValue() const noexcept { return _hash; }
+
+        public:
+            MINT_INLINE const bool      operator==(const ControlId& rhs) const noexcept { return _hash == rhs._hash; }
+            MINT_INLINE const bool      operator!=(const ControlId& rhs) const noexcept { return _hash != rhs._hash; }
+
+        private:
+            uint64                      _hash;
+        };
+
 
         struct ResizingMask
         {
@@ -160,13 +180,13 @@ namespace mint
             void                setRawDockSize(const Float2& rawDockSize) noexcept;
             const Float2&       getRawDockSizeXXX() const noexcept;
             void                swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept;
-            const int32         getDockedControlIndex(const uint64 dockedControlId) const noexcept;
-            const uint64        getDockedControlId(const int32 dockedControlIndex) const noexcept;
+            const int32         getDockedControlIndex(const ControlId& dockedControlId) const noexcept;
+            const ControlId     getDockedControlId(const int32 dockedControlIndex) const noexcept;
             const float         getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept;
             const int32         getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept;
 
         public:
-            Vector<uint64>      _dockedControlIdArray;
+            Vector<ControlId>   _dockedControlIdArray;
             int32               _dockedControlIndexShown;
             Vector<float>       _dockedControlTitleBarOffsetArray; // TitleBar 렌더링 위치 계산에 사용
             Vector<float>       _dockedControlTitleBarWidthArray; // TitleBar 순서 변경 시 마우스 Interaction 에 사용!
@@ -196,7 +216,7 @@ namespace mint
             Float2          _displaySizeMin                 = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
             bool            _alwaysResetDisplaySize         = true;
             bool            _alwaysResetParent              = false;
-            uint64          _parentIdOverride               = 0;
+            ControlId       _parentIdOverride               = ControlId();
             bool            _alwaysResetPosition            = true;
             bool            _ignoreMeForContentAreaSize     = false;
             ClipRectUsage   _clipRectUsage                  = ClipRectUsage::ParentsChild;
@@ -221,23 +241,23 @@ namespace mint
 
             private:
                 DockDatum                       _dockData[static_cast<uint32>(DockingMethod::COUNT)];
-                uint64                          _dockControlId;
+                ControlId                       _dockControlId;
                 DockingStateContext             _dokcingStateContext;
             };
 
         public:
                                                 REFLECTION_CLASS(ControlData);
                                                 ControlData();
-                                                ControlData(const uint64 id, const uint64 parentId, const ControlType controlType);
-                                                ControlData(const uint64 id, const uint64 parentId, const ControlType controlType, const Float2& size);
+                                                ControlData(const ControlId& id, const ControlId& parentId, const ControlType controlType);
+                                                ControlData(const ControlId& id, const ControlId& parentId, const ControlType controlType, const Float2& size);
     
         public:
             void                                clearPerFrameData() noexcept;
             void                                updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parent) noexcept;
 
         public:
-            const uint64                        getId() const noexcept;
-            const uint64                        getParentId() const noexcept;
+            const ControlId&                    getId() const noexcept;
+            const ControlId&                    getParentId() const noexcept;
             const Rect&                         getInnerPadding() const noexcept;
             Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
@@ -260,8 +280,8 @@ namespace mint
             const Rect&                         getClipRect() const noexcept;
             const Rect&                         getClipRectForChildren() const noexcept;
             const Rect&                         getClipRectForDocks() const noexcept;
-            const Vector<uint64>&               getChildControlIds() const noexcept;
-            const Vector<uint64>&               getPreviousChildControlIds() const noexcept;
+            const Vector<ControlId>&           getChildControlIds() const noexcept;
+            const Vector<ControlId>&           getPreviousChildControlIds() const noexcept;
             const uint16                        getPreviousChildControlCount() const noexcept;
             const uint16                        getPreviousMaxChildControlCount() const noexcept;
             void                                prepareChildControlIds() noexcept;
@@ -277,9 +297,9 @@ namespace mint
             const float                         getHorzDockSizeSum() const noexcept;
             const float                         getVertDockSizeSum() const noexcept;
             const Float2                        getMenuBarThickness() const noexcept;
-            void                                connectToDock(const uint64 dockControlId) noexcept;
+            void                                connectToDock(const ControlId& dockControlId) noexcept;
             void                                disconnectFromDock() noexcept;
-            const uint64                        getDockControlId() const noexcept;
+            const ControlId&                    getDockControlId() const noexcept;
             const bool                          isDocking() const noexcept;
             const bool                          isDockHosting() const noexcept;
             const bool                          isResizable() const noexcept;
@@ -288,14 +308,14 @@ namespace mint
             
         public:
             void                                connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
-            void                                disconnectChildWindow(const uint64 childWindowId) noexcept;
-            const HashMap<uint64, bool>&        getChildWindowIdMap() const noexcept;
+            void                                disconnectChildWindow(const ControlId& childWindowId) noexcept;
+            const HashMap<ControlId, bool>&     getChildWindowIdMap() const noexcept;
 
         public:
             void                                swapDockingStateContext() noexcept;
     
         public:
-            void                                setParentIdXXX(const uint64 parentId) noexcept;
+            void                                setParentIdXXX(const ControlId& parentId) noexcept;
             void                                setOffsetY_XXX(const float offsetY) noexcept;
             void                                setClipRectXXX(const Rect& clipRect) noexcept;
             void                                setClipRectForChildrenXXX(const Rect& clipRect) noexcept;
@@ -321,15 +341,15 @@ namespace mint
             bool                                _isInteractableOutsideParent;
             ResizingMask                        _resizingMask;
             Rect                                _draggingConstraints; // MUST set all four values if want to limit dragging area
-            uint64                              _delegateControlId; // Used for drag, resize and focus
+            ControlId                           _delegateControlId; // Used for drag, resize and focus
             REFLECTION_MEMBER(StringW, _text);
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;
             DockRelatedData                     _dockRelatedData;
 
         private:
-            REFLECTION_MEMBER(uint64, _id);
-            uint64                              _parentId;
+            REFLECTION_MEMBER(ControlId, _id);
+            ControlId                           _parentId;
             Rect                                _innerPadding; // For child controls
             Float2                              _displaySizeMin;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
@@ -343,10 +363,10 @@ namespace mint
             Rect                                _clipRect;
             Rect                                _clipRectForChildren; // Used by window
             Rect                                _clipRectForDocks;
-            Vector<uint64>                      _childControlIds;
-            Vector<uint64>                      _previousChildControlIds;
+            Vector<ControlId>                   _childControlIds;
+            Vector<ControlId>                   _previousChildControlIds;
             uint16                              _previousMaxChildControlCount;
-            HashMap<uint64, bool>               _childWindowIdMap;
+            HashMap<ControlId, bool>            _childWindowIdMap;
 
         private:
             REFLECTION_BIND_BEGIN;

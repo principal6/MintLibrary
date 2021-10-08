@@ -9,20 +9,20 @@ namespace mint
 #pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
         {
-            _controlIdForUpdateDockDatum = 0;
+            _controlIdForUpdateDockDatum.reset();
         }
 
         MINT_INLINE const bool TaskWhenMouseUp::isSet() const noexcept
         {
-            return _controlIdForUpdateDockDatum != 0;
+            return _controlIdForUpdateDockDatum.isValid();
         }
 
-        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const uint64 controlId) noexcept
+        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const ControlId& controlId) noexcept
         {
             _controlIdForUpdateDockDatum = controlId;
         }
 
-        MINT_INLINE const uint64 TaskWhenMouseUp::getUpdateDockDatum() const noexcept
+        MINT_INLINE const ControlId& TaskWhenMouseUp::getUpdateDockDatum() const noexcept
         {
             return _controlIdForUpdateDockDatum;
         }
@@ -173,7 +173,7 @@ namespace mint
 #pragma endregion
 
 
-        MINT_INLINE const bool GuiContext::isValidControlId(const uint64 id) const noexcept
+        MINT_INLINE const bool GuiContext::isValidControlId(const ControlId& id) const noexcept
         {
             const auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
             return found.isValid();
@@ -205,7 +205,7 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::getControlData(const uint64 id) noexcept
+        MINT_INLINE ControlData& GuiContext::getControlData(const ControlId& id) noexcept
         {
             auto found = _controlIdMap.find(id);
             if (found.isValid() == true)
@@ -215,7 +215,7 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE const ControlData& GuiContext::getControlData(const uint64 id) const noexcept
+        MINT_INLINE const ControlData& GuiContext::getControlData(const ControlId& id) const noexcept
         {
             auto found = _controlIdMap.find(id);
             if (found.isValid() == true)
