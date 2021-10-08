@@ -633,7 +633,7 @@ namespace mint
             windowParam._position = Float2(20.0f, 50.0f);
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
-                if (isValidControlId(_viewerTargetControlId) == true)
+                if (isValidControl(_viewerTargetControlId) == true)
                 {
                     ScopeStringW<300> buffer;
                     const ControlData& controlData = getControlData(_viewerTargetControlId);

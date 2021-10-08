@@ -173,7 +173,7 @@ namespace mint
 #pragma endregion
 
 
-        MINT_INLINE const bool GuiContext::isValidControlId(const ControlId& id) const noexcept
+        MINT_INLINE const bool GuiContext::isValidControl(const ControlId& id) const noexcept
         {
             const auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
             return found.isValid();

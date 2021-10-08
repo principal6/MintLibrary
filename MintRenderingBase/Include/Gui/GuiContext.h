@@ -460,7 +460,7 @@ namespace mint
             void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
 
         private:
-            const bool                                  isValidControlId(const ControlId& id) const noexcept;
+            const bool                                  isValidControl(const ControlId& id) const noexcept;
             ControlData&                                createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
             ControlData&                                createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
             ControlData&                                _createOrGetControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept;
