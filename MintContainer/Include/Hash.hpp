@@ -44,25 +44,30 @@ namespace mint
     }
 
     template <typename T>
-    MINT_INLINE std::enable_if_t<std::is_arithmetic<T>::value, const uint64> computeHash(const T value) noexcept
+    const uint64 computeHash(const T& value) noexcept
     {
-        const char* const str = reinterpret_cast<const char*>(&value);
-        const uint32 length = sizeof(value);
-        return computeHash(str, length);
+        if constexpr (std::is_arithmetic<T>::value == true)
+        {
+            const char* const str = reinterpret_cast<const char*>(&value);
+            const uint32 length = sizeof(value);
+            return computeHash(str, length);
+        }
+        else if constexpr (std::is_pointer<T>::value == true)
+        {
+            const char* const str = reinterpret_cast<const char*>(&value);
+            const uint32 length = sizeof(value);
+            return computeHash(str, length);
+        }
+
+        MINT_ASSERT("±èÀå¿ø", false, "Hash computation not implemented for this type!");
+        return 0;
     }
 
-    template <typename T>
-    MINT_INLINE std::enable_if_t<std::is_pointer<T>::value, const uint64> computeHash(const T value) noexcept
-    {
-        const char* const str = reinterpret_cast<const char*>(&value);
-        const uint32 length = sizeof(value);
-        return computeHash(str, length);
-    }
 
     template<typename T>
     inline const uint64 Hasher<T>::operator()(const T& value) const noexcept
     {
-        return mint::computeHash<T>(value);
+        return computeHash<T>(value);
         //return uint64(value); // ### FOR TEST ###
     }
 

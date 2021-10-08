@@ -15,15 +15,13 @@
 
 namespace mint
 {
-    const uint64    computeHash(const char* const rawString, const uint32 length) noexcept;
-    const uint64    computeHash(const char* const rawString) noexcept;
-    const uint64    computeHash(const wchar_t* const rawString) noexcept;
+    const uint64 computeHash(const char* const rawString, const uint32 length) noexcept;
+    const uint64 computeHash(const char* const rawString) noexcept;
+    const uint64 computeHash(const wchar_t* const rawString) noexcept;
 
     template <typename T>
-    std::enable_if_t<std::is_arithmetic<T>::value, const uint64> computeHash(const T value) noexcept;
+    const uint64 computeHash(const T& value) noexcept;
 
-    template <typename T>
-    std::enable_if_t<std::is_pointer<T>::value, const uint64> computeHash(const T value) noexcept;
 
 
     template <typename T>
