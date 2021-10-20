@@ -18,38 +18,38 @@ namespace mint
     {
         class GraphicDevice;
         struct SB_Material;
-        struct Color;
+        class Color;
 
 
         class InstantRenderer final
         {
         public:
-                                                        InstantRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
-                                                        ~InstantRenderer();
+                                            InstantRenderer(GraphicDevice* const graphicDevice);
+                                            ~InstantRenderer();
 
         public:
-            void                                        initialize() noexcept;
+            void                            initialize() noexcept;
 
         public:
-            void                                        drawLine(const mint::Float3& a, const mint::Float3& b, const mint::Rendering::Color& color) noexcept;
-            void                                        drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration, const mint::Rendering::Color& color) noexcept;
+            void                            drawLine(const mint::Float3& a, const mint::Float3& b, const Color& color) noexcept;
+            void                            drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         public:
-            void                                        render() noexcept;
+            void                            render() noexcept;
 
         private:
-            mint::Rendering::GraphicDevice* const   _graphicDevice;
+            GraphicDevice* const            _graphicDevice;
 
         private:
-            mint::Rendering::LowLevelRenderer<mint::Rendering::VS_INPUT>    _lowLevelRendererLine;
-            mint::Rendering::LowLevelRenderer<mint::Rendering::VS_INPUT>    _lowLevelRendererMesh;
+            LowLevelRenderer<VS_INPUT>      _lowLevelRendererLine;
+            LowLevelRenderer<VS_INPUT>      _lowLevelRendererMesh;
 
         private:
-            mint::Rendering::CB_Transform               _cbTransformData;
-            mint::Vector<mint::Rendering::SB_Material>  _sbMaterialDatas;
-            mint::Rendering::DxObjectId                 _vsDefaultId;
-            mint::Rendering::DxObjectId                 _psDefaultId;
-            mint::Rendering::DxObjectId                 _psColorId;
+            CB_Transform                    _cbTransformData;
+            mint::Vector<SB_Material>       _sbMaterialDatas;
+            DxObjectId                      _vsDefaultId;
+            DxObjectId                      _psDefaultId;
+            DxObjectId                      _psColorId;
         };
     }
 }

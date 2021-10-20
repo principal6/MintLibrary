@@ -46,7 +46,7 @@ namespace mint
             Rendering::IndexElementType     _vertexIndexArray[kIndexCountPerFace];
         };
 
-        struct Color
+        class Color
         {
         public:
             static const Color      kTransparent;
