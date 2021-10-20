@@ -382,7 +382,7 @@ const bool testWindow()
             graphicDevice.beginRendering();
 
 #if 0
-            RenderingBase::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
+            Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
             Rendering::Plotter plotter(shapeFontRendererContext);
             plotter.xLabel(L"weight");
             plotter.yLabel(L"length");
