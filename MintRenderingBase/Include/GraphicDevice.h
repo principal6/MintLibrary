@@ -115,148 +115,148 @@ namespace mint
                 ID3D11PixelShader*      _psShader;
 
             private: // Resources
-                mint::Vector<DxObjectId>    _vsShaderResources;
-                mint::Vector<DxObjectId>    _gsShaderResources;
-                mint::Vector<DxObjectId>    _psShaderResources;
+                Vector<DxObjectId>      _vsShaderResources;
+                Vector<DxObjectId>      _gsShaderResources;
+                Vector<DxObjectId>      _psShaderResources;
 
             private: // Constant Buffers
-                mint::Vector<DxObjectId>    _vsConstantBuffers;
-                mint::Vector<DxObjectId>    _gsConstantBuffers;
-                mint::Vector<DxObjectId>    _psConstantBuffers;
+                Vector<DxObjectId>      _vsConstantBuffers;
+                Vector<DxObjectId>      _gsConstantBuffers;
+                Vector<DxObjectId>      _psConstantBuffers;
             };
             
             friend SafeResourceMapper;
             friend StateManager;
 
         public:
-                                                                GraphicDevice();
-                                                                ~GraphicDevice() = default;
+                                                        GraphicDevice();
+                                                        ~GraphicDevice() = default;
 
         public:
-            const bool                                          initialize(mint::Window::IWindow* const window);
-            void                                                updateScreenSize();
+            const bool                                  initialize(Window::IWindow* const window);
+            void                                        updateScreenSize();
 
         private:
-            void                                                createDxDevice();
-            const bool                                          loadFontData();
+            void                                        createDxDevice();
+            const bool                                  loadFontData();
 
         private:
-            const bool                                          createSwapChain(const mint::Int2& windowSize, const HWND windowHandle);
-            const bool                                          initializeBackBuffer();
-            const bool                                          initializeDepthStencilBufferAndView(const mint::Int2& windowSize);
-            const bool                                          initializeDepthStencilStates();
-            void                                                initializeShaderHeaderMemory();
-            void                                                initializeShaders();
-            void                                                initializeSamplerStates();
-            void                                                initializeBlendStates();
-            void                                                initializeFullScreenData(const mint::Int2& windowSize);
-            void                                                setDefaultRenderTargetsAndDepthStencil();
+            const bool                                  createSwapChain(const Int2& windowSize, const HWND windowHandle);
+            const bool                                  initializeBackBuffer();
+            const bool                                  initializeDepthStencilBufferAndView(const Int2& windowSize);
+            const bool                                  initializeDepthStencilStates();
+            void                                        initializeShaderHeaderMemory();
+            void                                        initializeShaders();
+            void                                        initializeSamplerStates();
+            void                                        initializeBlendStates();
+            void                                        initializeFullScreenData(const Int2& windowSize);
+            void                                        setDefaultRenderTargetsAndDepthStencil();
 
         public:
-            void                                                beginRendering();
-            void                                                draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
-            void                                                drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
-            void                                                endRendering();
+            void                                        beginRendering();
+            void                                        draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
+            void                                        drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
+            void                                        endRendering();
 
         public:
-            void                                                useScissorRectangles() noexcept;
-            void                                                useFullScreenViewport() noexcept;
-            void                                                useWireFrameNoCullingRasterizer() noexcept;
-            void                                                useWireFrameCullBackRasterizer() noexcept;
-            void                                                useSolidCullBackRasterizer() noexcept;
-            const D3D11_VIEWPORT&                               getFullScreenViewport() const noexcept;
-            const mint::Rect&                                   getFullScreenClipRect() const noexcept;
+            void                                        useScissorRectangles() noexcept;
+            void                                        useFullScreenViewport() noexcept;
+            void                                        useWireFrameNoCullingRasterizer() noexcept;
+            void                                        useWireFrameCullBackRasterizer() noexcept;
+            void                                        useSolidCullBackRasterizer() noexcept;
+            const D3D11_VIEWPORT&                       getFullScreenViewport() const noexcept;
+            const Rect&                                 getFullScreenClipRect() const noexcept;
 
         public:
-            mint::Rendering::DxShaderPool&                  getShaderPool() noexcept;
-            mint::Rendering::DxResourcePool&                getResourcePool() noexcept;
-            mint::Rendering::ShapeRendererContext&          getShapeRendererContext() noexcept;
-            mint::Rendering::FontRendererContext&           getFontRendererContext() noexcept;
-            mint::Rendering::ShapeFontRendererContext&      getShapeFontRendererContext() noexcept;
-            mint::Gui::GuiContext&                              getGuiContext() noexcept;
-            const Language::CppHlsl::Interpreter&         getCppHlslSteamData() const noexcept;
-            const Language::CppHlsl::Interpreter&         getCppHlslConstantBuffers() const noexcept;
-            StateManager&                                       getStateManager() noexcept;
+            DxShaderPool&                               getShaderPool() noexcept;
+            DxResourcePool&                             getResourcePool() noexcept;
+            ShapeRendererContext&                       getShapeRendererContext() noexcept;
+            FontRendererContext&                        getFontRendererContext() noexcept;
+            ShapeFontRendererContext&                   getShapeFontRendererContext() noexcept;
+            Gui::GuiContext&                            getGuiContext() noexcept;
+            const Language::CppHlsl::Interpreter&       getCppHlslSteamData() const noexcept;
+            const Language::CppHlsl::Interpreter&       getCppHlslConstantBuffers() const noexcept;
+            StateManager&                               getStateManager() noexcept;
 
         public: // Common buffers
-            DxObjectId                                          getCommonCbTransformId() const noexcept;
-            DxObjectId                                          getCommonSbTransformId() const noexcept;
-            DxObjectId                                          getCommonSbMaterialId() const noexcept;
+            DxObjectId                                  getCommonCbTransformId() const noexcept;
+            DxObjectId                                  getCommonSbTransformId() const noexcept;
+            DxObjectId                                  getCommonSbMaterialId() const noexcept;
 
         public:
-            void                                                initialize2DProjectionMatrix(const mint::Float2& windowSize) noexcept;
-            void                                                setViewMatrix(const mint::Float4x4& viewMatrix) noexcept;
-            void                                                setProjectionMatrix(const mint::Float4x4& projectionMatrix) noexcept;
-            void                                                updateCbView() noexcept;
+            void                                        initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
+            void                                        setViewMatrix(const Float4x4& viewMatrix) noexcept;
+            void                                        setProjectionMatrix(const Float4x4& projectionMatrix) noexcept;
+            void                                        updateCbView() noexcept;
 
         public:
-            ID3D11Device*                                       getDxDevice() noexcept;
-            const mint::Int2&                                   getWindowSize() const noexcept;
-            mint::Float2                                        getWindowSizeFloat2() const noexcept;
-            mint::Window::IWindow*                              getWindow() noexcept;
+            ID3D11Device*                               getDxDevice() noexcept;
+            const Int2&                                 getWindowSize() const noexcept;
+            Float2                                      getWindowSizeFloat2() const noexcept;
+            Window::IWindow*                            getWindow() noexcept;
 
         private:
-            mint::Window::IWindow*                              _window;
+            Window::IWindow*                            _window;
 
         private:
-            mint::Rendering::Color                          _clearColor;
+            Color                                       _clearColor;
 
     #pragma region DirectX
         private:
-            ComPtr<IDXGISwapChain>                              _swapChain;
-            ComPtr<ID3D11Device>                                _device;
-            ComPtr<ID3D11DeviceContext>                         _deviceContext;
+            ComPtr<IDXGISwapChain>                      _swapChain;
+            ComPtr<ID3D11Device>                        _device;
+            ComPtr<ID3D11DeviceContext>                 _deviceContext;
 
         private:
-            ComPtr<ID3D11RenderTargetView>                      _backBufferRtv;
-            ComPtr<ID3D11Texture2D>                             _depthStencilBuffer;
-            ComPtr<ID3D11DepthStencilView>                      _depthStencilView;
-            ComPtr<ID3D11DepthStencilState>                     _depthStencilStateLessEqual;
+            ComPtr<ID3D11RenderTargetView>              _backBufferRtv;
+            ComPtr<ID3D11Texture2D>                     _depthStencilBuffer;
+            ComPtr<ID3D11DepthStencilView>              _depthStencilView;
+            ComPtr<ID3D11DepthStencilState>             _depthStencilStateLessEqual;
 
         private:
-            ID3D11RasterizerState*                              _currentRasterizerFor3D;
-            ComPtr<ID3D11RasterizerState>                       _rasterizerStateSolidCullBack;
-            ComPtr<ID3D11RasterizerState>                       _rasterizerStateWireFrameNoCulling;
-            ComPtr<ID3D11RasterizerState>                       _rasterizerStateWireFrameCullBack;
-            ComPtr<ID3D11RasterizerState>                       _rasterizerStateScissorRectangles;
-            D3D11_VIEWPORT                                      _fullScreenViewport;
-            mint::Rect                                          _fullScreenClipRect;
+            ID3D11RasterizerState*                      _currentRasterizerFor3D;
+            ComPtr<ID3D11RasterizerState>               _rasterizerStateSolidCullBack;
+            ComPtr<ID3D11RasterizerState>               _rasterizerStateWireFrameNoCulling;
+            ComPtr<ID3D11RasterizerState>               _rasterizerStateWireFrameCullBack;
+            ComPtr<ID3D11RasterizerState>               _rasterizerStateScissorRectangles;
+            D3D11_VIEWPORT                              _fullScreenViewport;
+            Rect                                        _fullScreenClipRect;
 
         private:
-            DxShaderHeaderMemory                                _shaderHeaderMemory;
-            DxShaderPool                                        _shaderPool;
-            DxResourcePool                                      _resourcePool;
+            DxShaderHeaderMemory                        _shaderHeaderMemory;
+            DxShaderPool                                _shaderPool;
+            DxResourcePool                              _resourcePool;
 
         private:
-            mint::Rendering::CB_View                        _cbViewData;
-            DxObjectId                                          _cbViewId;
+            CB_View                                     _cbViewData;
+            DxObjectId                                  _cbViewId;
 
         private: // Common buffers
-            DxObjectId                                          _cbTransformId;
-            DxObjectId                                          _sbTransformId;
-            DxObjectId                                          _sbMaterialId;
+            DxObjectId                                  _cbTransformId;
+            DxObjectId                                  _sbTransformId;
+            DxObjectId                                  _sbMaterialId;
 
         private:
-            ComPtr<ID3D11SamplerState>                          _samplerState;
-            ComPtr<ID3D11BlendState>                            _blendState;
+            ComPtr<ID3D11SamplerState>                  _samplerState;
+            ComPtr<ID3D11BlendState>                    _blendState;
     #pragma endregion
 
         private:
-            StateManager                                        _stateManager;
+            StateManager                                _stateManager;
 
         private:
-            Language::CppHlsl::Interpreter                _cppHlslStreamData;
-            Language::CppHlsl::Interpreter                _cppHlslConstantBuffers;
-            Language::CppHlsl::Interpreter                _cppHlslStructuredBuffers;
+            Language::CppHlsl::Interpreter              _cppHlslStreamData;
+            Language::CppHlsl::Interpreter              _cppHlslConstantBuffers;
+            Language::CppHlsl::Interpreter              _cppHlslStructuredBuffers;
 
         private:
-            mint::Rendering::ShapeRendererContext           _shapeRendererContext;
-            mint::Rendering::FontRendererContext            _fontRendererContext;
-            mint::Rendering::ShapeFontRendererContext       _shapeFontRendererContext;
-            bool                                                _needEndRenderingCall;
+            ShapeRendererContext                        _shapeRendererContext;
+            FontRendererContext                         _fontRendererContext;
+            ShapeFontRendererContext                    _shapeFontRendererContext;
+            bool                                        _needEndRenderingCall;
 
         private:
-            mint::Gui::GuiContext                               _guiContext;
+            Gui::GuiContext                             _guiContext;
         };
     }
 }

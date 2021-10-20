@@ -1,4 +1,3 @@
-#include "GraphicDevice.h"
 #pragma once
 
 
@@ -17,32 +16,32 @@ namespace mint
         }
 
 
-        MINT_INLINE mint::Rendering::DxShaderPool& GraphicDevice::getShaderPool() noexcept
+        MINT_INLINE DxShaderPool& GraphicDevice::getShaderPool() noexcept
         {
             return _shaderPool;
         }
 
-        MINT_INLINE mint::Rendering::DxResourcePool& GraphicDevice::getResourcePool() noexcept
+        MINT_INLINE DxResourcePool& GraphicDevice::getResourcePool() noexcept
         {
             return _resourcePool;
         }
 
-        MINT_INLINE mint::Rendering::ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
+        MINT_INLINE ShapeRendererContext& GraphicDevice::getShapeRendererContext() noexcept
         {
             return _shapeRendererContext;
         }
 
-        MINT_INLINE mint::Rendering::FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
+        MINT_INLINE FontRendererContext& GraphicDevice::getFontRendererContext() noexcept
         {
             return _fontRendererContext;
         }
 
-        MINT_INLINE mint::Rendering::ShapeFontRendererContext& GraphicDevice::getShapeFontRendererContext() noexcept
+        MINT_INLINE ShapeFontRendererContext& GraphicDevice::getShapeFontRendererContext() noexcept
         {
             return _shapeFontRendererContext;
         }
 
-        MINT_INLINE mint::Gui::GuiContext& GraphicDevice::getGuiContext() noexcept
+        MINT_INLINE Gui::GuiContext& GraphicDevice::getGuiContext() noexcept
         {
             return _guiContext;
         }

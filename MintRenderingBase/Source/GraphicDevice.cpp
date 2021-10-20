@@ -86,13 +86,13 @@ namespace mint
             
             switch (iaRenderingPrimitive)
             {
-            case mint::Rendering::RenderingPrimitive::INVALID:
+            case RenderingPrimitive::INVALID:
                 MINT_NEVER;
                 break;
-            case mint::Rendering::RenderingPrimitive::LineList:
+            case RenderingPrimitive::LineList:
                 _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
                 break;
-            case mint::Rendering::RenderingPrimitive::TriangleList:
+            case RenderingPrimitive::TriangleList:
                 _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                 break;
             default:
@@ -154,7 +154,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setVsResources(const DxResource& resource) noexcept
         {
-            mint::Vector<DxObjectId>& shaderResources = _vsShaderResources;
+            Vector<DxObjectId>& shaderResources = _vsShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
@@ -170,7 +170,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setGsResources(const DxResource& resource) noexcept
         {
-            mint::Vector<DxObjectId>& shaderResources = _gsShaderResources;
+            Vector<DxObjectId>& shaderResources = _gsShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
@@ -186,7 +186,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setPsResources(const DxResource& resource) noexcept
         {
-            mint::Vector<DxObjectId>& shaderResources = _psShaderResources;
+            Vector<DxObjectId>& shaderResources = _psShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
@@ -202,7 +202,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setVsConstantBuffers(const DxResource& constantBuffer)
         {
-            mint::Vector<DxObjectId>& constantBuffers = _vsConstantBuffers;
+            Vector<DxObjectId>& constantBuffers = _vsConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
@@ -218,7 +218,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setGsConstantBuffers(const DxResource& constantBuffer)
         {
-            mint::Vector<DxObjectId>& constantBuffers = _gsConstantBuffers;
+            Vector<DxObjectId>& constantBuffers = _gsConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
@@ -234,7 +234,7 @@ namespace mint
 
         void GraphicDevice::StateManager::setPsConstantBuffers(const DxResource& constantBuffer)
         {
-            mint::Vector<DxObjectId>& constantBuffers = _psConstantBuffers;
+            Vector<DxObjectId>& constantBuffers = _psConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
@@ -254,7 +254,7 @@ namespace mint
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
             , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
-            , _shaderPool{ this, &_shaderHeaderMemory, mint::Rendering::DxShaderVersion::v_5_0 }
+            , _shaderPool{ this, &_shaderHeaderMemory, DxShaderVersion::v_5_0 }
             , _resourcePool{ this }
             , _stateManager{ this }
             , _shapeRendererContext{ this }
@@ -266,7 +266,7 @@ namespace mint
             __noop;
         }
 
-        const bool GraphicDevice::initialize(mint::Window::IWindow* const window)
+        const bool GraphicDevice::initialize(Window::IWindow* const window)
         {
             if (window == nullptr)
             {
@@ -299,15 +299,15 @@ namespace mint
             initializeBackBuffer();
             initializeDepthStencilBufferAndView(_window->getSize());
             initializeFullScreenData(_window->getSize());
-            initialize2DProjectionMatrix(mint::Float2(_window->getSize()));
+            initialize2DProjectionMatrix(Float2(_window->getSize()));
 
             setDefaultRenderTargetsAndDepthStencil();
         }
 
         void GraphicDevice::createDxDevice()
         {
-            const mint::Window::WindowsWindow& windowsWindow = *static_cast<const mint::Window::WindowsWindow*>(_window);
-            const mint::Int2& windowSize = windowsWindow.getSize();
+            const Window::WindowsWindow& windowsWindow = *static_cast<const Window::WindowsWindow*>(_window);
+            const Int2& windowSize = windowsWindow.getSize();
 
             if (createSwapChain(windowSize, windowsWindow.getHandle()) == false)
             {
@@ -365,8 +365,8 @@ namespace mint
         {
             if (_fontRendererContext.existsFontData(kDefaultFont) == false)
             {
-                _fontRendererContext.pushGlyphRange(mint::Rendering::GlyphRange(0, 0x33DD));
-                _fontRendererContext.pushGlyphRange(mint::Rendering::GlyphRange(L'가', L'힣'));
+                _fontRendererContext.pushGlyphRange(GlyphRange(0, 0x33DD));
+                _fontRendererContext.pushGlyphRange(GlyphRange(L'가', L'힣'));
                 if (_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1) == false)
                 {
                     MINT_LOG_ERROR("김장원", "폰트 데이터를 Bake 하는 데 실패했습니다!");
@@ -385,7 +385,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::createSwapChain(const mint::Int2& windowSize, const HWND windowHandle)
+        const bool GraphicDevice::createSwapChain(const Int2& windowSize, const HWND windowHandle)
         {
             DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
             swapChainDescriptor.BufferCount = 1;
@@ -426,7 +426,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::initializeDepthStencilBufferAndView(const mint::Int2& windowSize)
+        const bool GraphicDevice::initializeDepthStencilBufferAndView(const Int2& windowSize)
         {
             D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
             depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
@@ -507,7 +507,7 @@ namespace mint
                     _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
                 }
 
-                initialize2DProjectionMatrix(mint::Float2(windowSize));
+                initialize2DProjectionMatrix(Float2(windowSize));
             }
 
             // Structured buffers
@@ -574,7 +574,7 @@ namespace mint
             }
         }
 
-        void GraphicDevice::initializeFullScreenData(const mint::Int2& windowSize)
+        void GraphicDevice::initializeFullScreenData(const Int2& windowSize)
         {
             _fullScreenViewport.Width = static_cast<FLOAT>(windowSize._x);
             _fullScreenViewport.Height = static_cast<FLOAT>(windowSize._y);
@@ -677,25 +677,25 @@ namespace mint
             return _fullScreenViewport;
         }
 
-        const mint::Rect& GraphicDevice::getFullScreenClipRect() const noexcept
+        const Rect& GraphicDevice::getFullScreenClipRect() const noexcept
         {
             return _fullScreenClipRect;
         }
         
-        void GraphicDevice::initialize2DProjectionMatrix(const mint::Float2& windowSize) noexcept
+        void GraphicDevice::initialize2DProjectionMatrix(const Float2& windowSize) noexcept
         {
-            _cbViewData._cb2DProjectionMatrix = mint::Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+            _cbViewData._cb2DProjectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 
             DxResource& cbView = _resourcePool.getResource(_cbViewId);
             cbView.updateBuffer(&_cbViewData, 1);
         }
 
-        void GraphicDevice::setViewMatrix(const mint::Float4x4& viewMatrix) noexcept
+        void GraphicDevice::setViewMatrix(const Float4x4& viewMatrix) noexcept
         {
             _cbViewData._cbViewMatrix = viewMatrix;
         }
 
-        void GraphicDevice::setProjectionMatrix(const mint::Float4x4& projectionMatrix) noexcept
+        void GraphicDevice::setProjectionMatrix(const Float4x4& projectionMatrix) noexcept
         {
             _cbViewData._cb3DProjectionMatrix = projectionMatrix;
         }
@@ -708,17 +708,17 @@ namespace mint
             cbView.updateBuffer(&_cbViewData, 1);
         }
 
-        const mint::Int2& GraphicDevice::getWindowSize() const noexcept
+        const Int2& GraphicDevice::getWindowSize() const noexcept
         {
-            return (_window != nullptr) ? _window->getSize() : mint::Int2::kZero;
+            return (_window != nullptr) ? _window->getSize() : Int2::kZero;
         }
 
-        mint::Float2 GraphicDevice::getWindowSizeFloat2() const noexcept
+        Float2 GraphicDevice::getWindowSizeFloat2() const noexcept
         {
-            return mint::Float2(getWindowSize());
+            return Float2(getWindowSize());
         }
         
-        mint::Window::IWindow* GraphicDevice::getWindow() noexcept
+        Window::IWindow* GraphicDevice::getWindow() noexcept
         {
             return _window;
         }
