@@ -12,7 +12,7 @@
 
 namespace mint
 {
-    class MintLibraryVersion
+    class LibraryVersion
     {
     public:
         static const uint16 getVersionMajor() noexcept;

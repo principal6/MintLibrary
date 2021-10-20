@@ -583,7 +583,7 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    mint::MintLibraryVersion::printVersion();
+    mint::LibraryVersion::printVersion();
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE
