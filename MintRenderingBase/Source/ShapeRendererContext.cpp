@@ -43,7 +43,7 @@ namespace mint
                     
                     VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
                     {
-                        const uint packedInfo       = asuint(input._info.y);
+                        const uint packedInfo       = asuint(input._info.x);
                         const uint shapeType        = (packedInfo >> 30) & 3;
                         const uint transformIndex   = packedInfo & 0x3FFFFFFF;
                         
@@ -93,7 +93,10 @@ namespace mint
                     R"(
                     #include <ShaderStructDefinitions>
                     #include <ShaderConstantBuffers>
-
+                    
+                    sampler                 g_sampler0;
+                    Texture2D<float>        g_texture0;
+                    
                     static const float kDeltaDoublePixel = _cb2DProjectionMatrix[0][0];
                     static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
                     static const float kDeltaHalfPixel = kDeltaPixel * 0.5;
@@ -228,8 +231,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 0.0f;
             v._texCoord._w = abs(pointA._x - pointB._x);
-            //v._info._x = _viewportIndex;
-            v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::QuadraticBezierTriangle);
+            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::QuadraticBezierTriangle);
             vertexArray.push_back(v);
 
             v._position._x = controlPoint._x;
@@ -274,8 +276,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = pointA._x;
                 v._position._y = pointA._y;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
                 v._position._x = pointB._x;
@@ -315,8 +316,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 1.0f;
             v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
-            //v._info._x = _viewportIndex;
-            v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
             vertexArray.push_back(v);
 
             v._position._x += radius;
@@ -369,8 +369,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = halfRadius * 2.0f;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfRadius;
@@ -441,8 +440,7 @@ namespace mint
                 v._texCoord._y = +1.0f;
                 v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
                 v._texCoord._w = radius;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circle);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circle);
                 vertexArray.push_back(v);
 
                 v._position._x = +radius;
@@ -507,8 +505,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = radius;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = +radius * sinHalfArcAngle;
@@ -593,8 +590,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = +1.0f; // @IMPORTANT
                 v._texCoord._w = outerRadius;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = +outerRadius * tanHalfArcAngle;
@@ -770,8 +766,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y - halfSize._y;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfSize._x;
@@ -822,8 +817,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = -halfSize._x + horizontalOffsetL;
                 v._position._y = -halfSize._y;
-                //v._info._x = _viewportIndex;
-                v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
                 v._position._x = +halfSize._x - horizontalOffsetR;
@@ -1100,8 +1094,7 @@ namespace mint
             v._position = _position;
             v._position._x = v0._x;
             v._position._y = v0._y;
-            //v._info._x = _viewportIndex;
-            v._info._y = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
             vertexArray.push_back(v);
 
             v._position._x = v1._x;
