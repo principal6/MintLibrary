@@ -60,6 +60,9 @@
     <ClInclude Include="Include\MathExpRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SplineRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -93,6 +96,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MathExpRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SplineRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
