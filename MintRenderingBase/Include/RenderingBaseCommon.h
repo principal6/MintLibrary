@@ -49,74 +49,75 @@ namespace mint
         class Color
         {
         public:
-            static const Color      kTransparent;
-            static const Color      kWhite;
-            static const Color      kBlack;
-            static const Color      kRed;
-            static const Color      kGreen;
-            static const Color      kBlue;
-            static const Color      kCyan;
-            static const Color      kMagenta;
-            static const Color      kYellow;
+            static const Color          kTransparent;
+            static const Color          kWhite;
+            static const Color          kBlack;
+            static const Color          kRed;
+            static const Color          kGreen;
+            static const Color          kBlue;
+            static const Color          kCyan;
+            static const Color          kMagenta;
+            static const Color          kYellow;
 
         public:
-            constexpr               Color() : Color(255, 255, 255) { __noop; }
-            constexpr               Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } { __noop; }
-            constexpr               Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
-            constexpr               Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
-            constexpr               Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
-            constexpr               Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
-            constexpr explicit      Color(const Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
+            constexpr                   Color() : Color(255, 255, 255) { __noop; }
+            constexpr                   Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } { __noop; }
+            constexpr                   Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
+            constexpr                   Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
+            constexpr                   Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
+            constexpr                   Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
+            constexpr explicit          Color(const Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
 
         public:
-                                    operator Float4&() noexcept { return _raw; }
-                                    operator const Float4&() const noexcept { return _raw; }
-                                    operator const float*() const noexcept { return _raw._f; }
-            Color                   operator*(const Color& rhs) const noexcept { return Color(_raw._x * rhs._raw._x, _raw._y * rhs._raw._y, _raw._z * rhs._raw._z, _raw._w * rhs._raw._w); }
-            Color                   operator*(const float s) const noexcept { return Color(_raw * s); }
-            Color                   operator/(const float s) const { return Color(_raw / s); }
-            Color                   operator+(const Color& rhs) const { return Color(_raw + rhs._raw); }
-            Color                   operator-(const Color& rhs) const { return Color(_raw - rhs._raw); }
-            const bool              operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
+                                        operator Float4&() noexcept { return _raw; }
+                                        operator const Float4&() const noexcept { return _raw; }
+                                        operator const float*() const noexcept { return _raw._f; }
+            Color                       operator*(const Color& rhs) const noexcept { return Color(_raw._x * rhs._raw._x, _raw._y * rhs._raw._y, _raw._z * rhs._raw._z, _raw._w * rhs._raw._w); }
+            Color                       operator*(const float s) const noexcept { return Color(_raw * s); }
+            Color                       operator/(const float s) const { return Color(_raw / s); }
+            Color                       operator+(const Color& rhs) const { return Color(_raw + rhs._raw); }
+            Color                       operator-(const Color& rhs) const { return Color(_raw - rhs._raw); }
+            const bool                  operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
 
         public:
-            constexpr float         r() const noexcept { return _raw._x; }
-            constexpr float         g() const noexcept { return _raw._y; }
-            constexpr float         b() const noexcept { return _raw._z; }
-            constexpr float         a() const noexcept { return _raw._w; }
+            MINT_INLINE constexpr float r() const noexcept { return _raw._x; }
+            MINT_INLINE constexpr float g() const noexcept { return _raw._y; }
+            MINT_INLINE constexpr float b() const noexcept { return _raw._z; }
+            MINT_INLINE constexpr float a() const noexcept { return _raw._w; }
 
-            constexpr byte          rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
-            constexpr byte          gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
-            constexpr byte          bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
-            constexpr byte          aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
+            MINT_INLINE constexpr byte  rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
+            MINT_INLINE constexpr byte  gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
+            MINT_INLINE constexpr byte  bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
+            MINT_INLINE constexpr byte  aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
 
-            constexpr void          r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
-            constexpr void          g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
-            constexpr void          b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
-            constexpr void          a(const int32 value) noexcept { _raw._w = (value / 255.0f); }
+            MINT_INLINE constexpr void  r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
+            MINT_INLINE constexpr void  g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
+            MINT_INLINE constexpr void  a(const int32 value) noexcept { _raw._w = (value / 255.0f); }
+            MINT_INLINE constexpr void  b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
 
-            constexpr void          r(const float value) noexcept { _raw._x = value; }
-            constexpr void          g(const float value) noexcept { _raw._y = value; }
-            constexpr void          b(const float value) noexcept { _raw._z = value; }
-            constexpr void          a(const float value) noexcept { _raw._w = value; }
-
-        public:
-            void                    rgb(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
-            Color                   addedRgb(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
-            Color                   addedRgb(const int32 s) const noexcept { return addedRgb(s / 255.0f); }
-            Color                   scaledRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
-            Color                   scaledA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
-            void                    scaleR(const float s) noexcept { _raw._x *= s; }
-            void                    scaleG(const float s) noexcept { _raw._y *= s; }
-            void                    scaleB(const float s) noexcept { _raw._z *= s; }
-            void                    scaleA(const float s) noexcept { _raw._w *= s; }
-            const bool              isTransparent() const noexcept;
+            MINT_INLINE constexpr void  r(const float value) noexcept { _raw._x = value; }
+            MINT_INLINE constexpr void  g(const float value) noexcept { _raw._y = value; }
+            MINT_INLINE constexpr void  b(const float value) noexcept { _raw._z = value; }
+            MINT_INLINE constexpr void  a(const float value) noexcept { _raw._w = value; }
 
         public:
-            constexpr float         toLuma() const noexcept; // Rec. 601
+            MINT_INLINE void            rgb(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
+            MINT_INLINE Color           addedRgb(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
+            MINT_INLINE Color           addedRgb(const int32 s) const noexcept { return addedRgb(s / 255.0f); }
+            MINT_INLINE Color           scaledRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+            MINT_INLINE Color           scaledA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
+            MINT_INLINE void            scaleR(const float s) noexcept { _raw._x *= s; }
+            MINT_INLINE void            scaleG(const float s) noexcept { _raw._y *= s; }
+            MINT_INLINE void            scaleB(const float s) noexcept { _raw._z *= s; }
+            MINT_INLINE void            scaleA(const float s) noexcept { _raw._w *= s; }
+            MINT_INLINE const bool      isTransparent() const noexcept { return (_raw._w <= 0.0f); }
+
+        public:
+            // Rec. 601
+            MINT_INLINE constexpr float toLuma() const noexcept { return _raw._x * 0.299f + _raw._y * 0.587f + _raw._z * 0.114f; }
 
         private:
-            Float4                  _raw;
+            Float4                      _raw;
         };
 
 

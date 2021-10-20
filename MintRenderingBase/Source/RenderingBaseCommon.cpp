@@ -18,24 +18,14 @@ namespace mint
         const Color Color::kMagenta = Color(255, 0, 255, 255);
         const Color Color::kYellow = Color(255, 255, 0, 255);
 
-        const bool Color::isTransparent() const noexcept
-        {
-            return (_raw._w <= 0.0f);
-        }
-
-        constexpr float Color::toLuma() const noexcept
-        {
-            return _raw._x * 0.299f + _raw._y * 0.587f + _raw._z * 0.114f;
-        }
-
         
-        void ColorImage::setSize(const mint::Int2& size) noexcept
+        void ColorImage::setSize(const Int2& size) noexcept
         {
             _size = size;
             _colorArray.resize(_size._x * _size._y);
         }
 
-        const mint::Int2& ColorImage::getSize() const noexcept
+        const Int2& ColorImage::getSize() const noexcept
         {
             return _size;
         }
@@ -50,22 +40,22 @@ namespace mint
             }
         }
 
-        void ColorImage::fillRect(const mint::Int2& position, const mint::Int2& size, const Color& color) noexcept
+        void ColorImage::fillRect(const Int2& position, const Int2& size, const Color& color) noexcept
         {
             if (size._x <= 0 || size._y <= 0)
             {
                 return;
             }
             
-            const int32 beginX = mint::max(position._x, 0);
-            const int32 beginY = mint::max(position._y, 0);
+            const int32 beginX = max(position._x, 0);
+            const int32 beginY = max(position._y, 0);
             if (_size._x <= beginX || _size._y <= beginY)
             {
                 return;
             }
 
-            const int32 endX = mint::min(position._x + size._x, _size._x);
-            const int32 endY = mint::min(position._y + size._y, _size._y);
+            const int32 endX = min(position._x + size._x, _size._x);
+            const int32 endY = min(position._y + size._y, _size._y);
             if (endX < 0 || endY < 0)
             {
                 return;
@@ -81,7 +71,7 @@ namespace mint
             }
         }
 
-        void ColorImage::fillCircle(const mint::Int2& center, const int32 radius, const Color& color) noexcept
+        void ColorImage::fillCircle(const Int2& center, const int32 radius, const Color& color) noexcept
         {
             const int32 twoRadii = radius * 2;
             const int32 left = center._x - radius;
@@ -93,8 +83,8 @@ namespace mint
             {
                 for (int32 x = left; x < right; ++x)
                 {
-                    const mint::Int2 currentPosition{ x, y };
-                    const mint::Float2 diff = mint::Float2(currentPosition - center);
+                    const Int2 currentPosition{ x, y };
+                    const Float2 diff = Float2(currentPosition - center);
                     if (diff.length() <= radiusF)
                     {
                         setPixel(currentPosition, color);
@@ -103,19 +93,19 @@ namespace mint
             }
         }
 
-        void ColorImage::setPixel(const mint::Int2& at, const Color& color) noexcept
+        void ColorImage::setPixel(const Int2& at, const Color& color) noexcept
         {
             const int32 index = convertXyToIndex(at._x, at._y);
             _colorArray[index] = color;
         }
 
-        const Color& ColorImage::getPixel(const mint::Int2& at) const noexcept
+        const Color& ColorImage::getPixel(const Int2& at) const noexcept
         {
             const int32 index = convertXyToIndex(at._x, at._y);
             return _colorArray[index];
         }
 
-        const Color ColorImage::getSubPixel(const mint::Float2& at) const noexcept
+        const Color ColorImage::getSubPixel(const Float2& at) const noexcept
         {
             static constexpr float kSubPixelEpsilon = 0.01f;
 
@@ -127,7 +117,7 @@ namespace mint
 
             if (deltaX < kSubPixelEpsilon && deltaY < kSubPixelEpsilon)
             {
-                return getPixel(mint::Int2(static_cast<int32>(at._x), static_cast<int32>(at._y)));
+                return getPixel(Int2(static_cast<int32>(at._x), static_cast<int32>(at._y)));
             }
 
             const int32 y = static_cast<int32>(floorY);
@@ -136,8 +126,8 @@ namespace mint
             {   
                 const int32 yPrime = y + static_cast<int32>(std::ceil(deltaY));
 
-                Color a = getPixel(mint::Int2(x, y));
-                Color b = getPixel(mint::Int2(x, yPrime));
+                Color a = getPixel(Int2(x, y));
+                Color b = getPixel(Int2(x, yPrime));
 
                 return a * (1.0f - deltaY) + b * deltaY;
             }
@@ -145,8 +135,8 @@ namespace mint
             {
                 const int32 xPrime = x + static_cast<int32>(std::ceil(deltaX));
 
-                Color a = getPixel(mint::Int2(x, y));
-                Color b = getPixel(mint::Int2(xPrime, y));
+                Color a = getPixel(Int2(x, y));
+                Color b = getPixel(Int2(xPrime, y));
 
                 return a * (1.0f - deltaX) + b * deltaX;
             }
@@ -155,19 +145,19 @@ namespace mint
                 const int32 xPrime = x + static_cast<int32>(std::ceil(deltaX));
                 const int32 yPrime = y + static_cast<int32>(std::ceil(deltaY));
 
-                Color a0 = getPixel(mint::Int2(x, y));
-                Color b0 = getPixel(mint::Int2(xPrime, y));
+                Color a0 = getPixel(Int2(x, y));
+                Color b0 = getPixel(Int2(xPrime, y));
                 Color r0 = a0 * (1.0f - deltaX) + b0 * deltaX;
 
-                Color a1 = getPixel(mint::Int2(x, yPrime));
-                Color b1 = getPixel(mint::Int2(xPrime, yPrime));
+                Color a1 = getPixel(Int2(x, yPrime));
+                Color b1 = getPixel(Int2(xPrime, yPrime));
                 Color r1 = a1 * (1.0f - deltaX) + b1 * deltaX;
 
                 return r0 * (1.0f - deltaY) + r1 * deltaY;
             }
         }
 
-        void ColorImage::getAdjacentPixels(const mint::Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept
+        void ColorImage::getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept
         {
             outAdjacentPixels._top      = (at._y <= 0) ? Color::kTransparent : getColorFromXy(at._x, at._y - 1);
             outAdjacentPixels._bottom   = (_size._y - 1 <= at._y) ? Color::kTransparent : getColorFromXy(at._x, at._y + 1);
@@ -175,7 +165,7 @@ namespace mint
             outAdjacentPixels._right    = (_size._x - 1 <= at._x) ? Color::kTransparent : getColorFromXy(at._x + 1, at._y);
         }
 
-        void ColorImage::getCoAdjacentPixels(const mint::Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept
+        void ColorImage::getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept
         {
             if (at._x <= 0)
             {
@@ -218,7 +208,7 @@ namespace mint
 
         const int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
         {
-            return mint::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
+            return min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
         }
 
         const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept
