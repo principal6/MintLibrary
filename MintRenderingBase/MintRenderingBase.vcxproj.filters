@@ -109,7 +109,7 @@
       <Filter>Include\Gui</Filter>
     </ClInclude>
     <ClInclude Include="Include\ShapeFontRendererContext.h">
-      <Filter>Source</Filter>
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
