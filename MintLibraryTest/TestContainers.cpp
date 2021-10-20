@@ -36,7 +36,7 @@ namespace mint
 
         static const bool testVector() noexcept
         {
-            using namespace mint::TestContainers;
+            using namespace TestContainers;
 
             using Type = int32;
             //using Type = Notable<int32>;
@@ -54,7 +54,7 @@ namespace mint
                 //strVector.erase(t.begin() + 1);
                 strVector.insert(strVector.begin() + 1, 4);
 
-                mint::Vector<Type> mintVector;
+                Vector<Type> mintVector;
                 mintVector.reserve(5);
                 mintVector.push_back(0);
                 mintVector.push_back(1);
@@ -65,20 +65,20 @@ namespace mint
             }
 
 
-            mint::Vector<uint32> a(5);
+            Vector<uint32> a(5);
             a.push_back(1);
             a.push_back(2);
             a.push_back(3);
             a.insert(2, 5);
             a.erase(1);
 
-            mint::Vector<uint32> b(20);
+            Vector<uint32> b(20);
             b.push_back(9);
 
             // Move semantic Á¡°Ë!
             std::swap(a, b);
 
-            mint::Vector<uint32> c(3);
+            Vector<uint32> c(3);
             c.insert(3, 10);
             c.insert(2, 0);
             c.insert(99, 1);
@@ -174,8 +174,6 @@ namespace mint
 
         static const bool testBitVector() noexcept
         {
-            using mint::BitVector;
-
             BitVector a;
             a.reserveByteCapacity(4);
             a.push_back(true);
@@ -209,16 +207,16 @@ namespace mint
                 static constexpr uint32 kCount = 200'000'000;
 #endif
 
-                mint::Vector<uint8> sourceData;
+                Vector<uint8> sourceData;
                 sourceData.resize(kCount);
 
-                mint::Vector<uint8> byteVector;
-                mint::Vector<uint8> byteVectorCopy;
+                Vector<uint8> byteVector;
+                Vector<uint8> byteVectorCopy;
                 byteVector.resize(kCount);
                 byteVectorCopy.resize(kCount);
 
-                mint::Vector<bool> boolVector;
-                mint::Vector<bool> boolVectorCopy;
+                Vector<bool> boolVector;
+                Vector<bool> boolVectorCopy;
                 boolVector.resize(kCount);
                 boolVectorCopy.resize(kCount);
 
@@ -235,7 +233,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "1) byte vector" };
+                    Profiler::ScopedCpuProfiler profiler{ "1) byte vector" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         byteVector[i] = sourceData[i];
@@ -243,7 +241,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "1) byte vector copy" };
+                    Profiler::ScopedCpuProfiler profiler{ "1) byte vector copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         byteVectorCopy[i] = byteVector[i];
@@ -251,7 +249,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "2) bool vector" };
+                    Profiler::ScopedCpuProfiler profiler{ "2) bool vector" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         boolVector[i] = sourceData[i];
@@ -259,7 +257,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "2) bool vector copy" };
+                    Profiler::ScopedCpuProfiler profiler{ "2) bool vector copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         boolVectorCopy[i] = boolVector[i];
@@ -267,7 +265,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         bitVector.set(i, sourceData[i]);
@@ -275,7 +273,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw copy" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         bitVectorCopy.set(i, bitVector.get(i));
@@ -283,7 +281,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1" };
                     const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -296,7 +294,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1 copy" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1 copy" };
                     const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -309,7 +307,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2" };
                     const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -324,7 +322,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
                     const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -339,7 +337,7 @@ namespace mint
                 }
 
                 {
-                    mint::Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
+                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
                     const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -348,7 +346,7 @@ namespace mint
                     }
                 }
 
-                mint::Vector<mint::Profiler::ScopedCpuProfiler::Log> logArray = mint::Profiler::ScopedCpuProfiler::getEntireLogArray();
+                Vector<Profiler::ScopedCpuProfiler::Log> logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
                 const bool isEmpty = logArray.empty();
             }
 #endif
@@ -358,7 +356,7 @@ namespace mint
 
         static const bool testHashMap() noexcept
         {
-            mint::HashMap<std::string, std::string> hashMap;
+            HashMap<std::string, std::string> hashMap;
             hashMap.insert("1", "a");
             hashMap.insert("5", "b");
             hashMap.insert("11", "c");
@@ -366,11 +364,11 @@ namespace mint
             hashMap.insert("33", "e");
             hashMap.insert("41", "f");
 
-            mint::KeyValuePair<std::string, std::string> keyValuePair0 = hashMap.find("1");
+            KeyValuePair<std::string, std::string> keyValuePair0 = hashMap.find("1");
 
             hashMap.erase("21");
 
-            mint::KeyValuePair<std::string, std::string> keyValuePair1 = hashMap.find("21");
+            KeyValuePair<std::string, std::string> keyValuePair1 = hashMap.find("21");
 
             return true;
         }
@@ -378,7 +376,6 @@ namespace mint
         static const bool testStringTypes() noexcept
         {
 #pragma region ScopeString
-            using mint::ScopeStringA;
             {
                 ScopeStringA<256> a{ "abcd" };
                 ScopeStringA<256> b = a;
@@ -405,8 +402,6 @@ namespace mint
 #pragma endregion
 
 #pragma region UniqueString
-            using mint::UniqueStringA;
-            using mint::UniqueStringAId;
             {
                 UniqueStringA a{ "ab" };
                 UniqueStringA b{ "cdef" };
@@ -425,9 +420,9 @@ namespace mint
 #if defined MINT_TEST_PERFORMANCE
             static constexpr uint32 kCount = 20'000;
             {
-                mint::Profiler::ScopedCpuProfiler profiler{ "mint::Vector<std::string>" };
+                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
 
-                mint::Vector<std::string> dnsArray;
+                Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
                 for (uint32 i = 0; i < kCount; ++i)
                 {
@@ -436,9 +431,9 @@ namespace mint
             }
 
             {
-                mint::Profiler::ScopedCpuProfiler profiler{ "mint::Vector<std::string>" };
+                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
 
-                mint::Vector<std::string> dnsArray;
+                Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
                 for (uint32 i = 0; i < kCount; ++i)
                 {
@@ -447,9 +442,9 @@ namespace mint
             }
 
             {
-                mint::Profiler::ScopedCpuProfiler profiler{ "mint::Vector<std::string>" };
+                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
 
-                mint::Vector<std::string> dnsArray;
+                Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
                 for (uint32 i = 0; i < kCount; ++i)
                 {
@@ -458,9 +453,9 @@ namespace mint
             }
 
             {
-                mint::Profiler::ScopedCpuProfiler profiler{ "mint::Vector<std::string>" };
+                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
 
-                mint::Vector<std::string> sArray;
+                Vector<std::string> sArray;
                 sArray.resize(kCount);
                 for (uint32 i = 0; i < kCount; ++i)
                 {
@@ -468,7 +463,7 @@ namespace mint
                 }
             }
 
-            auto logArray = mint::Profiler::ScopedCpuProfiler::getEntireLogArray();
+            auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
             const bool isEmpty = logArray.empty();
 #endif
 #pragma endregion
@@ -505,7 +500,7 @@ namespace mint
         static const bool testStringUtil() noexcept
         {
             const std::string testA{ "ab c   def g" };
-            mint::Vector<std::string> testATokenized;
+            Vector<std::string> testATokenized;
             StringUtil::tokenize(testA, ' ', testATokenized);
 
             std::string testB{
@@ -524,8 +519,8 @@ namespace mint
             }
         )"
             };
-            const mint::Vector<char> delimiterArray{ ' ', '\t', '\n' };
-            mint::Vector<std::string> testBTokenized;
+            const Vector<char> delimiterArray{ ' ', '\t', '\n' };
+            Vector<std::string> testBTokenized;
             StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
             return true;
@@ -533,27 +528,27 @@ namespace mint
 
         static const bool testTree() noexcept
         {
-            mint::Tree<std::string> stringTree;
-            mint::TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
+            Tree<std::string> stringTree;
+            TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
 
-            mint::TreeNodeAccessor a = rootNode.insertChildNode("A");
+            TreeNodeAccessor a = rootNode.insertChildNode("A");
             const std::string& aData = a.getNodeData();
 
-            mint::TreeNodeAccessor b = a.insertChildNode("b");
-            mint::TreeNodeAccessor c = a.insertChildNode("c");
+            TreeNodeAccessor b = a.insertChildNode("b");
+            TreeNodeAccessor c = a.insertChildNode("c");
 
-            mint::TreeNodeAccessor d = rootNode.insertChildNode("D");
+            TreeNodeAccessor d = rootNode.insertChildNode("D");
 
             //stringTree.swapNodeData(a, b);
             b.moveToParent(rootNode);
-            mint::TreeNodeAccessor bParent = b.getParentNode();
+            TreeNodeAccessor bParent = b.getParentNode();
             const uint32 aChildCount = a.getChildNodeCount();
             a.clearChildNodes();
 #if defined MINT_TEST_FAILURES
-            mint::TreeNodeAccessor aInvalidChild = a.getChildNode(10);
+            TreeNodeAccessor aInvalidChild = a.getChildNode(10);
 #endif
 
-            mint::TreeNodeAccessor found = stringTree.findNode(rootNode, "A");
+            TreeNodeAccessor found = stringTree.findNode(rootNode, "A");
 
             //stringTree.eraseChildNode(rootNode, a);
             //stringTree.clearChildren(rootNode);

@@ -10,7 +10,7 @@
 namespace mint
 {
     template <typename T>
-    const int32 binarySearchInternal(const mint::Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
+    const int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -33,7 +33,7 @@ namespace mint
     }
 
     template <typename T>
-    const int32 binarySearch(const mint::Vector<T>& vec, const T& value)
+    const int32 binarySearch(const Vector<T>& vec, const T& value)
     {
         if (vec.empty() == true)
         {
@@ -44,7 +44,7 @@ namespace mint
 
 
     template <typename T, typename CompT>
-    const int32 binarySearchInternal(const mint::Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
+    const int32 binarySearchInternal(const Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -67,7 +67,7 @@ namespace mint
     }
 
     template<typename T, typename CompT>
-    const int32 binarySearch(const mint::Vector<T>& vec, const CompT& value)
+    const int32 binarySearch(const Vector<T>& vec, const CompT& value)
     {
         if (vec.empty() == true)
         {
@@ -77,7 +77,7 @@ namespace mint
     }
 
     template<typename T, typename Comparator>
-    void quickSortInternal(mint::Vector<T>& vector, const int32 front, const int32 back, Comparator comparator)
+    void quickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator)
     {
         if (back <= front)
         {
@@ -103,7 +103,7 @@ namespace mint
     }
 
     template<typename T, typename Comparator>
-    void quickSort(mint::Vector<T>& vector, Comparator comparator)
+    void quickSort(Vector<T>& vector, Comparator comparator)
     {
         const int32 begin = 0;
         const int32 end = static_cast<int32>(vector.size() - 1);

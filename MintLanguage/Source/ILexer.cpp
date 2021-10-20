@@ -157,7 +157,7 @@ namespace mint
 
         void ILexer::registerKeyword(const char* const keyword)
         {
-            const uint64 hash = mint::computeHash(keyword);
+            const uint64 hash = computeHash(keyword);
             if (_keywordUmap.find(hash).isValid() == false)
             {
                 _keywordTable.push_back(keyword);
@@ -200,7 +200,7 @@ namespace mint
                 return;
             }
 
-            const uint64 key = mint::computeHash(punctuator);
+            const uint64 key = computeHash(punctuator);
             if (_punctuatorUmap.find(key).isValid() == false)
             {
                 _punctuatorTable.push_back(punctuator);
@@ -631,7 +631,7 @@ namespace mint
         const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
         {
             const char keyString3[4]{ ch0, ch1, ch2, '\0' };
-            const uint64 key3 = mint::computeHash(keyString3);
+            const uint64 key3 = computeHash(keyString3);
             auto found3 = _punctuatorUmap.find(key3);
             if (found3.isValid() == true)
             {
@@ -640,7 +640,7 @@ namespace mint
             }
 
             const char keyString2[3]{ ch0, ch1, '\0' };
-            const uint64 key2 = mint::computeHash(keyString2);
+            const uint64 key2 = computeHash(keyString2);
             auto found2 = _punctuatorUmap.find(key2);
             if (found2.isValid() == true)
             {
@@ -649,7 +649,7 @@ namespace mint
             }
 
             const char keyString1[2]{ ch0, '\0' };
-            const uint64 key1 = mint::computeHash(keyString1);
+            const uint64 key1 = computeHash(keyString1);
             auto found1 = _punctuatorUmap.find(key1);
             if (found1.isValid() == true)
             {
@@ -714,7 +714,7 @@ namespace mint
 
         const bool ILexer::isKeyword(const std::string& input) const noexcept
         {
-            return _keywordUmap.find(mint::computeHash(input.c_str())).isValid() == true;
+            return _keywordUmap.find(computeHash(input.c_str())).isValid() == true;
         }
 
         const bool ILexer::isEscaper(const char input) const noexcept
@@ -727,7 +727,7 @@ namespace mint
             return static_cast<uint32>(_symbolTable.size());
         }
 
-        const mint::Vector<SymbolTableItem>& ILexer::getSymbolTable() const noexcept
+        const Vector<SymbolTableItem>& ILexer::getSymbolTable() const noexcept
         {
             return _symbolTable;
         }

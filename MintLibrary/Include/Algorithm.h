@@ -16,11 +16,11 @@ namespace mint
 
 
     template <typename T>
-    const int32 binarySearch(const mint::Vector<T>& vec, const T& value);
+    const int32 binarySearch(const Vector<T>& vec, const T& value);
 
     template <typename T, typename CompT>
-    const int32 binarySearch(const mint::Vector<T>& vec, const CompT& value);
+    const int32 binarySearch(const Vector<T>& vec, const CompT& value);
 
     template <typename T, typename Comparator>
-    void quickSort(mint::Vector<T>& vector, Comparator comparator);
+    void quickSort(Vector<T>& vector, Comparator comparator);
 }
