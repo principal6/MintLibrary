@@ -61,7 +61,7 @@ namespace mint
             return UniqueStringA::kInvalidId;
         }
 
-        const uint64 hash = mint::computeHash(rawString);
+        const uint64 hash = computeHash(rawString);
         {
             auto found = _registrationMap.find(hash);
             if (found.isValid() == true)
