@@ -184,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintRenderingBase.lib;MintLanguage.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -208,7 +208,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintRenderingBase.lib;MintLanguage.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MintMath.lib;MintContainer.lib;MintReflection.lib;MintPlatform.lib;MintLanguage.lib;MintRenderingBase.lib;MintRendering.lib;MintGame.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)_output\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
