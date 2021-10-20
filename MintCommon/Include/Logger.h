@@ -92,13 +92,15 @@ namespace mint
 
     public:
         static Logger&  getInstance() noexcept;
+        static void     setOutputFileName(const char* const fileName) noexcept;
+
+    public:
         void            log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
         void            logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
         void            logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
 
     private:
         void            logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize]);
-        void            setOutputFileName(const char* const fileName);
 
     private:
         uint32          _basePathOffset;

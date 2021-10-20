@@ -28,6 +28,7 @@ namespace mint
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(rhsLength + 1);
         ::strcpy_s(_rawPointer, _capacity, rhs);
+        _size = rhsLength;
         return *this;
     }
 
@@ -36,6 +37,7 @@ namespace mint
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(max(_capacity * 2, _size + rhsLength + 1));
         ::strcpy_s(&_rawPointer[_size], rhsLength + 1, rhs);
+        _size += rhsLength;
         return *this;
     }
 
@@ -106,11 +108,11 @@ namespace mint
         return logger;
     }
 
-    void Logger::setOutputFileName(const char* const fileName)
+    void Logger::setOutputFileName(const char* const fileName) noexcept
     {
-        std::lock_guard<std::mutex> scopeLock{ _mutex };
-
-        _outputFileName = fileName;
+        Logger& logger = getInstance();
+        std::lock_guard<std::mutex> scopeLock{ logger._mutex };
+        logger._outputFileName = fileName;
     }
 
     void Logger::log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
