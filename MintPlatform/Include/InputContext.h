@@ -153,6 +153,7 @@ namespace mint
             static InputContext&    getInstance() noexcept;
 
         public:
+            void                    flushInputEvents() noexcept;
             void                    pushInputEvent(const InputEvent& inputEvent) noexcept;
         
         public:

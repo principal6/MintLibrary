@@ -266,6 +266,9 @@ namespace mint
 
         bool WindowsWindow::isRunning() noexcept
         {
+            Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+            inputContext.flushInputEvents();
+
             if (::PeekMessageW(&_msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
             {
                 if (_msg->message == WM_QUIT)

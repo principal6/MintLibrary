@@ -105,6 +105,11 @@ namespace mint
             return instance;
         }
 
+        void InputContext::flushInputEvents() noexcept
+        {
+            _events.flush();
+        }
+
         void InputContext::pushInputEvent(const InputEvent& inputEvent) noexcept
         {
             _events.push(inputEvent);
