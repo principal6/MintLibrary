@@ -45,12 +45,12 @@ namespace mint
             return _parentIndex;
         }
 
-        const mint::Float4x4& SkeletonJoint::getBindPoseLocalMatrix() const noexcept
+        const Float4x4& SkeletonJoint::getBindPoseLocalMatrix() const noexcept
         {
             return _bindPoseLocalMatrix;
         }
 
-        const mint::Float4x4& SkeletonJoint::getBindPoseModelMatrix() const noexcept
+        const Float4x4& SkeletonJoint::getBindPoseModelMatrix() const noexcept
         {
             return _bindPoseModelMatrix;
         }
@@ -66,7 +66,7 @@ namespace mint
             __noop;
         }
 
-        JointIndexType SkeletonGenerator::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalMatrix) noexcept
+        JointIndexType SkeletonGenerator::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept
         {
             if (_joints.empty() == false && parentJointIndex < 0)
             {
@@ -93,7 +93,7 @@ namespace mint
             return (static_cast<uint32>(jointIndex) < _joints.size()) ? &_joints[jointIndex] : nullptr;
         }
 
-        const mint::Vector<SkeletonJoint>& SkeletonGenerator::getJoints() const noexcept
+        const Vector<SkeletonJoint>& SkeletonGenerator::getJoints() const noexcept
         {
             return _joints;
         }
@@ -141,7 +141,7 @@ namespace mint
             return (static_cast<uint32>(jointIndex) < _joints.size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
         }
 
-        void Skeleton::renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldMatrix) const noexcept
+        void Skeleton::renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const Float4x4& worldMatrix) const noexcept
         {
             if (_joints.empty() == true)
             {
@@ -152,19 +152,19 @@ namespace mint
             for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
             {
                 const SkeletonJoint& joint = _joints[jointIndex];
-                mint::Float4x4 jointWorldMatrix = worldMatrix;
+                Float4x4 jointWorldMatrix = worldMatrix;
                 jointWorldMatrix *= joint._bindPoseModelMatrix;
 
                 if (joint.hasParent() == true)
                 {
                     const SkeletonJoint& parentJoint = _joints[joint._parentIndex];
-                    mint::Float4x4 parentJointWorldMatrix = worldMatrix;
+                    Float4x4 parentJointWorldMatrix = worldMatrix;
                     parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), mint::Rendering::Color::kCyan);
+                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), Rendering::Color::kCyan);
                 }
 
-                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, mint::Rendering::Color::kMagenta);
+                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
             }
         }
 

@@ -51,14 +51,14 @@ namespace mint
             const char*                 getName() const noexcept;
             const bool                  hasParent() const noexcept;
             const JointIndexType        getParentIndex() const noexcept;
-            const mint::Float4x4&       getBindPoseLocalMatrix() const noexcept;
-            const mint::Float4x4&       getBindPoseModelMatrix() const noexcept;
+            const Float4x4&             getBindPoseLocalMatrix() const noexcept;
+            const Float4x4&             getBindPoseModelMatrix() const noexcept;
 
         private:
             char                        _name[kJointNameLengthMax];
             JointIndexType              _parentIndex;
-            mint::Float4x4              _bindPoseLocalMatrix;
-            mint::Float4x4              _bindPoseModelMatrix; // TODO: 여기 있는 게 맞을지 Skeleton 으로 옮길지?
+            Float4x4                    _bindPoseLocalMatrix;
+            Float4x4                    _bindPoseModelMatrix; // TODO: 여기 있는 게 맞을지 Skeleton 으로 옮길지?
 
         public:
             static const SkeletonJoint  kInvalidSkeletonJoint;
@@ -68,38 +68,38 @@ namespace mint
         class SkeletonGenerator
         {
         public:
-                                                SkeletonGenerator();
-                                                ~SkeletonGenerator();
+                                            SkeletonGenerator();
+                                            ~SkeletonGenerator();
 
         public:
-            JointIndexType                      createJoint(const JointIndexType parentJointIndex, const char* const jointName, const mint::Float4x4& bindPoseLocalMatrix) noexcept;
-            const SkeletonJoint*                getJoint(const JointIndexType jointIndex) const noexcept;
-            const mint::Vector<SkeletonJoint>&  getJoints() const noexcept;
-            void                                buildBindPoseModelSpace() noexcept;
+            JointIndexType                  createJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept;
+            const SkeletonJoint*            getJoint(const JointIndexType jointIndex) const noexcept;
+            const Vector<SkeletonJoint>&    getJoints() const noexcept;
+            void                            buildBindPoseModelSpace() noexcept;
 
         private:
-            mint::Vector<SkeletonJoint>         _joints;
+            Vector<SkeletonJoint>           _joints;
         };
 
 
         class Skeleton final
         {
         public:
-                                                Skeleton();
-                                                Skeleton(const SkeletonGenerator& skeletonGenerator);
-                                                ~Skeleton();
+                                            Skeleton();
+                                            Skeleton(const SkeletonGenerator& skeletonGenerator);
+                                            ~Skeleton();
 
         public:
-            const bool                          createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
+            const bool                      createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
 
         public:
-            const SkeletonJoint&                getJoint(const JointIndexType jointIndex) const noexcept;
+            const SkeletonJoint&            getJoint(const JointIndexType jointIndex) const noexcept;
 
         public:
-            void                                renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const mint::Float4x4& worldMatrix) const noexcept;
+            void                            renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const Float4x4& worldMatrix) const noexcept;
 
         private:
-            mint::Vector<SkeletonJoint>         _joints;
+            Vector<SkeletonJoint>           _joints;
         };
     }
 }
