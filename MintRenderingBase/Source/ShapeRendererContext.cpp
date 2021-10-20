@@ -12,12 +12,12 @@ namespace mint
 {
     namespace Rendering
     {
-        ShapeRendererContext::ShapeRendererContext(mint::Rendering::GraphicDevice* const graphicDevice)
+        ShapeRendererContext::ShapeRendererContext(GraphicDevice* const graphicDevice)
             : IRendererContext(graphicDevice)
             , _lowLevelRenderer{ nullptr }
-            , _borderColor{ mint::Rendering::Color(1.0f, 1.0f, 1.0f) }
+            , _borderColor{ Color(1.0f, 1.0f, 1.0f) }
         {
-            _lowLevelRenderer = MINT_NEW(Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>, graphicDevice);
+            _lowLevelRenderer = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice);
         }
 
         ShapeRendererContext::~ShapeRendererContext()
@@ -29,7 +29,7 @@ namespace mint
         {
             _clipRect = _graphicDevice->getFullScreenClipRect();
 
-            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
 
             {
                 static constexpr const char kShaderString[]
@@ -63,7 +63,7 @@ namespace mint
                 };
 
                 using namespace Language;
-                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
             }
 
@@ -160,7 +160,7 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -170,8 +170,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                mint::Rendering::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -190,22 +190,22 @@ namespace mint
             flush();
         }
 
-        void ShapeRendererContext::setBorderColor(const mint::Rendering::Color& borderColor) noexcept
+        void ShapeRendererContext::setBorderColor(const Color& borderColor) noexcept
         {
             _borderColor = borderColor;
         }
 
-        void ShapeRendererContext::drawQuadraticBezier(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const bool validate)
+        void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
         {
             drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
 
             pushTransformToBuffer(0.0f, false);
         }
 
-        void ShapeRendererContext::drawQuadraticBezierInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& controlPoint, const mint::Rendering::Color& color, const bool validate)
+        void ShapeRendererContext::drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
-            const mint::Float2(&pointArray)[2] = { pointA, pointB };
+            const Float2(&pointArray)[2] = { pointA, pointB };
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
             
@@ -213,13 +213,13 @@ namespace mint
             if (validate == true)
             {
                 // The control point must be on the left side of the AB segment!
-                const mint::Float3 ac = mint::Float3(controlPoint - pointA);
-                const mint::Float3 ab = mint::Float3(pointB - pointA);
-                const mint::Float3& cross = mint::Float3::cross(ab, ac);
+                const Float3 ac = Float3(controlPoint - pointA);
+                const Float3 ab = Float3(pointB - pointA);
+                const Float3& cross = Float3::cross(ab, ac);
                 flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
             }
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = color;
             v._position = _position;
@@ -254,20 +254,20 @@ namespace mint
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
-        void ShapeRendererContext::drawSolidTriangle(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC)
+        void ShapeRendererContext::drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
         {
             drawSolidTriangleInternal(pointA, pointB, pointC, _defaultColor);
 
             pushTransformToBuffer(0.0f, false);
         }
 
-        void ShapeRendererContext::drawSolidTriangleInternal(const mint::Float2& pointA, const mint::Float2& pointB, const mint::Float2& pointC, const mint::Rendering::Color& color)
+        void ShapeRendererContext::drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 3;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -306,7 +306,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
             
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
@@ -347,18 +347,18 @@ namespace mint
         {
             const float halfRadius = radius * 0.5f;
             
-            drawQuarterCircleInternal(mint::Float2::kZero, halfRadius, _defaultColor);
+            drawQuarterCircleInternal(Float2::kZero, halfRadius, _defaultColor);
 
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawQuarterCircleInternal(const mint::Float2& offset, const float halfRadius, const mint::Rendering::Color& color)
+        void ShapeRendererContext::drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -407,19 +407,19 @@ namespace mint
 
         void ShapeRendererContext::drawHalfCircle(const float radius, const float rotationAngle)
         {
-            const mint::Float4 originalPosition = _position;
+            const Float4 originalPosition = _position;
             const float halfRadius = radius * 0.5f;
 
-            const mint::Float4& offset = mint::Float4(+halfRadius, -halfRadius, 0.0f, 0.0f);
-            const mint::Float4x4& rotationMatrixA = mint::Float4x4::rotationMatrixZ(-rotationAngle);
-            const mint::Float4& rotatedOffsetA = rotationMatrixA.mul(offset);
+            const Float4& offset = Float4(+halfRadius, -halfRadius, 0.0f, 0.0f);
+            const Float4x4& rotationMatrixA = Float4x4::rotationMatrixZ(-rotationAngle);
+            const Float4& rotatedOffsetA = rotationMatrixA.mul(offset);
             setPosition(originalPosition + rotatedOffsetA);
             drawQuarterCircle(radius, rotationAngle);
 
-            const mint::Float4x4& rotationMatrixB = mint::Float4x4::rotationMatrixZ(-(rotationAngle + mint::Math::kPiOverTwo));
-            const mint::Float4& rotatedOffsetB = rotationMatrixB.mul(offset);
+            const Float4x4& rotationMatrixB = Float4x4::rotationMatrixZ(-(rotationAngle + Math::kPiOverTwo));
+            const Float4& rotatedOffsetB = rotationMatrixB.mul(offset);
             setPosition(originalPosition + rotatedOffsetB);
-            drawQuarterCircle(radius, rotationAngle + mint::Math::kPiOverTwo);
+            drawQuarterCircle(radius, rotationAngle + Math::kPiOverTwo);
 
             setPosition(originalPosition);
         }
@@ -430,7 +430,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
@@ -488,13 +488,13 @@ namespace mint
         void ShapeRendererContext::drawCircularArc(const float radius, const float arcAngle, const float rotationAngle)
         {
             static constexpr uint32 kDeltaVertexCount = 6;
-            const float halfArcAngle = mint::Math::clamp(arcAngle, 0.0f, mint::Math::kPi) * 0.5f;
+            const float halfArcAngle = Math::clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             
             // Right arc section
@@ -573,14 +573,14 @@ namespace mint
         void ShapeRendererContext::drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle)
         {
             static constexpr uint32 kDeltaVertexCount = 13;
-            const float halfArcAngle = mint::Math::clamp(arcAngle, 0.0f, mint::Math::kPi) * 0.5f;
+            const float halfArcAngle = Math::clamp(arcAngle, 0.0f, Math::kPi) * 0.5f;
             const float sinHalfArcAngle = sin(halfArcAngle);
             const float cosHalfArcAngle = cos(halfArcAngle);
             const float tanHalfArcAngle = tan(halfArcAngle);
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
 
             // Right outer arc section
@@ -737,33 +737,33 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRectangle(const mint::Float2& size, const float borderThickness, const float rotationAngle)
+        void ShapeRendererContext::drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
         {
-            const mint::Float2 halfSize = size * 0.5f;
+            const Float2 halfSize = size * 0.5f;
             
             if (1.0f <= borderThickness)
             {
-                drawRectangleInternal(mint::Float2(0.0f, -halfSize._y - borderThickness * 0.5f), mint::Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
 
-                drawRectangleInternal(mint::Float2(0.0f, +halfSize._y + borderThickness * 0.5f), mint::Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
 
-                drawRectangleInternal(mint::Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), mint::Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
+                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
 
-                drawRectangleInternal(mint::Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), mint::Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
+                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
             }
 
-            drawRectangleInternal(mint::Float2::kZero, halfSize, _defaultColor);
+            drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
             
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRectangleInternal(const mint::Float2& offset, const mint::Float2& halfSize, const mint::Rendering::Color& color)
+        void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = color;
@@ -805,9 +805,9 @@ namespace mint
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
         }
 
-        void ShapeRendererContext::drawTaperedRectangle(const mint::Float2& size, const float tapering, const float bias, const float rotationAngle)
+        void ShapeRendererContext::drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle)
         {
-            const mint::Float2 halfSize = size * 0.5f;
+            const Float2 halfSize = size * 0.5f;
             const float horizontalSpace = size._x * (1.0f - tapering);
             static constexpr uint32 kDeltaVertexCount = 4;
             const float horizontalOffsetL = horizontalSpace * bias;
@@ -815,7 +815,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
@@ -857,76 +857,76 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangle(const mint::Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
+        void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
         {
-            const float clampedRoundness = mint::Math::saturate(roundness);
+            const float clampedRoundness = Math::saturate(roundness);
             if (clampedRoundness == 0.0f)
             {
                 drawRectangle(size, borderThickness, rotationAngle);
                 return;
             }
 
-            const float radius = mint::min(size._x, size._y) * 0.5f * clampedRoundness;
-            const mint::Float2& halfSize = size * 0.5f;
-            const mint::Float2& halfCoreSize = halfSize - mint::Float2(radius);
+            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
+            const Float2& halfSize = size * 0.5f;
+            const Float2& halfCoreSize = halfSize - Float2(radius);
 
             if (1.0f <= borderThickness)
             {
-                mint::Float2 pointA;
-                mint::Float2 pointB;
-                mint::Float2 pointC;
+                Float2 pointA;
+                Float2 pointB;
+                Float2 pointC;
                 
                 // Left top
                 {
-                    pointA = mint::Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
-                    pointB = mint::Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
-                    drawQuadraticBezierInternal(pointA, pointB, -halfSize - mint::Float2(borderThickness), _borderColor);
+                    pointA = Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
+                    pointB = Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
+                    drawQuadraticBezierInternal(pointA, pointB, -halfSize - Float2(borderThickness), _borderColor);
 
-                    pointC = mint::Float2(-halfCoreSize._x, -halfCoreSize._y);
+                    pointC = Float2(-halfCoreSize._x, -halfCoreSize._y);
                     drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
                 }
                 
                 // Right top
                 {
-                    pointA = mint::Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
-                    pointB = mint::Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
-                    drawQuadraticBezierInternal(pointA, pointB, mint::Float2(+halfSize._x, -halfSize._y) + mint::Float2(+borderThickness, -borderThickness), _borderColor);
+                    pointA = Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
+                    pointB = Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
+                    drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, -halfSize._y) + Float2(+borderThickness, -borderThickness), _borderColor);
 
-                    pointC = mint::Float2(+halfCoreSize._x, -halfCoreSize._y);
+                    pointC = Float2(+halfCoreSize._x, -halfCoreSize._y);
                     drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
                 }
 
                 // Left bottom
                 {
-                    pointA = mint::Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
-                    pointB = mint::Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
-                    drawQuadraticBezierInternal(pointA, pointB, mint::Float2(-halfSize._x, +halfSize._y) + mint::Float2(-borderThickness, +borderThickness), _borderColor);
+                    pointA = Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
+                    pointB = Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
+                    drawQuadraticBezierInternal(pointA, pointB, Float2(-halfSize._x, +halfSize._y) + Float2(-borderThickness, +borderThickness), _borderColor);
 
-                    pointC = mint::Float2(-halfCoreSize._x, +halfCoreSize._y);
+                    pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
                     drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
                 }
 
                 // Right bottom
                 {
-                    pointA = mint::Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
-                    pointB = mint::Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
-                    drawQuadraticBezierInternal(pointA, pointB, halfSize + mint::Float2(borderThickness), _borderColor);
+                    pointA = Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
+                    pointB = Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
+                    drawQuadraticBezierInternal(pointA, pointB, halfSize + Float2(borderThickness), _borderColor);
 
-                    pointC = mint::Float2(+halfCoreSize._x, +halfCoreSize._y);
+                    pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
                     drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
                 }
 
                 // Top
-                drawRectangleInternal(mint::Float2(0.0f, -halfSize._y - borderThickness * 0.5f), mint::Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
 
                 // Bottom
-                drawRectangleInternal(mint::Float2(0.0f, +halfSize._y + borderThickness * 0.5f), mint::Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
 
                 // Left
-                drawRectangleInternal(mint::Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), mint::Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
+                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
 
                 // Right
-                drawRectangleInternal(mint::Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), mint::Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
+                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
             }
 
             drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
@@ -934,167 +934,167 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawHalfRoundedRectangle(const mint::Float2& size, const float roundness, const float rotationAngle)
+        void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
         {
-            const float clampedRoundness = mint::Math::saturate(roundness);
+            const float clampedRoundness = Math::saturate(roundness);
             if (clampedRoundness == 0.0f)
             {
                 drawRectangle(size, 0.0f, rotationAngle);
                 return;
             }
 
-            const float radius = mint::min(size._x, size._y) * 0.5f * clampedRoundness;
-            const mint::Float2& halfSize = size * 0.5f;
+            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
+            const Float2& halfSize = size * 0.5f;
 
             drawHalfRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color)
+        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
         {
-            const mint::Float2& halfCoreSize = halfSize - mint::Float2(radius);
+            const Float2& halfCoreSize = halfSize - Float2(radius);
 
-            mint::Float2 pointA;
-            mint::Float2 pointB;
-            mint::Float2 pointC;
+            Float2 pointA;
+            Float2 pointB;
+            Float2 pointC;
 
             // Center box
             {
-                pointA = mint::Float2(-halfCoreSize._x, -halfSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, -halfSize._y);
-                pointC = mint::Float2(-halfCoreSize._x, +halfSize._y);
+                pointA = Float2(-halfCoreSize._x, -halfSize._y);
+                pointB = Float2(+halfCoreSize._x, -halfSize._y);
+                pointC = Float2(-halfCoreSize._x, +halfSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-                pointA = mint::Float2(+halfCoreSize._x, +halfSize._y);
+                pointA = Float2(+halfCoreSize._x, +halfSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
             }
             
             // Left top corner
             {
-                pointA = mint::Float2(-halfSize._x, -halfCoreSize._y);
-                pointB = mint::Float2(-halfCoreSize._x, -halfSize._y);
+                pointA = Float2(-halfSize._x, -halfCoreSize._y);
+                pointB = Float2(-halfCoreSize._x, -halfSize._y);
                 drawQuadraticBezierInternal(pointA, pointB, -halfSize, color, false);
             }
 
             // Left side box
             {
-                pointC = mint::Float2(-halfCoreSize._x, +halfCoreSize._y);
+                pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-                pointA = mint::Float2(-halfSize._x, -halfCoreSize._y);
-                pointB = mint::Float2(-halfSize._x, +halfCoreSize._y);
+                pointA = Float2(-halfSize._x, -halfCoreSize._y);
+                pointB = Float2(-halfSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
             }
 
             // Left bottom corner
             {
-                pointA = mint::Float2(-halfSize._x, +halfCoreSize._y);
-                pointB = mint::Float2(-halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointB, pointA, mint::Float2(-halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointB, pointA, mint::Float2(-halfCoreSize._x, +halfCoreSize._y), color);
+                pointA = Float2(-halfSize._x, +halfCoreSize._y);
+                pointB = Float2(-halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointB, pointA, Float2(-halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointB, pointA, Float2(-halfCoreSize._x, +halfCoreSize._y), color);
             }
 
             // Right top corner
             {
-                pointA = mint::Float2(+halfSize._x, -halfCoreSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, -halfSize._y);
-                drawQuadraticBezierInternal(pointB, pointA, mint::Float2(+halfSize._x, -halfSize._y), color, false);
+                pointA = Float2(+halfSize._x, -halfCoreSize._y);
+                pointB = Float2(+halfCoreSize._x, -halfSize._y);
+                drawQuadraticBezierInternal(pointB, pointA, Float2(+halfSize._x, -halfSize._y), color, false);
             }
 
             // Right side box
             {
-                pointC = mint::Float2(+halfCoreSize._x, +halfCoreSize._y);
+                pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
 
-                pointA = mint::Float2(+halfSize._x, -halfCoreSize._y);
-                pointB = mint::Float2(+halfSize._x, +halfCoreSize._y);
+                pointA = Float2(+halfSize._x, -halfCoreSize._y);
+                pointB = Float2(+halfSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
             }
 
             // Right bottom corner
             {
-                pointA = mint::Float2(+halfSize._x, +halfCoreSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointA, pointB, mint::Float2(+halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointA, pointB, mint::Float2(+halfCoreSize._x, +halfCoreSize._y), color);
+                pointA = Float2(+halfSize._x, +halfCoreSize._y);
+                pointB = Float2(+halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointA, pointB, Float2(+halfCoreSize._x, +halfCoreSize._y), color);
             }
         }
 
-        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const mint::Float2& halfSize, const float roundness, const mint::Rendering::Color& color)
+        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
         {
-            const mint::Float2& halfCoreSize = halfSize - mint::Float2(radius);
+            const Float2& halfCoreSize = halfSize - Float2(radius);
 
-            mint::Float2 pointA;
-            mint::Float2 pointB;
-            mint::Float2 pointC;
+            Float2 pointA;
+            Float2 pointB;
+            Float2 pointC;
 
             // Center box
             {
-                pointA = mint::Float2(-halfCoreSize._x, -halfSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, -halfSize._y);
-                pointC = mint::Float2(-halfCoreSize._x, +halfSize._y);
+                pointA = Float2(-halfCoreSize._x, -halfSize._y);
+                pointB = Float2(+halfCoreSize._x, -halfSize._y);
+                pointC = Float2(-halfCoreSize._x, +halfSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-                pointA = mint::Float2(+halfCoreSize._x, +halfSize._y);
+                pointA = Float2(+halfCoreSize._x, +halfSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
             }
 
             // Left side box
             {
-                pointA = mint::Float2(-halfSize._x, -halfSize._y);
-                pointB = mint::Float2(-halfCoreSize._x, -halfSize._y);
-                pointC = mint::Float2(-halfCoreSize._x, +halfCoreSize._y);
+                pointA = Float2(-halfSize._x, -halfSize._y);
+                pointB = Float2(-halfCoreSize._x, -halfSize._y);
+                pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
 
-                pointB = mint::Float2(-halfSize._x, +halfCoreSize._y);
+                pointB = Float2(-halfSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
             }
 
             // Left bottom corner
             {
-                pointA = mint::Float2(-halfSize._x, +halfCoreSize._y);
-                pointB = mint::Float2(-halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointB, pointA, mint::Float2(-halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointB, pointA, mint::Float2(-halfCoreSize._x, +halfCoreSize._y), color);
+                pointA = Float2(-halfSize._x, +halfCoreSize._y);
+                pointB = Float2(-halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointB, pointA, Float2(-halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointB, pointA, Float2(-halfCoreSize._x, +halfCoreSize._y), color);
             }
 
             // Right side box
             {
-                pointA = mint::Float2(+halfSize._x, -halfSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, -halfSize._y);
-                pointC = mint::Float2(+halfCoreSize._x, +halfCoreSize._y);
+                pointA = Float2(+halfSize._x, -halfSize._y);
+                pointB = Float2(+halfCoreSize._x, -halfSize._y);
+                pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointC, pointB, pointA, color);
 
-                pointB = mint::Float2(+halfSize._x, +halfCoreSize._y);
+                pointB = Float2(+halfSize._x, +halfCoreSize._y);
                 drawSolidTriangleInternal(pointA, pointB, pointC, color);
             }
 
             // Right bottom corner
             {
-                pointA = mint::Float2(+halfSize._x, +halfCoreSize._y);
-                pointB = mint::Float2(+halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointA, pointB, mint::Float2(+halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointA, pointB, mint::Float2(+halfCoreSize._x, +halfCoreSize._y), color);
+                pointA = Float2(+halfSize._x, +halfCoreSize._y);
+                pointB = Float2(+halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointA, pointB, Float2(+halfCoreSize._x, +halfCoreSize._y), color);
             }
         }
 
-        void ShapeRendererContext::drawLine(const mint::Float2& p0, const mint::Float2& p1, const float thickness)
+        void ShapeRendererContext::drawLine(const Float2& p0, const Float2& p1, const float thickness)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
-            const mint::Float2& dir = mint::Float2::normalize(p1 - p0);
-            const mint::Float2& normal = mint::Float2(-dir._y, dir._x);
+            const Float2& dir = Float2::normalize(p1 - p0);
+            const Float2& normal = Float2(-dir._y, dir._x);
             const float halfThickness = thickness * 0.5f;
 
-            const mint::Float2 v0 = p0 - normal * halfThickness;
-            const mint::Float2 v1 = p1 - normal * halfThickness;
-            const mint::Float2 v2 = p0 + normal * halfThickness;
-            const mint::Float2 v3 = p1 + normal * halfThickness;
+            const Float2 v0 = p0 - normal * halfThickness;
+            const Float2 v1 = p1 - normal * halfThickness;
+            const Float2 v2 = p0 + normal * halfThickness;
+            const Float2 v3 = p1 + normal * halfThickness;
 
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            Rendering::VS_INPUT_SHAPE v;
+            VS_INPUT_SHAPE v;
             auto& vertexArray = _lowLevelRenderer->vertices();
             v._color = _defaultColor;
             v._position = _position;
@@ -1139,8 +1139,8 @@ namespace mint
 
         void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
         {
-            mint::Rendering::SB_Transform transform;
-            transform._transformMatrix = mint::Float4x4::rotationMatrixZ(-rotationAngle);
+            SB_Transform transform;
+            transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
             transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
             transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
             //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
@@ -1150,24 +1150,24 @@ namespace mint
         void ShapeRendererContext::drawColorPallete(const float radius)
         {
             static constexpr uint32 colorCount = 12;
-            static const mint::Rendering::Color colorArray[colorCount] = {
+            static const Color colorArray[colorCount] = {
                 // Red => Green
-                mint::Rendering::Color(1.0f, 0.0f, 0.0f, 1.0f),
-                mint::Rendering::Color(1.0f, 0.25f, 0.0f, 1.0f),
-                mint::Rendering::Color(1.0f, 0.5f, 0.0f, 1.0f),
-                mint::Rendering::Color(1.0f, 0.75f, 0.0f, 1.0f),
-                mint::Rendering::Color(1.0f, 1.0f, 0.0f, 1.0f),
-                mint::Rendering::Color(0.5f, 1.0f, 0.0f, 1.0f),
+                Color(1.0f, 0.0f, 0.0f, 1.0f),
+                Color(1.0f, 0.25f, 0.0f, 1.0f),
+                Color(1.0f, 0.5f, 0.0f, 1.0f),
+                Color(1.0f, 0.75f, 0.0f, 1.0f),
+                Color(1.0f, 1.0f, 0.0f, 1.0f),
+                Color(0.5f, 1.0f, 0.0f, 1.0f),
 
                 // Gren => Blue
-                mint::Rendering::Color(0.0f, 0.875f, 0.125f, 1.0f),
-                mint::Rendering::Color(0.0f, 0.666f, 1.0f, 1.0f),
-                mint::Rendering::Color(0.0f, 0.333f, 1.0f, 1.0f),
-                mint::Rendering::Color(0.0f, 0.0f, 1.0f, 1.0f),
+                Color(0.0f, 0.875f, 0.125f, 1.0f),
+                Color(0.0f, 0.666f, 1.0f, 1.0f),
+                Color(0.0f, 0.333f, 1.0f, 1.0f),
+                Color(0.0f, 0.0f, 1.0f, 1.0f),
 
                 // Blue => Red
-                mint::Rendering::Color(0.5f, 0.0f, 1.0f, 1.0f),
-                mint::Rendering::Color(1.0f, 0.0f, 0.5f, 1.0f),
+                Color(0.5f, 0.0f, 1.0f, 1.0f),
+                Color(1.0f, 0.0f, 0.5f, 1.0f),
             };
 
             static constexpr uint32 outerStepSmoothingOffset = 4;
@@ -1176,7 +1176,7 @@ namespace mint
             const uint32 innerStepCount = 4;
             const float stepHeight = radius / (innerStepCount + outerStepCount);
             
-            const float deltaAngle = mint::Math::kTwoPi / colorCount;
+            const float deltaAngle = Math::kTwoPi / colorCount;
             const float halfDeltaAngle = deltaAngle * 0.5f;
             for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
             {
@@ -1184,19 +1184,19 @@ namespace mint
                 const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
                 
                 int32 colorIndexCorrected = colorIndex;
-                const mint::Rendering::Color& stepsColor = colorArray[colorIndexCorrected];
+                const Color& stepsColor = colorArray[colorIndexCorrected];
 
                 // Outer steps
                 for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
                 {
                     const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
-                    setColor(stepsColor * outerStepRatio + mint::Rendering::Color(0.0f, 0.0f, 0.0f, 1.0f));
+                    setColor(stepsColor * outerStepRatio + Color(0.0f, 0.0f, 0.0f, 1.0f));
 
                     drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
                 }
 
                 // Inner steps
-                const mint::Rendering::Color deltaColor = mint::Rendering::Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
+                const Color deltaColor = Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
                 for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
                 {
                     setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
