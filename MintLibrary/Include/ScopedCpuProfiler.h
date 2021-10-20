@@ -20,6 +20,10 @@ namespace mint
 
         class FpsCounter
         {
+        private:
+                                    FpsCounter() = default;
+                                    ~FpsCounter() = default;
+
         public:
             static void             count() noexcept;
             static const uint64     getFps() noexcept;
