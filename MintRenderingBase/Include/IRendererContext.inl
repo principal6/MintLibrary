@@ -69,5 +69,11 @@ namespace mint
             const uint32 packedUint = (_2bits << 30) | (_30bits);
             return *reinterpret_cast<const float*>(&packedUint);
         }
+
+        MINT_INLINE const float IRendererContext::packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept
+        {
+            const uint32 packedUint = (_4bits << 28) | (_28bits);
+            return *reinterpret_cast<const float*>(&packedUint);
+        }
     }
 }

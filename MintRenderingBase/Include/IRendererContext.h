@@ -61,6 +61,7 @@ namespace mint
         protected:
             const mint::Float4&                     getColorInternal(const uint32 index) const noexcept;
             static const float                      packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+            static const float                      packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
         protected:
             mint::Rendering::GraphicDevice*     _graphicDevice;

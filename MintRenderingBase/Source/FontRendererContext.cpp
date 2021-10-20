@@ -570,19 +570,19 @@ namespace mint
                     R"(
                     #include <ShaderStructDefinitions>
 
-                    sampler                 sampler0;
-                    Texture2D<float>        texture0;
+                    sampler                 g_sampler0;
+                    Texture2D<float>        g_texture0;
                 
                     float4 main(VS_OUTPUT_SHAPE input) : SV_Target
                     {
-                        const float sampled = texture0.Sample(sampler0, input._texCoord.xy);
+                        const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
                         float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
                         
                         const bool drawShade = (input._info.y == 1.0);
                         if (true == drawShade)
                         {
                             const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
-                            const float rbSampled = texture0.Sample(sampler0, rbCoord);
+                            const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
                             if (0.0 < rbSampled)
                             {
                                 const float3 rbColor = lerp(sampledColor.xyz * 0.25 * max(rbSampled, 0.25), sampledColor.xyz, sampled);

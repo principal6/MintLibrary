@@ -44,7 +44,7 @@ namespace mint
                     VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
                     {
                         const uint packedInfo       = asuint(input._info.x);
-                        const uint shapeType        = (packedInfo >> 30) & 3;
+                        const uint shapeType        = (packedInfo >> 28) & 0xF;
                         const uint transformIndex   = packedInfo & 0x3FFFFFFF;
                         
                         float4 transformedPosition = float4(input._position.xyz, 1.0);
@@ -95,7 +95,7 @@ namespace mint
                     #include <ShaderConstantBuffers>
                     
                     sampler                 g_sampler0;
-                    Texture2D<float>        g_texture0;
+                    Texture2D<float4>       g_texture0;
                     
                     static const float kDeltaDoublePixel = _cb2DProjectionMatrix[0][0];
                     static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
@@ -109,7 +109,12 @@ namespace mint
                         const float flipped = input._texCoord.z;
                         
                         float signedDistance = 0.0;
-                        if (1.0 == input._info.x)
+                        if (0.0 == input._info.x)
+                        {
+                            // Quadratic Bezier
+                            signedDistance = -(u * u - v);
+                        }
+                        else if (1.0 == input._info.x)
                         {
                             // Solid triangle
                             return input._color;
@@ -126,8 +131,8 @@ namespace mint
                         }
                         else
                         {
-                            // Quadratic Bezier
-                            signedDistance = -(u * u - v);
+                            // Textured triangle
+                            return g_texture0.Sample(g_sampler0, input._texCoord.xy);
                         }
                         
                         // Apply scale to the signed distance for more consistent anti-aliasing
@@ -753,7 +758,14 @@ namespace mint
             pushTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color)
+        void ShapeRendererContext::drawTexturedRectangle(const Float2& size, const float rotationAngle)
+        {
+            const Float2 halfSize = size * 0.5f;
+            drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, ShapeType::TexturedTriangle);
+            pushTransformToBuffer(rotationAngle);
+        }
+
+        void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType)
         {
             static constexpr uint32 kDeltaVertexCount = 4;
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
@@ -766,19 +778,27 @@ namespace mint
                 v._position = _position;
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y - halfSize._y;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(shapeType);
+                v._texCoord._x = 0.0f;
+                v._texCoord._y = 0.0f;
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfSize._x;
                 v._position._y = offset._y - halfSize._y;
+                v._texCoord._x = 1.0f;
+                v._texCoord._y = 0.0f;
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y + halfSize._y;
+                v._texCoord._x = 0.0f;
+                v._texCoord._y = 1.0f;
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfSize._x;
                 v._position._y = offset._y + halfSize._y;
+                v._texCoord._x = 1.0f;
+                v._texCoord._y = 1.0f;
                 vertexArray.push_back(v);
             }
 
@@ -1127,7 +1147,7 @@ namespace mint
 
         const float ShapeRendererContext::packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept
         {
-            return packBits2_30AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
+            return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }
 
         void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)

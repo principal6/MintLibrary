@@ -27,6 +27,7 @@ namespace mint
                 SolidTriangle,
                 Circular,
                 Circle,
+                TexturedTriangle,
             };
 
         public:
@@ -88,9 +89,10 @@ namespace mint
 
         public:
             void                                    drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
+            void                                    drawTexturedRectangle(const Float2& size, const float rotationAngle);
 
         protected:
-            void                                    drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Rendering::Color& color);
+            void                                    drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Rendering::Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
 
         public:
             void                                    drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
