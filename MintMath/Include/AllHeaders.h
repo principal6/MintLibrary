@@ -18,5 +18,7 @@
 #include <MintMath/Include/VectorR.h>
 #include <MintMath/Include/Matrix.h>
 
+#include <MintMath/Include/Easing.h>
+
 
 #endif // !MINT_MATH_ALL_HEADERS_H

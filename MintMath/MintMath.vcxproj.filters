@@ -57,6 +57,9 @@
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Easing.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -101,6 +104,9 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\Rect.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Easing.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>

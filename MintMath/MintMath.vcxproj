@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Source\_UnityBuild.cpp" />
     <ClInclude Include="Include\AllHpps.h" />
+    <ClInclude Include="Include\Easing.h" />
     <ClInclude Include="Include\Float2.h" />
     <ClInclude Include="Include\Float2x2.h" />
     <ClInclude Include="Include\Float3.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="Include\VectorR.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Include\Easing.inl" />
     <None Include="Include\Float2.inl" />
     <None Include="Include\Float3.inl" />
     <None Include="Include\Float4.inl" />
