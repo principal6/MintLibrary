@@ -12,11 +12,11 @@ namespace mint
 {
     namespace Math
     {
-        template <int32 N>
+        template <int32 N, typename T>
         class VectorR;
 
 
-        template <int32 M, int32 N>
+        template <int32 M, int32 N, typename T>
         class Matrix
         {
             static_assert(0 < M, "M must be greater than 0!");
@@ -35,7 +35,7 @@ namespace mint
             Matrix&                 operator/=(const double scalar) noexcept;
             Matrix&                 operator+=(const Matrix& rhs) noexcept;
             Matrix&                 operator-=(const Matrix& rhs) noexcept;
-            Matrix&                 operator*=(const Matrix<N, N>& rhs) noexcept;
+            Matrix&                 operator*=(const Matrix<N, N, T>& rhs) noexcept;
 
         public:
             Matrix                  operator*(const double scalar) noexcept;
@@ -45,26 +45,26 @@ namespace mint
 
         public:
             template <int32 P>
-            Matrix<M, P>            operator*(const Matrix<N, P>& rhs) const noexcept;
+            Matrix<M, P, T>         operator*(const Matrix<N, P, T>& rhs) const noexcept;
 
         public:
             void                    setElement(const uint32 rowIndex, const uint32 columnIndex, const double value) noexcept;
             const double            getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
-            void                    setRow(const uint32 rowIndex, const VectorR<N>& row) noexcept;
-            VectorR<N>              getRow(const uint32 rowIndex) const noexcept;
-            void                    setColumn(const uint32 columnIndex, const VectorR<M>& column) noexcept;
-            VectorR<M>              getColumn(const uint32 columnIndex) const noexcept;
+            void                    setRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept;
+            VectorR<N, T>           getRow(const uint32 rowIndex) const noexcept;
+            void                    setColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept;
+            VectorR<M, T>           getColumn(const uint32 columnIndex) const noexcept;
 
         public:
-            VectorR<N>              multiplyRowVector(const VectorR<M>& rowVector) const noexcept;
-            VectorR<M>              multiplyColumnVector(const VectorR<N>& columnVector) const noexcept;
+            VectorR<N, T>           multiplyRowVector(const VectorR<M, T>& rowVector) const noexcept;
+            VectorR<M, T>           multiplyColumnVector(const VectorR<N, T>& columnVector) const noexcept;
 
         public:
-            Matrix<N, M>            transpose() const noexcept;
+            Matrix<N, M, T>         transpose() const noexcept;
             const double            trace() const noexcept;
 
         public:
-            void                    factorizeLu(Matrix<N, N>& l, Matrix<N, N>& u) const noexcept;
+            void                    factorizeLu(Matrix<N, N, T>& l, Matrix<N, N, T>& u) const noexcept;
 
         public:
             constexpr const bool    isSquareMatrix() const noexcept;
@@ -85,16 +85,23 @@ namespace mint
         };
 
 
-        template <int32 M, int32 N>
-        Matrix<M, N>                operator*(const double scalar, const Matrix<M, N>& matrix) noexcept;
+        template <int32 M, int32 N, typename T>
+        Matrix<M, N, T>             operator*(const double scalar, const Matrix<M, N, T>& matrix) noexcept;
         
         // Row vector multiplication
-        template <int32 M, int32 N>
-        VectorR<N>                  operator*(const VectorR<M>& rowVector, const Matrix<M, N>& matrix) noexcept;
+        template <int32 M, int32 N, typename T>
+        VectorR<N, T>               operator*(const VectorR<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept;
 
         // Column vector multiplication
+        template <int32 M, int32 N, typename T>
+        VectorR<M, T>               operator*(const Matrix<M, N, T>& matrix, const VectorR<N, T>& columnVector) noexcept;
+
+
         template <int32 M, int32 N>
-        VectorR<M>                  operator*(const Matrix<M, N>& matrix, const VectorR<N>& columnVector) noexcept;
+        using MatrixF = Matrix<M, N, float>;
+
+        template <int32 M, int32 N>
+        using MatrixD = Matrix<M, N, double>;
     }
 }
 

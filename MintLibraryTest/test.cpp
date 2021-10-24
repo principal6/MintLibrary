@@ -150,55 +150,57 @@ const bool testAlgorithm()
 const bool testLinearAlgebra()
 {
     using namespace mint;
+    using Math::VectorD;
+    using Math::MatrixD;
 
-    Math::VectorR<3> vec0(1.0, 1.0, 0.0);
-    vec0 = 5 * vec0;
-    Math::VectorR<3> vec1(0.0, 3.0, 0.0);
-    Math::VectorR<3> vec2 = vec0.cross(vec1).setNormalized();
+    VectorD<3> vec0(1.0, 1.0, 0.0);
+    vec0 = 5.0 * vec0;
+    VectorD<3> vec1(0.0, 3.0, 0.0);
+    VectorD<3> vec2 = Math::cross(vec0, vec1).setNormalized();
     const bool trueValue = vec2.isUnitVector();
     const bool falseValue = Math::equals(1.00002f, 1.0f);
     const double distance = vec1.normalize().distance(vec2);
     const double theta = vec1.angle(vec2);
     const bool orthogonality = vec1.isOrthogonalTo(vec2);
 
-    Math::VectorR<1> vec3(3.0);
-    Math::Matrix<1, 3> mat0;
-    mat0.setRow(0, Math::VectorR<3>(4.0, 5.0, 6.0));
+    VectorD<1> vec3(3.0);
+    MatrixD<1, 3> mat0;
+    mat0.setRow(0, VectorD<3>(4.0, 5.0, 6.0));
     constexpr bool isMat0Square = mat0.isSquareMatrix();
     
-    Math::Matrix<3, 3> mat1;
-    mat1.setRow(0, Math::VectorR<3>(3.0, 0.0, 0.0));
-    mat1.setRow(1, Math::VectorR<3>(0.0, 3.0, 0.0));
-    mat1.setRow(2, Math::VectorR<3>(0.0, 0.0, 3.0));
+    MatrixD<3, 3> mat1;
+    mat1.setRow(0, VectorD<3>(3.0, 0.0, 0.0));
+    mat1.setRow(1, VectorD<3>(0.0, 3.0, 0.0));
+    mat1.setRow(2, VectorD<3>(0.0, 0.0, 3.0));
     const bool isMat1Scalar = mat1.isScalarMatrix();
     mat1.setIdentity();
     const bool isMat1Identity = mat1.isIdentityMatrix();
     mat1.setZero();
     const bool isMat1Zero = mat1.isZeroMatrix();
 
-    Math::VectorR<3> a = Math::VectorR<3>(1.0, 2.0, 3.0);
-    mat1.setRow(0, Math::VectorR<3>(1.0, 2.0, 3.0));
-    mat1.setRow(1, Math::VectorR<3>(4.0, 5.0, 6.0));
-    mat1.setRow(2, Math::VectorR<3>(7.0, 8.0, 9.0));
-    Math::VectorR<3> e1 = Math::VectorR<3>::standardUnitVector(1);
-    Math::VectorR<3> row1 = e1 * mat1;
-    Math::VectorR<3> col1 = mat1 * e1;
+    VectorD<3> a = VectorD<3>(1.0, 2.0, 3.0);
+    mat1.setRow(0, VectorD<3>(1.0, 2.0, 3.0));
+    mat1.setRow(1, VectorD<3>(4.0, 5.0, 6.0));
+    mat1.setRow(2, VectorD<3>(7.0, 8.0, 9.0));
+    VectorD<3> e1 = VectorD<3>::standardUnitVector(1);
+    VectorD<3> row1 = e1 * mat1;
+    VectorD<3> col1 = mat1 * e1;
     vec0 = vec3 * mat0;
 
-    mat1.setRow(1, Math::VectorR<3>(2.0, 5.0, 6.0));
-    mat1.setRow(2, Math::VectorR<3>(3.0, 6.0, 9.0));
+    mat1.setRow(1, VectorD<3>(2.0, 5.0, 6.0));
+    mat1.setRow(2, VectorD<3>(3.0, 6.0, 9.0));
     const bool isMat1Symmetric = mat1.isSymmetricMatrix();
 
-    mat1.setRow(1, Math::VectorR<3>(-2.0, 5.0, 6.0));
-    mat1.setRow(2, Math::VectorR<3>(-3.0, -6.0, 9.0));
+    mat1.setRow(1, VectorD<3>(-2.0, 5.0, 6.0));
+    mat1.setRow(2, VectorD<3>(-3.0, -6.0, 9.0));
     const bool isMat1SkewSymmetric = mat1.isSkewSymmetricMatrix();
 
-    Math::Matrix<2, 3> mat2;
-    mat2.setRow(0, Math::VectorR<3>(0.0, 1.0, 2.0));
-    mat2.setRow(1, Math::VectorR<3>(3.0, 4.0, 5.0));
-    Math::Matrix<3, 2> mat2Transpose = mat2.transpose();
+    MatrixD<2, 3> mat2;
+    mat2.setRow(0, VectorD<3>(0.0, 1.0, 2.0));
+    mat2.setRow(1, VectorD<3>(3.0, 4.0, 5.0));
+    MatrixD<3, 2> mat2Transpose = mat2.transpose();
 
-    Math::Matrix<2, 2> mat3;
+    MatrixD<2, 2> mat3;
     const bool isMat3Idempotent = mat3.isIdempotentMatrix();
 
     return true;

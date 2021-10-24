@@ -10,21 +10,21 @@ namespace mint
 {
     namespace Math
     {
-        template<int32 M, int32 N>
-        inline Matrix<M, N>::Matrix()
+        template<int32 M, int32 N, typename T>
+        inline Matrix<M, N, T>::Matrix()
             : _m{}
         {
             __noop;
         }
 
-        template<int32 M, int32 N>
-        inline Matrix<M, N>::~Matrix()
+        template<int32 M, int32 N, typename T>
+        inline Matrix<M, N, T>::~Matrix()
         {
             __noop;
         }
 
-        template<int32 M, int32 N>
-        inline const bool Matrix<M, N>::operator==(const Matrix& rhs) const noexcept
+        template<int32 M, int32 N, typename T>
+        inline const bool Matrix<M, N, T>::operator==(const Matrix& rhs) const noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -39,14 +39,14 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        inline const bool Matrix<M, N>::operator!=(const Matrix& rhs) const noexcept
+        template<int32 M, int32 N, typename T>
+        inline const bool Matrix<M, N, T>::operator!=(const Matrix& rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N>& Matrix<M, N>::operator*=(const double scalar) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const double scalar) noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -58,8 +58,8 @@ namespace mint
             return *this;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N>& Matrix<M, N>::operator/=(const double scalar) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator/=(const double scalar) noexcept
         {
             MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
 
@@ -73,8 +73,8 @@ namespace mint
             return *this;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N>& Matrix<M, N>::operator+=(const Matrix& rhs) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator+=(const Matrix& rhs) noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -86,8 +86,8 @@ namespace mint
             return *this;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N>& Matrix<M, N>::operator-=(const Matrix& rhs) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator-=(const Matrix& rhs) noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -99,8 +99,8 @@ namespace mint
             return *this;
         }
 
-        template<int32 M, int32 N>
-        inline Matrix<M, N>& Matrix<M, N>::operator*=(const Matrix<N, N>& rhs) noexcept
+        template<int32 M, int32 N, typename T>
+        inline Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const Matrix<N, N, T>& rhs) noexcept
         {
             static_assert(M == N, "Power of non-square matrix!!!");
 
@@ -108,61 +108,61 @@ namespace mint
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
-                    _m[rowIndex][columnIndex] = mint::Math::VectorR<N>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
+                    _m[rowIndex][columnIndex] = mint::Math::VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
                 }
             }
             return *this;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N> Matrix<M, N>::operator*(const double scalar) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator*(const double scalar) noexcept
         {
             Matrix result = *this;
             result *= scalar;
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N> Matrix<M, N>::operator/(const double scalar) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator/(const double scalar) noexcept
         {
             Matrix result = *this;
             result /= scalar;
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N> Matrix<M, N>::operator+(const Matrix& rhs) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator+(const Matrix& rhs) noexcept
         {
             Matrix result = *this;
             result += rhs;
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N> Matrix<M, N>::operator-(const Matrix& rhs) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator-(const Matrix& rhs) noexcept
         {
             Matrix result = *this;
             result -= rhs;
             return result;
         }
 
-        template<int32 M, int32 N>
+        template<int32 M, int32 N, typename T>
         template<int32 P>
-        MINT_INLINE Matrix<M, P> Matrix<M, N>::operator*(const Matrix<N, P>& rhs) const noexcept
+        MINT_INLINE Matrix<M, P, T> Matrix<M, N, T>::operator*(const Matrix<N, P, T>& rhs) const noexcept
         {
-            Matrix<M, P> result;
+            Matrix<M, P, T> result;
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
                 for (int32 columnIndex = 0; columnIndex < P; ++columnIndex)
                 {
-                    result._m[rowIndex][columnIndex] = mint::Math::VectorR<N>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
+                    result._m[rowIndex][columnIndex] = mint::Math::VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
                 }
             }
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE void Matrix<M, N>::setElement(const uint32 rowIndex, const uint32 columnIndex, const double value) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const double value) noexcept
         {
             if (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N))
             {
@@ -170,15 +170,15 @@ namespace mint
             }
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const double Matrix<M, N>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const double Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
         {
             MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
             return _m[rowIndex][columnIndex];
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE void Matrix<M, N>::setRow(const uint32 rowIndex, const VectorR<N>& row) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::setRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept
         {
             if (rowIndex < static_cast<uint32>(M))
             {
@@ -189,12 +189,12 @@ namespace mint
             }
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<N> Matrix<M, N>::getRow(const uint32 rowIndex) const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<N, T> Matrix<M, N, T>::getRow(const uint32 rowIndex) const noexcept
         {
             MINT_ASSERT("김장원", rowIndex < static_cast<uint32>(M), "범위를 벗어난 접근입니다!");
 
-            VectorR<N> result;
+            VectorR<N, T> result;
             for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
             {
                 result[columnIndex] = _m[rowIndex][columnIndex];
@@ -202,8 +202,8 @@ namespace mint
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE void Matrix<M, N>::setColumn(const uint32 columnIndex, const VectorR<M>& column) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::setColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept
         {
             if (columnIndex < static_cast<uint32>(N))
             {
@@ -214,12 +214,12 @@ namespace mint
             }
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<M> Matrix<M, N>::getColumn(const uint32 columnIndex) const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<M, T> Matrix<M, N, T>::getColumn(const uint32 columnIndex) const noexcept
         {
             MINT_ASSERT("김장원", columnIndex < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
 
-            VectorR<M> result;
+            VectorR<M, T> result;
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
                 result[rowIndex] = _m[rowIndex][columnIndex];
@@ -227,10 +227,10 @@ namespace mint
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<N> Matrix<M, N>::multiplyRowVector(const VectorR<M>& rowVector) const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<N, T> Matrix<M, N, T>::multiplyRowVector(const VectorR<M, T>& rowVector) const noexcept
         {
-            VectorR<N> result;
+            VectorR<N, T> result;
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
                 result += getRow(rowIndex) * rowVector[rowIndex];
@@ -238,10 +238,10 @@ namespace mint
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<M> Matrix<M, N>::multiplyColumnVector(const VectorR<N>& columnVector) const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<M, T> Matrix<M, N, T>::multiplyColumnVector(const VectorR<N, T>& columnVector) const noexcept
         {
-            VectorR<M> result;
+            VectorR<M, T> result;
             for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
             {
                 result += getColumn(columnIndex) * columnVector[columnIndex];
@@ -249,10 +249,10 @@ namespace mint
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<N, M> Matrix<M, N>::transpose() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<N, M, T> Matrix<M, N, T>::transpose() const noexcept
         {
-            Matrix<N, M> result;
+            Matrix<N, M, T> result;
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
@@ -263,8 +263,8 @@ namespace mint
             return result;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const double Matrix<M, N>::trace() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const double Matrix<M, N, T>::trace() const noexcept
         {
             if (isSquareMatrix() == false)
             {
@@ -280,14 +280,14 @@ namespace mint
             return trace;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE constexpr const bool Matrix<M, N>::isSquareMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE constexpr const bool Matrix<M, N, T>::isSquareMatrix() const noexcept
         {
             return (M == N);
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isDiagonalMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isDiagonalMatrix() const noexcept
         {
             if (isSquareMatrix() == false)
             {
@@ -310,8 +310,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isScalarMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isScalarMatrix() const noexcept
         {
             if (isSquareMatrix() == false)
             {
@@ -332,8 +332,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isIdentityMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isIdentityMatrix() const noexcept
         {
             if (isSquareMatrix() == false)
             {
@@ -353,8 +353,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isZeroMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isZeroMatrix() const noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -369,8 +369,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isSymmetricMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isSymmetricMatrix() const noexcept
         {
             if (false == isSquareMatrix())
             {
@@ -395,8 +395,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isSkewSymmetricMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isSkewSymmetricMatrix() const noexcept
         {
             if (false == isSquareMatrix())
             {
@@ -421,8 +421,8 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isUpperTriangularMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isUpperTriangularMatrix() const noexcept
         {
             if (false == isSquareMatrix())
             {
@@ -443,16 +443,16 @@ namespace mint
             return true;
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE const bool Matrix<M, N>::isIdempotentMatrix() const noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE const bool Matrix<M, N, T>::isIdempotentMatrix() const noexcept
         {
-            Matrix<M, N> squared = *this;
+            Matrix<M, N, T> squared = *this;
             squared *= *this;
             return (squared == *this);
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE void Matrix<M, N>::setIdentity() noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::setIdentity() noexcept
         {
             if (isSquareMatrix() == false)
             {
@@ -468,8 +468,8 @@ namespace mint
             }
         }
 
-        template<int32 M, int32 N>
-        MINT_INLINE void Matrix<M, N>::setZero() noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::setZero() noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -481,20 +481,20 @@ namespace mint
         }
 
 
-        template<int32 M, int32 N>
-        MINT_INLINE Matrix<M, N> operator*(const double scalar, const Matrix<M, N>& matrix) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M, N, T> operator*(const double scalar, const Matrix<M, N, T>& matrix) noexcept
         {
             return (matrix * scalar);
         }
         
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<N> operator*(const VectorR<M>& rowVector, const Matrix<M, N>& matrix) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<N, T> operator*(const VectorR<M, T>& rowVector, const Matrix<M, N, T>& matrix) noexcept
         {
             return matrix.multiplyRowVector(rowVector);
         }
         
-        template<int32 M, int32 N>
-        MINT_INLINE VectorR<M> operator*(const Matrix<M, N>& matrix, const VectorR<N>& columnVector) noexcept
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE VectorR<M, T> operator*(const Matrix<M, N, T>& matrix, const VectorR<N, T>& columnVector) noexcept
         {
             return matrix.multiplyColumnVector(columnVector);
         }
