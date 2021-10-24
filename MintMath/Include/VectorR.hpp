@@ -32,7 +32,7 @@ namespace mint
         template<int32 N, typename T>
         inline VectorR<N, T>::VectorR(const std::initializer_list<T>& initializerList)
         {
-            const int32 count = mint::min(static_cast<int32>(initializerList.size()), N);
+            const int32 count = min(static_cast<int32>(initializerList.size()), N);
             const T* const first = initializerList.begin();
             for (int32 index = 0; index < count; ++index)
             {
@@ -80,7 +80,7 @@ namespace mint
         template<int32 N, typename T>
         MINT_INLINE const bool VectorR<N, T>::isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
         {
-            return mint::Math::equals(lhs.dot(rhs), 0.0);
+            return equals(lhs.dot(rhs), 0.0);
         }
 
         template<int32 N, typename T>
@@ -223,7 +223,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void mint::Math::VectorR<N, T>::setComponent(const uint32 index, const T value) noexcept
+        MINT_INLINE void VectorR<N, T>::setComponent(const uint32 index, const T value) noexcept
         {
             if (index < static_cast<uint32>(N))
             {
@@ -296,7 +296,7 @@ namespace mint
         template<int32 N, typename T>
         MINT_INLINE const bool VectorR<N, T>::isUnitVector() const noexcept
         {
-            return mint::Math::equals(normSquared(), 1.0);
+            return equals(normSquared(), 1.0);
         }
 
         template<int32 N, typename T>

@@ -108,7 +108,7 @@ namespace mint
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
-                    _m[rowIndex][columnIndex] = mint::Math::VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
+                    _m[rowIndex][columnIndex] = VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
                 }
             }
             return *this;
@@ -155,7 +155,7 @@ namespace mint
             {
                 for (int32 columnIndex = 0; columnIndex < P; ++columnIndex)
                 {
-                    result._m[rowIndex][columnIndex] = mint::Math::VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
+                    result._m[rowIndex][columnIndex] = VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
                 }
             }
             return result;
@@ -272,7 +272,7 @@ namespace mint
             }
 
             double trace = 0.0;
-            const int32 safeSize = mint::min(M, N);
+            const int32 safeSize = min(M, N);
             for (int32 index = 0; index < safeSize; ++index)
             {
                 trace += _m[index][index];
