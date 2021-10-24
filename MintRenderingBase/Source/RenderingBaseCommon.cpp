@@ -190,6 +190,23 @@ namespace mint
             }
         }
 
+        void ColorImage::sample3x3(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept
+        {
+            Color(&pixels)[3][3] = outSample3x3._m;
+
+            pixels[0][0] = getColorFromXy(at._x - 1, at._y - 1);
+            pixels[0][1] = getColorFromXy(at._x    , at._y - 1);
+            pixels[0][2] = getColorFromXy(at._x + 1, at._y - 1);
+            
+            pixels[1][0] = getColorFromXy(at._x - 1, at._y    );
+            pixels[1][1] = getColorFromXy(at._x    , at._y    );
+            pixels[1][2] = getColorFromXy(at._x + 1, at._y    );
+            
+            pixels[2][0] = getColorFromXy(at._x - 1, at._y + 1);
+            pixels[2][1] = getColorFromXy(at._x    , at._y + 1);
+            pixels[2][2] = getColorFromXy(at._x + 1, at._y + 1);
+        }
+
         const byte* ColorImage::buildPixelRgbaArray() noexcept
         {
             static constexpr uint32 kByteCountPerPixel = 4;

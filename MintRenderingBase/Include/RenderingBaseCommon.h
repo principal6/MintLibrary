@@ -15,6 +15,10 @@
 #include <MintMath/Include/Int2.h>
 
 
+#undef max
+#undef min
+
+
 namespace mint
 {
     namespace Rendering
@@ -140,6 +144,44 @@ namespace mint
                 Color   _bottomLeft;
             };
 
+            template <typename T>
+            struct Sample3x3
+            {
+                MINT_INLINE const T NW() const noexcept { return _m[0][0]; }
+                MINT_INLINE const T N() const noexcept  { return _m[0][1]; }
+                MINT_INLINE const T NE() const noexcept { return _m[0][2]; }
+                
+                MINT_INLINE const T W() const noexcept  { return _m[1][0]; }
+                MINT_INLINE const T M() const noexcept  { return _m[1][1]; }
+                MINT_INLINE const T E() const noexcept  { return _m[1][2]; }
+                
+                MINT_INLINE const T SW() const noexcept { return _m[2][0]; }
+                MINT_INLINE const T S() const noexcept  { return _m[2][1]; }
+                MINT_INLINE const T SE() const noexcept { return _m[2][2]; }
+
+                MINT_INLINE const T maxAdjacent() const noexcept { return max(max(max(N(), S()), E()), W()); }
+                MINT_INLINE const T minAdjacent() const noexcept { return min(min(min(N(), S()), E()), W()); }
+                
+                MINT_INLINE const T sumAdjacent() const noexcept { return N() + S() + E() + W(); }
+                MINT_INLINE const T sumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }
+
+                T                   _m[3][3];
+            };
+
+            struct Sample3x3Luma : public Sample3x3<float>
+            {
+                Sample3x3Luma(const Sample3x3<Color>& colorSample3x3)
+                {
+                    for (uint32 y = 0; y < 3; ++y)
+                    {
+                        for (uint32 x = 0; x < 3; ++x)
+                        {
+                            _m[y][x] = colorSample3x3._m[y][x].toLuma();
+                        }
+                    }
+                }
+            };
+
         public:
                                     ColorImage() = default;
                                     ~ColorImage() = default;
@@ -157,6 +199,7 @@ namespace mint
             const Color             getSubPixel(const Float2& at) const noexcept;
             void                    getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
             void                    getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
+            void                    sample3x3(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept;
 
         public:
             const byte*             buildPixelRgbaArray() noexcept;
