@@ -269,12 +269,7 @@ namespace mint
         template<int32 N, typename T>
         MINT_INLINE const T VectorR<N, T>::normSquared() const noexcept
         {
-            T result = 0.0;
-            for (int32 index = 0; index < N; ++index)
-            {
-                result += (_c[index] * _c[index]);
-            }
-            return result;
+            return dot(*this);
         }
 
         template<int32 N, typename T>
