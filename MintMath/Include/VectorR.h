@@ -14,10 +14,6 @@ namespace mint
 {
     namespace Math
     {
-        template <int32 M, int32 N>
-        class Matrix;
-
-
         template <int32 N>
         class VectorR
         {
@@ -56,10 +52,18 @@ namespace mint
             VectorR                         operator/(const double scalar) const noexcept;
             VectorR                         operator+(const VectorR& rhs) const noexcept;
             VectorR                         operator-(const VectorR& rhs) const noexcept;
+            
+        public:
+            const VectorR&                  operator+() const noexcept;
+            VectorR                         operator-() const noexcept;
 
         public:
             double&                         operator[](const uint32 index) noexcept;
             const double&                   operator[](const uint32 index) const noexcept;
+
+        public:
+            const bool                      operator==(const VectorR& rhs) const noexcept;
+            const bool                      operator!=(const VectorR& rhs) const noexcept;
 
         public:
             void                            setZero() noexcept;

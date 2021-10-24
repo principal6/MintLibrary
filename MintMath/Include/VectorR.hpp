@@ -175,6 +175,23 @@ namespace mint
         }
 
         template<int32 N>
+        MINT_INLINE const VectorR<N>& VectorR<N>::operator+() const noexcept
+        {
+            return *this;
+        }
+
+        template<int32 N>
+        MINT_INLINE VectorR<N> VectorR<N>::operator-() const noexcept
+        {
+            VectorR<N> result;
+            for (int32 i = 0; i < N; ++i)
+            {
+                result._c[i] = -_c[i];
+            }
+            return result;
+        }
+
+        template<int32 N>
         MINT_INLINE double& VectorR<N>::operator[](const uint32 index) noexcept
         {
             MINT_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
@@ -186,6 +203,25 @@ namespace mint
         {
             MINT_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
             return _c[index];
+        }
+
+        template<int32 N>
+        MINT_INLINE const bool VectorR<N>::operator==(const VectorR& rhs) const noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                if (rhs._c[i] != _c[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        template<int32 N>
+        MINT_INLINE const bool VectorR<N>::operator!=(const VectorR& rhs) const noexcept
+        {
+            return !(rhs == *this);
         }
 
         template<int32 N>
