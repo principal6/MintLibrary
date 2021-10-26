@@ -22,7 +22,7 @@ namespace mint
         static const float          norm(const Quaternion& q) noexcept;
 
     public:
-        static Quaternion           makeRotationQuaternion(const mint::Float3& axis, float angle) noexcept;
+        static Quaternion           makeRotationQuaternion(const Float3& axis, float angle) noexcept;
 
         // q^(-1)
         static Quaternion           reciprocal(const Quaternion& q) noexcept;
@@ -50,7 +50,7 @@ namespace mint
 
     public:
         // Hamilton product for vector rotation
-        Quaternion&                 operator*=(const mint::Float4& v) noexcept;
+        Quaternion&                 operator*=(const Float4& v) noexcept;
 
     public:
         // Hamilton product
@@ -61,14 +61,14 @@ namespace mint
     public:
         Quaternion                  conjugate() const noexcept;
         Quaternion                  reciprocal() const noexcept;
-        mint::Float4                  rotateVector(const mint::Float4& inputVector);
-        void                        setAxisAngle(const mint::Float3& axis, float angle) noexcept;
-        void                        getAxisAngle(mint::Float3& axis, float& angle) const noexcept;
+        Float4                      rotateVector(const Float4& inputVector);
+        void                        setAxisAngle(const Float3& axis, float angle) noexcept;
+        void                        getAxisAngle(Float3& axis, float& angle) const noexcept;
 
     public:
         union
         {
-            mint::Float4              _data;
+            Float4                  _data;
             struct
             {
                 float               _x; // b (vector part)

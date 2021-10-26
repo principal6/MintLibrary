@@ -20,9 +20,9 @@ namespace mint
         return Quaternion(conjugate / (norm * norm));
     }
 
-    Quaternion Quaternion::makeRotationQuaternion(const mint::Float3& axis, float angle) noexcept
+    Quaternion Quaternion::makeRotationQuaternion(const Float3& axis, float angle) noexcept
     {
-        const mint::Float3 r = mint::Float3::normalize(axis);
+        const Float3 r = Float3::normalize(axis);
         const float half_angle = angle * 0.5f;
         const float cos_half = cosf(half_angle);
         const float sin_half = sinf(half_angle);
@@ -67,7 +67,7 @@ namespace mint
         return *this;
     }
 
-    Quaternion& Quaternion::operator*=(const mint::Float4& v) noexcept
+    Quaternion& Quaternion::operator*=(const Float4& v) noexcept
     {
         const float a = _a;
         const float b = _b;
@@ -111,17 +111,17 @@ namespace mint
         return Quaternion::reciprocal(*this);
     }
 
-    mint::Float4 Quaternion::rotateVector(const mint::Float4& inputVector)
+    Float4 Quaternion::rotateVector(const Float4& inputVector)
     {
         Quaternion result = *this;
         result *= inputVector;
         result *= conjugate();
-        return mint::Float4(result._x, result._y, result._z, inputVector._w);
+        return Float4(result._x, result._y, result._z, inputVector._w);
     }
 
-    void Quaternion::setAxisAngle(const mint::Float3& axis, float angle) noexcept
+    void Quaternion::setAxisAngle(const Float3& axis, float angle) noexcept
     {
-        const mint::Float3 normalizedAxis = mint::Float3::normalize(axis);
+        const Float3 normalizedAxis = Float3::normalize(axis);
         const float halfAngle = angle * 0.5f;
         const float cosHalfAngle = cosf(halfAngle);
         const float sinHalfAngle = 1.0f - cosHalfAngle * cosHalfAngle;
@@ -131,7 +131,7 @@ namespace mint
         _w = cosHalfAngle;
     }
 
-    void Quaternion::getAxisAngle(mint::Float3& axis, float& angle) const noexcept
+    void Quaternion::getAxisAngle(Float3& axis, float& angle) const noexcept
     {
         angle = acos(_w) * 2.0f;
 
