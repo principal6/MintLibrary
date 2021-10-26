@@ -46,7 +46,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const double scalar) noexcept
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const T scalar) noexcept
         {
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
@@ -59,7 +59,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator/=(const double scalar) noexcept
+        MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator/=(const T scalar) noexcept
         {
             MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
 
@@ -115,7 +115,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator*(const double scalar) noexcept
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator*(const T scalar) noexcept
         {
             Matrix result = *this;
             result *= scalar;
@@ -123,7 +123,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator/(const double scalar) noexcept
+        MINT_INLINE Matrix<M, N, T> Matrix<M, N, T>::operator/(const T scalar) noexcept
         {
             Matrix result = *this;
             result /= scalar;
@@ -162,7 +162,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const double value) noexcept
+        MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
         {
             if (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N))
             {
@@ -171,7 +171,7 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE const double Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
+        MINT_INLINE const T Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
         {
             MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
             return _m[rowIndex][columnIndex];
@@ -264,14 +264,14 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE const double Matrix<M, N, T>::trace() const noexcept
+        MINT_INLINE const T Matrix<M, N, T>::trace() const noexcept
         {
             if (isSquareMatrix() == false)
             {
                 MINT_LOG_ERROR("김장원", "Tried to calculate trace from a non-square matrix!");
             }
 
-            double trace = 0.0;
+            T trace = 0.0;
             const int32 safeSize = min(M, N);
             for (int32 index = 0; index < safeSize; ++index)
             {
@@ -318,7 +318,7 @@ namespace mint
                 return false;
             }
             
-            const double scale = _m[0][0];
+            const T scale = _m[0][0];
             for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
@@ -482,7 +482,7 @@ namespace mint
 
 
         template<int32 M, int32 N, typename T>
-        MINT_INLINE Matrix<M, N, T> operator*(const double scalar, const Matrix<M, N, T>& matrix) noexcept
+        MINT_INLINE Matrix<M, N, T> operator*(const T scalar, const Matrix<M, N, T>& matrix) noexcept
         {
             return (matrix * scalar);
         }

@@ -31,15 +31,15 @@ namespace mint
             const bool              operator!=(const Matrix& rhs) const noexcept;
 
         public:
-            Matrix&                 operator*=(const double scalar) noexcept;
-            Matrix&                 operator/=(const double scalar) noexcept;
+            Matrix&                 operator*=(const T scalar) noexcept;
+            Matrix&                 operator/=(const T scalar) noexcept;
             Matrix&                 operator+=(const Matrix& rhs) noexcept;
             Matrix&                 operator-=(const Matrix& rhs) noexcept;
             Matrix&                 operator*=(const Matrix<N, N, T>& rhs) noexcept;
 
         public:
-            Matrix                  operator*(const double scalar) noexcept;
-            Matrix                  operator/(const double scalar) noexcept;
+            Matrix                  operator*(const T scalar) noexcept;
+            Matrix                  operator/(const T scalar) noexcept;
             Matrix                  operator+(const Matrix& rhs) noexcept;
             Matrix                  operator-(const Matrix& rhs) noexcept;
 
@@ -48,8 +48,8 @@ namespace mint
             Matrix<M, P, T>         operator*(const Matrix<N, P, T>& rhs) const noexcept;
 
         public:
-            void                    setElement(const uint32 rowIndex, const uint32 columnIndex, const double value) noexcept;
-            const double            getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
+            void                    setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
+            const T                 getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
             void                    setRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept;
             VectorR<N, T>           getRow(const uint32 rowIndex) const noexcept;
             void                    setColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept;
@@ -61,7 +61,7 @@ namespace mint
 
         public:
             Matrix<N, M, T>         transpose() const noexcept;
-            const double            trace() const noexcept;
+            const T                 trace() const noexcept;
 
         public:
             void                    factorizeLu(Matrix<N, N, T>& l, Matrix<N, N, T>& u) const noexcept;
@@ -81,12 +81,12 @@ namespace mint
             void                    setZero() noexcept;
 
         private:
-            double                  _m[M][N];
+            T                       _m[M][N];
         };
 
 
         template <int32 M, int32 N, typename T>
-        Matrix<M, N, T>             operator*(const double scalar, const Matrix<M, N, T>& matrix) noexcept;
+        Matrix<M, N, T>             operator*(const T scalar, const Matrix<M, N, T>& matrix) noexcept;
         
         // Row vector multiplication
         template <int32 M, int32 N, typename T>
