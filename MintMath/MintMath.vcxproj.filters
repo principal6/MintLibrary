@@ -60,6 +60,9 @@
     <ClInclude Include="Include\Easing.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Quaternion.inl">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -81,9 +84,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Int2.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Quaternion.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\MathCommon.cpp">

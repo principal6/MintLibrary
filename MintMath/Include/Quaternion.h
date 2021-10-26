@@ -88,4 +88,7 @@ namespace mint
 }
 
 
+#include <MintMath/Include/Quaternion.inl>
+
+
 #endif // !MINT_QUATERNION_H

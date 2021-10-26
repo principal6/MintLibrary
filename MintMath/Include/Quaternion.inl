@@ -1,26 +1,26 @@
-﻿#include <MintMath/Include/Quaternion.h>
+#pragma once
 
 
 namespace mint
 {
-    Quaternion Quaternion::conjugate(const Quaternion& q) noexcept
+    MINT_INLINE Quaternion Quaternion::conjugate(const Quaternion& q) noexcept
     {
         return Quaternion(q._w, -q._x, -q._y, -q._z);
     }
 
-    const float Quaternion::norm(const Quaternion& q) noexcept
+    MINT_INLINE const float Quaternion::norm(const Quaternion& q) noexcept
     {
         return Float4(q._x, q._y, q._z, q._w).length();
     }
 
-    Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
+    MINT_INLINE Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
     {
-        const Quaternion conjugate  = Quaternion::conjugate(q);
+        const Quaternion conjugate = Quaternion::conjugate(q);
         const float norm = Quaternion::norm(q);
         return Quaternion(conjugate / (norm * norm));
     }
 
-    Quaternion Quaternion::makeRotationQuaternion(const Float3& axis, float angle) noexcept
+    MINT_INLINE Quaternion Quaternion::makeRotationQuaternion(const Float3& axis, float angle) noexcept
     {
         const Float3 r = Float3::normalize(axis);
         const float half_angle = angle * 0.5f;
@@ -30,13 +30,13 @@ namespace mint
     }
 
 
-    Quaternion::Quaternion()
+    inline Quaternion::Quaternion()
         : Quaternion(1.0f, 0.0f, 0.0f, 0.0f)
     {
         __noop;
     }
 
-    Quaternion::Quaternion(const float a, const float b, const float c, const float d)
+    inline Quaternion::Quaternion(const float a, const float b, const float c, const float d)
         : _a{ a }
         , _b{ b }
         , _c{ c }
@@ -45,7 +45,7 @@ namespace mint
         __noop;
     }
 
-    Quaternion& Quaternion::operator*=(const Quaternion& q) noexcept
+    MINT_INLINE Quaternion& Quaternion::operator*=(const Quaternion& q) noexcept
     {
         const float a = _a;
         const float b = _b;
@@ -58,7 +58,7 @@ namespace mint
         return *this;
     }
 
-    Quaternion& Quaternion::operator*=(const float s) noexcept
+    MINT_INLINE Quaternion& Quaternion::operator*=(const float s) noexcept
     {
         _a *= s;
         _b *= s;
@@ -67,16 +67,16 @@ namespace mint
         return *this;
     }
 
-    Quaternion& Quaternion::operator/=(const float s) noexcept
+    MINT_INLINE Quaternion& Quaternion::operator/=(const float s) noexcept
     {
         _a /= s;
         _b /= s;
         _c /= s;
-        _d /= s; 
+        _d /= s;
         return *this;
     }
 
-    Quaternion& Quaternion::operator*=(const Float4& v) noexcept
+    MINT_INLINE Quaternion& Quaternion::operator*=(const Float4& v) noexcept
     {
         const float a = _a;
         const float b = _b;
@@ -89,7 +89,7 @@ namespace mint
         return *this;
     }
 
-    Quaternion Quaternion::operator*(const Quaternion& q) const noexcept
+    MINT_INLINE Quaternion Quaternion::operator*(const Quaternion& q) const noexcept
     {
         return Quaternion
         (
@@ -100,27 +100,27 @@ namespace mint
         );
     }
 
-    Quaternion Quaternion::operator*(const float s) const noexcept
+    MINT_INLINE Quaternion Quaternion::operator*(const float s) const noexcept
     {
         return Quaternion(_a * s, _b * s, _c * s, _d * s);
     }
 
-    Quaternion Quaternion::operator/(const float s) const noexcept
+    MINT_INLINE Quaternion Quaternion::operator/(const float s) const noexcept
     {
         return Quaternion(_a / s, _b / s, _c / s, _d / s);
     }
 
-    Quaternion Quaternion::conjugate() const noexcept
+    MINT_INLINE Quaternion Quaternion::conjugate() const noexcept
     {
         return Quaternion::conjugate(*this);
     }
 
-    Quaternion Quaternion::reciprocal() const noexcept
+    MINT_INLINE Quaternion Quaternion::reciprocal() const noexcept
     {
         return Quaternion::reciprocal(*this);
     }
 
-    Float4 Quaternion::rotateVector(const Float4& inputVector)
+    MINT_INLINE Float4 Quaternion::rotateVector(const Float4& inputVector)
     {
         Quaternion result = *this;
         result *= inputVector;
@@ -128,7 +128,7 @@ namespace mint
         return Float4(result._x, result._y, result._z, inputVector._w);
     }
 
-    void Quaternion::setAxisAngle(const Float3& axis, float angle) noexcept
+    MINT_INLINE void Quaternion::setAxisAngle(const Float3& axis, float angle) noexcept
     {
         const Float3 normalizedAxis = Float3::normalize(axis);
         const float halfAngle = angle * 0.5f;
@@ -140,7 +140,7 @@ namespace mint
         _w = cosHalfAngle;
     }
 
-    void Quaternion::getAxisAngle(Float3& axis, float& angle) const noexcept
+    MINT_INLINE void Quaternion::getAxisAngle(Float3& axis, float& angle) const noexcept
     {
         angle = acos(_w) * 2.0f;
 

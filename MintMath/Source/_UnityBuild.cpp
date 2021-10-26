@@ -6,4 +6,3 @@
 #include <MintMath/Source/Float4x4.cpp>
 #include <MintMath/Source/Int2.cpp>
 #include <MintMath/Source/MathCommon.cpp>
-#include <MintMath/Source/Quaternion.cpp>
