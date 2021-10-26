@@ -47,7 +47,7 @@ namespace mint
 
         public:
             Float3                  _scale = Float3::kUnitScale;
-            Quaternion              _rotation;
+            QuaternionF             _rotation;
             Float3                  _translation;
         };
 

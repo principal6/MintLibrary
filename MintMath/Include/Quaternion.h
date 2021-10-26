@@ -6,11 +6,13 @@
 
 
 #include <MintMath/Include/Float4.h>
+#include <MintMath/Include/VectorR.h>
 
 
 namespace mint
 {
     // Quaternion = a + bi + cj + dk
+    template<typename T>
     class Quaternion final
     {
 #pragma region Static functions
@@ -19,10 +21,10 @@ namespace mint
         static Quaternion           conjugate(const Quaternion& q) noexcept;
 
         // ||q||
-        static const float          norm(const Quaternion& q) noexcept;
+        static const T              norm(const Quaternion& q) noexcept;
 
     public:
-        static Quaternion           makeRotationQuaternion(const Float3& axis, float angle) noexcept;
+        static Quaternion           makeRotationQuaternion(const Float3& axis, T angle) noexcept;
 
         // q^(-1)
         static Quaternion           reciprocal(const Quaternion& q) noexcept;
@@ -33,7 +35,7 @@ namespace mint
                                     // Quaternion(a, b, c, d) = Float4(w, x, y, z)
                                     // a: real part
                                     // b, c, d: vector part
-        explicit                    Quaternion(const float a, const float b, const float c, const float d);
+        explicit                    Quaternion(const T a, const T b, const T c, const T d);
                                     Quaternion(const Quaternion& q)         = default;
                                     Quaternion(Quaternion&& q) noexcept     = default;
                                     ~Quaternion()                           = default;
@@ -45,8 +47,8 @@ namespace mint
     public:
         // Hamilton product
         Quaternion&                 operator*=(const Quaternion& q) noexcept;
-        Quaternion&                 operator*=(const float s) noexcept;
-        Quaternion&                 operator/=(const float s) noexcept;
+        Quaternion&                 operator*=(const T s) noexcept;
+        Quaternion&                 operator/=(const T s) noexcept;
 
     public:
         // Hamilton product for vector rotation
@@ -55,36 +57,39 @@ namespace mint
     public:
         // Hamilton product
         Quaternion                  operator*(const Quaternion& q) const noexcept;
-        Quaternion                  operator*(const float s) const noexcept;
-        Quaternion                  operator/(const float s) const noexcept;
+        Quaternion                  operator*(const T s) const noexcept;
+        Quaternion                  operator/(const T s) const noexcept;
 
     public:
         Quaternion                  conjugate() const noexcept;
         Quaternion                  reciprocal() const noexcept;
         Float4                      rotateVector(const Float4& inputVector);
-        void                        setAxisAngle(const Float3& axis, float angle) noexcept;
-        void                        getAxisAngle(Float3& axis, float& angle) const noexcept;
+        void                        setAxisAngle(const Float3& axis, T angle) noexcept;
+        void                        getAxisAngle(Float3& axis, T& angle) const noexcept;
 
     public:
         union
         {
             struct
             {
-                float               _x; // b (vector part)
-                float               _y; // c (vector part)
-                float               _z; // d (vector part)
-                float               _w; // a (real part)
+                T                   _x; // b (vector part)
+                T                   _y; // c (vector part)
+                T                   _z; // d (vector part)
+                T                   _w; // a (real part)
             };
             struct
             {
-                float               _b; // x (vector part)
-                float               _c; // y (vector part)
-                float               _d; // z (vector part)
-                float               _a; // w (real part)
+                T                   _b; // x (vector part)
+                T                   _c; // y (vector part)
+                T                   _d; // z (vector part)
+                T                   _a; // w (real part)
             };
         };
-        
     };
+
+
+    using QuaternionF = Quaternion<float>;
+    using QuaternionD = Quaternion<double>;
 }
 
 

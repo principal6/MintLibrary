@@ -120,7 +120,7 @@ namespace mint
         return axesToColumns(axisX, axisY, axisZ);
     }
 
-    Float4x4 Float4x4::rotationMatrix(const mint::Quaternion& rotation) noexcept
+    Float4x4 Float4x4::rotationMatrix(const mint::QuaternionF& rotation) noexcept
     {
         mint::Float3 axis;
         float angle;
@@ -150,7 +150,7 @@ namespace mint
         );
     }
     
-    Float4x4 Float4x4::srtMatrix(const mint::Float3& scale, const mint::Quaternion& rotation, const mint::Float3& translation) noexcept
+    Float4x4 Float4x4::srtMatrix(const mint::Float3& scale, const mint::QuaternionF& rotation, const mint::Float3& translation) noexcept
     {
         // SRT matrix for column vector is like below:
         // SRT = T * R * S

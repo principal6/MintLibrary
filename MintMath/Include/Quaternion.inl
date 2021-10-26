@@ -3,40 +3,47 @@
 
 namespace mint
 {
-    MINT_INLINE Quaternion Quaternion::conjugate(const Quaternion& q) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::conjugate(const Quaternion&q) noexcept
     {
         return Quaternion(q._w, -q._x, -q._y, -q._z);
     }
 
-    MINT_INLINE const float Quaternion::norm(const Quaternion& q) noexcept
+    template<typename T>
+    MINT_INLINE const T Quaternion<T>::norm(const Quaternion& q) noexcept
     {
-        return Float4(q._x, q._y, q._z, q._w).length();
+        return Math::Vector4<T>({ q._x, q._y, q._z, q._w }).norm();
+        //return Float4(q._x, q._y, q._z, q._w).length();
     }
 
-    MINT_INLINE Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::reciprocal(const Quaternion& q) noexcept
     {
         const Quaternion conjugate = Quaternion::conjugate(q);
-        const float norm = Quaternion::norm(q);
+        const T norm = Quaternion::norm(q);
         return Quaternion(conjugate / (norm * norm));
     }
 
-    MINT_INLINE Quaternion Quaternion::makeRotationQuaternion(const Float3& axis, float angle) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Float3& axis, T angle) noexcept
     {
         const Float3 r = Float3::normalize(axis);
-        const float half_angle = angle * 0.5f;
-        const float cos_half = cosf(half_angle);
-        const float sin_half = sinf(half_angle);
+        const T half_angle = static_cast<T>(angle * 0.5);
+        const T cos_half = ::cos(half_angle);
+        const T sin_half = ::sin(half_angle);
         return Quaternion(cos_half, sin_half * r._x, sin_half * r._y, sin_half * r._z);
     }
 
 
-    inline Quaternion::Quaternion()
-        : Quaternion(1.0f, 0.0f, 0.0f, 0.0f)
+    template<typename T>
+    inline Quaternion<T>::Quaternion()
+        : Quaternion(1, 0, 0, 0)
     {
         __noop;
     }
 
-    inline Quaternion::Quaternion(const float a, const float b, const float c, const float d)
+    template<typename T>
+    inline Quaternion<T>::Quaternion(const T a, const T b, const T c, const T d)
         : _a{ a }
         , _b{ b }
         , _c{ c }
@@ -45,12 +52,13 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE Quaternion& Quaternion::operator*=(const Quaternion& q) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Quaternion& q) noexcept
     {
-        const float a = _a;
-        const float b = _b;
-        const float c = _c;
-        const float d = _d;
+        const T a = _a;
+        const T b = _b;
+        const T c = _c;
+        const T d = _d;
         _a = +a * q._a - b * q._b - c * q._c - d * q._d;
         _b = +a * q._b + b * q._a + c * q._d - d * q._c;
         _c = +a * q._c - b * q._d + c * q._a + d * q._b;
@@ -58,7 +66,8 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE Quaternion& Quaternion::operator*=(const float s) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const T s) noexcept
     {
         _a *= s;
         _b *= s;
@@ -67,7 +76,8 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE Quaternion& Quaternion::operator/=(const float s) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator/=(const T s) noexcept
     {
         _a /= s;
         _b /= s;
@@ -76,12 +86,13 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE Quaternion& Quaternion::operator*=(const Float4& v) noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Float4& v) noexcept
     {
-        const float a = _a;
-        const float b = _b;
-        const float c = _c;
-        const float d = _d;
+        const T a = _a;
+        const T b = _b;
+        const T c = _c;
+        const T d = _d;
         _a = -b * v._x - c * v._y - d * v._z;
         _b = +a * v._x + c * v._z - d * v._y;
         _c = +a * v._y - b * v._z + d * v._x;
@@ -89,7 +100,8 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE Quaternion Quaternion::operator*(const Quaternion& q) const noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::operator*(const Quaternion& q) const noexcept
     {
         return Quaternion
         (
@@ -100,27 +112,32 @@ namespace mint
         );
     }
 
-    MINT_INLINE Quaternion Quaternion::operator*(const float s) const noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::operator*(const T s) const noexcept
     {
         return Quaternion(_a * s, _b * s, _c * s, _d * s);
     }
 
-    MINT_INLINE Quaternion Quaternion::operator/(const float s) const noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::operator/(const T s) const noexcept
     {
         return Quaternion(_a / s, _b / s, _c / s, _d / s);
     }
 
-    MINT_INLINE Quaternion Quaternion::conjugate() const noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::conjugate() const noexcept
     {
         return Quaternion::conjugate(*this);
     }
 
-    MINT_INLINE Quaternion Quaternion::reciprocal() const noexcept
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::reciprocal() const noexcept
     {
         return Quaternion::reciprocal(*this);
     }
 
-    MINT_INLINE Float4 Quaternion::rotateVector(const Float4& inputVector)
+    template<typename T>
+    MINT_INLINE Float4 Quaternion<T>::rotateVector(const Float4& inputVector)
     {
         Quaternion result = *this;
         result *= inputVector;
@@ -128,28 +145,30 @@ namespace mint
         return Float4(result._x, result._y, result._z, inputVector._w);
     }
 
-    MINT_INLINE void Quaternion::setAxisAngle(const Float3& axis, float angle) noexcept
+    template<typename T>
+    MINT_INLINE void Quaternion<T>::setAxisAngle(const Float3& axis, T angle) noexcept
     {
         const Float3 normalizedAxis = Float3::normalize(axis);
-        const float halfAngle = angle * 0.5f;
-        const float cosHalfAngle = cosf(halfAngle);
-        const float sinHalfAngle = 1.0f - cosHalfAngle * cosHalfAngle;
+        const T halfAngle = static_cast<T>(angle * 0.5);
+        const T cosHalfAngle = ::cos(halfAngle);
+        const T sinHalfAngle = static_cast<T>(1.0 - cosHalfAngle * cosHalfAngle);
         _x = sinHalfAngle * normalizedAxis._x;
         _y = sinHalfAngle * normalizedAxis._y;
         _z = sinHalfAngle * normalizedAxis._z;
         _w = cosHalfAngle;
     }
 
-    MINT_INLINE void Quaternion::getAxisAngle(Float3& axis, float& angle) const noexcept
+    template<typename T>
+    MINT_INLINE void Quaternion<T>::getAxisAngle(Float3& axis, T& angle) const noexcept
     {
-        angle = acos(_w) * 2.0f;
+        angle = static_cast<T>(::acos(_w) * 2.0);
 
-        const float sinHalfAngle = 1.0f - _w * _w;
-        if (sinHalfAngle == 0.0f)
+        const T sinHalfAngle = static_cast<T>(1.0 - _w * _w);
+        if (sinHalfAngle == static_cast<T>(0.0))
         {
-            axis._x = 1.0f;
-            axis._y = 0.0f;
-            axis._z = 0.0f;
+            axis._x = static_cast<T>(1);
+            axis._y = static_cast<T>(0);
+            axis._z = static_cast<T>(0);
         }
         else
         {

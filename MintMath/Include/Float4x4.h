@@ -40,11 +40,11 @@ namespace mint
         // Rodrigues' rotation formula
         static Float4x4         rotationMatrixAxisAngle(const mint::Float3& axis, const float angle) noexcept;
         static Float4x4         rotationMatrixFromAxes(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
-        static Float4x4         rotationMatrix(const mint::Quaternion& rotation) noexcept;
+        static Float4x4         rotationMatrix(const mint::QuaternionF& rotation) noexcept;
         static Float4x4         axesToColumns(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
         // Interprets vector from new basis.
         static Float4x4         axesToRows(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
-        static Float4x4         srtMatrix(const mint::Float3& scale, const mint::Quaternion& rotation, const mint::Float3& translation) noexcept;
+        static Float4x4         srtMatrix(const mint::Float3& scale, const mint::QuaternionF& rotation, const mint::Float3& translation) noexcept;
 
         static Float4x4         projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
         static Float4x4         projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
