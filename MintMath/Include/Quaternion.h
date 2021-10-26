@@ -24,7 +24,7 @@ namespace mint
         static const T              norm(const Quaternion& q) noexcept;
 
     public:
-        static Quaternion           makeRotationQuaternion(const Float3& axis, T angle) noexcept;
+        static Quaternion           makeRotationQuaternion(const Float3& axis, const T angle) noexcept;
 
         // q^(-1)
         static Quaternion           reciprocal(const Quaternion& q) noexcept;

@@ -25,7 +25,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Float3& axis, T angle) noexcept
+    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Float3& axis, const T angle) noexcept
     {
         const Float3 r = Float3::normalize(axis);
         const T half_angle = static_cast<T>(angle * 0.5);
