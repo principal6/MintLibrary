@@ -21,6 +21,25 @@ namespace mint
 {
     namespace Math
     {
+        template<typename T>
+        const T                     getScalarZero() noexcept;
+
+        template<>
+        const float                 getScalarZero() noexcept;
+
+        template<>
+        const double                getScalarZero() noexcept;
+
+        template<typename T>
+        const T                     getScalarOne() noexcept;
+
+        template<>
+        const float                 getScalarOne() noexcept;
+
+        template<>
+        const double                getScalarOne() noexcept;
+
+
         template <int32 M, int32 N, typename T>
         class Matrix
         {
@@ -30,7 +49,13 @@ namespace mint
         public:
                                     Matrix();
                                     Matrix(const std::initializer_list<T>& initializerList);
+                                    Matrix(const Matrix& rhs) = default;
+                                    Matrix(Matrix&& rhs) noexcept = default;
                                     ~Matrix();
+
+        public:
+            Matrix&                 operator=(const Matrix& rhs) = default;
+            Matrix&                 operator=(Matrix&& rhs) noexcept = default;
 
         public:
             const bool              operator==(const Matrix& rhs) const noexcept;
@@ -124,24 +149,9 @@ namespace mint
 
         namespace MatrixUtils
         {
-            template<typename T>
-            static constexpr T      getScalarZero() noexcept;
-
-            template<>
-            static constexpr float  getScalarZero() noexcept;
+            template<int32 N, typename T>
+            const Matrix<N, N, T>&  identity() noexcept;
             
-            template<>
-            static constexpr double getScalarZero() noexcept;
-
-            template<typename T>
-            static constexpr T      getScalarOne() noexcept;
-
-            template<>
-            static constexpr float  getScalarOne() noexcept;
-            
-            template<>
-            static constexpr double getScalarOne() noexcept;
-
             template<typename T>
             const T                 determinant(const Matrix2x2<T>& in) noexcept;
 
@@ -162,6 +172,44 @@ namespace mint
 
             template<typename T>
             void                    decomposeSrt(const Matrix4x4<T>& in, Vector3<T>& outScale, Matrix4x4<T>& outRotationMatrix, Vector3<T>& outTranslation) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            axesToColumns(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+
+            // Interprets vector from new basis.
+            template<typename T>
+            Matrix4x4<T>            axesToRows(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            translationMatrix(const Vector3<T>& translation) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            scalarMatrix(const Vector3<T>& scale) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixX(const T angle) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixY(const T angle) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixZ(const T angle) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept;
+
+            // Rodrigues' rotation formula
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixAxisAngle(const Vector3<T>& axis, const T angle) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>            rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>            projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept;
         }
 #pragma endregion
     }

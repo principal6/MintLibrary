@@ -14,6 +14,45 @@ namespace mint
 {
     namespace Math
     {
+        template<typename T>
+        const T getScalarZero() noexcept
+        {
+            MINT_NEVER;
+            return T();
+        }
+
+        template<>
+        const float getScalarZero() noexcept
+        {
+            return 0.0f;
+        }
+
+        template<>
+        const double getScalarZero() noexcept
+        {
+            return 0.0;
+        }
+
+        template<typename T>
+        const T getScalarOne() noexcept
+        {
+            MINT_NEVER;
+            return T();
+        }
+
+        template<>
+        const float getScalarOne() noexcept
+        {
+            return 1.0f;
+        }
+
+        template<>
+        const double getScalarOne() noexcept
+        {
+            return 1.0;
+        }
+
+
         template<int32 M, int32 N, typename T>
         inline Matrix<M, N, T>::Matrix()
             : _m{}
@@ -502,7 +541,7 @@ namespace mint
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
-                    _m[rowIndex][columnIndex] = (columnIndex == rowIndex) ? 1.0 : 0.0;
+                    _m[rowIndex][columnIndex] = (columnIndex == rowIndex) ? getScalarOne<T>() : getScalarZero<T>();
                 }
             }
         }
@@ -514,7 +553,7 @@ namespace mint
             {
                 for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
                 {
-                    _m[rowIndex][columnIndex] = 0.0;
+                    _m[rowIndex][columnIndex] = 0;
                 }
             }
         }
@@ -541,44 +580,19 @@ namespace mint
 
         namespace MatrixUtils
         {
-            template<typename T>
-            constexpr T getScalarZero() noexcept
+            template<int32 N, typename T>
+            const Matrix<N, N, T>& identity() noexcept
             {
-                MINT_NEVER;
-                return T();
+                static bool isFirstTime = true;
+                static Matrix<N, N, T> identityMatrix;
+                if (true == isFirstTime)
+                {
+                    identityMatrix.setIdentity();
+                    isFirstTime = false;
+                }
+                return identityMatrix;
             }
             
-            template<>
-            constexpr float getScalarZero() noexcept
-            {
-                return 0.0f;
-            }
-
-            template<>
-            constexpr double getScalarZero() noexcept
-            {
-                return 0.0;
-            }
-
-            template<typename T>
-            constexpr T getScalarOne() noexcept
-            {
-                return T();
-            }
-            
-            template<typename T>
-            constexpr float getScalarOne() noexcept
-            {
-                MINT_NEVER;
-                return 1.0f;
-            }
-            
-            template<typename T>
-            constexpr double getScalarOne() noexcept
-            {
-                return 1.0;
-            }
-
             template<typename T>
             const T determinant(const Matrix2x2<T>& in) noexcept
             {
@@ -693,6 +707,180 @@ namespace mint
                 outTranslation._c[0] = _14;
                 outTranslation._c[1] = _24;
                 outTranslation._c[2] = _34;
+            }
+
+            template<typename T>
+            Matrix4x4<T> axesToColumns(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        axisX._c[0], axisY._c[0], axisZ._c[0], 0,
+                        axisX._c[1], axisY._c[1], axisZ._c[1], 0,
+                        axisX._c[2], axisY._c[2], axisZ._c[2], 0,
+                                  0,           0,           0, 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> axesToRows(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        axisX._c[0], axisX._c[1], axisX._c[2], 0,
+                        axisY._c[0], axisY._c[1], axisY._c[2], 0,
+                        axisZ._c[0], axisZ._c[1], axisZ._c[2], 0,
+                                  0,           0,           0, 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> translationMatrix(const Vector3<T>& translation) noexcept
+            {
+                const T x = translation._c[0];
+                const T y = translation._c[1];
+                const T z = translation._c[2];
+                return Matrix4x4<T>
+                (
+                    {
+                        1, 0, 0, x,
+                        0, 1, 0, y,
+                        0, 0, 1, z,
+                        0, 0, 0, 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> scalarMatrix(const Vector3<T>& scale) noexcept
+            {
+                const T x = scale._c[0];
+                const T y = scale._c[1];
+                const T z = scale._c[2];
+                return Matrix4x4<T>
+                (
+                    {
+                        x, 0, 0, 0,
+                        0, y, 0, 0,
+                        0, 0, z, 0,
+                        0, 0, 0, 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixX(const T angle) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        1             , 0             , 0             , 0,
+                        0             , +::cos(angle) , -::sin(angle) , 0,
+                        0             , +::sin(angle) , +::cos(angle) , 0,
+                        0             , 0             , 0             , 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixY(const T angle) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        +::cos(angle) , 0             , +::sin(angle) , 0,
+                        0             , 1             , 0             , 0,
+                        -::sin(angle) , 0             , +::cos(angle) , 0,
+                        0             , 0             , 0             , 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixZ(const T angle) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        +::cos(angle) , -::sin(angle) , 0             , 0,
+                        +::sin(angle) , +::cos(angle) , 0             , 0,
+                        0             , 0             , 1             , 0,
+                        0             , 0             , 0             , 1
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept
+            {
+                return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixAxisAngle(const Vector3<T>& axis, const T angle) noexcept
+            {
+                // (v * r)r(1 - cos¥è) + vcos¥è + (r X v)sin¥è
+
+                const Vector3<T> r = axis.normalize();
+                const T c = ::cos(angle);
+                const T s = ::sin(angle);
+
+                const T rx = r._c[0];
+                const T ry = r._c[1];
+                const T rz = r._c[2];
+                Matrix4x4<T> result
+                (
+                    {
+                        (1 - c) * rx * rx  + c            , (1 - c) * ry * rx       - (rz * s), (1 - c) * rz * rx       + (ry * s), 0,
+                        (1 - c) * rx * ry       + (rz * s), (1 - c) * ry * ry  + c            , (1 - c) * rz * ry       - (rx * s), 0,
+                        (1 - c) * rx * rz       - (ry * s), (1 - c) * ry * rz       + (rx * s), (1 - c) * rz * rz  + c            , 0,
+                        0                                 , 0                                 , 0                                 , 1
+                    }
+                );
+                return result;
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+            {
+                return axesToColumns(axisX, axisY, axisZ);
+            }
+            
+            template<typename T>
+            Matrix4x4<T> projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept
+            {
+                const T halfFov = static_cast<T>(fov * 0.5);
+                const T a = static_cast<T>(1.0 / (::tan(halfFov) * ratio));
+                const T b = static_cast<T>(1.0 / (::tan(halfFov)));
+                const T c = (farZ) / (farZ - nearZ);
+                const T d = -(farZ * nearZ) / (farZ - nearZ);
+                const T e = static_cast<T>(1.0);
+                return Matrix4x4<T>
+                (
+                    {
+                        a, 0, 0, 0,
+                        0, b, 0, 0,
+                        0, 0, c, d,
+                        0, 0, e, 0
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        +static_cast<T>(2) / pixelWidth,  0                              , 0, -1,
+                         0                             , -static_cast<T>(2) / pixelHeight, 0, +1,
+                         0                             ,  0                              , 1,  0,
+                         0                             ,  0                              , 0,  1
+                    }
+                );
             }
         }
     }
