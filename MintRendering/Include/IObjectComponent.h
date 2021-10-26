@@ -43,12 +43,12 @@ namespace mint
         struct Srt
         {
         public:
-            mint::Float4x4            toMatrix() const noexcept { return mint::Float4x4::srtMatrix(_scale, _rotation, _translation); }
+            Float4x4                toMatrix() const noexcept { return Float4x4::srtMatrix(_scale, _rotation, _translation); }
 
         public:
-            mint::Float3              _scale = mint::Float3::kUnitScale;
-            mint::Quaternion          _rotation;
-            mint::Float3              _translation;
+            Float3                  _scale = Float3::kUnitScale;
+            Quaternion              _rotation;
+            Float3                  _translation;
         };
 
 
@@ -64,10 +64,10 @@ namespace mint
             virtual                                 ~IObjectComponent() { __noop; }
 
         public:
-            MINT_INLINE const ObjectComponentType     getType() const noexcept { return _type; }
-            MINT_INLINE const bool                    isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
-            MINT_INLINE const ObjectComponentId&      getId() const noexcept { return _id; }
-            MINT_INLINE Object*                       getOwnerObject() const noexcept { return _ownerObject; }
+            MINT_INLINE const ObjectComponentType   getType() const noexcept { return _type; }
+            MINT_INLINE const bool                  isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
+            MINT_INLINE const ObjectComponentId&    getId() const noexcept { return _id; }
+            MINT_INLINE Object*                     getOwnerObject() const noexcept { return _ownerObject; }
         
         protected:
             Object*                                 _ownerObject;
