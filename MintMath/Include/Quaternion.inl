@@ -146,7 +146,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void Quaternion<T>::setAxisAngle(const Float3& axis, T angle) noexcept
+    MINT_INLINE void Quaternion<T>::setAxisAngle(const Float3& axis, const T angle) noexcept
     {
         const Float3 normalizedAxis = Float3::normalize(axis);
         const T halfAngle = static_cast<T>(angle * 0.5);
