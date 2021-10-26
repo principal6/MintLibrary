@@ -3,7 +3,11 @@
 
 #include <MintMath/Include/Matrix.h>
 
+#include <MintCommon/Include/Logger.h>
+
 #include <MintMath/Include/VectorR.hpp>
+
+#include <initializer_list>
 
 
 namespace mint
@@ -15,6 +19,19 @@ namespace mint
             : _m{}
         {
             __noop;
+        }
+
+        template<int32 M, int32 N, typename T>
+        inline Matrix<M, N, T>::Matrix(const std::initializer_list<T>& initializerList)
+        {
+            const int32 count = min(static_cast<int32>(initializerList.size()), M * N);
+            const T* const first = initializerList.begin();
+            for (int32 index = 0; index < count; ++index)
+            {
+                const int32 col = index % M;
+                const int32 row = index / M;
+                _m[row][col] = *(first + index);
+            }
         }
 
         template<int32 M, int32 N, typename T>
@@ -281,6 +298,28 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
+        MINT_INLINE Matrix<M - 1, N - 1, T> Matrix<M, N, T>::minor(const uint32 row, const uint32 col) const noexcept
+        {
+            Matrix<M - 1, N - 1, T> result;
+            uint32 targetRow{ 0 };
+            for (uint32 sourceRow = 0; sourceRow < M; ++sourceRow)
+            {
+                if (sourceRow == row) continue;
+
+                uint32 targetCol{ 0 };
+                for (uint32 sourceCol = 0; sourceCol < N; ++sourceCol)
+                {
+                    if (sourceCol == col) continue;
+
+                    result.setElement(targetRow, targetCol, _m[sourceRow][sourceCol]);
+                    ++targetCol;
+                }
+                ++targetRow;
+            }
+            return result;
+        }
+
+        template<int32 M, int32 N, typename T>
         MINT_INLINE constexpr const bool Matrix<M, N, T>::isSquareMatrix() const noexcept
         {
             return (M == N);
@@ -497,6 +536,164 @@ namespace mint
         MINT_INLINE VectorR<M, T> operator*(const Matrix<M, N, T>& matrix, const VectorR<N, T>& columnVector) noexcept
         {
             return matrix.multiplyColumnVector(columnVector);
+        }
+
+
+        namespace MatrixUtils
+        {
+            template<typename T>
+            constexpr T getScalarZero() noexcept
+            {
+                MINT_NEVER;
+                return T();
+            }
+            
+            template<>
+            constexpr float getScalarZero() noexcept
+            {
+                return 0.0f;
+            }
+
+            template<>
+            constexpr double getScalarZero() noexcept
+            {
+                return 0.0;
+            }
+
+            template<typename T>
+            constexpr T getScalarOne() noexcept
+            {
+                return T();
+            }
+            
+            template<typename T>
+            constexpr float getScalarOne() noexcept
+            {
+                MINT_NEVER;
+                return 1.0f;
+            }
+            
+            template<typename T>
+            constexpr double getScalarOne() noexcept
+            {
+                return 1.0;
+            }
+
+            template<typename T>
+            const T determinant(const Matrix2x2<T>& in) noexcept
+            {
+                const T a = in.getElement(0, 0);
+                const T b = in.getElement(0, 1);
+                const T c = in.getElement(1, 0);
+                const T d = in.getElement(1, 1);
+                return static_cast<T>(a * d - b * c);
+            }
+
+            template<typename T>
+            const T determinant(const Matrix3x3<T>& in) noexcept
+            {
+                const T a = in.getElement(0, 0);
+                const T b = in.getElement(0, 1);
+                const T c = in.getElement(0, 2);
+                return a * determinant(in.minor(0, 0)) - b * determinant(in.minor(0, 1)) + c * determinant(in.minor(0, 2));
+            }
+
+            template<typename T>
+            const T determinant(const Matrix4x4<T>& in) noexcept
+            {
+                const T a = in.getElement(0, 0);
+                const T b = in.getElement(0, 1);
+                const T c = in.getElement(0, 2);
+                const T d = in.getElement(0, 3);
+                return a * determinant(in.minor(0, 0)) - b * determinant(in.minor(0, 1)) + c * determinant(in.minor(0, 2)) - d * determinant(in.minor(0, 3));
+            }
+
+            template<typename T>
+            Matrix4x4<T> cofactor(const Matrix4x4<T>& in) noexcept
+            {
+                return Matrix4x4<T>
+                (
+                    {
+                        +determinant(in.minor(0, 0)), -determinant(in.minor(0, 1)), +determinant(in.minor(0, 2)), -determinant(in.minor(0, 3)),
+                        -determinant(in.minor(1, 0)), +determinant(in.minor(1, 1)), -determinant(in.minor(1, 2)), +determinant(in.minor(1, 3)),
+                        +determinant(in.minor(2, 0)), -determinant(in.minor(2, 1)), +determinant(in.minor(2, 2)), -determinant(in.minor(2, 3)),
+                        -determinant(in.minor(3, 0)), +determinant(in.minor(3, 1)), -determinant(in.minor(3, 2)), +determinant(in.minor(3, 3))
+                    }
+                );
+            }
+
+            template<typename T>
+            Matrix4x4<T> adjugate(const Matrix4x4<T>& in) noexcept
+            {
+                return cofactor(in).transpose();
+            }
+
+            template<typename T>
+            Matrix4x4<T> inverse(const Matrix4x4<T>& in) noexcept
+            {
+                return adjugate(in) / determinant(in);
+            }
+
+            template<typename T>
+            void decomposeSrt(const Matrix4x4<T>& in, Vector3<T>& outScale, Matrix4x4<T>& outRotationMatrix, Vector3<T>& outTranslation) noexcept
+            {
+                // TODO: avoid nan in outRotationMatrix
+
+
+                // Srt Matrix
+                // 
+                // | s_x * r_11  s_y * r_12  s_z * r_13  t_x |
+                // | s_x * r_21  s_y * r_22  s_z * r_23  t_y |
+                // | s_x * r_31  s_y * r_32  s_z * r_33  t_z |
+                // | 0           0           0           1   |
+
+                const T _11 = in.getElement(0, 0);
+                const T _12 = in.getElement(0, 1);
+                const T _13 = in.getElement(0, 2);
+                const T _21 = in.getElement(1, 0);
+                const T _22 = in.getElement(1, 1);
+                const T _23 = in.getElement(1, 2);
+                const T _31 = in.getElement(2, 0);
+                const T _32 = in.getElement(2, 1);
+                const T _33 = in.getElement(2, 2);
+                
+                // s
+                outScale._c[0] = ::sqrt((_11 * _11) + (_21 * _21) + (_31 * _31));
+                outScale._c[1] = ::sqrt((_12 * _12) + (_22 * _22) + (_32 * _32));
+                outScale._c[2] = ::sqrt((_13 * _13) + (_23 * _23) + (_33 * _33));
+
+                // r
+                outRotationMatrix.setElement(0, 0, _11 / outScale._c[0]);
+                outRotationMatrix.setElement(1, 0, _21 / outScale._c[0]);
+                outRotationMatrix.setElement(2, 0, _31 / outScale._c[0]);
+
+                outRotationMatrix.setElement(0, 1, _12 / outScale._c[1]);
+                outRotationMatrix.setElement(1, 1, _22 / outScale._c[1]);
+                outRotationMatrix.setElement(2, 1, _32 / outScale._c[1]);
+
+                outRotationMatrix.setElement(0, 2, _13 / outScale._c[2]);
+                outRotationMatrix.setElement(1, 2, _23 / outScale._c[2]);
+                outRotationMatrix.setElement(2, 2, _33 / outScale._c[2]);
+
+                const T kZero = getScalarZero<T>();
+                const T kOne = getScalarOne<T>();
+                outRotationMatrix.setElement(0, 3, kZero);
+                outRotationMatrix.setElement(1, 3, kZero);
+                outRotationMatrix.setElement(2, 3, kZero);
+                outRotationMatrix.setElement(3, 0, kZero);
+                outRotationMatrix.setElement(3, 1, kZero);
+                outRotationMatrix.setElement(3, 2, kZero);
+                outRotationMatrix.setElement(3, 3, kOne);
+
+                const T _14 = in.getElement(0, 3);
+                const T _24 = in.getElement(1, 3);
+                const T _34 = in.getElement(2, 3);
+
+                // t
+                outTranslation._c[0] = _14;
+                outTranslation._c[1] = _24;
+                outTranslation._c[2] = _34;
+            }
         }
     }
 }

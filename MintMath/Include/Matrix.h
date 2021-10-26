@@ -7,15 +7,20 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintMath/Include/VectorR.h>
+
+
+namespace std
+{
+    template <class _Elem>
+    class initializer_list;
+}
+
 
 namespace mint
 {
     namespace Math
     {
-        template <int32 N, typename T>
-        class VectorR;
-
-
         template <int32 M, int32 N, typename T>
         class Matrix
         {
@@ -24,6 +29,7 @@ namespace mint
 
         public:
                                     Matrix();
+                                    Matrix(const std::initializer_list<T>& initializerList);
                                     ~Matrix();
 
         public:
@@ -62,6 +68,7 @@ namespace mint
         public:
             Matrix<N, M, T>         transpose() const noexcept;
             const T                 trace() const noexcept;
+            Matrix<M - 1, N - 1, T> minor(const uint32 row, const uint32 col) const noexcept;
 
         public:
             void                    factorizeLu(Matrix<N, N, T>& l, Matrix<N, N, T>& u) const noexcept;
@@ -102,6 +109,61 @@ namespace mint
 
         template <int32 M, int32 N>
         using MatrixD = Matrix<M, N, double>;
+
+
+#pragma region 2x2, 3x3, 4x4
+        template <typename T>
+        using Matrix2x2 = Matrix<2, 2, T>;
+
+        template <typename T>
+        using Matrix3x3 = Matrix<3, 3, T>;
+
+        template <typename T>
+        using Matrix4x4 = Matrix<4, 4, T>;
+
+
+        namespace MatrixUtils
+        {
+            template<typename T>
+            static constexpr T      getScalarZero() noexcept;
+
+            template<>
+            static constexpr float  getScalarZero() noexcept;
+            
+            template<>
+            static constexpr double getScalarZero() noexcept;
+
+            template<typename T>
+            static constexpr T      getScalarOne() noexcept;
+
+            template<>
+            static constexpr float  getScalarOne() noexcept;
+            
+            template<>
+            static constexpr double getScalarOne() noexcept;
+
+            template<typename T>
+            const T                 determinant(const Matrix2x2<T>& in) noexcept;
+
+            template<typename T>
+            const T                 determinant(const Matrix3x3<T>& in) noexcept;
+
+            template<typename T>
+            const T                 determinant(const Matrix4x4<T>& in) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            cofactor(const Matrix4x4<T>& in) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            adjugate(const Matrix4x4<T>& in) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>            inverse(const Matrix4x4<T>& in) noexcept;
+
+            template<typename T>
+            void                    decomposeSrt(const Matrix4x4<T>& in, Vector3<T>& outScale, Matrix4x4<T>& outRotationMatrix, Vector3<T>& outTranslation) noexcept;
+        }
+#pragma endregion
     }
 }
 

@@ -150,8 +150,8 @@ const bool testAlgorithm()
 const bool testLinearAlgebra()
 {
     using namespace mint;
-    using Math::VectorD;
-    using Math::MatrixD;
+    using namespace mint::Math;
+    
 
     VectorD<3> vec0(1.0, 1.0, 0.0);
     vec0 = 5.0 * vec0;
@@ -203,6 +203,18 @@ const bool testLinearAlgebra()
     MatrixD<2, 2> mat3;
     const bool isMat3Idempotent = mat3.isIdempotentMatrix();
 
+
+    Float4x4 testFloat4x4;
+    testFloat4x4.set(1, 1, 1, 0, 0, 3, 1, 2, 2, 3, 1, 0, 1, 0, 2, 1);
+    Float4x4 testFloat4x4Inverse{ testFloat4x4.inverse() };
+
+    Matrix4x4<float> testMatrix4x4;
+    testMatrix4x4.setRow(0, {  1, 1, 1, 0 });
+    testMatrix4x4.setRow(1, {  0, 3, 1, 2 });
+    testMatrix4x4.setRow(2, {  2, 3, 1, 0 });
+    testMatrix4x4.setRow(3, {  1, 0, 2, 1 });
+    Matrix4x4<float> testMatrix4x4Inverse = MatrixUtils::inverse(testMatrix4x4);
+    
     return true;
 }
 

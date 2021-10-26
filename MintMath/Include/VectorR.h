@@ -107,6 +107,16 @@ namespace mint
         
         template <int32 N>
         using VectorD = VectorR<N, double>;
+
+
+        template <typename T>
+        using Vector2 = VectorR<2, T>;
+        
+        template <typename T>
+        using Vector3 = VectorR<3, T>;
+        
+        template <typename T>
+        using Vector4 = VectorR<4, T>;
     }
 }
 
