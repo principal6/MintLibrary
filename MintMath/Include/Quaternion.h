@@ -68,7 +68,6 @@ namespace mint
     public:
         union
         {
-            Float4                  _data;
             struct
             {
                 float               _x; // b (vector part)

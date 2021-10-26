@@ -10,7 +10,7 @@ namespace mint
 
     const float Quaternion::norm(const Quaternion& q) noexcept
     {
-        return q._data.length();
+        return Float4(q._x, q._y, q._z, q._w).length();
     }
 
     Quaternion Quaternion::reciprocal(const Quaternion& q) noexcept
@@ -37,7 +37,10 @@ namespace mint
     }
 
     Quaternion::Quaternion(const float a, const float b, const float c, const float d)
-        : _data{ b, c, d, a }
+        : _a{ a }
+        , _b{ b }
+        , _c{ c }
+        , _d{ d }
     {
         __noop;
     }
@@ -57,13 +60,19 @@ namespace mint
 
     Quaternion& Quaternion::operator*=(const float s) noexcept
     {
-        _data *= s;
+        _a *= s;
+        _b *= s;
+        _c *= s;
+        _d *= s;
         return *this;
     }
 
     Quaternion& Quaternion::operator/=(const float s) noexcept
     {
-        _data /= s;
+        _a /= s;
+        _b /= s;
+        _c /= s;
+        _d /= s; 
         return *this;
     }
 
