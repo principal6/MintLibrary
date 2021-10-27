@@ -71,7 +71,7 @@ namespace mint
 
         public:
             void                            setZero() noexcept;
-            void                            setComponent(const uint32 index, const T value) noexcept;
+            VectorR<N, T>&                  setComponent(const uint32 index, const T value) noexcept;
             const T                         getComponent(const uint32 index) const noexcept;
             const T                         maxComponent() const noexcept;
             const T                         minComponent() const noexcept;
@@ -120,6 +120,16 @@ namespace mint
         
         template <typename T>
         using Vector4 = VectorR<4, T>;
+
+
+        namespace VectorUtils
+        {
+            template <int32 N, typename T>
+            void setNan(VectorR<N, T>& in) noexcept;
+
+            template <int32 N, typename T>
+            const bool isNan(const VectorR<N, T>& in) noexcept;
+        }
     }
 }
 

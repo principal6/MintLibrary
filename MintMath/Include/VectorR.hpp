@@ -223,12 +223,13 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void VectorR<N, T>::setComponent(const uint32 index, const T value) noexcept
+        MINT_INLINE VectorR<N, T>& VectorR<N, T>::setComponent(const uint32 index, const T value) noexcept
         {
             if (index < static_cast<uint32>(N))
             {
                 _c[index] = value;
             }
+            return *this;
         }
         
         template<int32 N, typename T>
@@ -360,6 +361,32 @@ namespace mint
         MINT_INLINE VectorR<N, T> operator*(const T scalar, const VectorR<N, T>& vector) noexcept
         {
             return (vector * scalar);
+        }
+
+
+        namespace VectorUtils
+        {
+            template<int32 N, typename T>
+            void setNan(VectorR<N, T>& in) noexcept
+            {
+                for (uint32 i = 0; i < N; ++i)
+                {
+                    in.setComponent(i, Math::nan());
+                }
+            }
+
+            template<int32 N, typename T>
+            const bool isNan(const VectorR<N, T>& in) noexcept
+            {
+                for (uint32 i = 0; i < N; ++i)
+                {
+                    if (true == Math::isNan(in.getComponent(i)))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
     }
 }
