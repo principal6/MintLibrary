@@ -13,7 +13,7 @@ namespace mint
     template<typename T>
     MINT_INLINE const T Quaternion<T>::norm(const Quaternion& q) noexcept
     {
-        return Math::Vector4<T>({ q._x, q._y, q._z, q._w }).norm();
+        return Vector4<T>({ q._x, q._y, q._z, q._w }).norm();
         //return Float4(q._x, q._y, q._z, q._w).length();
     }
 
@@ -36,9 +36,9 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Math::Vector3<T>& axis, const T angle) noexcept
+    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Vector3<T>& axis, const T angle) noexcept
     {
-        const Math::Vector3<T>& r = axis.normalize();
+        const Vector3<T>& r = axis.normalize();
         const T half_angle = static_cast<T>(angle * 0.5);
         const T cos_half = ::cos(half_angle);
         const T sin_half = ::sin(half_angle);
@@ -112,7 +112,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Math::Vector4<T>& v) noexcept
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Vector4<T>& v) noexcept
     {
         const T vx = v.getComponent(0);
         const T vy = v.getComponent(1);
@@ -175,12 +175,12 @@ namespace mint
     }
 
     template<typename T>
-    inline Math::Vector4<T> Quaternion<T>::rotateVector(const Math::Vector4<T>& inputVector) const noexcept
+    inline Vector4<T> Quaternion<T>::rotateVector(const Vector4<T>& inputVector) const noexcept
     {
         Quaternion result = *this;
         result *= inputVector;
         result *= conjugate();
-        return Math::Vector4<T>(result._x, result._y, result._z, inputVector.getComponent(3));
+        return Vector4<T>(result._x, result._y, result._z, inputVector.getComponent(3));
     }
 
     template<typename T>
@@ -197,9 +197,9 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void Quaternion<T>::setAxisAngle(const Math::Vector3<T>& axis, const T angle) noexcept
+    MINT_INLINE void Quaternion<T>::setAxisAngle(const Vector3<T>& axis, const T angle) noexcept
     {
-        const Math::Vector3<T>& normalizedAxis = axis.normalize();
+        const Vector3<T>& normalizedAxis = axis.normalize();
         const T halfAngle = static_cast<T>(angle * 0.5);
         const T cosHalfAngle = ::cos(halfAngle);
         const T sinHalfAngle = static_cast<T>(1.0 - cosHalfAngle * cosHalfAngle);
@@ -231,7 +231,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void Quaternion<T>::getAxisAngle(Math::Vector3<T>& axis, T& angle) const noexcept
+    MINT_INLINE void Quaternion<T>::getAxisAngle(Vector3<T>& axis, T& angle) const noexcept
     {
         angle = static_cast<T>(::acos(_w) * 2.0);
 

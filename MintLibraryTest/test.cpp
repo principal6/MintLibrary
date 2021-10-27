@@ -150,13 +150,11 @@ const bool testAlgorithm()
 const bool testLinearAlgebra()
 {
     using namespace mint;
-    using namespace mint::Math;
     
-
     VectorD<3> vec0(1.0, 1.0, 0.0);
     vec0 = 5.0 * vec0;
     VectorD<3> vec1(0.0, 3.0, 0.0);
-    VectorD<3> vec2 = Math::cross(vec0, vec1).setNormalized();
+    VectorD<3> vec2 = cross(vec0, vec1).setNormalized();
     const bool trueValue = vec2.isUnitVector();
     const bool falseValue = Math::equals(1.00002f, 1.0f);
     const double distance = vec1.normalize().distance(vec2);

@@ -25,7 +25,7 @@ namespace mint
 
     public:
         static Quaternion           makeRotationQuaternion(const Float3& axis, const T angle) noexcept;
-        static Quaternion           makeRotationQuaternion(const Math::Vector3<T>& axis, const T angle) noexcept;
+        static Quaternion           makeRotationQuaternion(const Vector3<T>& axis, const T angle) noexcept;
 
         // q^(-1)
         static Quaternion           reciprocal(const Quaternion& q) noexcept;
@@ -55,7 +55,7 @@ namespace mint
         // Hamilton product for vector rotation
         Quaternion&                 operator*=(const Float4& v) noexcept;
         // Hamilton product for vector rotation
-        Quaternion&                 operator*=(const Math::Vector4<T>& v) noexcept;
+        Quaternion&                 operator*=(const Vector4<T>& v) noexcept;
 
     public:
         // Hamilton product
@@ -67,13 +67,13 @@ namespace mint
         Quaternion                  conjugate() const noexcept;
         Quaternion                  reciprocal() const noexcept;
         Float4                      rotateVector(const Float4& inputVector) const noexcept;
-        Math::Vector4<T>            rotateVector(const Math::Vector4<T>& inputVector) const noexcept;
+        Vector4<T>                  rotateVector(const Vector4<T>& inputVector) const noexcept;
     
     public:
         void                        setAxisAngle(const Float3& axis, const T angle) noexcept;
-        void                        setAxisAngle(const Math::Vector3<T>& axis, const T angle) noexcept;
+        void                        setAxisAngle(const Vector3<T>& axis, const T angle) noexcept;
         void                        getAxisAngle(Float3& axis, T& angle) const noexcept;
-        void                        getAxisAngle(Math::Vector3<T>& axis, T& angle) const noexcept;
+        void                        getAxisAngle(Vector3<T>& axis, T& angle) const noexcept;
 
     public:
         union
