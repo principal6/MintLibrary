@@ -1,3 +1,4 @@
+#include "Quaternion.h"
 #pragma once
 
 
@@ -32,6 +33,16 @@ namespace mint
         const T cos_half = ::cos(half_angle);
         const T sin_half = ::sin(half_angle);
         return Quaternion(cos_half, sin_half * r._x, sin_half * r._y, sin_half * r._z);
+    }
+
+    template<typename T>
+    MINT_INLINE Quaternion<T> Quaternion<T>::makeRotationQuaternion(const Math::Vector3<T>& axis, const T angle) noexcept
+    {
+        const Math::Vector3<T>& r = axis.normalize();
+        const T half_angle = static_cast<T>(angle * 0.5);
+        const T cos_half = ::cos(half_angle);
+        const T sin_half = ::sin(half_angle);
+        return Quaternion(cos_half, sin_half * r.getComponent(0), sin_half * r.getComponent(1), sin_half * r.getComponent(2));
     }
 
 
@@ -101,6 +112,24 @@ namespace mint
     }
 
     template<typename T>
+    MINT_INLINE Quaternion<T>& Quaternion<T>::operator*=(const Math::Vector4<T>& v) noexcept
+    {
+        const T vx = v.getComponent(0);
+        const T vy = v.getComponent(1);
+        const T vz = v.getComponent(2);
+        const T vw = v.getComponent(3);
+        const T a = _a;
+        const T b = _b;
+        const T c = _c;
+        const T d = _d;
+        _a = -b * vx - c * vy - d * vz;
+        _b = +a * vx + c * vz - d * vy;
+        _c = +a * vy - b * vz + d * vx;
+        _d = +a * vz + b * vy - c * vx;
+        return *this;
+    }
+
+    template<typename T>
     MINT_INLINE Quaternion<T> Quaternion<T>::operator*(const Quaternion& q) const noexcept
     {
         return Quaternion
@@ -137,12 +166,21 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE Float4 Quaternion<T>::rotateVector(const Float4& inputVector)
+    MINT_INLINE Float4 Quaternion<T>::rotateVector(const Float4& inputVector) const noexcept
     {
         Quaternion result = *this;
         result *= inputVector;
         result *= conjugate();
         return Float4(result._x, result._y, result._z, inputVector._w);
+    }
+
+    template<typename T>
+    inline Math::Vector4<T> Quaternion<T>::rotateVector(const Math::Vector4<T>& inputVector) const noexcept
+    {
+        Quaternion result = *this;
+        result *= inputVector;
+        result *= conjugate();
+        return Math::Vector4<T>(result._x, result._y, result._z, inputVector.getComponent(3));
     }
 
     template<typename T>
@@ -155,6 +193,19 @@ namespace mint
         _x = sinHalfAngle * normalizedAxis._x;
         _y = sinHalfAngle * normalizedAxis._y;
         _z = sinHalfAngle * normalizedAxis._z;
+        _w = cosHalfAngle;
+    }
+
+    template<typename T>
+    MINT_INLINE void Quaternion<T>::setAxisAngle(const Math::Vector3<T>& axis, const T angle) noexcept
+    {
+        const Math::Vector3<T>& normalizedAxis = axis.normalize();
+        const T halfAngle = static_cast<T>(angle * 0.5);
+        const T cosHalfAngle = ::cos(halfAngle);
+        const T sinHalfAngle = static_cast<T>(1.0 - cosHalfAngle * cosHalfAngle);
+        _x = sinHalfAngle * normalizedAxis.getComponent(0);
+        _y = sinHalfAngle * normalizedAxis.getComponent(1);
+        _z = sinHalfAngle * normalizedAxis.getComponent(2);
         _w = cosHalfAngle;
     }
 
@@ -175,6 +226,27 @@ namespace mint
             axis._x = _x / sinHalfAngle;
             axis._y = _y / sinHalfAngle;
             axis._z = _z / sinHalfAngle;
+            axis.normalize();
+        }
+    }
+
+    template<typename T>
+    MINT_INLINE void Quaternion<T>::getAxisAngle(Math::Vector3<T>& axis, T& angle) const noexcept
+    {
+        angle = static_cast<T>(::acos(_w) * 2.0);
+
+        const T sinHalfAngle = static_cast<T>(1.0 - _w * _w);
+        if (sinHalfAngle == static_cast<T>(0.0))
+        {
+            axis.setComponnet(0, static_cast<T>(1));
+            axis.setComponnet(1, static_cast<T>(0));
+            axis.setComponnet(2, static_cast<T>(0));
+        }
+        else
+        {
+            axis.setComponnet(0, static_cast<T>(_x / sinHalfAngle));
+            axis.setComponnet(1, static_cast<T>(_y / sinHalfAngle));
+            axis.setComponnet(2, static_cast<T>(_z / sinHalfAngle));
             axis.normalize();
         }
     }
