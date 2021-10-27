@@ -683,22 +683,22 @@ namespace mint
             const T _33 = in.getElement(2, 2);
                 
             // s
-            outScale._c[0] = ::sqrt((_11 * _11) + (_21 * _21) + (_31 * _31));
-            outScale._c[1] = ::sqrt((_12 * _12) + (_22 * _22) + (_32 * _32));
-            outScale._c[2] = ::sqrt((_13 * _13) + (_23 * _23) + (_33 * _33));
+            outScale.x() = ::sqrt((_11 * _11) + (_21 * _21) + (_31 * _31));
+            outScale.y() = ::sqrt((_12 * _12) + (_22 * _22) + (_32 * _32));
+            outScale.z() = ::sqrt((_13 * _13) + (_23 * _23) + (_33 * _33));
 
             // r
-            outRotationMatrix.setElement(0, 0, _11 / outScale._c[0]);
-            outRotationMatrix.setElement(1, 0, _21 / outScale._c[0]);
-            outRotationMatrix.setElement(2, 0, _31 / outScale._c[0]);
+            outRotationMatrix.setElement(0, 0, _11 / outScale.x());
+            outRotationMatrix.setElement(1, 0, _21 / outScale.x());
+            outRotationMatrix.setElement(2, 0, _31 / outScale.x());
 
-            outRotationMatrix.setElement(0, 1, _12 / outScale._c[1]);
-            outRotationMatrix.setElement(1, 1, _22 / outScale._c[1]);
-            outRotationMatrix.setElement(2, 1, _32 / outScale._c[1]);
+            outRotationMatrix.setElement(0, 1, _12 / outScale.y());
+            outRotationMatrix.setElement(1, 1, _22 / outScale.y());
+            outRotationMatrix.setElement(2, 1, _32 / outScale.y());
 
-            outRotationMatrix.setElement(0, 2, _13 / outScale._c[2]);
-            outRotationMatrix.setElement(1, 2, _23 / outScale._c[2]);
-            outRotationMatrix.setElement(2, 2, _33 / outScale._c[2]);
+            outRotationMatrix.setElement(0, 2, _13 / outScale.z());
+            outRotationMatrix.setElement(1, 2, _23 / outScale.z());
+            outRotationMatrix.setElement(2, 2, _33 / outScale.z());
 
             const T kZero = getScalarZero<T>();
             const T kOne = getScalarOne<T>();
@@ -715,9 +715,9 @@ namespace mint
             const T _34 = in.getElement(2, 3);
 
             // t
-            outTranslation._c[0] = _14;
-            outTranslation._c[1] = _24;
-            outTranslation._c[2] = _34;
+            outTranslation.x() = _14;
+            outTranslation.y() = _24;
+            outTranslation.z() = _34;
         }
 
         template<typename T>
@@ -726,10 +726,10 @@ namespace mint
             return Matrix4x4<T>
             (
                 {
-                    axisX._c[0], axisY._c[0], axisZ._c[0], 0,
-                    axisX._c[1], axisY._c[1], axisZ._c[1], 0,
-                    axisX._c[2], axisY._c[2], axisZ._c[2], 0,
-                                0,           0,           0, 1
+                    axisX.x(), axisY.x(), axisZ.x(), 0,
+                    axisX.y(), axisY.y(), axisZ.y(), 0,
+                    axisX.z(), axisY.z(), axisZ.z(), 0,
+                            0,         0,         0, 1
                 }
             );
         }
@@ -740,10 +740,10 @@ namespace mint
             return Matrix4x4<T>
             (
                 {
-                    axisX._c[0], axisX._c[1], axisX._c[2], 0,
-                    axisY._c[0], axisY._c[1], axisY._c[2], 0,
-                    axisZ._c[0], axisZ._c[1], axisZ._c[2], 0,
-                                0,           0,           0, 1
+                    axisX.x(), axisX.y(), axisX.z(), 0,
+                    axisY.x(), axisY.y(), axisY.z(), 0,
+                    axisZ.x(), axisZ.y(), axisZ.z(), 0,
+                            0,         0,         0, 1
                 }
             );
         }
@@ -751,9 +751,9 @@ namespace mint
         template<typename T>
         Matrix4x4<T> translationMatrix(const Vector3<T>& translation) noexcept
         {
-            const T x = translation._c[0];
-            const T y = translation._c[1];
-            const T z = translation._c[2];
+            const T x = translation.x();
+            const T y = translation.y();
+            const T z = translation.z();
             return Matrix4x4<T>
             (
                 {
@@ -802,9 +802,9 @@ namespace mint
         template<typename T>
         Matrix4x4<T> scalarMatrix(const Vector3<T>& scale) noexcept
         {
-            const T x = scale._c[0];
-            const T y = scale._c[1];
-            const T z = scale._c[2];
+            const T x = scale.x();
+            const T y = scale.y();
+            const T z = scale.z();
             return Matrix4x4<T>
             (
                 {
@@ -891,9 +891,9 @@ namespace mint
             const T c = ::cos(angle);
             const T s = ::sin(angle);
 
-            const T rx = r._c[0];
-            const T ry = r._c[1];
-            const T rz = r._c[2];
+            const T rx = r.x();
+            const T ry = r.y();
+            const T rz = r.z();
             Matrix4x4<T> result
             (
                 {
@@ -928,8 +928,8 @@ namespace mint
             // SRT = T * R * S
             // which is the same as below..
             Matrix4x4<T> matrix = rotationMatrix(rotation);
-            matrix.preTranslate(translation._x, translation._y, translation._z);
-            matrix.postScale(scale._x, scale._y, scale._z);
+            matrix.preTranslate(translation.x(), translation.y(), translation.z());
+            matrix.postScale(scale.x(), scale.y(), scale.z());
             return matrix;
         }
             
