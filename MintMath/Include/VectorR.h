@@ -71,8 +71,12 @@ namespace mint
 
         public:
             void                            setZero() noexcept;
+        
+        public:
             VectorR<N, T>&                  setComponent(const uint32 index, const T value) noexcept;
             const T                         getComponent(const uint32 index) const noexcept;
+        
+        public:
             const T                         maxComponent() const noexcept;
             const T                         minComponent() const noexcept;
 
