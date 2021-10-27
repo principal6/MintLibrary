@@ -6,6 +6,7 @@
 #include <MintCommon/Include/Logger.h>
 
 #include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Quaternion.h>
 
 #include <initializer_list>
 
@@ -220,10 +221,22 @@ namespace mint
         template<int32 M, int32 N, typename T>
         MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
         {
-            if (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N))
-            {
-                _m[rowIndex][columnIndex] = value;
-            }
+            MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+            _m[rowIndex][columnIndex] = value;
+        }
+
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::addElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
+        {
+            MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+            _m[rowIndex][columnIndex] += value;
+        }
+
+        template<int32 M, int32 N, typename T>
+        MINT_INLINE void Matrix<M, N, T>::mulElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
+        {
+            MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+            _m[rowIndex][columnIndex] *= value;
         }
 
         template<int32 M, int32 N, typename T>
@@ -755,6 +768,40 @@ namespace mint
             }
 
             template<typename T>
+            Matrix4x4<T>& setTranslation(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+            {
+                in.setElement(0, 3, translation.getComponent(0));
+                in.setElement(1, 3, translation.getComponent(1));
+                in.setElement(2, 3, translation.getComponent(2));
+                return in;
+            }
+
+            template<typename T>
+            Matrix4x4<T>& preTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+            {
+                in.addElement(0, 3, translation.getComponent(0));
+                in.addElement(1, 3, translation.getComponent(1));
+                in.addElement(2, 3, translation.getComponent(2));
+                return in;
+            }
+
+            template<typename T>
+            Matrix4x4<T>& postTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+            {
+                in.addElement(0, 3, in.getRow(0).shrink().dot(translation));
+                in.addElement(1, 3, in.getRow(1).shrink().dot(translation));
+                in.addElement(2, 3, in.getRow(2).shrink().dot(translation));
+                in.addElement(3, 3, in.getRow(3).shrink().dot(translation));
+                return in;
+            }
+
+            template<typename T>
+            Vector3<T>& getTranslation(const Matrix4x4<T>& in) noexcept
+            {
+                return in.getColumn(0).shrink();
+            }
+
+            template<typename T>
             Matrix4x4<T> scalarMatrix(const Vector3<T>& scale) noexcept
             {
                 const T x = scale._c[0];
@@ -769,6 +816,24 @@ namespace mint
                         0, 0, 0, 1
                     }
                 );
+            }
+
+            template<typename T>
+            Matrix4x4<T>& preScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept
+            {
+                in.setRow(0, in.getRow(0) * scale.getComponent(0));
+                in.setRow(1, in.getRow(1) * scale.getComponent(1));
+                in.setRow(2, in.getRow(2) * scale.getComponent(2));
+                return in;
+            }
+
+            template<typename T>
+            Matrix4x4<T>& postScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept
+            {
+                in.setColumn(0, in.getColumn(0) * scale.getComponent(0));
+                in.setColumn(1, in.getColumn(1) * scale.getComponent(1));
+                in.setColumn(2, in.getColumn(2) * scale.getComponent(2));
+                return in;
             }
 
             template<typename T>
@@ -847,6 +912,27 @@ namespace mint
             Matrix4x4<T> rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
             {
                 return axesToColumns(axisX, axisY, axisZ);
+            }
+
+            template<typename T>
+            Matrix4x4<T> rotationMatrix(const Quaternion<T>& rotation) noexcept
+            {
+                Vector3<T> axis;
+                T angle;
+                rotation.getAxisAngle(axis, angle);
+                return rotationMatrixAxisAngle(axis, angle);
+            }
+
+            template<typename T>
+            Matrix4x4<T> srtMatrix(const Vector3<T>& scale, const Quaternion<T>& rotation, const Vector3<T>& translation) noexcept
+            {
+                // SRT matrix for column vector is like below:
+                // SRT = T * R * S
+                // which is the same as below..
+                Matrix4x4<T> matrix = rotationMatrix(rotation);
+                matrix.preTranslate(translation._x, translation._y, translation._z);
+                matrix.postScale(scale._x, scale._y, scale._z);
+                return matrix;
             }
             
             template<typename T>

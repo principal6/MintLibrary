@@ -19,6 +19,10 @@ namespace std
 
 namespace mint
 {
+    template<typename T>
+    class Quaternion;
+
+
     namespace Math
     {
         template<typename T>
@@ -80,7 +84,11 @@ namespace mint
 
         public:
             void                    setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
+            void                    addElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
+            void                    mulElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
             const T                 getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
+        
+        public:
             void                    setRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept;
             VectorR<N, T>           getRow(const uint32 rowIndex) const noexcept;
             void                    setColumn(const uint32 columnIndex, const VectorR<M, T>& column) noexcept;
@@ -184,7 +192,25 @@ namespace mint
             Matrix4x4<T>            translationMatrix(const Vector3<T>& translation) noexcept;
 
             template<typename T>
+            Matrix4x4<T>&           setTranslation(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>&           preTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>&           postTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+            
+            template<typename T>
+            Vector3<T>&             getTranslation(const Matrix4x4<T>& in) noexcept;
+
+            template<typename T>
             Matrix4x4<T>            scalarMatrix(const Vector3<T>& scale) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>&           preScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept;
+
+            template<typename T>
+            Matrix4x4<T>&           postScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept;
 
             template<typename T>
             Matrix4x4<T>            rotationMatrixX(const T angle) noexcept;
@@ -204,6 +230,12 @@ namespace mint
             
             template<typename T>
             Matrix4x4<T>            rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>            rotationMatrix(const Quaternion<T>& rotation) noexcept;
+            
+            template<typename T>
+            Matrix4x4<T>            srtMatrix(const Vector3<T>& scale, const Quaternion<T>& rotation, const Vector3<T>& translation) noexcept;
 
             template<typename T>
             Matrix4x4<T>            projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept;

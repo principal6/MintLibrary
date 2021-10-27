@@ -329,6 +329,19 @@ namespace mint
             return projectUOntoV(*this, rhs);
         }
 
+        template<int32 N, typename T>
+        MINT_INLINE VectorR<N - 1, T> VectorR<N, T>::shrink() const noexcept
+        {
+            MINT_ASSERT("±èÀå¿ø", 1 < N, "N must be greater than 1!!!");
+            
+            VectorR<N - 1, T> result;
+            for (uint32 i = 0; i < N - 1; ++i)
+            {
+                result.setComponent(0, _c[i]);
+            }
+            return result;
+        }
+
 
         template<typename T>
         VectorR<3, T> cross(const VectorR<3, T>& lhs, const VectorR<3, T>& rhs) noexcept

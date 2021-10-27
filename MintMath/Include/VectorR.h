@@ -90,6 +90,9 @@ namespace mint
             const bool                      isOrthogonalTo(const VectorR& rhs) const noexcept;
             VectorR<N, T>                   projectOnto(const VectorR& rhs) const noexcept;
 
+        public:
+            VectorR<N - 1, T>               shrink() const noexcept;
+
         private:
             T                               _c[N];
         };
