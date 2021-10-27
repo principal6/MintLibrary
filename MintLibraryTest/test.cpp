@@ -216,6 +216,12 @@ const bool testLinearAlgebra()
     Matrix4x4<float> testMatrix4x4Inverse = MatrixUtils::inverse(testMatrix4x4);
     
     const Matrix4x4<float> testIdentity(MatrixUtils::identity<4, float>());
+
+    Vector2<float> setTest;
+    setTest.x() = 1.0f;
+    setTest.y() = 1.0f;
+    //setTest.z() = 1.0f; // compile-error
+
     return true;
 }
 

@@ -240,6 +240,60 @@ namespace mint
         }
 
         template<int32 N, typename T>
+        MINT_INLINE T& VectorR<N, T>::x() noexcept
+        {
+            return _c[0];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE T& VectorR<N, T>::y() noexcept
+        {
+            static_assert(2 <= N, "Vector dimension is not enough!");
+            return _c[1];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE T& VectorR<N, T>::z() noexcept
+        {
+            static_assert(3 <= N, "Vector dimension is not enough!");
+            return _c[2];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE T& VectorR<N, T>::w() noexcept
+        {
+            static_assert(4 <= N, "Vector dimension is not enough!");
+            return _c[3];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T& VectorR<N, T>::x() const noexcept
+        {
+            return _c[0];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T& VectorR<N, T>::y() const noexcept
+        {
+            static_assert(2 <= N, "Vector dimension is not enough!");
+            return _c[1];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T& VectorR<N, T>::z() const noexcept
+        {
+            static_assert(3 <= N, "Vector dimension is not enough!");
+            return _c[2];
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T& VectorR<N, T>::w() const noexcept
+        {
+            static_assert(4 <= N, "Vector dimension is not enough!");
+            return _c[3];
+        }
+
+        template<int32 N, typename T>
         MINT_INLINE const T VectorR<N, T>::maxComponent() const noexcept
         {
             T result = 1.0e-323;
