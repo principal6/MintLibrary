@@ -24,22 +24,22 @@ namespace mint
 
 
     template<typename T>
-    const T                     getScalarZero() noexcept;
+    constexpr T                 getScalarZero() noexcept;
 
     template<>
-    const float                 getScalarZero() noexcept;
+    constexpr float             getScalarZero() noexcept;
 
     template<>
-    const double                getScalarZero() noexcept;
+    constexpr double            getScalarZero() noexcept;
 
     template<typename T>
-    const T                     getScalarOne() noexcept;
+    constexpr T                 getScalarOne() noexcept;
 
     template<>
-    const float                 getScalarOne() noexcept;
+    constexpr float             getScalarOne() noexcept;
 
     template<>
-    const double                getScalarOne() noexcept;
+    constexpr double            getScalarOne() noexcept;
 
 
     template <int32 M, int32 N, typename T>

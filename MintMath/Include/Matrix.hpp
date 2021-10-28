@@ -14,39 +14,39 @@
 namespace mint
 {
     template<typename T>
-    const T getScalarZero() noexcept
+    constexpr T getScalarZero() noexcept
     {
         MINT_NEVER;
         return T();
     }
 
     template<>
-    const float getScalarZero() noexcept
+    constexpr float getScalarZero() noexcept
     {
         return 0.0f;
     }
 
     template<>
-    const double getScalarZero() noexcept
+    constexpr double getScalarZero() noexcept
     {
         return 0.0;
     }
 
     template<typename T>
-    const T getScalarOne() noexcept
+    constexpr T getScalarOne() noexcept
     {
         MINT_NEVER;
         return T();
     }
 
     template<>
-    const float getScalarOne() noexcept
+    constexpr float getScalarOne() noexcept
     {
         return 1.0f;
     }
 
     template<>
-    const double getScalarOne() noexcept
+    constexpr double getScalarOne() noexcept
     {
         return 1.0;
     }
