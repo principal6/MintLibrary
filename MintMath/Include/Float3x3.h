@@ -45,8 +45,8 @@ namespace mint
 
     public:
         Float3x3            operator*(const Float3x3& rhs) const noexcept;
-        Float3x3            operator*(const float s) const noexcept;
-        Float3x3            operator/(const float s) const noexcept;
+        Float3x3            operator*(const float scalar) const noexcept;
+        Float3x3            operator/(const float scalar) const noexcept;
         
     public:
         void                setZero() noexcept;

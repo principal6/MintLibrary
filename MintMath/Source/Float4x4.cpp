@@ -235,42 +235,30 @@ namespace mint
 
     Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
     {
-        return Float4x4(
-            _m[0][0] + rhs._m[0][0], _m[0][1] + rhs._m[0][1], _m[0][2] + rhs._m[0][2], _m[0][3] + rhs._m[0][3],
-            _m[1][0] + rhs._m[1][0], _m[1][1] + rhs._m[1][1], _m[1][2] + rhs._m[1][2], _m[1][3] + rhs._m[1][3],
-            _m[2][0] + rhs._m[2][0], _m[2][1] + rhs._m[2][1], _m[2][2] + rhs._m[2][2], _m[2][3] + rhs._m[2][3],
-            _m[3][0] + rhs._m[3][0], _m[3][1] + rhs._m[3][1], _m[3][2] + rhs._m[3][2], _m[3][3] + rhs._m[3][3]
-        );
+        Float4x4 result;
+        Math::setAddMat(result._m, rhs._m);
+        return result;
     }
 
     Float4x4 Float4x4::operator-(const Float4x4& rhs) const noexcept
     {
-        return Float4x4(
-            _m[0][0] - rhs._m[0][0], _m[0][1] - rhs._m[0][1], _m[0][2] - rhs._m[0][2], _m[0][3] - rhs._m[0][3],
-            _m[1][0] - rhs._m[1][0], _m[1][1] - rhs._m[1][1], _m[1][2] - rhs._m[1][2], _m[1][3] - rhs._m[1][3],
-            _m[2][0] - rhs._m[2][0], _m[2][1] - rhs._m[2][1], _m[2][2] - rhs._m[2][2], _m[2][3] - rhs._m[2][3],
-            _m[3][0] - rhs._m[3][0], _m[3][1] - rhs._m[3][1], _m[3][2] - rhs._m[3][2], _m[3][3] - rhs._m[3][3]
-        );
+        Float4x4 result;
+        Math::setSubMat(result._m, rhs._m);
+        return result;
     }
 
-    Float4x4 Float4x4::operator*(const float s) const noexcept
+    Float4x4 Float4x4::operator*(const float scalar) const noexcept
     {
-        return Float4x4(
-            _m[0][0] * s, _m[0][1] * s, _m[0][2] * s, _m[0][3] * s,
-            _m[1][0] * s, _m[1][1] * s, _m[1][2] * s, _m[1][3] * s,
-            _m[2][0] * s, _m[2][1] * s, _m[2][2] * s, _m[2][3] * s,
-            _m[3][0] * s, _m[3][1] * s, _m[3][2] * s, _m[3][3] * s
-        );
+        Float4x4 result;
+        Math::setMulMat(result._m, scalar);
+        return result;
     }
 
-    Float4x4 Float4x4::operator/(const float s) const noexcept
+    Float4x4 Float4x4::operator/(const float scalar) const noexcept
     {
-        return Float4x4(
-            _m[0][0] / s, _m[0][1] / s, _m[0][2] / s, _m[0][3] / s,
-            _m[1][0] / s, _m[1][1] / s, _m[1][2] / s, _m[1][3] / s,
-            _m[2][0] / s, _m[2][1] / s, _m[2][2] / s, _m[2][3] / s,
-            _m[3][0] / s, _m[3][1] / s, _m[3][2] / s, _m[3][3] / s
-        );
+        Float4x4 result;
+        Math::setDivMat(result._m, scalar);
+        return result;
     }
 
     Float4x4 Float4x4::operator*(const Float4x4& rhs) const noexcept
@@ -278,14 +266,14 @@ namespace mint
         return mul(*this, rhs);
     }
 
-    Float4 Float4x4::operator*(const Float4& v) const noexcept
+    Float4 Float4x4::operator*(const Float4& vec) const noexcept
     {
-        return mul(*this, v);
+        return mul(*this, vec);
     }
 
-    Float3 Float4x4::operator*(const Float3& v) const noexcept
+    Float3 Float4x4::operator*(const Float3& vec) const noexcept
     {
-        return mul(*this, v);
+        return mul(*this, vec);
     }
 
     void Float4x4::set(

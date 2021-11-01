@@ -73,14 +73,14 @@ namespace mint
         Float4x4                operator+(const Float4x4& rhs) const noexcept;
         Float4x4                operator-(const Float4x4& rhs) const noexcept;
 
-        Float4x4                operator*(const float s) const noexcept;
-        Float4x4                operator/(const float s) const noexcept;
+        Float4x4                operator*(const float scalar) const noexcept;
+        Float4x4                operator/(const float scalar) const noexcept;
         // matrix(lhs) * matrix(rhs)
         Float4x4                operator*(const Float4x4& rhs) const noexcept;
         // matrix * (column) vector
-        Float4                  operator*(const Float4& v) const noexcept;
+        Float4                  operator*(const Float4& vec) const noexcept;
         // matrix * (column) vector
-        Float3                  operator*(const Float3& v) const noexcept;
+        Float3                  operator*(const Float3& vec) const noexcept;
 
     public:
         void                    set(

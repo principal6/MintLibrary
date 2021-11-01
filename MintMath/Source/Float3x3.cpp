@@ -77,22 +77,18 @@ namespace mint
         return result;
     }
 
-    Float3x3 Float3x3::operator*(const float s) const noexcept
+    Float3x3 Float3x3::operator*(const float scalar) const noexcept
     {
-        return Float3x3(
-            _m[0][0] * s, _m[0][1] * s, _m[0][2] * s,
-            _m[1][0] * s, _m[1][1] * s, _m[1][2] * s,
-            _m[2][0] * s, _m[2][1] * s, _m[2][2] * s
-        );
+        Float3x3 result = *this;
+        Math::setMulMat(result._m, scalar);
+        return result;
     }
 
-    Float3x3 Float3x3::operator/(const float s) const noexcept
+    Float3x3 Float3x3::operator/(const float scalar) const noexcept
     {
-        return Float3x3(
-            _m[0][0] / s, _m[0][1] / s, _m[0][2] / s,
-            _m[1][0] / s, _m[1][1] / s, _m[1][2] / s,
-            _m[2][0] / s, _m[2][1] / s, _m[2][2] / s
-        );
+        Float3x3 result = *this;
+        Math::setDivMat(result._m, scalar);
+        return result;
     }
 
     void Float3x3::setZero() noexcept

@@ -36,43 +36,35 @@ namespace mint
         __noop;
     }
 
-    Float2x2 Float2x2::operator*(const float s) const noexcept
+    Float2x2 Float2x2::operator*(const float scalar) const noexcept
     {
-        return Float2x2(
-            _m[0][0] * s, _m[0][1] * s,
-            _m[1][0] * s, _m[1][1] * s
-        );
+        Float2x2 result = *this;
+        Math::setMulMat(result._m, scalar);
+        return result;
     }
 
-    Float2x2 Float2x2::operator/(const float s) const noexcept
+    Float2x2 Float2x2::operator/(const float scalar) const noexcept
     {
-        return Float2x2(
-            _m[0][0] / s, _m[0][1] / s,
-            _m[1][0] / s, _m[1][1] / s
-        );
+        Float2x2 result = *this;
+        Math::setDivMat(result._m, scalar);
+        return result;
     }
 
     Float2x2 Float2x2::operator*(const Float2x2& rhs) const noexcept
     {
-        return Float2x2(
-            // row 0
-            _m[0][0] * rhs._m[0][0] + _m[0][1] * rhs._m[1][0],
-            _m[0][0] * rhs._m[0][1] + _m[0][1] * rhs._m[1][1],
-
-            // row 1
-            _m[1][0] * rhs._m[0][0] + _m[1][1] * rhs._m[1][0],
-            _m[1][0] * rhs._m[0][1] + _m[1][1] * rhs._m[1][1]
-        );
+        Float2x2 result;
+        Math::mul(_m, rhs._m, result._m);
+        return result;
     }
 
     void Float2x2::set(const uint32 row, const uint32 col, const float newValue) noexcept
     {
-        _m[mint::min(row - 1, mint::Float2x2::kMaxIndex)][mint::min(col - 1, mint::Float2x2::kMaxIndex)] = newValue;
+        _m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)] = newValue;
     }
 
     const float Float2x2::get(const uint32 row, const uint32 col) const noexcept
     {
-        return _m[mint::min(row - 1, mint::Float2x2::kMaxIndex)][mint::min(col - 1, mint::Float2x2::kMaxIndex)];
+        return _m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)];
     }
 
     void Float2x2::setZero() noexcept
