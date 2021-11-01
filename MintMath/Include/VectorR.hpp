@@ -12,37 +12,113 @@
 
 namespace mint
 {
-    template<int32 N, typename T>
-    inline VectorR<N, T>::VectorR()
-        : _c{}
+    namespace Math
     {
-        __noop;
-    }
-
-    template<int32 N, typename T>
-    template <class ...Args>
-    inline VectorR<N, T>::VectorR(Args... args)
-        : _c{ args... }
-    {
-        __noop;
-    }
-
-    template<int32 N, typename T>
-    inline VectorR<N, T>::VectorR(const std::initializer_list<T>& initializerList)
-    {
-        const int32 count = min(static_cast<int32>(initializerList.size()), N);
-        const T* const first = initializerList.begin();
-        for (int32 index = 0; index < count; ++index)
+        template<int32 N, typename T>
+        MINT_INLINE const bool equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon) noexcept
         {
-            _c[index] = *(first + index);
+            for (int32 i = 0; i < N; ++i)
+            {
+                const T absDiff = ::abs(lhs[i] - rhs[i]);
+                if (epsilon < absDiff)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
+        {
+            T result{};
+            for (int32 i = 0; i < N; ++i)
+            {
+                result += lhs[i] * rhs[i];
+            }
+            return result;
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T normSq(const T(&vec)[N]) noexcept
+        {
+            return dot(vec, vec);
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const T norm(const T(&vec)[N]) noexcept
+        {
+            return ::sqrt(normSq(vec));
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setZero(T(&vec)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                vec[i] = 0;
+            }
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setNan(T(&vec)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                vec[i] = Math::nan();
+            }
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE const bool isNan(const T(&vec)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                if (true == Math::isNan(vec[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setAdd(T(&lhs)[N], const T(&rhs)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                lhs[i] += rhs[i];
+            }
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setSub(T(&lhs)[N], const T(&rhs)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                lhs[i] -= rhs[i];
+            }
+        }
+        
+        template<int32 N, typename T>
+        MINT_INLINE void setMul(T(&vec)[N], const float scalar) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                vec[i] *= scalar;
+            }
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setDiv(T(&vec)[N], const float scalar) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                vec[i] /= scalar;
+            }
         }
     }
-
-    template<int32 N, typename T>
-    inline VectorR<N, T>::~VectorR()
-    {
-        __noop;
-    }
+    
 
     template<int32 N, typename T>
     inline VectorR<N, T> VectorR<N, T>::standardUnitVector(const int32 math_i) noexcept
@@ -55,12 +131,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE const T VectorR<N, T>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
     {
-        T result = 0.0;
-        for (int32 index = 0; index < N; ++index)
-        {
-            result += (lhs._c[index] * rhs._c[index]);
-        }
-        return result;
+        return Math::dot(lhs._c, rhs._c);
     }
 
     template<int32 N, typename T>
@@ -85,6 +156,32 @@ namespace mint
     MINT_INLINE VectorR<N, T> VectorR<N, T>::projectUOntoV(const VectorR& u, const VectorR& v) noexcept
     {
         return (u.dot(v) / u.dot(u)) * u;
+    }
+
+    template<int32 N, typename T>
+    inline constexpr VectorR<N, T>::VectorR()
+        : _c{}
+    {
+        __noop;
+    }
+
+    template<int32 N, typename T>
+    template <class ...Args>
+    inline constexpr VectorR<N, T>::VectorR(Args... args)
+        : _c{ args... }
+    {
+        __noop;
+    }
+
+    template<int32 N, typename T>
+    inline constexpr VectorR<N, T>::VectorR(const std::initializer_list<T>& initializerList)
+    {
+        const int32 count = min(static_cast<int32>(initializerList.size()), N);
+        const T* const first = initializerList.begin();
+        for (int32 index = 0; index < count; ++index)
+        {
+            _c[index] = *(first + index);
+        }
     }
 
     template<int32 N, typename T>
@@ -322,13 +419,13 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE const T VectorR<N, T>::normSquared() const noexcept
     {
-        return dot(*this);
+        return Math::normSq(_c);
     }
 
     template<int32 N, typename T>
     MINT_INLINE const T VectorR<N, T>::norm() const noexcept
     {
-        return ::sqrt(normSquared());
+        return Math::norm(_c);
     }
         
     template<int32 N, typename T>

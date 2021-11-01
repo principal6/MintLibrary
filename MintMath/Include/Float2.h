@@ -82,8 +82,16 @@ namespace mint
         const bool              hasNegativeElement() const noexcept;
 
     public:
-        float                   _x;
-        float                   _y;
+        union
+        {
+            struct
+            {
+                float           _x;
+                float           _y;
+            };
+            float               _c[2];
+        };
+        
     };
 }
 

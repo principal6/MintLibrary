@@ -17,6 +17,43 @@ namespace std
 
 namespace mint
 {
+    namespace Math
+    {
+        template <int32 N, typename T>
+        const bool                      equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon = 0) noexcept;
+        
+        template <int32 N, typename T>
+        const T                         dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept;
+
+        template <int32 N, typename T>
+        const T                         normSq(const T(&vec)[N]) noexcept;
+
+        template <int32 N, typename T>
+        const T                         norm(const T(&vec)[N]) noexcept;
+
+        template <int32 N, typename T>
+        void                            setZero(T(&vec)[N]) noexcept;
+        
+        template <int32 N, typename T>
+        void                            setNan(T(&vec)[N]) noexcept;
+
+        template <int32 N, typename T>
+        const bool                      isNan(const T(&vec)[N]) noexcept;
+
+        template <int32 N, typename T>
+        void                            setAdd(T(&lhs)[N], const T(&rhs)[N]) noexcept;
+        
+        template <int32 N, typename T>
+        void                            setSub(T(&lhs)[N], const T(&rhs)[N]) noexcept;
+
+        template <int32 N, typename T>
+        void                            setMul(T(&vec)[N], const float scalar) noexcept;
+        
+        template <int32 N, typename T>
+        void                            setDiv(T(&vec)[N], const float scalar) noexcept;
+    }
+    
+
     template <int32 N, typename T>
     class VectorR
     {
@@ -31,13 +68,13 @@ namespace mint
         static VectorR<N, T>            projectUOntoV(const VectorR& u, const VectorR& v) noexcept;
 
     public:
-                                        VectorR();
+        constexpr                       VectorR();
                                         template <class ...Args>
-                                        VectorR(Args ... args);
-                                        VectorR(const std::initializer_list<T>& initializerList);
-                                        VectorR(const VectorR& rhs) = default;
-                                        VectorR(VectorR&& rhs) noexcept = default;
-                                        ~VectorR();
+        constexpr                       VectorR(Args ... args);
+        constexpr                       VectorR(const std::initializer_list<T>& initializerList);
+        constexpr                       VectorR(const VectorR& rhs) = default;
+        constexpr                       VectorR(VectorR&& rhs) noexcept = default;
+                                        ~VectorR() = default;
         
     public:
         VectorR&                        operator=(const VectorR& rhs) = default;

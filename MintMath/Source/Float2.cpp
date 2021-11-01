@@ -2,6 +2,7 @@
 
 #include <MintCommon/Include/Logger.h>
 
+#include <MintMath/Include/VectorR.hpp>
 #include <MintMath/Include/Int2.h>
 
 
@@ -10,7 +11,7 @@ namespace mint
     const Float2 Float2::kZero          = mint::Float2(0.0f);
     const Float2 Float2::kOne           = mint::Float2(+1.0f);
     const Float2 Float2::kNegativeOne   = mint::Float2(-1.0f);
-    const Float2 Float2::kNan           = mint::Float2(mint::Math::nan());
+    const Float2 Float2::kNan           = mint::Float2(Math::nan());
 
     Float2::Float2(const Int2& rhs)
         : Float2(static_cast<float>(rhs._x), static_cast<float>(rhs._y))
@@ -20,29 +21,25 @@ namespace mint
 
     Float2& Float2::operator+=(const Float2& rhs)
     {
-        _x += rhs._x;
-        _y += rhs._y;
+        Math::setAdd(_c, rhs._c);
         return *this;
     }
 
     Float2& Float2::operator-=(const Float2& rhs)
     {
-        _x -= rhs._x;
-        _y -= rhs._y;
+        Math::setSub(_c, rhs._c);
         return *this;
     }
 
     Float2& Float2::operator*=(const float s)
     {
-        _x *= s;
-        _y *= s;
+        Math::setMul(_c, s);
         return *this;
     }
 
     Float2& Float2::operator/=(const float s)
     {
-        _x /= s;
-        _y /= s;
+        Math::setDiv(_c, s);
         return *this;
     }
 
@@ -79,18 +76,18 @@ namespace mint
     float& Float2::operator[](const uint32 index) noexcept
     {
         MINT_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
-        return (&_x)[index];
+        return _c[index];
     }
 
     const float& Float2::operator[](const uint32 index) const noexcept
     {
         MINT_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
-        return (&_x)[index];
+        return _c[index];
     }
 
     const bool Float2::operator==(const Float2& rhs) const noexcept
     {
-        return (_x == rhs._x && _y == rhs._y);
+        return Math::equals(_c, rhs._c);
     }
 
     const bool Float2::operator!=(const Float2& rhs) const noexcept
@@ -100,7 +97,7 @@ namespace mint
 
     const float Float2::dot(const Float2& lhs, const Float2& rhs) noexcept
     {
-        return lhs._x * rhs._x + lhs._y * rhs._y;
+        return Math::dot(lhs._c, rhs._c);
     }
 
     Float2 Float2::normalize(const Float2& float2) noexcept
@@ -115,12 +112,12 @@ namespace mint
 
     const float Float2::lengthSqaure() const noexcept
     {
-        return dot(*this, *this);
+        return Math::normSq(_c);
     }
 
     const float Float2::length() const noexcept
     {
-        return sqrt(lengthSqaure());
+        return Math::norm(_c);
     }
 
     const float Float2::maxElement() const noexcept
@@ -141,17 +138,17 @@ namespace mint
 
     void Float2::setZero() noexcept
     {
-        _x = _y = 0.0f;
+        Math::setZero(_c);
     }
 
     void Float2::setNan() noexcept
     {
-        _x = _y = mint::Math::nan();
+        Math::setNan(_c);
     }
 
     const bool Float2::isNan() const noexcept
     {
-        return (mint::Math::isNan(_x) || mint::Math::isNan(_y));
+        return Math::isNan(_c);
     }
 
     const bool Float2::hasNegativeElement() const noexcept
