@@ -63,7 +63,7 @@ namespace mint
 
     public:
         static const float      dot(const Float2& lhs, const Float2& rhs) noexcept;
-        static Float2           normalize(const Float2& float2) noexcept;
+        static Float2           normalize(const Float2& in) noexcept;
         static Float2           abs(const Float2& rhs) noexcept;
 
     public:

@@ -30,21 +30,21 @@ namespace mint
         static Float4x4         mul(const Float4x4& l, const Float4x4& r) noexcept;
                
         static Float4x4         translationMatrix(const float x, const float y, const float z) noexcept;
-        static Float4x4         translationMatrix(const mint::Float3& translation) noexcept;
+        static Float4x4         translationMatrix(const Float3& translation) noexcept;
         static Float4x4         scalingMatrix(const float x, const float y, const float z) noexcept;
-        static Float4x4         scalingMatrix(const mint::Float3& scale) noexcept;
+        static Float4x4         scalingMatrix(const Float3& scale) noexcept;
         static Float4x4         rotationMatrixX(const float angle) noexcept;
         static Float4x4         rotationMatrixY(const float angle) noexcept;
         static Float4x4         rotationMatrixZ(const float angle) noexcept;
         static Float4x4         rotationMatrixRollPitchYaw(const float pitch, const float yaw, const float roll) noexcept;
         // Rodrigues' rotation formula
-        static Float4x4         rotationMatrixAxisAngle(const mint::Float3& axis, const float angle) noexcept;
-        static Float4x4         rotationMatrixFromAxes(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
-        static Float4x4         rotationMatrix(const mint::QuaternionF& rotation) noexcept;
-        static Float4x4         axesToColumns(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
+        static Float4x4         rotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept;
+        static Float4x4         rotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
+        static Float4x4         rotationMatrix(const QuaternionF& rotation) noexcept;
+        static Float4x4         axesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
         // Interprets vector from new basis.
-        static Float4x4         axesToRows(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept;
-        static Float4x4         srtMatrix(const mint::Float3& scale, const mint::QuaternionF& rotation, const mint::Float3& translation) noexcept;
+        static Float4x4         axesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
+        static Float4x4         srtMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept;
 
         static Float4x4         projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
         static Float4x4         projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
@@ -97,20 +97,20 @@ namespace mint
     public:
         void                    preScale(const float x, const float y, const float z) noexcept;
         void                    postScale(const float x, const float y, const float z) noexcept;
-        void                    preScale(const mint::Float3& scale) noexcept;
-        void                    postScale(const mint::Float3& scale) noexcept;
+        void                    preScale(const Float3& scale) noexcept;
+        void                    postScale(const Float3& scale) noexcept;
 
     public:
         void                    setTranslation(const float x, const float y, const float z) noexcept;
-        void                    setTranslation(const mint::Float3& translation) noexcept;
+        void                    setTranslation(const Float3& translation) noexcept;
         void                    preTranslate(const float x, const float y, const float z) noexcept;
         void                    postTranslate(const float x, const float y, const float z) noexcept;
-        void                    preTranslate(const mint::Float3& translation) noexcept;
-        void                    postTranslate(const mint::Float3& translation) noexcept;
+        void                    preTranslate(const Float3& translation) noexcept;
+        void                    postTranslate(const Float3& translation) noexcept;
 
     public:
-        mint::Float3            getTranslation() const noexcept;
-        void                    decomposeSrt(mint::Float3& outScale, mint::Float4x4& outRotationMatrix, mint::Float3& outTranslation) const noexcept;
+        Float3                  getTranslation() const noexcept;
+        void                    decomposeSrt(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
 
     public:
         Float3x3                minor(const uint32 row, const uint32 col) const noexcept;
@@ -133,7 +133,7 @@ namespace mint
         union
         {
             float               _m[4][4];
-            mint::Float4          _row[4];
+            Float4              _row[4];
             struct
             {
                 float           _11, _12, _13, _14;

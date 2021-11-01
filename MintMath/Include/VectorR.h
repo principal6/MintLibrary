@@ -27,15 +27,24 @@ namespace mint
         
         template <int32 N, typename T>
         const T                         dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept;
+        
+        template <typename T>
+        void                            cross(const T(&lhs)[3], const T(&rhs)[3], T(&out)[3]) noexcept;
+        
+        template <typename T>
+        void                            cross(const T(&lhs)[4], const T(&rhs)[4], T(&out)[4]) noexcept;
 
         template <int32 N, typename T>
         const T                         normSq(const T(&vec)[N]) noexcept;
 
         template <int32 N, typename T>
         const T                         norm(const T(&vec)[N]) noexcept;
+        
+        template <int32 N, typename T>
+        void                            normalize(T(&inOut)[N]) noexcept;
 
         template <int32 N, typename T>
-        void                            setZero(T(&vec)[N]) noexcept;
+        void                            setZeroVec(T(&vec)[N]) noexcept;
         
         template <int32 N, typename T>
         void                            setNan(T(&vec)[N]) noexcept;

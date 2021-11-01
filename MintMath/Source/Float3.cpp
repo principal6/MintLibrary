@@ -2,6 +2,8 @@
 
 #include <MintCommon/Include/Logger.h>
 
+#include <MintMath/Include/VectorR.hpp>
+
 
 namespace mint
 {
@@ -10,33 +12,25 @@ namespace mint
 
     Float3& Float3::operator+=(const Float3& rhs)
     {
-        _x += rhs._x;
-        _y += rhs._y;
-        _z += rhs._z;
+        Math::setAddVec(_c, rhs._c);
         return *this;
     }
 
     Float3& Float3::operator-=(const Float3& rhs)
     {
-        _x -= rhs._x;
-        _y -= rhs._y;
-        _z -= rhs._z;
+        Math::setSubVec(_c, rhs._c);
         return *this;
     }
 
     Float3& Float3::operator*=(const float s)
     {
-        _x *= s;
-        _y *= s;
-        _z *= s;
+        Math::setMulVec(_c, s);
         return *this;
     }
 
     Float3& Float3::operator/=(const float s)
     {
-        _x /= s;
-        _y /= s;
-        _z /= s;
+        Math::setDivVec(_c, s);
         return *this;
     }
 
@@ -73,18 +67,18 @@ namespace mint
     float& Float3::operator[](const uint32 index) noexcept
     {
         MINT_ASSERT("김장원", index < 3, "범위를 벗어난 접근입니다.");
-        return (&_x)[index];
+        return _c[index];
     }
 
     const float& Float3::operator[](const uint32 index) const noexcept
     {
         MINT_ASSERT("김장원", index < 3, "범위를 벗어난 접근입니다.");
-        return (&_x)[index];
+        return _c[index];
     }
 
     const bool Float3::operator==(const Float3& rhs) const noexcept
     {
-        return (_x == rhs._x && _y == rhs._y && _z == rhs._z);
+        return Math::equals(_c, rhs._c);
     }
 
     const bool Float3::operator!=(const Float3& rhs) const noexcept
@@ -92,29 +86,16 @@ namespace mint
         return !(*this == rhs);
     }
 
-    const float Float3::dotProductRaw(const float* const a, const float* const b) noexcept
-    {
-        return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
-    }
-
-    const float Float3::dotProductRaw(const float(&a)[3], const float bX, const float bY, const float bZ) noexcept
-    {
-        return (a[0] * bX) + (a[1] * bY) + (a[2] * bZ);
-    }
-
     const float Float3::dot(const Float3& lhs, const Float3& rhs) noexcept
     {
-        return dotProductRaw(&lhs._x, &rhs._x);
+        return Math::dot(lhs._c, rhs._c);
     }
 
     Float3 Float3::cross(const Float3& lhs, const Float3& rhs) noexcept
     {
-        return Float3
-        (
-            lhs._y * rhs._z - lhs._z * rhs._y,
-            lhs._z * rhs._x - lhs._x * rhs._z,
-            lhs._x * rhs._y - lhs._y * rhs._x
-        );
+        Float3 result;
+        Math::cross(lhs._c, rhs._c, result._c);
+        return result;
     }
 
     Float3 Float3::crossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept
@@ -122,24 +103,26 @@ namespace mint
         return normalize(cross(lhs, rhs));
     }
 
-    Float3 Float3::normalize(const Float3& float3) noexcept
+    Float3 Float3::normalize(const Float3& in) noexcept
     {
-        return Float3(float3 / float3.length());
+        Float3 result = in;
+        result.normalize();
+        return result;
     }
 
     void Float3::normalize() noexcept
     {
-        *this = Float3::normalize(*this);
+        Math::normalize(_c);
     }
 
     const float Float3::lengthSqaure() const noexcept
     {
-        return dot(*this, *this);
+        return Math::normSq(_c);
     }
 
     const float Float3::length() const noexcept
     {
-        return sqrt(lengthSqaure());
+        return Math::norm(_c);
     }
 
     void Float3::set(const float x, const float y, const float z) noexcept

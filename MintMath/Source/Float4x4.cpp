@@ -1,5 +1,6 @@
 ﻿#include <MintMath/Include/Float4x4.h>
 
+#include <MintMath/Include/VectorR.hpp>
 #include <MintMath/Include/Float3x3.h>
 
 #include <cstring>
@@ -35,7 +36,7 @@ namespace mint
         );
     }
 
-    Float4x4 Float4x4::translationMatrix(const mint::Float3& translation) noexcept
+    Float4x4 Float4x4::translationMatrix(const Float3& translation) noexcept
     {
         return translationMatrix(translation._x, translation._y, translation._z);
     }
@@ -51,7 +52,7 @@ namespace mint
         );
     }
 
-    Float4x4 Float4x4::scalingMatrix(const mint::Float3& scale) noexcept
+    Float4x4 Float4x4::scalingMatrix(const Float3& scale) noexcept
     {
         return scalingMatrix(scale._x, scale._y, scale._z);
     }
@@ -94,7 +95,7 @@ namespace mint
         return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
     }
 
-    Float4x4 Float4x4::rotationMatrixAxisAngle(const mint::Float3& axis, const float angle) noexcept
+    Float4x4 Float4x4::rotationMatrixAxisAngle(const Float3& axis, const float angle) noexcept
     {
         // (v * r)r(1 - cosθ) + vcosθ + (r X v)sinθ
 
@@ -115,20 +116,20 @@ namespace mint
         return result;
     }
 
-    Float4x4 Float4x4::rotationMatrixFromAxes(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept
+    Float4x4 Float4x4::rotationMatrixFromAxes(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
     {
         return axesToColumns(axisX, axisY, axisZ);
     }
 
-    Float4x4 Float4x4::rotationMatrix(const mint::QuaternionF& rotation) noexcept
+    Float4x4 Float4x4::rotationMatrix(const QuaternionF& rotation) noexcept
     {
-        mint::Float3 axis;
+        Float3 axis;
         float angle;
         rotation.getAxisAngle(axis, angle);
         return rotationMatrixAxisAngle(axis, angle);
     }
 
-    Float4x4 Float4x4::axesToColumns(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept
+    Float4x4 Float4x4::axesToColumns(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
     {
         return Float4x4
         (
@@ -139,7 +140,7 @@ namespace mint
         );
     }
 
-    Float4x4 Float4x4::axesToRows(const mint::Float3& axisX, const mint::Float3& axisY, const mint::Float3& axisZ) noexcept
+    Float4x4 Float4x4::axesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept
     {
         return Float4x4
         (
@@ -150,7 +151,7 @@ namespace mint
         );
     }
     
-    Float4x4 Float4x4::srtMatrix(const mint::Float3& scale, const mint::QuaternionF& rotation, const mint::Float3& translation) noexcept
+    Float4x4 Float4x4::srtMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept
     {
         // SRT matrix for column vector is like below:
         // SRT = T * R * S
@@ -228,34 +229,7 @@ namespace mint
 
     Float4x4& Float4x4::operator*=(const Float4x4& rhs) noexcept
     {
-        // row 0
-        mint::Float4 row = _row[0];
-        _row[0]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
-        _row[0]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
-        _row[0]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
-        _row[0]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
-
-        // row 1
-        row = _row[1];
-        _row[1]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
-        _row[1]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
-        _row[1]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
-        _row[1]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
-
-        // row 2
-        row = _row[2];
-        _row[2]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
-        _row[2]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
-        _row[2]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
-        _row[2]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
-
-        // row 3
-        row = _row[3];
-        _row[3]._x = Float4::dotProductRaw(row._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]);
-        _row[3]._y = Float4::dotProductRaw(row._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]);
-        _row[3]._z = Float4::dotProductRaw(row._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]);
-        _row[3]._w = Float4::dotProductRaw(row._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]);
-
+        Math::mul(_m, rhs._m, _m);
         return *this;
     }
 
@@ -347,15 +321,12 @@ namespace mint
 
     void Float4x4::setZero() noexcept
     {
-        ::memset(_m, 0, sizeof(float) * 16);
+        Math::setZeroMat(_m);
     }
 
     void Float4x4::setIdentity() noexcept
     {
-        _m[0][0] = _m[1][1] = _m[2][2] = _m[3][3] = 1.0f;
-
-        _m[0][1] = _m[0][2] = _m[0][3] = _m[1][0] = _m[1][2] = _m[1][3]
-            = _m[2][0] = _m[2][1] = _m[2][3] = _m[3][0] = _m[3][1] = _m[3][2] = 0.0f;
+        Math::setIdentity(_m);
     }
 
     Float4x4& Float4x4::power(const uint32 exponent) noexcept
@@ -366,7 +337,7 @@ namespace mint
             return *this;
         }
 
-        const mint::Float4x4 original = *this;
+        const Float4x4 original = *this;
         for (uint32 iter = 0; iter < exponent; ++iter)
         {
             *this *= original;
@@ -399,12 +370,12 @@ namespace mint
         _43 *= z;
     }
 
-    void Float4x4::preScale(const mint::Float3& scale) noexcept
+    void Float4x4::preScale(const Float3& scale) noexcept
     {
         preScale(scale._x, scale._y, scale._z);
     }
 
-    void Float4x4::postScale(const mint::Float3& scale) noexcept
+    void Float4x4::postScale(const Float3& scale) noexcept
     {
         postScale(scale._x, scale._y, scale._z);
     }
@@ -416,7 +387,7 @@ namespace mint
         _34 = z;
     }
 
-    void Float4x4::setTranslation(const mint::Float3& translation) noexcept
+    void Float4x4::setTranslation(const Float3& translation) noexcept
     {
         _14 = translation._x;
         _24 = translation._y;
@@ -432,7 +403,7 @@ namespace mint
 
     void Float4x4::postTranslate(const float x, const float y, const float z) noexcept
     {
-        mint::Float4 row = _row[0];
+        Float4 row = _row[0];
         _row[0]._w += row._x * x + row._y * y + row._z * z;
         row = _row[1];
         _row[1]._w += row._x * x + row._y * y + row._z * z;
@@ -442,22 +413,22 @@ namespace mint
         _row[3]._w += row._x * x + row._y * y + row._z * z;
     }
 
-    void Float4x4::preTranslate(const mint::Float3& translation) noexcept
+    void Float4x4::preTranslate(const Float3& translation) noexcept
     {
         preTranslate(translation._x, translation._y, translation._z);
     }
 
-    void Float4x4::postTranslate(const mint::Float3& translation) noexcept
+    void Float4x4::postTranslate(const Float3& translation) noexcept
     {
         postTranslate(translation._x, translation._y, translation._z);
     }
 
-    mint::Float3 Float4x4::getTranslation() const noexcept
+    Float3 Float4x4::getTranslation() const noexcept
     {
-        return mint::Float3(_14, _24, _34);
+        return Float3(_14, _24, _34);
     }
 
-    void Float4x4::decomposeSrt(mint::Float3& outScale, mint::Float4x4& outRotationMatrix, mint::Float3& outTranslation) const noexcept
+    void Float4x4::decomposeSrt(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept
     {
         // TODO: avoid nan in outRotationMatrix
         
@@ -499,46 +470,20 @@ namespace mint
     Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
     {
         Float3x3 result;
-
-        uint32 smallRow{};
-        for (uint32 myRow = 0; myRow < 4; ++myRow)
-        {
-            if (myRow == row) continue;
-
-            uint32 smallCol{};
-            for (uint32 myCol = 0; myCol < 4; ++myCol)
-            {
-                if (myCol == col) continue;
-
-                result._m[smallRow][smallCol] = _m[myRow][myCol];
-
-                ++smallCol;
-            }
-
-            ++smallRow;
-        }
-
+        Math::minor(_m, row, col, result._m);
         return result;
     }
 
     const float Float4x4::determinant() const noexcept
     {
-        const float a = _m[0][0];
-        const float b = _m[0][1];
-        const float c = _m[0][2];
-        const float d = _m[0][3];
-        return a * minor(0, 0).determinant() - b * minor(0, 1).determinant() + c * minor(0, 2).determinant() - d * minor(0, 3).determinant();
+        return Math::determinant(_m);
     }
 
     Float4x4 Float4x4::transpose() const noexcept
     {
-        return Float4x4
-        (
-            _m[0][0], _m[1][0], _m[2][0], _m[3][0],
-            _m[0][1], _m[1][1], _m[2][1], _m[3][1],
-            _m[0][2], _m[1][2], _m[2][2], _m[3][2],
-            _m[0][3], _m[1][3], _m[2][3], _m[3][3]
-        );
+        Float4x4 result;
+        Math::transpose(_m, result._m);
+        return result;
     }
 
     Float4x4 Float4x4::cofactor() const noexcept
@@ -564,80 +509,29 @@ namespace mint
 
     Float4x4 Float4x4::mul(const Float4x4& rhs) const noexcept
     {
-        return Float4x4
-        (
-            // row 0
-            Float4::dotProductRaw(_row[0]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-            Float4::dotProductRaw(_row[0]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-            Float4::dotProductRaw(_row[0]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-            Float4::dotProductRaw(_row[0]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
-
-            // row 1
-            Float4::dotProductRaw(_row[1]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-            Float4::dotProductRaw(_row[1]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-            Float4::dotProductRaw(_row[1]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-            Float4::dotProductRaw(_row[1]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
-
-            // row 2
-            Float4::dotProductRaw(_row[2]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-            Float4::dotProductRaw(_row[2]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-            Float4::dotProductRaw(_row[2]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-            Float4::dotProductRaw(_row[2]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3]),
-
-            // row 3
-            Float4::dotProductRaw(_row[3]._f, rhs._m[0][0], rhs._m[1][0], rhs._m[2][0], rhs._m[3][0]),
-            Float4::dotProductRaw(_row[3]._f, rhs._m[0][1], rhs._m[1][1], rhs._m[2][1], rhs._m[3][1]),
-            Float4::dotProductRaw(_row[3]._f, rhs._m[0][2], rhs._m[1][2], rhs._m[2][2], rhs._m[3][2]),
-            Float4::dotProductRaw(_row[3]._f, rhs._m[0][3], rhs._m[1][3], rhs._m[2][3], rhs._m[3][3])
-        );
+        Float4x4 result;
+        Math::mul(_m, rhs._m, result._m);
+        return result;
     }
 
     void Float4x4::mulAssignReverse(const Float4x4& lhs) noexcept
     {
-        static constexpr uint32 kRowCount = 4;
-        static constexpr uint32 kColumnCount = 4;
-
-        mint::Float4x4 copy = *this;
-        for (uint32 rowIndex = 0; rowIndex < kRowCount; ++rowIndex)
-        {
-            for (uint32 columnIndex = 0; columnIndex < kColumnCount; ++columnIndex)
-            {
-                _row[rowIndex][columnIndex] = Float4::dotProductRaw(lhs._row[rowIndex]._f, copy._m[0][columnIndex], copy._m[1][columnIndex], copy._m[2][columnIndex], copy._m[3][columnIndex]);
-            }
-        }
+        Float4x4 rhsCopy = *this;
+        Math::mul(lhs._m, rhsCopy._m, _m);
     }
 
     Float4 Float4x4::mul(const Float4& v) const noexcept
     {
-        return Float4
-        (
-            // x'
-            Float4::dot(_row[0], v),
-
-            // y'
-            Float4::dot(_row[1], v),
-
-            // z'
-            Float4::dot(_row[2], v),
-
-            // w'
-            Float4::dot(_row[3], v)
-        );
+        Float4 result;
+        Math::mul(_m, v._c, result._c);
+        return result;
     }
 
     Float3 Float4x4::mul(const Float3& v) const noexcept
     {
-        return Float3
-        (
-            // x'
-            Float3::dotProductRaw(_row[0]._f, &v[0]),
-            
-            // y'
-            Float3::dotProductRaw(_row[1]._f, &v[0]),
-
-            // z'
-            Float3::dotProductRaw(_row[2]._f, &v[0])
-        );
+        Float4 v4 = Float4(v._x, v._y, v._z, 0.0f);
+        Float4 r4;
+        Math::mul(_m, v4._c, r4._c);
+        return r4.getXyz();
     }
-
 }

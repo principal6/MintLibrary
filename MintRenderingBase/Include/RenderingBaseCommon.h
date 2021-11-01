@@ -75,7 +75,7 @@ namespace mint
         public:
                                         operator Float4&() noexcept { return _raw; }
                                         operator const Float4&() const noexcept { return _raw; }
-                                        operator const float*() const noexcept { return _raw._f; }
+                                        operator const float*() const noexcept { return _raw._c; }
             Color                       operator*(const Color& rhs) const noexcept { return Color(_raw._x * rhs._raw._x, _raw._y * rhs._raw._y, _raw._z * rhs._raw._z, _raw._w * rhs._raw._w); }
             Color                       operator*(const float s) const noexcept { return Color(_raw * s); }
             Color                       operator/(const float s) const { return Color(_raw / s); }

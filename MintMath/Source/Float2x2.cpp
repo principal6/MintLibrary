@@ -77,8 +77,7 @@ namespace mint
 
     void Float2x2::setZero() noexcept
     {
-        Math::setZero(_m[0]);
-        Math::setZero(_m[1]);
+        Math::setZeroMat(_m);
     }
 
     void Float2x2::setIdentity() noexcept

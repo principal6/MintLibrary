@@ -100,9 +100,11 @@ namespace mint
         return Math::dot(lhs._c, rhs._c);
     }
 
-    Float2 Float2::normalize(const Float2& float2) noexcept
+    Float2 Float2::normalize(const Float2& in) noexcept
     {
-        return Float2(float2 / float2.length());
+        Float2 result = in;
+        Math::normalize(result._c);
+        return result;
     }
 
     Float2 Float2::abs(const Float2& rhs) noexcept
@@ -138,7 +140,7 @@ namespace mint
 
     void Float2::setZero() noexcept
     {
-        Math::setZero(_c);
+        Math::setZeroVec(_c);
     }
 
     void Float2::setNan() noexcept

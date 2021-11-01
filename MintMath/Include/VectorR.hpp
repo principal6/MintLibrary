@@ -29,7 +29,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        void copyVec(const T(&src)[N], T(&dest)[N]) noexcept
+        MINT_INLINE void copyVec(const T(&src)[N], T(&dest)[N]) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -48,6 +48,23 @@ namespace mint
             return result;
         }
 
+        template<typename T>
+        MINT_INLINE void cross(const T(&lhs)[3], const T(&rhs)[3], T(&out)[3]) noexcept
+        {
+            out[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+            out[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+            out[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
+        }
+
+        template<typename T>
+        void cross(const T(&lhs)[4], const T(&rhs)[4], T(&out)[4]) noexcept
+        {
+            out[0] = lhs[1] * rhs[2] - lhs[2] * rhs[1];
+            out[1] = lhs[2] * rhs[0] - lhs[0] * rhs[2];
+            out[2] = lhs[0] * rhs[1] - lhs[1] * rhs[0];
+            out[3] = static_cast<T>(0); // It is a vector, not point!
+        }
+
         template<int32 N, typename T>
         MINT_INLINE const T normSq(const T(&vec)[N]) noexcept
         {
@@ -61,7 +78,14 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void setZero(T(&vec)[N]) noexcept
+        MINT_INLINE void normalize(T(&inOut)[N]) noexcept
+        {
+            const T norm_ = norm(inOut);
+            Math::setDivVec(inOut, norm_);
+        }
+
+        template<int32 N, typename T>
+        MINT_INLINE void setZeroVec(T(&vec)[N]) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {

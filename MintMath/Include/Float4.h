@@ -56,18 +56,12 @@ namespace mint
         constexpr const bool    operator!=(const Float4& rhs) const noexcept;
 
     public:
-        static const float      dotProductRaw(const float* const a, const float* const b);
-
-        // for matrix multiplication
-        static const float      dotProductRaw(const float (&a)[4], const float bX, const float bY, const float bZ, const float bW);
-
-    public:
         static const float      dot(const Float4& lhs, const Float4& rhs) noexcept;
 
         // in 3D affine space
         static Float4           cross(const Float4& lhs, const Float4& rhs) noexcept;
         static Float4           crossNormalize(const Float4& lhs, const Float4& rhs) noexcept;
-        static Float4           normalize(const Float4& float4) noexcept;
+        static Float4           normalize(const Float4& in) noexcept;
 
     public:
         Float4&                 transform(const Float4x4& matrix) noexcept;
@@ -107,7 +101,7 @@ namespace mint
                 float           _z;
                 float           _w;
             };
-            float               _f[4];
+            float               _c[4];
         };
         
     };
