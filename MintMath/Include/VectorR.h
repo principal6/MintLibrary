@@ -23,6 +23,9 @@ namespace mint
         const bool                      equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon = 0) noexcept;
         
         template <int32 N, typename T>
+        void                            copyVec(const T(&src)[N], T(&dest)[N]) noexcept;
+        
+        template <int32 N, typename T>
         const T                         dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept;
 
         template <int32 N, typename T>
@@ -41,16 +44,16 @@ namespace mint
         const bool                      isNan(const T(&vec)[N]) noexcept;
 
         template <int32 N, typename T>
-        void                            setAdd(T(&lhs)[N], const T(&rhs)[N]) noexcept;
+        void                            setAddVec(T(&lhs)[N], const T(&rhs)[N]) noexcept;
         
         template <int32 N, typename T>
-        void                            setSub(T(&lhs)[N], const T(&rhs)[N]) noexcept;
+        void                            setSubVec(T(&lhs)[N], const T(&rhs)[N]) noexcept;
 
         template <int32 N, typename T>
-        void                            setMul(T(&vec)[N], const float scalar) noexcept;
+        void                            setMulVec(T(&vec)[N], const float scalar) noexcept;
         
         template <int32 N, typename T>
-        void                            setDiv(T(&vec)[N], const float scalar) noexcept;
+        void                            setDivVec(T(&vec)[N], const float scalar) noexcept;
     }
     
 
@@ -140,7 +143,7 @@ namespace mint
     public:
         VectorR<N - 1, T>               shrink() const noexcept;
 
-    private:
+    public:
         T                               _c[N];
     };
 

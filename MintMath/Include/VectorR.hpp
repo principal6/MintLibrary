@@ -29,6 +29,15 @@ namespace mint
         }
 
         template<int32 N, typename T>
+        void copyVec(const T(&src)[N], T(&dest)[N]) noexcept
+        {
+            for (int32 i = 0; i < N; ++i)
+            {
+                dest[i] = src[i];
+            }
+        }
+
+        template<int32 N, typename T>
         MINT_INLINE const T dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
         {
             T result{};
@@ -83,7 +92,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void setAdd(T(&lhs)[N], const T(&rhs)[N]) noexcept
+        MINT_INLINE void setAddVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -92,7 +101,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void setSub(T(&lhs)[N], const T(&rhs)[N]) noexcept
+        MINT_INLINE void setSubVec(T(&lhs)[N], const T(&rhs)[N]) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -101,7 +110,7 @@ namespace mint
         }
         
         template<int32 N, typename T>
-        MINT_INLINE void setMul(T(&vec)[N], const float scalar) noexcept
+        MINT_INLINE void setMulVec(T(&vec)[N], const float scalar) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -110,8 +119,9 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE void setDiv(T(&vec)[N], const float scalar) noexcept
+        MINT_INLINE void setDivVec(T(&vec)[N], const float scalar) noexcept
         {
+            MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
             for (int32 i = 0; i < N; ++i)
             {
                 vec[i] /= scalar;

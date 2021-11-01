@@ -13,6 +13,165 @@
 
 namespace mint
 {
+    namespace Math
+    {
+        template<int32 M, int32 N, typename T>
+        const bool equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                const bool areRowsEqual = Math::equals(lhs[row], rhs[row], epsilon);
+                if (false == areRowsEqual)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        template<int32 M, int32 N, typename T>
+        void copyMat(const T(&src)[M][N], T(&dest)[M][N]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    dest[row][col] = src[row][col];
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setAddMat(T(&lhs)[M][N], const T(&rhs)[M][N]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    lhs[row][col] += rhs[row][col];
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setSubMat(T(&lhs)[M][N], const T(&rhs)[M][N]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    lhs[row][col] -= rhs[row][col];
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setMulMat(T(&mat)[M][N], const T scalar) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    mat[row][col] *= scalar;
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setDivMat(T(&mat)[M][N], const T scalar) noexcept
+        {
+            MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    mat[row][col] /= scalar;
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setRow(const T(&src)[N], T(&dest)[M][N], const int32 destRow) noexcept
+        {
+            for (int32 col = 0; col < N; ++col)
+            {
+                dest[destRow][col] = src[col];
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void getRow(const T(&mat)[M][N], const int32 row, T(&out)[N]) noexcept
+        {
+            for (int32 col = 0; col < N; ++col)
+            {
+                out[col] = mat[row][col];
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setCol(const T(&src)[M], T(&dest)[M][N], const int32 destCol) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                dest[row][destCol] = src[row];
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void getCol(const T(&mat)[M][N], const int32 col, T(&out)[M]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                out[row] = mat[row][col];
+            }
+        }
+
+        template<int32 M, int32 N, int32 P, typename T>
+        void mul(const T(&lhs)[M][N], const T(&rhs)[N][P], T(&out)[M][P]) noexcept
+        {
+            T lhsRowVec[N];
+            T rhsColVec[N];
+            T rhsCopy[N][P];
+            copyMat(rhs, rhsCopy);
+            for (int32 row = 0; row < M; ++row)
+            {
+                Math::getRow(lhs, row, lhsRowVec);
+
+                for (int32 col = 0; col < P; ++col)
+                {
+                    Math::getCol(rhsCopy, col, rhsColVec);
+                    
+                    out[row][col] = Math::dot(lhsRowVec, rhsColVec);
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void mul(const T(&lhsMat)[M][N], const T(&rhsVec)[N], T(&outVec)[N]) noexcept
+        {
+            T rhsVecCopy[N];
+            copyVec(rhsVec, rhsVecCopy);
+
+            for (int32 row = 0; row < M; ++row)
+            {
+                outVec[row] = Math::dot(lhsMat[row], rhsVecCopy);
+            }
+        }
+
+        template<int32 M, typename T>
+        void setIdentity(T(&inOut)[M][M]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < M; ++col)
+                {
+                    inOut[row][col] = static_cast<T>((row == col) ? 1 : 0);
+                }
+            }
+        }
+    }
+
+
     template<typename T>
     constexpr T getScalarZero() noexcept
     {
@@ -81,17 +240,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     inline const bool Matrix<M, N, T>::operator==(const Matrix& rhs) const noexcept
     {
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                if (_m[rowIndex][columnIndex] != rhs._m[rowIndex][columnIndex])
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return Math::equals(_m, rhs._m);
     }
 
     template<int32 M, int32 N, typename T>
@@ -103,54 +252,28 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const T scalar) noexcept
     {
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] *= scalar;
-            }
-        }
+        Math::setMulMat(_m, scalar);
         return *this;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator/=(const T scalar) noexcept
     {
-        MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
-
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] /= scalar;
-            }
-        }
+        Math::setDivMat(_m, scalar);
         return *this;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator+=(const Matrix& rhs) noexcept
     {
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] += rhs._m[rowIndex][columnIndex];
-            }
-        }
+        Math::setAddMat(_m, rhs._m);
         return *this;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE Matrix<M, N, T>& Matrix<M, N, T>::operator-=(const Matrix& rhs) noexcept
     {
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] -= rhs._m[rowIndex][columnIndex];
-            }
-        }
+        Math::setSubMat(_m, rhs._m);
         return *this;
     }
 
@@ -158,14 +281,7 @@ namespace mint
     inline Matrix<M, N, T>& Matrix<M, N, T>::operator*=(const Matrix<N, N, T>& rhs) noexcept
     {
         static_assert(M == N, "Power of non-square matrix!!!");
-
-        for (int32 rowIndex = 0; rowIndex < N; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] = VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
-            }
-        }
+        Math::mul(_m, rhs._m, _m);
         return *this;
     }
 
@@ -206,13 +322,7 @@ namespace mint
     MINT_INLINE Matrix<M, P, T> Matrix<M, N, T>::operator*(const Matrix<N, P, T>& rhs) const noexcept
     {
         Matrix<M, P, T> result;
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < P; ++columnIndex)
-            {
-                result._m[rowIndex][columnIndex] = VectorR<N, T>::dot(getRow(rowIndex), rhs.getColumn(columnIndex));
-            }
-        }
+        Math::mul(_m, rhs._m, result._m);
         return result;
     }
 
@@ -249,10 +359,7 @@ namespace mint
     {
         if (rowIndex < static_cast<uint32>(M))
         {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] = row[columnIndex];
-            }
+            Math::setRow(row._c, _m, rowIndex);
         }
     }
 
@@ -262,10 +369,7 @@ namespace mint
         MINT_ASSERT("김장원", rowIndex < static_cast<uint32>(M), "범위를 벗어난 접근입니다!");
 
         VectorR<N, T> result;
-        for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-        {
-            result[columnIndex] = _m[rowIndex][columnIndex];
-        }
+        Math::getRow(_m, rowIndex, result._c);
         return result;
     }
 
@@ -274,10 +378,7 @@ namespace mint
     {
         if (columnIndex < static_cast<uint32>(N))
         {
-            for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-            {
-                _m[rowIndex][columnIndex] = column[rowIndex];
-            }
+            Math::setCol(column._c, _m, static_cast<int32>(columnIndex));
         }
     }
 
@@ -287,10 +388,7 @@ namespace mint
         MINT_ASSERT("김장원", columnIndex < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
 
         VectorR<M, T> result;
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            result[rowIndex] = _m[rowIndex][columnIndex];
-        }
+        Math::getCol(_m, columnIndex, result._c);
         return result;
     }
 
@@ -389,7 +487,7 @@ namespace mint
             {
                 if (columnIndex != rowIndex)
                 {
-                    if (_m[rowIndex][columnIndex] != 0.0)
+                    if (_m[rowIndex][columnIndex] != 0)
                     {
                         return false;
                     }
@@ -412,7 +510,7 @@ namespace mint
         {
             for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
             {
-                if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? scale : 0.0))
+                if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? scale : 0))
                 {
                     return false;
                 }
@@ -433,7 +531,7 @@ namespace mint
         {
             for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
             {
-                if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? 1.0 : 0.0))
+                if (_m[rowIndex][columnIndex] != ((columnIndex == rowIndex) ? 1 : 0))
                 {
                     return false;
                 }
@@ -449,7 +547,7 @@ namespace mint
         {
             for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
             {
-                if (_m[rowIndex][columnIndex] != 0.0)
+                if (_m[rowIndex][columnIndex] != 0)
                 {
                     return false;
                 }
@@ -522,7 +620,7 @@ namespace mint
         {
             for (int32 columnIndex = 0; columnIndex < rowIndex; ++columnIndex)
             {
-                if (_m[rowIndex][columnIndex] != 0.0)
+                if (_m[rowIndex][columnIndex] != 0)
                 {
                     return false;
                 }
@@ -960,9 +1058,9 @@ namespace mint
             (
                 {
                     +static_cast<T>(2) / pixelWidth,  0                              , 0, -1,
-                        0                             , -static_cast<T>(2) / pixelHeight, 0, +1,
-                        0                             ,  0                              , 1,  0,
-                        0                             ,  0                              , 0,  1
+                     0                             , -static_cast<T>(2) / pixelHeight, 0, +1,
+                     0                             ,  0                              , 1,  0,
+                     0                             ,  0                              , 0,  1
                 }
             );
         }

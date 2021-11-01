@@ -21,25 +21,25 @@ namespace mint
 
     Float2& Float2::operator+=(const Float2& rhs)
     {
-        Math::setAdd(_c, rhs._c);
+        Math::setAddVec(_c, rhs._c);
         return *this;
     }
 
     Float2& Float2::operator-=(const Float2& rhs)
     {
-        Math::setSub(_c, rhs._c);
+        Math::setSubVec(_c, rhs._c);
         return *this;
     }
 
     Float2& Float2::operator*=(const float s)
     {
-        Math::setMul(_c, s);
+        Math::setMulVec(_c, s);
         return *this;
     }
 
     Float2& Float2::operator/=(const float s)
     {
-        Math::setDiv(_c, s);
+        Math::setDivVec(_c, s);
         return *this;
     }
 

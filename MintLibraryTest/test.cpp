@@ -211,6 +211,8 @@ const bool testLinearAlgebra()
     testMatrix4x4.setRow(1, {  0, 3, 1, 2 });
     testMatrix4x4.setRow(2, {  2, 3, 1, 0 });
     testMatrix4x4.setRow(3, {  1, 0, 2, 1 });
+    const bool testEquals = testMatrix4x4 == testMatrix4x4;
+    testMatrix4x4 *= testMatrix4x4;
     Matrix4x4<float> testMatrix4x4Inverse = MatrixUtils::inverse(testMatrix4x4);
     
     const Matrix4x4<float> testIdentity(MatrixUtils::identity<4, float>());

@@ -64,7 +64,7 @@ namespace mint
         union
         {
             float                   _m[2][2];
-            mint::Float2              _row[2];
+            Float2                  _row[2];
             struct
             {
                 float               _11, _12;

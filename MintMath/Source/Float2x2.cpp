@@ -1,5 +1,7 @@
 ﻿#include <MintMath/Include/Float2x2.h>
 
+#include <MintMath/Include/VectorR.hpp>
+
 
 namespace mint
 {
@@ -12,8 +14,8 @@ namespace mint
 
     Float2x2::Float2x2()
         : Float2x2(
-            1.0f, 0.0f, 
-            0.0f, 1.0f)
+            1, 0, 
+            0, 1)
     {
         __noop;
     }
@@ -75,13 +77,13 @@ namespace mint
 
     void Float2x2::setZero() noexcept
     {
-        _m[0][0] = _m[0][1] = _m[1][0] = _m[1][1] = 0.0f;
+        Math::setZero(_m[0]);
+        Math::setZero(_m[1]);
     }
 
     void Float2x2::setIdentity() noexcept
     {
-        _m[0][1] = _m[1][0] = 0.0f;
-        _m[0][0] = _m[1][1] = 1.0f;
+        Math::setIdentity(_m);
     }
 
     const float Float2x2::determinant() const noexcept
@@ -112,6 +114,8 @@ namespace mint
 
     Float2 Float2x2::mul(const Float2& v) const noexcept
     {
-        return Float2(_m[0][0] * v._x + _m[0][1] * v._y, _m[1][0] * v._x + _m[1][1] * v._y);
+        Float2 result;
+        Math::mul(_m, v._c, result._c);
+        return result;
     }
 }

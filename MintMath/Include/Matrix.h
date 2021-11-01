@@ -19,6 +19,49 @@ namespace std
 
 namespace mint
 {
+    namespace Math
+    {
+        template <int32 M, int32 N, typename T>
+        const bool              equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon = 0) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    copyMat(const T(&src)[M][N], T(&dest)[M][N]) noexcept;
+        
+        template <int32 M, int32 N, typename T>
+        void                    setAddMat(T(&lhs)[M][N], const T(&rhs)[M][N]) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    setSubMat(T(&lhs)[M][N], const T(&rhs)[M][N]) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    setMulMat(T(&mat)[M][N], const T scalar) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    setDivMat(T(&mat)[M][N], const T scalar) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    setRow(const T(&src)[N], T(&dest)[M][N], const int32 destRow) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    getRow(const T(&mat)[M][N], const int32 row, T(&out)[N]) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    setCol(const T(&src)[M], T(&dest)[M][N], const int32 destCol) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    getCol(const T(&mat)[M][N], const int32 col, T(&out)[M]) noexcept;
+
+        template <int32 M, int32 N, int32 P, typename T>
+        void                    mul(const T(&lhs)[M][N], const T(&rhs)[N][P], T(&out)[M][P]) noexcept;
+        
+        template <int32 M, int32 N, typename T>
+        void                    mul(const T(&lhsMat)[M][N], const T(&rhsVec)[N], T(&outVec)[N]) noexcept;
+
+        template <int32 M, typename T>
+        void                    setIdentity(T(&inOut)[M][M]) noexcept;
+    }
+
+
     template<typename T>
     class Quaternion;
 
