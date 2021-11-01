@@ -22,15 +22,15 @@ namespace mint
         return *this;
     }
 
-    Float3& Float3::operator*=(const float s)
+    Float3& Float3::operator*=(const float scalar)
     {
-        Math::setMulVec(_c, s);
+        Math::setMulVec(_c, scalar);
         return *this;
     }
 
-    Float3& Float3::operator/=(const float s)
+    Float3& Float3::operator/=(const float scalar)
     {
-        Math::setDivVec(_c, s);
+        Math::setDivVec(_c, scalar);
         return *this;
     }
 
@@ -54,14 +54,14 @@ namespace mint
         return Float3(_x - rhs._x, _y - rhs._y, _z - rhs._z);
     }
 
-    Float3 Float3::operator*(const float s) const noexcept
+    Float3 Float3::operator*(const float scalar) const noexcept
     {
-        return Float3(_x * s, _y * s, _z * s);
+        return Float3(_x * scalar, _y * scalar, _z * scalar);
     }
 
-    Float3 Float3::operator/(const float s) const noexcept
+    Float3 Float3::operator/(const float scalar) const noexcept
     {
-        return Float3(_x / s, _y / s, _z / s);
+        return Float3(_x / scalar, _y / scalar, _z / scalar);
     }
 
     float& Float3::operator[](const uint32 index) noexcept

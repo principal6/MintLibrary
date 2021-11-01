@@ -26,7 +26,7 @@ namespace mint
 
     public:
         constexpr               Float2();
-        constexpr explicit      Float2(const float s);
+        constexpr explicit      Float2(const float scalar);
         constexpr explicit      Float2(const float x, const float y);
         explicit                Float2(const Int2& rhs);
         constexpr               Float2(const Float2& rhs)           = default;
@@ -40,8 +40,8 @@ namespace mint
     public:
         Float2&                 operator+=(const Float2& rhs);        
         Float2&                 operator-=(const Float2& rhs);
-        Float2&                 operator*=(const float s);
-        Float2&                 operator/=(const float s);
+        Float2&                 operator*=(const float scalar);
+        Float2&                 operator/=(const float scalar);
 
     public:
         const Float2&           operator+() const noexcept;
@@ -50,8 +50,8 @@ namespace mint
     public:
         Float2                  operator+(const Float2& rhs) const noexcept;
         Float2                  operator-(const Float2& rhs) const noexcept;
-        Float2                  operator*(const float s) const noexcept;
-        Float2                  operator/(const float s) const noexcept;
+        Float2                  operator*(const float scalar) const noexcept;
+        Float2                  operator/(const float scalar) const noexcept;
 
     public:
         float&                  operator[](const uint32 index) noexcept;

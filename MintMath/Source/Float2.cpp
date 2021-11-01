@@ -31,15 +31,15 @@ namespace mint
         return *this;
     }
 
-    Float2& Float2::operator*=(const float s)
+    Float2& Float2::operator*=(const float scalar)
     {
-        Math::setMulVec(_c, s);
+        Math::setMulVec(_c, scalar);
         return *this;
     }
 
-    Float2& Float2::operator/=(const float s)
+    Float2& Float2::operator/=(const float scalar)
     {
-        Math::setDivVec(_c, s);
+        Math::setDivVec(_c, scalar);
         return *this;
     }
 
@@ -55,22 +55,30 @@ namespace mint
 
     Float2 Float2::operator+(const Float2& rhs) const noexcept
     {
-        return Float2(_x + rhs._x, _y + rhs._y);
+        Float2 result = *this;
+        Math::setAddVec(result._c, rhs._c);
+        return result;
     }
 
     Float2 Float2::operator-(const Float2& rhs) const noexcept
     {
-        return Float2(_x - rhs._x, _y - rhs._y);
+        Float2 result = *this;
+        Math::setSubVec(result._c, rhs._c);
+        return result;
     }
 
-    Float2 Float2::operator*(const float s) const noexcept
+    Float2 Float2::operator*(const float scalar) const noexcept
     {
-        return Float2(_x * s, _y * s);
+        Float2 result = *this;
+        Math::setMulVec(result._c, scalar);
+        return result;
     }
 
-    Float2 Float2::operator/(const float s) const noexcept
+    Float2 Float2::operator/(const float scalar) const noexcept
     {
-        return Float2(_x / s, _y / s);
+        Float2 result = *this;
+        Math::setDivVec(result._c, scalar);
+        return result;
     }
 
     float& Float2::operator[](const uint32 index) noexcept

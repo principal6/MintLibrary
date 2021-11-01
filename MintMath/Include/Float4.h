@@ -34,8 +34,8 @@ namespace mint
     public:
         Float4&                 operator+=(const Float4& rhs);
         Float4&                 operator-=(const Float4& rhs);
-        Float4&                 operator*=(const float s);
-        Float4&                 operator/=(const float s);
+        Float4&                 operator*=(const float scalar);
+        Float4&                 operator/=(const float scalar);
 
     public:
         const Float4&           operator+() const noexcept;
@@ -44,8 +44,8 @@ namespace mint
     public:
         Float4                  operator+(const Float4& rhs) const noexcept;
         Float4                  operator-(const Float4& rhs) const noexcept;
-        Float4                  operator*(const float s) const noexcept;
-        Float4                  operator/(const float s) const noexcept;
+        Float4                  operator*(const float scalar) const noexcept;
+        Float4                  operator/(const float scalar) const noexcept;
 
     public:
         float&                  operator[](const uint32 index) noexcept;

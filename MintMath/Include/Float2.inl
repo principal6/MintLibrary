@@ -9,8 +9,8 @@ namespace mint
         __noop;
     }
 
-    inline constexpr Float2::Float2(const float s)
-        : Float2(s, s)
+    inline constexpr Float2::Float2(const float scalar)
+        : Float2(scalar, scalar)
     {
         __noop;
     }

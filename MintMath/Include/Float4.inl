@@ -48,21 +48,21 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE Float4& Float4::operator*=(const float s)
+    MINT_INLINE Float4& Float4::operator*=(const float scalar)
     {
-        _x *= s;
-        _y *= s;
-        _z *= s;
-        _w *= s;
+        _x *= scalar;
+        _y *= scalar;
+        _z *= scalar;
+        _w *= scalar;
         return *this;
     }
 
-    MINT_INLINE Float4& Float4::operator/=(const float s)
+    MINT_INLINE Float4& Float4::operator/=(const float scalar)
     {
-        _x /= s;
-        _y /= s;
-        _z /= s;
-        _w /= s;
+        _x /= scalar;
+        _y /= scalar;
+        _z /= scalar;
+        _w /= scalar;
         return *this;
     }
 
@@ -86,14 +86,14 @@ namespace mint
         return Float4(_x - rhs._x, _y - rhs._y, _z - rhs._z, _w - rhs._w);
     }
 
-    MINT_INLINE Float4 Float4::operator*(const float s) const noexcept
+    MINT_INLINE Float4 Float4::operator*(const float scalar) const noexcept
     {
-        return Float4(_x * s, _y * s, _z * s, _w * s);
+        return Float4(_x * scalar, _y * scalar, _z * scalar, _w * scalar);
     }
 
-    MINT_INLINE Float4 Float4::operator/(const float s) const noexcept
+    MINT_INLINE Float4 Float4::operator/(const float scalar) const noexcept
     {
-        return Float4(_x / s, _y / s, _z / s, _w / s);
+        return Float4(_x / scalar, _y / scalar, _z / scalar, _w / scalar);
     }
 
     MINT_INLINE constexpr const bool Float4::operator==(const Float4& rhs) const noexcept
@@ -108,11 +108,11 @@ namespace mint
 
     MINT_INLINE const float Float4::maxComponent() const noexcept
     {
-        return mint::max(mint::max(_x, _y), mint::max(_z, _w));
+        return max(max(_x, _y), max(_z, _w));
     }
 
     MINT_INLINE const float Float4::minComponent() const noexcept
     {
-        return mint::min(mint::min(_x, _y), mint::min(_z, _w));
+        return min(min(_x, _y), min(_z, _w));
     }
 }
