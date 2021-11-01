@@ -147,27 +147,147 @@ namespace mint
         }
 
         template<int32 M, int32 N, typename T>
-        void mul(const T(&lhsMat)[M][N], const T(&rhsVec)[N], T(&outVec)[N]) noexcept
+        void mul(const T(&mat)[M][N], const T(&vec)[N], T(&outVec)[M]) noexcept
         {
-            T rhsVecCopy[N];
-            copyVec(rhsVec, rhsVecCopy);
+            T vecCopy[N];
+            copyVec(vec, vecCopy);
 
             for (int32 row = 0; row < M; ++row)
             {
-                outVec[row] = Math::dot(lhsMat[row], rhsVecCopy);
+                outVec[row] = Math::dot(mat[row], vecCopy);
             }
         }
 
-        template<int32 M, typename T>
-        void setIdentity(T(&inOut)[M][M]) noexcept
+        template<int32 M, int32 N, typename T>
+        void mul(const T(&vec)[M], const T(&mat)[M][N], T(&outVec)[N]) noexcept
         {
-            for (int32 row = 0; row < M; ++row)
+            T vecCopy[M];
+            copyVec(vec, vecCopy);
+
+            T matCol[M];
+            for (int32 col = 0; col < N; ++col)
             {
-                for (int32 col = 0; col < M; ++col)
+                Math::getCol(mat, col, matCol);
+                
+                outVec[col] = Math::dot(vecCopy, matCol);
+            }
+        }
+
+        template<int32 N, typename T>
+        void setIdentity(T(&inOut)[N][N]) noexcept
+        {
+            for (int32 row = 0; row < N; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
                 {
                     inOut[row][col] = static_cast<T>((row == col) ? 1 : 0);
                 }
             }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void setZeroMat(T(&inOut)[M][N]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    inOut[row][col] = static_cast<T>(0);
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void transpose(const T(&in)[M][N], T(&out)[N][M]) noexcept
+        {
+            for (int32 row = 0; row < M; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    out[col][row] = in[row][col];
+                }
+            }
+        }
+
+        template<int32 M, int32 N, typename T>
+        void minor(const T(&in)[M][N], const int32 row, const int32 col, T(&out)[M - 1][N - 1]) noexcept
+        {
+            int32 destRow = 0;
+            for (int32 srcRow = 0; srcRow < M; ++srcRow)
+            {
+                if (row != destRow)
+                {
+                    int32 destCol = 0;
+                    for (int32 srcCol = 0; srcCol < M; ++srcCol)
+                    {
+                        if (col != srcCol)
+                        {
+                            out[destRow][destCol] = in[srcRow][srcCol];
+
+                            ++destCol;
+                        }
+                    }
+
+                    ++destRow;
+                }
+            }
+        }
+
+        template<int32 N, typename T>
+        const T trace(const T(&mat)[N][N]) noexcept
+        {
+            T result{};
+            for (int32 row = 0; row < N; ++row)
+            {
+                for (int32 col = 0; col < N; ++col)
+                {
+                    result += mat[row][col];
+                }
+            }
+            return result;
+        }
+
+        template<typename T>
+        const T determinant(const T(&mat)[2][2]) noexcept
+        {
+            const T a = mat[0][0];
+            const T b = mat[0][1];
+            const T c = mat[1][0];
+            const T d = mat[1][1];
+            return static_cast<T>(a * d - b * c);
+        }
+
+        template<typename T>
+        const T determinant(const T(&mat)[3][3]) noexcept
+        {
+            const T a = mat[0][0];
+            const T b = mat[0][1];
+            const T c = mat[0][2];
+            T minorA[2][2];
+            T minorB[2][2];
+            T minorC[2][2];
+            minor(mat, 0, 0, minorA);
+            minor(mat, 0, 1, minorB);
+            minor(mat, 0, 2, minorC);
+            return a * determinant(minorA) - b * determinant(minorB) + c * determinant(minorC);
+        }
+
+        template<typename T>
+        const T determinant(const T(&mat)[4][4]) noexcept
+        {
+            const T a = mat[0][0];
+            const T b = mat[0][1];
+            const T c = mat[0][2];
+            const T d = mat[0][3];
+            T minorA[3][3];
+            T minorB[3][3];
+            T minorC[3][3];
+            T minorD[3][3];
+            minor(mat, 0, 0, minorA);
+            minor(mat, 0, 1, minorB);
+            minor(mat, 0, 2, minorC);
+            minor(mat, 0, 3, minorD);
+            return a * determinant(minorA) - b * determinant(minorB) + c * determinant(minorC) - d * determinant(minorD);
         }
     }
 
@@ -396,10 +516,7 @@ namespace mint
     MINT_INLINE VectorR<N, T> Matrix<M, N, T>::multiplyRowVector(const VectorR<M, T>& rowVector) const noexcept
     {
         VectorR<N, T> result;
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            result += getRow(rowIndex) * rowVector[rowIndex];
-        }
+        Math::mul(rowVector._c, _m, result._c);
         return result;
     }
 
@@ -407,10 +524,7 @@ namespace mint
     MINT_INLINE VectorR<M, T> Matrix<M, N, T>::multiplyColumnVector(const VectorR<N, T>& columnVector) const noexcept
     {
         VectorR<M, T> result;
-        for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-        {
-            result += getColumn(columnIndex) * columnVector[columnIndex];
-        }
+        Math::mul(_m, columnVector._c, result._c);
         return result;
     }
 
@@ -418,13 +532,7 @@ namespace mint
     MINT_INLINE Matrix<N, M, T> Matrix<M, N, T>::transpose() const noexcept
     {
         Matrix<N, M, T> result;
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                result.setElement(columnIndex, rowIndex, _m[rowIndex][columnIndex]);
-            }
-        }
+        Math::transpose(_m, result._m);
         return result;
     }
 
@@ -436,34 +544,14 @@ namespace mint
             MINT_LOG_ERROR("±èÀå¿ø", "Tried to calculate trace from a non-square matrix!");
         }
 
-        T trace = 0.0;
-        const int32 safeSize = min(M, N);
-        for (int32 index = 0; index < safeSize; ++index)
-        {
-            trace += _m[index][index];
-        }
-        return trace;
+        return Math::trace(_m);
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE Matrix<M - 1, N - 1, T> Matrix<M, N, T>::minor(const uint32 row, const uint32 col) const noexcept
     {
         Matrix<M - 1, N - 1, T> result;
-        uint32 targetRow{ 0 };
-        for (uint32 sourceRow = 0; sourceRow < M; ++sourceRow)
-        {
-            if (sourceRow == row) continue;
-
-            uint32 targetCol{ 0 };
-            for (uint32 sourceCol = 0; sourceCol < N; ++sourceCol)
-            {
-                if (sourceCol == col) continue;
-
-                result.setElement(targetRow, targetCol, _m[sourceRow][sourceCol]);
-                ++targetCol;
-            }
-            ++targetRow;
-        }
+        Math::minor(_m, row, col, result._m);
         return result;
     }
 
@@ -646,25 +734,13 @@ namespace mint
             MINT_LOG_ERROR("±èÀå¿ø", "Non-square matrix is set to identity!");
         }
 
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] = (columnIndex == rowIndex) ? getScalarOne<T>() : getScalarZero<T>();
-            }
-        }
+        Math::setIdentity(_m);
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::setZero() noexcept
     {
-        for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
-        {
-            for (int32 columnIndex = 0; columnIndex < N; ++columnIndex)
-            {
-                _m[rowIndex][columnIndex] = 0;
-            }
-        }
+        Math::setZeroMat(_m);
     }
 
 
@@ -705,30 +781,19 @@ namespace mint
         template<typename T>
         const T determinant(const Matrix2x2<T>& in) noexcept
         {
-            const T a = in.getElement(0, 0);
-            const T b = in.getElement(0, 1);
-            const T c = in.getElement(1, 0);
-            const T d = in.getElement(1, 1);
-            return static_cast<T>(a * d - b * c);
+            return Math::determinant(in._m);
         }
 
         template<typename T>
         const T determinant(const Matrix3x3<T>& in) noexcept
         {
-            const T a = in.getElement(0, 0);
-            const T b = in.getElement(0, 1);
-            const T c = in.getElement(0, 2);
-            return a * determinant(in.minor(0, 0)) - b * determinant(in.minor(0, 1)) + c * determinant(in.minor(0, 2));
+            return Math::determinant(in._m);
         }
 
         template<typename T>
         const T determinant(const Matrix4x4<T>& in) noexcept
         {
-            const T a = in.getElement(0, 0);
-            const T b = in.getElement(0, 1);
-            const T c = in.getElement(0, 2);
-            const T d = in.getElement(0, 3);
-            return a * determinant(in.minor(0, 0)) - b * determinant(in.minor(0, 1)) + c * determinant(in.minor(0, 2)) - d * determinant(in.minor(0, 3));
+            return Math::determinant(in._m);
         }
 
         template<typename T>

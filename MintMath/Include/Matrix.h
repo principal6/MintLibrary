@@ -54,11 +54,37 @@ namespace mint
         template <int32 M, int32 N, int32 P, typename T>
         void                    mul(const T(&lhs)[M][N], const T(&rhs)[N][P], T(&out)[M][P]) noexcept;
         
+        // mat * vec
         template <int32 M, int32 N, typename T>
-        void                    mul(const T(&lhsMat)[M][N], const T(&rhsVec)[N], T(&outVec)[N]) noexcept;
+        void                    mul(const T(&lhsMat)[M][N], const T(&rhsVec)[N], T(&outVec)[M]) noexcept;
+        
+        // vec * mat
+        template <int32 M, int32 N, typename T>
+        void                    mul(const T(&lhsVec)[M], const T(&rhsMat)[M][N], T(&outVec)[N]) noexcept;
 
-        template <int32 M, typename T>
-        void                    setIdentity(T(&inOut)[M][M]) noexcept;
+        template <int32 N, typename T>
+        void                    setIdentity(T(&inOut)[N][N]) noexcept;
+        
+        template <int32 M, int32 N, typename T>
+        void                    setZeroMat(T(&inOut)[M][N]) noexcept;
+
+        template <int32 M, int32 N, typename T>
+        void                    transpose(const T(&in)[M][N], T(&out)[N][M]) noexcept;
+        
+        template <int32 M, int32 N, typename T>
+        void                    minor(const T(&in)[M][N], const int32 row, const int32 col, T(&out)[M - 1][N - 1]) noexcept;
+
+        template <int32 N, typename T>
+        const T                 trace(const T(&mat)[N][N]) noexcept;
+        
+        template <typename T>
+        const T                 determinant(const T(&mat)[2][2]) noexcept;
+
+        template <typename T>
+        const T                 determinant(const T(&mat)[3][3]) noexcept;
+
+        template <typename T>
+        const T                 determinant(const T(&mat)[4][4]) noexcept;
     }
 
 
@@ -161,7 +187,7 @@ namespace mint
         void                    setIdentity() noexcept;
         void                    setZero() noexcept;
 
-    private:
+    public:
         T                       _m[M][N];
     };
 

@@ -88,11 +88,7 @@ namespace mint
 
     const float Float2x2::determinant() const noexcept
     {
-        const float a = _m[0][0];
-        const float b = _m[0][1];
-        const float c = _m[1][0];
-        const float d = _m[1][1];
-        return a * d - b * c;
+        return Math::determinant(_m);
     }
 
     Float2x2 Float2x2::inverse() const noexcept
