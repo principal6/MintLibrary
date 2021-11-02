@@ -215,7 +215,7 @@ namespace mint
             int32 destRow = 0;
             for (int32 srcRow = 0; srcRow < M; ++srcRow)
             {
-                if (row != destRow)
+                if (row != srcRow)
                 {
                     int32 destCol = 0;
                     for (int32 srcCol = 0; srcCol < M; ++srcCol)

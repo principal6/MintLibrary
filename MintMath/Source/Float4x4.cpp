@@ -235,28 +235,28 @@ namespace mint
 
     Float4x4 Float4x4::operator+(const Float4x4& rhs) const noexcept
     {
-        Float4x4 result;
+        Float4x4 result = *this;
         Math::setAddMat(result._m, rhs._m);
         return result;
     }
 
     Float4x4 Float4x4::operator-(const Float4x4& rhs) const noexcept
     {
-        Float4x4 result;
+        Float4x4 result = *this;
         Math::setSubMat(result._m, rhs._m);
         return result;
     }
 
     Float4x4 Float4x4::operator*(const float scalar) const noexcept
     {
-        Float4x4 result;
+        Float4x4 result = *this;
         Math::setMulMat(result._m, scalar);
         return result;
     }
 
     Float4x4 Float4x4::operator/(const float scalar) const noexcept
     {
-        Float4x4 result;
+        Float4x4 result = *this;
         Math::setDivMat(result._m, scalar);
         return result;
     }
