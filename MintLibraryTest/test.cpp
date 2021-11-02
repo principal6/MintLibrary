@@ -61,7 +61,7 @@ void testFloatTypes()
 #endif
     {
         /*
-        static constexpr uint64 kTestCount = 100'000'000;
+        static constexpr uint64 kTestCount = 500'000'000;
         {
             Profiler::ScopedCpuProfiler profiler("Profile - Float4");
             Float4 a(1.0f, 0.0f, 1.0f, 0.0f);
@@ -69,6 +69,10 @@ void testFloatTypes()
             Float4 c;
             for (uint64 i = 0; i < kTestCount; ++i)
             {
+                //a += b;
+                //a -= b;
+                //a *= 0.5f;
+                //a *= 2.0f;
                 c = a + b;
                 //c = Float4::cross(a, b);
             }
@@ -80,12 +84,17 @@ void testFloatTypes()
             Vector4F c;
             for (uint64 i = 0; i < kTestCount; ++i)
             {
+                //a += b;
+                //a -= b;
+                //a *= 0.5f;
+                //a *= 2.0f;
                 c = a + b;
                 //c = a.cross(b);
             }
         }
         auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
         */
+
         Vector4F a;
         Vector4F b;
         Vector4F c = Vector4F(0.0f, 2.0f, 3.0f, 4.0f);
