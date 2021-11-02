@@ -59,6 +59,43 @@ void testFloatTypes()
     Float2 t;
     t[3] = 1.0f;
 #endif
+    {
+        /*
+        static constexpr uint64 kTestCount = 100'000'000;
+        {
+            Profiler::ScopedCpuProfiler profiler("Profile - Float4");
+            Float4 a(1.0f, 0.0f, 1.0f, 0.0f);
+            Float4 b(0.0f, 1.0f, 0.0f, 1.0f);
+            Float4 c;
+            for (uint64 i = 0; i < kTestCount; ++i)
+            {
+                c = a + b;
+                //c = Float4::cross(a, b);
+            }
+        }
+        {
+            Profiler::ScopedCpuProfiler profiler("Profile - Vector4F");
+            Vector4F a(1.0f, 0.0f, 1.0f, 0.0f);
+            Vector4F b(0.0f, 1.0f, 0.0f, 1.0f);
+            Vector4F c;
+            for (uint64 i = 0; i < kTestCount; ++i)
+            {
+                c = a + b;
+                //c = a.cross(b);
+            }
+        }
+        auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
+        */
+        Vector4F a;
+        Vector4F b;
+        Vector4F c = Vector4F(0.0f, 2.0f, 3.0f, 4.0f);
+        a == b;
+        a == c;
+        Vector4D da;
+        auto sizeA = sizeof(a);
+        auto sizeB = sizeof(da);
+        printf("");
+    }
 }
 
 const bool testFiles()

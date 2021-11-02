@@ -18,6 +18,8 @@
 #include <MintMath/Include/VectorR.h>
 #include <MintMath/Include/Matrix.h>
 
+#include <MintMath/Include/Vector4.h>
+
 #include <MintMath/Include/Easing.h>
 
 

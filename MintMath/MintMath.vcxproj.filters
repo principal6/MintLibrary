@@ -63,6 +63,9 @@
     <ClInclude Include="Include\Quaternion.inl">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Vector4.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -92,6 +95,9 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Vector4.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Float4.inl">
@@ -107,6 +113,9 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\Easing.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Vector4.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>
