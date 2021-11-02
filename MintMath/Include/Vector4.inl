@@ -1,3 +1,4 @@
+#include "Vector4.h"
 #pragma once
 
 
@@ -35,6 +36,38 @@ namespace mint
         // y == l.zx - r.xz
         // z == l.xy - r.yx
         return Vector4<float>(_mm_sub_ps(lhsPair, rhsPair));
+    }
+
+    MINT_INLINE const double dot(const Vector4<double>& lhs, const Vector4<double>& rhs) noexcept
+    {
+        const __m256d result = _mm256_mul_pd(lhs.getRaw(), rhs.getRaw());
+        return result.m256d_f64[0] + result.m256d_f64[1] + result.m256d_f64[2] + result.m256d_f64[3];
+    }
+
+    MINT_INLINE void normalize(Vector4<double>& inOut) noexcept
+    {
+        const double norm = inOut.norm();
+        inOut /= norm;
+    }
+
+    MINT_INLINE Vector4<double> cross(const Vector4<double>& lhs, const Vector4<double>& rhs) noexcept
+    {
+        // Pair
+        //    |  x |  y |  z |
+        // *  |  y |  z |  x |
+        //
+        // =  | xy | yz | zx |
+        double lhsVec[4];
+        lhs.store(lhsVec);
+        double rhsVec[4];
+        rhs.store(rhsVec);
+        const __m256d lhsPair = _mm256_mul_pd(lhs.getRaw(), _mm256_set_pd(lhsVec[1], lhsVec[2], lhsVec[0], 0.0f));
+        const __m256d rhsPair = _mm256_mul_pd(rhs.getRaw(), _mm256_set_pd(rhsVec[1], rhsVec[2], rhsVec[0], 0.0f));
+
+        // x == l.yz - r.zy
+        // y == l.zx - r.xz
+        // z == l.xy - r.yx
+        return Vector4<double>(_mm256_sub_pd(lhsPair, rhsPair));
     }
 #pragma endregion
 
@@ -196,6 +229,170 @@ namespace mint
     }
 
     MINT_INLINE Vector4<float> Vector4<float>::cross(const Vector4<float>& rhs) const noexcept
+    {
+        return mint::cross(*this, rhs);
+    }
+
+
+
+
+    inline Vector4<double>::Vector4()
+        : _raw{ _mm256_setzero_pd() }
+    {
+        __noop;
+    }
+
+    inline Vector4<double>::Vector4(const double scalar)
+        : _raw{ _mm256_set_pd(scalar, scalar, scalar, scalar) }
+    {
+        __noop;
+    }
+
+    inline Vector4<double>::Vector4(const double x, const double y, const double z, const double w)
+        : _raw{ _mm256_set_pd(x, y, z, w) }
+    {
+        __noop;
+    }
+
+    inline Vector4<double>::Vector4(const __m256d raw)
+        : _raw{ raw }
+    {
+        __noop;
+    }
+
+    inline Vector4<double>::Vector4(const Vector4& rhs)
+        : _raw{ rhs._raw }
+    {
+        __noop;
+    }
+
+    inline Vector4<double>::Vector4(Vector4&& rhs) noexcept
+        : _raw{ rhs._raw }
+    {
+        rhs._raw = _mm256_setzero_pd();
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator=(const Vector4& rhs)
+    {
+        if (this != &rhs)
+        {
+            _raw = rhs._raw;
+        }
+        return *this;
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator=(Vector4&& rhs) noexcept
+    {
+        if (this != &rhs)
+        {
+            _raw = rhs._raw;
+            rhs._raw = _mm256_setzero_pd();
+        }
+        return *this;
+    }
+
+    MINT_INLINE const bool Vector4<double>::operator==(const Vector4& rhs) const noexcept
+    {
+        const __m256d cmpResult = _mm256_cmp_pd(_raw, rhs._raw, _CMP_EQ_OQ);
+        return (cmpResult.m256d_f64[0] < 0) && (cmpResult.m256d_f64[1] < 0) && (cmpResult.m256d_f64[2] < 0) && (cmpResult.m256d_f64[3] < 0);
+    }
+
+    MINT_INLINE const bool Vector4<double>::operator!=(const Vector4& rhs) const noexcept
+    {
+        const __m256d cmpResult = _mm256_cmp_pd(_raw, rhs._raw, _CMP_EQ_OQ);
+        return (cmpResult.m256d_f64[0] == 0) || (cmpResult.m256d_f64[1] == 0) || (cmpResult.m256d_f64[2] == 0) || (cmpResult.m256d_f64[3] == 0);
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator+() noexcept
+    {
+        return *this;
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::operator-() const noexcept
+    {
+        return Vector4(_mm256_mul_pd(_raw, _mm256_set_pd(-1.0f, -1.0f, -1.0f, -1.0f)));
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::operator+(const Vector4& rhs) const noexcept
+    {
+        return Vector4(_mm256_add_pd(_raw, rhs._raw));
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::operator-(const Vector4& rhs) const noexcept
+    {
+        return Vector4(_mm256_sub_pd(_raw, rhs._raw));
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::operator*(const double scalar) const noexcept
+    {
+        return Vector4(_mm256_mul_pd(_raw, _mm256_set_pd(scalar, scalar, scalar, scalar)));
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::operator/(const double scalar) const noexcept
+    {
+        return Vector4(_mm256_div_pd(_raw, _mm256_set_pd(scalar, scalar, scalar, scalar)));
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator+=(const Vector4& rhs) noexcept
+    {
+        _raw = _mm256_add_pd(_raw, rhs._raw);
+        return *this;
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator-=(const Vector4& rhs) noexcept
+    {
+        _raw = _mm256_sub_pd(_raw, rhs._raw);
+        return *this;
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator*=(const double scalar) noexcept
+    {
+        _raw = _mm256_mul_pd(_raw, _mm256_set_pd(scalar, scalar, scalar, scalar));
+        return *this;
+    }
+
+    MINT_INLINE Vector4<double>& Vector4<double>::operator/=(const double scalar) noexcept
+    {
+        _raw = _mm256_div_pd(_raw, _mm256_set_pd(scalar, scalar, scalar, scalar));
+        return *this;
+    }
+
+    MINT_INLINE void Vector4<double>::load(const double x, const double y, const double z, const double w) noexcept
+    {
+        _raw = _mm256_set_pd(x, y, z, w);
+    }
+
+    MINT_INLINE void Vector4<double>::store(double(&vec)[4]) const noexcept
+    {
+        _mm256_store_pd(vec, _raw);
+    }
+
+    MINT_INLINE const __m256d& Vector4<double>::getRaw() const noexcept
+    {
+        return _raw;
+    }
+
+    MINT_INLINE const double Vector4<double>::dot(const Vector4& rhs) const noexcept
+    {
+        return mint::dot(*this, rhs);
+    }
+
+    MINT_INLINE const double Vector4<double>::normSq() const noexcept
+    {
+        return dot(*this);
+    }
+
+    MINT_INLINE const double Vector4<double>::norm() const noexcept
+    {
+        return ::sqrt(normSq());
+    }
+
+    MINT_INLINE void Vector4<double>::normalize() noexcept
+    {
+        mint::normalize(*this);
+    }
+
+    MINT_INLINE Vector4<double> Vector4<double>::cross(const Vector4<double>& rhs) const noexcept
     {
         return mint::cross(*this, rhs);
     }

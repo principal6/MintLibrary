@@ -25,6 +25,10 @@ namespace mint
     const float         dot(const Vector4<float>& lhs, const Vector4<float>& rhs) noexcept;
     void                normalize(Vector4<float>& inOut) noexcept;
     Vector4<float>      cross(const Vector4<float>& lhs, const Vector4<float>& rhs) noexcept;
+
+    const double        dot(const Vector4<double>& lhs, const Vector4<double>& rhs) noexcept;
+    void                normalize(Vector4<double>& inOut) noexcept;
+    Vector4<double>     cross(const Vector4<double>& lhs, const Vector4<double>& rhs) noexcept;
 #pragma endregion
 
 
@@ -87,19 +91,54 @@ namespace mint
     };
 
 
-    // TODO
     template<>
     class Vector4<double>
     {
     public:
-        Vector4()
-        {
-            _raw = _mm256_setzero_pd();
-        }
-        ~Vector4() = default;
+                        Vector4();
+                        Vector4(const double scalar);
+                        Vector4(const double x, const double y, const double z, const double w);
+                        Vector4(const __m256d raw);
+                        Vector4(const Vector4& rhs);
+                        Vector4(Vector4&& rhs) noexcept;
+                        ~Vector4() = default;
+    
+    public:
+        Vector4&        operator=(const Vector4& rhs);
+        Vector4&        operator=(Vector4&& rhs) noexcept;
+    
+    public:
+        const bool      operator==(const Vector4& rhs) const noexcept;
+        const bool      operator!=(const Vector4& rhs) const noexcept;
+    
+    public:
+        Vector4&        operator+() noexcept;
+        Vector4         operator-() const noexcept;
+
+        Vector4         operator+(const Vector4& rhs) const noexcept;
+        Vector4         operator-(const Vector4& rhs) const noexcept;
+        Vector4         operator*(const double scalar) const noexcept;
+        Vector4         operator/(const double scalar) const noexcept;
+        
+        Vector4&        operator+=(const Vector4& rhs) noexcept;
+        Vector4&        operator-=(const Vector4& rhs) noexcept;
+        Vector4&        operator*=(const double scalar) noexcept;
+        Vector4&        operator/=(const double scalar) noexcept;
+
+    public:
+        void            load(const double x, const double y, const double z, const double w) noexcept;
+        void            store(double(&vec)[4]) const noexcept;
+        const __m256d&  getRaw() const noexcept;
+    
+    public:
+        const double    dot(const Vector4& rhs) const noexcept;
+        const double    normSq() const noexcept;
+        const double    norm() const noexcept;
+        void            normalize() noexcept;
+        Vector4<double> cross(const Vector4<double>& rhs) const noexcept;
 
     private:
-        __m256d _raw;
+        __m256d         _raw;
     };
 
 

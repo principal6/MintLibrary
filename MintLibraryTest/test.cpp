@@ -100,7 +100,12 @@ void testFloatTypes()
         Vector4F c = Vector4F(0.0f, 2.0f, 3.0f, 4.0f);
         a == b;
         a == c;
+
         Vector4D da;
+        Vector4D db;
+        Vector4D dc = Vector4D(0, 2, 3, 4);
+        da == db;
+        da += dc;
         auto sizeA = sizeof(a);
         auto sizeB = sizeof(da);
         printf("");
