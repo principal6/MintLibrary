@@ -246,38 +246,38 @@ namespace mint
         Matrix4x4<T>            inverse(const Matrix4x4<T>& in) noexcept;
 
         template<typename T>
-        void                    decomposeSrt(const Matrix4x4<T>& in, Vector3<T>& outScale, Matrix4x4<T>& outRotationMatrix, Vector3<T>& outTranslation) noexcept;
+        void                    decomposeSrt(const Matrix4x4<T>& in, VectorR3<T>& outScale, Matrix4x4<T>& outRotationMatrix, VectorR3<T>& outTranslation) noexcept;
 
         template<typename T>
-        Matrix4x4<T>            axesToColumns(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+        Matrix4x4<T>            axesToColumns(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
 
         // Interprets vector from new basis.
         template<typename T>
-        Matrix4x4<T>            axesToRows(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+        Matrix4x4<T>            axesToRows(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
 
         template<typename T>
-        Matrix4x4<T>            translationMatrix(const Vector3<T>& translation) noexcept;
+        Matrix4x4<T>            translationMatrix(const VectorR3<T>& translation) noexcept;
 
         template<typename T>
-        Matrix4x4<T>&           setTranslation(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+        Matrix4x4<T>&           setTranslation(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
             
         template<typename T>
-        Matrix4x4<T>&           preTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+        Matrix4x4<T>&           preTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
             
         template<typename T>
-        Matrix4x4<T>&           postTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept;
+        Matrix4x4<T>&           postTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
             
         template<typename T>
-        Vector3<T>&             getTranslation(const Matrix4x4<T>& in) noexcept;
+        VectorR3<T>&             getTranslation(const Matrix4x4<T>& in) noexcept;
 
         template<typename T>
-        Matrix4x4<T>            scalarMatrix(const Vector3<T>& scale) noexcept;
+        Matrix4x4<T>            scalarMatrix(const VectorR3<T>& scale) noexcept;
 
         template<typename T>
-        Matrix4x4<T>&           preScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept;
+        Matrix4x4<T>&           preScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept;
 
         template<typename T>
-        Matrix4x4<T>&           postScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept;
+        Matrix4x4<T>&           postScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept;
 
         template<typename T>
         Matrix4x4<T>            rotationMatrixX(const T angle) noexcept;
@@ -293,16 +293,16 @@ namespace mint
 
         // Rodrigues' rotation formula
         template<typename T>
-        Matrix4x4<T>            rotationMatrixAxisAngle(const Vector3<T>& axis, const T angle) noexcept;
+        Matrix4x4<T>            rotationMatrixAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
             
         template<typename T>
-        Matrix4x4<T>            rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept;
+        Matrix4x4<T>            rotationMatrixFromAxes(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
             
         template<typename T>
         Matrix4x4<T>            rotationMatrix(const Quaternion<T>& rotation) noexcept;
             
         template<typename T>
-        Matrix4x4<T>            srtMatrix(const Vector3<T>& scale, const Quaternion<T>& rotation, const Vector3<T>& translation) noexcept;
+        Matrix4x4<T>            srtMatrix(const VectorR3<T>& scale, const Quaternion<T>& rotation, const VectorR3<T>& translation) noexcept;
 
         template<typename T>
         Matrix4x4<T>            projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept;

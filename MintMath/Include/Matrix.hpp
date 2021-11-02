@@ -823,7 +823,7 @@ namespace mint
         }
 
         template<typename T>
-        void decomposeSrt(const Matrix4x4<T>& in, Vector3<T>& outScale, Matrix4x4<T>& outRotationMatrix, Vector3<T>& outTranslation) noexcept
+        void decomposeSrt(const Matrix4x4<T>& in, VectorR3<T>& outScale, Matrix4x4<T>& outRotationMatrix, VectorR3<T>& outTranslation) noexcept
         {
             // TODO: avoid nan in outRotationMatrix
 
@@ -884,7 +884,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T> axesToColumns(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+        Matrix4x4<T> axesToColumns(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept
         {
             return Matrix4x4<T>
             (
@@ -898,7 +898,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T> axesToRows(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+        Matrix4x4<T> axesToRows(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept
         {
             return Matrix4x4<T>
             (
@@ -912,7 +912,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T> translationMatrix(const Vector3<T>& translation) noexcept
+        Matrix4x4<T> translationMatrix(const VectorR3<T>& translation) noexcept
         {
             const T x = translation.x();
             const T y = translation.y();
@@ -929,7 +929,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T>& setTranslation(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+        Matrix4x4<T>& setTranslation(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept
         {
             in.setElement(0, 3, translation.getComponent(0));
             in.setElement(1, 3, translation.getComponent(1));
@@ -938,7 +938,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T>& preTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+        Matrix4x4<T>& preTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept
         {
             in.addElement(0, 3, translation.getComponent(0));
             in.addElement(1, 3, translation.getComponent(1));
@@ -947,7 +947,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T>& postTranslate(Matrix4x4<T>& in, const Vector3<T>& translation) noexcept
+        Matrix4x4<T>& postTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept
         {
             in.addElement(0, 3, in.getRow(0).shrink().dot(translation));
             in.addElement(1, 3, in.getRow(1).shrink().dot(translation));
@@ -957,13 +957,13 @@ namespace mint
         }
 
         template<typename T>
-        Vector3<T>& getTranslation(const Matrix4x4<T>& in) noexcept
+        VectorR3<T>& getTranslation(const Matrix4x4<T>& in) noexcept
         {
             return in.getColumn(0).shrink();
         }
 
         template<typename T>
-        Matrix4x4<T> scalarMatrix(const Vector3<T>& scale) noexcept
+        Matrix4x4<T> scalarMatrix(const VectorR3<T>& scale) noexcept
         {
             const T x = scale.x();
             const T y = scale.y();
@@ -980,7 +980,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T>& preScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept
+        Matrix4x4<T>& preScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept
         {
             in.setRow(0, in.getRow(0) * scale.getComponent(0));
             in.setRow(1, in.getRow(1) * scale.getComponent(1));
@@ -989,7 +989,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T>& postScale(Matrix4x4<T>& in, const Vector3<T>& scale) noexcept
+        Matrix4x4<T>& postScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept
         {
             in.setColumn(0, in.getColumn(0) * scale.getComponent(0));
             in.setColumn(1, in.getColumn(1) * scale.getComponent(1));
@@ -1046,11 +1046,11 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T> rotationMatrixAxisAngle(const Vector3<T>& axis, const T angle) noexcept
+        Matrix4x4<T> rotationMatrixAxisAngle(const VectorR3<T>& axis, const T angle) noexcept
         {
             // (v * r)r(1 - cos¥è) + vcos¥è + (r X v)sin¥è
 
-            const Vector3<T> r = axis.normalize();
+            const VectorR3<T> r = axis.normalize();
             const T c = ::cos(angle);
             const T s = ::sin(angle);
 
@@ -1070,7 +1070,7 @@ namespace mint
         }
 
         template<typename T>
-        Matrix4x4<T> rotationMatrixFromAxes(const Vector3<T>& axisX, const Vector3<T>& axisY, const Vector3<T>& axisZ) noexcept
+        Matrix4x4<T> rotationMatrixFromAxes(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept
         {
             return axesToColumns(axisX, axisY, axisZ);
         }
@@ -1078,14 +1078,14 @@ namespace mint
         template<typename T>
         Matrix4x4<T> rotationMatrix(const Quaternion<T>& rotation) noexcept
         {
-            Vector3<T> axis;
+            VectorR3<T> axis;
             T angle;
             rotation.getAxisAngle(axis, angle);
             return rotationMatrixAxisAngle(axis, angle);
         }
 
         template<typename T>
-        Matrix4x4<T> srtMatrix(const Vector3<T>& scale, const Quaternion<T>& rotation, const Vector3<T>& translation) noexcept
+        Matrix4x4<T> srtMatrix(const VectorR3<T>& scale, const Quaternion<T>& rotation, const VectorR3<T>& translation) noexcept
         {
             // SRT matrix for column vector is like below:
             // SRT = T * R * S
