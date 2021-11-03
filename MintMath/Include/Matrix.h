@@ -88,9 +88,6 @@ namespace mint
 
         template <typename T>
         const T                 determinant(const T(&mat)[4][4]) noexcept;
-
-        template <typename T>
-        const T                 determinantFourthColTranslation(const T(&mat)[4][4]) noexcept;
     }
 
 
