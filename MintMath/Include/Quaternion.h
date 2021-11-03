@@ -72,7 +72,7 @@ namespace mint
     public:
         void                        setAxisAngle(const Float3& axis, const T angle) noexcept;
         void                        setAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
-        void                        getAxisAngle(float(&axis)[3], T& angle) const noexcept;
+        void                        getAxisAngle(T(&axis)[3], T& angle) const noexcept;
         void                        getAxisAngle(Float3& axis, T& angle) const noexcept;
         void                        getAxisAngle(VectorR3<T>& axis, T& angle) const noexcept;
 

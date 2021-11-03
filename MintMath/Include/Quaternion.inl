@@ -210,7 +210,7 @@ namespace mint
     }
 
     template<typename T>
-    inline void Quaternion<T>::getAxisAngle(float(&axis)[3], T& angle) const noexcept
+    MINT_INLINE void Quaternion<T>::getAxisAngle(T(&axis)[3], T& angle) const noexcept
     {
         angle = static_cast<T>(::acos(_w) * 2.0);
 
