@@ -145,6 +145,10 @@ namespace mint
         void                postTranslate(const AffineVecF& translation) noexcept;
     
     public:
+        void                setTranslation(const AffineVecF& translation) noexcept { setCol(3, translation); }
+        AffineVecF          getTranslation() const noexcept { return getCol(3); }
+
+    public:
         void                decomposeSrt(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept;
 
     public:
