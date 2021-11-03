@@ -3,49 +3,24 @@
 
 namespace mint
 {
-#pragma region Helpers for inverse
+#pragma region Free functions
     template<typename T>
-    MINT_INLINE const T determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept
+    AffineMat<T> operator*(const T scalar, const AffineMat<T>& mat) noexcept
     {
-        return _11 * (_22 * _33 - _23 * _32)
-            - _12 * (_21 * _33 - _23 * _31)
-            + _13 * (_21 * _32 - _22 * _31);
+        return mat * scalar;
     }
 
     template<typename T>
-    MINT_INLINE const T determinantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
+    MINT_INLINE AffineVec<T> operator*(const AffineVec<T>& rowVec, const AffineMat<T>& mat) noexcept
     {
-        // 0 => 1 2 3
-        // 1 => 0 2 3
-        // 2 => 0 1 3
-        // 3 => 0 1 2
-        const int32 r0 = (0 == row) ? 1 : 0;
-        const int32 r1 = (0 == (row & 2)) ? 2 : 1;
-        const int32 r2 = (3 == row) ? 2 : 3;
-        const int32 c0 = (0 == col) ? 1 : 0;
-        const int32 c1 = (0 == (col & 2)) ? 2 : 1;
-        const int32 c2 = (3 == col) ? 2 : 3;
-        return determinant(mat[r0][c0], mat[r0][c1], mat[r0][c2], mat[r1][c0], mat[r1][c1], mat[r1][c2], mat[r2][c0], mat[r2][c1], mat[r2][c2]);
+        return AffineVec<T>(mat.getCol(0).dot(rowVec), mat.getCol(1).dot(rowVec), mat.getCol(2).dot(rowVec), mat.getCol(3).dot(rowVec));
     }
 
     template<typename T>
-    MINT_INLINE const T determinant(const T(&mat)[4][4]) noexcept
+    MINT_INLINE AffineVec<T> operator*(const AffineMat<T>& mat, const AffineVec<T>& colVec) noexcept
     {
-        return mat[0][0] * determinantOfMinor(mat, 0, 0) - mat[0][1] * determinantOfMinor(mat, 0, 1) 
-             + mat[0][2] * determinantOfMinor(mat, 0, 2) - mat[0][3] * determinantOfMinor(mat, 0, 3);
+        return AffineVec<T>(mat.getRow(0).dot(colVec), mat.getRow(1).dot(colVec), mat.getRow(2).dot(colVec), mat.getRow(3).dot(colVec));
     }
-
-    // transpose of cofactor
-    template<typename T>
-    MINT_INLINE void adjugate(const T(&in)[4][4], T(&out)[4][4]) noexcept
-    {
-        out[0][0] = +determinantOfMinor(in, 0, 0); out[1][0] = -determinantOfMinor(in, 0, 1); out[2][0] = +determinantOfMinor(in, 0, 2); out[3][0] = -determinantOfMinor(in, 0, 3);
-        out[0][1] = -determinantOfMinor(in, 1, 0); out[1][1] = +determinantOfMinor(in, 1, 1); out[2][1] = -determinantOfMinor(in, 1, 2); out[3][1] = +determinantOfMinor(in, 1, 3);
-        out[0][2] = +determinantOfMinor(in, 2, 0); out[1][2] = -determinantOfMinor(in, 2, 1); out[2][2] = +determinantOfMinor(in, 2, 2); out[3][2] = -determinantOfMinor(in, 2, 3);
-        out[0][3] = -determinantOfMinor(in, 3, 0); out[1][3] = +determinantOfMinor(in, 3, 1); out[2][3] = -determinantOfMinor(in, 3, 2); out[3][3] = +determinantOfMinor(in, 3, 3);
-    }
-#pragma endregion
-
 
     template<typename T>
     MINT_INLINE AffineMat<T> translationMatrix(const AffineVec<T>& translation) noexcept
@@ -86,6 +61,166 @@ namespace mint
                0,    0,    0,    1
         );
     }
+
+    template<typename T>
+    MINT_INLINE AffineMat<T> rotationMatrixX(const T angle) noexcept
+    {
+        return AffineMat<T>
+        (
+            1.0f          , 0.0f          , 0.0f          , 0.0f,
+            0.0f          , +::cos(angle) , -::sin(angle) , 0.0f,
+            0.0f          , +::sin(angle) , +::cos(angle) , 0.0f,
+            0.0f          , 0.0f          , 0.0f          , 1.0f
+        );
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrixY(const T angle) noexcept
+    {
+        return AffineMat<T>
+        (
+            +::cos(angle) , 0.0f          , +::sin(angle) , 0.0f,
+            0.0f          , 1.0f          , 0.0f          , 0.0f,
+            -::sin(angle) , 0.0f          , +::cos(angle) , 0.0f,
+            0.0f          , 0.0f          , 0.0f          , 1.0f
+        );
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrixZ(const T angle) noexcept
+    {
+        return AffineMat<T>
+        (
+            +::cos(angle) , -::sin(angle) , 0.0f          , 0.0f,
+            +::sin(angle) , +::cos(angle) , 0.0f          , 0.0f,
+            0.0f          , 0.0f          , 1.0f          , 0.0f,
+            0.0f          , 0.0f          , 0.0f          , 1.0f
+        );
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept
+    {
+        return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept
+    {
+        // (v * r)r(1 - cos¥è) + vcos¥è + (r X v)sin¥è
+
+        T r[4];
+        normalize(axis).get(r);
+        const T c = cosf(angle);
+        const T s = sinf(angle);
+
+        const T rx = r[0];
+        const T ry = r[1];
+        const T rz = r[2];
+        AffineMat<T> result
+        (
+            (1 - c) * rx * rx  + c            , (1 - c) * ry * rx       - (rz * s), (1 - c) * rz * rx       + (ry * s), 0,
+            (1 - c) * rx * ry       + (rz * s), (1 - c) * ry * ry  + c            , (1 - c) * rz * ry       - (rx * s), 0,
+            (1 - c) * rx * rz       - (ry * s), (1 - c) * ry * rz       + (rx * s), (1 - c) * rz * rz  + c            , 0,
+            0                                 , 0                                 , 0                                 , 1
+        );
+        return result;
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrixFromAxes(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    {
+        return axesToColumns(axisX, axisY, axisZ);
+    }
+
+    template<typename T>
+    AffineMat<T> rotationMatrix(const Quaternion<T>& rotation) noexcept
+    {
+        T axis[3];
+        T angle;
+        rotation.getAxisAngle(axis, angle);
+        return rotationMatrixAxisAngle(AffineVec<T>(axis[0], axis[1], axis[2], 0), angle);
+    }
+
+    template<typename T>
+    AffineMat<T> axesToColumns(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    {
+        T aX[4];
+        T aY[4];
+        T aZ[4];
+        axisX.get(aX);
+        axisY.get(aY);
+        axisZ.get(aZ);
+        return AffineMat<T>
+        (
+            aX[0], aY[0], aZ[0], 0,
+            aX[1], aY[1], aZ[1], 0,
+            aX[2], aY[2], aZ[2], 0,
+                0,     0,     0, 1
+        );
+    }
+
+    template<typename T>
+    AffineMat<T> axesToRows(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    {
+        T aX[4];
+        T aY[4];
+        T aZ[4];
+        axisX.get(aX);
+        axisY.get(aY);
+        axisZ.get(aZ);
+        return AffineMat<T>
+        (
+            aX[0], aX[1], aX[2], 0,
+            aY[0], aY[1], aY[2], 0,
+            aZ[0], aZ[1], aZ[2], 0,
+                0,     0,     0, 1
+        );
+    }
+
+    template<typename T>
+    AffineMat<T> srtMatrix(const AffineVec<T>& scale, const Quaternion<T>& rotation, const AffineVec<T>& translation) noexcept
+    {
+        // SRT matrix for column vector is like below:
+        // SRT = T * R * S
+        // which is the same as below..
+        AffineMat<T> matrix = rotationMatrix(rotation);
+        matrix.preTranslate(translation._x, translation._y, translation._z);
+        matrix.postScale(scale._x, scale._y, scale._z);
+        return matrix;
+    }
+
+    template<typename T>
+    AffineMat<T> projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept
+    {
+        const T halfFov = fov * static_cast<T>(0.5);
+        const T a = 1.0f / (::tan(halfFov) * ratio);
+        const T b = 1.0f / (::tan(halfFov));
+        const T c = (farZ) / (farZ - nearZ);
+        const T d = -(farZ * nearZ) / (farZ - nearZ);
+        const T e = 1.0f;
+        return AffineMat<T>
+        (
+            a, 0, 0, 0,
+            0, b, 0, 0,
+            0, 0, c, d,
+            0, 0, e, 0
+        );
+
+    }
+
+    template<typename T>
+    AffineMat<T> projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept
+    {
+        return AffineMat<T>
+        (
+            +static_cast<T>(2) / pixelWidth ,  0                                , 0, -1,
+             0                              , -static_cast<T>(2) / pixelHeight  , 0, +1,
+             0                              ,  0                                , 1,  0,
+             0                              ,  0                                , 0,  1
+        );
+    }
+#pragma endregion
 
 
     inline AffineMat<float>::AffineMat()
@@ -142,11 +277,6 @@ namespace mint
         return AffineMat(_rows[0] - rhs._rows[0], _rows[1] - rhs._rows[1], _rows[2] - rhs._rows[2], _rows[3] - rhs._rows[3]);
     }
 
-    MINT_INLINE AffineMat<float> AffineMat<float>::operator*(const float scalar) const noexcept
-    {
-        return AffineMat(_rows[0] * scalar, _rows[1] * scalar, _rows[2] * scalar, _rows[3] * scalar);
-    }
-
     MINT_INLINE AffineMat<float> AffineMat<float>::operator*(const AffineMat& rhs) const noexcept
     {
         return AffineMat
@@ -156,6 +286,11 @@ namespace mint
                 _rows[2].dot(rhs.getCol(0)), _rows[2].dot(rhs.getCol(1)), _rows[2].dot(rhs.getCol(2)), _rows[2].dot(rhs.getCol(3)),
                 _rows[3].dot(rhs.getCol(0)), _rows[3].dot(rhs.getCol(1)), _rows[3].dot(rhs.getCol(2)), _rows[3].dot(rhs.getCol(3))
             );
+    }
+
+    MINT_INLINE AffineMat<float> AffineMat<float>::operator*(const float scalar) const noexcept
+    {
+        return AffineMat(_rows[0] * scalar, _rows[1] * scalar, _rows[2] * scalar, _rows[3] * scalar);
     }
 
     MINT_INLINE AffineMat<float> AffineMat<float>::operator/(const float scalar) const noexcept
@@ -181,18 +316,18 @@ namespace mint
         return *this;
     }
 
+    MINT_INLINE AffineMat<float>& AffineMat<float>::operator*=(const AffineMat& rhs) noexcept
+    {
+        *this = (*this * rhs);
+        return *this;
+    }
+
     MINT_INLINE AffineMat<float>& AffineMat<float>::operator*=(const float scalar) noexcept
     {
         _rows[0] *= scalar;
         _rows[1] *= scalar;
         _rows[2] *= scalar;
         _rows[3] *= scalar;
-        return *this;
-    }
-
-    MINT_INLINE AffineMat<float>& AffineMat<float>::operator*=(const AffineMat& rhs) noexcept
-    {
-        *this = (*this * rhs);
         return *this;
     }
 
@@ -267,6 +402,89 @@ namespace mint
         return AffineVecF(_rows[0].getComponent(col), _rows[1].getComponent(col), _rows[2].getComponent(col), _rows[3].getComponent(col));
     }
 
+    MINT_INLINE void AffineMat<float>::preScale(const AffineVecF& scale) noexcept
+    {
+        float s[4];
+        scale.get(s);
+        _rows[0] *= s[0];
+        _rows[1] *= s[1];
+        _rows[2] *= s[2];
+    }
+
+    MINT_INLINE void AffineMat<float>::postScale(const AffineVecF& scale) noexcept
+    {
+        AffineVecF scaleW0 = scale;
+        scaleW0.setComponent(3, 0.0f);
+        _rows[0] *= scaleW0;
+        _rows[1] *= scaleW0;
+        _rows[2] *= scaleW0;
+        _rows[3] *= scaleW0;
+    }
+
+    MINT_INLINE void AffineMat<float>::preTranslate(const AffineVecF& translation) noexcept
+    {
+        float t[4];
+        translation.get(t);
+        _rows[0].addComponent(3, t[0]);
+        _rows[1].addComponent(3, t[1]);
+        _rows[2].addComponent(3, t[2]);
+    }
+
+    MINT_INLINE void AffineMat<float>::postTranslate(const AffineVecF& translation) noexcept
+    {
+        AffineVecF rowCopy = _rows[0];
+        rowCopy.setComponent(3, 0.0f);
+        _rows[0].addComponent(3, rowCopy.dot(rowCopy));
+        
+        rowCopy = _rows[1];
+        rowCopy.setComponent(3, 0.0f);
+        _rows[1].addComponent(3, rowCopy.dot(rowCopy));
+        
+        rowCopy = _rows[2];
+        rowCopy.setComponent(3, 0.0f);
+        _rows[2].addComponent(3, rowCopy.dot(rowCopy));
+        
+        rowCopy = _rows[3];
+        rowCopy.setComponent(3, 0.0f);
+        _rows[3].addComponent(3, rowCopy.dot(rowCopy));
+    }
+
+    MINT_INLINE void AffineMat<float>::decomposeSrt(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept
+    {
+        // TODO: avoid nan in outRotationMatrix
+
+        float m[4][4];
+        get(m);
+
+        // Srt Matrix
+        // 
+        // | s_x * r_11  s_y * r_12  s_z * r_13  t_x |
+        // | s_x * r_21  s_y * r_22  s_z * r_23  t_y |
+        // | s_x * r_31  s_y * r_32  s_z * r_33  t_z |
+        // | 0           0           0           1   |
+
+        // s
+        const float sx = ::sqrt((m[0][0] * m[0][0]) + (m[1][0] * m[1][0]) + (m[2][0] * m[2][0]));
+        const float sy = ::sqrt((m[0][1] * m[0][1]) + (m[1][1] * m[1][1]) + (m[2][1] * m[2][1]));
+        const float sz = ::sqrt((m[0][2] * m[0][2]) + (m[1][2] * m[1][2]) + (m[2][2] * m[2][2]));
+        outScale.set(sx, sy, sz, 1.0f);
+
+        // r
+        outRotationMatrix.setIdentity();
+        outRotationMatrix.setRow(0, _rows[0] / outScale);
+        outRotationMatrix.setRow(1, _rows[1] / outScale);
+        outRotationMatrix.setRow(2, _rows[2] / outScale);
+        outRotationMatrix.setElement(0, 3, 0.0f);
+        outRotationMatrix.setElement(1, 3, 0.0f);
+        outRotationMatrix.setElement(2, 3, 0.0f);
+
+        // t
+        outTranslation.set(m[0][3], m[1][3], m[2][3], 1.0f);
+
+        // s !!
+        outScale.setComponent(3, 0.0f);
+    }
+
     MINT_INLINE AffineMat<float> AffineMat<float>::inverse() const noexcept
     {
         float m[4][4];
@@ -276,8 +494,8 @@ namespace mint
         _rows[3].get(m[3]);
 
         float adj[4][4];
-        adjugate(m, adj);
-        const float det = determinant(m);
+        Math::adjugate(m, adj);
+        const float det = Math::determinant(m);
         AffineMat inv = AffineMat(adj);
         inv /= det;
         return inv;

@@ -273,14 +273,18 @@ const bool testLinearAlgebra()
         AffineVecF vec0 = AffineVecF(1, 0, 0, 0);
         AffineVecF vec1 = AffineVecF(0, 1, 0, 0);
         AffineVecF vec2 = vec0.cross(vec1);
-        vec0.setComponent(2, 9);
+        vec0.setComponent(3, 1);
         vec0.get(v);
 
         AffineMat<float> mat0 = translationMatrix(AffineVecF(4, 5, 6, 1));
         AffineMat<float> mat1 = scalarMatrix(AffineVecF(2, 3, 4, 0));
         mat1 *= mat0;
+        AffineVecF vec3 = mat1 * vec0;
         AffineMat<float> mat1Inv = mat1.inverse();
         mat1 *= mat1Inv;
+
+        AffineMat<float> mat2 = rotationMatrixAxisAngle(AffineVecF(1, 0, 0, 0), 1.0f);
+        printf("");
     }
     
     return true;

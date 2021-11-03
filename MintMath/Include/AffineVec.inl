@@ -4,16 +4,30 @@
 namespace mint
 {
 #pragma region Free functions
+    template<typename T>
+    MINT_INLINE AffineVec<T> operator*(const T scalar, const AffineVec<T>& vec) noexcept
+    {
+        return vec * scalar;
+    }
+
+    template<typename T>
+    MINT_INLINE AffineVec<T> normalize(const AffineVec<T>& in) noexcept
+    {
+        const T norm = in.norm();
+        return AffineVec<T>(in) / norm;
+    }
+
+    template<typename T>
+    MINT_INLINE void normalize(AffineVec<T>& inOut) noexcept
+    {
+        const T norm = inOut.norm();
+        inOut /= norm;
+    }
+
     MINT_INLINE const float dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
     {
         const __m128 result = _mm_mul_ps(lhs.getRaw(), rhs.getRaw());
         return result.m128_f32[0] + result.m128_f32[1] + result.m128_f32[2] + result.m128_f32[3];
-    }
-
-    MINT_INLINE void normalize(AffineVec<float>& inOut) noexcept
-    {
-        const float norm = inOut.norm();
-        inOut /= norm;
     }
 
     MINT_INLINE AffineVec<float> cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
@@ -34,12 +48,6 @@ namespace mint
     {
         const __m256d result = _mm256_mul_pd(lhs.getRaw(), rhs.getRaw());
         return result.m256d_f64[0] + result.m256d_f64[1] + result.m256d_f64[2] + result.m256d_f64[3];
-    }
-
-    MINT_INLINE void normalize(AffineVec<double>& inOut) noexcept
-    {
-        const double norm = inOut.norm();
-        inOut /= norm;
     }
 
     MINT_INLINE AffineVec<double> cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
@@ -145,6 +153,16 @@ namespace mint
         return AffineVec(_mm_sub_ps(_raw, rhs._raw));
     }
 
+    MINT_INLINE AffineVec<float> AffineVec<float>::operator*(const AffineVec& rhs) const noexcept
+    {
+        return AffineVec(_mm_mul_ps(_raw, rhs._raw));
+    }
+
+    MINT_INLINE AffineVec<float> AffineVec<float>::operator/(const AffineVec& rhs) const noexcept
+    {
+        return AffineVec(_mm_div_ps(_raw, rhs._raw));
+    }
+
     MINT_INLINE AffineVec<float> AffineVec<float>::operator*(const float scalar) const noexcept
     {
         return AffineVec(_mm_mul_ps(_raw, _mm_set_ps(scalar, scalar, scalar, scalar)));
@@ -164,6 +182,18 @@ namespace mint
     MINT_INLINE AffineVec<float>& AffineVec<float>::operator-=(const AffineVec& rhs) noexcept
     {
         _raw = _mm_sub_ps(_raw, rhs._raw);
+        return *this;
+    }
+
+    MINT_INLINE AffineVec<float>& AffineVec<float>::operator*=(const AffineVec& rhs) noexcept
+    {
+        _raw = _mm_mul_ps(_raw, rhs._raw);
+        return *this;
+    }
+
+    MINT_INLINE AffineVec<float>& AffineVec<float>::operator/=(const AffineVec& rhs) noexcept
+    {
+        _raw = _mm_div_ps(_raw, rhs._raw);
         return *this;
     }
 
@@ -187,6 +217,11 @@ namespace mint
     MINT_INLINE void AffineVec<float>::setComponent(const int32 i, const float scalar) noexcept
     {
         _raw.m128_f32[i] = scalar;
+    }
+
+    MINT_INLINE void AffineVec<float>::addComponent(const int32 i, const float scalar) noexcept
+    {
+        _raw.m128_f32[i] += scalar;
     }
 
     MINT_INLINE void AffineVec<float>::get(float(&vec)[4]) const noexcept
@@ -319,6 +354,16 @@ namespace mint
         return AffineVec(_mm256_sub_pd(_raw, rhs._raw));
     }
 
+    MINT_INLINE AffineVec<double> AffineVec<double>::operator*(const AffineVec& rhs) const noexcept
+    {
+        return AffineVec(_mm256_mul_pd(_raw, rhs._raw));
+    }
+
+    MINT_INLINE AffineVec<double> AffineVec<double>::operator/(const AffineVec& rhs) const noexcept
+    {
+        return AffineVec(_mm256_div_pd(_raw, rhs._raw));
+    }
+
     MINT_INLINE AffineVec<double> AffineVec<double>::operator*(const double scalar) const noexcept
     {
         return AffineVec(_mm256_mul_pd(_raw, _mm256_set_pd(scalar, scalar, scalar, scalar)));
@@ -338,6 +383,18 @@ namespace mint
     MINT_INLINE AffineVec<double>& AffineVec<double>::operator-=(const AffineVec& rhs) noexcept
     {
         _raw = _mm256_sub_pd(_raw, rhs._raw);
+        return *this;
+    }
+
+    MINT_INLINE AffineVec<double>& AffineVec<double>::operator*=(const AffineVec& rhs) noexcept
+    {
+        _raw = _mm256_mul_pd(_raw, rhs._raw);
+        return *this;
+    }
+    
+    MINT_INLINE AffineVec<double>& AffineVec<double>::operator/=(const AffineVec& rhs) noexcept
+    {
+        _raw = _mm256_div_pd(_raw, rhs._raw);
         return *this;
     }
 
@@ -361,6 +418,11 @@ namespace mint
     MINT_INLINE void AffineVec<double>::setComponent(const int32 i, const double scalar) noexcept
     {
         _raw.m256d_f64[i] = scalar;
+    }
+
+    MINT_INLINE void AffineVec<double>::addComponent(const int32 i, const double scalar) noexcept
+    {
+        _raw.m256d_f64[i] += scalar;
     }
 
     MINT_INLINE void AffineVec<double>::get(double(&vec)[4]) const noexcept

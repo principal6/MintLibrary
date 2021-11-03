@@ -67,11 +67,12 @@ namespace mint
         Quaternion                  conjugate() const noexcept;
         Quaternion                  reciprocal() const noexcept;
         Float4                      rotateVector(const Float4& inputVector) const noexcept;
-        VectorR4<T>                  rotateVector(const VectorR4<T>& inputVector) const noexcept;
+        VectorR4<T>                 rotateVector(const VectorR4<T>& inputVector) const noexcept;
     
     public:
         void                        setAxisAngle(const Float3& axis, const T angle) noexcept;
         void                        setAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
+        void                        getAxisAngle(float(&axis)[3], T& angle) const noexcept;
         void                        getAxisAngle(Float3& axis, T& angle) const noexcept;
         void                        getAxisAngle(VectorR3<T>& axis, T& angle) const noexcept;
 

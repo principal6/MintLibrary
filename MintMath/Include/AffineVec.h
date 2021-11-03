@@ -22,12 +22,19 @@ namespace mint
 
 
 #pragma region Free functions
+    template<typename T>
+    AffineVec<T>        operator*(const T scalar, const AffineVec<T>& vec) noexcept;
+
+    template<typename T>
+    AffineVec<T>        normalize(const AffineVec<T>& in) noexcept;
+
+    template<typename T>
+    void                normalize(AffineVec<T>& inOut) noexcept;
+
     const float         dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
-    void                normalize(AffineVec<float>& inOut) noexcept;
     AffineVec<float>    cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
 
     const double        dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
-    void                normalize(AffineVec<double>& inOut) noexcept;
     AffineVec<double>   cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
 #pragma endregion
 
@@ -66,17 +73,22 @@ namespace mint
 
         AffineVec           operator+(const AffineVec& rhs) const noexcept;
         AffineVec           operator-(const AffineVec& rhs) const noexcept;
+        AffineVec           operator*(const AffineVec& rhs) const noexcept;
+        AffineVec           operator/(const AffineVec& rhs) const noexcept;
         AffineVec           operator*(const float scalar) const noexcept;
         AffineVec           operator/(const float scalar) const noexcept;
     
         AffineVec&          operator+=(const AffineVec& rhs) noexcept;
         AffineVec&          operator-=(const AffineVec& rhs) noexcept;
+        AffineVec&          operator*=(const AffineVec& rhs) noexcept;
+        AffineVec&          operator/=(const AffineVec& rhs) noexcept;
         AffineVec&          operator*=(const float scalar) noexcept;
         AffineVec&          operator/=(const float scalar) noexcept;
     
     public:
         void                set(const float x, const float y, const float z, const float w) noexcept;
         void                setComponent(const int32 i, const float scalar) noexcept;
+        void                addComponent(const int32 i, const float scalar) noexcept;
     
     public:
         void                get(float(&vec)[4]) const noexcept;
@@ -121,18 +133,23 @@ namespace mint
 
         AffineVec           operator+(const AffineVec& rhs) const noexcept;
         AffineVec           operator-(const AffineVec& rhs) const noexcept;
+        AffineVec           operator*(const AffineVec& rhs) const noexcept;
+        AffineVec           operator/(const AffineVec& rhs) const noexcept;
         AffineVec           operator*(const double scalar) const noexcept;
         AffineVec           operator/(const double scalar) const noexcept;
         
         AffineVec&          operator+=(const AffineVec& rhs) noexcept;
         AffineVec&          operator-=(const AffineVec& rhs) noexcept;
+        AffineVec&          operator*=(const AffineVec& rhs) noexcept;
+        AffineVec&          operator/=(const AffineVec& rhs) noexcept;
         AffineVec&          operator*=(const double scalar) noexcept;
         AffineVec&          operator/=(const double scalar) noexcept;
 
     public:
         void                set(const double x, const double y, const double z, const double w) noexcept;
         void                setComponent(const int32 i, const double scalar) noexcept;
-    
+        void                addComponent(const int32 i, const double scalar) noexcept;
+
     public:
         void                get(double(&vec)[4]) const noexcept;
         const double        getComponent(const int32 i) const noexcept;

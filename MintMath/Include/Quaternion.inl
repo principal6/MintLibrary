@@ -210,44 +210,40 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void Quaternion<T>::getAxisAngle(Float3& axis, T& angle) const noexcept
+    inline void Quaternion<T>::getAxisAngle(float(&axis)[3], T& angle) const noexcept
     {
         angle = static_cast<T>(::acos(_w) * 2.0);
 
         const T sinHalfAngle = static_cast<T>(1.0 - _w * _w);
         if (sinHalfAngle == static_cast<T>(0.0))
         {
-            axis._x = static_cast<T>(1);
-            axis._y = static_cast<T>(0);
-            axis._z = static_cast<T>(0);
+            axis[0] = static_cast<T>(1);
+            axis[1] = static_cast<T>(0);
+            axis[2] = static_cast<T>(0);
         }
         else
         {
-            axis._x = _x / sinHalfAngle;
-            axis._y = _y / sinHalfAngle;
-            axis._z = _z / sinHalfAngle;
-            axis.normalize();
+            axis[0] = _x / sinHalfAngle;
+            axis[1] = _y / sinHalfAngle;
+            axis[2] = _z / sinHalfAngle;
+            
+            const T normSq = axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2];
+            const T norm = ::sqrt(normSq);
+            axis[0] /= norm;
+            axis[1] /= norm;
+            axis[2] /= norm;
         }
+    }
+
+    template<typename T>
+    MINT_INLINE void Quaternion<T>::getAxisAngle(Float3& axis, T& angle) const noexcept
+    {
+        getAxisAngle(axis._c, angle);
     }
 
     template<typename T>
     MINT_INLINE void Quaternion<T>::getAxisAngle(VectorR3<T>& axis, T& angle) const noexcept
     {
-        angle = static_cast<T>(::acos(_w) * 2.0);
-
-        const T sinHalfAngle = static_cast<T>(1.0 - _w * _w);
-        if (sinHalfAngle == static_cast<T>(0.0))
-        {
-            axis.setComponnet(0, static_cast<T>(1));
-            axis.setComponnet(1, static_cast<T>(0));
-            axis.setComponnet(2, static_cast<T>(0));
-        }
-        else
-        {
-            axis.setComponnet(0, static_cast<T>(_x / sinHalfAngle));
-            axis.setComponnet(1, static_cast<T>(_y / sinHalfAngle));
-            axis.setComponnet(2, static_cast<T>(_z / sinHalfAngle));
-            axis.normalize();
-        }
+        getAxisAngle(axis._c, angle);
     }
 }
