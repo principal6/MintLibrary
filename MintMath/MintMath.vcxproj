@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Vector4.cpp">
+    <ClCompile Include="Source\AffineVec.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -39,6 +39,7 @@
     <ClInclude Include="Include\MathCommon.h" />
     <ClInclude Include="Include\Matrix.h" />
     <ClInclude Include="Include\Matrix.hpp" />
+    <ClInclude Include="Include\AffineMat.h" />
     <ClInclude Include="Include\Quaternion.h" />
     <ClCompile Include="Source\Float2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -90,7 +91,7 @@
     </ClCompile>
     <ClInclude Include="Include\Quaternion.inl" />
     <ClInclude Include="Include\Rect.h" />
-    <ClInclude Include="Include\Vector4.h" />
+    <ClInclude Include="Include\AffineVec.h" />
     <ClInclude Include="Include\VectorR.h" />
     <ClInclude Include="Include\VectorR.hpp" />
   </ItemGroup>
@@ -99,8 +100,9 @@
     <None Include="Include\Float2.inl" />
     <None Include="Include\Float3.inl" />
     <None Include="Include\Float4.inl" />
+    <None Include="Include\AffineMat.inl" />
     <None Include="Include\Rect.inl" />
-    <None Include="Include\Vector4.inl" />
+    <None Include="Include\AffineVec.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

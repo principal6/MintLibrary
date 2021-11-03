@@ -63,7 +63,10 @@
     <ClInclude Include="Include\Quaternion.inl">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Vector4.h">
+    <ClInclude Include="Include\AffineVec.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AffineMat.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,7 +98,7 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Vector4.cpp">
+    <ClCompile Include="Source\AffineVec.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -115,7 +118,10 @@
     <None Include="Include\Easing.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\Vector4.inl">
+    <None Include="Include\AffineVec.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\AffineMat.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>

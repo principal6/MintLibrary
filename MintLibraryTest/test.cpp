@@ -78,10 +78,10 @@ void testFloatTypes()
             }
         }
         {
-            Profiler::ScopedCpuProfiler profiler("Profile - Vector4F");
-            Vector4F a(1.0f, 0.0f, 1.0f, 0.0f);
-            Vector4F b(0.0f, 1.0f, 0.0f, 1.0f);
-            Vector4F c;
+            Profiler::ScopedCpuProfiler profiler("Profile - AffineVecF");
+            AffineVecF a(1.0f, 0.0f, 1.0f, 0.0f);
+            AffineVecF b(0.0f, 1.0f, 0.0f, 1.0f);
+            AffineVecF c;
             for (uint64 i = 0; i < kTestCount; ++i)
             {
                 //a += b;
@@ -95,15 +95,15 @@ void testFloatTypes()
         auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
         */
 
-        Vector4F a;
-        Vector4F b;
-        Vector4F c = Vector4F(0.0f, 2.0f, 3.0f, 4.0f);
+        AffineVecF a;
+        AffineVecF b;
+        AffineVecF c = AffineVecF(0.0f, 2.0f, 3.0f, 4.0f);
         a == b;
         a == c;
 
-        Vector4D da;
-        Vector4D db;
-        Vector4D dc = Vector4D(0, 2, 3, 4);
+        AffineVecD da;
+        AffineVecD db;
+        AffineVecD dc = AffineVecD(0, 2, 3, 4);
         da == db;
         da += dc;
         auto sizeA = sizeof(a);
@@ -267,6 +267,23 @@ const bool testLinearAlgebra()
     Matrix4x4<float> testMatrix4x4Inverse = MatrixUtils::inverse(testMatrix4x4);
     
     const Matrix4x4<float> testIdentity(MatrixUtils::identity<4, float>());
+
+    // Affine
+    {
+        float v[4];
+        AffineVecF vec0 = AffineVecF(1, 0, 0, 0);
+        AffineVecF vec1 = AffineVecF(0, 1, 0, 0);
+        AffineVecF vec2 = vec0.cross(vec1);
+        vec0.setComponent(2, 9);
+        vec0.get(v);
+
+        AffineMat<float> mat0 = translationMatrix(AffineVecF(4, 5, 6, 1));
+        AffineMat<float> mat1 = scalarMatrix(AffineVecF(2, 3, 4, 0));
+        mat1 *= mat0;
+        AffineMat<float> mat1Inv = mat1.inverse();
+        mat1 *= mat1Inv;
+    }
+    
     return true;
 }
 

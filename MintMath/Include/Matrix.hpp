@@ -248,46 +248,67 @@ namespace mint
         }
 
         template<typename T>
-        const T determinant(const T(&mat)[2][2]) noexcept
+        MINT_INLINE const T determinant(const T(&mat)[2][2]) noexcept
         {
-            const T a = mat[0][0];
-            const T b = mat[0][1];
-            const T c = mat[1][0];
-            const T d = mat[1][1];
-            return static_cast<T>(a * d - b * c);
+            return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
         }
 
         template<typename T>
-        const T determinant(const T(&mat)[3][3]) noexcept
+        MINT_INLINE const T determinant(const T(&mat)[3][3]) noexcept
         {
-            const T a = mat[0][0];
-            const T b = mat[0][1];
-            const T c = mat[0][2];
-            T minorA[2][2];
-            T minorB[2][2];
-            T minorC[2][2];
-            minor(mat, 0, 0, minorA);
-            minor(mat, 0, 1, minorB);
-            minor(mat, 0, 2, minorC);
-            return a * determinant(minorA) - b * determinant(minorB) + c * determinant(minorC);
+            return mat[0][0] * (mat[1][1] * mat[2][2] - mat[1][2] * mat[2][1])
+                 - mat[0][1] * (mat[1][0] * mat[2][2] - mat[1][2] * mat[2][0])
+                 + mat[0][2] * (mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0]);
         }
 
         template<typename T>
-        const T determinant(const T(&mat)[4][4]) noexcept
+        MINT_INLINE const T determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept
         {
-            const T a = mat[0][0];
-            const T b = mat[0][1];
-            const T c = mat[0][2];
-            const T d = mat[0][3];
-            T minorA[3][3];
-            T minorB[3][3];
-            T minorC[3][3];
-            T minorD[3][3];
-            minor(mat, 0, 0, minorA);
-            minor(mat, 0, 1, minorB);
-            minor(mat, 0, 2, minorC);
-            minor(mat, 0, 3, minorD);
-            return a * determinant(minorA) - b * determinant(minorB) + c * determinant(minorC) - d * determinant(minorD);
+            return _11 * (_22 * _33 - _23 * _32)
+                 - _12 * (_21 * _33 - _23 * _31)
+                 + _13 * (_21 * _32 - _22 * _31);
+        }
+
+        template<typename T>
+        MINT_INLINE const T determinantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
+        {
+            // 0 => 1 2 3
+            // 1 => 0 2 3
+            // 2 => 0 1 3
+            // 3 => 0 1 2
+            const int32 r0 = (0 == row) ? 1 : 0;
+            const int32 r1 = (0 == (row & 2)) ? 2 : 1;
+            const int32 r2 = (3 == row) ? 2 : 3;
+            const int32 c0 = (0 == col) ? 1 : 0;
+            const int32 c1 = (0 == (col & 2)) ? 2 : 1;
+            const int32 c2 = (3 == col) ? 2 : 3;
+            return determinant(mat[r0][c0], mat[r0][c1], mat[r0][c2], mat[r1][c0], mat[r1][c1], mat[r1][c2], mat[r2][c0], mat[r2][c1], mat[r2][c2]);
+        }
+
+        template<typename T>
+        MINT_INLINE const T determinant(const T(&mat)[4][4]) noexcept
+        {
+            return mat[0][0] * determinantOfMinor(mat, 0, 0) - mat[0][1] * determinantOfMinor(mat, 0, 1)
+                 + mat[0][2] * determinantOfMinor(mat, 0, 2) - mat[0][3] * determinantOfMinor(mat, 0, 3);
+        }
+
+        template<typename T>
+        MINT_INLINE void cofactor(const T(&in)[4][4], T(&out)[4][4]) noexcept
+        {
+            out[0][0] = +determinantOfMinor(in, 0, 0); out[0][1] = -determinantOfMinor(in, 0, 1); out[0][2] = +determinantOfMinor(in, 0, 2); out[0][3] = -determinantOfMinor(in, 0, 3);
+            out[1][0] = -determinantOfMinor(in, 1, 0); out[1][1] = +determinantOfMinor(in, 1, 1); out[1][2] = -determinantOfMinor(in, 1, 2); out[1][3] = +determinantOfMinor(in, 1, 3);
+            out[2][0] = +determinantOfMinor(in, 2, 0); out[2][1] = -determinantOfMinor(in, 2, 1); out[2][2] = +determinantOfMinor(in, 2, 2); out[2][3] = -determinantOfMinor(in, 2, 3);
+            out[3][0] = -determinantOfMinor(in, 3, 0); out[3][1] = +determinantOfMinor(in, 3, 1); out[3][2] = -determinantOfMinor(in, 3, 2); out[3][3] = +determinantOfMinor(in, 3, 3);
+        }
+
+        // transpose of cofactor
+        template<typename T>
+        MINT_INLINE void adjugate(const T(&in)[4][4], T(&out)[4][4]) noexcept
+        {
+            out[0][0] = +determinantOfMinor(in, 0, 0); out[1][0] = -determinantOfMinor(in, 0, 1); out[2][0] = +determinantOfMinor(in, 0, 2); out[3][0] = -determinantOfMinor(in, 0, 3);
+            out[0][1] = -determinantOfMinor(in, 1, 0); out[1][1] = +determinantOfMinor(in, 1, 1); out[2][1] = -determinantOfMinor(in, 1, 2); out[3][1] = +determinantOfMinor(in, 1, 3);
+            out[0][2] = +determinantOfMinor(in, 2, 0); out[1][2] = -determinantOfMinor(in, 2, 1); out[2][2] = +determinantOfMinor(in, 2, 2); out[3][2] = -determinantOfMinor(in, 2, 3);
+            out[0][3] = -determinantOfMinor(in, 3, 0); out[1][3] = +determinantOfMinor(in, 3, 1); out[2][3] = -determinantOfMinor(in, 3, 2); out[3][3] = +determinantOfMinor(in, 3, 3);
         }
     }
 
@@ -802,10 +823,10 @@ namespace mint
             return Matrix4x4<T>
             (
                 {
-                    +determinant(in.minor(0, 0)), -determinant(in.minor(0, 1)), +determinant(in.minor(0, 2)), -determinant(in.minor(0, 3)),
-                    -determinant(in.minor(1, 0)), +determinant(in.minor(1, 1)), -determinant(in.minor(1, 2)), +determinant(in.minor(1, 3)),
-                    +determinant(in.minor(2, 0)), -determinant(in.minor(2, 1)), +determinant(in.minor(2, 2)), -determinant(in.minor(2, 3)),
-                    -determinant(in.minor(3, 0)), +determinant(in.minor(3, 1)), -determinant(in.minor(3, 2)), +determinant(in.minor(3, 3))
+                    +Math::determinantOfMinor(in._m, 0, 0), -Math::determinantOfMinor(in._m, 0, 1), +Math::determinantOfMinor(in._m, 0, 2), -Math::determinantOfMinor(in._m, 0, 3),
+                    -Math::determinantOfMinor(in._m, 1, 0), +Math::determinantOfMinor(in._m, 1, 1), -Math::determinantOfMinor(in._m, 1, 2), +Math::determinantOfMinor(in._m, 1, 3),
+                    +Math::determinantOfMinor(in._m, 2, 0), -Math::determinantOfMinor(in._m, 2, 1), +Math::determinantOfMinor(in._m, 2, 2), -Math::determinantOfMinor(in._m, 2, 3),
+                    -Math::determinantOfMinor(in._m, 3, 0), +Math::determinantOfMinor(in._m, 3, 1), -Math::determinantOfMinor(in._m, 3, 2), +Math::determinantOfMinor(in._m, 3, 3)
                 }
             );
         }
