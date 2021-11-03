@@ -214,106 +214,11 @@ namespace mint
     using MatrixD = Matrix<M, N, double>;
 
 
-#pragma region 2x2, 3x3, 4x4
-    template <typename T>
-    using Matrix2x2 = Matrix<2, 2, T>;
-
-    template <typename T>
-    using Matrix3x3 = Matrix<3, 3, T>;
-
-    template <typename T>
-    using Matrix4x4 = Matrix<4, 4, T>;
-
-
     namespace MatrixUtils
     {
         template<int32 N, typename T>
         const Matrix<N, N, T>&  identity() noexcept;
-            
-        template<typename T>
-        const T                 determinant(const Matrix2x2<T>& in) noexcept;
-
-        template<typename T>
-        const T                 determinant(const Matrix3x3<T>& in) noexcept;
-
-        template<typename T>
-        const T                 determinant(const Matrix4x4<T>& in) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            cofactor(const Matrix4x4<T>& in) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            adjugate(const Matrix4x4<T>& in) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            inverse(const Matrix4x4<T>& in) noexcept;
-
-        template<typename T>
-        void                    decomposeSrt(const Matrix4x4<T>& in, VectorR3<T>& outScale, Matrix4x4<T>& outRotationMatrix, VectorR3<T>& outTranslation) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            axesToColumns(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
-
-        // Interprets vector from new basis.
-        template<typename T>
-        Matrix4x4<T>            axesToRows(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            translationMatrix(const VectorR3<T>& translation) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>&           setTranslation(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>&           preTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>&           postTranslate(Matrix4x4<T>& in, const VectorR3<T>& translation) noexcept;
-            
-        template<typename T>
-        VectorR3<T>&             getTranslation(const Matrix4x4<T>& in) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            scalarMatrix(const VectorR3<T>& scale) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>&           preScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>&           postScale(Matrix4x4<T>& in, const VectorR3<T>& scale) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixX(const T angle) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixY(const T angle) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixZ(const T angle) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept;
-
-        // Rodrigues' rotation formula
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixAxisAngle(const VectorR3<T>& axis, const T angle) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>            rotationMatrixFromAxes(const VectorR3<T>& axisX, const VectorR3<T>& axisY, const VectorR3<T>& axisZ) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>            rotationMatrix(const Quaternion<T>& rotation) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>            srtMatrix(const VectorR3<T>& scale, const Quaternion<T>& rotation, const VectorR3<T>& translation) noexcept;
-
-        template<typename T>
-        Matrix4x4<T>            projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept;
-            
-        template<typename T>
-        Matrix4x4<T>            projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept;
     }
-#pragma endregion
 }
 
 

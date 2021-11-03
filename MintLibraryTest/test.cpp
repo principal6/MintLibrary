@@ -257,16 +257,15 @@ const bool testLinearAlgebra()
     testFloat4x4.set(1, 1, 1, 0, 0, 3, 1, 2, 2, 3, 1, 0, 1, 0, 2, 1);
     Float4x4 testFloat4x4Inverse{ testFloat4x4.inverse() };
 
-    Matrix4x4<float> testMatrix4x4;
+    Matrix<4, 4, float> testMatrix4x4;
     testMatrix4x4.setRow(0, {  1, 1, 1, 0 });
     testMatrix4x4.setRow(1, {  0, 3, 1, 2 });
     testMatrix4x4.setRow(2, {  2, 3, 1, 0 });
     testMatrix4x4.setRow(3, {  1, 0, 2, 1 });
     const bool testEquals = testMatrix4x4 == testMatrix4x4;
     testMatrix4x4 *= testMatrix4x4;
-    Matrix4x4<float> testMatrix4x4Inverse = MatrixUtils::inverse(testMatrix4x4);
-    
-    const Matrix4x4<float> testIdentity(MatrixUtils::identity<4, float>());
+
+    const Matrix<4, 4, float> testIdentity(MatrixUtils::identity<4, float>());
 
     // Affine
     {
