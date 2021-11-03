@@ -5,7 +5,7 @@ namespace mint
 {
 #pragma region Free functions
     template<typename T>
-    AffineMat<T> operator*(const T scalar, const AffineMat<T>& mat) noexcept
+    MINT_INLINE AffineMat<T> operator*(const T scalar, const AffineMat<T>& mat) noexcept
     {
         return mat * scalar;
     }
@@ -75,7 +75,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrixY(const T angle) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrixY(const T angle) noexcept
     {
         return AffineMat<T>
         (
@@ -87,7 +87,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrixZ(const T angle) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrixZ(const T angle) noexcept
     {
         return AffineMat<T>
         (
@@ -99,13 +99,13 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrixRollPitchYaw(const T pitch, const T yaw, const T roll) noexcept
     {
         return rotationMatrixY(yaw) * rotationMatrixX(pitch) * rotationMatrixZ(roll);
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept
     {
         // (v * r)r(1 - cos¥è) + vcos¥è + (r X v)sin¥è
 
@@ -128,13 +128,13 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrixFromAxes(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrixFromAxes(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
     {
         return axesToColumns(axisX, axisY, axisZ);
     }
 
     template<typename T>
-    AffineMat<T> rotationMatrix(const Quaternion<T>& rotation) noexcept
+    MINT_INLINE AffineMat<T> rotationMatrix(const Quaternion<T>& rotation) noexcept
     {
         T axis[3];
         T angle;
@@ -143,7 +143,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> axesToColumns(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    MINT_INLINE AffineMat<T> axesToColumns(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
     {
         T aX[4];
         T aY[4];
@@ -161,7 +161,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> axesToRows(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
+    MINT_INLINE AffineMat<T> axesToRows(const AffineVec<T>& axisX, const AffineVec<T>& axisY, const AffineVec<T>& axisZ) noexcept
     {
         T aX[4];
         T aY[4];
@@ -179,7 +179,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> srtMatrix(const AffineVec<T>& scale, const Quaternion<T>& rotation, const AffineVec<T>& translation) noexcept
+    MINT_INLINE AffineMat<T> srtMatrix(const AffineVec<T>& scale, const Quaternion<T>& rotation, const AffineVec<T>& translation) noexcept
     {
         // SRT matrix for column vector is like below:
         // SRT = T * R * S
@@ -191,7 +191,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept
+    MINT_INLINE AffineMat<T> projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept
     {
         const T halfFov = fov * static_cast<T>(0.5);
         const T a = 1.0f / (::tan(halfFov) * ratio);
@@ -210,7 +210,7 @@ namespace mint
     }
 
     template<typename T>
-    AffineMat<T> projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept
+    MINT_INLINE AffineMat<T> projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept
     {
         return AffineMat<T>
         (
