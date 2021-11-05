@@ -27,7 +27,7 @@ namespace mint
                     return S_OK;
                 }
             }
-            mint::ScopeStringA<kMaxPath> asssertMessage{ "셰이더 파일명을 찾지 못했습니다! 파일명:" };
+            ScopeStringA<kMaxPath> asssertMessage{ "셰이더 파일명을 찾지 못했습니다! 파일명:" };
             asssertMessage.append(pFileName);
             MINT_ASSERT("김장원", false, asssertMessage.c_str());
             return E_FAIL;

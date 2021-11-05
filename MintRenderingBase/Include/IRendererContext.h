@@ -32,51 +32,51 @@ namespace mint
         class IRendererContext abstract
         {
         public:
-                                                    IRendererContext() = default;
-                                                    IRendererContext(mint::Rendering::GraphicDevice* const graphicDevice);
-            virtual                                 ~IRendererContext() = default;
+                                        IRendererContext() = default;
+                                        IRendererContext(GraphicDevice* const graphicDevice);
+            virtual                     ~IRendererContext() = default;
 
         public:
-            virtual void                            initializeShaders() noexcept abstract;
-            virtual const bool                      hasData() const noexcept abstract;
-            virtual void                            flush() noexcept abstract;
-            virtual void                            render() noexcept abstract;
-            virtual void                            renderAndFlush() noexcept abstract;
+            virtual void                initializeShaders() noexcept abstract;
+            virtual const bool          hasData() const noexcept abstract;
+            virtual void                flush() noexcept abstract;
+            virtual void                render() noexcept abstract;
+            virtual void                renderAndFlush() noexcept abstract;
+
+        protected:
+            void                        flushTransformBuffer() noexcept;
+            void                        prepareTransformBuffer() noexcept;
+
+        public:
+            void                        setUseMultipleViewports() noexcept;
+            const bool                  getUseMultipleViewports() const noexcept;
+
+        public:
+            void                        setPosition(const Float4& position) noexcept;
+            void                        setPositionZ(const float s) noexcept;
+            void                        setColor(const Color& color) noexcept;
+            void                        setColor(const Vector<Color>& colorArray) noexcept;
+            virtual void                setClipRect(const Rect& clipRect) noexcept;
+
+        protected:
+            const Float4&               getColorInternal(const uint32 index) const noexcept;
+            static const float          packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+            static const float          packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
+
+        protected:
+            GraphicDevice*              _graphicDevice;
         
         protected:
-            void                                    flushTransformBuffer() noexcept;
-            void                                    prepareTransformBuffer() noexcept;
-
-        public:
-            void                                    setUseMultipleViewports() noexcept;
-            const bool                              getUseMultipleViewports() const noexcept;
-
-        public:
-            void                                    setPosition(const mint::Float4& position) noexcept;
-            void                                    setPositionZ(const float s) noexcept;
-            void                                    setColor(const mint::Rendering::Color& color) noexcept;
-            void                                    setColor(const mint::Vector<mint::Rendering::Color>& colorArray) noexcept;
-            virtual void                            setClipRect(const mint::Rect& clipRect) noexcept;
+            Float4                      _position;
+            Vector<Color>               _colorArray;
+            Color                       _defaultColor;
+            Rect                        _clipRect;
 
         protected:
-            const mint::Float4&                     getColorInternal(const uint32 index) const noexcept;
-            static const float                      packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
-            static const float                      packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
-
-        protected:
-            mint::Rendering::GraphicDevice*     _graphicDevice;
-        
-        protected:
-            mint::Float4                            _position;
-            mint::Vector<Rendering::Color>      _colorArray;
-            mint::Rendering::Color              _defaultColor;
-            mint::Rect                              _clipRect;
-
-        protected:
-            mint::Vector<SB_Transform>              _sbTransformData;
+            Vector<SB_Transform>        _sbTransformData;
 
         private:
-            bool                                    _useMultipleViewports;
+            bool                        _useMultipleViewports;
         };
     }
 }

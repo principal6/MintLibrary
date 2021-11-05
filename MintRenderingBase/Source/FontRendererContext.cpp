@@ -84,12 +84,12 @@ namespace mint
 
 
         FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
-            : FontRendererContext(graphicDevice, MINT_NEW(Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>, graphicDevice))
+            : FontRendererContext(graphicDevice, MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice))
         {
             _ownTriangleRenderer = true;
         }
 
-        FontRendererContext::FontRendererContext(mint::Rendering::GraphicDevice* const graphicDevice, mint::Rendering::LowLevelRenderer<Rendering::VS_INPUT_SHAPE>* const triangleRenderer)
+        FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer)
             : IRendererContext(graphicDevice)
             , _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
@@ -117,9 +117,9 @@ namespace mint
             const uint32 glyphRangeCount = _glyphRangeArray.size();
             if (2 <= glyphRangeCount)
             {
-                mint::quickSort(_glyphRangeArray, mint::ComparatorAscending<mint::Rendering::GlyphRange>());
+                quickSort(_glyphRangeArray, ComparatorAscending<GlyphRange>());
 
-                mint::Vector<uint32> deletionList;
+                Vector<uint32> deletionList;
                 for (uint32 glyphRangeIndex = 1; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
                 {
                     GlyphRange& prev = _glyphRangeArray[glyphRangeIndex - 1];
@@ -158,7 +158,7 @@ namespace mint
 
         const bool FontRendererContext::existsFontDataInternal(const char* const fontFileNameWithExtension) const noexcept
         {
-            return mint::FileUtil::exists(fontFileNameWithExtension);
+            return FileUtil::exists(fontFileNameWithExtension);
         }
 
         const bool FontRendererContext::loadFontData(const char* const fontFileName)
@@ -170,7 +170,7 @@ namespace mint
                 return false;
             }
 
-            mint::BinaryFileReader binaryFileReader;
+            BinaryFileReader binaryFileReader;
             if (binaryFileReader.open(fontFileNameWithExtension.c_str()) == false)
             {
                 MINT_LOG_ERROR("김장원", "해당 FontFile 을 여는 데 실패했습니다: %s", fontFileNameWithExtension.c_str());
@@ -209,10 +209,10 @@ namespace mint
                 _fontData._charCodeToGlyphIndexMap[glyphInfo._charCode] = glyphIndex;
             }
 
-            mint::Vector<byte> rawData;
+            Vector<byte> rawData;
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
             const int32 pngLength = *binaryFileReader.read<int32>();
-            mint::Vector<byte> pngData(pngLength);
+            Vector<byte> pngData(pngLength);
             for (int32 pngAt = 0; pngAt < pngLength; ++pngAt)
             {
                 pngData[pngAt] = *binaryFileReader.read<byte>();
@@ -239,8 +239,8 @@ namespace mint
             }
 #endif
             
-            mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            _fontData._fontTextureId = resourcePool.pushTexture2D(mint::Rendering::DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
+            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            _fontData._fontTextureId = resourcePool.pushTexture2D(DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
             return true;
         }
 
@@ -271,7 +271,7 @@ namespace mint
                 fontFaceFileNameS.append(".ttf");
             }
 
-            if (mint::FileUtil::exists(fontFaceFileNameS.c_str()) == false)
+            if (FileUtil::exists(fontFaceFileNameS.c_str()) == false)
             {
                 StringUtil::excludeExtension(fontFaceFileNameS);
                 fontFaceFileNameS.append(".otf");
@@ -284,7 +284,7 @@ namespace mint
             }
 
             static constexpr int16 kInitialHeight = 64;
-            mint::Vector<uint8> pixelArray(static_cast<int64>(textureWidth) * kInitialHeight);
+            Vector<uint8> pixelArray(static_cast<int64>(textureWidth) * kInitialHeight);
 
             _fontData._glyphInfoArray.clear();
             _fontData._charCodeToGlyphIndexMap.clear();
@@ -302,7 +302,7 @@ namespace mint
             for (uint32 glyphRangeIndex = 0; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
             {
                 const GlyphRange& glyphRange = _glyphRangeArray[glyphRangeIndex];
-                maxCharCode = mint::max(maxCharCode, glyphRange._endWchar);
+                maxCharCode = max(maxCharCode, glyphRange._endWchar);
             }
 
             _fontData._charCodeToGlyphIndexMap.resize(maxCharCode + 1);
@@ -326,7 +326,7 @@ namespace mint
             stbi_write_png(pngFileName.c_str(), textureWidth, textureHeight, 1, &pixelArray[0], textureWidth * 1);
 #endif
 
-            mint::BinaryFileWriter binaryFileWriter;
+            BinaryFileWriter binaryFileWriter;
             writeMetaData(textureWidth, textureHeight, binaryFileWriter);
 
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
@@ -405,7 +405,7 @@ namespace mint
             return true;
         }
 
-        const bool FontRendererContext::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, mint::Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
+        const bool FontRendererContext::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
         {
             if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
             {
@@ -475,7 +475,7 @@ namespace mint
             }
         }
 
-        void FontRendererContext::writeMetaData(const int16 textureWidth, const int16 textureHeight, mint::BinaryFileWriter& binaryFileWriter) const noexcept
+        void FontRendererContext::writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept
         {
             binaryFileWriter.write("FNT");
             binaryFileWriter.write(textureWidth);
@@ -539,7 +539,7 @@ namespace mint
                 };
 
                 using namespace Language;
-                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(mint::Rendering::VS_INPUT_SHAPE));
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
             }
 
@@ -615,9 +615,9 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, mint::Rendering::DxShaderType::PixelShader, 0);
+                _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, DxShaderType::PixelShader, 0);
 
-                mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -627,8 +627,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                mint::Rendering::DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -647,18 +647,18 @@ namespace mint
             flush();
         }
 
-        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption)
+        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             const uint32 textLength = StringUtil::length(wideText);
             drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
-        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption)
+        void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontSize * fontRenderingOption._scale;
             
-            mint::Float4 postTranslation;
+            Float4 postTranslation;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
             {
                 postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
@@ -672,7 +672,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            mint::Float2 glyphPosition = mint::Float2(0.0f, 0.0f);
+            Float2 glyphPosition = Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
                 drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
@@ -681,22 +681,22 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
-            const mint::Float4& preTranslation = position;
+            const Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
-        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
             const uint32 textLength = StringUtil::length(wideText);
             drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 
-        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const mint::Float4& position, const FontRenderingOption& fontRenderingOption, const mint::BitVector& bitFlags)
+        void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
             const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontSize * fontRenderingOption._scale;
 
-            mint::Float4 postTranslation;
+            Float4 postTranslation;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
             {
                 postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
@@ -710,7 +710,7 @@ namespace mint
             const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-            mint::Float2 glyphPosition = mint::Float2(0.0f, 0.0f);
+            Float2 glyphPosition = Float2(0.0f, 0.0f);
             for (uint32 at = 0; at < textLength; ++at)
             {
                 drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.get(at));
@@ -719,7 +719,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
 
-            const mint::Float4& preTranslation = position;
+            const Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
@@ -757,9 +757,9 @@ namespace mint
             return textLength;
         }
 
-        void FontRendererContext::pushTransformToBuffer(const mint::Float4& preTranslation, mint::Float4x4 transformMatrix, const mint::Float4& postTranslation)
+        void FontRendererContext::pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
         {
-            mint::Rendering::SB_Transform transform;
+            SB_Transform transform;
             transform._transformMatrix.preTranslate(preTranslation.getXyz());
             transform._transformMatrix.postTranslate(postTranslation.getXyz());
             transform._transformMatrix *= transformMatrix;
@@ -771,7 +771,7 @@ namespace mint
             return _fontData._fontTextureId;
         }
 
-        void FontRendererContext::drawGlyph(const wchar_t wideChar, mint::Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
+        void FontRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
         {
             const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
@@ -779,7 +779,7 @@ namespace mint
             {
                 const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 
-                mint::Rect glyphRect;
+                Rect glyphRect;
                 glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
                 glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
                 glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
@@ -789,7 +789,7 @@ namespace mint
                 {
                     auto& vertexArray = _lowLevelRenderer->vertices();
 
-                    mint::Rendering::VS_INPUT_SHAPE v;
+                    VS_INPUT_SHAPE v;
                     v._position._x = glyphRect.left();
                     v._position._y = glyphRect.top();
                     v._position._z = 0.0f;

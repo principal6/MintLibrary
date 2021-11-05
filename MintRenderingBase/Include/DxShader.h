@@ -39,8 +39,8 @@ namespace mint
 
         struct DxInputElementSet
         {
-            mint::Vector<std::string>                 _semanticNameArray;
-            mint::Vector<D3D11_INPUT_ELEMENT_DESC>    _inputElementDescriptorArray;
+            Vector<std::string>                 _semanticNameArray;
+            Vector<D3D11_INPUT_ELEMENT_DESC>    _inputElementDescriptorArray;
         };
 
         enum class DxShaderVersion
@@ -146,9 +146,9 @@ namespace mint
             DxShaderVersion             _shaderVersion;
 
         private:
-            mint::Vector<DxShader>        _vertexShaderArray;
-            mint::Vector<DxShader>        _geometryShaderArray;
-            mint::Vector<DxShader>        _pixelShaderArray;
+            Vector<DxShader>        _vertexShaderArray;
+            Vector<DxShader>        _geometryShaderArray;
+            Vector<DxShader>        _pixelShaderArray;
 
         private:
             DxObjectId                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];

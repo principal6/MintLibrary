@@ -28,30 +28,30 @@ namespace mint
         struct MeshData
         {
         public:
-                                                        MeshData();
+                                                MeshData();
 
         public:
-            void                                        clear() noexcept;
-            void                                        shrinkToFit() noexcept;
-            void                                        updateVertexFromPositions() noexcept;
+            void                                clear() noexcept;
+            void                                shrinkToFit() noexcept;
+            void                                updateVertexFromPositions() noexcept;
 
         public:
-            const uint32                                getPositionCount() const noexcept;
-            const uint32                                getVertexCount() const noexcept;
-            const uint32                                getFaceCount() const noexcept;
-            const uint32                                getIndexCount() const noexcept;
-            const Rendering::VS_INPUT*                  getVertices() const noexcept;
-            const Rendering::IndexElementType*          getIndices() const noexcept;
+            const uint32                        getPositionCount() const noexcept;
+            const uint32                        getVertexCount() const noexcept;
+            const uint32                        getFaceCount() const noexcept;
+            const uint32                        getIndexCount() const noexcept;
+            const VS_INPUT*                     getVertices() const noexcept;
+            const IndexElementType*             getIndices() const noexcept;
 
         public:
-            static const Rendering::VS_INPUT            kNullVertex;
-            static const Rendering::IndexElementType    kNullIndex;
+            static const VS_INPUT               kNullVertex;
+            static const IndexElementType       kNullIndex;
 
         public:
-            Vector<Float4>                              _positionArray;
-            Vector<uint32>                              _vertexToPositionTable;
-            Vector<Rendering::VS_INPUT>                 _vertexArray;
-            Vector<Rendering::Face>                     _faceArray;
+            Vector<Float4>                      _positionArray;
+            Vector<uint32>                      _vertexToPositionTable;
+            Vector<VS_INPUT>                    _vertexArray;
+            Vector<Face>                        _faceArray;
         };
     }
 }

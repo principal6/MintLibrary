@@ -9,7 +9,7 @@ namespace mint
 {
     namespace Rendering
     {
-        inline IRendererContext::IRendererContext(mint::Rendering::GraphicDevice* const graphicDevice)
+        inline IRendererContext::IRendererContext(GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _defaultColor{ Color::kWhite }
             , _useMultipleViewports{ false }
@@ -27,7 +27,7 @@ namespace mint
             return _useMultipleViewports;
         }
 
-        MINT_INLINE void IRendererContext::setPosition(const mint::Float4& position) noexcept
+        MINT_INLINE void IRendererContext::setPosition(const Float4& position) noexcept
         {
             _position = position;
         }
@@ -37,13 +37,13 @@ namespace mint
             _position._z = s;
         }
 
-        MINT_INLINE void IRendererContext::setColor(const mint::Rendering::Color& color) noexcept
+        MINT_INLINE void IRendererContext::setColor(const Color& color) noexcept
         {
             _colorArray.clear();
             _defaultColor = color;
         }
 
-        MINT_INLINE void IRendererContext::setColor(const mint::Vector<mint::Rendering::Color>& colorArray) noexcept
+        MINT_INLINE void IRendererContext::setColor(const Vector<Color>& colorArray) noexcept
         {
             _colorArray = colorArray;
 
@@ -53,12 +53,12 @@ namespace mint
             }
         }
 
-        MINT_INLINE void IRendererContext::setClipRect(const mint::Rect& clipRect) noexcept
+        MINT_INLINE void IRendererContext::setClipRect(const Rect& clipRect) noexcept
         {
             _clipRect = clipRect;
         }
 
-        MINT_INLINE const mint::Float4& IRendererContext::getColorInternal(const uint32 index) const noexcept
+        MINT_INLINE const Float4& IRendererContext::getColorInternal(const uint32 index) const noexcept
         {
             const uint32 colorCount = static_cast<uint32>(_colorArray.size());
             return (colorCount <= index) ? _defaultColor : _colorArray[index];

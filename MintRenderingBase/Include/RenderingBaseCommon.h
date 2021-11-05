@@ -45,9 +45,9 @@ namespace mint
         // Triangle face
         struct Face
         {
-            static constexpr uint8          kIndexCountPerFace = 3;
+            static constexpr uint8  kIndexCountPerFace = 3;
 
-            Rendering::IndexElementType     _vertexIndexArray[kIndexCountPerFace];
+            IndexElementType        _vertexIndexArray[kIndexCountPerFace];
         };
 
         class Color

@@ -27,7 +27,7 @@ namespace mint
     {
 #pragma region Static function definitions
         template<uint32 BufferSize>
-        static void makeShaderVersion(mint::ScopeStringA<BufferSize>& out, const DxShaderType shaderType, const DxShaderVersion shaderVersion)
+        static void makeShaderVersion(ScopeStringA<BufferSize>& out, const DxShaderType shaderType, const DxShaderVersion shaderVersion)
         {
             out.clear();
 
@@ -282,7 +282,7 @@ namespace mint
         {
             std::string inputShaderFilePath{ inputDirectory };
             inputShaderFilePath += inputShaderFileName;
-            if (mint::FileUtil::exists(inputShaderFilePath.c_str()) == false)
+            if (FileUtil::exists(inputShaderFilePath.c_str()) == false)
             {
                 MINT_LOG_ERROR("김장원", "Input shader file not found : %s", inputShaderFilePath.c_str());
                 return false;
@@ -292,9 +292,9 @@ namespace mint
             StringUtil::excludeExtension(outputShaderFilePath);
             if (outputDirectory != nullptr)
             {
-                if (mint::FileUtil::exists(outputDirectory) == false)
+                if (FileUtil::exists(outputDirectory) == false)
                 {
-                    MINT_ASSERT("김장원", mint::FileUtil::createDirectory(outputDirectory) == true, "경로 생성에 실패했습니다!");
+                    MINT_ASSERT("김장원", FileUtil::createDirectory(outputDirectory) == true, "경로 생성에 실패했습니다!");
                 }
 
                 outputShaderFilePath = outputDirectory + outputShaderFilePath;
@@ -315,7 +315,7 @@ namespace mint
                 return false;
             }
 
-            if (mint::FileUtil::exists(outputShaderFilePath) == false || forceCompilation == true)
+            if (FileUtil::exists(outputShaderFilePath) == false || forceCompilation == true)
             {
                 DxShaderCompileParam compileParam;
                 compileParam._inputFileName = inputShaderFilePath;
@@ -344,13 +344,13 @@ namespace mint
 
         const bool DxShaderPool::compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
         {
-            mint::ScopeStringA<20> version;
+            ScopeStringA<20> version;
             makeShaderVersion(version, shaderType, _shaderVersion);
 
             const char* content{};
             const char* identifier{};
             uint32 contentLength{};
-            mint::TextFileReader textFileReader;
+            TextFileReader textFileReader;
             if (compileParam._inputFileName != nullptr)
             {
                 if (textFileReader.open(compileParam._inputFileName) == false)
@@ -392,10 +392,10 @@ namespace mint
 
         void DxShaderPool::recompileAllShaders()
         {
-            const uint32 shaderTypeCount = static_cast<uint32>(mint::Rendering::DxShaderType::COUNT);
+            const uint32 shaderTypeCount = static_cast<uint32>(DxShaderType::COUNT);
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const mint::Rendering::DxShaderType shaderType = static_cast<mint::Rendering::DxShaderType>(shaderTypeIndex);
+                const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
                 if (objectId.isValid() == true)
                 {
@@ -416,7 +416,7 @@ namespace mint
             {
                 DxShader& shader = _geometryShaderArray[geometryShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, mint::Rendering::DxShaderType::GeometryShader);
+                createNonVertexShaderInternal(shader, DxShaderType::GeometryShader);
             }
 
             const uint32 pixelShaderCount = _pixelShaderArray.size();
@@ -424,12 +424,12 @@ namespace mint
             {
                 DxShader& shader = _pixelShaderArray[pixelShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, mint::Rendering::DxShaderType::PixelShader);
+                createNonVertexShaderInternal(shader, DxShaderType::PixelShader);
             }
 
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const mint::Rendering::DxShaderType shaderType = static_cast<mint::Rendering::DxShaderType>(shaderTypeIndex);
+                const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
                 const DxObjectId objectId = _boundShaderIdArray[shaderTypeIndex];
                 if (objectId.isValid() == true)
                 {
@@ -483,7 +483,7 @@ namespace mint
 
             if (shaderType == DxShaderType::VertexShader)
             {
-                const int32 index = mint::binarySearch(_vertexShaderArray, objectId);
+                const int32 index = binarySearch(_vertexShaderArray, objectId);
                 if (0 <= index)
                 {
                     return _vertexShaderArray[index];
@@ -491,7 +491,7 @@ namespace mint
             }
             else if (shaderType == DxShaderType::GeometryShader)
             {
-                const int32 index = mint::binarySearch(_geometryShaderArray, objectId);
+                const int32 index = binarySearch(_geometryShaderArray, objectId);
                 if (0 <= index)
                 {
                     return _geometryShaderArray[index];
@@ -499,7 +499,7 @@ namespace mint
             }
             else if (shaderType == DxShaderType::PixelShader)
             {
-                const int32 index = mint::binarySearch(_pixelShaderArray, objectId);
+                const int32 index = binarySearch(_pixelShaderArray, objectId);
                 if (0 <= index)
                 {
                     return _pixelShaderArray[index];

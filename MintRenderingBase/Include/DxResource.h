@@ -122,28 +122,28 @@ namespace mint
         class DxResourcePool final : public IDxObject
         {
         public:
-                                            DxResourcePool(GraphicDevice* const graphicDevice);
-                                            DxResourcePool(const DxResourcePool& rhs) = delete;
-            virtual                         ~DxResourcePool() = default;
+                                    DxResourcePool(GraphicDevice* const graphicDevice);
+                                    DxResourcePool(const DxResourcePool& rhs) = delete;
+            virtual                 ~DxResourcePool() = default;
 
         public:
-            const DxObjectId&               pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-            const DxObjectId&               pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const DxObjectId&               pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-            const DxObjectId&               pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+            const DxObjectId&       pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+            const DxObjectId&       pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const DxObjectId&       pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+            const DxObjectId&       pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
         public:
-            const DxObjectId&               pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+            const DxObjectId&       pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
         public:
-            void                            bindAsInput(const DxObjectId& objectId) noexcept;
-            void                            bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
+            void                    bindAsInput(const DxObjectId& objectId) noexcept;
+            void                    bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
 
         public:
-            DxResource&                     getResource(const DxObjectId& objectId);
+            DxResource&             getResource(const DxObjectId& objectId);
 
         private:
-            mint::Vector<DxResource>        _resourceArray{};
+            Vector<DxResource>      _resourceArray{};
         };
     }
 }
