@@ -22,11 +22,11 @@ namespace mint
 
     public:
                             Float3x3();
-        explicit            Float3x3(const float s);
+        explicit            Float3x3(const float scalar);
         explicit            Float3x3(
-                                const float m00, const float m01, const float m02,
-                                const float m10, const float m11, const float m12,
-                                const float m20, const float m21, const float m22);
+                                const float _11, const float _12, const float _13,
+                                const float _21, const float _22, const float _23,
+                                const float _31, const float _32, const float _33);
                             Float3x3(const Float3x3& rhs)       = default;
                             Float3x3(Float3x3&& rhs) noexcept   = default;
                             ~Float3x3()                         = default;
@@ -50,7 +50,7 @@ namespace mint
         Float3x3            inverse() const noexcept;
 
     public:
-        Float3              mul(const Float3& v) const noexcept;
+        Float3              mul(const Float3& vec) const noexcept;
 
     public:
         union

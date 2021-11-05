@@ -51,20 +51,20 @@ namespace mint
         __noop;
     }
 
-    Float3x3::Float3x3(const float s)
+    Float3x3::Float3x3(const float scalar)
         : Float3x3(
-            s, s, s,
-            s, s, s, 
-            s, s, s)
+            scalar, scalar, scalar,
+            scalar, scalar, scalar, 
+            scalar, scalar, scalar)
     {
         __noop;
     }
 
     Float3x3::Float3x3(
-        const float m00, const float m01, const float m02, 
-        const float m10, const float m11, const float m12, 
-        const float m20, const float m21, const float m22) 
-        : _m{ m00, m01, m02, m10, m11, m12, m20, m21, m22 }
+        const float _11, const float _12, const float _13, 
+        const float _21, const float _22, const float _23, 
+        const float _31, const float _32, const float _33) 
+        : _m{ _11, _12, _13, _21, _22, _23, _31, _32, _33 }
     {
         __noop;
     }
@@ -119,10 +119,10 @@ namespace mint
         return adj / Math::determinant(_m);
     }
 
-    Float3 Float3x3::mul(const Float3& v) const noexcept
+    Float3 Float3x3::mul(const Float3& vec) const noexcept
     {
         Float3 result;
-        Math::mul(_m, v._c, result._c);
+        Math::mul(_m, vec._c, result._c);
         return result;
     }
 }
