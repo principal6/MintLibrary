@@ -171,11 +171,9 @@ namespace mint
         }
 
 
-        MathExpressionRenderer::MathExpressionRenderer(mint::Rendering::GraphicDevice* const graphicDevice)
+        MathExpressionRenderer::MathExpressionRenderer(GraphicDevice* const graphicDevice)
             : _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
         {
-            using namespace mint::Rendering;
-
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
@@ -196,16 +194,14 @@ namespace mint
             __noop;
         }
 
-        void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const mint::Float2& screenPosition) noexcept
+        void MathExpressionRenderer::drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept
         {
-            using namespace mint::Rendering;
-
             mathExpression.evaluate();
 
             const uint32 plainStringLength = mathExpression.getPlainStringLength();
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
-                mint::BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
+                BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
                 bitFlags.resizeBitCount(plainStringLength);
                 bitFlags.fill(false);
             }
@@ -216,7 +212,7 @@ namespace mint
                 const MathExpression::Modifier& modifier = mathExpression._modifiers[modifierIndex];
                 const uint32 modifierTypeIndex = static_cast<uint32>(modifier._type);
                 
-                mint::BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
+                BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
                 for (uint32 iter = 0; iter < modifier._range._length; iter++)
                 {
                     const uint32 at = modifier._range._offset + iter;
@@ -228,15 +224,13 @@ namespace mint
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
 
-                rendererContext.drawDynamicTextBitFlagged(mathExpression.getPlainString(), mint::Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
+                rendererContext.drawDynamicTextBitFlagged(mathExpression.getPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
                     FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
             }            
         }
 
         void MathExpressionRenderer::render() noexcept
         {
-            using namespace mint::Rendering;
-
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];

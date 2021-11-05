@@ -3,7 +3,7 @@
 
 namespace mint
 {
-    MINT_INLINE constexpr Rect Rect::fromPositionSize(const mint::Float2& positionFromLeftTop, const mint::Float2& size)
+    MINT_INLINE constexpr Rect Rect::fromPositionSize(const Float2& positionFromLeftTop, const Float2& size)
     {
         return Rect(positionFromLeftTop, size);
     }
@@ -26,7 +26,7 @@ namespace mint
         __noop;
     }
 
-    inline constexpr Rect::Rect(const mint::Float2& positionFromLeftTop, const mint::Float2& size)
+    inline constexpr Rect::Rect(const Float2& positionFromLeftTop, const Float2& size)
         : Rect(positionFromLeftTop._x, positionFromLeftTop._x + size._x, positionFromLeftTop._y, positionFromLeftTop._y + size._y)
     {
         __noop;
@@ -118,22 +118,22 @@ namespace mint
         _raw._w = s;
     }
 
-    MINT_INLINE constexpr const mint::Float2 Rect::center() const noexcept
+    MINT_INLINE constexpr const Float2 Rect::center() const noexcept
     {
-        return mint::Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
+        return Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
     }
 
-    MINT_INLINE constexpr const mint::Float2 Rect::size() const noexcept
+    MINT_INLINE constexpr const Float2 Rect::size() const noexcept
     {
-        return mint::Float2(right() - left(), bottom() - top());
+        return Float2(right() - left(), bottom() - top());
     }
 
-    MINT_INLINE constexpr const mint::Float2 Rect::position() const noexcept
+    MINT_INLINE constexpr const Float2 Rect::position() const noexcept
     {
-        return mint::Float2(left(), top());
+        return Float2(left(), top());
     }
 
-    MINT_INLINE constexpr void Rect::position(const mint::Float2& position) noexcept
+    MINT_INLINE constexpr void Rect::position(const Float2& position) noexcept
     {
         left(position._x);
         top(position._y);
@@ -151,7 +151,7 @@ namespace mint
         bottom(max(top(), bottom()));
     }
 
-    MINT_INLINE constexpr const bool Rect::contains(const mint::Float2& position) const noexcept
+    MINT_INLINE constexpr const bool Rect::contains(const Float2& position) const noexcept
     {
         return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
     }

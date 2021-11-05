@@ -26,27 +26,27 @@ namespace mint
         class MeshRenderer final
         {
         public:
-                                                        MeshRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
-                                                        ~MeshRenderer();
-        
+                                            MeshRenderer(GraphicDevice* const graphicDevice);
+                                            ~MeshRenderer();
+
         public:
-            void                                        initialize() noexcept;
-            void                                        render(const mint::Rendering::ObjectPool& objectPool) noexcept;
+            void                            initialize() noexcept;
+            void                            render(const ObjectPool& objectPool) noexcept;
 
         private:
-            mint::Rendering::GraphicDevice* const   _graphicDevice;
+            GraphicDevice* const            _graphicDevice;
 
         private:
-            mint::Rendering::LowLevelRenderer<mint::Rendering::VS_INPUT>    _lowLevelRenderer;
-            mint::Rendering::CB_Transform                                       _cbTransformData;
-            mint::Vector<mint::Rendering::SB_Material>                          _sbMaterialDatas;
+            LowLevelRenderer<VS_INPUT>      _lowLevelRenderer;
+            CB_Transform                    _cbTransformData;
+            Vector<SB_Material>             _sbMaterialDatas;
 
         private:
-            mint::Rendering::DxObjectId             _vsDefaultId;
-            mint::Rendering::DxObjectId             _gsNormalId;
-            mint::Rendering::DxObjectId             _gsTriangleEdgeId;
-            mint::Rendering::DxObjectId             _psDefaultId;
-            mint::Rendering::DxObjectId             _psTexCoordAsColorId;
+            DxObjectId                      _vsDefaultId;
+            DxObjectId                      _gsNormalId;
+            DxObjectId                      _gsTriangleEdgeId;
+            DxObjectId                      _psDefaultId;
+            DxObjectId                      _psTexCoordAsColorId;
         };
     }
 }

@@ -21,26 +21,26 @@ namespace mint
         class MeshComponent final : public TransformComponent
         {
         public:
-                                                            MeshComponent();
-            virtual                                         ~MeshComponent();
+                                        MeshComponent();
+            virtual                     ~MeshComponent();
 
         public:
-            const mint::Rendering::MeshData&            getMeshData() const noexcept;
-            const uint32                                    getVertexCount() const noexcept;
-            const mint::Rendering::VS_INPUT*            getVertices() const noexcept;
-            const uint32                                    getIndexCount() const noexcept;
-            const mint::Rendering::IndexElementType*    getIndices() const noexcept;
+            const MeshData&             getMeshData() const noexcept;
+            const uint32                getVertexCount() const noexcept;
+            const VS_INPUT*             getVertices() const noexcept;
+            const uint32                getIndexCount() const noexcept;
+            const IndexElementType*     getIndices() const noexcept;
 
         public:
-            void                                            shouldDrawNormals(const bool shouldDrawNormals) noexcept;
-            const bool                                      shouldDrawNormals() const noexcept;
-            void                                            shouldDrawEdges(const bool shouldDrawEdges) noexcept;
-            const bool                                      shouldDrawEdges() const noexcept;
+            void                        shouldDrawNormals(const bool shouldDrawNormals) noexcept;
+            const bool                  shouldDrawNormals() const noexcept;
+            void                        shouldDrawEdges(const bool shouldDrawEdges) noexcept;
+            const bool                  shouldDrawEdges() const noexcept;
 
         private:
-            mint::Rendering::MeshData                   _meshData;
-            bool                                            _shouldDrawNormals;
-            bool                                            _shouldDrawEdges;
+            MeshData                    _meshData;
+            bool                        _shouldDrawNormals;
+            bool                        _shouldDrawEdges;
         };
     }
 }
