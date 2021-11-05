@@ -18,6 +18,7 @@ namespace mint
     {
         class GraphicDevice;
         struct SB_Material;
+        struct Srt;
         class Color;
 
 
@@ -32,7 +33,11 @@ namespace mint
 
         public:
             void                            drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
+            void                            drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept;
             void                            drawSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
+
+        private:
+            void                            pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
 
         public:
             void                            render() noexcept;

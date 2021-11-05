@@ -63,6 +63,22 @@ namespace mint
             _sbMaterialDatas.push_back(sbMaterialData);
         }
 
+        void InstantRenderer::drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept
+        {
+            MeshGenerator::BoxParam boxParam;
+            boxParam._width = extents._x;
+            boxParam._height = extents._y;
+            boxParam._depth = extents._z;
+            MeshData meshData;
+            MeshGenerator::generateBox(boxParam, meshData);
+
+            Float4x4 transformationMatrix;
+            transformationMatrix.srtMatrix(worldSrt._scale, worldSrt._rotation, worldSrt._translation);
+            MeshGenerator::transformMeshData(meshData, transformationMatrix);
+
+            pushMeshWithMaterial(meshData, color);
+        }
+
         void InstantRenderer::drawSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
         {
             MeshGenerator::GeoSpherePram geosphereParam;
@@ -76,13 +92,18 @@ namespace mint
             transformationMatrix.setTranslation(center);
             MeshGenerator::transformMeshData(meshData, transformationMatrix);
             
+            pushMeshWithMaterial(meshData, color);
+        }
+
+        void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
+        {
             const uint32 materialId = _sbMaterialDatas.size();
             MeshGenerator::setMaterialId(meshData, materialId);
 
             _lowLevelRendererMesh.pushMesh(meshData);
 
             SB_Material sbMaterialData;
-            sbMaterialData._diffuseColor = color;
+            sbMaterialData._diffuseColor = diffuseColor;
             _sbMaterialDatas.push_back(sbMaterialData);
         }
 
