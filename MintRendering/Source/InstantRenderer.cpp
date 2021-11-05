@@ -71,10 +71,7 @@ namespace mint
             boxParam._depth = extents._z;
             MeshData meshData;
             MeshGenerator::generateBox(boxParam, meshData);
-
-            Float4x4 transformationMatrix;
-            transformationMatrix.srtMatrix(worldSrt._scale, worldSrt._rotation, worldSrt._translation);
-            MeshGenerator::transformMeshData(meshData, transformationMatrix);
+            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }
@@ -92,6 +89,19 @@ namespace mint
             transformationMatrix.setTranslation(center);
             MeshGenerator::transformMeshData(meshData, transformationMatrix);
             
+            pushMeshWithMaterial(meshData, color);
+        }
+
+        void InstantRenderer::drawHalfOpenSphere(const Srt& worldSrt, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
+        {
+            MeshGenerator::GeoSpherePram geosphereParam;
+            geosphereParam._radius = radius;
+            geosphereParam._subdivisionIteration = subdivisionIteration;
+            geosphereParam._smooth = true;
+            MeshData meshData;
+            MeshGenerator::generateHalfOpenGeoSphere(geosphereParam, meshData);
+            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
+
             pushMeshWithMaterial(meshData, color);
         }
 

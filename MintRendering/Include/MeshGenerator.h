@@ -66,7 +66,9 @@ namespace mint
             static void             generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
             static void             generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
             static void             generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
+            static void             generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void             generateGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept;
+            static void             generateHalfOpenGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept;
 
         public:
             static void             setMaterialId(MeshData& meshData, const uint32 materialId) noexcept;
