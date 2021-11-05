@@ -23,8 +23,8 @@ namespace mint
 
     public:
                                     Float2x2();
-        explicit                    Float2x2(const float s);
-        explicit                    Float2x2(const float m00, const float m01, const float m10, const float m11);
+        explicit                    Float2x2(const float scalar);
+        explicit                    Float2x2(const float _11, const float _12, const float _21, const float _22);
                                     Float2x2(const Float2x2& rhs)       = default;
                                     Float2x2(Float2x2&& rhs) noexcept   = default;
                                     ~Float2x2()                         = default;
@@ -51,7 +51,7 @@ namespace mint
         const bool                  isInvertible() const noexcept;
 
     public:
-        Float2                      mul(const Float2& v) const noexcept;
+        Float2                      mul(const Float2& vec) const noexcept;
 
     public:
         union

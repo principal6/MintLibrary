@@ -24,18 +24,18 @@ namespace mint
         __noop;
     }
 
-    Float2x2::Float2x2(const float s)
+    Float2x2::Float2x2(const float scalar)
         : Float2x2(
-            s, s, 
-            s, s)
+            scalar, scalar, 
+            scalar, scalar)
     {
         __noop;
     }
 
     Float2x2::Float2x2(
-        const float m00, const float m01, 
-        const float m10, const float m11)
-        : _m{ m00, m01, m10, m11 }
+        const float _11, const float _12, 
+        const float _21, const float _22)
+        : _m{ _11, _12, _21, _22 }
     {
         __noop;
     }
@@ -103,10 +103,10 @@ namespace mint
         return (0.0f != determinant());
     }
 
-    Float2 Float2x2::mul(const Float2& v) const noexcept
+    Float2 Float2x2::mul(const Float2& vec) const noexcept
     {
         Float2 result;
-        Math::mul(_m, v._c, result._c);
+        Math::mul(_m, vec._c, result._c);
         return result;
     }
 }
