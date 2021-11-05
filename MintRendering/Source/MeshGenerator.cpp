@@ -531,13 +531,18 @@ namespace mint
 
         void MeshGenerator::mergeMeshData(const MeshData& meshDataA, const MeshData& meshDataB, MeshData& outMeshData) noexcept
         {
-            outMeshData = meshDataA;
-
+            mergeMeshData(meshDataA, outMeshData);
             mergeMeshData(meshDataB, outMeshData);
         }
 
         void MeshGenerator::mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept
         {
+            if (inoutTargetMeshData.isEmpty() == true)
+            {
+                inoutTargetMeshData = sourceMeshData;
+                return;
+            }
+
             const uint32 oldPositionCount = inoutTargetMeshData.getPositionCount();
             const uint32 deltaPositionCount = sourceMeshData.getPositionCount();
             inoutTargetMeshData._positionArray.reserve(inoutTargetMeshData._positionArray.size() + deltaPositionCount);
@@ -553,7 +558,7 @@ namespace mint
             for (uint32 deltaVertexIndex = 0; deltaVertexIndex < deltaVertexCount; ++deltaVertexIndex)
             {
                 inoutTargetMeshData._vertexArray.push_back(sourceMeshData._vertexArray[deltaVertexIndex]);
-                inoutTargetMeshData._vertexToPositionTable.push_back(oldPositionCount + inoutTargetMeshData._vertexToPositionTable[deltaVertexIndex]);
+                inoutTargetMeshData._vertexToPositionTable.push_back(oldPositionCount + sourceMeshData._vertexToPositionTable[deltaVertexIndex]);
             }
 
             const uint32 deltaFaceCount = sourceMeshData.getFaceCount();
