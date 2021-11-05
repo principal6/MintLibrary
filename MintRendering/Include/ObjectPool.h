@@ -24,49 +24,49 @@ namespace mint
         class ObjectPool final
         {
         public:
-                                                                                ObjectPool();
-                                                                                ~ObjectPool();
+                                                ObjectPool();
+                                                ~ObjectPool();
 
         public:
-            mint::Rendering::Object*                                              createObject();
-            mint::Rendering::CameraObject*                                        createCameraObject();
+            Object*                             createObject();
+            CameraObject*                       createCameraObject();
 
         private:
-            void                                                                destroyObjects();
+            void                                destroyObjects();
 
         private:
-            mint::Rendering::Object*                                              createObjectInternalXXX(mint::Rendering::Object* const object);
-        
-        public:
-            mint::Rendering::TransformComponent*                                  createTransformComponent();
-            mint::Rendering::MeshComponent*                                       createMeshComponent();
-        
-        public:
-            void                                                                destroyObjectComponents(Object& object);
+            Object*                             createObjectInternalXXX(Object* const object);
 
         public:
-            void                                                                registerMeshComponent(mint::Rendering::MeshComponent* const meshComponent);
-            void                                                                deregisterMeshComponent(mint::Rendering::MeshComponent* const meshComponent);
+            TransformComponent*                 createTransformComponent();
+            MeshComponent*                      createMeshComponent();
 
         public:
-            void                                                                computeDeltaTime() const noexcept;
-            void                                                                updateScreenSize(const mint::Float2& screenSize);
+            void                                destroyObjectComponents(Object& object);
 
         public:
-            const mint::Vector<mint::Rendering::MeshComponent*>&                    getMeshComponents() const noexcept;
+            void                                registerMeshComponent(MeshComponent* const meshComponent);
+            void                                deregisterMeshComponent(MeshComponent* const meshComponent);
 
         public:
-            const uint32                                                        getObjectCount() const noexcept;
-            const DeltaTimer*                                                   getDeltaTimerXXX() const noexcept;
+            void                                computeDeltaTime() const noexcept;
+            void                                updateScreenSize(const Float2& screenSize);
+
+        public:
+            const Vector<MeshComponent*>&       getMeshComponents() const noexcept;
+
+        public:
+            const uint32                        getObjectCount() const noexcept;
+            const DeltaTimer*                   getDeltaTimerXXX() const noexcept;
 
         private:
-            const DeltaTimer* const                                             _deltaTimer;
+            const DeltaTimer* const             _deltaTimer;
 
         private:
-            mint::Vector<mint::Rendering::Object*>                                  _objectArray;
+            Vector<Object*>                     _objectArray;
 
         private:
-            mint::Vector<mint::Rendering::MeshComponent*>                           _meshComponentArray;
+            Vector<MeshComponent*>              _meshComponentArray;
         };
     }
 }

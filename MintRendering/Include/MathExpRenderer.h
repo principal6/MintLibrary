@@ -62,7 +62,7 @@ namespace mint
             mutable bool                _isEvaluated;
 
         private:
-            mint::Vector<Modifier>      _modifiers;
+            Vector<Modifier>            _modifiers;
             std::wstring                _plainString;
         };
 
@@ -70,22 +70,22 @@ namespace mint
         class MathExpressionRenderer
         {
         public:
-                                MathExpressionRenderer(mint::Rendering::GraphicDevice* const graphicDevice);
+                                MathExpressionRenderer(GraphicDevice* const graphicDevice);
                                 ~MathExpressionRenderer();
 
         public:
-            void                drawMathExpression(const MathExpression& mathExpression, const mint::Float2& screenPosition) noexcept;
+            void                drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
 
         public:
             void                render() noexcept;
 
         private:
-            static constexpr const char* const              kFontFileNames[MathExpression::getModifierTypeCount()] =
+            static constexpr const char* const      kFontFileNames[MathExpression::getModifierTypeCount()] =
                 { "Assets/cmu_s_italic", "Assets/cmu_s_bold", "Assets/cmu_s_bold_italic", "Assets/cmu_s_roman" };
 
         private:
-            mint::Rendering::ShapeFontRendererContext       _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
-            mint::BitVector                                 _bitFlagsArray[MathExpression::getModifierTypeCount()];
+            ShapeFontRendererContext                _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
+            BitVector                               _bitFlagsArray[MathExpression::getModifierTypeCount()];
         };
     }
 }

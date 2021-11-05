@@ -48,7 +48,7 @@ namespace mint
             {
                 static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base 가 달라졌습니다!");
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
-                return 0.125f * static_cast<float>(mint::Math::pow2_ui32(moveSpeedUint8));
+                return 0.125f * static_cast<float>(Math::pow2_ui32(moveSpeedUint8));
             }
 
             MINT_INLINE constexpr const MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)
@@ -97,20 +97,20 @@ namespace mint
             void                    rotateYaw(const float angle);
 
         public:
-            mint::Float4x4            getViewMatrix() const noexcept;
-            const mint::Float4x4&     getProjectionMatrix() const noexcept;
+            Float4x4                getViewMatrix() const noexcept;
+            const Float4x4&         getProjectionMatrix() const noexcept;
         
         private:
-            mint::Float4x4            getRotationMatrix() const noexcept;
+            Float4x4                getRotationMatrix() const noexcept;
 
         private:
-            mint::Float3              _baseUpDirection;
-            mint::Float3              _baseForwardDirection;
-            mint::Float3              _focusOffset;
-            mint::Float4x4            _projectionMatrix;
+            Float3                  _baseUpDirection;
+            Float3                  _baseForwardDirection;
+            Float3                  _focusOffset;
+            Float4x4                _projectionMatrix;
 
         private:
-            mutable mint::Float3      _forwardDirectionFinal;
+            mutable Float3          _forwardDirectionFinal;
 
         private:
             float                   _fov;

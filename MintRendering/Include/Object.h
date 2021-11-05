@@ -54,10 +54,10 @@ namespace mint
             IObjectComponent*               getComponent(const ObjectComponentType type) const noexcept;
 
         public:
-            void                            setObjectTransform(const mint::Rendering::Srt& srt) noexcept;
-            mint::Rendering::Srt&             getObjectTransformSrt() noexcept;
-            const mint::Rendering::Srt&       getObjectTransformSrt() const noexcept;
-            mint::Float4x4                    getObjectTransformMatrix() const noexcept;
+            void                            setObjectTransform(const Srt& srt) noexcept;
+            Srt&                            getObjectTransformSrt() noexcept;
+            const Srt&                      getObjectTransformSrt() const noexcept;
+            Float4x4                        getObjectTransformMatrix() const noexcept;
 
         protected:
             TransformComponent*             getObjectTransformComponent() const noexcept;
@@ -68,7 +68,7 @@ namespace mint
             const ObjectType                _objectType;
 
         protected:
-            mint::Vector<IObjectComponent*>   _componentArray;
+            Vector<IObjectComponent*>       _componentArray;
         };
 
     }

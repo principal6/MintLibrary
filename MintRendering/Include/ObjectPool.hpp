@@ -19,7 +19,7 @@ namespace mint
     namespace Rendering
     {
         inline ObjectPool::ObjectPool()
-            : _deltaTimer{ &mint::Rendering::DeltaTimer::getDeltaTimer() }
+            : _deltaTimer{ &DeltaTimer::getDeltaTimer() }
         {
             __noop;
         }
@@ -29,14 +29,14 @@ namespace mint
             destroyObjects();
         }
 
-        MINT_INLINE mint::Rendering::Object* ObjectPool::createObject()
+        MINT_INLINE Object* ObjectPool::createObject()
         {
-            return createObjectInternalXXX(MINT_NEW(mint::Rendering::Object, this));
+            return createObjectInternalXXX(MINT_NEW(Object, this));
         }
 
-        MINT_INLINE mint::Rendering::CameraObject* ObjectPool::createCameraObject()
+        MINT_INLINE CameraObject* ObjectPool::createCameraObject()
         {
-            return static_cast<mint::Rendering::CameraObject*>(createObjectInternalXXX(MINT_NEW(mint::Rendering::CameraObject, this)));
+            return static_cast<CameraObject*>(createObjectInternalXXX(MINT_NEW(CameraObject, this)));
         }
 
         MINT_INLINE void ObjectPool::destroyObjects()
@@ -54,21 +54,21 @@ namespace mint
             _objectArray.clear();
         }
 
-        MINT_INLINE mint::Rendering::Object* ObjectPool::createObjectInternalXXX(mint::Rendering::Object* const object)
+        MINT_INLINE Object* ObjectPool::createObjectInternalXXX(Object* const object)
         {
             _objectArray.push_back(object);
             object->attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
             return object;
         }
 
-        MINT_INLINE mint::Rendering::TransformComponent* ObjectPool::createTransformComponent()
+        MINT_INLINE TransformComponent* ObjectPool::createTransformComponent()
         {
-            return MINT_NEW(mint::Rendering::TransformComponent);
+            return MINT_NEW(TransformComponent);
         }
 
-        MINT_INLINE mint::Rendering::MeshComponent* ObjectPool::createMeshComponent()
+        MINT_INLINE MeshComponent* ObjectPool::createMeshComponent()
         {
-            mint::Rendering::MeshComponent* result = MINT_NEW(mint::Rendering::MeshComponent);
+            MeshComponent* result = MINT_NEW(MeshComponent);
             _meshComponentArray.push_back(std::move(result));
             return _meshComponentArray.back();
         }
@@ -84,7 +84,7 @@ namespace mint
                     const ObjectComponentType componentType = component->getType();
                     if (componentType == ObjectComponentType::MeshComponent)
                     {
-                        deregisterMeshComponent(static_cast<mint::Rendering::MeshComponent*>(component));
+                        deregisterMeshComponent(static_cast<MeshComponent*>(component));
                     }
 
                     MINT_DELETE(component);
@@ -92,7 +92,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE void ObjectPool::registerMeshComponent(mint::Rendering::MeshComponent* const meshComponent)
+        MINT_INLINE void ObjectPool::registerMeshComponent(MeshComponent* const meshComponent)
         {
             if (meshComponent == nullptr)
             {
@@ -111,7 +111,7 @@ namespace mint
             _meshComponentArray.push_back(meshComponent);
         }
 
-        MINT_INLINE void ObjectPool::deregisterMeshComponent(mint::Rendering::MeshComponent* const meshComponent)
+        MINT_INLINE void ObjectPool::deregisterMeshComponent(MeshComponent* const meshComponent)
         {
             if (meshComponent == nullptr)
             {
@@ -144,13 +144,13 @@ namespace mint
             _deltaTimer->computeDeltaTimeS();
         }
 
-        MINT_INLINE void ObjectPool::updateScreenSize(const mint::Float2& screenSize)
+        MINT_INLINE void ObjectPool::updateScreenSize(const Float2& screenSize)
         {
             const float screenRatio = (screenSize._x / screenSize._y);
             const uint32 objectCount = _objectArray.size();
             for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
             {
-                mint::Rendering::Object*& object = _objectArray[objectIndex];
+                Object*& object = _objectArray[objectIndex];
                 if (object->isTypeOf(ObjectType::CameraObject) == true)
                 {
                     CameraObject* const cameraObject = static_cast<CameraObject*>(object);
@@ -159,7 +159,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE const mint::Vector<mint::Rendering::MeshComponent*>& ObjectPool::getMeshComponents() const noexcept
+        MINT_INLINE const Vector<MeshComponent*>& ObjectPool::getMeshComponents() const noexcept
         {
             return _meshComponentArray;
         }

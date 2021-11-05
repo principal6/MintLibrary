@@ -75,7 +75,7 @@ namespace mint
             }
         }
 
-        const uint32 mint::Rendering::Object::getComponentCount() const noexcept
+        const uint32 Object::getComponentCount() const noexcept
         {
             return static_cast<uint32>(_componentArray.size());
         }
@@ -93,22 +93,22 @@ namespace mint
             return nullptr;
         }
 
-        void Object::setObjectTransform(const mint::Rendering::Srt& srt) noexcept
+        void Object::setObjectTransform(const Srt& srt) noexcept
         {
             getObjectTransformComponent()->_srt = srt;
         }
 
-        mint::Rendering::Srt& Object::getObjectTransformSrt() noexcept
+        Srt& Object::getObjectTransformSrt() noexcept
         {
             return getObjectTransformComponent()->_srt;
         }
 
-        const mint::Rendering::Srt& Object::getObjectTransformSrt() const noexcept
+        const Srt& Object::getObjectTransformSrt() const noexcept
         {
             return getObjectTransformComponent()->_srt;
         }
 
-        mint::Float4x4 Object::getObjectTransformMatrix() const noexcept
+        Float4x4 Object::getObjectTransformMatrix() const noexcept
         {
             return getObjectTransformComponent()->_srt.toMatrix();
         }

@@ -31,8 +31,8 @@ namespace mint
             void                            initialize() noexcept;
 
         public:
-            void                            drawLine(const mint::Float3& a, const mint::Float3& b, const Color& color) noexcept;
-            void                            drawSphere(const mint::Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void                            drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
+            void                            drawSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         public:
             void                            render() noexcept;
@@ -46,7 +46,7 @@ namespace mint
 
         private:
             CB_Transform                    _cbTransformData;
-            mint::Vector<SB_Material>       _sbMaterialDatas;
+            Vector<SB_Material>             _sbMaterialDatas;
             DxObjectId                      _vsDefaultId;
             DxObjectId                      _psDefaultId;
             DxObjectId                      _psColorId;

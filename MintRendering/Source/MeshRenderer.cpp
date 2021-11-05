@@ -15,7 +15,7 @@ namespace mint
 {
     namespace Rendering
     {
-        MeshRenderer::MeshRenderer(mint::Rendering::GraphicDevice* const graphicDevice)
+        MeshRenderer::MeshRenderer(GraphicDevice* const graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _lowLevelRenderer{ graphicDevice }
         {
@@ -31,37 +31,37 @@ namespace mint
         {
             using namespace Language;
             const CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
-            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(mint::Rendering::VS_INPUT));
+            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
-            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
             _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", mint::Rendering::DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
             
-            _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", mint::Rendering::DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", mint::Rendering::DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", mint::Rendering::DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
 
-        void MeshRenderer::render(const mint::Rendering::ObjectPool& objectPool) noexcept
+        void MeshRenderer::render(const ObjectPool& objectPool) noexcept
         {
-            const mint::Vector<mint::Rendering::MeshComponent*>& meshComponents = objectPool.getMeshComponents();
+            const Vector<MeshComponent*>& meshComponents = objectPool.getMeshComponents();
 
-            mint::Rendering::DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
-            shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::VertexShader, _vsDefaultId);
+            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultId);
 
-            mint::Rendering::DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            mint::Rendering::DxResource& cbTransform = resourcePool.getResource(_graphicDevice->getCommonCbTransformId());
+            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResource& cbTransform = resourcePool.getResource(_graphicDevice->getCommonCbTransformId());
             {
-                cbTransform.bindToShader(mint::Rendering::DxShaderType::VertexShader, cbTransform.getRegisterIndex());
-                cbTransform.bindToShader(mint::Rendering::DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
+                cbTransform.bindToShader(DxShaderType::VertexShader, cbTransform.getRegisterIndex());
+                cbTransform.bindToShader(DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
             }
 
-            mint::Rendering::DxResource& sbMaterial = resourcePool.getResource(_graphicDevice->getCommonSbMaterialId());
+            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice->getCommonSbMaterialId());
             {
-                sbMaterial.bindToShader(mint::Rendering::DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
+                sbMaterial.bindToShader(DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
             }
 
-            mint::Rendering::SB_Material sbMaterialData;
+            SB_Material sbMaterialData;
             const uint32 meshComponentCount = meshComponents.size();
             for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
             {
@@ -73,25 +73,25 @@ namespace mint
                 
                 _lowLevelRenderer.pushMesh(meshComponent->getMeshData());
 
-                sbMaterialData._diffuseColor = mint::Rendering::Color::kBlue;
+                sbMaterialData._diffuseColor = Color::kBlue;
                 sbMaterial.updateBuffer(&sbMaterialData, 1);
                 
-                shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::PixelShader, _psDefaultId);
-                shaderPool.unbindShader(mint::Rendering::DxShaderType::GeometryShader);
-                _lowLevelRenderer.render(mint::Rendering::RenderingPrimitive::TriangleList);
+                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psDefaultId);
+                shaderPool.unbindShader(DxShaderType::GeometryShader);
+                _lowLevelRenderer.render(RenderingPrimitive::TriangleList);
 
                 if (meshComponent->shouldDrawNormals() == true)
                 {
-                    shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::GeometryShader, _gsNormalId);
-                    shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::PixelShader, _psTexCoordAsColorId);
-                    _lowLevelRenderer.render(mint::Rendering::RenderingPrimitive::LineList);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsNormalId);
+                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorId);
+                    _lowLevelRenderer.render(RenderingPrimitive::LineList);
                 }
 
                 if (meshComponent->shouldDrawEdges() == true)
                 {
-                    shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::GeometryShader, _gsTriangleEdgeId);
-                    shaderPool.bindShaderIfNot(mint::Rendering::DxShaderType::PixelShader, _psTexCoordAsColorId);
-                    _lowLevelRenderer.render(mint::Rendering::RenderingPrimitive::TriangleList);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsTriangleEdgeId);
+                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorId);
+                    _lowLevelRenderer.render(RenderingPrimitive::TriangleList);
                 }
             }
         }
