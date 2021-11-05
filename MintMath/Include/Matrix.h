@@ -90,6 +90,9 @@ namespace mint
         const T                 determinant(const T(&mat)[4][4]) noexcept;
 
         template<typename T>
+        void                    adjugate(const T(&in)[3][3], T(&out)[3][3]) noexcept;
+
+        template<typename T>
         void                    adjugate(const T(&in)[4][4], T(&out)[4][4]) noexcept;
     }
 

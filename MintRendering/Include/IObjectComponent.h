@@ -10,6 +10,7 @@
 #include <MintContainer/Include/IId.h>
 
 #include <MintMath/Include/Float4x4.h>
+#include <MintMath/Include/Quaternion.h>
 
 
 namespace mint

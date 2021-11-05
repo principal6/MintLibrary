@@ -1,9 +1,7 @@
 ﻿#include <MintMath/Include/Float4x4.h>
 
+#include <MintMath/Include/Quaternion.h>
 #include <MintMath/Include/VectorR.hpp>
-#include <MintMath/Include/Float3x3.h>
-
-#include <cstring>
 
 
 namespace mint
@@ -317,22 +315,6 @@ namespace mint
         Math::setIdentity(_m);
     }
 
-    Float4x4& Float4x4::power(const uint32 exponent) noexcept
-    {
-        if (exponent == 0)
-        {
-            setIdentity();
-            return *this;
-        }
-
-        const Float4x4 original = *this;
-        for (uint32 iter = 0; iter < exponent; ++iter)
-        {
-            *this *= original;
-        }
-        return *this;
-    }
-
     void Float4x4::preScale(const float x, const float y, const float z) noexcept
     {
         _row[0] *= x;
@@ -455,13 +437,6 @@ namespace mint
         outTranslation._z = _34;
     }
 
-    Float3x3 Float4x4::minor(const uint32 row, const uint32 col) const noexcept
-    {
-        Float3x3 result;
-        Math::minor(_m, row, col, result._m);
-        return result;
-    }
-
     const float Float4x4::determinant() const noexcept
     {
         return Math::determinant(_m);
@@ -474,25 +449,11 @@ namespace mint
         return result;
     }
 
-    Float4x4 Float4x4::cofactor() const noexcept
-    {
-        return Float4x4
-        (
-            +minor(0, 0).determinant(), -minor(0, 1).determinant(), +minor(0, 2).determinant(), -minor(0, 3).determinant(),
-            -minor(1, 0).determinant(), +minor(1, 1).determinant(), -minor(1, 2).determinant(), +minor(1, 3).determinant(),
-            +minor(2, 0).determinant(), -minor(2, 1).determinant(), +minor(2, 2).determinant(), -minor(2, 3).determinant(),
-            -minor(3, 0).determinant(), +minor(3, 1).determinant(), -minor(3, 2).determinant(), +minor(3, 3).determinant()
-        );
-    }
-
-    Float4x4 Float4x4::adjugate() const noexcept
-    {
-        return cofactor().transpose();
-    }
-
     Float4x4 Float4x4::inverse() const noexcept
     {
-        return adjugate() / determinant();
+        Float4x4 adj;
+        Math::adjugate(_m, adj._m);
+        return adj / Math::determinant(_m);
     }
 
     Float4x4 Float4x4::mul(const Float4x4& rhs) const noexcept

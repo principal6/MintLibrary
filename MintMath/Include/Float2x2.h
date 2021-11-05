@@ -10,16 +10,9 @@
 
 namespace mint
 {
-#pragma region Forward declaration
-    class Float3x3;
-#pragma endregion
-
-
     // 2x2 floating point matrix
     class Float2x2 final
     {
-        friend Float3x3;
-
         static constexpr uint32     kMaxIndex = 1;
 
 #pragma region Static Functions

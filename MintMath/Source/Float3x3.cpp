@@ -1,8 +1,7 @@
 ﻿#include <MintMath/Include/Float3x3.h>
 
-#include <MintMath/Include/Float2x2.h>
-
 #include <MintMath/Include/VectorR.hpp>
+#include <MintMath/Include/Matrix.hpp>
 
 
 namespace mint
@@ -100,14 +99,7 @@ namespace mint
     {
         Math::setIdentity(_m);
     }
-
-    Float2x2 Float3x3::minor(const uint32 row, const uint32 col) const noexcept
-    {
-        Float2x2 result;
-        Math::minor(_m, row, col, result._m);
-        return result;
-    }
-
+    
     const float Float3x3::determinant() const noexcept
     {
         return Math::determinant(_m);
@@ -120,24 +112,11 @@ namespace mint
         return result;
     }
 
-    Float3x3 Float3x3::cofactor() const noexcept
-    {
-        return Float3x3
-        (
-            +minor(0, 0).determinant(), -minor(0, 1).determinant(), +minor(0, 2).determinant(),
-            -minor(1, 0).determinant(), +minor(1, 1).determinant(), -minor(1, 2).determinant(),
-            +minor(2, 0).determinant(), -minor(2, 1).determinant(), +minor(2, 2).determinant()
-        );
-    }
-
-    Float3x3 Float3x3::adjugate() const noexcept
-    {
-        return cofactor().transpose();
-    }
-
     Float3x3 Float3x3::inverse() const noexcept
     {
-        return adjugate() / determinant();
+        Float3x3 adj;
+        Math::adjugate(_m, adj._m);
+        return adj / Math::determinant(_m);
     }
 
     Float3 Float3x3::mul(const Float3& v) const noexcept

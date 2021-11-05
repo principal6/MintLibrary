@@ -9,7 +9,11 @@ namespace mint
     {
         const float cosAngle = cos(angle);
         const float sinAngle = sin(angle);
-        return Float2x2(cosAngle, -sinAngle, sinAngle, cosAngle);
+        return Float2x2
+        (
+            cosAngle, -sinAngle,
+            sinAngle,  cosAngle
+        );
     }
 
     Float2x2::Float2x2()

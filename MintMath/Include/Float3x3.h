@@ -10,17 +10,9 @@
 
 namespace mint
 {
-#pragma region Forward declaration
-    class Float2x2;
-    class Float4x4;
-#pragma endregion
-
-
     // 3x3 floating point matrix
     class Float3x3 final
     {
-        friend Float4x4;
-
 #pragma region Static Functions
     public:
         static Float3x3     rotationMatrixX(const float angle) noexcept;
@@ -53,11 +45,8 @@ namespace mint
         void                setIdentity() noexcept;
 
     public:
-        Float2x2            minor(const uint32 row, const uint32 col) const noexcept;
         const float         determinant() const noexcept;
         Float3x3            transpose() const noexcept;
-        Float3x3            cofactor() const noexcept;
-        Float3x3            adjugate() const noexcept;
         Float3x3            inverse() const noexcept;
 
     public:

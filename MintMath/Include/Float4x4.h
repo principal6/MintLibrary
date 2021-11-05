@@ -6,13 +6,14 @@
 
 
 #include <MintMath/Include/Float4.h>
-#include <MintMath/Include/Quaternion.h>
 
 
 namespace mint
 {
 #pragma region Forward declaration
-    class Float3x3;
+    template<typename T>
+    class Quaternion;
+    using QuaternionF = Quaternion<float>;
 #pragma endregion
 
 
@@ -92,9 +93,6 @@ namespace mint
         void                    setIdentity() noexcept;
 
     public:
-        Float4x4&               power(const uint32 exponent) noexcept;
-
-    public:
         void                    preScale(const float x, const float y, const float z) noexcept;
         void                    postScale(const float x, const float y, const float z) noexcept;
         void                    preScale(const Float3& scale) noexcept;
@@ -113,11 +111,8 @@ namespace mint
         void                    decomposeSrt(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
 
     public:
-        Float3x3                minor(const uint32 row, const uint32 col) const noexcept;
         const float             determinant() const noexcept;
         Float4x4                transpose() const noexcept;
-        Float4x4                cofactor() const noexcept;
-        Float4x4                adjugate() const noexcept;
         Float4x4                inverse() const noexcept;
 
     public:
