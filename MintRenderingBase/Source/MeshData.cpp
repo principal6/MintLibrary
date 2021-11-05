@@ -16,6 +16,11 @@ namespace mint
             __noop;
         }
 
+        const bool MeshData::isEmpty() const noexcept
+        {
+            return _positionArray.empty() && _vertexToPositionTable.empty() && _vertexArray.empty() && _faceArray.empty();
+        }
+
         void MeshData::clear() noexcept
         {
             _positionArray.clear();
