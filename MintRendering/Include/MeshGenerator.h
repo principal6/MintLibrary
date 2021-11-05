@@ -25,6 +25,13 @@ namespace mint
         class MeshGenerator abstract final
         {
         public:
+            struct BoxParam
+            {
+                float     _width = 1.0f;
+                float     _height = 1.0f;
+                float     _depth = 1.0f;
+            };
+            
             struct ConeParam
             {
                 int16     _sideCount = 16;
@@ -54,7 +61,8 @@ namespace mint
             };
 
         public:
-            static void             generateCube(MeshData& meshData) noexcept;
+            static void             generateUnitCube(MeshData& meshData) noexcept;
+            static void             generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
             static void             generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
             static void             generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
             static void             generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;

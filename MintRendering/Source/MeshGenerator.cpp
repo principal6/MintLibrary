@@ -225,7 +225,7 @@ namespace mint
             normalArray.clear();
         }
         
-        void MeshGenerator::generateCube(MeshData& meshData) noexcept
+        void MeshGenerator::generateUnitCube(MeshData& meshData) noexcept
         {
             static constexpr float kHalfSize = 0.5f;
 
@@ -241,6 +241,31 @@ namespace mint
             pushPosition({ +kHalfSize, +kHalfSize, +kHalfSize }, meshData);
             pushPosition({ +kHalfSize, -kHalfSize, +kHalfSize }, meshData);
             pushPosition({ -kHalfSize, -kHalfSize, +kHalfSize }, meshData);
+
+            const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
+            pushQuad({ 4, 5, 1, 0 }, meshData, uvs); // Top
+            pushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Front
+            pushQuad({ 1, 5, 6, 2 }, meshData, uvs); // Right
+            pushQuad({ 5, 4, 7, 6 }, meshData, uvs); // Back
+            pushQuad({ 4, 0, 3, 7 }, meshData, uvs); // Left
+            pushQuad({ 3, 2, 6, 7 }, meshData, uvs); // Bottom
+        }
+
+        void MeshGenerator::generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            // Vertex positions
+            meshData._positionArray.reserve(8);
+            const Float3 halfExtents{ boxParam._width * 0.5f, boxParam._height * 0.5f, boxParam._depth * 0.5f };
+            pushPosition({ -halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
+            pushPosition({ -halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
+            pushPosition({ -halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ -halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
 
             const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
             pushQuad({ 4, 5, 1, 0 }, meshData, uvs); // Top
