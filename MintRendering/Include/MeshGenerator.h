@@ -53,7 +53,14 @@ namespace mint
                 float     _radius = 1.0f;
             };
 
-            struct GeoSpherePram
+            struct GeoSphereParam
+            {
+                float     _radius = 1.0f;
+                uint8     _subdivisionIteration = 1;
+                bool      _smooth = false;
+            };
+
+            struct CapsulePram
             {
                 float     _radius = 1.0f;
                 uint8     _subdivisionIteration = 1;
@@ -67,8 +74,8 @@ namespace mint
             static void             generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
             static void             generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void             generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
-            static void             generateGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept;
-            static void             generateHalfOpenGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept;
+            static void             generateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
+            static void             generateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
 
         public:
             static void             setMaterialId(MeshData& meshData, const uint32 materialId) noexcept;

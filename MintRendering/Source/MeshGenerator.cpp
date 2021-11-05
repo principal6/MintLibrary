@@ -467,43 +467,43 @@ namespace mint
             }
         }
 
-        void MeshGenerator::generateGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept
+        void MeshGenerator::generateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept
         {
             RadiusParam radiusParam;
-            radiusParam._radius = geoSpherePram._radius;
+            radiusParam._radius = geoSphereParam._radius;
 
             generateOctahedron(radiusParam, meshData);
 
             subdivideTriByMidpoints(meshData); // At least once
-            for (int8 iteration = 0; iteration < geoSpherePram._subdivisionIteration; ++iteration)
+            for (int8 iteration = 0; iteration < geoSphereParam._subdivisionIteration; ++iteration)
             {
                 subdivideTriByMidpoints(meshData);
             }
 
             projectVerticesToSphere(radiusParam, meshData);
 
-            if (geoSpherePram._smooth == true)
+            if (geoSphereParam._smooth == true)
             {
                 smoothNormals(meshData);
             }
         }
 
-        void MeshGenerator::generateHalfOpenGeoSphere(const GeoSpherePram& geoSpherePram, MeshData& meshData) noexcept
+        void MeshGenerator::generateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept
         {
             RadiusParam radiusParam;
-            radiusParam._radius = geoSpherePram._radius;
+            radiusParam._radius = geoSphereParam._radius;
 
             generateHalfOpenOctahedron(radiusParam, meshData);
 
             subdivideTriByMidpoints(meshData); // At least once
-            for (int8 iteration = 0; iteration < geoSpherePram._subdivisionIteration; ++iteration)
+            for (int8 iteration = 0; iteration < geoSphereParam._subdivisionIteration; ++iteration)
             {
                 subdivideTriByMidpoints(meshData);
             }
 
             projectVerticesToSphere(radiusParam, meshData);
 
-            if (geoSpherePram._smooth == true)
+            if (geoSphereParam._smooth == true)
             {
                 smoothNormals(meshData);
             }

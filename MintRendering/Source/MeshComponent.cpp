@@ -15,7 +15,7 @@ namespace mint
             , _shouldDrawNormals{ false }
             , _shouldDrawEdges{ false }
         {
-            MeshGenerator::GeoSpherePram geosphereParam;
+            MeshGenerator::GeoSphereParam geosphereParam;
             geosphereParam._radius = 1.0f;
             geosphereParam._subdivisionIteration = 3;
             geosphereParam._smooth = true;

@@ -78,7 +78,7 @@ namespace mint
 
         void InstantRenderer::drawSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
         {
-            MeshGenerator::GeoSpherePram geosphereParam;
+            MeshGenerator::GeoSphereParam geosphereParam;
             geosphereParam._radius = radius;
             geosphereParam._subdivisionIteration = subdivisionIteration;
             geosphereParam._smooth = true;
@@ -94,7 +94,7 @@ namespace mint
 
         void InstantRenderer::drawHalfOpenSphere(const Srt& worldSrt, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
         {
-            MeshGenerator::GeoSpherePram geosphereParam;
+            MeshGenerator::GeoSphereParam geosphereParam;
             geosphereParam._radius = radius;
             geosphereParam._subdivisionIteration = subdivisionIteration;
             geosphereParam._smooth = true;
