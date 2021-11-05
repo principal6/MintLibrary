@@ -112,14 +112,14 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
