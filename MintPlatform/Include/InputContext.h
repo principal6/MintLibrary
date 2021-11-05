@@ -55,7 +55,7 @@ namespace mint
         {
             InputMouseEventType     _type{ InputMouseEventType::COUNT };
             MouseButton             _button{ MouseButton::COUNT };
-            mint::Float2            _position;
+            Float2                  _position;
             float                   _wheelScroll{ 0.0f };
         };
 
@@ -107,10 +107,10 @@ namespace mint
 
         public:
             const bool              isPointerMoved() const noexcept;
-            void                    setPosition(const mint::Float2& position) noexcept;
-            void                    setDeltaPosition(const mint::Float2& deltaPosition) noexcept;
-            const mint::Float2&     getPosition() const noexcept;
-            const mint::Float2&     getDeltaPosition() const noexcept;
+            void                    setPosition(const Float2& position) noexcept;
+            void                    setDeltaPosition(const Float2& deltaPosition) noexcept;
+            const Float2&           getPosition() const noexcept;
+            const Float2&           getDeltaPosition() const noexcept;
 
         public:
             MouseButtonState        _buttonStates[getMouseButtonCount()]{};
@@ -123,8 +123,8 @@ namespace mint
             MouseButton             _doubleClickedButton = MouseButton::COUNT;
 
         private:
-            mint::Float2            _position;
-            mint::Float2            _deltaPosition;
+            Float2                  _position;
+            Float2                  _deltaPosition;
             bool                    _isPointerMoved = false;
         };
 
@@ -170,8 +170,8 @@ namespace mint
             const bool              isMouseButtonUp(const MouseButton mouseButton) const noexcept;
             const bool              isMousePointerMoved() const noexcept;
             const bool              isMouseWheelScrolled() const noexcept;
-            const mint::Float2      getMousePosition() const noexcept;
-            const mint::Float2      getMouseDeltaPosition() const noexcept;
+            const Float2            getMousePosition() const noexcept;
+            const Float2            getMouseDeltaPosition() const noexcept;
             const float             getMouseWheelScroll() const noexcept;
 
         public:

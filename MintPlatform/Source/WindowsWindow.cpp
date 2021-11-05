@@ -68,7 +68,7 @@ namespace mint
 
 
         WindowsWindow::WindowsWindow()
-            : IWindow(mint::Platform::PlatformType::Windows)
+            : IWindow(Platform::PlatformType::Windows)
             , _windowStyle{}
             , _hWnd{}
             , _hInstance{}
@@ -328,7 +328,7 @@ namespace mint
 
             POINT rawCursorPosition;
             ::GetCursorPos(&rawCursorPosition);
-            const mint::Float2 cursorPosition(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
+            const Float2 cursorPosition(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
 
             RECT rawClientRect;
             ::GetClientRect(_hWnd, &rawClientRect);
@@ -337,7 +337,7 @@ namespace mint
             ::ClientToScreen(_hWnd, &leftTop);
             ::ClientToScreen(_hWnd, &rightBottom);
             
-            const mint::Rect clientRect = mint::Rect::fromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
+            const Rect clientRect = Rect::fromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
             if (clientRect.contains(cursorPosition) == true)
             {
                 ::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
@@ -400,12 +400,12 @@ namespace mint
             UINT type = MB_OK;
             switch (messageBoxType)
             {
-            case mint::Window::MessageBoxType::Ok:
+            case MessageBoxType::Ok:
                 break;
-            case mint::Window::MessageBoxType::Warning:
+            case MessageBoxType::Warning:
                 type = MB_ICONEXCLAMATION;
                 break;
-            case mint::Window::MessageBoxType::Error:
+            case MessageBoxType::Error:
                 type = MB_ICONERROR;
                 break;
             default:
@@ -416,7 +416,7 @@ namespace mint
 
         LRESULT WindowsWindow::processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam)
         {
-            const mint::Float2& mousePosition = mint::Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
+            const Float2& mousePosition = Float2(static_cast<float>(GET_X_LPARAM(lParam)), static_cast<float>(GET_Y_LPARAM(lParam)));
 
             Platform::InputContext& inputContext = Platform::InputContext::getInstance();
             Platform::InputEvent inputEvent;
@@ -589,7 +589,7 @@ namespace mint
                     {
                         inputEvent._type = Platform::InputEventType::Mouse;
                         inputEvent._mouseData._type = Platform::InputMouseEventType::PointerMovedDelta;
-                        inputEvent._mouseData._position = mint::Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY));
+                        inputEvent._mouseData._position = Float2(static_cast<float>(rawMouse.lLastX), static_cast<float>(rawMouse.lLastY));
                         inputContext.pushInputEvent(inputEvent);
                     }
                 }
@@ -597,7 +597,7 @@ namespace mint
             }
             case WM_SIZE:
             {
-                const mint::Int2 size{ LOWORD(lParam), HIWORD(lParam) };
+                const Int2 size{ LOWORD(lParam), HIWORD(lParam) };
                 setSize(size, true);
                 return 0;
             }

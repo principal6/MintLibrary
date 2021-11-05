@@ -68,56 +68,56 @@ namespace mint
         class IWindow abstract
         {
         public:
-                                            IWindow();
-                                            IWindow(const mint::Platform::PlatformType platformType);
-            virtual                         ~IWindow() = default;
+                                        IWindow();
+                                        IWindow(const Platform::PlatformType platformType);
+            virtual                     ~IWindow() = default;
 
         public:
-            virtual bool                    create(const CreationData& creationData) noexcept abstract;
-            virtual void                    destroy() noexcept { _isRunning = false; }
+            virtual bool                create(const CreationData& creationData) noexcept abstract;
+            virtual void                destroy() noexcept { _isRunning = false; }
+    
+        public:
+            virtual bool                isRunning() noexcept { return _isRunning; }
+
+        public:
+            CreationError               getCreationError() const noexcept { return _creationError; }
+
+        public:
+            virtual void                setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true;  }
+            const Int2&                 getSize() const noexcept { return _creationData._size; }
+            MINT_INLINE const bool      isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
         
-        public:
-            virtual bool                    isRunning() noexcept { return _isRunning; }
+            const Int2&                 getEntireSize() const noexcept { return _entireSize; }
 
-        public:
-            CreationError                   getCreationError() const noexcept { return _creationError; }
+            virtual void                setPosition(const Int2& newPosition) abstract;
+            const Int2&                 getPosition() const noexcept { return _creationData._position; }
+        
+            const Float3&               getBackgroundColor() const noexcept { return _creationData._bgColor; }
 
-        public:
-            virtual void                    setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true;  }
-            const Int2&                     getSize() const noexcept { return _creationData._size; }
-            MINT_INLINE const bool          isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
-            
-            const Int2&                     getEntireSize() const noexcept { return _entireSize; }
+            virtual void                setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
+            const CursorType            getCursorType() const noexcept { return _currentCursorType; }
 
-            virtual void                    setPosition(const Int2& newPosition) abstract;
-            const Int2&                     getPosition() const noexcept { return _creationData._position; }
-            
-            const mint::Float3&             getBackgroundColor() const noexcept { return _creationData._bgColor; }
+            virtual const uint32        getCaretBlinkIntervalMs() const noexcept abstract;
 
-            virtual void                    setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
-            const CursorType                getCursorType() const noexcept { return _currentCursorType; }
-
-            virtual const uint32            getCaretBlinkIntervalMs() const noexcept abstract;
-
-            virtual void                    textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
-            virtual void                    textFromClipboard(StringW& outText) const noexcept abstract;
-            virtual void                    showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
+            virtual void                textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
+            virtual void                textFromClipboard(StringW& outText) const noexcept abstract;
+            virtual void                showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
         protected:
-            static constexpr uint32         kEventQueueCapacity = 128;
+            static constexpr uint32     kEventQueueCapacity = 128;
 
         protected:
-            bool                            _isRunning;
-            mint::Platform::PlatformType    _platformType;
-            CreationData                    _creationData;
-            mint::Int2                      _entireSize;
-            CreationError                   _creationError;
+            bool                        _isRunning;
+            Platform::PlatformType      _platformType;
+            CreationData                _creationData;
+            Int2                        _entireSize;
+            CreationError               _creationError;
 
         private:
-            mutable bool                    _isWindowResized;
+            mutable bool                _isWindowResized;
 
         protected:
-            CursorType                      _currentCursorType;
+            CursorType                  _currentCursorType;
         };
     }
 }

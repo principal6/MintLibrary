@@ -45,24 +45,24 @@ namespace mint
             return _isPointerMoved;
         }
 
-        void MouseState::setPosition(const mint::Float2& position) noexcept
+        void MouseState::setPosition(const Float2& position) noexcept
         {
             _position = position;
             _isPointerMoved = true;
         }
 
-        void MouseState::setDeltaPosition(const mint::Float2& deltaPosition) noexcept
+        void MouseState::setDeltaPosition(const Float2& deltaPosition) noexcept
         {
             _deltaPosition = deltaPosition;
             _isPointerMoved = true;
         }
 
-        const mint::Float2& MouseState::getPosition() const noexcept
+        const Float2& MouseState::getPosition() const noexcept
         {
             return _position;
         }
 
-        const mint::Float2& MouseState::getDeltaPosition() const noexcept
+        const Float2& MouseState::getDeltaPosition() const noexcept
         {
             return _deltaPosition;
         }
@@ -126,19 +126,19 @@ namespace mint
 
                 switch (inputEvent._type)
                 {
-                    case mint::Platform::InputEventType::Mouse:
+                    case InputEventType::Mouse:
                     {
                         const InputEventMouseData& mouseData = inputEvent._mouseData;
                         const int32 mouseButtonIndex = static_cast<int32>(mouseData._button);
                         switch (mouseData._type)
                         {
-                            case mint::Platform::InputMouseEventType::ButtonPressed:
+                            case InputMouseEventType::ButtonPressed:
                             {
                                 _mouseState._buttonStates[mouseButtonIndex] = MouseButtonState::Pressed;
                                 _mouseState._pressedButton = mouseData._button;
                                 break;
                             }
-                            case mint::Platform::InputMouseEventType::ButtonReleased:
+                            case InputMouseEventType::ButtonReleased:
                             {
                                 if (isMouseButtonDown(mouseData._button) == true)
                                 {
@@ -149,23 +149,23 @@ namespace mint
                                 _mouseState._releasedButton = mouseData._button;
                                 break;
                             }
-                            case mint::Platform::InputMouseEventType::ButtonDoubleClicked:
+                            case InputMouseEventType::ButtonDoubleClicked:
                             {
                                 _mouseState._buttonStates[mouseButtonIndex] = MouseButtonState::DoubleClicked;
                                 _mouseState._doubleClickedButton = mouseData._button;
                                 break;
                             }
-                            case mint::Platform::InputMouseEventType::PointerMoved:
+                            case InputMouseEventType::PointerMoved:
                             {
                                 _mouseState.setPosition(mouseData._position);
                                 break;
                             }
-                            case mint::Platform::InputMouseEventType::PointerMovedDelta:
+                            case InputMouseEventType::PointerMovedDelta:
                             {
                                 _mouseState.setDeltaPosition(mouseData._position);
                                 break;
                             }
-                            case mint::Platform::InputMouseEventType::WheelScrolled:
+                            case InputMouseEventType::WheelScrolled:
                             {
                                 _mouseState._wheelScroll = mouseData._wheelScroll;
                                 break;
@@ -175,30 +175,30 @@ namespace mint
                         }
                         break;
                     }
-                    case mint::Platform::InputEventType::Keyboard:
+                    case InputEventType::Keyboard:
                     {
                         const InputEventKeyboardData& keyboardData = inputEvent._keyboardData;
                         const int32 keyIndex = static_cast<int32>(keyboardData._keyCode);
                         switch (keyboardData._type)
                         {
-                            case mint::Platform::InputKeyboardEventType::KeyPressed:
+                            case InputKeyboardEventType::KeyPressed:
                             {
                                 _keyboardState._keyStates[keyIndex] = KeyState::Pressed;
                                 _keyboardState._pressedKeyCode = keyboardData._keyCode;
                                 break;
                             }
-                            case mint::Platform::InputKeyboardEventType::KeyReleased:
+                            case InputKeyboardEventType::KeyReleased:
                             {
                                 _keyboardState._keyStates[keyIndex] = KeyState::Released;
                                 _keyboardState._releasedKeyCode = keyboardData._keyCode;
                                 break;
                             }
-                            case mint::Platform::InputKeyboardEventType::CharacterInput:
+                            case InputKeyboardEventType::CharacterInput:
                             {
                                 _keyboardState._character = keyboardData._character;
                                 break;
                             }
-                            case mint::Platform::InputKeyboardEventType::CharacterInputCandidate:
+                            case InputKeyboardEventType::CharacterInputCandidate:
                             {
                                 _keyboardState._characterCandidate = keyboardData._character;
                                 break;
@@ -267,12 +267,12 @@ namespace mint
             return _mouseState._wheelScroll != 0.0f;
         }
 
-        const mint::Float2 InputContext::getMousePosition() const noexcept
+        const Float2 InputContext::getMousePosition() const noexcept
         {
             return _mouseState.getPosition();
         }
 
-        const mint::Float2 InputContext::getMouseDeltaPosition() const noexcept
+        const Float2 InputContext::getMouseDeltaPosition() const noexcept
         {
             return _mouseState.getDeltaPosition();
         }

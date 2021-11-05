@@ -27,51 +27,51 @@ namespace mint
         {
             struct PerButtonStates
             {
-                void                            resetPerFrame() noexcept;
+                void                    resetPerFrame() noexcept;
 
-                bool                            _isButtonDown = false;
-                bool                            _isButtonDownThisFrame = false;
-                bool                            _isButtonDownUp = false;
-                bool                            _isDoubleClicked = false;
+                bool                    _isButtonDown = false;
+                bool                    _isButtonDownThisFrame = false;
+                bool                    _isButtonDownUp = false;
+                bool                    _isDoubleClicked = false;
             };
 
         public:
-            void                                resetPerFrame() noexcept;
+            void                        resetPerFrame() noexcept;
 
         public:
-            void                                setPosition(const mint::Float2& position) noexcept;
-            void                                setButtonDownPosition(const mint::Float2& position) noexcept;
-            void                                setButtonDownPositionCopy(const mint::Float2& position) noexcept;
-            void                                setButtonUpPosition(const mint::Float2& position) noexcept;
-            void                                setButtonDown(const mint::Platform::MouseButton mouseButton) noexcept;
-            void                                setButtonUp(const mint::Platform::MouseButton mouseButton) noexcept;
-            void                                setDoubleClicked(const mint::Platform::MouseButton mouseButton) noexcept;
+            void                        setPosition(const Float2& position) noexcept;
+            void                        setButtonDownPosition(const Float2& position) noexcept;
+            void                        setButtonDownPositionCopy(const Float2& position) noexcept;
+            void                        setButtonUpPosition(const Float2& position) noexcept;
+            void                        setButtonDown(const Platform::MouseButton mouseButton) noexcept;
+            void                        setButtonUp(const Platform::MouseButton mouseButton) noexcept;
+            void                        setDoubleClicked(const Platform::MouseButton mouseButton) noexcept;
 
         private:
-            void                                calculateMouseDragDelta() noexcept;
+            void                        calculateMouseDragDelta() noexcept;
 
         public:
-            const mint::Float2&                 getPosition() const noexcept;
-            const mint::Float2&                 getButtonDownPosition() const noexcept;
-            const mint::Float2&                 getButtonUpPosition() const noexcept;
-            const mint::Float2&                 getMouseDragDelta() const noexcept;
-            const bool                          isButtonDown(const mint::Platform::MouseButton mouseButton) const noexcept;
-            const bool                          isButtonDownThisFrame(const mint::Platform::MouseButton mouseButton) const noexcept;
-            const bool                          isButtonDownUp(const mint::Platform::MouseButton mouseButton) const noexcept;
-            const bool                          isDoubleClicked(const mint::Platform::MouseButton mouseButton) const noexcept;
-            const bool                          isCursor(const mint::Window::CursorType cursorType) const noexcept;
+            const Float2&               getPosition() const noexcept;
+            const Float2&               getButtonDownPosition() const noexcept;
+            const Float2&               getButtonUpPosition() const noexcept;
+            const Float2&               getMouseDragDelta() const noexcept;
+            const bool                  isButtonDown(const Platform::MouseButton mouseButton) const noexcept;
+            const bool                  isButtonDownThisFrame(const Platform::MouseButton mouseButton) const noexcept;
+            const bool                  isButtonDownUp(const Platform::MouseButton mouseButton) const noexcept;
+            const bool                  isDoubleClicked(const Platform::MouseButton mouseButton) const noexcept;
+            const bool                  isCursor(const Window::CursorType cursorType) const noexcept;
 
         private:
-            mint::Float2                        _mousePosition;
-            mint::Float2                        _mouseDownPosition;
-            mint::Float2                        _mouseDownPositionCopy;
-            mint::Float2                        _mouseUpPosition;
-            mint::Float2                        _mouseDragDelta;
-            PerButtonStates                     _perButtonStates[mint::Platform::getMouseButtonCount()];
+            Float2                      _mousePosition;
+            Float2                      _mouseDownPosition;
+            Float2                      _mouseDownPositionCopy;
+            Float2                      _mouseUpPosition;
+            Float2                      _mouseDragDelta;
+            PerButtonStates             _perButtonStates[Platform::getMouseButtonCount()];
 
         public:
-            mutable float                       _mouseWheel;
-            mutable mint::Window::CursorType    _cursorType = mint::Window::CursorType::Arrow; // per frame
+            mutable float               _mouseWheel;
+            mutable Window::CursorType  _cursorType = Window::CursorType::Arrow; // per frame
         };
 
 
@@ -92,40 +92,40 @@ namespace mint
 
 #pragma region Mouse
         public:
-            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
-                ControlData& controlData, const mint::Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept;
+            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const Rendering::ShapeFontRendererContext& rendererContext, 
+                ControlData& controlData, const Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
         
 #pragma region Keyboard
         public:
-            static void             processDefaultKeyboardInputs(const mint::Window::IWindow* const window, const mint::Rendering::ShapeFontRendererContext& rendererContext, 
-                ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, mint::Platform::KeyCode& keyCode,
-                wchar_t& wcharInput, const wchar_t wcharInputCandidate, const mint::Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept;
+            static void             processDefaultKeyboardInputs(const Window::IWindow* const window, const Rendering::ShapeFontRendererContext& rendererContext, 
+                ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, Platform::KeyCode& keyCode,
+                wchar_t& wcharInput, const wchar_t wcharInputCandidate, const Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Control functions
         public:
-            static void             processAsciiControlFunctions(const mint::Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, StringW& outText) noexcept;
+            static void             processAsciiControlFunctions(const Window::IWindow* const window, const wchar_t asciiCode, const uint32 maxTextLength, ControlData& controlData, StringW& outText) noexcept;
 
         public:
             static void             eraseAfter(ControlData& controlData, StringW& outText) noexcept;
             static void             eraseBefore(ControlData& controlData, StringW& outText) noexcept;
             static void             selectAll(ControlData& controlData, const StringW& outText) noexcept;
-            static void             copySelection(const mint::Window::IWindow* const window, ControlData& controlData, const StringW& outText) noexcept;
-            static void             cutSelection(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText) noexcept;
-            static void             paste(const mint::Window::IWindow* const window, ControlData& controlData, StringW& outText, const wchar_t* const errorMessage = nullptr) noexcept;
+            static void             copySelection(const Window::IWindow* const window, ControlData& controlData, const StringW& outText) noexcept;
+            static void             cutSelection(const Window::IWindow* const window, ControlData& controlData, StringW& outText) noexcept;
+            static void             paste(const Window::IWindow* const window, ControlData& controlData, StringW& outText, const wchar_t* const errorMessage = nullptr) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Caret movements
         public:
-            static void             processKeyCodeCaretMovements(const mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Platform::KeyCode keyCode,
+            static void             processKeyCodeCaretMovements(const Rendering::ShapeFontRendererContext& rendererContext, const Platform::KeyCode keyCode,
                 ControlData& controlData, StringW& outText) noexcept;
         
         public:
             static void             moveCaretToPrev(ControlData& controlData) noexcept;
             static void             moveCaretToNext(ControlData& controlData, const StringW& text) noexcept;
             static void             moveCaretToHead(ControlData& controlData) noexcept;
-            static void             moveCaretToTail(const mint::Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept;
+            static void             moveCaretToTail(const Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Character input
@@ -147,14 +147,14 @@ namespace mint
             static const wchar_t*   getLengthErrorMessage(const uint32 maxLength) noexcept;
 
         public:
-            static void             updateTextDisplayOffset(const mint::Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
+            static void             updateTextDisplayOffset(const Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
                 const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth = 0.0f) noexcept;
-            static void             drawTextWithInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
-                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept;
-            static void             drawTextWithoutInputCandidate(mint::Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
-                const mint::Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept;
-            static void             drawSelection(mint::Rendering::ShapeFontRendererContext& rendererContext, const mint::Float4& textRenderOffset, 
-                const bool isFocused, const float fontSize, const mint::Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept;
+            static void             drawTextWithInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+                const Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept;
+            static void             drawTextWithoutInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
+                const Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept;
+            static void             drawSelection(Rendering::ShapeFontRendererContext& rendererContext, const Float4& textRenderOffset, 
+                const bool isFocused, const float fontSize, const Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept;
         };
     }
 }

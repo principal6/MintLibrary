@@ -42,16 +42,16 @@ namespace mint
         class WindowsWindowPool
         {
         public:
-                                                WindowsWindowPool() = default;
-                                                ~WindowsWindowPool() = default;
+                                        WindowsWindowPool() = default;
+                                        ~WindowsWindowPool() = default;
 
         public:
-            void                                insertWindow(const HWND hWnd, WindowsWindow* const windowsWindow);
-            LRESULT                             redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
+            void                        insertWindow(const HWND hWnd, WindowsWindow* const windowsWindow);
+            LRESULT                     redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
         private:
-            mint::Vector<WindowsWindow*>        _windowArray;
-            mint::HashMap<HWND, uint8>          _hWndMap;
+            Vector<WindowsWindow*>      _windowArray;
+            HashMap<HWND, uint8>        _hWndMap;
         };
 #pragma endregion
 
@@ -66,62 +66,62 @@ namespace mint
                 WparamKeyCodePair() = default;
                 WparamKeyCodePair(const WPARAM wParam, const Platform::KeyCode keyCode);
 
-                WPARAM              _wParam;
-                Platform::KeyCode   _keyCode;
+                WPARAM                  _wParam;
+                Platform::KeyCode       _keyCode;
             };
 
         public:
-                                                WindowsWindow();
-            virtual                             ~WindowsWindow() = default;
+                                        WindowsWindow();
+            virtual                     ~WindowsWindow() = default;
 
         public:
-            virtual bool                        create(const CreationData& creationData) noexcept override;
-            virtual void                        destroy() noexcept override;
-
-        private:
-            void                                buildWparamKeyCodePairArray() noexcept;
-            Platform::KeyCode                   convertWparamToKeyCode(const WPARAM wParam) const noexcept;
-            WPARAM                              convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
-
-        public:
-            virtual bool                        isRunning() noexcept override;
-
-        public:
-            virtual void                        setSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
+            virtual bool                create(const CreationData& creationData) noexcept override;
+            virtual void                destroy() noexcept override;
 
         private:
-            void                                setSizeData(const Int2& newSize);
+            void                        buildWparamKeyCodePairArray() noexcept;
+            Platform::KeyCode           convertWparamToKeyCode(const WPARAM wParam) const noexcept;
+            WPARAM                      convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept;
 
         public:
-            virtual void                        setPosition(const Int2& newPosition) override final;
-            HWND                                getHandle() const noexcept;
+            virtual bool                isRunning() noexcept override;
 
         public:
-            virtual void                        setCursorType(const CursorType cursorType) noexcept override final;
-        
-        public:
-            virtual const uint32                getCaretBlinkIntervalMs() const noexcept override final;
+            virtual void                setSize(const Int2& newSize, const bool onlyUpdateData) noexcept override final;
+
+        private:
+            void                        setSizeData(const Int2& newSize);
 
         public:
-            virtual void                        textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
-            virtual void                        textFromClipboard(StringW& outText) const noexcept override final;
-        
+            virtual void                setPosition(const Int2& newPosition) override final;
+            HWND                        getHandle() const noexcept;
+
         public:
-            virtual void                        showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;
+            virtual void                setCursorType(const CursorType cursorType) noexcept override final;
+
+        public:
+            virtual const uint32        getCaretBlinkIntervalMs() const noexcept override final;
+
+        public:
+            virtual void                textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;
+            virtual void                textFromClipboard(StringW& outText) const noexcept override final;
+
+        public:
+            virtual void                showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept override final;
 
         protected:
-            LRESULT                             processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
+            LRESULT                     processDefaultMessage(const UINT Msg, const WPARAM wParam, const LPARAM lParam);
 
         protected:
-            uint32                              _windowStyle;
-            HWND                                _hWnd;
-            HINSTANCE                           _hInstance;
-            mint::Safe<MSG>                     _msg;
+            uint32                      _windowStyle;
+            HWND                        _hWnd;
+            HINSTANCE                   _hInstance;
+            Safe<MSG>                   _msg;
         
         private:
-            HCURSOR                             _cursorArray[static_cast<uint32>(CursorType::COUNT)];
-            mint::Vector<WparamKeyCodePair>     _wParamKeyCodePairArray;
-            BYTE                                _byteArrayForRawInput[kRawInputByteSize];
+            HCURSOR                     _cursorArray[static_cast<uint32>(CursorType::COUNT)];
+            Vector<WparamKeyCodePair>   _wParamKeyCodePairArray;
+            BYTE                        _byteArrayForRawInput[kRawInputByteSize];
         };
 #pragma endregion
     }

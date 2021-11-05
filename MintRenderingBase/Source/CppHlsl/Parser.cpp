@@ -243,7 +243,7 @@ namespace mint
 
             void Parser::buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept
             {
-                mint::Vector<std::string> namespaceStack;
+                Vector<std::string> namespaceStack;
                 SyntaxTreeNode parentNode = structNode.getParentNode();
                 while (parentNode.isValid() == true)
                 {
@@ -417,7 +417,7 @@ namespace mint
                 std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
 
                 // inputSlot 0 은 나 자신이다!
-                mint::Vector<TypeMetaData<TypeCustomData>> slottedDatas;
+                Vector<TypeMetaData<TypeCustomData>> slottedDatas;
                 for (int32 inputSlot = 1; inputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT; ++inputSlot)
                 {
                     std::string typeName = typeMetaData.getTypeName() + std::to_string(inputSlot);

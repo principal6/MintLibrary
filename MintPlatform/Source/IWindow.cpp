@@ -6,12 +6,12 @@ namespace mint
     namespace Window
     {
         IWindow::IWindow()
-            : IWindow(mint::Platform::PlatformType::INVALID)
+            : IWindow(Platform::PlatformType::INVALID)
         {
             __noop;
         }
         
-        IWindow::IWindow(const mint::Platform::PlatformType platformType)
+        IWindow::IWindow(const Platform::PlatformType platformType)
             : _isRunning{ false }
             , _platformType{ platformType }
             , _creationError{ CreationError::None }
