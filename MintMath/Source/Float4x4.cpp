@@ -199,27 +199,27 @@ namespace mint
         __noop;
     }
 
-    Float4x4::Float4x4(const float s)
+    Float4x4::Float4x4(const float scalar)
         : Float4x4(
-            s, s, s, s,
-            s, s, s, s,
-            s, s, s, s,
-            s, s, s, s
+            scalar, scalar, scalar, scalar,
+            scalar, scalar, scalar, scalar,
+            scalar, scalar, scalar, scalar,
+            scalar, scalar, scalar, scalar
         )
     {
         __noop;
     }
 
     Float4x4::Float4x4(
-        const float m00, const float m01, const float m02, const float m03,
-        const float m10, const float m11, const float m12, const float m13,
-        const float m20, const float m21, const float m22, const float m23,
-        const float m30, const float m31, const float m32, const float m33)
+        const float _11, const float _12, const float _13, const float _14,
+        const float _21, const float _22, const float _23, const float _24,
+        const float _31, const float _32, const float _33, const float _34,
+        const float _41, const float _42, const float _43, const float _44)
         : _m{
-            m00, m01, m02, m03,
-            m10, m11, m12, m13,
-            m20, m21, m22, m23,
-            m30, m31, m32, m33
+            _11, _12, _13, _14,
+            _21, _22, _23, _24,
+            _31, _32, _33, _34,
+            _41, _42, _43, _44
         }
     {
         __noop;
@@ -275,34 +275,34 @@ namespace mint
     }
 
     void Float4x4::set(
-        float m00, float m01, float m02, float m03, 
-        float m10, float m11, float m12, float m13, 
-        float m20, float m21, float m22, float m23, 
-        float m30, float m31, float m32, float m33) noexcept
+        const float _11, const float _12, const float _13, const float _14,
+        const float _21, const float _22, const float _23, const float _24,
+        const float _31, const float _32, const float _33, const float _34,
+        const float _41, const float _42, const float _43, const float _44) noexcept
     {
         // row 0
-        _m[0][0] = m00;
-        _m[0][1] = m01;
-        _m[0][2] = m02;
-        _m[0][3] = m03;
+        _m[0][0] = _11;
+        _m[0][1] = _12;
+        _m[0][2] = _13;
+        _m[0][3] = _14;
 
         // row 1
-        _m[1][0] = m10;
-        _m[1][1] = m11;
-        _m[1][2] = m12;
-        _m[1][3] = m13;
+        _m[1][0] = _21;
+        _m[1][1] = _22;
+        _m[1][2] = _23;
+        _m[1][3] = _24;
 
         // row 2
-        _m[2][0] = m20;
-        _m[2][1] = m21;
-        _m[2][2] = m22;
-        _m[2][3] = m23;
+        _m[2][0] = _31;
+        _m[2][1] = _32;
+        _m[2][2] = _33;
+        _m[2][3] = _34;
 
         // row 3
-        _m[3][0] = m30;
-        _m[3][1] = m31;
-        _m[3][2] = m32;
-        _m[3][3] = m33;
+        _m[3][0] = _41;
+        _m[3][1] = _42;
+        _m[3][2] = _43;
+        _m[3][3] = _44;
     }
 
     void Float4x4::setZero() noexcept
@@ -469,16 +469,16 @@ namespace mint
         Math::mul(lhs._m, rhsCopy._m, _m);
     }
 
-    Float4 Float4x4::mul(const Float4& v) const noexcept
+    Float4 Float4x4::mul(const Float4& vec) const noexcept
     {
         Float4 result;
-        Math::mul(_m, v._c, result._c);
+        Math::mul(_m, vec._c, result._c);
         return result;
     }
 
-    Float3 Float4x4::mul(const Float3& v) const noexcept
+    Float3 Float4x4::mul(const Float3& vec) const noexcept
     {
-        Float4 v4 = Float4(v._x, v._y, v._z, 0.0f);
+        Float4 v4 = Float4(vec._x, vec._y, vec._z, 0.0f);
         Float4 r4;
         Math::mul(_m, v4._c, r4._c);
         return r4.getXyz();

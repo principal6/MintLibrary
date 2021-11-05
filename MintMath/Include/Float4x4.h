@@ -53,12 +53,12 @@ namespace mint
 
     public:
                                 Float4x4();
-        explicit                Float4x4(const float s);
+        explicit                Float4x4(const float scalar);
         explicit                Float4x4(
-                                    const float m00, const float m01, const float m02, const float m03,
-                                    const float m10, const float m11, const float m12, const float m13,
-                                    const float m20, const float m21, const float m22, const float m23,
-                                    const float m30, const float m31, const float m32, const float m33);
+                                    const float _11, const float _12, const float _13, const float _14,
+                                    const float _21, const float _22, const float _23, const float _24,
+                                    const float _31, const float _32, const float _33, const float _34,
+                                    const float _41, const float _42, const float _43, const float _44);
                                 Float4x4(const Float4x4& rhs)       = default;
                                 Float4x4(Float4x4&& rhs) noexcept   = default;
                                 ~Float4x4()                         = default;
@@ -85,10 +85,10 @@ namespace mint
 
     public:
         void                    set(
-                                    float m00, float m01, float m02, float m03,
-                                    float m10, float m11, float m12, float m13,
-                                    float m20, float m21, float m22, float m23,
-                                    float m30, float m31, float m32, float m33) noexcept;
+                                    const float _11, const float _12, const float _13, const float _14,
+                                    const float _21, const float _22, const float _23, const float _24,
+                                    const float _31, const float _32, const float _33, const float _34,
+                                    const float _41, const float _42, const float _43, const float _44) noexcept;
         void                    setZero() noexcept;
         void                    setIdentity() noexcept;
 
@@ -120,9 +120,9 @@ namespace mint
         void                    mulAssignReverse(const Float4x4& lhs) noexcept;
 
         // matrix * (column) vector
-        Float4                  mul(const Float4& v) const noexcept;
+        Float4                  mul(const Float4& vec) const noexcept;
         // matrix * (column) vector
-        Float3                  mul(const Float3& v) const noexcept;
+        Float3                  mul(const Float3& vec) const noexcept;
 
     public:
         union
