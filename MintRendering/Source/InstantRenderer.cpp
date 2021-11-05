@@ -105,6 +105,20 @@ namespace mint
             pushMeshWithMaterial(meshData, color);
         }
 
+        void InstantRenderer::drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
+        {
+            MeshGenerator::CylinderParam cylinderParam;
+            cylinderParam._height = height;
+            cylinderParam._radius = radius;
+            cylinderParam._sideCount = Math::pow2_ui32(2 + subdivisionIteration);
+            cylinderParam._smooth = true;
+            MeshData meshData;
+            MeshGenerator::generateCylinder(cylinderParam, meshData);
+            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
+
+            pushMeshWithMaterial(meshData, color);
+        }
+
         void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
         {
             const uint32 materialId = _sbMaterialDatas.size();

@@ -36,6 +36,7 @@ namespace mint
             void                            drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept;
             void                            drawSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
             void                            drawHalfOpenSphere(const Srt& worldSrt, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void                            drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         private:
             void                            pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
