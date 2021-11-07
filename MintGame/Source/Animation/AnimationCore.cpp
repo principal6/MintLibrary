@@ -164,7 +164,7 @@ namespace mint
                     instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), Rendering::Color::kCyan);
                 }
 
-                instantRenderer->drawSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
+                instantRenderer->drawGeoSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
             }
         }
 

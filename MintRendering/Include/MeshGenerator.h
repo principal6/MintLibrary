@@ -60,9 +60,18 @@ namespace mint
                 bool      _smooth = false;
             };
 
-            struct CapsulePram
+            struct SphereParam
             {
                 float     _radius = 1.0f;
+                uint8     _polarDetail = 4;
+                uint8     _azimuthalDetail = 8;
+                bool      _smooth = false;
+            };
+
+            struct CapsulePram
+            {
+                float     _sphereRadius = 1.0f;
+                float     _cylinderHeight = 1.0f;
                 uint8     _subdivisionIteration = 1;
                 bool      _smooth = false;
             };
@@ -76,6 +85,14 @@ namespace mint
             static void             generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void             generateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
             static void             generateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
+            static void             generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept;
+            static void             generateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept;
+
+        private:
+            static void             _pushCirclularPoints(const float radius, const float y, const uint32 pointCount, MeshData& meshData) noexcept;
+            static void             _pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept;
+            static void             _pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept;
+            static void             _pushRingQuads(const int32 indexBase, const uint8 count, MeshData& meshData) noexcept;
 
         public:
             static void             setMaterialId(MeshData& meshData, const uint32 materialId) noexcept;

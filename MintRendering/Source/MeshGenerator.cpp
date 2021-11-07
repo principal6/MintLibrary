@@ -509,6 +509,173 @@ namespace mint
             }
         }
 
+        void MeshGenerator::generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            const float radius = sphereParam._radius;
+            const uint8 polarDetail = sphereParam._polarDetail;
+            const uint8 azimuthalDetail = sphereParam._azimuthalDetail;
+
+            // polarAngle: 0 at +Y, Pi at -Y
+            // azimuthalAngle: 0 at +X, rotates around +Y axis (counter-clockwise) all the way around back to +X again
+            const float polarAngleStep = Math::kPi / polarDetail;
+
+            // Position
+            meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
+            for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
+            {
+                const float polarAngle = polarAngleStep * polarIter;
+                _pushCirclularPoints(radius * ::sin(polarAngle), radius * ::cos(polarAngle), azimuthalDetail, meshData);
+            }
+            
+            // Tris and quads
+            for (uint8 polarIter = 0; polarIter < polarDetail; ++polarIter)
+            {
+                const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
+                if (polarIter == 0)
+                {
+                    // Top center included
+                    _pushUpperUmbrellaTris(0, indexBase, azimuthalDetail, meshData);
+                }
+                else if (polarIter == polarDetail - 1)
+                {
+                    // Bottom center included
+                    const int32 bottomCenterIndex = static_cast<int32>(meshData.getPositionCount() - 1);
+                    _pushLowerUmbrellaTris(bottomCenterIndex, indexBase, azimuthalDetail, meshData);
+                }
+                else
+                {
+                    // Middle quads
+                    _pushRingQuads(indexBase, azimuthalDetail, meshData);
+                }
+            }
+
+            if (sphereParam._smooth == true)
+            {
+                smoothNormals(meshData);
+            }
+        }
+
+        void MeshGenerator::generateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+            
+            const float halfHeight = capsulePram._cylinderHeight * 0.5f;
+            const float radius = capsulePram._sphereRadius;
+
+            const uint8 polarDetail = ((4 + capsulePram._subdivisionIteration) / 2) * 2; // e.g.) 4, 6, 8, 10, ...
+            const uint8 halfPolarDetail = polarDetail / 2;
+            const uint8 azimuthalDetail = polarDetail * 2;
+
+            // polarAngle: 0 at +Y, Pi at -Y
+           // azimuthalAngle: 0 at +X, rotates around +Y axis (counter-clockwise) all the way around back to +X again
+            const float polarAngleStep = Math::kPi / polarDetail;
+
+            // Position
+            {
+                meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
+
+                // Upper half-sphere
+                for (uint8 polarIter = 0; polarIter < halfPolarDetail + 1; ++polarIter)
+                {
+                    const float polarAngle = polarAngleStep * polarIter;
+                    _pushCirclularPoints(radius * ::sin(polarAngle), radius * ::cos(polarAngle) + halfHeight, azimuthalDetail, meshData);
+                }
+
+                // Lower half-sphere
+                for (uint8 polarIter = 0; polarIter < halfPolarDetail + 1; ++polarIter)
+                {
+                    const float polarAngle = polarAngleStep * (polarIter + halfPolarDetail);
+                    _pushCirclularPoints(radius * ::sin(polarAngle), radius * ::cos(polarAngle) - halfHeight, azimuthalDetail, meshData);
+                }
+            }
+
+            // Tris and quads
+            for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
+            {
+                const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
+                if (polarIter == 0)
+                {
+                    // Top center included
+                    _pushUpperUmbrellaTris(0, indexBase, azimuthalDetail, meshData);
+                }
+                else if (polarIter == polarDetail)
+                {
+                    // Bottom center included
+                    const int32 bottomCenterIndex = static_cast<int32>(meshData.getPositionCount() - 1);
+                    _pushLowerUmbrellaTris(bottomCenterIndex, indexBase, azimuthalDetail, meshData);
+                }
+                else
+                {
+                    // Middle quads
+                    _pushRingQuads(indexBase, azimuthalDetail, meshData);
+                }
+            }
+
+            if (capsulePram._smooth == true)
+            {
+                smoothNormals(meshData);
+            }
+        }
+
+        void MeshGenerator::_pushCirclularPoints(const float radius, const float y, const uint32 pointCount, MeshData& meshData) noexcept
+        {
+            if (radius < Math::kFloatEpsilon)
+            {
+                pushPosition({ 0.0f, y, 0.0f }, meshData);
+                return;
+            }
+
+            const float angleStep = Math::kTwoPi / pointCount;
+            for (uint8 pointIndex = 0; pointIndex < pointCount; ++pointIndex)
+            {
+                const float angle = angleStep * pointIndex;
+                pushPosition({ ::cos(angle) * radius, y, ::sin(angle) * radius }, meshData);
+            }
+        }
+
+        void MeshGenerator::_pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        {
+            const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
+            for (uint8 iter = 0; iter < count - 1; ++iter)
+            {
+                pushTri({ 0, indexBase + iter + 1, indexBase + iter }, meshData, uvs);
+            }
+            pushTri({ 0, indexBase, indexBase + count - 1 }, meshData, uvs);
+        }
+
+        void MeshGenerator::_pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        {
+            const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f) };
+            for (uint8 iter = 0; iter < count - 1; ++iter)
+            {
+                pushTri({ indexBase + iter, indexBase + iter + 1, centerIndex }, meshData, uvs);
+            }
+            pushTri({ indexBase + count - 1, indexBase, centerIndex }, meshData, uvs);
+        }
+
+        void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        {
+            const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
+            for (uint8 iter = 0; iter < count - 1; ++iter)
+            {
+                pushQuad(
+                    { indexBase + iter,
+                      indexBase + iter + 1,
+                      indexBase + iter + count + 1,
+                      indexBase + iter + count,
+                    }, meshData, uvs);;
+            }
+
+            pushQuad(
+                { indexBase + count - 1,
+                  indexBase,
+                  indexBase + count,
+                  indexBase + count - 1 + count,
+                }, meshData, uvs);
+        }
+
         void MeshGenerator::setMaterialId(MeshData& meshData, const uint32 materialId) noexcept
         {
             const uint32 vertexCount = meshData._vertexArray.size();
@@ -677,8 +844,8 @@ namespace mint
                 }
 
             private:
-                int32               _positionCount = 0;
-                Vector<int32> _edgeTable;
+                int32           _positionCount = 0;
+                Vector<int32>   _edgeTable;
             };
 
             PositionEdgeGraph positionEdgeGraph;
