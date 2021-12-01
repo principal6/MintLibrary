@@ -104,7 +104,7 @@ namespace mint
             static void             pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept;
             static void             pushPosition(const Float4& xyzw, MeshData& meshData) noexcept;
             static void             pushTri(const int32(&positionIndices)[3], MeshData& meshData, const Float2(&uvs)[3]) noexcept;
-            static void             pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const Float2(&uvsInClockwise)[4]) noexcept;
+            static void             pushQuad(const int32(&positionIndices)[4], MeshData& meshData, const Float2(&uvs)[4]) noexcept;
 
         private:
             static void             subdivideTriByMidpoints(MeshData& oldMeshData) noexcept;

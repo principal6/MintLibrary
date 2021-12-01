@@ -766,19 +766,19 @@ namespace mint
             pushTriFaceXXX(vertexCountOld, meshData);
         }
 
-        void MeshGenerator::pushQuad(const int32(&positionIndicesInClockwise)[4], MeshData& meshData, const Float2(&uvsInClockwise)[4]) noexcept
+        void MeshGenerator::pushQuad(const int32(&positionIndices)[4], MeshData& meshData, const Float2(&uvs)[4]) noexcept
         {
             const uint32 vertexCountOld = meshData.getVertexCount();
 
-            pushVertexWithPositionXXX(positionIndicesInClockwise[0], meshData);
-            pushVertexWithPositionXXX(positionIndicesInClockwise[1], meshData);
-            pushVertexWithPositionXXX(positionIndicesInClockwise[3], meshData);
-            pushVertexWithPositionXXX(positionIndicesInClockwise[2], meshData);
+            pushVertexWithPositionXXX(positionIndices[0], meshData);
+            pushVertexWithPositionXXX(positionIndices[1], meshData);
+            pushVertexWithPositionXXX(positionIndices[3], meshData);
+            pushVertexWithPositionXXX(positionIndices[2], meshData);
 
-            setVertexUv(meshData, vertexCountOld + 0, uvsInClockwise[0]._x, uvsInClockwise[0]._y);
-            setVertexUv(meshData, vertexCountOld + 1, uvsInClockwise[1]._x, uvsInClockwise[1]._y);
-            setVertexUv(meshData, vertexCountOld + 2, uvsInClockwise[3]._x, uvsInClockwise[3]._y);
-            setVertexUv(meshData, vertexCountOld + 3, uvsInClockwise[2]._x, uvsInClockwise[2]._y);
+            setVertexUv(meshData, vertexCountOld + 0, uvs[0]._x, uvs[0]._y);
+            setVertexUv(meshData, vertexCountOld + 1, uvs[1]._x, uvs[1]._y);
+            setVertexUv(meshData, vertexCountOld + 2, uvs[3]._x, uvs[3]._y);
+            setVertexUv(meshData, vertexCountOld + 3, uvs[2]._x, uvs[2]._y);
 
             pushQuadFaceXXX(vertexCountOld, meshData);
         }
