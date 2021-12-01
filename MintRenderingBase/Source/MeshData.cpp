@@ -64,7 +64,7 @@ namespace mint
 
         const uint32 MeshData::getIndexCount() const noexcept
         {
-            return static_cast<uint32>(_faceArray.size() * Face::kIndexCountPerFace);
+            return static_cast<uint32>(_faceArray.size() * Face::kVertexCountPerFace);
         }
 
         const VS_INPUT* MeshData::getVertices() const noexcept
