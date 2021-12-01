@@ -47,21 +47,21 @@ namespace mint
     struct Bucket
     {
     public:
-                                        Bucket();
+                                    Bucket();
 
-                                        template <typename B = Bucket>
-                                        Bucket(std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs);
+                                    template <typename B = Bucket>
+                                    Bucket(std::enable_if_t<std::is_copy_constructible<Value>::value, const B&> rhs);
 
-                                        template <typename B = Bucket>
-                                        Bucket(std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs);
+                                    template <typename B = Bucket>
+                                    Bucket(std::enable_if_t<std::is_move_constructible<Value>::value, B&&> rhs);
 
-                                        ~Bucket() = default;
+                                    ~Bucket() = default;
 
     public:
-        mint::StaticBitArray<kHopRange>   _hopInfo;
-        bool                            _isUsed;
-        Key                             _key;
-        Value                           _value;
+        StaticBitArray<kHopRange>   _hopInfo;
+        bool                        _isUsed;
+        Key                         _key;
+        Value                       _value;
     };
 
 
@@ -100,58 +100,58 @@ namespace mint
         static constexpr uint32 kSegmentLength      = 127;
 
     public:
-                                            HashMap();
-                                            ~HashMap();
-    
+                                        HashMap();
+                                        ~HashMap();
+
     public:
-        const bool                          contains(const Key& key) const noexcept;
-    
+        const bool                      contains(const Key& key) const noexcept;
+
     private:
-        const bool                          containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
+        const bool                      containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
 
     public:
         template <typename V = Value>
         std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
-                                            insert(const Key& key, const V& value) noexcept;
+                                        insert(const Key& key, const V& value) noexcept;
         
         template <typename V = Value>
         std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
-                                            insert(const Key& key, V&& value) noexcept;
+                                        insert(const Key& key, V&& value) noexcept;
 
     private:
-        const bool                          existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
+        const bool                      existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
 
     public:
-        const KeyValuePair<Key, Value>      find(const Key& key) const noexcept;
-        const Value&                        at(const Key& key) const noexcept;
-        Value&                              at(const Key& key) noexcept;
-        void                                erase(const Key& key) noexcept;
-        void                                clear() noexcept;
-        BucketViewer<Key, Value>            getBucketViewer() const noexcept;
+        const KeyValuePair<Key, Value>  find(const Key& key) const noexcept;
+        const Value&                    at(const Key& key) const noexcept;
+        Value&                          at(const Key& key) noexcept;
+        void                            erase(const Key& key) noexcept;
+        void                            clear() noexcept;
+        BucketViewer<Key, Value>        getBucketViewer() const noexcept;
 
     private:
-        static Value&                       getInvalidValue() noexcept;
-    
+        static Value&                   getInvalidValue() noexcept;
+
     public:
-        const uint32                        size() const noexcept;
-        const bool                          empty() const noexcept;
+        const uint32                    size() const noexcept;
+        const bool                      empty() const noexcept;
 
     private:
-        void                                resize() noexcept;
-    
-    private:
-        void                                setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
-        void                                setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
-        const bool                          displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
-        void                                displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
+        void                            resize() noexcept;
 
     private:
-        const uint32                        computeSegmentIndex(const uint64 keyHash) const noexcept;
-        const uint32                        computeStartBucketIndex(const uint64 keyHash) const noexcept;
+        void                            setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
+        void                            setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
+        const bool                      displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
+        void                            displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
 
     private:
-        mint::Vector<Bucket<Key, Value>>    _bucketArray;
-        uint32                              _bucketCount;
+        const uint32                    computeSegmentIndex(const uint64 keyHash) const noexcept;
+        const uint32                    computeStartBucketIndex(const uint64 keyHash) const noexcept;
+
+    private:
+        Vector<Bucket<Key, Value>>      _bucketArray;
+        uint32                          _bucketCount;
     };
 }
 

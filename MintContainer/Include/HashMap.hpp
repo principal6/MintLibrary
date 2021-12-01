@@ -347,7 +347,7 @@ namespace mint
         const float load = static_cast<float>(_bucketCount) / static_cast<float>(_bucketArray.size());
         MINT_LOG("±èÀå¿ø", "HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.size());
 
-        mint::Vector<Bucket<Key, Value>> oldBucketArray = _bucketArray;
+        Vector<Bucket<Key, Value>> oldBucketArray = _bucketArray;
 
         _bucketCount = 0;
 

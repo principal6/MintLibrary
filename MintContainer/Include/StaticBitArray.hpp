@@ -69,59 +69,59 @@ namespace mint
             return;
         }
 
-        const uint32 byteAt = mint::BitVector::getByteAtByBitAt(bitAt);
-        const uint32 bitOffset = mint::BitVector::getBitOffsetByBitAt(bitAt);
-        mint::BitVector::setBit(_byteArray[byteAt], bitOffset, value);
+        const uint32 byteAt = BitVector::getByteAtByBitAt(bitAt);
+        const uint32 bitOffset = BitVector::getBitOffsetByBitAt(bitAt);
+        BitVector::setBit(_byteArray[byteAt], bitOffset, value);
     }
 
     template<uint32 BitCount>
     inline void StaticBitArray<BitCount>::setUnsafe(const uint32 bitAt, const bool value) noexcept
     {
-        const uint32 byteAt = mint::BitVector::getByteAtByBitAt(bitAt);
-        const uint32 bitOffset = mint::BitVector::getBitOffsetByBitAt(bitAt);
-        mint::BitVector::setBit(_byteArray[byteAt], bitOffset, value);
+        const uint32 byteAt = BitVector::getByteAtByBitAt(bitAt);
+        const uint32 bitOffset = BitVector::getBitOffsetByBitAt(bitAt);
+        BitVector::setBit(_byteArray[byteAt], bitOffset, value);
     }
 
     template<uint32 BitCount>
     inline void StaticBitArray<BitCount>::set(const uint32 byteAt, const uint8 bitOffset, const bool value) noexcept
     {
-        mint::BitVector::setBit(_byteArray[mint::min(byteAt, kByteCount - 1)], mint::min(bitOffset, kBitsPerByte - 1), value);
+        BitVector::setBit(_byteArray[mint::min(byteAt, kByteCount - 1)], mint::min(bitOffset, kBitsPerByte - 1), value);
     }
 
     template<uint32 BitCount>
     inline void StaticBitArray<BitCount>::setUnsafe(const uint32 byteAt, const uint8 bitOffset, const bool value) noexcept
     {
-        mint::BitVector::setBit(_byteArray[byteAt], bitOffset, value);
+        BitVector::setBit(_byteArray[byteAt], bitOffset, value);
     }
 
     template<uint32 BitCount>
     inline const bool StaticBitArray<BitCount>::get(const uint32 bitAt) const noexcept
     {
         const uint32 clampedBitAt = mint::min(bitAt, BitCount - 1);
-        const uint32 byteAt = mint::BitVector::getByteAtByBitAt(clampedBitAt);
-        const uint32 bitOffset = mint::BitVector::getBitOffsetByBitAt(clampedBitAt);
-        return mint::BitVector::getBit(_byteArray[byteAt], bitOffset);
+        const uint32 byteAt = BitVector::getByteAtByBitAt(clampedBitAt);
+        const uint32 bitOffset = BitVector::getBitOffsetByBitAt(clampedBitAt);
+        return BitVector::getBit(_byteArray[byteAt], bitOffset);
     }
 
     template<uint32 BitCount>
     inline const bool StaticBitArray<BitCount>::getUnsafe(const uint32 bitAt) const noexcept
     {
-        const uint32 byteAt = mint::BitVector::getByteAtByBitAt(bitAt);
-        const uint32 bitOffset = mint::BitVector::getBitOffsetByBitAt(bitAt);
-        return mint::BitVector::getBit(_byteArray[byteAt], bitOffset);
+        const uint32 byteAt = BitVector::getByteAtByBitAt(bitAt);
+        const uint32 bitOffset = BitVector::getBitOffsetByBitAt(bitAt);
+        return BitVector::getBit(_byteArray[byteAt], bitOffset);
     }
 
     template<uint32 BitCount>
     inline const bool StaticBitArray<BitCount>::get(const uint32 byteAt, const uint8 bitOffset) const noexcept
     {
         const uint32 clampedByteAt = mint::min(byteAt, kByteCount - 1);
-        return mint::BitVector::getBit(_byteArray[clampedByteAt], bitOffset);
+        return BitVector::getBit(_byteArray[clampedByteAt], bitOffset);
     }
 
     template<uint32 BitCount>
     inline const bool StaticBitArray<BitCount>::getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept
     {
-        return mint::BitVector::getBit(_byteArray[byteAt], bitOffset);
+        return BitVector::getBit(_byteArray[byteAt], bitOffset);
     }
 
     template<uint32 BitCount>
