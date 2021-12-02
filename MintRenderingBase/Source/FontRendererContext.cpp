@@ -34,6 +34,7 @@ namespace mint
 {
     namespace Rendering
     {
+#pragma region GlyphInfo
         GlyphInfo::GlyphInfo()
             : _charCode{}
             , _width{}
@@ -55,8 +56,10 @@ namespace mint
         {
             __noop;
         }
+#pragma endregion
 
 
+#pragma region GlyphRange
         GlyphRange::GlyphRange()
             : _startWchar{ 0 }
             , _endWchar{ 0 }
@@ -75,6 +78,7 @@ namespace mint
         {
             return _startWchar < rhs._startWchar;
         }
+#pragma endregion
 
 
         const uint32 FontRendererContext::FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
