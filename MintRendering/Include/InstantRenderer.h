@@ -25,26 +25,26 @@ namespace mint
         class InstantRenderer final
         {
         public:
-                                            InstantRenderer(GraphicDevice* const graphicDevice);
-                                            ~InstantRenderer();
+                        InstantRenderer(GraphicDevice* const graphicDevice);
+                        ~InstantRenderer();
 
         public:
-            void                            initialize() noexcept;
+            void        initialize() noexcept;
 
         public:
-            void                            drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
-            void                            drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept;
-            void                            drawCone(const Srt& worldSrt, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
-            void                            drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
-            void                            drawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept;
-            void                            drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
-            void                            drawCapsule(const Srt& worldSrt, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void        drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
+            void        drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept;
+            void        drawCone(const Srt& worldSrt, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
+            void        drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void        drawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept;
+            void        drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void        drawCapsule(const Srt& worldSrt, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         private:
-            void                            pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
+            void        pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
 
         public:
-            void                            render() noexcept;
+            void        render() noexcept;
 
         private:
             GraphicDevice* const            _graphicDevice;
