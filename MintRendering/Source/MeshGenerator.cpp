@@ -368,6 +368,54 @@ namespace mint
             }
         }
 
+        void MeshGenerator::generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept
+        {
+            meshData.clear();
+
+            const float radius = sphereParam._radius;
+            const uint8 polarDetail = sphereParam._polarDetail;
+            const uint8 azimuthalDetail = sphereParam._azimuthalDetail;
+
+            // polarAngle: 0 at +Y, Pi at -Y
+            // azimuthalAngle: 0 at +X, rotates around +Y axis (counter-clockwise) all the way around back to +X again
+            const float polarAngleStep = Math::kPi / polarDetail;
+
+            // Position
+            meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
+            for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
+            {
+                const float polarAngle = polarAngleStep * polarIter;
+                _pushCirclularPoints(radius * ::sin(polarAngle), radius * ::cos(polarAngle), azimuthalDetail, meshData);
+            }
+
+            // Tris and quads
+            for (uint8 polarIter = 0; polarIter < polarDetail; ++polarIter)
+            {
+                const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
+                if (polarIter == 0)
+                {
+                    // Top center included
+                    _pushUpperUmbrellaTris(0, indexBase, azimuthalDetail, meshData);
+                }
+                else if (polarIter == polarDetail - 1)
+                {
+                    // Bottom center included
+                    const int32 bottomCenterIndex = static_cast<int32>(meshData.getPositionCount() - 1);
+                    _pushLowerUmbrellaTris(bottomCenterIndex, indexBase, azimuthalDetail, meshData);
+                }
+                else
+                {
+                    // Middle quads
+                    _pushRingQuads(indexBase, azimuthalDetail, meshData);
+                }
+            }
+
+            if (sphereParam._smooth == true)
+            {
+                smoothNormals(meshData);
+            }
+        }
+
         void MeshGenerator::generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept
         {
             meshData.clear();
@@ -478,54 +526,6 @@ namespace mint
             projectVerticesToSphere(radiusParam, meshData);
 
             if (geoSphereParam._smooth == true)
-            {
-                smoothNormals(meshData);
-            }
-        }
-
-        void MeshGenerator::generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept
-        {
-            meshData.clear();
-
-            const float radius = sphereParam._radius;
-            const uint8 polarDetail = sphereParam._polarDetail;
-            const uint8 azimuthalDetail = sphereParam._azimuthalDetail;
-
-            // polarAngle: 0 at +Y, Pi at -Y
-            // azimuthalAngle: 0 at +X, rotates around +Y axis (counter-clockwise) all the way around back to +X again
-            const float polarAngleStep = Math::kPi / polarDetail;
-
-            // Position
-            meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
-            for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
-            {
-                const float polarAngle = polarAngleStep * polarIter;
-                _pushCirclularPoints(radius * ::sin(polarAngle), radius * ::cos(polarAngle), azimuthalDetail, meshData);
-            }
-            
-            // Tris and quads
-            for (uint8 polarIter = 0; polarIter < polarDetail; ++polarIter)
-            {
-                const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
-                if (polarIter == 0)
-                {
-                    // Top center included
-                    _pushUpperUmbrellaTris(0, indexBase, azimuthalDetail, meshData);
-                }
-                else if (polarIter == polarDetail - 1)
-                {
-                    // Bottom center included
-                    const int32 bottomCenterIndex = static_cast<int32>(meshData.getPositionCount() - 1);
-                    _pushLowerUmbrellaTris(bottomCenterIndex, indexBase, azimuthalDetail, meshData);
-                }
-                else
-                {
-                    // Middle quads
-                    _pushRingQuads(indexBase, azimuthalDetail, meshData);
-                }
-            }
-
-            if (sphereParam._smooth == true)
             {
                 smoothNormals(meshData);
             }

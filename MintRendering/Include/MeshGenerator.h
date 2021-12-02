@@ -80,11 +80,11 @@ namespace mint
             static void             generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
             static void             generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
             static void             generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
+            static void             generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept;
             static void             generateOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void             generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept;
             static void             generateGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
             static void             generateHalfOpenGeoSphere(const GeoSphereParam& geoSphereParam, MeshData& meshData) noexcept;
-            static void             generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept;
             static void             generateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept;
 
         private:

@@ -76,18 +76,30 @@ namespace mint
             pushMeshWithMaterial(meshData, color);
         }
 
-        void InstantRenderer::drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
+        void InstantRenderer::drawCone(const Srt& worldSrt, const float radius, const float height, const uint8 detail, const Color& color) noexcept
         {
-            MeshGenerator::GeoSphereParam geosphereParam;
-            geosphereParam._radius = radius;
-            geosphereParam._subdivisionIteration = subdivisionIteration;
-            geosphereParam._smooth = true;
+            MeshGenerator::ConeParam coneParam;
+            coneParam._radius = radius;
+            coneParam._height = height;
+            coneParam._sideCount = detail;
+            coneParam._smooth = true;
             MeshData meshData;
-            MeshGenerator::generateGeoSphere(geosphereParam, meshData);
+            MeshGenerator::generateCone(coneParam, meshData);
+            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
 
-            Float4x4 transformationMatrix;
-            transformationMatrix.setTranslation(center);
-            MeshGenerator::transformMeshData(meshData, transformationMatrix);
+            pushMeshWithMaterial(meshData, color);
+        }
+
+        void InstantRenderer::drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
+        {
+            MeshGenerator::CylinderParam cylinderParam;
+            cylinderParam._height = height;
+            cylinderParam._radius = radius;
+            cylinderParam._sideCount = Math::pow2_ui32(2 + subdivisionIteration);
+            cylinderParam._smooth = true;
+            MeshData meshData;
+            MeshGenerator::generateCylinder(cylinderParam, meshData);
+            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }
@@ -109,29 +121,18 @@ namespace mint
             pushMeshWithMaterial(meshData, color);
         }
 
-        void InstantRenderer::drawHalfOpenGeoSphere(const Srt& worldSrt, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
+        void InstantRenderer::drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept
         {
             MeshGenerator::GeoSphereParam geosphereParam;
             geosphereParam._radius = radius;
             geosphereParam._subdivisionIteration = subdivisionIteration;
             geosphereParam._smooth = true;
             MeshData meshData;
-            MeshGenerator::generateHalfOpenGeoSphere(geosphereParam, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
+            MeshGenerator::generateGeoSphere(geosphereParam, meshData);
 
-            pushMeshWithMaterial(meshData, color);
-        }
-
-        void InstantRenderer::drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
-        {
-            MeshGenerator::CylinderParam cylinderParam;
-            cylinderParam._height = height;
-            cylinderParam._radius = radius;
-            cylinderParam._sideCount = Math::pow2_ui32(2 + subdivisionIteration);
-            cylinderParam._smooth = true;
-            MeshData meshData;
-            MeshGenerator::generateCylinder(cylinderParam, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSrt.toMatrix());
+            Float4x4 transformationMatrix;
+            transformationMatrix.setTranslation(center);
+            MeshGenerator::transformMeshData(meshData, transformationMatrix);
 
             pushMeshWithMaterial(meshData, color);
         }
