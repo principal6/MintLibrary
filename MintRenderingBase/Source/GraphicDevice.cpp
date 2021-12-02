@@ -690,18 +690,10 @@ namespace mint
             cbView.updateBuffer(&_cbViewData, 1);
         }
 
-        void GraphicDevice::setViewMatrix(const Float4x4& viewMatrix) noexcept
+        void GraphicDevice::setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept
         {
             _cbViewData._cbViewMatrix = viewMatrix;
-        }
-
-        void GraphicDevice::setProjectionMatrix(const Float4x4& projectionMatrix) noexcept
-        {
             _cbViewData._cb3DProjectionMatrix = projectionMatrix;
-        }
-
-        void GraphicDevice::updateCbView() noexcept
-        {
             _cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
             DxResource& cbView = _resourcePool.getResource(_cbViewId);

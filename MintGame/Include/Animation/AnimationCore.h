@@ -96,7 +96,7 @@ namespace mint
             const SkeletonJoint&            getJoint(const JointIndexType jointIndex) const noexcept;
 
         public:
-            void                            renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const Float4x4& worldMatrix) const noexcept;
+            void                            renderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept;
 
         private:
             Vector<SkeletonJoint>           _joints;

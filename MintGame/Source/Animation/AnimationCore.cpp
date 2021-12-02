@@ -141,7 +141,7 @@ namespace mint
             return (static_cast<uint32>(jointIndex) < _joints.size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
         }
 
-        void Skeleton::renderSkeleton(Rendering::InstantRenderer* const instantRenderer, const Float4x4& worldMatrix) const noexcept
+        void Skeleton::renderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept
         {
             if (_joints.empty() == true)
             {
@@ -161,10 +161,10 @@ namespace mint
                     Float4x4 parentJointWorldMatrix = worldMatrix;
                     parentJointWorldMatrix *= parentJoint._bindPoseModelMatrix;
 
-                    instantRenderer->drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), Rendering::Color::kCyan);
+                    instantRenderer.drawLine(jointWorldMatrix.getTranslation(), parentJointWorldMatrix.getTranslation(), Rendering::Color::kCyan);
                 }
 
-                instantRenderer->drawGeoSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
+                instantRenderer.drawGeoSphere(jointWorldMatrix.getTranslation(), 0.03125f, 1, Rendering::Color::kMagenta);
             }
         }
 

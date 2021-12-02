@@ -611,11 +611,9 @@ const bool testWindow()
                 }
             }
 
-            testSkeleton.renderSkeleton(&instantRenderer, testSkeletonWorldMatrix);
+            testSkeleton.renderSkeleton(instantRenderer, testSkeletonWorldMatrix);
 
-            graphicDevice.setViewMatrix(testCameraObject->getViewMatrix());
-            graphicDevice.setProjectionMatrix(testCameraObject->getProjectionMatrix());
-            graphicDevice.updateCbView();
+            graphicDevice.setViewProjectionMatrix(testCameraObject->getViewMatrix(), testCameraObject->getProjectionMatrix());
 
             meshRenderer.render(objectPool);
             instantRenderer.render();
