@@ -225,32 +225,6 @@ namespace mint
             normalArray.clear();
         }
         
-        void MeshGenerator::generateUnitCube(MeshData& meshData) noexcept
-        {
-            static constexpr float kHalfSize = 0.5f;
-
-            meshData.clear();
-
-            // Vertex positions
-            meshData._positionArray.reserve(8);
-            pushPosition({ -kHalfSize, +kHalfSize, -kHalfSize }, meshData);
-            pushPosition({ +kHalfSize, +kHalfSize, -kHalfSize }, meshData);
-            pushPosition({ +kHalfSize, -kHalfSize, -kHalfSize }, meshData);
-            pushPosition({ -kHalfSize, -kHalfSize, -kHalfSize }, meshData);
-            pushPosition({ -kHalfSize, +kHalfSize, +kHalfSize }, meshData);
-            pushPosition({ +kHalfSize, +kHalfSize, +kHalfSize }, meshData);
-            pushPosition({ +kHalfSize, -kHalfSize, +kHalfSize }, meshData);
-            pushPosition({ -kHalfSize, -kHalfSize, +kHalfSize }, meshData);
-
-            const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-            pushQuad({ 4, 5, 1, 0 }, meshData, uvs); // Top
-            pushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Front
-            pushQuad({ 1, 5, 6, 2 }, meshData, uvs); // Right
-            pushQuad({ 5, 4, 7, 6 }, meshData, uvs); // Back
-            pushQuad({ 4, 0, 3, 7 }, meshData, uvs); // Left
-            pushQuad({ 3, 2, 6, 7 }, meshData, uvs); // Bottom
-        }
-
         void MeshGenerator::generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
         {
             meshData.clear();

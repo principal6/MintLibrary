@@ -77,7 +77,6 @@ namespace mint
             };
 
         public:
-            static void             generateUnitCube(MeshData& meshData) noexcept;
             static void             generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept;
             static void             generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept;
             static void             generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept;
