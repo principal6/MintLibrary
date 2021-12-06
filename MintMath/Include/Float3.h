@@ -14,6 +14,7 @@ namespace mint
     class Float3 final
     {
     public:
+        static const Float3         kZero;
         static const Float3         kUnitScale;
 
     public:

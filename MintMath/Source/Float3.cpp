@@ -7,6 +7,7 @@
 
 namespace mint
 {
+    const Float3 Float3::kZero      = Float3(0.0f, 0.0f, 0.0f);
     const Float3 Float3::kUnitScale = Float3(1.0f, 1.0f, 1.0f);
     
 
