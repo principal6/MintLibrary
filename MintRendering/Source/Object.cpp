@@ -93,17 +93,17 @@ namespace mint
             return nullptr;
         }
 
-        void Object::setObjectTransform(const Srt& srt) noexcept
+        void Object::setObjectTransform(const SRT& srt) noexcept
         {
             getObjectTransformComponent()->_srt = srt;
         }
 
-        Srt& Object::getObjectTransformSrt() noexcept
+        SRT& Object::getObjectTransformSRT() noexcept
         {
             return getObjectTransformComponent()->_srt;
         }
 
-        const Srt& Object::getObjectTransformSrt() const noexcept
+        const SRT& Object::getObjectTransformSRT() const noexcept
         {
             return getObjectTransformComponent()->_srt;
         }

@@ -449,14 +449,14 @@ namespace mint
         _rows[3].addComponent(3, rowCopy.dot(rowCopy));
     }
 
-    MINT_INLINE void AffineMat<float>::decomposeSrt(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept
+    MINT_INLINE void AffineMat<float>::decomposeSRT(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept
     {
         // TODO: avoid nan in outRotationMatrix
 
         float m[4][4];
         get(m);
 
-        // Srt Matrix
+        // SRT Matrix
         // 
         // | s_x * r_11  s_y * r_12  s_z * r_13  t_x |
         // | s_x * r_21  s_y * r_22  s_z * r_23  t_y |

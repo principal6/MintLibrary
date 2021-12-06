@@ -108,7 +108,7 @@ namespace mint
 
     public:
         Float3                  getTranslation() const noexcept;
-        void                    decomposeSrt(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
+        void                    decomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
 
     public:
         const float             determinant() const noexcept;

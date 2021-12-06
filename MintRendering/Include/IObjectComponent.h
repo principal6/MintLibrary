@@ -41,7 +41,7 @@ namespace mint
         };
 
 
-        struct Srt
+        struct SRT
         {
         public:
             Float4x4                toMatrix() const noexcept { return Float4x4::srtMatrix(_scale, _rotation, _translation); }

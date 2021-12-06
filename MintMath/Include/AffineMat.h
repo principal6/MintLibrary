@@ -149,7 +149,7 @@ namespace mint
         AffineVecF          getTranslation() const noexcept { return getCol(3); }
 
     public:
-        void                decomposeSrt(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept;
+        void                decomposeSRT(AffineVecF& outScale, AffineMat& outRotationMatrix, AffineVecF& outTranslation) const noexcept;
 
     public:
         AffineMat           inverse() const noexcept;

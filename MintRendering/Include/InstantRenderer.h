@@ -18,7 +18,7 @@ namespace mint
     {
         class GraphicDevice;
         struct SB_Material;
-        struct Srt;
+        struct SRT;
         class Color;
 
 
@@ -33,12 +33,12 @@ namespace mint
 
         public:
             void        drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
-            void        drawBox(const Srt& worldSrt, const Float3& extents, const Color& color) noexcept;
-            void        drawCone(const Srt& worldSrt, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
-            void        drawCylinder(const Srt& worldSrt, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void        drawBox(const SRT& worldSRT, const Float3& extents, const Color& color) noexcept;
+            void        drawCone(const SRT& worldSRT, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
+            void        drawCylinder(const SRT& worldSRT, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept;
             void        drawSphere(const Float3& center, const float radius, const uint8 polarDetail, const uint8 azimuthalDetail, const Color& color) noexcept;
             void        drawGeoSphere(const Float3& center, const float radius, const uint8 subdivisionIteration, const Color& color) noexcept;
-            void        drawCapsule(const Srt& worldSrt, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
+            void        drawCapsule(const SRT& worldSRT, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         private:
             void        pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;

@@ -63,7 +63,7 @@ namespace mint
             const Float3& upDirection = Float3::cross(_forwardDirectionFinal, rightDirection);
             
             const float moveSpeedFloat = getMoveSpeedAsFloat((true == _isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
-            Srt& srt = getObjectTransformSrt();
+            SRT& srt = getObjectTransformSRT();
             switch (moveDirection)
             {
             case CameraObject::MoveDirection::Forward:
@@ -119,7 +119,7 @@ namespace mint
         Float4x4 CameraObject::getViewMatrix() const noexcept
         {
             const Float4x4& rotationMatrix = getRotationMatrix();
-            return rotationMatrix.transpose() * Float4x4::translationMatrix(-getObjectTransformSrt()._translation);
+            return rotationMatrix.transpose() * Float4x4::translationMatrix(-getObjectTransformSRT()._translation);
         }
 
         const Float4x4& CameraObject::getProjectionMatrix() const noexcept

@@ -398,12 +398,12 @@ namespace mint
         return Float3(_14, _24, _34);
     }
 
-    void Float4x4::decomposeSrt(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept
+    void Float4x4::decomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept
     {
         // TODO: avoid nan in outRotationMatrix
         
 
-        // Srt Matrix
+        // SRT Matrix
         // 
         // | s_x * r_11  s_y * r_12  s_z * r_13  t_x |
         // | s_x * r_21  s_y * r_22  s_z * r_23  t_y |

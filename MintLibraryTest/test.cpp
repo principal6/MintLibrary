@@ -327,8 +327,8 @@ const bool testWindow()
     testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
     {
         testObject->attachComponent(objectPool.createMeshComponent());
-        testObject->getObjectTransformSrt()._translation._z = 4.0f;
-        //testObject->getObjectTransformSrt()._rotation.setAxisAngle(Float3(1.0f, 1.0f, 0.0f), Math::kPiOverEight);
+        testObject->getObjectTransformSRT()._translation._z = 4.0f;
+        //testObject->getObjectTransformSRT()._rotation.setAxisAngle(Float3(1.0f, 1.0f, 0.0f), Math::kPiOverEight);
     }
     testCameraObject->rotatePitch(0.125f);
     
@@ -568,7 +568,7 @@ const bool testWindow()
                     formatString(tempBuffer, L" CPU: %d ms", Profiler::FpsCounter::getFrameTimeMs());
                     guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
                     
-                    Float3& cameraPosition = testCameraObject->getObjectTransformSrt()._translation;
+                    Float3& cameraPosition = testCameraObject->getObjectTransformSRT()._translation;
                     guiContext.makeLabel(MINT_GUI_CONTROL(L" Camera Position:", labelParam));
                     
                     {
