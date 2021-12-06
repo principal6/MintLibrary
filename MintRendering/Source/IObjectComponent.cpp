@@ -17,6 +17,20 @@ namespace mint
         }
 
 
+        SRT::SRT()
+            : SRT(Float3::kZero)
+        {
+            __noop;
+        }
+
+        SRT::SRT(const Float3& translation)
+            : _scale{ Float3::kUnitScale }
+            , _translation{ translation }
+        {
+            __noop;
+        }
+
+
         std::atomic<uint32> IObjectComponent::_nextRawId = 0;
         IObjectComponent::IObjectComponent(const ObjectComponentType type)
             : _ownerObject{ nullptr }

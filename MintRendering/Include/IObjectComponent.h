@@ -44,6 +44,10 @@ namespace mint
         struct SRT
         {
         public:
+                                    SRT();
+                                    SRT(const Float3& translation);
+
+        public:
             Float4x4                toMatrix() const noexcept { return Float4x4::srtMatrix(_scale, _rotation, _translation); }
 
         public:
