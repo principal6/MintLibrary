@@ -47,7 +47,8 @@ namespace mint
         static Float4x4         axesToRows(const Float3& axisX, const Float3& axisY, const Float3& axisZ) noexcept;
         static Float4x4         srtMatrix(const Float3& scale, const QuaternionF& rotation, const Float3& translation) noexcept;
 
-        static Float4x4         projectionMatrixPerspective(const float Fov, const float nearZ, const float farZ, const float ratio) noexcept;
+        // +X is the right direction for world.
+        static Float4x4         projectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept;
         static Float4x4         projectionMatrix2DFromTopLeft(const float pixelWidth, const float pixelHeight) noexcept;
 #pragma endregion
 

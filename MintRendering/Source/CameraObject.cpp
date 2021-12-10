@@ -52,7 +52,7 @@ namespace mint
 
         void CameraObject::updatePerspectiveMatrix() noexcept
         {
-            _projectionMatrix = Float4x4::projectionMatrixPerspective(_fov, _nearZ, _farZ, _screenRatio);
+            _projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(false, _fov, _nearZ, _farZ, _screenRatio);
         }
 
         void CameraObject::move(const MoveDirection moveDirection)

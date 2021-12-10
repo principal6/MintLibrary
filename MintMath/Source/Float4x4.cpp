@@ -160,14 +160,14 @@ namespace mint
         return matrix;
     }
 
-    Float4x4 Float4x4::projectionMatrixPerspective(const float fov, const float nearZ, const float farZ, const float ratio) noexcept
+    Float4x4 Float4x4::projectionMatrixPerspectiveYUP(const bool isRightHanded, const float FOVAngle, const float nearDepth, const float farDepth, const float screenWidthOverHeight) noexcept
     {
-        const float halfFov = fov * 0.5f;
-        const float a = 1.0f / (tanf(halfFov) * ratio);
-        const float b = 1.0f / (tanf(halfFov));
-        const float c = (farZ) / (farZ - nearZ);
-        const float d = -(farZ * nearZ) / (farZ - nearZ);
-        const float e = 1.0f;
+        const float halfFOVAngle = FOVAngle * 0.5f;
+        const float a = 1.0f / (tanf(halfFOVAngle) * screenWidthOverHeight);
+        const float b = 1.0f / (tanf(halfFOVAngle));
+        const float c = (farDepth / (nearDepth - farDepth)) * (isRightHanded ? +1.0f : -1.0f);
+        const float d = (farDepth * nearDepth) / (nearDepth - farDepth);
+        const float e = (isRightHanded ? -1.0f : +1.0f);
         return Float4x4
         (
             a, 0, 0, 0,
