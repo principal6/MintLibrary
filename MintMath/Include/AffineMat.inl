@@ -189,37 +189,6 @@ namespace mint
         matrix.postScale(scale._x, scale._y, scale._z);
         return matrix;
     }
-
-    template<typename T>
-    MINT_INLINE AffineMat<T> projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept
-    {
-        const T halfFov = fov * static_cast<T>(0.5);
-        const T a = 1.0f / (::tan(halfFov) * ratio);
-        const T b = 1.0f / (::tan(halfFov));
-        const T c = (farZ) / (farZ - nearZ);
-        const T d = -(farZ * nearZ) / (farZ - nearZ);
-        const T e = 1.0f;
-        return AffineMat<T>
-        (
-            a, 0, 0, 0,
-            0, b, 0, 0,
-            0, 0, c, d,
-            0, 0, e, 0
-        );
-
-    }
-
-    template<typename T>
-    MINT_INLINE AffineMat<T> projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept
-    {
-        return AffineMat<T>
-        (
-            +static_cast<T>(2) / pixelWidth ,  0                                , 0, -1,
-             0                              , -static_cast<T>(2) / pixelHeight  , 0, +1,
-             0                              ,  0                                , 1,  0,
-             0                              ,  0                                , 0,  1
-        );
-    }
 #pragma endregion
 
 

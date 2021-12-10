@@ -72,12 +72,6 @@ namespace mint
 
     template<typename T>
     AffineMat<T>    srtMatrix(const AffineVec<T>& scale, const Quaternion<T>&rotation, const AffineVec<T>& translation) noexcept;
-
-    template<typename T>
-    AffineMat<T>    projectionMatrixPerspective(const T fov, const T nearZ, const T farZ, const T ratio) noexcept;
-
-    template<typename T>
-    AffineMat<T>    projectionMatrix2DFromTopLeft(const T pixelWidth, const T pixelHeight) noexcept;
 #pragma endregion
 
 
