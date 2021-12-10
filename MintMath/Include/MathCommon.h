@@ -12,6 +12,14 @@
 
 namespace mint
 {
+    enum class Axis
+    {
+        X,
+        Y,
+        Z
+    };
+
+
     namespace Math
     {
         static constexpr float kPi              = 3.1415926535f;
@@ -23,7 +31,6 @@ namespace mint
         static constexpr float kFloatMax        = 3.402823466e+38f;
         static constexpr float kFloatEpsilon    = 0.0000152587890625f;
         static constexpr double kDoubleEpsilon  = 0.0000152587890625;
-
 
         MINT_INLINE constexpr uint32 pow2_ui32(const uint32 exponent)
         {
