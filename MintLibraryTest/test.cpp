@@ -328,7 +328,6 @@ const bool testWindow()
     {
         testObject->attachComponent(objectPool.createMeshComponent());
         testObject->getObjectTransformSRT()._translation._z = 4.0f;
-        //testObject->getObjectTransformSRT()._rotation.setAxisAngle(Float3(1.0f, 1.0f, 0.0f), Math::kPiOverEight);
     }
     testCameraObject->rotatePitch(0.125f);
     

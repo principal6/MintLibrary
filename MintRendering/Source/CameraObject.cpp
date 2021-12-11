@@ -9,9 +9,7 @@ namespace mint
     {
         CameraObject::CameraObject(const ObjectPool* const objectPool)
             : Object(objectPool, ObjectType::CameraObject)
-            , _baseUpDirection{ 0.0f, 1.0f, 0.0f }
-            , _baseForwardDirection{ 0.0f, 0.0f, 1.0f }
-            , _focusOffset{ 0.0f, 0.0f, 2.0f }
+            , _isRightHanded{ false }
             , _fov{ Math::toRadian(60.0f) }
             , _nearZ{ 0.1f }
             , _farZ{ 1000.0f }
@@ -52,31 +50,32 @@ namespace mint
 
         void CameraObject::updatePerspectiveMatrix() noexcept
         {
-            _projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(false, _fov, _nearZ, _farZ, _screenRatio);
+            _projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
         }
 
         void CameraObject::move(const MoveDirection moveDirection)
         {
             const float deltaTimeS = getDeltaTimeS();
 
-            const Float3& rightDirection = Float3::cross(_baseUpDirection, _forwardDirectionFinal);
-            const Float3& upDirection = Float3::cross(_forwardDirectionFinal, rightDirection);
+            const float handnessSign = (_isRightHanded ? -1.0f : +1.0f);
+            const Float3& leftDirection = Float3::cross(_forwardDirection, Float3::kAxisY) * handnessSign;
+            const Float3& upDirection = Float3::cross(leftDirection, _forwardDirection) * handnessSign;
             
             const float moveSpeedFloat = getMoveSpeedAsFloat((true == _isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
             SRT& srt = getObjectTransformSRT();
             switch (moveDirection)
             {
             case CameraObject::MoveDirection::Forward:
-                srt._translation += _forwardDirectionFinal * moveSpeedFloat * deltaTimeS;
+                srt._translation += _forwardDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Backward:
-                srt._translation -= _forwardDirectionFinal * moveSpeedFloat * deltaTimeS;
+                srt._translation -= _forwardDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Leftward:
-                srt._translation -= rightDirection * moveSpeedFloat * deltaTimeS;
+                srt._translation += leftDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Rightward:
-                srt._translation += rightDirection * moveSpeedFloat * deltaTimeS;
+                srt._translation -= leftDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Upward:
                 srt._translation += upDirection * moveSpeedFloat * deltaTimeS;
@@ -129,11 +128,13 @@ namespace mint
 
         Float4x4 CameraObject::getRotationMatrix() const noexcept
         {
-            const Float3& forwardDirectionAfterYaw = Float4x4::rotationMatrixY(_yaw) * _baseForwardDirection;
-            const Float3& rightDirection = Float3::crossAndNormalize(_baseUpDirection, forwardDirectionAfterYaw);
-            _forwardDirectionFinal = Float4x4::rotationMatrixAxisAngle(rightDirection, _pitch) * forwardDirectionAfterYaw;
-            const Float3& upDirection = Float3::crossAndNormalize(_forwardDirectionFinal, rightDirection);
-            return Float4x4::rotationMatrixFromAxes(rightDirection, upDirection, _forwardDirectionFinal);
+            const float handnessSign = (_isRightHanded ? -1.0f : +1.0f);
+            const Float3 kBaseForward = Float3::kAxisZ * handnessSign;
+            const Float3& forwardDirectionXz = Float4x4::rotationMatrixY(_yaw) * kBaseForward;
+            const Float3& leftDirection = Float3::crossAndNormalize(forwardDirectionXz, Float3::kAxisY) * handnessSign;
+            _forwardDirection = Float4x4::rotationMatrixAxisAngle(leftDirection * -handnessSign, _pitch) * forwardDirectionXz;
+            const Float3& upDirection = Float3::crossAndNormalize(leftDirection, _forwardDirection) * handnessSign;
+            return Float4x4::rotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
         }
     }
 }

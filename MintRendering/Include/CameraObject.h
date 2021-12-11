@@ -104,15 +104,13 @@ namespace mint
             Float4x4                getRotationMatrix() const noexcept;
 
         private:
-            Float3                  _baseUpDirection;
-            Float3                  _baseForwardDirection;
-            Float3                  _focusOffset;
             Float4x4                _projectionMatrix;
 
         private:
-            mutable Float3          _forwardDirectionFinal;
+            mutable Float3          _forwardDirection;
 
         private:
+            bool                    _isRightHanded;
             float                   _fov;
             float                   _nearZ;
             float                   _farZ;
