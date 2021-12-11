@@ -16,6 +16,9 @@ namespace mint
     public:
         static const Float3         kZero;
         static const Float3         kUnitScale;
+        static const Float3         kAxisX;
+        static const Float3         kAxisY;
+        static const Float3         kAxisZ;
 
     public:
         constexpr                   Float3();

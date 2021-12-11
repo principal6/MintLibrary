@@ -9,6 +9,9 @@ namespace mint
 {
     const Float3 Float3::kZero      = Float3(0.0f, 0.0f, 0.0f);
     const Float3 Float3::kUnitScale = Float3(1.0f, 1.0f, 1.0f);
+    const Float3 Float3::kAxisX     = Float3(1.0f, 0.0f, 0.0f);
+    const Float3 Float3::kAxisY     = Float3(0.0f, 1.0f, 0.0f);
+    const Float3 Float3::kAxisZ     = Float3(0.0f, 0.0f, 1.0f);
     
 
     Float3& Float3::operator+=(const Float3& rhs)
