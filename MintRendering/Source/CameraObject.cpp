@@ -57,7 +57,7 @@ namespace mint
         {
             const float deltaTimeS = getDeltaTimeS();
 
-            const float handnessSign = (_isRightHanded ? -1.0f : +1.0f);
+            const float handnessSign = getHandednessSign();
             const Float3& leftDirection = Float3::cross(_forwardDirection, Float3::kAxisY) * handnessSign;
             const Float3& upDirection = Float3::cross(leftDirection, _forwardDirection) * handnessSign;
             
@@ -115,6 +115,13 @@ namespace mint
             _yaw = Math::limitAngleToPositiveNegativeTwoPiRotation(_yaw);
         }
 
+        void CameraObject::rotateByMouseDelta(const Float2& mouseDelta)
+        {
+            const float handnessSign = getHandednessSign();
+            rotatePitch(mouseDelta._y);
+            rotateYaw(mouseDelta._x * handnessSign);
+        }
+
         Float4x4 CameraObject::getViewMatrix() const noexcept
         {
             const Float4x4& rotationMatrix = getRotationMatrix();
@@ -128,13 +135,18 @@ namespace mint
 
         Float4x4 CameraObject::getRotationMatrix() const noexcept
         {
-            const float handnessSign = (_isRightHanded ? -1.0f : +1.0f);
+            const float handnessSign = getHandednessSign();
             const Float3 kBaseForward = Float3::kAxisZ * handnessSign;
             const Float3& forwardDirectionXz = Float4x4::rotationMatrixY(_yaw) * kBaseForward;
             const Float3& leftDirection = Float3::crossAndNormalize(forwardDirectionXz, Float3::kAxisY) * handnessSign;
             _forwardDirection = Float4x4::rotationMatrixAxisAngle(leftDirection * -handnessSign, _pitch) * forwardDirectionXz;
             const Float3& upDirection = Float3::crossAndNormalize(leftDirection, _forwardDirection) * handnessSign;
             return Float4x4::rotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
+        }
+
+        const float CameraObject::getHandednessSign() const noexcept
+        {
+            return (_isRightHanded ? -1.0f : +1.0f);
         }
     }
 }

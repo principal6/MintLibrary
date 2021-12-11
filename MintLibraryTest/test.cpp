@@ -414,9 +414,7 @@ const bool testWindow()
                 {
                     if (inputContext.isMouseButtonDown(Platform::MouseButton::Right) == true)
                     {
-                        const Float2& mouseDeltaPosition = inputContext.getMouseDeltaPosition();
-                        testCameraObject->rotatePitch(mouseDeltaPosition._y);
-                        testCameraObject->rotateYaw(mouseDeltaPosition._x);
+                        testCameraObject->rotateByMouseDelta(inputContext.getMouseDeltaPosition());
                     }
                 }
                 else if (window.isResized() == true)

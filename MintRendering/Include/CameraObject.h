@@ -95,6 +95,7 @@ namespace mint
         public:
             void                    rotatePitch(const float angle);
             void                    rotateYaw(const float angle);
+            void                    rotateByMouseDelta(const Float2& mouseDelta);
 
         public:
             Float4x4                getViewMatrix() const noexcept;
@@ -102,6 +103,7 @@ namespace mint
         
         private:
             Float4x4                getRotationMatrix() const noexcept;
+            const float             getHandednessSign() const noexcept;
 
         private:
             Float4x4                _projectionMatrix;
