@@ -89,8 +89,8 @@ namespace mint
 
         private:
             static void             _pushCirclularPoints(const float radius, const float y, const uint32 pointCount, MeshData& meshData) noexcept;
-            static void             _pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept;
-            static void             _pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept;
+            static void             _pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triCount, MeshData& meshData) noexcept;
+            static void             _pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triCount, MeshData& meshData) noexcept;
             static void             _pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept;
 
         public:

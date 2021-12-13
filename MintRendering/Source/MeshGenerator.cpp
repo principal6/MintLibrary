@@ -612,30 +612,44 @@ namespace mint
             }
         }
 
-        void MeshGenerator::_pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        void MeshGenerator::_pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept
         {
+            // 예시) triCount = 8
+            //
+            //    VERTEX INPUT   ||       TRI[0]               TRI[1]               TRI[2]            
+            //                   ||                                                                   
+            //         5         ||         .                    .                    .               
+            //    6         4    ||    .         .          .         .          .         4          
+            //                   ||                                                                   
+            //  7      0      3  ||  .      0      .  =>  .      0      3  =>  .      0      3  => ...
+            //                   ||                                                                   
+            //    8         2    ||    .         2          .         2          .         .          
+            //         1         ||         1                    .                    .               
+            //                   ||                                                                   
+            //
             const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-            for (uint8 iter = 0; iter < count - 1; ++iter)
+            for (uint8 triangleIndex = 0; triangleIndex < triangleCount - 1; ++triangleIndex)
             {
-                pushTri({ 0, indexBase + iter + 1, indexBase + iter }, meshData, uvs);
+                pushTri({ centerIndex, indexBase + triangleIndex + 1, indexBase + triangleIndex }, meshData, uvs);
             }
-            pushTri({ 0, indexBase, indexBase + count - 1 }, meshData, uvs);
+            pushTri({ centerIndex, indexBase, indexBase + triangleCount - 1 }, meshData, uvs);
         }
 
-        void MeshGenerator::_pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        void MeshGenerator::_pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept
         {
             const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f) };
-            for (uint8 iter = 0; iter < count - 1; ++iter)
+            for (uint8 triangleIndex = 0; triangleIndex < triangleCount - 1; ++triangleIndex)
             {
-                pushTri({ indexBase + iter, indexBase + iter + 1, centerIndex }, meshData, uvs);
+                pushTri({ indexBase + triangleIndex, indexBase + triangleIndex + 1, centerIndex }, meshData, uvs);
             }
-            pushTri({ indexBase + count - 1, indexBase, centerIndex }, meshData, uvs);
+            pushTri({ indexBase + triangleCount - 1, indexBase, centerIndex }, meshData, uvs);
         }
 
         void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept
         {
-            // 예를 들어 cube 를 보면 Vertex 는 아래처럼
-            // 윗줄 순서대로 먼저, 그다음 아랫줄 동일한 순서대로 들어와야 하며
+            // 예시) quadCount = 4
+            //
+            // Vertex 는 아래처럼 윗줄 순서대로 먼저, 그다음 아랫줄 동일한 순서대로 들어와야 하며
             // 반드시 윗줄과 아랫줄의 Vertex 개수가 일치해야 한다!
             //
             // VERTEX INPUT  ||  QUAD[0]      QUAD[1]       QUAD[2]        QUAD[3]
