@@ -96,7 +96,6 @@ namespace mint
         void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
             // Vertex winding 에 상관없이 항상 이 순서.
-            // 0-1-2 가 삼각형 하나, 2-1-3 이 다른 삼각형!
             Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
@@ -104,8 +103,8 @@ namespace mint
             calculateTangentBitangent(face, meshData._vertexArray);
             meshData._faceArray.push_back(face);
 
-            face._vertexIndexArray[0] = vertexOffset + 2;
-            face._vertexIndexArray[1] = vertexOffset + 1;
+            face._vertexIndexArray[0] = vertexOffset + 0;
+            face._vertexIndexArray[1] = vertexOffset + 2;
             face._vertexIndexArray[2] = vertexOffset + 3;
             calculateTangentBitangent(face, meshData._vertexArray);
             meshData._faceArray.push_back(face);
@@ -237,20 +236,17 @@ namespace mint
             const Float3 halfExtents{ boxParam._width * 0.5f, boxParam._height * 0.5f, boxParam._depth * 0.5f };
             pushPosition({ -halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
             pushPosition({ +halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ -halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ -halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
             pushPosition({ +halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ -halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ -halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
             pushPosition({ +halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
             pushPosition({ -halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
 
             const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-            pushQuad({ 4, 5, 1, 0 }, meshData, uvs); // Top
-            pushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Front
-            pushQuad({ 1, 5, 6, 2 }, meshData, uvs); // Right
-            pushQuad({ 5, 4, 7, 6 }, meshData, uvs); // Back
-            pushQuad({ 4, 0, 3, 7 }, meshData, uvs); // Left
-            pushQuad({ 3, 2, 6, 7 }, meshData, uvs); // Bottom
+            pushQuad({ 3, 2, 1, 0 }, meshData, uvs); // Top
+            pushQuad({ 4, 5, 6, 7 }, meshData, uvs); // Bottom
+            _pushRingQuads(0, 4, meshData);
         }
 
         void MeshGenerator::generateCone(const ConeParam& coneParam, MeshData& meshData) noexcept
@@ -671,7 +667,7 @@ namespace mint
                       indexBase + quadIndex + 1,
                       indexBase + quadIndex + quadCount + 1,
                       indexBase + quadIndex + quadCount,
-                    }, meshData, uvs);;
+                    }, meshData, uvs);
             }
 
             pushQuad(
@@ -778,13 +774,13 @@ namespace mint
 
             pushVertexWithPositionXXX(positionIndices[0], meshData);
             pushVertexWithPositionXXX(positionIndices[1], meshData);
-            pushVertexWithPositionXXX(positionIndices[3], meshData);
             pushVertexWithPositionXXX(positionIndices[2], meshData);
+            pushVertexWithPositionXXX(positionIndices[3], meshData);
 
             setVertexUv(meshData, vertexCountOld + 0, uvs[0]._x, uvs[0]._y);
             setVertexUv(meshData, vertexCountOld + 1, uvs[1]._x, uvs[1]._y);
-            setVertexUv(meshData, vertexCountOld + 2, uvs[3]._x, uvs[3]._y);
-            setVertexUv(meshData, vertexCountOld + 3, uvs[2]._x, uvs[2]._y);
+            setVertexUv(meshData, vertexCountOld + 2, uvs[2]._x, uvs[2]._y);
+            setVertexUv(meshData, vertexCountOld + 3, uvs[3]._x, uvs[3]._y);
 
             pushQuadFaceXXX(vertexCountOld, meshData);
         }
