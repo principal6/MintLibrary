@@ -300,57 +300,32 @@ namespace mint
                     const float x = ::cos(angleStep * sideIndex) * cylinderParam._radius;
                     const float z = ::sin(angleStep * sideIndex) * cylinderParam._radius;
                     pushPosition({ x, cylinderParam._height, z }, meshData);
+                }
+                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount; ++sideIndex)
+                {
+                    const float x = ::cos(angleStep * sideIndex) * cylinderParam._radius;
+                    const float z = ::sin(angleStep * sideIndex) * cylinderParam._radius;
                     pushPosition({ x, 0.0f, z }, meshData);
                 }
 
                 pushPosition({ 0.0f, 0.0f, 0.0f }, meshData);
             }
+
             const int32 positionIndexTopCenter      = 0;
             const int32 positionIndexBottomCenter   = static_cast<int32>(meshData._positionArray.size() - 1);
 
-            // Cylinder sides
+            // Clylinder sides
+            _pushRingQuads(1, static_cast<uint8>(cylinderParam._sideCount), meshData);
+            if (cylinderParam._smooth == true)
             {
-                const int16 positionIndexBase = 1;
-                const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
-                {
-                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
-                    pushQuad({ positionIndex + 0, positionIndex + 2, positionIndex + 3, positionIndex + 1 }, meshData, uvs);
-                }
-                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
-                pushQuad({ positionIndex + 0, 1, 2, positionIndex + 1 }, meshData, uvs);
-
-                if (cylinderParam._smooth == true)
-                {
-                    smoothNormals(meshData);
-                }
+                smoothNormals(meshData);
             }
 
             // Clylinder top
-            {
-                const int16 positionIndexBase = 1;
-                const Float2 uvs[3]{ Float2(0.5f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
-                {
-                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
-                    pushTri({ positionIndexTopCenter, positionIndex + 2, positionIndex }, meshData, uvs);
-                }
-                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
-                pushTri({ positionIndexTopCenter, positionIndexBase, positionIndex }, meshData, uvs);
-            }
-
+            _pushUpperUmbrellaTris(positionIndexTopCenter, 1, static_cast<uint8>(cylinderParam._sideCount), meshData);
+            
             // Clylinder bottom
-            {
-                const int16 positionIndexBase = 1;
-                const Float2 uvs[3]{ Float2(0.5f, 1.0f), Float2(0.0f, 0.0f), Float2(1.0f, 0.0f) };
-                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount - 1; ++sideIndex)
-                {
-                    const int32 positionIndex = positionIndexBase + sideIndex * 2;
-                    pushTri({ positionIndexBottomCenter, positionIndex + 1, positionIndex + 3 }, meshData, uvs);
-                }
-                const int32 positionIndex = positionIndexBase + (cylinderParam._sideCount - 1) * 2;
-                pushTri({ positionIndexBottomCenter, positionIndex + 1, positionIndexBase + 1 }, meshData, uvs);
-            }
+            _pushLowerUmbrellaTris(positionIndexBottomCenter, 1 + cylinderParam._sideCount, static_cast<uint8>(cylinderParam._sideCount), meshData);
         }
 
         void MeshGenerator::generateSphere(const SphereParam& sphereParam, MeshData& meshData) noexcept
