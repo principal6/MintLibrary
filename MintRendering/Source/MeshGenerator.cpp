@@ -269,33 +269,19 @@ namespace mint
 
                 pushPosition({ 0.0f, 0.0f, 0.0f }, meshData);
             }
+
             const int32 positionIndexTopCenter      = 0;
             const int32 positionIndexBottomCenter   = static_cast<int32>(meshData._positionArray.size() - 1);
 
             // Cone sides
+            _pushUpperUmbrellaTris(positionIndexTopCenter, 1, static_cast<uint8>(coneParam._sideCount), meshData);
+            if (coneParam._smooth == true)
             {
-                const Float2 uvs[3]{ Float2(0.5f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount - 1; ++sideIndex)
-                {
-                    pushTri({ positionIndexTopCenter, sideIndex + 2, sideIndex + 1 }, meshData, uvs);
-                }
-                pushTri({ positionIndexTopCenter, 1, coneParam._sideCount }, meshData, uvs);
-
-                if (coneParam._smooth == true)
-                {
-                    smoothNormals(meshData);
-                }
+                smoothNormals(meshData);
             }
 
             // Cone bottom
-            {
-                const Float2 uvs[3]{ Float2(0.5f, 1.0f), Float2(0.0f, 0.0f), Float2(1.0f, 0.0f) };
-                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount - 1; ++sideIndex)
-                {
-                    pushTri({ positionIndexBottomCenter, sideIndex + 1, sideIndex + 2 }, meshData, uvs);
-                }
-                pushTri({ positionIndexBottomCenter, coneParam._sideCount, 1 }, meshData, uvs);
-            }
+            _pushLowerUmbrellaTris(positionIndexBottomCenter, 1, static_cast<uint8>(coneParam._sideCount), meshData);
         }
 
         void MeshGenerator::generateCylinder(const CylinderParam& cylinderParam, MeshData& meshData) noexcept
