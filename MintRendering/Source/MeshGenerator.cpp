@@ -390,34 +390,11 @@ namespace mint
                 pushPosition({ ::cos(Math::kTwoPi * 0.75f) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.75f) * radiusParam._radius }, meshData);
                 pushPosition({ 0.0f, -radiusParam._radius, 0.0f }, meshData);
             }
+
             const int32 positionIndexTopCenter = 0;
             const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.size() - 1);
-
-            // Upper
-            {
-                const int16 positionIndexBase = 1;
-                const Float2 uvs[3]{ Float2(0.5f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-                for (int16 sideIndex = 0; sideIndex < 3; ++sideIndex)
-                {
-                    const int16 positionIndex = positionIndexBase + sideIndex;
-                    pushTri({ positionIndexTopCenter, positionIndex + 1, positionIndex }, meshData, uvs);
-                }
-                const int16 positionIndex = positionIndexBase + 3;
-                pushTri({ positionIndexTopCenter, 1, positionIndex }, meshData, uvs);
-            }
-
-            // Lower
-            {
-                const int16 positionIndexBase = 1;
-                const Float2 uvs[3]{ Float2(0.5f, 1.0f), Float2(0.0f, 0.0f), Float2(1.0f, 0.0f) };
-                for (int16 sideIndex = 0; sideIndex < 3; ++sideIndex)
-                {
-                    const int16 positionIndex = positionIndexBase + sideIndex;
-                    pushTri({ positionIndexBottomCenter, positionIndex, positionIndex + 1}, meshData, uvs);
-                }
-                const int16 positionIndex = positionIndexBase + 3;
-                pushTri({ positionIndexBottomCenter, positionIndex, 1 }, meshData, uvs);
-            }
+            _pushUpperUmbrellaTris(positionIndexTopCenter, 1, 4, meshData);
+            _pushLowerUmbrellaTris(positionIndexBottomCenter, 1, 4, meshData);
         }
 
         void MeshGenerator::generateHalfOpenOctahedron(const RadiusParam& radiusParam, MeshData& meshData) noexcept
