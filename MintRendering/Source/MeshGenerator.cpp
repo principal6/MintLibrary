@@ -84,6 +84,7 @@ namespace mint
 
         void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
+            // Vertex winding 에 상관없이 항상 이 순서.
             Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
@@ -94,6 +95,8 @@ namespace mint
 
         void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
+            // Vertex winding 에 상관없이 항상 이 순서.
+            // 0-1-2 가 삼각형 하나, 2-1-3 이 다른 삼각형!
             Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
@@ -629,24 +632,39 @@ namespace mint
             pushTri({ indexBase + count - 1, indexBase, centerIndex }, meshData, uvs);
         }
 
-        void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 count, MeshData& meshData) noexcept
+        void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept
         {
+            // 예를 들어 cube 를 보면 Vertex 는 아래처럼
+            // 윗줄 순서대로 먼저, 그다음 아랫줄 동일한 순서대로 들어와야 하며
+            // 반드시 윗줄과 아랫줄의 Vertex 개수가 일치해야 한다!
+            //
+            // VERTEX INPUT  ||  QUAD[0]      QUAD[1]       QUAD[2]        QUAD[3]
+            //               ||                                                   
+            //   3 -- 2      ||                     2       3 -- 2        3       
+            //  /    /       ||                    /|       |    |       /|       
+            // 0 -- 1        ||  0 -- 1           1 |       |    |      0 |       
+            //               ||  |    |  =>       | |   =>  |    |  =>  | |       
+            //   7 -- 6      ||  |    |           | 6       7 -- 6      | 7       
+            //  /    /       ||  |    |           |/                    |/        
+            // 4 -- 5        ||  4 -- 5           5                     4         
+            //               ||
+            //
             const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-            for (uint8 iter = 0; iter < count - 1; ++iter)
+            for (uint8 quadIndex = 0; quadIndex < quadCount - 1; ++quadIndex)
             {
                 pushQuad(
-                    { indexBase + iter,
-                      indexBase + iter + 1,
-                      indexBase + iter + count + 1,
-                      indexBase + iter + count,
+                    { indexBase + quadIndex,
+                      indexBase + quadIndex + 1,
+                      indexBase + quadIndex + quadCount + 1,
+                      indexBase + quadIndex + quadCount,
                     }, meshData, uvs);;
             }
 
             pushQuad(
-                { indexBase + count - 1,
+                { indexBase + quadCount - 1,
                   indexBase,
-                  indexBase + count,
-                  indexBase + count - 1 + count,
+                  indexBase + quadCount,
+                  indexBase + quadCount - 1 + quadCount,
                 }, meshData, uvs);
         }
 
