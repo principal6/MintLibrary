@@ -616,11 +616,11 @@ const bool testWindow()
             
             // InstantRenderer 테스트
             //instantRenderer.drawBox(Rendering::SRT(), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
-            //instantRenderer.drawCapsule(Rendering::SRT(Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
             //instantRenderer.drawCone(Rendering::SRT(Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
-            instantRenderer.drawCylinder(Rendering::SRT(Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
+            //instantRenderer.drawCylinder(Rendering::SRT(Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
             //instantRenderer.drawGeoSphere(Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
             //instantRenderer.drawSphere(Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
+            //instantRenderer.drawCapsule(Rendering::SRT(Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
 
             instantRenderer.render();
 
