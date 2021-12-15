@@ -253,7 +253,7 @@ namespace mint
 
             drawLine(screenOffset + Float2(120 - kHalfSize, 200 - kHalfSize), screenOffset + Float2(120 + kHalfSize, 200 + kHalfSize), 4.0f);
 
-            setPosition(screenOffset4 + Float4(180 + 60, 200 + 50, 0, 0));
+            setPosition(screenOffset4 + Float4(180 + 60, 200 + kHalfSize, 0, 0));
             drawColorPalleteXXX(kSize);
         }
 
