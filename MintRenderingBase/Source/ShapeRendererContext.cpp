@@ -1160,7 +1160,7 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        void ShapeRendererContext::drawColorPallete(const float radius)
+        void ShapeRendererContext::drawColorPalleteXXX(const float radius)
         {
             static constexpr uint32 colorCount = 12;
             static const Color colorArray[colorCount] = {
