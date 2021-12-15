@@ -52,7 +52,7 @@ namespace mint
             void                                setBorderColor(const Color& borderColor) noexcept;
 
         public:
-            void                                testDraw(const Float2& screenOffset);
+            virtual void                        testDraw(const Float2& screenOffset);
 
         public:
             // Independent from internal position set by setPosition() call

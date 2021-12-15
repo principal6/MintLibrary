@@ -39,6 +39,9 @@ namespace mint
             const FontRendererContext::FontData&    getFontData() const noexcept;
 
         public:
+            virtual void                            testDraw(const Float2& screenOffset) override final;
+
+        public:
             void                                    drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
             void                                    drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
             void                                    drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
