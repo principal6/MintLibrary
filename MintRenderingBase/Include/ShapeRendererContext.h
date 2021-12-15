@@ -114,7 +114,7 @@ namespace mint
 
         public:
             // This function is slow...!!!
-            void                                drawColorPallete(const float radius);
+            void                                drawColorPalleteXXX(const float radius);
 
         protected:
             LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
