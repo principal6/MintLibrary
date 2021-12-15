@@ -24,6 +24,7 @@ namespace mint
             virtual const bool                      hasData() const noexcept override final;
             virtual void                            flush() noexcept override final;
             virtual void                            render() noexcept final;
+            // TODO: render() 함수랑 통합할 것. 함수가 두 개니까 헷갈림.
             virtual void                            renderAndFlush() noexcept final;
 
         public:
