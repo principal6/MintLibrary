@@ -203,6 +203,60 @@ namespace mint
             _borderColor = borderColor;
         }
 
+        void ShapeRendererContext::testDraw(const Float2& screenOffset)
+        {
+            const float kSize = 40.0f;
+            const float kHalfSize = kSize * 0.5f;
+
+            setColor(Color(20, 200, 80));
+            
+            // First row
+
+            drawQuadraticBezier(screenOffset + Float2(-kHalfSize, +kHalfSize), screenOffset + Float2(+kHalfSize, +kHalfSize), screenOffset + Float2(0, -kHalfSize));
+
+            drawSolidTriangle(screenOffset + Float2(60 - kHalfSize, -kHalfSize), screenOffset + Float2(60 + kHalfSize, -kHalfSize), screenOffset + Float2(60, +kHalfSize));
+            
+            const Float4 screenOffset4 = Float4(screenOffset._x, screenOffset._y, 0.0f, 1.0f);
+            setPosition(screenOffset4 + Float4(120, 0, 0, 0));
+            drawCircularTriangle(kHalfSize, 0.0f, false);
+            
+            setPosition(screenOffset4 + Float4(180, 0, 0, 0));
+            drawQuarterCircle(kHalfSize, 0.0f);
+
+            setPosition(screenOffset4 + Float4(240, 20, 0, 0));
+            drawHalfCircle(kHalfSize, 0.0f);
+
+            // Second row
+
+            setPosition(screenOffset4 + Float4(0, 100, 0, 0));
+            drawCircle(kHalfSize);
+
+            setPosition(screenOffset4 + Float4(60, 100, 0, 0));
+            drawCircularArc(kHalfSize, Math::kPiOverFour, 0.0f);
+            
+            setPosition(screenOffset4 + Float4(120, 100, 0, 0));
+            drawDoubleCircularArc(kHalfSize, 10.0f, Math::kPiOverFour, 0.0f);
+
+            setPosition(screenOffset4 + Float4(160, 100, 0, 0));
+            drawRectangle(Float2(kSize), 1.0f, 0.0f);
+
+            setPosition(screenOffset4 + Float4(240, 100, 0, 0));
+            drawTaperedRectangle(Float2(kSize), 0.5f, 0.25f, 0.0f);
+
+            // Third row
+
+            setPosition(screenOffset4 + Float4(0, 200, 0, 0));
+            drawRoundedRectangle(Float2(kSize), 4.0f, 1.0f, 0.0f);
+
+            setPosition(screenOffset4 + Float4(60, 200, 0, 0));
+            drawHalfRoundedRectangle(Float2(kSize), 4.0f, 0.0f);
+
+            drawLine(screenOffset + Float2(120 - kHalfSize, 200 - kHalfSize), screenOffset + Float2(120 + kHalfSize, 200 + kHalfSize), 4.0f);
+
+            setPosition(screenOffset4 + Float4(180 + 60, 200 + 50, 0, 0));
+            drawColorPalleteXXX(kSize);
+        }
+
         void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
         {
             drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);

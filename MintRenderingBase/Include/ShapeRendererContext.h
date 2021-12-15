@@ -52,6 +52,9 @@ namespace mint
             void                                setBorderColor(const Color& borderColor) noexcept;
 
         public:
+            void                                testDraw(const Float2& screenOffset);
+
+        public:
             // Independent from internal position set by setPosition() call
             // No rotation allowed
             void                                drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
