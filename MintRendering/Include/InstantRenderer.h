@@ -32,6 +32,9 @@ namespace mint
             void        initialize() noexcept;
 
         public:
+            void        testDraw(const Float3& worldOffset) noexcept;
+
+        public:
             void        drawLine(const Float3& a, const Float3& b, const Color& color) noexcept;
             void        drawBox(const SRT& worldSRT, const Float3& extents, const Color& color) noexcept;
             void        drawCone(const SRT& worldSRT, const float radius, const float height, const uint8 detail, const Color& color) noexcept;
