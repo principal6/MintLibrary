@@ -21,7 +21,7 @@ namespace mint
             for (int32 row = 0; row < M; ++row)
             {
                 const bool areRowsEqual = Math::equals(lhs[row], rhs[row], epsilon);
-                if (false == areRowsEqual)
+                if (areRowsEqual == false)
                 {
                     return false;
                 }
@@ -295,12 +295,12 @@ namespace mint
             // 1 => 0 2 3
             // 2 => 0 1 3
             // 3 => 0 1 2
-            const int32 r0 = (0 == row) ? 1 : 0;
-            const int32 r1 = (0 == (row & 2)) ? 2 : 1;
-            const int32 r2 = (3 == row) ? 2 : 3;
-            const int32 c0 = (0 == col) ? 1 : 0;
-            const int32 c1 = (0 == (col & 2)) ? 2 : 1;
-            const int32 c2 = (3 == col) ? 2 : 3;
+            const int32 r0 = (row == 0) ? 1 : 0;
+            const int32 r1 = ((row & 2) == 0) ? 2 : 1;
+            const int32 r2 = (row == 3) ? 2 : 3;
+            const int32 c0 = (col == 0) ? 1 : 0;
+            const int32 c1 = ((col & 2) == 0) ? 2 : 1;
+            const int32 c2 = (col == 3) ? 2 : 3;
             return determinant(mat[r0][c0], mat[r0][c1], mat[r0][c2], mat[r1][c0], mat[r1][c1], mat[r1][c2], mat[r2][c0], mat[r2][c1], mat[r2][c2]);
         }
 
@@ -687,7 +687,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE const bool Matrix<M, N, T>::isSymmetricMatrix() const noexcept
     {
-        if (false == isSquareMatrix())
+        if (isSquareMatrix() == false)
         {
             return false;
         }
@@ -713,7 +713,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE const bool Matrix<M, N, T>::isSkewSymmetricMatrix() const noexcept
     {
-        if (false == isSquareMatrix())
+        if (isSquareMatrix() == false)
         {
             return false;
         }
@@ -739,7 +739,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE const bool Matrix<M, N, T>::isUpperTriangularMatrix() const noexcept
     {
-        if (false == isSquareMatrix())
+        if (isSquareMatrix() == false)
         {
             return false;
         }
@@ -810,7 +810,7 @@ namespace mint
         {
             static bool isFirstTime = true;
             static Matrix<N, N, T> identityMatrix;
-            if (true == isFirstTime)
+            if (isFirstTime)
             {
                 identityMatrix.setIdentity();
                 isFirstTime = false;

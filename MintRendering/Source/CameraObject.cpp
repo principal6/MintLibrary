@@ -61,7 +61,7 @@ namespace mint
             const Float3& leftDirection = Float3::cross(_forwardDirection, Float3::kAxisY) * handnessSign;
             const Float3& upDirection = Float3::cross(leftDirection, _forwardDirection) * handnessSign;
             
-            const float moveSpeedFloat = getMoveSpeedAsFloat((true == _isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
+            const float moveSpeedFloat = getMoveSpeedAsFloat((_isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
             SRT& srt = getObjectTransformSRT();
             switch (moveDirection)
             {

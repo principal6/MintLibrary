@@ -162,12 +162,12 @@ namespace mint
     template<typename T>
     inline String<T>& String<T>::append(const T* const rawString) noexcept
     {
-        if (true == isNotAllocated())
+        if (isNotAllocated())
         {
             return assign(rawString);
         }
 
-        if (true == isSmallString())
+        if (isSmallString())
         {
             return appendInternalSmallXXX(rawString);
         }
@@ -233,7 +233,7 @@ namespace mint
 
         const uint32 oldLength = length();
         T* temp = MemoryRaw::allocateMemory<T>(oldLength + 1);
-        __copyString(temp, (true == isSmallString()) ? _short._smallString : _long._rawPointer, oldLength);
+        __copyString(temp, (isSmallString()) ? _short._smallString : _long._rawPointer, oldLength);
 
         release();
         
@@ -286,7 +286,7 @@ namespace mint
     {
         _setSize(0);
 
-        if (true == isSmallString())
+        if (isSmallString())
         {
             _short._smallString[0] = 0;
         }
@@ -496,7 +496,7 @@ namespace mint
     template<typename T>
     inline void String<T>::release() noexcept
     {
-        if (false == isSmallString())
+        if (isSmallString() == false)
         {
             MemoryRaw::deallocateMemory<T>(_long._rawPointer);
         }
@@ -508,7 +508,7 @@ namespace mint
     template<typename T>
     inline void String<T>::toLongString() noexcept
     {
-        if (false == isSmallString() || true == isEmpty())
+        if (isSmallString() == false || isEmpty() == true)
         {
             return;
         }

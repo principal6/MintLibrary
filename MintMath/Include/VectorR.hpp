@@ -107,7 +107,7 @@ namespace mint
         {
             for (int32 i = 0; i < N; ++i)
             {
-                if (true == Math::isNan(vec[i]))
+                if (Math::isNan(vec[i]))
                 {
                     return true;
                 }
@@ -563,7 +563,7 @@ namespace mint
         {
             for (uint32 i = 0; i < N; ++i)
             {
-                if (true == Math::isNan(in.getComponent(i)))
+                if (Math::isNan(in.getComponent(i)))
                 {
                     return true;
                 }

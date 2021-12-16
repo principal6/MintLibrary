@@ -144,7 +144,7 @@ namespace mint
         }
 
         auto& startBucket = _bucketArray[startBucketIndex];
-        if (false == startBucket._isUsed)
+        if (startBucket._isUsed == false)
         {
             setBucket(startBucketIndex, 0, key, value);
             return;
@@ -194,7 +194,7 @@ namespace mint
         }
 
         auto& startBucket = _bucketArray[startBucketIndex];
-        if (false == startBucket._isUsed)
+        if (startBucket._isUsed == false)
         {
             setBucket(startBucketIndex, 0, key, std::move(value));
             return;
@@ -338,7 +338,7 @@ namespace mint
     template<typename Key, typename Value>
     inline const bool HashMap<Key, Value>::empty() const noexcept
     {
-        return 0 == _bucketCount;
+        return _bucketCount == 0;
     }
 
     template<typename Key, typename Value>

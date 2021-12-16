@@ -54,7 +54,7 @@ namespace mint
                 _rendererContext->drawLine(p0, p1, thickness);
             }
 
-            if (true == _debugOptions._drawControlPoints)
+            if (_debugOptions._drawControlPoints)
             {
                 _rendererContext->setColor(_debugOptions._controlPointColor);
 

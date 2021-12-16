@@ -421,7 +421,7 @@ namespace mint
                 for (int32 inputSlot = 1; inputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT; ++inputSlot)
                 {
                     std::string typeName = typeMetaData.getTypeName() + std::to_string(inputSlot);
-                    if (false == existsTypeMetaData(typeName))
+                    if (existsTypeMetaData(typeName) == false)
                     {
                         break;
                     }

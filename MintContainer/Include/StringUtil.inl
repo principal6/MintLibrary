@@ -8,12 +8,12 @@ namespace mint
     {
         MINT_INLINE const bool isNullOrEmpty(const char* const rawString)
         {
-            return (nullptr == rawString || '\0' == rawString[0]);
+            return (rawString == nullptr || rawString[0] == '\0');
         }
 
         MINT_INLINE const bool isNullOrEmpty(const wchar_t* const rawWideString)
         {
-            return (nullptr == rawWideString || L'\0' == rawWideString[0]);
+            return (rawWideString == nullptr || rawWideString[0] == L'\0');
         }
 
         MINT_INLINE const uint32 length(const char* const rawString)
@@ -78,12 +78,12 @@ namespace mint
 
         MINT_INLINE const bool compare(const char* const a, const char* const b)
         {
-            return (0 == ::strcmp(a, b));
+            return (::strcmp(a, b) == 0);
         }
         
         MINT_INLINE const bool compare(const wchar_t* const a, const wchar_t* const b)
         {
-            return (0 == ::wcscmp(a, b));
+            return (::wcscmp(a, b) == 0);
         }
 
         template<uint32 DestSize>

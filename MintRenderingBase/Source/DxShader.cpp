@@ -468,7 +468,7 @@ namespace mint
             }
 
             const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-            if (false == _boundShaderIdArray[shaderTypeIndex].isValid())
+            if (_boundShaderIdArray[shaderTypeIndex].isValid() == false)
             {
                 return;
             }

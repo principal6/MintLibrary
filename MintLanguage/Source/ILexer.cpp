@@ -97,7 +97,7 @@ namespace mint
         {
             const uint32 lengthOpen = StringUtil::length(lineSkipperOpen);
             const uint32 lengthClose = StringUtil::length(lineSkipperClose);
-            if ((0 == lengthOpen || 2 < lengthOpen) || (0 == lengthClose || 2 < lengthClose))
+            if ((lengthOpen == 0 || lengthOpen > 2) || (lengthClose == 0 || lengthClose > 2))
             {
                 MINT_LOG_ERROR("김장원", "lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: Open[%d] Close[%d]", lengthOpen, lengthClose);
                 return;
@@ -106,7 +106,7 @@ namespace mint
             // OpenClose
             if (StringUtil::compare(lineSkipperOpen, lineSkipperClose) == true)
             {
-                const uint64 keyOpenClose = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
+                const uint64 keyOpenClose = (lengthOpen == 1) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpenClose).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenCloseMarker, 0));
@@ -119,7 +119,7 @@ namespace mint
             // Open & Close
             {
                 const uint16 nextGroupId = getLineSkipperNextGroupId();
-                const uint64 keyOpen = (1 == lengthOpen) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
+                const uint64 keyOpen = (lengthOpen == 1) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpen).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenMarker, nextGroupId));
@@ -127,7 +127,7 @@ namespace mint
                     _lineSkipperUmap.insert(keyOpen, lineSkipperIndex);
                 }
 
-                const uint64 keyClose = (1 == lengthClose) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
+                const uint64 keyClose = (lengthClose == 1) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
                 if (_lineSkipperUmap.find(keyClose).isValid() == false)
                 {
                     _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, lineSkipperSemantic, LineSkipperClassifier::CloseMarker, nextGroupId));
@@ -140,13 +140,13 @@ namespace mint
         void ILexer::registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic)
         {
             const uint32 length = StringUtil::length(lineSkipper);
-            if (0 == length || 2 < length)
+            if (length == 0 || length > 2)
             {
                 MINT_LOG_ERROR("김장원", "lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
             }
 
-            const uint64 key = (1 == length) ? lineSkipper[0] : static_cast<uint64>(lineSkipper[1]) * 255 + lineSkipper[0];
+            const uint64 key = (length == 1) ? lineSkipper[0] : static_cast<uint64>(lineSkipper[1]) * 255 + lineSkipper[0];
             if (_lineSkipperUmap.find(key).isValid() == false)
             {
                 _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipper, lineSkipperSemantic, LineSkipperClassifier::SingleMarker, 0));
@@ -194,7 +194,7 @@ namespace mint
         void ILexer::registerPunctuator(const char* const punctuator)
         {
             const uint32 length = StringUtil::length(punctuator);
-            if (0 == length || 3 < length)
+            if (length == 0 || length > 3)
             {
                 MINT_LOG_ERROR("김장원", "punctuator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
@@ -213,7 +213,7 @@ namespace mint
         void ILexer::registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier)
         {
             const uint32 length = StringUtil::length(operator_);
-            if (0 == length || 2 < length)
+            if (length == 0 || length > 2)
             {
                 MINT_LOG_ERROR("김장원", "operator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
@@ -224,7 +224,7 @@ namespace mint
                 return;
             }
 
-            const uint64 key = (1 == length) ? operator_[0] : static_cast<uint64>(operator_[1]) * 255 + operator_[0];
+            const uint64 key = (length == 1) ? operator_[0] : static_cast<uint64>(operator_[1]) * 255 + operator_[0];
             if (_operatorUmap.find(key).isValid() == false)
             {
                 _operatorTable.push_back(OperatorTableItem(operator_, operatorClassifier));
@@ -524,7 +524,7 @@ namespace mint
                 // Delimiter 제외 자기 자신도 symbol 이다!!!
                 if (symbolClassifier != SymbolClassifier::Delimiter)
                 {
-                    char symbolStringRaw[4] = { ch0, (2 == advance) ? ch1 : 0, (3 == advance) ? ch2 : 0, 0 };
+                    char symbolStringRaw[4] = { ch0, (advance == 2) ? ch1 : 0, (advance == 3) ? ch2 : 0, 0 };
                     _symbolTable.push_back(SymbolTableItem(symbolClassifier, symbolStringRaw, sourceAt));
                 }
 
@@ -608,7 +608,7 @@ namespace mint
 
         const bool ILexer::isStatementTerminator(const char input) const noexcept
         {
-            return (0 == _statementTerminator) ? false : (_statementTerminator == input);
+            return (_statementTerminator == 0) ? false : (_statementTerminator == input);
         }
 
         const bool ILexer::isGrouper(const char input, GrouperTableItem& out) const noexcept

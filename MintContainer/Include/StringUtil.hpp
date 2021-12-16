@@ -261,7 +261,7 @@ namespace mint
             uint64 prevAt = 0;
             while (at < length)
             {
-                if (0 == inputString.compare(at, delimiterLength, delimiterString))
+                if (inputString.compare(at, delimiterLength, delimiterString) == 0)
                 {
                     if (prevAt < at)
                     {

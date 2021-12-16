@@ -29,7 +29,7 @@ void main(triangle VS_OUTPUT input[3], inout LineStream<VS_OUTPUT> output)
     for (int i = 0; i < 3; ++i)
     {
         const int index0 = i + 0;
-        const int index1 = (2 == index0) ? 0 : index0 + 1;
+        const int index1 = (index0 == 2) ? 0 : index0 + 1;
 
         element._worldPosition = input[index0]._worldPosition;
         element._screenPosition = mul(element._worldPosition, _cbViewProjectionMatrix);

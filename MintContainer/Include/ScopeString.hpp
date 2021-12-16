@@ -176,7 +176,7 @@ namespace mint
     inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::append(const T* const rawString) noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
-        if (true == canInsert(rawStringLength))
+        if (canInsert(rawStringLength))
         {
             _copyString(&_raw[_length], rawString, rawStringLength);
             _length += rawStringLength;
@@ -189,7 +189,7 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::append(const ScopeString& rhs) noexcept
     {
-        if (true == canInsert(rhs._length))
+        if (canInsert(rhs._length))
         {
             _copyString(&_raw[_length], &rhs._raw[0], rhs._length);
             _length += rhs._length;

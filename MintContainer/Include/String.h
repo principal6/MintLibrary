@@ -68,10 +68,10 @@ namespace mint
         void                        clear() noexcept;
 
     public:
-        MINT_INLINE const bool      empty() const noexcept { return 0 == size(); }
-        MINT_INLINE const uint32    size() const noexcept { return static_cast<uint32>(true == isSmallString() ? _short._size : _long._size); }
+        MINT_INLINE const bool      empty() const noexcept { return (size() == 0); }
+        MINT_INLINE const uint32    size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
         MINT_INLINE const uint32    length() const noexcept { return size(); }
-        MINT_INLINE const uint32    capacity() const noexcept { return static_cast<uint32>(true == isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
+        MINT_INLINE const uint32    capacity() const noexcept { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
         const T*                    c_str() const noexcept;
 
     private:
@@ -95,8 +95,8 @@ namespace mint
         void                        release() noexcept;
         void                        toLongString() noexcept;
         MINT_INLINE const bool      isSmallString() const noexcept { return _short._size < Short::kSmallStringCapacity; }
-        MINT_INLINE const bool      isEmpty() const noexcept { return (isSmallString() == true) ? (0 == _short._size) : (0 == _long._size); }
-        MINT_INLINE const bool      isNotAllocated() const noexcept { return (isSmallString() == true) ? (0 == _short._size) : (nullptr == _long._rawPointer); }
+        MINT_INLINE const bool      isEmpty() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._size == 0); }
+        MINT_INLINE const bool      isNotAllocated() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
 
     private:
         //

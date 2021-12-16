@@ -597,7 +597,7 @@ namespace mint
 
         void GraphicDevice::beginRendering()
         {
-            if (true == _needEndRenderingCall)
+            if (_needEndRenderingCall)
             {
                 MINT_LOG_ERROR("김장원", "beginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 endRendering() 을 호출해 주세요!");
                 return;
@@ -625,7 +625,7 @@ namespace mint
 
         void GraphicDevice::endRendering()
         {
-            if (false == _needEndRenderingCall)
+            if (_needEndRenderingCall == false)
             {
                 MINT_LOG_ERROR("김장원", "endRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 beginRendering() 을 호출해 주세요!");
                 return;

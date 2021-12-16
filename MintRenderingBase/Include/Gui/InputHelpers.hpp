@@ -352,7 +352,7 @@ namespace mint
             eraseSelection(controlData, outText);
 
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-            if (false == insertWstring(fromClipboard, caretAt, outText))
+            if (insertWstring(fromClipboard, caretAt, outText) == false)
             {
                 if (errorMessage != nullptr)
                 {

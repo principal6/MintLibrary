@@ -288,7 +288,7 @@ namespace mint
 
             setSizeData(newSize);
             
-            if (true == onlyUpdateData)
+            if (onlyUpdateData)
             {
                 return;
             }

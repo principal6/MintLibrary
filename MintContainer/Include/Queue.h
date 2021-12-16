@@ -23,7 +23,7 @@ namespace mint
     public:
         MINT_INLINE const uint32    size() const noexcept { return _size; }
         MINT_INLINE const uint32    capacity() const noexcept { return _capacity; }
-        MINT_INLINE const bool      empty() const noexcept { return (0 == _size); }
+        MINT_INLINE const bool      empty() const noexcept { return (_size == 0); }
 
     public:
         void                        push(const T& newEntry) noexcept;

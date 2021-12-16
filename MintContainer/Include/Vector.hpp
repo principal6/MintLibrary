@@ -354,7 +354,7 @@ namespace mint
     {
         if (_size == _capacity)
         {
-            reserve((0 == _capacity) ? kBaseCapacity : _capacity * 2);
+            reserve((_capacity == 0) ? kBaseCapacity : _capacity * 2);
         }
     }
 

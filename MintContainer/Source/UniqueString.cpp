@@ -30,7 +30,7 @@ namespace mint
 
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
     UniqueStringA::UniqueStringA(const UniqueStringAId id)
-        : _id{ (true == _pool.isValid(id)) ? id : UniqueStringA::kInvalidId }
+        : _id{ (_pool.isValid(id)) ? id : UniqueStringA::kInvalidId }
 #if defined MINT_DEBUG
         , _str{ _pool.getRawString(_id) }
 #endif
@@ -56,7 +56,7 @@ namespace mint
 
     const UniqueStringAId UniqueStringPoolA::registerString(const char* const rawString) noexcept
     {
-        if (nullptr == rawString)
+        if (rawString == nullptr)
         {
             return UniqueStringA::kInvalidId;
         }

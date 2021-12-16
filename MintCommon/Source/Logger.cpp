@@ -182,7 +182,7 @@ namespace mint
             localtime_s(&localNow, &now);
             strftime(timeBuffer, kTimeBufferSize, "%Y-%m-%d-%H:%M:%S", &localNow);
 
-            if (nullptr == logTag || nullptr == functionName || nullptr == fileName)
+            if (logTag == nullptr || functionName == nullptr || fileName == nullptr)
             {
                 if (author == nullptr || ::strlen(author) == 0)
                 {

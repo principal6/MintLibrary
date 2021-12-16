@@ -949,7 +949,7 @@ namespace mint
             Rendering::Color finalBackgroundColor;
             const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
             const bool isChecked = controlData._controlValue._booleanData.get();
-            if (nullptr != outIsChecked)
+            if (outIsChecked != nullptr)
             {
                 *outIsChecked = isChecked;
             }
@@ -1579,7 +1579,7 @@ namespace mint
 
             const bool wasToggled = menuBar._controlValue._booleanData.get();
             const Float2 interactionSize = Float2(menuBar._controlValue._itemData._itemSize._x, menuBar.getInteractionSize()._y);
-            if (true == _controlInteractionStates.hasPressedControl() 
+            if (_controlInteractionStates.hasPressedControl() 
                 && ControlCommonHelpers::isInControl(_mouseStates.getPosition(), menuBar._position, Float2::kZero, interactionSize) == false)
             {
                 menuBar._controlValue._booleanData.set(false);
@@ -2377,7 +2377,7 @@ namespace mint
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
                 ControlData newControlData{ controlId, stackTopControlData.getId(), controlType };
-                if (nullptr != text)
+                if (text != nullptr)
                 {
                     newControlData._text = text;
                 }
@@ -2602,7 +2602,7 @@ namespace mint
                 Float2& parentControlContentAreaSize = const_cast<Float2&>(parentControlData.getContentAreaSize());
                 if (prepareControlDataParam._ignoreMeForContentAreaSize == false)
                 {
-                    if (true == _controlMetaStateSet.getNextSameLine())
+                    if (_controlMetaStateSet.getNextSameLine())
                     {
                         if (parentControlContentAreaSize._x == 0.0f)
                         {
@@ -2612,8 +2612,8 @@ namespace mint
                         parentControlContentAreaSize._x += controlData._displaySize._x + kDefaultIntervalX;
                     }
 
-                    parentControlContentAreaSize._y += (true == _controlMetaStateSet.getNextSameLine()) ? 0.0f : controlData._displaySize._y;
-                    parentControlContentAreaSize._y += (true == addIntervalY) ? kDefaultIntervalY : 0.0f;
+                    parentControlContentAreaSize._y += (_controlMetaStateSet.getNextSameLine()) ? 0.0f : controlData._displaySize._y;
+                    parentControlContentAreaSize._y += (addIntervalY) ? kDefaultIntervalY : 0.0f;
                 }
 
                 controlData._position = parentControlChildAt;

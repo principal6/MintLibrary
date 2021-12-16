@@ -211,7 +211,7 @@ namespace mint
     template <typename T>
     inline const bool Serializer::deserialize(const char* const fileName, T& to) noexcept
     {
-        if (false == _reader.open(fileName))
+        if (_reader.open(fileName) == false)
         {
             return false;
         }

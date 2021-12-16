@@ -81,7 +81,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
@@ -108,7 +108,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
@@ -134,7 +134,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (nullptr != resourceContent) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;

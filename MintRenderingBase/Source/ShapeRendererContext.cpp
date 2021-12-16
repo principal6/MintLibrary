@@ -109,22 +109,22 @@ namespace mint
                         const float flipped = input._texCoord.z;
                         
                         float signedDistance = 0.0;
-                        if (0.0 == input._info.x)
+                        if (input._info.x == 0.0)
                         {
                             // Quadratic Bezier
                             signedDistance = -(u * u - v);
                         }
-                        else if (1.0 == input._info.x)
+                        else if (input._info.x == 1.0)
                         {
                             // Solid triangle
                             return input._color;
                         }
-                        else if (2.0 == input._info.x)
+                        else if (input._info.x == 2.0)
                         {
                             // Circular section
                             signedDistance = flipped * (1.0 -  sqrt(u * u + v * v));
                         }
-                        else if (3.0 == input._info.x)
+                        else if (input._info.x == 3.0)
                         {
                             // Circle
                             signedDistance = flipped * (1.0 - sqrt(input._texCoord.x * input._texCoord.x + input._texCoord.y * input._texCoord.y));

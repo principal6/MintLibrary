@@ -178,7 +178,7 @@ namespace mint
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
                 const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
-                if (false == rendererContext.existsFontData(kFontFileName))
+                if (rendererContext.existsFontData(kFontFileName) == false)
                 {
                     rendererContext.pushGlyphRange(GlyphRange(0, 0x33DD));
                     rendererContext.bakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);

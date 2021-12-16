@@ -297,7 +297,7 @@ namespace mint
             int16 pixelY{ 0 };
             wchar_t maxCharCode = 0;
             const uint32 glyphRangeCount = _glyphRangeArray.size();
-            if (0 == glyphRangeCount)
+            if (glyphRangeCount == 0)
             {
                 MINT_LOG_ERROR("김장원", "glyphRangeCount 가 0 입니다!! pushGlyphRange() 함수를 먼저 호출해주세요!");
                 return false;
@@ -583,7 +583,7 @@ namespace mint
                         float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
                         
                         const bool drawShade = (input._info.y == 1.0);
-                        if (true == drawShade)
+                        if (drawShade)
                         {
                             const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
                             const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
@@ -779,7 +779,7 @@ namespace mint
         {
             const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-            if (false == leaveOnlySpace)
+            if (leaveOnlySpace == false)
             {
                 const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
 
