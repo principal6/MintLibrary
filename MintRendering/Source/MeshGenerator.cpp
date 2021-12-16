@@ -288,19 +288,8 @@ namespace mint
 
                 pushPosition({ 0.0f, cylinderParam._height, 0.0f }, meshData);
 
-                const float angleStep = Math::kTwoPi / static_cast<float>(cylinderParam._sideCount);
-                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount; ++sideIndex)
-                {
-                    const float x = ::cos(angleStep * sideIndex) * cylinderParam._radius;
-                    const float z = ::sin(angleStep * sideIndex) * cylinderParam._radius;
-                    pushPosition({ x, cylinderParam._height, z }, meshData);
-                }
-                for (int16 sideIndex = 0; sideIndex < cylinderParam._sideCount; ++sideIndex)
-                {
-                    const float x = ::cos(angleStep * sideIndex) * cylinderParam._radius;
-                    const float z = ::sin(angleStep * sideIndex) * cylinderParam._radius;
-                    pushPosition({ x, 0.0f, z }, meshData);
-                }
+                _pushCirclularPoints(cylinderParam._radius, cylinderParam._height, cylinderParam._sideCount, meshData);
+                _pushCirclularPoints(cylinderParam._radius, 0.0f, cylinderParam._sideCount, meshData);
 
                 pushPosition({ 0.0f, 0.0f, 0.0f }, meshData);
             }
@@ -378,10 +367,9 @@ namespace mint
             {
                 meshData._positionArray.reserve(6);
                 pushPosition({ 0.0f, +radiusParam._radius, 0.0f }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.0f ) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.0f ) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.25f) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.25f) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.5f ) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.5f ) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.75f) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.75f) * radiusParam._radius }, meshData);
+
+                _pushCirclularPoints(radiusParam._radius, 0.0f, 4, meshData);
+                
                 pushPosition({ 0.0f, -radiusParam._radius, 0.0f }, meshData);
             }
 
@@ -399,10 +387,8 @@ namespace mint
             {
                 meshData._positionArray.reserve(6);
                 pushPosition({ 0.0f, +radiusParam._radius, 0.0f }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.0f ) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.0f ) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.25f) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.25f) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.5f ) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.5f ) * radiusParam._radius }, meshData);
-                pushPosition({ ::cos(Math::kTwoPi * 0.75f) * radiusParam._radius, 0.0f, ::sin(Math::kTwoPi * 0.75f) * radiusParam._radius }, meshData);
+                
+                _pushCirclularPoints(radiusParam._radius, 0.0f, 4, meshData);
             }
 
             const int32 positionIndexTopCenter = 0;
