@@ -293,16 +293,16 @@ namespace mint
             v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::QuadraticBezierTriangle);
             vertexArray.push_back(v);
 
-            v._position._x = controlPoint._x;
-            v._position._y = controlPoint._y;
-            v._texCoord._x = 0.5f;
-            v._texCoord._y = 0.0f;
-            vertexArray.push_back(v);
-
             v._position._x = pointArray[1 ^ flip]._x;
             v._position._y = pointArray[1 ^ flip]._y;
             v._texCoord._x = 1.0f;
             v._texCoord._y = 1.0f;
+            vertexArray.push_back(v);
+
+            v._position._x = controlPoint._x;
+            v._position._y = controlPoint._y;
+            v._texCoord._x = 0.5f;
+            v._texCoord._y = 0.0f;
             vertexArray.push_back(v);
 
             const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -338,12 +338,12 @@ namespace mint
                 v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
-                v._position._x = pointB._x;
-                v._position._y = pointB._y;
-                vertexArray.push_back(v);
-
                 v._position._x = pointC._x;
                 v._position._y = pointC._y;
+                vertexArray.push_back(v);
+
+                v._position._x = pointB._x;
+                v._position._y = pointB._y;
                 vertexArray.push_back(v);
             }
             
@@ -378,15 +378,15 @@ namespace mint
             v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
             vertexArray.push_back(v);
 
-            v._position._x += radius;
-            v._texCoord._x = 1.0f;
-            v._texCoord._y = 1.0f;
-            vertexArray.push_back(v);
-
-            v._position._x = -halfRadius;
             v._position._y += radius;
             v._texCoord._x = 0.0f;
             v._texCoord._y = 0.0f;
+            vertexArray.push_back(v);
+
+            v._position._x += radius;
+            v._position._y = -halfRadius;
+            v._texCoord._x = 1.0f;
+            v._texCoord._y = 1.0f;
             vertexArray.push_back(v);
 
             const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
@@ -436,13 +436,14 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 vertexArray.push_back(v);
 
+                v._position._x = offset._x - halfRadius;
                 v._position._y = offset._y + halfRadius;
-                v._texCoord._x = 1.0f;
+                v._texCoord._x = 0.0f;
                 v._texCoord._y = 0.0f;
                 vertexArray.push_back(v);
 
-                v._position._x = offset._x - halfRadius;
-                v._texCoord._x = 0.0f;
+                v._position._x = offset._x + halfRadius;
+                v._texCoord._x = 1.0f;
                 v._texCoord._y = 0.0f;
                 vertexArray.push_back(v);
             }
@@ -451,8 +452,8 @@ namespace mint
             auto& indexArray = _lowLevelRenderer->indices();
             {
                 indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 3);
                 indexArray.push_back(vertexBase + 1);
-                indexArray.push_back(vertexBase + 2);
 
                 indexArray.push_back(vertexBase + 0);
                 indexArray.push_back(vertexBase + 2);
@@ -527,13 +528,13 @@ namespace mint
             {
                 // Body left upper
                 indexArray.push_back(vertexBase + 0);
+                indexArray.push_back(vertexBase + 3);
                 indexArray.push_back(vertexBase + 1);
-                indexArray.push_back(vertexBase + 2);
 
                 // Body right lower
-                indexArray.push_back(vertexBase + 1);
-                indexArray.push_back(vertexBase + 3);
+                indexArray.push_back(vertexBase + 0);
                 indexArray.push_back(vertexBase + 2);
+                indexArray.push_back(vertexBase + 3);
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
@@ -605,20 +606,20 @@ namespace mint
 
             auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexBase + 0);
-            indexArray.push_back(vertexBase + 1);
             indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 1);
 
             indexArray.push_back(vertexBase + 3);
-            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 4);
+            indexArray.push_back(vertexBase + 0);
 
             indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 5);
             indexArray.push_back(vertexBase + 2);
-            indexArray.push_back(vertexBase + 5);
 
             indexArray.push_back(vertexBase + 4);
-            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 5);
+            indexArray.push_back(vertexBase + 0);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
@@ -748,43 +749,43 @@ namespace mint
             
             // Right outer arc section
             indexArray.push_back(vertexBase + 0);
-            indexArray.push_back(vertexBase + 1);
             indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 1);
 
             // Left outer arc section
             indexArray.push_back(vertexBase + 3);
-            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 4);
+            indexArray.push_back(vertexBase + 0);
 
             // Middle-right
             indexArray.push_back(vertexBase + 0);
-            indexArray.push_back(vertexBase + 2);
             indexArray.push_back(vertexBase + 5);
+            indexArray.push_back(vertexBase + 2);
 
             // Middle-left
             indexArray.push_back(vertexBase + 4);
-            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 5);
+            indexArray.push_back(vertexBase + 0);
 
             // Right inner arc section
             indexArray.push_back(vertexBase + 6);
-            indexArray.push_back(vertexBase + 7);
             indexArray.push_back(vertexBase + 8);
+            indexArray.push_back(vertexBase + 7);
 
             // Left inner arc section
             indexArray.push_back(vertexBase + 9);
-            indexArray.push_back(vertexBase + 6);
             indexArray.push_back(vertexBase + 10);
+            indexArray.push_back(vertexBase + 6);
 
             // Right side
             indexArray.push_back(vertexBase + 5);
-            indexArray.push_back(vertexBase + 2);
             indexArray.push_back(vertexBase + 11);
+            indexArray.push_back(vertexBase + 2);
 
             // Left side
             indexArray.push_back(vertexBase + 4);
-            indexArray.push_back(vertexBase + 5);
             indexArray.push_back(vertexBase + 12);
+            indexArray.push_back(vertexBase + 5);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
@@ -862,13 +863,13 @@ namespace mint
 
             // Body left upper
             indexArray.push_back(vertexBase + 0);
+            indexArray.push_back(vertexBase + 3);
             indexArray.push_back(vertexBase + 1);
-            indexArray.push_back(vertexBase + 2);
 
             // Body right lower
-            indexArray.push_back(vertexBase + 1);
-            indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 3);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
@@ -911,12 +912,12 @@ namespace mint
             auto& indexArray = _lowLevelRenderer->indices();
             {
                 indexArray.push_back(vertexBase + 0);
-                indexArray.push_back(vertexBase + 1);
-                indexArray.push_back(vertexBase + 2);
-
-                indexArray.push_back(vertexBase + 1);
                 indexArray.push_back(vertexBase + 3);
+                indexArray.push_back(vertexBase + 1);
+
+                indexArray.push_back(vertexBase + 0);
                 indexArray.push_back(vertexBase + 2);
+                indexArray.push_back(vertexBase + 3);
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
@@ -1186,12 +1187,12 @@ namespace mint
             const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
             auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back(vertexBase + 0);
-            indexArray.push_back(vertexBase + 1);
-            indexArray.push_back(vertexBase + 2);
-
-            indexArray.push_back(vertexBase + 1);
             indexArray.push_back(vertexBase + 3);
+            indexArray.push_back(vertexBase + 1);
+
+            indexArray.push_back(vertexBase + 0);
             indexArray.push_back(vertexBase + 2);
+            indexArray.push_back(vertexBase + 3);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);

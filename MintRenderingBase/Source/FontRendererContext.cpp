@@ -833,14 +833,15 @@ namespace mint
             const auto& vertexArray = _lowLevelRenderer->vertices();
             const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
 
+            // 오른손 좌표계
             auto& indexArray = _lowLevelRenderer->indices();
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
-
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
+            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
+
+            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
             indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
+            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
         }
     }
 }

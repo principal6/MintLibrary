@@ -340,7 +340,7 @@ namespace mint
                 rasterizerDescriptor.DepthBiasClamp = 0.0f;
                 rasterizerDescriptor.DepthClipEnable = TRUE;
                 rasterizerDescriptor.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
-                rasterizerDescriptor.FrontCounterClockwise = FALSE;
+                rasterizerDescriptor.FrontCounterClockwise = TRUE; // 오른손 좌표계
                 rasterizerDescriptor.MultisampleEnable = TRUE;
                 rasterizerDescriptor.ScissorEnable = FALSE;
                 rasterizerDescriptor.SlopeScaledDepthBias = 0.0f;

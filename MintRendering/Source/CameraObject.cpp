@@ -9,7 +9,7 @@ namespace mint
     {
         CameraObject::CameraObject(const ObjectPool* const objectPool)
             : Object(objectPool, ObjectType::CameraObject)
-            , _isRightHanded{ false }
+            , _isRightHanded{ true }
             , _fov{ Math::toRadian(60.0f) }
             , _nearZ{ 0.1f }
             , _farZ{ 1000.0f }

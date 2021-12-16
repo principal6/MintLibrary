@@ -22,4 +22,7 @@ namespace mint
         MINT_LOG_UNTAGGED("MintLibrary", "> This is MintLibrary");
         MINT_LOG_UNTAGGED("MintLibrary", "> Version %d.%02d\n", LibraryVersion::getVersionMajor(), LibraryVersion::getVersionMinor());
     }
+
+    // 2D Tri == { 0, 1, 2 }
+    // 2D Quad == { 0, 3, 1 } + { 0, 2, 3 }
 }
