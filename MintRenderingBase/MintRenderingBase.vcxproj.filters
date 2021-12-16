@@ -111,6 +111,9 @@
     <ClInclude Include="Include\ShapeFontRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Gui\ControlMetaStateSet.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -123,6 +126,9 @@
       <Filter>Include\CppHlsl</Filter>
     </None>
     <None Include="Include\Gui\GuiContext.inl">
+      <Filter>Include\Gui</Filter>
+    </None>
+    <None Include="Include\Gui\ControlMetaStateSet.inl">
       <Filter>Include\Gui</Filter>
     </None>
   </ItemGroup>

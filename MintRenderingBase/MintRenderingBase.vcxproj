@@ -206,6 +206,7 @@
     <ClInclude Include="Include\GraphicDevice.h" />
     <ClInclude Include="Include\Gui\ControlData.h" />
     <ClInclude Include="Include\Gui\ControlData.hpp" />
+    <ClInclude Include="Include\Gui\ControlMetaStateSet.h" />
     <ClInclude Include="Include\Gui\GuiCommon.h" />
     <ClInclude Include="Include\Gui\GuiContext.h" />
     <ClInclude Include="Include\Gui\InputHelpers.h" />
@@ -223,6 +224,7 @@
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
     <None Include="Include\GraphicDevice.inl" />
+    <None Include="Include\Gui\ControlMetaStateSet.inl" />
     <None Include="Include\Gui\GuiContext.inl" />
     <None Include="Include\IRendererContext.inl" />
   </ItemGroup>
