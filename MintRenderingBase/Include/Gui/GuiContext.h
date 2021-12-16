@@ -21,6 +21,7 @@
 #include <MintRenderingBase/Include/Gui/ControlData.h>
 #include <MintRenderingBase/Include/Gui/InputHelpers.h>
 #include <MintRenderingBase/Include/Gui/ControlMetaStateSet.h>
+#include <MintRenderingBase/Include/Gui/ControlInteractionStateSet.h>
 
 
 // This macro makes arguments for begin-/make- functions of GuiContext
@@ -45,36 +46,7 @@ namespace mint
     {
         class GuiContext;
 
-        static constexpr float          kDefaultIntervalX = 5.0f;
-        static constexpr float          kDefaultIntervalY = 5.0f;
-        static constexpr float          kDefaultRoundnessInPixel = 8.0f;
-        static constexpr float          kDefaultFocusedAlpha = 0.875f;
-        static constexpr float          kDefaultOutOfFocusAlpha = 0.5f;
-        static constexpr float          kDefaultRoundButtonRadius = 7.0f;
-        static constexpr float          kFontScaleA = 1.0f;
-        static constexpr float          kFontScaleB = 0.875f;
-        static constexpr float          kFontScaleC = 0.8125f;
-        static constexpr Rect           kWindowInnerPadding = Rect(4.0f);
-        static constexpr float          kScrollBarThickness = 8.0f;
-        static constexpr Rect           kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
-        static constexpr float          kTitleBarBaseThickness = Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert();
-        static constexpr Float2         kMenuBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + 8.0f);
-        static constexpr float          kMenuBarItemTextSpace = 24.0f;
-        static constexpr float          kMenuItemSpaceLeft = 16.0f;
-        static constexpr float          kMenuItemSpaceRight = 48.0f;
-        static constexpr float          kHalfBorderThickness = 5.0f;
-        static constexpr float          kSliderTrackThicknes = 6.0f;
-        static constexpr float          kSliderThumbRadius = 8.0f;
-        static constexpr float          kDockingInteractionShort = 30.0f;
-        static constexpr float          kDockingInteractionLong = 40.0f;
-        static constexpr float          kDockingInteractionDisplayBorderThickness = 2.0f;
-        static constexpr float          kDockingInteractionOffset = 5.0f;
-        static constexpr Float2         kCheckBoxSize = Float2(16.0f, 16.0f);
-        static constexpr float          kMouseWheelScrollScale = -8.0f;
-        static constexpr float          kTextBoxBackSpaceStride = 48.0f;
-        static constexpr uint32         kTextBoxMaxTextLength = 2048;
-
-
+        
         struct WindowParam
         {
             CommonControlParam  _common;
@@ -180,62 +152,6 @@ namespace mint
                 ControlId           _id;
             };
 
-            class ControlInteractionStateSet
-            {
-            public:
-                void                            setControlHovered(const ControlData& controlData) noexcept;
-                const bool                      setControlPressed(const ControlData& controlData) noexcept;
-                const bool                      setControlClicked(const ControlData& controlData) noexcept;
-                void                            setControlFocused(const ControlData& controlData) noexcept;
-            
-            public:
-                MINT_INLINE const bool          hasPressedControl() const noexcept { return _pressedControlId.isValid(); }
-                MINT_INLINE const bool          hasClickedControl() const noexcept { return _clickedControlIdPerFrame.isValid(); }
-                MINT_INLINE const bool          hasFocusedControl() const noexcept { return _focusedControlId.isValid(); }
-            
-            public:
-                const bool                      isControlHovered(const ControlData& controlData) const noexcept;
-                const bool                      isControlPressed(const ControlData& controlData) const noexcept;
-                const bool                      isControlClicked(const ControlData& controlData) const noexcept;
-                const bool                      isControlFocused(const ControlData& controlData) const noexcept;
-                const bool                      isHoveringMoreThan(const uint64 durationMs) const noexcept;
-            
-            public:
-                MINT_INLINE const ControlId&    getHoveredControlId() const noexcept { return _hoveredControlId; }
-                MINT_INLINE const ControlId&    getPressedControlId() const noexcept { return _pressedControlId; }
-                MINT_INLINE const ControlId&    getFocusedControlId() const noexcept { return _focusedControlId; }
-
-            public:
-                void                            resetPerFrameStates(const MouseStates& mouseStates) noexcept;
-                void                            resetHover() noexcept;
-                void                            resetHoverIf(const ControlData& controlData) noexcept;
-                void                            resetPressIf(const ControlData& controlData) noexcept;
-            
-            public:
-                MINT_INLINE void                setMouseInteractionDoneThisFrame() noexcept { _isMouseInteractionDoneThisFrame = true; }
-                MINT_INLINE const bool          isMouseInteractionDoneThisFrame() const noexcept { return _isMouseInteractionDoneThisFrame; }
-
-            public:
-                MINT_INLINE const bool          needToShowTooltip() const noexcept { return _tooltipParentWindowId.isValid(); }
-                MINT_INLINE const wchar_t*      getTooltipText() const noexcept { return _tooltipTextFinal; }
-                const Float2                    getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
-                MINT_INLINE const ControlId&    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
-                void                            setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlId& tooltipParentWindowId) noexcept;
-
-            private:
-                bool                            _isMouseInteractionDoneThisFrame = false;
-                ControlId                       _hoveredControlId;
-                ControlId                       _focusedControlId;
-                ControlId                       _pressedControlId;
-                Float2                          _pressedControlInitialPosition;
-                ControlId                       _clickedControlIdPerFrame;
-                uint64                          _hoverStartTimeMs = 0;
-                bool                            _hoverStarted = false;
-                Float2                          _tooltipPosition;
-                ControlId                       _tooltipParentWindowId;
-                const wchar_t*                  _tooltipTextFinal = nullptr;
-            };
-        
         private:
                                                         GuiContext(Rendering::GraphicDevice* const graphicDevice);
 

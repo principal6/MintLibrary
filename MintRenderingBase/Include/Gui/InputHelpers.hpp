@@ -8,6 +8,7 @@
 #include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintRenderingBase/Include/Gui/ControlData.hpp>
+#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 
 #include <MintPlatform/Include/InputContext.h>
 

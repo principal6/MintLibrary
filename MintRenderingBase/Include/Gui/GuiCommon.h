@@ -9,6 +9,8 @@
 
 #include <MintMath/Include/Float4.h>
 
+#include <MintRenderingBase/Include/RenderingBaseCommon.h>
+
 
 namespace mint
 {
@@ -173,6 +175,36 @@ namespace mint
             Rendering::Color    _backgroundColor;
             Rendering::Color    _fontColor;
         };
+
+
+        static constexpr float          kDefaultIntervalX = 5.0f;
+        static constexpr float          kDefaultIntervalY = 5.0f;
+        static constexpr float          kDefaultRoundnessInPixel = 8.0f;
+        static constexpr float          kDefaultFocusedAlpha = 0.875f;
+        static constexpr float          kDefaultOutOfFocusAlpha = 0.5f;
+        static constexpr float          kDefaultRoundButtonRadius = 7.0f;
+        static constexpr float          kFontScaleA = 1.0f;
+        static constexpr float          kFontScaleB = 0.875f;
+        static constexpr float          kFontScaleC = 0.8125f;
+        static constexpr Rect           kWindowInnerPadding = Rect(4.0f);
+        static constexpr float          kScrollBarThickness = 8.0f;
+        static constexpr Rect           kTitleBarInnerPadding = Rect(12.0f, 6.0f, 6.0f, 6.0f);
+        static constexpr float          kTitleBarBaseThickness = Rendering::kDefaultFontSize + kTitleBarInnerPadding.vert();
+        static constexpr Float2         kMenuBarBaseSize = Float2(0.0f, Rendering::kDefaultFontSize + 8.0f);
+        static constexpr float          kMenuBarItemTextSpace = 24.0f;
+        static constexpr float          kMenuItemSpaceLeft = 16.0f;
+        static constexpr float          kMenuItemSpaceRight = 48.0f;
+        static constexpr float          kHalfBorderThickness = 5.0f;
+        static constexpr float          kSliderTrackThicknes = 6.0f;
+        static constexpr float          kSliderThumbRadius = 8.0f;
+        static constexpr float          kDockingInteractionShort = 30.0f;
+        static constexpr float          kDockingInteractionLong = 40.0f;
+        static constexpr float          kDockingInteractionDisplayBorderThickness = 2.0f;
+        static constexpr float          kDockingInteractionOffset = 5.0f;
+        static constexpr Float2         kCheckBoxSize = Float2(16.0f, 16.0f);
+        static constexpr float          kMouseWheelScrollScale = -8.0f;
+        static constexpr float          kTextBoxBackSpaceStride = 48.0f;
+        static constexpr uint32         kTextBoxMaxTextLength = 2048;
     }
 }
 

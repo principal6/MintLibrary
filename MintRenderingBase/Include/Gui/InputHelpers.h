@@ -18,6 +18,12 @@ namespace mint
     class Float4;
 
 
+    namespace Rendering
+    {
+        class ShapeFontRendererContext;
+    }
+
+
     namespace Gui
     {
         class ControlData;

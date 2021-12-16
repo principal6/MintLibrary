@@ -114,6 +114,9 @@
     <ClInclude Include="Include\Gui\ControlMetaStateSet.h">
       <Filter>Include\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Gui\ControlInteractionStateSet.h">
+      <Filter>Include\Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -179,6 +182,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Gui\GuiContext.cpp">
+      <Filter>Source\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Gui\ControlInteractionStateSet.cpp">
       <Filter>Source\Gui</Filter>
     </ClCompile>
   </ItemGroup>
