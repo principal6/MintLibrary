@@ -195,6 +195,7 @@ namespace mint
 
         private:
             Window::IWindow*                            _window;
+            Int2                                        _lastWindowSize;
 
         private:
             Color                                       _clearColor;

@@ -276,7 +276,10 @@ namespace mint
 
             _window = window;
             _clearColor = _window->getBackgroundColor();
+            _lastWindowSize = _window->getSize();
+            
             createDxDevice();
+            
             if (loadFontData() == false)
             {
                 return false;
@@ -289,10 +292,15 @@ namespace mint
 
         void GraphicDevice::updateScreenSize()
         {
+            if (_window->getSize() == _lastWindowSize)
+            {
+                return;
+            }
+
             _deviceContext->OMSetRenderTargets(0, nullptr, nullptr);
             _deviceContext->OMSetDepthStencilState(nullptr, 0);
 
-            //_backBufferRtv->Release();
+            _backBufferRtv->Release();
 
             _swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0);
 
@@ -302,6 +310,8 @@ namespace mint
             initialize2DProjectionMatrix(Float2(_window->getSize()));
 
             setDefaultRenderTargetsAndDepthStencil();
+
+            _lastWindowSize = _window->getSize();
         }
 
         void GraphicDevice::createDxDevice()
