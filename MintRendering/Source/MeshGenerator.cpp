@@ -259,13 +259,7 @@ namespace mint
 
                 pushPosition({ 0.0f, coneParam._height, 0.0f }, meshData);
 
-                const float angleStep = Math::kTwoPi / static_cast<float>(coneParam._sideCount);
-                for (int16 sideIndex = 0; sideIndex < coneParam._sideCount; ++sideIndex)
-                {
-                    const float x = ::cos(angleStep * sideIndex) * coneParam._radius;
-                    const float z = ::sin(angleStep * sideIndex) * coneParam._radius;
-                    pushPosition({ x, 0.0f, z }, meshData);
-                }
+                _pushCirclularPoints(coneParam._radius, 0.0f, coneParam._sideCount, meshData);
 
                 pushPosition({ 0.0f, 0.0f, 0.0f }, meshData);
             }
@@ -519,7 +513,7 @@ namespace mint
             }
         }
 
-        void MeshGenerator::_pushCirclularPoints(const float radius, const float y, const uint32 pointCount, MeshData& meshData) noexcept
+        void MeshGenerator::_pushCirclularPoints(const float radius, const float y, const uint32 sideCount, MeshData& meshData) noexcept
         {
             if (radius < Math::kFloatEpsilon)
             {
@@ -527,10 +521,10 @@ namespace mint
                 return;
             }
 
-            const float angleStep = Math::kTwoPi / pointCount;
-            for (uint8 pointIndex = 0; pointIndex < pointCount; ++pointIndex)
+            const float angleStep = Math::kTwoPi / sideCount;
+            for (uint8 sideIndex = 0; sideIndex < sideCount; ++sideIndex)
             {
-                const float angle = angleStep * pointIndex;
+                const float angle = angleStep * sideIndex;
                 pushPosition({ ::cos(angle) * radius, y, ::sin(angle) * radius }, meshData);
             }
         }

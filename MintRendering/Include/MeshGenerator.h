@@ -88,7 +88,7 @@ namespace mint
             static void             generateCapsule(const CapsulePram& capsulePram, MeshData& meshData) noexcept;
 
         private:
-            static void             _pushCirclularPoints(const float radius, const float y, const uint32 pointCount, MeshData& meshData) noexcept;
+            static void             _pushCirclularPoints(const float radius, const float y, const uint32 sideCount, MeshData& meshData) noexcept;
             static void             _pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
             static void             _pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept;
             static void             _pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept;
