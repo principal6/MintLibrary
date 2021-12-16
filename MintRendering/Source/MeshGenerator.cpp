@@ -235,17 +235,18 @@ namespace mint
             meshData._positionArray.reserve(8);
             const Float3 halfExtents{ boxParam._width * 0.5f, boxParam._height * 0.5f, boxParam._depth * 0.5f };
             pushPosition({ -halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ +halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ +halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
             pushPosition({ -halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
+            
             pushPosition({ -halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
-            pushPosition({ +halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
             pushPosition({ -halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, -halfExtents._y, +halfExtents._z }, meshData);
+            pushPosition({ +halfExtents._x, -halfExtents._y, -halfExtents._z }, meshData);
 
             const Float2 uvs[4]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
-            pushQuad({ 3, 2, 1, 0 }, meshData, uvs); // Top
-            pushQuad({ 4, 5, 6, 7 }, meshData, uvs); // Bottom
+            pushQuad({ 0, 1, 2, 3 }, meshData, uvs); // Top
+            pushQuad({ 7, 6, 5, 4 }, meshData, uvs); // Bottom
             _pushRingQuads(0, 4, meshData);
         }
 
@@ -511,7 +512,7 @@ namespace mint
             for (uint8 sideIndex = 0; sideIndex < sideCount; ++sideIndex)
             {
                 const float angle = angleStep * sideIndex;
-                pushPosition({ ::cos(angle) * radius, y, ::sin(angle) * radius }, meshData);
+                pushPosition({ ::cos(angle) * radius, y, -::sin(angle) * radius }, meshData);
             }
         }
 
@@ -533,9 +534,9 @@ namespace mint
             const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 1.0f), Float2(0.0f, 1.0f) };
             for (uint8 triangleIndex = 0; triangleIndex < triangleCount - 1; ++triangleIndex)
             {
-                pushTri({ centerIndex, indexBase + triangleIndex + 1, indexBase + triangleIndex }, meshData, uvs);
+                pushTri({ centerIndex, indexBase + triangleIndex, indexBase + triangleIndex + 1 }, meshData, uvs);
             }
-            pushTri({ centerIndex, indexBase, indexBase + triangleCount - 1 }, meshData, uvs);
+            pushTri({ centerIndex, indexBase + triangleCount - 1,indexBase }, meshData, uvs);
         }
 
         void MeshGenerator::_pushLowerUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept
@@ -543,9 +544,9 @@ namespace mint
             const Float2 uvs[3]{ Float2(0.0f, 0.0f), Float2(1.0f, 0.0f), Float2(1.0f, 1.0f) };
             for (uint8 triangleIndex = 0; triangleIndex < triangleCount - 1; ++triangleIndex)
             {
-                pushTri({ indexBase + triangleIndex, indexBase + triangleIndex + 1, centerIndex }, meshData, uvs);
+                pushTri({ indexBase + triangleIndex, centerIndex, indexBase + triangleIndex + 1 }, meshData, uvs);
             }
-            pushTri({ indexBase + triangleCount - 1, indexBase, centerIndex }, meshData, uvs);
+            pushTri({ indexBase + triangleCount - 1, centerIndex, indexBase }, meshData, uvs);
         }
 
         void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept
@@ -571,17 +572,17 @@ namespace mint
             {
                 pushQuad(
                     { indexBase + quadIndex,
-                      indexBase + quadIndex + 1,
-                      indexBase + quadIndex + quadCount + 1,
                       indexBase + quadIndex + quadCount,
+                      indexBase + quadIndex + quadCount + 1,
+                      indexBase + quadIndex + 1,
                     }, meshData, uvs);
             }
 
             pushQuad(
                 { indexBase + quadCount - 1,
-                  indexBase,
-                  indexBase + quadCount,
                   indexBase + quadCount - 1 + quadCount,
+                  indexBase + quadCount,
+                  indexBase,
                 }, meshData, uvs);
         }
 
