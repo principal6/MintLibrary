@@ -740,7 +740,7 @@ namespace mint
                 }
                 MINT_INLINE const bool    hasMidpoint(const PositionEdge& edge) const noexcept
                 {
-                    return (0 <= _edgeTable[getIndexFromEdge(edge)]);
+                    return (_edgeTable[getIndexFromEdge(edge)] >= 0);
                 }
                 MINT_INLINE const int32   getMidpointPositionIndex(const PositionEdge& edge) const noexcept
                 {

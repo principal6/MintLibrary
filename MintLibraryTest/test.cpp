@@ -403,7 +403,7 @@ const bool testWindow()
                 else if (inputContext.isMouseWheelScrolled() == true)
                 {
                     const float mouseWheelScroll = inputContext.getMouseWheelScroll();
-                    if (0.0f < mouseWheelScroll)
+                    if (mouseWheelScroll > 0.0f)
                     {
                         testCameraObject->increaseMoveSpeed();
                     }

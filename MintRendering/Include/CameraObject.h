@@ -65,7 +65,7 @@ namespace mint
             MINT_INLINE constexpr const MoveSpeed getSlowerMoveSpeed(const MoveSpeed moveSpeed)
             {
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
-                if (0 < moveSpeedUint8)
+                if (moveSpeedUint8 > 0)
                 {
                     return static_cast<MoveSpeed>(moveSpeedUint8 - 1);
                 }

@@ -293,7 +293,7 @@ namespace mint
                         memberTypeMetaData.setDeclName(childNodeData._identifier);
                         memberTypeMetaData._customData.setInputSlot(inputSlot);
 
-                        if (2 <= attributeCount)
+                        if (attributeCount >= 2)
                         {
                             // SemanticName
                             SyntaxTreeNode attribute1 = childNode.getChildNode(1);
@@ -329,7 +329,7 @@ namespace mint
             
                 pushTypeMetaData(fullTypeName, typeMetaData);
 
-                if (0 < inputSlot)
+                if (inputSlot > 0)
                 {
                     TypeMetaData<TypeCustomData>& streamDataForSlots = accessTypeMetaData(streamDataTypeNameForSlots);
                     streamDataForSlots._customData.pushSlottedStreamData(typeMetaData);

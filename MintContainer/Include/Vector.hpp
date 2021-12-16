@@ -361,28 +361,28 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::front() noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::front() const noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE T& Vector<T>::back() noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[_size - 1];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::back() const noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[_size - 1];
     }
 

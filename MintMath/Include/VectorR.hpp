@@ -377,21 +377,21 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE T& VectorR<N, T>::y() noexcept
     {
-        static_assert(2 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 2, "Vector dimension is not enough!");
         return _c[1];
     }
 
     template<int32 N, typename T>
     MINT_INLINE T& VectorR<N, T>::z() noexcept
     {
-        static_assert(3 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 3, "Vector dimension is not enough!");
         return _c[2];
     }
 
     template<int32 N, typename T>
     MINT_INLINE T& VectorR<N, T>::w() noexcept
     {
-        static_assert(4 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 4, "Vector dimension is not enough!");
         return _c[3];
     }
 
@@ -404,21 +404,21 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE const T& VectorR<N, T>::y() const noexcept
     {
-        static_assert(2 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 2, "Vector dimension is not enough!");
         return _c[1];
     }
 
     template<int32 N, typename T>
     MINT_INLINE const T& VectorR<N, T>::z() const noexcept
     {
-        static_assert(3 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 3, "Vector dimension is not enough!");
         return _c[2];
     }
 
     template<int32 N, typename T>
     MINT_INLINE const T& VectorR<N, T>::w() const noexcept
     {
-        static_assert(4 <= N, "Vector dimension is not enough!");
+        static_assert(N >= 4, "Vector dimension is not enough!");
         return _c[3];
     }
 
@@ -516,7 +516,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE VectorR<N - 1, T> VectorR<N, T>::shrink() const noexcept
     {
-        MINT_ASSERT("±èÀå¿ø", 1 < N, "N must be greater than 1!!!");
+        MINT_ASSERT("±èÀå¿ø", N > 1, "N must be greater than 1!!!");
             
         VectorR<N - 1, T> result;
         for (uint32 i = 0; i < N - 1; ++i)

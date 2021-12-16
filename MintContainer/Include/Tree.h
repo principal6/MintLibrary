@@ -126,7 +126,7 @@ namespace mint
     class Tree
     {
         static constexpr uint32             kDefaultNodeArraySize = 16;
-        static_assert(0 < kDefaultNodeArraySize, "kDefaultNodeArraySize must not be 0");
+        static_assert(kDefaultNodeArraySize > 0, "kDefaultNodeArraySize must not be 0");
 
     public:
                                             Tree();

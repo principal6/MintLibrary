@@ -129,7 +129,7 @@ namespace mint
                 }
             }
 
-            if (0 <= foundIndex)
+            if (foundIndex >= 0)
             {
                 if (foundIndex < meshComponentCount)
                 {

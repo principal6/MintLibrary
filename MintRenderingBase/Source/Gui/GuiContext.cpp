@@ -879,7 +879,7 @@ namespace mint
             if (windowControlData.isDocking() == true)
             {
                 const ControlData& dockControlData = getControlData(windowControlData.getDockControlId());
-                if (0 < _updateScreenSizeCounter)
+                if (_updateScreenSizeCounter > 0)
                 {
                     windowControlData._position = dockControlData.getDockPosition(windowControlData._dockRelatedData._lastDockingMethod);
                     windowControlData._displaySize = dockControlData.getDockSize(windowControlData._dockRelatedData._lastDockingMethod);
@@ -1207,7 +1207,7 @@ namespace mint
             }
 
             const wchar_t inputCandidate[2]{ _wcharInputCandidate, L'\0' };
-            const float inputCandidateWidth = ((isFocused == true) && (32 <= _wcharInputCandidate)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const float inputCandidateWidth = ((isFocused == true) && (_wcharInputCandidate >= 32)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
             const uint16 textLength = static_cast<uint16>(outText.length());
             Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
@@ -1241,7 +1241,7 @@ namespace mint
             rendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
 
             // Text, Caret, Selection 렌더링
-            const bool needToRenderInputCandidate = (isFocused == true && 32 <= _wcharInputCandidate);
+            const bool needToRenderInputCandidate = (isFocused == true && _wcharInputCandidate >= 32);
             if (needToRenderInputCandidate == true)
             {
                 Gui::InputBoxHelpers::drawTextWithInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, _wcharInputCandidate, controlData, outText);
@@ -1757,7 +1757,7 @@ namespace mint
             rendererContext.drawRoundedRectangle(menuItem._displaySize, 0.0f, 0.0f, 0.0f);
 
             const uint16 previousMaxChildCount = menuItem.getPreviousMaxChildControlCount();
-            if (0 < previousMaxChildCount)
+            if (previousMaxChildCount > 0)
             {
                 const Float2& controlRightCenterPosition = menuItem.getControlRightCenterPosition();
                 Float2 a = controlRightCenterPosition + Float2(-14, -5);
@@ -1891,7 +1891,7 @@ namespace mint
             {
                 const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
                 const float extraSize = parentControlData.getPreviousContentAreaSize()._y - parentWindowPureDisplayHeight;
-                if (0.0f <= extraSize)
+                if (extraSize >= 0.0f)
                 {
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
@@ -1907,7 +1907,7 @@ namespace mint
                         shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
 
                         // Rect
-                        if (0.0f < rectLength)
+                        if (rectLength > 0.0f)
                         {
                             trackRenderPosition._y += rectLength * 0.5f;
                             shapeFontRendererContext.setPosition(trackRenderPosition);
@@ -1915,7 +1915,7 @@ namespace mint
                         }
 
                         // Lower half circle
-                        if (0.0f < rectLength)
+                        if (rectLength > 0.0f)
                         {
                             trackRenderPosition._y += rectLength * 0.5f;
                         }
@@ -1930,7 +1930,7 @@ namespace mint
             {
                 const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
                 const float extraSize = parentControlData.getPreviousContentAreaSize()._x - parentWindowPureDisplayWidth;
-                if (0.0f <= extraSize)
+                if (extraSize >= 0.0f)
                 {
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
@@ -1946,7 +1946,7 @@ namespace mint
                         shapeFontRendererContext.drawHalfCircle(radius, +Math::kPiOverTwo);
 
                         // Rect
-                        if (0.0f < rectLength)
+                        if (rectLength > 0.0f)
                         {
                             trackRenderPosition._x += rectLength * 0.5f;
                             shapeFontRendererContext.setPosition(trackRenderPosition);
@@ -1954,7 +1954,7 @@ namespace mint
                         }
 
                         // Right half circle
-                        if (0.0f < rectLength)
+                        if (rectLength > 0.0f)
                         {
                             trackRenderPosition._x += rectLength * 0.5f;
                         }
@@ -2029,7 +2029,7 @@ namespace mint
                     shapeFontRendererContext.drawHalfCircle(radius, 0.0f);
 
                     // Rect
-                    if (0.0f < rectLength)
+                    if (rectLength > 0.0f)
                     {
                         thumbRenderPosition._y += rectLength * 0.5f;
                         shapeFontRendererContext.setPosition(thumbRenderPosition);
@@ -2037,7 +2037,7 @@ namespace mint
                     }
 
                     // Lower half circle
-                    if (0.0f < rectLength)
+                    if (rectLength > 0.0f)
                     {
                         thumbRenderPosition._y += rectLength * 0.5f;
                     }
@@ -2092,7 +2092,7 @@ namespace mint
                     shapeFontRendererContext.drawHalfCircle(radius, +Math::kPiOverTwo);
 
                     // Rect
-                    if (0.0f < rectLength)
+                    if (rectLength > 0.0f)
                     {
                         thumbRenderPosition._x += rectLength * 0.5f;
                         shapeFontRendererContext.setPosition(thumbRenderPosition);
@@ -2100,7 +2100,7 @@ namespace mint
                     }
 
                     // Right half circle
-                    if (0.0f < rectLength)
+                    if (rectLength > 0.0f)
                     {
                         thumbRenderPosition._x += rectLength * 0.5f;
                     }
@@ -3021,7 +3021,7 @@ namespace mint
                         {
                             const float titleBarOffset = _mouseStates.getPosition()._x - dockTitleBarAreaRect.left();
                             const int32 targetDockedControlindex = dockDatum.getDockedControlIndexByMousePosition(titleBarOffset);
-                            if (0 <= targetDockedControlindex)
+                            if (targetDockedControlindex >= 0)
                             {
                                 const int32 originalDockedControlIndex = dockDatum.getDockedControlIndex(changeTargetControlData.getId());
                                 if (originalDockedControlIndex != targetDockedControlindex)
@@ -3326,7 +3326,7 @@ namespace mint
                     indexToErase = static_cast<int32>(iter);
                 }
             }
-            if (0 <= indexToErase)
+            if (indexToErase >= 0)
             {
                 dockDatum._dockedControlIdArray.erase(indexToErase);
             }
@@ -3672,7 +3672,7 @@ namespace mint
         const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
         {
             float result = 0.0f;
-            if (0.0f != _mouseStates._mouseWheel 
+            if (_mouseStates._mouseWheel != 0.0f
                 && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
             {
                 result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
@@ -3743,7 +3743,7 @@ namespace mint
             // 다음 프레임에서 가장 먼저 렌더링 되는 것!!
             processDock(_rootControlData, getRendererContext(RendererContextLayer::Background));
 
-            if (0 < _updateScreenSizeCounter)
+            if (_updateScreenSizeCounter > 0)
             {
                 --_updateScreenSizeCounter;
             }

@@ -160,14 +160,14 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Queue<T>::peek() noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "_size 가 0 인 Queue 입니다!!!");
+        MINT_ASSERT("김장원", _size > 0, "_size 가 0 인 Queue 입니다!!!");
         return _rawPointer[_headAt];
     }
 
     template<typename T>
     MINT_INLINE const T& Queue<T>::peek() const noexcept
     {
-        MINT_ASSERT("김장원", 0 < _size, "_size 가 0 인 Queue 입니다!!!");
+        MINT_ASSERT("김장원", _size > 0, "_size 가 0 인 Queue 입니다!!!");
         return _rawPointer[_headAt];
     }
 }

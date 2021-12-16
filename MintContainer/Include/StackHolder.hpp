@@ -14,8 +14,8 @@ namespace mint
         , _allocMetaDataArray{}
         , _rawByteArray{}
     {
-        static_assert(0 < UnitByteSize, "UnitByteSize 를 1 이상의 값으로 지정하세요.");
-        static_assert(0 < MaxUnitCount, "MaxUnitCount 를 1 이상의 값으로 지정하세요.");
+        static_assert(UnitByteSize > 0, "UnitByteSize 를 1 이상의 값으로 지정하세요.");
+        static_assert(MaxUnitCount > 0, "MaxUnitCount 를 1 이상의 값으로 지정하세요.");
 
         if ((MaxUnitCount % kBitMaskByteCount) != 0)
         {
@@ -34,7 +34,7 @@ namespace mint
     template<uint32 UnitByteSize, uint32 MaxUnitCount>
     inline byte* StackHolder<UnitByteSize, MaxUnitCount>::registerSpace(const CountMetaDataType unitCount)
     {
-        MINT_ASSERT("김장원", 0 < unitCount, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
+        MINT_ASSERT("김장원", unitCount > 0, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
         MINT_ASSERT("김장원", unitCount <= kBitMaskByteCount, "!!! 한번에 할당 가능한 최대 Unit 수를 넘었습니다 !!!");
 
         uint32 allocMetaDataIndex = 0;

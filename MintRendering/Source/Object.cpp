@@ -64,7 +64,7 @@ namespace mint
                 }
             }
 
-            if (0 <= foundComponentIndex)
+            if (foundComponentIndex >= 0)
             {
                 if (foundComponentIndex < componentCount - 1)
                 {

@@ -481,7 +481,7 @@ namespace mint
             MINT_ASSERT("±èÀå¿ø", objectId.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
             const int32 index = binarySearch(_resourceArray, objectId);
-            if (0 <= index)
+            if (index >= 0)
             {
                 return _resourceArray[index];
             }

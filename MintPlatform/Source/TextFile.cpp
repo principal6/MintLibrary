@@ -87,7 +87,7 @@ namespace mint
         if (_encoding == TextFileEncoding::UTF8_BOM)
         {
             bool writeBom = true;
-            if (3 <= _byteArray.size())
+            if (_byteArray.size() >= 3)
             {
                 if (_byteArray.at(0) == 0xEF &&
                     _byteArray.at(1) == 0xBB &&

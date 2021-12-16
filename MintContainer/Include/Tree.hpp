@@ -206,7 +206,7 @@ namespace mint
     template<typename T>
     inline void Tree<T>::destroyRootNode()
     {
-        if (0 < _nodeCount)
+        if (_nodeCount > 0)
         {
             TreeNodeAccessor<T> rootNodeAccessor = getRootNode();
             clearChildNodes(rootNodeAccessor);
@@ -455,7 +455,7 @@ namespace mint
             TreeNode<T>& node = getNodeXXX(nodeAccessor);
 
             const uint32 childCount = static_cast<uint32>(node._childNodeAccessorArray.size());
-            if (0 < childCount)
+            if (childCount > 0)
             {
                 for (uint32 childIndex = childCount - 1; childIndex != kUint32Max; --childIndex)
                 {

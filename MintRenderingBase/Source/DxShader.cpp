@@ -246,7 +246,7 @@ namespace mint
             inputElementDescriptor.AlignedByteOffset = memberTypeMetaData.getByteOffset();
             inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA;
             inputElementDescriptor.InstanceDataStepRate = outerDataTypeMetaData._customData.getInstanceDataStepRate();
-            if (0 < inputElementDescriptor.InstanceDataStepRate)
+            if (inputElementDescriptor.InstanceDataStepRate > 0)
             {
                 inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
             }
@@ -484,7 +484,7 @@ namespace mint
             if (shaderType == DxShaderType::VertexShader)
             {
                 const int32 index = binarySearch(_vertexShaderArray, objectId);
-                if (0 <= index)
+                if (index >= 0)
                 {
                     return _vertexShaderArray[index];
                 }
@@ -492,7 +492,7 @@ namespace mint
             else if (shaderType == DxShaderType::GeometryShader)
             {
                 const int32 index = binarySearch(_geometryShaderArray, objectId);
-                if (0 <= index)
+                if (index >= 0)
                 {
                     return _geometryShaderArray[index];
                 }
@@ -500,7 +500,7 @@ namespace mint
             else if (shaderType == DxShaderType::PixelShader)
             {
                 const int32 index = binarySearch(_pixelShaderArray, objectId);
-                if (0 <= index)
+                if (index >= 0)
                 {
                     return _pixelShaderArray[index];
                 }

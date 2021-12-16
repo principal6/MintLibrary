@@ -123,8 +123,8 @@ namespace mint
     template <int32 M, int32 N, typename T>
     class Matrix
     {
-        static_assert(0 < M, "M must be greater than 0!");
-        static_assert(0 < N, "N must be greater than 0!");
+        static_assert(M > 0, "M must be greater than 0!");
+        static_assert(N > 0, "N must be greater than 0!");
 
     public:
                                 Matrix();

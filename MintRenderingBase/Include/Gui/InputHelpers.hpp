@@ -191,7 +191,7 @@ namespace mint
             const bool isShiftKeyDown = inputContext.isKeyDown(Platform::KeyCode::Shift);
             const bool isControlKeyDown = inputContext.isKeyDown(Platform::KeyCode::Control);
             const uint16 oldCaretAt = controlData._controlValue._textBoxData._caretAt;
-            if (32 <= wcharInputCandidate)
+            if (wcharInputCandidate >= 32)
             {
                 InputBoxHelpers::eraseSelection(controlData, outText);
             }
@@ -199,7 +199,7 @@ namespace mint
             {
                 // 글자 입력 or 키 입력
 
-                const bool isInputCharacter = (32 <= wcharInput);
+                const bool isInputCharacter = (wcharInput >= 32);
                 if (isInputCharacter == true)
                 {
                     const uint16 futureCaretAt = InputBoxHelpers::calculateCaretAtIfErasedSelection(controlData, outText);
@@ -250,7 +250,7 @@ namespace mint
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
+            if (selectionLength > 0)
             {
                 eraseSelection(controlData, outText);
             }
@@ -258,7 +258,7 @@ namespace mint
             {
                 caretAt = min(caretAt, static_cast<uint16>(outText.length()));
 
-                if (outText.empty() == false && 0 < caretAt)
+                if (outText.empty() == false && caretAt > 0)
                 {
                     outText.erase(caretAt - 1);
 
@@ -296,7 +296,7 @@ namespace mint
         inline void InputBoxHelpers::eraseAfter(ControlData& controlData, StringW& outText) noexcept
         {
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
+            if (selectionLength > 0)
             {
                 eraseSelection(controlData, outText);
             }
@@ -304,7 +304,7 @@ namespace mint
             {
                 const uint16 textLength = static_cast<uint16>(outText.length());
                 uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
-                if (0 < textLength && caretAt < textLength)
+                if (textLength > 0 && caretAt < textLength)
                 {
                     outText.erase(caretAt);
 
@@ -518,7 +518,7 @@ namespace mint
         {
             uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
-            if (0 < selectionLength)
+            if (selectionLength > 0)
             {
                 const uint16 textLength = static_cast<uint16>(outText.length() - selectionLength);
                 caretAt = min(static_cast<uint16>(caretAt - selectionLength), textLength);
@@ -593,7 +593,7 @@ namespace mint
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             {
                 const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
-                if (0.0f < deltaTextDisplayOffsetRight)
+                if (deltaTextDisplayOffsetRight > 0.0f)
                 {
                     textDisplayOffset += deltaTextDisplayOffsetRight;
                 }
@@ -639,7 +639,7 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered));
 
             // Text 렌더링 (Caret 이후)
-            const float inputCandidateWidth = ((isFocused == true) && (32 <= inputCandiate)) ? rendererContext.calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const float inputCandidateWidth = ((isFocused == true) && (inputCandiate >= 32)) ? rendererContext.calculateTextWidth(inputCandidate, 1) : 0.0f;
             if (outText.empty() == false)
             {
                 rendererContext.setTextColor(commonControlParam._fontColor);
@@ -702,7 +702,7 @@ namespace mint
             const uint16 selectionStart = textBoxControlData._controlValue._textBoxData._selectionStart;
             const uint16 selectionLength = textBoxControlData._controlValue._textBoxData._selectionLength;
             const uint16 selectionEnd = selectionStart + selectionLength;
-            if (0 < selectionLength)
+            if (selectionLength > 0)
             {
                 const Float2& controlLeftCenterPosition = textBoxControlData.getControlLeftCenterPosition();
                 const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;

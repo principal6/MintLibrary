@@ -11,7 +11,7 @@ VS_OUTPUT main(VS_INPUT input)
 
     float4x4 finalMatrix = mul(_cbWorldMatrix, _cbViewProjectionMatrix);
     output._screenPosition = mul(inputPosition, finalMatrix);
-    if (0.0f < output._screenPosition.w)
+    if (output._screenPosition.w != 0.0f)
     {
         output._screenPosition /= output._screenPosition.w;
     }

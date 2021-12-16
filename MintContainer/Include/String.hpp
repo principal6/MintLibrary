@@ -370,7 +370,7 @@ namespace mint
         String result;
         const T* const dataPointer = c_str();
         const uint32 stringLength = length();
-        if (offset < stringLength && 0 < count)
+        if (offset < stringLength && count > 0)
         {
             const uint32 substringLength = min(count, stringLength - offset);
             result.resize(substringLength);

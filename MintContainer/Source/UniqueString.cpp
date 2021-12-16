@@ -94,7 +94,7 @@ namespace mint
         if (_rawCapacity < rawCapacity)
         {
             char* temp = nullptr;
-            if (0 < _rawCapacity)
+            if (_rawCapacity > 0)
             {
                 temp = MINT_NEW_ARRAY(char, _rawCapacity);
                 memcpy(temp, _rawMemory, sizeof(char) * _rawCapacity);
@@ -103,7 +103,7 @@ namespace mint
             MINT_DELETE_ARRAY(_rawMemory);
 
             _rawMemory = MINT_NEW_ARRAY(char, rawCapacity);
-            if (0 < _rawCapacity)
+            if (_rawCapacity > 0)
             {
                 memcpy(_rawMemory, temp, sizeof(char) * _rawCapacity);
                 MINT_DELETE_ARRAY(temp);

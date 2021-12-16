@@ -27,7 +27,7 @@ namespace mint
             ++_frameCounter;
 
             const uint64 currentTimeUs = getCurrentTimeUs();
-            if (1'000'000 <= currentTimeUs - _previousFpsTimeUs)
+            if (currentTimeUs - _previousFpsTimeUs >= 1'000'000)
             {
                 _fps = _frameCounter;
                 _frameCounter = 0;

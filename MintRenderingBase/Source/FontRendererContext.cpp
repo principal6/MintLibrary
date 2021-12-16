@@ -119,7 +119,7 @@ namespace mint
             _glyphRangeArray.push_back(glyphRange);
 
             const uint32 glyphRangeCount = _glyphRangeArray.size();
-            if (2 <= glyphRangeCount)
+            if (glyphRangeCount >= 2)
             {
                 quickSort(_glyphRangeArray, ComparatorAscending<GlyphRange>());
 
@@ -580,14 +580,14 @@ namespace mint
                     float4 main(VS_OUTPUT_SHAPE input) : SV_Target
                     {
                         const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
-                        float4 sampledColor = float4(input._color.xyz * ((0.0 < sampled) ? 1.0 : 0.0), sampled * input._color.a);
+                        float4 sampledColor = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
                         
                         const bool drawShade = (input._info.y == 1.0);
                         if (drawShade)
                         {
                             const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
                             const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
-                            if (0.0 < rbSampled)
+                            if (rbSampled > 0.0)
                             {
                                 const float3 rbColor = lerp(sampledColor.xyz * 0.25 * max(rbSampled, 0.25), sampledColor.xyz, sampled);
                                 return float4(rbColor, saturate(sampled + rbSampled));
@@ -788,8 +788,8 @@ namespace mint
                 glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
                 glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
                 glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
-                if (0.0f <= glyphRect.right() && glyphRect.left() <= _graphicDevice->getWindowSize()._x
-                    && 0.0f <= glyphRect.bottom() && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+                if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice->getWindowSize()._x
+                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
                 {
                     auto& vertexArray = _lowLevelRenderer->vertices();
 

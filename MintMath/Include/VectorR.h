@@ -69,7 +69,7 @@ namespace mint
     template <int32 N, typename T>
     class VectorR
     {
-        static_assert(0 < N, "N must be greater than 0!");
+        static_assert(N > 0, "N must be greater than 0!");
 
     public:
         static VectorR<N, T>            standardUnitVector(const int32 math_i) noexcept;

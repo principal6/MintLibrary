@@ -16,7 +16,7 @@ namespace mint
     inline StaticBitArray<BitCount>::StaticBitArray()
         : _byteArray{}
     {
-        static_assert(0 < BitCount, "BitCount of StaticBitArray must be greater than zero!!!");
+        static_assert(BitCount > 0, "BitCount of StaticBitArray must be greater than zero!!!");
     }
 
     template<uint32 BitCount>

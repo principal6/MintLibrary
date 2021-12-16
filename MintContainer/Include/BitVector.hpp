@@ -40,7 +40,7 @@ namespace mint
 
     MINT_INLINE const bool BitVector::pop_back()
     {
-        if (0 < _bitCount)
+        if (_bitCount > 0)
         {
             const bool value = last();
             if (value == true)

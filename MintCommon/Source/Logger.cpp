@@ -49,7 +49,7 @@ namespace mint
         }
 
         char* temp = nullptr;
-        if (0 < _size)
+        if (_size > 0)
         {
             temp = MINT_NEW_ARRAY(char, _size + 1);
             ::strcpy_s(temp, _size + 1, _rawPointer);
@@ -58,7 +58,7 @@ namespace mint
         MINT_DELETE_ARRAY(_rawPointer);
         _rawPointer = MINT_NEW_ARRAY(char, newCapacity);
         
-        if (0 < _size)
+        if (_size > 0)
         {
             ::strcpy_s(_rawPointer, _size + 1, temp);
             MINT_DELETE_ARRAY(temp);

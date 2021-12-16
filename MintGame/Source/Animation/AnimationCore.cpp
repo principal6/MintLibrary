@@ -37,7 +37,7 @@ namespace mint
 
         const bool SkeletonJoint::hasParent() const noexcept
         {
-            return 0 <= _parentIndex;
+            return (_parentIndex >= 0);
         }
 
         const JointIndexType SkeletonJoint::getParentIndex() const noexcept
@@ -106,7 +106,7 @@ namespace mint
                 SkeletonJoint& joint = _joints[jointIndex];
                 joint._bindPoseModelMatrix = joint._bindPoseLocalMatrix;
 
-                if (0 <= joint._parentIndex)
+                if (joint.hasParent())
                 {
                     SkeletonJoint& parentJoint = _joints[joint._parentIndex];
                     joint._bindPoseModelMatrix.mulAssignReverse(parentJoint._bindPoseModelMatrix);

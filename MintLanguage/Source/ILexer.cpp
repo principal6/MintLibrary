@@ -282,7 +282,7 @@ namespace mint
                                 prev = prev.substr(trimFront);
 
                                 // Back
-                                while (0 < prev.size())
+                                while (prev.size() > 0)
                                 {
                                     if (prev.back() == '\r' || prev.back() == '\n')
                                     {
@@ -479,7 +479,7 @@ namespace mint
 
         void ILexer::advanceExecution(const SymbolClassifier symbolClassifier, const uint32 advance, uint32& prevSourceAt, uint32& sourceAt)
         {
-            if (0 < advance)
+            if (advance > 0)
             {
                 const char ch0 = getCh0(sourceAt);
                 const char ch1 = getCh1(sourceAt);
@@ -505,7 +505,7 @@ namespace mint
                     }
                 }
 
-                if (0 < tokenLength)
+                if (tokenLength > 0)
                 {
                     std::string tokenString = _source.substr(prevSourceAt, tokenLength);
                     SymbolClassifier tokenSymbolClassifier = _defaultSymbolClassifier;

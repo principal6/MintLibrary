@@ -297,7 +297,7 @@ namespace mint
                 break;
             }
         }
-        if (0 <= hopDistance)
+        if (hopDistance >= 0)
         {
             startBucket._hopInfo.set(hopDistance, false);
 

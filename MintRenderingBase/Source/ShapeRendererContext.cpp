@@ -136,7 +136,7 @@ namespace mint
                         }
                         
                         // Apply scale to the signed distance for more consistent anti-aliasing
-                        if (0.0 < scale)
+                        if (scale > 0.0)
                         {
                             signedDistance *= (scale * kDeltaPixel);
                         }
@@ -797,7 +797,7 @@ namespace mint
         {
             const Float2 halfSize = size * 0.5f;
             
-            if (1.0f <= borderThickness)
+            if (borderThickness >= 1.0f)
             {
                 drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
 
@@ -939,7 +939,7 @@ namespace mint
             const Float2& halfSize = size * 0.5f;
             const Float2& halfCoreSize = halfSize - Float2(radius);
 
-            if (1.0f <= borderThickness)
+            if (borderThickness >= 1.0f)
             {
                 Float2 pointA;
                 Float2 pointB;

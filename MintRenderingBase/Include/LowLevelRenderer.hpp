@@ -193,7 +193,7 @@ namespace mint
             DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
             
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
-            if (_vertexBufferId.isValid() == false && 0 < vertexCount)
+            if (_vertexBufferId.isValid() == false && vertexCount > 0)
             {
                 _vertexBufferId = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
             }
@@ -205,7 +205,7 @@ namespace mint
             }
 
             const uint32 indexCount = static_cast<uint32>(_indices.size());
-            if (_indexBufferId.isValid() == false && 0 < indexCount)
+            if (_indexBufferId.isValid() == false && indexCount > 0)
             {
                 _indexBufferId = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
             }

@@ -100,7 +100,7 @@ namespace mint
 
     const bool Float2x2::isInvertible() const noexcept
     {
-        return (0.0f != determinant());
+        return (determinant() != 0.0f);
     }
 
     Float2 Float2x2::mul(const Float2& vec) const noexcept

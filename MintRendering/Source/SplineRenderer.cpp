@@ -36,10 +36,10 @@ namespace mint
 
         const bool SplineRenderer::drawBezierCurve(const Vector<Float2>& controlPoints, const float thickness, const Color& color) noexcept
         {
-            MINT_ASSURE(0 < _precision);
+            MINT_ASSURE(_precision > 0);
 
             const uint32 order = controlPoints.size() - 1;
-            MINT_ASSURE(0 < order);
+            MINT_ASSURE(order > 0);
 
             _rendererContext->setColor(color);
 
