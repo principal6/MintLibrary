@@ -466,20 +466,6 @@ const bool testWindow()
 
 #if 0
             Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
-            Rendering::SplineRenderer splineRenderer{ shapeFontRendererContext };
-            Rendering::SplineRenderer::DebugOptions debugOptions;
-            debugOptions._drawControlPoints = true;
-            Vector<Float2> controlPoints;
-            controlPoints.push_back(Float2(10, 200));
-            controlPoints.push_back(Float2(110, 50));
-            controlPoints.push_back(Float2(210, 200));
-            controlPoints.push_back(Float2(310, 50));
-            splineRenderer.setDebugOptions(debugOptions);
-            splineRenderer.drawBezierCurve(controlPoints, 1.0f);
-            splineRenderer.render();
-#endif
-#if 0
-            Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
             Rendering::Plotter plotter(shapeFontRendererContext);
             plotter.xLabel(L"weight");
             plotter.yLabel(L"length");
@@ -614,7 +600,11 @@ const bool testWindow()
 
             meshRenderer.render(objectPool);
             
-            // InstantRenderer 테스트
+            // # ShapeFontRendererContext 테스트
+            //Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
+            //shapeFontRendererContext.testDraw(Float2(30, 60));
+
+            // # InstantRenderer 테스트
             //instantRenderer.testDraw(Float3::kZero);
             instantRenderer.render();
 
