@@ -180,7 +180,7 @@ namespace mint
                 ControlId           _id;
             };
 
-            class ControlInteractionStates
+            class ControlInteractionStateSet
             {
             public:
                 void                            setControlHovered(const ControlData& controlData) noexcept;
@@ -530,7 +530,7 @@ namespace mint
             HashMap<ControlId, ControlData>             _controlIdMap;
 
         private:
-            mutable ControlInteractionStates            _controlInteractionStates;
+            mutable ControlInteractionStateSet          _controlInteractionStateSet;
             ControlMetaStateSet                         _controlMetaStateSet;
 
 #pragma region Mouse
