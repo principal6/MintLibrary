@@ -327,7 +327,9 @@ const bool testWindow()
     testCameraObject->setPerspectiveScreenRatio(windowSize._x / windowSize._y);
     {
         testObject->attachComponent(objectPool.createMeshComponent());
-        testObject->getObjectTransformSRT()._translation._z = 4.0f;
+        
+        Rendering::SRT& srt = testObject->getObjectTransformSRT();
+        srt._translation._z = -4.0f;
     }
     testCameraObject->rotatePitch(0.125f);
     
@@ -336,7 +338,7 @@ const bool testWindow()
 
     Game::SkeletonGenerator testSkeletonGenerator;
     Float4x4 testSkeletonWorldMatrix;
-    testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, 4.0f);
+    testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, -4.0f);
     Float4x4 bindPoseLocalMatrix;
     testSkeletonGenerator.createJoint(-1, "Root", bindPoseLocalMatrix);
     bindPoseLocalMatrix.setTranslation(1.0f, 0.0f, 0.0f);
@@ -657,7 +659,8 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    mint::LibraryVersion::printVersion();
+    mint::LibraryInfo::printVersion();
+    //mint::LibraryInfo::printCoordinateSystem();
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE
