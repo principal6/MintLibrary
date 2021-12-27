@@ -108,6 +108,12 @@ namespace mint
         };
 
 
+        // Dock ============================
+        // ||           | Docked Control  ||
+        // ||           |                 ||
+        // ||           |                 ||
+        // =================================
+
         class GuiContext final
         {
             friend Rendering::GraphicDevice;

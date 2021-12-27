@@ -3226,7 +3226,8 @@ namespace mint
         void GuiContext::updateDockDatum(const ControlId& dockControlId, const bool dontUpdateWidthArray) noexcept
         {
             ControlData& dockControlData = accessControlData(dockControlId);
-            for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
+            for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT;
+                dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
             {
                 DockDatum& dockDatum = dockControlData.getDockDatum(dockingMethodIter);
                 const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlIdArray.size());
