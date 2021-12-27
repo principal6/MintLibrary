@@ -2904,7 +2904,7 @@ namespace mint
                                     dockDatum._dockedControlIndexShown = targetDockedControlindex;
 
                                     _taskWhenMouseUp.setUpdateDockDatum(dockControlData.getId());
-                                    updateDockDatum(dockControlData.getId(), true);
+                                    updateDockDatum(dockControlData.getId(), false);
                                 }
                             }
                             else
@@ -3223,7 +3223,7 @@ namespace mint
             updateDockDatum(dockControlIdCopy);
         }
 
-        void GuiContext::updateDockDatum(const ControlId& dockControlId, const bool dontUpdateWidthArray) noexcept
+        void GuiContext::updateDockDatum(const ControlId& dockControlId, const bool updateWidthArray) noexcept
         {
             ControlData& dockControlData = accessControlData(dockControlId);
             for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT;
@@ -3244,7 +3244,7 @@ namespace mint
                     const wchar_t* const title = dockedControlData.getText();
                     const float titleBarWidth = calculateTextWidth(title, StringUtil::length(title)) + 16.0f;
                     dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
-                    if (dontUpdateWidthArray == false)
+                    if (updateWidthArray)
                     {
                         dockDatum._dockedControlTitleBarWidthArray[dockedControlIndex] = titleBarWidth;
                     }

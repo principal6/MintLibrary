@@ -381,7 +381,7 @@ namespace mint
 
             void                                        dock(const ControlId& dockedControlId, const ControlId& dockControlId) noexcept;
             void                                        undock(const ControlId& dockedControlId) noexcept;
-            void                                        updateDockDatum(const ControlId& dockControlId, const bool dontUpdateWidthArray = false) noexcept;
+            void                                        updateDockDatum(const ControlId& dockControlId, const bool updateWidthArray = true) noexcept;
 
             const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
             
