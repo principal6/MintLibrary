@@ -2850,84 +2850,80 @@ namespace mint
 
         void GuiContext::processControlDraggingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
-            const bool isDragging = isControlBeingDragged(controlData);
-            if (isDragging == true)
+            ControlData& targetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
+            const bool isDragging = isControlBeingDragged(targetControlData);
+            if (isDragging == false)
             {
-                if (_isDragBegun == true)
+                return;
+            }
+            
+            if (_isDragBegun == true)
+            {
+                _draggedControlInitialPosition = targetControlData._position;
+                _isDragBegun = false;
+            }
+
+            const Float2 positionOld = targetControlData._position;
+            const Float2& mouseDragDelta = _mouseStates.getMouseDragDelta();
+            const Float2 positionCandidate = _draggedControlInitialPosition + mouseDragDelta;
+            const Rect& positionConstraints = targetControlData._positionConstraintsForDragging;
+            targetControlData._position = (positionConstraints.isNan()) ? positionCandidate : positionConstraints.clamp(positionCandidate);
+
+            if (targetControlData.isDocking() == true)
+            {
+                // Docking 중이었으면 마우스로 바로 옮길 수 없도록!! (Dock 에 좀 더 오래 붙어있도록)
+
+                targetControlData._position = positionOld;
+
+                ControlData& dockControlData = accessControlData(targetControlData.getDockControlId());
+                DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockRelatedData._lastDockingMethod);
+                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockRelatedData._lastDockingMethod);
+                const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockRelatedData._lastDockingMethod);
+                const Rect dockRect{ dockPosition, dockSize };
+                bool needToDisconnectFromDock = true;
+                const Float2& mousePosition = _mouseStates.getPosition();
+                if (dockRect.contains(mousePosition))
                 {
-                    _draggedControlInitialPosition = changeTargetControlData._position;
+                    needToDisconnectFromDock = false;
 
-                    _isDragBegun = false;
-                }
-
-                const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
-                const Float2 originalPosition = changeTargetControlData._position;
-                const Float2& naivePosition = _draggedControlInitialPosition + mouseDragDelta;
-                if (changeTargetControlData._positionConstraintsForDragging.isNan() == true)
-                {
-                    changeTargetControlData._position = naivePosition;
-                }
-                else
-                {
-                    changeTargetControlData._position = changeTargetControlData._positionConstraintsForDragging.clamp(naivePosition);
-                }
-
-                if (changeTargetControlData.isDocking() == true)
-                {
-                    // Docking 중이었으면 마우스로 바로 옮길 수 없도록!! (Dock 에 좀 더 오래 붙어있도록)
-
-                    changeTargetControlData._position = originalPosition;
-
-                    ControlData& dockControlData = accessControlData(changeTargetControlData.getDockControlId());
-                    DockDatum& dockDatum = dockControlData.getDockDatum(changeTargetControlData._dockRelatedData._lastDockingMethod);
-                    const Float2& dockSize = dockControlData.getDockSize(changeTargetControlData._dockRelatedData._lastDockingMethod);
-                    const Float2& dockPosition = dockControlData.getDockPosition(changeTargetControlData._dockRelatedData._lastDockingMethod);
-                    const Rect dockRect{ dockPosition, dockSize };
-                    bool needToDisconnectFromDock = true;
-                    if (dockRect.contains(_mouseStates.getPosition()) == true)
+                    const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockSize._x, kTitleBarBaseThickness) };
+                    if (dockTitleBarAreaRect.contains(mousePosition))
                     {
-                        needToDisconnectFromDock = false;
-
-                        const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockSize._x, kTitleBarBaseThickness) };
-                        if (dockTitleBarAreaRect.contains(_mouseStates.getPosition()) == true)
+                        const float titleBarOffset = mousePosition._x - dockTitleBarAreaRect.left();
+                        const int32 targetDockedControlindex = dockDatum.getDockedControlIndexByMousePosition(titleBarOffset);
+                        if (targetDockedControlindex >= 0)
                         {
-                            const float titleBarOffset = _mouseStates.getPosition()._x - dockTitleBarAreaRect.left();
-                            const int32 targetDockedControlindex = dockDatum.getDockedControlIndexByMousePosition(titleBarOffset);
-                            if (targetDockedControlindex >= 0)
+                            const int32 originalDockedControlIndex = dockDatum.getDockedControlIndex(targetControlData.getId());
+                            if (originalDockedControlIndex != targetDockedControlindex)
                             {
-                                const int32 originalDockedControlIndex = dockDatum.getDockedControlIndex(changeTargetControlData.getId());
-                                if (originalDockedControlIndex != targetDockedControlindex)
-                                {
-                                    dockDatum.swapDockedControlsXXX(originalDockedControlIndex, targetDockedControlindex);
-                                    dockDatum._dockedControlIndexShown = targetDockedControlindex;
+                                dockDatum.swapDockedControlsXXX(originalDockedControlIndex, targetDockedControlindex);
+                                dockDatum._dockedControlIndexShown = targetDockedControlindex;
 
-                                    _taskWhenMouseUp.setUpdateDockDatum(dockControlData.getId());
-                                    updateDockDatum(dockControlData.getId(), false);
-                                }
-                            }
-                            else
-                            {
-                                needToDisconnectFromDock = true;
+                                _taskWhenMouseUp.setUpdateDockDatum(dockControlData.getId());
+                                updateDockDatum(dockControlData.getId(), false);
                             }
                         }
-                    }
-
-                    if (needToDisconnectFromDock == true)
-                    {
-                        // 마우스가 dockRect 를 벗어나야 옮길 수 있다!
-
-                        undock(changeTargetControlData.getId());
+                        else
+                        {
+                            needToDisconnectFromDock = true;
+                        }
                     }
                 }
-                else
+
+                if (needToDisconnectFromDock == true)
                 {
-                    // Set delta position
-                    changeTargetControlData._currentFrameDeltaPosition = changeTargetControlData._position - originalPosition;
-                }
+                    // 마우스가 dockRect 를 벗어나야 옮길 수 있다!
 
-                _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
+                    undock(targetControlData.getId());
+                }
             }
+            else
+            {
+                // Set delta position
+                targetControlData._currentFrameDeltaPosition = targetControlData._position - positionOld;
+            }
+
+            _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
         void GuiContext::processControlDockingInternal(ControlData& controlData) noexcept
