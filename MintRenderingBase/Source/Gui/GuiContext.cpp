@@ -169,7 +169,7 @@ namespace mint
 
             const Float2& windowSize = Float2(_graphicDevice->getWindowSize());
             _rootControlData = ControlData(ControlId(1), ControlId(0), Gui::ControlType::ROOT, windowSize);
-            _rootControlData._isFocusable = false;
+            _rootControlData._option._isFocusable = false;
 
             updateScreenSize(windowSize);
 
@@ -587,7 +587,7 @@ namespace mint
 
             ControlData& windowControlData = createOrGetControlData(file, line, controlType, title);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
-            windowControlData._isFocusable = true;
+            windowControlData._option._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
             if (windowControlData.updateVisibleState(inoutVisibleState) == true && windowControlData.isControlVisible() == true)
             {
@@ -968,7 +968,7 @@ namespace mint
                 ControlData& thumbControlData = createOrGetControlData(file, line, thumbControlType, nullptr);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._size._y * 0.5f - thumbControlData._size._y * 0.5f;
-                thumbControlData._isDraggable = true;
+                thumbControlData._option._isDraggable = true;
                 thumbControlData._draggingConstraints.top(thumbControlData._position._y);
                 thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
                 thumbControlData._draggingConstraints.left(trackControlData._position._x);
@@ -1064,7 +1064,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::TextBox;
             
             ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
-            controlData._isFocusable = true;
+            controlData._option._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = textBoxParam._common._offset;
             prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
@@ -1169,8 +1169,8 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
             ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
-            controlData._isFocusable = true;
-            controlData._needDoubleClickToFocus = true;
+            controlData._option._isFocusable = true;
+            controlData._option._needDoubleClickToFocus = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = commonControlParam._offset;
             prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
@@ -1316,7 +1316,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ListView;
             
             ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
-            controlData._isFocusable = false;
+            controlData._option._isFocusable = false;
 
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -1388,7 +1388,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ListItem;
             
             ControlData& controlData = createOrGetControlData(file, line, controlType, text);
-            controlData._isFocusable = false;
+            controlData._option._isFocusable = false;
 
             ControlData& parentControlData = accessControlData(controlData.getParentId());
             PrepareControlDataParam prepareControlDataParam;
@@ -1572,7 +1572,7 @@ namespace mint
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
             ControlData& menuItem = createOrGetControlData(file, line, controlType, text);
-            menuItem._isInteractableOutsideParent = true;
+            menuItem._option._isInteractableOutsideParent = true;
 
             ControlData& menuItemParent = accessControlData(menuItem.getParentId());
             const ControlType parentControlType = menuItemParent.getControlType();
@@ -1870,7 +1870,7 @@ namespace mint
                     prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
                     prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
-                    thumbControlData._isDraggable = true;
+                    thumbControlData._option._isDraggable = true;
                     thumbControlData._draggingConstraints.left(scrollBarTrack._position._x - kScrollBarThickness * 0.5f);
                     thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
                     thumbControlData._draggingConstraints.top(scrollBarTrack._position._y);
@@ -1934,7 +1934,7 @@ namespace mint
                     prepareControlDataParamForThumb._ignoreMeForContentAreaSize = true;
                     prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
-                    thumbControlData._isDraggable = true;
+                    thumbControlData._option._isDraggable = true;
                     thumbControlData._draggingConstraints.left(scrollBarTrack._position._x);
                     thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + trackRemnantSize);
                     thumbControlData._draggingConstraints.top(scrollBarTrack._position._y - kScrollBarThickness * 0.5f);
@@ -2058,7 +2058,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::TitleBar;
 
             ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
-            controlData._isDraggable = true;
+            controlData._option._isDraggable = true;
             controlData._delegateControlId = controlData.getParentId();
             ControlData& parentWindowControlData = accessControlData(controlData.getParentId());
             const bool isParentControlDocking = parentWindowControlData.isDocking();
@@ -2346,9 +2346,9 @@ namespace mint
 
         void GuiContext::setControlFocused(const ControlData& controlData) noexcept
         {
-            if (controlData._isFocusable == true)
+            if (controlData._option._isFocusable == true)
             {
-                if (controlData._needDoubleClickToFocus == true)
+                if (controlData._option._needDoubleClickToFocus == true)
                 {
                     if (_mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
                     {
@@ -2568,11 +2568,11 @@ namespace mint
             const ControlId& controlId = (controlData._delegateControlId.isValid() == true) ? controlData._delegateControlId : controlData.getId();
 
             // Check new focus
-            if (_draggedControlId.isValid() == false && _resizedControlId.isValid() == false && controlData._isFocusable == true &&
+            if (_draggedControlId.isValid() == false && _resizedControlId.isValid() == false && controlData._option._isFocusable == true &&
                 (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true
                     && (_controlInteractionStateSet.isControlPressed(controlData) == true || _controlInteractionStateSet.isControlClicked(controlData) == true)))
             {
-                if (controlData._needDoubleClickToFocus == true)
+                if (controlData._option._needDoubleClickToFocus == true)
                 {
                     if (_mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
                     {
@@ -2683,7 +2683,7 @@ namespace mint
             const ControlData& parentControlData = getControlData(controlData.getParentId());
             const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
             const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData);
-            const bool meetsAreaCondition = (controlData._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
+            const bool meetsAreaCondition = (controlData._option._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
             const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
             if (meetsAreaCondition == true && meetsInteractionCondition == true)
             {
@@ -2694,7 +2694,7 @@ namespace mint
                     _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
                 }
 
-                if (_controlInteractionStateSet.isControlHovered(controlData) == false && controlData._isFocusable == false)
+                if (_controlInteractionStateSet.isControlHovered(controlData) == false && controlData._option._isFocusable == false)
                 {
                     setControlHovered(controlData);
                 }
@@ -3283,7 +3283,7 @@ namespace mint
 
             if (_draggedControlId.isValid() == false)
             {
-                if (_resizedControlId.isValid() == true || controlData._isDraggable == false || isInteractingInternal(controlData) == false)
+                if (_resizedControlId.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
                 {
                     return false;
                 }
@@ -3520,7 +3520,7 @@ namespace mint
                 return controlData;
             }
 
-            if (controlData._isFocusable == true && controlData.isDocking() == false)
+            if (controlData._option._isFocusable == true && controlData.isDocking() == false)
             {
                 return controlData;
             }

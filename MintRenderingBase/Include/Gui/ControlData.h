@@ -265,6 +265,16 @@ namespace mint
                 DockingStateContext             _dokcingStateContext;
             };
 
+            struct Option
+            {
+                        Option();
+
+                bool    _isFocusable                    : 1;
+                bool    _needDoubleClickToFocus         : 1;
+                bool    _isDraggable                    : 1;
+                bool    _isInteractableOutsideParent    : 1;
+            };
+
         public:
                                                 REFLECTION_CLASS(ControlData);
                                                 ControlData();
@@ -353,12 +363,9 @@ namespace mint
             // In screen space, at left-top corner
             REFLECTION_MEMBER(Float2, _position);
 
+            Option                              _option;
             Float2                              _currentFrameDeltaPosition; // Used for dragging
             Float2                              _childDisplayOffset; // Used for scrolling child controls (of Window control)
-            bool                                _isFocusable;
-            bool                                _needDoubleClickToFocus;
-            bool                                _isDraggable;
-            bool                                _isInteractableOutsideParent;
             ResizingMask                        _resizingMask;
             Rect                                _draggingConstraints; // MUST set all four values if want to limit dragging area
             ControlId                           _delegateControlId; // Used for drag, resize and focus

@@ -255,6 +255,17 @@ namespace mint
         }
 #pragma endregion
 
+#pragma region ControlData - Option
+        inline ControlData::Option::Option()
+            : _isFocusable{ false }
+            , _needDoubleClickToFocus{ false }
+            , _isDraggable{ false }
+            , _isInteractableOutsideParent{ false }
+        {
+            __noop;
+        }
+#pragma endregion
+
 #pragma region ControlData
         inline ControlData::ControlData()
             : ControlData(ControlId(), ControlId(), ControlType::ROOT)
@@ -272,10 +283,6 @@ namespace mint
             : _updateCount{ 0 }
             , _interactionSize{ size }
             , _nonDockInteractionSize{ size }
-            , _isFocusable{ false }
-            , _needDoubleClickToFocus{ false }
-            , _isDraggable{ false }
-            , _isInteractableOutsideParent{ false }
             , _size{ size }
             , _minSize{ kControlDisplayMinWidth, kControlDisplayMinHeight }
             , _childAt{ _innerPadding.left(), _innerPadding.top() }
@@ -316,7 +323,7 @@ namespace mint
             _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
 
             // Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
-            if (_isDraggable == true && _draggingConstraints.isNan() == false)
+            if (_option._isDraggable == true && _draggingConstraints.isNan() == false)
             {
                 _position._x = min(max(_draggingConstraints.left(), _position._x), _draggingConstraints.right());
                 _position._y = min(max(_draggingConstraints.top(), _position._y), _draggingConstraints.bottom());
