@@ -276,8 +276,8 @@ namespace mint
             , _needDoubleClickToFocus{ false }
             , _isDraggable{ false }
             , _isInteractableOutsideParent{ false }
-            , _displaySize{ size }
-            , _displaySizeMin{ kControlDisplayMinWidth, kControlDisplayMinHeight }
+            , _size{ size }
+            , _minSize{ kControlDisplayMinWidth, kControlDisplayMinHeight }
             , _childAt{ _innerPadding.left(), _innerPadding.top() }
             , _delegateControlId{ 0 }
             , _dockRelatedData{ controlType }
@@ -310,9 +310,9 @@ namespace mint
             parentControlData._childControlIds.push_back(_id);
             parentControlData.connectChildWindowIfNot(*this);
 
-            _displaySizeMin = prepareControlDataParam._displaySizeMin;
+            _minSize = prepareControlDataParam._minSize;
             _innerPadding = prepareControlDataParam._innerPadding;
-            _interactionSize = _displaySize + prepareControlDataParam._deltaInteractionSize;
+            _interactionSize = _size + prepareControlDataParam._deltaInteractionSize;
             _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
 
             // Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
@@ -355,7 +355,7 @@ namespace mint
 
         MINT_INLINE Float2 ControlData::getClientSize() const noexcept
         {
-            Float2 result = Float2(_displaySize._x - _innerPadding.horz(), _displaySize._y - _innerPadding.vert());
+            Float2 result = Float2(_size._x - _innerPadding.horz(), _size._y - _innerPadding.vert());
             if (_controlType == ControlType::Window)
             {
                 result._y -= kTitleBarBaseThickness;
@@ -368,9 +368,9 @@ namespace mint
             return ((_controlType == ControlType::Window) ? kTitleBarBaseThickness : 0.0f) + getMenuBarThickness()._y;
         }
 
-        MINT_INLINE const Float2& ControlData::getDisplaySizeMin() const noexcept
+        MINT_INLINE const Float2& ControlData::getMinSize() const noexcept
         {
-            return _displaySizeMin;
+            return _minSize;
         }
 
         MINT_INLINE const float ControlData::getPureDisplayWidth() const noexcept
@@ -378,7 +378,7 @@ namespace mint
             const Float2& menuBarThicknes = getMenuBarThickness();
             return max(
                 0.0f,
-                _displaySize._x - getHorzDockSizeSum() - _innerPadding.horz()
+                _size._x - getHorzDockSizeSum() - _innerPadding.horz()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - menuBarThicknes._x
             );
@@ -390,7 +390,7 @@ namespace mint
             const Float2& menuBarThicknes = getMenuBarThickness();
             return max(
                 0.0f,
-                _displaySize._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
+                _size._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - menuBarThicknes._y
             );
@@ -596,14 +596,14 @@ namespace mint
                 resultDockPosition._y += getDockSizeIfHosting(DockingMethod::TopSide)._y;
                 break;
             case Gui::DockingMethod::RightSide:
-                resultDockPosition = Float2(_position._x + _displaySize._x - dockSize._x, _position._y) + offset;
+                resultDockPosition = Float2(_position._x + _size._x - dockSize._x, _position._y) + offset;
                 resultDockPosition._y += getDockSizeIfHosting(DockingMethod::TopSide)._y;
                 break;
             case Gui::DockingMethod::TopSide:
                 resultDockPosition = Float2(_position._x, _position._y) + offset;
                 break;
             case Gui::DockingMethod::BottomSide:
-                resultDockPosition = Float2(_position._x, _position._y + _displaySize._y - dockSize._y);
+                resultDockPosition = Float2(_position._x, _position._y + _size._y - dockSize._y);
                 break;
             case Gui::DockingMethod::COUNT:
             default:
@@ -673,7 +673,7 @@ namespace mint
 
         MINT_INLINE Rect ControlData::getControlRect() const noexcept
         {
-            return Rect::fromPositionSize(_position, _displaySize);
+            return Rect::fromPositionSize(_position, _size);
         }
 
         MINT_INLINE Rect ControlData::getControlPaddedRect() const noexcept
@@ -681,9 +681,9 @@ namespace mint
             return Rect
             (
                 _position._x + _innerPadding.left(),
-                _position._x + _displaySize._x - _innerPadding.horz(),
+                _position._x + _size._x - _innerPadding.horz(),
                 _position._y + _innerPadding.top(),
-                _position._y + _displaySize._y - _innerPadding.vert()
+                _position._y + _size._y - _innerPadding.vert()
             );
         }
 
@@ -707,7 +707,7 @@ namespace mint
 
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept
         {
-            std::swap(_displaySize, _dockRelatedData._dokcingStateContext._displaySize);
+            std::swap(_size, _dockRelatedData._dokcingStateContext._size);
             std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
         }
 
@@ -738,17 +738,17 @@ namespace mint
 
         MINT_INLINE const Float4 ControlData::getControlCenterPosition() const noexcept
         {
-            return Float4(_position._x + _displaySize._x * 0.5f, _position._y + _displaySize._y * 0.5f, 0.0f, 1.0f);
+            return Float4(_position._x + _size._x * 0.5f, _position._y + _size._y * 0.5f, 0.0f, 1.0f);
         }
 
         MINT_INLINE const Float2 ControlData::getControlLeftCenterPosition() const noexcept
         {
-            return Float2(_position._x, _position._y + _displaySize._y * 0.5f);
+            return Float2(_position._x, _position._y + _size._y * 0.5f);
         }
 
         MINT_INLINE const Float2 ControlData::getControlRightCenterPosition() const noexcept
         {
-            return Float2(_position._x + _displaySize._x, _position._y + _displaySize._y * 0.5f);
+            return Float2(_position._x + _size._x, _position._y + _size._y * 0.5f);
         }
 #pragma endregion
     }

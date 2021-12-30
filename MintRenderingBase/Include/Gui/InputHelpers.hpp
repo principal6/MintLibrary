@@ -417,7 +417,7 @@ namespace mint
 
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const float textWidth = rendererContext.calculateTextWidth(text.c_str(), textLength);
-            textDisplayOffset = max(0.0f, textWidth - controlData._displaySize._x);
+            textDisplayOffset = max(0.0f, textWidth - controlData._size._x);
         }
 
         inline const bool InputBoxHelpers::insertWchar(const wchar_t input, uint16& caretAt, StringW& outText) noexcept
@@ -593,7 +593,7 @@ namespace mint
             const float textWidthTillCaret = rendererContext.calculateTextWidth(controlData._text.c_str(), min(caretAt, textLength));
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             {
-                const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._displaySize._x;
+                const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._size._x;
                 if (deltaTextDisplayOffsetRight > 0.0f)
                 {
                     textDisplayOffset += deltaTextDisplayOffsetRight;
@@ -606,7 +606,7 @@ namespace mint
                     textDisplayOffset = max(textDisplayOffset, 0.0f);
                 }
 
-                if (textWidthTillCaret + inputCandidateWidth < controlData._displaySize._x)
+                if (textWidthTillCaret + inputCandidateWidth < controlData._size._x)
                 {
                     textDisplayOffset = 0.0f;
                 }

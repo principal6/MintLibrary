@@ -181,7 +181,7 @@ namespace mint
         {
             _clipRectFullScreen = _graphicDevice->getFullScreenClipRect();
 
-            _rootControlData._displaySize = newScreenSize;
+            _rootControlData._size = newScreenSize;
             _rootControlData.setClipRectXXX(_clipRectFullScreen);
             _rootControlData.setClipRectForChildrenXXX(_clipRectFullScreen);
             _rootControlData.setClipRectForDocksXXX(_clipRectFullScreen);
@@ -601,8 +601,8 @@ namespace mint
                 prepareControlDataParam._initialResizingMask.setAllTrue();
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
-                prepareControlDataParam._displaySizeMin._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-                prepareControlDataParam._displaySizeMin._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
+                prepareControlDataParam._minSize._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
+                prepareControlDataParam._minSize._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
                 prepareControlDataParam._alwaysResetDisplaySize = false; // 중요!!!
                 prepareControlDataParam._alwaysResetPosition = false;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
@@ -676,11 +676,11 @@ namespace mint
                         Rendering::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
                         inDockColor.a(finalBackgroundColor.a());
                         rendererContext.setColor(inDockColor);
-                        rendererContext.drawRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), 0.0f, 0.0f);
+                        rendererContext.drawRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), 0.0f, 0.0f);
                     }
                     else
                     {
-                        rendererContext.drawHalfRoundedRectangle(windowControlData._displaySize - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), (kDefaultRoundnessInPixel * 2.0f / windowControlData._displaySize.minElement()), 0.0f);
+                        rendererContext.drawHalfRoundedRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), (kDefaultRoundnessInPixel * 2.0f / windowControlData._size.minElement()), 0.0f);
                     }
 
                     processDock(windowControlData, rendererContext);
@@ -693,7 +693,7 @@ namespace mint
                 {
                     _controlMetaStateSet.nextOffAutoPosition(); // 중요
 
-                    const Float2 titleBarSize = Float2(windowControlData._displaySize._x, windowControlData._controlValue._windowData._titleBarThickness);
+                    const Float2 titleBarSize = Float2(windowControlData._size._x, windowControlData._controlValue._windowData._titleBarThickness);
                     beginTitleBar(windowControlData, title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
@@ -719,11 +719,11 @@ namespace mint
                 ControlData& parentControlData = accessControlData(windowControlData.getParentId());
                 if (dockingMethod == DockingMethod::LeftSide || dockingMethod == DockingMethod::RightSide)
                 {
-                    parentControlData.setDockSize(dockingMethod, Float2(initialDockingSize._x, parentControlData._displaySize._y));
+                    parentControlData.setDockSize(dockingMethod, Float2(initialDockingSize._x, parentControlData._size._y));
                 }
                 else
                 {
-                    parentControlData.setDockSize(dockingMethod, Float2(parentControlData._displaySize._x, initialDockingSize._y));
+                    parentControlData.setDockSize(dockingMethod, Float2(parentControlData._size._x, initialDockingSize._y));
                 }
 
                 dock(windowControlData.getId(), parentControlData.getId());
@@ -756,7 +756,7 @@ namespace mint
                 if (_updateScreenSizeCounter > 0)
                 {
                     windowControlData._position = dockControlData.getDockPosition(windowControlData._dockRelatedData._lastDockingMethod);
-                    windowControlData._displaySize = dockControlData.getDockSize(windowControlData._dockRelatedData._lastDockingMethod);
+                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockRelatedData._lastDockingMethod);
                 }
             }
         }
@@ -796,7 +796,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel * 2.0f / controlData._size.minElement()), 0.0f, 0.0f);
 
             rendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * Rendering::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
             rendererContext.drawDynamicText(text, controlCenterPosition, 
@@ -833,7 +833,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
 
             if (isChecked == true)
             {
@@ -875,7 +875,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(labelParam._common._backgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
+            rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
 
             rendererContext.setTextColor((labelParam._common._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._common._fontColor);
             const Float4 textPosition = labelCalculateTextPosition(labelParam, controlData);
@@ -896,7 +896,7 @@ namespace mint
                 }
                 else
                 {
-                    textPosition._x = labelControlData._position._x + labelControlData._displaySize._x;
+                    textPosition._x = labelControlData._position._x + labelControlData._size._x;
                 }
             }
             if (labelParam._alignmentVert != TextAlignmentVert::Middle)
@@ -907,7 +907,7 @@ namespace mint
                 }
                 else
                 {
-                    textPosition._y = labelControlData._position._y + labelControlData._displaySize._y;
+                    textPosition._y = labelControlData._position._y + labelControlData._size._y;
                 }
             }
             return textPosition;
@@ -964,10 +964,10 @@ namespace mint
 
                 _controlMetaStateSet.nextOffAutoPosition();
 
-                const float sliderValidLength = trackControlData._displaySize._x - kSliderThumbRadius * 2.0f;
+                const float sliderValidLength = trackControlData._size._x - kSliderThumbRadius * 2.0f;
                 ControlData& thumbControlData = createOrGetControlData(file, line, thumbControlType, nullptr);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
-                thumbControlData._position._y = trackControlData._position._y + trackControlData._displaySize._y * 0.5f - thumbControlData._displaySize._y * 0.5f;
+                thumbControlData._position._y = trackControlData._position._y + trackControlData._size._y * 0.5f - thumbControlData._size._y * 0.5f;
                 thumbControlData._isDraggable = true;
                 thumbControlData._draggingConstraints.top(thumbControlData._position._y);
                 thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
@@ -1011,10 +1011,10 @@ namespace mint
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(trackControlData);
             const float trackRadius = kSliderTrackThicknes * 0.5f;
-            const float trackRectLength = trackControlData._displaySize._x - trackRadius * 2.0f;
+            const float trackRectLength = trackControlData._size._x - trackRadius * 2.0f;
 
             const float thumbAt = trackControlData._controlValue._thumbData._thumbAt;
-            const float sliderValidLength = trackControlData._displaySize._x - kSliderThumbRadius * 2.0f;
+            const float sliderValidLength = trackControlData._size._x - kSliderThumbRadius * 2.0f;
             const float trackRectLeftLength = thumbAt * sliderValidLength;
             const float trackRectRightLength = trackRectLength - trackRectLeftLength;
 
@@ -1089,11 +1089,11 @@ namespace mint
                 const float fullTextWidth = calculateTextWidth(outText.c_str(), textLength);
                 if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
                 {
-                    textRenderOffset._x = (controlData._displaySize._x - fullTextWidth - inputCandidateWidth) * 0.5f;
+                    textRenderOffset._x = (controlData._size._x - fullTextWidth - inputCandidateWidth) * 0.5f;
                 }
                 else if (textBoxParam._alignmentHorz == TextAlignmentHorz::Right)
                 {
-                    textRenderOffset._x = controlData._displaySize._x - fullTextWidth - inputCandidateWidth;
+                    textRenderOffset._x = controlData._size._x - fullTextWidth - inputCandidateWidth;
                 }
             }
 
@@ -1112,7 +1112,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (textBoxParam._roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (textBoxParam._roundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
 
             // Text, Caret, Selection 렌더링
             const bool needToRenderInputCandidate = (isFocused == true && _wcharInputCandidate >= 32);
@@ -1202,7 +1202,7 @@ namespace mint
                 const float fullTextWidth = calculateTextWidth(controlData._text.c_str(), textLength);
                 
                 // 가운데 정렬!
-                textRenderOffset._x = (controlData._displaySize._x - fullTextWidth) * 0.5f;
+                textRenderOffset._x = (controlData._size._x - fullTextWidth) * 0.5f;
             }
 
             // Input 처리
@@ -1222,7 +1222,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (roundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (roundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
 
             // Text, Caret, Selection 렌더링
             Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
@@ -1357,7 +1357,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
             
             if (listViewParam._useScrollBar == true)
             {
@@ -1393,7 +1393,7 @@ namespace mint
             ControlData& parentControlData = accessControlData(controlData.getParentId());
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._displaySize._x;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._size._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize + 12.0f;
                 prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoCalculatedDisplaySize._y * 0.25f);
                 prepareControlDataParam._clipRectUsage = Gui::ClipRectUsage::ParentsChild;
@@ -1416,7 +1416,7 @@ namespace mint
             rendererContext.setClipRect(controlData.getClipRect());
             rendererContext.setColor(finalColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()), 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
 
             const Float2& controlLeftCenterPosition = controlData.getControlLeftCenterPosition();
             rendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
@@ -1443,7 +1443,7 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = menuBarParent._displaySize._x;
+                prepareControlDataParam._autoCalculatedDisplaySize._x = menuBarParent._size._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseThickness : 0.0f;
@@ -1482,7 +1482,7 @@ namespace mint
             rendererContext.setClipRect(menuBar.getClipRect());
             rendererContext.setColor(color);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(menuBar._displaySize, 0.0f, 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(menuBar._size, 0.0f, 0.0f, 0.0f);
 
             _controlStackPerFrame.push_back(ControlStackData(menuBar));
             return true;
@@ -1513,7 +1513,7 @@ namespace mint
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(menuBarItem, prepareControlDataParam);
-            menuBar._controlValue._itemData._itemSize._x += menuBarItem._displaySize._x;
+            menuBar._controlValue._itemData._itemSize._x += menuBarItem._size._x;
             menuBarItem._controlValue._itemData._itemSize._y = 0.0f;
 
             const int16 menuBarSelectedItemIndex = menuBar._controlValue._itemData.getSelectedItemIndex();
@@ -1548,11 +1548,11 @@ namespace mint
             rendererContext.setClipRect(menuBarItem.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(menuBarItem._displaySize, 0.0f, 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(menuBarItem._size, 0.0f, 0.0f, 0.0f);
 
             const Float2& controlLeftCenterPosition = menuBarItem.getControlLeftCenterPosition();
             rendererContext.setTextColor(getNamedColor(NamedColor::LightFont));
-            rendererContext.drawDynamicText(text, Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._displaySize._x * 0.5f, controlLeftCenterPosition._y, 0, 0),
+            rendererContext.drawDynamicText(text, Float4(controlLeftCenterPosition._x + menuBarItem.getInnerPadding().left() + menuBarItem._size._x * 0.5f, controlLeftCenterPosition._y, 0, 0),
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Centered, Rendering::TextRenderDirectionVert::Centered));
 
             const bool isMeSelected = (menuBarSelectedItemIndex == myIndex);
@@ -1588,7 +1588,7 @@ namespace mint
                 prepareControlDataParam._autoCalculatedDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
-                prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._displaySize._x : 0.0f;
+                prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._size._x : 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._autoCalculatedDisplaySize._y);
             }
             prepareControlData(menuItem, prepareControlDataParam);
@@ -1596,7 +1596,7 @@ namespace mint
             const uint32 textLength = StringUtil::length(text);
             const float textWidth = calculateTextWidth(text, textLength);
             menuItemParent._controlValue._itemData._itemSize._x = max(menuItemParent._controlValue._itemData._itemSize._x, textWidth + kMenuItemSpaceRight);
-            menuItemParent._controlValue._itemData._itemSize._y += menuItem._displaySize._y;
+            menuItemParent._controlValue._itemData._itemSize._y += menuItem._size._y;
             menuItem._controlValue._itemData._itemSize._y = 0.0f;
 
             const bool isDescendantHovered = isDescendantControlHoveredInclusive(menuItem);
@@ -1628,7 +1628,7 @@ namespace mint
             rendererContext.setClipRect(menuItem.getClipRect());
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(menuItem._displaySize, 0.0f, 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(menuItem._size, 0.0f, 0.0f, 0.0f);
 
             const uint16 previousMaxChildCount = menuItem.getPreviousMaxChildControlCount();
             if (previousMaxChildCount > 0)
@@ -1677,7 +1677,7 @@ namespace mint
 
             ScrollBarTrackParam scrollBarTrackParam;
             _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowPureDisplayHeight));
-            scrollBarTrackParam._positionInParent._x = parentControlData._displaySize._x - titleBarOffsetX;
+            scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
             scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
             
             bool hasExtraSize = false;
@@ -1706,7 +1706,7 @@ namespace mint
             ScrollBarTrackParam scrollBarTrackParam;
             _controlMetaStateSet.nextSize(Float2(parentWindowPureDisplayWidth, kScrollBarThickness));
             scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
-            scrollBarTrackParam._positionInParent._y = parentControlData._displaySize._y - kHalfBorderThickness * 2.0f;
+            scrollBarTrackParam._positionInParent._y = parentControlData._size._y - kHalfBorderThickness * 2.0f;
 
             bool hasExtraSize = false;
             const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
@@ -1738,7 +1738,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParamForTrack;
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
             {
-                //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._displaySize;
+                //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._size;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
@@ -1770,7 +1770,7 @@ namespace mint
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
                     {
-                        const float rectLength = trackControlData._displaySize._y - radius * 2.0f;
+                        const float rectLength = trackControlData._size._y - radius * 2.0f;
                         shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
                         shapeFontRendererContext.setColor(trackColor);
 
@@ -1785,7 +1785,7 @@ namespace mint
                         {
                             trackRenderPosition._y += rectLength * 0.5f;
                             shapeFontRendererContext.setPosition(trackRenderPosition);
-                            shapeFontRendererContext.drawRectangle(trackControlData._displaySize - Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+                            shapeFontRendererContext.drawRectangle(trackControlData._size - Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
                         }
 
                         // Lower half circle
@@ -1809,7 +1809,7 @@ namespace mint
                     // Rendering track
                     const float radius = kScrollBarThickness * 0.5f;
                     {
-                        const float rectLength = trackControlData._displaySize._x - radius * 2.0f;
+                        const float rectLength = trackControlData._size._x - radius * 2.0f;
                         shapeFontRendererContext.setClipRect(trackControlData.getClipRect());
                         shapeFontRendererContext.setColor(trackColor);
 
@@ -1824,7 +1824,7 @@ namespace mint
                         {
                             trackRenderPosition._x += rectLength * 0.5f;
                             shapeFontRendererContext.setPosition(trackRenderPosition);
-                            shapeFontRendererContext.drawRectangle(trackControlData._displaySize - Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+                            shapeFontRendererContext.drawRectangle(trackControlData._size - Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
                         }
 
                         // Right half circle
@@ -1907,7 +1907,7 @@ namespace mint
                     {
                         thumbRenderPosition._y += rectLength * 0.5f;
                         shapeFontRendererContext.setPosition(thumbRenderPosition);
-                        shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
+                        shapeFontRendererContext.drawRectangle(thumbControlData._size - Float2(0.0f, radius * 2.0f), 0.0f, 0.0f);
                     }
 
                     // Lower half circle
@@ -1970,7 +1970,7 @@ namespace mint
                     {
                         thumbRenderPosition._x += rectLength * 0.5f;
                         shapeFontRendererContext.setPosition(thumbRenderPosition);
-                        shapeFontRendererContext.drawRectangle(thumbControlData._displaySize - Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
+                        shapeFontRendererContext.drawRectangle(thumbControlData._size - Float2(radius * 2.0f, 0.0f), 0.0f, 0.0f);
                     }
 
                     // Right half circle
@@ -2070,7 +2070,7 @@ namespace mint
                     const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
-                    const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._displaySize._y);
+                    const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._size._y);
                     prepareControlDataParam._autoCalculatedDisplaySize = displaySizeOverride;
                     prepareControlDataParam._desiredPositionInParent._x = parentDockDatum.getDockedControlTitleBarOffset(dockedControlIndex);
                     prepareControlDataParam._desiredPositionInParent._y = 0.0f;
@@ -2115,16 +2115,16 @@ namespace mint
                     rendererContext.setColor(((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(16)));
                 }
 
-                rendererContext.drawRectangle(controlData._displaySize, 0.0f, 0.0f);
+                rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
             }
             else
             {
                 rendererContext.setColor(finalBackgroundColor);
 
-                rendererContext.drawHalfRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel * 2.0f / controlData._displaySize.minElement()), Math::kPi);
+                rendererContext.drawHalfRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel * 2.0f / controlData._size.minElement()), Math::kPi);
 
                 rendererContext.setColor(Rendering::Color(127, 127, 127));
-                rendererContext.drawLine(controlData._position + Float2(0.0f, titleBarSize._y), controlData._position + Float2(controlData._displaySize._x, titleBarSize._y), 1.0f);
+                rendererContext.drawLine(controlData._position + Float2(0.0f, titleBarSize._y), controlData._position + Float2(controlData._size._x, titleBarSize._y), 1.0f);
             }
 
             const Float4& titleBarTextPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(innerPadding.left(), titleBarSize._y * 0.5f, 0.0f, 0.0f);
@@ -2223,7 +2223,7 @@ namespace mint
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             rendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
             rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._displaySize, (kDefaultRoundnessInPixel / controlData._displaySize.minElement()) * 0.75f, 0.0f, 0.0f);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()) * 0.75f, 0.0f, 0.0f);
 
             const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._autoCalculatedDisplaySize._y * 0.5f, 0.0f, 0.0f);
             rendererContext.setClipRect(controlData.getClipRect());
@@ -2317,7 +2317,7 @@ namespace mint
         const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
         {
             const ControlData& parentControlData = getControlStackTopXXX();
-            const float maxDisplaySizeX = parentControlData._displaySize._x - ((_controlMetaStateSet.getNextUseAutoPosition() == true) 
+            const float maxDisplaySizeX = parentControlData._size._x - ((_controlMetaStateSet.getNextUseAutoPosition() == true) 
                 ? parentControlData.getInnerPadding().left() * 2.0f 
                 : 0.0f);
             return maxDisplaySizeX;
@@ -2387,7 +2387,7 @@ namespace mint
 
         void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
         {
-            const bool isNewData = controlData._displaySize.isNan();
+            const bool isNewData = controlData._size.isNan();
             if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
@@ -2427,7 +2427,7 @@ namespace mint
 
                 if (_controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
                 {
-                    controlData._displaySize = desiredSize;
+                    controlData._size = desiredSize;
                 }
                 else
                 {
@@ -2436,7 +2436,7 @@ namespace mint
                         desiredSize._x = min(maxDisplaySizeX, desiredSize._x);
                     }
 
-                    controlData._displaySize = desiredSize;
+                    controlData._size = desiredSize;
                 }
             }
 
@@ -2454,7 +2454,7 @@ namespace mint
                     const float intervalX = getCurrentSameLineIntervalX();
                     parentControlChildAt._x += (parentControlNextChildOffset._x + intervalX);
 
-                    parentControlNextChildOffset = controlData._displaySize;
+                    parentControlNextChildOffset = controlData._size;
                 }
                 else
                 {
@@ -2463,7 +2463,7 @@ namespace mint
 
                     parentControlChildAt._y += parentControlNextChildOffset._y;
 
-                    parentControlNextChildOffset = controlData._displaySize;
+                    parentControlNextChildOffset = controlData._size;
                 }
 
                 const bool addIntervalY = (_controlMetaStateSet.getNextUseAutoPosition() == true && _controlMetaStateSet.getNextUseInterval() == true);
@@ -2483,10 +2483,10 @@ namespace mint
                             // 최초 isSameLine() 시 바로 왼쪽 컨트롤의 크기도 추가해줘야 한다!
                             parentControlContentAreaSize._x = parentControlPreviousNextChildOffsetX;
                         }
-                        parentControlContentAreaSize._x += controlData._displaySize._x + kDefaultIntervalX;
+                        parentControlContentAreaSize._x += controlData._size._x + kDefaultIntervalX;
                     }
 
-                    parentControlContentAreaSize._y += (_controlMetaStateSet.getNextSameLine()) ? 0.0f : controlData._displaySize._y;
+                    parentControlContentAreaSize._y += (_controlMetaStateSet.getNextSameLine()) ? 0.0f : controlData._size._y;
                     parentControlContentAreaSize._y += (addIntervalY) ? kDefaultIntervalY : 0.0f;
                 }
 
@@ -2788,12 +2788,12 @@ namespace mint
                 if (_isResizeBegun == true)
                 {
                     _resizedControlInitialPosition = changeTargetControlData._position;
-                    _resizedControlInitialDisplaySize = changeTargetControlData._displaySize;
+                    _resizedControlInitialDisplaySize = changeTargetControlData._size;
 
                     _isResizeBegun = false;
                 }
 
-                Float2& changeTargetControlDisplaySize = const_cast<Float2&>(changeTargetControlData._displaySize);
+                Float2& changeTargetControlDisplaySize = const_cast<Float2&>(changeTargetControlData._size);
 
                 const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
                 const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
@@ -2803,7 +2803,7 @@ namespace mint
                     const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
                     const float newDisplaySizeX = _resizedControlInitialDisplaySize._x + mouseDragDelta._x * flipHorz;
 
-                    if (changeTargetControlData.getDisplaySizeMin()._x + changeTargetControlData.getHorzDockSizeSum() < newDisplaySizeX)
+                    if (changeTargetControlData.getMinSize()._x + changeTargetControlData.getHorzDockSizeSum() < newDisplaySizeX)
                     {
                         if (flipHorz < 0.0f)
                         {
@@ -2817,7 +2817,7 @@ namespace mint
                     const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
                     const float newDisplaySizeY = _resizedControlInitialDisplaySize._y + mouseDragDelta._y * flipVert;
 
-                    if (changeTargetControlData.getDisplaySizeMin()._y + changeTargetControlData.getVertDockSizeSum() < newDisplaySizeY)
+                    if (changeTargetControlData.getMinSize()._y + changeTargetControlData.getVertDockSizeSum() < newDisplaySizeY)
                     {
                         if (flipVert < 0.0f)
                         {
@@ -2969,7 +2969,7 @@ namespace mint
             {
                 const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
                 const float previewShortLengthMax = 160.0f;
-                const float previewShortLength = min(parentControlData._displaySize._x * 0.5f, previewShortLengthMax);
+                const float previewShortLength = min(parentControlData._size._x * 0.5f, previewShortLengthMax);
 
                 Rect interactionBoxRect;
                 Rect previewRect;
@@ -2989,7 +2989,7 @@ namespace mint
 
                     const Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::TopSide);
                     previewRect.position(dockPosition);
-                    previewRect.right(previewRect.left() + parentControlData._displaySize._x);
+                    previewRect.right(previewRect.left() + parentControlData._size._x);
                     previewRect.bottom(previewRect.top() + previewShortLength);
 
                     if (isDragging == true)
@@ -3023,12 +3023,12 @@ namespace mint
                 {
                     interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
                     interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
-                    interactionBoxRect.bottom(parentControlData._position._y + parentControlData._displaySize._y - kDockingInteractionOffset);
+                    interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
                     interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
 
                     const Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::BottomSide);
                     previewRect.position(dockPosition);
-                    previewRect.right(previewRect.left() + parentControlData._displaySize._x);
+                    previewRect.right(previewRect.left() + parentControlData._size._x);
                     previewRect.bottom(previewRect.top() + previewShortLength);
 
                     if (isDragging == true)
@@ -3068,7 +3068,7 @@ namespace mint
                     const Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::LeftSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + previewShortLength);
-                    previewRect.bottom(previewRect.top() + parentControlData._displaySize._y - parentControlData.getDockOffsetSize()._y);
+                    previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
 
                     if (isDragging == true)
                     {
@@ -3099,7 +3099,7 @@ namespace mint
 
                 // Right
                 {
-                    interactionBoxRect.right(parentControlData._position._x + parentControlData._displaySize._x - kDockingInteractionOffset);
+                    interactionBoxRect.right(parentControlData._position._x + parentControlData._size._x - kDockingInteractionOffset);
                     interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
                     interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
                     interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
@@ -3107,7 +3107,7 @@ namespace mint
                     const Float2& dockPosition = parentControlData.getDockPosition(DockingMethod::RightSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + previewShortLength);
-                    previewRect.bottom(previewRect.top() + parentControlData._displaySize._y - parentControlData.getDockOffsetSize()._y);
+                    previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
 
                     if (isDragging == true)
                     {
@@ -3167,7 +3167,7 @@ namespace mint
             DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
             if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
             {
-                dockedControlData._displaySize = dockControlData.getDockSize(dockedControlData._dockRelatedData._lastDockingMethod);
+                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockRelatedData._lastDockingMethod);
             }
             parentControlDockDatum._dockedControlIdArray.push_back(dockedControlData.getId());
 
@@ -3238,7 +3238,7 @@ namespace mint
                 for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
                 {
                     ControlData& dockedControlData = accessControlData(dockDatum._dockedControlIdArray[dockedControlIndex]);
-                    dockedControlData._displaySize = dockControlData.getDockSize(dockingMethodIter);
+                    dockedControlData._size = dockControlData.getDockSize(dockingMethodIter);
                     dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
                     
                     const wchar_t* const title = dockedControlData.getText();

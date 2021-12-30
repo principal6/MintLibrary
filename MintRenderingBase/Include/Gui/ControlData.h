@@ -201,7 +201,7 @@ namespace mint
 
         struct DockingStateContext
         {
-            Float2              _displaySize;
+            Float2              _size;
             ResizingMask        _resizingMask;
         };
 
@@ -216,7 +216,7 @@ namespace mint
             Float2          _desiredPositionInParent        = Float2::kNan;
             Float2          _deltaInteractionSize           = Float2::kZero;
             Float2          _deltaInteractionSizeByDock     = Float2::kZero;
-            Float2          _displaySizeMin                 = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+            Float2          _minSize                 = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
             bool            _alwaysResetDisplaySize         = true;
             bool            _alwaysResetParent              = false;
             ControlId       _parentIdOverride               = ControlId();
@@ -281,7 +281,7 @@ namespace mint
             const Rect&                         getInnerPadding() const noexcept;
             Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
-            const Float2&                       getDisplaySizeMin() const noexcept;
+            const Float2&                       getMinSize() const noexcept;
             const float                         getPureDisplayWidth() const noexcept;
             const float                         getPureDisplayHeight() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
@@ -348,7 +348,7 @@ namespace mint
 
         public:
             uint8                               _updateCount;
-            Float2                              _displaySize;
+            Float2                              _size;
 
             // In screen space, at left-top corner
             REFLECTION_MEMBER(Float2, _position);
@@ -372,10 +372,10 @@ namespace mint
             REFLECTION_MEMBER(ControlId, _id);
             ControlId                           _parentId;
             Rect                                _innerPadding; // For child controls
-            Float2                              _displaySizeMin;
+            Float2                              _minSize;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
             Float2                              _nonDockInteractionSize; // Exluces dock area
-            Float2                              _contentAreaSize; // Could be smaller or larger than _displaySize
+            Float2                              _contentAreaSize; // Could be smaller or larger than _size
             Float2                              _previousContentAreaSize;
             Float2                              _childAt; // In screen space, Next child control will be positioned according to this
             Float2                              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
