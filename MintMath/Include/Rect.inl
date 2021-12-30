@@ -1,3 +1,4 @@
+#include "Rect.h"
 #pragma once
 
 
@@ -137,6 +138,21 @@ namespace mint
     {
         left(position._x);
         top(position._y);
+    }
+
+    MINT_INLINE constexpr float Rect::clampHorz(const float x) const noexcept
+    {
+        return min(max(left(), x), right());
+    }
+
+    MINT_INLINE constexpr float Rect::clampVert(const float y) const noexcept
+    {
+        return min(max(top(), y), bottom());
+    }
+
+    MINT_INLINE constexpr Float2 Rect::clamp(const Float2& position) const noexcept
+    {
+        return Float2(clampHorz(position._x), clampVert(position._y));
     }
 
     MINT_INLINE void Rect::clipBy(const Rect& outerRect) noexcept

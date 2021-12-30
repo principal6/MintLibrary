@@ -364,10 +364,10 @@ namespace mint
             REFLECTION_MEMBER(Float2, _position);
 
             Option                              _option;
-            Float2                              _currentFrameDeltaPosition; // Used for dragging
             Float2                              _childDisplayOffset; // Used for scrolling child controls (of Window control)
             ResizingMask                        _resizingMask;
-            Rect                                _draggingConstraints; // MUST set all four values if want to limit dragging area
+            Float2                              _currentFrameDeltaPosition; // Used for dragging
+            Rect                                _positionConstraintsForDragging; // MUST set all four values if want to limit dragging area
             ControlId                           _delegateControlId; // Used for drag, resize and focus
             REFLECTION_MEMBER(StringW, _text);
             ControlValue                        _controlValue;

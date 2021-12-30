@@ -58,6 +58,9 @@ namespace mint
         constexpr void              position(const Float2& position) noexcept;
 
     public:
+        constexpr float             clampHorz(const float x) const noexcept;
+        constexpr float             clampVert(const float y) const noexcept;
+        constexpr Float2            clamp(const Float2& position) const noexcept;
         void                        clipBy(const Rect& outerRect) noexcept;
         constexpr const bool        contains(const Float2& position) const noexcept;
         constexpr const bool        contains(const Rect& rhs) const noexcept;

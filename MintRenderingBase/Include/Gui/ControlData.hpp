@@ -295,7 +295,7 @@ namespace mint
             , _visibleState{ VisibleState::Visible }
             , _previousMaxChildControlCount{ 0 }
         {
-            _draggingConstraints.setNan();
+            _positionConstraintsForDragging.setNan();
 
             _controlAccessData._controlId = _id;
         }
@@ -323,10 +323,10 @@ namespace mint
             _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
 
             // Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
-            if (_option._isDraggable == true && _draggingConstraints.isNan() == false)
+            if (_option._isDraggable == true && _positionConstraintsForDragging.isNan() == false)
             {
-                _position._x = min(max(_draggingConstraints.left(), _position._x), _draggingConstraints.right());
-                _position._y = min(max(_draggingConstraints.top(), _position._y), _draggingConstraints.bottom());
+                _position._x = min(max(_positionConstraintsForDragging.left(), _position._x), _positionConstraintsForDragging.right());
+                _position._y = min(max(_positionConstraintsForDragging.top(), _position._y), _positionConstraintsForDragging.bottom());
             }
 
             switch (prepareControlDataParam._clipRectUsage)

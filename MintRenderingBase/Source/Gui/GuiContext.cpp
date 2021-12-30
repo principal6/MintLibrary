@@ -969,10 +969,10 @@ namespace mint
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._size._y * 0.5f - thumbControlData._size._y * 0.5f;
                 thumbControlData._option._isDraggable = true;
-                thumbControlData._draggingConstraints.top(thumbControlData._position._y);
-                thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
-                thumbControlData._draggingConstraints.left(trackControlData._position._x);
-                thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + sliderValidLength);
+                thumbControlData._positionConstraintsForDragging.top(thumbControlData._position._y);
+                thumbControlData._positionConstraintsForDragging.bottom(thumbControlData._positionConstraintsForDragging.top());
+                thumbControlData._positionConstraintsForDragging.left(trackControlData._position._x);
+                thumbControlData._positionConstraintsForDragging.right(thumbControlData._positionConstraintsForDragging.left() + sliderValidLength);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
@@ -1871,10 +1871,10 @@ namespace mint
                     prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
                     thumbControlData._option._isDraggable = true;
-                    thumbControlData._draggingConstraints.left(scrollBarTrack._position._x - kScrollBarThickness * 0.5f);
-                    thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left());
-                    thumbControlData._draggingConstraints.top(scrollBarTrack._position._y);
-                    thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top() + trackRemnantSize);
+                    thumbControlData._positionConstraintsForDragging.left(scrollBarTrack._position._x - kScrollBarThickness * 0.5f);
+                    thumbControlData._positionConstraintsForDragging.right(thumbControlData._positionConstraintsForDragging.left());
+                    thumbControlData._positionConstraintsForDragging.top(scrollBarTrack._position._y);
+                    thumbControlData._positionConstraintsForDragging.bottom(thumbControlData._positionConstraintsForDragging.top() + trackRemnantSize);
                 }
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
@@ -1886,7 +1886,7 @@ namespace mint
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
                 const float mouseWheelScroll = getMouseWheelScroll(scrollBarParent);
-                const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._y - thumbControlData._draggingConstraints.top() + mouseWheelScroll) / trackRemnantSize);
+                const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._y - thumbControlData._positionConstraintsForDragging.top() + mouseWheelScroll) / trackRemnantSize);
                 thumbControlData._controlValue._thumbData._thumbAt = thumbAtRatio;
                 scrollBarParent._childDisplayOffset._y = -thumbAtRatio * (totalLength - visibleLength); // Scrolling!
 
@@ -1935,10 +1935,10 @@ namespace mint
                     prepareControlDataParamForThumb._clipRectUsage = ClipRectUsage::ParentsOwn;
 
                     thumbControlData._option._isDraggable = true;
-                    thumbControlData._draggingConstraints.left(scrollBarTrack._position._x);
-                    thumbControlData._draggingConstraints.right(thumbControlData._draggingConstraints.left() + trackRemnantSize);
-                    thumbControlData._draggingConstraints.top(scrollBarTrack._position._y - kScrollBarThickness * 0.5f);
-                    thumbControlData._draggingConstraints.bottom(thumbControlData._draggingConstraints.top());
+                    thumbControlData._positionConstraintsForDragging.left(scrollBarTrack._position._x);
+                    thumbControlData._positionConstraintsForDragging.right(thumbControlData._positionConstraintsForDragging.left() + trackRemnantSize);
+                    thumbControlData._positionConstraintsForDragging.top(scrollBarTrack._position._y - kScrollBarThickness * 0.5f);
+                    thumbControlData._positionConstraintsForDragging.bottom(thumbControlData._positionConstraintsForDragging.top());
                 }
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
@@ -1949,7 +1949,7 @@ namespace mint
                 Rendering::Color thumbColor;
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
 
-                const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._x - thumbControlData._draggingConstraints.left()) / trackRemnantSize);
+                const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._x - thumbControlData._positionConstraintsForDragging.left()) / trackRemnantSize);
                 thumbControlData._controlValue._thumbData._thumbAt = thumbAtRatio;
                 scrollBarParent._childDisplayOffset._x = -thumbAtRatio * (totalLength - visibleLength + ((scrollBarType == ScrollBarType::Both) ? kScrollBarThickness : 0.0f)); // Scrolling!
 
@@ -2863,15 +2863,14 @@ namespace mint
 
                 const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
                 const Float2 originalPosition = changeTargetControlData._position;
-                if (changeTargetControlData._draggingConstraints.isNan() == true)
+                const Float2& naivePosition = _draggedControlInitialPosition + mouseDragDelta;
+                if (changeTargetControlData._positionConstraintsForDragging.isNan() == true)
                 {
-                    changeTargetControlData._position = _draggedControlInitialPosition + mouseDragDelta;
+                    changeTargetControlData._position = naivePosition;
                 }
                 else
                 {
-                    const Float2& naivePosition = _draggedControlInitialPosition + mouseDragDelta;
-                    changeTargetControlData._position._x = min(max(changeTargetControlData._draggingConstraints.left(), naivePosition._x), changeTargetControlData._draggingConstraints.right());
-                    changeTargetControlData._position._y = min(max(changeTargetControlData._draggingConstraints.top(), naivePosition._y), changeTargetControlData._draggingConstraints.bottom());
+                    changeTargetControlData._position = changeTargetControlData._positionConstraintsForDragging.clamp(naivePosition);
                 }
 
                 if (changeTargetControlData.isDocking() == true)
