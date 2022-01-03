@@ -307,7 +307,7 @@ namespace mint
             const bool                          isRootControl() const noexcept;
             const bool                          updateVisibleState(const VisibleState visibleState) noexcept;
             const bool                          isControlVisible() const noexcept;
-            const Rect&                         getClipRect() const noexcept;
+            const Rect&                         getClipRectForMe() const noexcept;
             const Rect&                         getClipRectForChildren() const noexcept;
             const Rect&                         getClipRectForDocks() const noexcept;
             const Vector<ControlId>&            getChildControlIds() const noexcept;
@@ -347,9 +347,10 @@ namespace mint
         public:
             void                                setParentIdXXX(const ControlId& parentId) noexcept;
             void                                setOffsetY_XXX(const float offsetY) noexcept;
-            void                                setClipRectXXX(const Rect& clipRect) noexcept;
-            void                                setClipRectForChildrenXXX(const Rect& clipRect) noexcept;
-            void                                setClipRectForDocksXXX(const Rect& clipRect) noexcept;
+            void                                setAllClipRects(const Rect& clipRect) noexcept;
+            void                                setClipRectForMe(const Rect& clipRect) noexcept;
+            void                                setClipRectForChildren(const Rect& clipRect) noexcept;
+            void                                setClipRectForDocks(const Rect& clipRect) noexcept;
 
         public:
             const Float4                        getControlCenterPosition() const noexcept;

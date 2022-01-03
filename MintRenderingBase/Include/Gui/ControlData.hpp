@@ -332,13 +332,13 @@ namespace mint
             switch (prepareControlDataParam._clipRectUsage)
             {
             case Gui::ClipRectUsage::ParentsOwn:
-                setClipRectXXX(parentControlData.getClipRect());
+                setClipRectForMe(parentControlData.getClipRectForMe());
                 break;
             case Gui::ClipRectUsage::ParentsChild:
-                setClipRectXXX(parentControlData.getClipRectForChildren());
+                setClipRectForMe(parentControlData.getClipRectForChildren());
                 break;
             case Gui::ClipRectUsage::ParentsDock:
-                setClipRectXXX(parentControlData.getClipRectForDocks());
+                setClipRectForMe(parentControlData.getClipRectForDocks());
                 break;
             default:
                 break;
@@ -473,7 +473,7 @@ namespace mint
             return (_visibleState != VisibleState::Invisible);
         }
 
-        MINT_INLINE const Rect& ControlData::getClipRect() const noexcept
+        MINT_INLINE const Rect& ControlData::getClipRectForMe() const noexcept
         {
             return _clipRect;
         }
@@ -728,17 +728,24 @@ namespace mint
             _nextChildOffset._y = offsetY;
         }
 
-        MINT_INLINE void ControlData::setClipRectXXX(const Rect& clipRect) noexcept
+        MINT_INLINE void ControlData::setAllClipRects(const Rect& clipRect) noexcept
+        {
+            setClipRectForMe(clipRect);
+            setClipRectForChildren(clipRect);
+            setClipRectForDocks(clipRect);
+        }
+
+        MINT_INLINE void ControlData::setClipRectForMe(const Rect& clipRect) noexcept
         {
             _clipRect = clipRect;
         }
 
-        MINT_INLINE void ControlData::setClipRectForChildrenXXX(const Rect& clipRect) noexcept
+        MINT_INLINE void ControlData::setClipRectForChildren(const Rect& clipRect) noexcept
         {
             _clipRectForChildren = clipRect;
         }
 
-        MINT_INLINE void ControlData::setClipRectForDocksXXX(const Rect& clipRect) noexcept
+        MINT_INLINE void ControlData::setClipRectForDocks(const Rect& clipRect) noexcept
         {
             _clipRectForDocks = clipRect;
         }

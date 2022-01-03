@@ -324,9 +324,6 @@ namespace mint
         private:
             void                                        processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
             void                                        endControlInternal(const ControlType controlType);
-            void                                        setClipRectForMe(ControlData& controlData, const Rect& clipRect);
-            void                                        setClipRectForDocks(ControlData& controlData, const Rect& clipRect);
-            void                                        setClipRectForChildren(ControlData& controlData, const Rect& clipRect);
 
         private:
             const bool                                  isValidControl(const ControlId& id) const noexcept;
