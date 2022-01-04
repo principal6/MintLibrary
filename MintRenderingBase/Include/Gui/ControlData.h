@@ -300,8 +300,27 @@ namespace mint
             void                                updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parent) noexcept;
 
         public:
+            void                                setParentIdXXX(const ControlId& parentId) noexcept;
             const ControlId&                    getId() const noexcept;
             const ControlId&                    getParentId() const noexcept;
+            const Vector<ControlId>&            getChildControlIds() const noexcept;
+            const Vector<ControlId>&            getPreviousChildControlIds() const noexcept;
+            const uint16                        getPreviousChildControlCount() const noexcept;
+            const uint16                        getPreviousMaxChildControlCount() const noexcept;
+            void                                prepareChildControlIds() noexcept;
+            const bool                          hasChildWindow() const noexcept;
+            void                                connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
+            void                                disconnectChildWindow(const ControlId& childWindowId) noexcept;
+            const HashMap<ControlId, bool>&     getChildWindowIdMap() const noexcept;
+
+        public:
+            const ControlType                   getControlType() const noexcept;
+            const bool                          isTypeOf(const ControlType controlType) const noexcept;
+            const bool                          isInputBoxType() const noexcept;
+            const bool                          isRootControl() const noexcept;
+
+        public:
+            void                                setOffsetY_XXX(const float offsetY) noexcept;
             const Rect&                         getInnerPadding() const noexcept;
             Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
@@ -312,22 +331,24 @@ namespace mint
             const Float2&                       getNonDockInteractionSize() const noexcept;
             const Float2&                       getPreviousContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
-            const ControlType                   getControlType() const noexcept;
-            const bool                          isTypeOf(const ControlType controlType) const noexcept;
-            const bool                          isInputBoxType() const noexcept;
+
+        public:
             const wchar_t*                      getText() const noexcept;
-            const bool                          isRootControl() const noexcept;
+
+        public:
             const bool                          updateVisibleState(const VisibleState visibleState) noexcept;
             const bool                          isControlVisible() const noexcept;
+
+        public:
+            void                                setAllClipRects(const Rect& clipRect) noexcept;
+            void                                setClipRectForMe(const Rect& clipRect) noexcept;
+            void                                setClipRectForChildren(const Rect& clipRect) noexcept;
+            void                                setClipRectForDocks(const Rect& clipRect) noexcept;
             const Rect&                         getClipRectForMe() const noexcept;
             const Rect&                         getClipRectForChildren() const noexcept;
             const Rect&                         getClipRectForDocks() const noexcept;
-            const Vector<ControlId>&            getChildControlIds() const noexcept;
-            const Vector<ControlId>&            getPreviousChildControlIds() const noexcept;
-            const uint16                        getPreviousChildControlCount() const noexcept;
-            const uint16                        getPreviousMaxChildControlCount() const noexcept;
-            void                                prepareChildControlIds() noexcept;
-            const bool                          hasChildWindow() const noexcept;
+            
+        public:
             DockDatum&                          getDockDatum(const DockingMethod dockingMethod) noexcept;
             const DockDatum&                    getDockDatum(const DockingMethod dockingMethod) const noexcept;
             const bool                          isShowingInDock(const ControlData& dockedControlData) const noexcept;
@@ -338,33 +359,18 @@ namespace mint
             const Float2                        getDockPosition(const DockingMethod dockingMethod) const noexcept;
             const float                         getHorzDockSizeSum() const noexcept;
             const float                         getVertDockSizeSum() const noexcept;
-            const Float2                        getMenuBarThickness() const noexcept;
             void                                connectToDock(const ControlId& dockControlId) noexcept;
             void                                disconnectFromDock() noexcept;
             const ControlId&                    getDockControlId() const noexcept;
             const bool                          isDocking() const noexcept;
             const bool                          isDockHosting() const noexcept;
             const bool                          isResizable() const noexcept;
+            void                                swapDockingStateContext() noexcept;
+
+        public:
+            const Float2                        getMenuBarThickness() const noexcept;
             Rect                                getControlRect() const noexcept;
             Rect                                getControlPaddedRect() const noexcept;
-            
-        public:
-            void                                connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
-            void                                disconnectChildWindow(const ControlId& childWindowId) noexcept;
-            const HashMap<ControlId, bool>&     getChildWindowIdMap() const noexcept;
-
-        public:
-            void                                swapDockingStateContext() noexcept;
-    
-        public:
-            void                                setParentIdXXX(const ControlId& parentId) noexcept;
-            void                                setOffsetY_XXX(const float offsetY) noexcept;
-            void                                setAllClipRects(const Rect& clipRect) noexcept;
-            void                                setClipRectForMe(const Rect& clipRect) noexcept;
-            void                                setClipRectForChildren(const Rect& clipRect) noexcept;
-            void                                setClipRectForDocks(const Rect& clipRect) noexcept;
-
-        public:
             const Float4                        getControlCenterPosition() const noexcept;
             const Float2                        getControlLeftCenterPosition() const noexcept;
             const Float2                        getControlRightCenterPosition() const noexcept;
