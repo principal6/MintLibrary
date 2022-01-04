@@ -165,7 +165,7 @@ namespace mint
                                                         ~GuiContext();
 
         public:
-            void                                        initialize(const char* const font);
+            void                                        initialize();
             void                                        updateScreenSize(const Float2& newScreenSize);
 
         public:

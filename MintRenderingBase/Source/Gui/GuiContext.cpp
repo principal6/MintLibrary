@@ -149,7 +149,7 @@ namespace mint
             __noop;
         }
 
-        void GuiContext::initialize(const char* const font)
+        void GuiContext::initialize()
         {
             _fontSize = static_cast<float>(_graphicDevice->getFontRendererContext().getFontSize());
             
