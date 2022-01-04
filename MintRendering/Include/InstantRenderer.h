@@ -29,9 +29,6 @@ namespace mint
                         ~InstantRenderer();
 
         public:
-            void        initialize() noexcept;
-
-        public:
             void        testDraw(const Float3& worldOffset) noexcept;
 
         public:
@@ -44,6 +41,7 @@ namespace mint
             void        drawCapsule(const SRT& worldSRT, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept;
 
         private:
+            void        initialize() noexcept;
             void        pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept;
 
         public:

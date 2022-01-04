@@ -30,8 +30,10 @@ namespace mint
                                             ~MeshRenderer();
 
         public:
-            void                            initialize() noexcept;
             void                            render(const ObjectPool& objectPool) noexcept;
+
+        private:
+            void                            initialize() noexcept;
 
         private:
             GraphicDevice&                  _graphicDevice;

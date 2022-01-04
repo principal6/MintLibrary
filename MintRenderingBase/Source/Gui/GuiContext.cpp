@@ -187,10 +187,8 @@ namespace mint
             _updateScreenSizeCounter = 2;
         }
 
-        void GuiContext::processEvent(Window::IWindow* const window) noexcept
+        void GuiContext::processEvent() noexcept
         {
-            MINT_ASSERT("김장원", window != nullptr, "window 가 nullptr 이면 안 됩니다!");
-            
             // 초기화
             _mouseStates.resetPerFrame();
             
@@ -247,7 +245,6 @@ namespace mint
                 if (isFocusedControlInputBox() == true && Platform::isKeyCodeAlnum(_keyCode) == true)
                 {
                     _keyCode = Platform::KeyCode::NONE;
-                    //window->popEvent();
                 }
             }
 

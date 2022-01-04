@@ -312,13 +312,10 @@ const bool testWindow()
     Rendering::GraphicDevice graphicDevice(window);
     graphicDevice.initialize();
 
-    //Rendering::MathExpressionRenderer mathExpressionRenderer(&graphicDevice);
+    //Rendering::MathExpressionRenderer mathExpressionRenderer(graphicDevice);
     Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
     Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
-    Rendering::MeshRenderer meshRenderer{ graphicDevice };
-    meshRenderer.initialize();
-    
     Rendering::ObjectPool objectPool;
     Rendering::Object* const testObject = objectPool.createObject();
     Rendering::CameraObject* const testCameraObject = objectPool.createCameraObject();
@@ -333,9 +330,8 @@ const bool testWindow()
     }
     testCameraObject->rotatePitch(0.125f);
     
+    Rendering::MeshRenderer meshRenderer{ graphicDevice };
     Rendering::InstantRenderer instantRenderer{ graphicDevice };
-    instantRenderer.initialize();
-
     Game::SkeletonGenerator testSkeletonGenerator;
     Float4x4 testSkeletonWorldMatrix;
     testSkeletonWorldMatrix.setTranslation(1.0f, 0.0f, -4.0f);
@@ -357,7 +353,7 @@ const bool testWindow()
         {
             inputContext.processEvents();
 
-            guiContext.processEvent(&window);
+            guiContext.processEvent();
 
             {
                 if (inputContext.isKeyPressed() == true)

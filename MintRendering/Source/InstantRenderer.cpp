@@ -19,24 +19,12 @@ namespace mint
             , _lowLevelRendererLine{ graphicDevice }
             , _lowLevelRendererMesh{ graphicDevice }
         {
-            __noop;
+            initialize();
         }
 
         InstantRenderer::~InstantRenderer()
         {
             __noop;
-        }
-
-        void InstantRenderer::initialize() noexcept
-        {
-            using namespace Language;
-            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
-            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
-
-            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
-            _psColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
 
         void InstantRenderer::testDraw(const Float3& worldOffset) noexcept
@@ -159,6 +147,18 @@ namespace mint
             MeshGenerator::transformMeshData(meshData, worldSRT.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
+        }
+
+        void InstantRenderer::initialize() noexcept
+        {
+            using namespace Language;
+            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
+
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
+            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _psColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
 
         void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept

@@ -19,27 +19,12 @@ namespace mint
             : _graphicDevice{ graphicDevice }
             , _lowLevelRenderer{ graphicDevice }
         {
-            __noop;
+            initialize();
         }
 
         MeshRenderer::~MeshRenderer()
         {
             __noop;
-        }
-
-        void MeshRenderer::initialize() noexcept
-        {
-            using namespace Language;
-            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
-            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
-
-            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
-            
-            _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
 
         void MeshRenderer::render(const ObjectPool& objectPool) noexcept
@@ -94,6 +79,21 @@ namespace mint
                     _lowLevelRenderer.render(RenderingPrimitive::TriangleList);
                 }
             }
+        }
+
+        void MeshRenderer::initialize() noexcept
+        {
+            using namespace Language;
+            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
+
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
+            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+
+            _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
     }
 }

@@ -169,7 +169,7 @@ namespace mint
             void                                        updateScreenSize(const Float2& newScreenSize);
 
         public:
-            void                                        processEvent(Window::IWindow* const window) noexcept;
+            void                                        processEvent() noexcept;
 
         private:
             const bool                                  shouldInteract(const Float2& screenPosition, const ControlData& controlData) const noexcept;
