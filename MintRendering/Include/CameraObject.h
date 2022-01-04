@@ -10,6 +10,12 @@
 
 namespace mint
 {
+    namespace Platform
+    {
+        class InputContext;
+    }
+
+
     namespace Rendering
     {
         class ObjectPool;
@@ -83,42 +89,39 @@ namespace mint
             void                    setPerspectiveZRange(const float nearZ, const float farZ);
             void                    setPerspectiveScreenRatio(const float screenRatio);
 
-        private:
-            void                    updatePerspectiveMatrix() noexcept;
-        
         public:
+            void                    steer(Platform::InputContext& inputContext, const bool isMoveLocked);
             void                    move(const MoveDirection moveDirection);
-            void                    increaseMoveSpeed() noexcept;
-            void                    decreaseMoveSpeed() noexcept;
-            void                    setBoostMode(const bool isBoostMode) noexcept;
-
-        public:
             void                    rotatePitch(const float angle);
             void                    rotateYaw(const float angle);
             void                    rotateByMouseDelta(const Float2& mouseDelta);
 
         public:
+            void                    increaseMoveSpeed() noexcept;
+            void                    decreaseMoveSpeed() noexcept;
+            void                    setBoostMode(const bool isBoostMode) noexcept;
+
+        public:
             Float4x4                getViewMatrix() const noexcept;
             const Float4x4&         getProjectionMatrix() const noexcept;
-        
+
         private:
+            void                    updatePerspectiveMatrix() noexcept;
+
             Float4x4                getRotationMatrix() const noexcept;
             const float             getHandednessSign() const noexcept;
 
         private:
             Float4x4                _projectionMatrix;
 
-        private:
             mutable Float3          _forwardDirection;
 
-        private:
             bool                    _isRightHanded;
             float                   _fov;
             float                   _nearZ;
             float                   _farZ;
             float                   _screenRatio;
 
-        private:
             float                   _pitch;
             float                   _yaw;
             float                   _roll;

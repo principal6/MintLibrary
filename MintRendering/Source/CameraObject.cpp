@@ -2,6 +2,8 @@
 #include <MintRendering/Include/CameraObject.h>
 #include <MintRendering/Include/ObjectPool.hpp>
 
+#include <MintPlatform/Include/InputContext.h>
+
 
 namespace mint
 {
@@ -51,6 +53,50 @@ namespace mint
         void CameraObject::updatePerspectiveMatrix() noexcept
         {
             _projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
+        }
+
+        void CameraObject::steer(Platform::InputContext& inputContext, const bool isMoveLocked)
+        {
+            if (isMoveLocked == false)
+            {
+                if (inputContext.isKeyDown(Platform::KeyCode::Q) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Upward);
+                }
+
+                if (inputContext.isKeyDown(Platform::KeyCode::E) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Downward);
+                }
+
+                if (inputContext.isKeyDown(Platform::KeyCode::W) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Forward);
+                }
+
+                if (inputContext.isKeyDown(Platform::KeyCode::S) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Backward);
+                }
+
+                if (inputContext.isKeyDown(Platform::KeyCode::A) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Leftward);
+                }
+
+                if (inputContext.isKeyDown(Platform::KeyCode::D) == true)
+                {
+                    move(Rendering::CameraObject::MoveDirection::Rightward);
+                }
+            }
+            
+            if (inputContext.isMousePointerMoved() == true)
+            {
+                if (inputContext.isMouseButtonDown(Platform::MouseButton::Right) == true)
+                {
+                    rotateByMouseDelta(inputContext.getMouseDeltaPosition());
+                }
+            }
         }
 
         void CameraObject::move(const MoveDirection moveDirection)

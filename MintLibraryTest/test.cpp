@@ -355,108 +355,68 @@ const bool testWindow()
 
             guiContext.processEvent();
 
+            if (inputContext.isKeyPressed() == true)
             {
-                if (inputContext.isKeyPressed() == true)
+                if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
                 {
-                    if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
-                    {
-                        graphicDevice.getShaderPool().recompileAllShaders();
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
-                    {
-                        graphicDevice.useSolidCullBackRasterizer();
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
-                    {
-                        graphicDevice.useWireFrameCullBackRasterizer();
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
-                    {
-                        graphicDevice.useWireFrameNoCullingRasterizer();
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
-                    {
-                        Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
-                        meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
-                    {
-                        Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
-                        meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
-                    }
-                    else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
-                    {
-                        testCameraObject->setBoostMode(true);
-                    }
+                    graphicDevice.getShaderPool().recompileAllShaders();
                 }
-                else if (inputContext.isKeyReleased() == true)
+                else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
                 {
-                    if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
-                    {
-                        testCameraObject->setBoostMode(false);
-                    }
+                    graphicDevice.useSolidCullBackRasterizer();
                 }
-                else if (inputContext.isMouseWheelScrolled() == true)
+                else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
                 {
-                    const float mouseWheelScroll = inputContext.getMouseWheelScroll();
-                    if (mouseWheelScroll > 0.0f)
-                    {
-                        testCameraObject->increaseMoveSpeed();
-                    }
-                    else
-                    {
-                        testCameraObject->decreaseMoveSpeed();
-                    }
+                    graphicDevice.useWireFrameCullBackRasterizer();
                 }
-                else if (inputContext.isMousePointerMoved() == true)
+                else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
                 {
-                    if (inputContext.isMouseButtonDown(Platform::MouseButton::Right) == true)
-                    {
-                        testCameraObject->rotateByMouseDelta(inputContext.getMouseDeltaPosition());
-                    }
+                    graphicDevice.useWireFrameNoCullingRasterizer();
                 }
-                else if (window.isResized() == true)
+                else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
                 {
-                    graphicDevice.updateScreenSize();
-                    guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
-                    objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+                    Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
+                    meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
                 }
+                else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
+                {
+                    Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
+                    meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
+                }
+                else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
+                {
+                    testCameraObject->setBoostMode(true);
+                }
+            }
+            else if (inputContext.isKeyReleased() == true)
+            {
+                if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
+                {
+                    testCameraObject->setBoostMode(false);
+                }
+            }
+            else if (inputContext.isMouseWheelScrolled() == true)
+            {
+                const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+                if (mouseWheelScroll > 0.0f)
+                {
+                    testCameraObject->increaseMoveSpeed();
+                }
+                else
+                {
+                    testCameraObject->decreaseMoveSpeed();
+                }
+            }
+            else if (window.isResized() == true)
+            {
+                graphicDevice.updateScreenSize();
+                guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+                objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
             }
         }
 
-        // Dynamic Keyboard Inputs
-        if (guiContext.isFocusedControlInputBox() == false)
-        {
-            if (inputContext.isKeyDown(Platform::KeyCode::Q) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Upward);
-            }
-
-            if (inputContext.isKeyDown(Platform::KeyCode::E) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Downward);
-            }
-
-            if (inputContext.isKeyDown(Platform::KeyCode::W) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Forward);
-            }
-
-            if (inputContext.isKeyDown(Platform::KeyCode::S) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Backward);
-            }
-
-            if (inputContext.isKeyDown(Platform::KeyCode::A) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Leftward);
-            }
-
-            if (inputContext.isKeyDown(Platform::KeyCode::D) == true)
-            {
-                testCameraObject->move(Rendering::CameraObject::MoveDirection::Rightward);
-            }
-        }
+        const bool isCameraMoveLocked = guiContext.isFocusedControlInputBox();
+        testCameraObject->steer(inputContext, isCameraMoveLocked);
 
         // Rendering
         {
