@@ -2371,7 +2371,7 @@ namespace mint
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
                 const ControlId& parentId = (prepareControlDataParam._parentIdOverride.isValid() == true) ? prepareControlDataParam._parentIdOverride : stackTopControlData.getId();
-                controlData.setParentIdXXX(parentId);
+                controlData.setParentId(parentId);
 
                 if (isNewData == true)
                 {

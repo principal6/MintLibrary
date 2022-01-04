@@ -300,8 +300,8 @@ namespace mint
             void                                updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parent) noexcept;
 
         public:
-            void                                setParentIdXXX(const ControlId& parentId) noexcept;
             const ControlId&                    getId() const noexcept;
+            void                                setParentId(const ControlId& parentId) noexcept;
             const ControlId&                    getParentId() const noexcept;
             const Vector<ControlId>&            getChildControlIds() const noexcept;
             const Vector<ControlId>&            getPreviousChildControlIds() const noexcept;

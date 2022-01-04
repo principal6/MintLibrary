@@ -351,9 +351,66 @@ namespace mint
             return _id;
         }
 
+        MINT_INLINE void ControlData::setParentId(const ControlId& parentId) noexcept
+        {
+            _parentId = parentId;
+        }
+
         MINT_INLINE const ControlId& ControlData::getParentId() const noexcept
         {
             return _parentId;
+        }
+
+        MINT_INLINE const Vector<ControlId>& ControlData::getChildControlIds() const noexcept
+        {
+            return _childControlIds;
+        }
+
+        MINT_INLINE const Vector<ControlId>& ControlData::getPreviousChildControlIds() const noexcept
+        {
+            return _previousChildControlIds;
+        }
+
+        MINT_INLINE const uint16 ControlData::getPreviousChildControlCount() const noexcept
+        {
+            return static_cast<uint16>(_previousChildControlIds.size());
+        }
+
+        MINT_INLINE const uint16 ControlData::getPreviousMaxChildControlCount() const noexcept
+        {
+            return _previousMaxChildControlCount;
+        }
+
+        MINT_INLINE void ControlData::prepareChildControlIds() noexcept
+        {
+            std::swap(_childControlIds, _previousChildControlIds);
+            _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlIds.size()));
+            _childControlIds.clear();
+
+            _controlAccessData._childControlIds = _previousChildControlIds;
+        }
+
+        MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
+        {
+            return !_childWindowIdMap.empty();
+        }
+
+        MINT_INLINE void ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
+        {
+            if (childWindowControlData._controlType == ControlType::Window && _childWindowIdMap.find(childWindowControlData._id).isValid() == false)
+            {
+                _childWindowIdMap.insert(childWindowControlData._id, true);
+            }
+        }
+
+        MINT_INLINE void ControlData::disconnectChildWindow(const ControlId& childWindowId) noexcept
+        {
+            _childWindowIdMap.erase(childWindowId);
+        }
+
+        MINT_INLINE const HashMap<ControlId, bool>& ControlData::getChildWindowIdMap() const noexcept
+        {
+            return _childWindowIdMap;
         }
 
         MINT_INLINE const Rect& ControlData::getInnerPadding() const noexcept
@@ -477,40 +534,6 @@ namespace mint
         MINT_INLINE const Rect& ControlData::getClipRectForDocks() const noexcept
         {
             return _clipRectForDocks;
-        }
-
-        MINT_INLINE const Vector<ControlId>& ControlData::getChildControlIds() const noexcept
-        {
-            return _childControlIds;
-        }
-
-        MINT_INLINE const Vector<ControlId>& ControlData::getPreviousChildControlIds() const noexcept
-        {
-            return _previousChildControlIds;
-        }
-
-        MINT_INLINE const uint16 ControlData::getPreviousChildControlCount() const noexcept
-        {
-            return static_cast<uint16>(_previousChildControlIds.size());
-        }
-
-        MINT_INLINE const uint16 ControlData::getPreviousMaxChildControlCount() const noexcept
-        {
-            return _previousMaxChildControlCount;
-        }
-
-        MINT_INLINE void ControlData::prepareChildControlIds() noexcept
-        {
-            std::swap(_childControlIds, _previousChildControlIds);
-            _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlIds.size()));
-            _childControlIds.clear();
-
-            _controlAccessData._childControlIds = _previousChildControlIds;
-        }
-
-        MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
-        {
-            return !_childWindowIdMap.empty();
         }
 
         MINT_INLINE DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
@@ -685,33 +708,10 @@ namespace mint
             );
         }
 
-        MINT_INLINE void ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
-        {
-            if (childWindowControlData._controlType == ControlType::Window && _childWindowIdMap.find(childWindowControlData._id).isValid() == false)
-            {
-                _childWindowIdMap.insert(childWindowControlData._id, true);
-            }
-        }
-
-        MINT_INLINE void ControlData::disconnectChildWindow(const ControlId& childWindowId) noexcept
-        {
-            _childWindowIdMap.erase(childWindowId);
-        }
-
-        MINT_INLINE const HashMap<ControlId, bool>& ControlData::getChildWindowIdMap() const noexcept
-        {
-            return _childWindowIdMap;
-        }
-
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept
         {
             std::swap(_size, _dockRelatedData._dokcingStateContext._size);
             std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
-        }
-
-        MINT_INLINE void ControlData::setParentIdXXX(const ControlId& parentId) noexcept
-        {
-            _parentId = parentId;
         }
 
         MINT_INLINE void ControlData::setOffsetY_XXX(const float offsetY) noexcept
