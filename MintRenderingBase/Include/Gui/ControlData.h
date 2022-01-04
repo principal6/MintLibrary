@@ -248,7 +248,7 @@ namespace mint
         public:
             class DockRelatedData
             {
-                friend class ControlData;
+                friend ControlData;
 
             public:
                                                 DockRelatedData(const ControlType controlType);
@@ -275,6 +275,20 @@ namespace mint
                 bool    _isInteractableOutsideParent    : 1;
             };
 
+            struct PerFrameData
+            {
+                void            reset()
+                {
+                    _deltaPosition.setZero();
+                    _nextChildOffset.setZero();
+                    _contentAreaSize.setZero();
+                }
+
+                Float2          _deltaPosition; // Used for dragging
+                Float2          _nextChildOffset; // Every new child sets this offset to calculate next _childAt
+                Float2          _contentAreaSize; // Could be smaller or larger than _size
+            };
+
         public:
                                                 REFLECTION_CLASS(ControlData);
                                                 ControlData();
@@ -296,10 +310,8 @@ namespace mint
             const float                         getPureDisplayHeight() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
             const Float2&                       getNonDockInteractionSize() const noexcept;
-            const Float2&                       getContentAreaSize() const noexcept;
             const Float2&                       getPreviousContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
-            const Float2&                       getNextChildOffset() const noexcept;
             const ControlType                   getControlType() const noexcept;
             const bool                          isTypeOf(const ControlType controlType) const noexcept;
             const bool                          isInputBoxType() const noexcept;
@@ -365,9 +377,9 @@ namespace mint
             REFLECTION_MEMBER(Float2, _position);
 
             Option                              _option;
+            PerFrameData                        _perFrameData;
             Float2                              _childDisplayOffset; // Used for scrolling child controls (of Window control)
             ResizingMask                        _resizingMask;
-            Float2                              _currentFrameDeltaPosition; // Used for dragging
             Rect                                _positionConstraintsForDragging; // MUST set all four values if want to limit dragging area
             ControlId                           _delegateControlId; // Used for drag, resize and focus
             REFLECTION_MEMBER(StringW, _text);
@@ -383,10 +395,8 @@ namespace mint
             Float2                              _minSize;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
             Float2                              _nonDockInteractionSize; // Exluces dock area
-            Float2                              _contentAreaSize; // Could be smaller or larger than _size
             Float2                              _previousContentAreaSize;
             Float2                              _childAt; // In screen space, Next child control will be positioned according to this
-            Float2                              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
             ControlType                         _controlType;
             VisibleState                        _visibleState;
             Rect                                _clipRect;

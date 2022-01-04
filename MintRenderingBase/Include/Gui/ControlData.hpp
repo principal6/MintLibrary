@@ -304,10 +304,9 @@ namespace mint
 
         MINT_INLINE void ControlData::clearPerFrameData() noexcept
         {
-            _nextChildOffset.setZero();
-            _previousContentAreaSize = _contentAreaSize;
-            _contentAreaSize.setZero();
-            _currentFrameDeltaPosition.setZero();
+            _previousContentAreaSize = _perFrameData._contentAreaSize;
+            
+            _perFrameData.reset();
         }
 
         MINT_INLINE void ControlData::updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData) noexcept
@@ -415,11 +414,6 @@ namespace mint
             return _nonDockInteractionSize;
         }
 
-        MINT_INLINE const Float2& ControlData::getContentAreaSize() const noexcept
-        {
-            return _contentAreaSize;
-        }
-
         MINT_INLINE const Float2& ControlData::getPreviousContentAreaSize() const noexcept
         {
             return _previousContentAreaSize;
@@ -428,11 +422,6 @@ namespace mint
         MINT_INLINE const Float2& ControlData::getChildAt() const noexcept
         {
             return _childAt;
-        }
-
-        MINT_INLINE  const Float2& ControlData::getNextChildOffset() const noexcept
-        {
-            return _nextChildOffset;
         }
 
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
@@ -727,7 +716,7 @@ namespace mint
 
         MINT_INLINE void ControlData::setOffsetY_XXX(const float offsetY) noexcept
         {
-            _nextChildOffset._y = offsetY;
+            _perFrameData._nextChildOffset._y = offsetY;
         }
 
         MINT_INLINE void ControlData::setAllClipRects(const Rect& clipRect) noexcept

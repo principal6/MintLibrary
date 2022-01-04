@@ -746,10 +746,10 @@ namespace mint
             if (isParentAlsoWindow == true)
             {
                 // 부모 윈도우가 이동한 만큼 내 위치도 이동!
-                windowControlData._position += parentControlData._currentFrameDeltaPosition;
+                windowControlData._position += parentControlData._perFrameData._deltaPosition;
 
                 // 계층 가장 아래 Window 까지 전파되도록
-                windowControlData._currentFrameDeltaPosition = parentControlData._currentFrameDeltaPosition;
+                windowControlData._perFrameData._deltaPosition = parentControlData._perFrameData._deltaPosition;
             }
         }
 
@@ -2422,7 +2422,7 @@ namespace mint
             if (useAutoPosition == true)
             {
                 Float2& parentControlChildAt = const_cast<Float2&>(parentControlData.getChildAt());
-                Float2& parentControlNextChildOffset = const_cast<Float2&>(parentControlData.getNextChildOffset());
+                Float2& parentControlNextChildOffset = parentControlData._perFrameData._nextChildOffset;
                 const float parentControlPreviousNextChildOffsetX = parentControlNextChildOffset._x;
 
                 const bool isSameLineAsPreviousControl = (_controlMetaStateSet.getNextSameLine() == true);
@@ -2450,7 +2450,7 @@ namespace mint
                 }
 
                 // Parent content area size
-                Float2& parentControlContentAreaSize = const_cast<Float2&>(parentControlData.getContentAreaSize());
+                Float2& parentControlContentAreaSize = parentControlData._perFrameData._contentAreaSize;
                 if (prepareControlDataParam._ignoreMeForContentAreaSize == false)
                 {
                     if (_controlMetaStateSet.getNextSameLine())
@@ -2897,7 +2897,7 @@ namespace mint
             else
             {
                 // Set delta position
-                targetControlData._currentFrameDeltaPosition = targetControlData._position - positionOld;
+                targetControlData._perFrameData._deltaPosition = targetControlData._position - positionOld;
             }
 
             _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
