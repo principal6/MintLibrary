@@ -98,7 +98,7 @@ namespace mint
             _moveSpeed = getSlowerMoveSpeed(_moveSpeed);
         }
 
-        void CameraObject::setIsBoostMode(const bool isBoostMode) noexcept
+        void CameraObject::setBoostMode(const bool isBoostMode) noexcept
         {
             _isBoostMode = isBoostMode;
         }

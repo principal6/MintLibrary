@@ -90,7 +90,7 @@ namespace mint
             void                    move(const MoveDirection moveDirection);
             void                    increaseMoveSpeed() noexcept;
             void                    decreaseMoveSpeed() noexcept;
-            void                    setIsBoostMode(const bool isBoostMode) noexcept;
+            void                    setBoostMode(const bool isBoostMode) noexcept;
 
         public:
             void                    rotatePitch(const float angle);

@@ -386,14 +386,14 @@ const bool testWindow()
                     }
                     else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
                     {
-                        testCameraObject->setIsBoostMode(true);
+                        testCameraObject->setBoostMode(true);
                     }
                 }
                 else if (inputContext.isKeyReleased() == true)
                 {
                     if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
                     {
-                        testCameraObject->setIsBoostMode(false);
+                        testCameraObject->setBoostMode(false);
                     }
                 }
                 else if (inputContext.isMouseWheelScrolled() == true)
