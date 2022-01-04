@@ -253,12 +253,13 @@ namespace mint
 
         GraphicDevice& GraphicDevice::getInvalidInstance()
         {
-            static GraphicDevice invalidInstance;
+            static Window::WindowsWindow invalidWindow;
+            static GraphicDevice invalidInstance(invalidWindow);
             return invalidInstance;
         }
 
-        GraphicDevice::GraphicDevice()
-            : _window{ nullptr }
+        GraphicDevice::GraphicDevice(Window::IWindow& window)
+            : _window{ window }
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
             , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
@@ -274,17 +275,10 @@ namespace mint
             __noop;
         }
 
-        const bool GraphicDevice::initialize(Window::IWindow* const window)
+        const bool GraphicDevice::initialize()
         {
-            if (window == nullptr)
-            {
-                MINT_LOG_ERROR("김장원", "window 포인터가 nullptr 이면 안 됩니다!");
-                return false;
-            }
-
-            _window = window;
-            _clearColor = _window->getBackgroundColor();
-            _lastWindowSize = _window->getSize();
+            _clearColor = _window.getBackgroundColor();
+            _lastWindowSize = _window.getSize();
             
             createDxDevice();
             
@@ -300,7 +294,7 @@ namespace mint
 
         void GraphicDevice::updateScreenSize()
         {
-            if (_window->getSize() == _lastWindowSize)
+            if (_window.getSize() == _lastWindowSize)
             {
                 return;
             }
@@ -313,18 +307,18 @@ namespace mint
             _swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT::DXGI_FORMAT_UNKNOWN, 0);
 
             initializeBackBuffer();
-            initializeDepthStencilBufferAndView(_window->getSize());
-            initializeFullScreenData(_window->getSize());
-            initialize2DProjectionMatrix(Float2(_window->getSize()));
+            initializeDepthStencilBufferAndView(_window.getSize());
+            initializeFullScreenData(_window.getSize());
+            initialize2DProjectionMatrix(Float2(_window.getSize()));
 
             setDefaultRenderTargetsAndDepthStencil();
 
-            _lastWindowSize = _window->getSize();
+            _lastWindowSize = _window.getSize();
         }
 
         void GraphicDevice::createDxDevice()
         {
-            const Window::WindowsWindow& windowsWindow = *static_cast<const Window::WindowsWindow*>(_window);
+            const Window::WindowsWindow& windowsWindow = static_cast<const Window::WindowsWindow&>(_window);
             const Int2& windowSize = windowsWindow.getSize();
 
             if (createSwapChain(windowSize, windowsWindow.getHandle()) == false)
@@ -492,7 +486,7 @@ namespace mint
 
         void GraphicDevice::initializeShaderHeaderMemory()
         {
-            const Int2 windowSize = _window->getSize();
+            const Int2 windowSize = _window.getSize();
 
             // Stream data
             {
@@ -720,7 +714,7 @@ namespace mint
 
         const Int2& GraphicDevice::getWindowSize() const noexcept
         {
-            return (_window != nullptr) ? _window->getSize() : Int2::kZero;
+            return _window.getSize();
         }
 
         Float2 GraphicDevice::getWindowSizeFloat2() const noexcept
@@ -728,7 +722,12 @@ namespace mint
             return Float2(getWindowSize());
         }
         
-        Window::IWindow* GraphicDevice::getWindow() noexcept
+        Window::IWindow& GraphicDevice::accessWindow() noexcept
+        {
+            return _window;
+        }
+
+        const Window::IWindow& GraphicDevice::getWindow() const noexcept
         {
             return _window;
         }

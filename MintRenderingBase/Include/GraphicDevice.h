@@ -132,11 +132,11 @@ namespace mint
             static GraphicDevice&                       getInvalidInstance();
 
         public:
-                                                        GraphicDevice();
+                                                        GraphicDevice(Window::IWindow& window);
                                                         ~GraphicDevice() = default;
 
         public:
-            const bool                                  initialize(Window::IWindow* const window);
+            const bool                                  initialize();
             void                                        updateScreenSize();
 
         private:
@@ -194,10 +194,11 @@ namespace mint
             ID3D11Device*                               getDxDevice() noexcept;
             const Int2&                                 getWindowSize() const noexcept;
             Float2                                      getWindowSizeFloat2() const noexcept;
-            Window::IWindow*                            getWindow() noexcept;
+            Window::IWindow&                            accessWindow() noexcept;
+            const Window::IWindow&                      getWindow() const noexcept;
 
         private:
-            Window::IWindow*                            _window;
+            Window::IWindow&                            _window;
             Int2                                        _lastWindowSize;
 
         private:

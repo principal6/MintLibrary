@@ -309,8 +309,8 @@ const bool testWindow()
         return false;
     }
 
-    Rendering::GraphicDevice graphicDevice;
-    graphicDevice.initialize(&window);
+    Rendering::GraphicDevice graphicDevice(window);
+    graphicDevice.initialize();
 
     //Rendering::MathExpressionRenderer mathExpressionRenderer(&graphicDevice);
     Gui::GuiContext& guiContext = graphicDevice.getGuiContext();

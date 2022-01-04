@@ -153,7 +153,7 @@ namespace mint
         {
             _fontSize = static_cast<float>(_graphicDevice.getFontRendererContext().getFontSize());
             
-            _caretBlinkIntervalMs = _graphicDevice.getWindow()->getCaretBlinkIntervalMs();
+            _caretBlinkIntervalMs = _graphicDevice.getWindow().getCaretBlinkIntervalMs();
 
             const Rendering::FontRendererContext::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
@@ -1154,8 +1154,8 @@ namespace mint
             }
             else
             {
-                const Window::IWindow* const window = _graphicDevice.getWindow();
-                Gui::InputBoxHelpers::processDefaultKeyboardInputs(window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
+                const Window::IWindow& window = _graphicDevice.getWindow();
+                Gui::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
                     _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
             }
 
@@ -1265,7 +1265,7 @@ namespace mint
 
             if (_controlInteractionStateSet.isControlFocused(controlData) == true)
             {
-                const Window::IWindow* const window = _graphicDevice.getWindow();
+                const Window::IWindow& window = _graphicDevice.getWindow();
                 TextBoxProcessInputResult result;
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                 {
@@ -1274,7 +1274,7 @@ namespace mint
                 else
                 {
                     const TextInputMode kTextInputMode = TextInputMode::NumberOnly;
-                    Gui::InputBoxHelpers::processDefaultKeyboardInputs(window, getRendererContext(controlData), controlData, kTextInputMode, kTextBoxMaxTextLength, _keyCode,
+                    Gui::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, kTextInputMode, kTextBoxMaxTextLength, _keyCode,
                         _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
                 }
 
@@ -3551,7 +3551,7 @@ namespace mint
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
 
-            _graphicDevice.getWindow()->setCursorType(_mouseStates._cursorType);
+            _graphicDevice.accessWindow().setCursorType(_mouseStates._cursorType);
 
             if (_controlInteractionStateSet.needToShowTooltip() == true)
             {
