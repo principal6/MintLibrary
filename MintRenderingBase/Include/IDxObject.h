@@ -118,40 +118,45 @@ namespace mint
         class IDxObject abstract
         {
         public:
-                                        IDxObject(GraphicDevice* const graphicDevice, const DxObjectType objectType) : _graphicDevice{ graphicDevice} { _objectId.setObjectTypeXXX(objectType); }
-            virtual                     ~IDxObject() = default;
+                                            IDxObject(GraphicDevice& graphicDevice, const DxObjectType objectType) 
+                                                : _graphicDevice{ graphicDevice }
+                                                , _objectId{}
+                                            {
+                                                _objectId.setObjectTypeXXX(objectType); 
+                                            }
+            virtual                         ~IDxObject() = default;
 
         public:
-            MINT_INLINE const bool        operator==(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator==(const DxObjectId& objectId) const noexcept
             {
                 return _objectId == objectId;
             }
 
-            MINT_INLINE const bool        operator<(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator<(const DxObjectId& objectId) const noexcept
             {
                 return _objectId < objectId;
             }
 
-            MINT_INLINE const bool        operator>(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator>(const DxObjectId& objectId) const noexcept
             {
                 return _objectId > objectId;
             }
 
         public:
-            MINT_INLINE const DxObjectId& getId() const noexcept
+            MINT_INLINE const DxObjectId&   getId() const noexcept
             {
                 return _objectId;
             }
 
         protected:
-            MINT_INLINE void              assignIdXXX() noexcept
+            MINT_INLINE void                assignIdXXX() noexcept
             {
                 _objectId.assignIdXXX();
             }
 
         protected:
-            GraphicDevice*              _graphicDevice{ nullptr };
-            DxObjectId                  _objectId{};
+            GraphicDevice&              _graphicDevice;
+            DxObjectId                  _objectId;
         };
     }
 }

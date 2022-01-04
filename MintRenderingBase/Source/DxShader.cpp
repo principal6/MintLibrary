@@ -56,8 +56,8 @@ namespace mint
 #pragma endregion
 
 
-        const DxShader DxShader::kNullInstance(nullptr, DxShaderType::VertexShader);
-        DxShader::DxShader(GraphicDevice* const graphicDevice, const DxShaderType shaderType)
+        const DxShader DxShader::kNullInstance(GraphicDevice::getInvalidInstance(), DxShaderType::VertexShader);
+        DxShader::DxShader(GraphicDevice& graphicDevice, const DxShaderType shaderType)
             : IDxObject(graphicDevice, DxObjectType::Shader), _shaderType{ shaderType }
         {
             __noop;
@@ -67,16 +67,16 @@ namespace mint
         {
             if (_shaderType == DxShaderType::VertexShader)
             {
-                _graphicDevice->getStateManager().setVsShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
-                _graphicDevice->getStateManager().setIaInputLayout(_inputLayout.Get());
+                _graphicDevice.getStateManager().setVsShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setIaInputLayout(_inputLayout.Get());
             }
             else if (_shaderType == DxShaderType::GeometryShader)
             {
-                _graphicDevice->getStateManager().setGsShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setGsShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
             }
             else if (_shaderType == DxShaderType::PixelShader)
             {
-                _graphicDevice->getStateManager().setPsShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setPsShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
             }
         }
 
@@ -84,21 +84,21 @@ namespace mint
         {
             if (_shaderType == DxShaderType::VertexShader)
             {
-                _graphicDevice->getStateManager().setVsShader(nullptr);
-                _graphicDevice->getStateManager().setIaInputLayout(nullptr);
+                _graphicDevice.getStateManager().setVsShader(nullptr);
+                _graphicDevice.getStateManager().setIaInputLayout(nullptr);
             }
             else if (_shaderType == DxShaderType::GeometryShader)
             {
-                _graphicDevice->getStateManager().setGsShader(nullptr);
+                _graphicDevice.getStateManager().setGsShader(nullptr);
             }
             else if (_shaderType == DxShaderType::PixelShader)
             {
-                _graphicDevice->getStateManager().setPsShader(nullptr);
+                _graphicDevice.getStateManager().setPsShader(nullptr);
             }
         }
 
 
-        DxShaderPool::DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
+        DxShaderPool::DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
             : IDxObject(graphicDevice, DxObjectType::Pool)
             , _shaderHeaderMemory{ shaderHeaderMemory }
             , _shaderVersion{ shaderVersion }
@@ -191,7 +191,7 @@ namespace mint
 
         const bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData)
         {
-            if (FAILED(_graphicDevice->getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+            if (FAILED(_graphicDevice.getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
             {
                 return false;
             }
@@ -223,7 +223,7 @@ namespace mint
                     }
                 }
 
-                if (FAILED(_graphicDevice->getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
+                if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
                     shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
                 {
                     MINT_LOG_ERROR("김장원", "VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", shader._hlslFileName.c_str(), inputElementTypeMetaData->getTypeName().c_str());
@@ -258,14 +258,14 @@ namespace mint
         {
             if (shaderType == DxShaderType::GeometryShader)
             {
-                if (FAILED(_graphicDevice->getDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+                if (FAILED(_graphicDevice.getDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
                 {
                     return false;
                 }
             }
             else if (shaderType == DxShaderType::PixelShader)
             {
-                if (FAILED(_graphicDevice->getDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
+                if (FAILED(_graphicDevice.getDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
                 {
                     return false;
                 }

@@ -12,7 +12,7 @@ namespace mint
 {
     namespace Rendering
     {
-        ShapeFontRendererContext::ShapeFontRendererContext(GraphicDevice* const graphicDevice)
+        ShapeFontRendererContext::ShapeFontRendererContext(GraphicDevice& graphicDevice)
             : ShapeRendererContext(graphicDevice)
             , _fontRendererContext{ graphicDevice }
         {

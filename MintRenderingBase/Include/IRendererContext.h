@@ -32,8 +32,7 @@ namespace mint
         class IRendererContext abstract
         {
         public:
-                                        IRendererContext() = default;
-                                        IRendererContext(GraphicDevice* const graphicDevice);
+                                        IRendererContext(GraphicDevice& graphicDevice);
             virtual                     ~IRendererContext() = default;
 
         public:
@@ -64,7 +63,7 @@ namespace mint
             static const float          packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
         protected:
-            GraphicDevice*              _graphicDevice;
+            GraphicDevice&              _graphicDevice;
         
         protected:
             Float4                      _position;

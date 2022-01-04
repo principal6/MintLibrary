@@ -14,7 +14,7 @@ namespace mint
 {
     namespace Rendering
     {
-        InstantRenderer::InstantRenderer(GraphicDevice* const graphicDevice)
+        InstantRenderer::InstantRenderer(GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _lowLevelRendererLine{ graphicDevice }
             , _lowLevelRendererMesh{ graphicDevice }
@@ -30,10 +30,10 @@ namespace mint
         void InstantRenderer::initialize() noexcept
         {
             using namespace Language;
-            const CppHlsl::Interpreter& interpreter = _graphicDevice->getCppHlslSteamData();
+            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
             const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
-            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
             _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
             _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
             _psColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
@@ -175,12 +175,12 @@ namespace mint
 
         void InstantRenderer::render() noexcept
         {
-            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
             shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultId);
             shaderPool.unbindShader(DxShaderType::GeometryShader);
 
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            DxResource& cbTransform = resourcePool.getResource(_graphicDevice->getCommonCbTransformId());
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+            DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformId());
             {
                 cbTransform.bindToShader(DxShaderType::VertexShader, cbTransform.getRegisterIndex());
                 cbTransform.bindToShader(DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
@@ -189,7 +189,7 @@ namespace mint
                 cbTransform.updateBuffer(&_cbTransformData, 1);
             }
 
-            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice->getCommonSbMaterialId());
+            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSbMaterialId());
             {
                 sbMaterial.bindToShader(DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
 

@@ -47,7 +47,7 @@ namespace mint
             };
 
         public:
-                                            LowLevelRenderer(GraphicDevice* const graphicDevice);
+                                            LowLevelRenderer(GraphicDevice& graphicDevice);
                                             ~LowLevelRenderer() = default;
 
         public:
@@ -77,7 +77,7 @@ namespace mint
             void                            optimizeRenderCommands() noexcept;
 
         private:
-            GraphicDevice* const            _graphicDevice;
+            GraphicDevice&                  _graphicDevice;
             const uint32                    _vertexStride;
         
         private:

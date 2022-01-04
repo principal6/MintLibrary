@@ -9,12 +9,12 @@ namespace mint
 {
     namespace Rendering
     {
-        inline IRendererContext::IRendererContext(GraphicDevice* const graphicDevice)
+        inline IRendererContext::IRendererContext(GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _defaultColor{ Color::kWhite }
             , _useMultipleViewports{ false }
         {
-            MINT_ASSERT("김장원", _graphicDevice != nullptr, "GraphicDevice 가 nullptr 이면 안 됩니다!");
+            __noop;
         }
 
         MINT_INLINE void IRendererContext::setUseMultipleViewports() noexcept

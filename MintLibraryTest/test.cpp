@@ -316,7 +316,7 @@ const bool testWindow()
     Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
     Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
-    Rendering::MeshRenderer meshRenderer{ &graphicDevice };
+    Rendering::MeshRenderer meshRenderer{ graphicDevice };
     meshRenderer.initialize();
     
     Rendering::ObjectPool objectPool;
@@ -333,7 +333,7 @@ const bool testWindow()
     }
     testCameraObject->rotatePitch(0.125f);
     
-    Rendering::InstantRenderer instantRenderer{ &graphicDevice };
+    Rendering::InstantRenderer instantRenderer{ graphicDevice };
     instantRenderer.initialize();
 
     Game::SkeletonGenerator testSkeletonGenerator;

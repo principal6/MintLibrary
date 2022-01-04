@@ -12,7 +12,7 @@ namespace mint
 {
     namespace Rendering
     {
-        DxResource DxResource::s_invalidInstance(nullptr);
+        DxResource DxResource::s_invalidInstance(GraphicDevice::getInvalidInstance());
         DXGI_FORMAT DxResource::getDxgiFormat(const DxTextureFormat format)
         {
             switch (format)
@@ -44,7 +44,7 @@ namespace mint
         }
 
 
-        DxResource::DxResource(GraphicDevice* const graphicDevice)
+        DxResource::DxResource(GraphicDevice& graphicDevice)
             : IDxObject(graphicDevice, DxObjectType::Resource)
             , _resourceType{ DxResourceType::INVALID }
             , _resourceCapacity{ 0 }
@@ -81,7 +81,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
@@ -108,7 +108,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
@@ -134,7 +134,7 @@ namespace mint
                 D3D11_SUBRESOURCE_DATA subresourceData{};
                 subresourceData.pSysMem = resourceContent;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateBuffer(&bufferDescriptor, (resourceContent != nullptr) ? &subresourceData : nullptr, reinterpret_cast<ID3D11Buffer**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _resourceCapacity = bufferDescriptor.ByteWidth;
                     _elementStride = elementStride;
@@ -145,7 +145,7 @@ namespace mint
                     shaderResourceViewDescriptor.ViewDimension = D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_BUFFER;
                     shaderResourceViewDescriptor.Buffer.ElementOffset = 0;
                     shaderResourceViewDescriptor.Buffer.ElementWidth = elementCount;
-                    if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateShaderResourceView(newResource.Get(), &shaderResourceViewDescriptor, reinterpret_cast<ID3D11ShaderResourceView**>(_view.ReleaseAndGetAddressOf()))))
+                    if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateShaderResourceView(newResource.Get(), &shaderResourceViewDescriptor, reinterpret_cast<ID3D11ShaderResourceView**>(_view.ReleaseAndGetAddressOf()))))
                     {
                         std::swap(_resource, newResource);
                         return true;
@@ -184,7 +184,7 @@ namespace mint
                 subResource.SysMemPitch = texture2DDescriptor.Width * colorCount;
                 subResource.SysMemSlicePitch = 0;
 
-                if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateTexture2D(&texture2DDescriptor, &subResource, reinterpret_cast<ID3D11Texture2D**>(newResource.ReleaseAndGetAddressOf()))))
+                if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateTexture2D(&texture2DDescriptor, &subResource, reinterpret_cast<ID3D11Texture2D**>(newResource.ReleaseAndGetAddressOf()))))
                 {
                     _elementStride = colorCount;
                     _elementMaxCount = texture2DDescriptor.Width * texture2DDescriptor.Height;
@@ -199,7 +199,7 @@ namespace mint
                     shaderResourceViewDescriptor.ViewDimension = D3D11_SRV_DIMENSION::D3D11_SRV_DIMENSION_TEXTURE2D;
                     shaderResourceViewDescriptor.Texture2D.MipLevels = texture2DDescriptor.MipLevels;
                     shaderResourceViewDescriptor.Texture2D.MostDetailedMip = 0; // TODO?
-                    if (SUCCEEDED(_graphicDevice->getDxDevice()->CreateShaderResourceView(newResource.Get(), &shaderResourceViewDescriptor, reinterpret_cast<ID3D11ShaderResourceView**>(_view.ReleaseAndGetAddressOf()))))
+                    if (SUCCEEDED(_graphicDevice.getDxDevice()->CreateShaderResourceView(newResource.Get(), &shaderResourceViewDescriptor, reinterpret_cast<ID3D11ShaderResourceView**>(_view.ReleaseAndGetAddressOf()))))
                     {
                         std::swap(_resource, newResource);
                         return true;
@@ -311,11 +311,11 @@ namespace mint
         {
             if (_resourceType == DxResourceType::VertexBuffer)
             {
-                _graphicDevice->getStateManager().setIaVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
+                _graphicDevice.getStateManager().setIaVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
             }
             else if (_resourceType == DxResourceType::IndexBuffer)
             {
-                _graphicDevice->getStateManager().setIaIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
+                _graphicDevice.getStateManager().setIaIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
             }
             else
             {
@@ -331,15 +331,15 @@ namespace mint
             {
                 if (shaderType == DxShaderType::VertexShader)
                 {
-                    _graphicDevice->getStateManager().setVsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setVsConstantBuffers(*this);
                 }
                 else if (shaderType == DxShaderType::GeometryShader)
                 {
-                    _graphicDevice->getStateManager().setGsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setGsConstantBuffers(*this);
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
-                    _graphicDevice->getStateManager().setPsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setPsConstantBuffers(*this);
                 }
                 else
                 {
@@ -350,15 +350,15 @@ namespace mint
             {
                 if (shaderType == DxShaderType::VertexShader)
                 {
-                    _graphicDevice->getStateManager().setVsResources(*this);
+                    _graphicDevice.getStateManager().setVsResources(*this);
                 }
                 else if (shaderType == DxShaderType::GeometryShader)
                 {
-                    _graphicDevice->getStateManager().setGsResources(*this);
+                    _graphicDevice.getStateManager().setGsResources(*this);
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
-                    _graphicDevice->getStateManager().setPsResources(*this);
+                    _graphicDevice.getStateManager().setPsResources(*this);
                 }
                 else
                 {
@@ -374,7 +374,7 @@ namespace mint
         }
 
 
-        DxResourcePool::DxResourcePool(GraphicDevice* const graphicDevice)
+        DxResourcePool::DxResourcePool(GraphicDevice& graphicDevice)
             : IDxObject(graphicDevice, DxObjectType::Pool)
         {
             __noop;

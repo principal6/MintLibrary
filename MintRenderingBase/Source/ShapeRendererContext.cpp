@@ -12,7 +12,7 @@ namespace mint
 {
     namespace Rendering
     {
-        ShapeRendererContext::ShapeRendererContext(GraphicDevice* const graphicDevice)
+        ShapeRendererContext::ShapeRendererContext(GraphicDevice& graphicDevice)
             : IRendererContext(graphicDevice)
             , _lowLevelRenderer{ nullptr }
             , _borderColor{ Color(1.0f, 1.0f, 1.0f) }
@@ -27,9 +27,9 @@ namespace mint
 
         void ShapeRendererContext::initializeShaders() noexcept
         {
-            _clipRect = _graphicDevice->getFullScreenClipRect();
+            _clipRect = _graphicDevice.getFullScreenClipRect();
 
-            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
 
             {
                 static constexpr const char kShaderString[]
@@ -63,7 +63,7 @@ namespace mint
                 };
 
                 using namespace Language;
-                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
             }
 
@@ -168,7 +168,7 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -178,8 +178,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();

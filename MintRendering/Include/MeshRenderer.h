@@ -26,7 +26,7 @@ namespace mint
         class MeshRenderer final
         {
         public:
-                                            MeshRenderer(GraphicDevice* const graphicDevice);
+                                            MeshRenderer(GraphicDevice& graphicDevice);
                                             ~MeshRenderer();
 
         public:
@@ -34,7 +34,7 @@ namespace mint
             void                            render(const ObjectPool& objectPool) noexcept;
 
         private:
-            GraphicDevice* const            _graphicDevice;
+            GraphicDevice&                  _graphicDevice;
 
         private:
             LowLevelRenderer<VS_INPUT>      _lowLevelRenderer;

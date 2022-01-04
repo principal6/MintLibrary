@@ -16,7 +16,7 @@ namespace mint
         class ShapeFontRendererContext final : public ShapeRendererContext
         {
         public:
-                                                    ShapeFontRendererContext(GraphicDevice* const graphicDevice);
+                                                    ShapeFontRendererContext(GraphicDevice& graphicDevice);
             virtual                                 ~ShapeFontRendererContext();
 
         public:

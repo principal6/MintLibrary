@@ -159,7 +159,7 @@ namespace mint
             };
 
         private:
-                                                        GuiContext(Rendering::GraphicDevice* const graphicDevice);
+                                                        GuiContext(Rendering::GraphicDevice& graphicDevice);
 
         public:
                                                         ~GuiContext();
@@ -426,7 +426,7 @@ namespace mint
             void                                        resetPerFrameStates();
 
         private:
-            Rendering::GraphicDevice* const             _graphicDevice;
+            Rendering::GraphicDevice&                   _graphicDevice;
 
         private: // these are set externally
             float                                       _fontSize;

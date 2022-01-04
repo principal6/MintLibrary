@@ -23,6 +23,8 @@ namespace mint
     {
 #pragma region ControlValue
         inline ControlValue::ControlValue()
+            : _commonData{}
+            , _textBoxData{}
         {
             __noop;
         }

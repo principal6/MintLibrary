@@ -55,7 +55,7 @@ namespace mint
             friend DxShaderPool;
 
         private:
-                                        DxShader(GraphicDevice* const graphicDevice, const DxShaderType shaderType);
+                                        DxShader(GraphicDevice& graphicDevice, const DxShaderType shaderType);
 
         public:
             virtual                     ~DxShader() = default;
@@ -97,7 +97,7 @@ namespace mint
             static constexpr const char* const  kCompiledShaderFileExtension = ".hlslbin";
 
         public:
-                                        DxShaderPool(GraphicDevice* const graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
+                                        DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
                                         DxShaderPool(const DxShaderPool& rhs) = delete;
             virtual                     ~DxShaderPool() = default;
 
@@ -146,9 +146,9 @@ namespace mint
             DxShaderVersion             _shaderVersion;
 
         private:
-            Vector<DxShader>        _vertexShaderArray;
-            Vector<DxShader>        _geometryShaderArray;
-            Vector<DxShader>        _pixelShaderArray;
+            Vector<DxShader>            _vertexShaderArray;
+            Vector<DxShader>            _geometryShaderArray;
+            Vector<DxShader>            _pixelShaderArray;
 
         private:
             DxObjectId                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];

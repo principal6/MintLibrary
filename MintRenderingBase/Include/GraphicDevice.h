@@ -47,7 +47,7 @@ namespace mint
         class SafeResourceMapper
         {
         public:
-                                        SafeResourceMapper(GraphicDevice* const graphicDevice, ID3D11Resource* const resource, const uint32 subresource);
+                                        SafeResourceMapper(GraphicDevice& graphicDevice, ID3D11Resource* const resource, const uint32 subresource);
                                         ~SafeResourceMapper();
 
         public:
@@ -55,7 +55,7 @@ namespace mint
             void                        set(const void* const data, const uint32 size) noexcept;
 
         private:
-            GraphicDevice* const        _graphicDevice;
+            GraphicDevice&              _graphicDevice;
             ID3D11Resource* const       _resource;
             const uint32                _subresource;
             D3D11_MAPPED_SUBRESOURCE    _mappedSubresource;
@@ -68,7 +68,7 @@ namespace mint
             class StateManager
             {
             public:
-                                        StateManager(GraphicDevice* const graphicDevice);
+                                        StateManager(GraphicDevice& graphicDevice);
                                         ~StateManager() = default;
 
             public: // IA
@@ -98,7 +98,7 @@ namespace mint
                 void                    setPsConstantBuffers(const DxResource& constantBuffer);
             
             private:
-                GraphicDevice* const    _graphicDevice;
+                GraphicDevice&          _graphicDevice;
 
             private: // IA
                 RenderingPrimitive      _iaRenderingPrimitive;
@@ -127,6 +127,9 @@ namespace mint
             
             friend SafeResourceMapper;
             friend StateManager;
+
+        public:
+            static GraphicDevice&                       getInvalidInstance();
 
         public:
                                                         GraphicDevice();

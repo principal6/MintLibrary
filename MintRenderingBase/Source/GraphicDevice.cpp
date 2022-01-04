@@ -28,13 +28,13 @@ namespace mint
         #define MINT_CHECK_TWO_STATES(a, aa, b, bb) if ((a == aa) && (b == bb)) { return; } a = aa; b = bb;
 
 
-        SafeResourceMapper::SafeResourceMapper(GraphicDevice* const graphicDevice, ID3D11Resource* const resource, const uint32 subresource)
+        SafeResourceMapper::SafeResourceMapper(GraphicDevice& graphicDevice, ID3D11Resource* const resource, const uint32 subresource)
             : _graphicDevice{ graphicDevice }
             , _resource{ resource }
             , _subresource{ subresource }
             , _mappedSubresource{}
         {
-            if (FAILED(_graphicDevice->_deviceContext->Map(_resource, _subresource, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &_mappedSubresource)))
+            if (FAILED(_graphicDevice._deviceContext->Map(_resource, _subresource, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &_mappedSubresource)))
             {
                 _mappedSubresource.pData = nullptr;
                 _mappedSubresource.DepthPitch = 0;
@@ -46,7 +46,7 @@ namespace mint
         {
             if (isValid() == true)
             {
-                _graphicDevice->_deviceContext->Unmap(_resource, _subresource);
+                _graphicDevice._deviceContext->Unmap(_resource, _subresource);
             }
         }
 
@@ -61,11 +61,13 @@ namespace mint
         }
 
 
-        GraphicDevice::StateManager::StateManager(GraphicDevice* const graphicDevice)
+        GraphicDevice::StateManager::StateManager(GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _iaRenderingPrimitive{ RenderingPrimitive::INVALID }
             , _iaInputLayout{ nullptr }
             , _rsRasterizerState{ nullptr }
+            , _rsViewport{}
+            , _rsScissorRectangle{}
             , _vsShader{ nullptr }
             , _gsShader{ nullptr }
             , _psShader{ nullptr }
@@ -77,7 +79,7 @@ namespace mint
         {
             MINT_CHECK_STATE(_iaInputLayout, iaInputLayout);
             
-            _graphicDevice->_deviceContext->IASetInputLayout(_iaInputLayout);
+            _graphicDevice._deviceContext->IASetInputLayout(_iaInputLayout);
         }
 
         void GraphicDevice::StateManager::setIaRenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
@@ -90,10 +92,10 @@ namespace mint
                 MINT_NEVER;
                 break;
             case RenderingPrimitive::LineList:
-                _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
+                _graphicDevice._deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_LINELIST);
                 break;
             case RenderingPrimitive::TriangleList:
-                _graphicDevice->_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                _graphicDevice._deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
                 break;
             default:
                 break;
@@ -102,54 +104,54 @@ namespace mint
 
         void GraphicDevice::StateManager::setIaVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept
         {
-            _graphicDevice->_deviceContext->IASetVertexBuffers(bindingStartSlot, bufferCount, buffers, strides, offsets);
+            _graphicDevice._deviceContext->IASetVertexBuffers(bindingStartSlot, bufferCount, buffers, strides, offsets);
         }
 
         void GraphicDevice::StateManager::setIaIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept
         {
-            _graphicDevice->_deviceContext->IASetIndexBuffer(buffer, format, offset);
+            _graphicDevice._deviceContext->IASetIndexBuffer(buffer, format, offset);
         }
 
         void GraphicDevice::StateManager::setRsRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
         {
             MINT_CHECK_STATE(_rsRasterizerState, rsRasterizerState);
 
-            _graphicDevice->_deviceContext->RSSetState(_rsRasterizerState);
+            _graphicDevice._deviceContext->RSSetState(_rsRasterizerState);
         }
 
         void GraphicDevice::StateManager::setRsViewport(const D3D11_VIEWPORT rsViewport) noexcept
         {
             MINT_CHECK_STATE(_rsViewport, rsViewport);
             
-            _graphicDevice->_deviceContext->RSSetViewports(1, &rsViewport);
+            _graphicDevice._deviceContext->RSSetViewports(1, &rsViewport);
         }
 
         void GraphicDevice::StateManager::setRsScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
         {
             MINT_CHECK_STATE(_rsScissorRectangle, rsScissorRectangle);
 
-            _graphicDevice->_deviceContext->RSSetScissorRects(1, &rsScissorRectangle);
+            _graphicDevice._deviceContext->RSSetScissorRects(1, &rsScissorRectangle);
         }
 
         void GraphicDevice::StateManager::setVsShader(ID3D11VertexShader* const shader) noexcept
         {
             MINT_CHECK_STATE(_vsShader, shader);
 
-            _graphicDevice->_deviceContext->VSSetShader(shader, nullptr, 0);
+            _graphicDevice._deviceContext->VSSetShader(shader, nullptr, 0);
         }
 
         void GraphicDevice::StateManager::setGsShader(ID3D11GeometryShader* const shader) noexcept
         {
             MINT_CHECK_STATE(_gsShader, shader);
 
-            _graphicDevice->_deviceContext->GSSetShader(shader, nullptr, 0);
+            _graphicDevice._deviceContext->GSSetShader(shader, nullptr, 0);
         }
 
         void GraphicDevice::StateManager::setPsShader(ID3D11PixelShader* const shader) noexcept
         {
             MINT_CHECK_STATE(_psShader, shader);
 
-            _graphicDevice->_deviceContext->PSSetShader(shader, nullptr, 0);
+            _graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
         }
 
         void GraphicDevice::StateManager::setVsResources(const DxResource& resource) noexcept
@@ -165,7 +167,7 @@ namespace mint
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
-            _graphicDevice->_deviceContext->VSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+            _graphicDevice._deviceContext->VSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
 
         void GraphicDevice::StateManager::setGsResources(const DxResource& resource) noexcept
@@ -181,7 +183,7 @@ namespace mint
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
-            _graphicDevice->_deviceContext->GSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+            _graphicDevice._deviceContext->GSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
 
         void GraphicDevice::StateManager::setPsResources(const DxResource& resource) noexcept
@@ -197,7 +199,7 @@ namespace mint
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
-            _graphicDevice->_deviceContext->PSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+            _graphicDevice._deviceContext->PSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
 
         void GraphicDevice::StateManager::setVsConstantBuffers(const DxResource& constantBuffer)
@@ -213,7 +215,7 @@ namespace mint
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
-            _graphicDevice->_deviceContext->VSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+            _graphicDevice._deviceContext->VSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
 
         void GraphicDevice::StateManager::setGsConstantBuffers(const DxResource& constantBuffer)
@@ -229,7 +231,7 @@ namespace mint
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
-            _graphicDevice->_deviceContext->GSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+            _graphicDevice._deviceContext->GSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
 
         void GraphicDevice::StateManager::setPsConstantBuffers(const DxResource& constantBuffer)
@@ -245,23 +247,29 @@ namespace mint
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
-            _graphicDevice->_deviceContext->PSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+            _graphicDevice._deviceContext->PSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
 
+
+        GraphicDevice& GraphicDevice::getInvalidInstance()
+        {
+            static GraphicDevice invalidInstance;
+            return invalidInstance;
+        }
 
         GraphicDevice::GraphicDevice()
             : _window{ nullptr }
             , _clearColor{ 0.875f, 0.875f, 0.875f, 1.0f }
             , _currentRasterizerFor3D{ nullptr }
             , _fullScreenViewport{}
-            , _shaderPool{ this, &_shaderHeaderMemory, DxShaderVersion::v_5_0 }
-            , _resourcePool{ this }
-            , _stateManager{ this }
-            , _shapeRendererContext{ this }
-            , _fontRendererContext{ this }
-            , _shapeFontRendererContext{ this }
+            , _shaderPool{ *this, &_shaderHeaderMemory, DxShaderVersion::v_5_0 }
+            , _resourcePool{ *this }
+            , _stateManager{ *this }
+            , _shapeRendererContext{ *this }
+            , _fontRendererContext{ *this }
+            , _shapeFontRendererContext{ *this }
             , _needEndRenderingCall{ false }
-            , _guiContext{ this }
+            , _guiContext{ *this }
         {
             __noop;
         }
@@ -285,7 +293,7 @@ namespace mint
                 return false;
             }
 
-            _guiContext.initialize(kDefaultFont);
+            _guiContext.initialize();
 
             return true;
         }

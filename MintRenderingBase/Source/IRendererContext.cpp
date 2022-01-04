@@ -17,8 +17,8 @@ namespace mint
 
         void IRendererContext::prepareTransformBuffer() noexcept
         {
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-            DxResource& sbTransform = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+            DxResource& sbTransform = resourcePool.getResource(_graphicDevice.getCommonSbTransformId());
             sbTransform.updateBuffer(&_sbTransformData[0], _sbTransformData.size());
         }
     }

@@ -87,13 +87,13 @@ namespace mint
         }
 
 
-        FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice)
+        FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice)
             : FontRendererContext(graphicDevice, MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice))
         {
             _ownTriangleRenderer = true;
         }
 
-        FontRendererContext::FontRendererContext(GraphicDevice* const graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer)
+        FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer)
             : IRendererContext(graphicDevice)
             , _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
@@ -243,7 +243,7 @@ namespace mint
             }
 #endif
             
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             _fontData._fontTextureId = resourcePool.pushTexture2D(DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
             return true;
         }
@@ -505,9 +505,9 @@ namespace mint
 
         void FontRendererContext::initializeShaders() noexcept
         {
-            _clipRect = _graphicDevice->getFullScreenClipRect();
+            _clipRect = _graphicDevice.getFullScreenClipRect();
 
-            DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
 
             // Compile vertex shader and create input layer
             {
@@ -543,7 +543,7 @@ namespace mint
                 };
 
                 using namespace Language;
-                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice->getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
+                const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
                 _vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
             }
 
@@ -619,9 +619,9 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                _graphicDevice->getResourcePool().bindToShader(_fontData._fontTextureId, DxShaderType::PixelShader, 0);
+                _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureId, DxShaderType::PixelShader, 0);
 
-                DxShaderPool& shaderPool = _graphicDevice->getShaderPool();
+                DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
 
                 if (getUseMultipleViewports() == true)
@@ -631,8 +631,8 @@ namespace mint
 
                 shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
 
-                DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
-                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice->getCommonSbTransformId());
+                DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSbTransformId());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -788,8 +788,8 @@ namespace mint
                 glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
                 glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
                 glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
-                if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice->getWindowSize()._x
-                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice->getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+                if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice.getWindowSize()._x
+                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
                 {
                     auto& vertexArray = _lowLevelRenderer->vertices();
 

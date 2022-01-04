@@ -121,8 +121,8 @@ namespace mint
             };
 
         public:
-                                                FontRendererContext(GraphicDevice* const graphicDevice);
-                                                FontRendererContext(GraphicDevice* const graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer);
+                                                FontRendererContext(GraphicDevice& graphicDevice);
+                                                FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer);
             virtual                             ~FontRendererContext();
 
         public:

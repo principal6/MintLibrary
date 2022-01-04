@@ -25,7 +25,7 @@ namespace mint
         class InstantRenderer final
         {
         public:
-                        InstantRenderer(GraphicDevice* const graphicDevice);
+                        InstantRenderer(GraphicDevice& graphicDevice);
                         ~InstantRenderer();
 
         public:
@@ -50,7 +50,7 @@ namespace mint
             void        render() noexcept;
 
         private:
-            GraphicDevice* const            _graphicDevice;
+            GraphicDevice&                  _graphicDevice;
 
         private:
             LowLevelRenderer<VS_INPUT>      _lowLevelRendererLine;

@@ -57,7 +57,7 @@ namespace mint
             static const uint32                 getColorCount(const DxTextureFormat format);
 
         private:
-                                                DxResource(GraphicDevice* const graphicDevice);
+                                                DxResource(GraphicDevice& graphicDevice);
 
         public:
             virtual                             ~DxResource() = default;
@@ -122,7 +122,7 @@ namespace mint
         class DxResourcePool final : public IDxObject
         {
         public:
-                                    DxResourcePool(GraphicDevice* const graphicDevice);
+                                    DxResourcePool(GraphicDevice& graphicDevice);
                                     DxResourcePool(const DxResourcePool& rhs) = delete;
             virtual                 ~DxResourcePool() = default;
 

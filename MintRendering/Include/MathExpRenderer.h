@@ -70,7 +70,7 @@ namespace mint
         class MathExpressionRenderer
         {
         public:
-                                MathExpressionRenderer(GraphicDevice* const graphicDevice);
+                                MathExpressionRenderer(GraphicDevice& graphicDevice);
                                 ~MathExpressionRenderer();
 
         public:

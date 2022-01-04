@@ -171,7 +171,7 @@ namespace mint
         }
 
 
-        MathExpressionRenderer::MathExpressionRenderer(GraphicDevice* const graphicDevice)
+        MathExpressionRenderer::MathExpressionRenderer(GraphicDevice& graphicDevice)
             : _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
         {
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)

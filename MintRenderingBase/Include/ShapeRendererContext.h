@@ -38,7 +38,7 @@ namespace mint
             static constexpr uint8              kInfoCircular           = 2;
 
         public:
-                                                ShapeRendererContext(GraphicDevice* const graphicDevice);
+                                                ShapeRendererContext(GraphicDevice& graphicDevice);
             virtual                             ~ShapeRendererContext();
 
         public:

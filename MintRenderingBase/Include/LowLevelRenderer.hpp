@@ -14,7 +14,7 @@ namespace mint
     namespace Rendering
     {
         template <typename T>
-        inline LowLevelRenderer<T>::LowLevelRenderer(GraphicDevice* const graphicDevice)
+        inline LowLevelRenderer<T>::LowLevelRenderer(GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _vertexStride{ sizeof(T) }
             , _vertexBufferId{}
@@ -106,7 +106,7 @@ namespace mint
 
             prepareBuffers();
 
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
             DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
             vertexBuffer.bindAsInput();
@@ -115,15 +115,15 @@ namespace mint
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             const uint32 indexCount = static_cast<uint32>(_indices.size());
 
-            _graphicDevice->getStateManager().setIaRenderingPrimitive(renderingPrimitive);
+            _graphicDevice.getStateManager().setIaRenderingPrimitive(renderingPrimitive);
 
             switch (renderingPrimitive)
             {
             case RenderingPrimitive::LineList:
-                _graphicDevice->draw(vertexCount, 0);
+                _graphicDevice.draw(vertexCount, 0);
                 break;
             case RenderingPrimitive::TriangleList:
-                _graphicDevice->drawIndexed(indexCount, 0, 0);
+                _graphicDevice.drawIndexed(indexCount, 0, 0);
 
                 break;
             default:
@@ -151,7 +151,7 @@ namespace mint
             
             optimizeRenderCommands();
 
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
             DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
             vertexBuffer.bindAsInput();
@@ -167,17 +167,17 @@ namespace mint
                 }
 
                 D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
-                _graphicDevice->getStateManager().setRsScissorRectangle(scissorRect);
+                _graphicDevice.getStateManager().setRsScissorRectangle(scissorRect);
 
-                _graphicDevice->getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
+                _graphicDevice.getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
 
                 switch (renderCommand._primitive)
                 {
                 case RenderingPrimitive::LineList:
-                    _graphicDevice->draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+                    _graphicDevice.draw(renderCommand._vertexCount, renderCommand._vertexOffset);
                     break;
                 case RenderingPrimitive::TriangleList:
-                    _graphicDevice->drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+                    _graphicDevice.drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
                     break;
                 default:
                     break;
@@ -190,7 +190,7 @@ namespace mint
         template <typename T>
         inline void LowLevelRenderer<T>::prepareBuffers() noexcept
         {
-            DxResourcePool& resourcePool = _graphicDevice->getResourcePool();
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             if (_vertexBufferId.isValid() == false && vertexCount > 0)

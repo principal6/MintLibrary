@@ -106,7 +106,7 @@ namespace mint
         }
 
 
-        GuiContext::GuiContext(Rendering::GraphicDevice* const graphicDevice)
+        GuiContext::GuiContext(Rendering::GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _fontSize{ 0.0f }
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
@@ -151,11 +151,11 @@ namespace mint
 
         void GuiContext::initialize()
         {
-            _fontSize = static_cast<float>(_graphicDevice->getFontRendererContext().getFontSize());
+            _fontSize = static_cast<float>(_graphicDevice.getFontRendererContext().getFontSize());
             
-            _caretBlinkIntervalMs = _graphicDevice->getWindow()->getCaretBlinkIntervalMs();
+            _caretBlinkIntervalMs = _graphicDevice.getWindow()->getCaretBlinkIntervalMs();
 
-            const Rendering::FontRendererContext::FontData& fontData = _graphicDevice->getFontRendererContext().getFontData();
+            const Rendering::FontRendererContext::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
             {
                 if (_rendererContexts[rendererContextIndex].initializeFontData(fontData) == false)
@@ -167,7 +167,7 @@ namespace mint
                 _rendererContexts[rendererContextIndex].setUseMultipleViewports();
             }
 
-            const Float2& windowSize = Float2(_graphicDevice->getWindowSize());
+            const Float2& windowSize = Float2(_graphicDevice.getWindowSize());
             _rootControlData = ControlData(ControlId(1), ControlId(0), Gui::ControlType::ROOT, windowSize);
             _rootControlData._option._isFocusable = false;
 
@@ -179,7 +179,7 @@ namespace mint
 
         void GuiContext::updateScreenSize(const Float2& newScreenSize)
         {
-            _clipRectFullScreen = _graphicDevice->getFullScreenClipRect();
+            _clipRectFullScreen = _graphicDevice.getFullScreenClipRect();
 
             _rootControlData._size = newScreenSize;
             _rootControlData.setAllClipRects(_clipRectFullScreen);
@@ -1154,7 +1154,7 @@ namespace mint
             }
             else
             {
-                const Window::IWindow* const window = _graphicDevice->getWindow();
+                const Window::IWindow* const window = _graphicDevice.getWindow();
                 Gui::InputBoxHelpers::processDefaultKeyboardInputs(window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
                     _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
             }
@@ -1265,7 +1265,7 @@ namespace mint
 
             if (_controlInteractionStateSet.isControlFocused(controlData) == true)
             {
-                const Window::IWindow* const window = _graphicDevice->getWindow();
+                const Window::IWindow* const window = _graphicDevice.getWindow();
                 TextBoxProcessInputResult result;
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                 {
@@ -3551,7 +3551,7 @@ namespace mint
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
 
-            _graphicDevice->getWindow()->setCursorType(_mouseStates._cursorType);
+            _graphicDevice.getWindow()->setCursorType(_mouseStates._cursorType);
 
             if (_controlInteractionStateSet.needToShowTooltip() == true)
             {
@@ -3561,7 +3561,7 @@ namespace mint
             }
 
             // Viewport setting
-            _graphicDevice->useScissorRectangles();
+            _graphicDevice.useScissorRectangles();
 
             // Layer 순서대로!
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
@@ -3570,7 +3570,7 @@ namespace mint
             }
             
             // Viewport setting
-            _graphicDevice->useFullScreenViewport();
+            _graphicDevice.useFullScreenViewport();
 
             resetPerFrameStates();
         }
