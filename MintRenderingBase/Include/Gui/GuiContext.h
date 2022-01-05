@@ -307,7 +307,7 @@ namespace mint
             void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
             // [RoundButton]
-            const bool                                  makeRoundButton(const ControlID parentControlID, const wchar_t* const windowTitle, const Rendering::Color& color);
+            const bool                                  makeRoundButton(const ControlID parentControlID, const wchar_t* const identifier, const wchar_t* const windowTitle, const Rendering::Color& color);
 
             // [Tooltip]
             // Unique control
@@ -327,10 +327,10 @@ namespace mint
 
         private:
             const bool                                  isValidControl(const ControlID& id) const noexcept;
-            const ControlID                             issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept;
             const ControlID                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             _createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlID                             _generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType) const noexcept;
+            const ControlID                             _generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept;
             const ControlID                             _generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                accessControlStackTopXXX() noexcept;

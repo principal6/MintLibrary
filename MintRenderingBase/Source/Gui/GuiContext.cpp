@@ -1772,7 +1772,7 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
 
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
-            const ControlID trackControlID = issueControlID(parentControlID, trackControlType, nullptr);
+            const ControlID trackControlID = issueControlID(parentControlID, trackControlType, (isVert ? L"VERT" : L"HORZ"), nullptr);
 
             const ControlData& parentControlData = getControlData(parentControlID);
             ControlData& trackControlData = accessControlData(trackControlID);
@@ -1801,7 +1801,7 @@ namespace mint
             processShowOnlyControl(trackControlData, trackColor, false);
 
             // Vertical Track
-            if (isVert == true)
+            if (isVert)
             {
                 const float parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
                 const float extraSize = parentControlData.getContentAreaSize()._y - parentWindowScrollDisplayHeight;
@@ -1840,7 +1840,7 @@ namespace mint
                     outHasExtraSize = true;
                 }
             }
-            else
+            else // Horz
             {
                 const float parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
                 const float extraSize = parentControlData.getContentAreaSize()._x - parentWindowScrollDisplayWidth;
@@ -1889,7 +1889,8 @@ namespace mint
             
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
+            const bool isVert = (scrollBarType == ScrollBarType::Vert);
+            const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, (isVert ? L"VERT" : L"HORZ"), nullptr);
             
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
@@ -1898,7 +1899,7 @@ namespace mint
             ControlData& scrollBarTrack = accessControlData(parentControlID);
             ControlData& scrollBarParent = accessControlData(scrollBarTrack.getParentId());
             ControlData& thumbControlData = accessControlData(thumbControlID);
-            if (scrollBarType == ScrollBarType::Vert)
+            if (isVert)
             {
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -1961,7 +1962,7 @@ namespace mint
                     shapeFontRendererContext.drawHalfCircle(radius, Math::kPi);
                 }
             }
-            else if (scrollBarType == ScrollBarType::Horz)
+            else // Horz
             {
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -2070,7 +2071,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
-            const ControlID controlID = issueControlID(parentControlID, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlID, controlType, L"TITLEBAR", windowTitle);
             
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isDraggable = true;
@@ -2167,7 +2168,7 @@ namespace mint
                 _controlMetaStateSet.nextOffAutoPosition();
                 _controlMetaStateSet.nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
-                if (makeRoundButton(controlData.getId(), windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
+                if (makeRoundButton(controlData.getId(), L"CLOSEBUTTON", windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
                     inoutParentVisibleState = Gui::VisibleState::Invisible;
                 }
@@ -2179,11 +2180,11 @@ namespace mint
             return titleBarSize;
         }
 
-        const bool GuiContext::makeRoundButton(const ControlID parentControlID, const wchar_t* const windowTitle, const Rendering::Color& color)
+        const bool GuiContext::makeRoundButton(const ControlID parentControlID, const wchar_t* const identifier, const wchar_t* const windowTitle, const Rendering::Color& color)
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
-            const ControlID controlID = issueControlID(parentControlID, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlID, controlType, identifier, windowTitle);
 
             const float radius = kDefaultRoundButtonRadius;
             const ControlData& parentWindowData = getParentWindowControlData(getControlData(_controlStackPerFrame.back()._id));
@@ -2215,7 +2216,7 @@ namespace mint
             static constexpr float kTooltipFontScale = kFontScaleC;
             const float tooltipWindowPadding = 8.0f;
 
-            const ControlID controlID = issueControlID(parentControlID, controlType, tooltipText);
+            const ControlID controlID = issueControlID(parentControlID, controlType, L"TOOLTIPWINDOW", tooltipText);
             
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
@@ -2249,9 +2250,9 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        const ControlID GuiContext::issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GuiContext::issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept
         {
-            const ControlID controlID = _generateControlIDXXX(parentControlID, controlType);
+            const ControlID controlID = _generateControlIDXXX(parentControlID, controlType, identifier);
             return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
@@ -2284,12 +2285,13 @@ namespace mint
             return controlID;
         }
 
-        const ControlID GuiContext::_generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType) const noexcept
+        const ControlID GuiContext::_generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
             idWstring.append(StringUtil::convertToStringW(parentControlID.getRawValue()));
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
+            idWstring.append(identifier);
             return ControlID(computeHash(idWstring.c_str()));
         }
 
