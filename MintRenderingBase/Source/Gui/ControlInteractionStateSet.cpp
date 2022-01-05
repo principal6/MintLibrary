@@ -15,7 +15,7 @@ namespace mint
         {
             resetHover();
 
-            _hoveredControlId = controlData.getId();
+            _hoveredControlID = controlData.getId();
 
             if (_hoverStarted == false)
             {
@@ -30,9 +30,9 @@ namespace mint
                 resetHover();
             }
 
-            if (_pressedControlId != controlData.getId())
+            if (_pressedControlID != controlData.getId())
             {
-                _pressedControlId = controlData.getId();
+                _pressedControlID = controlData.getId();
                 _pressedControlInitialPosition = controlData._position;
 
                 return true;
@@ -43,9 +43,9 @@ namespace mint
 
         const bool ControlInteractionStateSet::setControlClicked(const ControlData& controlData) noexcept
         {
-            if (_pressedControlId == controlData.getId())
+            if (_pressedControlID == controlData.getId())
             {
-                _clickedControlIdPerFrame = controlData.getId();
+                _clickedControlIDPerFrame = controlData.getId();
 
                 return true;
             }
@@ -54,27 +54,27 @@ namespace mint
 
         void ControlInteractionStateSet::setControlFocused(const ControlData& controlData) noexcept
         {
-            _focusedControlId = controlData.getId();
+            _focusedControlID = controlData.getId();
         }
 
         const bool ControlInteractionStateSet::isControlHovered(const ControlData& controlData) const noexcept
         {
-            return (controlData.getId() == _hoveredControlId);
+            return (controlData.getId() == _hoveredControlID);
         }
 
         const bool ControlInteractionStateSet::isControlPressed(const ControlData& controlData) const noexcept
         {
-            return (controlData.getId() == _pressedControlId);
+            return (controlData.getId() == _pressedControlID);
         }
 
         const bool ControlInteractionStateSet::isControlClicked(const ControlData& controlData) const noexcept
         {
-            return (controlData.getId() == _clickedControlIdPerFrame);
+            return (controlData.getId() == _clickedControlIDPerFrame);
         }
 
         const bool ControlInteractionStateSet::isControlFocused(const ControlData& controlData) const noexcept
         {
-            return (controlData.getId() == _focusedControlId);
+            return (controlData.getId() == _focusedControlID);
         }
 
         const bool ControlInteractionStateSet::isHoveringMoreThan(const uint64 durationMs) const noexcept
@@ -86,21 +86,21 @@ namespace mint
         {
             if (mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true)
             {
-                if (_pressedControlId == ControlId(1))
+                if (_pressedControlID == ControlID(1))
                 {
-                    _focusedControlId.reset();
+                    _focusedControlID.reset();
                 }
 
-                _pressedControlId.reset();
+                _pressedControlID.reset();
             }
 
             _isMouseInteractionDoneThisFrame = false;
-            _clickedControlIdPerFrame.reset();
+            _clickedControlIDPerFrame.reset();
         }
 
         void ControlInteractionStateSet::resetHover() noexcept
         {
-            _hoveredControlId.reset();
+            _hoveredControlID.reset();
             _hoverStartTimeMs = Profiler::getCurrentTimeMs();
             _tooltipPosition.setZero();
             _tooltipParentWindowId.reset();
@@ -108,7 +108,7 @@ namespace mint
 
         void ControlInteractionStateSet::resetHoverIf(const ControlData& controlData) noexcept
         {
-            if (controlData.getId() == _hoveredControlId)
+            if (controlData.getId() == _hoveredControlID)
             {
                 resetHover();
             }
@@ -116,9 +116,9 @@ namespace mint
 
         void ControlInteractionStateSet::resetPressIf(const ControlData& controlData) noexcept
         {
-            if (controlData.getId() == _pressedControlId)
+            if (controlData.getId() == _pressedControlID)
             {
-                _pressedControlId.reset();
+                _pressedControlID.reset();
                 _pressedControlInitialPosition.setZero();
             }
         }
@@ -128,7 +128,7 @@ namespace mint
             return _tooltipPosition - tooltipParentWindow._position + Float2(12.0f, -16.0f);
         }
 
-        void ControlInteractionStateSet::setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlId& tooltipParentWindowId) noexcept
+        void ControlInteractionStateSet::setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlID& tooltipParentWindowId) noexcept
         {
             _tooltipTextFinal = tooltipText;
             _tooltipPosition = mouseStates.getPosition();

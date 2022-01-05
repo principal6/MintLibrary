@@ -100,11 +100,11 @@ namespace mint
         public:
             void                clear() noexcept;
             const bool          isSet() const noexcept;
-            void                setUpdateDockDatum(const ControlId& controlId) noexcept;
-            const ControlId&    getUpdateDockDatum() const noexcept;
+            void                setUpdateDockDatum(const ControlID& controlID) noexcept;
+            const ControlID&    getUpdateDockDatum() const noexcept;
 
         private:
-            ControlId           _controlIdForUpdateDockDatum;
+            ControlID           _controlIDForUpdateDockDatum;
         };
 
 
@@ -155,7 +155,7 @@ namespace mint
 
             public:
                 ControlType         _controlType;
-                ControlId           _id;
+                ControlID           _id;
             };
 
         private:
@@ -326,19 +326,19 @@ namespace mint
             void                                        endControlInternal(const ControlType controlType);
 
         private:
-            const bool                                  isValidControl(const ControlId& id) const noexcept;
-            const ControlId                             issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlId                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlId                             _createControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlId                             _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
-            const ControlId                             _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
+            const bool                                  isValidControl(const ControlID& id) const noexcept;
+            const ControlID                             issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             _createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             _generateControlIDXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
+            const ControlID                             _generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                accessControlStackTopXXX() noexcept;
-            const ControlData&                          getControlData(const ControlId& id) const noexcept;
-            ControlData&                                accessControlData(const ControlId& id) noexcept;
+            const ControlData&                          getControlData(const ControlID& id) const noexcept;
+            ControlData&                                accessControlData(const ControlID& id) noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
-            const ControlData&                          getParentWindowControlDataInternal(const ControlId& id) const noexcept;
+            const ControlData&                          getParentWindowControlDataInternal(const ControlID& id) const noexcept;
 #pragma endregion
 
         public:
@@ -375,9 +375,9 @@ namespace mint
             void                                        processControlDraggingInternal(ControlData& controlData) noexcept;
             void                                        processControlDockingInternal(ControlData& controlData) noexcept;
 
-            void                                        dock(const ControlId& dockedControlId, const ControlId& dockControlId) noexcept;
-            void                                        undock(const ControlId& dockedControlId) noexcept;
-            void                                        updateDockDatum(const ControlId& dockControlId, const bool updateWidthArray = true) noexcept;
+            void                                        dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept;
+            void                                        undock(const ControlID& dockedControlID) noexcept;
+            void                                        updateDockDatum(const ControlID& dockControlID, const bool updateWidthArray = true) noexcept;
 
             const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
             
@@ -388,13 +388,13 @@ namespace mint
             // RendererContext 고를 때 사용
             const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
             const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlId& id, const ControlId& targetId) const noexcept;
+            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetId) const noexcept;
             const bool                                  isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlId& ancestorCandidateId) const noexcept;
-            const bool                                  isAncestorControlRecursiveXXX(const ControlId& currentControlId, const ControlId& ancestorCandidateId) const noexcept;
-            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlId& descendantCandidateId) const noexcept;
-            const bool                                  isDescendantControlRecursiveXXX(const ControlId& currentControlId, const ControlId& descendantCandidateId) const noexcept;
+            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateId) const noexcept;
+            const bool                                  isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateId) const noexcept;
+            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateId) const noexcept;
+            const bool                                  isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateId) const noexcept;
 
             const bool                                  isParentControlRoot(const ControlData& controlData) const noexcept;
 
@@ -442,10 +442,10 @@ namespace mint
         private:
             ControlData                                 _rootControlData;
             Vector<ControlStackData>                    _controlStackPerFrame;
-            ControlId                                   _viewerTargetControlId;
+            ControlID                                   _viewerTargetControlID;
 
         private:
-            HashMap<ControlId, ControlData>             _controlIdMap;
+            HashMap<ControlID, ControlData>             _controlIDMap;
 
         private:
             mutable ControlInteractionStateSet          _controlInteractionStateSet;
@@ -457,12 +457,12 @@ namespace mint
         
         private:
             mutable bool                                _isDragBegun;
-            mutable ControlId                           _draggedControlId;
+            mutable ControlID                           _draggedControlID;
             mutable Float2                              _draggedControlInitialPosition;
         
         private:
             mutable bool                                _isResizeBegun;
-            mutable ControlId                           _resizedControlId;
+            mutable ControlID                           _resizedControlID;
             mutable Float2                              _resizedControlInitialPosition;
             mutable Float2                              _resizedControlInitialDisplaySize;
             mutable ResizingMethod                      _resizingMethod;

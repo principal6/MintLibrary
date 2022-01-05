@@ -24,9 +24,9 @@ namespace mint
             void                            setControlFocused(const ControlData& controlData) noexcept;
             
         public:
-            MINT_INLINE const bool          hasPressedControl() const noexcept { return _pressedControlId.isValid(); }
-            MINT_INLINE const bool          hasClickedControl() const noexcept { return _clickedControlIdPerFrame.isValid(); }
-            MINT_INLINE const bool          hasFocusedControl() const noexcept { return _focusedControlId.isValid(); }
+            MINT_INLINE const bool          hasPressedControl() const noexcept { return _pressedControlID.isValid(); }
+            MINT_INLINE const bool          hasClickedControl() const noexcept { return _clickedControlIDPerFrame.isValid(); }
+            MINT_INLINE const bool          hasFocusedControl() const noexcept { return _focusedControlID.isValid(); }
             
         public:
             const bool                      isControlHovered(const ControlData& controlData) const noexcept;
@@ -36,9 +36,9 @@ namespace mint
             const bool                      isHoveringMoreThan(const uint64 durationMs) const noexcept;
             
         public:
-            MINT_INLINE const ControlId&    getHoveredControlId() const noexcept { return _hoveredControlId; }
-            MINT_INLINE const ControlId&    getPressedControlId() const noexcept { return _pressedControlId; }
-            MINT_INLINE const ControlId&    getFocusedControlId() const noexcept { return _focusedControlId; }
+            MINT_INLINE const ControlID&    getHoveredControlID() const noexcept { return _hoveredControlID; }
+            MINT_INLINE const ControlID&    getPressedControlID() const noexcept { return _pressedControlID; }
+            MINT_INLINE const ControlID&    getFocusedControlID() const noexcept { return _focusedControlID; }
 
         public:
             void                            resetPerFrameStates(const MouseStates& mouseStates) noexcept;
@@ -54,20 +54,20 @@ namespace mint
             MINT_INLINE const bool          needToShowTooltip() const noexcept { return _tooltipParentWindowId.isValid(); }
             MINT_INLINE const wchar_t*      getTooltipText() const noexcept { return _tooltipTextFinal; }
             const Float2                    getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
-            MINT_INLINE const ControlId&    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
-            void                            setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlId& tooltipParentWindowId) noexcept;
+            MINT_INLINE const ControlID&    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
+            void                            setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlID& tooltipParentWindowId) noexcept;
 
         private:
             bool                            _isMouseInteractionDoneThisFrame = false;
-            ControlId                       _hoveredControlId;
-            ControlId                       _focusedControlId;
-            ControlId                       _pressedControlId;
+            ControlID                       _hoveredControlID;
+            ControlID                       _focusedControlID;
+            ControlID                       _pressedControlID;
             Float2                          _pressedControlInitialPosition;
-            ControlId                       _clickedControlIdPerFrame;
+            ControlID                       _clickedControlIDPerFrame;
             uint64                          _hoverStartTimeMs = 0;
             bool                            _hoverStarted = false;
             Float2                          _tooltipPosition;
-            ControlId                       _tooltipParentWindowId;
+            ControlID                       _tooltipParentWindowId;
             const wchar_t*                  _tooltipTextFinal = nullptr;
         };
     }

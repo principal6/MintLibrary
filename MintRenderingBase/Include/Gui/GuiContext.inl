@@ -9,22 +9,22 @@ namespace mint
 #pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
         {
-            _controlIdForUpdateDockDatum.reset();
+            _controlIDForUpdateDockDatum.reset();
         }
 
         MINT_INLINE const bool TaskWhenMouseUp::isSet() const noexcept
         {
-            return _controlIdForUpdateDockDatum.isValid();
+            return _controlIDForUpdateDockDatum.isValid();
         }
 
-        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const ControlId& controlId) noexcept
+        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const ControlID& controlID) noexcept
         {
-            _controlIdForUpdateDockDatum = controlId;
+            _controlIDForUpdateDockDatum = controlID;
         }
 
-        MINT_INLINE const ControlId& TaskWhenMouseUp::getUpdateDockDatum() const noexcept
+        MINT_INLINE const ControlID& TaskWhenMouseUp::getUpdateDockDatum() const noexcept
         {
-            return _controlIdForUpdateDockDatum;
+            return _controlIDForUpdateDockDatum;
         }
 #pragma endregion
 
@@ -39,9 +39,9 @@ namespace mint
 #pragma endregion
 
 
-        MINT_INLINE const bool GuiContext::isValidControl(const ControlId& id) const noexcept
+        MINT_INLINE const bool GuiContext::isValidControl(const ControlID& id) const noexcept
         {
-            const auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
+            const auto found = _controlIDMap.find(_controlStackPerFrame.back()._id);
             return found.isValid();
         }
 
@@ -49,7 +49,7 @@ namespace mint
         {
             if (_controlStackPerFrame.empty() == false)
             {
-                auto found = _controlIdMap.find(_controlStackPerFrame.back()._id);
+                auto found = _controlIDMap.find(_controlStackPerFrame.back()._id);
                 if (found.isValid() == true)
                 {
                     return *found._value;
@@ -63,9 +63,9 @@ namespace mint
             return const_cast<ControlData&>(getControlStackTopXXX());
         }
 
-        MINT_INLINE const ControlData& GuiContext::getControlData(const ControlId& id) const noexcept
+        MINT_INLINE const ControlData& GuiContext::getControlData(const ControlID& id) const noexcept
         {
-            auto found = _controlIdMap.find(id);
+            auto found = _controlIDMap.find(id);
             if (found.isValid() == true)
             {
                 return *found._value;
@@ -73,7 +73,7 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::accessControlData(const ControlId& id) noexcept
+        MINT_INLINE ControlData& GuiContext::accessControlData(const ControlID& id) noexcept
         {
             return const_cast<ControlData&>(getControlData(id));
         }

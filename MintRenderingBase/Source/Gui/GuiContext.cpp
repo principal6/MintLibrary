@@ -112,9 +112,9 @@ namespace mint
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
             , _updateScreenSizeCounter{ 0 }
             , _isDragBegun{ false }
-            , _draggedControlId{ 0 }
+            , _draggedControlID{ 0 }
             , _isResizeBegun{ false }
-            , _resizedControlId{ 0 }
+            , _resizedControlID{ 0 }
             , _resizingMethod{ ResizingMethod::ResizeOnly }
             , _caretBlinkIntervalMs{ 0 }
             , _wcharInput{ L'\0'}
@@ -168,7 +168,7 @@ namespace mint
             }
 
             const Float2& windowSize = Float2(_graphicDevice.getWindowSize());
-            _rootControlData = ControlData(ControlId(1), ControlId(0), Gui::ControlType::ROOT, windowSize);
+            _rootControlData = ControlData(ControlID(1), ControlID(0), Gui::ControlType::ROOT, windowSize);
             _rootControlData._option._isFocusable = false;
 
             updateScreenSize(windowSize);
@@ -502,12 +502,12 @@ namespace mint
             windowParam._position = Float2(20.0f, 50.0f);
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
-                if (isValidControl(_viewerTargetControlId) == true)
+                if (isValidControl(_viewerTargetControlID) == true)
                 {
                     ScopeStringW<300> buffer;
-                    const ControlData& controlData = getControlData(_viewerTargetControlId);
+                    const ControlData& controlData = getControlData(_viewerTargetControlID);
                     
-                    formatString(buffer, L"Control ID Map Size: %u", _controlIdMap.size());
+                    formatString(buffer, L"Control ID Map Size: %u", _controlIDMap.size());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"ID: %llX", controlData.getId());
@@ -580,8 +580,8 @@ namespace mint
             
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlId windowControlId = issueControlID(file, line, controlType, title);
-            ControlData& windowControlData = accessControlData(windowControlId);
+            const ControlID windowControlID = issueControlID(file, line, controlType, title);
+            ControlData& windowControlData = accessControlData(windowControlID);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._option._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
@@ -760,7 +760,7 @@ namespace mint
 
             if (windowControlData.isDocking() == true)
             {
-                const ControlData& dockControlData = getControlData(windowControlData.getDockControlId());
+                const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
                 if (_updateScreenSizeCounter > 0)
                 {
                     windowControlData._position = dockControlData.getDockPosition(windowControlData._dockRelatedData._lastDockingMethod);
@@ -777,7 +777,7 @@ namespace mint
             bool needToProcessControl = windowControlData.isControlVisible();
             if (isDocking == true)
             {
-                const ControlData& dockControlData = getControlData(windowControlData.getDockControlId());
+                const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
                 const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
                 needToProcessControl &= (isDocking && isShownInDock);
             }
@@ -788,7 +788,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Button;
             
-            const ControlId controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(file, line, controlType, text);
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -822,7 +822,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
-            const ControlId controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(file, line, controlType, text);
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -868,7 +868,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Label;
 
-            const ControlId controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(file, line, controlType, text);
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -960,8 +960,8 @@ namespace mint
             static constexpr ControlType trackControlType = ControlType::Slider;
             static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-            const ControlId trackControlID = issueControlID(file, line, trackControlType, nullptr);
-            const ControlId thumbControlID = issueControlID(file, line, thumbControlType, nullptr);
+            const ControlID trackControlID = issueControlID(file, line, trackControlType, nullptr);
+            const ControlID thumbControlID = issueControlID(file, line, thumbControlType, nullptr);
             
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
@@ -1076,7 +1076,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
-            const ControlId controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
@@ -1182,7 +1182,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
-            const ControlId controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             controlData._option._needDoubleClickToFocus = true;
@@ -1330,7 +1330,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
-            const ControlId& controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID& controlID = issueControlID(file, line, controlType, nullptr);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
@@ -1403,7 +1403,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
-            const ControlId controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(file, line, controlType, text);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
@@ -1419,7 +1419,7 @@ namespace mint
             prepareControlData(controlData, prepareControlDataParam);
 
             const int16 parentSelectedItemIndex = parentControlData._controlValue._itemData.getSelectedItemIndex();
-            const int16 myIndex = static_cast<int16>(parentControlData.getChildControlIds().size() - 1);
+            const int16 myIndex = static_cast<int16>(parentControlData.getChildControlIDs().size() - 1);
             Rendering::Color finalColor;
             const Rendering::Color inputColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::HighlightColor) : getNamedColor(NamedColor::LightFont);
             const bool isClicked = processClickControl(controlData, inputColor, inputColor, inputColor, finalColor);
@@ -1447,7 +1447,7 @@ namespace mint
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlId menuBarID = issueControlID(file, line, controlType, nullptr);
+            const ControlID menuBarID = issueControlID(file, line, controlType, nullptr);
             ControlData& menuBar = accessControlData(menuBarID);
             ControlData& menuBarParent = accessControlData(menuBar.getParentId());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
@@ -1519,7 +1519,7 @@ namespace mint
                 return false;
             }
 
-            const ControlId menuBarItemID = issueControlID(file, line, controlType, text);
+            const ControlID menuBarItemID = issueControlID(file, line, controlType, text);
             ControlData& menuBarItem = accessControlData(menuBarItemID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -1536,7 +1536,7 @@ namespace mint
             menuBarItem._controlValue._itemData._itemSize._y = 0.0f;
 
             const int16 menuBarSelectedItemIndex = menuBar._controlValue._itemData.getSelectedItemIndex();
-            const int16 myIndex = static_cast<int16>(menuBar.getChildControlIds().size() - 1);
+            const int16 myIndex = static_cast<int16>(menuBar.getChildControlIDs().size() - 1);
             const bool wasMeSelected = (menuBarSelectedItemIndex == myIndex);
             Rendering::Color finalBackgroundColor;
             const Rendering::Color& normalColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::NormalState);
@@ -1590,7 +1590,7 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
-            const ControlId menuItemID = issueControlID(file, line, controlType, text);
+            const ControlID menuItemID = issueControlID(file, line, controlType, text);
             ControlData& menuItem = accessControlData(menuItemID);
             menuItem._option._isInteractableOutsideParent = true;
 
@@ -1631,7 +1631,7 @@ namespace mint
             const bool isHovered = _controlInteractionStateSet.isControlHovered(menuItem);
             const bool isPresssed = _controlInteractionStateSet.isControlPressed(menuItem);
             const bool& isToggled = menuItem._controlValue._booleanData.get();
-            const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlIds().size() - 1);
+            const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlIDs().size() - 1);
             const bool isMeSelected = (menuItemParent._controlValue._itemData.isSelected(myIndex));
             if (isHovered == true)
             {
@@ -1754,7 +1754,7 @@ namespace mint
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlId trackControlID = issueControlID(parentControlData, trackControlType, nullptr);
+            const ControlID trackControlID = issueControlID(parentControlData, trackControlType, nullptr);
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
@@ -1878,7 +1878,7 @@ namespace mint
 
             if (scrollBarType == ScrollBarType::Vert)
             {
-                const ControlId thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                const ControlID thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
                 ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -1943,7 +1943,7 @@ namespace mint
             }
             else if (scrollBarType == ScrollBarType::Horz)
             {
-                const ControlId thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                const ControlID thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
                 ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -2023,7 +2023,7 @@ namespace mint
                         {
                             if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, Float2::kZero, dockSize) == true)
                             {
-                                if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlId()) == false)
+                                if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
                                 {
                                     setControlFocused(controlData);
                                 }
@@ -2052,17 +2052,17 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
-            const ControlId controlID = issueControlID(parentControlData, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlData, controlType, windowTitle);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isDraggable = true;
-            controlData._delegateControlId = controlData.getParentId();
+            controlData._delegateControlID = controlData.getParentId();
             ControlData& parentWindowControlData = accessControlData(controlData.getParentId());
             const bool isParentControlDocking = parentWindowControlData.isDocking();
             PrepareControlDataParam prepareControlDataParam;
             {
                 if (isParentControlDocking == true)
                 {
-                    const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                    const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
                     const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
@@ -2087,7 +2087,7 @@ namespace mint
             {
                 if (_controlInteractionStateSet.isControlPressed(controlData) == true)
                 {
-                    ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlId());
+                    ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlID());
                     DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
                     dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
@@ -2100,7 +2100,7 @@ namespace mint
             rendererContext.setPosition(controlData.getControlCenterPosition());
             if (isParentControlDocking == true)
             {
-                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
                 const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
                 if (_controlInteractionStateSet.isControlHovered(controlData) == true)
                 {
@@ -2127,7 +2127,7 @@ namespace mint
             const bool needToColorFocused_ = needToColorFocused(parentWindowControlData);
             if (isParentControlDocking == true)
             {
-                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlId());
+                const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
                 const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
 
                 rendererContext.setTextColor((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDockFont) : getNamedColor(NamedColor::LightFont));
@@ -2164,7 +2164,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
-            const ControlId controlID = issueControlID(parentControlData, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlData, controlType, windowTitle);
 
             const float radius = kDefaultRoundButtonRadius;
             const ControlData& parentWindowData = getParentWindowControlData(getControlData(_controlStackPerFrame.back()._id));
@@ -2196,7 +2196,7 @@ namespace mint
             static constexpr float kTooltipFontScale = kFontScaleC;
             const float tooltipWindowPadding = 8.0f;
 
-            const ControlId controlID = issueControlID(parentControlData, controlType, tooltipText);
+            const ControlID controlID = issueControlID(parentControlData, controlType, tooltipText);
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -2229,58 +2229,58 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        const ControlId GuiContext::issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GuiContext::issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            const ControlId controlId = _generateControlIdXXX(parentControlData, controlType);
-            return _createControlDataInternalXXX(controlId, controlType, text);
+            const ControlID controlID = _generateControlIDXXX(parentControlData, controlType);
+            return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
-        const ControlId GuiContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GuiContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            const ControlId controlId = _generateControlIdXXX(file, line, controlType);
-            return _createControlDataInternalXXX(controlId, controlType, text);
+            const ControlID controlID = _generateControlIDXXX(file, line, controlType);
+            return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
-        const ControlId GuiContext::_createControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GuiContext::_createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            auto found = _controlIdMap.find(controlId);
+            auto found = _controlIDMap.find(controlID);
             if (found.isValid() == false)
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
-                ControlData newControlData{ controlId, stackTopControlData.getId(), controlType };
+                ControlData newControlData{ controlID, stackTopControlData.getId(), controlType };
                 if (text != nullptr)
                 {
                     newControlData._text = text;
                 }
 
-                _controlIdMap.insert(controlId, std::move(newControlData));
+                _controlIDMap.insert(controlID, std::move(newControlData));
             }
 
-            ControlData& controlData = _controlIdMap.at(controlId);
+            ControlData& controlData = _controlIDMap.at(controlID);
             if (controlData._updateCount < 3)
             {
                 ++controlData._updateCount;
             }
-            return controlId;
+            return controlID;
         }
 
-        const ControlId GuiContext::_generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept
+        const ControlID GuiContext::_generateControlIDXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
             idWstring.append(StringUtil::convertToStringW(parentControlData.getId().getRawValue()));
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
-            return ControlId(computeHash(idWstring.c_str()));
+            return ControlID(computeHash(idWstring.c_str()));
         }
 
-        const ControlId GuiContext::_generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept
+        const ControlID GuiContext::_generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
             StringUtil::convertStringAToStringW(file, idWstring);
             idWstring.append(line);
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
-            return ControlId(computeHash(idWstring.c_str()));
+            return ControlID(computeHash(idWstring.c_str()));
         }
 
         const ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept
@@ -2288,7 +2288,7 @@ namespace mint
             return getParentWindowControlDataInternal(controlData.getParentId());
         }
 
-        const ControlData& GuiContext::getParentWindowControlDataInternal(const ControlId& id) const noexcept
+        const ControlData& GuiContext::getParentWindowControlDataInternal(const ControlID& id) const noexcept
         {
             if (id.isValid() == false)
             {
@@ -2331,7 +2331,7 @@ namespace mint
 
         const bool GuiContext::isFocusedControlInputBox() const noexcept
         {
-            return (_controlInteractionStateSet.hasFocusedControl()) ? getControlData(_controlInteractionStateSet.getFocusedControlId()).isInputBoxType() : false;
+            return (_controlInteractionStateSet.hasFocusedControl()) ? getControlData(_controlInteractionStateSet.getFocusedControlID()).isInputBoxType() : false;
         }
 
         void GuiContext::setControlFocused(const ControlData& controlData) noexcept
@@ -2381,7 +2381,7 @@ namespace mint
             if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
             {
                 const ControlData& stackTopControlData = getControlStackTopXXX();
-                const ControlId& parentId = (prepareControlDataParam._parentIdOverride.isValid() == true) ? prepareControlDataParam._parentIdOverride : stackTopControlData.getId();
+                const ControlID& parentId = (prepareControlDataParam._parentIdOverride.isValid() == true) ? prepareControlDataParam._parentIdOverride : stackTopControlData.getId();
                 controlData.setParentId(parentId);
 
                 if (isNewData == true)
@@ -2553,10 +2553,10 @@ namespace mint
         {
             processControlInteractionInternal(controlData, false);
 
-            const ControlId& controlId = (controlData._delegateControlId.isValid() == true) ? controlData._delegateControlId : controlData.getId();
+            const ControlID& controlID = (controlData._delegateControlID.isValid() == true) ? controlData._delegateControlID : controlData.getId();
 
             // Check new focus
-            if (_draggedControlId.isValid() == false && _resizedControlId.isValid() == false && controlData._option._isFocusable == true &&
+            if (_draggedControlID.isValid() == false && _resizedControlID.isValid() == false && controlData._option._isFocusable == true &&
                 (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true
                     && (_controlInteractionStateSet.isControlPressed(controlData) == true || _controlInteractionStateSet.isControlClicked(controlData) == true)))
             {
@@ -2660,7 +2660,7 @@ namespace mint
         
         void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
-            const ControlId& controlId = controlData.getId();
+            const ControlID& controlID = controlData.getId();
             if (isInteractingInternal(controlData) == false || _controlInteractionStateSet.isMouseInteractionDoneThisFrame() == true)
             {
                 _controlInteractionStateSet.resetHoverIf(controlData);
@@ -2706,7 +2706,7 @@ namespace mint
 
                     if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Right) == true)
                     {
-                        _viewerTargetControlId = controlData.getId();
+                        _viewerTargetControlID = controlData.getId();
                     }
 
                     // Clicked (only in interaction area)
@@ -2739,7 +2739,7 @@ namespace mint
 
         void GuiContext::checkControlResizing(ControlData& controlData) noexcept
         {
-            if (_resizedControlId.isValid() == false && isInteractingInternal(controlData) == true)
+            if (_resizedControlID.isValid() == false && isInteractingInternal(controlData) == true)
             {
                 Window::CursorType newCursorType;
                 ResizingMask resizingMask;
@@ -2769,7 +2769,7 @@ namespace mint
 
         void GuiContext::processControlResizingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
+            ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isResizing = isControlBeingResized(changeTargetControlData);
             if (isResizing == true)
             {
@@ -2819,10 +2819,10 @@ namespace mint
                 {
                     // 내가 Docking 중인 컨트롤이라면 Dock Control 의 Dock 크기도 같이 변경해줘야 한다.
 
-                    const ControlId& dockControlId = changeTargetControlData.getDockControlId();
-                    ControlData& dockControlData = accessControlData(dockControlId);
+                    const ControlID& dockControlID = changeTargetControlData.getDockControlID();
+                    ControlData& dockControlData = accessControlData(dockControlID);
                     dockControlData.setDockSize(changeTargetControlData._dockRelatedData._lastDockingMethod, changeTargetControlDisplaySize);
-                    updateDockDatum(dockControlId);
+                    updateDockDatum(dockControlID);
                 }
                 else if (changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::Dock 
                     || changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock)
@@ -2844,7 +2844,7 @@ namespace mint
                 return;
             }
             
-            ControlData& targetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
+            ControlData& targetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             if (_isDragBegun == true)
             {
                 _draggedControlInitialPosition = targetControlData._position;
@@ -2863,7 +2863,7 @@ namespace mint
 
                 targetControlData._position = positionOld;
 
-                ControlData& dockControlData = accessControlData(targetControlData.getDockControlId());
+                ControlData& dockControlData = accessControlData(targetControlData.getDockControlID());
                 DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockRelatedData._lastDockingMethod);
                 const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockRelatedData._lastDockingMethod);
                 const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockRelatedData._lastDockingMethod);
@@ -2916,7 +2916,7 @@ namespace mint
 
         void GuiContext::processControlDockingInternal(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
+            ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isDragging = isControlBeingDragged(controlData);
             
             static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
@@ -3128,15 +3128,15 @@ namespace mint
 
                         dock(changeTargetControlData.getId(), parentControlData.getId());
 
-                        _draggedControlId.reset();
+                        _draggedControlID.reset();
                     }
                 }
             }
         }
 
-        void GuiContext::dock(const ControlId& dockedControlId, const ControlId& dockControlId) noexcept
+        void GuiContext::dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept
         {
-            ControlData& dockedControlData = accessControlData(dockedControlId);
+            ControlData& dockedControlData = accessControlData(dockedControlID);
             dockedControlData.swapDockingStateContext();
 
             if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
@@ -3146,21 +3146,21 @@ namespace mint
                 dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
             }
 
-            ControlData& dockControlData = accessControlData(dockControlId);
+            ControlData& dockControlData = accessControlData(dockControlID);
             DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
             if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
             {
                 dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockRelatedData._lastDockingMethod);
             }
-            parentControlDockDatum._dockedControlIdArray.push_back(dockedControlData.getId());
+            parentControlDockDatum._dockedControlIDArray.push_back(dockedControlData.getId());
 
             dockedControlData._resizingMask = ResizingMask::fromDockingMethod(dockedControlData._dockRelatedData._lastDockingMethod);
             dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockRelatedData._lastDockingMethod);
-            dockedControlData.connectToDock(dockControlId);
+            dockedControlData.connectToDock(dockControlID);
 
             parentControlDockDatum._dockedControlIndexShown = parentControlDockDatum.getDockedControlIndex(dockedControlData.getId());
 
-            updateDockDatum(dockControlId);
+            updateDockDatum(dockControlID);
 
             // 내가 Focus 였다면 Dock 을 가진 컨트롤로 옮기자!
             if (_controlInteractionStateSet.isControlFocused(dockedControlData) == true)
@@ -3169,23 +3169,23 @@ namespace mint
             }
         }
 
-        void GuiContext::undock(const ControlId& dockedControlId) noexcept
+        void GuiContext::undock(const ControlID& dockedControlID) noexcept
         {
-            ControlData& dockedControlData = accessControlData(dockedControlId);
-            ControlData& dockControlData = accessControlData(dockedControlData.getDockControlId());
+            ControlData& dockedControlData = accessControlData(dockedControlID);
+            ControlData& dockControlData = accessControlData(dockedControlData.getDockControlID());
             DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
-            const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlIdArray.size());
+            const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlIDArray.size());
             int32 indexToErase = -1;
             for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
             {
-                if (dockDatum._dockedControlIdArray[iter] == dockedControlData.getId())
+                if (dockDatum._dockedControlIDArray[iter] == dockedControlData.getId())
                 {
                     indexToErase = static_cast<int32>(iter);
                 }
             }
             if (indexToErase >= 0)
             {
-                dockDatum._dockedControlIdArray.erase(indexToErase);
+                dockDatum._dockedControlIDArray.erase(indexToErase);
             }
             else
             {
@@ -3197,30 +3197,30 @@ namespace mint
             _draggedControlInitialPosition = dockedControlData._position;
             setControlFocused(dockedControlData);
 
-            const ControlId dockControlIdCopy = dockedControlData.getDockControlId();
+            const ControlID dockControlIDCopy = dockedControlData.getDockControlID();
 
             dockedControlData.disconnectFromDock();
-            dockDatum._dockedControlIndexShown = min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlIdArray.size() - 1));
+            dockDatum._dockedControlIndexShown = min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlIDArray.size() - 1));
             dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
 
-            updateDockDatum(dockControlIdCopy);
+            updateDockDatum(dockControlIDCopy);
         }
 
-        void GuiContext::updateDockDatum(const ControlId& dockControlId, const bool updateWidthArray) noexcept
+        void GuiContext::updateDockDatum(const ControlID& dockControlID, const bool updateWidthArray) noexcept
         {
-            ControlData& dockControlData = accessControlData(dockControlId);
+            ControlData& dockControlData = accessControlData(dockControlID);
             for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT;
                 dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
             {
                 DockDatum& dockDatum = dockControlData.getDockDatum(dockingMethodIter);
-                const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlIdArray.size());
+                const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlIDArray.size());
                 dockDatum._dockedControlTitleBarOffsetArray.resize(dockedControlCount);
                 dockDatum._dockedControlTitleBarWidthArray.resize(dockedControlCount);
 
                 float titleBarWidthSum = 0.0f;
                 for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
                 {
-                    ControlData& dockedControlData = accessControlData(dockDatum._dockedControlIdArray[dockedControlIndex]);
+                    ControlData& dockedControlData = accessControlData(dockDatum._dockedControlIDArray[dockedControlIndex]);
                     dockedControlData._size = dockControlData.getDockSize(dockingMethodIter);
                     dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
                     
@@ -3245,7 +3245,7 @@ namespace mint
                 Window::CursorType dummyCursorType;
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
-                const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlId());
+                const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
                 if (ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
                     || ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
@@ -3260,13 +3260,13 @@ namespace mint
         {
             if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
             {
-                _draggedControlId.reset();
+                _draggedControlID.reset();
                 return false;
             }
 
-            if (_draggedControlId.isValid() == false)
+            if (_draggedControlID.isValid() == false)
             {
-                if (_resizedControlId.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
+                if (_resizedControlID.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
                 {
                     return false;
                 }
@@ -3277,13 +3277,13 @@ namespace mint
                 {
                     // Drag 시작
                     _isDragBegun = true;
-                    _draggedControlId = controlData.getId();
+                    _draggedControlID = controlData.getId();
                     return true;
                 }
             }
             else
             {
-                if (controlData.getId() == _draggedControlId)
+                if (controlData.getId() == _draggedControlID)
                 {
                     return true;
                 }
@@ -3295,13 +3295,13 @@ namespace mint
         {
             if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
             {
-                _resizedControlId.reset();
+                _resizedControlID.reset();
                 return false;
             }
 
-            if (_resizedControlId.isValid() == false)
+            if (_resizedControlID.isValid() == false)
             {
-                if (_draggedControlId.isValid() == true || controlData.isResizable() == false || isInteractingInternal(controlData) == false)
+                if (_draggedControlID.isValid() == true || controlData.isResizable() == false || isInteractingInternal(controlData) == false)
                 {
                     return false;
                 }
@@ -3314,7 +3314,7 @@ namespace mint
                 {
                     if (controlData._resizingMask.overlaps(resizingMask) == true)
                     {
-                        _resizedControlId = controlData.getId();
+                        _resizedControlID = controlData.getId();
                         _isResizeBegun = true;
                         _mouseStates._cursorType = newCursorType;
                         return true;
@@ -3323,7 +3323,7 @@ namespace mint
             }
             else
             {
-                if (controlData.getId() == _resizedControlId)
+                if (controlData.getId() == _resizedControlID)
                 {
                     return true;
                 }
@@ -3340,46 +3340,46 @@ namespace mint
             return isAncestorControlFocused(controlData);
         }
 
-        const bool GuiContext::isAncestorControlInclusive(const ControlData& controlData, const ControlId& ancestorCandidateId) const noexcept
+        const bool GuiContext::isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateId) const noexcept
         {
             return isAncestorControlRecursiveXXX(controlData.getId(), ancestorCandidateId);
         }
 
-        const bool GuiContext::isAncestorControlRecursiveXXX(const ControlId& currentControlId, const ControlId& ancestorCandidateId) const noexcept
+        const bool GuiContext::isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateId) const noexcept
         {
-            if (currentControlId.isValid() == false)
+            if (currentControlID.isValid() == false)
             {
                 return false;
             }
 
-            if (currentControlId == ancestorCandidateId)
+            if (currentControlID == ancestorCandidateId)
             {
                 return true;
             }
 
-            const ControlId& parentControlId = getControlData(currentControlId).getParentId();
-            return isAncestorControlRecursiveXXX(parentControlId, ancestorCandidateId);
+            const ControlID& parentControlID = getControlData(currentControlID).getParentId();
+            return isAncestorControlRecursiveXXX(parentControlID, ancestorCandidateId);
         }
 
-        const bool GuiContext::isDescendantControlInclusive(const ControlData& controlData, const ControlId& descendantCandidateId) const noexcept
+        const bool GuiContext::isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateId) const noexcept
         {
             return ((descendantCandidateId.isValid() == false) ? false : isDescendantControlRecursiveXXX(controlData.getId(), descendantCandidateId));
         }
 
-        const bool GuiContext::isDescendantControlRecursiveXXX(const ControlId& currentControlId, const ControlId& descendantCandidateId) const noexcept
+        const bool GuiContext::isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateId) const noexcept
         {
-            if (currentControlId == descendantCandidateId)
+            if (currentControlID == descendantCandidateId)
             {
                 return true;
             }
 
-            const ControlData& controlData = getControlData(currentControlId);
-            const auto& previousChildControlIds = controlData.getPreviousChildControlIds();
-            const uint32 previousChildControlCount = previousChildControlIds.size();
+            const ControlData& controlData = getControlData(currentControlID);
+            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                const ControlId& previousChildControlId = previousChildControlIds[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlId, descendantCandidateId) == true)
+                const ControlID& previousChildControlID = previousChildControlIDs[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlID, descendantCandidateId) == true)
                 {
                     return true;
                 }
@@ -3396,15 +3396,15 @@ namespace mint
 
         const bool GuiContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
         {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentId(), _controlInteractionStateSet.getFocusedControlId());
+            return isAncestorControlTargetRecursiveXXX(controlData.getParentId(), _controlInteractionStateSet.getFocusedControlID());
         }
 
         const bool GuiContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
         {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentId(), _controlInteractionStateSet.getPressedControlId());
+            return isAncestorControlTargetRecursiveXXX(controlData.getParentId(), _controlInteractionStateSet.getPressedControlID());
         }
 
-        const bool GuiContext::isAncestorControlTargetRecursiveXXX(const ControlId& id, const ControlId& targetId) const noexcept
+        const bool GuiContext::isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetId) const noexcept
         {
             if (id.isValid() == false)
             {
@@ -3416,7 +3416,7 @@ namespace mint
                 return true;
             }
 
-            const ControlId& parentId = getControlData(id).getParentId();
+            const ControlID& parentId = getControlData(id).getParentId();
             return isAncestorControlTargetRecursiveXXX(parentId, targetId);
         }
 
@@ -3446,33 +3446,33 @@ namespace mint
 
             // #3. Docking
             const bool isDocking = closestFocusableAncestorInclusive.isDocking();
-            const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlId());
+            const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlID());
             return (isDocking == true && (dockControlData.isRootControl() == true || _controlInteractionStateSet.isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
         }
 
         const bool GuiContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlId());
+            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID());
         }
 
         const bool GuiContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getHoveredControlId());
+            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getHoveredControlID());
         }
 
         const bool GuiContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getPressedControlId());
+            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getPressedControlID());
         }
 
         const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
         {
-            const auto& previousChildControlIds = controlData.getPreviousChildControlIds();
-            const uint32 previousChildControlCount = previousChildControlIds.size();
+            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                const ControlId& previousChildControlId = previousChildControlIds[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlId, _controlInteractionStateSet.getPressedControlId()) == true)
+                const ControlID& previousChildControlID = previousChildControlIDs[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlID, _controlInteractionStateSet.getPressedControlID()) == true)
                 {
                     return true;
                 }
@@ -3482,12 +3482,12 @@ namespace mint
 
         const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
         {
-            const auto& previousChildControlIds = controlData.getPreviousChildControlIds();
-            const uint32 previousChildControlCount = previousChildControlIds.size();
+            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
-                const ControlId& previousChildControlId = previousChildControlIds[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlId, _controlInteractionStateSet.getHoveredControlId()) == true)
+                const ControlID& previousChildControlID = previousChildControlIDs[previousChildControlIndex];
+                if (isDescendantControlRecursiveXXX(previousChildControlID, _controlInteractionStateSet.getHoveredControlID()) == true)
                 {
                     return true;
                 }
@@ -3591,7 +3591,7 @@ namespace mint
 
             _rootControlData.clearPerFrameData();
 
-            if (_resizedControlId.isValid() == false)
+            if (_resizedControlID.isValid() == false)
             {
                 _mouseStates._cursorType = Window::CursorType::Arrow;
             }
