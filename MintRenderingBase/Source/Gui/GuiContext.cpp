@@ -702,13 +702,13 @@ namespace mint
                     _controlMetaStateSet.nextOffAutoPosition(); // 중요
 
                     const Float2 titleBarSize = Float2(windowControlData._size._x, windowControlData._controlValue._windowData._titleBarThickness);
-                    beginTitleBar(windowControlData, title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
+                    beginTitleBar(windowControlData.getId(), title, titleBarSize, kTitleBarInnerPadding, inoutVisibleState);
                     endTitleBar();
                 }
 
                 if (windowParam._scrollBarType != ScrollBarType::None)
                 {
-                    makeScrollBar(windowControlData, windowParam._scrollBarType);
+                    makeScrollBar(windowControlData.getId(), windowParam._scrollBarType);
                 }
             }
             
@@ -1330,7 +1330,7 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
-            const ControlID& controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
@@ -1393,7 +1393,7 @@ namespace mint
             const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
-                makeScrollBar(controlData, Gui::ScrollBarType::Vert);
+                makeScrollBar(controlData.getId(), Gui::ScrollBarType::Vert);
             }
 
             endControlInternal(ControlType::ListView);
@@ -1675,78 +1675,84 @@ namespace mint
             return result;
         }
 
-        void GuiContext::makeScrollBar(ControlData& parentControlData, const ScrollBarType scrollBarType)
+        void GuiContext::makeScrollBar(const ControlID parentControlID, const ScrollBarType scrollBarType)
         {
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
             {
-                _makeScrollBarVert(parentControlData);
+                _makeScrollBarVert(parentControlID);
             }
 
             const bool useHorizontal = (scrollBarType == ScrollBarType::Horz || scrollBarType == ScrollBarType::Both);
             if (useHorizontal == true)
             {
-                _makeScrollBarHorz(parentControlData);
+                _makeScrollBarHorz(parentControlID);
             }
         }
 
-        void GuiContext::_makeScrollBarVert(ControlData& parentControlData) noexcept
+        void GuiContext::_makeScrollBarVert(const ControlID parentControlID) noexcept
         {
-            const float parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
-            const float titleBarOffsetX = (parentControlData.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
-
             ScrollBarTrackParam scrollBarTrackParam;
-            _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
-            scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
-            scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
-            
+            float parentWindowScrollDisplayHeight = 0.0f;
+            {
+                const ControlData& parentControlData = getControlData(parentControlID);
+                parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
+                const float titleBarOffsetX = (parentControlData.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+
+                _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
+                scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
+                scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
+            }
+
             bool hasExtraSize = false;
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parentControlData);
-            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlData, ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
+            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlID, ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& parentControlData = accessControlData(parentControlID);
             if (hasExtraSize == true)
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                __makeScrollBarThumb(parentControlData, ScrollBarType::Vert, parentWindowScrollDisplayHeight, parentControlData.getContentAreaSize()._y, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlID, ScrollBarType::Vert, parentWindowScrollDisplayHeight, parentControlData.getContentAreaSize()._y, scrollBarTrack, rendererContext);
             }
             else
             {
                 parentControlData._controlValue._commonData.disableScrollBar(ScrollBarType::Vert);
-
                 parentControlData._childDisplayOffset._y = 0.0f; // Scrolling!
             }
         }
 
-        void GuiContext::_makeScrollBarHorz(ControlData& parentControlData) noexcept
+        void GuiContext::_makeScrollBarHorz(const ControlID parentControlID) noexcept
         {
-            const float parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
-            const Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
-
             ScrollBarTrackParam scrollBarTrackParam;
-            _controlMetaStateSet.nextSize(Float2(parentWindowScrollDisplayWidth, kScrollBarThickness));
-            scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
-            scrollBarTrackParam._positionInParent._y = parentControlData._size._y - kHalfBorderThickness * 2.0f;
+            float parentWindowScrollDisplayWidth = 0.0f;
+            {
+                const ControlData& parentControlData = getControlData(parentControlID);
+                parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
+                const Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 
+                _controlMetaStateSet.nextSize(Float2(parentWindowScrollDisplayWidth, kScrollBarThickness));
+                scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
+                scrollBarTrackParam._positionInParent._y = parentControlData._size._y - kHalfBorderThickness * 2.0f;
+            }
+            
             bool hasExtraSize = false;
-            const bool isParentAncestorFocusedInclusive = isAncestorControlFocusedInclusiveXXX(parentControlData);
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(parentControlData);
-            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlData, ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
+            ControlData& scrollBarTrack = __makeScrollBarTrack(parentControlID, ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
+            ControlData& parentControlData = accessControlData(parentControlID);
             if (hasExtraSize == true)
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                __makeScrollBarThumb(parentControlData, ScrollBarType::Horz, parentWindowScrollDisplayWidth, parentControlData.getContentAreaSize()._x, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlID, ScrollBarType::Horz, parentWindowScrollDisplayWidth, parentControlData.getContentAreaSize()._x, scrollBarTrack, rendererContext);
             }
             else
             {
                 parentControlData._controlValue._commonData.disableScrollBar(ScrollBarType::Horz);
-
                 parentControlData._childDisplayOffset._x = 0.0f; // Scrolling!
             }
         }
 
-        ControlData& GuiContext::__makeScrollBarTrack(ControlData& parentControlData, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GuiContext::__makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -1754,7 +1760,9 @@ namespace mint
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlID trackControlID = issueControlID(parentControlData, trackControlType, nullptr);
+            const ControlID trackControlID = issueControlID(parentControlID, trackControlType, nullptr);
+
+            const ControlData& parentControlData = getControlData(parentControlID);
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
@@ -1864,7 +1872,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::__makeScrollBarThumb(const ControlData& parentControlData, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GuiContext::__makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
@@ -1878,7 +1886,7 @@ namespace mint
 
             if (scrollBarType == ScrollBarType::Vert)
             {
-                const ControlID thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
                 ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -1943,7 +1951,7 @@ namespace mint
             }
             else if (scrollBarType == ScrollBarType::Horz)
             {
-                const ControlID thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
                 ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
@@ -2048,11 +2056,11 @@ namespace mint
             _controlStackPerFrame.pop_back();
         }
 
-        Float2 GuiContext::beginTitleBar(const ControlData& parentControlData, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
+        Float2 GuiContext::beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
-            const ControlID controlID = issueControlID(parentControlData, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlID, controlType, windowTitle);
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isDraggable = true;
             controlData._delegateControlID = controlData.getParentId();
@@ -2148,7 +2156,7 @@ namespace mint
                 _controlMetaStateSet.nextOffAutoPosition();
                 _controlMetaStateSet.nextPosition(Float2(titleBarSize._x - kDefaultRoundButtonRadius * 2.0f - innerPadding.right(), (titleBarSize._y - kDefaultRoundButtonRadius * 2.0f) * 0.5f));
 
-                if (makeRoundButton(controlData, windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
+                if (makeRoundButton(controlData.getId(), windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
                     inoutParentVisibleState = Gui::VisibleState::Invisible;
                 }
@@ -2160,11 +2168,11 @@ namespace mint
             return titleBarSize;
         }
 
-        const bool GuiContext::makeRoundButton(const ControlData& parentControlData, const wchar_t* const windowTitle, const Rendering::Color& color)
+        const bool GuiContext::makeRoundButton(const ControlID parentControlID, const wchar_t* const windowTitle, const Rendering::Color& color)
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
-            const ControlID controlID = issueControlID(parentControlData, controlType, windowTitle);
+            const ControlID controlID = issueControlID(parentControlID, controlType, windowTitle);
 
             const float radius = kDefaultRoundButtonRadius;
             const ControlData& parentWindowData = getParentWindowControlData(getControlData(_controlStackPerFrame.back()._id));
@@ -2190,13 +2198,13 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::makeTooltipWindow(const ControlData& parentControlData, const wchar_t* const tooltipText, const Float2& position)
+        void GuiContext::makeTooltipWindow(const ControlID parentControlID, const wchar_t* const tooltipText, const Float2& position)
         {
             static constexpr ControlType controlType = ControlType::TooltipWindow;
             static constexpr float kTooltipFontScale = kFontScaleC;
             const float tooltipWindowPadding = 8.0f;
 
-            const ControlID controlID = issueControlID(parentControlData, controlType, tooltipText);
+            const ControlID controlID = issueControlID(parentControlID, controlType, tooltipText);
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -2229,9 +2237,9 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        const ControlID GuiContext::issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GuiContext::issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            const ControlID controlID = _generateControlIDXXX(parentControlData, controlType);
+            const ControlID controlID = _generateControlIDXXX(parentControlID, controlType);
             return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
@@ -2264,11 +2272,11 @@ namespace mint
             return controlID;
         }
 
-        const ControlID GuiContext::_generateControlIDXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept
+        const ControlID GuiContext::_generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
-            idWstring.append(StringUtil::convertToStringW(parentControlData.getId().getRawValue()));
+            idWstring.append(StringUtil::convertToStringW(parentControlID.getRawValue()));
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return ControlID(computeHash(idWstring.c_str()));
         }
@@ -3563,7 +3571,7 @@ namespace mint
 
             if (_controlInteractionStateSet.needToShowTooltip() == true)
             {
-                makeTooltipWindow(_rootControlData, _controlInteractionStateSet.getTooltipText()
+                makeTooltipWindow(_rootControlData.getId(), _controlInteractionStateSet.getTooltipText()
                     , _controlInteractionStateSet.getTooltipWindowPosition(getControlData(_controlInteractionStateSet.getTooltipParentWindowId()))
                 );
             }

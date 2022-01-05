@@ -303,22 +303,22 @@ namespace mint
     #pragma region Controls - Internal use
         private:
             // \return Size of titlebar
-            Float2                                      beginTitleBar(const ControlData& parentControlData, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
+            Float2                                      beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
             // [RoundButton]
-            const bool                                  makeRoundButton(const ControlData& parentControlData, const wchar_t* const windowTitle, const Rendering::Color& color);
+            const bool                                  makeRoundButton(const ControlID parentControlID, const wchar_t* const windowTitle, const Rendering::Color& color);
 
             // [Tooltip]
             // Unique control
-            void                                        makeTooltipWindow(const ControlData& parentControlData, const wchar_t* const tooltipText, const Float2& position);
+            void                                        makeTooltipWindow(const ControlID parentControlID, const wchar_t* const tooltipText, const Float2& position);
 
             // [ScrollBar]
-            void                                        makeScrollBar(ControlData& parentControlData, const ScrollBarType scrollBarType);
-            void                                        _makeScrollBarVert(ControlData& parentControlData) noexcept;
-            void                                        _makeScrollBarHorz(ControlData& parentControlData) noexcept;
-            ControlData&                                __makeScrollBarTrack(ControlData& parentControlData, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                        __makeScrollBarThumb(const ControlData& parentControlData, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        makeScrollBar(const ControlID parentControlID, const ScrollBarType scrollBarType);
+            void                                        _makeScrollBarVert(const ControlID parentControlID) noexcept;
+            void                                        _makeScrollBarHorz(const ControlID parentControlID) noexcept;
+            ControlData&                                __makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                        __makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
     #pragma endregion
 
         private:
@@ -327,10 +327,10 @@ namespace mint
 
         private:
             const bool                                  isValidControl(const ControlID& id) const noexcept;
-            const ControlID                             issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             _createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlID                             _generateControlIDXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
+            const ControlID                             _generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType) const noexcept;
             const ControlID                             _generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             ControlData&                                accessControlStackTopXXX() noexcept;
