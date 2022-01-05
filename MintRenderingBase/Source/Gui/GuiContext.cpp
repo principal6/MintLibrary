@@ -2827,13 +2827,13 @@ namespace mint
 
         void GuiContext::processControlDraggingInternal(ControlData& controlData) noexcept
         {
-            ControlData& targetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
-            const bool isDragging = isControlBeingDragged(targetControlData);
+            const bool isDragging = isControlBeingDragged(controlData);
             if (isDragging == false)
             {
                 return;
             }
             
+            ControlData& targetControlData = (controlData._delegateControlId.isValid() == false) ? controlData : accessControlData(controlData._delegateControlId);
             if (_isDragBegun == true)
             {
                 _draggedControlInitialPosition = targetControlData._position;
