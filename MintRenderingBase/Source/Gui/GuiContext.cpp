@@ -580,7 +580,8 @@ namespace mint
             
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& windowControlData = createOrGetControlData(file, line, controlType, title);
+            const ControlId windowControlId = issueControlID(file, line, controlType, title);
+            ControlData& windowControlData = accessControlData(windowControlId);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._option._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
@@ -787,7 +788,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Button;
             
-            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
+            const ControlId controlID = issueControlID(file, line, controlType, text);
+            ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
@@ -820,7 +822,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
-            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
+            const ControlId controlID = issueControlID(file, line, controlType, text);
+            ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._autoCalculatedDisplaySize = kCheckBoxSize;
@@ -865,7 +868,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::Label;
 
-            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
+            const ControlId controlID = issueControlID(file, line, controlType, text);
+            ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float textWidth = calculateTextWidth(text, StringUtil::length(text));
@@ -954,8 +958,12 @@ namespace mint
         const bool GuiContext::beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue)
         {
             static constexpr ControlType trackControlType = ControlType::Slider;
+            static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-            ControlData& trackControlData = createOrGetControlData(file, line, trackControlType, nullptr);
+            const ControlId trackControlID = issueControlID(file, line, trackControlType, nullptr);
+            const ControlId thumbControlID = issueControlID(file, line, thumbControlType, nullptr);
+            
+            ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
                 prepareControlDataParamForTrack._autoCalculatedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
@@ -967,12 +975,10 @@ namespace mint
 
             bool isChanged = false;
             {
-                static constexpr ControlType thumbControlType = ControlType::SliderThumb;
-
                 _controlMetaStateSet.nextOffAutoPosition();
 
                 const float sliderValidLength = trackControlData._size._x - kSliderThumbRadius * 2.0f;
-                ControlData& thumbControlData = createOrGetControlData(file, line, thumbControlType, nullptr);
+                ControlData& thumbControlData = accessControlData(thumbControlID);
                 thumbControlData._position._x = trackControlData._position._x + trackControlData._controlValue._thumbData._thumbAt * sliderValidLength;
                 thumbControlData._position._y = trackControlData._position._y + trackControlData._size._y * 0.5f - thumbControlData._size._y * 0.5f;
                 thumbControlData._option._isDraggable = true;
@@ -1070,7 +1076,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
-            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
+            const ControlId controlID = issueControlID(file, line, controlType, nullptr);
+            ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = textBoxParam._common._offset;
@@ -1175,7 +1182,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
-            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
+            const ControlId controlID = issueControlID(file, line, controlType, nullptr);
+            ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             controlData._option._needDoubleClickToFocus = true;
             PrepareControlDataParam prepareControlDataParam;
@@ -1322,7 +1330,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
-            ControlData& controlData = createOrGetControlData(file, line, controlType, nullptr);
+            const ControlId& controlID = issueControlID(file, line, controlType, nullptr);
+            ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
             PrepareControlDataParam prepareControlDataParam;
@@ -1394,7 +1403,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
-            ControlData& controlData = createOrGetControlData(file, line, controlType, text);
+            const ControlId controlID = issueControlID(file, line, controlType, text);
+            ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
             ControlData& parentControlData = accessControlData(controlData.getParentId());
@@ -1437,7 +1447,8 @@ namespace mint
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& menuBar = createOrGetControlData(file, line, controlType, nullptr);
+            const ControlId menuBarID = issueControlID(file, line, controlType, nullptr);
+            ControlData& menuBar = accessControlData(menuBarID);
             ControlData& menuBarParent = accessControlData(menuBar.getParentId());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
             const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
@@ -1508,7 +1519,8 @@ namespace mint
                 return false;
             }
 
-            ControlData& menuBarItem = createOrGetControlData(file, line, controlType, text);
+            const ControlId menuBarItemID = issueControlID(file, line, controlType, text);
+            ControlData& menuBarItem = accessControlData(menuBarItemID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const uint32 textLength = StringUtil::length(text);
@@ -1578,7 +1590,8 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
-            ControlData& menuItem = createOrGetControlData(file, line, controlType, text);
+            const ControlId menuItemID = issueControlID(file, line, controlType, text);
+            ControlData& menuItem = accessControlData(menuItemID);
             menuItem._option._isInteractableOutsideParent = true;
 
             ControlData& menuItemParent = accessControlData(menuItem.getParentId());
@@ -1741,7 +1754,8 @@ namespace mint
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& trackControlData = createOrGetControlData(parentControlData, trackControlType, nullptr);
+            const ControlId trackControlID = issueControlID(parentControlData, trackControlType, nullptr);
+            ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             const bool isVert = (scrollBarType == ScrollBarType::Vert);
             {
@@ -1864,7 +1878,8 @@ namespace mint
 
             if (scrollBarType == ScrollBarType::Vert)
             {
-                ControlData& thumbControlData = createOrGetControlData(parentControlData, thumbControlType, nullptr);
+                const ControlId thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
@@ -1928,7 +1943,8 @@ namespace mint
             }
             else if (scrollBarType == ScrollBarType::Horz)
             {
-                ControlData& thumbControlData = createOrGetControlData(parentControlData, thumbControlType, nullptr);
+                const ControlId thumbControlID = issueControlID(parentControlData, thumbControlType, nullptr);
+                ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
@@ -2036,7 +2052,8 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
-            ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
+            const ControlId controlID = issueControlID(parentControlData, controlType, windowTitle);
+            ControlData& controlData = accessControlData(controlID);
             controlData._option._isDraggable = true;
             controlData._delegateControlId = controlData.getParentId();
             ControlData& parentWindowControlData = accessControlData(controlData.getParentId());
@@ -2147,11 +2164,11 @@ namespace mint
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
-            const ControlData& parentWindowData = getParentWindowControlData();
+            const ControlId controlID = issueControlID(parentControlData, controlType, windowTitle);
 
             const float radius = kDefaultRoundButtonRadius;
-            ControlData& controlData = createOrGetControlData(parentControlData, controlType, windowTitle);
-
+            const ControlData& parentWindowData = getParentWindowControlData(getControlData(_controlStackPerFrame.back()._id));
+            ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._parentIdOverride = parentWindowData.getId();
@@ -2179,7 +2196,8 @@ namespace mint
             static constexpr float kTooltipFontScale = kFontScaleC;
             const float tooltipWindowPadding = 8.0f;
 
-            ControlData& controlData = createOrGetControlData(parentControlData, controlType, tooltipText);
+            const ControlId controlID = issueControlID(parentControlData, controlType, tooltipText);
+            ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
                 const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
@@ -2211,19 +2229,19 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        ControlData& GuiContext::createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlId GuiContext::issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept
         {
             const ControlId controlId = _generateControlIdXXX(parentControlData, controlType);
-            return _createOrGetControlDataInternalXXX(controlId, controlType, text);
+            return _createControlDataInternalXXX(controlId, controlType, text);
         }
 
-        ControlData& GuiContext::createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlId GuiContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
         {
             const ControlId controlId = _generateControlIdXXX(file, line, controlType);
-            return _createOrGetControlDataInternalXXX(controlId, controlType, text);
+            return _createControlDataInternalXXX(controlId, controlType, text);
         }
 
-        ControlData& GuiContext::_createOrGetControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlId GuiContext::_createControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept
         {
             auto found = _controlIdMap.find(controlId);
             if (found.isValid() == false)
@@ -2243,7 +2261,7 @@ namespace mint
             {
                 ++controlData._updateCount;
             }
-            return controlData;
+            return controlId;
         }
 
         const ControlId GuiContext::_generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept
@@ -2263,13 +2281,6 @@ namespace mint
             idWstring.append(line);
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return ControlId(computeHash(idWstring.c_str()));
-        }
-
-        const ControlData& GuiContext::getParentWindowControlData() const noexcept
-        {
-            MINT_ASSERT("김장원", _controlStackPerFrame.empty() == false, "Control 스택이 비어있을 때 호출되면 안 됩니다!!!");
-
-            return getParentWindowControlData(getControlData(_controlStackPerFrame.back()._id));
         }
 
         const ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept

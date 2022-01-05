@@ -327,9 +327,9 @@ namespace mint
 
         private:
             const bool                                  isValidControl(const ControlId& id) const noexcept;
-            ControlData&                                createOrGetControlData(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
-            ControlData&                                createOrGetControlData(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
-            ControlData&                                _createOrGetControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlId                             issueControlID(const ControlData& parentControlData, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlId                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlId                             _createControlDataInternalXXX(const ControlId& controlId, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlId                             _generateControlIdXXX(const ControlData& parentControlData, const ControlType controlType) const noexcept;
             const ControlId                             _generateControlIdXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
@@ -337,7 +337,6 @@ namespace mint
             const ControlData&                          getControlData(const ControlId& id) const noexcept;
             ControlData&                                accessControlData(const ControlId& id) noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
-            const ControlData&                          getParentWindowControlData() const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlDataInternal(const ControlId& id) const noexcept;
 #pragma endregion
