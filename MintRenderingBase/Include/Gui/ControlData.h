@@ -23,6 +23,7 @@ namespace mint
     namespace Gui
     {
         class ControlData;
+        class ControlMetaStateSet;
 
 
         static constexpr float          kControlDisplayMinWidth = 10.0f;
@@ -297,7 +298,10 @@ namespace mint
     
         public:
             void                                clearPerFrameData() noexcept;
-            void                                updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parent) noexcept;
+            void                                updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
+            
+        private:
+            void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
 
         public:
             const ControlID&                    getId() const noexcept;

@@ -581,6 +581,7 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
 
             const ControlID windowControlID = issueControlID(file, line, controlType, title);
+            
             ControlData& windowControlData = accessControlData(windowControlID);
             windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
             windowControlData._option._isFocusable = true;
@@ -789,6 +790,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::Button;
             
             const ControlID controlID = issueControlID(file, line, controlType, text);
+            
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -823,6 +825,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::CheckBox;
 
             const ControlID controlID = issueControlID(file, line, controlType, text);
+            
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -869,6 +872,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::Label;
 
             const ControlID controlID = issueControlID(file, line, controlType, text);
+            
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -1077,6 +1081,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::TextBox;
             
             const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
@@ -1183,6 +1188,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
             const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
             controlData._option._needDoubleClickToFocus = true;
@@ -1331,6 +1337,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ListView;
             
             const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
@@ -1404,6 +1411,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::ListItem;
             
             const ControlID controlID = issueControlID(file, line, controlType, text);
+            
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
 
@@ -1448,6 +1456,7 @@ namespace mint
             _controlMetaStateSet.nextOffAutoPosition();
 
             const ControlID menuBarID = issueControlID(file, line, controlType, nullptr);
+            
             ControlData& menuBar = accessControlData(menuBarID);
             ControlData& menuBarParent = accessControlData(menuBar.getParentId());
             const bool isMenuBarParentRoot = menuBarParent.isTypeOf(ControlType::ROOT);
@@ -1512,15 +1521,16 @@ namespace mint
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            ControlData& menuBar = accessControlStackTopXXX();
-            if (menuBar.isTypeOf(ControlType::MenuBar) == false)
+            if (accessControlStackTopXXX().isTypeOf(ControlType::MenuBar) == false)
             {
                 MINT_LOG_ERROR("김장원", "MenuBarItem 은 MenuBar 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
 
             const ControlID menuBarItemID = issueControlID(file, line, controlType, text);
+            
             ControlData& menuBarItem = accessControlData(menuBarItemID);
+            ControlData& menuBar = accessControlData(menuBarItem.getParentId());
             PrepareControlDataParam prepareControlDataParam;
             {
                 const uint32 textLength = StringUtil::length(text);
@@ -1591,6 +1601,7 @@ namespace mint
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
             const ControlID menuItemID = issueControlID(file, line, controlType, text);
+            
             ControlData& menuItem = accessControlData(menuItemID);
             menuItem._option._isInteractableOutsideParent = true;
 
@@ -1712,7 +1723,7 @@ namespace mint
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                __makeScrollBarThumb(parentControlID, ScrollBarType::Vert, parentWindowScrollDisplayHeight, parentControlData.getContentAreaSize()._y, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(scrollBarTrack.getId(), ScrollBarType::Vert, parentWindowScrollDisplayHeight, parentControlData.getContentAreaSize()._y, rendererContext);
             }
             else
             {
@@ -1743,7 +1754,7 @@ namespace mint
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                __makeScrollBarThumb(parentControlID, ScrollBarType::Horz, parentWindowScrollDisplayWidth, parentControlData.getContentAreaSize()._x, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(scrollBarTrack.getId(), ScrollBarType::Horz, parentWindowScrollDisplayWidth, parentControlData.getContentAreaSize()._x, rendererContext);
             }
             else
             {
@@ -1760,12 +1771,12 @@ namespace mint
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
 
+            const bool isVert = (scrollBarType == ScrollBarType::Vert);
             const ControlID trackControlID = issueControlID(parentControlID, trackControlType, nullptr);
 
             const ControlData& parentControlData = getControlData(parentControlID);
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
-            const bool isVert = (scrollBarType == ScrollBarType::Vert);
             {
                 //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._size;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
@@ -1872,22 +1883,23 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::__makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GuiContext::__makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
             _controlMetaStateSet.nextOffAutoPosition();
 
+            const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
+            
             const float radius = kScrollBarThickness * 0.5f;
             const float thumbSizeRatio = (visibleLength / totalLength);
             const float thumbSize = visibleLength * thumbSizeRatio - radius * 2.0f;
             const float trackRemnantSize = std::abs(visibleLength - thumbSize);
+            ControlData& scrollBarTrack = accessControlData(parentControlID);
             ControlData& scrollBarParent = accessControlData(scrollBarTrack.getParentId());
-
+            ControlData& thumbControlData = accessControlData(thumbControlID);
             if (scrollBarType == ScrollBarType::Vert)
             {
-                const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
-                ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
@@ -1951,8 +1963,6 @@ namespace mint
             }
             else if (scrollBarType == ScrollBarType::Horz)
             {
-                const ControlID thumbControlID = issueControlID(parentControlID, thumbControlType, nullptr);
-                ControlData& thumbControlData = accessControlData(thumbControlID);
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
                     prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
@@ -2061,6 +2071,7 @@ namespace mint
             static constexpr ControlType controlType = ControlType::TitleBar;
 
             const ControlID controlID = issueControlID(parentControlID, controlType, windowTitle);
+            
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isDraggable = true;
             controlData._delegateControlID = controlData.getParentId();
@@ -2205,6 +2216,7 @@ namespace mint
             const float tooltipWindowPadding = 8.0f;
 
             const ControlID controlID = issueControlID(parentControlID, controlType, tooltipText);
+            
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -2402,40 +2414,12 @@ namespace mint
             }
 
             ControlData& parentControlData = accessControlData(controlData.getParentId());
-            controlData.updatePerFrameWithParent(isNewData, prepareControlDataParam, parentControlData);
-
+            const bool computeSize = (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true);
+            controlData.updatePerFrame(prepareControlDataParam, parentControlData, _controlMetaStateSet, getCurrentAvailableDisplaySizeX(), computeSize);
+            
             // 부모와 동일한 RendererContextLayer 가 되도록!
             controlData._rendererContextLayer = parentControlData._rendererContextLayer;
             
-            // Display size
-            Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
-            if (isNewData == true || prepareControlDataParam._alwaysResetDisplaySize == true)
-            {
-                const float maxDisplaySizeX = getCurrentAvailableDisplaySizeX();
-                if (desiredSize._x <= 0.0f)
-                {
-                    desiredSize._x = prepareControlDataParam._autoCalculatedDisplaySize._x;
-                }
-                if (desiredSize._y <= 0.0f)
-                {
-                    desiredSize._y = prepareControlDataParam._autoCalculatedDisplaySize._y;
-                }
-
-                if (_controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
-                {
-                    controlData._size = desiredSize;
-                }
-                else
-                {
-                    if (_controlMetaStateSet.getNextSizeForced() == false)
-                    {
-                        desiredSize._x = min(maxDisplaySizeX, desiredSize._x);
-                    }
-
-                    controlData._size = desiredSize;
-                }
-            }
-
             // Position, Parent offset, Parent child at, Parent content area size
             const bool useAutoPosition = (_controlMetaStateSet.getNextUseAutoPosition() == true);
             if (useAutoPosition == true)

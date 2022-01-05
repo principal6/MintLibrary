@@ -7,6 +7,8 @@
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Hash.hpp>
 
+#include <MintRenderingBase/Include/Gui/ControlMetaStateSet.h>
+
 
 namespace mint
 {
@@ -308,8 +310,8 @@ namespace mint
             
             _perFrameData.reset();
         }
-
-        MINT_INLINE void ControlData::updatePerFrameWithParent(const bool isNewData, const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData) noexcept
+        
+        MINT_INLINE void ControlData::updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept
         {
             clearPerFrameData();
 
@@ -318,10 +320,7 @@ namespace mint
             parentControlData._childControlIDs.push_back(_id);
             parentControlData.connectChildWindowIfNot(*this);
 
-            _minSize = prepareControlDataParam._minSize;
-            _innerPadding = prepareControlDataParam._innerPadding;
-            _interactionSize = _size + prepareControlDataParam._deltaInteractionSize;
-            _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
+            updateSize(prepareControlDataParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
 
             // Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
             if (_option._isDraggable == true && _positionConstraintsForDragging.isNan() == false)
@@ -344,6 +343,42 @@ namespace mint
             default:
                 break;
             }
+        }
+
+        MINT_INLINE void ControlData::updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept
+        {
+            Float2 desiredSize = controlMetaStateSet.getNextDesiredSize();
+            if (compute)
+            {
+                const float maxDisplaySizeX = availableDisplaySizeX;
+                if (desiredSize._x <= 0.0f)
+                {
+                    desiredSize._x = prepareControlDataParam._autoCalculatedDisplaySize._x;
+                }
+                if (desiredSize._y <= 0.0f)
+                {
+                    desiredSize._y = prepareControlDataParam._autoCalculatedDisplaySize._y;
+                }
+
+                if (controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
+                {
+                    _size = desiredSize;
+                }
+                else
+                {
+                    if (controlMetaStateSet.getNextSizeForced() == false)
+                    {
+                        desiredSize._x = min(maxDisplaySizeX, desiredSize._x);
+                    }
+
+                    _size = desiredSize;
+                }
+            }
+
+            _minSize = prepareControlDataParam._minSize;
+            _innerPadding = prepareControlDataParam._innerPadding;
+            _interactionSize = _size + prepareControlDataParam._deltaInteractionSize;
+            _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
         }
 
         MINT_INLINE const ControlID& ControlData::getId() const noexcept

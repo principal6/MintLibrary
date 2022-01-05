@@ -318,7 +318,7 @@ namespace mint
             void                                        _makeScrollBarVert(const ControlID parentControlID) noexcept;
             void                                        _makeScrollBarHorz(const ControlID parentControlID) noexcept;
             ControlData&                                __makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                        __makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, const ControlData& scrollBarTrack, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        __makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
     #pragma endregion
 
         private:
