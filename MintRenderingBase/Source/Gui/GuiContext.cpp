@@ -1679,11 +1679,11 @@ namespace mint
 
         void GuiContext::_makeScrollBarVert(ControlData& parentControlData) noexcept
         {
-            const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
+            const float parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
             const float titleBarOffsetX = (parentControlData.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
 
             ScrollBarTrackParam scrollBarTrackParam;
-            _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowPureDisplayHeight));
+            _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
             scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
             scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
             
@@ -1695,7 +1695,7 @@ namespace mint
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Vert);
 
-                __makeScrollBarThumb(parentControlData, ScrollBarType::Vert, parentWindowPureDisplayHeight, parentControlData.getPreviousContentAreaSize()._y, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlData, ScrollBarType::Vert, parentWindowScrollDisplayHeight, parentControlData.getContentAreaSize()._y, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1707,11 +1707,11 @@ namespace mint
 
         void GuiContext::_makeScrollBarHorz(ControlData& parentControlData) noexcept
         {
-            const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
+            const float parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
             const Float2& menuBarThicknes = parentControlData.getMenuBarThickness();
 
             ScrollBarTrackParam scrollBarTrackParam;
-            _controlMetaStateSet.nextSize(Float2(parentWindowPureDisplayWidth, kScrollBarThickness));
+            _controlMetaStateSet.nextSize(Float2(parentWindowScrollDisplayWidth, kScrollBarThickness));
             scrollBarTrackParam._positionInParent._x = parentControlData.getInnerPadding().left() + menuBarThicknes._x;
             scrollBarTrackParam._positionInParent._y = parentControlData._size._y - kHalfBorderThickness * 2.0f;
 
@@ -1723,7 +1723,7 @@ namespace mint
             {
                 parentControlData._controlValue._commonData.enableScrollBar(ScrollBarType::Horz);
 
-                __makeScrollBarThumb(parentControlData, ScrollBarType::Horz, parentWindowPureDisplayWidth, parentControlData.getPreviousContentAreaSize()._x, scrollBarTrack, rendererContext);
+                __makeScrollBarThumb(parentControlData, ScrollBarType::Horz, parentWindowScrollDisplayWidth, parentControlData.getContentAreaSize()._x, scrollBarTrack, rendererContext);
             }
             else
             {
@@ -1770,8 +1770,8 @@ namespace mint
             // Vertical Track
             if (isVert == true)
             {
-                const float parentWindowPureDisplayHeight = parentControlData.getPureDisplayHeight();
-                const float extraSize = parentControlData.getPreviousContentAreaSize()._y - parentWindowPureDisplayHeight;
+                const float parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
+                const float extraSize = parentControlData.getContentAreaSize()._y - parentWindowScrollDisplayHeight;
                 if (extraSize >= 0.0f)
                 {
                     // Rendering track
@@ -1809,8 +1809,8 @@ namespace mint
             }
             else
             {
-                const float parentWindowPureDisplayWidth = parentControlData.getPureDisplayWidth();
-                const float extraSize = parentControlData.getPreviousContentAreaSize()._x - parentWindowPureDisplayWidth;
+                const float parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
+                const float extraSize = parentControlData.getContentAreaSize()._x - parentWindowScrollDisplayWidth;
                 if (extraSize >= 0.0f)
                 {
                     // Rendering track

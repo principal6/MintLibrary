@@ -325,12 +325,12 @@ namespace mint
             Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
             const Float2&                       getMinSize() const noexcept;
-            const float                         getPureDisplayWidth() const noexcept;
-            const float                         getPureDisplayHeight() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
             const Float2&                       getNonDockInteractionSize() const noexcept;
-            const Float2&                       getPreviousContentAreaSize() const noexcept;
+            const Float2&                       getContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
+            const float                         computeScrollDisplayWidth() const noexcept;
+            const float                         computeScrollDisplayHeight() const noexcept;
 
         public:
             const wchar_t*                      getText() const noexcept;

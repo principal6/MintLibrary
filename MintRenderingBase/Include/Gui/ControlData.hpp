@@ -438,28 +438,6 @@ namespace mint
             return _minSize;
         }
 
-        MINT_INLINE const float ControlData::getPureDisplayWidth() const noexcept
-        {
-            const Float2& menuBarThicknes = getMenuBarThickness();
-            return max(
-                0.0f,
-                _size._x - getHorzDockSizeSum() - _innerPadding.horz()
-                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
-                - menuBarThicknes._x
-            );
-        }
-
-        MINT_INLINE const float ControlData::getPureDisplayHeight() const noexcept
-        {
-            const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? kTitleBarBaseThickness : 0.0f;
-            const Float2& menuBarThicknes = getMenuBarThickness();
-            return max(
-                0.0f,
-                _size._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
-                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
-                - menuBarThicknes._y
-            );
-        }
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
         {
@@ -471,8 +449,10 @@ namespace mint
             return _nonDockInteractionSize;
         }
 
-        MINT_INLINE const Float2& ControlData::getPreviousContentAreaSize() const noexcept
+        MINT_INLINE const Float2& ControlData::getContentAreaSize() const noexcept
         {
+            // ContentAreaSize 는 매 프레임 계산되는데, 계산 도중에 이 함수가 호출될 수 있으므로
+            // 안전하게 이전 프레임에 계산했던 값을 리턴한다.
             return _previousContentAreaSize;
         }
 
@@ -481,6 +461,28 @@ namespace mint
             return _childAt;
         }
 
+        MINT_INLINE const float ControlData::computeScrollDisplayWidth() const noexcept
+        {
+            const Float2& menuBarThicknes = getMenuBarThickness();
+            return max(
+                0.0f,
+                _size._x - getHorzDockSizeSum() - _innerPadding.horz()
+                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+                - menuBarThicknes._x
+            );
+        }
+
+        MINT_INLINE const float ControlData::computeScrollDisplayHeight() const noexcept
+        {
+            const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? kTitleBarBaseThickness : 0.0f;
+            const Float2& menuBarThicknes = getMenuBarThickness();
+            return max(
+                0.0f,
+                _size._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
+                - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
+                - menuBarThicknes._y
+            );
+        }
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
         {
             return _controlType;
