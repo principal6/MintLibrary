@@ -257,8 +257,8 @@ namespace mint
 
             public:
                 DockingControlType              _dockingControlType;
-                DockZone                    _lastDockZone;
-                DockZone                    _lastDockZoneCandidate;
+                DockZone                        _lastDockZone;
+                DockZone                        _lastDockZoneCandidate;
 
             private:
                 DockDatum                       _dockData[static_cast<uint32>(DockZone::COUNT)];

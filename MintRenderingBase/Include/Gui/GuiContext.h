@@ -52,7 +52,7 @@ namespace mint
             CommonControlParam  _common;
             Float2              _position               = Float2(100, 100);
             ScrollBarType       _scrollBarType          = ScrollBarType::None;
-            DockZone        _initialDockZone    = DockZone::COUNT;
+            DockZone            _initialDockZone        = DockZone::COUNT;
             Float2              _initialDockingSize     = Float2(160);
         };
 
