@@ -170,11 +170,11 @@ namespace mint
         };
 
 
-        class DockDatum
+        class DockZoneData
         {
         public:
-                                DockDatum();
-                                ~DockDatum() = default;
+                                DockZoneData();
+                                ~DockZoneData() = default;
 
         public:
             const bool          hasDockedControls() const noexcept;
@@ -261,7 +261,7 @@ namespace mint
                 DockZone                        _lastDockZoneCandidate;
 
             private:
-                DockDatum                       _dockData[static_cast<uint32>(DockZone::COUNT)];
+                DockZoneData                    _dockZoneDatas[static_cast<uint32>(DockZone::COUNT)];
                 ControlID                       _dockControlID;
                 DockingStateContext             _dokcingStateContext;
             };
@@ -354,8 +354,8 @@ namespace mint
             const ClipRects&                    getClipRects() const noexcept;
             
         public:
-            DockDatum&                          getDockDatum(const DockZone dockZone) noexcept;
-            const DockDatum&                    getDockDatum(const DockZone dockZone) const noexcept;
+            DockZoneData&                       getDockZoneData(const DockZone dockZone) noexcept;
+            const DockZoneData&                 getDockZoneData(const DockZone dockZone) const noexcept;
             const bool                          isFocusedDocker(const ControlData& dockedControlData) const noexcept;
             void                                setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept;
             const Float2                        getDockSize(const DockZone dockZone) const noexcept;

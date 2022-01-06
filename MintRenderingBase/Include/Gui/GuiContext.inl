@@ -9,22 +9,22 @@ namespace mint
 #pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
         {
-            _controlIDForUpdateDockDatum.reset();
+            _controlIDForUpdateDockZoneData.reset();
         }
 
         MINT_INLINE const bool TaskWhenMouseUp::isSet() const noexcept
         {
-            return _controlIDForUpdateDockDatum.isValid();
+            return _controlIDForUpdateDockZoneData.isValid();
         }
 
-        MINT_INLINE void TaskWhenMouseUp::setUpdateDockDatum(const ControlID& controlID) noexcept
+        MINT_INLINE void TaskWhenMouseUp::setUpdateDockZoneData(const ControlID& controlID) noexcept
         {
-            _controlIDForUpdateDockDatum = controlID;
+            _controlIDForUpdateDockZoneData = controlID;
         }
 
-        MINT_INLINE const ControlID& TaskWhenMouseUp::getUpdateDockDatum() const noexcept
+        MINT_INLINE const ControlID& TaskWhenMouseUp::getUpdateDockZoneData() const noexcept
         {
-            return _controlIDForUpdateDockDatum;
+            return _controlIDForUpdateDockZoneData;
         }
 #pragma endregion
 

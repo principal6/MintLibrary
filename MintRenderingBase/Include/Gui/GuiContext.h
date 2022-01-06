@@ -100,11 +100,11 @@ namespace mint
         public:
             void                clear() noexcept;
             const bool          isSet() const noexcept;
-            void                setUpdateDockDatum(const ControlID& controlID) noexcept;
-            const ControlID&    getUpdateDockDatum() const noexcept;
+            void                setUpdateDockZoneData(const ControlID& controlID) noexcept;
+            const ControlID&    getUpdateDockZoneData() const noexcept;
 
         private:
-            ControlID           _controlIDForUpdateDockDatum;
+            ControlID           _controlIDForUpdateDockZoneData;
         };
 
 
@@ -377,7 +377,7 @@ namespace mint
 
             void                                        dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept;
             void                                        undock(const ControlID& dockedControlID) noexcept;
-            void                                        updateDockDatum(const ControlID& dockControlID, const bool updateWidthArray = true) noexcept;
+            void                                        updateDockZoneData(const ControlID& dockControlID, const bool updateWidthArray = true) noexcept;
 
             const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
             

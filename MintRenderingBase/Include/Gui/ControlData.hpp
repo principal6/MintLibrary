@@ -173,39 +173,39 @@ namespace mint
 #pragma endregion
 
 
-#pragma region DockDatum
-        inline DockDatum::DockDatum()
+#pragma region DockZoneData
+        inline DockZoneData::DockZoneData()
             : _focusedDockedControlIndex{ 0 }
         {
             __noop;
         }
 
-        MINT_INLINE const bool DockDatum::hasDockedControls() const noexcept
+        MINT_INLINE const bool DockZoneData::hasDockedControls() const noexcept
         {
             return !_dockedControlIDArray.empty();
         }
 
-        MINT_INLINE const bool DockDatum::isRawDockSizeSet() const noexcept
+        MINT_INLINE const bool DockZoneData::isRawDockSizeSet() const noexcept
         {
             return _rawDockSize != Float2::kZero;
         }
 
-        MINT_INLINE void DockDatum::setRawDockSize(const Float2& rawDockSize) noexcept
+        MINT_INLINE void DockZoneData::setRawDockSize(const Float2& rawDockSize) noexcept
         {
             _rawDockSize = rawDockSize;
         }
 
-        MINT_INLINE const Float2& DockDatum::getRawDockSizeXXX() const noexcept
+        MINT_INLINE const Float2& DockZoneData::getRawDockSizeXXX() const noexcept
         {
             return _rawDockSize;
         }
 
-        MINT_INLINE void DockDatum::swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept
+        MINT_INLINE void DockZoneData::swapDockedControlsXXX(const int32 indexA, const int32 indexB) noexcept
         {
             std::swap(_dockedControlIDArray[indexA], _dockedControlIDArray[indexB]);
         }
 
-        MINT_INLINE const int32 DockDatum::getDockedControlIndex(const ControlID& dockedControlID) const noexcept
+        MINT_INLINE const int32 DockZoneData::getDockedControlIndex(const ControlID& dockedControlID) const noexcept
         {
             const int32 dockedControlCount = static_cast<int32>(_dockedControlIDArray.size());
             for (int32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
@@ -218,17 +218,17 @@ namespace mint
             return -1;
         }
 
-        MINT_INLINE const ControlID DockDatum::getDockedControlID(const int32 dockedControlIndex) const noexcept
+        MINT_INLINE const ControlID DockZoneData::getDockedControlID(const int32 dockedControlIndex) const noexcept
         {
             return _dockedControlIDArray[dockedControlIndex];
         }
 
-        MINT_INLINE const float DockDatum::getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept
+        MINT_INLINE const float DockZoneData::getDockedControlTitleBarOffset(const int32 dockedControlIndex) const noexcept
         {
             return _dockedControlTitleBarOffsetArray[dockedControlIndex];
         }
 
-        MINT_INLINE const int32 DockDatum::getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept
+        MINT_INLINE const int32 DockZoneData::getDockedControlIndexByMousePosition(const float relativeMousePositionX) const noexcept
         {
             int32 resultIndex = -1;
             float widthSum = 0.0f;
@@ -550,46 +550,46 @@ namespace mint
             return _clipRects;
         }
 
-        MINT_INLINE DockDatum& ControlData::getDockDatum(const DockZone dockZone) noexcept
+        MINT_INLINE DockZoneData& ControlData::getDockZoneData(const DockZone dockZone) noexcept
         {
-            return _dockContext._dockData[static_cast<uint32>(dockZone)];
+            return _dockContext._dockZoneDatas[static_cast<uint32>(dockZone)];
         }
 
-        MINT_INLINE const DockDatum& ControlData::getDockDatum(const DockZone dockZone) const noexcept
+        MINT_INLINE const DockZoneData& ControlData::getDockZoneData(const DockZone dockZone) const noexcept
         {
-            return _dockContext._dockData[static_cast<uint32>(dockZone)];
+            return _dockContext._dockZoneDatas[static_cast<uint32>(dockZone)];
         }
 
         MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockedControlData) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockContext._lastDockZone);
-            return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._focusedDockedControlIndex;
+            const DockZoneData& dockZoneData = getDockZoneData(dockedControlData._dockContext._lastDockZone);
+            return dockZoneData.getDockedControlIndex(dockedControlData.getId()) == dockZoneData._focusedDockedControlIndex;
         }
 
         MINT_INLINE void ControlData::setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept
         {
-            getDockDatum(dockZone).setRawDockSize(dockSize);
+            getDockZoneData(dockZone).setRawDockSize(dockSize);
         }
 
         MINT_INLINE const Float2 ControlData::getDockSize(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatumTopSide = getDockDatum(DockZone::TopSide);
-            const DockDatum& dockDatumBottomSide = getDockDatum(DockZone::BottomSide);
-            const DockDatum& dockDatum = getDockDatum(dockZone);
+            const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
+            const DockZoneData& dockZoneDataBottomSide = getDockZoneData(DockZone::BottomSide);
+            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
             const Float2 innerDisplaySize = computeInnerDisplaySize();
-            Float2 resultDockSize = dockDatum.getRawDockSizeXXX();
+            Float2 resultDockSize = dockZoneData.getRawDockSizeXXX();
             switch (dockZone)
             {
             case Gui::DockZone::LeftSide:
             case Gui::DockZone::RightSide:
                 resultDockSize._y = innerDisplaySize._y;
-                if (dockDatumTopSide.hasDockedControls() == true)
+                if (dockZoneDataTopSide.hasDockedControls() == true)
                 {
-                    resultDockSize._y -= dockDatumTopSide.getRawDockSizeXXX()._y;
+                    resultDockSize._y -= dockZoneDataTopSide.getRawDockSizeXXX()._y;
                 }
-                if (dockDatumBottomSide.hasDockedControls() == true)
+                if (dockZoneDataBottomSide.hasDockedControls() == true)
                 {
-                    resultDockSize._y -= dockDatumBottomSide.getRawDockSizeXXX()._y;
+                    resultDockSize._y -= dockZoneDataBottomSide.getRawDockSizeXXX()._y;
                 }
                 break;
             case Gui::DockZone::TopSide:
@@ -606,8 +606,8 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockSizeIfHosting(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockZone);
-            return (dockDatum.hasDockedControls() == true) ? getDockSize(dockZone) : Float2::kZero;
+            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
+            return (dockZoneData.hasDockedControls() == true) ? getDockSize(dockZone) : Float2::kZero;
         }
 
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
@@ -617,7 +617,7 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockPosition(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatumTopSide = getDockDatum(DockZone::TopSide);
+            const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
             const Float2& dockSize = getDockSize(dockZone);
             const Float2& offset = getDockOffsetSize();
 
@@ -690,8 +690,8 @@ namespace mint
         {
             for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
             {
-                const DockDatum& dockDatum = getDockDatum(dockZoneIter);
-                if (dockDatum.hasDockedControls() == true)
+                const DockZoneData& dockZoneData = getDockZoneData(dockZoneIter);
+                if (dockZoneData.hasDockedControls() == true)
                 {
                     return true;
                 }
