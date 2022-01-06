@@ -543,11 +543,6 @@ namespace mint
             return _controlType == ControlType::ROOT;
         }
 
-        MINT_INLINE const wchar_t* ControlData::getText() const noexcept
-        {
-            return _text.c_str();
-        }
-
         MINT_INLINE const bool ControlData::updateVisibleState(const VisibleState visibleState) noexcept
         {
             if (visibleState != _visibleState)

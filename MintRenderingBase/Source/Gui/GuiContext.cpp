@@ -516,7 +516,7 @@ namespace mint
                     formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
                     
-                    formatString(buffer, L"Text: %s", controlData.getText());
+                    formatString(buffer, L"Text: %s", controlData._text.c_str());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
@@ -3215,7 +3215,7 @@ namespace mint
                     dockedControlData._size = dockControlData.getDockSize(dockingMethodIter);
                     dockedControlData._position = dockControlData.getDockPosition(dockingMethodIter);
                     
-                    const wchar_t* const title = dockedControlData.getText();
+                    const wchar_t* const title = dockedControlData._text.c_str();
                     const float titleBarWidth = calculateTextWidth(title, StringUtil::length(title)) + 16.0f;
                     dockDatum._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
                     if (updateWidthArray)

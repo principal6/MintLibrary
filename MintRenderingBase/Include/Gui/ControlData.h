@@ -341,9 +341,6 @@ namespace mint
             const float                         computeScrollDisplayHeight() const noexcept;
 
         public:
-            const wchar_t*                      getText() const noexcept;
-
-        public:
             const bool                          updateVisibleState(const VisibleState visibleState) noexcept;
             const bool                          isControlVisible() const noexcept;
 
