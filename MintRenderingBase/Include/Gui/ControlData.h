@@ -378,7 +378,7 @@ namespace mint
 
         private:
             void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
-            Float2                              computeClientSize() const noexcept;
+            Float2                              computeInnerDisplaySize() const noexcept;
 
         public:
             uint8                               _updateCount;

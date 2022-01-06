@@ -460,7 +460,7 @@ namespace mint
             return _innerPadding;
         }
 
-        MINT_INLINE Float2 ControlData::computeClientSize() const noexcept
+        MINT_INLINE Float2 ControlData::computeInnerDisplaySize() const noexcept
         {
             Float2 result = Float2(_size._x - _innerPadding.horz(), _size._y - _innerPadding.vert());
             if (isTypeOf(ControlType::Window))
@@ -600,13 +600,13 @@ namespace mint
             const DockDatum& dockDatumTopSide = getDockDatum(DockingMethod::TopSide);
             const DockDatum& dockDatumBottomSide = getDockDatum(DockingMethod::BottomSide);
             const DockDatum& dockDatum = getDockDatum(dockingMethod);
-            const Float2 clientSize = computeClientSize();
+            const Float2 innerDisplaySize = computeInnerDisplaySize();
             Float2 resultDockSize = dockDatum.getRawDockSizeXXX();
             switch (dockingMethod)
             {
             case Gui::DockingMethod::LeftSide:
             case Gui::DockingMethod::RightSide:
-                resultDockSize._y = clientSize._y;
+                resultDockSize._y = innerDisplaySize._y;
                 if (dockDatumTopSide.hasDockedControls() == true)
                 {
                     resultDockSize._y -= dockDatumTopSide.getRawDockSizeXXX()._y;
@@ -620,7 +620,7 @@ namespace mint
                 break;
             case Gui::DockingMethod::TopSide:
             case Gui::DockingMethod::BottomSide:
-                resultDockSize._x = clientSize._x;
+                resultDockSize._x = innerDisplaySize._x;
                 break;
             case Gui::DockingMethod::COUNT:
                 break;
