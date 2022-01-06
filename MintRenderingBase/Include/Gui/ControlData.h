@@ -278,10 +278,11 @@ namespace mint
 
             struct PerFrameData
             {
-                void                reset();
+                void                reset(const Rect& innerPadding);
 
                 Float2              _deltaPosition; // Used for dragging
                 Float2              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
+                Float2              _childAt; // In screen space, Next child control will be positioned according to this
                 Float2              _contentAreaSize; // Could be smaller or larger than _size
                 Vector<ControlID>   _childControlIDs;
             };
@@ -416,7 +417,6 @@ namespace mint
             Rect                                _clipRectForChildren; // Used by window
             Rect                                _clipRectForDocks;
             HashMap<ControlID, bool>            _childWindowIdMap;
-            Float2                              _childAt; // In screen space, Next child control will be positioned according to this
             LastFrameData                       _lastFrameData;
 
         private:

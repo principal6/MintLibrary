@@ -271,12 +271,13 @@ namespace mint
 #pragma endregion
         
 #pragma region ControlData - PerFrameData
-        inline void ControlData::PerFrameData::reset()
+        inline void ControlData::PerFrameData::reset(const Rect& innerPadding)
         {
             _deltaPosition.setZero();
             _nextChildOffset.setZero();
             _contentAreaSize.setZero();
             _childControlIDs.clear();
+            _childAt.set(innerPadding.left(), innerPadding.top());
         }
 #pragma endregion
         
@@ -307,7 +308,6 @@ namespace mint
             , _nonDockInteractionSize{ size }
             , _size{ size }
             , _minSize{ kControlDisplayMinWidth, kControlDisplayMinHeight }
-            , _childAt{ _innerPadding.left(), _innerPadding.top() }
             , _delegateControlID{ 0 }
             , _dockRelatedData{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
@@ -329,7 +329,7 @@ namespace mint
 
             _controlAccessData._childControlIDs = _lastFrameData._childControlIDs;
 
-            _perFrameData.reset();
+            _perFrameData.reset(_innerPadding);
         }
         
         MINT_INLINE void ControlData::updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept
@@ -501,7 +501,7 @@ namespace mint
 
         MINT_INLINE const Float2& ControlData::getChildAt() const noexcept
         {
-            return _childAt;
+            return _perFrameData._childAt;
         }
 
         MINT_INLINE const float ControlData::computeScrollDisplayWidth() const noexcept
