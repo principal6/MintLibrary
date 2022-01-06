@@ -473,7 +473,7 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
         {
-            return _minSize + Float2(getHorzDockSizeSum(), getVertDockSizeSum());
+            return _minSize + Float2(getHorzDockTotalSize(), getVertDockTotalSize());
         }
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
@@ -494,7 +494,7 @@ namespace mint
         MINT_INLINE const float ControlData::computeScrollDisplayWidth() const noexcept
         {
             return max(0.0f,
-                _size._x - getHorzDockSizeSum() - _innerPadding.horz()
+                _size._x - getHorzDockTotalSize() - _innerPadding.horz()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - getMenuBarThickness()._x
             );
@@ -504,7 +504,7 @@ namespace mint
         {
             const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
             return max(0.0f,
-                _size._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
+                _size._y - getVertDockTotalSize() - titleBarHeight - _innerPadding.vert()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - getMenuBarThickness()._y
             );
@@ -645,12 +645,12 @@ namespace mint
             return resultDockPosition;
         }
 
-        MINT_INLINE const float ControlData::getHorzDockSizeSum() const noexcept
+        MINT_INLINE const float ControlData::getHorzDockTotalSize() const noexcept
         {
             return getDockSizeIfHosting(DockLocation::LeftSide)._x + getDockSizeIfHosting(DockLocation::RightSide)._x;
         }
 
-        MINT_INLINE const float ControlData::getVertDockSizeSum() const noexcept
+        MINT_INLINE const float ControlData::getVertDockTotalSize() const noexcept
         {
             return getDockSizeIfHosting(DockLocation::TopSide)._y + getDockSizeIfHosting(DockLocation::BottomSide)._y;
         }

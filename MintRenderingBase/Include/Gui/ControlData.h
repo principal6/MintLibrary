@@ -362,8 +362,8 @@ namespace mint
             const Float2                        getDockSizeIfHosting(const DockLocation dockLocation) const noexcept;
             const Float2                        getDockOffsetSize() const noexcept;
             const Float2                        getDockPosition(const DockLocation dockLocation) const noexcept;
-            const float                         getHorzDockSizeSum() const noexcept;
-            const float                         getVertDockSizeSum() const noexcept;
+            const float                         getHorzDockTotalSize() const noexcept;
+            const float                         getVertDockTotalSize() const noexcept;
             void                                connectToDock(const ControlID& dockControlID) noexcept;
             void                                disconnectFromDock() noexcept;
             const ControlID&                    getDockControlID() const noexcept;
