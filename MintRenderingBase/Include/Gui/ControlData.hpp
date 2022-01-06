@@ -566,12 +566,12 @@ namespace mint
             return dockZoneData.getDockedControlIndex(dockerControlData.getId()) == dockZoneData._focusedDockedControlIndex;
         }
 
-        MINT_INLINE void ControlData::setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept
+        MINT_INLINE void ControlData::setDockZoneSize(const DockZone dockZone, const Float2& dockSize) noexcept
         {
             getDockZoneData(dockZone).setRawDockSize(dockSize);
         }
 
-        MINT_INLINE const Float2 ControlData::getDockSize(const DockZone dockZone) const noexcept
+        MINT_INLINE const Float2 ControlData::getDockZoneSize(const DockZone dockZone) const noexcept
         {
             const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
             const DockZoneData& dockZoneDataBottomSide = getDockZoneData(DockZone::BottomSide);
@@ -607,7 +607,7 @@ namespace mint
         MINT_INLINE const Float2 ControlData::getDockSizeIfHosting(const DockZone dockZone) const noexcept
         {
             const DockZoneData& dockZoneData = getDockZoneData(dockZone);
-            return (dockZoneData.hasDockedControls() == true) ? getDockSize(dockZone) : Float2::kZero;
+            return (dockZoneData.hasDockedControls() == true) ? getDockZoneSize(dockZone) : Float2::kZero;
         }
 
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
@@ -618,7 +618,7 @@ namespace mint
         MINT_INLINE const Float2 ControlData::getDockPosition(const DockZone dockZone) const noexcept
         {
             const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
-            const Float2& dockSize = getDockSize(dockZone);
+            const Float2& dockSize = getDockZoneSize(dockZone);
             const Float2& offset = getDockOffsetSize();
 
             Float2 resultDockPosition;

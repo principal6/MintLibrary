@@ -728,11 +728,11 @@ namespace mint
                 ControlData& parentControlData = accessControlData(windowControlData.getParentId());
                 if (dockZone == DockZone::LeftSide || dockZone == DockZone::RightSide)
                 {
-                    parentControlData.setDockSize(dockZone, Float2(initialDockingSize._x, parentControlData._size._y));
+                    parentControlData.setDockZoneSize(dockZone, Float2(initialDockingSize._x, parentControlData._size._y));
                 }
                 else
                 {
-                    parentControlData.setDockSize(dockZone, Float2(parentControlData._size._x, initialDockingSize._y));
+                    parentControlData.setDockZoneSize(dockZone, Float2(parentControlData._size._x, initialDockingSize._y));
                 }
 
                 dock(windowControlData.getId(), parentControlData.getId());
@@ -765,7 +765,7 @@ namespace mint
                 if (_updateScreenSizeCounter > 0)
                 {
                     windowControlData._position = dockControlData.getDockPosition(windowControlData._dockContext._lastDockZone);
-                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockContext._lastDockZone);
+                    windowControlData._size = dockControlData.getDockZoneSize(windowControlData._dockContext._lastDockZone);
                 }
             }
         }
@@ -2035,12 +2035,12 @@ namespace mint
                     const DockZoneData& dockZoneData = controlData.getDockZoneData(dockZoneIter);
                     if (dockZoneData.hasDockedControls() == true)
                     {
-                        const Float2& dockSize = controlData.getDockSize(dockZoneIter);
+                        const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
                         const Float2& dockPosition = controlData.getDockPosition(dockZoneIter);
 
                         if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                         {
-                            if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, Float2::kZero, dockSize) == true)
+                            if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockPosition, Float2::kZero, dockZoneSize) == true)
                             {
                                 if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
                                 {
@@ -2052,9 +2052,9 @@ namespace mint
                         rendererContext.setClipRect(controlData.getClipRects()._forDocks);
                         
                         rendererContext.setColor(getNamedColor(NamedColor::Dock));
-                        rendererContext.setPosition(Float4(dockPosition._x + dockSize._x * 0.5f, dockPosition._y + dockSize._y * 0.5f, 0, 0));
+                        rendererContext.setPosition(Float4(dockPosition._x + dockZoneSize._x * 0.5f, dockPosition._y + dockZoneSize._y * 0.5f, 0, 0));
 
-                        rendererContext.drawRectangle(dockSize, 0.0f, 0.0f);
+                        rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
                     }
                 }
             }
@@ -2509,7 +2509,7 @@ namespace mint
             if (dockZoneDataTopSide.hasDockedControls() == true)
             {
                 // 맨 처음 Child Control 만 내려주면 된다!!
-                controlChildAt._y += controlData.getDockSize(DockZone::TopSide)._y + controlData.getInnerPadding().top();
+                controlChildAt._y += controlData.getDockZoneSize(DockZone::TopSide)._y + controlData.getInnerPadding().top();
             }
         }
 
@@ -2811,7 +2811,7 @@ namespace mint
 
                     const ControlID& dockControlID = changeTargetControlData.getDockControlID();
                     ControlData& dockControlData = accessControlData(dockControlID);
-                    dockControlData.setDockSize(changeTargetControlData._dockContext._lastDockZone, changeTargetControlDisplaySize);
+                    dockControlData.setDockZoneSize(changeTargetControlData._dockContext._lastDockZone, changeTargetControlDisplaySize);
                     updateDockZoneData(dockControlID);
                 }
                 else if (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Dock 
@@ -2855,16 +2855,16 @@ namespace mint
 
                 ControlData& dockControlData = accessControlData(targetControlData.getDockControlID());
                 DockZoneData& dockZoneData = dockControlData.getDockZoneData(targetControlData._dockContext._lastDockZone);
-                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockContext._lastDockZone);
+                const Float2& dockZoneSize = dockControlData.getDockZoneSize(targetControlData._dockContext._lastDockZone);
                 const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockContext._lastDockZone);
-                const Rect dockRect{ dockPosition, dockSize };
+                const Rect dockRect{ dockPosition, dockZoneSize };
                 bool needToDisconnectFromDock = true;
                 const Float2& mousePosition = _mouseStates.getPosition();
                 if (dockRect.contains(mousePosition))
                 {
                     needToDisconnectFromDock = false;
 
-                    const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockSize._x, kTitleBarBaseThickness) };
+                    const Rect dockTitleBarAreaRect{ dockPosition, Float2(dockZoneSize._x, kTitleBarBaseThickness) };
                     if (dockTitleBarAreaRect.contains(mousePosition))
                     {
                         const float titleBarOffset = mousePosition._x - dockTitleBarAreaRect.left();
@@ -2977,8 +2977,8 @@ namespace mint
 
                             if (parentControlDockZoneData.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::TopSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::TopSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::TopSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::TopSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3016,8 +3016,8 @@ namespace mint
 
                             if (parentControlDockZoneData.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::BottomSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::BottomSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::BottomSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::BottomSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3055,8 +3055,8 @@ namespace mint
                             
                             if (parentControlDockZoneData.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::LeftSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::LeftSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::LeftSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::LeftSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3094,8 +3094,8 @@ namespace mint
 
                             if (parentControlDockZoneData.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::RightSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::RightSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::RightSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::RightSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3140,7 +3140,7 @@ namespace mint
             DockZoneData& parentControlDockZoneData = dockControlData.getDockZoneData(dockedControlData._dockContext._lastDockZone);
             if (dockedControlData._dockContext._lastDockZone != dockedControlData._dockContext._lastDockZoneCandidate)
             {
-                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockContext._lastDockZone);
+                dockedControlData._size = dockControlData.getDockZoneSize(dockedControlData._dockContext._lastDockZone);
             }
             parentControlDockZoneData._dockedControlIDArray.push_back(dockedControlData.getId());
 
@@ -3211,7 +3211,7 @@ namespace mint
                 for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
                 {
                     ControlData& dockedControlData = accessControlData(dockZoneData._dockedControlIDArray[dockedControlIndex]);
-                    dockedControlData._size = dockControlData.getDockSize(dockZoneIter);
+                    dockedControlData._size = dockControlData.getDockZoneSize(dockZoneIter);
                     dockedControlData._position = dockControlData.getDockPosition(dockZoneIter);
                     
                     const wchar_t* const title = dockedControlData._text.c_str();
