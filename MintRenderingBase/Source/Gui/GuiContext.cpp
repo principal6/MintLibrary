@@ -583,7 +583,7 @@ namespace mint
             const ControlID windowControlID = issueControlID(file, line, controlType, title);
             
             ControlData& windowControlData = accessControlData(windowControlID);
-            windowControlData._dockRelatedData._dockingControlType = DockingControlType::DockerDock;
+            windowControlData._dockContext._dockingControlType = DockingControlType::DockerDock;
             windowControlData._option._isFocusable = true;
             windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
             if (windowControlData.updateVisibleState(inoutVisibleState) == true && windowControlData.isControlVisible() == true)
@@ -723,7 +723,7 @@ namespace mint
             // Initial docking
             if (windowControlData._updateCount == 2 && dockingMethod != DockingMethod::COUNT)
             {
-                windowControlData._dockRelatedData._lastDockingMethodCandidate = dockingMethod;
+                windowControlData._dockContext._lastDockingMethodCandidate = dockingMethod;
 
                 ControlData& parentControlData = accessControlData(windowControlData.getParentId());
                 if (dockingMethod == DockingMethod::LeftSide || dockingMethod == DockingMethod::RightSide)
@@ -764,8 +764,8 @@ namespace mint
                 const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
                 if (_updateScreenSizeCounter > 0)
                 {
-                    windowControlData._position = dockControlData.getDockPosition(windowControlData._dockRelatedData._lastDockingMethod);
-                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockRelatedData._lastDockingMethod);
+                    windowControlData._position = dockControlData.getDockPosition(windowControlData._dockContext._lastDockingMethod);
+                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockContext._lastDockingMethod);
                 }
             }
         }
@@ -2028,7 +2028,7 @@ namespace mint
 
         void GuiContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
         {
-            if (controlData._dockRelatedData._dockingControlType == DockingControlType::Dock || controlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock)
+            if (controlData._dockContext._dockingControlType == DockingControlType::Dock || controlData._dockContext._dockingControlType == DockingControlType::DockerDock)
             {
                 for (DockingMethod dockingMethodIter = static_cast<DockingMethod>(0); dockingMethodIter != DockingMethod::COUNT; dockingMethodIter = static_cast<DockingMethod>(static_cast<uint32>(dockingMethodIter) + 1))
                 {
@@ -2083,7 +2083,7 @@ namespace mint
                 if (isParentControlDocking == true)
                 {
                     const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
-                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
+                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockingMethod);
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._size._y);
@@ -2108,7 +2108,7 @@ namespace mint
                 if (_controlInteractionStateSet.isControlPressed(controlData) == true)
                 {
                     ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlID());
-                    DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
+                    DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockingMethod);
                     dockDatum._focusedDockedControlIndex = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
                     setControlFocused(dockControlData);
@@ -2811,11 +2811,11 @@ namespace mint
 
                     const ControlID& dockControlID = changeTargetControlData.getDockControlID();
                     ControlData& dockControlData = accessControlData(dockControlID);
-                    dockControlData.setDockSize(changeTargetControlData._dockRelatedData._lastDockingMethod, changeTargetControlDisplaySize);
+                    dockControlData.setDockSize(changeTargetControlData._dockContext._lastDockingMethod, changeTargetControlDisplaySize);
                     updateDockDatum(dockControlID);
                 }
-                else if (changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::Dock 
-                    || changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock)
+                else if (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Dock 
+                    || changeTargetControlData._dockContext._dockingControlType == DockingControlType::DockerDock)
                 {
                     // 내가 DockHosting 중일 수 있음
 
@@ -2854,9 +2854,9 @@ namespace mint
                 targetControlData._position = positionOld;
 
                 ControlData& dockControlData = accessControlData(targetControlData.getDockControlID());
-                DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockRelatedData._lastDockingMethod);
-                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockRelatedData._lastDockingMethod);
-                const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockRelatedData._lastDockingMethod);
+                DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockContext._lastDockingMethod);
+                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockContext._lastDockingMethod);
+                const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockContext._lastDockingMethod);
                 const Rect dockRect{ dockPosition, dockSize };
                 bool needToDisconnectFromDock = true;
                 const Float2& mousePosition = _mouseStates.getPosition();
@@ -2934,10 +2934,10 @@ namespace mint
 
             ControlData& parentControlData = accessControlData(changeTargetControlData.getParentId());
             if ((changeTargetControlData.hasChildWindow() == false) 
-                && (changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::Docker 
-                    || changeTargetControlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock) 
-                && (parentControlData._dockRelatedData._dockingControlType == DockingControlType::Dock 
-                    || parentControlData._dockRelatedData._dockingControlType == DockingControlType::DockerDock) 
+                && (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Docker 
+                    || changeTargetControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
+                && (parentControlData._dockContext._dockingControlType == DockingControlType::Dock 
+                    || parentControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
                 && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
                 const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
@@ -2950,7 +2950,7 @@ namespace mint
                 // 초기화
                 if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false)
                 {
-                    changeTargetControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
+                    changeTargetControlData._dockContext._lastDockingMethodCandidate = DockingMethod::COUNT;
                 }
 
                 // Top
@@ -2970,10 +2970,10 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::TopSide);
-                        if (changeTargetControlData._dockRelatedData._lastDockingMethodCandidate == DockingMethod::COUNT 
+                        if (changeTargetControlData._dockContext._lastDockingMethodCandidate == DockingMethod::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::TopSide;
+                            changeTargetControlData._dockContext._lastDockingMethodCandidate = DockingMethod::TopSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
@@ -3009,10 +3009,10 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::BottomSide);
-                        if (changeTargetControlData._dockRelatedData._lastDockingMethodCandidate == DockingMethod::COUNT 
+                        if (changeTargetControlData._dockContext._lastDockingMethodCandidate == DockingMethod::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::BottomSide;
+                            changeTargetControlData._dockContext._lastDockingMethodCandidate = DockingMethod::BottomSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
@@ -3048,10 +3048,10 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::LeftSide);
-                        if (changeTargetControlData._dockRelatedData._lastDockingMethodCandidate == DockingMethod::COUNT 
+                        if (changeTargetControlData._dockContext._lastDockingMethodCandidate == DockingMethod::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::LeftSide;
+                            changeTargetControlData._dockContext._lastDockingMethodCandidate = DockingMethod::LeftSide;
                             
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
@@ -3087,10 +3087,10 @@ namespace mint
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
                         DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockingMethod::RightSide);
-                        if (changeTargetControlData._dockRelatedData._lastDockingMethodCandidate == DockingMethod::COUNT 
+                        if (changeTargetControlData._dockContext._lastDockingMethodCandidate == DockingMethod::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::RightSide;
+                            changeTargetControlData._dockContext._lastDockingMethodCandidate = DockingMethod::RightSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
@@ -3110,7 +3110,7 @@ namespace mint
                 }
 
                 if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true 
-                    && changeTargetControlData._dockRelatedData._lastDockingMethodCandidate != DockingMethod::COUNT)
+                    && changeTargetControlData._dockContext._lastDockingMethodCandidate != DockingMethod::COUNT)
                 {
                     if (changeTargetControlData.isDocking() == false)
                     {
@@ -3129,23 +3129,23 @@ namespace mint
             ControlData& dockedControlData = accessControlData(dockedControlID);
             dockedControlData.swapDockingStateContext();
 
-            if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
+            if (dockedControlData._dockContext._lastDockingMethod != dockedControlData._dockContext._lastDockingMethodCandidate)
             {
-                dockedControlData._dockRelatedData._lastDockingMethod = dockedControlData._dockRelatedData._lastDockingMethodCandidate;
+                dockedControlData._dockContext._lastDockingMethod = dockedControlData._dockContext._lastDockingMethodCandidate;
 
-                dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
+                dockedControlData._dockContext._lastDockingMethodCandidate = DockingMethod::COUNT;
             }
 
             ControlData& dockControlData = accessControlData(dockControlID);
-            DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
-            if (dockedControlData._dockRelatedData._lastDockingMethod != dockedControlData._dockRelatedData._lastDockingMethodCandidate)
+            DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockingMethod);
+            if (dockedControlData._dockContext._lastDockingMethod != dockedControlData._dockContext._lastDockingMethodCandidate)
             {
-                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockRelatedData._lastDockingMethod);
+                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockContext._lastDockingMethod);
             }
             parentControlDockDatum._dockedControlIDArray.push_back(dockedControlData.getId());
 
-            dockedControlData._resizingMask = ResizingMask::fromDockingMethod(dockedControlData._dockRelatedData._lastDockingMethod);
-            dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockRelatedData._lastDockingMethod);
+            dockedControlData._resizingMask = ResizingMask::fromDockingMethod(dockedControlData._dockContext._lastDockingMethod);
+            dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockContext._lastDockingMethod);
             dockedControlData.connectToDock(dockControlID);
 
             parentControlDockDatum._focusedDockedControlIndex = parentControlDockDatum.getDockedControlIndex(dockedControlData.getId());
@@ -3163,7 +3163,7 @@ namespace mint
         {
             ControlData& dockedControlData = accessControlData(dockedControlID);
             ControlData& dockControlData = accessControlData(dockedControlData.getDockControlID());
-            DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
+            DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockingMethod);
             const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlIDArray.size());
             int32 indexToErase = -1;
             for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
@@ -3191,7 +3191,7 @@ namespace mint
 
             dockedControlData.disconnectFromDock();
             dockDatum._focusedDockedControlIndex = min(dockDatum._focusedDockedControlIndex, static_cast<int32>(dockDatum._dockedControlIDArray.size() - 1));
-            dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
+            dockedControlData._dockContext._lastDockingMethodCandidate = DockingMethod::COUNT;
 
             updateDockDatum(dockControlIDCopy);
         }

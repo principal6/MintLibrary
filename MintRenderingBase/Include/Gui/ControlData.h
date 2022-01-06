@@ -247,13 +247,13 @@ namespace mint
         class ControlData
         {
         public:
-            class DockRelatedData
+            class DockContext
             {
                 friend ControlData;
 
             public:
-                                                DockRelatedData(const ControlType controlType);
-                                                ~DockRelatedData() = default;
+                                                DockContext(const ControlType controlType);
+                                                ~DockContext() = default;
 
             public:
                 DockingControlType              _dockingControlType;
@@ -399,7 +399,7 @@ namespace mint
             REFLECTION_MEMBER(StringW, _text);
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;
-            DockRelatedData                     _dockRelatedData;
+            DockContext                         _dockContext;
             ControlAccessData                   _controlAccessData;
 
         private:

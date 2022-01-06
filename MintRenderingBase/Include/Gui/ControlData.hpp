@@ -248,8 +248,8 @@ namespace mint
 #pragma endregion
 
 
-#pragma region ControlData - DockRelatedData
-        inline ControlData::DockRelatedData::DockRelatedData(const ControlType controlType)
+#pragma region ControlData - DockContext
+        inline ControlData::DockContext::DockContext(const ControlType controlType)
             : _dockingControlType{ (controlType == ControlType::ROOT) ? DockingControlType::Dock : DockingControlType::None }
             , _lastDockingMethod{ DockingMethod::COUNT }
             , _lastDockingMethodCandidate{ DockingMethod::COUNT }
@@ -310,7 +310,7 @@ namespace mint
             , _size{ size }
             , _minSize{ kControlDisplayMinWidth, kControlDisplayMinHeight }
             , _delegateControlID{ 0 }
-            , _dockRelatedData{ controlType }
+            , _dockContext{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
             , _id{ id }
             , _parentId{ parentId }
@@ -552,17 +552,17 @@ namespace mint
 
         MINT_INLINE DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) noexcept
         {
-            return _dockRelatedData._dockData[static_cast<uint32>(dockingMethod)];
+            return _dockContext._dockData[static_cast<uint32>(dockingMethod)];
         }
 
         MINT_INLINE const DockDatum& ControlData::getDockDatum(const DockingMethod dockingMethod) const noexcept
         {
-            return _dockRelatedData._dockData[static_cast<uint32>(dockingMethod)];
+            return _dockContext._dockData[static_cast<uint32>(dockingMethod)];
         }
 
         MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockedControlData) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
+            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockContext._lastDockingMethod);
             return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._focusedDockedControlIndex;
         }
 
@@ -668,22 +668,22 @@ namespace mint
 
         MINT_INLINE void ControlData::connectToDock(const ControlID& dockControlID) noexcept
         {
-            _dockRelatedData._dockControlID = dockControlID;
+            _dockContext._dockControlID = dockControlID;
         }
 
         MINT_INLINE void ControlData::disconnectFromDock() noexcept
         {
-            _dockRelatedData._dockControlID.reset();
+            _dockContext._dockControlID.reset();
         }
 
         MINT_INLINE const ControlID& ControlData::getDockControlID() const noexcept
         {
-            return _dockRelatedData._dockControlID;
+            return _dockContext._dockControlID;
         }
 
         MINT_INLINE const bool ControlData::isDocking() const noexcept
         {
-            return _dockRelatedData._dockControlID.isValid();
+            return _dockContext._dockControlID.isValid();
         }
 
         MINT_INLINE const bool ControlData::isDockHosting() const noexcept
@@ -722,8 +722,8 @@ namespace mint
 
         MINT_INLINE void ControlData::swapDockingStateContext() noexcept
         {
-            std::swap(_size, _dockRelatedData._dokcingStateContext._size);
-            std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
+            std::swap(_size, _dockContext._dokcingStateContext._size);
+            std::swap(_resizingMask, _dockContext._dokcingStateContext._resizingMask);
         }
 
         MINT_INLINE void ControlData::setAllClipRects(const Rect& clipRect) noexcept
