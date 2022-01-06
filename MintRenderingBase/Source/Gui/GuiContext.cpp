@@ -627,15 +627,15 @@ namespace mint
                         Rect clipRectForMe = windowControlData.getControlRect();
                         if (isParentAlsoWindow == true)
                         {
-                            clipRectForMe.clipBy(parentControlData.getClipRectForDocks());
+                            clipRectForMe.clipBy(parentControlData.getClipRects()._forDocks);
 
                             if (windowControlData.isDocking() == true)
                             {
-                                windowControlData.setClipRectForMe(parentControlData.getClipRectForDocks());
+                                windowControlData.setClipRectForMe(parentControlData.getClipRects()._forDocks);
                             }
                             else
                             {
-                                windowControlData.setClipRectForMe(parentControlData.getClipRectForMe());
+                                windowControlData.setClipRectForMe(parentControlData.getClipRects()._forMe);
                             }
                         }
                         else
@@ -648,7 +648,7 @@ namespace mint
                         clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseThickness);
                         if (isParentAlsoWindow == true)
                         {
-                            clipRectForDocks.clipBy(parentControlData.getClipRectForDocks());
+                            clipRectForDocks.clipBy(parentControlData.getClipRects()._forDocks);
                         }
                         windowControlData.setClipRectForDocks(clipRectForDocks);
                     }
@@ -663,7 +663,7 @@ namespace mint
                         clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
                         if (isParentAlsoWindow == true)
                         {
-                            clipRectForChildren.clipBy(parentControlData.getClipRectForMe());
+                            clipRectForChildren.clipBy(parentControlData.getClipRects()._forMe);
                         }
                         windowControlData.setClipRectForChildren(clipRectForChildren);
                     }
@@ -675,7 +675,7 @@ namespace mint
                     windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
                     
                     Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
-                    rendererContext.setClipRect(windowControlData.getClipRectForMe());
+                    rendererContext.setClipRect(windowControlData.getClipRects()._forMe);
 
                     const Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
                     rendererContext.setColor(finalBackgroundColor);
@@ -804,7 +804,7 @@ namespace mint
             
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel * 2.0f / controlData._size.minElement()), 0.0f, 0.0f);
@@ -843,7 +843,7 @@ namespace mint
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
@@ -887,7 +887,7 @@ namespace mint
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(labelParam._common._backgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
@@ -1039,7 +1039,7 @@ namespace mint
             Float4 trackRenderPosition = trackCenterPosition - Float4(trackRectLength * 0.5f, 0.0f, 0.0f, 0.0f);
 
             // Left(or Upper) half circle
-            rendererContext.setClipRect(trackControlData.getClipRectForMe());
+            rendererContext.setClipRect(trackControlData.getClipRects()._forMe);
             rendererContext.setColor(getNamedColor(NamedColor::HighlightColor));
             rendererContext.setPosition(trackRenderPosition);
             rendererContext.drawHalfCircle(trackRadius, +Math::kPiOverTwo);
@@ -1095,7 +1095,7 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
                 Rect clipRectForMe = controlData.getControlRect();
-                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
+                clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
 
@@ -1128,7 +1128,7 @@ namespace mint
 
             // Box ·»´õ¸µ
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (textBoxParam._roundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
@@ -1203,7 +1203,7 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
                 Rect clipRectForMe = controlData.getControlRect();
-                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
+                clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
 
@@ -1240,7 +1240,7 @@ namespace mint
 
             // Box ·»´õ¸µ
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (roundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
@@ -1360,7 +1360,7 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
                 Rect clipRectForMe = controlData.getControlRect();
-                clipRectForMe.clipBy(parentControlData.getClipRectForChildren());
+                clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
             {
@@ -1371,13 +1371,13 @@ namespace mint
                 clipRectForChildren.right(clipRectForChildren.right() - static_cast<LONG>(halfRoundnessInPixel));
 
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
-                clipRectForChildren.clipBy(parentControlData.getClipRectForChildren());
+                clipRectForChildren.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForChildren(clipRectForChildren);
             }
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
@@ -1438,7 +1438,7 @@ namespace mint
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
@@ -1506,7 +1506,7 @@ namespace mint
             const Float4& controlCenterPosition = menuBar.getControlCenterPosition();
             menuBar._rendererContextLayer = getUpperRendererContextLayer(menuBarParent);
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuBar);
-            rendererContext.setClipRect(menuBar.getClipRectForMe());
+            rendererContext.setClipRect(menuBar.getClipRects()._forMe);
             rendererContext.setColor(color);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(menuBar._size, 0.0f, 0.0f, 0.0f);
@@ -1574,7 +1574,7 @@ namespace mint
             const Float4& controlCenterPosition = menuBarItem.getControlCenterPosition();
             
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuBarItem);
-            rendererContext.setClipRect(menuBarItem.getClipRectForMe());
+            rendererContext.setClipRect(menuBarItem.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(menuBarItem._size, 0.0f, 0.0f, 0.0f);
@@ -1656,7 +1656,7 @@ namespace mint
 
             const Float4& controlCenterPosition = menuItem.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuItem);
-            rendererContext.setClipRect(menuItem.getClipRectForMe());
+            rendererContext.setClipRect(menuItem.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(menuItem._size, 0.0f, 0.0f, 0.0f);
@@ -1812,7 +1812,7 @@ namespace mint
                     const float radius = kScrollBarThickness * 0.5f;
                     {
                         const float rectLength = trackControlData._size._y - radius * 2.0f;
-                        shapeFontRendererContext.setClipRect(trackControlData.getClipRectForMe());
+                        shapeFontRendererContext.setClipRect(trackControlData.getClipRects()._forMe);
                         shapeFontRendererContext.setColor(trackColor);
 
                         Float4 trackRenderPosition = Float4(trackControlData._position._x, trackControlData._position._y + radius, 0.0f, 1.0f);
@@ -1850,7 +1850,7 @@ namespace mint
                     const float radius = kScrollBarThickness * 0.5f;
                     {
                         const float rectLength = trackControlData._size._x - radius * 2.0f;
-                        shapeFontRendererContext.setClipRect(trackControlData.getClipRectForMe());
+                        shapeFontRendererContext.setClipRect(trackControlData.getClipRects()._forMe);
                         shapeFontRendererContext.setColor(trackColor);
 
                         Float4 trackRenderPosition = Float4(trackControlData._position._x + radius, trackControlData._position._y, 0.0f, 1.0f);
@@ -1936,7 +1936,7 @@ namespace mint
                 // Rendering thumb
                 {
                     const float rectLength = thumbSize - radius * 2.0f;
-                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRectForMe());
+                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRects()._forMe);
                     shapeFontRendererContext.setColor(thumbColor);
 
                     Float4 thumbRenderPosition = Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
@@ -1998,7 +1998,7 @@ namespace mint
                 // Rendering thumb
                 {
                     const float rectLength = thumbSize - radius * 2.0f;
-                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRectForMe());
+                    shapeFontRendererContext.setClipRect(thumbControlData.getClipRects()._forMe);
                     shapeFontRendererContext.setColor(thumbColor);
 
                     Float4 thumbRenderPosition = Float4(thumbControlData._position._x + radius, thumbControlData._position._y + radius, 0.0f, 1.0f);
@@ -2049,7 +2049,7 @@ namespace mint
                             }
                         }
 
-                        rendererContext.setClipRect(controlData.getClipRectForDocks());
+                        rendererContext.setClipRect(controlData.getClipRects()._forDocks);
                         
                         rendererContext.setColor(getNamedColor(NamedColor::Dock));
                         rendererContext.setPosition(Float4(dockPosition._x + dockSize._x * 0.5f, dockPosition._y + dockSize._y * 0.5f, 0, 0));
@@ -2116,7 +2116,7 @@ namespace mint
             }
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setPosition(controlData.getControlCenterPosition());
             if (isParentControlDocking == true)
             {
@@ -2199,7 +2199,7 @@ namespace mint
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(controlColor);
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawCircle(radius);
@@ -2233,7 +2233,7 @@ namespace mint
             processShowOnlyControl(controlData, dummyColor);
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             rendererContext.setColor(getNamedColor(NamedColor::TooltipBackground));
@@ -2241,7 +2241,7 @@ namespace mint
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()) * 0.75f, 0.0f, 0.0f);
 
             const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._autoCalculatedDisplaySize._y * 0.5f, 0.0f, 0.0f);
-            rendererContext.setClipRect(controlData.getClipRectForMe());
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             rendererContext.drawDynamicText(tooltipText, textPosition, 
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
@@ -2917,7 +2917,7 @@ namespace mint
                 Float4 renderPosition = parentControlCenterPosition;
                 renderPosition._x = boxRect.center()._x;
                 renderPosition._y = boxRect.center()._y;
-                rendererContext.setClipRect(parentControlData.getClipRectForMe());
+                rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
 
                 const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
                 rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));

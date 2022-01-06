@@ -297,6 +297,13 @@ namespace mint
                 uint16              _maxChildControlCount;
             };
 
+            struct ClipRects
+            {
+                Rect                _forMe;
+                Rect                _forChildren; // Used by window
+                Rect                _forDocks;
+            };
+
         public:
                                                 REFLECTION_CLASS(ControlData);
                                                 ControlData();
@@ -344,9 +351,7 @@ namespace mint
             void                                setClipRectForMe(const Rect& clipRect) noexcept;
             void                                setClipRectForChildren(const Rect& clipRect) noexcept;
             void                                setClipRectForDocks(const Rect& clipRect) noexcept;
-            const Rect&                         getClipRectForMe() const noexcept;
-            const Rect&                         getClipRectForChildren() const noexcept;
-            const Rect&                         getClipRectForDocks() const noexcept;
+            const ClipRects&                    getClipRects() const noexcept;
             
         public:
             DockDatum&                          getDockDatum(const DockingMethod dockingMethod) noexcept;
@@ -406,9 +411,7 @@ namespace mint
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
             Float2                              _nonDockInteractionSize; // Exluces dock area
             VisibleState                        _visibleState;
-            Rect                                _clipRect;
-            Rect                                _clipRectForChildren; // Used by window
-            Rect                                _clipRectForDocks;
+            ClipRects                           _clipRects;
             HashMap<ControlID, bool>            _childWindowIDMap;
             LastFrameData                       _lastFrameData;
 
