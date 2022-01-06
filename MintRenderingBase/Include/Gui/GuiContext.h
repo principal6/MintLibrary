@@ -52,7 +52,7 @@ namespace mint
             CommonControlParam  _common;
             Float2              _position               = Float2(100, 100);
             ScrollBarType       _scrollBarType          = ScrollBarType::None;
-            DockingMethod       _initialDockingMethod   = DockingMethod::COUNT;
+            DockLocation        _initialDockLocation    = DockLocation::COUNT;
             Float2              _initialDockingSize     = Float2(160);
         };
 
@@ -213,7 +213,7 @@ namespace mint
             void                                        endWindow() { endControlInternal(ControlType::Window); }
 
         private:
-            void                                        dockWindowOnceInitially(ControlData& windowControlData, const DockingMethod dockingMethod, const Float2& initialDockingSize);
+            void                                        dockWindowOnceInitially(ControlData& windowControlData, const DockLocation dockLocation, const Float2& initialDockingSize);
             void                                        updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
             void                                        updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
             const bool                                  needToProcessWindowControl(const ControlData& windowControlData) const noexcept;

@@ -143,7 +143,7 @@ namespace mint
             ResizingMask&           operator=(ResizingMask&& rhs) noexcept      = default;
 
         public:
-            static ResizingMask     fromDockingMethod(const DockingMethod dockingMethod) noexcept;
+            static ResizingMask     fromDockLocation(const DockLocation dockLocation) noexcept;
 
         public:
             void                    setAllTrue() noexcept;
@@ -217,7 +217,7 @@ namespace mint
             Float2          _desiredPositionInParent        = Float2::kNan;
             Float2          _deltaInteractionSize           = Float2::kZero;
             Float2          _deltaInteractionSizeByDock     = Float2::kZero;
-            Float2          _minSize                 = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+            Float2          _minSize                        = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
             bool            _alwaysResetDisplaySize         = true;
             bool            _alwaysResetParent              = false;
             ControlID       _parentIdOverride               = ControlID();
@@ -257,11 +257,11 @@ namespace mint
 
             public:
                 DockingControlType              _dockingControlType;
-                DockingMethod                   _lastDockingMethod;
-                DockingMethod                   _lastDockingMethodCandidate;
+                DockLocation                    _lastDockLocation;
+                DockLocation                    _lastDockLocationCandidate;
 
             private:
-                DockDatum                       _dockData[static_cast<uint32>(DockingMethod::COUNT)];
+                DockDatum                       _dockData[static_cast<uint32>(DockLocation::COUNT)];
                 ControlID                       _dockControlID;
                 DockingStateContext             _dokcingStateContext;
             };
@@ -354,14 +354,14 @@ namespace mint
             const ClipRects&                    getClipRects() const noexcept;
             
         public:
-            DockDatum&                          getDockDatum(const DockingMethod dockingMethod) noexcept;
-            const DockDatum&                    getDockDatum(const DockingMethod dockingMethod) const noexcept;
+            DockDatum&                          getDockDatum(const DockLocation dockLocation) noexcept;
+            const DockDatum&                    getDockDatum(const DockLocation dockLocation) const noexcept;
             const bool                          isFocusedDocker(const ControlData& dockedControlData) const noexcept;
-            void                                setDockSize(const DockingMethod dockingMethod, const Float2& dockSize) noexcept;
-            const Float2                        getDockSize(const DockingMethod dockingMethod) const noexcept;
-            const Float2                        getDockSizeIfHosting(const DockingMethod dockingMethod) const noexcept;
+            void                                setDockSize(const DockLocation dockLocation, const Float2& dockSize) noexcept;
+            const Float2                        getDockSize(const DockLocation dockLocation) const noexcept;
+            const Float2                        getDockSizeIfHosting(const DockLocation dockLocation) const noexcept;
             const Float2                        getDockOffsetSize() const noexcept;
-            const Float2                        getDockPosition(const DockingMethod dockingMethod) const noexcept;
+            const Float2                        getDockPosition(const DockLocation dockLocation) const noexcept;
             const float                         getHorzDockSizeSum() const noexcept;
             const float                         getVertDockSizeSum() const noexcept;
             void                                connectToDock(const ControlID& dockControlID) noexcept;
