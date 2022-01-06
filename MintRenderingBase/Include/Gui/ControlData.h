@@ -356,7 +356,7 @@ namespace mint
         public:
             DockZoneData&                       getDockZoneData(const DockZone dockZone) noexcept;
             const DockZoneData&                 getDockZoneData(const DockZone dockZone) const noexcept;
-            const bool                          isFocusedDocker(const ControlData& dockedControlData) const noexcept;
+            const bool                          isFocusedDocker(const ControlData& dockerControlData) const noexcept;
             void                                setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept;
             const Float2                        getDockSize(const DockZone dockZone) const noexcept;
             const Float2                        getDockSizeIfHosting(const DockZone dockZone) const noexcept;

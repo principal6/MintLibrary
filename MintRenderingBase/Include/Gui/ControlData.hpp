@@ -560,10 +560,10 @@ namespace mint
             return _dockContext._dockZoneDatas[static_cast<uint32>(dockZone)];
         }
 
-        MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockedControlData) const noexcept
+        MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockerControlData) const noexcept
         {
-            const DockZoneData& dockZoneData = getDockZoneData(dockedControlData._dockContext._lastDockZone);
-            return dockZoneData.getDockedControlIndex(dockedControlData.getId()) == dockZoneData._focusedDockedControlIndex;
+            const DockZoneData& dockZoneData = getDockZoneData(dockerControlData._dockContext._lastDockZone);
+            return dockZoneData.getDockedControlIndex(dockerControlData.getId()) == dockZoneData._focusedDockedControlIndex;
         }
 
         MINT_INLINE void ControlData::setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept
