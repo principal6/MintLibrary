@@ -702,7 +702,7 @@ namespace mint
             return false;
         }
 
-        MINT_INLINE Rect ControlData::getControlRect() const noexcept
+        MINT_INLINE Rect ControlData::getRect() const noexcept
         {
             return Rect::fromPositionSize(_position, _size);
         }

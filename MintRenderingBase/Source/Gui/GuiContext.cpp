@@ -624,7 +624,7 @@ namespace mint
                     const ControlData& parentControlData = getControlData(windowControlData.getParentId());
                     const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
                     {
-                        Rect clipRectForMe = windowControlData.getControlRect();
+                        Rect clipRectForMe = windowControlData.getRect();
                         if (isParentAlsoWindow == true)
                         {
                             clipRectForMe.clipBy(parentControlData.getClipRects()._forDocks);
@@ -1094,7 +1094,7 @@ namespace mint
             const bool isFocused = processFocusControl(controlData, textBoxParam._common._backgroundColor, textBoxParam._common._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
-                Rect clipRectForMe = controlData.getControlRect();
+                Rect clipRectForMe = controlData.getRect();
                 clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
@@ -1202,7 +1202,7 @@ namespace mint
             const bool isFocused = processFocusControl(controlData, commonControlParam._backgroundColor, commonControlParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
-                Rect clipRectForMe = controlData.getControlRect();
+                Rect clipRectForMe = controlData.getRect();
                 clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
@@ -1359,12 +1359,12 @@ namespace mint
 
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentId());
-                Rect clipRectForMe = controlData.getControlRect();
+                Rect clipRectForMe = controlData.getRect();
                 clipRectForMe.clipBy(parentControlData.getClipRects()._forChildren);
                 controlData.setClipRectForMe(clipRectForMe);
             }
             {
-                Rect clipRectForChildren = controlData.getControlRect();
+                Rect clipRectForChildren = controlData.getRect();
                 const float halfRoundnessInPixel = kDefaultRoundnessInPixel * 0.5f;
                 const float quarterRoundnessInPixel = halfRoundnessInPixel * 0.5f;
                 clipRectForChildren.left(clipRectForChildren.left() + static_cast<LONG>(quarterRoundnessInPixel));

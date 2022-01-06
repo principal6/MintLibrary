@@ -373,7 +373,7 @@ namespace mint
 
         public:
             const Float2                        getMenuBarThickness() const noexcept;
-            Rect                                getControlRect() const noexcept;
+            Rect                                getRect() const noexcept;
             Rect                                getControlPaddedRect() const noexcept;
             const Float4                        getControlCenterPosition() const noexcept;
             const Float2                        getControlLeftCenterPosition() const noexcept;
