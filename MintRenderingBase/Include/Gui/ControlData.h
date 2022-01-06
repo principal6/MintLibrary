@@ -331,6 +331,7 @@ namespace mint
             const bool                          isTypeOf(const ControlType controlType) const noexcept;
             const bool                          isInputBoxType() const noexcept;
             const bool                          isRootControl() const noexcept;
+            const bool                          isResizable() const noexcept;
 
         public:
             const Rect&                         getInnerPadding() const noexcept;
@@ -368,7 +369,6 @@ namespace mint
             const ControlID&                    getDockControlID() const noexcept;
             const bool                          isDocking() const noexcept;
             const bool                          isDockHosting() const noexcept;
-            const bool                          isResizable() const noexcept;
             void                                swapDockingStateContext() noexcept;
 
         public:

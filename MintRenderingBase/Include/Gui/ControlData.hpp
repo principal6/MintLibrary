@@ -530,6 +530,11 @@ namespace mint
             return _controlType == ControlType::ROOT;
         }
 
+        MINT_INLINE const bool ControlData::isResizable() const noexcept
+        {
+            return _resizingMask.isResizable();
+        }
+
         MINT_INLINE const bool ControlData::updateVisibleState(const VisibleState visibleState) noexcept
         {
             if (visibleState != _visibleState)
@@ -695,11 +700,6 @@ namespace mint
                 }
             }
             return false;
-        }
-
-        MINT_INLINE const bool ControlData::isResizable() const noexcept
-        {
-            return _resizingMask.isResizable();
         }
 
         MINT_INLINE Rect ControlData::getControlRect() const noexcept
