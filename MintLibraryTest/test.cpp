@@ -493,7 +493,7 @@ const bool testWindow()
 
                 Gui::WindowParam inspectorWindowParam;
                 controlMetaStateSet.nextSize(Float2(320.0f, 400.0f));
-                inspectorWindowParam._initialDockLocation = Gui::DockLocation::RightSide;
+                inspectorWindowParam._initialDockZone = Gui::DockZone::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
                 static Gui::VisibleState inspectorVisibleState;
                 if (guiContext.beginWindow(MINT_GUI_CONTROL(L"Inspector", inspectorWindowParam, inspectorVisibleState)) == true)

@@ -41,7 +41,7 @@ namespace mint
             {
                 if (controlData.isDockHosting() == true)
                 {
-                    const Float2 positionOffset{ controlData.getDockSizeIfHosting(DockLocation::LeftSide)._x, controlData.getDockSizeIfHosting(DockLocation::TopSide)._y };
+                    const Float2 positionOffset{ controlData.getDockSizeIfHosting(DockZone::LeftSide)._x, controlData.getDockSizeIfHosting(DockZone::TopSide)._y };
                     return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInteractionSize());
                 }
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
@@ -420,7 +420,7 @@ namespace mint
                     Gui::WindowParam testWindowParam;
                     _controlMetaStateSet.nextSize(Float2(200.0f, 240.0f), true);
                     testWindowParam._scrollBarType = Gui::ScrollBarType::Both;
-                    testWindowParam._initialDockLocation = Gui::DockLocation::BottomSide;
+                    testWindowParam._initialDockZone = Gui::DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"1ST", testWindowParam, childWindowVisibleState0)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"테스트!!")) == true)
@@ -437,7 +437,7 @@ namespace mint
                     _controlMetaStateSet.nextSize(Float2(100.0f, 100.0f));
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
-                    testWindowParam._initialDockLocation = Gui::DockLocation::BottomSide;
+                    testWindowParam._initialDockZone = Gui::DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"2NDDD", testWindowParam, childWindowVisibleState1)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"YEAH")) == true)
@@ -458,7 +458,7 @@ namespace mint
             Gui::WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
-            windowParam._initialDockLocation = Gui::DockLocation::RightSide;
+            windowParam._initialDockZone = Gui::DockZone::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
             if (beginWindow(MINT_GUI_CONTROL(L"TestDockedWindow", windowParam, inoutVisibleState)) == true)
             {
@@ -590,7 +590,7 @@ namespace mint
             {
                 setControlFocused(windowControlData);
             }
-            dockWindowOnceInitially(windowControlData, windowParam._initialDockLocation, windowParam._initialDockingSize);
+            dockWindowOnceInitially(windowControlData, windowParam._initialDockZone, windowParam._initialDockingSize);
 
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -657,10 +657,10 @@ namespace mint
                         const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
 
                         Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockSizeIfHosting(DockLocation::TopSide)._y);
-                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockLocation::LeftSide)._x);
-                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockLocation::RightSide)._x);
-                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockLocation::BottomSide)._y);
+                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockSizeIfHosting(DockZone::TopSide)._y);
+                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockZone::LeftSide)._x);
+                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockZone::RightSide)._x);
+                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockZone::BottomSide)._y);
                         if (isParentAlsoWindow == true)
                         {
                             clipRectForChildren.clipBy(parentControlData.getClipRects()._forMe);
@@ -716,23 +716,23 @@ namespace mint
             return needToProcessControl;
         }
 
-        void GuiContext::dockWindowOnceInitially(ControlData& windowControlData, const DockLocation dockLocation, const Float2& initialDockingSize)
+        void GuiContext::dockWindowOnceInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             // Initial docking
-            if (windowControlData._updateCount == 2 && dockLocation != DockLocation::COUNT)
+            if (windowControlData._updateCount == 2 && dockZone != DockZone::COUNT)
             {
-                windowControlData._dockContext._lastDockLocationCandidate = dockLocation;
+                windowControlData._dockContext._lastDockZoneCandidate = dockZone;
 
                 ControlData& parentControlData = accessControlData(windowControlData.getParentId());
-                if (dockLocation == DockLocation::LeftSide || dockLocation == DockLocation::RightSide)
+                if (dockZone == DockZone::LeftSide || dockZone == DockZone::RightSide)
                 {
-                    parentControlData.setDockSize(dockLocation, Float2(initialDockingSize._x, parentControlData._size._y));
+                    parentControlData.setDockSize(dockZone, Float2(initialDockingSize._x, parentControlData._size._y));
                 }
                 else
                 {
-                    parentControlData.setDockSize(dockLocation, Float2(parentControlData._size._x, initialDockingSize._y));
+                    parentControlData.setDockSize(dockZone, Float2(parentControlData._size._x, initialDockingSize._y));
                 }
 
                 dock(windowControlData.getId(), parentControlData.getId());
@@ -764,8 +764,8 @@ namespace mint
                 const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
                 if (_updateScreenSizeCounter > 0)
                 {
-                    windowControlData._position = dockControlData.getDockPosition(windowControlData._dockContext._lastDockLocation);
-                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockContext._lastDockLocation);
+                    windowControlData._position = dockControlData.getDockPosition(windowControlData._dockContext._lastDockZone);
+                    windowControlData._size = dockControlData.getDockSize(windowControlData._dockContext._lastDockZone);
                 }
             }
         }
@@ -1784,13 +1784,13 @@ namespace mint
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
-                    prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSizeIfHosting(DockLocation::RightSide)._x;
-                    prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSizeIfHosting(DockLocation::TopSide)._y;
+                    prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSizeIfHosting(DockZone::RightSide)._x;
+                    prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSizeIfHosting(DockZone::TopSide)._y;
                 }
                 else
                 {
-                    prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSizeIfHosting(DockLocation::LeftSide)._x;
-                    prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSizeIfHosting(DockLocation::BottomSide)._y;
+                    prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSizeIfHosting(DockZone::LeftSide)._x;
+                    prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSizeIfHosting(DockZone::BottomSide)._y;
                 }
                 prepareControlDataParamForTrack._parentIdOverride = parentControlData.getId();
                 prepareControlDataParamForTrack._alwaysResetPosition = true;
@@ -2030,13 +2030,13 @@ namespace mint
         {
             if (controlData._dockContext._dockingControlType == DockingControlType::Dock || controlData._dockContext._dockingControlType == DockingControlType::DockerDock)
             {
-                for (DockLocation dockLocationIter = static_cast<DockLocation>(0); dockLocationIter != DockLocation::COUNT; dockLocationIter = static_cast<DockLocation>(static_cast<uint32>(dockLocationIter) + 1))
+                for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
                 {
-                    const DockDatum& dockDatum = controlData.getDockDatum(dockLocationIter);
+                    const DockDatum& dockDatum = controlData.getDockDatum(dockZoneIter);
                     if (dockDatum.hasDockedControls() == true)
                     {
-                        const Float2& dockSize = controlData.getDockSize(dockLocationIter);
-                        const Float2& dockPosition = controlData.getDockPosition(dockLocationIter);
+                        const Float2& dockSize = controlData.getDockSize(dockZoneIter);
+                        const Float2& dockPosition = controlData.getDockPosition(dockZoneIter);
 
                         if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                         {
@@ -2083,7 +2083,7 @@ namespace mint
                 if (isParentControlDocking == true)
                 {
                     const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
-                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockLocation);
+                    const DockDatum& parentDockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockZone);
                     const int32 dockedControlIndex = parentDockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._size._y);
@@ -2108,7 +2108,7 @@ namespace mint
                 if (_controlInteractionStateSet.isControlPressed(controlData) == true)
                 {
                     ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlID());
-                    DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockLocation);
+                    DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockContext._lastDockZone);
                     dockDatum._focusedDockedControlIndex = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
                     setControlFocused(dockControlData);
@@ -2438,7 +2438,7 @@ namespace mint
                 else
                 {
                     parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._childDisplayOffset._x; // @중요
-                    parentControlChildAt._x += parentControlData.getDockSizeIfHosting(DockLocation::LeftSide)._x;
+                    parentControlChildAt._x += parentControlData.getDockSizeIfHosting(DockZone::LeftSide)._x;
 
                     parentControlChildAt._y += parentControlNextChildOffset._y;
 
@@ -2505,11 +2505,11 @@ namespace mint
                     : Float2::kZero) +
                 Float2(0.0f, (MenuBarType::None != currentMenuBarType) ? kMenuBarBaseSize._y : 0.0f);
 
-            const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockLocation::TopSide);
+            const DockDatum& dockDatumTopSide = controlData.getDockDatum(DockZone::TopSide);
             if (dockDatumTopSide.hasDockedControls() == true)
             {
                 // 맨 처음 Child Control 만 내려주면 된다!!
-                controlChildAt._y += controlData.getDockSize(DockLocation::TopSide)._y + controlData.getInnerPadding().top();
+                controlChildAt._y += controlData.getDockSize(DockZone::TopSide)._y + controlData.getInnerPadding().top();
             }
         }
 
@@ -2811,7 +2811,7 @@ namespace mint
 
                     const ControlID& dockControlID = changeTargetControlData.getDockControlID();
                     ControlData& dockControlData = accessControlData(dockControlID);
-                    dockControlData.setDockSize(changeTargetControlData._dockContext._lastDockLocation, changeTargetControlDisplaySize);
+                    dockControlData.setDockSize(changeTargetControlData._dockContext._lastDockZone, changeTargetControlDisplaySize);
                     updateDockDatum(dockControlID);
                 }
                 else if (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Dock 
@@ -2854,9 +2854,9 @@ namespace mint
                 targetControlData._position = positionOld;
 
                 ControlData& dockControlData = accessControlData(targetControlData.getDockControlID());
-                DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockContext._lastDockLocation);
-                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockContext._lastDockLocation);
-                const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockContext._lastDockLocation);
+                DockDatum& dockDatum = dockControlData.getDockDatum(targetControlData._dockContext._lastDockZone);
+                const Float2& dockSize = dockControlData.getDockSize(targetControlData._dockContext._lastDockZone);
+                const Float2& dockPosition = dockControlData.getDockPosition(targetControlData._dockContext._lastDockZone);
                 const Rect dockRect{ dockPosition, dockSize };
                 bool needToDisconnectFromDock = true;
                 const Float2& mousePosition = _mouseStates.getPosition();
@@ -2950,7 +2950,7 @@ namespace mint
                 // 초기화
                 if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false)
                 {
-                    changeTargetControlData._dockContext._lastDockLocationCandidate = DockLocation::COUNT;
+                    changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
                 }
 
                 // Top
@@ -2960,7 +2960,7 @@ namespace mint
                     interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
                     interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
 
-                    const Float2& dockPosition = parentControlData.getDockPosition(DockLocation::TopSide);
+                    const Float2& dockPosition = parentControlData.getDockPosition(DockZone::TopSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + parentControlData._size._x);
                     previewRect.bottom(previewRect.top() + previewShortLength);
@@ -2969,16 +2969,16 @@ namespace mint
                     {
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
-                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockLocation::TopSide);
-                        if (changeTargetControlData._dockContext._lastDockLocationCandidate == DockLocation::COUNT 
+                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockZone::TopSide);
+                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockContext._lastDockLocationCandidate = DockLocation::TopSide;
+                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::TopSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockLocation::TopSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockLocation::TopSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::TopSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::TopSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -2999,7 +2999,7 @@ namespace mint
                     interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
                     interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
 
-                    const Float2& dockPosition = parentControlData.getDockPosition(DockLocation::BottomSide);
+                    const Float2& dockPosition = parentControlData.getDockPosition(DockZone::BottomSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + parentControlData._size._x);
                     previewRect.bottom(previewRect.top() + previewShortLength);
@@ -3008,16 +3008,16 @@ namespace mint
                     {
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
-                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockLocation::BottomSide);
-                        if (changeTargetControlData._dockContext._lastDockLocationCandidate == DockLocation::COUNT 
+                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockZone::BottomSide);
+                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockContext._lastDockLocationCandidate = DockLocation::BottomSide;
+                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::BottomSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockLocation::BottomSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockLocation::BottomSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::BottomSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::BottomSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3038,7 +3038,7 @@ namespace mint
                     interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
                     interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-                    const Float2& dockPosition = parentControlData.getDockPosition(DockLocation::LeftSide);
+                    const Float2& dockPosition = parentControlData.getDockPosition(DockZone::LeftSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + previewShortLength);
                     previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
@@ -3047,16 +3047,16 @@ namespace mint
                     {
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
-                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockLocation::LeftSide);
-                        if (changeTargetControlData._dockContext._lastDockLocationCandidate == DockLocation::COUNT 
+                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockZone::LeftSide);
+                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockContext._lastDockLocationCandidate = DockLocation::LeftSide;
+                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::LeftSide;
                             
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockLocation::LeftSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockLocation::LeftSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::LeftSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::LeftSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3077,7 +3077,7 @@ namespace mint
                     interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
                     interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-                    const Float2& dockPosition = parentControlData.getDockPosition(DockLocation::RightSide);
+                    const Float2& dockPosition = parentControlData.getDockPosition(DockZone::RightSide);
                     previewRect.position(dockPosition);
                     previewRect.right(previewRect.left() + previewShortLength);
                     previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
@@ -3086,16 +3086,16 @@ namespace mint
                     {
                         fnRenderDockingBox(interactionBoxRect, parentControlData);
 
-                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockLocation::RightSide);
-                        if (changeTargetControlData._dockContext._lastDockLocationCandidate == DockLocation::COUNT 
+                        DockDatum& parentControlDockDatum = parentControlData.getDockDatum(DockZone::RightSide);
+                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
                             && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                         {
-                            changeTargetControlData._dockContext._lastDockLocationCandidate = DockLocation::RightSide;
+                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::RightSide;
 
                             if (parentControlDockDatum.isRawDockSizeSet() == true)
                             {
-                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockLocation::RightSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockLocation::RightSide)._y);
+                                previewRect.right(previewRect.left() + parentControlData.getDockSize(DockZone::RightSide)._x);
+                                previewRect.bottom(previewRect.top() + parentControlData.getDockSize(DockZone::RightSide)._y);
 
                                 fnRenderPreview(previewRect);
                             }
@@ -3110,7 +3110,7 @@ namespace mint
                 }
 
                 if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true 
-                    && changeTargetControlData._dockContext._lastDockLocationCandidate != DockLocation::COUNT)
+                    && changeTargetControlData._dockContext._lastDockZoneCandidate != DockZone::COUNT)
                 {
                     if (changeTargetControlData.isDocking() == false)
                     {
@@ -3129,23 +3129,23 @@ namespace mint
             ControlData& dockedControlData = accessControlData(dockedControlID);
             dockedControlData.swapDockingStateContext();
 
-            if (dockedControlData._dockContext._lastDockLocation != dockedControlData._dockContext._lastDockLocationCandidate)
+            if (dockedControlData._dockContext._lastDockZone != dockedControlData._dockContext._lastDockZoneCandidate)
             {
-                dockedControlData._dockContext._lastDockLocation = dockedControlData._dockContext._lastDockLocationCandidate;
+                dockedControlData._dockContext._lastDockZone = dockedControlData._dockContext._lastDockZoneCandidate;
 
-                dockedControlData._dockContext._lastDockLocationCandidate = DockLocation::COUNT;
+                dockedControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
             }
 
             ControlData& dockControlData = accessControlData(dockControlID);
-            DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockLocation);
-            if (dockedControlData._dockContext._lastDockLocation != dockedControlData._dockContext._lastDockLocationCandidate)
+            DockDatum& parentControlDockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockZone);
+            if (dockedControlData._dockContext._lastDockZone != dockedControlData._dockContext._lastDockZoneCandidate)
             {
-                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockContext._lastDockLocation);
+                dockedControlData._size = dockControlData.getDockSize(dockedControlData._dockContext._lastDockZone);
             }
             parentControlDockDatum._dockedControlIDArray.push_back(dockedControlData.getId());
 
-            dockedControlData._resizingMask = ResizingMask::fromDockLocation(dockedControlData._dockContext._lastDockLocation);
-            dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockContext._lastDockLocation);
+            dockedControlData._resizingMask = ResizingMask::fromDockZone(dockedControlData._dockContext._lastDockZone);
+            dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockContext._lastDockZone);
             dockedControlData.connectToDock(dockControlID);
 
             parentControlDockDatum._focusedDockedControlIndex = parentControlDockDatum.getDockedControlIndex(dockedControlData.getId());
@@ -3163,7 +3163,7 @@ namespace mint
         {
             ControlData& dockedControlData = accessControlData(dockedControlID);
             ControlData& dockControlData = accessControlData(dockedControlData.getDockControlID());
-            DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockLocation);
+            DockDatum& dockDatum = dockControlData.getDockDatum(dockedControlData._dockContext._lastDockZone);
             const uint32 changeTargetParentDockedControlCount = static_cast<uint32>(dockDatum._dockedControlIDArray.size());
             int32 indexToErase = -1;
             for (uint32 iter = 0; iter < changeTargetParentDockedControlCount; ++iter)
@@ -3191,7 +3191,7 @@ namespace mint
 
             dockedControlData.disconnectFromDock();
             dockDatum._focusedDockedControlIndex = min(dockDatum._focusedDockedControlIndex, static_cast<int32>(dockDatum._dockedControlIDArray.size() - 1));
-            dockedControlData._dockContext._lastDockLocationCandidate = DockLocation::COUNT;
+            dockedControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
 
             updateDockDatum(dockControlIDCopy);
         }
@@ -3199,10 +3199,10 @@ namespace mint
         void GuiContext::updateDockDatum(const ControlID& dockControlID, const bool updateWidthArray) noexcept
         {
             ControlData& dockControlData = accessControlData(dockControlID);
-            for (DockLocation dockLocationIter = static_cast<DockLocation>(0); dockLocationIter != DockLocation::COUNT;
-                dockLocationIter = static_cast<DockLocation>(static_cast<uint32>(dockLocationIter) + 1))
+            for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT;
+                dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
             {
-                DockDatum& dockDatum = dockControlData.getDockDatum(dockLocationIter);
+                DockDatum& dockDatum = dockControlData.getDockDatum(dockZoneIter);
                 const uint32 dockedControlCount = static_cast<uint32>(dockDatum._dockedControlIDArray.size());
                 dockDatum._dockedControlTitleBarOffsetArray.resize(dockedControlCount);
                 dockDatum._dockedControlTitleBarWidthArray.resize(dockedControlCount);
@@ -3211,8 +3211,8 @@ namespace mint
                 for (uint32 dockedControlIndex = 0; dockedControlIndex < dockedControlCount; ++dockedControlIndex)
                 {
                     ControlData& dockedControlData = accessControlData(dockDatum._dockedControlIDArray[dockedControlIndex]);
-                    dockedControlData._size = dockControlData.getDockSize(dockLocationIter);
-                    dockedControlData._position = dockControlData.getDockPosition(dockLocationIter);
+                    dockedControlData._size = dockControlData.getDockSize(dockZoneIter);
+                    dockedControlData._position = dockControlData.getDockPosition(dockZoneIter);
                     
                     const wchar_t* const title = dockedControlData._text.c_str();
                     const float titleBarWidth = calculateTextWidth(title, StringUtil::length(title)) + 16.0f;

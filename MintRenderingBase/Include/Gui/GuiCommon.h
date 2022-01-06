@@ -112,7 +112,7 @@ namespace mint
             DockerDock
         };
 
-        enum class DockLocation
+        enum class DockZone
         {
             LeftSide,
             RightSide,

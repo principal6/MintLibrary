@@ -103,26 +103,26 @@ namespace mint
             __noop;
         }
 
-        inline ResizingMask ResizingMask::fromDockLocation(const DockLocation dockLocation) noexcept
+        inline ResizingMask ResizingMask::fromDockZone(const DockZone dockZone) noexcept
         {
             ResizingMask result;
             result.setAllFalse();
 
-            switch (dockLocation)
+            switch (dockZone)
             {
-            case Gui::DockLocation::LeftSide:
+            case Gui::DockZone::LeftSide:
                 result._right = true;
                 break;
-            case Gui::DockLocation::RightSide:
+            case Gui::DockZone::RightSide:
                 result._left = true;
                 break;
-            case Gui::DockLocation::TopSide:
+            case Gui::DockZone::TopSide:
                 result._bottom = true;
                 break;
-            case Gui::DockLocation::BottomSide:
+            case Gui::DockZone::BottomSide:
                 result._top = true;
                 break;
-            case Gui::DockLocation::COUNT:
+            case Gui::DockZone::COUNT:
                 break;
             default:
                 break;
@@ -251,8 +251,8 @@ namespace mint
 #pragma region ControlData - DockContext
         inline ControlData::DockContext::DockContext(const ControlType controlType)
             : _dockingControlType{ (controlType == ControlType::ROOT) ? DockingControlType::Dock : DockingControlType::None }
-            , _lastDockLocation{ DockLocation::COUNT }
-            , _lastDockLocationCandidate{ DockLocation::COUNT }
+            , _lastDockZone{ DockZone::COUNT }
+            , _lastDockZoneCandidate{ DockZone::COUNT }
             , _dockControlID{ 0 }
         {
             __noop;
@@ -550,38 +550,38 @@ namespace mint
             return _clipRects;
         }
 
-        MINT_INLINE DockDatum& ControlData::getDockDatum(const DockLocation dockLocation) noexcept
+        MINT_INLINE DockDatum& ControlData::getDockDatum(const DockZone dockZone) noexcept
         {
-            return _dockContext._dockData[static_cast<uint32>(dockLocation)];
+            return _dockContext._dockData[static_cast<uint32>(dockZone)];
         }
 
-        MINT_INLINE const DockDatum& ControlData::getDockDatum(const DockLocation dockLocation) const noexcept
+        MINT_INLINE const DockDatum& ControlData::getDockDatum(const DockZone dockZone) const noexcept
         {
-            return _dockContext._dockData[static_cast<uint32>(dockLocation)];
+            return _dockContext._dockData[static_cast<uint32>(dockZone)];
         }
 
         MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockedControlData) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockContext._lastDockLocation);
+            const DockDatum& dockDatum = getDockDatum(dockedControlData._dockContext._lastDockZone);
             return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._focusedDockedControlIndex;
         }
 
-        MINT_INLINE void ControlData::setDockSize(const DockLocation dockLocation, const Float2& dockSize) noexcept
+        MINT_INLINE void ControlData::setDockSize(const DockZone dockZone, const Float2& dockSize) noexcept
         {
-            getDockDatum(dockLocation).setRawDockSize(dockSize);
+            getDockDatum(dockZone).setRawDockSize(dockSize);
         }
 
-        MINT_INLINE const Float2 ControlData::getDockSize(const DockLocation dockLocation) const noexcept
+        MINT_INLINE const Float2 ControlData::getDockSize(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatumTopSide = getDockDatum(DockLocation::TopSide);
-            const DockDatum& dockDatumBottomSide = getDockDatum(DockLocation::BottomSide);
-            const DockDatum& dockDatum = getDockDatum(dockLocation);
+            const DockDatum& dockDatumTopSide = getDockDatum(DockZone::TopSide);
+            const DockDatum& dockDatumBottomSide = getDockDatum(DockZone::BottomSide);
+            const DockDatum& dockDatum = getDockDatum(dockZone);
             const Float2 innerDisplaySize = computeInnerDisplaySize();
             Float2 resultDockSize = dockDatum.getRawDockSizeXXX();
-            switch (dockLocation)
+            switch (dockZone)
             {
-            case Gui::DockLocation::LeftSide:
-            case Gui::DockLocation::RightSide:
+            case Gui::DockZone::LeftSide:
+            case Gui::DockZone::RightSide:
                 resultDockSize._y = innerDisplaySize._y;
                 if (dockDatumTopSide.hasDockedControls() == true)
                 {
@@ -592,11 +592,11 @@ namespace mint
                     resultDockSize._y -= dockDatumBottomSide.getRawDockSizeXXX()._y;
                 }
                 break;
-            case Gui::DockLocation::TopSide:
-            case Gui::DockLocation::BottomSide:
+            case Gui::DockZone::TopSide:
+            case Gui::DockZone::BottomSide:
                 resultDockSize._x = innerDisplaySize._x;
                 break;
-            case Gui::DockLocation::COUNT:
+            case Gui::DockZone::COUNT:
                 break;
             default:
                 break;
@@ -604,10 +604,10 @@ namespace mint
             return resultDockSize;
         }
 
-        MINT_INLINE const Float2 ControlData::getDockSizeIfHosting(const DockLocation dockLocation) const noexcept
+        MINT_INLINE const Float2 ControlData::getDockSizeIfHosting(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatum = getDockDatum(dockLocation);
-            return (dockDatum.hasDockedControls() == true) ? getDockSize(dockLocation) : Float2::kZero;
+            const DockDatum& dockDatum = getDockDatum(dockZone);
+            return (dockDatum.hasDockedControls() == true) ? getDockSize(dockZone) : Float2::kZero;
         }
 
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
@@ -615,30 +615,30 @@ namespace mint
             return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
         }
 
-        MINT_INLINE const Float2 ControlData::getDockPosition(const DockLocation dockLocation) const noexcept
+        MINT_INLINE const Float2 ControlData::getDockPosition(const DockZone dockZone) const noexcept
         {
-            const DockDatum& dockDatumTopSide = getDockDatum(DockLocation::TopSide);
-            const Float2& dockSize = getDockSize(dockLocation);
+            const DockDatum& dockDatumTopSide = getDockDatum(DockZone::TopSide);
+            const Float2& dockSize = getDockSize(dockZone);
             const Float2& offset = getDockOffsetSize();
 
             Float2 resultDockPosition;
-            switch (dockLocation)
+            switch (dockZone)
             {
-            case Gui::DockLocation::LeftSide:
+            case Gui::DockZone::LeftSide:
                 resultDockPosition = _position + offset;
-                resultDockPosition._y += getDockSizeIfHosting(DockLocation::TopSide)._y;
+                resultDockPosition._y += getDockSizeIfHosting(DockZone::TopSide)._y;
                 break;
-            case Gui::DockLocation::RightSide:
+            case Gui::DockZone::RightSide:
                 resultDockPosition = Float2(_position._x + _size._x - dockSize._x, _position._y) + offset;
-                resultDockPosition._y += getDockSizeIfHosting(DockLocation::TopSide)._y;
+                resultDockPosition._y += getDockSizeIfHosting(DockZone::TopSide)._y;
                 break;
-            case Gui::DockLocation::TopSide:
+            case Gui::DockZone::TopSide:
                 resultDockPosition = Float2(_position._x, _position._y) + offset;
                 break;
-            case Gui::DockLocation::BottomSide:
+            case Gui::DockZone::BottomSide:
                 resultDockPosition = Float2(_position._x, _position._y + _size._y - dockSize._y);
                 break;
-            case Gui::DockLocation::COUNT:
+            case Gui::DockZone::COUNT:
             default:
                 break;
             }
@@ -647,12 +647,12 @@ namespace mint
 
         MINT_INLINE const float ControlData::getHorzDockTotalSize() const noexcept
         {
-            return getDockSizeIfHosting(DockLocation::LeftSide)._x + getDockSizeIfHosting(DockLocation::RightSide)._x;
+            return getDockSizeIfHosting(DockZone::LeftSide)._x + getDockSizeIfHosting(DockZone::RightSide)._x;
         }
 
         MINT_INLINE const float ControlData::getVertDockTotalSize() const noexcept
         {
-            return getDockSizeIfHosting(DockLocation::TopSide)._y + getDockSizeIfHosting(DockLocation::BottomSide)._y;
+            return getDockSizeIfHosting(DockZone::TopSide)._y + getDockSizeIfHosting(DockZone::BottomSide)._y;
         }
 
         MINT_INLINE const Float2 ControlData::getMenuBarThickness() const noexcept
@@ -688,9 +688,9 @@ namespace mint
 
         MINT_INLINE const bool ControlData::isDockHosting() const noexcept
         {
-            for (DockLocation dockLocationIter = static_cast<DockLocation>(0); dockLocationIter != DockLocation::COUNT; dockLocationIter = static_cast<DockLocation>(static_cast<uint32>(dockLocationIter) + 1))
+            for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
             {
-                const DockDatum& dockDatum = getDockDatum(dockLocationIter);
+                const DockDatum& dockDatum = getDockDatum(dockZoneIter);
                 if (dockDatum.hasDockedControls() == true)
                 {
                     return true;
