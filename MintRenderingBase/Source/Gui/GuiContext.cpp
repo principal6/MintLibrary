@@ -1348,7 +1348,7 @@ namespace mint
             }
             prepareControlData(controlData, prepareControlDataParam);
 
-            if (controlData.getPreviousChildControlCount() == 0)
+            if (controlData.getChildControlCount() == 0)
             {
                 controlData._controlValue._itemData.deselect();
             }
@@ -1427,7 +1427,7 @@ namespace mint
             prepareControlData(controlData, prepareControlDataParam);
 
             const int16 parentSelectedItemIndex = parentControlData._controlValue._itemData.getSelectedItemIndex();
-            const int16 myIndex = static_cast<int16>(parentControlData.getChildControlIDs().size() - 1);
+            const int16 myIndex = parentControlData.getLastAddedChildIndex();
             Rendering::Color finalColor;
             const Rendering::Color inputColor = (parentSelectedItemIndex == myIndex) ? getNamedColor(NamedColor::HighlightColor) : getNamedColor(NamedColor::LightFont);
             const bool isClicked = processClickControl(controlData, inputColor, inputColor, inputColor, finalColor);
@@ -1488,8 +1488,8 @@ namespace mint
             menuBar._controlValue._itemData._itemSize._x = 0.0f;
 
             const bool isToggled = menuBar._controlValue._booleanData.get();
-            const uint32 previousChildCount = static_cast<uint32>(menuBar.getPreviousChildControlCount());
-            if ((previousChildCount == 0 || isToggled == false) && wasToggled == false)
+            const uint32 childCount = static_cast<uint32>(menuBar.getChildControlCount());
+            if ((childCount == 0 || isToggled == false) && wasToggled == false)
             {
                 // wasToggled 덕분에 다음 프레임에 -1 로 세팅된다. 한 번은 자식 함수들이 쭉 호출된다는 뜻!
 
@@ -1546,7 +1546,7 @@ namespace mint
             menuBarItem._controlValue._itemData._itemSize._y = 0.0f;
 
             const int16 menuBarSelectedItemIndex = menuBar._controlValue._itemData.getSelectedItemIndex();
-            const int16 myIndex = static_cast<int16>(menuBar.getChildControlIDs().size() - 1);
+            const int16 myIndex = menuBar.getLastAddedChildIndex();
             const bool wasMeSelected = (menuBarSelectedItemIndex == myIndex);
             Rendering::Color finalBackgroundColor;
             const Rendering::Color& normalColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::NormalState);
@@ -1642,7 +1642,7 @@ namespace mint
             const bool isHovered = _controlInteractionStateSet.isControlHovered(menuItem);
             const bool isPresssed = _controlInteractionStateSet.isControlPressed(menuItem);
             const bool& isToggled = menuItem._controlValue._booleanData.get();
-            const int16 myIndex = static_cast<int16>(menuItemParent.getChildControlIDs().size() - 1);
+            const int16 myIndex = menuItemParent.getLastAddedChildIndex();
             const bool isMeSelected = (menuItemParent._controlValue._itemData.isSelected(myIndex));
             if (isHovered == true)
             {
@@ -1661,8 +1661,8 @@ namespace mint
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(menuItem._size, 0.0f, 0.0f, 0.0f);
 
-            const uint16 previousMaxChildCount = menuItem.getPreviousMaxChildControlCount();
-            if (previousMaxChildCount > 0)
+            const uint16 maxChildCount = menuItem.getMaxChildControlCount();
+            if (maxChildCount > 0)
             {
                 const Float2& controlRightCenterPosition = menuItem.getControlRightCenterPosition();
                 Float2 a = controlRightCenterPosition + Float2(-14, -5);
@@ -3368,7 +3368,7 @@ namespace mint
             }
 
             const ControlData& controlData = getControlData(currentControlID);
-            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
@@ -3461,7 +3461,7 @@ namespace mint
 
         const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
         {
-            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
@@ -3476,7 +3476,7 @@ namespace mint
 
         const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
         {
-            const auto& previousChildControlIDs = controlData.getPreviousChildControlIDs();
+            const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {

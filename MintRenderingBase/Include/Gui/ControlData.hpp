@@ -269,6 +269,24 @@ namespace mint
             __noop;
         }
 #pragma endregion
+        
+#pragma region ControlData - PerFrameData
+        inline void ControlData::PerFrameData::reset()
+        {
+            _deltaPosition.setZero();
+            _nextChildOffset.setZero();
+            _contentAreaSize.setZero();
+            _childControlIDs.clear();
+        }
+#pragma endregion
+        
+#pragma region ControlData - LastFrameData
+        inline ControlData::LastFrameData::LastFrameData()
+            : _maxChildControlCount{ 0 }
+        {
+            __noop;
+        }
+#pragma endregion
 
 #pragma region ControlData
         inline ControlData::ControlData()
@@ -297,7 +315,6 @@ namespace mint
             , _parentId{ parentId }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
-            , _previousMaxChildControlCount{ 0 }
         {
             _positionConstraintsForDragging.setNan();
 
@@ -306,8 +323,12 @@ namespace mint
 
         MINT_INLINE void ControlData::clearPerFrameData() noexcept
         {
-            _previousContentAreaSize = _perFrameData._contentAreaSize;
-            
+            _lastFrameData._contentAreaSize = _perFrameData._contentAreaSize;
+            _lastFrameData._childControlIDs = _perFrameData._childControlIDs;
+            _lastFrameData._maxChildControlCount = max(_lastFrameData._maxChildControlCount, static_cast<uint16>(_lastFrameData._childControlIDs.size()));
+
+            _controlAccessData._childControlIDs = _lastFrameData._childControlIDs;
+
             _perFrameData.reset();
         }
         
@@ -315,9 +336,7 @@ namespace mint
         {
             clearPerFrameData();
 
-            prepareChildControlIDs();
-
-            parentControlData._childControlIDs.push_back(_id);
+            parentControlData._perFrameData._childControlIDs.push_back(_id);
             parentControlData.connectChildWindowIfNot(*this);
 
             updateSize(prepareControlDataParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
@@ -396,33 +415,24 @@ namespace mint
             return _parentId;
         }
 
+        MINT_INLINE const int16 ControlData::getLastAddedChildIndex() const noexcept
+        {
+            return static_cast<int16>(_perFrameData._childControlIDs.size() - 1);
+        }
+
         MINT_INLINE const Vector<ControlID>& ControlData::getChildControlIDs() const noexcept
         {
-            return _childControlIDs;
+            return _lastFrameData._childControlIDs;
         }
 
-        MINT_INLINE const Vector<ControlID>& ControlData::getPreviousChildControlIDs() const noexcept
+        MINT_INLINE const uint16 ControlData::getChildControlCount() const noexcept
         {
-            return _previousChildControlIDs;
+            return static_cast<uint16>(_lastFrameData._childControlIDs.size());
         }
-
-        MINT_INLINE const uint16 ControlData::getPreviousChildControlCount() const noexcept
+        
+        MINT_INLINE const uint16 ControlData::getMaxChildControlCount() const noexcept
         {
-            return static_cast<uint16>(_previousChildControlIDs.size());
-        }
-
-        MINT_INLINE const uint16 ControlData::getPreviousMaxChildControlCount() const noexcept
-        {
-            return _previousMaxChildControlCount;
-        }
-
-        MINT_INLINE void ControlData::prepareChildControlIDs() noexcept
-        {
-            std::swap(_childControlIDs, _previousChildControlIDs);
-            _previousMaxChildControlCount = max(_previousMaxChildControlCount, static_cast<uint16>(_previousChildControlIDs.size()));
-            _childControlIDs.clear();
-
-            _controlAccessData._childControlIDs = _previousChildControlIDs;
+            return _lastFrameData._maxChildControlCount;
         }
 
         MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
@@ -486,9 +496,7 @@ namespace mint
 
         MINT_INLINE const Float2& ControlData::getContentAreaSize() const noexcept
         {
-            // ContentAreaSize 는 매 프레임 계산되는데, 계산 도중에 이 함수가 호출될 수 있으므로
-            // 안전하게 이전 프레임에 계산했던 값을 리턴한다.
-            return _previousContentAreaSize;
+            return _lastFrameData._contentAreaSize;
         }
 
         MINT_INLINE const Float2& ControlData::getChildAt() const noexcept

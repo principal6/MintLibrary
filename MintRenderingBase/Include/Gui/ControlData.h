@@ -278,16 +278,22 @@ namespace mint
 
             struct PerFrameData
             {
-                void            reset()
-                {
-                    _deltaPosition.setZero();
-                    _nextChildOffset.setZero();
-                    _contentAreaSize.setZero();
-                }
+                void                reset();
 
-                Float2          _deltaPosition; // Used for dragging
-                Float2          _nextChildOffset; // Every new child sets this offset to calculate next _childAt
-                Float2          _contentAreaSize; // Could be smaller or larger than _size
+                Float2              _deltaPosition; // Used for dragging
+                Float2              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
+                Float2              _contentAreaSize; // Could be smaller or larger than _size
+                Vector<ControlID>   _childControlIDs;
+            };
+
+            // 한 프레임 지연된 데이터
+            struct LastFrameData
+            {
+                                    LastFrameData();
+
+                Float2              _contentAreaSize;
+                Vector<ControlID>   _childControlIDs;
+                uint16              _maxChildControlCount;
             };
 
         public:
@@ -307,11 +313,10 @@ namespace mint
             const ControlID&                    getId() const noexcept;
             void                                setParentId(const ControlID& parentId) noexcept;
             const ControlID&                    getParentId() const noexcept;
+            const int16                         getLastAddedChildIndex() const noexcept;
             const Vector<ControlID>&            getChildControlIDs() const noexcept;
-            const Vector<ControlID>&            getPreviousChildControlIDs() const noexcept;
-            const uint16                        getPreviousChildControlCount() const noexcept;
-            const uint16                        getPreviousMaxChildControlCount() const noexcept;
-            void                                prepareChildControlIDs() noexcept;
+            const uint16                        getChildControlCount() const noexcept;
+            const uint16                        getMaxChildControlCount() const noexcept;
             const bool                          hasChildWindow() const noexcept;
             void                                connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
             void                                disconnectChildWindow(const ControlID& childWindowId) noexcept;
@@ -405,17 +410,14 @@ namespace mint
             Float2                              _minSize;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
             Float2                              _nonDockInteractionSize; // Exluces dock area
-            Float2                              _previousContentAreaSize;
-            Float2                              _childAt; // In screen space, Next child control will be positioned according to this
             ControlType                         _controlType;
             VisibleState                        _visibleState;
             Rect                                _clipRect;
             Rect                                _clipRectForChildren; // Used by window
             Rect                                _clipRectForDocks;
-            Vector<ControlID>                   _childControlIDs;
-            Vector<ControlID>                   _previousChildControlIDs;
-            uint16                              _previousMaxChildControlCount;
             HashMap<ControlID, bool>            _childWindowIdMap;
+            Float2                              _childAt; // In screen space, Next child control will be positioned according to this
+            LastFrameData                       _lastFrameData;
 
         private:
             REFLECTION_BIND_BEGIN;
