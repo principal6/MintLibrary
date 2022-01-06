@@ -1803,8 +1803,7 @@ namespace mint
             // Vertical Track
             if (isVert)
             {
-                const float parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
-                const float extraSize = parentControlData.getContentAreaSize()._y - parentWindowScrollDisplayHeight;
+                const float extraSize = parentControlData.getContentAreaSize()._y - parentControlData.computeScrollDisplayHeight();
                 if (extraSize >= 0.0f)
                 {
                     // Rendering track
@@ -1842,8 +1841,7 @@ namespace mint
             }
             else // Horz
             {
-                const float parentWindowScrollDisplayWidth = parentControlData.computeScrollDisplayWidth();
-                const float extraSize = parentControlData.getContentAreaSize()._x - parentWindowScrollDisplayWidth;
+                const float extraSize = parentControlData.getContentAreaSize()._x - parentControlData.computeScrollDisplayWidth();
                 if (extraSize >= 0.0f)
                 {
                     // Rendering track
