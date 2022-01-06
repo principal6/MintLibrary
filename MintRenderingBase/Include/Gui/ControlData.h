@@ -307,9 +307,6 @@ namespace mint
             void                                clearPerFrameData() noexcept;
             void                                updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
             
-        private:
-            void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
-
         public:
             const ControlID&                    getId() const noexcept;
             void                                setParentId(const ControlID& parentId) noexcept;
@@ -330,7 +327,6 @@ namespace mint
 
         public:
             const Rect&                         getInnerPadding() const noexcept;
-            Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
             const Float2&                       getMinSize() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
@@ -379,6 +375,10 @@ namespace mint
             const Float4                        getControlCenterPosition() const noexcept;
             const Float2                        getControlLeftCenterPosition() const noexcept;
             const Float2                        getControlRightCenterPosition() const noexcept;
+
+        private:
+            void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
+            Float2                              computeClientSize() const noexcept;
 
         public:
             uint8                               _updateCount;
