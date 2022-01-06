@@ -262,8 +262,8 @@ namespace mint
             }
 
             // ParentControlData 가 Root 거나 Window 일 때만 여기에 온다.
-            const auto& childWindowIdMap = parentControlData.getChildWindowIdMap();
-            BucketViewer bucketViewer = childWindowIdMap.getBucketViewer();
+            const auto& childWindowIDMap = parentControlData.getChildWindowIDMap();
+            BucketViewer bucketViewer = childWindowIDMap.getBucketViewer();
             for (; bucketViewer.isValid(); bucketViewer.next())
             {
                 const ControlData& childWindowControlData = getControlData(*bucketViewer.view()._key);

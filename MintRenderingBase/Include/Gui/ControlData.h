@@ -319,9 +319,8 @@ namespace mint
             const uint16                        getChildControlCount() const noexcept;
             const uint16                        getMaxChildControlCount() const noexcept;
             const bool                          hasChildWindow() const noexcept;
-            void                                connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept;
-            void                                disconnectChildWindow(const ControlID& childWindowId) noexcept;
-            const HashMap<ControlID, bool>&     getChildWindowIdMap() const noexcept;
+            void                                registerChildWindow(const ControlData& childWindowControlData) noexcept;
+            const HashMap<ControlID, bool>&     getChildWindowIDMap() const noexcept;
 
         public:
             const ControlType                   getControlType() const noexcept;
@@ -405,18 +404,18 @@ namespace mint
             ControlAccessData                   _controlAccessData;
 
         private:
+            ControlType                         _controlType;
             REFLECTION_MEMBER(ControlID, _id);
             ControlID                           _parentId;
             Rect                                _innerPadding; // For child controls
             Float2                              _minSize;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size
             Float2                              _nonDockInteractionSize; // Exluces dock area
-            ControlType                         _controlType;
             VisibleState                        _visibleState;
             Rect                                _clipRect;
             Rect                                _clipRectForChildren; // Used by window
             Rect                                _clipRectForDocks;
-            HashMap<ControlID, bool>            _childWindowIdMap;
+            HashMap<ControlID, bool>            _childWindowIDMap;
             LastFrameData                       _lastFrameData;
 
         private:

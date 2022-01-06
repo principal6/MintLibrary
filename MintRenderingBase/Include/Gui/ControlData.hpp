@@ -337,7 +337,7 @@ namespace mint
             clearPerFrameData();
 
             parentControlData._perFrameData._childControlIDs.push_back(_id);
-            parentControlData.connectChildWindowIfNot(*this);
+            parentControlData.registerChildWindow(*this);
 
             updateSize(prepareControlDataParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
 
@@ -437,25 +437,20 @@ namespace mint
 
         MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
         {
-            return !_childWindowIdMap.empty();
+            return _childWindowIDMap.empty() == false;
         }
 
-        MINT_INLINE void ControlData::connectChildWindowIfNot(const ControlData& childWindowControlData) noexcept
+        MINT_INLINE void ControlData::registerChildWindow(const ControlData& childWindowControlData) noexcept
         {
-            if (childWindowControlData._controlType == ControlType::Window && _childWindowIdMap.find(childWindowControlData._id).isValid() == false)
+            if (childWindowControlData._controlType == ControlType::Window && _childWindowIDMap.find(childWindowControlData._id).isValid() == false)
             {
-                _childWindowIdMap.insert(childWindowControlData._id, true);
+                _childWindowIDMap.insert(childWindowControlData._id, true);
             }
         }
 
-        MINT_INLINE void ControlData::disconnectChildWindow(const ControlID& childWindowId) noexcept
+        MINT_INLINE const HashMap<ControlID, bool>& ControlData::getChildWindowIDMap() const noexcept
         {
-            _childWindowIdMap.erase(childWindowId);
-        }
-
-        MINT_INLINE const HashMap<ControlID, bool>& ControlData::getChildWindowIdMap() const noexcept
-        {
-            return _childWindowIdMap;
+            return _childWindowIDMap;
         }
 
         MINT_INLINE const Rect& ControlData::getInnerPadding() const noexcept
