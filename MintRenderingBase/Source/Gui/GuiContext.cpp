@@ -657,7 +657,7 @@ namespace mint
                         const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
 
                         Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top() += static_cast<LONG>(windowControlData.getVertOffsetToInnerDisplayArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
+                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
                         clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
                         clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
                         clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);

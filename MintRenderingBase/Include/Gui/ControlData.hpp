@@ -275,7 +275,7 @@ namespace mint
         {
             _deltaPosition.setZero();
             _nextChildOffset.setZero();
-            _nextChildOffset._y = nextChildOffsetY;
+            _nextChildOffset._y = innerPadding.top() + nextChildOffsetY;
             _contentAreaSize.setZero();
             _childControlIDs.clear();
             _childAt.set(innerPadding.left(), innerPadding.top());
@@ -471,11 +471,6 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const float ControlData::getVertOffsetToInnerDisplayArea() const noexcept
-        {
-            return ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f) + getMenuBarThickness()._y;
-        }
-
         MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
         {
             return _minSize + Float2(getHorzDockSizeSum(), getVertDockSizeSum());
@@ -517,7 +512,7 @@ namespace mint
 
         MINT_INLINE const float ControlData::computeVertScrollBarPositionY() const noexcept
         {
-            return getVertOffsetToInnerDisplayArea() + getInnerPadding().top();
+            return ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f) + getMenuBarThickness()._y + getInnerPadding().top();
         }
 
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
