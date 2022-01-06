@@ -475,11 +475,10 @@ namespace mint
             return ((_controlType == ControlType::Window) ? kTitleBarBaseThickness : 0.0f) + getMenuBarThickness()._y;
         }
 
-        MINT_INLINE const Float2& ControlData::getMinSize() const noexcept
+        MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
         {
-            return _minSize;
+            return _minSize + Float2(getHorzDockSizeSum(), getVertDockSizeSum());
         }
-
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
         {

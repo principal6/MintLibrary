@@ -464,7 +464,7 @@ namespace mint
             mutable bool                                _isResizeBegun;
             mutable ControlID                           _resizedControlID;
             mutable Float2                              _resizedControlInitialPosition;
-            mutable Float2                              _resizedControlInitialDisplaySize;
+            mutable Float2                              _resizedControlInitialSize;
             mutable ResizingMethod                      _resizingMethod;
 
         private:

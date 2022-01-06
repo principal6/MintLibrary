@@ -2767,7 +2767,7 @@ namespace mint
                 if (_isResizeBegun == true)
                 {
                     _resizedControlInitialPosition = changeTargetControlData._position;
-                    _resizedControlInitialDisplaySize = changeTargetControlData._size;
+                    _resizedControlInitialSize = changeTargetControlData._size;
 
                     _isResizeBegun = false;
                 }
@@ -2777,32 +2777,31 @@ namespace mint
                 const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
                 const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
                 const float flipVert = (_resizingMethod == ResizingMethod::RepositionVert || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
+                const Float2 resizeMinSize = changeTargetControlData.getResizeMinSize();
                 if (_mouseStates.isCursor(Window::CursorType::SizeVert) == false)
                 {
                     const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
-                    const float newDisplaySizeX = _resizedControlInitialDisplaySize._x + mouseDragDelta._x * flipHorz;
-
-                    if (changeTargetControlData.getMinSize()._x + changeTargetControlData.getHorzDockSizeSum() < newDisplaySizeX)
+                    const float newSizeX = _resizedControlInitialSize._x + mouseDragDelta._x * flipHorz;
+                    if (resizeMinSize._x < newSizeX)
                     {
                         if (flipHorz < 0.0f)
                         {
                             changeTargetControlData._position._x = newPositionX;
                         }
-                        changeTargetControlDisplaySize._x = newDisplaySizeX;
+                        changeTargetControlDisplaySize._x = newSizeX;
                     }
                 }
                 if (_mouseStates.isCursor(Window::CursorType::SizeHorz) == false)
                 {
                     const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
-                    const float newDisplaySizeY = _resizedControlInitialDisplaySize._y + mouseDragDelta._y * flipVert;
-
-                    if (changeTargetControlData.getMinSize()._y + changeTargetControlData.getVertDockSizeSum() < newDisplaySizeY)
+                    const float newSizeY = _resizedControlInitialSize._y + mouseDragDelta._y * flipVert;
+                    if (resizeMinSize._y < newSizeY)
                     {
                         if (flipVert < 0.0f)
                         {
                             changeTargetControlData._position._y = newPositionY;
                         }
-                        changeTargetControlDisplaySize._y = newDisplaySizeY;
+                        changeTargetControlDisplaySize._y = newSizeY;
                     }
                 }
 
