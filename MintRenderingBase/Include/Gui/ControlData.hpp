@@ -470,7 +470,7 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const float ControlData::getTopOffsetToClientArea() const noexcept
+        MINT_INLINE const float ControlData::getVertOffsetToInnerDisplayArea() const noexcept
         {
             return ((_controlType == ControlType::Window) ? kTitleBarBaseThickness : 0.0f) + getMenuBarThickness()._y;
         }
@@ -483,12 +483,7 @@ namespace mint
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
         {
-            return _interactionSize;
-        }
-
-        MINT_INLINE const Float2& ControlData::getNonDockInteractionSize() const noexcept
-        {
-            return _nonDockInteractionSize;
+            return isDockHosting() ? _nonDockInteractionSize : _interactionSize;
         }
 
         MINT_INLINE const Float2& ControlData::getContentAreaSize() const noexcept

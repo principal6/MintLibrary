@@ -42,7 +42,7 @@ namespace mint
                 if (controlData.isDockHosting() == true)
                 {
                     const Float2 positionOffset{ controlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x, controlData.getDockSizeIfHosting(DockingMethod::TopSide)._y };
-                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getNonDockInteractionSize());
+                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInteractionSize());
                 }
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
             }
@@ -599,7 +599,7 @@ namespace mint
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
                 prepareControlDataParam._minSize._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-                prepareControlDataParam._minSize._y = windowControlData.getTopOffsetToClientArea() + 16.0f;
+                prepareControlDataParam._minSize._y = windowControlData.getVertOffsetToInnerDisplayArea() + 16.0f;
                 prepareControlDataParam._alwaysResetDisplaySize = false; // Áß¿ä!!!
                 prepareControlDataParam._alwaysResetPosition = false;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
@@ -657,7 +657,7 @@ namespace mint
                         const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
 
                         Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top() += static_cast<LONG>(windowControlData.getTopOffsetToClientArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
+                        clipRectForChildren.top() += static_cast<LONG>(windowControlData.getVertOffsetToInnerDisplayArea() + windowControlData.getDockSizeIfHosting(DockingMethod::TopSide)._y);
                         clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockingMethod::LeftSide)._x);
                         clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::RightSide)._x);
                         clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockingMethod::BottomSide)._y);
@@ -1712,7 +1712,7 @@ namespace mint
 
                 _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
                 scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
-                scrollBarTrackParam._positionInParent._y = parentControlData.getTopOffsetToClientArea() + parentControlData.getInnerPadding().top();
+                scrollBarTrackParam._positionInParent._y = parentControlData.getVertOffsetToInnerDisplayArea() + parentControlData.getInnerPadding().top();
             }
 
             bool hasExtraSize = false;

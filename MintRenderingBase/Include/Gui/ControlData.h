@@ -327,10 +327,9 @@ namespace mint
 
         public:
             const Rect&                         getInnerPadding() const noexcept;
-            const float                         getTopOffsetToClientArea() const noexcept;
+            const float                         getVertOffsetToInnerDisplayArea() const noexcept;
             const Float2&                       getMinSize() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
-            const Float2&                       getNonDockInteractionSize() const noexcept;
             const Float2&                       getContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
             const float                         computeScrollDisplayWidth() const noexcept;
