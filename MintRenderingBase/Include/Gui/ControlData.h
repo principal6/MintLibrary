@@ -191,7 +191,7 @@ namespace mint
 
         public:
             Vector<ControlID>   _dockedControlIDArray;
-            int32               _dockedControlIndexShown;
+            int32               _focusedDockedControlIndex;
             Vector<float>       _dockedControlTitleBarOffsetArray; // TitleBar 렌더링 위치 계산에 사용
             Vector<float>       _dockedControlTitleBarWidthArray; // TitleBar 순서 변경 시 마우스 Interaction 에 사용!
 
@@ -356,7 +356,7 @@ namespace mint
         public:
             DockDatum&                          getDockDatum(const DockingMethod dockingMethod) noexcept;
             const DockDatum&                    getDockDatum(const DockingMethod dockingMethod) const noexcept;
-            const bool                          isShowingInDock(const ControlData& dockedControlData) const noexcept;
+            const bool                          isFocusedDocker(const ControlData& dockedControlData) const noexcept;
             void                                setDockSize(const DockingMethod dockingMethod, const Float2& dockSize) noexcept;
             const Float2                        getDockSize(const DockingMethod dockingMethod) const noexcept;
             const Float2                        getDockSizeIfHosting(const DockingMethod dockingMethod) const noexcept;

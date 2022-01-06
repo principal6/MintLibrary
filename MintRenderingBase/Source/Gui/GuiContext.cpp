@@ -779,8 +779,8 @@ namespace mint
             if (isDocking == true)
             {
                 const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
-                const bool isShownInDock = dockControlData.isShowingInDock(windowControlData);
-                needToProcessControl &= (isDocking && isShownInDock);
+                const bool isFocusedDocker = dockControlData.isFocusedDocker(windowControlData);
+                needToProcessControl &= (isDocking && isFocusedDocker);
             }
             return needToProcessControl;
         }
@@ -2109,7 +2109,7 @@ namespace mint
                 {
                     ControlData& dockControlData = accessControlData(parentWindowControlData.getDockControlID());
                     DockDatum& dockDatum = dockControlData.getDockDatum(parentWindowControlData._dockRelatedData._lastDockingMethod);
-                    dockDatum._dockedControlIndexShown = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
+                    dockDatum._focusedDockedControlIndex = dockDatum.getDockedControlIndex(parentWindowControlData.getId());
                     
                     setControlFocused(dockControlData);
                 }
@@ -2121,14 +2121,14 @@ namespace mint
             if (isParentControlDocking == true)
             {
                 const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
-                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
+                const bool isParentControlFocusedDocker = dockControlData.isFocusedDocker(parentWindowControlData);
                 if (_controlInteractionStateSet.isControlHovered(controlData) == true)
                 {
-                    rendererContext.setColor(((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(32)));
+                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(32)));
                 }
                 else
                 {
-                    rendererContext.setColor(((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(16)));
+                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(16)));
                 }
 
                 rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
@@ -2148,9 +2148,9 @@ namespace mint
             if (isParentControlDocking == true)
             {
                 const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
-                const bool isParentControlShownInDock = dockControlData.isShowingInDock(parentWindowControlData);
+                const bool isParentControlFocusedDocker = dockControlData.isFocusedDocker(parentWindowControlData);
 
-                rendererContext.setTextColor((isParentControlShownInDock == true) ? getNamedColor(NamedColor::ShownInDockFont) : getNamedColor(NamedColor::LightFont));
+                rendererContext.setTextColor((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDockFont) : getNamedColor(NamedColor::LightFont));
             }
             else
             {
@@ -2875,7 +2875,7 @@ namespace mint
                             if (originalDockedControlIndex != targetDockedControlindex)
                             {
                                 dockDatum.swapDockedControlsXXX(originalDockedControlIndex, targetDockedControlindex);
-                                dockDatum._dockedControlIndexShown = targetDockedControlindex;
+                                dockDatum._focusedDockedControlIndex = targetDockedControlindex;
 
                                 _taskWhenMouseUp.setUpdateDockDatum(dockControlData.getId());
                                 updateDockDatum(dockControlData.getId(), false);
@@ -3148,7 +3148,7 @@ namespace mint
             dockedControlData._position = dockControlData.getDockPosition(dockedControlData._dockRelatedData._lastDockingMethod);
             dockedControlData.connectToDock(dockControlID);
 
-            parentControlDockDatum._dockedControlIndexShown = parentControlDockDatum.getDockedControlIndex(dockedControlData.getId());
+            parentControlDockDatum._focusedDockedControlIndex = parentControlDockDatum.getDockedControlIndex(dockedControlData.getId());
 
             updateDockDatum(dockControlID);
 
@@ -3190,7 +3190,7 @@ namespace mint
             const ControlID dockControlIDCopy = dockedControlData.getDockControlID();
 
             dockedControlData.disconnectFromDock();
-            dockDatum._dockedControlIndexShown = min(dockDatum._dockedControlIndexShown, static_cast<int32>(dockDatum._dockedControlIDArray.size() - 1));
+            dockDatum._focusedDockedControlIndex = min(dockDatum._focusedDockedControlIndex, static_cast<int32>(dockDatum._dockedControlIDArray.size() - 1));
             dockedControlData._dockRelatedData._lastDockingMethodCandidate = DockingMethod::COUNT;
 
             updateDockDatum(dockControlIDCopy);

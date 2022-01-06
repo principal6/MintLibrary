@@ -175,7 +175,7 @@ namespace mint
 
 #pragma region DockDatum
         inline DockDatum::DockDatum()
-            : _dockedControlIndexShown{ 0 }
+            : _focusedDockedControlIndex{ 0 }
         {
             __noop;
         }
@@ -560,10 +560,10 @@ namespace mint
             return _dockRelatedData._dockData[static_cast<uint32>(dockingMethod)];
         }
 
-        MINT_INLINE const bool ControlData::isShowingInDock(const ControlData& dockedControlData) const noexcept
+        MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockedControlData) const noexcept
         {
             const DockDatum& dockDatum = getDockDatum(dockedControlData._dockRelatedData._lastDockingMethod);
-            return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._dockedControlIndexShown;
+            return dockDatum.getDockedControlIndex(dockedControlData.getId()) == dockDatum._focusedDockedControlIndex;
         }
 
         MINT_INLINE void ControlData::setDockSize(const DockingMethod dockingMethod, const Float2& dockSize) noexcept
