@@ -609,12 +609,7 @@ namespace mint
             return resultDockSize;
         }
 
-        MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
-        {
-            return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
-        }
-
-        MINT_INLINE const Float2 ControlData::getDockPosition(const DockZone dockZone) const noexcept
+        MINT_INLINE const Float2 ControlData::getDockZonePosition(const DockZone dockZone) const noexcept
         {
             const Float2& dockSize = getDockZoneSize(dockZone);
             const Float2& offset = getDockOffsetSize();
@@ -641,6 +636,11 @@ namespace mint
                 break;
             }
             return resultDockPosition;
+        }
+
+        MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
+        {
+            return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
         }
 
         MINT_INLINE const float ControlData::getHorzDockTotalSize() const noexcept
