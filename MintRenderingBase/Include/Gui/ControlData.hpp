@@ -616,7 +616,6 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockPosition(const DockZone dockZone) const noexcept
         {
-            const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
             const Float2& dockSize = getDockZoneSize(dockZone);
             const Float2& offset = getDockOffsetSize();
 
