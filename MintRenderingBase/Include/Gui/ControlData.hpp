@@ -497,24 +497,20 @@ namespace mint
 
         MINT_INLINE const float ControlData::computeScrollDisplayWidth() const noexcept
         {
-            const Float2& menuBarThicknes = getMenuBarThickness();
-            return max(
-                0.0f,
+            return max(0.0f,
                 _size._x - getHorzDockSizeSum() - _innerPadding.horz()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
-                - menuBarThicknes._x
+                - getMenuBarThickness()._x
             );
         }
 
         MINT_INLINE const float ControlData::computeScrollDisplayHeight() const noexcept
         {
             const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
-            const Float2& menuBarThicknes = getMenuBarThickness();
-            return max(
-                0.0f,
+            return max(0.0f,
                 _size._y - getVertDockSizeSum() - titleBarHeight - _innerPadding.vert()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
-                - menuBarThicknes._y
+                - getMenuBarThickness()._y
             );
         }
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
