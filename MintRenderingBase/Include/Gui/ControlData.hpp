@@ -473,7 +473,7 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
         {
-            return _minSize + Float2(getHorzDockTotalSize(), getVertDockTotalSize());
+            return _minSize + Float2(getHorzDockZoneSize(), getVertDockZoneSize());
         }
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
@@ -494,7 +494,7 @@ namespace mint
         MINT_INLINE const float ControlData::computeScrollDisplayWidth() const noexcept
         {
             return max(0.0f,
-                _size._x - getHorzDockTotalSize() - _innerPadding.horz()
+                _size._x - getHorzDockZoneSize() - _innerPadding.horz()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - getMenuBarThickness()._x
             );
@@ -504,7 +504,7 @@ namespace mint
         {
             const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
             return max(0.0f,
-                _size._y - getVertDockTotalSize() - titleBarHeight - _innerPadding.vert()
+                _size._y - getVertDockZoneSize() - titleBarHeight - _innerPadding.vert()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
                 - getMenuBarThickness()._y
             );
@@ -609,6 +609,16 @@ namespace mint
             return resultDockSize;
         }
 
+        MINT_INLINE const float ControlData::getHorzDockZoneSize() const noexcept
+        {
+            return getDockZoneSize(DockZone::LeftSide)._x + getDockZoneSize(DockZone::RightSide)._x;
+        }
+
+        MINT_INLINE const float ControlData::getVertDockZoneSize() const noexcept
+        {
+            return getDockZoneSize(DockZone::TopSide)._y + getDockZoneSize(DockZone::BottomSide)._y;
+        }
+
         MINT_INLINE const Float2 ControlData::getDockZonePosition(const DockZone dockZone) const noexcept
         {
             const Float2& dockSize = getDockZoneSize(dockZone);
@@ -641,16 +651,6 @@ namespace mint
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
         {
             return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
-        }
-
-        MINT_INLINE const float ControlData::getHorzDockTotalSize() const noexcept
-        {
-            return getDockZoneSize(DockZone::LeftSide)._x + getDockZoneSize(DockZone::RightSide)._x;
-        }
-
-        MINT_INLINE const float ControlData::getVertDockTotalSize() const noexcept
-        {
-            return getDockZoneSize(DockZone::TopSide)._y + getDockZoneSize(DockZone::BottomSide)._y;
         }
 
         MINT_INLINE const Float2 ControlData::getMenuBarThickness() const noexcept

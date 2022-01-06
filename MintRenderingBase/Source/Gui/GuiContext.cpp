@@ -603,8 +603,8 @@ namespace mint
                 prepareControlDataParam._alwaysResetDisplaySize = false; // Áß¿ä!!!
                 prepareControlDataParam._alwaysResetPosition = false;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
-                prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockTotalSize();
-                prepareControlDataParam._deltaInteractionSizeByDock._y = -windowControlData.getVertDockTotalSize();
+                prepareControlDataParam._deltaInteractionSizeByDock._x = -windowControlData.getHorzDockZoneSize();
+                prepareControlDataParam._deltaInteractionSizeByDock._y = -windowControlData.getVertDockZoneSize();
             }
             prepareControlData(windowControlData, prepareControlDataParam);
 

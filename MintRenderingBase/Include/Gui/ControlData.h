@@ -359,10 +359,10 @@ namespace mint
             const bool                          isFocusedDocker(const ControlData& dockerControlData) const noexcept;
             void                                setDockZoneSize(const DockZone dockZone, const Float2& dockSize) noexcept;
             const Float2                        getDockZoneSize(const DockZone dockZone) const noexcept;
+            const float                         getHorzDockZoneSize() const noexcept;
+            const float                         getVertDockZoneSize() const noexcept;
             const Float2                        getDockZonePosition(const DockZone dockZone) const noexcept;
             const Float2                        getDockOffsetSize() const noexcept;
-            const float                         getHorzDockTotalSize() const noexcept;
-            const float                         getVertDockTotalSize() const noexcept;
             void                                connectToDock(const ControlID& dockControlID) noexcept;
             void                                disconnectFromDock() noexcept;
             const ControlID&                    getDockControlID() const noexcept;
