@@ -1708,11 +1708,13 @@ namespace mint
             {
                 const ControlData& parentControlData = getControlData(parentControlID);
                 parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
-                const float titleBarOffsetX = (parentControlData.isTypeOf(Gui::ControlType::Window) == true) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+                const bool isParentControlWindow = parentControlData.isTypeOf(Gui::ControlType::Window);
+                const float titleBarOffsetX = (isParentControlWindow) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
+                const float titleBarOffsetY = (isParentControlWindow) ? parentControlData.getMenuBarThickness()._y + parentControlData._controlValue._windowData._titleBarThickness : 0.0f;
 
                 _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
                 scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
-                scrollBarTrackParam._positionInParent._y = parentControlData.computeVertScrollBarPositionY();
+                scrollBarTrackParam._positionInParent._y = parentControlData.getInnerPadding().top() + titleBarOffsetY;
             }
 
             bool hasExtraSize = false;

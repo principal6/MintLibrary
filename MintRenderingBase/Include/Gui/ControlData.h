@@ -334,7 +334,6 @@ namespace mint
             Float2                              computeInnerDisplaySize() const noexcept;
             const float                         computeScrollDisplayWidth() const noexcept;
             const float                         computeScrollDisplayHeight() const noexcept;
-            const float                         computeVertScrollBarPositionY() const noexcept;
 
         public:
             const bool                          updateVisibleState(const VisibleState visibleState) noexcept;

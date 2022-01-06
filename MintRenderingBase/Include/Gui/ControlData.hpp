@@ -510,11 +510,6 @@ namespace mint
             );
         }
 
-        MINT_INLINE const float ControlData::computeVertScrollBarPositionY() const noexcept
-        {
-            return ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f) + getMenuBarThickness()._y + getInnerPadding().top();
-        }
-
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
         {
             return _controlType;
