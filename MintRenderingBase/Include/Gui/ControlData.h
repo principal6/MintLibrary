@@ -332,8 +332,10 @@ namespace mint
             const Float2&                       getInteractionSize() const noexcept;
             const Float2&                       getContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
+            Float2                              computeInnerDisplaySize() const noexcept;
             const float                         computeScrollDisplayWidth() const noexcept;
             const float                         computeScrollDisplayHeight() const noexcept;
+            const float                         computeVertScrollBarPositionY() const noexcept;
 
         public:
             const bool                          updateVisibleState(const VisibleState visibleState) noexcept;
@@ -377,7 +379,6 @@ namespace mint
 
         private:
             void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
-            Float2                              computeInnerDisplaySize() const noexcept;
 
         public:
             uint8                               _updateCount;

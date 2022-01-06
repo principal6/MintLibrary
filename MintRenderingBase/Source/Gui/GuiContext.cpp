@@ -599,7 +599,7 @@ namespace mint
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
                 prepareControlDataParam._minSize._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
-                prepareControlDataParam._minSize._y = windowControlData.getVertOffsetToInnerDisplayArea() + 16.0f;
+                prepareControlDataParam._minSize._y = windowControlData._size._y - windowControlData.computeInnerDisplaySize()._y + 16.0f;
                 prepareControlDataParam._alwaysResetDisplaySize = false; // Áß¿ä!!!
                 prepareControlDataParam._alwaysResetPosition = false;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::Own;
@@ -1712,7 +1712,7 @@ namespace mint
 
                 _controlMetaStateSet.nextSize(Float2(kScrollBarThickness, parentWindowScrollDisplayHeight));
                 scrollBarTrackParam._positionInParent._x = parentControlData._size._x - titleBarOffsetX;
-                scrollBarTrackParam._positionInParent._y = parentControlData.getVertOffsetToInnerDisplayArea() + parentControlData.getInnerPadding().top();
+                scrollBarTrackParam._positionInParent._y = parentControlData.computeVertScrollBarPositionY();
             }
 
             bool hasExtraSize = false;

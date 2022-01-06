@@ -466,6 +466,7 @@ namespace mint
             if (isTypeOf(ControlType::Window))
             {
                 result._y -= _controlValue._windowData._titleBarThickness;
+                result._y -= getMenuBarThickness()._y;
             }
             return result;
         }
@@ -513,6 +514,12 @@ namespace mint
                 - getMenuBarThickness()._y
             );
         }
+
+        MINT_INLINE const float ControlData::computeVertScrollBarPositionY() const noexcept
+        {
+            return getVertOffsetToInnerDisplayArea() + getInnerPadding().top();
+        }
+
         MINT_INLINE const ControlType ControlData::getControlType() const noexcept
         {
             return _controlType;
@@ -586,7 +593,6 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockSize(const DockingMethod dockingMethod) const noexcept
         {
-            const Float2& menuBarThickness = getMenuBarThickness();
             const DockDatum& dockDatumTopSide = getDockDatum(DockingMethod::TopSide);
             const DockDatum& dockDatumBottomSide = getDockDatum(DockingMethod::BottomSide);
             const DockDatum& dockDatum = getDockDatum(dockingMethod);
@@ -605,8 +611,6 @@ namespace mint
                 {
                     resultDockSize._y -= dockDatumBottomSide.getRawDockSizeXXX()._y;
                 }
-
-                resultDockSize._y -= menuBarThickness._y;
                 break;
             case Gui::DockingMethod::TopSide:
             case Gui::DockingMethod::BottomSide:
