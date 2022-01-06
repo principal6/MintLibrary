@@ -465,14 +465,14 @@ namespace mint
             Float2 result = Float2(_size._x - _innerPadding.horz(), _size._y - _innerPadding.vert());
             if (isTypeOf(ControlType::Window))
             {
-                result._y -= kTitleBarBaseThickness;
+                result._y -= _controlValue._windowData._titleBarThickness;
             }
             return result;
         }
 
         MINT_INLINE const float ControlData::getVertOffsetToInnerDisplayArea() const noexcept
         {
-            return ((_controlType == ControlType::Window) ? kTitleBarBaseThickness : 0.0f) + getMenuBarThickness()._y;
+            return ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f) + getMenuBarThickness()._y;
         }
 
         MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
@@ -508,7 +508,7 @@ namespace mint
 
         MINT_INLINE const float ControlData::computeScrollDisplayHeight() const noexcept
         {
-            const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? kTitleBarBaseThickness : 0.0f;
+            const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
             const Float2& menuBarThicknes = getMenuBarThickness();
             return max(
                 0.0f,
@@ -632,7 +632,7 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
         {
-            return Float2(0.0f, ((_controlType == ControlType::Window) ? kTitleBarBaseThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
+            return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
         }
 
         MINT_INLINE const Float2 ControlData::getDockPosition(const DockingMethod dockingMethod) const noexcept
