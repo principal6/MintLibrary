@@ -41,7 +41,7 @@ namespace mint
             {
                 if (controlData.isDockHosting() == true)
                 {
-                    const Float2 positionOffset{ controlData.getDockSizeIfHosting(DockZone::LeftSide)._x, controlData.getDockSizeIfHosting(DockZone::TopSide)._y };
+                    const Float2 positionOffset{ controlData.getDockZoneSize(DockZone::LeftSide)._x, controlData.getDockZoneSize(DockZone::TopSide)._y };
                     return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInteractionSize());
                 }
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
@@ -657,10 +657,10 @@ namespace mint
                         const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
 
                         Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockSizeIfHosting(DockZone::TopSide)._y);
-                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockSizeIfHosting(DockZone::LeftSide)._x);
-                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockZone::RightSide)._x);
-                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockSizeIfHosting(DockZone::BottomSide)._y);
+                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockZoneSize(DockZone::TopSide)._y);
+                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockZoneSize(DockZone::LeftSide)._x);
+                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::RightSide)._x);
+                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::BottomSide)._y);
                         if (isParentAlsoWindow == true)
                         {
                             clipRectForChildren.clipBy(parentControlData.getClipRects()._forMe);
@@ -1784,13 +1784,13 @@ namespace mint
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
-                    prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockSizeIfHosting(DockZone::RightSide)._x;
-                    prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockSizeIfHosting(DockZone::TopSide)._y;
+                    prepareControlDataParamForTrack._desiredPositionInParent._x -= parentControlData.getDockZoneSize(DockZone::RightSide)._x;
+                    prepareControlDataParamForTrack._desiredPositionInParent._y += parentControlData.getDockZoneSize(DockZone::TopSide)._y;
                 }
                 else
                 {
-                    prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockSizeIfHosting(DockZone::LeftSide)._x;
-                    prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockSizeIfHosting(DockZone::BottomSide)._y;
+                    prepareControlDataParamForTrack._desiredPositionInParent._x += parentControlData.getDockZoneSize(DockZone::LeftSide)._x;
+                    prepareControlDataParamForTrack._desiredPositionInParent._y -= parentControlData.getDockZoneSize(DockZone::BottomSide)._y;
                 }
                 prepareControlDataParamForTrack._parentIdOverride = parentControlData.getId();
                 prepareControlDataParamForTrack._alwaysResetPosition = true;
@@ -2438,7 +2438,7 @@ namespace mint
                 else
                 {
                     parentControlChildAt._x = parentControlData._position._x + parentControlData.getInnerPadding().left() + parentControlData._childDisplayOffset._x; // @Áß¿ä
-                    parentControlChildAt._x += parentControlData.getDockSizeIfHosting(DockZone::LeftSide)._x;
+                    parentControlChildAt._x += parentControlData.getDockZoneSize(DockZone::LeftSide)._x;
 
                     parentControlChildAt._y += parentControlNextChildOffset._y;
 

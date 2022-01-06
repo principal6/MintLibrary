@@ -359,7 +359,6 @@ namespace mint
             const bool                          isFocusedDocker(const ControlData& dockerControlData) const noexcept;
             void                                setDockZoneSize(const DockZone dockZone, const Float2& dockSize) noexcept;
             const Float2                        getDockZoneSize(const DockZone dockZone) const noexcept;
-            const Float2                        getDockSizeIfHosting(const DockZone dockZone) const noexcept;
             const Float2                        getDockOffsetSize() const noexcept;
             const Float2                        getDockPosition(const DockZone dockZone) const noexcept;
             const float                         getHorzDockTotalSize() const noexcept;

@@ -573,9 +573,14 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockZoneSize(const DockZone dockZone) const noexcept
         {
+            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
+            if (dockZoneData.hasDockedControls() == false)
+            {
+                return Float2::kZero;
+            }
+
             const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
             const DockZoneData& dockZoneDataBottomSide = getDockZoneData(DockZone::BottomSide);
-            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
             const Float2 innerDisplaySize = computeInnerDisplaySize();
             Float2 resultDockSize = dockZoneData.getRawDockSizeXXX();
             switch (dockZone)
@@ -604,12 +609,6 @@ namespace mint
             return resultDockSize;
         }
 
-        MINT_INLINE const Float2 ControlData::getDockSizeIfHosting(const DockZone dockZone) const noexcept
-        {
-            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
-            return (dockZoneData.hasDockedControls() == true) ? getDockZoneSize(dockZone) : Float2::kZero;
-        }
-
         MINT_INLINE const Float2 ControlData::getDockOffsetSize() const noexcept
         {
             return Float2(0.0f, ((_controlType == ControlType::Window) ? _controlValue._windowData._titleBarThickness + _innerPadding.top() : 0.0f) + getMenuBarThickness()._y);
@@ -626,11 +625,11 @@ namespace mint
             {
             case Gui::DockZone::LeftSide:
                 resultDockPosition = _position + offset;
-                resultDockPosition._y += getDockSizeIfHosting(DockZone::TopSide)._y;
+                resultDockPosition._y += getDockZoneSize(DockZone::TopSide)._y;
                 break;
             case Gui::DockZone::RightSide:
                 resultDockPosition = Float2(_position._x + _size._x - dockSize._x, _position._y) + offset;
-                resultDockPosition._y += getDockSizeIfHosting(DockZone::TopSide)._y;
+                resultDockPosition._y += getDockZoneSize(DockZone::TopSide)._y;
                 break;
             case Gui::DockZone::TopSide:
                 resultDockPosition = Float2(_position._x, _position._y) + offset;
@@ -647,12 +646,12 @@ namespace mint
 
         MINT_INLINE const float ControlData::getHorzDockTotalSize() const noexcept
         {
-            return getDockSizeIfHosting(DockZone::LeftSide)._x + getDockSizeIfHosting(DockZone::RightSide)._x;
+            return getDockZoneSize(DockZone::LeftSide)._x + getDockZoneSize(DockZone::RightSide)._x;
         }
 
         MINT_INLINE const float ControlData::getVertDockTotalSize() const noexcept
         {
-            return getDockSizeIfHosting(DockZone::TopSide)._y + getDockSizeIfHosting(DockZone::BottomSide)._y;
+            return getDockZoneSize(DockZone::TopSide)._y + getDockZoneSize(DockZone::BottomSide)._y;
         }
 
         MINT_INLINE const Float2 ControlData::getMenuBarThickness() const noexcept
