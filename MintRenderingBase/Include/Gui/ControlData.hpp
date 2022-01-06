@@ -271,10 +271,11 @@ namespace mint
 #pragma endregion
         
 #pragma region ControlData - PerFrameData
-        inline void ControlData::PerFrameData::reset(const Rect& innerPadding)
+        inline void ControlData::PerFrameData::reset(const float nextChildOffsetY, const Rect& innerPadding)
         {
             _deltaPosition.setZero();
             _nextChildOffset.setZero();
+            _nextChildOffset._y = nextChildOffsetY;
             _contentAreaSize.setZero();
             _childControlIDs.clear();
             _childAt.set(innerPadding.left(), innerPadding.top());
@@ -329,7 +330,8 @@ namespace mint
 
             _controlAccessData._childControlIDs = _lastFrameData._childControlIDs;
 
-            _perFrameData.reset(_innerPadding);
+            const float nextChildOffsetY = isTypeOf(ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
+            _perFrameData.reset(nextChildOffsetY, _innerPadding);
         }
         
         MINT_INLINE void ControlData::updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept
@@ -752,11 +754,6 @@ namespace mint
         {
             std::swap(_size, _dockRelatedData._dokcingStateContext._size);
             std::swap(_resizingMask, _dockRelatedData._dokcingStateContext._resizingMask);
-        }
-
-        MINT_INLINE void ControlData::setOffsetY_XXX(const float offsetY) noexcept
-        {
-            _perFrameData._nextChildOffset._y = offsetY;
         }
 
         MINT_INLINE void ControlData::setAllClipRects(const Rect& clipRect) noexcept

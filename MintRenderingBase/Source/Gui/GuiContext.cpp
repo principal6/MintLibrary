@@ -2174,9 +2174,6 @@ namespace mint
                 }
             }
 
-            // Window Offset ¿Á¡∂¡§!!
-            parentWindowControlData.setOffsetY_XXX(titleBarSize._y + parentWindowControlData.getInnerPadding().top());
-
             return titleBarSize;
         }
 

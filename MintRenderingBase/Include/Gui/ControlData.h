@@ -278,7 +278,7 @@ namespace mint
 
             struct PerFrameData
             {
-                void                reset(const Rect& innerPadding);
+                void                reset(const float nextChildOffsetY, const Rect& innerPadding);
 
                 Float2              _deltaPosition; // Used for dragging
                 Float2              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
@@ -329,7 +329,6 @@ namespace mint
             const bool                          isRootControl() const noexcept;
 
         public:
-            void                                setOffsetY_XXX(const float offsetY) noexcept;
             const Rect&                         getInnerPadding() const noexcept;
             Float2                              getClientSize() const noexcept;
             const float                         getTopOffsetToClientArea() const noexcept;
