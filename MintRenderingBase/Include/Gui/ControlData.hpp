@@ -463,7 +463,7 @@ namespace mint
         MINT_INLINE Float2 ControlData::getClientSize() const noexcept
         {
             Float2 result = Float2(_size._x - _innerPadding.horz(), _size._y - _innerPadding.vert());
-            if (_controlType == ControlType::Window)
+            if (isTypeOf(ControlType::Window))
             {
                 result._y -= kTitleBarBaseThickness;
             }
