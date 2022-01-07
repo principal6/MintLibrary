@@ -2845,7 +2845,7 @@ namespace mint
             const Float2& mouseDragDelta = _mouseStates.getMouseDragDelta();
             const Float2 positionCandidate = _draggedControlInitialPosition + mouseDragDelta;
             const Rect& positionConstraints = targetControlData._positionConstraintsForDragging;
-            targetControlData._position = (positionConstraints.isNan()) ? positionCandidate : positionConstraints.clamp(positionCandidate);
+            targetControlData._position = (positionConstraints.isNan()) ? positionCandidate : positionConstraints.bound(positionCandidate);
 
             if (targetControlData.isDocking() == true)
             {

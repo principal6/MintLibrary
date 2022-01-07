@@ -140,21 +140,6 @@ namespace mint
         top(position._y);
     }
 
-    MINT_INLINE constexpr float Rect::clampHorz(const float x) const noexcept
-    {
-        return min(max(left(), x), right());
-    }
-
-    MINT_INLINE constexpr float Rect::clampVert(const float y) const noexcept
-    {
-        return min(max(top(), y), bottom());
-    }
-
-    MINT_INLINE constexpr Float2 Rect::clamp(const Float2& position) const noexcept
-    {
-        return Float2(clampHorz(position._x), clampVert(position._y));
-    }
-
     MINT_INLINE void Rect::clipBy(const Rect& outerRect) noexcept
     {
         left(max(left(), outerRect.left()));
@@ -165,6 +150,11 @@ namespace mint
         // Rect Size 가 음수가 되지 않도록 방지!! (중요)
         right(max(left(), right()));
         bottom(max(top(), bottom()));
+    }
+
+    MINT_INLINE constexpr Float2 Rect::bound(const Float2& position) const noexcept
+    {
+        return Float2(boundHorz(position._x), boundVert(position._y));
     }
 
     MINT_INLINE constexpr const bool Rect::contains(const Float2& position) const noexcept
@@ -185,5 +175,15 @@ namespace mint
     MINT_INLINE void Rect::setNan() noexcept
     {
         _raw.setNan();
+    }
+
+    MINT_INLINE constexpr float Rect::boundHorz(const float x) const noexcept
+    {
+        return min(max(left(), x), right());
+    }
+
+    MINT_INLINE constexpr float Rect::boundVert(const float y) const noexcept
+    {
+        return min(max(top(), y), bottom());
     }
 }

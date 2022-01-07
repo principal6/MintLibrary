@@ -58,14 +58,18 @@ namespace mint
         constexpr void              position(const Float2& position) noexcept;
 
     public:
-        constexpr float             clampHorz(const float x) const noexcept;
-        constexpr float             clampVert(const float y) const noexcept;
-        constexpr Float2            clamp(const Float2& position) const noexcept;
         void                        clipBy(const Rect& outerRect) noexcept;
+        constexpr Float2            bound(const Float2& position) const noexcept;
         constexpr const bool        contains(const Float2& position) const noexcept;
         constexpr const bool        contains(const Rect& rhs) const noexcept;
+    
+    public:
         const bool                  isNan() const noexcept;
         void                        setNan() noexcept;
+
+    private:
+        constexpr float             boundHorz(const float x) const noexcept;
+        constexpr float             boundVert(const float y) const noexcept;
 
     private:
         Float4                      _raw;
