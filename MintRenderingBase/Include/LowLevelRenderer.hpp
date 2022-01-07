@@ -17,9 +17,9 @@ namespace mint
         inline LowLevelRenderer<T>::LowLevelRenderer(GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _vertexStride{ sizeof(T) }
-            , _vertexBufferId{}
+            , _vertexBufferID{}
             , _indexBase{ 0 }
-            , _indexBufferId{}
+            , _indexBufferID{}
         {
             __noop;
         }
@@ -107,8 +107,8 @@ namespace mint
             prepareBuffers();
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
-            DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+            DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
+            DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
             vertexBuffer.bindAsInput();
             indexBuffer.bindAsInput();
 
@@ -152,8 +152,8 @@ namespace mint
             optimizeRenderCommands();
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
-            DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+            DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
+            DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
             vertexBuffer.bindAsInput();
             indexBuffer.bindAsInput();
 
@@ -193,26 +193,26 @@ namespace mint
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
-            if (_vertexBufferId.isValid() == false && vertexCount > 0)
+            if (_vertexBufferID.isValid() == false && vertexCount > 0)
             {
-                _vertexBufferId = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
+                _vertexBufferID = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
             }
 
-            if (_vertexBufferId.isValid() == true)
+            if (_vertexBufferID.isValid() == true)
             {
-                DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferId);
+                DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
                 vertexBuffer.updateBuffer(&_vertices[0], vertexCount);
             }
 
             const uint32 indexCount = static_cast<uint32>(_indices.size());
-            if (_indexBufferId.isValid() == false && indexCount > 0)
+            if (_indexBufferID.isValid() == false && indexCount > 0)
             {
-                _indexBufferId = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
+                _indexBufferID = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
             }
 
-            if (_indexBufferId.isValid() == true)
+            if (_indexBufferID.isValid() == true)
             {
-                DxResource& indexBuffer = resourcePool.getResource(_indexBufferId);
+                DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
                 indexBuffer.updateBuffer(&_indices[0], indexCount);
             }
         }

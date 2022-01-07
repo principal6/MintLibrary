@@ -297,13 +297,13 @@ namespace mint
             initializeReflection();
         }
 
-        inline ControlData::ControlData(const ControlID& id, const ControlID& parentId, const ControlType controlType)
-            : ControlData(id, parentId, controlType, Float2::kNan)
+        inline ControlData::ControlData(const ControlID& id, const ControlID& parentID, const ControlType controlType)
+            : ControlData(id, parentID, controlType, Float2::kNan)
         {
             __noop;
         }
 
-        inline ControlData::ControlData(const ControlID& id, const ControlID& parentId, const ControlType controlType, const Float2& size)
+        inline ControlData::ControlData(const ControlID& id, const ControlID& parentID, const ControlType controlType, const Float2& size)
             : _updateCount{ 0 }
             , _interactionSize{ size }
             , _nonDockInteractionSize{ size }
@@ -313,7 +313,7 @@ namespace mint
             , _dockContext{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
             , _id{ id }
-            , _parentId{ parentId }
+            , _parentID{ parentID }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
         {
@@ -402,19 +402,19 @@ namespace mint
             _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
         }
 
-        MINT_INLINE const ControlID& ControlData::getId() const noexcept
+        MINT_INLINE const ControlID& ControlData::getID() const noexcept
         {
             return _id;
         }
 
-        MINT_INLINE void ControlData::setParentId(const ControlID& parentId) noexcept
+        MINT_INLINE void ControlData::setParentID(const ControlID& parentID) noexcept
         {
-            _parentId = parentId;
+            _parentID = parentID;
         }
 
-        MINT_INLINE const ControlID& ControlData::getParentId() const noexcept
+        MINT_INLINE const ControlID& ControlData::getParentID() const noexcept
         {
-            return _parentId;
+            return _parentID;
         }
 
         MINT_INLINE const int16 ControlData::getLastAddedChildIndex() const noexcept
@@ -568,7 +568,7 @@ namespace mint
         MINT_INLINE const bool ControlData::isFocusedDocker(const ControlData& dockerControlData) const noexcept
         {
             const DockZoneData& dockZoneData = getDockZoneData(dockerControlData._dockContext._lastDockZone);
-            return dockZoneData.getDockedControlIndex(dockerControlData.getId()) == dockZoneData._focusedDockedControlIndex;
+            return dockZoneData.getDockedControlIndex(dockerControlData.getID()) == dockZoneData._focusedDockedControlIndex;
         }
 
         MINT_INLINE void ControlData::setDockZoneSize(const DockZone dockZone, const Float2& dockSize) noexcept

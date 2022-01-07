@@ -28,9 +28,6 @@
     <ClInclude Include="Include\ScopedCpuProfiler.h" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="MintLibrary.natvis" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Include\ScopedCpuProfiler.inl" />
   </ItemGroup>
   <ItemGroup>

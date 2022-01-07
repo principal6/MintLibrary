@@ -18,12 +18,12 @@
 
 namespace mint
 {
-    class UniqueStringAId;
+    class UniqueStringAID;
     class UniqueStringA;
     class UniqueStringPoolA;
 
 
-    class UniqueStringAId
+    class UniqueStringAID
     {
         friend UniqueStringA;
         friend UniqueStringPoolA;
@@ -32,33 +32,33 @@ namespace mint
         static constexpr uint32 kInvalidRawID = kUint32Max;
 
     public:
-                                UniqueStringAId();
+                                UniqueStringAID();
 
 #if !defined MINT_UNIQUE_STRING_EXPOSE_ID
     private:
 #endif
-                                UniqueStringAId(const uint32 newRawID);
+                                UniqueStringAID(const uint32 newRawID);
 
     public:
-                                UniqueStringAId(const UniqueStringAId& rhs) = default;
-                                UniqueStringAId(UniqueStringAId&& rhs) noexcept = default;
-                                ~UniqueStringAId() = default;
+                                UniqueStringAID(const UniqueStringAID& rhs) = default;
+                                UniqueStringAID(UniqueStringAID&& rhs) noexcept = default;
+                                ~UniqueStringAID() = default;
 
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
     public:
 #else
     private:
 #endif
-        UniqueStringAId&        operator=(const UniqueStringAId& rhs) = default;
-        UniqueStringAId&        operator=(UniqueStringAId && rhs) noexcept = default;
+        UniqueStringAID&        operator=(const UniqueStringAID& rhs) = default;
+        UniqueStringAID&        operator=(UniqueStringAID && rhs) noexcept = default;
         
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
     public:
 #else
     private:
 #endif
-        const bool              operator==(const UniqueStringAId& rhs) const noexcept;
-        const bool              operator!=(const UniqueStringAId& rhs) const noexcept;
+        const bool              operator==(const UniqueStringAID& rhs) const noexcept;
+        const bool              operator!=(const UniqueStringAID& rhs) const noexcept;
 
     private:
         uint32                  _rawID;
@@ -68,13 +68,13 @@ namespace mint
     class UniqueStringA
     {
     public:
-        static const UniqueStringAId    kInvalidId;
+        static const UniqueStringAID    kInvalidID;
 
     public:
                                         UniqueStringA();
     explicit                            UniqueStringA(const char* const rawString);
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    explicit                            UniqueStringA(const UniqueStringAId id);
+    explicit                            UniqueStringA(const UniqueStringAID id);
 #endif
                                         UniqueStringA(const UniqueStringA& rhs) = default;
                                         UniqueStringA(UniqueStringA&& rhs) noexcept = default;
@@ -91,14 +91,14 @@ namespace mint
     public:
         const char*                     c_str() const noexcept;
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-        const UniqueStringAId           getId() const noexcept;
+        const UniqueStringAID           getID() const noexcept;
 #endif
 
     private:
         static UniqueStringPoolA        _pool;
 
     private:
-        UniqueStringAId                 _id;
+        UniqueStringAID                 _id;
 
 #if defined MINT_DEBUG
     private:
@@ -118,16 +118,16 @@ namespace mint
                                             ~UniqueStringPoolA();
 
     public:
-        const UniqueStringAId               registerString(const char* const rawString) noexcept;
-        const bool                          isValid(const UniqueStringAId id) const noexcept;
-        const char*                         getRawString(const UniqueStringAId id) const noexcept;
+        const UniqueStringAID               registerString(const char* const rawString) noexcept;
+        const bool                          isValid(const UniqueStringAID id) const noexcept;
+        const char*                         getRawString(const UniqueStringAID id) const noexcept;
 
     public:
         void                                reserve(const uint32 rawCapacity);
 
     private:
         std::mutex                          _mutex;
-        HashMap<uint64, UniqueStringAId>    _registrationMap;
+        HashMap<uint64, UniqueStringAID>    _registrationMap;
 
     private:
         Vector<uint32>                      _offsetArray;

@@ -388,13 +388,13 @@ namespace mint
             // RendererContext 고를 때 사용
             const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
             const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetId) const noexcept;
+            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept;
             const bool                                  isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
-            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateId) const noexcept;
-            const bool                                  isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateId) const noexcept;
-            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateId) const noexcept;
-            const bool                                  isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateId) const noexcept;
+            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept;
+            const bool                                  isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept;
+            const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateID) const noexcept;
+            const bool                                  isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateID) const noexcept;
 
             const bool                                  isParentControlRoot(const ControlData& controlData) const noexcept;
 

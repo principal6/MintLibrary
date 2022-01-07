@@ -92,7 +92,7 @@ namespace mint
             }
 
         private:
-            MINT_INLINE void                  assignIdXXX() noexcept
+            MINT_INLINE void                  assignIDXXX() noexcept
             {
                 ++_lastRawID;
                 _rawID = _lastRawID;
@@ -143,15 +143,15 @@ namespace mint
             }
 
         public:
-            MINT_INLINE const DxObjectID&   getId() const noexcept
+            MINT_INLINE const DxObjectID&   getID() const noexcept
             {
                 return _objectID;
             }
 
         protected:
-            MINT_INLINE void                assignIdXXX() noexcept
+            MINT_INLINE void                assignIDXXX() noexcept
             {
-                _objectID.assignIdXXX();
+                _objectID.assignIDXXX();
             }
 
         protected:

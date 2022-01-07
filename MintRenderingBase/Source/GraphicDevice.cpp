@@ -165,7 +165,7 @@ namespace mint
             {
                 shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
+            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
 
             _graphicDevice._deviceContext->VSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
@@ -181,7 +181,7 @@ namespace mint
             {
                 shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
+            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
 
             _graphicDevice._deviceContext->GSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
@@ -197,7 +197,7 @@ namespace mint
             {
                 shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
+            MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
 
             _graphicDevice._deviceContext->PSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
         }
@@ -213,7 +213,7 @@ namespace mint
             {
                 constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
+            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
 
             _graphicDevice._deviceContext->VSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
@@ -229,7 +229,7 @@ namespace mint
             {
                 constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
+            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
 
             _graphicDevice._deviceContext->GSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
@@ -245,7 +245,7 @@ namespace mint
             {
                 constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
-            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
+            MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
 
             _graphicDevice._deviceContext->PSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
         }
@@ -505,9 +505,9 @@ namespace mint
 
                 {
                     const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(_cbViewData));
-                    _cbViewId = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
+                    _cbViewID = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
                     
-                    DxResource& cbView = _resourcePool.getResource(_cbViewId);
+                    DxResource& cbView = _resourcePool.getResource(_cbViewID);
                     cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::GeometryShader, cbView.getRegisterIndex());
                     cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
@@ -516,7 +516,7 @@ namespace mint
                 {
                     CB_Transform cbTransformData;
                     const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(cbTransformData));
-                    _cbTransformId = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
+                    _cbTransformID = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
                 }
 
                 initialize2DProjectionMatrix(Float2(windowSize));
@@ -531,13 +531,13 @@ namespace mint
                 {
                     SB_Transform sbTransformData;
                     const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbTransformData));
-                    _sbTransformId = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
+                    _sbTransformID = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
                 }
 
                 {
                     SB_Material sbMaterialData;
                     const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbMaterialData));
-                    _sbMaterialId = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
+                    _sbMaterialID = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
                 }
             }
         }
@@ -698,7 +698,7 @@ namespace mint
         {
             _cbViewData._cb2DProjectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 
-            DxResource& cbView = _resourcePool.getResource(_cbViewId);
+            DxResource& cbView = _resourcePool.getResource(_cbViewID);
             cbView.updateBuffer(&_cbViewData, 1);
         }
 
@@ -708,7 +708,7 @@ namespace mint
             _cbViewData._cb3DProjectionMatrix = projectionMatrix;
             _cbViewData._cbViewProjectionMatrix = _cbViewData._cb3DProjectionMatrix * _cbViewData._cbViewMatrix;
 
-            DxResource& cbView = _resourcePool.getResource(_cbViewId);
+            DxResource& cbView = _resourcePool.getResource(_cbViewID);
             cbView.updateBuffer(&_cbViewData, 1);
         }
 

@@ -22,9 +22,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="MintLibrary.natvis" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Include">
       <UniqueIdentifier>{9688e6c4-def7-4070-9632-6b2869865ca3}</UniqueIdentifier>
     </Filter>

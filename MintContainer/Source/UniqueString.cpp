@@ -8,10 +8,10 @@
 
 namespace mint
 {
-    const UniqueStringAId UniqueStringA::kInvalidId;
+    const UniqueStringAID UniqueStringA::kInvalidID;
     UniqueStringPoolA UniqueStringA::_pool;
     UniqueStringA::UniqueStringA()
-        : _id{ UniqueStringA::kInvalidId }
+        : _id{ UniqueStringA::kInvalidID }
 #if defined MINT_DEBUG
         , _str{}
 #endif
@@ -29,8 +29,8 @@ namespace mint
     }
 
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    UniqueStringA::UniqueStringA(const UniqueStringAId id)
-        : _id{ (_pool.isValid(id)) ? id : UniqueStringA::kInvalidId }
+    UniqueStringA::UniqueStringA(const UniqueStringAID id)
+        : _id{ (_pool.isValid(id)) ? id : UniqueStringA::kInvalidID }
 #if defined MINT_DEBUG
         , _str{ _pool.getRawString(_id) }
 #endif
@@ -54,11 +54,11 @@ namespace mint
         MINT_DELETE_ARRAY(_rawMemory);
     }
 
-    const UniqueStringAId UniqueStringPoolA::registerString(const char* const rawString) noexcept
+    const UniqueStringAID UniqueStringPoolA::registerString(const char* const rawString) noexcept
     {
         if (rawString == nullptr)
         {
-            return UniqueStringA::kInvalidId;
+            return UniqueStringA::kInvalidID;
         }
 
         const uint64 hash = computeHash(rawString);
@@ -76,15 +76,15 @@ namespace mint
             reserve(_rawCapacity * 2);
         }
 
-        UniqueStringAId newId(_uniqueStringCount);
-        _offsetArray[newId._rawID] = _totalLength;
-        memcpy(&_rawMemory[_offsetArray[newId._rawID]], rawString, lengthNullIncluded - 1);
+        UniqueStringAID newID(_uniqueStringCount);
+        _offsetArray[newID._rawID] = _totalLength;
+        memcpy(&_rawMemory[_offsetArray[newID._rawID]], rawString, lengthNullIncluded - 1);
 
         _totalLength += lengthNullIncluded;
         ++_uniqueStringCount;
-        _registrationMap.insert(hash, newId);
+        _registrationMap.insert(hash, newID);
 
-        return newId;
+        return newID;
     }
 
     void UniqueStringPoolA::reserve(const uint32 rawCapacity)

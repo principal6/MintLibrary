@@ -99,18 +99,18 @@ namespace mint
         {
         public:
                                                     LineSkipperTableItem();
-                                                    LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupId);
+                                                    LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupID);
 
         public:
             MINT_INLINE const bool                  isSameString(const LineSkipperTableItem& rhs) const noexcept { return _string == rhs._string; }
-            MINT_INLINE const bool                  isSameGroup(const LineSkipperTableItem& rhs) const noexcept { return _groupId == rhs._groupId; }
+            MINT_INLINE const bool                  isSameGroup(const LineSkipperTableItem& rhs) const noexcept { return _groupID == rhs._groupID; }
             MINT_INLINE const bool                  checkSemantic(const LineSkipperSemantic lineSkipperSemantic) const noexcept { return _lineSkipperSemantic == lineSkipperSemantic; }
             MINT_INLINE const bool                  checkClassifier(const LineSkipperClassifier lineSkipperClassifier) const noexcept { return _lineSkipperClassifier == lineSkipperClassifier; }
             MINT_INLINE const LineSkipperClassifier getClassifier() const noexcept { return _lineSkipperClassifier; }
 
         private:
             std::string                             _string;
-            uint16                                  _groupId;
+            uint16                                  _groupID;
             LineSkipperSemantic                     _lineSkipperSemantic;
             LineSkipperClassifier                   _lineSkipperClassifier;
         };
@@ -144,7 +144,7 @@ namespace mint
             void                            registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier);
 
         private:
-            const uint16                    getLineSkipperNextGroupId() noexcept;
+            const uint16                    getLineSkipperNextGroupID() noexcept;
 
         protected:
             virtual const bool              execute() noexcept abstract;
@@ -204,7 +204,7 @@ namespace mint
         protected:
             Vector<LineSkipperTableItem>    _lineSkipperTable;
             HashMap<uint64, uint32>         _lineSkipperUmap;
-            uint16                          _lineSkipperNextGroupId;
+            uint16                          _lineSkipperNextGroupID;
 
         protected:
             Vector<std::string>             _keywordTable;

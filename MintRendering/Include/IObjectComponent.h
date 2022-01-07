@@ -29,7 +29,7 @@ namespace mint
         };
 
 
-        class ObjectComponentId final : public IID
+        class ObjectComponentID final : public IID
         {
             friend IObjectComponent;
 
@@ -71,13 +71,13 @@ namespace mint
         public:
             MINT_INLINE const ObjectComponentType   getType() const noexcept { return _type; }
             MINT_INLINE const bool                  isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
-            MINT_INLINE const ObjectComponentId&    getId() const noexcept { return _id; }
+            MINT_INLINE const ObjectComponentID&    getID() const noexcept { return _id; }
             MINT_INLINE Object*                     getOwnerObject() const noexcept { return _ownerObject; }
         
         protected:
             Object*                                 _ownerObject;
             ObjectComponentType                     _type;
-            ObjectComponentId                       _id;
+            ObjectComponentID                       _id;
         };
     }
 }

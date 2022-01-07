@@ -586,12 +586,12 @@ namespace mint
                 }, meshData, uvs);
         }
 
-        void MeshGenerator::setMaterialId(MeshData& meshData, const uint32 materialId) noexcept
+        void MeshGenerator::setMaterialID(MeshData& meshData, const uint32 materialID) noexcept
         {
             const uint32 vertexCount = meshData._vertexArray.size();
             for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
             {
-                meshData._vertexArray[vertexIndex]._materialId = materialId;
+                meshData._vertexArray[vertexIndex]._materialID = materialID;
             }
         }
 

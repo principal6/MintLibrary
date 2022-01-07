@@ -64,7 +64,7 @@ namespace mint
 
                 using namespace Language;
                 const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
-                _vertexShaderId = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
+                _vertexShaderID = shaderPool.pushVertexShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", &typeMetaData);
             }
 
             {
@@ -84,7 +84,7 @@ namespace mint
                     }
                     )"
                 };
-                _geometryShaderId = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", DxShaderType::GeometryShader);
+                _geometryShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", DxShaderType::GeometryShader);
             }
 
             {
@@ -146,7 +146,7 @@ namespace mint
                     }
                     )"
                 };
-                _pixelShaderId = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", DxShaderType::PixelShader);
+                _pixelShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", DxShaderType::PixelShader);
             }
         }
 
@@ -169,17 +169,17 @@ namespace mint
                 prepareTransformBuffer();
 
                 DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-                shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
+                shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
 
                 if (getUseMultipleViewports() == true)
                 {
-                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderId);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
                 }
 
-                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
+                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderID);
 
                 DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSbTransformId());
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();

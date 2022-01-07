@@ -182,9 +182,9 @@ namespace mint
             StateManager&                               getStateManager() noexcept;
 
         public: // Common buffers
-            DxObjectID                                  getCommonCbTransformId() const noexcept;
-            DxObjectID                                  getCommonSbTransformId() const noexcept;
-            DxObjectID                                  getCommonSbMaterialId() const noexcept;
+            DxObjectID                                  getCommonCbTransformID() const noexcept;
+            DxObjectID                                  getCommonSBTransformID() const noexcept;
+            DxObjectID                                  getCommonSBMaterialID() const noexcept;
 
         public:
             void                                        initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
@@ -232,12 +232,12 @@ namespace mint
 
         private:
             CB_View                                     _cbViewData;
-            DxObjectID                                  _cbViewId;
+            DxObjectID                                  _cbViewID;
 
         private: // Common buffers
-            DxObjectID                                  _cbTransformId;
-            DxObjectID                                  _sbTransformId;
-            DxObjectID                                  _sbMaterialId;
+            DxObjectID                                  _cbTransformID;
+            DxObjectID                                  _sbTransformID;
+            DxObjectID                                  _sbMaterialID;
 
         private:
             ComPtr<ID3D11SamplerState>                  _samplerState;

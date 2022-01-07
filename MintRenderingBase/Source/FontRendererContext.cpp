@@ -244,13 +244,13 @@ namespace mint
 #endif
             
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            _fontData._fontTextureId = resourcePool.pushTexture2D(DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
+            _fontData._fontTextureID = resourcePool.pushTexture2D(DxTextureFormat::R8_UNORM, &rawData[0], textureWidth, textureHeight);
             return true;
         }
 
         const bool FontRendererContext::loadFontData(const FontData& fontData)
         {
-            if (fontData._fontTextureId.isValid() == false)
+            if (fontData._fontTextureID.isValid() == false)
             {
                 MINT_LOG_ERROR("김장원", "FontData 의 FontTexture 가 Invalid 합니다!");
                 return false;
@@ -544,7 +544,7 @@ namespace mint
 
                 using namespace Language;
                 const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
-                _vertexShaderId = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
+                _vertexShaderID = shaderPool.pushVertexShaderFromMemory("FontRendererVS", kShaderString, "main", &typeMetaData);
             }
 
             {
@@ -564,7 +564,7 @@ namespace mint
                     }
                     )"
                 };
-                _geometryShaderId = shaderPool.pushNonVertexShaderFromMemory("FontRendererGS", kShaderString, "main", DxShaderType::GeometryShader);
+                _geometryShaderID = shaderPool.pushNonVertexShaderFromMemory("FontRendererGS", kShaderString, "main", DxShaderType::GeometryShader);
             }
 
             // Compile pixel shader
@@ -597,7 +597,7 @@ namespace mint
                     }
                     )"
                 };
-                _pixelShaderId = shaderPool.pushNonVertexShaderFromMemory("FontRendererPS", kShaderString, "main", DxShaderType::PixelShader);
+                _pixelShaderID = shaderPool.pushNonVertexShaderFromMemory("FontRendererPS", kShaderString, "main", DxShaderType::PixelShader);
             }
         }
 
@@ -619,20 +619,20 @@ namespace mint
             {
                 prepareTransformBuffer();
 
-                _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureId, DxShaderType::PixelShader, 0);
+                _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
 
                 DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-                shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderId);
+                shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
 
                 if (getUseMultipleViewports() == true)
                 {
-                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderId);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
                 }
 
-                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderId);
+                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderID);
 
                 DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSbTransformId());
+                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
                 sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
                 _lowLevelRenderer->executeRenderCommands();
@@ -770,9 +770,9 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        const DxObjectID& FontRendererContext::getFontTextureId() const noexcept
+        const DxObjectID& FontRendererContext::getFontTextureID() const noexcept
         {
-            return _fontData._fontTextureId;
+            return _fontData._fontTextureID;
         }
 
         void FontRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)

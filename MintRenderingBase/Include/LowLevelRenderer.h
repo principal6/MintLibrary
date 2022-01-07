@@ -82,12 +82,12 @@ namespace mint
         
         private:
             Vector<T>                       _vertices;
-            DxObjectID                      _vertexBufferId;
+            DxObjectID                      _vertexBufferID;
 
         private:
             Vector<IndexElementType>        _indices;
             IndexElementType                _indexBase;
-            DxObjectID                      _indexBufferId;
+            DxObjectID                      _indexBufferID;
 
         private:
             Vector<RenderCommand>           _renderCommands;

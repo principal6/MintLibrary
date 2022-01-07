@@ -220,7 +220,7 @@ namespace mint
             Float2          _minSize                        = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
             bool            _alwaysResetDisplaySize         = true;
             bool            _alwaysResetParent              = false;
-            ControlID       _parentIdOverride               = ControlID();
+            ControlID       _parentIDOverride               = ControlID();
             bool            _alwaysResetPosition            = true;
             bool            _ignoreMeForContentAreaSize     = false;
             ClipRectUsage   _clipRectUsage                  = ClipRectUsage::ParentsChild;
@@ -307,17 +307,17 @@ namespace mint
         public:
                                                 REFLECTION_CLASS(ControlData);
                                                 ControlData();
-                                                ControlData(const ControlID& id, const ControlID& parentId, const ControlType controlType);
-                                                ControlData(const ControlID& id, const ControlID& parentId, const ControlType controlType, const Float2& size);
+                                                ControlData(const ControlID& id, const ControlID& parentID, const ControlType controlType);
+                                                ControlData(const ControlID& id, const ControlID& parentID, const ControlType controlType, const Float2& size);
     
         public:
             void                                clearPerFrameData() noexcept;
             void                                updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
             
         public:
-            const ControlID&                    getId() const noexcept;
-            void                                setParentId(const ControlID& parentId) noexcept;
-            const ControlID&                    getParentId() const noexcept;
+            const ControlID&                    getID() const noexcept;
+            void                                setParentID(const ControlID& parentID) noexcept;
+            const ControlID&                    getParentID() const noexcept;
             const int16                         getLastAddedChildIndex() const noexcept;
             const Vector<ControlID>&            getChildControlIDs() const noexcept;
             const uint16                        getChildControlCount() const noexcept;
@@ -404,7 +404,7 @@ namespace mint
         private:
             ControlType                         _controlType;
             REFLECTION_MEMBER(ControlID, _id);
-            ControlID                           _parentId;
+            ControlID                           _parentID;
             Rect                                _innerPadding; // For child controls
             Float2                              _minSize;
             Float2                              _interactionSize; // _nonDockInteractionSize + dock size

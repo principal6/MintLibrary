@@ -386,11 +386,11 @@ namespace mint
             resource._resourceType = DxResourceType::ConstantBuffer;
             if (resource.createBuffer(resourceContent, bufferSize, 1) == true)
             {
-                resource.assignIdXXX();
+                resource.assignIDXXX();
                 resource._registerIndex = registerIndex;
                 
                 _resourceArray.push_back(std::move(resource));
-                return _resourceArray.back().getId();
+                return _resourceArray.back().getID();
             }
             MINT_ASSERT("김장원", false, "pushConstantBuffer 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
@@ -402,9 +402,9 @@ namespace mint
             resource._resourceType = DxResourceType::VertexBuffer;
             if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
             {
-                resource.assignIdXXX();
+                resource.assignIDXXX();
                 _resourceArray.push_back(std::move(resource));
-                return _resourceArray.back().getId();
+                return _resourceArray.back().getID();
             }
 
             MINT_ASSERT("김장원", false, "pushVertexBuffer 에 실패했습니다!");
@@ -417,9 +417,9 @@ namespace mint
             resource._resourceType = DxResourceType::IndexBuffer;
             if (resource.createBuffer(resourceContent, DxResource::kIndexBufferElementStride, elementCount) == true)
             {
-                resource.assignIdXXX();
+                resource.assignIDXXX();
                 _resourceArray.push_back(std::move(resource));
-                return _resourceArray.back().getId();
+                return _resourceArray.back().getID();
             }
 
             MINT_ASSERT("김장원", false, "pushIndexBuffer 에 실패했습니다!");
@@ -432,11 +432,11 @@ namespace mint
             resource._resourceType = DxResourceType::StructuredBuffer;
             if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
             {
-                resource.assignIdXXX();
+                resource.assignIDXXX();
                 resource._registerIndex = registerIndex;
 
                 _resourceArray.push_back(std::move(resource));
-                return _resourceArray.back().getId();
+                return _resourceArray.back().getID();
             }
 
             MINT_ASSERT("김장원", false, "pushStructuredBuffer 에 실패했습니다!");
@@ -449,9 +449,9 @@ namespace mint
             resource._resourceType = DxResourceType::Texture2D;
             if (resource.createTexture(format, textureContent, width, height) == true)
             {
-                resource.assignIdXXX();
+                resource.assignIDXXX();
                 _resourceArray.push_back(std::move(resource));
-                return _resourceArray.back().getId();
+                return _resourceArray.back().getID();
             }
 
             MINT_ASSERT("김장원", false, "pushTexture2D 에 실패했습니다!");

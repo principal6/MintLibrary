@@ -42,16 +42,16 @@ namespace mint
 
 
         LineSkipperTableItem::LineSkipperTableItem()
-            : _groupId{ kUint16Max }
+            : _groupID{ kUint16Max }
             , _lineSkipperSemantic{ LineSkipperSemantic::COUNT }
             , _lineSkipperClassifier{ LineSkipperClassifier::COUNT }
         {
             __noop;
         }
 
-        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupId)
+        LineSkipperTableItem::LineSkipperTableItem(const char* const string, const LineSkipperSemantic lineSkipperSemantic, const LineSkipperClassifier lineSkipperClassifier, const uint16 groupID)
             : _string{ string }
-            , _groupId{ groupId }
+            , _groupID{ groupID }
             , _lineSkipperSemantic{ lineSkipperSemantic }
             , _lineSkipperClassifier{ lineSkipperClassifier }
         {
@@ -65,7 +65,7 @@ namespace mint
             , _statementTerminator{ '\0' }
             , _parsePlainEscaper{ false }
             , _defaultSymbolClassifier{ SymbolClassifier::Identifier }
-            , _lineSkipperNextGroupId{ 0 }
+            , _lineSkipperNextGroupID{ 0 }
         {
             __noop;
         }
@@ -118,11 +118,11 @@ namespace mint
 
             // Open & Close
             {
-                const uint16 nextGroupId = getLineSkipperNextGroupId();
+                const uint16 nextGroupID = getLineSkipperNextGroupID();
                 const uint64 keyOpen = (lengthOpen == 1) ? lineSkipperOpen[0] : static_cast<uint64>(lineSkipperOpen[1]) * 255 + lineSkipperOpen[0];
                 if (_lineSkipperUmap.find(keyOpen).isValid() == false)
                 {
-                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenMarker, nextGroupId));
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperOpen, lineSkipperSemantic, LineSkipperClassifier::OpenMarker, nextGroupID));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(keyOpen, lineSkipperIndex);
                 }
@@ -130,7 +130,7 @@ namespace mint
                 const uint64 keyClose = (lengthClose == 1) ? lineSkipperClose[0] : static_cast<uint64>(lineSkipperClose[1]) * 255 + lineSkipperClose[0];
                 if (_lineSkipperUmap.find(keyClose).isValid() == false)
                 {
-                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, lineSkipperSemantic, LineSkipperClassifier::CloseMarker, nextGroupId));
+                    _lineSkipperTable.push_back(LineSkipperTableItem(lineSkipperClose, lineSkipperSemantic, LineSkipperClassifier::CloseMarker, nextGroupID));
                     const uint32 lineSkipperIndex = _lineSkipperTable.size() - 1;
                     _lineSkipperUmap.insert(keyClose, lineSkipperIndex);
                 }
@@ -233,10 +233,10 @@ namespace mint
             }
         }
 
-        const uint16 ILexer::getLineSkipperNextGroupId() noexcept
+        const uint16 ILexer::getLineSkipperNextGroupID() noexcept
         {
-            const uint16 result = _lineSkipperNextGroupId;
-            ++_lineSkipperNextGroupId;
+            const uint16 result = _lineSkipperNextGroupID;
+            ++_lineSkipperNextGroupID;
             return result;
         }
 

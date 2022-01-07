@@ -32,16 +32,16 @@ namespace mint
             const Vector<MeshComponent*>& meshComponents = objectPool.getMeshComponents();
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultId);
+            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultID);
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformId());
+            DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformID());
             {
                 cbTransform.bindToShader(DxShaderType::VertexShader, cbTransform.getRegisterIndex());
                 cbTransform.bindToShader(DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
             }
 
-            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSbMaterialId());
+            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSBMaterialID());
             {
                 sbMaterial.bindToShader(DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
             }
@@ -61,21 +61,21 @@ namespace mint
                 sbMaterialData._diffuseColor = Color::kBlue;
                 sbMaterial.updateBuffer(&sbMaterialData, 1);
                 
-                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psDefaultId);
+                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psDefaultID);
                 shaderPool.unbindShader(DxShaderType::GeometryShader);
                 _lowLevelRenderer.render(RenderingPrimitive::TriangleList);
 
                 if (meshComponent->shouldDrawNormals() == true)
                 {
-                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsNormalId);
-                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorId);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsNormalID);
+                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorID);
                     _lowLevelRenderer.render(RenderingPrimitive::LineList);
                 }
 
                 if (meshComponent->shouldDrawEdges() == true)
                 {
-                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsTriangleEdgeId);
-                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorId);
+                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _gsTriangleEdgeID);
+                    shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psTexCoordAsColorID);
                     _lowLevelRenderer.render(RenderingPrimitive::TriangleList);
                 }
             }
@@ -88,12 +88,12 @@ namespace mint
             const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _vsDefaultID = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
+            _psDefaultID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
 
-            _gsNormalId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _gsTriangleEdgeId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
-            _psTexCoordAsColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _gsNormalID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsNormal.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _gsTriangleEdgeID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, "Assets/HlslBinary/");
+            _psTexCoordAsColorID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
     }
 }

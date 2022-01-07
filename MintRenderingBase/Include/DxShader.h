@@ -151,7 +151,7 @@ namespace mint
             Vector<DxShader>            _pixelShaderArray;
 
         private:
-            DxObjectID                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];
+            DxObjectID                  _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
         };
     }
 }

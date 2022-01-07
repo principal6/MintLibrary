@@ -32,7 +32,7 @@ namespace mint
 #pragma region GuiContext - ControlStackData
         inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
             : _controlType{ controlData.getControlType() }
-            , _id{ controlData.getId() }
+            , _id{ controlData.getID() }
         {
             __noop;
         }
@@ -80,7 +80,7 @@ namespace mint
 
         MINT_INLINE Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
-            return controlData._position - getControlData(controlData.getParentId())._position;
+            return controlData._position - getControlData(controlData.getParentID())._position;
         }
 
         MINT_INLINE const Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept

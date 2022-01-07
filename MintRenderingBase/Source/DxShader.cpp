@@ -162,9 +162,9 @@ namespace mint
         {
             if (createVertexShaderInternal(shader, inputElementTypeMetaData) == true)
             {
-                shader.assignIdXXX();
+                shader.assignIDXXX();
                 _vertexShaderArray.push_back(std::move(shader));
-                return _vertexShaderArray.back().getId();
+                return _vertexShaderArray.back().getID();
             }
             return DxObjectID::kInvalidObjectID;
         }
@@ -175,15 +175,15 @@ namespace mint
             {
                 if (shaderType == DxShaderType::GeometryShader)
                 {
-                    shader.assignIdXXX();
+                    shader.assignIDXXX();
                     _geometryShaderArray.push_back(std::move(shader));
-                    return _geometryShaderArray.back().getId();
+                    return _geometryShaderArray.back().getID();
                 }
                 else if (shaderType == DxShaderType::PixelShader)
                 {
-                    shader.assignIdXXX();
+                    shader.assignIDXXX();
                     _pixelShaderArray.push_back(std::move(shader));
-                    return _pixelShaderArray.back().getId();
+                    return _pixelShaderArray.back().getID();
                 }
             }
             return DxObjectID::kInvalidObjectID;
@@ -396,10 +396,10 @@ namespace mint
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
                 const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
-                const DxObjectID objectID = _boundShaderIdArray[shaderTypeIndex];
+                const DxObjectID objectID = _boundShaderIDArray[shaderTypeIndex];
                 if (objectID.isValid() == true)
                 {
-                    getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).unbind();
+                    getShader(shaderType, _boundShaderIDArray[shaderTypeIndex]).unbind();
                 }
             }
 
@@ -430,10 +430,10 @@ namespace mint
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
                 const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
-                const DxObjectID objectID = _boundShaderIdArray[shaderTypeIndex];
+                const DxObjectID objectID = _boundShaderIDArray[shaderTypeIndex];
                 if (objectID.isValid() == true)
                 {
-                    getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).bind();
+                    getShader(shaderType, _boundShaderIDArray[shaderTypeIndex]).bind();
                 }
             }
         }
@@ -452,9 +452,9 @@ namespace mint
         void DxShaderPool::bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID)
         {
             const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-            if (_boundShaderIdArray[shaderTypeIndex] != objectID)
+            if (_boundShaderIDArray[shaderTypeIndex] != objectID)
             {
-                _boundShaderIdArray[shaderTypeIndex] = objectID;
+                _boundShaderIDArray[shaderTypeIndex] = objectID;
 
                 getShader(shaderType, objectID).bind();
             }
@@ -468,13 +468,13 @@ namespace mint
             }
 
             const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-            if (_boundShaderIdArray[shaderTypeIndex].isValid() == false)
+            if (_boundShaderIDArray[shaderTypeIndex].isValid() == false)
             {
                 return;
             }
 
-            getShader(shaderType, _boundShaderIdArray[shaderTypeIndex]).unbind();
-            _boundShaderIdArray[shaderTypeIndex] = DxObjectID::kInvalidObjectID;
+            getShader(shaderType, _boundShaderIDArray[shaderTypeIndex]).unbind();
+            _boundShaderIDArray[shaderTypeIndex] = DxObjectID::kInvalidObjectID;
         }
 
         const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectID& objectID)

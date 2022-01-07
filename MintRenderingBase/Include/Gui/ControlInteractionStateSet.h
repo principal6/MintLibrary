@@ -51,11 +51,11 @@ namespace mint
             MINT_INLINE const bool          isMouseInteractionDoneThisFrame() const noexcept { return _isMouseInteractionDoneThisFrame; }
 
         public:
-            MINT_INLINE const bool          needToShowTooltip() const noexcept { return _tooltipParentWindowId.isValid(); }
+            MINT_INLINE const bool          needToShowTooltip() const noexcept { return _tooltipParentWindowID.isValid(); }
             MINT_INLINE const wchar_t*      getTooltipText() const noexcept { return _tooltipTextFinal; }
             const Float2                    getTooltipWindowPosition(const ControlData& tooltipParentWindow) const noexcept;
-            MINT_INLINE const ControlID&    getTooltipParentWindowId() const noexcept { return _tooltipParentWindowId; }
-            void                            setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlID& tooltipParentWindowId) noexcept;
+            MINT_INLINE const ControlID&    getTooltipParentWindowID() const noexcept { return _tooltipParentWindowID; }
+            void                            setTooltipData(const MouseStates& mouseStates, const wchar_t* const tooltipText, const ControlID& tooltipParentWindowID) noexcept;
 
         private:
             bool                            _isMouseInteractionDoneThisFrame = false;
@@ -67,7 +67,7 @@ namespace mint
             uint64                          _hoverStartTimeMs = 0;
             bool                            _hoverStarted = false;
             Float2                          _tooltipPosition;
-            ControlID                       _tooltipParentWindowId;
+            ControlID                       _tooltipParentWindowID;
             const wchar_t*                  _tooltipTextFinal = nullptr;
         };
     }

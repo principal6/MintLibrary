@@ -102,7 +102,7 @@ namespace mint
             const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.size());
             for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
             {
-                if (_meshComponentArray[meshComponentIndex]->getId() == meshComponent->getId())
+                if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
                 {
                     return;
                 }
@@ -122,7 +122,7 @@ namespace mint
             const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.size());
             for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
             {
-                if (_meshComponentArray[meshComponentIndex]->getId() == meshComponent->getId())
+                if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
                 {
                     foundIndex = meshComponentIndex;
                     break;

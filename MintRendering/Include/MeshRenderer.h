@@ -44,11 +44,11 @@ namespace mint
             Vector<SB_Material>             _sbMaterialDatas;
 
         private:
-            DxObjectID                      _vsDefaultId;
-            DxObjectID                      _gsNormalId;
-            DxObjectID                      _gsTriangleEdgeId;
-            DxObjectID                      _psDefaultId;
-            DxObjectID                      _psTexCoordAsColorId;
+            DxObjectID                      _vsDefaultID;
+            DxObjectID                      _gsNormalID;
+            DxObjectID                      _gsTriangleEdgeID;
+            DxObjectID                      _psDefaultID;
+            DxObjectID                      _psTexCoordAsColorID;
         };
     }
 }

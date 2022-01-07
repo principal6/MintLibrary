@@ -39,12 +39,12 @@ namespace mint
 
         void InstantRenderer::drawLine(const Float3& a, const Float3& b, const Color& color) noexcept
         {
-            const uint32 materialId = _sbMaterialDatas.size();
+            const uint32 materialID = _sbMaterialDatas.size();
             auto& vertices = _lowLevelRendererLine.vertices();
             auto& indices = _lowLevelRendererLine.indices();
 
             VS_INPUT vertex;
-            vertex._materialId = materialId;
+            vertex._materialID = materialID;
 
             vertex._positionU.setXyz(a);
             vertices.push_back(vertex);
@@ -156,15 +156,15 @@ namespace mint
             const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultId = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
-            _psColorId = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _vsDefaultID = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
+            _psDefaultID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _psColorID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
         }
 
         void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
         {
-            const uint32 materialId = _sbMaterialDatas.size();
-            MeshGenerator::setMaterialId(meshData, materialId);
+            const uint32 materialID = _sbMaterialDatas.size();
+            MeshGenerator::setMaterialID(meshData, materialID);
 
             _lowLevelRendererMesh.pushMesh(meshData);
 
@@ -176,11 +176,11 @@ namespace mint
         void InstantRenderer::render() noexcept
         {
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultId);
+            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vsDefaultID);
             shaderPool.unbindShader(DxShaderType::GeometryShader);
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformId());
+            DxResource& cbTransform = resourcePool.getResource(_graphicDevice.getCommonCbTransformID());
             {
                 cbTransform.bindToShader(DxShaderType::VertexShader, cbTransform.getRegisterIndex());
                 cbTransform.bindToShader(DxShaderType::GeometryShader, cbTransform.getRegisterIndex());
@@ -189,18 +189,18 @@ namespace mint
                 cbTransform.updateBuffer(&_cbTransformData, 1);
             }
 
-            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSbMaterialId());
+            DxResource& sbMaterial = resourcePool.getResource(_graphicDevice.getCommonSBMaterialID());
             {
                 sbMaterial.bindToShader(DxShaderType::PixelShader, sbMaterial.getRegisterIndex());
 
                 sbMaterial.updateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.size());
             }
             
-            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psColorId);
+            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psColorID);
             _lowLevelRendererLine.render(RenderingPrimitive::LineList);
             _lowLevelRendererLine.flush();
 
-            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psDefaultId);
+            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _psDefaultID);
             _lowLevelRendererMesh.render(RenderingPrimitive::TriangleList);
             _lowLevelRendererMesh.flush();
 

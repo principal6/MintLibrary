@@ -27,7 +27,7 @@ namespace mint
 
         //private:
             ClassifierType          _classifier;
-            std::string             _identifier;
+            std::string             _IDentifier;
             std::string             _value;
         };
 
