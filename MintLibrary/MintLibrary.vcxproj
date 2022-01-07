@@ -25,10 +25,10 @@
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\AllHeaders.h" />
     <ClInclude Include="Include\Profiler.h" />
-    <ClInclude Include="Include\ScopedCpuProfiler.h" />
+    <ClInclude Include="Include\ScopedCPUProfiler_.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\ScopedCpuProfiler.inl" />
+    <None Include="Include\ScopedCPUProfiler_.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AllHeaders.cpp" />

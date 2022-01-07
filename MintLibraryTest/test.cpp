@@ -63,7 +63,7 @@ void testFloatTypes()
         /*
         static constexpr uint64 kTestCount = 500'000'000;
         {
-            Profiler::ScopedCpuProfiler profiler("Profile - Float4");
+            Profiler::ScopedCPUProfiler profiler("Profile - Float4");
             Float4 a(1.0f, 0.0f, 1.0f, 0.0f);
             Float4 b(0.0f, 1.0f, 0.0f, 1.0f);
             Float4 c;
@@ -78,7 +78,7 @@ void testFloatTypes()
             }
         }
         {
-            Profiler::ScopedCpuProfiler profiler("Profile - AffineVecF");
+            Profiler::ScopedCPUProfiler profiler("Profile - AffineVecF");
             AffineVecF a(1.0f, 0.0f, 1.0f, 0.0f);
             AffineVecF b(0.0f, 1.0f, 0.0f, 1.0f);
             AffineVecF c;
@@ -92,7 +92,7 @@ void testFloatTypes()
                 //c = a.cross(b);
             }
         }
-        auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
+        auto logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
         */
 
         AffineVecF a;
@@ -503,10 +503,10 @@ const bool testWindow()
                     labelParam._common._fontColor = Rendering::Color(200, 220, 255, 255);
                     labelParam._alignmentHorz = Gui::TextAlignmentHorz::Left;
                     
-                    formatString(tempBuffer, L" FPS: %d", Profiler::FpsCounter::getFps());
+                    formatString(tempBuffer, L" FPS: %d", Profiler::FPSCounter::getFps());
                     guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
 
-                    formatString(tempBuffer, L" CPU: %d ms", Profiler::FpsCounter::getFrameTimeMs());
+                    formatString(tempBuffer, L" CPU: %d ms", Profiler::FPSCounter::getFrameTimeMs());
                     guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
                     
                     Float3& cameraPosition = testCameraObject->getObjectTransformSRT()._translation;
@@ -573,7 +573,7 @@ const bool testWindow()
             graphicDevice.endRendering();
         }
         
-        Profiler::FpsCounter::count();
+        Profiler::FPSCounter::count();
     }
     return true;
 }

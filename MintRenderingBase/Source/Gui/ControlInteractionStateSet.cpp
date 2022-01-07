@@ -3,7 +3,7 @@
 
 #include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
 
-#include <MintLibrary/Include/ScopedCpuProfiler.h>
+#include <MintLibrary/Include/ScopedCPUProfiler_.h>
 
 
 namespace mint

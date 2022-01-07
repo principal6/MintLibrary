@@ -233,7 +233,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "1) byte vector" };
+                    Profiler::ScopedCPUProfiler profiler{ "1) byte vector" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         byteVector[i] = sourceData[i];
@@ -241,7 +241,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "1) byte vector copy" };
+                    Profiler::ScopedCPUProfiler profiler{ "1) byte vector copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         byteVectorCopy[i] = byteVector[i];
@@ -249,7 +249,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "2) bool vector" };
+                    Profiler::ScopedCPUProfiler profiler{ "2) bool vector" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         boolVector[i] = sourceData[i];
@@ -257,7 +257,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "2) bool vector copy" };
+                    Profiler::ScopedCPUProfiler profiler{ "2) bool vector copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         boolVectorCopy[i] = boolVector[i];
@@ -265,7 +265,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector raw" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         bitVector.set(i, sourceData[i]);
@@ -273,7 +273,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector raw copy" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector raw copy" };
                     for (uint32 i = 0; i < kCount; ++i)
                     {
                         bitVectorCopy.set(i, bitVector.get(i));
@@ -281,7 +281,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector per byte #1" };
                     const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -294,7 +294,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1 copy" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector per byte #1 copy" };
                     const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -307,7 +307,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector per byte #2" };
                     const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -322,7 +322,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
                     const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -337,7 +337,7 @@ namespace mint
                 }
 
                 {
-                    Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
+                    Profiler::ScopedCPUProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
                     const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
@@ -346,7 +346,7 @@ namespace mint
                     }
                 }
 
-                Vector<Profiler::ScopedCpuProfiler::Log> logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
+                Vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
                 const bool isEmpty = logArray.empty();
             }
 #endif
@@ -420,7 +420,7 @@ namespace mint
 #if defined MINT_TEST_PERFORMANCE
             static constexpr uint32 kCount = 20'000;
             {
-                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
+                Profiler::ScopedCPUProfiler profiler{ "Vector<std::string>" };
 
                 Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
@@ -431,7 +431,7 @@ namespace mint
             }
 
             {
-                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
+                Profiler::ScopedCPUProfiler profiler{ "Vector<std::string>" };
 
                 Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
@@ -442,7 +442,7 @@ namespace mint
             }
 
             {
-                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
+                Profiler::ScopedCPUProfiler profiler{ "Vector<std::string>" };
 
                 Vector<std::string> dnsArray;
                 dnsArray.resize(kCount);
@@ -453,7 +453,7 @@ namespace mint
             }
 
             {
-                Profiler::ScopedCpuProfiler profiler{ "Vector<std::string>" };
+                Profiler::ScopedCPUProfiler profiler{ "Vector<std::string>" };
 
                 Vector<std::string> sArray;
                 sArray.resize(kCount);
@@ -463,7 +463,7 @@ namespace mint
                 }
             }
 
-            auto logArray = Profiler::ScopedCpuProfiler::getEntireLogArray();
+            auto logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
             const bool isEmpty = logArray.empty();
 #endif
 #pragma endregion

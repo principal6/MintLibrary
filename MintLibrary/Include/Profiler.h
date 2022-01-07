@@ -5,7 +5,7 @@
 #define MINT_PROFILER_H
 
 
-#include <MintLibrary/Include/ScopedCpuProfiler.h>
+#include <MintLibrary/Include/ScopedCPUProfiler_.h>
 
 
 #endif // !MINT_PROFILER_H

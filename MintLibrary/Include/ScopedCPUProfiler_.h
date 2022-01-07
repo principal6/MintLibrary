@@ -18,11 +18,11 @@ namespace mint
         static const uint64         getCurrentTimeUs() noexcept;
 
 
-        class FpsCounter
+        class FPSCounter
         {
         private:
-                                    FpsCounter() = default;
-                                    ~FpsCounter() = default;
+                                    FPSCounter() = default;
+                                    ~FPSCounter() = default;
 
         public:
             static void             count() noexcept;
@@ -39,7 +39,7 @@ namespace mint
         };
 
 
-        class ScopedCpuProfiler
+        class ScopedCPUProfiler
         {
             friend const uint64     getCurrentTimeMs() noexcept;
             friend const uint64     getCurrentTimeUs() noexcept;
@@ -59,19 +59,19 @@ namespace mint
             };
 
         private:
-            class ScopedCpuProfilerLogger
+            class ScopedCPUProfilerLogger
             {
             private:
-                                                    ScopedCpuProfilerLogger() = default;
-                                                    ~ScopedCpuProfilerLogger() = default;
+                                                    ScopedCPUProfilerLogger() = default;
+                                                    ~ScopedCPUProfilerLogger() = default;
 
             public:
-                static ScopedCpuProfilerLogger&     getInstance() noexcept;
+                static ScopedCPUProfilerLogger&     getInstance() noexcept;
                 static const uint64                 getCurrentTimeMs() noexcept;
                 static const uint64                 getCurrentTimeUs() noexcept;
 
             public:
-                void                                log(const ScopedCpuProfiler& profiler, const uint64 durationMs) noexcept;
+                void                                log(const ScopedCPUProfiler& profiler, const uint64 durationMs) noexcept;
                 const std::vector<Log>&             getLogArray() const noexcept;
 
             private:
@@ -79,8 +79,8 @@ namespace mint
             };
 
         public:
-                                                    ScopedCpuProfiler(const std::string& content);
-                                                    ~ScopedCpuProfiler();
+                                                    ScopedCPUProfiler(const std::string& content);
+                                                    ~ScopedCPUProfiler();
 
         public:
             static const std::vector<Log>&          getEntireLogArray() noexcept;
@@ -93,7 +93,7 @@ namespace mint
 }
 
 
-#include <MintLibrary/Include/ScopedCpuProfiler.inl>
+#include <MintLibrary/Include/ScopedCPUProfiler_.inl>
 
 
 #endif // !MINT_SCOPED_CPU_PROFILER_H

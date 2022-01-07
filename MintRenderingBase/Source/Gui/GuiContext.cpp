@@ -17,7 +17,7 @@
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>
 
-#include <MintLibrary/Include/ScopedCpuProfiler.h>
+#include <MintLibrary/Include/ScopedCPUProfiler_.h>
 
 
 namespace mint

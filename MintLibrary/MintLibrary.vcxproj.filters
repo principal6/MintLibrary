@@ -14,7 +14,7 @@
     <ClInclude Include="Include\Profiler.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ScopedCpuProfiler.h">
+    <ClInclude Include="Include\ScopedCPUProfiler_.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\AllHpps.h">
@@ -30,7 +30,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\ScopedCpuProfiler.inl">
+    <None Include="Include\ScopedCPUProfiler_.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>
