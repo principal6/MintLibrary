@@ -93,7 +93,7 @@ namespace mint
 }
 
 
-#include <MintLibrary/Include/ScopedCPUProfiler_.inl>
+#include <MintLibrary/Include/ScopedCPUProfiler.inl>
 
 
 #endif // !MINT_SCOPED_CPU_PROFILER_H

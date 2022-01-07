@@ -1,4 +1,4 @@
-#include "ScopedCPUProfiler_.h"
+#include "ScopedCPUProfiler.h"
 #pragma once
 
 
