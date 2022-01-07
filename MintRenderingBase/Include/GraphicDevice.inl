@@ -41,7 +41,7 @@ namespace mint
             return _shapeFontRendererContext;
         }
 
-        MINT_INLINE Gui::GuiContext& GraphicDevice::getGuiContext() noexcept
+        MINT_INLINE GUI::GUIContext& GraphicDevice::getGUIContext() noexcept
         {
             return _guiContext;
         }

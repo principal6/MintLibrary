@@ -3,7 +3,7 @@
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         inline ControlMetaStateSet::ControlMetaStateSet()
         {

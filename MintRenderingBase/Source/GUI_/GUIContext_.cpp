@@ -1,5 +1,7 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/Gui/GuiContext.h>
+#include <MintRenderingBase/Include/GUI_/GUIContext_.h>
+
+#include <functional>
 
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/String.hpp>
@@ -11,8 +13,8 @@
 #include <MintReflection/Include/Reflection.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
-#include <MintRenderingBase/Include/Gui/ControlData.hpp>
-#include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
+#include <MintRenderingBase/Include/GUI_/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI_/InputHelpers.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>
@@ -22,7 +24,7 @@
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         namespace ControlCommonHelpers
         {
@@ -106,7 +108,7 @@ namespace mint
         }
 
 
-        GuiContext::GuiContext(Rendering::GraphicDevice& graphicDevice)
+        GUIContext::GUIContext(Rendering::GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }
             , _fontSize{ 0.0f }
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
@@ -144,12 +146,12 @@ namespace mint
             setNamedColor(NamedColor::ShownInDockFont, getNamedColor(NamedColor::HighlightColor));
         }
 
-        GuiContext::~GuiContext()
+        GUIContext::~GUIContext()
         {
             __noop;
         }
 
-        void GuiContext::initialize()
+        void GUIContext::initialize()
         {
             _fontSize = static_cast<float>(_graphicDevice.getFontRendererContext().getFontSize());
             
@@ -168,7 +170,7 @@ namespace mint
             }
 
             const Float2& windowSize = Float2(_graphicDevice.getWindowSize());
-            _rootControlData = ControlData(ControlID(1), ControlID(0), Gui::ControlType::ROOT, windowSize);
+            _rootControlData = ControlData(ControlID(1), ControlID(0), GUI::ControlType::ROOT, windowSize);
             _rootControlData._option._isFocusable = false;
 
             updateScreenSize(windowSize);
@@ -177,7 +179,7 @@ namespace mint
             resetPerFrameStates();
         }
 
-        void GuiContext::updateScreenSize(const Float2& newScreenSize)
+        void GUIContext::updateScreenSize(const Float2& newScreenSize)
         {
             _clipRectFullScreen = _graphicDevice.getFullScreenClipRect();
 
@@ -187,7 +189,7 @@ namespace mint
             _updateScreenSizeCounter = 2;
         }
 
-        void GuiContext::processEvent() noexcept
+        void GUIContext::processEvent() noexcept
         {
             // 초기화
             _mouseStates.resetPerFrame();
@@ -252,7 +254,7 @@ namespace mint
             processControlInteractionInternal(_rootControlData, false);
         }
 
-        const bool GuiContext::shouldInteract(const Float2& screenPosition, const ControlData& controlData) const noexcept
+        const bool GUIContext::shouldInteract(const Float2& screenPosition, const ControlData& controlData) const noexcept
         {
             const ControlType controlType = controlData.getControlType();
             const ControlData& parentControlData = getControlData(controlData.getParentID());
@@ -275,11 +277,11 @@ namespace mint
             return true;
         }
 
-        void GuiContext::makeTestWindow(VisibleState& inoutVisibleState)
+        void GUIContext::makeTestWindow(VisibleState& inoutVisibleState)
         {
-            Gui::WindowParam windowParam;
+            GUI::WindowParam windowParam;
             windowParam._position = Float2(200.0f, 50.0f);
-            windowParam._scrollBarType = Gui::ScrollBarType::Both;
+            windowParam._scrollBarType = GUI::ScrollBarType::Both;
             _controlMetaStateSet.nextSize(Float2(500.0f, 500.0f), true);
             if (beginWindow(MINT_GUI_CONTROL(L"TestWindow", windowParam, inoutVisibleState)) == true)
             {
@@ -355,7 +357,7 @@ namespace mint
                 }
 
                 {
-                    Gui::SliderParam sliderParam;
+                    GUI::SliderParam sliderParam;
                     _controlMetaStateSet.nextSize(Float2(32.0f, 0.0f));
                     float value = 0.0f;
                     if (beginSlider(MINT_GUI_CONTROL(sliderParam, value)) == true)
@@ -393,16 +395,16 @@ namespace mint
 
                 static StringW textBoxContent;
                 {
-                    Gui::TextBoxParam textBoxParam;
+                    GUI::TextBoxParam textBoxParam;
                     _controlMetaStateSet.nextSize(Float2(240.0f, 24.0f));
-                    textBoxParam._alignmentHorz = Gui::TextAlignmentHorz::Center;
+                    textBoxParam._alignmentHorz = GUI::TextAlignmentHorz::Center;
                     if (beginTextBox(MINT_GUI_CONTROL(textBoxParam, textBoxContent)) == true)
                     {
                         endTextBox();
                     }
                 }
 
-                Gui::ListViewParam listViewParam;
+                GUI::ListViewParam listViewParam;
                 int16 listViewSelectedItemIndex = 0;
                 if (beginListView(MINT_GUI_CONTROL(listViewSelectedItemIndex, listViewParam)) == true)
                 {
@@ -417,10 +419,10 @@ namespace mint
                 }
 
                 {
-                    Gui::WindowParam testWindowParam;
+                    GUI::WindowParam testWindowParam;
                     _controlMetaStateSet.nextSize(Float2(200.0f, 240.0f), true);
-                    testWindowParam._scrollBarType = Gui::ScrollBarType::Both;
-                    testWindowParam._initialDockZone = Gui::DockZone::BottomSide;
+                    testWindowParam._scrollBarType = GUI::ScrollBarType::Both;
+                    testWindowParam._initialDockZone = GUI::DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"1ST", testWindowParam, childWindowVisibleState0)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"테스트!!")) == true)
@@ -433,11 +435,11 @@ namespace mint
                 }
 
                 {
-                    Gui::WindowParam testWindowParam;
+                    GUI::WindowParam testWindowParam;
                     _controlMetaStateSet.nextSize(Float2(100.0f, 100.0f));
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
-                    testWindowParam._initialDockZone = Gui::DockZone::BottomSide;
+                    testWindowParam._initialDockZone = GUI::DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"2NDDD", testWindowParam, childWindowVisibleState1)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"YEAH")) == true)
@@ -453,12 +455,12 @@ namespace mint
             }
         }
 
-        void GuiContext::makeTestDockedWindow(VisibleState& inoutVisibleState)
+        void GUIContext::makeTestDockedWindow(VisibleState& inoutVisibleState)
         {
-            Gui::WindowParam windowParam;
+            GUI::WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
-            windowParam._initialDockZone = Gui::DockZone::RightSide;
+            windowParam._initialDockZone = GUI::DockZone::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
             if (beginWindow(MINT_GUI_CONTROL(L"TestDockedWindow", windowParam, inoutVisibleState)) == true)
             {
@@ -495,9 +497,9 @@ namespace mint
             }
         }
 
-        void GuiContext::makeDebugControlDataViewer(VisibleState& inoutVisibleState)
+        void GUIContext::makeDebugControlDataViewer(VisibleState& inoutVisibleState)
         {
-            Gui::WindowParam windowParam;
+            GUI::WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
@@ -532,7 +534,7 @@ namespace mint
             }
         }
 
-        void GuiContext::makeFromReflectionClass(const char* const file, const int line, const ReflectionData& reflectionData, const void* const reflectionClass)
+        void GUIContext::makeFromReflectionClass(const char* const file, const int line, const ReflectionData& reflectionData, const void* const reflectionClass)
         {
             ScopeStringA<300> bufferA;
             ScopeStringW<300> bufferW;
@@ -574,7 +576,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
+        const bool GUIContext::beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
         {
             static constexpr ControlType controlType = ControlType::Window;
             
@@ -716,7 +718,7 @@ namespace mint
             return needToProcessControl;
         }
 
-        void GuiContext::dockWindowOnceInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
+        void GUIContext::dockWindowOnceInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -739,7 +741,7 @@ namespace mint
             }
         }
 
-        void GuiContext::updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept
+        void GUIContext::updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -755,7 +757,7 @@ namespace mint
             }
         }
 
-        void GuiContext::updateDockingWindowDisplay(ControlData& windowControlData) noexcept
+        void GUIContext::updateDockingWindowDisplay(ControlData& windowControlData) noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -770,7 +772,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::needToProcessWindowControl(const ControlData& windowControlData) const noexcept
+        const bool GUIContext::needToProcessWindowControl(const ControlData& windowControlData) const noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -785,7 +787,7 @@ namespace mint
             return needToProcessControl;
         }
 
-        const bool GuiContext::beginButton(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginButton(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::Button;
             
@@ -820,7 +822,7 @@ namespace mint
             return isClicked;
         }
 
-        const bool GuiContext::beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked)
+        const bool GUIContext::beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked)
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
@@ -867,7 +869,7 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam)
+        void GUIContext::makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam)
         {
             static constexpr ControlType controlType = ControlType::Label;
 
@@ -898,7 +900,7 @@ namespace mint
             rendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
         }
 
-        Float4 GuiContext::labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        Float4 GUIContext::labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
@@ -928,7 +930,7 @@ namespace mint
             return textPosition;
         }
 
-        Rendering::FontRenderingOption GuiContext::labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        Rendering::FontRenderingOption GUIContext::labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
@@ -959,7 +961,7 @@ namespace mint
             return Rendering::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
         }
 
-        const bool GuiContext::beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue)
+        const bool GUIContext::beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue)
         {
             static constexpr ControlType trackControlType = ControlType::Slider;
             static constexpr ControlType thumbControlType = ControlType::SliderThumb;
@@ -1022,7 +1024,7 @@ namespace mint
             return isChanged;
         }
 
-        void GuiContext::sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const Rendering::Color& trackColor) noexcept
+        void GUIContext::sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const Rendering::Color& trackColor) noexcept
         {
             MINT_ASSERT("김장원", trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
 
@@ -1062,7 +1064,7 @@ namespace mint
             rendererContext.drawHalfCircle(trackRadius, -Math::kPiOverTwo);
         }
 
-        void GuiContext::sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const Rendering::Color& thumbColor) noexcept
+        void GUIContext::sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const Rendering::Color& thumbColor) noexcept
         {
             MINT_ASSERT("김장원", thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
 
@@ -1076,7 +1078,7 @@ namespace mint
             rendererContext.drawCircle(kSliderThumbRadius - 2.0f);
         }
 
-        const bool GuiContext::beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText)
+        const bool GUIContext::beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText)
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
@@ -1124,7 +1126,7 @@ namespace mint
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            Gui::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData, inputCandidateWidth);
+            GUI::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData, inputCandidateWidth);
 
             // Box 렌더링
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
@@ -1137,40 +1139,40 @@ namespace mint
             const bool needToRenderInputCandidate = (isFocused == true && _wcharInputCandidate >= 32);
             if (needToRenderInputCandidate == true)
             {
-                Gui::InputBoxHelpers::drawTextWithInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, _wcharInputCandidate, controlData, outText);
+                GUI::InputBoxHelpers::drawTextWithInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, _wcharInputCandidate, controlData, outText);
             }
             else
             {
-                Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, true, controlData, outText);
+                GUI::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, true, controlData, outText);
             }
-            Gui::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, outText);
+            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, outText);
 
             return false;
         }
         
-        void GuiContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, StringW& outText) noexcept
+        void GUIContext::textBoxProcessInput(const bool wasControlFocused, const TextInputMode textInputMode, ControlData& controlData, Float4& textRenderOffset, StringW& outText) noexcept
         {
-            Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
+            GUI::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
             TextBoxProcessInputResult result;
             if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
             {
-                Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
+                GUI::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
             }
             else if (_mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
             {
-                Gui::InputBoxHelpers::selectAll(controlData, outText);
+                GUI::InputBoxHelpers::selectAll(controlData, outText);
             }
             else
             {
                 const Window::IWindow& window = _graphicDevice.getWindow();
-                Gui::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
+                GUI::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, textInputMode, kTextBoxMaxTextLength, _keyCode,
                     _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
             }
 
             if (wasControlFocused == false)
             {
-                Gui::InputBoxHelpers::refreshCaret(controlData);
+                GUI::InputBoxHelpers::refreshCaret(controlData);
             }
 
             if (result._clearKeyCode == true)
@@ -1183,7 +1185,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GUIContext::beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
@@ -1231,12 +1233,12 @@ namespace mint
 
             if (wasFocused == false && isFocused == true)
             {
-                Gui::InputBoxHelpers::selectAll(controlData, controlData._text);
+                GUI::InputBoxHelpers::selectAll(controlData, controlData._text);
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            Gui::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData);
+            GUI::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData);
 
             // Box 렌더링
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
@@ -1246,15 +1248,15 @@ namespace mint
             rendererContext.drawRoundedRectangle(controlData._size, (roundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
 
             // Text, Caret, Selection 렌더링
-            Gui::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
-            Gui::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, controlData._text);
+            GUI::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
+            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, controlData._text);
             return false;
         }
 
-        const bool GuiContext::beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GUIContext::beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             LabelParam labelParamModified = labelParam;
-            labelParamModified._alignmentHorz = Gui::TextAlignmentHorz::Center;
+            labelParamModified._alignmentHorz = GUI::TextAlignmentHorz::Center;
             const Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
             _controlMetaStateSet.pushSize(Float2(labelWidth, desiredSize._y));
             makeLabel(file, line, labelText, labelParamModified);
@@ -1270,9 +1272,9 @@ namespace mint
             return result;
         }
 
-        void GuiContext::valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
+        void GUIContext::valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
         {
-            Gui::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
+            GUI::InputBoxHelpers::updateCaretState(_caretBlinkIntervalMs, controlData);
 
             if (_controlInteractionStateSet.isControlFocused(controlData) == true)
             {
@@ -1280,18 +1282,18 @@ namespace mint
                 TextBoxProcessInputResult result;
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true || _mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                 {
-                    Gui::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
+                    GUI::InputBoxHelpers::processDefaultMouseInputs(_mouseStates, getRendererContext(controlData), controlData, textRenderOffset, outText, result);
                 }
                 else
                 {
                     const TextInputMode kTextInputMode = TextInputMode::NumberOnly;
-                    Gui::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, kTextInputMode, kTextBoxMaxTextLength, _keyCode,
+                    GUI::InputBoxHelpers::processDefaultKeyboardInputs(&window, getRendererContext(controlData), controlData, kTextInputMode, kTextBoxMaxTextLength, _keyCode,
                         _wcharInput, _wcharInputCandidate, textRenderOffset, outText, result);
                 }
 
                 if (wasControlFocused == false)
                 {
-                    Gui::InputBoxHelpers::refreshCaret(controlData);
+                    GUI::InputBoxHelpers::refreshCaret(controlData);
                 }
 
                 if (result._clearKeyCode == true)
@@ -1332,7 +1334,7 @@ namespace mint
             }
         }
         
-        const bool GuiContext::beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
+        const bool GUIContext::beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
@@ -1384,29 +1386,29 @@ namespace mint
             
             if (listViewParam._useScrollBar == true)
             {
-                controlData._controlValue._commonData.enableScrollBar(Gui::ScrollBarType::Vert);
+                controlData._controlValue._commonData.enableScrollBar(GUI::ScrollBarType::Vert);
             }
             else
             {
-                controlData._controlValue._commonData.disableScrollBar(Gui::ScrollBarType::Vert);
+                controlData._controlValue._commonData.disableScrollBar(GUI::ScrollBarType::Vert);
             }
             _controlStackPerFrame.push_back(ControlStackData(controlData));
             return true;
         }
 
-        void GuiContext::endListView()
+        void GUIContext::endListView()
         {
             ControlData& controlData = accessControlStackTopXXX();
             const bool hasScrollBarVert = controlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
             if (hasScrollBarVert == true)
             {
-                makeScrollBar(controlData.getID(), Gui::ScrollBarType::Vert);
+                makeScrollBar(controlData.getID(), GUI::ScrollBarType::Vert);
             }
 
             endControlInternal(ControlType::ListView);
         }
 
-        void GuiContext::makeListItem(const char* const file, const int line, const wchar_t* const text)
+        void GUIContext::makeListItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
@@ -1421,7 +1423,7 @@ namespace mint
                 prepareControlDataParam._autoComputedDisplaySize._x = parentControlData._size._x;
                 prepareControlDataParam._autoComputedDisplaySize._y = _fontSize + 12.0f;
                 prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoComputedDisplaySize._y * 0.25f);
-                prepareControlDataParam._clipRectUsage = Gui::ClipRectUsage::ParentsChild;
+                prepareControlDataParam._clipRectUsage = GUI::ClipRectUsage::ParentsChild;
                 _controlMetaStateSet.nextOffInterval();
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -1449,7 +1451,7 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered));
         }
 
-        const bool GuiContext::beginMenuBar(const char* const file, const int line, const wchar_t* const name)
+        const bool GUIContext::beginMenuBar(const char* const file, const int line, const wchar_t* const name)
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
@@ -1515,7 +1517,7 @@ namespace mint
             return true;
         }
 
-        const bool GuiContext::beginMenuBarItem(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginMenuBarItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
@@ -1593,7 +1595,7 @@ namespace mint
             return result;
         }
 
-        const bool GuiContext::beginMenuItem(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginMenuItem(const char* const file, const int line, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
@@ -1686,7 +1688,7 @@ namespace mint
             return result;
         }
 
-        void GuiContext::makeScrollBar(const ControlID parentControlID, const ScrollBarType scrollBarType)
+        void GUIContext::makeScrollBar(const ControlID parentControlID, const ScrollBarType scrollBarType)
         {
             const bool useVertical = (scrollBarType == ScrollBarType::Vert || scrollBarType == ScrollBarType::Both);
             if (useVertical == true)
@@ -1701,14 +1703,14 @@ namespace mint
             }
         }
 
-        void GuiContext::_makeScrollBarVert(const ControlID parentControlID) noexcept
+        void GUIContext::_makeScrollBarVert(const ControlID parentControlID) noexcept
         {
             ScrollBarTrackParam scrollBarTrackParam;
             float parentWindowScrollDisplayHeight = 0.0f;
             {
                 const ControlData& parentControlData = getControlData(parentControlID);
                 parentWindowScrollDisplayHeight = parentControlData.computeScrollDisplayHeight();
-                const bool isParentControlWindow = parentControlData.isTypeOf(Gui::ControlType::Window);
+                const bool isParentControlWindow = parentControlData.isTypeOf(GUI::ControlType::Window);
                 const float titleBarOffsetX = (isParentControlWindow) ? kHalfBorderThickness * 2.0f : kScrollBarThickness * 0.5f;
                 const float titleBarOffsetY = (isParentControlWindow) ? parentControlData.getMenuBarThickness()._y + parentControlData._controlValue._windowData._titleBarThickness : 0.0f;
 
@@ -1734,7 +1736,7 @@ namespace mint
             }
         }
 
-        void GuiContext::_makeScrollBarHorz(const ControlID parentControlID) noexcept
+        void GUIContext::_makeScrollBarHorz(const ControlID parentControlID) noexcept
         {
             ScrollBarTrackParam scrollBarTrackParam;
             float parentWindowScrollDisplayWidth = 0.0f;
@@ -1765,7 +1767,7 @@ namespace mint
             }
         }
 
-        ControlData& GuiContext::__makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GUIContext::__makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -1883,7 +1885,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GuiContext::__makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GUIContext::__makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
@@ -2026,7 +2028,7 @@ namespace mint
             }
         }
 
-        void GuiContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
+        void GUIContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
         {
             if (controlData._dockContext._dockingControlType == DockingControlType::Dock || controlData._dockContext._dockingControlType == DockingControlType::DockerDock)
             {
@@ -2060,14 +2062,14 @@ namespace mint
             }
         }
 
-        void GuiContext::endControlInternal(const ControlType controlType)
+        void GUIContext::endControlInternal(const ControlType controlType)
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.back()._controlType == controlType, "begin 과 end 의 ControlType 이 다릅니다!!!");
 
             _controlStackPerFrame.pop_back();
         }
 
-        Float2 GuiContext::beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
+        Float2 GUIContext::beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState)
         {
             static constexpr ControlType controlType = ControlType::TitleBar;
 
@@ -2170,14 +2172,14 @@ namespace mint
 
                 if (makeRoundButton(controlData.getID(), L"CLOSEBUTTON", windowTitle, Rendering::Color(1.0f, 0.375f, 0.375f)) == true)
                 {
-                    inoutParentVisibleState = Gui::VisibleState::Invisible;
+                    inoutParentVisibleState = GUI::VisibleState::Invisible;
                 }
             }
 
             return titleBarSize;
         }
 
-        const bool GuiContext::makeRoundButton(const ControlID parentControlID, const wchar_t* const identifier, const wchar_t* const windowTitle, const Rendering::Color& color)
+        const bool GUIContext::makeRoundButton(const ControlID parentControlID, const wchar_t* const identifier, const wchar_t* const windowTitle, const Rendering::Color& color)
         {
             static constexpr ControlType controlType = ControlType::RoundButton;
 
@@ -2207,7 +2209,7 @@ namespace mint
             return isClicked;
         }
 
-        void GuiContext::makeTooltipWindow(const ControlID parentControlID, const wchar_t* const tooltipText, const Float2& position)
+        void GUIContext::makeTooltipWindow(const ControlID parentControlID, const wchar_t* const tooltipText, const Float2& position)
         {
             static constexpr ControlType controlType = ControlType::TooltipWindow;
             static constexpr float kTooltipFontScale = kFontScaleC;
@@ -2247,19 +2249,19 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kTooltipFontScale));
         }
 
-        const ControlID GuiContext::issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept
+        const ControlID GUIContext::issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept
         {
             const ControlID controlID = _generateControlIDXXX(parentControlID, controlType, identifier);
             return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
-        const ControlID GuiContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GUIContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
         {
             const ControlID controlID = _generateControlIDXXX(file, line, controlType);
             return _createControlDataInternalXXX(controlID, controlType, text);
         }
 
-        const ControlID GuiContext::_createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GUIContext::_createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept
         {
             auto found = _controlIDMap.find(controlID);
             if (found.isValid() == false)
@@ -2282,7 +2284,7 @@ namespace mint
             return controlID;
         }
 
-        const ControlID GuiContext::_generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept
+        const ControlID GUIContext::_generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
@@ -2292,7 +2294,7 @@ namespace mint
             return ControlID(computeHash(idWstring.c_str()));
         }
 
-        const ControlID GuiContext::_generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept
+        const ControlID GUIContext::_generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
@@ -2302,12 +2304,12 @@ namespace mint
             return ControlID(computeHash(idWstring.c_str()));
         }
 
-        const ControlData& GuiContext::getParentWindowControlData(const ControlData& controlData) const noexcept
+        const ControlData& GUIContext::getParentWindowControlData(const ControlData& controlData) const noexcept
         {
             return getParentWindowControlDataInternal(controlData.getParentID());
         }
 
-        const ControlData& GuiContext::getParentWindowControlDataInternal(const ControlID& id) const noexcept
+        const ControlData& GUIContext::getParentWindowControlDataInternal(const ControlID& id) const noexcept
         {
             if (id.isValid() == false)
             {
@@ -2323,7 +2325,7 @@ namespace mint
             return getParentWindowControlDataInternal(controlData.getParentID());
         }
 
-        const float GuiContext::getCurrentAvailableDisplaySizeX() const noexcept
+        const float GUIContext::getCurrentAvailableDisplaySizeX() const noexcept
         {
             const ControlData& parentControlData = getControlStackTopXXX();
             const float maxDisplaySizeX = parentControlData._size._x - ((_controlMetaStateSet.getNextUseAutoPosition() == true) 
@@ -2332,28 +2334,28 @@ namespace mint
             return maxDisplaySizeX;
         }
 
-        const float GuiContext::getCurrentSameLineIntervalX() const noexcept
+        const float GUIContext::getCurrentSameLineIntervalX() const noexcept
         {
             const float intervalX = (_controlMetaStateSet.getNextUseInterval() == true) ? kDefaultIntervalX : 0.0f;
             return intervalX;
         }
 
-        const bool GuiContext::isThisControlPressed() const noexcept
+        const bool GUIContext::isThisControlPressed() const noexcept
         {
             return _controlInteractionStateSet.isControlPressed(getControlStackTopXXX());
         }
 
-        const ControlAccessData& GuiContext::getThisControlAccessData() const noexcept
+        const ControlAccessData& GUIContext::getThisControlAccessData() const noexcept
         {
             return getControlStackTopXXX()._controlAccessData;
         }
 
-        const bool GuiContext::isFocusedControlInputBox() const noexcept
+        const bool GUIContext::isFocusedControlInputBox() const noexcept
         {
             return (_controlInteractionStateSet.hasFocusedControl()) ? getControlData(_controlInteractionStateSet.getFocusedControlID()).isInputBoxType() : false;
         }
 
-        void GuiContext::setControlFocused(const ControlData& controlData) noexcept
+        void GUIContext::setControlFocused(const ControlData& controlData) noexcept
         {
             if (controlData._option._isFocusable == true)
             {
@@ -2371,12 +2373,12 @@ namespace mint
             }
         }
 
-        void GuiContext::setControlHovered(const ControlData& controlData) noexcept
+        void GUIContext::setControlHovered(const ControlData& controlData) noexcept
         {
             _controlInteractionStateSet.setControlHovered(controlData);
         }
 
-        void GuiContext::setControlPressed(const ControlData& controlData) noexcept
+        void GUIContext::setControlPressed(const ControlData& controlData) noexcept
         {
             if (_controlInteractionStateSet.setControlPressed(controlData) == true)
             {
@@ -2385,7 +2387,7 @@ namespace mint
             }
         }
         
-        void GuiContext::setControlClicked(const ControlData& controlData) noexcept
+        void GUIContext::setControlClicked(const ControlData& controlData) noexcept
         {
             if (_controlInteractionStateSet.setControlClicked(controlData) == true)
             {
@@ -2394,7 +2396,7 @@ namespace mint
             }
         }
 
-        void GuiContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
+        void GUIContext::prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept
         {
             const bool isNewData = controlData._size.isNan();
             if ((isNewData == true) || (prepareControlDataParam._alwaysResetParent == true))
@@ -2495,7 +2497,7 @@ namespace mint
             computeControlChildAt(controlData);
         }
 
-        void GuiContext::computeControlChildAt(ControlData& controlData) noexcept
+        void GUIContext::computeControlChildAt(ControlData& controlData) noexcept
         {
             const MenuBarType currentMenuBarType = controlData._controlValue._commonData._menuBarType;
             Float2& controlChildAt = const_cast<Float2&>(controlData.getChildAt());
@@ -2513,7 +2515,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::processClickControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& pressedColor, Rendering::Color& outBackgroundColor) noexcept
+        const bool GUIContext::processClickControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& pressedColor, Rendering::Color& outBackgroundColor) noexcept
         {
             processControlInteractionInternal(controlData);
 
@@ -2540,7 +2542,7 @@ namespace mint
             return isClicked;
         }
 
-        const bool GuiContext::processFocusControl(ControlData& controlData, const Rendering::Color& focusedColor, const Rendering::Color& nonFocusedColor, Rendering::Color& outBackgroundColor) noexcept
+        const bool GUIContext::processFocusControl(ControlData& controlData, const Rendering::Color& focusedColor, const Rendering::Color& nonFocusedColor, Rendering::Color& outBackgroundColor) noexcept
         {
             processControlInteractionInternal(controlData, false);
 
@@ -2586,7 +2588,7 @@ namespace mint
             return _controlInteractionStateSet.isControlFocused(controlData);
         }
 
-        void GuiContext::processShowOnlyControl(ControlData& controlData, Rendering::Color& outBackgroundColor, const bool setMouseInteractionDone) noexcept
+        void GUIContext::processShowOnlyControl(ControlData& controlData, Rendering::Color& outBackgroundColor, const bool setMouseInteractionDone) noexcept
         {
             processControlInteractionInternal(controlData, setMouseInteractionDone);
 
@@ -2602,7 +2604,7 @@ namespace mint
             processControlCommon(controlData);
         }
 
-        const bool GuiContext::processScrollableControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& dragColor, Rendering::Color& outBackgroundColor) noexcept
+        const bool GUIContext::processScrollableControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& dragColor, Rendering::Color& outBackgroundColor) noexcept
         {
             processControlInteractionInternal(controlData);
 
@@ -2626,7 +2628,7 @@ namespace mint
             return isPressed;
         }
         
-        const bool GuiContext::processToggleControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& toggledColor, Rendering::Color& outBackgroundColor) noexcept
+        const bool GUIContext::processToggleControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& toggledColor, Rendering::Color& outBackgroundColor) noexcept
         {
             processControlInteractionInternal(controlData);
 
@@ -2649,7 +2651,7 @@ namespace mint
             return isClicked;
         }
         
-        void GuiContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
+        void GUIContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
             const ControlID& controlID = controlData.getID();
             if (isInteractingInternal(controlData) == false || _controlInteractionStateSet.isMouseInteractionDoneThisFrame() == true)
@@ -2716,7 +2718,7 @@ namespace mint
             }
         }
 
-        void GuiContext::processControlCommon(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon(ControlData& controlData) noexcept
         {
             checkControlResizing(controlData);
             checkControlHoveringForTooltip(controlData);
@@ -2728,7 +2730,7 @@ namespace mint
             _controlMetaStateSet.resetPerFrame();
         }
 
-        void GuiContext::checkControlResizing(ControlData& controlData) noexcept
+        void GUIContext::checkControlResizing(ControlData& controlData) noexcept
         {
             if (_resizedControlID.isValid() == false && isInteractingInternal(controlData) == true)
             {
@@ -2748,7 +2750,7 @@ namespace mint
             }
         }
 
-        void GuiContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
+        void GUIContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
         {
             const bool isHovered = _controlInteractionStateSet.isControlHovered(controlData);
             if (_controlMetaStateSet.getNextTooltipText() != nullptr && isHovered == true
@@ -2758,7 +2760,7 @@ namespace mint
             }
         }
 
-        void GuiContext::processControlResizingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlResizingInternal(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isResizing = isControlBeingResized(changeTargetControlData);
@@ -2826,7 +2828,7 @@ namespace mint
             }
         }
 
-        void GuiContext::processControlDraggingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlDraggingInternal(ControlData& controlData) noexcept
         {
             const bool isDragging = isControlBeingDragged(controlData);
             if (isDragging == false)
@@ -2904,7 +2906,7 @@ namespace mint
             _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
-        void GuiContext::processControlDockingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlDockingInternal(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isDragging = isControlBeingDragged(controlData);
@@ -3124,7 +3126,7 @@ namespace mint
             }
         }
 
-        void GuiContext::dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept
+        void GUIContext::dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept
         {
             ControlData& dockedControlData = accessControlData(dockedControlID);
             dockedControlData.swapDockingStateContext();
@@ -3159,7 +3161,7 @@ namespace mint
             }
         }
 
-        void GuiContext::undock(const ControlID& dockedControlID) noexcept
+        void GUIContext::undock(const ControlID& dockedControlID) noexcept
         {
             ControlData& dockedControlData = accessControlData(dockedControlID);
             ControlData& dockControlData = accessControlData(dockedControlData.getDockControlID());
@@ -3196,7 +3198,7 @@ namespace mint
             updateDockZoneData(dockControlIDCopy);
         }
 
-        void GuiContext::updateDockZoneData(const ControlID& dockControlID, const bool updateWidthArray) noexcept
+        void GUIContext::updateDockZoneData(const ControlID& dockControlID, const bool updateWidthArray) noexcept
         {
             ControlData& dockControlData = accessControlData(dockControlID);
             for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT;
@@ -3226,7 +3228,7 @@ namespace mint
             }
         }
 
-        const bool GuiContext::isInteractingInternal(const ControlData& controlData) const noexcept
+        const bool GUIContext::isInteractingInternal(const ControlData& controlData) const noexcept
         {
             if (_controlInteractionStateSet.hasFocusedControl() == true && isAncestorControlFocusedInclusiveXXX(controlData) == false)
             {
@@ -3246,7 +3248,7 @@ namespace mint
             return true;
         }
 
-        const bool GuiContext::isControlBeingDragged(const ControlData& controlData) const noexcept
+        const bool GUIContext::isControlBeingDragged(const ControlData& controlData) const noexcept
         {
             if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
             {
@@ -3281,7 +3283,7 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::isControlBeingResized(const ControlData& controlData) const noexcept
+        const bool GUIContext::isControlBeingResized(const ControlData& controlData) const noexcept
         {
             if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
             {
@@ -3321,7 +3323,7 @@ namespace mint
             return false;
         }
         
-        const bool GuiContext::isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept
+        const bool GUIContext::isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept
         {
             if (_controlInteractionStateSet.isControlFocused(controlData) == true)
             {
@@ -3330,12 +3332,12 @@ namespace mint
             return isAncestorControlFocused(controlData);
         }
 
-        const bool GuiContext::isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept
+        const bool GUIContext::isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept
         {
             return isAncestorControlRecursiveXXX(controlData.getID(), ancestorCandidateID);
         }
 
-        const bool GuiContext::isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept
+        const bool GUIContext::isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept
         {
             if (currentControlID.isValid() == false)
             {
@@ -3351,12 +3353,12 @@ namespace mint
             return isAncestorControlRecursiveXXX(parentControlID, ancestorCandidateID);
         }
 
-        const bool GuiContext::isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateID) const noexcept
+        const bool GUIContext::isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateID) const noexcept
         {
             return ((descendantCandidateID.isValid() == false) ? false : isDescendantControlRecursiveXXX(controlData.getID(), descendantCandidateID));
         }
 
-        const bool GuiContext::isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateID) const noexcept
+        const bool GUIContext::isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateID) const noexcept
         {
             if (currentControlID == descendantCandidateID)
             {
@@ -3378,23 +3380,23 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::isParentControlRoot(const ControlData& controlData) const noexcept
+        const bool GUIContext::isParentControlRoot(const ControlData& controlData) const noexcept
         {
             const ControlData& parentControlData = getControlData(controlData.getParentID());
             return parentControlData.isTypeOf(ControlType::ROOT);
         }
 
-        const bool GuiContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
+        const bool GUIContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
         {
             return isAncestorControlTargetRecursiveXXX(controlData.getParentID(), _controlInteractionStateSet.getFocusedControlID());
         }
 
-        const bool GuiContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
+        const bool GUIContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
         {
             return isAncestorControlTargetRecursiveXXX(controlData.getParentID(), _controlInteractionStateSet.getPressedControlID());
         }
 
-        const bool GuiContext::isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept
+        const bool GUIContext::isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept
         {
             if (id.isValid() == false)
             {
@@ -3410,7 +3412,7 @@ namespace mint
             return isAncestorControlTargetRecursiveXXX(parentID, targetID);
         }
 
-        const bool GuiContext::needToColorFocused(const ControlData& controlData) const noexcept
+        const bool GUIContext::needToColorFocused(const ControlData& controlData) const noexcept
         {
             // #0. Child of docking control
             const bool hasDockingAncestorInclusive = hasDockingAncestorControlInclusive(controlData);
@@ -3440,22 +3442,22 @@ namespace mint
             return (isDocking == true && (dockControlData.isRootControl() == true || _controlInteractionStateSet.isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
         }
 
-        const bool GuiContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
         {
             return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID());
         }
 
-        const bool GuiContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
         {
             return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getHoveredControlID());
         }
 
-        const bool GuiContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
         {
             return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getPressedControlID());
         }
 
-        const bool GuiContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
         {
             const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
@@ -3470,7 +3472,7 @@ namespace mint
             return false;
         }
 
-        const bool GuiContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
         {
             const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
@@ -3485,7 +3487,7 @@ namespace mint
             return false;
         }
 
-        const ControlData& GuiContext::getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept
+        const ControlData& GUIContext::getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept
         {
             if (controlData.getID().getRawValue() <= 1)
             {
@@ -3501,7 +3503,7 @@ namespace mint
             return getClosestFocusableAncestorControlInclusive(getControlData(controlData.getParentID()));
         }
 
-        const bool GuiContext::hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept
+        const bool GUIContext::hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept
         {
             if (controlData.getID().getRawValue() <= 1)
             {
@@ -3517,7 +3519,7 @@ namespace mint
             return hasDockingAncestorControlInclusive(getControlData(controlData.getParentID()));
         }
 
-        const float GuiContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
+        const float GUIContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
         {
             float result = 0.0f;
             if (_mouseStates._mouseWheel != 0.0f
@@ -3529,23 +3531,23 @@ namespace mint
             return result;
         }
 
-        Rendering::ShapeFontRendererContext& GuiContext::getRendererContext(const ControlData& controlData) noexcept
+        Rendering::ShapeFontRendererContext& GUIContext::getRendererContext(const ControlData& controlData) noexcept
         {
             return getRendererContext(controlData._rendererContextLayer);
         }
 
-        Rendering::ShapeFontRendererContext& GuiContext::getRendererContext(const RendererContextLayer rendererContextLayer) noexcept
+        Rendering::ShapeFontRendererContext& GUIContext::getRendererContext(const RendererContextLayer rendererContextLayer) noexcept
         {
             return _rendererContexts[static_cast<int32>(rendererContextLayer)];
         }
 
-        const RendererContextLayer GuiContext::getUpperRendererContextLayer(const ControlData& controlData) noexcept
+        const RendererContextLayer GUIContext::getUpperRendererContextLayer(const ControlData& controlData) noexcept
         {
             const int32 index = min(static_cast<int32>(controlData._rendererContextLayer) + 1, static_cast<int32>(RendererContextLayer::TopMost) - 1);
             return static_cast<RendererContextLayer>(index);
         }
 
-        void GuiContext::render()
+        void GUIContext::render()
         {
             MINT_ASSERT("김장원", _controlStackPerFrame.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
 
@@ -3573,7 +3575,7 @@ namespace mint
             resetPerFrameStates();
         }
 
-        void GuiContext::resetPerFrameStates()
+        void GUIContext::resetPerFrameStates()
         {
             _controlInteractionStateSet.resetPerFrameStates(_mouseStates);
 

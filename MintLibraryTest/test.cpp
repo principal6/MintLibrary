@@ -313,7 +313,7 @@ const bool testWindow()
     graphicDevice.initialize();
 
     //Rendering::MathExpressionRenderer mathExpressionRenderer(graphicDevice);
-    Gui::GuiContext& guiContext = graphicDevice.getGuiContext();
+    GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
     Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
     Rendering::ObjectPool objectPool;
@@ -442,10 +442,10 @@ const bool testWindow()
 #endif
 #if 1
             {
-                Gui::ControlMetaStateSet& controlMetaStateSet = guiContext.getControlMetaStateSet();
+                GUI::ControlMetaStateSet& controlMetaStateSet = guiContext.getControlMetaStateSet();
 
-                static Gui::VisibleState testWindowVisibleState = Gui::VisibleState::Invisible;
-                static Gui::VisibleState debugControlDataViewerVisibleState = Gui::VisibleState::Invisible;
+                static GUI::VisibleState testWindowVisibleState = GUI::VisibleState::Invisible;
+                static GUI::VisibleState debugControlDataViewerVisibleState = GUI::VisibleState::Invisible;
                 guiContext.makeTestWindow(testWindowVisibleState);
                 guiContext.makeDebugControlDataViewer(debugControlDataViewerVisibleState);
                 if (guiContext.beginMenuBar(MINT_GUI_CONTROL(L"")) == true)
@@ -469,7 +469,7 @@ const bool testWindow()
                         {
                             if (guiContext.isThisControlPressed() == true)
                             {
-                                testWindowVisibleState = Gui::VisibleState::VisibleOpen;
+                                testWindowVisibleState = GUI::VisibleState::VisibleOpen;
                             }
                             
                             guiContext.endMenuItem();
@@ -479,7 +479,7 @@ const bool testWindow()
                         {
                             if (guiContext.isThisControlPressed() == true)
                             {
-                                debugControlDataViewerVisibleState = Gui::VisibleState::VisibleOpen;
+                                debugControlDataViewerVisibleState = GUI::VisibleState::VisibleOpen;
                             }
 
                             guiContext.endMenuItem();
@@ -491,17 +491,17 @@ const bool testWindow()
                     guiContext.endMenuBar();
                 }
 
-                Gui::WindowParam inspectorWindowParam;
+                GUI::WindowParam inspectorWindowParam;
                 controlMetaStateSet.nextSize(Float2(320.0f, 400.0f));
-                inspectorWindowParam._initialDockZone = Gui::DockZone::RightSide;
+                inspectorWindowParam._initialDockZone = GUI::DockZone::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
-                static Gui::VisibleState inspectorVisibleState;
+                static GUI::VisibleState inspectorVisibleState;
                 if (guiContext.beginWindow(MINT_GUI_CONTROL(L"Inspector", inspectorWindowParam, inspectorVisibleState)) == true)
                 {
                     wchar_t tempBuffer[256];
-                    Gui::LabelParam labelParam;
+                    GUI::LabelParam labelParam;
                     labelParam._common._fontColor = Rendering::Color(200, 220, 255, 255);
-                    labelParam._alignmentHorz = Gui::TextAlignmentHorz::Left;
+                    labelParam._alignmentHorz = GUI::TextAlignmentHorz::Left;
                     
                     formatString(tempBuffer, L" FPS: %d", Profiler::FPSCounter::getFps());
                     guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
@@ -516,7 +516,7 @@ const bool testWindow()
                         labelParam._common._backgroundColor.r(1.0f);
                         labelParam._common._backgroundColor.a(0.75f);
                         labelParam._common._fontColor = Rendering::Color::kWhite;
-                        Gui::CommonControlParam valueSliderParam;
+                        GUI::CommonControlParam valueSliderParam;
                         const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
                         const float labelWidth = 16.0f;
                         const Float2 valueSliderSize = Float2((maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f, 24.0f);

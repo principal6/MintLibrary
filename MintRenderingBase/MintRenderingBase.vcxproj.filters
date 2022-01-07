@@ -19,11 +19,11 @@
     <Filter Include="Source\CppHlsl">
       <UniqueIdentifier>{defe00fb-a822-402c-9509-712cdebd06c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\Gui">
-      <UniqueIdentifier>{83c1bdb0-bf77-4546-8c67-a8f1e58dcdfa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Gui">
+    <Filter Include="Source\GUI">
       <UniqueIdentifier>{e1cc7fd8-c15d-4f82-be33-76c921770f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\GUI">
+      <UniqueIdentifier>{83c1bdb0-bf77-4546-8c67-a8f1e58dcdfa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,32 +90,32 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Gui\GuiCommon.h">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Gui\GuiContext.h">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Gui\ControlData.h">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Gui\ControlData.hpp">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Gui\InputHelpers.h">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Gui\InputHelpers.hpp">
-      <Filter>Include\Gui</Filter>
-    </ClInclude>
     <ClInclude Include="Include\ShapeFontRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Gui\ControlMetaStateSet.h">
-      <Filter>Include\Gui</Filter>
+    <ClInclude Include="Include\GUI_\ControlData.h">
+      <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Gui\ControlInteractionStateSet.h">
-      <Filter>Include\Gui</Filter>
+    <ClInclude Include="Include\GUI_\ControlData.hpp">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\ControlInteractionStateSet.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\ControlMetaStateSet.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\GUICommon_.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\GUIContext_.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\InputHelpers.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI_\InputHelpers.hpp">
+      <Filter>Include\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -128,11 +128,11 @@
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
-    <None Include="Include\Gui\GuiContext.inl">
-      <Filter>Include\Gui</Filter>
+    <None Include="Include\GUI_\ControlMetaStateSet.inl">
+      <Filter>Include\GUI</Filter>
     </None>
-    <None Include="Include\Gui\ControlMetaStateSet.inl">
-      <Filter>Include\Gui</Filter>
+    <None Include="Include\GUI_\GUIContext_.inl">
+      <Filter>Include\GUI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -181,11 +181,11 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Gui\GuiContext.cpp">
-      <Filter>Source\Gui</Filter>
+    <ClCompile Include="Source\GUI_\ControlInteractionStateSet.cpp">
+      <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Gui\ControlInteractionStateSet.cpp">
-      <Filter>Source\Gui</Filter>
+    <ClCompile Include="Source\GUI_\GUIContext_.cpp">
+      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

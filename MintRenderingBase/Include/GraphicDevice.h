@@ -18,7 +18,7 @@
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/FontRendererContext.h>
 
-#include <MintRenderingBase/Include/Gui/GuiContext.h>
+#include <MintRenderingBase/Include/GUI_/GUIContext_.h>
 
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
@@ -176,7 +176,7 @@ namespace mint
             ShapeRendererContext&                       getShapeRendererContext() noexcept;
             FontRendererContext&                        getFontRendererContext() noexcept;
             ShapeFontRendererContext&                   getShapeFontRendererContext() noexcept;
-            Gui::GuiContext&                            getGuiContext() noexcept;
+            GUI::GUIContext&                            getGUIContext() noexcept;
             const Language::CppHlsl::Interpreter&       getCppHlslSteamData() const noexcept;
             const Language::CppHlsl::Interpreter&       getCppHlslConstantBuffers() const noexcept;
             StateManager&                               getStateManager() noexcept;
@@ -259,7 +259,7 @@ namespace mint
             bool                                        _needEndRenderingCall;
 
         private:
-            Gui::GuiContext                             _guiContext;
+            GUI::GUIContext                             _guiContext;
         };
     }
 }

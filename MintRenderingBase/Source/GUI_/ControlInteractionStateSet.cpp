@@ -1,14 +1,14 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/Gui/ControlInteractionStateSet.h>
+#include <MintRenderingBase/Include/GUI_/ControlInteractionStateSet.h>
 
-#include <MintRenderingBase/Include/Gui/InputHelpers.hpp>
+#include <MintRenderingBase/Include/GUI_/InputHelpers.hpp>
 
 #include <MintLibrary/Include/ScopedCPUProfiler.h>
 
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
 
         void ControlInteractionStateSet::setControlHovered(const ControlData& controlData) noexcept

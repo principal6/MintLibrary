@@ -17,14 +17,14 @@
 #include <MintMath/Include/Rect.h>
 
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
-#include <MintRenderingBase/Include/Gui/GuiCommon.h>
-#include <MintRenderingBase/Include/Gui/ControlData.h>
-#include <MintRenderingBase/Include/Gui/InputHelpers.h>
-#include <MintRenderingBase/Include/Gui/ControlMetaStateSet.h>
-#include <MintRenderingBase/Include/Gui/ControlInteractionStateSet.h>
+#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
+#include <MintRenderingBase/Include/GUI_/ControlData.h>
+#include <MintRenderingBase/Include/GUI_/InputHelpers.h>
+#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.h>
+#include <MintRenderingBase/Include/GUI_/ControlInteractionStateSet.h>
 
 
-// This macro makes arguments for begin-/make- functions of GuiContext
+// This macro makes arguments for begin-/make- functions of GUIContext
 #define MINT_GUI_CONTROL(params, ...) __FILE__, __LINE__, params, __VA_ARGS__
 
 
@@ -42,9 +42,9 @@ namespace mint
     }
 
 
-    namespace Gui
+    namespace GUI
     {
-        class GuiContext;
+        class GUIContext;
 
         
         struct WindowParam
@@ -114,7 +114,7 @@ namespace mint
         // ||           |                 ||
         // =================================
 
-        class GuiContext final
+        class GUIContext final
         {
             friend Rendering::GraphicDevice;
 
@@ -159,10 +159,10 @@ namespace mint
             };
 
         private:
-                                                        GuiContext(Rendering::GraphicDevice& graphicDevice);
+                                                        GUIContext(Rendering::GraphicDevice& graphicDevice);
 
         public:
-                                                        ~GuiContext();
+                                                        ~GUIContext();
 
         public:
             void                                        initialize();
@@ -482,7 +482,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/Gui/GuiContext.inl>
+#include <MintRenderingBase/Include/GUI_/GUIContext_.inl>
 
 
 #endif // !MINT_GUI_CONTEXT_H

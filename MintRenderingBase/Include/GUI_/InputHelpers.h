@@ -9,7 +9,7 @@
 
 #include <MintContainer/Include/String.h>
 
-#include <MintRenderingBase/Include/Gui/GuiCommon.h>
+#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
 #include <MintPlatform/Include/IWindow.h>
 
 
@@ -24,7 +24,7 @@ namespace mint
     }
 
 
-    namespace Gui
+    namespace GUI
     {
         class ControlData;
 

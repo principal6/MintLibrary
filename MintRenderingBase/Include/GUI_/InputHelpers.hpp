@@ -2,12 +2,12 @@
 
 
 #include <stdafx.h>
-#include <MintRenderingBase/Include/Gui/InputHelpers.h>
+#include <MintRenderingBase/Include/GUI_/InputHelpers.h>
 
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
-#include <MintRenderingBase/Include/Gui/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI_/ControlData.hpp>
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 
 #include <MintPlatform/Include/InputContext.h>
@@ -17,7 +17,7 @@
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
 #pragma region MouseStates
         MINT_INLINE void MouseStates::PerButtonStates::resetPerFrame() noexcept

@@ -12,7 +12,7 @@
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         class ControlMetaStateSet
         {
@@ -70,7 +70,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/Gui/ControlMetaStateSet.inl>
+#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.inl>
 
 
 #endif // !MINT_GUI_CONTROL_METASTATE_SET

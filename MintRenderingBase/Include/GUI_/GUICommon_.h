@@ -14,7 +14,7 @@
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         enum class ControlType : uint16
         {

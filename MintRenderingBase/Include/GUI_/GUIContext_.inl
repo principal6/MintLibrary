@@ -1,10 +1,10 @@
-#include "GuiContext.h"
+#include "GUIContext_.h"
 #pragma once
 
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
 #pragma region TaskWhenMouseUp
         MINT_INLINE void TaskWhenMouseUp::clear() noexcept
@@ -29,8 +29,8 @@ namespace mint
 #pragma endregion
 
 
-#pragma region GuiContext - ControlStackData
-        inline GuiContext::ControlStackData::ControlStackData(const ControlData& controlData)
+#pragma region GUIContext - ControlStackData
+        inline GUIContext::ControlStackData::ControlStackData(const ControlData& controlData)
             : _controlType{ controlData.getControlType() }
             , _id{ controlData.getID() }
         {
@@ -39,13 +39,13 @@ namespace mint
 #pragma endregion
 
 
-        MINT_INLINE const bool GuiContext::isValidControl(const ControlID& id) const noexcept
+        MINT_INLINE const bool GUIContext::isValidControl(const ControlID& id) const noexcept
         {
             const auto found = _controlIDMap.find(_controlStackPerFrame.back()._id);
             return found.isValid();
         }
 
-        MINT_INLINE const ControlData& GuiContext::getControlStackTopXXX() const noexcept
+        MINT_INLINE const ControlData& GUIContext::getControlStackTopXXX() const noexcept
         {
             if (_controlStackPerFrame.empty() == false)
             {
@@ -58,12 +58,12 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::accessControlStackTopXXX() noexcept
+        MINT_INLINE ControlData& GUIContext::accessControlStackTopXXX() noexcept
         {
             return const_cast<ControlData&>(getControlStackTopXXX());
         }
 
-        MINT_INLINE const ControlData& GuiContext::getControlData(const ControlID& id) const noexcept
+        MINT_INLINE const ControlData& GUIContext::getControlData(const ControlID& id) const noexcept
         {
             auto found = _controlIDMap.find(id);
             if (found.isValid() == true)
@@ -73,32 +73,32 @@ namespace mint
             return _rootControlData;
         }
 
-        MINT_INLINE ControlData& GuiContext::accessControlData(const ControlID& id) noexcept
+        MINT_INLINE ControlData& GUIContext::accessControlData(const ControlID& id) noexcept
         {
             return const_cast<ControlData&>(getControlData(id));
         }
 
-        MINT_INLINE Float2 GuiContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
+        MINT_INLINE Float2 GUIContext::getControlPositionInParentSpace(const ControlData& controlData) const noexcept
         {
             return controlData._position - getControlData(controlData.getParentID())._position;
         }
 
-        MINT_INLINE const Rendering::Color& GuiContext::getNamedColor(const NamedColor namedColor) const noexcept
+        MINT_INLINE const Rendering::Color& GUIContext::getNamedColor(const NamedColor namedColor) const noexcept
         {
             return _namedColors[static_cast<uint32>(namedColor)];
         }
 
-        MINT_INLINE void GuiContext::setNamedColor(const NamedColor namedColor, const Rendering::Color& color) noexcept
+        MINT_INLINE void GUIContext::setNamedColor(const NamedColor namedColor, const Rendering::Color& color) noexcept
         {
             _namedColors[static_cast<uint32>(namedColor)] = color;
         }
 
-        MINT_INLINE const float GuiContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+        MINT_INLINE const float GUIContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
             return _rendererContexts[0].computeTextWidth(wideText, textLength);
         }
 
-        MINT_INLINE const uint32 GuiContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+        MINT_INLINE const uint32 GUIContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
         {
             return _rendererContexts[0].computeIndexFromPositionInText(wideText, textLength, positionInText);
         }

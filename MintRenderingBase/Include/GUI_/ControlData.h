@@ -13,14 +13,14 @@
 
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/Gui/GuiCommon.h>
+#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
 
 #include <MintReflection/Include/Reflection.h>
 
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         class ControlData;
         class ControlMetaStateSet;

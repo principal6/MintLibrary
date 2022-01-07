@@ -2,26 +2,26 @@
 
 
 #include <stdafx.h>
-#include <MintRenderingBase/Include/Gui/ControlData.h>
+#include <MintRenderingBase/Include/GUI_/ControlData.h>
 
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Hash.hpp>
 
-#include <MintRenderingBase/Include/Gui/ControlMetaStateSet.h>
+#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.h>
 
 
 namespace mint
 {
 #pragma region ControlID
     template <>
-    MINT_INLINE const uint64 computeHash(const Gui::ControlID& controlID) noexcept
+    MINT_INLINE const uint64 computeHash(const GUI::ControlID& controlID) noexcept
     {
         return computeHash(controlID.getRawValue());
     }
 #pragma endregion
 
 
-    namespace Gui
+    namespace GUI
     {
 #pragma region ControlValue
         inline ControlValue::ControlValue()
@@ -31,7 +31,7 @@ namespace mint
             __noop;
         }
 
-        MINT_INLINE void Gui::ControlValue::CommonData::enableScrollBar(const ScrollBarType scrollBarType) noexcept
+        MINT_INLINE void GUI::ControlValue::CommonData::enableScrollBar(const ScrollBarType scrollBarType) noexcept
         {
             if (_scrollBarType != ScrollBarType::Both && scrollBarType != ScrollBarType::None)
             {
@@ -110,19 +110,19 @@ namespace mint
 
             switch (dockZone)
             {
-            case Gui::DockZone::LeftSide:
+            case GUI::DockZone::LeftSide:
                 result._right = true;
                 break;
-            case Gui::DockZone::RightSide:
+            case GUI::DockZone::RightSide:
                 result._left = true;
                 break;
-            case Gui::DockZone::TopSide:
+            case GUI::DockZone::TopSide:
                 result._bottom = true;
                 break;
-            case Gui::DockZone::BottomSide:
+            case GUI::DockZone::BottomSide:
                 result._top = true;
                 break;
-            case Gui::DockZone::COUNT:
+            case GUI::DockZone::COUNT:
                 break;
             default:
                 break;
@@ -352,13 +352,13 @@ namespace mint
 
             switch (prepareControlDataParam._clipRectUsage)
             {
-            case Gui::ClipRectUsage::ParentsOwn:
+            case GUI::ClipRectUsage::ParentsOwn:
                 setClipRectForMe(parentControlData.getClipRects()._forMe);
                 break;
-            case Gui::ClipRectUsage::ParentsChild:
+            case GUI::ClipRectUsage::ParentsChild:
                 setClipRectForMe(parentControlData.getClipRects()._forChildren);
                 break;
-            case Gui::ClipRectUsage::ParentsDock:
+            case GUI::ClipRectUsage::ParentsDock:
                 setClipRectForMe(parentControlData.getClipRects()._forDocks);
                 break;
             default:
@@ -502,7 +502,7 @@ namespace mint
 
         MINT_INLINE const float ControlData::computeScrollDisplayHeight() const noexcept
         {
-            const float titleBarHeight = (_controlType == Gui::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
+            const float titleBarHeight = (_controlType == GUI::ControlType::Window) ? _controlValue._windowData._titleBarThickness : 0.0f;
             return max(0.0f,
                 _size._y - getVertDockZoneSize() - titleBarHeight - _innerPadding.vert()
                 - ((_controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz) == true) ? kScrollBarThickness * 2.0f : 0.0f)
@@ -590,8 +590,8 @@ namespace mint
             Float2 resultDockSize = dockZoneData.getRawDockSizeXXX();
             switch (dockZone)
             {
-            case Gui::DockZone::LeftSide:
-            case Gui::DockZone::RightSide:
+            case GUI::DockZone::LeftSide:
+            case GUI::DockZone::RightSide:
                 resultDockSize._y = innerDisplaySize._y;
                 if (dockZoneDataTopSide.hasDockedControls() == true)
                 {
@@ -602,11 +602,11 @@ namespace mint
                     resultDockSize._y -= dockZoneDataBottomSide.getRawDockSizeXXX()._y;
                 }
                 break;
-            case Gui::DockZone::TopSide:
-            case Gui::DockZone::BottomSide:
+            case GUI::DockZone::TopSide:
+            case GUI::DockZone::BottomSide:
                 resultDockSize._x = innerDisplaySize._x;
                 break;
-            case Gui::DockZone::COUNT:
+            case GUI::DockZone::COUNT:
                 break;
             default:
                 break;
@@ -632,21 +632,21 @@ namespace mint
             Float2 resultDockPosition;
             switch (dockZone)
             {
-            case Gui::DockZone::LeftSide:
+            case GUI::DockZone::LeftSide:
                 resultDockPosition = _position + offset;
                 resultDockPosition._y += getDockZoneSize(DockZone::TopSide)._y;
                 break;
-            case Gui::DockZone::RightSide:
+            case GUI::DockZone::RightSide:
                 resultDockPosition = Float2(_position._x + _size._x - dockSize._x, _position._y) + offset;
                 resultDockPosition._y += getDockZoneSize(DockZone::TopSide)._y;
                 break;
-            case Gui::DockZone::TopSide:
+            case GUI::DockZone::TopSide:
                 resultDockPosition = Float2(_position._x, _position._y) + offset;
                 break;
-            case Gui::DockZone::BottomSide:
+            case GUI::DockZone::BottomSide:
                 resultDockPosition = Float2(_position._x, _position._y + _size._y - dockSize._y);
                 break;
-            case Gui::DockZone::COUNT:
+            case GUI::DockZone::COUNT:
             default:
                 break;
             }

@@ -5,12 +5,12 @@
 #define MINT_GUI_CONTROL_INTERACTION_STATESET
 
 
-#include <MintRenderingBase/Include/Gui/ControlData.h>
+#include <MintRenderingBase/Include/GUI_/ControlData.h>
 
 
 namespace mint
 {
-    namespace Gui
+    namespace GUI
     {
         struct MouseStates;
 
