@@ -42,7 +42,7 @@ namespace mint
         class DxObjectId final
         {
             friend IDxObject;
-            static constexpr uint32         kDxInvalidObjectRawId{ kUint32Max };
+            static constexpr uint32         kDxInvalidObjectRawID{ kUint32Max };
 
         public:
                                             DxObjectId() = default;
@@ -57,28 +57,28 @@ namespace mint
         public:
             MINT_INLINE const bool            operator==(const DxObjectId& rhs) const noexcept
             {
-                return _rawId == rhs._rawId;
+                return _rawID == rhs._rawID;
             }
 
             MINT_INLINE const bool            operator!=(const DxObjectId& rhs) const noexcept
             {
-                return _rawId != rhs._rawId;
+                return _rawID != rhs._rawID;
             }
 
             MINT_INLINE const bool            operator<(const DxObjectId& rhs) const noexcept
             {
-                return _rawId < rhs._rawId;
+                return _rawID < rhs._rawID;
             }
 
             MINT_INLINE const bool            operator>(const DxObjectId& rhs) const noexcept
             {
-                return _rawId > rhs._rawId;
+                return _rawID > rhs._rawID;
             }
 
         public:
             MINT_INLINE const bool            isValid() const noexcept
             {
-                return _rawId != kDxInvalidObjectRawId;
+                return _rawID != kDxInvalidObjectRawID;
             }
 
             MINT_INLINE const DxObjectType    getObjectType() const noexcept
@@ -94,8 +94,8 @@ namespace mint
         private:
             MINT_INLINE void                  assignIdXXX() noexcept
             {
-                ++_lastRawId;
-                _rawId = _lastRawId;
+                ++_lastRawID;
+                _rawID = _lastRawID;
             }
 
             MINT_INLINE void                  setObjectTypeXXX(const DxObjectType objectType) noexcept
@@ -104,11 +104,11 @@ namespace mint
             }
 
         private:
-            uint32                          _rawId{ kDxInvalidObjectRawId };
+            uint32                          _rawID{ kDxInvalidObjectRawID };
             DxObjectType                    _objectType{ DxObjectType::None };
 
         private:
-            static std::atomic<uint32>      _lastRawId;
+            static std::atomic<uint32>      _lastRawID;
     
         public:
             static const DxObjectId         kInvalidObjectId;

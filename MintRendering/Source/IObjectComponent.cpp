@@ -6,14 +6,14 @@ namespace mint
 {
     namespace Rendering
     {
-        void ObjectComponentId::assignRawId(const uint32 rawId) noexcept
+        void ObjectComponentId::assignRawID(const uint32 rawId) noexcept
         {
-            _rawId = rawId;
+            _rawID = rawId;
         }
 
-        const uint32 ObjectComponentId::getRawId() const noexcept
+        const uint32 ObjectComponentId::getRawID() const noexcept
         {
-            return _rawId;
+            return _rawID;
         }
 
 
@@ -31,14 +31,14 @@ namespace mint
         }
 
 
-        std::atomic<uint32> IObjectComponent::_nextRawId = 0;
+        std::atomic<uint32> IObjectComponent::_nextRawID = 0;
         IObjectComponent::IObjectComponent(const ObjectComponentType type)
             : _ownerObject{ nullptr }
             , _type{ type }
         {
-            _id.assignRawId(IObjectComponent::_nextRawId);
+            _id.assignRawID(IObjectComponent::_nextRawID);
 
-            ++IObjectComponent::_nextRawId;
+            ++IObjectComponent::_nextRawID;
         }
     }
 }

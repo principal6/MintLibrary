@@ -77,8 +77,8 @@ namespace mint
         }
 
         UniqueStringAId newId(_uniqueStringCount);
-        _offsetArray[newId._rawId] = _totalLength;
-        memcpy(&_rawMemory[_offsetArray[newId._rawId]], rawString, lengthNullIncluded - 1);
+        _offsetArray[newId._rawID] = _totalLength;
+        memcpy(&_rawMemory[_offsetArray[newId._rawID]], rawString, lengthNullIncluded - 1);
 
         _totalLength += lengthNullIncluded;
         ++_uniqueStringCount;

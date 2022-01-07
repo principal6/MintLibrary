@@ -9,7 +9,7 @@ namespace mint
 {
     class IID abstract
     {
-        static constexpr uint32         kInvalidRawId{ kUint32Max };
+        static constexpr uint32         kInvalidRawID{ kUint32Max };
 
     public:
                                         IID()                              = default;
@@ -31,10 +31,10 @@ namespace mint
         const bool                      isValid() const noexcept;
 
     protected:
-        virtual void                    assignRawId(const uint32 rawId) noexcept abstract;
+        virtual void                    assignRawID(const uint32 rawId) noexcept abstract;
 
     protected:
-        uint32                          _rawId{ kInvalidRawId };
+        uint32                          _rawID{ kInvalidRawID };
     };
 }
 

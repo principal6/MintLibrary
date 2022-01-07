@@ -34,10 +34,10 @@ namespace mint
             friend IObjectComponent;
 
         private:
-            virtual void            assignRawId(const uint32 rawId) noexcept override final;
+            virtual void            assignRawID(const uint32 rawId) noexcept override final;
 
         public:
-            const uint32            getRawId() const noexcept;
+            const uint32            getRawID() const noexcept;
         };
 
 
@@ -62,7 +62,7 @@ namespace mint
             friend Object;
 
         private:
-            static std::atomic<uint32>              _nextRawId;
+            static std::atomic<uint32>              _nextRawID;
 
         public:
                                                     IObjectComponent(const ObjectComponentType type);

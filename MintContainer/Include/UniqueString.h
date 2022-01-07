@@ -29,7 +29,7 @@ namespace mint
         friend UniqueStringPoolA;
 
     private:
-        static constexpr uint32 kInvalidRawId = kUint32Max;
+        static constexpr uint32 kInvalidRawID = kUint32Max;
 
     public:
                                 UniqueStringAId();
@@ -37,7 +37,7 @@ namespace mint
 #if !defined MINT_UNIQUE_STRING_EXPOSE_ID
     private:
 #endif
-                                UniqueStringAId(const uint32 newRawId);
+                                UniqueStringAId(const uint32 newRawID);
 
     public:
                                 UniqueStringAId(const UniqueStringAId& rhs) = default;
@@ -61,7 +61,7 @@ namespace mint
         const bool              operator!=(const UniqueStringAId& rhs) const noexcept;
 
     private:
-        uint32                  _rawId;
+        uint32                  _rawID;
     };
 
 

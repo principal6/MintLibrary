@@ -10,25 +10,25 @@
 namespace mint
 {
     inline UniqueStringAId::UniqueStringAId()
-        : _rawId{ UniqueStringAId::kInvalidRawId }
+        : _rawID{ UniqueStringAId::kInvalidRawID }
     {
         __noop;
     }
 
-    inline UniqueStringAId::UniqueStringAId(const uint32 newRawId)
-        : _rawId{ newRawId }
+    inline UniqueStringAId::UniqueStringAId(const uint32 newRawID)
+        : _rawID{ newRawID }
     {
         __noop;
     }
 
     MINT_INLINE const bool UniqueStringAId::operator==(const UniqueStringAId& rhs) const noexcept
     {
-        return _rawId == rhs._rawId;
+        return _rawID == rhs._rawID;
     }
 
     MINT_INLINE const bool UniqueStringAId::operator!=(const UniqueStringAId& rhs) const noexcept
     {
-        return _rawId != rhs._rawId;
+        return _rawID != rhs._rawID;
     }
 
 
@@ -57,7 +57,7 @@ namespace mint
 
     MINT_INLINE const bool UniqueStringPoolA::isValid(const UniqueStringAId id) const noexcept
     {
-        return (id._rawId < _uniqueStringCount);
+        return (id._rawID < _uniqueStringCount);
     }
 
     MINT_INLINE const char* UniqueStringPoolA::getRawString(const UniqueStringAId id) const noexcept
@@ -66,6 +66,6 @@ namespace mint
         {
             return nullptr;
         }
-        return &_rawMemory[_offsetArray[id._rawId]];;
+        return &_rawMemory[_offsetArray[id._rawID]];;
     }
 }
