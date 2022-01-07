@@ -54,7 +54,7 @@ namespace mint
             void                        setDoubleClicked(const Platform::MouseButton mouseButton) noexcept;
 
         private:
-            void                        calculateMouseDragDelta() noexcept;
+            void                        computeMouseDragDelta() noexcept;
 
         public:
             const Float2&               getPosition() const noexcept;
@@ -145,7 +145,7 @@ namespace mint
         public:
             static void             deselect(ControlData& controlData) noexcept;
             static void             eraseSelection(ControlData& controlData, StringW& outText) noexcept;
-            static const uint16     calculateCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept;
+            static const uint16     computeCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept;
             static void             updateSelection(const uint16 oldCaretAt, const uint16 caretAt, ControlData& controlData) noexcept;
 #pragma endregion
 

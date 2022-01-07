@@ -581,7 +581,7 @@ namespace mint
     {
         if (isSquareMatrix() == false)
         {
-            MINT_LOG_ERROR("±èÀå¿ø", "Tried to calculate trace from a non-square matrix!");
+            MINT_LOG_ERROR("±èÀå¿ø", "Tried to compute trace from a non-square matrix!");
         }
 
         return Math::trace(_m);

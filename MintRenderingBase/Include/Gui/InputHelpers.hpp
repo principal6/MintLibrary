@@ -39,21 +39,21 @@ namespace mint
         {
             _mousePosition = position;
 
-            calculateMouseDragDelta();
+            computeMouseDragDelta();
         }
 
         MINT_INLINE void MouseStates::setButtonDownPosition(const Float2& position) noexcept
         {
             _mouseDownPositionCopy = _mouseDownPosition = position;
 
-            calculateMouseDragDelta();
+            computeMouseDragDelta();
         }
 
         MINT_INLINE void MouseStates::setButtonDownPositionCopy(const Float2& position) noexcept
         {
             _mouseDownPositionCopy = position;
 
-            calculateMouseDragDelta();
+            computeMouseDragDelta();
         }
 
         MINT_INLINE void MouseStates::setButtonUpPosition(const Float2& position) noexcept
@@ -81,7 +81,7 @@ namespace mint
             _perButtonStates[static_cast<uint32>(mouseButton)]._isDoubleClicked = true;
         }
 
-        MINT_INLINE void MouseStates::calculateMouseDragDelta() noexcept
+        MINT_INLINE void MouseStates::computeMouseDragDelta() noexcept
         {
             _mouseDragDelta = _mousePosition - _mouseDownPositionCopy;
         }
@@ -161,7 +161,7 @@ namespace mint
             const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             const float positionInText = mouseStates.getPosition()._x - controlData._position._x + textDisplayOffset - textRenderOffset._x;
             const uint16 textLength = static_cast<uint16>(outText.length());
-            const uint32 newCaretAt = rendererContext.calculateIndexFromPositionInText(outText.c_str(), textLength, positionInText);
+            const uint32 newCaretAt = rendererContext.computeIndexFromPositionInText(outText.c_str(), textLength, positionInText);
             if (mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
             {
                 caretAt = newCaretAt;
@@ -203,7 +203,7 @@ namespace mint
                 const bool isInputCharacter = (wcharInput >= 32);
                 if (isInputCharacter == true)
                 {
-                    const uint16 futureCaretAt = InputBoxHelpers::calculateCaretAtIfErasedSelection(controlData, outText);
+                    const uint16 futureCaretAt = InputBoxHelpers::computeCaretAtIfErasedSelection(controlData, outText);
                     if (InputBoxHelpers::isValidCharacterInput(wcharInput, futureCaretAt, textInputMode, outText) == true)
                     {
                         InputBoxHelpers::eraseSelection(controlData, outText);
@@ -416,7 +416,7 @@ namespace mint
             caretAt = textLength;
 
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
-            const float textWidth = rendererContext.calculateTextWidth(text.c_str(), textLength);
+            const float textWidth = rendererContext.computeTextWidth(text.c_str(), textLength);
             textDisplayOffset = max(0.0f, textWidth - controlData._size._x);
         }
 
@@ -515,7 +515,7 @@ namespace mint
             controlData._controlValue._textBoxData._selectionLength = 0;
         }
 
-        MINT_INLINE const uint16 InputBoxHelpers::calculateCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept
+        MINT_INLINE const uint16 InputBoxHelpers::computeCaretAtIfErasedSelection(const ControlData& controlData, const StringW& outText) noexcept
         {
             uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
             const uint16 selectionLength = controlData._controlValue._textBoxData._selectionLength;
@@ -590,7 +590,7 @@ namespace mint
             const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth) noexcept
         {
             const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
-            const float textWidthTillCaret = rendererContext.calculateTextWidth(controlData._text.c_str(), min(caretAt, textLength));
+            const float textWidthTillCaret = rendererContext.computeTextWidth(controlData._text.c_str(), min(caretAt, textLength));
             float& textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
             {
                 const float deltaTextDisplayOffsetRight = (textWidthTillCaret + inputCandidateWidth - textDisplayOffset) - controlData._size._x;
@@ -634,13 +634,13 @@ namespace mint
             // Input Candidate ·»´õ¸µ
             const wchar_t inputCandidate[2]{ inputCandiate, L'\0' };
             const uint16 textLength = static_cast<uint16>(outText.length());
-            const float textWidthTillCaret = rendererContext.calculateTextWidth(outText.c_str(), min(caretAt, textLength));
+            const float textWidthTillCaret = rendererContext.computeTextWidth(outText.c_str(), min(caretAt, textLength));
             rendererContext.setTextColor(commonControlParam._fontColor);
             rendererContext.drawDynamicText(inputCandidate, Float4(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset, controlLeftCenterPosition._y, 0, 0) + textRenderOffset,
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered));
 
             // Text ·»´õ¸µ (Caret ÀÌÈÄ)
-            const float inputCandidateWidth = ((isFocused == true) && (inputCandiate >= 32)) ? rendererContext.calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const float inputCandidateWidth = ((isFocused == true) && (inputCandiate >= 32)) ? rendererContext.computeTextWidth(inputCandidate, 1) : 0.0f;
             if (outText.empty() == false)
             {
                 rendererContext.setTextColor(commonControlParam._fontColor);
@@ -682,7 +682,7 @@ namespace mint
             {
                 const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
                 const uint16 textLength = static_cast<uint16>(outText.length());
-                const float textWidthTillCaret = rendererContext.calculateTextWidth(outText.c_str(), min(caretAt, textLength));
+                const float textWidthTillCaret = rendererContext.computeTextWidth(outText.c_str(), min(caretAt, textLength));
                 const float caretHeight = fontSize;
                 const Float2& p0 = Float2(controlLeftCenterPosition._x + textWidthTillCaret - textDisplayOffset + textRenderOffset._x, controlLeftCenterPosition._y - caretHeight * 0.5f);
                 rendererContext.setColor(Rendering::Color::kBlack);
@@ -707,8 +707,8 @@ namespace mint
             {
                 const Float2& controlLeftCenterPosition = textBoxControlData.getControlLeftCenterPosition();
                 const float textDisplayOffset = textBoxControlData._controlValue._textBoxData._textDisplayOffset;
-                const float textWidthTillSelectionStart = rendererContext.calculateTextWidth(outText.c_str(), selectionStart);
-                const float textWidthTillSelectionEnd = rendererContext.calculateTextWidth(outText.c_str(), selectionEnd);
+                const float textWidthTillSelectionStart = rendererContext.computeTextWidth(outText.c_str(), selectionStart);
+                const float textWidthTillSelectionEnd = rendererContext.computeTextWidth(outText.c_str(), selectionEnd);
                 const float textWidthSelection = textWidthTillSelectionEnd - textWidthTillSelectionStart;
 
                 const Float4 selectionRenderPosition = Float4(controlLeftCenterPosition._x - textDisplayOffset + textWidthTillSelectionStart + textWidthSelection * 0.5f, controlLeftCenterPosition._y, 0, 0);

@@ -241,7 +241,7 @@ namespace mint
             void                                        makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
-            Float4                                      labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            Float4                                      labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
             Rendering::FontRenderingOption              labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
     #pragma endregion
 
@@ -358,7 +358,7 @@ namespace mint
 #pragma region Before drawing controls
         private:
             void                                        prepareControlData(ControlData& controlData, const PrepareControlDataParam& prepareControlDataParam) noexcept;
-            void                                        calculateControlChildAt(ControlData& controlData) noexcept;
+            void                                        computeControlChildAt(ControlData& controlData) noexcept;
 
             const bool                                  processClickControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& pressedColor, Rendering::Color& outBackgroundColor) noexcept;
             const bool                                  processFocusControl(ControlData& controlData, const Rendering::Color& focusedColor, const Rendering::Color& nonFocusedColor, Rendering::Color& outBackgroundColor) noexcept;
@@ -412,8 +412,8 @@ namespace mint
             void                                        setNamedColor(const NamedColor namedColor, const Rendering::Color& color) noexcept;
 
             const float                                 getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept;
-            const float                                 calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            const uint32                                calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
+            const float                                 computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+            const uint32                                computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 #pragma endregion
 
         private:

@@ -93,14 +93,14 @@ namespace mint
             _namedColors[static_cast<uint32>(namedColor)] = color;
         }
 
-        MINT_INLINE const float GuiContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+        MINT_INLINE const float GuiContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
-            return _rendererContexts[0].calculateTextWidth(wideText, textLength);
+            return _rendererContexts[0].computeTextWidth(wideText, textLength);
         }
 
-        MINT_INLINE const uint32 GuiContext::calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+        MINT_INLINE const uint32 GuiContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
         {
-            return _rendererContexts[0].calculateIndexFromPositionInText(wideText, textLength, positionInText);
+            return _rendererContexts[0].computeIndexFromPositionInText(wideText, textLength, positionInText);
         }
     }
 }

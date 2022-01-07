@@ -594,7 +594,7 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float titleWidth = calculateTextWidth(title, StringUtil::length(title));
+                const float titleWidth = computeTextWidth(title, StringUtil::length(title));
                 prepareControlDataParam._initialResizingMask.setAllTrue();
                 prepareControlDataParam._desiredPositionInParent = windowParam._position;
                 prepareControlDataParam._innerPadding = kWindowInnerPadding;
@@ -794,8 +794,8 @@ namespace mint
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float textWidth = calculateTextWidth(text, StringUtil::length(text));
-                prepareControlDataParam._autoCalculatedDisplaySize = Float2(textWidth + 24, _fontSize + 12);
+                const float textWidth = computeTextWidth(text, StringUtil::length(text));
+                prepareControlDataParam._autoComputedDisplaySize = Float2(textWidth + 24, _fontSize + 12);
             }
             prepareControlData(controlData, prepareControlDataParam);
         
@@ -829,7 +829,7 @@ namespace mint
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize = kCheckBoxSize;
+                prepareControlDataParam._autoComputedDisplaySize = kCheckBoxSize;
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -876,8 +876,8 @@ namespace mint
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float textWidth = calculateTextWidth(text, StringUtil::length(text));
-                prepareControlDataParam._autoCalculatedDisplaySize = Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y);
+                const float textWidth = computeTextWidth(text, StringUtil::length(text));
+                prepareControlDataParam._autoComputedDisplaySize = Float2(textWidth + labelParam._paddingForAutoSize._x, _fontSize + labelParam._paddingForAutoSize._y);
                 prepareControlDataParam._offset = labelParam._common._offset;
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -893,12 +893,12 @@ namespace mint
             rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
 
             rendererContext.setTextColor((labelParam._common._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._common._fontColor);
-            const Float4 textPosition = labelCalculateTextPosition(labelParam, controlData);
+            const Float4 textPosition = labelComputeTextPosition(labelParam, controlData);
             const Rendering::FontRenderingOption fontRenderingOption = labelGetFontRenderingOption(labelParam, controlData);
             rendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
         }
 
-        Float4 GuiContext::labelCalculateTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        Float4 GuiContext::labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
@@ -970,7 +970,7 @@ namespace mint
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                prepareControlDataParamForTrack._autoCalculatedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
+                prepareControlDataParamForTrack._autoComputedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
             }
             prepareControlData(trackControlData, prepareControlDataParamForTrack);
             
@@ -994,8 +994,8 @@ namespace mint
                 {
                     const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kSliderThumbRadius * 2.0f;
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = kSliderThumbRadius * 2.0f;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._x = kSliderThumbRadius * 2.0f;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._y = kSliderThumbRadius * 2.0f;
                     prepareControlDataParamForThumb._alwaysResetPosition = false;
                     prepareControlDataParamForThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
                 }
@@ -1086,7 +1086,7 @@ namespace mint
             controlData._option._isFocusable = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = textBoxParam._common._offset;
-            prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
+            prepareControlDataParam._autoComputedDisplaySize._y = _fontSize;
             prepareControlData(controlData, prepareControlDataParam);
             
             Rendering::Color finalBackgroundColor;
@@ -1100,12 +1100,12 @@ namespace mint
             }
 
             const wchar_t inputCandidate[2]{ _wcharInputCandidate, L'\0' };
-            const float inputCandidateWidth = ((isFocused == true) && (_wcharInputCandidate >= 32)) ? calculateTextWidth(inputCandidate, 1) : 0.0f;
+            const float inputCandidateWidth = ((isFocused == true) && (_wcharInputCandidate >= 32)) ? computeTextWidth(inputCandidate, 1) : 0.0f;
             const uint16 textLength = static_cast<uint16>(outText.length());
             Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
             {
-                const float fullTextWidth = calculateTextWidth(outText.c_str(), textLength);
+                const float fullTextWidth = computeTextWidth(outText.c_str(), textLength);
                 if (textBoxParam._alignmentHorz == TextAlignmentHorz::Center)
                 {
                     textRenderOffset._x = (controlData._size._x - fullTextWidth - inputCandidateWidth) * 0.5f;
@@ -1194,7 +1194,7 @@ namespace mint
             controlData._option._needDoubleClickToFocus = true;
             PrepareControlDataParam prepareControlDataParam;
             prepareControlDataParam._offset = commonControlParam._offset;
-            prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize;
+            prepareControlDataParam._autoComputedDisplaySize._y = _fontSize;
             prepareControlData(controlData, prepareControlDataParam);
 
             Rendering::Color finalBackgroundColor;
@@ -1220,7 +1220,7 @@ namespace mint
             Float4 textRenderOffset;
             if (controlData._controlValue._textBoxData._textDisplayOffset == 0)
             {
-                const float fullTextWidth = calculateTextWidth(controlData._text.c_str(), textLength);
+                const float fullTextWidth = computeTextWidth(controlData._text.c_str(), textLength);
                 
                 // 가운데 정렬!
                 textRenderOffset._x = (controlData._size._x - fullTextWidth) * 0.5f;
@@ -1343,8 +1343,8 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = 160.0f;
-                prepareControlDataParam._autoCalculatedDisplaySize._y = 100.0f;
+                prepareControlDataParam._autoComputedDisplaySize._x = 160.0f;
+                prepareControlDataParam._autoComputedDisplaySize._y = 100.0f;
             }
             prepareControlData(controlData, prepareControlDataParam);
 
@@ -1418,9 +1418,9 @@ namespace mint
             ControlData& parentControlData = accessControlData(controlData.getParentId());
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = parentControlData._size._x;
-                prepareControlDataParam._autoCalculatedDisplaySize._y = _fontSize + 12.0f;
-                prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoCalculatedDisplaySize._y * 0.25f);
+                prepareControlDataParam._autoComputedDisplaySize._x = parentControlData._size._x;
+                prepareControlDataParam._autoComputedDisplaySize._y = _fontSize + 12.0f;
+                prepareControlDataParam._innerPadding.left(prepareControlDataParam._autoComputedDisplaySize._y * 0.25f);
                 prepareControlDataParam._clipRectUsage = Gui::ClipRectUsage::ParentsChild;
                 _controlMetaStateSet.nextOffInterval();
             }
@@ -1470,8 +1470,8 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = menuBarParent._size._x;
-                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
+                prepareControlDataParam._autoComputedDisplaySize._x = menuBarParent._size._x;
+                prepareControlDataParam._autoComputedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
                 prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseThickness : 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
@@ -1534,9 +1534,9 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 const uint32 textLength = StringUtil::length(text);
-                const float textWidth = calculateTextWidth(text, textLength);
-                prepareControlDataParam._autoCalculatedDisplaySize._x = textWidth + kMenuBarItemTextSpace;
-                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
+                const float textWidth = computeTextWidth(text, textLength);
+                prepareControlDataParam._autoComputedDisplaySize._x = textWidth + kMenuBarItemTextSpace;
+                prepareControlDataParam._autoComputedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = menuBar._controlValue._itemData._itemSize._x;
                 prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
@@ -1616,16 +1616,16 @@ namespace mint
 
             PrepareControlDataParam prepareControlDataParam;
             {
-                prepareControlDataParam._autoCalculatedDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
-                prepareControlDataParam._autoCalculatedDisplaySize._y = kMenuBarBaseSize._y;
+                prepareControlDataParam._autoComputedDisplaySize._x = menuItemParent._controlValue._itemData._itemSize._x;
+                prepareControlDataParam._autoComputedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._innerPadding.left(kMenuItemSpaceLeft);
                 prepareControlDataParam._desiredPositionInParent._x = (isParentControlMenuItem == true) ? menuItemParent._size._x : 0.0f;
-                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._autoCalculatedDisplaySize._y);
+                prepareControlDataParam._desiredPositionInParent._y = menuItemParent._controlValue._itemData._itemSize._y + ((isParentControlMenuItem == true) ? 0.0f : prepareControlDataParam._autoComputedDisplaySize._y);
             }
             prepareControlData(menuItem, prepareControlDataParam);
 
             const uint32 textLength = StringUtil::length(text);
-            const float textWidth = calculateTextWidth(text, textLength);
+            const float textWidth = computeTextWidth(text, textLength);
             menuItemParent._controlValue._itemData._itemSize._x = max(menuItemParent._controlValue._itemData._itemSize._x, textWidth + kMenuItemSpaceRight);
             menuItemParent._controlValue._itemData._itemSize._y += menuItem._size._y;
             menuItem._controlValue._itemData._itemSize._y = 0.0f;
@@ -1780,7 +1780,7 @@ namespace mint
             ControlData& trackControlData = accessControlData(trackControlID);
             PrepareControlDataParam prepareControlDataParamForTrack;
             {
-                //prepareControlDataParamForTrack._autoCalculatedDisplaySize = trackControlData._size;
+                //prepareControlDataParamForTrack._autoComputedDisplaySize = trackControlData._size;
                 prepareControlDataParamForTrack._desiredPositionInParent = scrollBarTrackParam._positionInParent;
                 if (isVert == true)
                 {
@@ -1903,8 +1903,8 @@ namespace mint
             {
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = kScrollBarThickness;
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = thumbSize;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._x = kScrollBarThickness;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._y = thumbSize;
 
                     prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
                     prepareControlDataParamForThumb._desiredPositionInParent._x -= kScrollBarThickness * 0.5f;
@@ -1922,7 +1922,7 @@ namespace mint
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
                 // @중요
-                // Calculate position from internal value
+                // Compute position from internal value
                 thumbControlData._position._y = scrollBarTrack._position._y + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 Rendering::Color thumbColor;
@@ -1966,8 +1966,8 @@ namespace mint
             {
                 PrepareControlDataParam prepareControlDataParamForThumb;
                 {
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._x = thumbSize;
-                    prepareControlDataParamForThumb._autoCalculatedDisplaySize._y = kScrollBarThickness;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._x = thumbSize;
+                    prepareControlDataParamForThumb._autoComputedDisplaySize._y = kScrollBarThickness;
 
                     prepareControlDataParamForThumb._desiredPositionInParent = getControlPositionInParentSpace(scrollBarTrack);
                     prepareControlDataParamForThumb._desiredPositionInParent._y -= kScrollBarThickness * 0.5f;
@@ -1985,7 +1985,7 @@ namespace mint
                 prepareControlData(thumbControlData, prepareControlDataParamForThumb);
 
                 // @중요
-                // Calculate position from internal value
+                // Compute position from internal value
                 thumbControlData._position._x = scrollBarTrack._position._x + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 Rendering::Color thumbColor;
@@ -2085,15 +2085,15 @@ namespace mint
                     const ControlData& dockControlData = getControlData(parentWindowControlData.getDockControlID());
                     const DockZoneData& parentDockZoneData = dockControlData.getDockZoneData(parentWindowControlData._dockContext._lastDockZone);
                     const int32 dockedControlIndex = parentDockZoneData.getDockedControlIndex(parentWindowControlData.getId());
-                    const float textWidth = calculateTextWidth(windowTitle, StringUtil::length(windowTitle));
+                    const float textWidth = computeTextWidth(windowTitle, StringUtil::length(windowTitle));
                     const Float2& displaySizeOverride = Float2(textWidth + 16.0f, controlData._size._y);
-                    prepareControlDataParam._autoCalculatedDisplaySize = displaySizeOverride;
+                    prepareControlDataParam._autoComputedDisplaySize = displaySizeOverride;
                     prepareControlDataParam._desiredPositionInParent._x = parentDockZoneData.getDockedControlTitleBarOffset(dockedControlIndex);
                     prepareControlDataParam._desiredPositionInParent._y = 0.0f;
                 }
                 else
                 {
-                    prepareControlDataParam._autoCalculatedDisplaySize = titleBarSize;
+                    prepareControlDataParam._autoComputedDisplaySize = titleBarSize;
                     prepareControlDataParam._deltaInteractionSize = Float2(-innerPadding.right() - kDefaultRoundButtonRadius * 2.0f, 0.0f);
                 }
                 prepareControlDataParam._alwaysResetPosition = true;
@@ -2189,7 +2189,7 @@ namespace mint
             PrepareControlDataParam prepareControlDataParam;
             {
                 prepareControlDataParam._parentIdOverride = parentWindowData.getId();
-                prepareControlDataParam._autoCalculatedDisplaySize = Float2(radius * 2.0f);
+                prepareControlDataParam._autoComputedDisplaySize = Float2(radius * 2.0f);
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(controlData, prepareControlDataParam);
@@ -2218,8 +2218,8 @@ namespace mint
             ControlData& controlData = accessControlData(controlID);
             PrepareControlDataParam prepareControlDataParam;
             {
-                const float tooltipTextWidth = calculateTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
-                prepareControlDataParam._autoCalculatedDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
+                const float tooltipTextWidth = computeTextWidth(tooltipText, StringUtil::length(tooltipText)) * kTooltipFontScale;
+                prepareControlDataParam._autoComputedDisplaySize = Float2(tooltipTextWidth + tooltipWindowPadding * 2.0f, _fontSize * kTooltipFontScale + tooltipWindowPadding);
                 prepareControlDataParam._desiredPositionInParent = position;
                 prepareControlDataParam._alwaysResetParent = true;
                 prepareControlDataParam._alwaysResetPosition = true;
@@ -2240,7 +2240,7 @@ namespace mint
             rendererContext.setPosition(controlCenterPosition);
             rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()) * 0.75f, 0.0f, 0.0f);
 
-            const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._autoCalculatedDisplaySize._y * 0.5f, 0.0f, 0.0f);
+            const Float4& textPosition = Float4(controlData._position._x, controlData._position._y, 0.0f, 1.0f) + Float4(tooltipWindowPadding, prepareControlDataParam._autoComputedDisplaySize._y * 0.5f, 0.0f, 0.0f);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setTextColor(getNamedColor(NamedColor::DarkFont));
             rendererContext.drawDynamicText(tooltipText, textPosition, 
@@ -2492,10 +2492,10 @@ namespace mint
             }
 
             // Child at
-            calculateControlChildAt(controlData);
+            computeControlChildAt(controlData);
         }
 
-        void GuiContext::calculateControlChildAt(ControlData& controlData) noexcept
+        void GuiContext::computeControlChildAt(ControlData& controlData) noexcept
         {
             const MenuBarType currentMenuBarType = controlData._controlValue._commonData._menuBarType;
             Float2& controlChildAt = const_cast<Float2&>(controlData.getChildAt());
@@ -3215,7 +3215,7 @@ namespace mint
                     dockedControlData._position = dockControlData.getDockZonePosition(dockZoneIter);
                     
                     const wchar_t* const title = dockedControlData._text.c_str();
-                    const float titleBarWidth = calculateTextWidth(title, StringUtil::length(title)) + 16.0f;
+                    const float titleBarWidth = computeTextWidth(title, StringUtil::length(title)) + 16.0f;
                     dockZoneData._dockedControlTitleBarOffsetArray[dockedControlIndex] = titleBarWidthSum;
                     if (updateWidthArray)
                     {

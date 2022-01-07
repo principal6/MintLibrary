@@ -89,7 +89,7 @@ namespace mint
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
             face._vertexIndexArray[2] = vertexOffset + 2;
-            calculateTangentBitangent(face, meshData._vertexArray);
+            computeTangentBitangent(face, meshData._vertexArray);
             meshData._faceArray.push_back(face);
         }
 
@@ -100,19 +100,19 @@ namespace mint
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
             face._vertexIndexArray[2] = vertexOffset + 2;
-            calculateTangentBitangent(face, meshData._vertexArray);
+            computeTangentBitangent(face, meshData._vertexArray);
             meshData._faceArray.push_back(face);
 
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 2;
             face._vertexIndexArray[2] = vertexOffset + 3;
-            calculateTangentBitangent(face, meshData._vertexArray);
+            computeTangentBitangent(face, meshData._vertexArray);
             meshData._faceArray.push_back(face);
         }
 
-        void MeshGenerator::recalculateTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept
+        void MeshGenerator::recomputeTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept
         {
-            // TODO: TexCoord._w calculation
+            // TODO: TexCoord._w computation
             const Float2 uv = getVertexUv(vertex);
             vertex._tangentV._w = 0.0f;
             vertex._bitangentW = Float4::crossNormalize(normal, vertex._tangentV);
@@ -125,7 +125,7 @@ namespace mint
             return Float4::crossNormalize(vertex._tangentV, vertex._bitangentW);
         }
 
-        void MeshGenerator::calculateTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept
+        void MeshGenerator::computeTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept
         {
             VS_INPUT& v0 = inoutVertexArray[face._vertexIndexArray[0]];
             VS_INPUT& v1 = inoutVertexArray[face._vertexIndexArray[1]];
@@ -213,7 +213,7 @@ namespace mint
                 normalArray[positionIndex].normalize();
             }
 
-            // Recalculate tangent, bitangent
+            // Recompute tangent, bitangent
             for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
             {
                 const Float4& normal = normalArray[meshData._vertexToPositionTable[vertexIndex]];
@@ -887,9 +887,9 @@ namespace mint
                 faceNormal = vertexNormals[0] + vertexNormals[1] + vertexNormals[2];
                 faceNormal.normalize();
 
-                recalculateTangentBitangentFromNormal(faceNormal, getFaceVertex0(face, meshData));
-                recalculateTangentBitangentFromNormal(faceNormal, getFaceVertex1(face, meshData));
-                recalculateTangentBitangentFromNormal(faceNormal, getFaceVertex2(face, meshData));
+                recomputeTangentBitangentFromNormal(faceNormal, getFaceVertex0(face, meshData));
+                recomputeTangentBitangentFromNormal(faceNormal, getFaceVertex1(face, meshData));
+                recomputeTangentBitangentFromNormal(faceNormal, getFaceVertex2(face, meshData));
             }
 
             meshData.updateVertexFromPositions();

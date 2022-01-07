@@ -659,7 +659,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontSize * fontRenderingOption._scale;
             
             Float4 postTranslation;
@@ -697,7 +697,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
-            const float scaledTextWidth = calculateTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontSize * fontRenderingOption._scale;
 
             Float4 postTranslation;
@@ -727,7 +727,7 @@ namespace mint
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
-        const float FontRendererContext::calculateTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+        const float FontRendererContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
             int32 totalWidth = 0;
             for (uint32 textAt = 0; textAt < textLength; ++textAt)
@@ -741,7 +741,7 @@ namespace mint
             return static_cast<float>(totalWidth);
         }
 
-        const uint32 FontRendererContext::calculateIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+        const uint32 FontRendererContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
         {
             const int32 positionInTextInt = static_cast<int32>(positionInText);
             int32 totalWidth = 0;

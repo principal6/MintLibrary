@@ -125,11 +125,11 @@ namespace mint
             static Float4&          getFaceVertexPosition2(const Face& face, MeshData& meshData) noexcept;
             static void             pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
             static void             pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept;
-            static void             recalculateTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept;
+            static void             recomputeTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept;
             static Float4           computeNormalFromTangentBitangent(const VS_INPUT& vertex) noexcept;
 
         public:
-            static void             calculateTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept;
+            static void             computeTangentBitangent(const Face& face, Vector<VS_INPUT>& inoutVertexArray) noexcept;
             static void             smoothNormals(MeshData& meshData) noexcept;
         };
     }

@@ -374,11 +374,11 @@ namespace mint
                 const float maxDisplaySizeX = availableDisplaySizeX;
                 if (desiredSize._x <= 0.0f)
                 {
-                    desiredSize._x = prepareControlDataParam._autoCalculatedDisplaySize._x;
+                    desiredSize._x = prepareControlDataParam._autoComputedDisplaySize._x;
                 }
                 if (desiredSize._y <= 0.0f)
                 {
-                    desiredSize._y = prepareControlDataParam._autoCalculatedDisplaySize._y;
+                    desiredSize._y = prepareControlDataParam._autoComputedDisplaySize._y;
                 }
 
                 if (controlMetaStateSet.getNextUseSizeConstraintToParent() == false)

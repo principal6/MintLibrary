@@ -211,7 +211,7 @@ namespace mint
         {
         public:
             Rect            _innerPadding;
-            Float2          _autoCalculatedDisplaySize      = Float2::kZero;
+            Float2          _autoComputedDisplaySize      = Float2::kZero;
             ResizingMask    _initialResizingMask;
             Float2          _offset                         = Float2::kZero;
             Float2          _desiredPositionInParent        = Float2::kNan;
@@ -281,7 +281,7 @@ namespace mint
                 void                reset(const float nextChildOffsetY, const Rect& innerPadding);
 
                 Float2              _deltaPosition; // Used for dragging
-                Float2              _nextChildOffset; // Every new child sets this offset to calculate next _childAt
+                Float2              _nextChildOffset; // Every new child sets this offset to compute next _childAt
                 Float2              _childAt; // In screen space, Next child control will be positioned according to this
                 Float2              _contentAreaSize; // Could be smaller or larger than _size
                 Vector<ControlID>   _childControlIDs;
