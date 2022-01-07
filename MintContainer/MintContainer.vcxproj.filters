@@ -18,7 +18,7 @@
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IID_.h">
+    <ClInclude Include="Include\IID.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\ScopeString.h">
@@ -101,7 +101,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Include\IID_.inl">
+    <None Include="Include\IID.inl">
       <Filter>Include</Filter>
     </None>
     <None Include="Include\StaticArray.inl">

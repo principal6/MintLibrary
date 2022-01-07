@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/IID_.h>
+#include <MintContainer/Include/IID.h>
 
 #include <MintMath/Include/Float4x4.h>
 #include <MintMath/Include/Quaternion.h>

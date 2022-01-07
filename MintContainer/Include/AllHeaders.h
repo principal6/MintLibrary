@@ -14,7 +14,7 @@
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/Tree.h>
 #include <MintContainer/Include/Vector.h>
-#include <MintContainer/Include/IID_.h>
+#include <MintContainer/Include/IID.h>
 #include <MintContainer/Include/HashMap.h>
 #include <MintContainer/Include/Queue.h>
 #include <MintContainer/Include/OwnPtr.h>
