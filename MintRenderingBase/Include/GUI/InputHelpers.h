@@ -9,7 +9,7 @@
 
 #include <MintContainer/Include/String.h>
 
-#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
+#include <MintRenderingBase/Include/GUI/GUICommon.h>
 #include <MintPlatform/Include/IWindow.h>
 
 

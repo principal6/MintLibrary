@@ -2,12 +2,12 @@
 
 
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GUI_/ControlData.h>
+#include <MintRenderingBase/Include/GUI/ControlData.h>
 
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Hash.hpp>
 
-#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.h>
+#include <MintRenderingBase/Include/GUI/ControlMetaStateSet.h>
 
 
 namespace mint

@@ -2,12 +2,12 @@
 
 
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GUI_/InputHelpers.h>
+#include <MintRenderingBase/Include/GUI/InputHelpers.h>
 
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
-#include <MintRenderingBase/Include/GUI_/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI/ControlData.hpp>
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 
 #include <MintPlatform/Include/InputContext.h>

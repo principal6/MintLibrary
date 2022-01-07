@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GUI_/GUIContext_.h>
+#include <MintRenderingBase/Include/GUI/GUIContext.h>
 
 #include <functional>
 
@@ -13,8 +13,8 @@
 #include <MintReflection/Include/Reflection.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
-#include <MintRenderingBase/Include/GUI_/ControlData.hpp>
-#include <MintRenderingBase/Include/GUI_/InputHelpers.hpp>
+#include <MintRenderingBase/Include/GUI/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI/InputHelpers.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>

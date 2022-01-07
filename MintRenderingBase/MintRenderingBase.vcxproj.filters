@@ -93,28 +93,28 @@
     <ClInclude Include="Include\ShapeFontRendererContext.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\ControlData.h">
+    <ClInclude Include="Include\GUI\ControlData.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\ControlData.hpp">
+    <ClInclude Include="Include\GUI\ControlData.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\ControlInteractionStateSet.h">
+    <ClInclude Include="Include\GUI\ControlInteractionStateSet.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\ControlMetaStateSet.h">
+    <ClInclude Include="Include\GUI\ControlMetaStateSet.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\GUICommon_.h">
+    <ClInclude Include="Include\GUI\GUICommon.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\GUIContext_.h">
+    <ClInclude Include="Include\GUI\GUIContext.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\InputHelpers.h">
+    <ClInclude Include="Include\GUI\InputHelpers.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI_\InputHelpers.hpp">
+    <ClInclude Include="Include\GUI\InputHelpers.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,10 +128,10 @@
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
     </None>
-    <None Include="Include\GUI_\ControlMetaStateSet.inl">
+    <None Include="Include\GUI\ControlMetaStateSet.inl">
       <Filter>Include\GUI</Filter>
     </None>
-    <None Include="Include\GUI_\GUIContext_.inl">
+    <None Include="Include\GUI\GUIContext.inl">
       <Filter>Include\GUI</Filter>
     </None>
   </ItemGroup>
@@ -181,10 +181,10 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI_\ControlInteractionStateSet.cpp">
+    <ClCompile Include="Source\GUI\ControlInteractionStateSet.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI_\GUIContext_.cpp">
+    <ClCompile Include="Source\GUI\GUIContext.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>

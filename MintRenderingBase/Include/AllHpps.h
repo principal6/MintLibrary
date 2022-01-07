@@ -7,8 +7,8 @@
 
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
-#include <MintRenderingBase/Include/GUI_/ControlData.hpp>
-#include <MintRenderingBase/Include/GUI_/InputHelpers.hpp>
+#include <MintRenderingBase/Include/GUI/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI/InputHelpers.hpp>
 
 
 #endif // !MINT_RENDERING_BASE_ALL_HPPS_H

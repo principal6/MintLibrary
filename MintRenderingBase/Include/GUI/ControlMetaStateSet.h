@@ -70,7 +70,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.inl>
+#include <MintRenderingBase/Include/GUI/ControlMetaStateSet.inl>
 
 
 #endif // !MINT_GUI_CONTROL_METASTATE_SET

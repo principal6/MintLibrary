@@ -13,7 +13,7 @@
 
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
+#include <MintRenderingBase/Include/GUI/GUICommon.h>
 
 #include <MintReflection/Include/Reflection.h>
 

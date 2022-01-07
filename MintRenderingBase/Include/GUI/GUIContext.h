@@ -17,11 +17,11 @@
 #include <MintMath/Include/Rect.h>
 
 #include <MintRenderingBase/Include/ShapeFontRendererContext.h>
-#include <MintRenderingBase/Include/GUI_/GUICommon_.h>
-#include <MintRenderingBase/Include/GUI_/ControlData.h>
-#include <MintRenderingBase/Include/GUI_/InputHelpers.h>
-#include <MintRenderingBase/Include/GUI_/ControlMetaStateSet.h>
-#include <MintRenderingBase/Include/GUI_/ControlInteractionStateSet.h>
+#include <MintRenderingBase/Include/GUI/GUICommon.h>
+#include <MintRenderingBase/Include/GUI/ControlData.h>
+#include <MintRenderingBase/Include/GUI/InputHelpers.h>
+#include <MintRenderingBase/Include/GUI/ControlMetaStateSet.h>
+#include <MintRenderingBase/Include/GUI/ControlInteractionStateSet.h>
 
 
 // This macro makes arguments for begin-/make- functions of GUIContext
@@ -482,7 +482,7 @@ namespace mint
 }
 
 
-#include <MintRenderingBase/Include/GUI_/GUIContext_.inl>
+#include <MintRenderingBase/Include/GUI/GUIContext.inl>
 
 
 #endif // !MINT_GUI_CONTEXT_H

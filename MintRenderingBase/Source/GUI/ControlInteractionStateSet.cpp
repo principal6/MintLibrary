@@ -1,7 +1,7 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GUI_/ControlInteractionStateSet.h>
+#include <MintRenderingBase/Include/GUI/ControlInteractionStateSet.h>
 
-#include <MintRenderingBase/Include/GUI_/InputHelpers.hpp>
+#include <MintRenderingBase/Include/GUI/InputHelpers.hpp>
 
 #include <MintLibrary/Include/ScopedCPUProfiler.h>
 
