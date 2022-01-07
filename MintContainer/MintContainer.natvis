@@ -57,19 +57,19 @@
     <Type Name="mint::TreeNode&lt;*&gt;">
         <DisplayString>{{ Node Data = { _data } }}</DisplayString>
         <Expand>
-            <Item Name="[Node ID]">_nodeId</Item>
+            <Item Name="[Node ID]">_nodeID</Item>
             <ExpandedItem>_data</ExpandedItem>
-            <Item Name="[Parent Node]" Condition="_parentNodeAccessor._nodeId != kUint32Max">_parentNodeAccessor</Item>
+            <Item Name="[Parent Node]" Condition="_parentNodeAccessor._nodeID != kUint32Max">_parentNodeAccessor</Item>
             <Item Name="[Child Nodes]" Condition="_childNodeAccessorArray._size > 0">_childNodeAccessorArray</Item>
         </Expand>
     </Type>
 
     <Type Name="mint::TreeNodeAccessor&lt;*&gt;">
-        <DisplayString>{{ Node ID [{ _nodeId }] { (_tree->_nodeArray._rawPointer + _slotIndex)->_data } }}</DisplayString>
+        <DisplayString>{{ Node ID [{ _nodeID }] { (_tree->_nodeArray._rawPointer + _slotIndex)->_data } }}</DisplayString>
         <Expand>
-            <Item Name="[Node ID]">_nodeId</Item>
+            <Item Name="[Node ID]">_nodeID</Item>
             <ExpandedItem>(_tree->_nodeArray._rawPointer + _slotIndex)->_data</ExpandedItem>
-            <Item Name="[Parent Node]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor._nodeId != kUint32Max">(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor</Item>
+            <Item Name="[Parent Node]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor._nodeID != kUint32Max">(_tree->_nodeArray._rawPointer + _slotIndex)->_parentNodeAccessor</Item>
             <Item Name="[Child Nodes]" Condition="(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray._size > 0">(_tree->_nodeArray._rawPointer + _slotIndex)->_childNodeAccessorArray</Item>
         </Expand>
     </Type>

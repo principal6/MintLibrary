@@ -6,9 +6,9 @@ namespace mint
 {
     namespace Rendering
     {
-        void ObjectComponentId::assignRawID(const uint32 rawId) noexcept
+        void ObjectComponentId::assignRawID(const uint32 rawID) noexcept
         {
-            _rawID = rawId;
+            _rawID = rawID;
         }
 
         const uint32 ObjectComponentId::getRawID() const noexcept

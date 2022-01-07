@@ -25,7 +25,7 @@ namespace mint
         friend Tree<T>;
         friend TreeNode<T>;
 
-        static constexpr uint32         kInvalidNodeId = kUint32Max;
+        static constexpr uint32         kInvalidNodeID = kUint32Max;
 
     public:
                                         TreeNodeAccessor();
@@ -33,7 +33,7 @@ namespace mint
                                         TreeNodeAccessor(TreeNodeAccessor&& rhs) = default;
 
     private:
-                                        TreeNodeAccessor(Tree<T>* const tree, const uint32 slotIndex, const uint32 nodeId);
+                                        TreeNodeAccessor(Tree<T>* const tree, const uint32 slotIndex, const uint32 nodeID);
 
     public:
         TreeNodeAccessor&               operator=(const TreeNodeAccessor& rhs) = default;
@@ -69,7 +69,7 @@ namespace mint
 
     private:
         uint32                          _slotIndex;
-        uint32                          _nodeId;
+        uint32                          _nodeID;
 
     public:
         static const TreeNodeAccessor   kInvalidTreeNodeAccessor;
@@ -86,23 +86,23 @@ namespace mint
 
     public:
         TreeNode()
-            : _nodeId{ TreeNodeAccessor<T>::kInvalidNodeId }
+            : _nodeID{ TreeNodeAccessor<T>::kInvalidNodeID }
             , _parentNodeAccessor{ TreeNodeAccessor<T>::kInvalidTreeNodeAccessor }
         {
             __noop;
         }
 
     private:
-        TreeNode(const uint32 nodeId, const TreeNodeAccessor<T>& parentNodeAccessor, const T& data)
-            : _nodeId{ nodeId }
+        TreeNode(const uint32 nodeID, const TreeNodeAccessor<T>& parentNodeAccessor, const T& data)
+            : _nodeID{ nodeID }
             , _data{ data }
             , _parentNodeAccessor{ parentNodeAccessor }
         {
             __noop;
         }
 
-        TreeNode(const uint32 nodeId, const TreeNodeAccessor<T>& parentNodeAccessor, T&& data)
-            : _nodeId{ nodeId }
+        TreeNode(const uint32 nodeID, const TreeNodeAccessor<T>& parentNodeAccessor, T&& data)
+            : _nodeID{ nodeID }
             , _data{ data }
             , _parentNodeAccessor{ parentNodeAccessor }
         {
@@ -114,7 +114,7 @@ namespace mint
         void                            invalidate() noexcept;
 
     private:
-        uint32                          _nodeId;
+        uint32                          _nodeID;
         T                               _data;
 
         TreeNodeAccessor<T>             _parentNodeAccessor;
@@ -170,7 +170,7 @@ namespace mint
 
     private:
         Vector<TreeNode<T>>                 _nodeArray;
-        uint32                              _nextNodeId;
+        uint32                              _nextNodeID;
         uint32                              _nodeCount;
     };
 }

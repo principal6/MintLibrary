@@ -31,7 +31,7 @@ namespace mint
         const bool                      isValid() const noexcept;
 
     protected:
-        virtual void                    assignRawID(const uint32 rawId) noexcept abstract;
+        virtual void                    assignRawID(const uint32 rawID) noexcept abstract;
 
     protected:
         uint32                          _rawID{ kInvalidRawID };

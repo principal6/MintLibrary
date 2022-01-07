@@ -21,16 +21,16 @@ namespace mint
     TreeNodeAccessor<T>::TreeNodeAccessor()
         : _tree{ nullptr }
         , _slotIndex{ 0 }
-        , _nodeId{ kInvalidNodeId }
+        , _nodeID{ kInvalidNodeID }
     {
         __noop;
     }
 
     template<typename T>
-    TreeNodeAccessor<T>::TreeNodeAccessor(Tree<T>* const tree, const uint32 slotIndex, const uint32 nodeId)
+    TreeNodeAccessor<T>::TreeNodeAccessor(Tree<T>* const tree, const uint32 slotIndex, const uint32 nodeID)
         : _tree{ tree }
         , _slotIndex{ slotIndex }
-        , _nodeId{ nodeId }
+        , _nodeID{ nodeID }
     {
         __noop;
     }
@@ -38,7 +38,7 @@ namespace mint
     template<typename T>
     const bool TreeNodeAccessor<T>::operator==(const TreeNodeAccessor<T>& rhs) const noexcept
     {
-        return (_nodeId == rhs._nodeId) && (_slotIndex == rhs._slotIndex);
+        return (_nodeID == rhs._nodeID) && (_slotIndex == rhs._slotIndex);
     }
 
     template<typename T>
@@ -161,13 +161,13 @@ namespace mint
     template<typename T>
     inline const bool TreeNode<T>::isValid() const noexcept
     {
-        return (_nodeId != TreeNodeAccessor<T>::kInvalidNodeId);
+        return (_nodeID != TreeNodeAccessor<T>::kInvalidNodeID);
     }
 
     template<typename T>
     inline void TreeNode<T>::invalidate() noexcept
     {
-        _nodeId = TreeNodeAccessor<T>::kInvalidNodeId;
+        _nodeID = TreeNodeAccessor<T>::kInvalidNodeID;
         _data = T(); // T 가 동적 할당된 메모리를 들고 있다면 이게 더 비용이 쌀 가능성이 높으므로...
         _parentNodeAccessor = TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
     }
@@ -175,7 +175,7 @@ namespace mint
 
     template<typename T>
     inline Tree<T>::Tree()
-        : _nextNodeId{ 0 }
+        : _nextNodeID{ 0 }
         , _nodeCount{ 0 }
     {
         _nodeArray.resize(kDefaultNodeArraySize);
@@ -192,9 +192,9 @@ namespace mint
     {
         if (_nodeCount == 0)
         {
-            TreeNode rootNode{ _nextNodeId, TreeNodeAccessor<T>::kInvalidTreeNodeAccessor, rootNodeData };
+            TreeNode rootNode{ _nextNodeID, TreeNodeAccessor<T>::kInvalidTreeNodeAccessor, rootNodeData };
             
-            ++_nextNodeId;
+            ++_nextNodeID;
             ++_nodeCount;
 
             _nodeArray[0] = rootNode;
@@ -222,7 +222,7 @@ namespace mint
     inline TreeNodeAccessor<T> Tree<T>::getRootNode() noexcept
     {
         const TreeNode<T>& rootNode = _nodeArray.front();
-        return TreeNodeAccessor<T>::TreeNodeAccessor(this, static_cast<uint32>(0), rootNode._nodeId); // this == Tree<T>* 가 const 이면 안 되므로 이 함수는 const 함수일 수 없다!!!
+        return TreeNodeAccessor<T>::TreeNodeAccessor(this, static_cast<uint32>(0), rootNode._nodeID); // this == Tree<T>* 가 const 이면 안 되므로 이 함수는 const 함수일 수 없다!!!
     }
 
     template<typename T>
@@ -298,7 +298,7 @@ namespace mint
         const uint32 parentChildCount = parentNode._childNodeAccessorArray.size();
         for (uint32 parentChildIndex = 0; parentChildIndex < parentChildCount; ++parentChildIndex)
         {
-            if (parentNode._childNodeAccessorArray[parentChildIndex]._nodeId == nodeAccessor._nodeId) 
+            if (parentNode._childNodeAccessorArray[parentChildIndex]._nodeID == nodeAccessor._nodeID) 
             {
                 thisAt = parentChildIndex;
                 break;
@@ -316,7 +316,7 @@ namespace mint
     const bool Tree<T>::isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
     {
         const TreeNode<T>& node = _nodeArray.at(nodeAccessor._slotIndex);
-        return node._nodeId == nodeAccessor._nodeId;
+        return node._nodeID == nodeAccessor._nodeID;
     }
 
     template<typename T>
@@ -386,16 +386,16 @@ namespace mint
         }
 
         const uint32 slotIndex = getAvailableNodeSlot();
-        const uint32 nodeId = _nextNodeId;
+        const uint32 nodeID = _nextNodeID;
 
-        const TreeNode<T> childNode{ nodeId, nodeAccessor, childNodeData };
-        TreeNodeAccessor<T> childNodeAccessor{ this, nodeId, slotIndex };
+        const TreeNode<T> childNode{ nodeID, nodeAccessor, childNodeData };
+        TreeNodeAccessor<T> childNodeAccessor{ this, nodeID, slotIndex };
         _nodeArray[slotIndex] = childNode;
 
         TreeNode<T>& node = getNodeXXX(nodeAccessor);
         node._childNodeAccessorArray.push_back(childNodeAccessor);
 
-        ++_nextNodeId;
+        ++_nextNodeID;
         ++_nodeCount;
 
         return childNodeAccessor;
