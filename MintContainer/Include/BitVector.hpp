@@ -124,7 +124,7 @@ namespace mint
 
     MINT_INLINE const bool BitVector::isFull() const noexcept
     {
-        return (_byteCapacity < getByteAtByBitAt(_bitCount) + 1);
+        return (_byteCapacity < computeByteAt(_bitCount) + 1);
     }
 
     MINT_INLINE const bool BitVector::isInSizeBoundary(const uint32 bitAt) const noexcept
@@ -136,10 +136,10 @@ namespace mint
     {
         MINT_ASSERT("김장원", isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
-        const uint32 byteAt = getByteAtByBitAt(bitAt);
-        const uint32 byteBitOffsetFromLeft = getBitOffsetByBitAt(bitAt);
+        const uint32 byteAt = computeByteAt(bitAt);
+        const uint32 byteBitOffsetFromLeft = computeBitOffset(bitAt);
 
-        const uint8 bitMaskOneAt = getBitMaskOneAt(byteBitOffsetFromLeft);
+        const uint8 bitMaskOneAt = makeBitMaskOneAt(byteBitOffsetFromLeft);
         return (_byteArray[byteAt] & bitMaskOneAt);
     }
 
@@ -164,8 +164,8 @@ namespace mint
     {
         MINT_ASSERT("김장원", isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
-        const uint32 byteAt = getByteAtByBitAt(bitAt);
-        const uint32 bitOffsetFromLeft = getBitOffsetByBitAt(bitAt);
+        const uint32 byteAt = computeByteAt(bitAt);
+        const uint32 bitOffsetFromLeft = computeBitOffset(bitAt);
         setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
     }
 
@@ -219,47 +219,49 @@ namespace mint
 
         if (value == true)
         {
-            inOutByte |= getBitMaskOneAt(bitOffsetFromLeft);
+            inOutByte |= makeBitMaskOneAt(bitOffsetFromLeft);
         }
         else
         {
-            inOutByte &= ~getBitMaskOneAt(bitOffsetFromLeft);
+            inOutByte &= ~makeBitMaskOneAt(bitOffsetFromLeft);
         }
-    }
-
-    MINT_INLINE const uint8 BitVector::getByteFromArray(const bool(&valueArray)[8]) noexcept
-    {
-        return static_cast<uint8>((static_cast<int32>(valueArray[0]) << 7) &
-            (static_cast<int32>(valueArray[1]) << 6) &
-            (static_cast<int32>(valueArray[2]) << 5) &
-            (static_cast<int32>(valueArray[3]) << 4) &
-            (static_cast<int32>(valueArray[4]) << 3) &
-            (static_cast<int32>(valueArray[5]) << 2) &
-            (static_cast<int32>(valueArray[6]) << 1) &
-            static_cast<int32>(valueArray[7]));
     }
 
     MINT_INLINE const bool BitVector::getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
     {
-        return (byte & getBitMaskOneAt(bitOffsetFromLeft));
+        return (byte & makeBitMaskOneAt(bitOffsetFromLeft));
     }
 
-    MINT_INLINE const uint32 BitVector::getByteCountFromBitCount(const uint32 bitCount) noexcept
+    MINT_INLINE const uint32 BitVector::computeByteCount(const uint32 bitCount) noexcept
     {
         return ((bitCount - 1) / kBitsPerByte + 1);
     }
 
-    MINT_INLINE const uint32 BitVector::getByteAtByBitAt(const uint32 bitAt) noexcept
+    MINT_INLINE const uint32 BitVector::computeByteAt(const uint32 bitAt) noexcept
     {
         return bitAt / kBitsPerByte;
     }
 
-    MINT_INLINE const uint32 BitVector::getBitOffsetByBitAt(const uint32 bitAt) noexcept
+    MINT_INLINE const uint32 BitVector::computeBitOffset(const uint32 bitAt) noexcept
     {
         return bitAt % kBitsPerByte;
     }
 
-    MINT_INLINE const uint8 BitVector::getBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
+    MINT_INLINE const uint8 BitVector::makeByte(const bool(&valueArray)[8]) noexcept
+    {
+        return static_cast<uint8>(
+             (static_cast<int32>(valueArray[0]) << 7) &
+             (static_cast<int32>(valueArray[1]) << 6) &
+             (static_cast<int32>(valueArray[2]) << 5) &
+             (static_cast<int32>(valueArray[3]) << 4) &
+             (static_cast<int32>(valueArray[4]) << 3) &
+             (static_cast<int32>(valueArray[5]) << 2) &
+             (static_cast<int32>(valueArray[6]) << 1) &
+              static_cast<int32>(valueArray[7])
+            );
+    }
+
+    MINT_INLINE const uint8 BitVector::makeBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
     {
         return (1 << (kBitsPerByte - bitOffsetFromLeft - 1));
     }

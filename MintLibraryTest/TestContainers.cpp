@@ -282,7 +282,7 @@ namespace mint
 
                 {
                     Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1" };
-                    const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+                    const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
                         const uint32 sourceAt = byteAt * kBitsPerByte;
@@ -295,7 +295,7 @@ namespace mint
 
                 {
                     Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #1 copy" };
-                    const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+                    const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
                         const uint32 sourceAt = byteAt * kBitsPerByte;
@@ -308,7 +308,7 @@ namespace mint
 
                 {
                     Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2" };
-                    const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+                    const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
                         const uint32 sourceAt = byteAt * kBitsPerByte;
@@ -323,7 +323,7 @@ namespace mint
 
                 {
                     Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per bit" };
-                    const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+                    const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
                         const uint8 srcByteData = bitVector.getByte(byteAt);
@@ -338,7 +338,7 @@ namespace mint
 
                 {
                     Profiler::ScopedCpuProfiler profiler{ "3) bit vector per byte #2 copy per byte" };
-                    const uint32 kByteCount = BitVector::getByteCountFromBitCount(kCount);
+                    const uint32 kByteCount = BitVector::computeByteCount(kCount);
                     for (uint32 byteAt = 0; byteAt < kByteCount; ++byteAt)
                     {
                         const uint8 byteData = bitVector.getByte(byteAt);
