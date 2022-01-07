@@ -127,20 +127,20 @@ namespace mint
             virtual                 ~DxResourcePool() = default;
 
         public:
-            const DxObjectId&       pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-            const DxObjectId&       pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const DxObjectId&       pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-            const DxObjectId&       pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+            const DxObjectID&       pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+            const DxObjectID&       pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const DxObjectID&       pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+            const DxObjectID&       pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
         public:
-            const DxObjectId&       pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+            const DxObjectID&       pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
         public:
-            void                    bindAsInput(const DxObjectId& objectId) noexcept;
-            void                    bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
+            void                    bindAsInput(const DxObjectID& objectID) noexcept;
+            void                    bindToShader(const DxObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
 
         public:
-            DxResource&             getResource(const DxObjectId& objectId);
+            DxResource&             getResource(const DxObjectID& objectID);
 
         private:
             Vector<DxResource>      _resourceArray{};

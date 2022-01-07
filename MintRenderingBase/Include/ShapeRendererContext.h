@@ -121,9 +121,9 @@ namespace mint
 
         protected:
             LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
-            DxObjectId                          _vertexShaderId;
-            DxObjectId                          _geometryShaderId;
-            DxObjectId                          _pixelShaderId;
+            DxObjectID                          _vertexShaderId;
+            DxObjectID                          _geometryShaderId;
+            DxObjectID                          _pixelShaderId;
 
         protected:
             Color                               _borderColor;

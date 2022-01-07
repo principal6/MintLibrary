@@ -115,14 +115,14 @@ namespace mint
                 ID3D11PixelShader*      _psShader;
 
             private: // Resources
-                Vector<DxObjectId>      _vsShaderResources;
-                Vector<DxObjectId>      _gsShaderResources;
-                Vector<DxObjectId>      _psShaderResources;
+                Vector<DxObjectID>      _vsShaderResources;
+                Vector<DxObjectID>      _gsShaderResources;
+                Vector<DxObjectID>      _psShaderResources;
 
             private: // Constant Buffers
-                Vector<DxObjectId>      _vsConstantBuffers;
-                Vector<DxObjectId>      _gsConstantBuffers;
-                Vector<DxObjectId>      _psConstantBuffers;
+                Vector<DxObjectID>      _vsConstantBuffers;
+                Vector<DxObjectID>      _gsConstantBuffers;
+                Vector<DxObjectID>      _psConstantBuffers;
             };
             
             friend SafeResourceMapper;
@@ -182,9 +182,9 @@ namespace mint
             StateManager&                               getStateManager() noexcept;
 
         public: // Common buffers
-            DxObjectId                                  getCommonCbTransformId() const noexcept;
-            DxObjectId                                  getCommonSbTransformId() const noexcept;
-            DxObjectId                                  getCommonSbMaterialId() const noexcept;
+            DxObjectID                                  getCommonCbTransformId() const noexcept;
+            DxObjectID                                  getCommonSbTransformId() const noexcept;
+            DxObjectID                                  getCommonSbMaterialId() const noexcept;
 
         public:
             void                                        initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
@@ -232,12 +232,12 @@ namespace mint
 
         private:
             CB_View                                     _cbViewData;
-            DxObjectId                                  _cbViewId;
+            DxObjectID                                  _cbViewId;
 
         private: // Common buffers
-            DxObjectId                                  _cbTransformId;
-            DxObjectId                                  _sbTransformId;
-            DxObjectId                                  _sbMaterialId;
+            DxObjectID                                  _cbTransformId;
+            DxObjectID                                  _sbTransformId;
+            DxObjectID                                  _sbMaterialId;
 
         private:
             ComPtr<ID3D11SamplerState>                  _samplerState;

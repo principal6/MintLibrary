@@ -117,7 +117,7 @@ namespace mint
 
                 Vector<GlyphInfo>           _glyphInfoArray;
                 Vector<uint32>              _charCodeToGlyphIndexMap;
-                DxObjectId                  _fontTextureId;
+                DxObjectID                  _fontTextureId;
             };
 
         public:
@@ -168,7 +168,7 @@ namespace mint
         
         public:
             void                                pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
-            const DxObjectId&                   getFontTextureId() const noexcept;
+            const DxObjectID&                   getFontTextureId() const noexcept;
 
         private:
             void                                drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
@@ -188,9 +188,9 @@ namespace mint
         private:
             bool                                _ownTriangleRenderer;
             LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
-            DxObjectId                          _vertexShaderId;
-            DxObjectId                          _geometryShaderId;
-            DxObjectId                          _pixelShaderId;
+            DxObjectID                          _vertexShaderId;
+            DxObjectID                          _geometryShaderId;
+            DxObjectID                          _pixelShaderId;
         };
     }
 }

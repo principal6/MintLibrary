@@ -61,17 +61,17 @@ namespace mint
             return _stateManager;
         }
 
-        MINT_INLINE DxObjectId GraphicDevice::getCommonCbTransformId() const noexcept
+        MINT_INLINE DxObjectID GraphicDevice::getCommonCbTransformId() const noexcept
         {
             return _cbTransformId;
         }
 
-        MINT_INLINE DxObjectId GraphicDevice::getCommonSbTransformId() const noexcept
+        MINT_INLINE DxObjectID GraphicDevice::getCommonSbTransformId() const noexcept
         {
             return _sbTransformId;
         }
 
-        MINT_INLINE DxObjectId GraphicDevice::getCommonSbMaterialId() const noexcept
+        MINT_INLINE DxObjectID GraphicDevice::getCommonSbMaterialId() const noexcept
         {
             return _sbMaterialId;
         }

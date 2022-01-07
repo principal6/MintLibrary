@@ -39,38 +39,38 @@ namespace mint
         };
 
 
-        class DxObjectId final
+        class DxObjectID final
         {
             friend IDxObject;
             static constexpr uint32         kDxInvalidObjectRawID{ kUint32Max };
 
         public:
-                                            DxObjectId() = default;
-                                            DxObjectId(const DxObjectId& rhs) = default;
-                                            DxObjectId(DxObjectId&& rhs) = default;
-                                            ~DxObjectId() = default;
+                                            DxObjectID() = default;
+                                            DxObjectID(const DxObjectID& rhs) = default;
+                                            DxObjectID(DxObjectID&& rhs) = default;
+                                            ~DxObjectID() = default;
 
         public:
-            DxObjectId&                     operator=(const DxObjectId& rhs) noexcept = default;
-            DxObjectId&                     operator=(DxObjectId&& rhs) noexcept = default;
+            DxObjectID&                     operator=(const DxObjectID& rhs) noexcept = default;
+            DxObjectID&                     operator=(DxObjectID&& rhs) noexcept = default;
     
         public:
-            MINT_INLINE const bool            operator==(const DxObjectId& rhs) const noexcept
+            MINT_INLINE const bool            operator==(const DxObjectID& rhs) const noexcept
             {
                 return _rawID == rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator!=(const DxObjectId& rhs) const noexcept
+            MINT_INLINE const bool            operator!=(const DxObjectID& rhs) const noexcept
             {
                 return _rawID != rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator<(const DxObjectId& rhs) const noexcept
+            MINT_INLINE const bool            operator<(const DxObjectID& rhs) const noexcept
             {
                 return _rawID < rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator>(const DxObjectId& rhs) const noexcept
+            MINT_INLINE const bool            operator>(const DxObjectID& rhs) const noexcept
             {
                 return _rawID > rhs._rawID;
             }
@@ -111,7 +111,7 @@ namespace mint
             static std::atomic<uint32>      _lastRawID;
     
         public:
-            static const DxObjectId         kInvalidObjectId;
+            static const DxObjectID         kInvalidObjectID;
         };
 
 
@@ -120,43 +120,43 @@ namespace mint
         public:
                                             IDxObject(GraphicDevice& graphicDevice, const DxObjectType objectType) 
                                                 : _graphicDevice{ graphicDevice }
-                                                , _objectId{}
+                                                , _objectID{}
                                             {
-                                                _objectId.setObjectTypeXXX(objectType); 
+                                                _objectID.setObjectTypeXXX(objectType); 
                                             }
             virtual                         ~IDxObject() = default;
 
         public:
-            MINT_INLINE const bool          operator==(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator==(const DxObjectID& objectID) const noexcept
             {
-                return _objectId == objectId;
+                return _objectID == objectID;
             }
 
-            MINT_INLINE const bool          operator<(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator<(const DxObjectID& objectID) const noexcept
             {
-                return _objectId < objectId;
+                return _objectID < objectID;
             }
 
-            MINT_INLINE const bool          operator>(const DxObjectId& objectId) const noexcept
+            MINT_INLINE const bool          operator>(const DxObjectID& objectID) const noexcept
             {
-                return _objectId > objectId;
+                return _objectID > objectID;
             }
 
         public:
-            MINT_INLINE const DxObjectId&   getId() const noexcept
+            MINT_INLINE const DxObjectID&   getId() const noexcept
             {
-                return _objectId;
+                return _objectID;
             }
 
         protected:
             MINT_INLINE void                assignIdXXX() noexcept
             {
-                _objectId.assignIdXXX();
+                _objectID.assignIdXXX();
             }
 
         protected:
             GraphicDevice&              _graphicDevice;
-            DxObjectId                  _objectId;
+            DxObjectID                  _objectID;
         };
     }
 }

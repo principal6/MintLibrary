@@ -102,16 +102,16 @@ namespace mint
             virtual                     ~DxShaderPool() = default;
 
         public:
-            const DxObjectId&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectId&           pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
+            const DxObjectID&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const DxObjectID&           pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
         public:
-            const DxObjectId&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
-            const DxObjectId&           pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
+            const DxObjectID&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
+            const DxObjectID&           pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
-            const DxObjectId&           pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectId&           pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            const DxObjectID&           pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const DxObjectID&           pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
         
         private:
             const bool                  createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
@@ -130,11 +130,11 @@ namespace mint
             void                        reportCompileError();
 
         public:
-            void                        bindShaderIfNot(const DxShaderType shaderType, const DxObjectId& objectId);
+            void                        bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID);
             void                        unbindShader(const DxShaderType shaderType);
             
         private:
-            const DxShader&             getShader(const DxShaderType shaderType, const DxObjectId& objectId);
+            const DxShader&             getShader(const DxShaderType shaderType, const DxObjectID& objectID);
 
         private:
             ComPtr<ID3DBlob>            _errorMessageBlob;
@@ -151,7 +151,7 @@ namespace mint
             Vector<DxShader>            _pixelShaderArray;
 
         private:
-            DxObjectId                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];
+            DxObjectID                  _boundShaderIdArray[static_cast<uint32>(DxShaderType::COUNT)];
         };
     }
 }

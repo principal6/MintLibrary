@@ -380,7 +380,7 @@ namespace mint
             __noop;
         }
 
-        const DxObjectId& DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
+        const DxObjectID& DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::ConstantBuffer;
@@ -393,10 +393,10 @@ namespace mint
                 return _resourceArray.back().getId();
             }
             MINT_ASSERT("김장원", false, "pushConstantBuffer 에 실패했습니다!");
-            return DxObjectId::kInvalidObjectId;
+            return DxObjectID::kInvalidObjectID;
         }
 
-        const DxObjectId& DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        const DxObjectID& DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::VertexBuffer;
@@ -408,10 +408,10 @@ namespace mint
             }
 
             MINT_ASSERT("김장원", false, "pushVertexBuffer 에 실패했습니다!");
-            return DxObjectId::kInvalidObjectId;
+            return DxObjectID::kInvalidObjectID;
         }
 
-        const DxObjectId& DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
+        const DxObjectID& DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::IndexBuffer;
@@ -423,10 +423,10 @@ namespace mint
             }
 
             MINT_ASSERT("김장원", false, "pushIndexBuffer 에 실패했습니다!");
-            return DxObjectId::kInvalidObjectId;
+            return DxObjectID::kInvalidObjectID;
         }
 
-        const DxObjectId& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
+        const DxObjectID& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::StructuredBuffer;
@@ -440,10 +440,10 @@ namespace mint
             }
 
             MINT_ASSERT("김장원", false, "pushStructuredBuffer 에 실패했습니다!");
-            return DxObjectId::kInvalidObjectId;
+            return DxObjectID::kInvalidObjectID;
         }
 
-        const DxObjectId& DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
+        const DxObjectID& DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
         {
             DxResource resource{ _graphicDevice };
             resource._resourceType = DxResourceType::Texture2D;
@@ -455,32 +455,32 @@ namespace mint
             }
 
             MINT_ASSERT("김장원", false, "pushTexture2D 에 실패했습니다!");
-            return DxObjectId::kInvalidObjectId;
+            return DxObjectID::kInvalidObjectID;
         }
 
-        void DxResourcePool::bindAsInput(const DxObjectId& objectId) noexcept
+        void DxResourcePool::bindAsInput(const DxObjectID& objectID) noexcept
         {
-            DxResource& resource = getResource(objectId);
+            DxResource& resource = getResource(objectID);
             if (resource.isValid() == true)
             {
                 resource.bindAsInput();
             }
         }
 
-        void DxResourcePool::bindToShader(const DxObjectId& objectId, const DxShaderType shaderType, const uint32 bindingSlot) noexcept
+        void DxResourcePool::bindToShader(const DxObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept
         {
-            DxResource& resource = getResource(objectId);
+            DxResource& resource = getResource(objectID);
             if (resource.isValid() == true)
             {
                 resource.bindToShader(shaderType, bindingSlot);
             }
         }
 
-        DxResource& DxResourcePool::getResource(const DxObjectId& objectId)
+        DxResource& DxResourcePool::getResource(const DxObjectID& objectID)
         {
-            MINT_ASSERT("김장원", objectId.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
+            MINT_ASSERT("김장원", objectID.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
-            const int32 index = binarySearch(_resourceArray, objectId);
+            const int32 index = binarySearch(_resourceArray, objectID);
             if (index >= 0)
             {
                 return _resourceArray[index];

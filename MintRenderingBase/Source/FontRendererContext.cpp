@@ -770,7 +770,7 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        const DxObjectId& FontRendererContext::getFontTextureId() const noexcept
+        const DxObjectID& FontRendererContext::getFontTextureId() const noexcept
         {
             return _fontData._fontTextureId;
         }

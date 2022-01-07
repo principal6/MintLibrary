@@ -57,9 +57,9 @@ namespace mint
         private:
             CB_Transform                    _cbTransformData;
             Vector<SB_Material>             _sbMaterialDatas;
-            DxObjectId                      _vsDefaultId;
-            DxObjectId                      _psDefaultId;
-            DxObjectId                      _psColorId;
+            DxObjectID                      _vsDefaultId;
+            DxObjectID                      _psDefaultId;
+            DxObjectID                      _psColorId;
         };
     }
 }

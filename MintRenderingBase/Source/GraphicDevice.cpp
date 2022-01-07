@@ -156,14 +156,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setVsResources(const DxResource& resource) noexcept
         {
-            Vector<DxObjectId>& shaderResources = _vsShaderResources;
+            Vector<DxObjectID>& shaderResources = _vsShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
             }
             if (resource.needToBind() == true)
             {
-                shaderResources[resource.getRegisterIndex()] = DxObjectId();
+                shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
@@ -172,14 +172,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setGsResources(const DxResource& resource) noexcept
         {
-            Vector<DxObjectId>& shaderResources = _gsShaderResources;
+            Vector<DxObjectID>& shaderResources = _gsShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
             }
             if (resource.needToBind() == true)
             {
-                shaderResources[resource.getRegisterIndex()] = DxObjectId();
+                shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
@@ -188,14 +188,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setPsResources(const DxResource& resource) noexcept
         {
-            Vector<DxObjectId>& shaderResources = _psShaderResources;
+            Vector<DxObjectID>& shaderResources = _psShaderResources;
             if (shaderResources.size() <= resource.getRegisterIndex())
             {
                 shaderResources.resize(resource.getRegisterIndex() + 1);
             }
             if (resource.needToBind() == true)
             {
-                shaderResources[resource.getRegisterIndex()] = DxObjectId();
+                shaderResources[resource.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getId());
 
@@ -204,14 +204,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setVsConstantBuffers(const DxResource& constantBuffer)
         {
-            Vector<DxObjectId>& constantBuffers = _vsConstantBuffers;
+            Vector<DxObjectID>& constantBuffers = _vsConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
             }
             if (constantBuffer.needToBind() == true)
             {
-                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectId();
+                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
@@ -220,14 +220,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setGsConstantBuffers(const DxResource& constantBuffer)
         {
-            Vector<DxObjectId>& constantBuffers = _gsConstantBuffers;
+            Vector<DxObjectID>& constantBuffers = _gsConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
             }
             if (constantBuffer.needToBind() == true)
             {
-                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectId();
+                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
@@ -236,14 +236,14 @@ namespace mint
 
         void GraphicDevice::StateManager::setPsConstantBuffers(const DxResource& constantBuffer)
         {
-            Vector<DxObjectId>& constantBuffers = _psConstantBuffers;
+            Vector<DxObjectID>& constantBuffers = _psConstantBuffers;
             if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
             {
                 constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
             }
             if (constantBuffer.needToBind() == true)
             {
-                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectId();
+                constantBuffers[constantBuffer.getRegisterIndex()] = DxObjectID();
             }
             MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getId());
 
