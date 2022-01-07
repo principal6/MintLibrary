@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/IId.h>
+#include <MintContainer/Include/IID_.h>
 
 #include <MintMath/Include/Float4x4.h>
 #include <MintMath/Include/Quaternion.h>
@@ -29,7 +29,7 @@ namespace mint
         };
 
 
-        class ObjectComponentId final : public IId
+        class ObjectComponentId final : public IID
         {
             friend IObjectComponent;
 
