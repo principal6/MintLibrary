@@ -2942,10 +2942,10 @@ namespace mint
 
         void GUIContext::processControlCommon_dock(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
-            const bool isDragging = isControlBeingDragged(controlData);
-            
             static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
+            const bool isDragging = isControlBeingDragged(controlData);
+            ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
+            
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             std::function fnRenderDockingBox = [&](const Rect& boxRect, const ControlData& parentControlData)
             {
