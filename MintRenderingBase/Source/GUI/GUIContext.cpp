@@ -2798,70 +2798,69 @@ namespace mint
 
         void GUIContext::processControlCommon_resize(ControlData& controlData) noexcept
         {
-            ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
-            const bool isResizing = isControlBeingResized(changeTargetControlData);
-            if (isResizing == true)
+            ControlData& targetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
+            if (isControlBeingResized(targetControlData) == false)
             {
-                if (_isResizeBegun == true)
-                {
-                    _resizedControlInitialPosition = changeTargetControlData._position;
-                    _resizedControlInitialSize = changeTargetControlData._size;
-
-                    _isResizeBegun = false;
-                }
-
-                Float2& changeTargetControlDisplaySize = const_cast<Float2&>(changeTargetControlData._size);
-
-                const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
-                const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
-                const float flipVert = (_resizingMethod == ResizingMethod::RepositionVert || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
-                const Float2 resizeMinSize = changeTargetControlData.getResizeMinSize();
-                if (_mouseStates.isCursor(Window::CursorType::SizeVert) == false)
-                {
-                    const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
-                    const float newSizeX = _resizedControlInitialSize._x + mouseDragDelta._x * flipHorz;
-                    if (resizeMinSize._x < newSizeX)
-                    {
-                        if (flipHorz < 0.0f)
-                        {
-                            changeTargetControlData._position._x = newPositionX;
-                        }
-                        changeTargetControlDisplaySize._x = newSizeX;
-                    }
-                }
-                if (_mouseStates.isCursor(Window::CursorType::SizeHorz) == false)
-                {
-                    const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
-                    const float newSizeY = _resizedControlInitialSize._y + mouseDragDelta._y * flipVert;
-                    if (resizeMinSize._y < newSizeY)
-                    {
-                        if (flipVert < 0.0f)
-                        {
-                            changeTargetControlData._position._y = newPositionY;
-                        }
-                        changeTargetControlDisplaySize._y = newSizeY;
-                    }
-                }
-
-                if (changeTargetControlData.isDocking() == true)
-                {
-                    // 내가 Docking 중인 컨트롤이라면 Dock Control 의 Dock 크기도 같이 변경해줘야 한다.
-
-                    const ControlID& dockControlID = changeTargetControlData.getDockControlID();
-                    ControlData& dockControlData = accessControlData(dockControlID);
-                    dockControlData.setDockZoneSize(changeTargetControlData._dockContext._lastDockZone, changeTargetControlDisplaySize);
-                    updateDockZoneData(dockControlID);
-                }
-                else if (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Dock 
-                    || changeTargetControlData._dockContext._dockingControlType == DockingControlType::DockerDock)
-                {
-                    // 내가 DockHosting 중일 수 있음
-
-                    updateDockZoneData(changeTargetControlData.getID());
-                }
-
-                _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
+                return;
             }
+
+            if (_isResizeBegun == true)
+            {
+                _resizedControlInitialPosition = targetControlData._position;
+                _resizedControlInitialSize = targetControlData._size;
+
+                _isResizeBegun = false;
+            }
+
+            Float2& targetControlDisplaySize = const_cast<Float2&>(targetControlData._size);
+            const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
+            const Float2 targetControlResizeMinSize = targetControlData.getResizeMinSize();
+            const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
+            if (_mouseStates.isCursor(Window::CursorType::SizeVert) == false)
+            {
+                const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
+                const float newSizeX = _resizedControlInitialSize._x + mouseDragDelta._x * flipHorz;
+                if (targetControlResizeMinSize._x < newSizeX)
+                {
+                    if (flipHorz < 0.0f)
+                    {
+                        targetControlData._position._x = newPositionX;
+                    }
+                    targetControlDisplaySize._x = newSizeX;
+                }
+            }
+
+            const float flipVert = (_resizingMethod == ResizingMethod::RepositionVert || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
+            if (_mouseStates.isCursor(Window::CursorType::SizeHorz) == false)
+            {
+                const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
+                const float newSizeY = _resizedControlInitialSize._y + mouseDragDelta._y * flipVert;
+                if (targetControlResizeMinSize._y < newSizeY)
+                {
+                    if (flipVert < 0.0f)
+                    {
+                        targetControlData._position._y = newPositionY;
+                    }
+                    targetControlDisplaySize._y = newSizeY;
+                }
+            }
+
+            if (targetControlData.isDocking() == true)
+            {
+                // TargetControl 이 Docking 중이라면, DockControl 의 DockZoneSize 도 같이 변경해줘야 한다.
+                const ControlID& dockControlID = targetControlData.getDockControlID();
+                ControlData& dockControlData = accessControlData(dockControlID);
+                dockControlData.setDockZoneSize(targetControlData._dockContext._lastDockZone, targetControlDisplaySize);
+                updateDockZoneData(dockControlID);
+            }
+            else if (targetControlData._dockContext._dockingControlType == DockingControlType::Dock || 
+                     targetControlData._dockContext._dockingControlType == DockingControlType::DockerDock)
+            {
+                // 내가 DockHosting 중일 수 있음
+                updateDockZoneData(targetControlData.getID());
+            }
+
+            _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
         void GUIContext::processControlCommon_drag(ControlData& controlData) noexcept
