@@ -386,12 +386,9 @@ namespace mint
             const bool                                  isControlBeingResized(const ControlData& controlData) const noexcept;
 
             // RendererContext 고를 때 사용
-            const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
-            const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                  isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept;
+            const bool                                  isAncestorControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept;
+            const bool                                  isAncestorControlInteractionState_recursive(const ControlID& id, const ControlID& targetID) const noexcept;
 
-            const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept;
-            const bool                                  isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept;
             const bool                                  isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateID) const noexcept;
             const bool                                  isDescendantControlRecursiveXXX(const ControlID& currentControlID, const ControlID& descendantCandidateID) const noexcept;
 
@@ -399,11 +396,8 @@ namespace mint
 
             // Focus, Out-of-focus 색 정할 때 사용
             const bool                                  needToColorFocused(const ControlData& controlData) const noexcept;
-            const bool                                  isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept;
-            const bool                                  isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept;
-            const bool                                  isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept;
-            const bool                                  isDescendantControlPressed(const ControlData& controlData) const noexcept;
-            const bool                                  isDescendantControlHovered(const ControlData& controlData) const noexcept;
+            const bool                                  isThisOrDescendantControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept;
+            const bool                                  isDescendantControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept;
             const ControlData&                          getClosestFocusableAncestorControlInclusive(const ControlData& controlData) const noexcept;
             const bool                                  hasDockingAncestorControlInclusive(const ControlData& controlData) const noexcept;
 

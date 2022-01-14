@@ -14,6 +14,14 @@ namespace mint
     {
         struct MouseStates;
 
+        enum class ControlInteractionState
+        {
+            None,
+            Hovered,
+            Pressed,
+            Clicked,
+            Focused,
+        };
 
         class ControlInteractionStateSet
         {
@@ -39,6 +47,7 @@ namespace mint
             MINT_INLINE const ControlID&    getHoveredControlID() const noexcept { return _hoveredControlID; }
             MINT_INLINE const ControlID&    getPressedControlID() const noexcept { return _pressedControlID; }
             MINT_INLINE const ControlID&    getFocusedControlID() const noexcept { return _focusedControlID; }
+            MINT_INLINE const ControlID&    getClickedControlID() const noexcept { return _clickedControlIDPerFrame; }
 
         public:
             void                            resetPerFrameStates(const MouseStates& mouseStates) noexcept;

@@ -685,7 +685,7 @@ namespace mint
 
                 if (needToProcessControl == true)
                 {
-                    const bool isAncestorFocused = isAncestorControlFocused(windowControlData);
+                    const bool isAncestorFocused = isAncestorControlInteractionState(windowControlData, ControlInteractionState::Focused);
                     windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
                     
                     Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
@@ -1567,7 +1567,7 @@ namespace mint
             const Rendering::Color& hoverColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::HoverState);
             const Rendering::Color& pressedColor = (wasMeSelected == true) ? getNamedColor(NamedColor::PressedState) : getNamedColor(NamedColor::PressedState);
             const bool isClicked = processClickControl(menuBarItem, normalColor, hoverColor, pressedColor, finalBackgroundColor);
-            const bool isParentAncestorPressed = isAncestorControlPressed(menuBar);
+            const bool isParentAncestorPressed = isAncestorControlInteractionState(menuBar, ControlInteractionState::Pressed);
             const bool& isParentControlToggled = menuBar._controlValue._booleanData.get();
             const bool wasParentControlToggled = isParentControlToggled;
             if (isClicked == true)
@@ -1644,7 +1644,7 @@ namespace mint
             menuItemParent._controlValue._itemData._itemSize._y += menuItem._size._y;
             menuItem._controlValue._itemData._itemSize._y = 0.0f;
 
-            const bool isDescendantHovered = isDescendantControlHoveredInclusive(menuItem);
+            const bool isDescendantHovered = isThisOrDescendantControlInteractionState(menuItem, ControlInteractionState::Hovered);
             Rendering::Color finalBackgroundColor;
             {
                 const Rendering::Color& normalColor = getNamedColor((isDescendantHovered == true) ? NamedColor::HoverState : NamedColor::NormalState);
@@ -3258,7 +3258,7 @@ namespace mint
         const bool GUIContext::isInteractingInternal(const ControlData& controlData) const noexcept
         {
             if (_controlInteractionStateSet.hasFocusedControl() == true && _controlInteractionStateSet.isControlFocused(controlData) == false && 
-                isAncestorControlFocused(controlData) == false)
+                isAncestorControlInteractionState(controlData, ControlInteractionState::Focused) == false)
             {
                 // Focus 가 있는 Control 이 존재하지만 내가 Focus 는 아닌 경우
 
@@ -3338,27 +3338,6 @@ namespace mint
             return false;
         }
         
-        const bool GUIContext::isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept
-        {
-            return isAncestorControlRecursiveXXX(controlData.getID(), ancestorCandidateID);
-        }
-
-        const bool GUIContext::isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept
-        {
-            if (currentControlID.isValid() == false)
-            {
-                return false;
-            }
-
-            if (currentControlID == ancestorCandidateID)
-            {
-                return true;
-            }
-
-            const ControlID& parentControlID = getControlData(currentControlID).getParentID();
-            return isAncestorControlRecursiveXXX(parentControlID, ancestorCandidateID);
-        }
-
         const bool GUIContext::isDescendantControlInclusive(const ControlData& controlData, const ControlID& descendantCandidateID) const noexcept
         {
             return ((descendantCandidateID.isValid() == false) ? false : isDescendantControlRecursiveXXX(controlData.getID(), descendantCandidateID));
@@ -3392,17 +3371,27 @@ namespace mint
             return parentControlData.isTypeOf(ControlType::ROOT);
         }
 
-        const bool GUIContext::isAncestorControlFocused(const ControlData& controlData) const noexcept
+        const bool GUIContext::isAncestorControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept
         {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentID(), _controlInteractionStateSet.getFocusedControlID());
+            switch (controlInteractionState)
+            {
+            case ControlInteractionState::None:
+                break;
+            case ControlInteractionState::Hovered:
+                return isAncestorControlInteractionState_recursive(controlData.getParentID(), _controlInteractionStateSet.getHoveredControlID());
+            case ControlInteractionState::Pressed:
+                return isAncestorControlInteractionState_recursive(controlData.getParentID(), _controlInteractionStateSet.getPressedControlID());
+            case ControlInteractionState::Clicked:
+                return isAncestorControlInteractionState_recursive(controlData.getParentID(), _controlInteractionStateSet.getClickedControlID());
+            case ControlInteractionState::Focused:
+                return isAncestorControlInteractionState_recursive(controlData.getParentID(), _controlInteractionStateSet.getFocusedControlID());
+            default:
+                break;
+            }
+            return false;
         }
 
-        const bool GUIContext::isAncestorControlPressed(const ControlData& controlData) const noexcept
-        {
-            return isAncestorControlTargetRecursiveXXX(controlData.getParentID(), _controlInteractionStateSet.getPressedControlID());
-        }
-
-        const bool GUIContext::isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept
+        const bool GUIContext::isAncestorControlInteractionState_recursive(const ControlID& id, const ControlID& targetID) const noexcept
         {
             if (id.isValid() == false)
             {
@@ -3415,7 +3404,7 @@ namespace mint
             }
 
             const ControlID& parentID = getControlData(id).getParentID();
-            return isAncestorControlTargetRecursiveXXX(parentID, targetID);
+            return isAncestorControlInteractionState_recursive(parentID, targetID);
         }
 
         const bool GUIContext::needToColorFocused(const ControlData& controlData) const noexcept
@@ -3435,8 +3424,8 @@ namespace mint
                 return true;
             }
 
-            // #2. Child Control Focused
-            const bool isDescendantFocused = isDescendantControlFocusedInclusive(closestFocusableAncestorInclusive);
+            // #2. Descendant Control Focused
+            const bool isDescendantFocused = isThisOrDescendantControlInteractionState(closestFocusableAncestorInclusive, ControlInteractionState::Focused);
             if (isDescendantFocused == true)
             {
                 return true;
@@ -3445,47 +3434,59 @@ namespace mint
             // #3. Docking
             const bool isDocking = closestFocusableAncestorInclusive.isDocking();
             const ControlData& dockControlData = getControlData(closestFocusableAncestorInclusive.getDockControlID());
-            return (isDocking == true && (dockControlData.isRootControl() == true || _controlInteractionStateSet.isControlFocused(dockControlData) == true || isDescendantControlFocusedInclusive(dockControlData) == true));
+            return (isDocking == true && (dockControlData.isRootControl() == true || _controlInteractionStateSet.isControlFocused(dockControlData) == true || 
+                isThisOrDescendantControlInteractionState(dockControlData, ControlInteractionState::Focused) == true));
         }
 
-        const bool GUIContext::isDescendantControlFocusedInclusive(const ControlData& controlData) const noexcept
+        const bool GUIContext::isThisOrDescendantControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept
         {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID());
-        }
-
-        const bool GUIContext::isDescendantControlHoveredInclusive(const ControlData& controlData) const noexcept
-        {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getHoveredControlID());
-        }
-
-        const bool GUIContext::isDescendantControlPressedInclusive(const ControlData& controlData) const noexcept
-        {
-            return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getPressedControlID());
-        }
-
-        const bool GUIContext::isDescendantControlPressed(const ControlData& controlData) const noexcept
-        {
-            const auto& previousChildControlIDs = controlData.getChildControlIDs();
-            const uint32 previousChildControlCount = previousChildControlIDs.size();
-            for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
+            switch (controlInteractionState)
             {
-                const ControlID& previousChildControlID = previousChildControlIDs[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlID, _controlInteractionStateSet.getPressedControlID()) == true)
-                {
-                    return true;
-                }
+            case ControlInteractionState::None:
+                break;
+            case ControlInteractionState::Hovered:
+                return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getHoveredControlID());
+            case ControlInteractionState::Pressed:
+                return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getPressedControlID());
+            case ControlInteractionState::Clicked:
+                return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getClickedControlID());
+            case ControlInteractionState::Focused:
+                return isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID());
+            default:
+                break;
             }
             return false;
         }
 
-        const bool GUIContext::isDescendantControlHovered(const ControlData& controlData) const noexcept
+        const bool GUIContext::isDescendantControlInteractionState(const ControlData& controlData, const ControlInteractionState controlInteractionState) const noexcept
         {
+            ControlID controlIDToCompare;
+            switch (controlInteractionState)
+            {
+            case ControlInteractionState::None:
+                break;
+            case ControlInteractionState::Hovered:
+                controlIDToCompare = _controlInteractionStateSet.getHoveredControlID();
+                break;
+            case ControlInteractionState::Pressed:
+                controlIDToCompare = _controlInteractionStateSet.getPressedControlID();
+                break;
+            case ControlInteractionState::Clicked:
+                controlIDToCompare = _controlInteractionStateSet.getClickedControlID();
+                break;
+            case ControlInteractionState::Focused:
+                controlIDToCompare = _controlInteractionStateSet.getFocusedControlID();
+                break;
+            default:
+                break;
+            }
+
             const auto& previousChildControlIDs = controlData.getChildControlIDs();
             const uint32 previousChildControlCount = previousChildControlIDs.size();
             for (uint32 previousChildControlIndex = 0; previousChildControlIndex < previousChildControlCount; ++previousChildControlIndex)
             {
                 const ControlID& previousChildControlID = previousChildControlIDs[previousChildControlIndex];
-                if (isDescendantControlRecursiveXXX(previousChildControlID, _controlInteractionStateSet.getHoveredControlID()) == true)
+                if (isDescendantControlRecursiveXXX(previousChildControlID, controlIDToCompare) == true)
                 {
                     return true;
                 }
