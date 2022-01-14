@@ -2865,8 +2865,7 @@ namespace mint
 
         void GUIContext::processControlCommon_drag(ControlData& controlData) noexcept
         {
-            const bool isDragging = isControlBeingDragged(controlData);
-            if (isDragging == false)
+            if (isControlBeingDragged(controlData) == false)
             {
                 return;
             }
