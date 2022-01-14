@@ -335,6 +335,7 @@ namespace mint
             const Rect&                         getInnerPadding() const noexcept;
             const Float2                        getResizeMinSize() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
+            const Float2&                       getInnerInteractionSize() const noexcept;
             const Float2&                       getContentAreaSize() const noexcept;
             const Float2&                       getChildAt() const noexcept;
             Float2                              computeInnerDisplaySize() const noexcept;

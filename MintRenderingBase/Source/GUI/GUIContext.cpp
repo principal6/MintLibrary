@@ -22,6 +22,9 @@
 #include <MintLibrary/Include/ScopedCPUProfiler.h>
 
 
+#pragma optimize("", off)
+
+
 namespace mint
 {
     namespace GUI
@@ -39,14 +42,14 @@ namespace mint
                 return false;
             }
 
-            MINT_INLINE const bool isInControlInteractionArea(const Float2& screenPosition, const ControlData& controlData) noexcept
+            MINT_INLINE const bool isInControlInnerInteractionArea(const Float2& screenPosition, const ControlData& controlData) noexcept
             {
                 if (controlData.isDockHosting() == true)
                 {
                     const Float2 positionOffset{ controlData.getDockZoneSize(DockZone::LeftSide)._x, controlData.getDockZoneSize(DockZone::TopSide)._y };
-                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInteractionSize());
+                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInnerInteractionSize());
                 }
-                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
+                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInnerInteractionSize());
             }
 
             MINT_INLINE const bool isInControlBorderArea(const Float2& screenPosition, const ControlData& controlData, Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) noexcept
@@ -275,7 +278,7 @@ namespace mint
                     continue;
                 }
 
-                if (ControlCommonHelpers::isInControlInteractionArea(screenPosition, parentChildControlData) == true)
+                if (ControlCommonHelpers::isInControlInnerInteractionArea(screenPosition, parentChildControlData) == true)
                 {
                     return false;
                 }
@@ -531,6 +534,9 @@ namespace mint
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+                    
+                    formatString(buffer, L"Inner InteractionSize: (%f, %f)", controlData.getInnerInteractionSize()._x, controlData.getInnerInteractionSize()._y);
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     makeFromReflectionClass(MINT_GUI_CONTROL(controlData.getReflectionData(), &controlData));
@@ -1330,7 +1336,7 @@ namespace mint
             else
             {
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true 
-                    && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     const Float2 dragDelta = _mouseStates.getMouseDragDelta();
                     value += (dragDelta._x - dragDelta._y) * 0.1f;
@@ -2668,8 +2674,8 @@ namespace mint
             }
 
             const ControlData& parentControlData = getControlData(controlData.getParentID());
-            const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
-            const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData);
+            const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), parentControlData);
+            const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData);
             const bool meetsAreaCondition = (controlData._option._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
             const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
             if (meetsAreaCondition == true && meetsInteractionCondition == true)
@@ -2694,7 +2700,7 @@ namespace mint
                 }
                 
                 // Pressed (Mouse down)
-                const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
+                const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
                 if (isMouseDownInInteractionArea == true)
                 {
                     if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true 
@@ -2946,7 +2952,7 @@ namespace mint
                     || changeTargetControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
                 && (parentControlData._dockContext._dockingControlType == DockingControlType::Dock 
                     || parentControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
-                && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
+                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
                 const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
                 const float previewShortLengthMax = 160.0f;
@@ -3244,7 +3250,7 @@ namespace mint
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
                 const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
-                if (ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
+                if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
                     || ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
                     // 마우스가 Focus Control 과 상호작용할 경우 나와는 상호작용하지 않는것으로 판단!!
@@ -3270,8 +3276,8 @@ namespace mint
                 }
 
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true
-                    && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData) == true
-                    && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true
+                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     // Drag 시작
                     _isDragBegun = true;
@@ -3529,7 +3535,7 @@ namespace mint
         {
             float result = 0.0f;
             if (_mouseStates._mouseWheel != 0.0f
-                && ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
+                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
             {
                 result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
                 _mouseStates._mouseWheel = 0.0f;

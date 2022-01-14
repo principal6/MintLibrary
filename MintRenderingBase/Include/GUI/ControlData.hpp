@@ -469,6 +469,11 @@ namespace mint
 
         MINT_INLINE const Float2& ControlData::getInteractionSize() const noexcept
         {
+            return _interactionSize;
+        }
+
+        MINT_INLINE const Float2& ControlData::getInnerInteractionSize() const noexcept
+        {
             return isDockHosting() ? _nonDockInteractionSize : _interactionSize;
         }
 
