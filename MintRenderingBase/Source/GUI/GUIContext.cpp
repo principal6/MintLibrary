@@ -264,12 +264,18 @@ namespace mint
             }
 
             // ParentControlData 가 Root 거나 Window 일 때만 여기에 온다.
-            const auto& childWindowIDMap = parentControlData.getChildWindowIDMap();
-            BucketViewer bucketViewer = childWindowIDMap.getBucketViewer();
-            for (; bucketViewer.isValid(); bucketViewer.next())
+            const Vector<ControlID>& parentChildControlIDs = parentControlData.getChildControlIDs();
+            const uint32 parentChildControlCount = parentChildControlIDs.size();
+            for (uint32 parentChildControlIndex = 0; parentChildControlIndex < parentChildControlCount; ++parentChildControlIndex)
             {
-                const ControlData& childWindowControlData = getControlData(*bucketViewer.view()._key);
-                if (ControlCommonHelpers::isInControlInteractionArea(screenPosition, childWindowControlData) == true)
+                const ControlID& parentChildControlID = parentChildControlIDs[parentChildControlIndex];
+                const ControlData& parentChildControlData = getControlData(parentChildControlID);
+                if (parentChildControlData.isTypeOf(ControlType::Window) == false)
+                {
+                    continue;
+                }
+
+                if (ControlCommonHelpers::isInControlInteractionArea(screenPosition, parentChildControlData) == true)
                 {
                     return false;
                 }

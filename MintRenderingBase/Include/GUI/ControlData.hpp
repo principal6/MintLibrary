@@ -316,6 +316,7 @@ namespace mint
             , _parentID{ parentID }
             , _controlType{ controlType }
             , _visibleState{ VisibleState::Visible }
+            , _hasChildWindow{ false }
         {
             _positionConstraintsForDragging.setNan();
 
@@ -339,7 +340,10 @@ namespace mint
             clearPerFrameData();
 
             parentControlData._perFrameData._childControlIDs.push_back(_id);
-            parentControlData.registerChildWindow(*this);
+            if (isTypeOf(ControlType::Window))
+            {
+                parentControlData._hasChildWindow = true;
+            }
 
             updateSize(prepareControlDataParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
 
@@ -439,20 +443,7 @@ namespace mint
 
         MINT_INLINE const bool ControlData::hasChildWindow() const noexcept
         {
-            return _childWindowIDMap.empty() == false;
-        }
-
-        MINT_INLINE void ControlData::registerChildWindow(const ControlData& childWindowControlData) noexcept
-        {
-            if (childWindowControlData._controlType == ControlType::Window && _childWindowIDMap.find(childWindowControlData._id).isValid() == false)
-            {
-                _childWindowIDMap.insert(childWindowControlData._id, true);
-            }
-        }
-
-        MINT_INLINE const HashMap<ControlID, bool>& ControlData::getChildWindowIDMap() const noexcept
-        {
-            return _childWindowIDMap;
+            return _hasChildWindow;
         }
 
         MINT_INLINE const Rect& ControlData::getInnerPadding() const noexcept

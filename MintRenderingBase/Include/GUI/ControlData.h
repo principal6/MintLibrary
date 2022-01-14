@@ -323,8 +323,6 @@ namespace mint
             const uint16                        getChildControlCount() const noexcept;
             const uint16                        getMaxChildControlCount() const noexcept;
             const bool                          hasChildWindow() const noexcept;
-            void                                registerChildWindow(const ControlData& childWindowControlData) noexcept;
-            const HashMap<ControlID, bool>&     getChildWindowIDMap() const noexcept;
 
         public:
             const ControlType                   getControlType() const noexcept;
@@ -411,8 +409,8 @@ namespace mint
             Float2                              _nonDockInteractionSize; // Exluces dock area
             VisibleState                        _visibleState;
             ClipRects                           _clipRects;
-            HashMap<ControlID, bool>            _childWindowIDMap;
             LastFrameData                       _lastFrameData;
+            bool                                _hasChildWindow;
 
         private:
             REFLECTION_BIND_BEGIN;
