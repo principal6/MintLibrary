@@ -371,9 +371,9 @@ namespace mint
             void                                        processControlCommon(ControlData& controlData) noexcept;
             void                                        processControlCommon_updateMouseCursorForResizing(ControlData& controlData) noexcept;
             void                                        processControlCommon_updateTooltipData(ControlData& controlData) noexcept;
-            void                                        processControlCommon_resizing(ControlData& controlData) noexcept;
-            void                                        processControlCommon_dragging(ControlData& controlData) noexcept;
-            void                                        processControlCommon_docking(ControlData& controlData) noexcept;
+            void                                        processControlCommon_resize(ControlData& controlData) noexcept;
+            void                                        processControlCommon_drag(ControlData& controlData) noexcept;
+            void                                        processControlCommon_dock(ControlData& controlData) noexcept;
 
             void                                        dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept;
             void                                        undock(const ControlID& dockedControlID) noexcept;

@@ -2735,9 +2735,9 @@ namespace mint
             processControlCommon_updateMouseCursorForResizing(controlData);
             processControlCommon_updateTooltipData(controlData);
 
-            processControlCommon_resizing(controlData);
-            processControlCommon_dragging(controlData);
-            processControlCommon_docking(controlData);
+            processControlCommon_resize(controlData);
+            processControlCommon_drag(controlData);
+            processControlCommon_dock(controlData);
 
             _controlMetaStateSet.resetPerFrame();
         }
@@ -2796,7 +2796,7 @@ namespace mint
             _controlInteractionStateSet.setTooltipData(_mouseStates, _controlMetaStateSet.getNextTooltipText(), getParentWindowControlData(controlData).getID());
         }
 
-        void GUIContext::processControlCommon_resizing(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_resize(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isResizing = isControlBeingResized(changeTargetControlData);
@@ -2864,7 +2864,7 @@ namespace mint
             }
         }
 
-        void GUIContext::processControlCommon_dragging(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_drag(ControlData& controlData) noexcept
         {
             const bool isDragging = isControlBeingDragged(controlData);
             if (isDragging == false)
@@ -2942,7 +2942,7 @@ namespace mint
             _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
-        void GUIContext::processControlCommon_docking(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_dock(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isDragging = isControlBeingDragged(controlData);
