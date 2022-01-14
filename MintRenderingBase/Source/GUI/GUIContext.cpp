@@ -2369,19 +2369,18 @@ namespace mint
 
         void GUIContext::setControlFocused(const ControlData& controlData) noexcept
         {
-            if (controlData._option._isFocusable == true)
+            if (controlData._option._isFocusable == false)
             {
-                if (controlData._option._needDoubleClickToFocus == true)
-                {
-                    if (_mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
-                    {
-                        _controlInteractionStateSet.setControlFocused(controlData);
-                    }
-                }
-                else
-                {
-                    _controlInteractionStateSet.setControlFocused(controlData);
-                }
+                return;
+            }
+
+            if (controlData._option._needDoubleClickToFocus == true && _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
+            {
+                _controlInteractionStateSet.setControlFocused(controlData);
+            }
+            else
+            {
+                _controlInteractionStateSet.setControlFocused(controlData);
             }
         }
 
