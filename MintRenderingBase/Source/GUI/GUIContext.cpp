@@ -3542,14 +3542,20 @@ namespace mint
 
         const float GUIContext::getMouseWheelScroll(const ControlData& scrollParentControlData) const noexcept
         {
-            float result = 0.0f;
-            if (_mouseStates._mouseWheel != 0.0f
-                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == true)
+            static constexpr float kNoMouseWheelValue = 0.0f;
+            if (_mouseStates._mouseWheel == kNoMouseWheelValue)
             {
-                result = _mouseStates._mouseWheel * kMouseWheelScrollScale;
-                _mouseStates._mouseWheel = 0.0f;
+                return kNoMouseWheelValue;
             }
-            return result;
+
+            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == false)
+            {
+                return kNoMouseWheelValue;
+            }
+
+            const float mouseWheelScroll = _mouseStates._mouseWheel * kMouseWheelScrollScale;
+            _mouseStates._mouseWheel = kNoMouseWheelValue;
+            return mouseWheelScroll;
         }
 
         Rendering::ShapeFontRendererContext& GUIContext::getRendererContext(const ControlData& controlData) noexcept
