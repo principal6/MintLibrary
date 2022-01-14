@@ -389,7 +389,6 @@ namespace mint
             const bool                                  isAncestorControlFocused(const ControlData& controlData) const noexcept;
             const bool                                  isAncestorControlPressed(const ControlData& controlData) const noexcept;
             const bool                                  isAncestorControlTargetRecursiveXXX(const ControlID& id, const ControlID& targetID) const noexcept;
-            const bool                                  isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept;
 
             const bool                                  isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept;
             const bool                                  isAncestorControlRecursiveXXX(const ControlID& currentControlID, const ControlID& ancestorCandidateID) const noexcept;

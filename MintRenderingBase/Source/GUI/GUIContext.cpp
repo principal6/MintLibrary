@@ -3257,7 +3257,8 @@ namespace mint
 
         const bool GUIContext::isInteractingInternal(const ControlData& controlData) const noexcept
         {
-            if (_controlInteractionStateSet.hasFocusedControl() == true && isAncestorControlFocusedInclusiveXXX(controlData) == false)
+            if (_controlInteractionStateSet.hasFocusedControl() == true && _controlInteractionStateSet.isControlFocused(controlData) == false && 
+                isAncestorControlFocused(controlData) == false)
             {
                 // Focus 가 있는 Control 이 존재하지만 내가 Focus 는 아닌 경우
 
@@ -3337,15 +3338,6 @@ namespace mint
             return false;
         }
         
-        const bool GUIContext::isAncestorControlFocusedInclusiveXXX(const ControlData& controlData) const noexcept
-        {
-            if (_controlInteractionStateSet.isControlFocused(controlData) == true)
-            {
-                return true;
-            }
-            return isAncestorControlFocused(controlData);
-        }
-
         const bool GUIContext::isAncestorControlInclusive(const ControlData& controlData, const ControlID& ancestorCandidateID) const noexcept
         {
             return isAncestorControlRecursiveXXX(controlData.getID(), ancestorCandidateID);
