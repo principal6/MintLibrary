@@ -3300,10 +3300,10 @@ namespace mint
                 return false;
             }
 
-            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true
-                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true &&
+                ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
             {
-                // Drag Ω√¿€
+                // Begin dragging
                 _isDragBegun = true;
                 _draggedControlID = controlData.getID();
                 return true;
@@ -3319,34 +3319,27 @@ namespace mint
                 return false;
             }
 
-            if (_resizedControlID.isValid() == false)
+            if (_resizedControlID.isValid())
             {
-                if (_draggedControlID.isValid() == true || controlData.isResizable() == false || isInteractingInternal(controlData) == false)
-                {
-                    return false;
-                }
-
-                Window::CursorType newCursorType;
-                ResizingMask resizingMask;
-                if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true
-                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true
-                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
-                {
-                    if (controlData._resizingMask.overlaps(resizingMask) == true)
-                    {
-                        _resizedControlID = controlData.getID();
-                        _isResizeBegun = true;
-                        _mouseStates._cursorType = newCursorType;
-                        return true;
-                    }
-                }
+                return controlData.getID() == _resizedControlID;
             }
-            else
+
+            if (_draggedControlID.isValid() == true || controlData.isResizable() == false || isInteractingInternal(controlData) == false)
             {
-                if (controlData.getID() == _resizedControlID)
-                {
-                    return true;
-                }
+                return false;
+            }
+
+            Window::CursorType newCursorType;
+            ResizingMask resizingMask;
+            if (ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true &&
+                ControlCommonHelpers::isInControlBorderArea(_mouseStates.getButtonDownPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true &&
+                controlData._resizingMask.overlaps(resizingMask) == true)
+            {
+                // Begin resizing
+                _resizedControlID = controlData.getID();
+                _isResizeBegun = true;
+                _mouseStates._cursorType = newCursorType;
+                return true;
             }
             return false;
         }
