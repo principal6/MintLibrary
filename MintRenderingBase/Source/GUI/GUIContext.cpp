@@ -2678,55 +2678,49 @@ namespace mint
             const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData);
             const bool meetsAreaCondition = (controlData._option._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
             const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
-            if (meetsAreaCondition == true && meetsInteractionCondition == true)
-            {
-                // Hovered (at least)
-
-                if (setMouseInteractionDone == true)
-                {
-                    _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
-                }
-
-                if (_controlInteractionStateSet.isControlHovered(controlData) == false && controlData._option._isFocusable == false)
-                {
-                    setControlHovered(controlData);
-                }
-
-                // Click Event 가 발생했을 때도 Pressed 상태 유지!
-                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false 
-                    && _mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
-                {
-                    _controlInteractionStateSet.resetPressIf(controlData);
-                }
-                
-                // Pressed (Mouse down)
-                const bool isMouseDownInInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData);
-                if (isMouseDownInInteractionArea == true)
-                {
-                    if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true 
-                        || _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
-                    {
-                        setControlPressed(controlData);
-                    }
-
-                    if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Right) == true)
-                    {
-                        _viewerTargetControlID = controlData.getID();
-                    }
-
-                    // Clicked (only in interaction area)
-                    if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true)
-                    {
-                        setControlClicked(controlData);
-                    }
-                }
-            }
-            else
+            if (meetsAreaCondition == false || meetsInteractionCondition == false)
             {
                 // Not interacting
-
                 _controlInteractionStateSet.resetHoverIf(controlData);
                 _controlInteractionStateSet.resetPressIf(controlData);
+                return;
+            }
+
+            // Hovered (at least)
+            if (setMouseInteractionDone)
+            {
+                _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
+            }
+
+            if (_controlInteractionStateSet.isControlHovered(controlData) == false && controlData._option._isFocusable == false)
+            {
+                setControlHovered(controlData);
+            }
+
+            // Click Event 가 발생했을 때도 Pressed 상태 유지!
+            if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false && _mouseStates.isButtonDown(Platform::MouseButton::Left) == false)
+            {
+                _controlInteractionStateSet.resetPressIf(controlData);
+            }
+
+            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+            {
+                // Pressed (Mouse down)
+                if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true || _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
+                {
+                    setControlPressed(controlData);
+                }
+
+                // Clicked (only in interaction area)
+                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true)
+                {
+                    setControlClicked(controlData);
+                }
+
+                if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Right) == true)
+                {
+                    _viewerTargetControlID = controlData.getID();
+                }
             }
         }
 
