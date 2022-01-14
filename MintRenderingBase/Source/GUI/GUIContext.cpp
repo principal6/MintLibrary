@@ -3290,29 +3290,23 @@ namespace mint
                 return false;
             }
 
-            if (_draggedControlID.isValid() == false)
+            if (_draggedControlID.isValid())
             {
-                if (_resizedControlID.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
-                {
-                    return false;
-                }
-
-                if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true
-                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true
-                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
-                {
-                    // Drag 시작
-                    _isDragBegun = true;
-                    _draggedControlID = controlData.getID();
-                    return true;
-                }
+                return controlData.getID() == _draggedControlID;
             }
-            else
+
+            if (_resizedControlID.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
             {
-                if (controlData.getID() == _draggedControlID)
-                {
-                    return true;
-                }
+                return false;
+            }
+
+            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true
+                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+            {
+                // Drag 시작
+                _isDragBegun = true;
+                _draggedControlID = controlData.getID();
+                return true;
             }
             return false;
         }
