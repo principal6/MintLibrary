@@ -369,11 +369,11 @@ namespace mint
             void                                        processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone = true) noexcept;
 
             void                                        processControlCommon(ControlData& controlData) noexcept;
-            void                                        checkControlResizing(ControlData& controlData) noexcept;
-            void                                        checkControlHoveringForTooltip(ControlData& controlData) noexcept;
-            void                                        processControlResizingInternal(ControlData& controlData) noexcept;
-            void                                        processControlDraggingInternal(ControlData& controlData) noexcept;
-            void                                        processControlDockingInternal(ControlData& controlData) noexcept;
+            void                                        processControlCommon_updateMouseCursorForResizing(ControlData& controlData) noexcept;
+            void                                        processControlCommon_updateTooltipData(ControlData& controlData) noexcept;
+            void                                        processControlCommon_resizing(ControlData& controlData) noexcept;
+            void                                        processControlCommon_dragging(ControlData& controlData) noexcept;
+            void                                        processControlCommon_docking(ControlData& controlData) noexcept;
 
             void                                        dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept;
             void                                        undock(const ControlID& dockedControlID) noexcept;

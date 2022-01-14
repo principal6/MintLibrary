@@ -2732,47 +2732,71 @@ namespace mint
 
         void GUIContext::processControlCommon(ControlData& controlData) noexcept
         {
-            checkControlResizing(controlData);
-            checkControlHoveringForTooltip(controlData);
+            processControlCommon_updateMouseCursorForResizing(controlData);
+            processControlCommon_updateTooltipData(controlData);
 
-            processControlResizingInternal(controlData);
-            processControlDraggingInternal(controlData);
-            processControlDockingInternal(controlData);
+            processControlCommon_resizing(controlData);
+            processControlCommon_dragging(controlData);
+            processControlCommon_docking(controlData);
 
             _controlMetaStateSet.resetPerFrame();
         }
 
-        void GUIContext::checkControlResizing(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_updateMouseCursorForResizing(ControlData& controlData) noexcept
         {
-            if (_resizedControlID.isValid() == false && isInteractingInternal(controlData) == true)
+            if (_resizedControlID.isValid())
             {
-                Window::CursorType newCursorType;
-                ResizingMask resizingMask;
-                const bool isResizable = controlData.isResizable();
-                if (controlData.isResizable() == true 
-                    && ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == true)
-                {
-                    if (controlData._resizingMask.overlaps(resizingMask) == true)
-                    {
-                        _mouseStates._cursorType = newCursorType;
-
-                        _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
-                    }
-                }
+                return;
             }
+
+            if (isInteractingInternal(controlData) == false)
+            {
+                return;
+            }
+
+            if (controlData.isResizable() == false)
+            {
+                return;
+            }
+
+            Window::CursorType newCursorType;
+            ResizingMask resizingMask;
+            if (ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), controlData, newCursorType, resizingMask, _resizingMethod) == false)
+            {
+                return;
+            }
+
+            if (controlData._resizingMask.overlaps(resizingMask) == false)
+            {
+                return;
+            }
+
+            _mouseStates._cursorType = newCursorType;
+            _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
-        void GUIContext::checkControlHoveringForTooltip(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_updateTooltipData(ControlData& controlData) noexcept
         {
-            const bool isHovered = _controlInteractionStateSet.isControlHovered(controlData);
-            if (_controlMetaStateSet.getNextTooltipText() != nullptr && isHovered == true
-                && _controlInteractionStateSet.isHoveringMoreThan(1000) == true)
+            if (StringUtil::isNullOrEmpty(_controlMetaStateSet.getNextTooltipText()))
             {
-                _controlInteractionStateSet.setTooltipData(_mouseStates, _controlMetaStateSet.getNextTooltipText(), getParentWindowControlData(controlData).getID());
+                return;
             }
+
+            if (_controlInteractionStateSet.isControlHovered(controlData) == false)
+            {
+                return;
+            }
+            
+            // hover duration constraint
+            if (_controlInteractionStateSet.isHoveringMoreThan(1000) == false)
+            {
+                return;
+            }
+
+            _controlInteractionStateSet.setTooltipData(_mouseStates, _controlMetaStateSet.getNextTooltipText(), getParentWindowControlData(controlData).getID());
         }
 
-        void GUIContext::processControlResizingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_resizing(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isResizing = isControlBeingResized(changeTargetControlData);
@@ -2840,7 +2864,7 @@ namespace mint
             }
         }
 
-        void GUIContext::processControlDraggingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_dragging(ControlData& controlData) noexcept
         {
             const bool isDragging = isControlBeingDragged(controlData);
             if (isDragging == false)
@@ -2918,7 +2942,7 @@ namespace mint
             _controlInteractionStateSet.setMouseInteractionDoneThisFrame();
         }
 
-        void GUIContext::processControlDockingInternal(ControlData& controlData) noexcept
+        void GUIContext::processControlCommon_docking(ControlData& controlData) noexcept
         {
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             const bool isDragging = isControlBeingDragged(controlData);
