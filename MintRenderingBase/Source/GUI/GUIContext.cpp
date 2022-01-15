@@ -302,7 +302,7 @@ namespace mint
             {
                 setControlFocused(windowControlData);
             }
-            dockWindowOnceInitially(windowControlData, windowParam._initialDockZone, windowParam._initialDockingSize);
+            windowDockInitially(windowControlData, windowParam._initialDockZone, windowParam._initialDockingSize);
 
             PrepareControlDataParam prepareControlDataParam;
             {
@@ -320,11 +320,11 @@ namespace mint
             }
             prepareControlData(windowControlData, prepareControlDataParam);
 
-            updateWindowPositionByParentWindow(windowControlData);
+            windowUpdatePositionByParentWindow(windowControlData);
             
-            updateDockingWindowDisplay(windowControlData);
+            windowUpdateDockingWindowDisplay(windowControlData);
 
-            const bool needToProcessControl = needToProcessWindowControl(windowControlData);
+            const bool needToProcessControl = windowNeedToProcessControl(windowControlData);
             {
                 Rendering::Color finalBackgroundColor;
                 const bool isFocused = (needToProcessControl == true) 
@@ -428,7 +428,7 @@ namespace mint
             return needToProcessControl;
         }
 
-        void GUIContext::dockWindowOnceInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
+        void GUIContext::windowDockInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -457,7 +457,7 @@ namespace mint
             dock(windowControlData.getID(), parentControlData.getID());
         }
 
-        void GUIContext::updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept
+        void GUIContext::windowUpdatePositionByParentWindow(ControlData& windowControlData) noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -473,7 +473,7 @@ namespace mint
             }
         }
 
-        void GUIContext::updateDockingWindowDisplay(ControlData& windowControlData) noexcept
+        void GUIContext::windowUpdateDockingWindowDisplay(ControlData& windowControlData) noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
@@ -488,7 +488,7 @@ namespace mint
             }
         }
 
-        const bool GUIContext::needToProcessWindowControl(const ControlData& windowControlData) const noexcept
+        const bool GUIContext::windowNeedToProcessControl(const ControlData& windowControlData) const noexcept
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 

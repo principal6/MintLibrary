@@ -213,10 +213,10 @@ namespace mint
             void                                        endWindow() { endControlInternal(ControlType::Window); }
 
         private:
-            void                                        dockWindowOnceInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize);
-            void                                        updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept;
-            void                                        updateDockingWindowDisplay(ControlData& windowControlData) noexcept;
-            const bool                                  needToProcessWindowControl(const ControlData& windowControlData) const noexcept;
+            void                                        windowDockInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize);
+            void                                        windowUpdatePositionByParentWindow(ControlData& windowControlData) noexcept;
+            void                                        windowUpdateDockingWindowDisplay(ControlData& windowControlData) noexcept;
+            const bool                                  windowNeedToProcessControl(const ControlData& windowControlData) const noexcept;
     #pragma endregion
 
     #pragma region Controls - Button
