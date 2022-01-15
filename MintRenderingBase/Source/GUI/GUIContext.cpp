@@ -553,32 +553,36 @@ namespace mint
 
             Rendering::Color finalBackgroundColor;
             const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
+            
+            const Float4& controlCenterPosition = controlData.getControlCenterPosition();
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            rendererContext.setClipRect(controlData.getClipRects()._forMe);
+            
+            // draw background
+            rendererContext.setColor(finalBackgroundColor);
+            rendererContext.setPosition(controlCenterPosition);
+            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
+
             const bool isChecked = controlData._controlValue._booleanData.get();
             if (outIsChecked != nullptr)
             {
                 *outIsChecked = isChecked;
             }
-
-            const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
-            rendererContext.setClipRect(controlData.getClipRects()._forMe);
-            rendererContext.setColor(finalBackgroundColor);
-            rendererContext.setPosition(controlCenterPosition);
-            rendererContext.drawRoundedRectangle(controlData._size, (kDefaultRoundnessInPixel / controlData._size.minElement()), 0.0f, 0.0f);
-
-            if (isChecked == true)
+            if (isChecked)
             {
+                // draw check mark
                 Float2 p0 = Float2(controlCenterPosition._x - 1.0f, controlCenterPosition._y + 4.0f);
                 rendererContext.setColor(getNamedColor(NamedColor::LightFont));
                 rendererContext.drawLine(p0, p0 + Float2(-4.0f, -5.0f), 2.0f);
                 rendererContext.drawLine(p0, p0 + Float2(+7.0f, -8.0f), 2.0f);
             }
 
+            // draw text
             rendererContext.setTextColor(getNamedColor(NamedColor::LightFont) * Rendering::Color(1.0f, 1.0f, 1.0f, finalBackgroundColor.a()));
             rendererContext.drawDynamicText(text, controlCenterPosition + Float4(kCheckBoxSize._x * 0.75f, 0.0f, 0.0f, 0.0f), 
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered, kFontScaleB));
 
-            if (isClicked == true)
+            if (isClicked)
             {
                 _controlStackPerFrame.push_back(ControlStackData(controlData));
             }
