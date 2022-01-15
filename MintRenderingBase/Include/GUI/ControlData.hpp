@@ -406,6 +406,11 @@ namespace mint
             _nonDockInteractionSize = _interactionSize + prepareControlDataParam._deltaInteractionSizeByDock;
         }
 
+        MINT_INLINE const bool ControlData::needInitialization() const noexcept
+        {
+            return _updateCount <= 1;
+        }
+
         MINT_INLINE const ControlID& ControlData::getID() const noexcept
         {
             return _id;

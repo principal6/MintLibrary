@@ -313,7 +313,8 @@ namespace mint
         public:
             void                                clearPerFrameData() noexcept;
             void                                updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
-            
+            const bool                          needInitialization() const noexcept;
+
         public:
             const ControlID&                    getID() const noexcept;
             void                                setParentID(const ControlID& parentID) noexcept;

@@ -292,9 +292,12 @@ namespace mint
             const ControlID windowControlID = issueControlID(file, line, controlType, title);
             
             ControlData& windowControlData = accessControlData(windowControlID);
-            windowControlData._dockContext._dockingControlType = DockingControlType::DockerDock;
-            windowControlData._option._isFocusable = true;
-            windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
+            if (windowControlData.needInitialization())
+            {
+                windowControlData._option._isFocusable = true;
+                windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
+                windowControlData._dockContext._dockingControlType = DockingControlType::DockerDock;
+            }
             if (windowControlData.updateVisibleState(inoutVisibleState) == true && windowControlData.isControlVisible() == true)
             {
                 setControlFocused(windowControlData);
