@@ -207,7 +207,7 @@ namespace mint
         };
 
 
-        struct PrepareControlDataParam
+        struct UpdateControlDataParam
         {
         public:
             Rect            _innerPadding;
@@ -312,7 +312,7 @@ namespace mint
     
         public:
             void                                clearPerFrameData() noexcept;
-            void                                updatePerFrame(const PrepareControlDataParam& prepareControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
+            void                                updatePerFrame(const UpdateControlDataParam& updateControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
             const bool                          needInitialization() const noexcept;
 
         public:
@@ -380,7 +380,7 @@ namespace mint
             const Float2                        getControlRightCenterPosition() const noexcept;
 
         private:
-            void                                updateSize(const PrepareControlDataParam& prepareControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
+            void                                updateSize(const UpdateControlDataParam& updateControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
 
         public:
             uint8                               _updateCount;
