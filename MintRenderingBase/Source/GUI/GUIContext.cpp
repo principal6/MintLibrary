@@ -627,24 +627,18 @@ namespace mint
             Float4 textPosition = labelControlData.getControlCenterPosition();
             if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
             {
-                if (labelParam._alignmentHorz == TextAlignmentHorz::Left)
+                textPosition._x = labelControlData._position._x;
+                if (labelParam._alignmentHorz == TextAlignmentHorz::Right)
                 {
-                    textPosition._x = labelControlData._position._x;
-                }
-                else
-                {
-                    textPosition._x = labelControlData._position._x + labelControlData._size._x;
+                    textPosition._x += labelControlData._size._x;
                 }
             }
             if (labelParam._alignmentVert != TextAlignmentVert::Middle)
             {
-                if (labelParam._alignmentVert == TextAlignmentVert::Top)
+                textPosition._y = labelControlData._position._y;
+                if (labelParam._alignmentVert == TextAlignmentVert::Bottom)
                 {
-                    textPosition._y = labelControlData._position._y;
-                }
-                else
-                {
-                    textPosition._y = labelControlData._position._y + labelControlData._size._y;
+                    textPosition._y += labelControlData._size._y;
                 }
             }
             return textPosition;
