@@ -493,14 +493,14 @@ namespace mint
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             const bool isDocking = windowControlData.isDocking();
-            bool needToProcessControl = windowControlData.isControlVisible();
-            if (isDocking == true)
+            if (isDocking == false)
             {
-                const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
-                const bool isFocusedDocker = dockControlData.isFocusedDocker(windowControlData);
-                needToProcessControl &= (isDocking && isFocusedDocker);
+                return windowControlData.isControlVisible();
             }
-            return needToProcessControl;
+
+            const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
+            const bool isFocusedDocker = dockControlData.isFocusedDocker(windowControlData);
+            return (windowControlData.isControlVisible() && isFocusedDocker);
         }
 
         const bool GUIContext::beginButton(const char* const file, const int line, const wchar_t* const text)
