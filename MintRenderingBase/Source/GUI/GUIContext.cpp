@@ -354,7 +354,7 @@ namespace mint
                     }
                     {
                         Rect clipRectForDocks = windowControlData.getControlPaddedRect();
-                        clipRectForDocks.top() += static_cast<LONG>(kTitleBarBaseThickness);
+                        clipRectForDocks.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness);
                         if (isParentAlsoWindow == true)
                         {
                             clipRectForDocks.clipBy(parentControlData.getClipRects()._forDocks);
@@ -1182,7 +1182,7 @@ namespace mint
                 prepareControlDataParam._autoComputedDisplaySize._x = menuBarParent._size._x;
                 prepareControlDataParam._autoComputedDisplaySize._y = kMenuBarBaseSize._y;
                 prepareControlDataParam._desiredPositionInParent._x = 0.0f;
-                prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? kTitleBarBaseThickness : 0.0f;
+                prepareControlDataParam._desiredPositionInParent._y = (isMenuBarParentWindow == true) ? menuBarParent._controlValue._windowData._titleBarThickness : 0.0f;
                 prepareControlDataParam._clipRectUsage = ClipRectUsage::ParentsOwn;
             }
             prepareControlData(menuBar, prepareControlDataParam);
