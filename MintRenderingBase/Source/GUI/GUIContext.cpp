@@ -616,7 +616,7 @@ namespace mint
 
             rendererContext.setTextColor((labelParam._common._fontColor.isTransparent() == true) ? getNamedColor(NamedColor::LightFont) * colorWithAlpha : labelParam._common._fontColor);
             const Float4 textPosition = labelComputeTextPosition(labelParam, controlData);
-            const Rendering::FontRenderingOption fontRenderingOption = labelGetFontRenderingOption(labelParam, controlData);
+            const Rendering::FontRenderingOption fontRenderingOption = labelMakeFontRenderingOption(labelParam, controlData);
             rendererContext.drawDynamicText(text, textPosition, fontRenderingOption);
         }
 
@@ -650,7 +650,7 @@ namespace mint
             return textPosition;
         }
 
-        Rendering::FontRenderingOption GUIContext::labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
+        Rendering::FontRenderingOption GUIContext::labelMakeFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
             MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 

@@ -242,7 +242,7 @@ namespace mint
 
         private:
             Float4                                      labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
-            Rendering::FontRenderingOption              labelGetFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
+            Rendering::FontRenderingOption              labelMakeFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
     #pragma endregion
 
     #pragma region Controls - Slider
