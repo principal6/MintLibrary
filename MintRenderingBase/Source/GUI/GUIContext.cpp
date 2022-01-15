@@ -432,23 +432,29 @@ namespace mint
         {
             MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
-            // Initial docking
-            if (windowControlData._updateCount == 2 && dockZone != DockZone::COUNT)
+            if (dockZone == DockZone::COUNT)
             {
-                windowControlData._dockContext._lastDockZoneCandidate = dockZone;
-
-                ControlData& parentControlData = accessControlData(windowControlData.getParentID());
-                if (dockZone == DockZone::LeftSide || dockZone == DockZone::RightSide)
-                {
-                    parentControlData.setDockZoneSize(dockZone, Float2(initialDockingSize._x, parentControlData._size._y));
-                }
-                else
-                {
-                    parentControlData.setDockZoneSize(dockZone, Float2(parentControlData._size._x, initialDockingSize._y));
-                }
-
-                dock(windowControlData.getID(), parentControlData.getID());
+                return;
             }
+
+            if (windowControlData._updateCount != 2)
+            {
+                return;
+            }
+
+            windowControlData._dockContext._lastDockZoneCandidate = dockZone;
+
+            ControlData& parentControlData = accessControlData(windowControlData.getParentID());
+            if (dockZone == DockZone::LeftSide || dockZone == DockZone::RightSide)
+            {
+                parentControlData.setDockZoneSize(dockZone, Float2(initialDockingSize._x, parentControlData._size._y));
+            }
+            else
+            {
+                parentControlData.setDockZoneSize(dockZone, Float2(parentControlData._size._x, initialDockingSize._y));
+            }
+
+            dock(windowControlData.getID(), parentControlData.getID());
         }
 
         void GUIContext::updateWindowPositionByParentWindow(ControlData& windowControlData) noexcept
