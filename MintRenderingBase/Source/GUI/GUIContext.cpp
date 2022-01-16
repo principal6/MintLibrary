@@ -2661,10 +2661,6 @@ namespace mint
                 return;
             }
 
-            const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
-            const float previewShortLengthMax = 160.0f;
-            const float previewShortLength = min(parentControlData._size._x * 0.5f, previewShortLengthMax);
-
             // √ ±‚»≠
             if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false)
             {
@@ -2676,15 +2672,8 @@ namespace mint
 
             // Top
             {
-                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
-                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
-                interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
-                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
-
-                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::TopSide);
-                previewRect.position(dockZonePosition);
-                previewRect.right(previewRect.left() + parentControlData._size._x);
-                previewRect.bottom(previewRect.top() + previewShortLength);
+                interactionBoxRect = processControlCommon_dock_makeInteractionBoxRect(DockZone::TopSide, parentControlData);
+                previewRect = processControlCommon_dock_makePreviewRect(DockZone::TopSide, interactionBoxRect, parentControlData);
 
                 if (isDragging == true)
                 {
@@ -2699,15 +2688,8 @@ namespace mint
 
             // Bottom
             {
-                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
-                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
-                interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
-                interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
-
-                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::BottomSide);
-                previewRect.position(dockZonePosition);
-                previewRect.right(previewRect.left() + parentControlData._size._x);
-                previewRect.bottom(previewRect.top() + previewShortLength);
+                interactionBoxRect = processControlCommon_dock_makeInteractionBoxRect(DockZone::BottomSide, parentControlData);
+                previewRect = processControlCommon_dock_makePreviewRect(DockZone::BottomSide, interactionBoxRect, parentControlData);
 
                 if (isDragging == true)
                 {
@@ -2722,15 +2704,8 @@ namespace mint
 
             // Left
             {
-                interactionBoxRect.left(parentControlData._position._x + kDockingInteractionOffset);
-                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionShort);
-                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
-                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
-
-                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::LeftSide);
-                previewRect.position(dockZonePosition);
-                previewRect.right(previewRect.left() + previewShortLength);
-                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+                interactionBoxRect = processControlCommon_dock_makeInteractionBoxRect(DockZone::LeftSide, parentControlData);
+                previewRect = processControlCommon_dock_makePreviewRect(DockZone::LeftSide, interactionBoxRect, parentControlData);
 
                 if (isDragging == true)
                 {
@@ -2745,15 +2720,8 @@ namespace mint
 
             // Right
             {
-                interactionBoxRect.right(parentControlData._position._x + parentControlData._size._x - kDockingInteractionOffset);
-                interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
-                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
-                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
-
-                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::RightSide);
-                previewRect.position(dockZonePosition);
-                previewRect.right(previewRect.left() + previewShortLength);
-                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+                interactionBoxRect = processControlCommon_dock_makeInteractionBoxRect(DockZone::RightSide, parentControlData);
+                previewRect = processControlCommon_dock_makePreviewRect(DockZone::RightSide, interactionBoxRect, parentControlData);
 
                 if (isDragging == true)
                 {
@@ -2766,8 +2734,7 @@ namespace mint
                 }
             }
 
-            if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true
-                && changeTargetControlData._dockContext._lastDockZoneCandidate != DockZone::COUNT)
+            if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true && changeTargetControlData._dockContext._lastDockZoneCandidate != DockZone::COUNT)
             {
                 if (changeTargetControlData.isDocking() == false)
                 {
@@ -2780,6 +2747,83 @@ namespace mint
             }
         }
 
+        Rect GUIContext::processControlCommon_dock_makeInteractionBoxRect(const DockZone dockZone, ControlData& parentControlData) const noexcept
+        {
+            const Float4 parentControlCenterPosition = parentControlData.getControlCenterPosition();
+            Rect interactionBoxRect;
+            switch (dockZone)
+            {
+            case DockZone::LeftSide:
+                interactionBoxRect.left(parentControlData._position._x + kDockingInteractionOffset);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionShort);
+                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
+                break;
+            case DockZone::RightSide:
+                interactionBoxRect.right(parentControlData._position._x + parentControlData._size._x - kDockingInteractionOffset);
+                interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
+                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
+                break;
+            case DockZone::TopSide:
+                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
+                interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
+                break;
+            case DockZone::BottomSide:
+                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
+                interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
+                interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
+                break;
+            default:
+                break;
+            }
+            return interactionBoxRect;
+        }
+
+        Rect GUIContext::processControlCommon_dock_makePreviewRect(const DockZone dockZone, const Rect& interactionBoxRect, ControlData& parentControlData) const noexcept
+        {
+            const float previewShortLengthMax = 160.0f;
+            const float previewShortLength = min(parentControlData._size._x * 0.5f, previewShortLengthMax);
+
+            Rect previewRect;
+            const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(dockZone);
+            previewRect.position(dockZonePosition);
+            
+            const DockZoneData& dockZoneData = parentControlData.getDockZoneData(dockZone);
+            if (dockZoneData.isRawDockSizeSet())
+            {
+                previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(dockZone)._x);
+                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(dockZone)._y);
+                return previewRect;
+            }
+
+            switch (dockZone)
+            {
+            case DockZone::LeftSide:
+                previewRect.right(previewRect.left() + previewShortLength);
+                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+                break;
+            case DockZone::RightSide:
+                previewRect.right(previewRect.left() + previewShortLength);
+                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+                break;
+            case DockZone::TopSide:
+                previewRect.right(previewRect.left() + parentControlData._size._x);
+                previewRect.bottom(previewRect.top() + previewShortLength);
+                break;
+            case DockZone::BottomSide:
+                previewRect.right(previewRect.left() + parentControlData._size._x);
+                previewRect.bottom(previewRect.top() + previewShortLength);
+                break;
+            default:
+                break;
+            }
+            return previewRect;
+        }
+
         void GUIContext::processControlCommon_dock_render(const DockZone dockZone, const Rendering::Color& color, const Rect& interactionBoxRect, Rect& previewRect, ControlData& parentControlData) noexcept
         {
             processControlCommon_dock_render_interactionBox(color, interactionBoxRect, parentControlData);
@@ -2787,12 +2831,7 @@ namespace mint
             DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(dockZone);
             if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
             {
-                if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                {
-                    previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(dockZone)._x);
-                    previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(dockZone)._y);
-                }
-                else
+                if (parentControlDockZoneData.isRawDockSizeSet() == false)
                 {
                     parentControlDockZoneData.setRawDockSize(previewRect.size());
                 }
