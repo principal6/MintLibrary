@@ -2688,25 +2688,12 @@ namespace mint
 
                 if (isDragging == true)
                 {
-                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::TopSide);
                     if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::TopSide;
-
-                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                        {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::TopSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::TopSide)._y);
-                        }
-                        else
-                        {
-                            parentControlDockZoneData.setRawDockSize(previewRect.size());
-                        }
-
-                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
+
+                    processControlCommon_dock_render(DockZone::TopSide, color, interactionBoxRect, previewRect, parentControlData);
                 }
             }
 
@@ -2724,25 +2711,12 @@ namespace mint
 
                 if (isDragging == true)
                 {
-                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::BottomSide);
                     if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::BottomSide;
-
-                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                        {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::BottomSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::BottomSide)._y);
-                        }
-                        else
-                        {
-                            parentControlDockZoneData.setRawDockSize(previewRect.size());
-                        }
-
-                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
+
+                    processControlCommon_dock_render(DockZone::BottomSide, color, interactionBoxRect, previewRect, parentControlData);
                 }
             }
 
@@ -2760,25 +2734,12 @@ namespace mint
 
                 if (isDragging == true)
                 {
-                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::LeftSide);
                     if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::LeftSide;
-
-                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                        {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::LeftSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::LeftSide)._y);
-                        }
-                        else
-                        {
-                            parentControlDockZoneData.setRawDockSize(previewRect.size());
-                        }
-
-                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
+
+                    processControlCommon_dock_render(DockZone::LeftSide, color, interactionBoxRect, previewRect, parentControlData);
                 }
             }
 
@@ -2796,25 +2757,12 @@ namespace mint
 
                 if (isDragging == true)
                 {
-                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::RightSide);
                     if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::RightSide;
-
-                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                        {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::RightSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::RightSide)._y);
-                        }
-                        else
-                        {
-                            parentControlDockZoneData.setRawDockSize(previewRect.size());
-                        }
-
-                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
+
+                    processControlCommon_dock_render(DockZone::RightSide, color, interactionBoxRect, previewRect, parentControlData);
                 }
             }
 
@@ -2832,17 +2780,38 @@ namespace mint
             }
         }
 
-        void GUIContext::processControlCommon_dock_renderDockingBox(const Rendering::Color& color, const Rect& boxRect, const ControlData& parentControlData) noexcept
+        void GUIContext::processControlCommon_dock_render(const DockZone dockZone, const Rendering::Color& color, const Rect& interactionBoxRect, Rect& previewRect, ControlData& parentControlData) noexcept
         {
-            const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
+            processControlCommon_dock_render_interactionBox(color, interactionBoxRect, parentControlData);
+
+            DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(dockZone);
+            if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+            {
+                if (parentControlDockZoneData.isRawDockSizeSet() == true)
+                {
+                    previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(dockZone)._x);
+                    previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(dockZone)._y);
+                }
+                else
+                {
+                    parentControlDockZoneData.setRawDockSize(previewRect.size());
+                }
+
+                processControlCommon_dock_render_previewBox(color, previewRect);
+            }
+        }
+
+        void GUIContext::processControlCommon_dock_render_interactionBox(const Rendering::Color& color, const Rect& interactionBoxRect, const ControlData& parentControlData) noexcept
+        {
+            const bool isMouseInBoxRect = interactionBoxRect.contains(_mouseStates.getPosition());
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
             rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
-            rendererContext.setPosition(Float4(boxRect.center()._x, boxRect.center()._y, 0.0f, 1.0f));
-            rendererContext.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
+            rendererContext.setPosition(Float4(interactionBoxRect.center()._x, interactionBoxRect.center()._y, 0.0f, 1.0f));
+            rendererContext.drawRectangle(interactionBoxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
         }
 
-        void GUIContext::processControlCommon_dock_renderPreview(const Rendering::Color& color, const Rect& previewRect) noexcept
+        void GUIContext::processControlCommon_dock_render_previewBox(const Rendering::Color& color, const Rect& previewRect) noexcept
         {
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(_clipRectFullScreen);
