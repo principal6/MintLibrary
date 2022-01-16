@@ -2520,31 +2520,33 @@ namespace mint
             const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
             if (_mouseStates.isCursor(Window::CursorType::SizeVert) == false)
             {
-                const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
-                const float newSizeX = _resizedControlInitialSize._x + mouseDragDelta._x * flipHorz;
-                if (targetControlResizeMinSize._x < newSizeX && newSizeX < maxSize._x)
+                float mouseDragDeltaFlipped = mouseDragDelta._x * flipHorz;
+                const float newSizeXRaw = _resizedControlInitialSize._x + mouseDragDeltaFlipped;
+                const float newSizeX = Math::clamp(newSizeXRaw, targetControlResizeMinSize._x, maxSize._x);
+                mouseDragDeltaFlipped += newSizeX - newSizeXRaw;
+
+                const float newPositionX = _resizedControlInitialPosition._x - mouseDragDeltaFlipped;
+                if (flipHorz < 0.0f)
                 {
-                    if (flipHorz < 0.0f)
-                    {
-                        targetControlData._position._x = newPositionX;
-                    }
-                    targetControlData._size._x = newSizeX;
+                    targetControlData._position._x = newPositionX;
                 }
+                targetControlData._size._x = newSizeX;
             }
 
             const float flipVert = (_resizingMethod == ResizingMethod::RepositionVert || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
             if (_mouseStates.isCursor(Window::CursorType::SizeHorz) == false)
             {
-                const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
-                const float newSizeY = _resizedControlInitialSize._y + mouseDragDelta._y * flipVert;
-                if (targetControlResizeMinSize._y < newSizeY && newSizeY < maxSize._y)
+                float mouseDragDeltaFlipped = mouseDragDelta._y * flipVert;
+                const float newSizeYRaw = _resizedControlInitialSize._y + mouseDragDeltaFlipped;
+                const float newSizeY = Math::clamp(newSizeYRaw, targetControlResizeMinSize._y, maxSize._y);
+                mouseDragDeltaFlipped += newSizeY - newSizeYRaw;
+
+                const float newPositionY = _resizedControlInitialPosition._y - mouseDragDeltaFlipped;
+                if (flipVert < 0.0f)
                 {
-                    if (flipVert < 0.0f)
-                    {
-                        targetControlData._position._y = newPositionY;
-                    }
-                    targetControlData._size._y = newSizeY;
+                    targetControlData._position._y = newPositionY;
                 }
+                targetControlData._size._y = newSizeY;
             }
 
             if (targetControlData.isDocking() == true)
