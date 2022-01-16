@@ -117,6 +117,9 @@
     <ClInclude Include="Include\GUI\InputHelpers.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUI\ControlValue.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -132,6 +135,9 @@
       <Filter>Include\GUI</Filter>
     </None>
     <None Include="Include\GUI\GUIContext.inl">
+      <Filter>Include\GUI</Filter>
+    </None>
+    <None Include="Include\GUI\ControlValue.inl">
       <Filter>Include\GUI</Filter>
     </None>
   </ItemGroup>
