@@ -2838,23 +2838,18 @@ namespace mint
 
         void GUIContext::processControlCommon_dock_renderDockingBox(const Rendering::Color& color, const Rect& boxRect, const ControlData& parentControlData) noexcept
         {
-            const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
-            Float4 renderPosition = parentControlCenterPosition;
-            renderPosition._x = boxRect.center()._x;
-            renderPosition._y = boxRect.center()._y;
-            rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
-
             const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
             rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
-            rendererContext.setPosition(renderPosition);
+            rendererContext.setPosition(Float4(boxRect.center()._x, boxRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
         }
 
         void GUIContext::processControlCommon_dock_renderPreview(const Rendering::Color& color, const Rect& previewRect) noexcept
         {
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
-            rendererContext.setClipRect(0);
+            rendererContext.setClipRect(_clipRectFullScreen);
             rendererContext.setColor(color.scaledA(0.5f));
             rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
