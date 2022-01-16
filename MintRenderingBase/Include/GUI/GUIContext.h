@@ -151,7 +151,7 @@ namespace mint
             {
             public:
                                     ControlStackData() = default;
-                                    ControlStackData(const ControlData& controlData);
+                                    ControlStackData(const ControlType controlType, const ControlID controlID);
 
             public:
                 ControlType         _controlType;
@@ -302,8 +302,7 @@ namespace mint
 
     #pragma region Controls - Internal use
         private:
-            // \return Size of titlebar
-            Float2                                      beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
+            const bool                                  beginTitleBar(const ControlID parentControlID, const wchar_t* const windowTitle, const Float2& titleBarSize, const Rect& innerPadding, VisibleState& inoutParentVisibleState);
             void                                        endTitleBar() { endControlInternal(ControlType::TitleBar); }
 
             // [RoundButton]
@@ -323,17 +322,17 @@ namespace mint
 
         private:
             void                                        processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            const bool                                  beginControlInternal(const ControlType controlType, const ControlID controlID, const bool returnValue);
             void                                        endControlInternal(const ControlType controlType);
 
         private:
             const bool                                  isValidControl(const ControlID& id) const noexcept;
             const ControlID                             issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept;
             const ControlID                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
-            const ControlID                             _createControlDataInternalXXX(const ControlID& controlID, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             _createControlDataInternalXXX(const ControlID controlID, const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             _generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept;
             const ControlID                             _generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
-            ControlData&                                accessControlStackTopXXX() noexcept;
             const ControlData&                          getControlData(const ControlID& id) const noexcept;
             ControlData&                                accessControlData(const ControlID& id) noexcept;
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
@@ -438,7 +437,7 @@ namespace mint
 
         private:
             ControlData                                 _rootControlData;
-            Vector<ControlStackData>                    _controlStackPerFrame;
+            Vector<ControlStackData>                    _controlStack;
             ControlID                                   _viewerTargetControlID;
 
         private:

@@ -29,9 +29,9 @@ namespace mint
 
 
 #pragma region GUIContext - ControlStackData
-        inline GUIContext::ControlStackData::ControlStackData(const ControlData& controlData)
-            : _controlType{ controlData.getControlType() }
-            , _id{ controlData.getID() }
+        inline GUIContext::ControlStackData::ControlStackData(const ControlType controlType, const ControlID controlID)
+            : _controlType{ controlType }
+            , _id{ controlID }
         {
             __noop;
         }
@@ -40,26 +40,21 @@ namespace mint
 
         MINT_INLINE const bool GUIContext::isValidControl(const ControlID& id) const noexcept
         {
-            const auto found = _controlIDMap.find(_controlStackPerFrame.back()._id);
+            const auto found = _controlIDMap.find(id);
             return found.isValid();
         }
 
         MINT_INLINE const ControlData& GUIContext::getControlStackTopXXX() const noexcept
         {
-            if (_controlStackPerFrame.empty() == false)
+            if (_controlStack.empty() == false)
             {
-                auto found = _controlIDMap.find(_controlStackPerFrame.back()._id);
+                auto found = _controlIDMap.find(_controlStack.back()._id);
                 if (found.isValid() == true)
                 {
                     return *found._value;
                 }
             }
             return _rootControlData;
-        }
-
-        MINT_INLINE ControlData& GUIContext::accessControlStackTopXXX() noexcept
-        {
-            return const_cast<ControlData&>(getControlStackTopXXX());
         }
 
         MINT_INLINE const ControlData& GUIContext::getControlData(const ControlID& id) const noexcept
