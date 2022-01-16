@@ -1752,29 +1752,30 @@ namespace mint
             for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
             {
                 const DockZoneData& dockZoneData = controlData.getDockZoneData(dockZoneIter);
-                if (dockZoneData.hasDockedControls() == true)
+                if (dockZoneData.hasDockedControls() == false)
                 {
-                    const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
-                    const Float2& dockZonePosition = controlData.getDockZonePosition(dockZoneIter);
+                    continue;
+                }
 
-                    if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
+                const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
+                const Float2& dockZonePosition = controlData.getDockZonePosition(dockZoneIter);
+                if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
+                {
+                    if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
                     {
-                        if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
+                        if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
                         {
-                            if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
-                            {
-                                setControlFocused(controlData);
-                            }
+                            setControlFocused(controlData);
                         }
                     }
-
-                    rendererContext.setClipRect(controlData.getClipRects()._forDocks);
-
-                    rendererContext.setColor(getNamedColor(NamedColor::Dock));
-                    rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
-
-                    rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
                 }
+
+                rendererContext.setClipRect(controlData.getClipRects()._forDocks);
+
+                rendererContext.setColor(getNamedColor(NamedColor::Dock));
+                rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
+
+                rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
             }
         }
 
