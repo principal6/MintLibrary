@@ -2086,11 +2086,7 @@ namespace mint
 
         void GUIContext::setControlPressed(const ControlData& controlData) noexcept
         {
-            if (_controlInteractionStateSet.setControlPressed(controlData) == true)
-            {
-                const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
-                setControlPressed(closestFocusableAncestor);
-            }
+            _controlInteractionStateSet.setControlPressed(controlData);
         }
         
         void GUIContext::setControlClicked(const ControlData& controlData) noexcept
