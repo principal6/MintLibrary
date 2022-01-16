@@ -676,11 +676,11 @@ namespace mint
             const ControlID thumbControlID = issueControlID(file, line, thumbControlType, nullptr);
             
             ControlData& trackControlData = accessControlData(trackControlID);
-            ControlData::UpdateParam updateParamForTrack;
+            ControlData::UpdateParam trackUpdateParam;
             {
-                updateParamForTrack._autoComputedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
+                trackUpdateParam._autoComputedDisplaySize = Float2(0.0f, kSliderThumbRadius * 2.0f);
             }
-            updateControlData(trackControlData, updateParamForTrack);
+            updateControlData(trackControlData, trackUpdateParam);
             
             Rendering::Color trackColor = getNamedColor(NamedColor::HoverState);
             processShowOnlyControl(trackControlData, trackColor, false);
@@ -698,16 +698,16 @@ namespace mint
                 thumbControlData._positionConstraintsForDragging.bottom(thumbControlData._positionConstraintsForDragging.top());
                 thumbControlData._positionConstraintsForDragging.left(trackControlData._position._x);
                 thumbControlData._positionConstraintsForDragging.right(thumbControlData._positionConstraintsForDragging.left() + sliderValidLength);
-                ControlData::UpdateParam updateParamForThumb;
+                ControlData::UpdateParam thumbUpdateParam;
                 {
                     const ControlData& parentWindowControlData = getParentWindowControlData(trackControlData);
 
-                    updateParamForThumb._autoComputedDisplaySize._x = kSliderThumbRadius * 2.0f;
-                    updateParamForThumb._autoComputedDisplaySize._y = kSliderThumbRadius * 2.0f;
-                    updateParamForThumb._alwaysResetPosition = false;
-                    updateParamForThumb._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
+                    thumbUpdateParam._autoComputedDisplaySize._x = kSliderThumbRadius * 2.0f;
+                    thumbUpdateParam._autoComputedDisplaySize._y = kSliderThumbRadius * 2.0f;
+                    thumbUpdateParam._alwaysResetPosition = false;
+                    thumbUpdateParam._desiredPositionInParent = trackControlData._position - parentWindowControlData._position;
                 }
-                updateControlData(thumbControlData, updateParamForThumb);
+                updateControlData(thumbControlData, thumbUpdateParam);
                 
                 Rendering::Color thumbColor;
                 processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
