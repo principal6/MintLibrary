@@ -184,6 +184,11 @@ namespace mint
         {
             __noop;
         }
+
+        MINT_INLINE const bool ControlData::DockContext::isDockable() const noexcept
+        {
+            return (_dockingControlType == DockingControlType::Dock || _dockingControlType == DockingControlType::DockerDock);
+        }
 #pragma endregion
 
 #pragma region ControlData - Option

@@ -178,6 +178,9 @@ namespace mint
                                                 ~DockContext() = default;
 
             public:
+                const bool                      isDockable() const noexcept;
+
+            public:
                 DockingControlType              _dockingControlType;
                 DockZone                        _lastDockZone;
                 DockZone                        _lastDockZoneCandidate;

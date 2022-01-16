@@ -1744,34 +1744,36 @@ namespace mint
 
         void GUIContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
         {
-            if (controlData._dockContext._dockingControlType == DockingControlType::Dock || controlData._dockContext._dockingControlType == DockingControlType::DockerDock)
+            if (controlData._dockContext.isDockable() == false)
             {
-                for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
+                return;
+            }
+            
+            for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
+            {
+                const DockZoneData& dockZoneData = controlData.getDockZoneData(dockZoneIter);
+                if (dockZoneData.hasDockedControls() == true)
                 {
-                    const DockZoneData& dockZoneData = controlData.getDockZoneData(dockZoneIter);
-                    if (dockZoneData.hasDockedControls() == true)
-                    {
-                        const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
-                        const Float2& dockZonePosition = controlData.getDockZonePosition(dockZoneIter);
+                    const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
+                    const Float2& dockZonePosition = controlData.getDockZonePosition(dockZoneIter);
 
-                        if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
+                    if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
+                    {
+                        if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
                         {
-                            if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
+                            if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
                             {
-                                if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
-                                {
-                                    setControlFocused(controlData);
-                                }
+                                setControlFocused(controlData);
                             }
                         }
-
-                        rendererContext.setClipRect(controlData.getClipRects()._forDocks);
-                        
-                        rendererContext.setColor(getNamedColor(NamedColor::Dock));
-                        rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
-
-                        rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
                     }
+
+                    rendererContext.setClipRect(controlData.getClipRects()._forDocks);
+
+                    rendererContext.setColor(getNamedColor(NamedColor::Dock));
+                    rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
+
+                    rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
                 }
             }
         }
@@ -2548,8 +2550,7 @@ namespace mint
                 dockControlData.setDockZoneSize(targetControlData._dockContext._lastDockZone, targetControlDisplaySize);
                 updateDockZoneData(dockControlID);
             }
-            else if (targetControlData._dockContext._dockingControlType == DockingControlType::Dock || 
-                     targetControlData._dockContext._dockingControlType == DockingControlType::DockerDock)
+            else if (targetControlData._dockContext.isDockable())
             {
                 // 내가 DockHosting 중일 수 있음
                 updateDockZoneData(targetControlData.getID());
@@ -2665,10 +2666,8 @@ namespace mint
 
             ControlData& parentControlData = accessControlData(changeTargetControlData.getParentID());
             if ((changeTargetControlData.hasChildWindow() == false) 
-                && (changeTargetControlData._dockContext._dockingControlType == DockingControlType::Docker 
-                    || changeTargetControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
-                && (parentControlData._dockContext._dockingControlType == DockingControlType::Dock 
-                    || parentControlData._dockContext._dockingControlType == DockingControlType::DockerDock) 
+                && (changeTargetControlData._dockContext.isDockable()) 
+                && (parentControlData._dockContext.isDockable()) 
                 && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
             {
                 const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
