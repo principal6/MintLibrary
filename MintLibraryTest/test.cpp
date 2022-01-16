@@ -150,8 +150,11 @@ const bool testLanguage()
     using namespace Language;
     
     TextFileReader textFileReader;
-    textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h");
-    
+    if (textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h") == false)
+    {
+        return false;
+    }
+
     CppHlsl::Lexer cppHlslLexer{ textFileReader.get() };
     cppHlslLexer.execute();
     
@@ -614,6 +617,11 @@ int main()
 #ifdef MINT_DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
+    if (mint::FileUtil::exists("Assets") == false)
+    {
+        MINT_ASSERT("김장원", false, "Could not find \"Assets\" folder. Make sure to set the project's working directory as \"$(SolutionDir)\"");
+    }
 
     mint::LibraryInfo::printVersion();
     //mint::LibraryInfo::printCoordinateSystem();
