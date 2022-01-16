@@ -2069,14 +2069,12 @@ namespace mint
                 return;
             }
 
-            if (controlData._option._needDoubleClickToFocus == true && _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
+            if (controlData._option._needDoubleClickToFocus == true && _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == false)
             {
-                _controlInteractionStateSet.setControlFocused(controlData);
+                return;
             }
-            else
-            {
-                _controlInteractionStateSet.setControlFocused(controlData);
-            }
+
+            _controlInteractionStateSet.setControlFocused(controlData);
         }
 
         void GUIContext::setControlHovered(const ControlData& controlData) noexcept
@@ -2403,7 +2401,7 @@ namespace mint
                 }
 
                 // Clicked (only in interaction area)
-                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true)
+                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true || _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
                 {
                     setControlClicked(controlData);
                 }
