@@ -976,14 +976,9 @@ namespace mint
             _controlMetaStateSet.nextOffInterval();
             
             _controlMetaStateSet.pushSize(Float2(desiredSize._x - labelWidth, desiredSize._y));
-
             const bool result = beginValueSlider(file, line, valueSliderParam, roundnessInPixel, decimalDigits, value);
-            const ControlType controlType = ControlType::ValueSlider;
-            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
-            
             _controlMetaStateSet.popSize();
-
-            return beginControlInternal(controlType, controlID, result);
+            return result;
         }
 
         void GUIContext::valueSliderProcessInput(const bool wasControlFocused, ControlData& controlData, Float4& textRenderOffset, float& value, StringW& outText) noexcept
