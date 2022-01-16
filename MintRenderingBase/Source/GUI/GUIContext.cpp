@@ -2089,7 +2089,7 @@ namespace mint
             if (_controlInteractionStateSet.setControlPressed(controlData) == true)
             {
                 const ControlData& closestFocusableAncestor = getClosestFocusableAncestorControlInclusive(controlData);
-                setControlFocused(closestFocusableAncestor);
+                setControlPressed(closestFocusableAncestor);
             }
         }
         
