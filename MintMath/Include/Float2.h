@@ -22,6 +22,7 @@ namespace mint
         static const Float2     kZero;
         static const Float2     kOne;
         static const Float2     kNegativeOne;
+        static const Float2     kMax;
         static const Float2     kNan;
 
     public:

@@ -11,6 +11,7 @@ namespace mint
     const Float2 Float2::kZero          = Float2(0.0f);
     const Float2 Float2::kOne           = Float2(+1.0f);
     const Float2 Float2::kNegativeOne   = Float2(-1.0f);
+    const Float2 Float2::kMax           = Float2(Math::kFloatMax);
     const Float2 Float2::kNan           = Float2(Math::nan());
 
     Float2::Float2(const Int2& rhs)
