@@ -620,7 +620,7 @@ int main()
 
     if (mint::FileUtil::exists("Assets") == false)
     {
-        MINT_ASSERT("김장원", false, "Could not find \"Assets\" folder. Make sure to set the project's working directory as \"$(SolutionDir)\"");
+        MINT_ASSERT("김장원", false, "Could not find \"/Assets\" directory. Make sure to set the project's working directory as \"$(SolutionDir)\"");
     }
 
     mint::LibraryInfo::printVersion();
