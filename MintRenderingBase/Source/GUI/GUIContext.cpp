@@ -2638,186 +2638,200 @@ namespace mint
             static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
             const bool isDragging = isControlBeingDragged(controlData);
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
-            
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
-            ControlData& parentControlData = accessControlData(changeTargetControlData.getParentID());
-            if ((changeTargetControlData.hasChildWindow() == false) 
-                && (changeTargetControlData._dockContext.isDockable()) 
-                && (parentControlData._dockContext.isDockable()) 
-                && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == true)
+            if (changeTargetControlData._dockContext.isDockable() == false)
             {
-                const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
-                const float previewShortLengthMax = 160.0f;
-                const float previewShortLength = min(parentControlData._size._x * 0.5f, previewShortLengthMax);
+                return;
+            }
 
-                Rect interactionBoxRect;
-                Rect previewRect;
-                
-                // 초기화
-                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false)
+            // No docking for controls that have child window.
+            if (changeTargetControlData.hasChildWindow())
+            {
+                return;
+            }
+
+            // Mouse cursor position constraint
+            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == false)
+            {
+                return;
+            }
+
+            ControlData& parentControlData = accessControlData(changeTargetControlData.getParentID());
+            if (parentControlData._dockContext.isDockable() == false)
+            {
+                return;
+            }
+
+            const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
+            const float previewShortLengthMax = 160.0f;
+            const float previewShortLength = min(parentControlData._size._x * 0.5f, previewShortLengthMax);
+
+            // 초기화
+            if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == false)
+            {
+                changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
+            }
+
+            Rect interactionBoxRect;
+            Rect previewRect;
+
+            // Top
+            {
+                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
+                interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
+
+                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::TopSide);
+                previewRect.position(dockZonePosition);
+                previewRect.right(previewRect.left() + parentControlData._size._x);
+                previewRect.bottom(previewRect.top() + previewShortLength);
+
+                if (isDragging == true)
                 {
-                    changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
-                }
+                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
-                // Top
-                {
-                    interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
-                    interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
-                    interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
-                    interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
-
-                    const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::TopSide);
-                    previewRect.position(dockZonePosition);
-                    previewRect.right(previewRect.left() + parentControlData._size._x);
-                    previewRect.bottom(previewRect.top() + previewShortLength);
-
-                    if (isDragging == true)
+                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::TopSide);
+                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
+                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
-                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
+                        changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::TopSide;
 
-                        DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::TopSide);
-                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
-                            && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::TopSide;
-
-                            if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                            {
-                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::TopSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::TopSide)._y);
-                            }
-                            else
-                            {
-                                parentControlDockZoneData.setRawDockSize(previewRect.size());
-                            }
-
-                            processControlCommon_dock_renderPreview(color, previewRect);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::TopSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::TopSide)._y);
                         }
-                    }
-                }
-
-                // Bottom
-                {
-                    interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
-                    interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
-                    interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
-                    interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
-
-                    const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::BottomSide);
-                    previewRect.position(dockZonePosition);
-                    previewRect.right(previewRect.left() + parentControlData._size._x);
-                    previewRect.bottom(previewRect.top() + previewShortLength);
-
-                    if (isDragging == true)
-                    {
-                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                        DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::BottomSide);
-                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
-                            && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                        else
                         {
-                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::BottomSide;
-
-                            if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                            {
-                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::BottomSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::BottomSide)._y);
-                            }
-                            else
-                            {
-                                parentControlDockZoneData.setRawDockSize(previewRect.size());
-                            }
-
-                            processControlCommon_dock_renderPreview(color, previewRect);
+                            parentControlDockZoneData.setRawDockSize(previewRect.size());
                         }
+
+                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
                 }
+            }
 
-                // Left
+            // Bottom
+            {
+                interactionBoxRect.left(parentControlCenterPosition._x - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionLong);
+                interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
+                interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
+
+                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::BottomSide);
+                previewRect.position(dockZonePosition);
+                previewRect.right(previewRect.left() + parentControlData._size._x);
+                previewRect.bottom(previewRect.top() + previewShortLength);
+
+                if (isDragging == true)
                 {
-                    interactionBoxRect.left(parentControlData._position._x + kDockingInteractionOffset);
-                    interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionShort);
-                    interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
-                    interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
+                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
-                    const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::LeftSide);
-                    previewRect.position(dockZonePosition);
-                    previewRect.right(previewRect.left() + previewShortLength);
-                    previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
-
-                    if (isDragging == true)
+                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::BottomSide);
+                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
+                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
-                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
+                        changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::BottomSide;
 
-                        DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::LeftSide);
-                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
-                            && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::LeftSide;
-                            
-                            if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                            {
-                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::LeftSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::LeftSide)._y);
-                            }
-                            else
-                            {
-                                parentControlDockZoneData.setRawDockSize(previewRect.size());
-                            }
-
-                            processControlCommon_dock_renderPreview(color, previewRect);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::BottomSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::BottomSide)._y);
                         }
-                    }
-                }
-
-                // Right
-                {
-                    interactionBoxRect.right(parentControlData._position._x + parentControlData._size._x - kDockingInteractionOffset);
-                    interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
-                    interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
-                    interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
-
-                    const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::RightSide);
-                    previewRect.position(dockZonePosition);
-                    previewRect.right(previewRect.left() + previewShortLength);
-                    previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
-
-                    if (isDragging == true)
-                    {
-                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
-
-                        DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::RightSide);
-                        if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
-                            && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                        else
                         {
-                            changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::RightSide;
-
-                            if (parentControlDockZoneData.isRawDockSizeSet() == true)
-                            {
-                                previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::RightSide)._x);
-                                previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::RightSide)._y);
-                            }
-                            else
-                            {
-                                parentControlDockZoneData.setRawDockSize(previewRect.size());
-                            }
-
-                            processControlCommon_dock_renderPreview(color, previewRect);
+                            parentControlDockZoneData.setRawDockSize(previewRect.size());
                         }
+
+                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
                 }
+            }
 
-                if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true 
-                    && changeTargetControlData._dockContext._lastDockZoneCandidate != DockZone::COUNT)
+            // Left
+            {
+                interactionBoxRect.left(parentControlData._position._x + kDockingInteractionOffset);
+                interactionBoxRect.right(interactionBoxRect.left() + kDockingInteractionShort);
+                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
+
+                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::LeftSide);
+                previewRect.position(dockZonePosition);
+                previewRect.right(previewRect.left() + previewShortLength);
+                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+
+                if (isDragging == true)
                 {
-                    if (changeTargetControlData.isDocking() == false)
+                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
+
+                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::LeftSide);
+                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
+                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
-                        // Docking 시작.
+                        changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::LeftSide;
 
-                        dock(changeTargetControlData.getID(), parentControlData.getID());
+                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
+                        {
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::LeftSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::LeftSide)._y);
+                        }
+                        else
+                        {
+                            parentControlDockZoneData.setRawDockSize(previewRect.size());
+                        }
 
-                        _draggedControlID.reset();
+                        processControlCommon_dock_renderPreview(color, previewRect);
                     }
+                }
+            }
+
+            // Right
+            {
+                interactionBoxRect.right(parentControlData._position._x + parentControlData._size._x - kDockingInteractionOffset);
+                interactionBoxRect.left(interactionBoxRect.right() - kDockingInteractionShort);
+                interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
+                interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
+
+                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::RightSide);
+                previewRect.position(dockZonePosition);
+                previewRect.right(previewRect.left() + previewShortLength);
+                previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
+
+                if (isDragging == true)
+                {
+                    processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
+
+                    DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::RightSide);
+                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
+                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                    {
+                        changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::RightSide;
+
+                        if (parentControlDockZoneData.isRawDockSizeSet() == true)
+                        {
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::RightSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::RightSide)._y);
+                        }
+                        else
+                        {
+                            parentControlDockZoneData.setRawDockSize(previewRect.size());
+                        }
+
+                        processControlCommon_dock_renderPreview(color, previewRect);
+                    }
+                }
+            }
+
+            if (_mouseStates.isButtonDownUp(Platform::MouseButton::Left) == true
+                && changeTargetControlData._dockContext._lastDockZoneCandidate != DockZone::COUNT)
+            {
+                if (changeTargetControlData.isDocking() == false)
+                {
+                    // Docking 시작.
+
+                    dock(changeTargetControlData.getID(), parentControlData.getID());
+
+                    _draggedControlID.reset();
                 }
             }
         }
