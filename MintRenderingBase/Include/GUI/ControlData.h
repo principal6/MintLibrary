@@ -259,6 +259,7 @@ namespace mint
 
         public:
             const Rect&                         getInnerPadding() const noexcept;
+            const Float2&                       getMinSize() const noexcept;
             const Float2                        getResizeMinSize() const noexcept;
             const Float2&                       getInteractionSize() const noexcept;
             const Float2&                       getInnerInteractionSize() const noexcept;

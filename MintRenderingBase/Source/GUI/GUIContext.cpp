@@ -2506,6 +2506,15 @@ namespace mint
                 _isResizeBegun = false;
             }
 
+            Float2 maxSize = Float2::kMax;
+            if (targetControlData.isDocking() == true)
+            {
+                // TargetControl 이 Docking 중이라면, 무한정 크기를 늘릴 수 없다!!!
+                const ControlID& dockControlID = targetControlData.getDockControlID();
+                const ControlData& dockControlData = getControlData(dockControlID);
+                maxSize = dockControlData._size - dockControlData.getMinSize();
+            }
+
             const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
             const Float2 targetControlResizeMinSize = targetControlData.getResizeMinSize();
             const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
@@ -2513,7 +2522,7 @@ namespace mint
             {
                 const float newPositionX = _resizedControlInitialPosition._x - mouseDragDelta._x * flipHorz;
                 const float newSizeX = _resizedControlInitialSize._x + mouseDragDelta._x * flipHorz;
-                if (targetControlResizeMinSize._x < newSizeX)
+                if (targetControlResizeMinSize._x < newSizeX && newSizeX < maxSize._x)
                 {
                     if (flipHorz < 0.0f)
                     {
@@ -2528,7 +2537,7 @@ namespace mint
             {
                 const float newPositionY = _resizedControlInitialPosition._y - mouseDragDelta._y * flipVert;
                 const float newSizeY = _resizedControlInitialSize._y + mouseDragDelta._y * flipVert;
-                if (targetControlResizeMinSize._y < newSizeY)
+                if (targetControlResizeMinSize._y < newSizeY && newSizeY < maxSize._y)
                 {
                     if (flipVert < 0.0f)
                     {

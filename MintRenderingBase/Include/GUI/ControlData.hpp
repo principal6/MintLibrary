@@ -399,6 +399,11 @@ namespace mint
             return result;
         }
 
+        MINT_INLINE const Float2& ControlData::getMinSize() const noexcept
+        {
+            return _minSize;
+        }
+
         MINT_INLINE const Float2 ControlData::getResizeMinSize() const noexcept
         {
             return _minSize + Float2(getHorzDockZoneSize(), getVertDockZoneSize());
