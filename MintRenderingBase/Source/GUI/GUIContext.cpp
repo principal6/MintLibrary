@@ -2506,7 +2506,7 @@ namespace mint
                 _isResizeBegun = false;
             }
 
-            Float2& targetControlDisplaySize = const_cast<Float2&>(targetControlData._size);
+            Float2& targetControlSize = const_cast<Float2&>(targetControlData._size);
             const Float2 mouseDragDelta = _mouseStates.getMouseDragDelta();
             const Float2 targetControlResizeMinSize = targetControlData.getResizeMinSize();
             const float flipHorz = (_resizingMethod == ResizingMethod::RepositionHorz || _resizingMethod == ResizingMethod::RepositionBoth) ? -1.0f : +1.0f;
@@ -2520,7 +2520,7 @@ namespace mint
                     {
                         targetControlData._position._x = newPositionX;
                     }
-                    targetControlDisplaySize._x = newSizeX;
+                    targetControlSize._x = newSizeX;
                 }
             }
 
@@ -2535,7 +2535,7 @@ namespace mint
                     {
                         targetControlData._position._y = newPositionY;
                     }
-                    targetControlDisplaySize._y = newSizeY;
+                    targetControlSize._y = newSizeY;
                 }
             }
 
@@ -2544,7 +2544,7 @@ namespace mint
                 // TargetControl 이 Docking 중이라면, DockControl 의 DockZoneSize 도 같이 변경해줘야 한다.
                 const ControlID& dockControlID = targetControlData.getDockControlID();
                 ControlData& dockControlData = accessControlData(dockControlID);
-                dockControlData.setDockZoneSize(targetControlData._dockContext._lastDockZone, targetControlDisplaySize);
+                dockControlData.setDockZoneSize(targetControlData._dockContext._lastDockZone, targetControlSize);
                 updateDockZoneData(dockControlID);
             }
             else if (targetControlData._dockContext.isDockable())
