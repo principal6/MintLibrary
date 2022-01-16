@@ -27,6 +27,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 _[Ii]ntermediate/
+_[Oo]utput/
 [Dd]ebug/
 
 # Visual Studio 2015/2017 cache/options directory
