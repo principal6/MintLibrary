@@ -129,25 +129,6 @@ namespace mint
         };
 
 
-        struct UpdateControlDataParam
-        {
-        public:
-            Rect            _innerPadding;
-            Float2          _autoComputedDisplaySize      = Float2::kZero;
-            ResizingMask    _initialResizingMask;
-            Float2          _offset                         = Float2::kZero;
-            Float2          _desiredPositionInParent        = Float2::kNan;
-            Float2          _deltaInteractionSize           = Float2::kZero;
-            Float2          _deltaInteractionSizeByDock     = Float2::kZero;
-            Float2          _minSize                        = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
-            bool            _alwaysResetDisplaySize         = true;
-            bool            _alwaysResetParent              = false;
-            ControlID       _parentIDOverride               = ControlID();
-            bool            _alwaysResetPosition            = true;
-            bool            _ignoreMeForContentAreaSize     = false;
-            ClipRectUsage   _clipRectUsage                  = ClipRectUsage::ParentsChild;
-        };
-
         class ControlAccessData
         {
             friend ControlData;
@@ -169,6 +150,25 @@ namespace mint
         class ControlData
         {
         public:
+            struct UpdateParam
+            {
+            public:
+                Rect            _innerPadding;
+                Float2          _autoComputedDisplaySize = Float2::kZero;
+                ResizingMask    _initialResizingMask;
+                Float2          _offset = Float2::kZero;
+                Float2          _desiredPositionInParent = Float2::kNan;
+                Float2          _deltaInteractionSize = Float2::kZero;
+                Float2          _deltaInteractionSizeByDock = Float2::kZero;
+                Float2          _minSize = Float2(kControlDisplayMinWidth, kControlDisplayMinHeight);
+                bool            _alwaysResetDisplaySize = true;
+                bool            _alwaysResetParent = false;
+                ControlID       _parentIDOverride = ControlID();
+                bool            _alwaysResetPosition = true;
+                bool            _ignoreMeForContentAreaSize = false;
+                ClipRectUsage   _clipRectUsage = ClipRectUsage::ParentsChild;
+            };
+
             class DockContext
             {
                 friend ControlData;
@@ -234,7 +234,7 @@ namespace mint
     
         public:
             void                                clearPerFrameData() noexcept;
-            void                                updatePerFrame(const UpdateControlDataParam& updateControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
+            void                                updatePerFrame(const UpdateParam& updateParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept;
             const bool                          needInitialization() const noexcept;
 
         public:
@@ -302,7 +302,7 @@ namespace mint
             const Float2                        getControlRightCenterPosition() const noexcept;
 
         private:
-            void                                updateSize(const UpdateControlDataParam& updateControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
+            void                                updateSize(const UpdateParam& updateParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
 
         public:
             uint8                               _updateCount;

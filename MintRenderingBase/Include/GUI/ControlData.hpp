@@ -262,7 +262,7 @@ namespace mint
             _perFrameData.reset(nextChildOffsetY, _innerPadding);
         }
         
-        MINT_INLINE void ControlData::updatePerFrame(const UpdateControlDataParam& updateControlDataParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept
+        MINT_INLINE void ControlData::updatePerFrame(const UpdateParam& updateParam, ControlData& parentControlData, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool computeSize) noexcept
         {
             clearPerFrameData();
 
@@ -272,7 +272,7 @@ namespace mint
                 parentControlData._hasChildWindow = true;
             }
 
-            updateSize(updateControlDataParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
+            updateSize(updateParam, controlMetaStateSet, availableDisplaySizeX, computeSize);
 
             // Drag constraints 적용! (Dragging 이 아닐 때도 Constraint 가 적용되어야 함.. 예를 들면 resizing 중에!)
             if (_option._isDraggable == true && _positionConstraintsForDragging.isNan() == false)
@@ -281,7 +281,7 @@ namespace mint
                 _position._y = min(max(_positionConstraintsForDragging.top(), _position._y), _positionConstraintsForDragging.bottom());
             }
 
-            switch (updateControlDataParam._clipRectUsage)
+            switch (updateParam._clipRectUsage)
             {
             case GUI::ClipRectUsage::ParentsOwn:
                 setClipRectForMe(parentControlData.getClipRects()._forMe);
@@ -297,7 +297,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE void ControlData::updateSize(const UpdateControlDataParam& updateControlDataParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept
+        MINT_INLINE void ControlData::updateSize(const UpdateParam& updateParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept
         {
             Float2 desiredSize = controlMetaStateSet.getNextDesiredSize();
             if (compute)
@@ -305,11 +305,11 @@ namespace mint
                 const float maxDisplaySizeX = availableDisplaySizeX;
                 if (desiredSize._x <= 0.0f)
                 {
-                    desiredSize._x = updateControlDataParam._autoComputedDisplaySize._x;
+                    desiredSize._x = updateParam._autoComputedDisplaySize._x;
                 }
                 if (desiredSize._y <= 0.0f)
                 {
-                    desiredSize._y = updateControlDataParam._autoComputedDisplaySize._y;
+                    desiredSize._y = updateParam._autoComputedDisplaySize._y;
                 }
 
                 if (controlMetaStateSet.getNextUseSizeConstraintToParent() == false)
@@ -327,10 +327,10 @@ namespace mint
                 }
             }
 
-            _minSize = updateControlDataParam._minSize;
-            _innerPadding = updateControlDataParam._innerPadding;
-            _interactionSize = _size + updateControlDataParam._deltaInteractionSize;
-            _nonDockInteractionSize = _interactionSize + updateControlDataParam._deltaInteractionSizeByDock;
+            _minSize = updateParam._minSize;
+            _innerPadding = updateParam._innerPadding;
+            _interactionSize = _size + updateParam._deltaInteractionSize;
+            _nonDockInteractionSize = _interactionSize + updateParam._deltaInteractionSizeByDock;
         }
 
         MINT_INLINE const bool ControlData::needInitialization() const noexcept

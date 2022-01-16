@@ -357,7 +357,7 @@ namespace mint
 
 #pragma region Before drawing controls
         private:
-            void                                        updateControlData(ControlData& controlData, const UpdateControlDataParam& updateControlDataParam) noexcept;
+            void                                        updateControlData(ControlData& controlData, const ControlData::UpdateParam& updateParam) noexcept;
             void                                        computeControlChildAt(ControlData& controlData) noexcept;
 
             const bool                                  processClickControl(ControlData& controlData, const Rendering::Color& normalColor, const Rendering::Color& hoverColor, const Rendering::Color& pressedColor, Rendering::Color& outBackgroundColor) noexcept;
