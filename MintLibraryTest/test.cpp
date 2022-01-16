@@ -200,7 +200,6 @@ const bool testAlgorithm()
     return true;
 }
 
-//#pragma optimize("", off)
 const bool testLinearAlgebra()
 {
     using namespace mint;

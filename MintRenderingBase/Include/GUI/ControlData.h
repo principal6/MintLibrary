@@ -285,9 +285,11 @@ namespace mint
             const bool                          isFocusedDocker(const ControlData& dockerControlData) const noexcept;
             void                                setDockZoneSize(const DockZone dockZone, const Float2& dockSize) noexcept;
             const Float2                        getDockZoneSize(const DockZone dockZone) const noexcept;
+            const Float2                        getDockZoneSizeCached(const DockZone dockZone) const noexcept;
             const float                         getHorzDockZoneSize() const noexcept;
             const float                         getVertDockZoneSize() const noexcept;
             const Float2                        getDockZonePosition(const DockZone dockZone) const noexcept;
+            const Float2                        getDockZonePositionCached(const DockZone dockZone) const noexcept;
             const Float2                        getDockOffsetSize() const noexcept;
             void                                connectToDock(const ControlID& dockControlID) noexcept;
             void                                disconnectFromDock() noexcept;
@@ -306,6 +308,7 @@ namespace mint
 
         private:
             void                                updateSize(const UpdateParam& updateParam, const ControlMetaStateSet& controlMetaStateSet, const float availableDisplaySizeX, const bool compute) noexcept;
+            const Float2                        getDockZonePositionInternal(const DockZone dockZone, const Float2& dockSize) const noexcept;
 
         public:
             uint8                               _updateCount;

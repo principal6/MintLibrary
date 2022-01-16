@@ -2681,7 +2681,7 @@ namespace mint
                 interactionBoxRect.top(parentControlData._position._y + parentControlData.getDockOffsetSize()._y + kDockingInteractionOffset);
                 interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionShort);
 
-                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::TopSide);
+                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::TopSide);
                 previewRect.position(dockZonePosition);
                 previewRect.right(previewRect.left() + parentControlData._size._x);
                 previewRect.bottom(previewRect.top() + previewShortLength);
@@ -2691,15 +2691,14 @@ namespace mint
                     processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                     DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::TopSide);
-                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
-                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                    if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::TopSide;
 
                         if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::TopSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::TopSide)._y);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::TopSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::TopSide)._y);
                         }
                         else
                         {
@@ -2718,7 +2717,7 @@ namespace mint
                 interactionBoxRect.bottom(parentControlData._position._y + parentControlData._size._y - kDockingInteractionOffset);
                 interactionBoxRect.top(interactionBoxRect.bottom() - kDockingInteractionShort);
 
-                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::BottomSide);
+                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::BottomSide);
                 previewRect.position(dockZonePosition);
                 previewRect.right(previewRect.left() + parentControlData._size._x);
                 previewRect.bottom(previewRect.top() + previewShortLength);
@@ -2728,15 +2727,14 @@ namespace mint
                     processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                     DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::BottomSide);
-                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
-                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                    if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::BottomSide;
 
                         if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::BottomSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::BottomSide)._y);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::BottomSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::BottomSide)._y);
                         }
                         else
                         {
@@ -2755,7 +2753,7 @@ namespace mint
                 interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
                 interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::LeftSide);
+                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::LeftSide);
                 previewRect.position(dockZonePosition);
                 previewRect.right(previewRect.left() + previewShortLength);
                 previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
@@ -2765,15 +2763,14 @@ namespace mint
                     processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                     DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::LeftSide);
-                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
-                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                    if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::LeftSide;
 
                         if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::LeftSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::LeftSide)._y);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::LeftSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::LeftSide)._y);
                         }
                         else
                         {
@@ -2792,7 +2789,7 @@ namespace mint
                 interactionBoxRect.top(parentControlCenterPosition._y - kDockingInteractionLong * 0.5f);
                 interactionBoxRect.bottom(interactionBoxRect.top() + kDockingInteractionLong);
 
-                const Float2& dockZonePosition = parentControlData.getDockZonePosition(DockZone::RightSide);
+                const Float2& dockZonePosition = parentControlData.getDockZonePositionCached(DockZone::RightSide);
                 previewRect.position(dockZonePosition);
                 previewRect.right(previewRect.left() + previewShortLength);
                 previewRect.bottom(previewRect.top() + parentControlData._size._y - parentControlData.getDockOffsetSize()._y);
@@ -2802,15 +2799,14 @@ namespace mint
                     processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                     DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::RightSide);
-                    if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT
-                        && interactionBoxRect.contains(_mouseStates.getPosition()) == true)
+                    if (interactionBoxRect.contains(_mouseStates.getPosition()) == true)
                     {
                         changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::RightSide;
 
                         if (parentControlDockZoneData.isRawDockSizeSet() == true)
                         {
-                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::RightSide)._x);
-                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::RightSide)._y);
+                            previewRect.right(previewRect.left() + parentControlData.getDockZoneSizeCached(DockZone::RightSide)._x);
+                            previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSizeCached(DockZone::RightSide)._y);
                         }
                         else
                         {

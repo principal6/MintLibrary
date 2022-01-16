@@ -517,9 +517,15 @@ namespace mint
                 return Float2::kZero;
             }
 
+            return getDockZoneSizeCached(dockZone);
+        }
+
+        MINT_INLINE const Float2 ControlData::getDockZoneSizeCached(const DockZone dockZone) const noexcept
+        {
             const DockZoneData& dockZoneDataTopSide = getDockZoneData(DockZone::TopSide);
             const DockZoneData& dockZoneDataBottomSide = getDockZoneData(DockZone::BottomSide);
             const Float2 innerDisplaySize = computeInnerDisplaySize();
+            const DockZoneData& dockZoneData = getDockZoneData(dockZone);
             Float2 resultDockSize = dockZoneData.getRawDockSizeXXX();
             switch (dockZone)
             {
@@ -559,9 +565,17 @@ namespace mint
 
         MINT_INLINE const Float2 ControlData::getDockZonePosition(const DockZone dockZone) const noexcept
         {
-            const Float2& dockSize = getDockZoneSize(dockZone);
-            const Float2& offset = getDockOffsetSize();
+            return getDockZonePositionInternal(dockZone, getDockZoneSize(dockZone));
+        }
 
+        MINT_INLINE const Float2 ControlData::getDockZonePositionCached(const DockZone dockZone) const noexcept
+        {
+            return getDockZonePositionInternal(dockZone, getDockZoneSizeCached(dockZone));
+        }
+        
+        MINT_INLINE const Float2 ControlData::getDockZonePositionInternal(const DockZone dockZone, const Float2& dockSize) const noexcept
+        {
+            const Float2& offset = getDockOffsetSize();
             Float2 resultDockPosition;
             switch (dockZone)
             {
