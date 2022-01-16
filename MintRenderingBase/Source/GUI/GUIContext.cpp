@@ -47,6 +47,11 @@ namespace mint
                 }
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInnerInteractionSize());
             }
+            
+            MINT_INLINE const bool isInControlInteractionArea(const Float2& screenPosition, const ControlData& controlData) noexcept
+            {
+                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
+            }
 
             MINT_INLINE const bool isInControlBorderArea(const Float2& screenPosition, const ControlData& controlData, Window::CursorType& outCursorType, ResizingMask& outResizingMask, ResizingMethod& outResizingMethod) noexcept
             {
@@ -2369,8 +2374,8 @@ namespace mint
             }
 
             const ControlData& parentControlData = getControlData(controlData.getParentID());
-            const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), parentControlData);
-            const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData);
+            const bool isMouseInParentInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), parentControlData);
+            const bool isMouseInInteractionArea = ControlCommonHelpers::isInControlInteractionArea(_mouseStates.getPosition(), controlData);
             const bool meetsAreaCondition = (controlData._option._isInteractableOutsideParent == true || isMouseInParentInteractionArea == true) && (isMouseInInteractionArea == true);
             const bool meetsInteractionCondition = (shouldInteract(_mouseStates.getPosition(), controlData) == true || controlData.isRootControl() == true);
             if (meetsAreaCondition == false || meetsInteractionCondition == false)
