@@ -2876,8 +2876,7 @@ namespace mint
         void GUIContext::updateDockZoneData(const ControlID& dockControlID, const bool updateWidthArray) noexcept
         {
             ControlData& dockControlData = accessControlData(dockControlID);
-            for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT;
-                dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
+            for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
             {
                 DockZoneData& dockZoneData = dockControlData.getDockZoneData(dockZoneIter);
                 const uint32 dockedControlCount = static_cast<uint32>(dockZoneData._dockedControlIDArray.size());
