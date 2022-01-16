@@ -1,8 +1,6 @@
 #include <stdafx.h>
 #include <MintRenderingBase/Include/GUI/GUIContext.h>
 
-#include <functional>
-
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/Vector.hpp>
@@ -1759,6 +1757,11 @@ namespace mint
 
                 const Float2& dockZoneSize = controlData.getDockZoneSize(dockZoneIter);
                 const Float2& dockZonePosition = controlData.getDockZonePosition(dockZoneIter);
+                rendererContext.setClipRect(controlData.getClipRects()._forDocks);
+                rendererContext.setColor(getNamedColor(NamedColor::Dock));
+                rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
+                rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
+
                 if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
                 {
                     if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
@@ -1769,13 +1772,6 @@ namespace mint
                         }
                     }
                 }
-
-                rendererContext.setClipRect(controlData.getClipRects()._forDocks);
-
-                rendererContext.setColor(getNamedColor(NamedColor::Dock));
-                rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
-
-                rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
             }
         }
 
@@ -2644,27 +2640,6 @@ namespace mint
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
-            std::function fnRenderDockingBox = [&](const Rect& boxRect, const ControlData& parentControlData)
-            {
-                const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
-                Float4 renderPosition = parentControlCenterPosition;
-                renderPosition._x = boxRect.center()._x;
-                renderPosition._y = boxRect.center()._y;
-                rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
-
-                const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
-                rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
-                rendererContext.setPosition(renderPosition);
-                rendererContext.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
-            };
-            std::function fnRenderPreview = [&](const Rect& previewRect)
-            {
-                rendererContext.setClipRect(0);
-                rendererContext.setColor(color.scaledA(0.5f));
-                rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
-                rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
-            };
-
             ControlData& parentControlData = accessControlData(changeTargetControlData.getParentID());
             if ((changeTargetControlData.hasChildWindow() == false) 
                 && (changeTargetControlData._dockContext.isDockable()) 
@@ -2698,7 +2673,7 @@ namespace mint
 
                     if (isDragging == true)
                     {
-                        fnRenderDockingBox(interactionBoxRect, parentControlData);
+                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                         DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::TopSide);
                         if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
@@ -2710,15 +2685,13 @@ namespace mint
                             {
                                 previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::TopSide)._x);
                                 previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::TopSide)._y);
-
-                                fnRenderPreview(previewRect);
                             }
                             else
                             {
                                 parentControlDockZoneData.setRawDockSize(previewRect.size());
-
-                                fnRenderPreview(previewRect);
                             }
+
+                            processControlCommon_dock_renderPreview(color, previewRect);
                         }
                     }
                 }
@@ -2737,7 +2710,7 @@ namespace mint
 
                     if (isDragging == true)
                     {
-                        fnRenderDockingBox(interactionBoxRect, parentControlData);
+                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                         DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::BottomSide);
                         if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
@@ -2749,15 +2722,13 @@ namespace mint
                             {
                                 previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::BottomSide)._x);
                                 previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::BottomSide)._y);
-
-                                fnRenderPreview(previewRect);
                             }
                             else
                             {
                                 parentControlDockZoneData.setRawDockSize(previewRect.size());
-
-                                fnRenderPreview(previewRect);
                             }
+
+                            processControlCommon_dock_renderPreview(color, previewRect);
                         }
                     }
                 }
@@ -2776,7 +2747,7 @@ namespace mint
 
                     if (isDragging == true)
                     {
-                        fnRenderDockingBox(interactionBoxRect, parentControlData);
+                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                         DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::LeftSide);
                         if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
@@ -2788,15 +2759,13 @@ namespace mint
                             {
                                 previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::LeftSide)._x);
                                 previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::LeftSide)._y);
-
-                                fnRenderPreview(previewRect);
                             }
                             else
                             {
                                 parentControlDockZoneData.setRawDockSize(previewRect.size());
-
-                                fnRenderPreview(previewRect);
                             }
+
+                            processControlCommon_dock_renderPreview(color, previewRect);
                         }
                     }
                 }
@@ -2815,7 +2784,7 @@ namespace mint
 
                     if (isDragging == true)
                     {
-                        fnRenderDockingBox(interactionBoxRect, parentControlData);
+                        processControlCommon_dock_renderDockingBox(color, interactionBoxRect, parentControlData);
 
                         DockZoneData& parentControlDockZoneData = parentControlData.getDockZoneData(DockZone::RightSide);
                         if (changeTargetControlData._dockContext._lastDockZoneCandidate == DockZone::COUNT 
@@ -2827,15 +2796,13 @@ namespace mint
                             {
                                 previewRect.right(previewRect.left() + parentControlData.getDockZoneSize(DockZone::RightSide)._x);
                                 previewRect.bottom(previewRect.top() + parentControlData.getDockZoneSize(DockZone::RightSide)._y);
-
-                                fnRenderPreview(previewRect);
                             }
                             else
                             {
                                 parentControlDockZoneData.setRawDockSize(previewRect.size());
-
-                                fnRenderPreview(previewRect);
                             }
+
+                            processControlCommon_dock_renderPreview(color, previewRect);
                         }
                     }
                 }
@@ -2853,6 +2820,30 @@ namespace mint
                     }
                 }
             }
+        }
+
+        void GUIContext::processControlCommon_dock_renderDockingBox(const Rendering::Color& color, const Rect& boxRect, const ControlData& parentControlData) noexcept
+        {
+            const Float4& parentControlCenterPosition = parentControlData.getControlCenterPosition();
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            Float4 renderPosition = parentControlCenterPosition;
+            renderPosition._x = boxRect.center()._x;
+            renderPosition._y = boxRect.center()._y;
+            rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
+
+            const bool isMouseInBoxRect = boxRect.contains(_mouseStates.getPosition());
+            rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
+            rendererContext.setPosition(renderPosition);
+            rendererContext.drawRectangle(boxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
+        }
+
+        void GUIContext::processControlCommon_dock_renderPreview(const Rendering::Color& color, const Rect& previewRect) noexcept
+        {
+            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            rendererContext.setClipRect(0);
+            rendererContext.setColor(color.scaledA(0.5f));
+            rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
+            rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
         }
 
         void GUIContext::dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept

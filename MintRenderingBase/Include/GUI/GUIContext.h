@@ -374,6 +374,8 @@ namespace mint
             void                                        processControlCommon_resize(ControlData& controlData) noexcept;
             void                                        processControlCommon_drag(ControlData& controlData) noexcept;
             void                                        processControlCommon_dock(ControlData& controlData) noexcept;
+            void                                        processControlCommon_dock_renderDockingBox(const Rendering::Color& color, const Rect& boxRect, const ControlData& parentControlData) noexcept;
+            void                                        processControlCommon_dock_renderPreview(const Rendering::Color& color, const Rect& previewRect) noexcept;
 
             void                                        dock(const ControlID& dockedControlID, const ControlID& dockControlID) noexcept;
             void                                        undock(const ControlID& dockedControlID) noexcept;
