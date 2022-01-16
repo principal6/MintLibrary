@@ -352,12 +352,13 @@ const bool testWindow()
         objectPool.computeDeltaTime();
 
         // Events
+        inputContext.processEvents();
+        guiContext.processEvent();
+
+        const bool isInputBoxFocused = guiContext.isFocusedControlInputBox();
+        if (isInputBoxFocused == false)
         {
-            inputContext.processEvents();
-
-            guiContext.processEvent();
-
-            if (inputContext.isKeyPressed() == true)
+            if (inputContext.isKeyPressed())
             {
                 if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
                 {
@@ -390,14 +391,14 @@ const bool testWindow()
                     testCameraObject->setBoostMode(true);
                 }
             }
-            else if (inputContext.isKeyReleased() == true)
+            else if (inputContext.isKeyReleased())
             {
                 if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
                 {
                     testCameraObject->setBoostMode(false);
                 }
             }
-            else if (inputContext.isMouseWheelScrolled() == true)
+            else if (inputContext.isMouseWheelScrolled())
             {
                 const float mouseWheelScroll = inputContext.getMouseWheelScroll();
                 if (mouseWheelScroll > 0.0f)
@@ -409,15 +410,16 @@ const bool testWindow()
                     testCameraObject->decreaseMoveSpeed();
                 }
             }
-            else if (window.isResized() == true)
-            {
-                graphicDevice.updateScreenSize();
-                guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
-                objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
-            }
+        }
+        
+        if (window.isResized())
+        {
+            graphicDevice.updateScreenSize();
+            guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
+            objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
         }
 
-        const bool isCameraMoveLocked = guiContext.isFocusedControlInputBox();
+        const bool isCameraMoveLocked = isInputBoxFocused;
         testCameraObject->steer(inputContext, isCameraMoveLocked);
 
         // Rendering
