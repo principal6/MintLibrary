@@ -27,7 +27,7 @@ namespace mint
         {
         public:
             void                            setControlHovered(const ControlData& controlData) noexcept;
-            const bool                      setControlPressed(const ControlData& controlData) noexcept;
+            void                            setControlPressed(const ControlData& controlData) noexcept;
             const bool                      setControlClicked(const ControlData& controlData) noexcept;
             void                            setControlFocused(const ControlData& controlData) noexcept;
             
@@ -52,6 +52,7 @@ namespace mint
         public:
             void                            resetPerFrameStates(const MouseStates& mouseStates) noexcept;
             void                            resetHover() noexcept;
+            void                            resetPress() noexcept;
             void                            resetHoverIf(const ControlData& controlData) noexcept;
             void                            resetPressIf(const ControlData& controlData) noexcept;
             
@@ -68,13 +69,19 @@ namespace mint
 
         private:
             bool                            _isMouseInteractionDoneThisFrame = false;
+            
             ControlID                       _hoveredControlID;
-            ControlID                       _focusedControlID;
-            ControlID                       _pressedControlID;
-            Float2                          _pressedControlInitialPosition;
-            ControlID                       _clickedControlIDPerFrame;
             uint64                          _hoverStartTimeMs = 0;
             bool                            _hoverStarted = false;
+            
+            
+            ControlID                       _pressedControlID;
+            Float2                          _pressedControlInitialPosition;
+
+            ControlID                       _clickedControlIDPerFrame;
+
+            ControlID                       _focusedControlID;
+
             Float2                          _tooltipPosition;
             ControlID                       _tooltipParentWindowID;
             const wchar_t*                  _tooltipTextFinal = nullptr;
