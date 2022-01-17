@@ -2649,7 +2649,6 @@ namespace mint
 
         void GUIContext::processControlCommon_dock(ControlData& controlData) noexcept
         {
-            static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
             const bool isDragging = isControlBeingDragged(controlData);
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
             if (changeTargetControlData._dockContext.isDock() == false)
@@ -2681,6 +2680,7 @@ namespace mint
                 changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
             }
 
+            static constexpr Rendering::Color color = Rendering::Color(60, 120, 240);
             if (isDragging && (Profiler::getCurrentTimeMs() > _dragStartTimeMs + 250))
             {
                 for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
@@ -2802,7 +2802,8 @@ namespace mint
             const bool isMouseInBoxRect = interactionBoxRect.contains(_mouseStates.getPosition());
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
-            rendererContext.setColor(((isMouseInBoxRect == true) ? color.scaledRgb(1.5f) : color));
+            const Rendering::Color alphaColor = color.scaledA(0.75f);
+            rendererContext.setColor(((isMouseInBoxRect == true) ? alphaColor.scaledRgb(1.5f) : alphaColor));
             rendererContext.setPosition(Float4(interactionBoxRect.center()._x, interactionBoxRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(interactionBoxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
         }
@@ -2811,7 +2812,7 @@ namespace mint
         {
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(_clipRectFullScreen);
-            rendererContext.setColor(color.scaledA(0.5f));
+            rendererContext.setColor(color.scaledA(0.25f));
             rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
         }
