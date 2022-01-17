@@ -185,7 +185,7 @@ namespace mint
             __noop;
         }
 
-        MINT_INLINE const bool ControlData::DockContext::isDockable() const noexcept
+        MINT_INLINE const bool ControlData::DockContext::isDock() const noexcept
         {
             return (_dockingControlType == DockingControlType::Dock || _dockingControlType == DockingControlType::DockerDock);
         }

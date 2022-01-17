@@ -1718,7 +1718,7 @@ namespace mint
 
         void GUIContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
         {
-            if (controlData._dockContext.isDockable() == false)
+            if (controlData._dockContext.isDock() == false)
             {
                 return;
             }
@@ -2561,7 +2561,7 @@ namespace mint
                 dockControlData.setDockZoneSize(targetControlData._dockContext._lastDockZone, targetControlData._size);
                 updateDockZoneData(dockControlID);
             }
-            else if (targetControlData._dockContext.isDockable())
+            else if (targetControlData._dockContext.isDock())
             {
                 // 내가 DockHosting 중일 수 있음
                 updateDockZoneData(targetControlData.getID());
@@ -2652,7 +2652,7 @@ namespace mint
             static constexpr Rendering::Color color = Rendering::Color(100, 110, 160);
             const bool isDragging = isControlBeingDragged(controlData);
             ControlData& changeTargetControlData = (controlData._delegateControlID.isValid() == false) ? controlData : accessControlData(controlData._delegateControlID);
-            if (changeTargetControlData._dockContext.isDockable() == false)
+            if (changeTargetControlData._dockContext.isDock() == false)
             {
                 return;
             }
@@ -2670,7 +2670,7 @@ namespace mint
             }
 
             ControlData& parentControlData = accessControlData(changeTargetControlData.getParentID());
-            if (parentControlData._dockContext.isDockable() == false)
+            if (parentControlData._dockContext.isDock() == false)
             {
                 return;
             }
