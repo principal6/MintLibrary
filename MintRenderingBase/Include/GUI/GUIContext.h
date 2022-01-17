@@ -456,7 +456,8 @@ namespace mint
             mutable bool                                _isDragBegun;
             mutable ControlID                           _draggedControlID;
             mutable Float2                              _draggedControlInitialPosition;
-        
+            mutable uint64                              _dragStartTimeMs;
+
         private:
             mutable bool                                _isResizeBegun;
             mutable ControlID                           _resizedControlID;

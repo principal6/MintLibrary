@@ -107,7 +107,7 @@ namespace mint
             , _rendererContexts{ _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice, _graphicDevice }
             , _updateScreenSizeCounter{ 0 }
             , _isDragBegun{ false }
-            , _draggedControlID{ 0 }
+            , _dragStartTimeMs{ 0 }
             , _isResizeBegun{ false }
             , _resizedControlID{ 0 }
             , _resizingMethod{ ResizingMethod::ResizeOnly }
@@ -2681,7 +2681,7 @@ namespace mint
                 changeTargetControlData._dockContext._lastDockZoneCandidate = DockZone::COUNT;
             }
 
-            if (isDragging)
+            if (isDragging && (Profiler::getCurrentTimeMs() > _dragStartTimeMs + 250))
             {
                 for (DockZone dockZoneIter = static_cast<DockZone>(0); dockZoneIter != DockZone::COUNT; dockZoneIter = static_cast<DockZone>(static_cast<uint32>(dockZoneIter) + 1))
                 {
@@ -2962,6 +2962,7 @@ namespace mint
                 // Begin dragging
                 _isDragBegun = true;
                 _draggedControlID = controlData.getID();
+                _dragStartTimeMs = Profiler::getCurrentTimeMs();
                 return true;
             }
             return false;
