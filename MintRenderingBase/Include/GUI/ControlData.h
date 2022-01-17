@@ -324,6 +324,7 @@ namespace mint
             ResizingMask                        _resizingMask;
             Rect                                _positionConstraintsForDragging; // MUST set all four values if want to limit dragging area
             ControlID                           _delegateControlID; // Used for drag, resize and focus
+            ControlID                           _titleBarControlID; // Used for window ...
             REFLECTION_MEMBER(StringW, _text);
             ControlValue                        _controlValue;
             RendererContextLayer                _rendererContextLayer;

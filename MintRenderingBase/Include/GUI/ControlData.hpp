@@ -241,7 +241,6 @@ namespace mint
             , _nonDockInteractionSize{ size }
             , _size{ size }
             , _minSize{ kControlDisplayMinWidth, kControlDisplayMinHeight }
-            , _delegateControlID{ 0 }
             , _dockContext{ controlType }
             , _rendererContextLayer{ RendererContextLayer::Background }
             , _id{ id }

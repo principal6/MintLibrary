@@ -19,7 +19,6 @@
 
 #include <MintLibrary/Include/ScopedCPUProfiler.h>
 
-#pragma optimize("",off)
 
 namespace mint
 {
@@ -27,27 +26,17 @@ namespace mint
     {
         namespace ControlCommonHelpers
         {
-            MINT_INLINE const bool isInControl(const Float2& screenPosition, const Float2& controlPosition, const Float2& controlPositionOffset, const Float2& interactionSize) noexcept
+            MINT_INLINE const bool isInControl(const Float2& screenPosition, const Float2& controlPosition, const Float2& interactionOffset, const Float2& interactionSize) noexcept
             {
-                const Float2 max = controlPosition + controlPositionOffset + interactionSize;
-                if (controlPosition._x + controlPositionOffset._x <= screenPosition._x && screenPosition._x <= max._x &&
-                    controlPosition._y + controlPositionOffset._y <= screenPosition._y && screenPosition._y <= max._y)
+                const Float2 max = controlPosition + interactionOffset + interactionSize;
+                if (controlPosition._x + interactionOffset._x <= screenPosition._x && screenPosition._x <= max._x &&
+                    controlPosition._y + interactionOffset._y <= screenPosition._y && screenPosition._y <= max._y)
                 {
                     return true;
                 }
                 return false;
             }
 
-            MINT_INLINE const bool isInControlInnerInteractionArea(const Float2& screenPosition, const ControlData& controlData) noexcept
-            {
-                if (controlData.isDockHosting() == true)
-                {
-                    const Float2 positionOffset{ controlData.getDockZoneSize(DockZone::LeftSide)._x, controlData.getDockZoneSize(DockZone::TopSide)._y };
-                    return ControlCommonHelpers::isInControl(screenPosition, controlData._position, positionOffset, controlData.getInnerInteractionSize());
-                }
-                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInnerInteractionSize());
-            }
-            
             MINT_INLINE const bool isInControlInteractionArea(const Float2& screenPosition, const ControlData& controlData) noexcept
             {
                 return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInteractionSize());
@@ -279,7 +268,7 @@ namespace mint
                     continue;
                 }
 
-                if (ControlCommonHelpers::isInControlInnerInteractionArea(screenPosition, parentChildControlData) == true)
+                if (isInControlInnerInteractionArea(screenPosition, parentChildControlData) == true)
                 {
                     return false;
                 }
@@ -1033,7 +1022,7 @@ namespace mint
             else
             {
                 if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true 
-                    && ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                    && isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
                 {
                     const Float2 dragDelta = _mouseStates.getMouseDragDelta();
                     value += (dragDelta._x - dragDelta._y) * 0.1f;
@@ -1788,6 +1777,7 @@ namespace mint
             controlData._option._isDraggable = true;
             controlData._delegateControlID = controlData.getParentID();
             ControlData& parentWindowControlData = accessControlData(controlData.getParentID());
+            parentWindowControlData._titleBarControlID = controlID;
             const bool isParentControlDocking = parentWindowControlData.isDocking();
             ControlData::UpdateParam updateParam;
             {
@@ -2030,6 +2020,31 @@ namespace mint
             }
 
             return getParentWindowControlDataInternal(controlData.getParentID());
+        }
+
+        const bool GUIContext::isInControlInnerInteractionArea(const Float2& screenPosition, const ControlData& controlData) const noexcept
+        {
+            if (controlData.isDockHosting())
+            {
+                const Float2 interactionOffset{ controlData.getDockZoneSize(DockZone::LeftSide)._x, controlData.getDockZoneSize(DockZone::TopSide)._y };
+                return ControlCommonHelpers::isInControl(screenPosition, controlData._position, interactionOffset, controlData.getInnerInteractionSize());
+            }
+            else if (controlData.isDocking())
+            {
+                const ControlData& dockControlData = getControlData(controlData.getDockControlID());
+                const ControlData& titleBarControlData = getControlData(controlData._titleBarControlID);
+                if (dockControlData.isFocusedDocker(controlData))
+                {
+                    const Float2& titleBarInnerInteractionSize = titleBarControlData.getInnerInteractionSize();
+                    return ControlCommonHelpers::isInControl(screenPosition, titleBarControlData._position, Float2::kZero, titleBarInnerInteractionSize) ||
+                        ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2(0.0f, titleBarInnerInteractionSize._y), controlData.getInnerInteractionSize() - Float2(0.0f, titleBarInnerInteractionSize._y));
+                }
+                else
+                {
+                    return ControlCommonHelpers::isInControl(screenPosition, titleBarControlData._position, Float2::kZero, titleBarControlData.getInnerInteractionSize());
+                }
+            }
+            return ControlCommonHelpers::isInControl(screenPosition, controlData._position, Float2::kZero, controlData.getInnerInteractionSize());
         }
 
         const float GUIContext::getCurrentAvailableDisplaySizeX() const noexcept
@@ -2392,7 +2407,7 @@ namespace mint
                 _controlInteractionStateSet.resetPressIf(controlData);
             }
 
-            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+            if (isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
             {
                 // Pressed (Mouse down)
                 if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true || _mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
@@ -2649,7 +2664,7 @@ namespace mint
             }
 
             // Mouse cursor position constraint
-            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == false)
+            if (isInControlInnerInteractionArea(_mouseStates.getPosition(), changeTargetControlData) == false)
             {
                 return;
             }
@@ -2913,7 +2928,7 @@ namespace mint
                 ResizingMethod dummyResizingMethod;
                 ResizingMask dummyResizingMask;
                 const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
-                if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
+                if (isInControlInnerInteractionArea(_mouseStates.getPosition(), focusedControlData) == true 
                     || ControlCommonHelpers::isInControlBorderArea(_mouseStates.getPosition(), focusedControlData, dummyCursorType, dummyResizingMask, dummyResizingMethod) == true)
                 {
                     // 마우스가 Focus Control 과 상호작용할 경우 나와는 상호작용하지 않는것으로 판단!!
@@ -2941,8 +2956,8 @@ namespace mint
                 return false;
             }
 
-            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true &&
-                ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+            if (isInControlInnerInteractionArea(_mouseStates.getPosition(), controlData) == true &&
+                isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
             {
                 // Begin dragging
                 _isDragBegun = true;
@@ -3181,7 +3196,7 @@ namespace mint
                 return kNoMouseWheelValue;
             }
 
-            if (ControlCommonHelpers::isInControlInnerInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == false)
+            if (isInControlInnerInteractionArea(_mouseStates.getPosition(), scrollParentControlData) == false)
             {
                 return kNoMouseWheelValue;
             }

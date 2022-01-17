@@ -338,6 +338,7 @@ namespace mint
             Float2                                      getControlPositionInParentSpace(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlData(const ControlData& controlData) const noexcept;
             const ControlData&                          getParentWindowControlDataInternal(const ControlID& id) const noexcept;
+            const bool                                  isInControlInnerInteractionArea(const Float2& screenPosition, const ControlData& controlData) const noexcept;
 #pragma endregion
 
         public:
