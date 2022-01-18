@@ -8,12 +8,11 @@ namespace mint
 {
     namespace GUI
     {
-
         void GUIContext::makeTestWindow(VisibleState& inoutVisibleState)
         {
-            GUI::WindowParam windowParam;
+            WindowParam windowParam;
             windowParam._position = Float2(200.0f, 50.0f);
-            windowParam._scrollBarType = GUI::ScrollBarType::Both;
+            windowParam._scrollBarType = ScrollBarType::Both;
             _controlMetaStateSet.nextSize(Float2(500.0f, 500.0f), true);
             if (beginWindow(MINT_GUI_CONTROL(L"TestWindow", windowParam, inoutVisibleState)) == true)
             {
@@ -89,7 +88,7 @@ namespace mint
                 }
 
                 {
-                    GUI::SliderParam sliderParam;
+                    SliderParam sliderParam;
                     _controlMetaStateSet.nextSize(Float2(32.0f, 0.0f));
                     float value = 0.0f;
                     if (beginSlider(MINT_GUI_CONTROL(sliderParam, value)) == true)
@@ -127,16 +126,16 @@ namespace mint
 
                 static StringW textBoxContent;
                 {
-                    GUI::TextBoxParam textBoxParam;
+                    TextBoxParam textBoxParam;
                     _controlMetaStateSet.nextSize(Float2(240.0f, 24.0f));
-                    textBoxParam._alignmentHorz = GUI::TextAlignmentHorz::Center;
+                    textBoxParam._alignmentHorz = TextAlignmentHorz::Center;
                     if (beginTextBox(MINT_GUI_CONTROL(textBoxParam, textBoxContent)) == true)
                     {
                         endTextBox();
                     }
                 }
 
-                GUI::ListViewParam listViewParam;
+                ListViewParam listViewParam;
                 int16 listViewSelectedItemIndex = 0;
                 if (beginListView(MINT_GUI_CONTROL(listViewSelectedItemIndex, listViewParam)) == true)
                 {
@@ -151,10 +150,10 @@ namespace mint
                 }
 
                 {
-                    GUI::WindowParam testWindowParam;
+                    WindowParam testWindowParam;
                     _controlMetaStateSet.nextSize(Float2(200.0f, 240.0f), true);
-                    testWindowParam._scrollBarType = GUI::ScrollBarType::Both;
-                    testWindowParam._initialDockZone = GUI::DockZone::BottomSide;
+                    testWindowParam._scrollBarType = ScrollBarType::Both;
+                    testWindowParam._initialDockZone = DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"1ST", testWindowParam, childWindowVisibleState0)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"Å×½ºÆ®!!")) == true)
@@ -167,11 +166,11 @@ namespace mint
                 }
 
                 {
-                    GUI::WindowParam testWindowParam;
+                    WindowParam testWindowParam;
                     _controlMetaStateSet.nextSize(Float2(100.0f, 100.0f));
                     testWindowParam._position._x = 10.0f;
                     testWindowParam._position._y = 60.0f;
-                    testWindowParam._initialDockZone = GUI::DockZone::BottomSide;
+                    testWindowParam._initialDockZone = DockZone::BottomSide;
                     if (beginWindow(MINT_GUI_CONTROL(L"2NDDD", testWindowParam, childWindowVisibleState1)))
                     {
                         if (beginButton(MINT_GUI_CONTROL(L"YEAH")) == true)
@@ -189,10 +188,10 @@ namespace mint
 
         void GUIContext::makeTestDockedWindow(VisibleState& inoutVisibleState)
         {
-            GUI::WindowParam windowParam;
+            WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
-            windowParam._initialDockZone = GUI::DockZone::RightSide;
+            windowParam._initialDockZone = DockZone::RightSide;
             windowParam._initialDockingSize._x = 240.0f;
             if (beginWindow(MINT_GUI_CONTROL(L"TestDockedWindow", windowParam, inoutVisibleState)) == true)
             {
@@ -231,9 +230,10 @@ namespace mint
 
         void GUIContext::makeDebugControlDataViewer(VisibleState& inoutVisibleState)
         {
-            GUI::WindowParam windowParam;
+            WindowParam windowParam;
             _controlMetaStateSet.nextSize(Float2(300.0f, 400.0f), true);
             windowParam._position = Float2(20.0f, 50.0f);
+            windowParam._scrollBarType = ScrollBarType::Both;
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
                 if (isValidControl(_viewerTargetControlID) == true)
