@@ -1737,17 +1737,6 @@ namespace mint
                 rendererContext.setColor(getNamedColor(NamedColor::Dock));
                 rendererContext.setPosition(Float4(dockZonePosition._x + dockZoneSize._x * 0.5f, dockZonePosition._y + dockZoneSize._y * 0.5f, 0, 0));
                 rendererContext.drawRectangle(dockZoneSize, 0.0f, 0.0f);
-
-                if (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true)
-                {
-                    if (ControlCommonHelpers::isInControl(_mouseStates.getButtonDownPosition(), dockZonePosition, Float2::kZero, dockZoneSize) == true)
-                    {
-                        if (isDescendantControlInclusive(controlData, _controlInteractionStateSet.getFocusedControlID()) == false)
-                        {
-                            setControlFocused(controlData);
-                        }
-                    }
-                }
             }
         }
 
@@ -2265,21 +2254,20 @@ namespace mint
             const ControlID& controlID = (controlData._delegateControlID.isValid() == true) ? controlData._delegateControlID : controlData.getID();
 
             // Check new focus
-            if (_draggedControlID.isValid() == false && _resizedControlID.isValid() == false && controlData._option._isFocusable == true &&
-                (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true
-                    && (_controlInteractionStateSet.isControlPressed(controlData) == true || _controlInteractionStateSet.isControlClicked(controlData) == true)))
+            if (_draggedControlID.isValid() == false && _resizedControlID.isValid() == false && 
+                controlData._option._isFocusable == true && (_mouseStates.isButtonDownThisFrame(Platform::MouseButton::Left) == true &&
+                (_controlInteractionStateSet.isControlPressed(controlData) == true || _controlInteractionStateSet.isControlClicked(controlData) == true)))
             {
-                if (controlData._option._needDoubleClickToFocus == true)
+                const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
+                if (isDescendantControlInclusive(focusedControlData, controlData.getParentID()))
                 {
-                    if (_mouseStates.isDoubleClicked(Platform::MouseButton::Left) == true)
+                    if (isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), focusedControlData))
                     {
-                        // Focus entered
                         setControlFocused(controlData);
                     }
                 }
                 else
                 {
-                    // Focus entered
                     setControlFocused(controlData);
                 }
             }
