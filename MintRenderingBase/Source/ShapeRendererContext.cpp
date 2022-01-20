@@ -312,7 +312,7 @@ namespace mint
             indexArray.push_back(vertexBase + 2);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
@@ -356,7 +356,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut)
@@ -397,7 +397,7 @@ namespace mint
             indexArray.push_back(vertexBase + 2);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
             
             pushTransformToBuffer(rotationAngle);
         }
@@ -461,7 +461,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawHalfCircle(const float radius, const float rotationAngle)
@@ -538,7 +538,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(0.0f);
         }
@@ -622,7 +622,7 @@ namespace mint
             indexArray.push_back(vertexBase + 0);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -788,7 +788,7 @@ namespace mint
             indexArray.push_back(vertexBase + 5);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -872,7 +872,7 @@ namespace mint
             indexArray.push_back(vertexBase + 3);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
         void ShapeRendererContext::drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle)
@@ -921,7 +921,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(rotationAngle);
         }
@@ -1195,7 +1195,7 @@ namespace mint
             indexArray.push_back(vertexBase + 3);
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             pushTransformToBuffer(0.0f, false);
         }

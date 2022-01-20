@@ -683,7 +683,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             const Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
@@ -721,7 +721,7 @@ namespace mint
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, 0, indexOffset, indexCount, _clipRect);
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
             const Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);

@@ -31,6 +31,8 @@ namespace mint
             TriangleList,
         };
 
+        static constexpr uint32 kVertexOffsetZero = 0;
+
 
         template <typename T>
         class LowLevelRenderer
