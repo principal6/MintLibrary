@@ -21,4 +21,7 @@
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\Logger.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Assets\CodingConvention.md" />
+  </ItemGroup>
 </Project>

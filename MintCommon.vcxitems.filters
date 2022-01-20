@@ -7,6 +7,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{f15620bd-b12f-43d2-b725-0a008648e75b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{259d0c4f-9969-4cb0-a4c8-287bb8da189d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)MintCommon\Include\Logger.h">
@@ -21,5 +24,10 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\Logger.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Assets\CodingConvention.md">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>
