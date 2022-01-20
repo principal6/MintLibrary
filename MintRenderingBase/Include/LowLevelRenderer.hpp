@@ -147,6 +147,11 @@ namespace mint
         template<typename T>
         MINT_INLINE void LowLevelRenderer<T>::executeRenderCommands() noexcept
         {
+            if (isRenderable() == false)
+            {
+                return;
+            }
+
             prepareBuffers();
             
             optimizeRenderCommands();
