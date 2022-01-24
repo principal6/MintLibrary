@@ -105,15 +105,15 @@ namespace mint
             MINT_INLINE constexpr void  a(const float value) noexcept { _raw._w = value; }
 
         public:
-            MINT_INLINE void            rgb(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
-            MINT_INLINE Color           addedRgb(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
-            MINT_INLINE Color           addedRgb(const int32 s) const noexcept { return addedRgb(s / 255.0f); }
-            MINT_INLINE Color           scaledRgb(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
-            MINT_INLINE Color           scaledA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
+            MINT_INLINE void            set(const Color& rhs) noexcept { _raw._x = rhs._raw._x; _raw._y = rhs._raw._y; _raw._z = rhs._raw._z; }
             MINT_INLINE void            scaleR(const float s) noexcept { _raw._x *= s; }
             MINT_INLINE void            scaleG(const float s) noexcept { _raw._y *= s; }
             MINT_INLINE void            scaleB(const float s) noexcept { _raw._z *= s; }
             MINT_INLINE void            scaleA(const float s) noexcept { _raw._w *= s; }
+            MINT_INLINE Color           cloneAddRGB(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
+            MINT_INLINE Color           cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(s / 255.0f); }
+            MINT_INLINE Color           cloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
+            MINT_INLINE Color           cloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
             MINT_INLINE const bool      isTransparent() const noexcept { return (_raw._w <= 0.0f); }
 
         public:

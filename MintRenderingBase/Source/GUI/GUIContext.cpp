@@ -117,7 +117,7 @@ namespace mint
             , _keyCode{ Platform::KeyCode::NONE }
         {
             setNamedColor(NamedColor::NormalState, Rendering::Color(45, 47, 49));
-            setNamedColor(NamedColor::HoverState, getNamedColor(NamedColor::NormalState).addedRgb(0.25f));
+            setNamedColor(NamedColor::HoverState, getNamedColor(NamedColor::NormalState).cloneAddRGB(0.25f));
             setNamedColor(NamedColor::PressedState, Rendering::Color(80, 100, 120));
 
             setNamedColor(NamedColor::WindowFocused, Rendering::Color(3, 5, 7));
@@ -132,10 +132,10 @@ namespace mint
             setNamedColor(NamedColor::TooltipBackground, Rendering::Color(200, 255, 220));
 
             setNamedColor(NamedColor::ScrollBarTrack, Rendering::Color(80, 82, 84));
-            setNamedColor(NamedColor::ScrollBarThumb, getNamedColor(NamedColor::ScrollBarTrack).addedRgb(0.25f));
+            setNamedColor(NamedColor::ScrollBarThumb, getNamedColor(NamedColor::ScrollBarTrack).cloneAddRGB(0.25f));
 
             setNamedColor(NamedColor::LightFont, Rendering::Color(233, 235, 237));
-            setNamedColor(NamedColor::DarkFont, getNamedColor(NamedColor::LightFont).addedRgb(-0.75f));
+            setNamedColor(NamedColor::DarkFont, getNamedColor(NamedColor::LightFont).cloneAddRGB(-0.75f));
             setNamedColor(NamedColor::ShownInDockFont, getNamedColor(NamedColor::HighlightColor));
         }
 
@@ -704,7 +704,7 @@ namespace mint
                 updateControlData(thumbControlData, thumbUpdateParam);
                 
                 Rendering::Color thumbColor;
-                processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).addedRgb(0.125f), thumbColor);
+                processScrollableControl(thumbControlData, getNamedColor(NamedColor::HighlightColor), getNamedColor(NamedColor::HighlightColor).cloneAddRGB(0.125f), thumbColor);
 
                 const float thumbAt = (thumbControlData._position._x - trackControlData._position._x) / sliderValidLength;
                 if (trackControlData._controlValue._thumbData._thumbAt != thumbAt)
@@ -769,7 +769,7 @@ namespace mint
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(thumbControlData);
             const Float4& thumbCenterPosition = thumbControlData.getControlCenterPosition();
             rendererContext.setPosition(thumbCenterPosition);
-            rendererContext.setColor(Rendering::Color::kWhite.scaledA(thumbColor.a()));
+            rendererContext.setColor(Rendering::Color::kWhite.cloneScaleA(thumbColor.a()));
             rendererContext.drawCircle(kSliderThumbRadius);
 
             rendererContext.setColor(thumbColor);
@@ -791,7 +791,7 @@ namespace mint
             
             Rendering::Color finalBackgroundColor;
             const bool wasFocused = _controlInteractionStateSet.isControlFocused(controlData);
-            const bool isFocused = processFocusControl(controlData, textBoxParam._common._backgroundColor, textBoxParam._common._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
+            const bool isFocused = processFocusControl(controlData, textBoxParam._common._backgroundColor, textBoxParam._common._backgroundColor.cloneAddRGB(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentID());
                 Rect clipRectForMe = controlData.getRect();
@@ -843,7 +843,7 @@ namespace mint
             {
                 GUI::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, textBoxParam._common, textRenderOffset, isFocused, _fontSize, true, controlData, outText);
             }
-            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, outText);
+            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).cloneAddRGB(-0.375f).cloneScaleA(0.25f), controlData, outText);
 
             return beginControlInternal(controlType, controlID, isFocused);
         }
@@ -899,7 +899,7 @@ namespace mint
 
             Rendering::Color finalBackgroundColor;
             const bool wasFocused = _controlInteractionStateSet.isControlFocused(controlData);
-            const bool isFocused = processFocusControl(controlData, commonControlParam._backgroundColor, commonControlParam._backgroundColor.addedRgb(-0.125f), finalBackgroundColor);
+            const bool isFocused = processFocusControl(controlData, commonControlParam._backgroundColor, commonControlParam._backgroundColor.cloneAddRGB(-0.125f), finalBackgroundColor);
             {
                 const ControlData& parentControlData = getControlData(controlData.getParentID());
                 Rect clipRectForMe = controlData.getRect();
@@ -947,7 +947,7 @@ namespace mint
 
             // Text, Caret, Selection ·»´õ¸µ
             GUI::InputBoxHelpers::drawTextWithoutInputCandidate(rendererContext, commonControlParam, textRenderOffset, isFocused, _fontSize, true, controlData, controlData._text);
-            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).addedRgb(-0.375f).scaledA(0.25f), controlData, controlData._text);
+            GUI::InputBoxHelpers::drawSelection(rendererContext, textRenderOffset, isFocused, _fontSize, getNamedColor(NamedColor::HighlightColor).cloneAddRGB(-0.375f).cloneScaleA(0.25f), controlData, controlData._text);
             
             return beginControlInternal(controlType, controlID, isFocused);
         }
@@ -1616,7 +1616,7 @@ namespace mint
                 thumbControlData._position._y = scrollBarTrack._position._y + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 Rendering::Color thumbColor;
-                processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
+                processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).cloneScaleRGB(1.25f), thumbColor);
 
                 const float mouseWheelScroll = getMouseWheelScroll(scrollBarParent);
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._y - thumbControlData._positionConstraintsForDragging.top() + mouseWheelScroll) / trackRemnantSize);
@@ -1679,7 +1679,7 @@ namespace mint
                 thumbControlData._position._x = scrollBarTrack._position._x + (thumbControlData._controlValue._thumbData._thumbAt * trackRemnantSize);
 
                 Rendering::Color thumbColor;
-                processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).scaledRgb(1.25f), thumbColor);
+                processScrollableControl(thumbControlData, getNamedColor(NamedColor::ScrollBarThumb), getNamedColor(NamedColor::ScrollBarThumb).cloneScaleRGB(1.25f), thumbColor);
 
                 const float thumbAtRatio = (trackRemnantSize < 1.0f) ? 0.0f : Math::saturate((thumbControlData._position._x - thumbControlData._positionConstraintsForDragging.left()) / trackRemnantSize);
                 thumbControlData._controlValue._thumbData._thumbAt = thumbAtRatio;
@@ -1814,11 +1814,11 @@ namespace mint
                 const bool isParentControlFocusedDocker = dockControlData.isFocusedDocker(parentWindowControlData);
                 if (_controlInteractionStateSet.isControlHovered(controlData) == true)
                 {
-                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(32)));
+                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).cloneAddRGB(32)));
                 }
                 else
                 {
-                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).addedRgb(16)));
+                    rendererContext.setColor(((isParentControlFocusedDocker == true) ? getNamedColor(NamedColor::ShownInDock) : getNamedColor(NamedColor::ShownInDock).cloneAddRGB(16)));
                 }
 
                 rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
@@ -1883,7 +1883,7 @@ namespace mint
             updateControlData(controlData, updateParam);
             
             Rendering::Color controlColor;
-            const bool isClicked = processClickControl(controlData, color, color.scaledRgb(1.5f), color.scaledRgb(0.75f), controlColor);
+            const bool isClicked = processClickControl(controlData, color, color.cloneScaleRGB(1.5f), color.cloneScaleRGB(0.75f), controlColor);
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
@@ -2790,8 +2790,8 @@ namespace mint
             const bool isMouseInBoxRect = interactionBoxRect.contains(_mouseStates.getPosition());
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
-            const Rendering::Color alphaColor = color.scaledA(0.75f);
-            rendererContext.setColor(((isMouseInBoxRect == true) ? alphaColor.scaledRgb(1.5f) : alphaColor));
+            const Rendering::Color alphaColor = color.cloneScaleA(0.75f);
+            rendererContext.setColor(((isMouseInBoxRect == true) ? alphaColor.cloneScaleRGB(1.5f) : alphaColor));
             rendererContext.setPosition(Float4(interactionBoxRect.center()._x, interactionBoxRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(interactionBoxRect.size(), kDockingInteractionDisplayBorderThickness, 0.0f);
         }
@@ -2800,7 +2800,7 @@ namespace mint
         {
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(_clipRectFullScreen);
-            rendererContext.setColor(color.scaledA(0.25f));
+            rendererContext.setColor(color.cloneScaleA(0.25f));
             rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
             rendererContext.drawRectangle(previewRect.size(), 0.0f, 0.0f);
         }
