@@ -190,13 +190,6 @@ namespace mint
             }
         }
 
-        void ShapeRendererContext::renderAndFlush() noexcept
-        {
-            render();
-
-            flush();
-        }
-
         void ShapeRendererContext::setBorderColor(const Color& borderColor) noexcept
         {
             _borderColor = borderColor;

@@ -42,7 +42,6 @@ namespace mint
             virtual const bool          hasData() const noexcept abstract;
             virtual void                flush() noexcept abstract;
             virtual void                render() noexcept abstract;
-            virtual void                renderAndFlush() noexcept abstract;
 
         protected:
             void                        flushTransformBuffer() noexcept;

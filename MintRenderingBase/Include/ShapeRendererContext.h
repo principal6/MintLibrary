@@ -45,7 +45,6 @@ namespace mint
             virtual const bool                  hasData() const noexcept override;
             virtual void                        flush() noexcept override;
             virtual void                        render() noexcept;
-            virtual void                        renderAndFlush() noexcept;
 
         public:
             void                                setBorderColor(const Color& borderColor) noexcept;

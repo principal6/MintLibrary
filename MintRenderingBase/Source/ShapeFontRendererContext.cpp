@@ -50,13 +50,6 @@ namespace mint
             _fontRendererContext.render();
         }
 
-        void ShapeFontRendererContext::renderAndFlush() noexcept
-        {
-            render();
-
-            flush();
-        }
-
         void ShapeFontRendererContext::setClipRect(const Rect& clipRect) noexcept
         {
             __super::setClipRect(clipRect);

@@ -95,7 +95,8 @@ namespace mint
 
         void SplineRenderer::render() noexcept
         {
-            _rendererContext->renderAndFlush();
+            _rendererContext->render();
+            _rendererContext->flush();
         }
     }
 }

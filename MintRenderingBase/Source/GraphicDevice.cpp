@@ -646,9 +646,12 @@ namespace mint
 #pragma region Renderer Contexts
             useFullScreenViewport();
 
-            _shapeRendererContext.renderAndFlush();
-            _fontRendererContext.renderAndFlush();
-            _shapeFontRendererContext.renderAndFlush();
+            _shapeRendererContext.render();
+            _shapeRendererContext.flush();
+            _fontRendererContext.render();
+            _fontRendererContext.flush();
+            _shapeFontRendererContext.render();
+            _shapeFontRendererContext.flush();
             _guiContext.render();
 #pragma endregion
 

@@ -3231,7 +3231,8 @@ namespace mint
             // Layer 순서대로!
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
             {
-                _rendererContexts[rendererContextIndex].renderAndFlush();
+                _rendererContexts[rendererContextIndex].render();
+                _rendererContexts[rendererContextIndex].flush();
             }
             
             // Viewport setting

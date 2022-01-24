@@ -640,13 +640,6 @@ namespace mint
             }
         }
 
-        void FontRendererContext::renderAndFlush() noexcept
-        {
-            render();
-
-            flush();
-        }
-
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             const uint32 textLength = StringUtil::length(wideText);

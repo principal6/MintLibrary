@@ -155,7 +155,6 @@ namespace mint
             virtual const bool                  hasData() const noexcept override final;
             virtual void                        flush() noexcept override final;
             virtual void                        render() noexcept final;
-            virtual void                        renderAndFlush() noexcept final;
 
         public:
             void                                drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);

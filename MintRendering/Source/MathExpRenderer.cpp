@@ -234,7 +234,8 @@ namespace mint
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
-                rendererContext.renderAndFlush();
+                rendererContext.render();
+                rendererContext.flush();
             }
         }
     }
