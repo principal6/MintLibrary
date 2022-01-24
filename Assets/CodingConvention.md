@@ -58,7 +58,7 @@ private:
 };
 ```
 
-#### make/generate/create
+#### make/generate/create/clone
 ##### Use `make-` for simple objects or POD(Plain Old Data).
 ```cpp
 Color makeColor(const float r, const float g, const float b);
@@ -67,6 +67,11 @@ Color makeColor(const float r, const float g, const float b);
 ##### Use `generate-` for classes with more things to be done.
 ```cpp
 ControlID generateControlID(const char* const text, const ControlType type);
+```
+
+##### Use `clone-` to create objects whose data is based on the existing ones.
+```cpp
+Color cloneAddRGB(const float r, const float g, const float b) const;
 ```
 
 ##### Do NOT use `create-`, since this makes you confuse it with ctor.
