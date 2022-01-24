@@ -88,29 +88,25 @@ namespace mint
 
 
         FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice)
-            : FontRendererContext(graphicDevice, MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice))
-        {
-            _ownTriangleRenderer = true;
-        }
-
-        FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer)
             : IRendererContext(graphicDevice)
             , _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
             , _fontSize{ 16 }
-            , _lowLevelRenderer{ triangleRenderer }
-            , _ownTriangleRenderer{ false }
+        {
+            __noop;
+        }
+
+        FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
+            : IRendererContext(graphicDevice, nonOwnedLowLevelRenderer)
+            , _ftLibrary{ nullptr }
+            , _ftFace{ nullptr }
+            , _fontSize{ 16 }
         {
             __noop;
         }
 
         FontRendererContext::~FontRendererContext()
         {
-            if (_ownTriangleRenderer == true)
-            {
-                MINT_DELETE(_lowLevelRenderer);
-            }
-
             deinitializeFreeType();
         }
 

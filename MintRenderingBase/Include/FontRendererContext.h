@@ -11,7 +11,6 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
-#include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 
 typedef struct FT_Glyph_Metrics_    FT_Glyph_Metrics;
@@ -122,7 +121,7 @@ namespace mint
 
         public:
                                                 FontRendererContext(GraphicDevice& graphicDevice);
-                                                FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const triangleRenderer);
+                                                FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
             virtual                             ~FontRendererContext();
 
         public:
@@ -186,8 +185,6 @@ namespace mint
             FontData                            _fontData;
 
         private:
-            bool                                _ownTriangleRenderer;
-            LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
             DxObjectID                          _vertexShaderID;
             DxObjectID                          _geometryShaderID;
             DxObjectID                          _pixelShaderID;

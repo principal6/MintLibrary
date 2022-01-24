@@ -14,15 +14,14 @@ namespace mint
     {
         ShapeRendererContext::ShapeRendererContext(GraphicDevice& graphicDevice)
             : IRendererContext(graphicDevice)
-            , _lowLevelRenderer{ nullptr }
             , _borderColor{ Color(1.0f, 1.0f, 1.0f) }
         {
-            _lowLevelRenderer = MINT_NEW(LowLevelRenderer<VS_INPUT_SHAPE>, graphicDevice);
+            __noop;
         }
 
         ShapeRendererContext::~ShapeRendererContext()
         {
-            MINT_DELETE(_lowLevelRenderer);
+            __noop;
         }
 
         void ShapeRendererContext::initializeShaders() noexcept

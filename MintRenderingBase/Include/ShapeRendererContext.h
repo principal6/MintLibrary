@@ -10,7 +10,6 @@
 #include <MintContainer/Include/Vector.h>
 
 #include <MintRenderingBase/Include/IRendererContext.h>
-#include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 #include <MintMath/Include/Int2.h>
 
@@ -120,7 +119,6 @@ namespace mint
             void                                drawColorPalleteXXX(const float radius);
 
         protected:
-            LowLevelRenderer<VS_INPUT_SHAPE>*   _lowLevelRenderer;
             DxObjectID                          _vertexShaderID;
             DxObjectID                          _geometryShaderID;
             DxObjectID                          _pixelShaderID;

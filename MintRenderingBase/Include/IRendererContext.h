@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
+#include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -33,7 +34,8 @@ namespace mint
         {
         public:
                                         IRendererContext(GraphicDevice& graphicDevice);
-            virtual                     ~IRendererContext() = default;
+                                        IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+            virtual                     ~IRendererContext();
 
         public:
             virtual void                initializeShaders() noexcept abstract;
@@ -63,8 +65,12 @@ namespace mint
             static const float          packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
         protected:
-            GraphicDevice&              _graphicDevice;
-        
+            GraphicDevice&                          _graphicDevice;
+            LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
+
+        private:
+            bool                                    _doesOwnLowLevelRenderer;
+
         protected:
             Float4                      _position;
             Vector<Color>               _colorArray;

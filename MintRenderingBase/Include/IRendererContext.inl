@@ -9,14 +9,6 @@ namespace mint
 {
     namespace Rendering
     {
-        inline IRendererContext::IRendererContext(GraphicDevice& graphicDevice)
-            : _graphicDevice{ graphicDevice }
-            , _defaultColor{ Color::kWhite }
-            , _useMultipleViewports{ false }
-        {
-            __noop;
-        }
-
         MINT_INLINE void IRendererContext::setUseMultipleViewports() noexcept
         {
             _useMultipleViewports = true;
