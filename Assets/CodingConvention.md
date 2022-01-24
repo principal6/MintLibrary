@@ -58,6 +58,19 @@ private:
 };
 ```
 
+#### make/generate/create
+##### Use `make-` for simple objects or POD(Plain Old Data).
+```cpp
+Color makeColor(const float r, const float g, const float b);
+```
+
+##### Use `generate-` for classes with more things to be done.
+```cpp
+ControlID generateControlID(const char* const text, const ControlType type);
+```
+
+##### Do NOT use `create-`, since this makes you confuse it with ctor.
+
 ## Code style
 #### Always use braces for single-statement blocks.
 <table style="border: 2px;">
