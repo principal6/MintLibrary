@@ -597,11 +597,6 @@ namespace mint
             }
         }
 
-        const bool FontRendererContext::hasData() const noexcept
-        {
-            return _lowLevelRenderer->isRenderable();
-        }
-
         void FontRendererContext::flush() noexcept
         {
             _lowLevelRenderer->flush();

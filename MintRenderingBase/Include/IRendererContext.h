@@ -39,7 +39,6 @@ namespace mint
 
         public:
             virtual void                initializeShaders() noexcept abstract;
-            virtual const bool          hasData() const noexcept abstract;
             virtual void                flush() noexcept abstract;
             virtual void                render() noexcept abstract;
 

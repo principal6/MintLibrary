@@ -31,11 +31,6 @@ namespace mint
             _fontRendererContext.initializeShaders();
         }
 
-        const bool ShapeFontRendererContext::hasData() const noexcept
-        {
-            return (__super::hasData() || _fontRendererContext.hasData());
-        }
-
         void ShapeFontRendererContext::flush() noexcept
         {
             __super::flush();

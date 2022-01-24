@@ -149,11 +149,6 @@ namespace mint
             }
         }
 
-        const bool ShapeRendererContext::hasData() const noexcept
-        {
-            return _lowLevelRenderer->isRenderable();
-        }
-
         void ShapeRendererContext::flush() noexcept
         {
             _lowLevelRenderer->flush();

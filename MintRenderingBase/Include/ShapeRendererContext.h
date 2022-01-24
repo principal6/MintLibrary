@@ -42,7 +42,6 @@ namespace mint
 
         public:
             virtual void                        initializeShaders() noexcept override;
-            virtual const bool                  hasData() const noexcept override;
             virtual void                        flush() noexcept override;
             virtual void                        render() noexcept;
 
