@@ -93,24 +93,24 @@ namespace mint
             return nullptr;
         }
 
-        void Object::setObjectTransform(const SRT& srt) noexcept
+        void Object::setObjectTransform(const Transform& transform) noexcept
         {
-            getObjectTransformComponent()->_srt = srt;
+            getObjectTransformComponent()->_transform = transform;
         }
 
-        SRT& Object::getObjectTransformSRT() noexcept
+        Transform& Object::getObjectTransform() noexcept
         {
-            return getObjectTransformComponent()->_srt;
+            return getObjectTransformComponent()->_transform;
         }
 
-        const SRT& Object::getObjectTransformSRT() const noexcept
+        const Transform& Object::getObjectTransform() const noexcept
         {
-            return getObjectTransformComponent()->_srt;
+            return getObjectTransformComponent()->_transform;
         }
 
         Float4x4 Object::getObjectTransformMatrix() const noexcept
         {
-            return getObjectTransformComponent()->_srt.toMatrix();
+            return getObjectTransformComponent()->_transform.toMatrix();
         }
 
         TransformComponent* Object::getObjectTransformComponent() const noexcept

@@ -327,8 +327,8 @@ const bool testWindow()
     {
         testObject->attachComponent(objectPool.createMeshComponent());
         
-        Rendering::SRT& srt = testObject->getObjectTransformSRT();
-        srt._translation._z = -4.0f;
+        Rendering::Transform& transform = testObject->getObjectTransform();
+        transform._translation._z = -4.0f;
     }
     testCameraObject->rotatePitch(0.125f);
     
@@ -513,7 +513,7 @@ const bool testWindow()
                     formatString(tempBuffer, L" CPU: %d ms", Profiler::FPSCounter::getFrameTimeMs());
                     guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
                     
-                    Float3& cameraPosition = testCameraObject->getObjectTransformSRT()._translation;
+                    Float3& cameraPosition = testCameraObject->getObjectTransform()._translation;
                     guiContext.makeLabel(MINT_GUI_CONTROL(L" Camera Position:", labelParam));
                     
                     {

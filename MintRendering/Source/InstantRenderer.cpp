@@ -29,12 +29,12 @@ namespace mint
 
         void InstantRenderer::testDraw(const Float3& worldOffset) noexcept
         {
-            drawBox(Rendering::SRT(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
-            drawCone(Rendering::SRT(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
-            drawCylinder(Rendering::SRT(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
+            drawBox(Rendering::Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
+            drawCone(Rendering::Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
+            drawCylinder(Rendering::Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
             drawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
             drawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
-            drawCapsule(Rendering::SRT(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
+            drawCapsule(Rendering::Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
         }
 
         void InstantRenderer::drawLine(const Float3& a, const Float3& b, const Color& color) noexcept
@@ -61,7 +61,7 @@ namespace mint
             _sbMaterialDatas.push_back(sbMaterialData);
         }
 
-        void InstantRenderer::drawBox(const SRT& worldSRT, const Float3& extents, const Color& color) noexcept
+        void InstantRenderer::drawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
         {
             MeshGenerator::BoxParam boxParam;
             boxParam._width = extents._x;
@@ -69,12 +69,12 @@ namespace mint
             boxParam._depth = extents._z;
             MeshData meshData;
             MeshGenerator::generateBox(boxParam, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSRT.toMatrix());
+            MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }
 
-        void InstantRenderer::drawCone(const SRT& worldSRT, const float radius, const float height, const uint8 detail, const Color& color) noexcept
+        void InstantRenderer::drawCone(const Transform& worldTransform, const float radius, const float height, const uint8 detail, const Color& color) noexcept
         {
             MeshGenerator::ConeParam coneParam;
             coneParam._radius = radius;
@@ -83,12 +83,12 @@ namespace mint
             coneParam._smooth = true;
             MeshData meshData;
             MeshGenerator::generateCone(coneParam, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSRT.toMatrix());
+            MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }
 
-        void InstantRenderer::drawCylinder(const SRT& worldSRT, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
+        void InstantRenderer::drawCylinder(const Transform& worldTransform, const float radius, const float height, const uint8 subdivisionIteration, const Color& color) noexcept
         {
             MeshGenerator::CylinderParam cylinderParam;
             cylinderParam._height = height;
@@ -97,7 +97,7 @@ namespace mint
             cylinderParam._smooth = true;
             MeshData meshData;
             MeshGenerator::generateCylinder(cylinderParam, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSRT.toMatrix());
+            MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }
@@ -135,7 +135,7 @@ namespace mint
             pushMeshWithMaterial(meshData, color);
         }
 
-        void InstantRenderer::drawCapsule(const SRT& worldSRT, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept
+        void InstantRenderer::drawCapsule(const Transform& worldTransform, const float sphereRadius, const float cylinderHeight, const uint8 subdivisionIteration, const Color& color) noexcept
         {
             MeshGenerator::CapsulePram capsulePram;
             capsulePram._sphereRadius = sphereRadius;
@@ -144,7 +144,7 @@ namespace mint
             capsulePram._smooth = true;
             MeshData meshData;
             MeshGenerator::generateCapsule(capsulePram, meshData);
-            MeshGenerator::transformMeshData(meshData, worldSRT.toMatrix());
+            MeshGenerator::transformMeshData(meshData, worldTransform.toMatrix());
 
             pushMeshWithMaterial(meshData, color);
         }

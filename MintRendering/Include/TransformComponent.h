@@ -25,7 +25,7 @@ namespace mint
             virtual                 ~TransformComponent() { __noop; }
 
         public:
-            SRT                     _srt;
+            Transform               _transform;
         };
     }
 }

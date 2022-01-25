@@ -22,7 +22,7 @@ namespace mint
         class TransformComponent;
         class ObjectPool;
         enum class ObjectComponentType;
-        struct SRT;
+        struct Transform;
 
         enum class ObjectType
         {
@@ -54,9 +54,9 @@ namespace mint
             IObjectComponent*               getComponent(const ObjectComponentType type) const noexcept;
 
         public:
-            void                            setObjectTransform(const SRT& srt) noexcept;
-            SRT&                            getObjectTransformSRT() noexcept;
-            const SRT&                      getObjectTransformSRT() const noexcept;
+            void                            setObjectTransform(const Transform& transform) noexcept;
+            Transform&                      getObjectTransform() noexcept;
+            const Transform&                getObjectTransform() const noexcept;
             Float4x4                        getObjectTransformMatrix() const noexcept;
 
         protected:

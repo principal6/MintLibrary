@@ -17,13 +17,13 @@ namespace mint
         }
 
 
-        SRT::SRT()
-            : SRT(Float3::kZero)
+        Transform::Transform()
+            : Transform(Float3::kZero)
         {
             __noop;
         }
 
-        SRT::SRT(const Float3& translation)
+        Transform::Transform(const Float3& translation)
             : _scale{ Float3::kUnitScale }
             , _translation{ translation }
         {

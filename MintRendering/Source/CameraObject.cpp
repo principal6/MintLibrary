@@ -108,26 +108,26 @@ namespace mint
             const Float3& upDirection = Float3::cross(leftDirection, _forwardDirection) * handnessSign;
             
             const float moveSpeedFloat = getMoveSpeedAsFloat((_isBoostMode) ? getFasterMoveSpeed(getFasterMoveSpeed(_moveSpeed)) : _moveSpeed);
-            SRT& srt = getObjectTransformSRT();
+            Transform& transform = getObjectTransform();
             switch (moveDirection)
             {
             case CameraObject::MoveDirection::Forward:
-                srt._translation += _forwardDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation += _forwardDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Backward:
-                srt._translation -= _forwardDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation -= _forwardDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Leftward:
-                srt._translation += leftDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation += leftDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Rightward:
-                srt._translation -= leftDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation -= leftDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Upward:
-                srt._translation += upDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation += upDirection * moveSpeedFloat * deltaTimeS;
                 break;
             case CameraObject::MoveDirection::Downward:
-                srt._translation -= upDirection * moveSpeedFloat * deltaTimeS;
+                transform._translation -= upDirection * moveSpeedFloat * deltaTimeS;
                 break;
             default:
                 break;
@@ -171,7 +171,7 @@ namespace mint
         Float4x4 CameraObject::getViewMatrix() const noexcept
         {
             const Float4x4& rotationMatrix = getRotationMatrix();
-            return rotationMatrix.transpose() * Float4x4::translationMatrix(-getObjectTransformSRT()._translation);
+            return rotationMatrix.transpose() * Float4x4::translationMatrix(-getObjectTransform()._translation);
         }
 
         const Float4x4& CameraObject::getProjectionMatrix() const noexcept
