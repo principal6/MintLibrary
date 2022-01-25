@@ -11,7 +11,7 @@
 
 #include <Assets/CppHlsl/CppHlslStreamData.h>
 
-#include <MintRenderingBase/Include/DxResource.h>
+#include <MintRenderingBase/Include/IDxObject.h>
 
 #include <MintMath/Include/Rect.h>
 

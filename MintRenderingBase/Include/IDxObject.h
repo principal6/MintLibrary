@@ -5,8 +5,6 @@
 #define MINT_I_DX_BASE_H
 
 
-#include <atomic>
-
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
