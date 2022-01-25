@@ -327,7 +327,7 @@ const bool testWindow()
     {
         testObject->attachComponent(objectPool.createMeshComponent());
         
-        Rendering::Transform& transform = testObject->getObjectTransform();
+        Transform& transform = testObject->getObjectTransform();
         transform._translation._z = -4.0f;
     }
     testCameraObject->rotatePitch(0.125f);

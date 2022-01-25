@@ -29,12 +29,12 @@ namespace mint
 
         void InstantRenderer::testDraw(const Float3& worldOffset) noexcept
         {
-            drawBox(Rendering::Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
-            drawCone(Rendering::Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
-            drawCylinder(Rendering::Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
+            drawBox(Transform(worldOffset), Float3(0.5f, 0.5f, 0.5f), Rendering::Color::kGreen);
+            drawCone(Transform(worldOffset + Float3(2, 0, 0)), 0.5f, 1.0f, 4, Rendering::Color::kGreen);
+            drawCylinder(Transform(worldOffset + Float3(3, 0, 0)), 0.5f, 1.0f, 1, Rendering::Color::kGreen);
             drawGeoSphere(worldOffset + Float3(4, 0, 0), 0.5f, 0, Rendering::Color::kGreen);
             drawSphere(worldOffset + Float3(5, 0, 0), 0.5f, 4, 4, Rendering::Color::kGreen);
-            drawCapsule(Rendering::Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
+            drawCapsule(Transform(worldOffset + Float3(1, 0, 0)), 0.25f, 1.0f, 3, Rendering::Color::kGreen);
         }
 
         void InstantRenderer::drawLine(const Float3& a, const Float3& b, const Color& color) noexcept

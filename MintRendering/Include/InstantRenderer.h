@@ -14,11 +14,13 @@
 
 namespace mint
 {
+    struct Transform;
+
+
     namespace Rendering
     {
         class GraphicDevice;
         struct SB_Material;
-        struct Transform;
         class Color;
 
 

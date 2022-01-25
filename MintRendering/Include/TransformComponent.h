@@ -9,8 +9,7 @@
 
 #include <MintRendering/Include/IObjectComponent.h>
 
-#include <MintMath/Include/Float4x4.h>
-#include <MintMath/Include/Quaternion.h>
+#include <MintMath/Include/Transform.h>
 
 
 namespace mint

@@ -69,6 +69,9 @@
     <ClInclude Include="Include\AffineMat.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Transform.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -122,6 +125,9 @@
       <Filter>Include</Filter>
     </None>
     <None Include="Include\AffineMat.inl">
+      <Filter>Include</Filter>
+    </None>
+    <None Include="Include\Transform.inl">
       <Filter>Include</Filter>
     </None>
   </ItemGroup>

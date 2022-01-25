@@ -16,13 +16,15 @@
 
 namespace mint
 {
+    struct Transform;
+
+
     namespace Rendering
     {
         class IObjectComponent;
         class TransformComponent;
         class ObjectPool;
         enum class ObjectComponentType;
-        struct Transform;
 
         enum class ObjectType
         {

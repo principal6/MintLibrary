@@ -17,20 +17,6 @@ namespace mint
         }
 
 
-        Transform::Transform()
-            : Transform(Float3::kZero)
-        {
-            __noop;
-        }
-
-        Transform::Transform(const Float3& translation)
-            : _scale{ Float3::kUnitScale }
-            , _translation{ translation }
-        {
-            __noop;
-        }
-
-
         std::atomic<uint32> IObjectComponent::_nextRawID = 0;
         IObjectComponent::IObjectComponent(const ObjectComponentType type)
             : _ownerObject{ nullptr }

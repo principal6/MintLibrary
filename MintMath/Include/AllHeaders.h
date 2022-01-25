@@ -17,6 +17,7 @@
 #include <MintMath/Include/Quaternion.h>
 #include <MintMath/Include/VectorR.h>
 #include <MintMath/Include/Matrix.h>
+#include <MintMath/Include/Transform.h>
 
 #include <MintMath/Include/AffineVec.h>
 #include <MintMath/Include/AffineMat.h>
