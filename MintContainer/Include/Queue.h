@@ -36,6 +36,10 @@ namespace mint
         const T&                    peek() const noexcept;
 
     private:
+        void                        saveBackup(T*& backUpPointer) noexcept;
+        void                        restoreBackup(const T* const backUpPointer) noexcept;
+
+    private:
         T*                          _rawPointer;
         uint32                      _size;
         uint32                      _capacity;

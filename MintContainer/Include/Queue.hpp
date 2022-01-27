@@ -36,7 +36,6 @@ namespace mint
     MINT_INLINE void Queue<T>::reserve(uint32 capacity) noexcept
     {
         capacity = mint::max(capacity, static_cast<uint32>(1)); // capacity 가 0 이 되지 않도록 보장!
-
         if (capacity < _capacity)
         {
             return;
@@ -46,39 +45,52 @@ namespace mint
         {
             MemoryRaw::deallocateMemory<T>(_rawPointer);
             _rawPointer = MemoryRaw::allocateMemory<T>(capacity);
+            _capacity = capacity;
+            return;
         }
-        else
-        {
-            T* temp = MemoryRaw::allocateMemory<T>(_size);
-            if (_headAt < _tailAt)
-            {
-                MemoryRaw::moveMemory<T>(temp, &_rawPointer[_headAt], _size);
-            }
-            else
-            {
-                // Head part
-                const uint32 headPartLength = _capacity - _headAt;
-                MemoryRaw::moveMemory<T>(&temp[0], &_rawPointer[_headAt], headPartLength);
 
-                // Tail part
-                if (headPartLength < _size)
-                {
-                    MemoryRaw::moveMemory<T>(&temp[headPartLength], &_rawPointer[0], _tailAt + 1);
-                }
-            }
+        T* copyPointer = MemoryRaw::allocateMemory<T>(_size);
+        saveBackup(copyPointer);
 
-            MemoryRaw::deallocateMemory<T>(_rawPointer);
-            _rawPointer = MemoryRaw::allocateMemory<T>(capacity);
+        // Reallocate _rawPointer
+        MemoryRaw::deallocateMemory<T>(_rawPointer);
+        _rawPointer = MemoryRaw::allocateMemory<T>(capacity);
 
-            MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
-            MemoryRaw::deallocateMemory<T>(temp);
+        restoreBackup(copyPointer);
+        MemoryRaw::deallocateMemory<T>(copyPointer);
 
-            // Reset head and tail position!!!
-            _headAt = 0;
-            _tailAt = _size - 1;
-        }
+        // Reset head and tail position!!!
+        _headAt = 0;
+        _tailAt = _size - 1;
 
         _capacity = capacity;
+    }
+
+    template<typename T>
+    MINT_INLINE void Queue<T>::saveBackup(T*& backUpPointer) noexcept
+    {
+        // Copy data from _rawPointer to copyPointer 
+        if (_headAt < _tailAt)
+        {
+            MemoryRaw::moveMemory<T>(backUpPointer, &_rawPointer[_headAt], _size);
+            return;
+        }
+        
+        // Head part
+        const uint32 headPartLength = _capacity - _headAt;
+        MemoryRaw::moveMemory<T>(&backUpPointer[0], &_rawPointer[_headAt], headPartLength);
+
+        // Tail part
+        if (headPartLength < _size)
+        {
+            MemoryRaw::moveMemory<T>(&backUpPointer[headPartLength], &_rawPointer[0], _tailAt + 1);
+        }
+    }
+
+    template<typename T>
+    MINT_INLINE void Queue<T>::restoreBackup(const T* const backUpPointer) noexcept
+    {
+        MemoryRaw::moveMemory<T>(_rawPointer, backUpPointer, _size);
     }
 
     template<typename T>
