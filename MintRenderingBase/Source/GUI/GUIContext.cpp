@@ -317,91 +317,40 @@ namespace mint
             
             windowUpdateDockingWindowDisplay(windowControlData);
 
-            const bool needToProcessControl = windowNeedToProcessControl(windowControlData);
+            const bool needToProcess = windowNeedToProcessControl(windowControlData);
+            Rendering::Color backgroundColor;
+            const bool isFocused = needToProcess && processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), backgroundColor);
+            windowSetClipRectForMe(windowControlData);
+            windowSetClipRectForChildren(windowControlData);
+            windowSetClipRectForDocks(windowControlData);
+
+            if (needToProcess)
             {
-                Rendering::Color finalBackgroundColor;
-                const bool isFocused = (needToProcessControl == true) 
-                    ? processFocusControl(windowControlData, getNamedColor(NamedColor::WindowFocused), getNamedColor(NamedColor::WindowOutOfFocus), finalBackgroundColor)
-                    : false;
-                
-                // Viewport & Scissor rectangle
+                const bool isAncestorFocused = isAncestorControlInteractionState(windowControlData, ControlInteractionState::Focused);
+                windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
+
+                Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
+                rendererContext.setClipRect(windowControlData.getClipRects()._forMe);
+
+                const Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
+                rendererContext.setColor(backgroundColor);
+                rendererContext.setPosition(windowCenterPosition + Float4(0, windowControlData._controlValue._windowData._titleBarThickness * 0.5f, 0, 0));
+                if (windowControlData.isDocking() == true)
                 {
-                    const ControlData& parentControlData = getControlData(windowControlData.getParentID());
-                    const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
-                    {
-                        Rect clipRectForMe = windowControlData.getRect();
-                        if (isParentAlsoWindow == true)
-                        {
-                            clipRectForMe.clipBy(parentControlData.getClipRects()._forDocks);
-
-                            if (windowControlData.isDocking() == true)
-                            {
-                                windowControlData.setClipRectForMe(parentControlData.getClipRects()._forDocks);
-                            }
-                            else
-                            {
-                                windowControlData.setClipRectForMe(parentControlData.getClipRects()._forMe);
-                            }
-                        }
-                        else
-                        {
-                            windowControlData.setClipRectForMe(clipRectForMe);
-                        }
-                    }
-                    {
-                        Rect clipRectForDocks = windowControlData.getControlPaddedRect();
-                        clipRectForDocks.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness);
-                        if (isParentAlsoWindow == true)
-                        {
-                            clipRectForDocks.clipBy(parentControlData.getClipRects()._forDocks);
-                        }
-                        windowControlData.setClipRectForDocks(clipRectForDocks);
-                    }
-                    {
-                        const bool hasScrollBarVert = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
-                        const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
-
-                        Rect clipRectForChildren = windowControlData.getControlPaddedRect();
-                        clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockZoneSize(DockZone::TopSide)._y);
-                        clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockZoneSize(DockZone::LeftSide)._x);
-                        clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::RightSide)._x);
-                        clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::BottomSide)._y);
-                        if (isParentAlsoWindow == true)
-                        {
-                            clipRectForChildren.clipBy(parentControlData.getClipRects()._forMe);
-                        }
-                        windowControlData.setClipRectForChildren(clipRectForChildren);
-                    }
+                    Rendering::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
+                    inDockColor.a(backgroundColor.a());
+                    rendererContext.setColor(inDockColor);
+                    rendererContext.drawRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), 0.0f, 0.0f);
+                }
+                else
+                {
+                    rendererContext.drawHalfRoundedRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), (kDefaultRoundnessInPixel * 2.0f / windowControlData._size.minElement()), 0.0f);
                 }
 
-                if (needToProcessControl == true)
-                {
-                    const bool isAncestorFocused = isAncestorControlInteractionState(windowControlData, ControlInteractionState::Focused);
-                    windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
-                    
-                    Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
-                    rendererContext.setClipRect(windowControlData.getClipRects()._forMe);
-
-                    const Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
-                    rendererContext.setColor(finalBackgroundColor);
-                    rendererContext.setPosition(windowCenterPosition + Float4(0, windowControlData._controlValue._windowData._titleBarThickness * 0.5f, 0, 0));
-                    if (windowControlData.isDocking() == true)
-                    {
-                        Rendering::Color inDockColor = getNamedColor(NamedColor::ShownInDock);
-                        inDockColor.a(finalBackgroundColor.a());
-                        rendererContext.setColor(inDockColor);
-                        rendererContext.drawRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), 0.0f, 0.0f);
-                    }
-                    else
-                    {
-                        rendererContext.drawHalfRoundedRectangle(windowControlData._size - Float2(0, windowControlData._controlValue._windowData._titleBarThickness), (kDefaultRoundnessInPixel * 2.0f / windowControlData._size.minElement()), 0.0f);
-                    }
-
-                    processDock(windowControlData, rendererContext);
-                }
+                processDock(windowControlData, rendererContext);
             }
             
-            if (windowControlData.isControlVisible() == true)
+            if (windowControlData.isControlVisible())
             {
                 // 중요
                 _controlMetaStateSet.nextOffAutoPosition();
@@ -419,7 +368,7 @@ namespace mint
             }
 
             // ControlStackTop 에 WindowControl 이 추가되는 시점이 아래인 것에 주의!!!
-            return beginControlInternal(controlType, windowControlID, needToProcessControl);
+            return beginControlInternal(controlType, windowControlID, needToProcess);
         }
 
         void GUIContext::windowDockInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
@@ -495,6 +444,53 @@ namespace mint
             const ControlData& dockControlData = getControlData(windowControlData.getDockControlID());
             const bool isFocusedDocker = dockControlData.isFocusedDocker(windowControlData);
             return (windowControlData.isControlVisible() && isFocusedDocker);
+        }
+
+        void GUIContext::windowSetClipRectForMe(ControlData& windowControlData) const noexcept
+        {
+            const ControlData& parentControlData = getControlData(windowControlData.getParentID());
+            const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
+            if (isParentAlsoWindow == false)
+            {
+                windowControlData.setClipRectForMe(windowControlData.getRect());
+                return;
+            }
+
+            Rect clipRectForMe = windowControlData.getRect();
+            clipRectForMe.clipBy(parentControlData.getClipRects()._forDocks);
+            windowControlData.setClipRectForMe((windowControlData.isDocking() ? parentControlData.getClipRects()._forDocks : parentControlData.getClipRects()._forMe));
+        }
+
+        void GUIContext::windowSetClipRectForChildren(ControlData& windowControlData) const noexcept
+        {
+            const bool hasScrollBarVert = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Vert);
+            const bool hasScrollBarHorz = windowControlData._controlValue._commonData.isScrollBarEnabled(ScrollBarType::Horz);
+
+            Rect clipRectForChildren = windowControlData.getControlPaddedRect();
+            clipRectForChildren.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness + windowControlData.getMenuBarThickness()._y + windowControlData.getDockZoneSize(DockZone::TopSide)._y);
+            clipRectForChildren.left() += static_cast<LONG>(windowControlData.getDockZoneSize(DockZone::LeftSide)._x);
+            clipRectForChildren.right() -= static_cast<LONG>(((hasScrollBarVert == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::RightSide)._x);
+            clipRectForChildren.bottom() -= static_cast<LONG>(((hasScrollBarHorz == true) ? kScrollBarThickness : 0.0f) + windowControlData.getDockZoneSize(DockZone::BottomSide)._y);
+            const ControlData& parentControlData = getControlData(windowControlData.getParentID());
+            const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
+            if (isParentAlsoWindow)
+            {
+                clipRectForChildren.clipBy(parentControlData.getClipRects()._forMe);
+            }
+            windowControlData.setClipRectForChildren(clipRectForChildren);
+        }
+
+        void GUIContext::windowSetClipRectForDocks(ControlData& windowControlData) const noexcept
+        {
+            Rect clipRectForDocks = windowControlData.getControlPaddedRect();
+            clipRectForDocks.top() += static_cast<LONG>(windowControlData._controlValue._windowData._titleBarThickness);
+            const ControlData& parentControlData = getControlData(windowControlData.getParentID());
+            const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
+            if (isParentAlsoWindow)
+            {
+                clipRectForDocks.clipBy(parentControlData.getClipRects()._forDocks);
+            }
+            windowControlData.setClipRectForDocks(clipRectForDocks);
         }
 
         const bool GUIContext::beginButton(const char* const file, const int line, const wchar_t* const text)

@@ -217,6 +217,9 @@ namespace mint
             void                                        windowUpdatePositionByParentWindow(ControlData& windowControlData) noexcept;
             void                                        windowUpdateDockingWindowDisplay(ControlData& windowControlData) noexcept;
             const bool                                  windowNeedToProcessControl(const ControlData& windowControlData) const noexcept;
+            void                                        windowSetClipRectForMe(ControlData& windowControlData) const noexcept;
+            void                                        windowSetClipRectForChildren(ControlData& windowControlData) const noexcept;
+            void                                        windowSetClipRectForDocks(ControlData& windowControlData) const noexcept;
     #pragma endregion
 
     #pragma region Controls - Button
