@@ -144,7 +144,7 @@ namespace mint
     template<typename T>
     MINT_INLINE void Queue<T>::pop() noexcept
     {
-        if (empty() == true)
+        if (empty())
         {
             return;
         }
