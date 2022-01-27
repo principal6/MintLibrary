@@ -290,6 +290,7 @@ namespace mint
                 windowControlData._option._isFocusable = true;
                 windowControlData._controlValue._windowData._titleBarThickness = kTitleBarBaseThickness;
                 windowControlData._dockContext._dockingControlType = DockingControlType::DockerDock;
+                windowControlData._resizingMask.setAllTrue();
             }
             if (windowControlData.updateVisibleState(inoutVisibleState) == true && windowControlData.isControlVisible() == true)
             {
@@ -300,7 +301,6 @@ namespace mint
             ControlData::UpdateParam updateParam;
             {
                 const float titleWidth = computeTextWidth(title, StringUtil::length(title));
-                updateParam._initialResizingMask.setAllTrue();
                 updateParam._desiredPositionInParent = windowParam._position;
                 updateParam._innerPadding = kWindowInnerPadding;
                 updateParam._minSize._x = titleWidth + kTitleBarInnerPadding.horz() + kDefaultRoundButtonRadius * 2.0f;
@@ -2099,17 +2099,15 @@ namespace mint
         void GUIContext::updateControlData(ControlData& controlData, const ControlData::UpdateParam& updateParam) noexcept
         {
             const bool isNewData = controlData._size.isNan();
-            if ((isNewData == true) || (updateParam._alwaysResetParent == true))
+            if (isNewData == true || updateParam._alwaysResetParent == true)
             {
                 if (updateParam._parentIDOverride.isValid())
                 {
                     controlData.setParentID(updateParam._parentIDOverride);
                 }
 
-                if (isNewData == true)
+                if (isNewData)
                 {
-                    controlData._resizingMask = updateParam._initialResizingMask;
-
                     // Áß¿ä!!!
                     controlData.setAllClipRects(_clipRectFullScreen);
                 }

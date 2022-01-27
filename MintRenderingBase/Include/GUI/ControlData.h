@@ -155,7 +155,6 @@ namespace mint
             public:
                 Rect            _innerPadding;
                 Float2          _autoComputedDisplaySize = Float2::kZero;
-                ResizingMask    _initialResizingMask;
                 Float2          _offset = Float2::kZero;
                 Float2          _desiredPositionInParent = Float2::kNan;
                 Float2          _deltaInteractionSize = Float2::kZero;
