@@ -18,6 +18,7 @@ namespace mint
 {
     namespace Rendering
     {
+        // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class ShapeRendererContext : public IRendererContext
         {
             enum class ShapeType : uint8

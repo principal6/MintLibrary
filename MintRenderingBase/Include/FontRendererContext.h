@@ -98,6 +98,7 @@ namespace mint
             Float4x4                    _transformMatrix;
         };
 
+        // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class FontRendererContext final : public IRendererContext
         {
             static constexpr int16                                              kSpaceBottomForVisibility = 1;
