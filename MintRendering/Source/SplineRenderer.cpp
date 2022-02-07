@@ -54,17 +54,7 @@ namespace mint
                 _rendererContext->drawLine(p0, p1, thickness);
             }
 
-            if (_debugOptions._drawControlPoints)
-            {
-                _rendererContext->setColor(_debugOptions._controlPointColor);
-
-                const uint32 controlPointCount = controlPoints.size();
-                for (uint32 controlPointIndex = 0; controlPointIndex < controlPointCount; ++controlPointIndex)
-                {
-                    _rendererContext->setPosition(Float4(controlPoints[controlPointIndex]._x, controlPoints[controlPointIndex]._y, 0.0f, 1.0f));
-                    _rendererContext->drawCircle(_debugOptions._controlPointSize);
-                }
-            }
+            drawControlPoints(controlPoints);
             return true;
         }
 
@@ -91,6 +81,23 @@ namespace mint
             }
 
             return getDeCasteljauPoint(result, t);
+        }
+
+        void SplineRenderer::drawControlPoints(const Vector<Float2>& controlPoints) noexcept
+        {
+            if (_debugOptions._drawControlPoints == false)
+            {
+                return;  
+            }
+
+            _rendererContext->setColor(_debugOptions._controlPointColor);
+
+            const uint32 controlPointCount = controlPoints.size();
+            for (uint32 controlPointIndex = 0; controlPointIndex < controlPointCount; ++controlPointIndex)
+            {
+                _rendererContext->setPosition(Float4(controlPoints[controlPointIndex]._x, controlPoints[controlPointIndex]._y, 0.0f, 1.0f));
+                _rendererContext->drawCircle(_debugOptions._controlPointSize);
+            }
         }
 
         void SplineRenderer::render() noexcept

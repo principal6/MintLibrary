@@ -332,6 +332,7 @@ const bool testWindow()
     }
     testCameraObject->rotatePitch(0.125f);
     
+    Rendering::SplineRenderer splineRenderer(graphicDevice.getShapeFontRendererContext());
     Rendering::MeshRenderer meshRenderer{ graphicDevice };
     Rendering::InstantRenderer instantRenderer{ graphicDevice };
     Game::SkeletonGenerator testSkeletonGenerator;
@@ -426,7 +427,18 @@ const bool testWindow()
         {
             graphicDevice.beginRendering();
 
-#if 0
+#if 0 // SplineRenderer
+            Rendering::SplineRenderer::DebugOptions splineRendererDebugOptions;
+            splineRendererDebugOptions._drawControlPoints = true;
+            Vector<Float2> controlPoints;
+            controlPoints.push_back(Float2(20, 100));
+            controlPoints.push_back(Float2(60, 200));
+            controlPoints.push_back(Float2(100, 100));
+            splineRenderer.setDebugOptions(splineRendererDebugOptions);
+            splineRenderer.drawBezierCurve(controlPoints, 1.0f);
+            splineRenderer.render();
+#endif
+#if 0 // Plotter
             Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
             Rendering::Plotter plotter(shapeFontRendererContext);
             plotter.xLabel(L"weight");

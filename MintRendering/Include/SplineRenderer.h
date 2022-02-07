@@ -46,6 +46,7 @@ namespace mint
 
         private:
             Float2                              getDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
+            void                                drawControlPoints(const Vector<Float2>& controlPoints) noexcept;
 
         public:
             void                                render() noexcept;
