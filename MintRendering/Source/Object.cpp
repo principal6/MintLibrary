@@ -36,7 +36,7 @@ namespace mint
             {
                 if (getComponent(objectComponent->getType()) != nullptr)
                 {
-                    MINT_LOG_ERROR("김장원", "동일한 Type 의 Component 를 Attach 하는 것은 아직 지원되지 않습니다!");
+                    MINT_LOG_ERROR("동일한 Type 의 Component 를 Attach 하는 것은 아직 지원되지 않습니다!");
                     return;
                 }
 

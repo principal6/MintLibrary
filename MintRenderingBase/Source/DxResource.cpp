@@ -24,7 +24,7 @@ namespace mint
             default:
                 break;
             }
-            MINT_ASSERT("김장원", false, "미지원 Texture Format 입니다!!!");
+            MINT_ASSERT(false, "미지원 Texture Format 입니다!!!");
             return DXGI_FORMAT();
         }
 
@@ -39,7 +39,7 @@ namespace mint
             default:
                 break;
             }
-            MINT_ASSERT("김장원", false, "미지원 Texture Format 입니다!!!");
+            MINT_ASSERT(false, "미지원 Texture Format 입니다!!!");
             return 0;
         }
 
@@ -223,7 +223,7 @@ namespace mint
 
         void DxResource::updateBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
-            MINT_ASSERT("김장원", _resourceType < DxResourceType::Texture2D, "");
+            MINT_ASSERT(_resourceType < DxResourceType::Texture2D, "");
 
             updateContentInternal(resourceContent, elementStride, elementCount, 0);
         }
@@ -235,7 +235,7 @@ namespace mint
 
         void DxResource::updateTexture(const void* const resourceContent, const uint32 width, const uint32 height)
         {
-            MINT_ASSERT("김장원", DxResourceType::Texture2D <= _resourceType, "");
+            MINT_ASSERT(DxResourceType::Texture2D <= _resourceType, "");
 
             updateContentInternal(resourceContent, _elementStride, width * height, width);
         }
@@ -244,7 +244,7 @@ namespace mint
         {
             if (resourceContent == nullptr)
             {
-                MINT_LOG_ERROR("김장원", "nullptr 인 데이터가 들어오면 안 됩니다!");
+                MINT_LOG_ERROR("nullptr 인 데이터가 들어오면 안 됩니다!");
                 return;
             }
 
@@ -263,7 +263,7 @@ namespace mint
                 {
                     if (width == 0)
                     {
-                        MINT_LOG_ERROR("김장원", "Texture 의 Width 가 0 이면 안 됩니다!!!");
+                        MINT_LOG_ERROR("Texture 의 Width 가 0 이면 안 됩니다!!!");
                         return;
                     }
 
@@ -319,7 +319,7 @@ namespace mint
             }
             else
             {
-                MINT_LOG_ERROR("김장원", "bindToShader 를 호출해야 합니다!");
+                MINT_LOG_ERROR("bindToShader 를 호출해야 합니다!");
             }
 
             _needToBind = false;
@@ -343,7 +343,7 @@ namespace mint
                 }
                 else
                 {
-                    MINT_LOG_ERROR("김장원", "미지원 ShaderType 입니다!");
+                    MINT_LOG_ERROR("미지원 ShaderType 입니다!");
                 }
             }
             else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
@@ -362,12 +362,12 @@ namespace mint
                 }
                 else
                 {
-                    MINT_LOG_ERROR("김장원", "미지원 ShaderType 입니다!");
+                    MINT_LOG_ERROR("미지원 ShaderType 입니다!");
                 }
             }
             else
             {
-                MINT_LOG_ERROR("김장원", "bindAsInpt 을 호출해야 합니다!");
+                MINT_LOG_ERROR("bindAsInpt 을 호출해야 합니다!");
             }
 
             _needToBind = false;
@@ -392,7 +392,7 @@ namespace mint
                 _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getID();
             }
-            MINT_ASSERT("김장원", false, "pushConstantBuffer 에 실패했습니다!");
+            MINT_ASSERT(false, "pushConstantBuffer 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -407,7 +407,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT("김장원", false, "pushVertexBuffer 에 실패했습니다!");
+            MINT_ASSERT(false, "pushVertexBuffer 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -422,7 +422,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT("김장원", false, "pushIndexBuffer 에 실패했습니다!");
+            MINT_ASSERT(false, "pushIndexBuffer 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -439,7 +439,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT("김장원", false, "pushStructuredBuffer 에 실패했습니다!");
+            MINT_ASSERT(false, "pushStructuredBuffer 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -454,7 +454,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT("김장원", false, "pushTexture2D 에 실패했습니다!");
+            MINT_ASSERT(false, "pushTexture2D 에 실패했습니다!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -478,7 +478,7 @@ namespace mint
 
         DxResource& DxResourcePool::getResource(const DxObjectID& objectID)
         {
-            MINT_ASSERT("김장원", objectID.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
+            MINT_ASSERT(objectID.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
             const int32 index = binarySearch(_resourceArray, objectID);
             if (index >= 0)
@@ -486,7 +486,7 @@ namespace mint
                 return _resourceArray[index];
             }
 
-            MINT_ASSERT("김장원", false, "Resource 를 찾지 못했습니다!!!");
+            MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
             return DxResource::s_invalidInstance;
         }
     }

@@ -66,7 +66,7 @@ namespace mint
         serializer._deserializeInternal(deserializedTypeName, true);
         if (_typeName != deserializedTypeName)
         {
-            MINT_LOG_ERROR("±èÀå¿ø", "type name of the class [%s] does not match that of the source binary [%s]", _typeName.c_str(), deserializedTypeName.c_str());
+            MINT_LOG_ERROR("type name of the class [%s] does not match that of the source binary [%s]", _typeName.c_str(), deserializedTypeName.c_str());
             return false;
         }
 
@@ -120,11 +120,11 @@ namespace mint
 
     //#define _DEBUG_LOG_SERIALIZER_INTERNALS
 #if defined (_DEBUG_LOG_SERIALIZER_INTERNALS)
-    #define _MINT_LOG_SERIALIZATION_NOT_SPECIALIZED    SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("±èÀå¿ø", "%sserialization of the type[%s] is NOT specialized!", SerializerUtil::getDepthPrefix(_depth), typeid(from).name());
-    #define _MINT_LOG_SERIALIZATION_SPECIALIZED        SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("±èÀå¿ø", "%sserialization of the type[%s] IS SPECIALIZED.", SerializerUtil::getDepthPrefix(_depth), typeid(from).name());
+    #define _MINT_LOG_SERIALIZATION_NOT_SPECIALIZED    SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("%sserialization of the type[%s] is NOT specialized!", SerializerUtil::getDepthPrefix(_depth), typeid(from).name());
+    #define _MINT_LOG_SERIALIZATION_SPECIALIZED        SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("%sserialization of the type[%s] IS SPECIALIZED.", SerializerUtil::getDepthPrefix(_depth), typeid(from).name());
 
-    #define _MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED  SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("±èÀå¿ø", "%sdeserialization of the type[%s] is NOT specialized!", SerializerUtil::getDepthPrefix(_depth), typeid(to).name());
-    #define _MINT_LOG_DESERIALIZATION_SPECIALIZED      SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("±èÀå¿ø", "%sdeserialization of the type[%s] IS SPECIALIZED.", SerializerUtil::getDepthPrefix(_depth), typeid(to).name());
+    #define _MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED  SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("%sdeserialization of the type[%s] is NOT specialized!", SerializerUtil::getDepthPrefix(_depth), typeid(to).name());
+    #define _MINT_LOG_DESERIALIZATION_SPECIALIZED      SerializerScopedDepth serializerScopedDepth(this); if (isTypeData == false) MINT_LOG("%sdeserialization of the type[%s] IS SPECIALIZED.", SerializerUtil::getDepthPrefix(_depth), typeid(to).name());
 #else
     #define _MINT_LOG_SERIALIZATION_NOT_SPECIALIZED      
     #define _MINT_LOG_SERIALIZATION_SPECIALIZED          
@@ -142,11 +142,11 @@ namespace mint
     #if defined (_DEBUG_LOG_SERIALIZER_INTERNALS)
         if constexpr (IsReflectionClass<T>::value == true)
         {
-            MINT_LOG("±èÀå¿ø", "serializing a reflection class to [%s]", fileName);
+            MINT_LOG("serializing a reflection class to [%s]", fileName);
         }
         else
         {
-            MINT_LOG("±èÀå¿ø", "serializing a non-reflection type to [%s]", fileName);
+            MINT_LOG("serializing a non-reflection type to [%s]", fileName);
         }
     #endif
 
@@ -219,11 +219,11 @@ namespace mint
     #if defined (_DEBUG_LOG_SERIALIZER_INTERNALS)
         if constexpr (IsReflectionClass<T>::value == true)
         {
-            MINT_LOG("±èÀå¿ø", "deserializing a reflection class from [%s]", fileName);
+            MINT_LOG("deserializing a reflection class from [%s]", fileName);
         }
         else
         {
-            MINT_LOG("±èÀå¿ø", "deserializing a non-reflection type from [%s]", fileName);
+            MINT_LOG("deserializing a non-reflection type from [%s]", fileName);
         }
     #endif
 

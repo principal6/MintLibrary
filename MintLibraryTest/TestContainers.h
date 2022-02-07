@@ -15,11 +15,11 @@ namespace mint
             static constexpr uint32 kClassNameBufferSize = 260;
 
         public:
-            Teller(const char* const className) : _className{}, _value{} { ::strcpy_s(_className, className); MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s", _className, "Ctor [default]"); }
-            Teller(const char* const className, const T& value) : _className{}, _value{ value } { ::strcpy_s(_className, className); MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Ctor [with initialization]", value); }
-            Teller(const Teller& rhs) { ::strcpy_s(_className, rhs._className); _value = rhs._value; MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Ctor [copy]", _value); }
-            Teller(Teller&& rhs) noexcept { ::strcpy_s(_className, rhs._className); _value = std::move(rhs._value); MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Ctor [move]", _value); }
-            ~Teller() { MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Dtor", _value); ::memset(_className, 0, kClassNameBufferSize); }
+            Teller(const char* const className) : _className{}, _value{} { ::strcpy_s(_className, className); MINT_LOG_UNTAGGED("%s - %s", _className, "Ctor [default]"); }
+            Teller(const char* const className, const T& value) : _className{}, _value{ value } { ::strcpy_s(_className, className); MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Ctor [with initialization]", value); }
+            Teller(const Teller& rhs) { ::strcpy_s(_className, rhs._className); _value = rhs._value; MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Ctor [copy]", _value); }
+            Teller(Teller&& rhs) noexcept { ::strcpy_s(_className, rhs._className); _value = std::move(rhs._value); MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Ctor [move]", _value); }
+            ~Teller() { MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Dtor", _value); ::memset(_className, 0, kClassNameBufferSize); }
 
         public:
             Teller& operator=(const Teller& rhs)
@@ -28,7 +28,7 @@ namespace mint
                 {
                     ::strcpy_s(_className, rhs._className); 
                     _value = rhs._value; 
-                    MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Assign [Copy]", _value);
+                    MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Assign [Copy]", _value);
                 }
                 return *this;
             }
@@ -38,7 +38,7 @@ namespace mint
                 {
                     ::strcpy_s(_className, rhs._className);
                     _value = std::move(rhs._value);
-                    MINT_LOG_UNTAGGED("±èÀå¿ø", "%s - %s, %d", _className, "Assign [Move]", _value);
+                    MINT_LOG_UNTAGGED("%s - %s, %d", _className, "Assign [Move]", _value);
                 }
                 return *this;
             }

@@ -99,7 +99,7 @@ namespace mint
             const uint32 lengthClose = StringUtil::length(lineSkipperClose);
             if ((lengthOpen == 0 || lengthOpen > 2) || (lengthClose == 0 || lengthClose > 2))
             {
-                MINT_LOG_ERROR("김장원", "lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: Open[%d] Close[%d]", lengthOpen, lengthClose);
+                MINT_LOG_ERROR("lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: Open[%d] Close[%d]", lengthOpen, lengthClose);
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace mint
             const uint32 length = StringUtil::length(lineSkipper);
             if (length == 0 || length > 2)
             {
-                MINT_LOG_ERROR("김장원", "lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
+                MINT_LOG_ERROR("lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
             }
 
@@ -196,7 +196,7 @@ namespace mint
             const uint32 length = StringUtil::length(punctuator);
             if (length == 0 || length > 3)
             {
-                MINT_LOG_ERROR("김장원", "punctuator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
+                MINT_LOG_ERROR("punctuator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
             }
 
@@ -215,12 +215,12 @@ namespace mint
             const uint32 length = StringUtil::length(operator_);
             if (length == 0 || length > 2)
             {
-                MINT_LOG_ERROR("김장원", "operator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
+                MINT_LOG_ERROR("operator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
                 return;
             }
             if (operatorClassifier == OperatorClassifier::COUNT)
             {
-                MINT_LOG_ERROR("김장원", "잘못된 OperatorClassifier!!");
+                MINT_LOG_ERROR("잘못된 OperatorClassifier!!");
                 return;
             }
 
@@ -326,7 +326,7 @@ namespace mint
                             }
                             else
                             {
-                                MINT_ASSERT("김장원", false, "아직 지원되지 않는 LineSkipperSemantic 입니다!!!");
+                                MINT_ASSERT(false, "아직 지원되지 않는 LineSkipperSemantic 입니다!!!");
                                 return false;
                             }
                         }
@@ -369,14 +369,14 @@ namespace mint
                             }
                             else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::CloseMarker) == true)
                             {
-                                MINT_LOG_ERROR("김장원", "Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
+                                MINT_LOG_ERROR("Open LineSkipper 가 없는데 Close LineSkipper 가 왔습니다!!!");
                                 return false;
                             }
                         }
 
                         if (isSuccess == false)
                         {
-                            MINT_LOG_ERROR("김장원", "실패!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
+                            MINT_LOG_ERROR("실패!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
                             return false;
                         }
                     }

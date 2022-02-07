@@ -24,31 +24,31 @@ namespace mint
         #define _MINT_LOG_ERROR_ACTION exit(kErrorExitCode)
     #endif
 
-    #define MINT_LOG_UNTAGGED(author, format, ...)              mint::Logger::getInstance().log(nullptr, author, nullptr, nullptr, 0, format, __VA_ARGS__)
-    #define MINT_LOG(author, format, ...)                       mint::Logger::getInstance().log(" _LOG_ ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-    #define MINT_LOG_ALERT(author, format, ...)                 mint::Logger::getInstance().logAlert(" ALERT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-    #define MINT_LOG_ERROR(author, format, ...)                 mint::Logger::getInstance().logError(" ERROR ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
+    #define MINT_LOG_UNTAGGED(format, ...)              mint::Logger::getInstance().log(nullptr, nullptr, nullptr, nullptr, 0, format, __VA_ARGS__)
+    #define MINT_LOG(format, ...)                       mint::Logger::getInstance().log(" _LOG_ ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+    #define MINT_LOG_ALERT(format, ...)                 mint::Logger::getInstance().logAlert(" ALERT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+    #define MINT_LOG_ERROR(format, ...)                 mint::Logger::getInstance().logError(" ERROR ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
 #pragma endregion
 
 
 #pragma region Assertion
-    #define MINT_NEVER                                          { mint::Logger::getInstance().logError(" ASSUR ", "XXX", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
+    #define MINT_NEVER                                  { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
     // [DESCRIPTION]
     // Return false if expression is false!
-    #define MINT_ASSURE(expression)                             if (!(expression)) { mint::Logger::getInstance().logError(" ASSUR ", "XXX", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
+    #define MINT_ASSURE(expression)                     if (!(expression)) { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
 
 #if defined MINT_LOG_FOR_ASSURE_SILENT
-    #define MINT_ASSURE_SILENT(expression)                      if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "XXX", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
+    #define MINT_ASSURE_SILENT(expression)              if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
 #else
-    #define MINT_ASSURE_SILENT(expression)                      if (!(expression)) { return false; }
+    #define MINT_ASSURE_SILENT(expression)              if (!(expression)) { return false; }
 #endif
 
     #if defined MINT_DEBUG
-        #define MINT_ASSERT(author, expression, format, ...)    if (!(expression)) { mint::Logger::getInstance().logError(" ASSRT ", author, __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION; }
+        #define MINT_ASSERT(expression, format, ...)    if (!(expression)) { mint::Logger::getInstance().logError(" ASSRT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION; }
     #else
-        #define MINT_ASSERT(author, expression, format, ...)
+        #define MINT_ASSERT(expression, format, ...)
     #endif
-    #define MINT_RETURN_FALSE_IF_NOT(expression)                if (!(expression)) return false
+    #define MINT_RETURN_FALSE_IF_NOT(expression)        if (!(expression)) return false
 #pragma endregion
 
 

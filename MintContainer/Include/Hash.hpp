@@ -59,7 +59,7 @@ namespace mint
             return computeHash(str, length);
         }
 
-        MINT_ASSERT("±èÀå¿ø", false, "Hash computation not implemented for this type!");
+        MINT_ASSERT(false, "Hash computation not implemented for this type!");
         return 0;
     }
 

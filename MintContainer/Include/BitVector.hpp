@@ -134,7 +134,7 @@ namespace mint
 
     MINT_INLINE const bool BitVector::get(const uint32 bitAt) const noexcept
     {
-        MINT_ASSERT("김장원", isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
         const uint32 byteAt = computeByteAt(bitAt);
         const uint32 byteBitOffsetFromLeft = computeBitOffset(bitAt);
@@ -145,7 +145,7 @@ namespace mint
 
     MINT_INLINE const uint8 BitVector::getByte(const uint32 byteAt) const noexcept
     {
-        MINT_ASSERT("김장원", byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
 
         return _byteArray[byteAt];
     }
@@ -162,7 +162,7 @@ namespace mint
 
     MINT_INLINE void BitVector::set(const uint32 bitAt, const bool value) noexcept
     {
-        MINT_ASSERT("김장원", isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
         const uint32 byteAt = computeByteAt(bitAt);
         const uint32 bitOffsetFromLeft = computeBitOffset(bitAt);
@@ -171,14 +171,14 @@ namespace mint
 
     MINT_INLINE void BitVector::set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept
     {
-        MINT_ASSERT("김장원", isInSizeBoundary(byteAt * kBitsPerByte + bitOffsetFromLeft), "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(isInSizeBoundary(byteAt * kBitsPerByte + bitOffsetFromLeft), "범위를 벗어난 접근입니다.");
         
         setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
     }
 
     MINT_INLINE void BitVector::setByte(const uint32 byteAt, const uint8 byte) noexcept
     {
-        MINT_ASSERT("김장원", byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
         
         _byteArray[byteAt] = byte;
     }
@@ -194,7 +194,7 @@ namespace mint
 
     MINT_INLINE void BitVector::swap(const uint32 aBitAt, const uint32 bBitAt) noexcept
     {
-        MINT_ASSERT("김장원", isInSizeBoundary(aBitAt) == true && isInSizeBoundary(bBitAt) == true, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(isInSizeBoundary(aBitAt) == true && isInSizeBoundary(bBitAt) == true, "범위를 벗어난 접근입니다.");
 
         const bool a = get(aBitAt);
         const bool b = get(bBitAt);

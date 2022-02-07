@@ -155,7 +155,7 @@ namespace mint
             {
                 if (_rendererContexts[rendererContextIndex].initializeFontData(fontData) == false)
                 {
-                    MINT_ASSERT("김장원", false, "ShapeFontRendererContext::initializeFont() 에 실패했습니다!");
+                    MINT_ASSERT(false, "ShapeFontRendererContext::initializeFont() 에 실패했습니다!");
                 }
 
                 _rendererContexts[rendererContextIndex].initializeShaders();
@@ -195,7 +195,7 @@ namespace mint
             else if (inputContext.isMouseButtonPressed() == true)
             {
                 const Platform::MouseState mouseState = inputContext.getMouseState();
-                MINT_LOG("김장원", "Event: Mouse Pressed");
+                MINT_LOG("Event: Mouse Pressed");
 
                 _mouseStates.setButtonDown(mouseState._pressedButton);
                 _mouseStates.setButtonDownPosition(inputContext.getMousePosition());
@@ -203,7 +203,7 @@ namespace mint
             else if (inputContext.isMouseButtonReleased() == true)
             {
                 const Platform::MouseState mouseState = inputContext.getMouseState();
-                MINT_LOG("김장원", "Event: Mouse Released");
+                MINT_LOG("Event: Mouse Released");
 
                 if (_taskWhenMouseUp.isSet())
                 {
@@ -373,7 +373,7 @@ namespace mint
 
         void GUIContext::windowDockInitially(ControlData& windowControlData, const DockZone dockZone, const Float2& initialDockingSize)
         {
-            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             if (dockZone == DockZone::COUNT)
             {
@@ -402,7 +402,7 @@ namespace mint
 
         void GUIContext::windowUpdatePositionByParentWindow(ControlData& windowControlData) noexcept
         {
-            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             const ControlData& parentControlData = getControlData(windowControlData.getParentID());
             const bool isParentAlsoWindow = parentControlData.isTypeOf(ControlType::Window);
@@ -418,7 +418,7 @@ namespace mint
 
         void GUIContext::windowUpdateDockingWindowDisplay(ControlData& windowControlData) noexcept
         {
-            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             if (windowControlData.isDocking() == true)
             {
@@ -433,7 +433,7 @@ namespace mint
 
         const bool GUIContext::windowNeedToProcessControl(const ControlData& windowControlData) const noexcept
         {
-            MINT_ASSERT("김장원", windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(windowControlData.isTypeOf(ControlType::Window) == true, "Window 가 아니면 사용하면 안 됩니다!");
 
             const bool isDocking = windowControlData.isDocking();
             if (isDocking == false)
@@ -604,7 +604,7 @@ namespace mint
 
         Float4 GUIContext::labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
-            MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
             Float4 textPosition = labelControlData.getControlCenterPosition();
             if (labelParam._alignmentHorz != TextAlignmentHorz::Center)
@@ -628,7 +628,7 @@ namespace mint
 
         Rendering::FontRenderingOption GUIContext::labelMakeFontRenderingOption(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept
         {
-            MINT_ASSERT("김장원", labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(labelControlData.isTypeOf(ControlType::Label) == true, "Label 이 아니면 사용하면 안 됩니다!");
 
             Rendering::TextRenderDirectionHorz textRenderDirectionHorz = Rendering::TextRenderDirectionHorz::Centered;
             Rendering::TextRenderDirectionVert textRenderDirectionVert = Rendering::TextRenderDirectionVert::Centered;
@@ -720,7 +720,7 @@ namespace mint
 
         void GUIContext::sliderDrawTrack(const SliderParam& sliderParam, const ControlData& trackControlData, const Rendering::Color& trackColor) noexcept
         {
-            MINT_ASSERT("김장원", trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(trackControlData);
             const float trackRadius = kSliderTrackThicknes * 0.5f;
@@ -760,7 +760,7 @@ namespace mint
 
         void GUIContext::sliderDrawThumb(const SliderParam& sliderParam, const ControlData& thumbControlData, const Rendering::Color& thumbColor) noexcept
         {
-            MINT_ASSERT("김장원", thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
 
             Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(thumbControlData);
             const Float4& thumbCenterPosition = thumbControlData.getControlCenterPosition();
@@ -1158,7 +1158,7 @@ namespace mint
             const bool isMenuBarParentWindow = menuBarParent.isTypeOf(ControlType::Window);
             if (isMenuBarParentRoot == false && isMenuBarParentWindow == false)
             {
-                MINT_LOG_ERROR("김장원", "MenuBar 는 Window 나 Root 컨트롤의 자식으로만 사용할 수 있습니다!");
+                MINT_LOG_ERROR("MenuBar 는 Window 나 Root 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
             menuBarParent._controlValue._commonData._menuBarType = MenuBarType::Top; // TODO...
@@ -1217,7 +1217,7 @@ namespace mint
 
             if (getControlStackTopXXX().isTypeOf(ControlType::MenuBar) == false)
             {
-                MINT_LOG_ERROR("김장원", "MenuBarItem 은 MenuBar 컨트롤의 자식으로만 사용할 수 있습니다!");
+                MINT_LOG_ERROR("MenuBarItem 은 MenuBar 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
 
@@ -1300,7 +1300,7 @@ namespace mint
             const bool isParentControlMenuItem = (parentControlType == ControlType::MenuItem);
             if (parentControlType != ControlType::MenuBarItem && isParentControlMenuItem == false)
             {
-                MINT_LOG_ERROR("김장원", "MenuItem 은 MenuBarItem 이나 MenuItem 컨트롤의 자식으로만 사용할 수 있습니다!");
+                MINT_LOG_ERROR("MenuItem 은 MenuBarItem 이나 MenuItem 컨트롤의 자식으로만 사용할 수 있습니다!");
                 return false;
             }
 
@@ -1454,7 +1454,7 @@ namespace mint
         ControlData& GUIContext::_makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
-            MINT_ASSERT("김장원", (scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
+            MINT_ASSERT((scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
 
             outHasExtraSize = false;
             _controlMetaStateSet.nextOffAutoPosition();
@@ -1747,7 +1747,7 @@ namespace mint
 
         void GUIContext::endControlInternal(const ControlType controlType)
         {
-            MINT_ASSERT("김장원", _controlStack.back()._controlType == controlType, "begin 과 end 의 ControlType 이 다릅니다!!!");
+            MINT_ASSERT(_controlStack.back()._controlType == controlType, "begin 과 end 의 ControlType 이 다릅니다!!!");
 
             _controlStack.pop_back();
         }
@@ -2854,7 +2854,7 @@ namespace mint
             }
             else
             {
-                MINT_LOG_ERROR("김장원", "Docked Control 이 Parent 의 Child Array 에 없는 상황입니다!!!");
+                MINT_LOG_ERROR("Docked Control 이 Parent 의 Child Array 에 없는 상황입니다!!!");
             }
 
             dockedControlData.swapDockingStateContext();
@@ -3208,7 +3208,7 @@ namespace mint
 
         void GUIContext::render()
         {
-            MINT_ASSERT("김장원", _controlStack.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
+            MINT_ASSERT(_controlStack.empty() == true, "begin 과 end 호출 횟수가 맞지 않습니다!!!");
 
             _graphicDevice.accessWindow().setCursorType(_mouseStates._cursorType);
 

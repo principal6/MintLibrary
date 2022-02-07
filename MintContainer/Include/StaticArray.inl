@@ -77,14 +77,14 @@ namespace mint
     template<typename T, uint32 maxSize>
     inline constexpr T& StaticArray<T, maxSize>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < maxSize, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < maxSize, "범위를 벗어난 접근입니다.");
         return _data[index];
     }
 
     template<typename T, uint32 maxSize>
     inline constexpr const T& StaticArray<T, maxSize>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < maxSize, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < maxSize, "범위를 벗어난 접근입니다.");
         return _data[index];
     }
 

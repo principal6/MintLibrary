@@ -76,13 +76,13 @@ namespace mint
 
     int32& Int2::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < 2, "범위를 벗어난 접근입니다.");
         return (&_x)[index];
     }
 
     const int32& Int2::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < 2, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < 2, "범위를 벗어난 접근입니다.");
         return (&_x)[index];
     }
 

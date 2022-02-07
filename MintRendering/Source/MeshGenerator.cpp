@@ -157,7 +157,7 @@ namespace mint
             Float4 bitangent;
             if (uvMatrix.isInvertible() == false)
             {
-                MINT_ASSERT("김장원", false, "uvMatrix 가 Invertible 하지 않습니다!!!");
+                MINT_ASSERT(false, "uvMatrix 가 Invertible 하지 않습니다!!!");
 
                 tangent.setXyz(+1.0f, 0.0f, 0.0f);
                 bitangent.setXyz(0.0f, 0.0f, -1.0f);

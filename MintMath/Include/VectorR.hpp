@@ -145,7 +145,7 @@ namespace mint
         template<int32 N, typename T>
         MINT_INLINE void setDivVec(T(&vec)[N], const float scalar) noexcept
         {
-            MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
+            MINT_ASSERT(scalar != 0.0, "0 으로 나누려 합니다!");
             for (int32 i = 0; i < N; ++i)
             {
                 vec[i] /= scalar;
@@ -231,7 +231,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE VectorR<N, T>& VectorR<N, T>::operator/=(const T scalar) noexcept
     {
-        MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
+        MINT_ASSERT(scalar != 0.0, "0 으로 나누려 합니다!");
 
         for (int32 index = 0; index < N; ++index)
         {
@@ -312,14 +312,14 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE T& VectorR<N, T>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
         return _c[index];
     }
 
     template<int32 N, typename T>
     MINT_INLINE const T& VectorR<N, T>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
         return _c[index];
     }
 
@@ -364,7 +364,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE const T VectorR<N, T>::getComponent(const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
         return _c[index];
     }
 
@@ -516,7 +516,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE VectorR<N - 1, T> VectorR<N, T>::shrink() const noexcept
     {
-        MINT_ASSERT("김장원", N > 1, "N must be greater than 1!!!");
+        MINT_ASSERT(N > 1, "N must be greater than 1!!!");
             
         VectorR<N - 1, T> result;
         for (uint32 i = 0; i < N - 1; ++i)

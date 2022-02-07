@@ -226,7 +226,7 @@ namespace mint
                 if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
                     shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
                 {
-                    MINT_LOG_ERROR("김장원", "VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", shader._hlslFileName.c_str(), inputElementTypeMetaData->getTypeName().c_str());
+                    MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", shader._hlslFileName.c_str(), inputElementTypeMetaData->getTypeName().c_str());
                     return false;
                 }
             }
@@ -284,7 +284,7 @@ namespace mint
             inputShaderFilePath += inputShaderFileName;
             if (FileUtil::exists(inputShaderFilePath.c_str()) == false)
             {
-                MINT_LOG_ERROR("김장원", "Input shader file not found : %s", inputShaderFilePath.c_str());
+                MINT_LOG_ERROR("Input shader file not found : %s", inputShaderFilePath.c_str());
                 return false;
             }
 
@@ -294,7 +294,7 @@ namespace mint
             {
                 if (FileUtil::exists(outputDirectory) == false)
                 {
-                    MINT_ASSERT("김장원", FileUtil::createDirectory(outputDirectory) == true, "경로 생성에 실패했습니다!");
+                    MINT_ASSERT(FileUtil::createDirectory(outputDirectory) == true, "경로 생성에 실패했습니다!");
                 }
 
                 outputShaderFilePath = outputDirectory + outputShaderFilePath;
@@ -355,7 +355,7 @@ namespace mint
             {
                 if (textFileReader.open(compileParam._inputFileName) == false)
                 {
-                    MINT_LOG_ERROR("김장원", "Input file not found : %s", compileParam._inputFileName);
+                    MINT_LOG_ERROR("Input file not found : %s", compileParam._inputFileName);
                     return false;
                 }
 
@@ -446,7 +446,7 @@ namespace mint
             const size_t secondNewLinePos = errorMessages.find('\n', firstNewLinePos + 1);
             errorMessages = errorMessages.substr(0, secondNewLinePos);
 
-            MINT_LOG_ERROR("김장원", "Shader Compile Error\n\n%s", errorMessages.c_str());
+            MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.c_str());
         }
 
         void DxShaderPool::bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID)
@@ -479,7 +479,7 @@ namespace mint
 
         const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const DxObjectID& objectID)
         {
-            MINT_ASSERT("김장원", objectID.isObjectType(DxObjectType::Shader) == true, "Invalid parameter - ObjectType !!");
+            MINT_ASSERT(objectID.isObjectType(DxObjectType::Shader) == true, "Invalid parameter - ObjectType !!");
 
             if (shaderType == DxShaderType::VertexShader)
             {

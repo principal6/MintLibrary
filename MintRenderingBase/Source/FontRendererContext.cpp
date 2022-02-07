@@ -166,21 +166,21 @@ namespace mint
             std::string fontFileNameWithExtension = getFontDataFileNameWithExtension(fontFileName);
             if (existsFontDataInternal(fontFileNameWithExtension.c_str()) == false)
             {
-                MINT_LOG_ERROR("김장원", "해당 FontFile 이 존재하지 않습니다: %s", fontFileNameWithExtension.c_str());
+                MINT_LOG_ERROR("해당 FontFile 이 존재하지 않습니다: %s", fontFileNameWithExtension.c_str());
                 return false;
             }
 
             BinaryFileReader binaryFileReader;
             if (binaryFileReader.open(fontFileNameWithExtension.c_str()) == false)
             {
-                MINT_LOG_ERROR("김장원", "해당 FontFile 을 여는 데 실패했습니다: %s", fontFileNameWithExtension.c_str());
+                MINT_LOG_ERROR("해당 FontFile 을 여는 데 실패했습니다: %s", fontFileNameWithExtension.c_str());
                 return false;
             }
 
             const char kMagicNumber[4]{ *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>() };
             if (StringUtil::compare(kMagicNumber, kFontFileMagicNumber) == false)
             {
-                MINT_LOG_ERROR("김장원", "%s 파일이 아닙니다!", kFontFileMagicNumber);
+                MINT_LOG_ERROR("%s 파일이 아닙니다!", kFontFileMagicNumber);
                 return false;
             }
 
@@ -248,13 +248,13 @@ namespace mint
         {
             if (fontData._fontTextureID.isValid() == false)
             {
-                MINT_LOG_ERROR("김장원", "FontData 의 FontTexture 가 Invalid 합니다!");
+                MINT_LOG_ERROR("FontData 의 FontTexture 가 Invalid 합니다!");
                 return false;
             }
 
             if (fontData._glyphInfoArray.empty() == true)
             {
-                MINT_LOG_ERROR("김장원", "FontData 의 GlyphInfo 가 비어 있습니다!");
+                MINT_LOG_ERROR("FontData 의 GlyphInfo 가 비어 있습니다!");
                 return false;
             }
 
@@ -279,7 +279,7 @@ namespace mint
 
             if (initializeFreeType(fontFaceFileNameS.c_str(), fontSize) == false)
             {
-                MINT_LOG_ERROR("김장원", "FreeType - 초기화에 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - 초기화에 실패했습니다.");
                 return false;
             }
 
@@ -295,7 +295,7 @@ namespace mint
             const uint32 glyphRangeCount = _glyphRangeArray.size();
             if (glyphRangeCount == 0)
             {
-                MINT_LOG_ERROR("김장원", "glyphRangeCount 가 0 입니다!! pushGlyphRange() 함수를 먼저 호출해주세요!");
+                MINT_LOG_ERROR("glyphRangeCount 가 0 입니다!! pushGlyphRange() 함수를 먼저 호출해주세요!");
                 return false;
             }
 
@@ -334,7 +334,7 @@ namespace mint
             unsigned char* png = stbi_write_png_to_mem(reinterpret_cast<unsigned char*>(&pixelArray[0]), textureWidth * 1, textureWidth, textureHeight, 1, &length);
             if (png == nullptr)
             {
-                MINT_LOG_ERROR("김장원", "FreeType - 텍스처 정보를 추출하는 데 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - 텍스처 정보를 추출하는 데 실패했습니다.");
                 return false;
             }
 
@@ -376,20 +376,20 @@ namespace mint
         {
             if (FT_Init_FreeType(&_ftLibrary))
             {
-                MINT_LOG_ERROR("김장원", "FreeType - 라이브러리 초기화에 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - 라이브러리 초기화에 실패했습니다.");
                 return false;
             }
 
             if (FT_New_Face(_ftLibrary, fontFaceFileName, 0, &_ftFace))
             {
-                MINT_LOG_ERROR("김장원", "FreeType - 폰트를 읽어오는 데 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - 폰트를 읽어오는 데 실패했습니다.");
                 return false;
             }
 
             _fontSize = fontSize;
             if (FT_Set_Pixel_Sizes(_ftFace, 0, fontSize))
             {
-                MINT_LOG_ERROR("김장원", "FreeType - 폰트 크기를 지정하는 데 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - 폰트 크기를 지정하는 데 실패했습니다.");
                 return false;
             }
 
@@ -409,13 +409,13 @@ namespace mint
         {
             if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
             {
-                MINT_LOG_ERROR("김장원", "FreeType - Glyph 를 불러오는 데 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - Glyph 를 불러오는 데 실패했습니다.");
                 return false;
             }
 
             if (FT_Render_Glyph(_ftFace->glyph, FT_RENDER_MODE_NORMAL))
             {
-                MINT_LOG_ERROR("김장원", "FreeType - Glyph 를 렌더하는 데 실패했습니다.");
+                MINT_LOG_ERROR("FreeType - Glyph 를 렌더하는 데 실패했습니다.");
                 return false;
             }
 

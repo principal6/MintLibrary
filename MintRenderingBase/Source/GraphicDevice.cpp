@@ -381,14 +381,14 @@ namespace mint
                 _fontRendererContext.pushGlyphRange(GlyphRange(L'가', L'힣'));
                 if (_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1) == false)
                 {
-                    MINT_LOG_ERROR("김장원", "폰트 데이터를 Bake 하는 데 실패했습니다!");
+                    MINT_LOG_ERROR("폰트 데이터를 Bake 하는 데 실패했습니다!");
                     return false;
                 }
             }
 
             if (_fontRendererContext.loadFontData(kDefaultFont) == false)
             {
-                MINT_LOG_ERROR("김장원", "폰트 데이터를 로드하지 못했습니다!");
+                MINT_LOG_ERROR("폰트 데이터를 로드하지 못했습니다!");
                 return false;
             }
 
@@ -419,7 +419,7 @@ namespace mint
             if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION,
                 &swapChainDescriptor, _swapChain.ReleaseAndGetAddressOf(), _device.ReleaseAndGetAddressOf(), nullptr, _deviceContext.ReleaseAndGetAddressOf())))
             {
-                MINT_LOG_ERROR("김장원", "SwapChain 생성에 실패했습니다!");
+                MINT_LOG_ERROR("SwapChain 생성에 실패했습니다!");
                 return false;
             }
             return true;
@@ -432,7 +432,7 @@ namespace mint
             
             if (FAILED(_device->CreateRenderTargetView(backBuffer.Get(), nullptr, _backBufferRtv.ReleaseAndGetAddressOf())))
             {
-                MINT_LOG_ERROR("김장원", "BackBuffer 초기화에 실패했습니다!");
+                MINT_LOG_ERROR("BackBuffer 초기화에 실패했습니다!");
                 return false;
             }
             return true;
@@ -455,13 +455,13 @@ namespace mint
 
             if (FAILED(_device->CreateTexture2D(&depthStencilBufferDescriptor, nullptr, _depthStencilBuffer.ReleaseAndGetAddressOf())))
             {
-                MINT_LOG_ERROR("김장원", "DepthStencil 텍스쳐 생성에 실패했습니다.");
+                MINT_LOG_ERROR("DepthStencil 텍스쳐 생성에 실패했습니다.");
                 return false;
             }
             
             if (FAILED(_device->CreateDepthStencilView(_depthStencilBuffer.Get(), nullptr, _depthStencilView.ReleaseAndGetAddressOf())))
             {
-                MINT_LOG_ERROR("김장원", "DepthStencil 뷰 생성에 실패했습니다.");
+                MINT_LOG_ERROR("DepthStencil 뷰 생성에 실패했습니다.");
                 return false;
             }
 
@@ -477,7 +477,7 @@ namespace mint
             depthStencilDescriptor.StencilEnable = FALSE;
             if (FAILED(_device->CreateDepthStencilState(&depthStencilDescriptor, _depthStencilStateLessEqual.ReleaseAndGetAddressOf())))
             {
-                MINT_LOG_ERROR("김장원", "DepthStencil State 생성에 실패했습니다.");
+                MINT_LOG_ERROR("DepthStencil State 생성에 실패했습니다.");
                 return false;
             }
 
@@ -611,7 +611,7 @@ namespace mint
         {
             if (_needEndRenderingCall)
             {
-                MINT_LOG_ERROR("김장원", "beginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 endRendering() 을 호출해 주세요!");
+                MINT_LOG_ERROR("beginRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 endRendering() 을 호출해 주세요!");
                 return;
             }
 
@@ -639,7 +639,7 @@ namespace mint
         {
             if (_needEndRenderingCall == false)
             {
-                MINT_LOG_ERROR("김장원", "endRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 beginRendering() 을 호출해 주세요!");
+                MINT_LOG_ERROR("endRendering() 을 두 번 연달아 호출할 수 없습니다. 먼저 beginRendering() 을 호출해 주세요!");
                 return;
             }
 

@@ -264,7 +264,7 @@ namespace mint
             const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
             if (openSymbol._symbolClassifier != SymbolClassifier::Grouper_Open)
             {
-                MINT_ASSERT("김장원", false, "symbolPosition 에 있는 Symbol 은 Grouper_Open 이어야 합니다!!!");
+                MINT_ASSERT(false, "symbolPosition 에 있는 Symbol 은 Grouper_Open 이어야 합니다!!!");
                 return false;
             }
 
@@ -285,7 +285,7 @@ namespace mint
                         {
                             *outCloseSymbolPosition = symbolIter;
                         }
-                        MINT_ASSERT("김장원", symbol._symbolClassifier == SymbolClassifier::Grouper_Close, "Symbol 은 찾았지만 Grouper_Close 가 아닙니다!!!");
+                        MINT_ASSERT(symbol._symbolClassifier == SymbolClassifier::Grouper_Close, "Symbol 은 찾았지만 Grouper_Close 가 아닙니다!!!");
                         return true;
                     }
 
@@ -324,7 +324,7 @@ namespace mint
         inline const TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaData(const std::string& typeName) const noexcept
         {
             KeyValuePair found = _typeMetaDataMap.find(typeName);
-            MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
+            MINT_ASSERT(found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
 
             const uint32 typeIndex = *found._value;
             return _typeMetaDatas[typeIndex];
@@ -353,7 +353,7 @@ namespace mint
         inline TypeMetaData<TypeCustomDataType>& IParser<TypeCustomDataType, SyntaxClassifierType>::accessTypeMetaData(const std::string& typeName) noexcept
         {
             KeyValuePair found = _typeMetaDataMap.find(typeName);
-            MINT_ASSERT("김장원", found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
+            MINT_ASSERT(found.isValid() == true, "Type[%s] 가 존재하지 않습니다!", typeName.c_str());
 
             const uint32 typeIndex = *found._value;
             return _typeMetaDatas[typeIndex];

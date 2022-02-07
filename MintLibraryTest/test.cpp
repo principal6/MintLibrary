@@ -596,9 +596,9 @@ const bool testAll()
 
     testReflection();
 
-    MINT_LOG("김장원", "LOG %d", 1234);
-    //MINT_ASSERT("김장원", false, "ASSERTION");
-    //MINT_LOG_ERROR("김장원", "ERROR");
+    MINT_LOG("LOG %d", 1234);
+    //MINT_ASSERT(false, "ASSERTION");
+    //MINT_LOG_ERROR("ERROR");
 
     /*
     */
@@ -621,7 +621,7 @@ int main()
 
     if (mint::FileUtil::exists("Assets") == false)
     {
-        MINT_ASSERT("김장원", false, "Could not find \"/Assets\" directory. Make sure to set the project's working directory as \"$(SolutionDir)\"");
+        MINT_ASSERT(false, "Could not find \"/Assets\" directory. Make sure to set the project's working directory as \"$(SolutionDir)\"");
     }
 
     mint::LibraryInfo::printVersion();

@@ -66,7 +66,7 @@ namespace mint
 
         MINT_INLINE const bool ControlValue::CommonData::isScrollBarEnabled(const ScrollBarType scrollBarType) const noexcept
         {
-            MINT_ASSERT("김장원", scrollBarType != ScrollBarType::None, "잘못된 질문입니다.");
+            MINT_ASSERT(scrollBarType != ScrollBarType::None, "잘못된 질문입니다.");
 
             if (_scrollBarType == ScrollBarType::Both)
             {

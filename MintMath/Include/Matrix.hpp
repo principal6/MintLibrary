@@ -80,7 +80,7 @@ namespace mint
         template<int32 M, int32 N, typename T>
         void setDivMat(T(&mat)[M][N], const T scalar) noexcept
         {
-            MINT_ASSERT("김장원", scalar != 0.0, "0 으로 나누려 합니다!");
+            MINT_ASSERT(scalar != 0.0, "0 으로 나누려 합니다!");
             for (int32 row = 0; row < M; ++row)
             {
                 for (int32 col = 0; col < N; ++col)
@@ -489,28 +489,28 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
         _m[rowIndex][columnIndex] = value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::addElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
         _m[rowIndex][columnIndex] += value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::mulElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
         _m[rowIndex][columnIndex] *= value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE const T Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
     {
-        MINT_ASSERT("김장원", (rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
         return _m[rowIndex][columnIndex];
     }
 
@@ -526,7 +526,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE VectorR<N, T> Matrix<M, N, T>::getRow(const uint32 rowIndex) const noexcept
     {
-        MINT_ASSERT("김장원", rowIndex < static_cast<uint32>(M), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT(rowIndex < static_cast<uint32>(M), "범위를 벗어난 접근입니다!");
 
         VectorR<N, T> result;
         Math::getRow(_m, rowIndex, result._c);
@@ -545,7 +545,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE VectorR<M, T> Matrix<M, N, T>::getColumn(const uint32 columnIndex) const noexcept
     {
-        MINT_ASSERT("김장원", columnIndex < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
+        MINT_ASSERT(columnIndex < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
 
         VectorR<M, T> result;
         Math::getCol(_m, columnIndex, result._c);
@@ -581,7 +581,7 @@ namespace mint
     {
         if (isSquareMatrix() == false)
         {
-            MINT_LOG_ERROR("김장원", "Tried to compute trace from a non-square matrix!");
+            MINT_LOG_ERROR("Tried to compute trace from a non-square matrix!");
         }
 
         return Math::trace(_m);
@@ -771,7 +771,7 @@ namespace mint
     {
         if (isSquareMatrix() == false)
         {
-            MINT_LOG_ERROR("김장원", "Non-square matrix is set to identity!");
+            MINT_LOG_ERROR("Non-square matrix is set to identity!");
         }
 
         Math::setIdentity(_m);

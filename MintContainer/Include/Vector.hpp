@@ -112,14 +112,14 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
@@ -361,42 +361,42 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::front() noexcept
     {
-        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::front() const noexcept
     {
-        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE T& Vector<T>::back() noexcept
     {
-        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[_size - 1];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::back() const noexcept
     {
-        MINT_ASSERT("김장원", _size > 0, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
         return _rawPointer[_size - 1];
     }
 
     template<typename T>
     MINT_INLINE T& Vector<T>::at(const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
         return _rawPointer[std::min(index, _size - 1)];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::at(const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < _size, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
         return _rawPointer[std::min(index, _size - 1)];
     }
 

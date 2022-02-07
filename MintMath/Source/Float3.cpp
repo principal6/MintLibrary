@@ -70,13 +70,13 @@ namespace mint
 
     float& Float3::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT("김장원", index < 3, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < 3, "범위를 벗어난 접근입니다.");
         return _c[index];
     }
 
     const float& Float3::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT("김장원", index < 3, "범위를 벗어난 접근입니다.");
+        MINT_ASSERT(index < 3, "범위를 벗어난 접근입니다.");
         return _c[index];
     }
 

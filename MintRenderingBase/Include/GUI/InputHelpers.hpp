@@ -616,7 +616,7 @@ namespace mint
         inline void InputBoxHelpers::drawTextWithInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
             const Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept
         {
-            MINT_ASSERT("김장원", controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
+            MINT_ASSERT(controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
 
             const Float2& controlLeftCenterPosition = controlData.getControlLeftCenterPosition();
             const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -662,7 +662,7 @@ namespace mint
         inline void InputBoxHelpers::drawTextWithoutInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
             const Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept
         {
-            MINT_ASSERT("김장원", controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
+            MINT_ASSERT(controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 
             const Float2& controlLeftCenterPosition = controlData.getControlLeftCenterPosition();
             const float textDisplayOffset = controlData._controlValue._textBoxData._textDisplayOffset;
@@ -693,7 +693,7 @@ namespace mint
         inline void InputBoxHelpers::drawSelection(Rendering::ShapeFontRendererContext& rendererContext, const Float4& textRenderOffset, 
             const bool isFocused, const float fontSize, const Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept
         {
-            MINT_ASSERT("김장원", textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
+            MINT_ASSERT(textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
 
             if (isFocused == false)
             {

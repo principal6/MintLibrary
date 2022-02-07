@@ -34,8 +34,8 @@ namespace mint
     template<uint32 UnitByteSize, uint32 MaxUnitCount>
     inline byte* StackHolder<UnitByteSize, MaxUnitCount>::registerSpace(const CountMetaDataType unitCount)
     {
-        MINT_ASSERT("김장원", unitCount > 0, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
-        MINT_ASSERT("김장원", unitCount <= kBitMaskByteCount, "!!! 한번에 할당 가능한 최대 Unit 수를 넘었습니다 !!!");
+        MINT_ASSERT(unitCount > 0, "!!! 0 개의 Unit 을 할당할 수는 없습니다 !!!");
+        MINT_ASSERT(unitCount <= kBitMaskByteCount, "!!! 한번에 할당 가능한 최대 Unit 수를 넘었습니다 !!!");
 
         uint32 allocMetaDataIndex = 0;
         uint8 bitOffset = 0;
@@ -49,7 +49,7 @@ namespace mint
             _allocMetaDataArray[allocMetaDataIndex] |= bitMask;
             return &_rawByteArray[byteOffset];
         }
-        MINT_ASSERT("김장원", false, "!!! StackHolder 가 가득 찼습니다 !!! 할당 실패 !!!");
+        MINT_ASSERT(false, "!!! StackHolder 가 가득 찼습니다 !!! 할당 실패 !!!");
         return nullptr;
     }
 
@@ -58,7 +58,7 @@ namespace mint
     {
         if (isInsider(ptr) == false)
         {
-            MINT_ASSERT("김장원", false, "!!! Insider 가 아닙니다 !!!");
+            MINT_ASSERT(false, "!!! Insider 가 아닙니다 !!!");
             return;
         }
 
@@ -67,13 +67,13 @@ namespace mint
         CountMetaDataType& unitCount = _allocCountDataArray[allocSizeDataIndex];
         if (unitCount == 0)
         {
-            MINT_ASSERT("김장원", false, "!!! 할당되지 않은 ptr 을 지울 수 없습니다 !!!");
+            MINT_ASSERT(false, "!!! 할당되지 않은 ptr 을 지울 수 없습니다 !!!");
             return;
         }
 
         if (canDeregister(ptr, unitCount) == false)
         {
-            MINT_ASSERT("김장원", false, "!!! 이 StackHolder 에 할당된 ptr 이 아닙니다 !!!");
+            MINT_ASSERT(false, "!!! 이 StackHolder 에 할당된 ptr 이 아닙니다 !!!");
             return;
         }
 

@@ -25,7 +25,7 @@ namespace mint
                 TextFileReader textFileReader;
                 if (textFileReader.open(fileName) == false)
                 {
-                    MINT_LOG_ERROR("김장원", "CppHlsl 파일[%s] 을 여는 데 실패했습니다!!", fileName);
+                    MINT_LOG_ERROR("CppHlsl 파일[%s] 을 여는 데 실패했습니다!!", fileName);
                     return;
                 }
 
@@ -80,7 +80,7 @@ namespace mint
 
                 if (_hlslString.empty() == true)
                 {
-                    MINT_LOG_ERROR("김장원", "Hlsl String 을 Generate 하지 못했습니다!! typeMetaDataCount: %d", typeMetaDataCount);
+                    MINT_LOG_ERROR("Hlsl String 을 Generate 하지 못했습니다!! typeMetaDataCount: %d", typeMetaDataCount);
                 }
             }
 

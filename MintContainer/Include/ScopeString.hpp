@@ -159,7 +159,7 @@ namespace mint
     {
         if (BufferSize <= _length + insertLength)
         {
-            MINT_ASSERT("김장원", false, "버퍼 크기를 초과해서 insert 할 수 없습니다.");
+            MINT_ASSERT(false, "버퍼 크기를 초과해서 insert 할 수 없습니다.");
             return false;
         }
         return true;
@@ -205,7 +205,7 @@ namespace mint
         uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (BufferSize <= rawStringLength)
         {
-            MINT_ASSERT("김장원", false, "버퍼 크기를 초과하여 문자열이 잘립니다.");
+            MINT_ASSERT(false, "버퍼 크기를 초과하여 문자열이 잘립니다.");
             rawStringLength = BufferSize - 1;
         }
         _length = rawStringLength;

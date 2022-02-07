@@ -73,14 +73,14 @@ namespace mint
                         const size_t escapeOpenAt = latexString.find(kEscapeOpenCh, at + 1);
                         if (escapeOpenAt == StringTypeNpos)
                         {
-                            MINT_LOG_ERROR("김장원", "%d 이후 잘못된 형식이 나왔습니다!", at);
+                            MINT_LOG_ERROR("%d 이후 잘못된 형식이 나왔습니다!", at);
                             break;
                         }
 
                         const size_t escapeCloseAt = latexString.find(kEscapeCloseCh, escapeOpenAt + 1);
                         if (escapeCloseAt == StringTypeNpos)
                         {
-                            MINT_LOG_ERROR("김장원", "%d 이후 잘못된 형식이 나왔습니다!", escapeOpenAt);
+                            MINT_LOG_ERROR("%d 이후 잘못된 형식이 나왔습니다!", escapeOpenAt);
                             break;
                         }
 
@@ -114,7 +114,7 @@ namespace mint
                         {
                             std::string modifierStr;
                             StringUtil::convertWideStringToString(modifierString, modifierStr);
-                            MINT_LOG_ERROR("김장원", "아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.c_str());
+                            MINT_LOG_ERROR("아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.c_str());
                         }
                     }
                     else

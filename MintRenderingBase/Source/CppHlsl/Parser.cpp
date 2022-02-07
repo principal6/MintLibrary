@@ -83,7 +83,7 @@ namespace mint
 
                 if (hasReportedErrors() == true)
                 {
-                    MINT_LOG_ERROR("김장원", "에러가 있었습니다!!!");
+                    MINT_LOG_ERROR("에러가 있었습니다!!!");
 
                     return false;
                 }

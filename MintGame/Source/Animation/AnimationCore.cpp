@@ -70,13 +70,13 @@ namespace mint
         {
             if (_joints.empty() == false && parentJointIndex < 0)
             {
-                MINT_LOG_ERROR("김장원", "이미 RootJoint 가 있는데 또 만들 수 없습니다!");
+                MINT_LOG_ERROR("이미 RootJoint 가 있는데 또 만들 수 없습니다!");
                 return SkeletonJoint::kInvalidJointIndex;
             }
 
             if (_joints.empty() == false && _joints.size() <= static_cast<uint32>(parentJointIndex))
             {
-                MINT_LOG_ERROR("김장원", "Parent Joint Index 가 잘못되었습니다!");
+                MINT_LOG_ERROR("Parent Joint Index 가 잘못되었습니다!");
                 return SkeletonJoint::kInvalidJointIndex;
             }
 

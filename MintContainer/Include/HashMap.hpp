@@ -345,7 +345,7 @@ namespace mint
     inline void HashMap<Key, Value>::resize() noexcept
     {
         const float load = static_cast<float>(_bucketCount) / static_cast<float>(_bucketArray.size());
-        MINT_LOG("김장원", "HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.size());
+        MINT_LOG("HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.size());
 
         Vector<Bucket<Key, Value>> oldBucketArray = _bucketArray;
 
@@ -436,9 +436,9 @@ namespace mint
         auto& baseBucket = _bucketArray[bucketIndex];
         auto& bucketA = _bucketArray[bucketIndex + hopDistanceA];
         auto& bucketB = _bucketArray[bucketIndex + hopDistanceB];
-        MINT_ASSERT("김장원", hopDistanceA < kHopRange, "HopDistance 는 반드시 HopRange 안에 있어야 합니다!!!");
-        MINT_ASSERT("김장원", hopDistanceB < kHopRange, "HopDistance 는 반드시 HopRange 안에 있어야 합니다!!!");
-        MINT_ASSERT("김장원", bucketB._isUsed == false, "BucketB 는 비어 있어야만 합니다!!!");
+        MINT_ASSERT(hopDistanceA < kHopRange, "HopDistance 는 반드시 HopRange 안에 있어야 합니다!!!");
+        MINT_ASSERT(hopDistanceB < kHopRange, "HopDistance 는 반드시 HopRange 안에 있어야 합니다!!!");
+        MINT_ASSERT(bucketB._isUsed == false, "BucketB 는 비어 있어야만 합니다!!!");
         
         baseBucket._hopInfo.set(hopDistanceA, false);
         baseBucket._hopInfo.set(hopDistanceB, true);

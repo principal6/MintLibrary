@@ -422,7 +422,7 @@ namespace mint
 
             if (childAt == kUint32Max)
             {
-                MINT_ASSERT("김장원", false, "자식이 아닌 노드를 지우려 합니다...!!!");
+                MINT_ASSERT(false, "자식이 아닌 노드를 지우려 합니다...!!!");
                 return;
             }
 
@@ -486,7 +486,7 @@ namespace mint
 
         if (getRootNode() == nodeAccessor)
         {
-            MINT_ASSERT("김장원", false, "루트 노트를 옮길 수 없습니다!!!");
+            MINT_ASSERT(false, "루트 노트를 옮길 수 없습니다!!!");
             return;
         }
 
@@ -505,7 +505,7 @@ namespace mint
                 }
             }
 
-            MINT_ASSERT("김장원", childAt != kUint32Max, "발생하면 안 되는 상황!!!");
+            MINT_ASSERT(childAt != kUint32Max, "발생하면 안 되는 상황!!!");
 
             oldParnetNode._childNodeAccessorArray.erase(childAt);
         }
