@@ -94,6 +94,8 @@ namespace mint
         };
         
     };
+
+    Float2                      operator*(const float scalar, const Float2& vector) noexcept;
 }
 
 

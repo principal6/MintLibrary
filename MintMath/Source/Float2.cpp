@@ -166,4 +166,9 @@ namespace mint
     {
         return (_x < 0.0f) || (_y < 0.0f);
     }
+
+    Float2 operator*(const float scalar, const Float2& vector) noexcept
+    {
+        return vector * scalar;
+    }
 }
