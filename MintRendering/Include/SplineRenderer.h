@@ -19,6 +19,8 @@ namespace mint
         class ShapeFontRendererContext;
         
 
+        // TODO: SplineComputer 로 바꾸자
+        // LineStrip 렌더링 기능을 ShapeRenderer 에 넣자! (LineList 도 넣을까?)
         class SplineRenderer
         {
         public:
@@ -45,6 +47,9 @@ namespace mint
             const bool                          drawBezierCurve(const Vector<Float2>& controlPoints, const float thickness, const Color& color = Color::kBlack) noexcept;
 
         private:
+            float                               computePower(const float base, const uint32 exponent) const noexcept;
+            uint32                              computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept;
+            Float2                              getBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
             Float2                              getDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
             void                                drawControlPoints(const Vector<Float2>& controlPoints) noexcept;
 

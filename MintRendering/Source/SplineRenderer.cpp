@@ -49,13 +49,54 @@ namespace mint
             const uint32 stepCount = _precision;
             for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
             {
-                const Float2& p0 = getDeCasteljauPoint(controlPoints, t0 + tStep * stepIndex);
-                const Float2& p1 = getDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1));
+                //const Float2& p0 = getDeCasteljauPoint(controlPoints, t0 + tStep * stepIndex);
+                //const Float2& p1 = getDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1));
+                const Float2& p0 = getBezierPoint(controlPoints, t0 + tStep * stepIndex);
+                const Float2& p1 = getBezierPoint(controlPoints, t0 + tStep * (stepIndex + 1));
                 _rendererContext->drawLine(p0, p1, thickness);
             }
 
             drawControlPoints(controlPoints);
             return true;
+        }
+
+        float SplineRenderer::computePower(const float base, const uint32 exponent) const noexcept
+        {
+            float result = 1.0f;
+            for (uint32 iter = 0; iter < exponent; iter++)
+            {
+                result *= base;
+            }
+            return result;
+        }
+
+        uint32 SplineRenderer::computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept
+        {
+            if (selectionCount == 0 || selectionCount == totalCount)
+            {
+                return 1;
+            }
+
+            //    1 1
+            //   1 2 1
+            //  1 3 3 1
+            // 1 4 6 4 1
+            return computeCombination(totalCount - 1, selectionCount - 1) + computeCombination(totalCount - 1, selectionCount);
+        }
+
+        Float2 SplineRenderer::getBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
+        {
+            const float s = 1.0f - t;
+            Float2 result = Float2::kZero;
+            const uint32 controlPointCount = controlPoints.size();
+            const uint32 order = controlPointCount - 1;
+            for (uint32 controlPointIndex = 0; controlPointIndex < controlPointCount; controlPointIndex++)
+            {
+                const float coefficient = static_cast<float>(computeCombination(order, controlPointIndex));
+                const Float2& controlPoint = controlPoints[controlPointIndex];
+                result += (coefficient * computePower(s, order - controlPointIndex) * computePower(t, controlPointIndex) * controlPoint);
+            }
+            return result;
         }
 
         Float2 SplineRenderer::getDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
