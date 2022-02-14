@@ -109,7 +109,12 @@ namespace mint
             // No rotation allowed
             void                                drawLine(const Float2& p0, const Float2& p1, const float thickness);
 
+            // Independent from internal position set by setPosition() call
+            // No rotation allowed
+            const bool                          drawLineStrip(const Vector<Float2>& points, const float thickness);
+
         protected:
+            void                                drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
             const float                         packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept;
             void                                pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
 

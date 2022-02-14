@@ -1137,6 +1137,27 @@ namespace mint
 
         void ShapeRendererContext::drawLine(const Float2& p0, const Float2& p1, const float thickness)
         {
+            drawLineInternal(p0, p1, thickness);
+            pushTransformToBuffer(0.0f, false);
+        }
+
+        const bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
+        {
+            const uint32 pointCount = points.size();
+            MINT_ASSURE(pointCount > 1);
+
+            for (uint32 pointIndex = 1; pointIndex < pointCount; ++pointIndex)
+            {
+                const Float2& p0 = points[pointIndex - 1];
+                const Float2& p1 = points[pointIndex];
+                drawLineInternal(p0, p1, thickness);
+            }
+            pushTransformToBuffer(0.0f, false);
+            return true;
+        }
+
+        void ShapeRendererContext::drawLineInternal(const Float2& p0, const Float2& p1, const float thickness)
+        {
             static constexpr uint32 kDeltaVertexCount = 4;
             const Float2& dir = Float2::normalize(p1 - p0);
             const Float2& normal = Float2(-dir._y, dir._x);
@@ -1183,8 +1204,6 @@ namespace mint
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
-
-            pushTransformToBuffer(0.0f, false);
         }
 
         const float ShapeRendererContext::packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept
