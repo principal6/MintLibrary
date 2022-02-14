@@ -47,14 +47,16 @@ namespace mint
             const float t1 = 1.0f;
             const float tStep = t1 / static_cast<float>(_precision);
             const uint32 stepCount = _precision;
+            Vector<Float2> points;
+            points.reserve(stepCount + 1);
+            //points.push_back(getDeCasteljauPoint(controlPoints, t0));
+            points.push_back(getBezierPoint(controlPoints, t0));
             for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
             {
-                //const Float2& p0 = getDeCasteljauPoint(controlPoints, t0 + tStep * stepIndex);
-                //const Float2& p1 = getDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1));
-                const Float2& p0 = getBezierPoint(controlPoints, t0 + tStep * stepIndex);
-                const Float2& p1 = getBezierPoint(controlPoints, t0 + tStep * (stepIndex + 1));
-                _rendererContext->drawLine(p0, p1, thickness);
+                //points.push_back(getDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
+                points.push_back(getBezierPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
             }
+            _rendererContext->drawLineStrip(points, thickness);
 
             drawControlPoints(controlPoints);
             return true;
