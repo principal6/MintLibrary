@@ -118,6 +118,12 @@ namespace mint
         {
             return (::abs(a - b) < epsilon);
         }
+
+        template<typename T>
+        MINT_INLINE T lerp(const T& a, const T& b, const float t) noexcept
+        {
+            return a * (1.0f - t) + b * t;
+        }
     }
 }
 

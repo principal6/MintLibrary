@@ -332,7 +332,6 @@ const bool testWindow()
     }
     testCameraObject->rotatePitch(0.125f);
     
-    Rendering::SplineRenderer splineRenderer(graphicDevice.getShapeFontRendererContext());
     Rendering::MeshRenderer meshRenderer{ graphicDevice };
     Rendering::InstantRenderer instantRenderer{ graphicDevice };
     Game::SkeletonGenerator testSkeletonGenerator;
@@ -427,16 +426,17 @@ const bool testWindow()
         {
             graphicDevice.beginRendering();
 
-#if 0 // SplineRenderer
-            Rendering::SplineRenderer::DebugOptions splineRendererDebugOptions;
-            splineRendererDebugOptions._drawControlPoints = true;
+#if 0 // SplineGenerator
             Vector<Float2> controlPoints;
-            controlPoints.push_back(Float2(20, 100));
-            controlPoints.push_back(Float2(60, 200));
-            controlPoints.push_back(Float2(100, 100));
-            splineRenderer.setDebugOptions(splineRendererDebugOptions);
-            splineRenderer.drawBezierCurve(controlPoints, 1.0f);
-            splineRenderer.render();
+            controlPoints.push_back(Float2(50, 100));
+            controlPoints.push_back(Float2(30, 200));
+            controlPoints.push_back(Float2(100, 200));
+            controlPoints.push_back(Float2(110, 100));
+            Vector<Float2> linePoints;
+            Rendering::SplineGenerator splineGenerator;
+            splineGenerator.generateBezierCurve(controlPoints, linePoints);
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kRed);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(linePoints, 1.0f);
 #endif
 #if 0 // Plotter
             Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();

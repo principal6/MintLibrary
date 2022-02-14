@@ -8,4 +8,4 @@
 #include <MintRendering/Source/Object.cpp>
 #include <MintRendering/Source/Plotter.cpp>
 #include <MintRendering/Source/MathExpRenderer.cpp>
-#include <MintRendering/Source/SplineRenderer.cpp>
+#include <MintRendering/Source/SplineGenerator.cpp>
