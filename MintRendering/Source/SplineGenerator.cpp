@@ -32,47 +32,48 @@ namespace mint
             MINT_ASSURE(controlPoints.size() > 1);
 
             const uint32 order = controlPoints.size() - 1;
-            const float t0 = 0.0f;
-            const float t1 = 1.0f;
-            const float tStep = t1 / static_cast<float>(_precision);
+
+            const float tBegin = 0.0f;
+            const float tEnd = 1.0f;
+            const float tStep = tEnd / static_cast<float>(_precision);
             const uint32 stepCount = _precision;
             outLinePoints.clear();
             outLinePoints.reserve(stepCount + 1);
-            outLinePoints.push_back(getDeCasteljauPoint(controlPoints, t0));
-            //outLinePoints.push_back(getBezierPoint(controlPoints, t0));
+            //outLinePoints.push_back(computeDeCasteljauPoint(controlPoints, t0));
+            outLinePoints.push_back(computeBezierPoint(controlPoints, tBegin));
             for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
             {
-                outLinePoints.push_back(getDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
-                //outLinePoints.push_back(getBezierPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
+                //outLinePoints.push_back(computeDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
+                outLinePoints.push_back(computeBezierPoint(controlPoints, tBegin + tStep * (stepIndex + 1)));
             }
             return true;
         }
 
-        float SplineGenerator::computePower(const float base, const uint32 exponent) const noexcept
+        const bool SplineGenerator::generateBSplineCurve(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
         {
-            float result = 1.0f;
-            for (uint32 iter = 0; iter < exponent; iter++)
+            const uint32 controlPointCount = controlPoints.size();
+            const uint32 knotCount = knotVector.size();
+            if (knotCount != order + controlPointCount + 1)
             {
-                result *= base;
-            }
-            return result;
-        }
-
-        uint32 SplineGenerator::computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept
-        {
-            if (selectionCount == 0 || selectionCount == totalCount)
-            {
-                return 1;
+                MINT_ASSERT(false, "Knot 의 개수는 Order + ControlPoint 개수 + 1 이어야 합니다!");
+                return false;
             }
 
-            //    1 1
-            //   1 2 1
-            //  1 3 3 1
-            // 1 4 6 4 1
-            return computeCombination(totalCount - 1, selectionCount - 1) + computeCombination(totalCount - 1, selectionCount);
+            const float tBegin = knotVector[order];
+            const float tEnd = knotVector[(knotVector.size() - 1) - (2 * order)];
+            const float tStep = tEnd / static_cast<float>(_precision);
+            const uint32 stepCount = _precision;
+            outLinePoints.clear();
+            outLinePoints.reserve(stepCount + 1);
+            outLinePoints.push_back(computeBSplinePoint(order, controlPoints, knotVector, tBegin));
+            for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
+            {
+                outLinePoints.push_back(computeBSplinePoint(order, controlPoints, knotVector, tBegin + tStep * (stepIndex + 1)));
+            }
+            return true;
         }
 
-        Float2 SplineGenerator::getBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
+        Float2 SplineGenerator::computeBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
         {
             const float s = 1.0f - t;
             Float2 result = Float2::kZero;
@@ -87,7 +88,7 @@ namespace mint
             return result;
         }
 
-        Float2 SplineGenerator::getDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
+        Float2 SplineGenerator::computeDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
         {
             // TODO: Stack Vector 구현으로 바꾸면 훨씬 성능에 나을 듯
 
@@ -109,7 +110,65 @@ namespace mint
                 result.push_back(Math::lerp(controlPoints[orderIter], controlPoints[orderIter + 1], t));
             }
 
-            return getDeCasteljauPoint(result, t);
+            return computeDeCasteljauPoint(result, t);
+        }
+
+        Float2 SplineGenerator::computeBSplinePoint(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, const float t) const noexcept
+        {
+            Float2 result = Float2::kZero;
+            const uint32 controlPointCount = controlPoints.size();
+            if (knotVector.size() != order + controlPointCount + 1)
+            {
+                MINT_ASSERT(false, "Knot 의 개수는 Order + ControlPoint 개수 + 1 이어야 합니다!");
+                return result;
+            }
+
+            const uint32 k = order;
+            for (uint32 i = 0; i < controlPointCount; i++)
+            {
+                const float N_i_k_t = evaluateBSplineBasisFunction(i, k, knotVector, t);
+                result += (N_i_k_t * controlPoints[i]);
+            }
+            return result;
+        }
+
+        const float SplineGenerator::computePower(const float base, const uint32 exponent) const noexcept
+        {
+            float result = 1.0f;
+            for (uint32 iter = 0; iter < exponent; iter++)
+            {
+                result *= base;
+            }
+            return result;
+        }
+        
+        const uint32 SplineGenerator::computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept
+        {
+            if (selectionCount == 0 || selectionCount == totalCount)
+            {
+                return 1;
+            }
+
+            //    1 1
+            //   1 2 1
+            //  1 3 3 1
+            // 1 4 6 4 1
+            return computeCombination(totalCount - 1, selectionCount - 1) + computeCombination(totalCount - 1, selectionCount);
+        }
+
+        const float SplineGenerator::evaluateBSplineBasisFunction(const uint32 i, const uint32 j, const Vector<float>& knotVector, const float t) const noexcept
+        {
+            // P = Plus
+            if (j == 0)
+            {
+                return ((knotVector[i] <= t && t < knotVector[i + 1]) ? 1.0f : 0.0f);
+            }
+            else
+            {
+                const float leftCoefficient = (t - knotVector[i]) / (knotVector[i + j] - knotVector[i]);
+                const float rightCoefficient = (knotVector[i + j + 1] - t) / (knotVector[i + j + 1] - knotVector[i + 1]);
+                return leftCoefficient * evaluateBSplineBasisFunction(i, j - 1, knotVector, t) + rightCoefficient * evaluateBSplineBasisFunction(i + 1, j - 1, knotVector, t);
+            }
         }
     }
 }

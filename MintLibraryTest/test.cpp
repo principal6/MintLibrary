@@ -427,16 +427,79 @@ const bool testWindow()
             graphicDevice.beginRendering();
 
 #if 0 // SplineGenerator
-            Vector<Float2> controlPoints;
-            controlPoints.push_back(Float2(50, 100));
-            controlPoints.push_back(Float2(30, 200));
-            controlPoints.push_back(Float2(100, 200));
-            controlPoints.push_back(Float2(110, 100));
-            Vector<Float2> linePoints;
+            Vector<Float2> sourceControlPointSet;
+            sourceControlPointSet.push_back(Float2(30, 100));
+            sourceControlPointSet.push_back(Float2(50, 200));
+            sourceControlPointSet.push_back(Float2(100, 200));
+            sourceControlPointSet.push_back(Float2(110, 100));
+            sourceControlPointSet.push_back(Float2(160, 200));
+            sourceControlPointSet.push_back(Float2(200, 100));
+            sourceControlPointSet.push_back(Float2(250, 200));
+            const uint32 sourceControlPointCount = sourceControlPointSet.size();
+            Vector<Float2> bezierControlPointSet0;
+            bezierControlPointSet0.push_back(sourceControlPointSet[0]);
+            bezierControlPointSet0.push_back(sourceControlPointSet[1]);
+            bezierControlPointSet0.push_back(sourceControlPointSet[2]);
+            bezierControlPointSet0.push_back(sourceControlPointSet[3]);
+            Vector<Float2> bezierControlPointSet1;
+            bezierControlPointSet1.push_back(sourceControlPointSet[1]);
+            bezierControlPointSet1.push_back(sourceControlPointSet[2]);
+            bezierControlPointSet1.push_back(sourceControlPointSet[3]);
+            bezierControlPointSet1.push_back(sourceControlPointSet[4]);
+            Vector<Float2> bezierControlPointSet2;
+            bezierControlPointSet2.push_back(sourceControlPointSet[2]);
+            bezierControlPointSet2.push_back(sourceControlPointSet[3]);
+            bezierControlPointSet2.push_back(sourceControlPointSet[4]);
+            bezierControlPointSet2.push_back(sourceControlPointSet[5]);
+            Vector<Float2> bezierControlPointSet3;
+            bezierControlPointSet3.push_back(sourceControlPointSet[3]);
+            bezierControlPointSet3.push_back(sourceControlPointSet[4]);
+            bezierControlPointSet3.push_back(sourceControlPointSet[5]);
+            bezierControlPointSet3.push_back(sourceControlPointSet[6]);
             Rendering::SplineGenerator splineGenerator;
-            splineGenerator.generateBezierCurve(controlPoints, linePoints);
+            Vector<Float2> bezierLinePointSet0;
+            Vector<Float2> bezierLinePointSet1;
+            Vector<Float2> bezierLinePointSet2;
+            Vector<Float2> bezierLinePointSet3;
+            splineGenerator.setPrecision(16);
+            splineGenerator.generateBezierCurve(bezierControlPointSet0, bezierLinePointSet0);
+            splineGenerator.generateBezierCurve(bezierControlPointSet1, bezierLinePointSet1);
+            splineGenerator.generateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
+            splineGenerator.generateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
             graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kRed);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(linePoints, 1.0f);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet0, 1.0f);
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kGreen);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet1, 1.0f);
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kBlue);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet2, 1.0f);
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kCyan);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet3, 1.0f);
+
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kBlack);
+            for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
+            {
+                const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
+                graphicDevice.getShapeFontRendererContext().setPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
+                graphicDevice.getShapeFontRendererContext().drawCircle(2.0f);
+
+                if (sourceControlPointIndex > 0)
+                {
+                    const Float2& previousSourceControlPoint = sourceControlPointSet[sourceControlPointIndex - 1];
+                    graphicDevice.getShapeFontRendererContext().drawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
+                }
+            }
+
+            const uint32 bSplineOrder = 2;
+            Vector<float> bSplineKnotVector;
+            for (uint32 knotIndex = 0; knotIndex < sourceControlPointCount + bSplineOrder + 1; knotIndex++)
+            {
+                bSplineKnotVector.push_back(static_cast<float>(knotIndex));
+            }
+            Vector<Float2> bSplineLinePointSet;
+            splineGenerator.setPrecision(64);
+            splineGenerator.generateBSplineCurve(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
+            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kMagenta);
+            graphicDevice.getShapeFontRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
 #endif
 #if 0 // Plotter
             Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
