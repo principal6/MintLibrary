@@ -16,6 +16,11 @@ namespace mint
 {
     namespace Rendering
     {
+        // TODO
+        // Hermite splines
+        // Catmull-Rom splines
+        // Cardinal splines (tension)
+        // Kochanek-Bartels splines (bias, continuity)
         class SplineGenerator
         {
         public:
