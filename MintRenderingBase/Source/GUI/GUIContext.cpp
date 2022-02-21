@@ -1017,8 +1017,7 @@ namespace mint
             }
             else
             {
-                if (_mouseStates.isButtonDown(Platform::MouseButton::Left) == true 
-                    && isInControlInnerInteractionArea(_mouseStates.getButtonDownPosition(), controlData) == true)
+                if (_controlInteractionStateSet.isControlPressed(controlData) == true)
                 {
                     const Float2 dragDelta = _mouseStates.getMouseDragDelta();
                     value += (dragDelta._x - dragDelta._y) * 0.1f;
