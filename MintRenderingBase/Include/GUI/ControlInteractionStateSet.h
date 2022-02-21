@@ -32,6 +32,7 @@ namespace mint
             void                            setControlFocused(const ControlData& controlData) noexcept;
             
         public:
+            MINT_INLINE const bool          hasHoveredControl() const noexcept { return _hoveredControlID.isValid(); }
             MINT_INLINE const bool          hasPressedControl() const noexcept { return _pressedControlID.isValid(); }
             MINT_INLINE const bool          hasClickedControl() const noexcept { return _clickedControlIDPerFrame.isValid(); }
             MINT_INLINE const bool          hasFocusedControl() const noexcept { return _focusedControlID.isValid(); }

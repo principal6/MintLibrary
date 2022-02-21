@@ -237,10 +237,20 @@ namespace mint
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
                 ScopeStringW<300> buffer;
+                if (_controlInteractionStateSet.hasHoveredControl())
+                {
+                    const ControlData& hoveredControlData = getControlData(_controlInteractionStateSet.getHoveredControlID());
+                    formatString(buffer, L"Hovered Control ID: %llX", hoveredControlData.getID().getRawValue());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+
+                    formatString(buffer, L"Hovered Control Type: (%s)", getControlTypeWideString(hoveredControlData.getControlType()));
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+                }
+
                 if (_controlInteractionStateSet.hasPressedControl())
                 {
                     const ControlData& pressedControlData = getControlData(_controlInteractionStateSet.getPressedControlID());
-                    formatString(buffer, L"Pressed Control ID: %X", pressedControlData.getID().getRawValue());
+                    formatString(buffer, L"Pressed Control ID: %llX", pressedControlData.getID().getRawValue());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"Pressed Control Type: (%s)", getControlTypeWideString(pressedControlData.getControlType()));
@@ -250,7 +260,7 @@ namespace mint
                 if (_controlInteractionStateSet.hasFocusedControl())
                 {
                     const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
-                    formatString(buffer, L"Focused Control ID: %X", focusedControlData.getID().getRawValue());
+                    formatString(buffer, L"Focused Control ID: %llX", focusedControlData.getID().getRawValue());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
                     formatString(buffer, L"Focused Control Type: (%s)", getControlTypeWideString(focusedControlData.getControlType()));
