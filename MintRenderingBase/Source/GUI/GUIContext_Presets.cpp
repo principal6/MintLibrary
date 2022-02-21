@@ -236,33 +236,43 @@ namespace mint
             windowParam._scrollBarType = ScrollBarType::Both;
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
+                ScopeStringW<300> buffer;
+                if (_controlInteractionStateSet.hasFocusedControl())
+                {
+                    const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
+                    formatString(buffer, L"Focused Control ID: %X", focusedControlData.getID().getRawValue());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+
+                    formatString(buffer, L"Focused Control Type: (%s)", getControlTypeWideString(focusedControlData.getControlType()));
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+                }
+
                 if (isValidControl(_viewerTargetControlID) == true)
                 {
-                    ScopeStringW<300> buffer;
-                    const ControlData& controlData = getControlData(_viewerTargetControlID);
+                    const ControlData& viewerTargetControlData = getControlData(_viewerTargetControlID);
 
                     formatString(buffer, L"Control ID Map Size: %u", _controlIDMap.size());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"ID: %llX", controlData.getID());
+                    formatString(buffer, L"ID: %llX", viewerTargetControlData.getID());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(controlData.getControlType()));
+                    formatString(buffer, L"Control Type: (%s)", getControlTypeWideString(viewerTargetControlData.getControlType()));
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"Text: %s", controlData._text.c_str());
+                    formatString(buffer, L"Text: %s", viewerTargetControlData._text.c_str());
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"Position: (%f, %f)", controlData._position._x, controlData._position._y);
+                    formatString(buffer, L"Position: (%f, %f)", viewerTargetControlData._position._x, viewerTargetControlData._position._y);
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"InteractionSize: (%f, %f)", controlData.getInteractionSize()._x, controlData.getInteractionSize()._y);
+                    formatString(buffer, L"InteractionSize: (%f, %f)", viewerTargetControlData.getInteractionSize()._x, viewerTargetControlData.getInteractionSize()._y);
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    formatString(buffer, L"Inner InteractionSize: (%f, %f)", controlData.getInnerInteractionSize()._x, controlData.getInnerInteractionSize()._y);
+                    formatString(buffer, L"Inner InteractionSize: (%f, %f)", viewerTargetControlData.getInnerInteractionSize()._x, viewerTargetControlData.getInnerInteractionSize()._y);
                     makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
 
-                    makeFromReflectionClass(MINT_GUI_CONTROL(controlData.getReflectionData(), &controlData));
+                    makeFromReflectionClass(MINT_GUI_CONTROL(viewerTargetControlData.getReflectionData(), &viewerTargetControlData));
                 }
 
                 endWindow();
