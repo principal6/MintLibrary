@@ -15,25 +15,15 @@ namespace mint
     class OwnPtr
     {
     public:
-                    OwnPtr() : _rawPointer{ nullptr } { __noop; }
-                    OwnPtr(T* const rawPointer) : _rawPointer{ rawPointer } { __noop; }
-                    OwnPtr(const OwnPtr& rhs) = delete;
-                    OwnPtr(OwnPtr&& rhs) : _rawPointer{ rhs._rawPointer } { rhs._rawPointer = nullptr; }
-                    ~OwnPtr() { release(); }
+                            OwnPtr() : _rawPointer{ nullptr } { __noop; }
+                            OwnPtr(T* const rawPointer) : _rawPointer{ rawPointer } { __noop; }
+                            OwnPtr(const OwnPtr& rhs) = delete;
+                            OwnPtr(OwnPtr&& rhs) : _rawPointer{ rhs._rawPointer } { rhs._rawPointer = nullptr; }
+                            ~OwnPtr() { release(); }
 
     public:
-        OwnPtr&     operator=(const OwnPtr& rhs)
-        {
-            if (this != &rhs)
-            {
-                release();
-
-                assign(MINT_NEW(T, *rhs._rawPointer));
-            }
-            return *this;
-        }
-
-        OwnPtr&     operator=(OwnPtr&& rhs) noexcept
+        OwnPtr&             operator=(const OwnPtr& rhs) noexcept = delete;
+        OwnPtr&             operator=(OwnPtr&& rhs) noexcept
         {
             if (this != &rhs)
             {
@@ -44,43 +34,19 @@ namespace mint
         }
 
     public:
-        T&          operator*() noexcept
-        {
-            return *_rawPointer;
-        }
-
-        const T&    operator*() const noexcept
-        {
-            return *_rawPointer;
-        }
-
-        T*          operator->() noexcept
-        {
-            return _rawPointer;
-        }
-
-        const T*    operator->() const noexcept
-        {
-            return _rawPointer;
-        }
+        T*                  operator&() noexcept { return _rawPointer; }
+        T&                  operator*() noexcept { return *_rawPointer; }
+        const T&            operator*() const noexcept { return *_rawPointer; }
+        T*                  operator->() noexcept { return _rawPointer; }
+        const T*            operator->() const noexcept { return _rawPointer; }
 
     public:
-        void        assign(T*&& rawPointer) noexcept
-        {
-            release();
-
-            _rawPointer = rawPointer;
-
-            rawPointer = nullptr;
-        }
-
-        void        release() noexcept
-        {
-            MINT_DELETE(_rawPointer);
-        }
+        void                assign(T*&& rawPointer) noexcept { release(); _rawPointer = rawPointer; rawPointer = nullptr; }
+        void                release() noexcept { MINT_DELETE(_rawPointer); }
+        constexpr uint64    size() { return sizeof(T); }
 
     private:
-        T*          _rawPointer;
+        T*                  _rawPointer;
     };
 }
 

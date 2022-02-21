@@ -7,6 +7,7 @@
 
 #include <MintPlatform/Include/IWindow.h>
 
+#include <MintContainer/Include/OwnPtr.h>
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/HashMap.h>
 
@@ -116,7 +117,7 @@ namespace mint
             uint32                      _windowStyle;
             HWND                        _hWnd;
             HINSTANCE                   _hInstance;
-            Safe<MSG>                   _msg;
+            OwnPtr<MSG>                 _msg;
         
         private:
             HCURSOR                     _cursorArray[static_cast<uint32>(CursorType::COUNT)];

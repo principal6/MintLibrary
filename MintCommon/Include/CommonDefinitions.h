@@ -102,30 +102,4 @@ namespace mint
 #endif
 
 
-    namespace mint
-    {
-        template<typename T>
-        class Safe
-        {
-        public:
-                                Safe() : _ptr{ nullptr } { __noop; }
-                                Safe(T* const ptr) : _ptr{ ptr } { __noop; }
-                                ~Safe() { release(); }
-
-        public:
-            T*                  operator&() const noexcept { return _ptr; }
-            T&                  operator*() noexcept { return *_ptr; }
-            T*                  operator->() noexcept { return _ptr; }
-
-        public:
-            void                assign(T* const ptr) { release(); _ptr = ptr; }
-            void                release() { MINT_DELETE(_ptr); }
-            constexpr uint64    size() { return sizeof(T); }
-
-        private:
-            T*                  _ptr;
-        };
-    }
-
-
 #endif // !MINT_COMMON_DEFINITIONS_H
