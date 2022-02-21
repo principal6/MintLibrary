@@ -49,7 +49,7 @@ namespace mint
             return true;
         }
 
-        const bool SplineGenerator::generateBSplineCurve(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
+        const bool SplineGenerator::generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
         {
             const uint32 controlPointCount = controlPoints.size();
             const uint32 knotCount = knotVector.size();

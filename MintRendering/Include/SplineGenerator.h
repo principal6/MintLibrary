@@ -32,7 +32,7 @@ namespace mint
 
         public:
             const bool                          generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept;
-            const bool                          generateBSplineCurve(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept;
+            const bool                          generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept;
 
         public:
             Float2                              computeBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;

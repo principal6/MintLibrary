@@ -497,7 +497,7 @@ const bool testWindow()
             }
             Vector<Float2> bSplineLinePointSet;
             splineGenerator.setPrecision(64);
-            splineGenerator.generateBSplineCurve(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
+            splineGenerator.generateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
             graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kMagenta);
             graphicDevice.getShapeFontRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
 #endif
