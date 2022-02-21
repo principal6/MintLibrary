@@ -2220,13 +2220,14 @@ namespace mint
             outBackgroundColor = normalColor;
 
             const bool isClicked = _controlInteractionStateSet.isControlClicked(controlData);
-            if (_controlInteractionStateSet.isControlHovered(controlData) == true)
+            if (_controlInteractionStateSet.isControlHovered(controlData))
             {
                 outBackgroundColor = hoverColor;
-            }
-            if (_controlInteractionStateSet.isControlPressed(controlData) == true || isClicked == true)
-            {
-                outBackgroundColor = pressedColor;
+
+                if (_controlInteractionStateSet.isControlPressed(controlData) == true || isClicked == true)
+                {
+                    outBackgroundColor = pressedColor;
+                }
             }
 
             if (needToColorFocused(controlData) == false)
