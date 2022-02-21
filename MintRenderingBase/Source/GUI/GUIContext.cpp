@@ -2351,7 +2351,7 @@ namespace mint
         void GUIContext::processControlInteractionInternal(ControlData& controlData, const bool setMouseInteractionDone) noexcept
         {
             const ControlID& controlID = controlData.getID();
-            if (isInteractingInternal(controlData) == false || _controlInteractionStateSet.isMouseInteractionDoneThisFrame() == true)
+            if (isInteracting(controlData) == false || _controlInteractionStateSet.isMouseInteractionDoneThisFrame() == true)
             {
                 _controlInteractionStateSet.resetHoverIf(controlData);
                 _controlInteractionStateSet.resetPressIf(controlData);
@@ -2428,7 +2428,7 @@ namespace mint
                 return;
             }
 
-            if (isInteractingInternal(controlData) == false)
+            if (isInteracting(controlData) == false)
             {
                 return;
             }
@@ -2899,7 +2899,7 @@ namespace mint
             }
         }
 
-        const bool GUIContext::isInteractingInternal(const ControlData& controlData) const noexcept
+        const bool GUIContext::isInteracting(const ControlData& controlData) const noexcept
         {
             if (_controlInteractionStateSet.hasFocusedControl() == true && _controlInteractionStateSet.isControlFocused(controlData) == false && 
                 isAncestorControlInteractionState(controlData, ControlInteractionState::Focused) == false)
@@ -2933,7 +2933,7 @@ namespace mint
                 return controlData.getID() == _draggedControlID;
             }
 
-            if (_resizedControlID.isValid() == true || controlData._option._isDraggable == false || isInteractingInternal(controlData) == false)
+            if (_resizedControlID.isValid() == true || controlData._option._isDraggable == false || isInteracting(controlData) == false)
             {
                 return false;
             }
@@ -2963,7 +2963,7 @@ namespace mint
                 return controlData.getID() == _resizedControlID;
             }
 
-            if (_draggedControlID.isValid() == true || controlData.isResizable() == false || isInteractingInternal(controlData) == false)
+            if (_draggedControlID.isValid() == true || controlData.isResizable() == false || isInteracting(controlData) == false)
             {
                 return false;
             }

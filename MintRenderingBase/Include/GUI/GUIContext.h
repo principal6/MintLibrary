@@ -386,7 +386,7 @@ namespace mint
             void                                        undock(const ControlID& dockedControlID) noexcept;
             void                                        updateDockZoneData(const ControlID& dockControlID, const bool updateWidthArray = true) noexcept;
 
-            const bool                                  isInteractingInternal(const ControlData& controlData) const noexcept;
+            const bool                                  isInteracting(const ControlData& controlData) const noexcept;
             
             // These functions must be called after process- functions
             const bool                                  isControlBeingDragged(const ControlData& controlData) const noexcept;
