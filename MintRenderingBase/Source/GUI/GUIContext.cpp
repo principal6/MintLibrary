@@ -2354,7 +2354,6 @@ namespace mint
             if (isInteracting(controlData) == false || _controlInteractionStateSet.isMouseInteractionDoneThisFrame() == true)
             {
                 _controlInteractionStateSet.resetHoverIf(controlData);
-                _controlInteractionStateSet.resetPressIf(controlData);
                 return;
             }
 
@@ -2367,7 +2366,6 @@ namespace mint
             {
                 // Not interacting
                 _controlInteractionStateSet.resetHoverIf(controlData);
-                _controlInteractionStateSet.resetPressIf(controlData);
                 return;
             }
 
