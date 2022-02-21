@@ -237,6 +237,16 @@ namespace mint
             if (beginWindow(MINT_GUI_CONTROL(L"ControlData Viewer", windowParam, inoutVisibleState)) == true)
             {
                 ScopeStringW<300> buffer;
+                if (_controlInteractionStateSet.hasPressedControl())
+                {
+                    const ControlData& pressedControlData = getControlData(_controlInteractionStateSet.getPressedControlID());
+                    formatString(buffer, L"Pressed Control ID: %X", pressedControlData.getID().getRawValue());
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+
+                    formatString(buffer, L"Pressed Control Type: (%s)", getControlTypeWideString(pressedControlData.getControlType()));
+                    makeLabel(MINT_GUI_CONTROL(buffer.c_str()));
+                }
+
                 if (_controlInteractionStateSet.hasFocusedControl())
                 {
                     const ControlData& focusedControlData = getControlData(_controlInteractionStateSet.getFocusedControlID());
