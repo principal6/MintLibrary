@@ -145,6 +145,8 @@ namespace mint
         {
         private:
                                     InputContext();
+                                    InputContext(const InputContext& rhs) = delete;
+                                    InputContext(InputContext&& rhs) = delete;
 
         public:
                                     ~InputContext();
