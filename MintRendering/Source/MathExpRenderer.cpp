@@ -174,6 +174,9 @@ namespace mint
         MathExpressionRenderer::MathExpressionRenderer(GraphicDevice& graphicDevice)
             : _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
         {
+            const char* const kFontFileNames[MathExpression::getModifierTypeCount()] =
+                { Path::makeAssetPath("cmu_s_italic"), Path::makeAssetPath("cmu_s_bold"), Path::makeAssetPath("cmu_s_bold_italic"), Path::makeAssetPath("cmu_s_roman") };
+
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];

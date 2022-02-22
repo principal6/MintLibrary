@@ -70,22 +70,18 @@ namespace mint
         class MathExpressionRenderer
         {
         public:
-                                MathExpressionRenderer(GraphicDevice& graphicDevice);
-                                ~MathExpressionRenderer();
+                        MathExpressionRenderer(GraphicDevice& graphicDevice);
+                        ~MathExpressionRenderer();
 
         public:
-            void                drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
+            void        drawMathExpression(const MathExpression& mathExpression, const Float2& screenPosition) noexcept;
 
         public:
-            void                render() noexcept;
+            void        render() noexcept;
 
         private:
-            static constexpr const char* const      kFontFileNames[MathExpression::getModifierTypeCount()] =
-                { "Assets/cmu_s_italic", "Assets/cmu_s_bold", "Assets/cmu_s_bold_italic", "Assets/cmu_s_roman" };
-
-        private:
-            ShapeFontRendererContext                _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
-            BitVector                               _bitFlagsArray[MathExpression::getModifierTypeCount()];
+            ShapeFontRendererContext    _shapeFontRendererContexts[MathExpression::getModifierTypeCount()];
+            BitVector                   _bitFlagsArray[MathExpression::getModifierTypeCount()];
         };
     }
 }

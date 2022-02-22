@@ -37,10 +37,9 @@ namespace mint
             Downward
         };
 
-        static constexpr const char* const          kDefaultFont = "Assets/noto_sans_kr_medium";
-        static constexpr int32                      kDefaultFontSize = 16;
+        static constexpr int32      kDefaultFontSize = 16;
 
-        using IndexElementType                      = uint16;
+        using IndexElementType      = uint16;
 
         // Triangle face
         struct Face

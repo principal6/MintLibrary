@@ -150,7 +150,7 @@ const bool testLanguage()
     using namespace Language;
     
     TextFileReader textFileReader;
-    if (textFileReader.open("Assets/CppHlsl/CppHlslStreamData.h") == false)
+    if (textFileReader.open(Path::makeAssetPath("CppHlsl/CppHlslStreamData.h")) == false)
     {
         return false;
     }
@@ -699,12 +699,6 @@ int main()
 
     mint::Path::setAssetDirectory("Assets");
     mint::Path testPath = mint::Path::makeAssetPath("test.cpp");
-    if (mint::FileUtil::exists("Assets") == false)
-    {
-        MINT_ASSERT(false, "Could not find \"/Assets\" directory. Make sure to set the project's working directory as \"$(SolutionDir)\"");
-    }
-
-    
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE

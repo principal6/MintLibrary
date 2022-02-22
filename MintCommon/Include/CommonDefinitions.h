@@ -210,6 +210,8 @@ namespace mint
     public:
         static void         setAssetDirectory(const Path& assetDirectory) noexcept;
         static const Path&  getAssetDirectory() noexcept;
+
+        // WARNING!!! static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 된다!!!
         static Path         makeAssetPath(const Path& subDirectoryPathMeta) noexcept;
 
     public:
@@ -231,6 +233,7 @@ namespace mint
     public:
         void                clear() noexcept { _rawString[0] = 0; _length = 0; }
         char*               data() noexcept { return _rawString; }
+        const bool          empty() const noexcept { return _length == 0; }
         const char*         c_str() const noexcept { return _rawString; }
 
     private:

@@ -375,18 +375,19 @@ namespace mint
 
         const bool GraphicDevice::loadFontData()
         {
-            if (_fontRendererContext.existsFontData(kDefaultFont) == false)
+            static const Path kDefaultFontPath = Path::makeAssetPath("noto_sans_kr_medium");
+            if (_fontRendererContext.existsFontData(kDefaultFontPath) == false)
             {
                 _fontRendererContext.pushGlyphRange(GlyphRange(0, 0x33DD));
                 _fontRendererContext.pushGlyphRange(GlyphRange(L'가', L'힣'));
-                if (_fontRendererContext.bakeFontData(kDefaultFont, kDefaultFontSize, kDefaultFont, 2048, 1, 1) == false)
+                if (_fontRendererContext.bakeFontData(kDefaultFontPath, kDefaultFontSize, kDefaultFontPath, 2048, 1, 1) == false)
                 {
                     MINT_LOG_ERROR("폰트 데이터를 Bake 하는 데 실패했습니다!");
                     return false;
                 }
             }
 
-            if (_fontRendererContext.loadFontData(kDefaultFont) == false)
+            if (_fontRendererContext.loadFontData(kDefaultFontPath) == false)
             {
                 MINT_LOG_ERROR("폰트 데이터를 로드하지 못했습니다!");
                 return false;
@@ -490,7 +491,7 @@ namespace mint
 
             // Stream data
             {
-                _cppHlslStreamData.parseCppHlslFile("Assets/CppHlsl/CppHlslStreamData.h");
+                _cppHlslStreamData.parseCppHlslFile(Path::makeAssetPath("CppHlsl/CppHlslStreamData.h"));
                 _cppHlslStreamData.generateHlslString(Language::CppHlsl::CppHlslFileType::StreamData);
                 _shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.getHlslString());
             }
@@ -499,7 +500,7 @@ namespace mint
 
             // Constant buffers
             {
-                _cppHlslConstantBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslConstantBuffers.h");
+                _cppHlslConstantBuffers.parseCppHlslFile(Path::makeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
                 _cppHlslConstantBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::ConstantBuffers);
                 _shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 
@@ -524,7 +525,7 @@ namespace mint
 
             // Structured buffers
             {
-                _cppHlslStructuredBuffers.parseCppHlslFile("Assets/CppHlsl/CppHlslStructuredBuffers.h");
+                _cppHlslStructuredBuffers.parseCppHlslFile(Path::makeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
                 _cppHlslStructuredBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::StructuredBuffers);
                 _shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
 

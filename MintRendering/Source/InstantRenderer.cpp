@@ -156,9 +156,9 @@ namespace mint
             const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultID = shaderPool.pushVertexShader("Assets/Hlsl/", "VsDefault.hlsl", "main", &vsInputTypeMetaData, "Assets/HlslBinary/");
-            _psDefaultID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsDefault.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
-            _psColorID = shaderPool.pushNonVertexShader("Assets/Hlsl/", "PsColor.hlsl", "main", DxShaderType::PixelShader, "Assets/HlslBinary/");
+            _vsDefaultID = shaderPool.pushVertexShader(Path::makeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", &vsInputTypeMetaData, Path::makeAssetPath("HlslBinary/"));
+            _psDefaultID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", DxShaderType::PixelShader, Path::makeAssetPath("HlslBinary/"));
+            _psColorID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "PsColor.hlsl", "main", DxShaderType::PixelShader, Path::makeAssetPath("HlslBinary/"));
         }
 
         void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept

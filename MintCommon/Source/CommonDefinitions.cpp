@@ -243,6 +243,7 @@ namespace mint
 
     Path Path::makeAssetPath(const Path& subDirectoryGlobalPaths) noexcept
     {
+        MINT_ASSERT(GlobalPaths::getInstance()._assetDirectory.empty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
         return Path(GlobalPaths::getInstance()._assetDirectory, subDirectoryGlobalPaths);
     }
 
@@ -261,16 +262,24 @@ namespace mint
 
     Path::Path(const Path& directory, const Path& subDirectoryPath)
     {
-        Path normalizedDirectory = directory;
-        if (normalizedDirectory.endsWithSlash() == false)
+        if (directory.empty())
         {
-            normalizedDirectory += '/';
-
-            MINT_ASSERT(normalizedDirectory.endsWithSlash(), "directory 가 비정상적입니다!!!");
+            MINT_ASSERT(false, "directory 가 비어 있습니다!!!");
+            *this = subDirectoryPath;
         }
+        else
+        {
+            Path normalizedDirectory = directory;
+            if (normalizedDirectory.endsWithSlash() == false)
+            {
+                normalizedDirectory += '/';
 
-        *this = normalizedDirectory;
-        *this += subDirectoryPath;
+                MINT_ASSERT(normalizedDirectory.endsWithSlash(), "directory 가 비정상적입니다!!!");
+            }
+
+            *this = normalizedDirectory;
+            *this += subDirectoryPath;
+        }
     }
 
     Path::Path(const char* const rhs)
