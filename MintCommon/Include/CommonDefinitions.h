@@ -142,15 +142,20 @@ namespace mint
 
 namespace mint
 {
-    class SimpleString
+    class LoggerString
     {
-    public:
-                        SimpleString(const uint32 capacity);
-                        ~SimpleString();
+    private:
+                        LoggerString();
 
     public:
-        SimpleString&   operator=(const char* const rhs);
-        SimpleString&   operator+=(const char* const rhs);
+                        LoggerString(const uint32 capacity);
+                        LoggerString(const char* const rawString);
+                        ~LoggerString();
+
+    public:
+        LoggerString&   operator=(const LoggerString& rhs);
+        LoggerString&   operator=(const char* const rhs);
+        LoggerString&   operator+=(const char* const rhs);
 
     public:
         MINT_INLINE const bool      empty() const noexcept { return _size == 0; }
@@ -195,8 +200,60 @@ namespace mint
     private:
         uint32          _basePathOffset;
         std::mutex      _mutex;
-        SimpleString    _history;
-        SimpleString    _outputFileName;
+        LoggerString    _history;
+        LoggerString    _outputFileName;
+    };
+
+
+    class Path
+    {
+    public:
+        static void         setAssetDirectory(const Path& assetDirectory) noexcept;
+        static const Path&  getAssetDirectory() noexcept;
+        static Path         makeAssetPath(const Path& subDirectoryPathMeta) noexcept;
+
+    public:
+                            Path();
+                            Path(const Path& rhs);
+                            Path(const Path& directory, const Path& subDirectoryPath);
+                            Path(const char* const rhs);
+                            ~Path();
+    
+    public:
+        Path&               operator=(const Path& rhs);
+        Path&               operator=(const char* const rhs);
+        Path&               operator+=(const Path& rhs);
+        Path&               operator+=(const char* const rhs);
+        Path&               operator+=(const char rhs);
+
+                            operator const char*() const { return c_str(); }
+
+    public:
+        void                clear() noexcept { _rawString[0] = 0; _length = 0; }
+        char*               data() noexcept { return _rawString; }
+        const char*         c_str() const noexcept { return _rawString; }
+
+    private:
+        const bool          endsWithSlash() const noexcept;
+
+    private:
+        char                _rawString[kMaxPath + 1];
+        uint32              _length;
+    };
+
+    class GlobalPaths
+    {
+        friend Path;
+
+    private:
+        static GlobalPaths& getInstance() noexcept;
+                            GlobalPaths();
+
+    public:
+                            ~GlobalPaths();
+
+    private:
+        Path                _assetDirectory;
     };
 }
 

@@ -9,21 +9,42 @@
 
 namespace mint
 {
-#pragma region SimpleString
-    SimpleString::SimpleString(const uint32 capacity)
+#pragma region LoggerString
+    LoggerString::LoggerString()
         : _capacity{ 0 }
         , _size{ 0 }
         , _rawPointer{ nullptr }
     {
+        __noop;
+    }
+
+    LoggerString::LoggerString(const uint32 capacity)
+        : LoggerString()
+    {
         reserve(capacity);
     }
 
-    SimpleString::~SimpleString()
+    LoggerString::LoggerString(const char* const rawString)
+        : LoggerString()
+    {
+        *this = rawString;
+    }
+
+    LoggerString::~LoggerString()
     {
         release();
     }
 
-    SimpleString& SimpleString::operator=(const char* const rhs)
+    LoggerString& LoggerString::operator=(const LoggerString& rhs)
+    {
+        if (this != &rhs)
+        {
+            *this = rhs.c_str();
+        }
+        return *this;
+    }
+
+    LoggerString& LoggerString::operator=(const char* const rhs)
     {
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(rhsLength + 1);
@@ -32,7 +53,7 @@ namespace mint
         return *this;
     }
 
-    SimpleString& SimpleString::operator+=(const char* const rhs)
+    LoggerString& LoggerString::operator+=(const char* const rhs)
     {
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(max(_capacity * 2, _size + rhsLength + 1));
@@ -41,7 +62,7 @@ namespace mint
         return *this;
     }
 
-    void SimpleString::reserve(const uint32 newCapacity) noexcept
+    void LoggerString::reserve(const uint32 newCapacity) noexcept
     {
         if (newCapacity <= _capacity)
         {
@@ -67,7 +88,7 @@ namespace mint
         _capacity = newCapacity;
     }
 
-    void SimpleString::release() noexcept
+    void LoggerString::release() noexcept
     {
         MINT_DELETE_ARRAY(_rawPointer);
         _capacity = 0;
@@ -206,6 +227,128 @@ namespace mint
 
             _history += outBuffer;
         }
+    }
+#pragma endregion
+
+#pragma region Path
+    void Path::setAssetDirectory(const Path& assetDirectory) noexcept
+    {
+        GlobalPaths::getInstance()._assetDirectory = assetDirectory;
+    }
+    
+    const Path& Path::getAssetDirectory() noexcept
+    {
+        return GlobalPaths::getInstance()._assetDirectory;
+    }
+
+    Path Path::makeAssetPath(const Path& subDirectoryGlobalPaths) noexcept
+    {
+        return Path(GlobalPaths::getInstance()._assetDirectory, subDirectoryGlobalPaths);
+    }
+
+    Path::Path()
+        : _rawString{}
+        , _length{ 0 }
+    {
+        __noop;
+    }
+
+    Path::Path(const Path& rhs)
+        : Path(rhs.c_str())
+    {
+        __noop;
+    }
+
+    Path::Path(const Path& directory, const Path& subDirectoryPath)
+    {
+        Path normalizedDirectory = directory;
+        if (normalizedDirectory.endsWithSlash() == false)
+        {
+            normalizedDirectory += '/';
+
+            MINT_ASSERT(normalizedDirectory.endsWithSlash(), "directory 가 비정상적입니다!!!");
+        }
+
+        *this = normalizedDirectory;
+        *this += subDirectoryPath;
+    }
+
+    Path::Path(const char* const rhs)
+        : Path()
+    {
+        *this = rhs;
+    }
+
+    Path::~Path()
+    {
+        __noop;
+    }
+
+    Path& Path::operator=(const Path& rhs)
+    {
+        if (this != &rhs)
+        {
+            *this = rhs.c_str();
+        }
+        return *this;
+    }
+
+    Path& Path::operator=(const char* const rhs)
+    {
+        ::strcpy_s(_rawString, rhs);
+        _length = static_cast<uint32>(::strlen(_rawString));
+        return *this;
+    }
+
+    Path& Path::operator+=(const Path& rhs)
+    {
+        if (this != &rhs)
+        {
+            *this += rhs.c_str();
+        }
+        return *this;
+    }
+
+    Path& Path::operator+=(const char* const rhs)
+    {
+        ::strcat_s(_rawString, rhs);
+        _length = static_cast<uint32>(::strlen(_rawString));
+        return *this;
+    }
+
+    Path& Path::operator+=(const char rhs)
+    {
+        if (_length < kMaxPath)
+        {
+            _rawString[_length] = rhs;
+            _rawString[_length + 1] = 0;
+            ++_length;
+        }
+        return *this;
+    }
+
+    const bool Path::endsWithSlash() const noexcept
+    {
+        return (_length == 0) ? false : _rawString[_length - 1] == '/';
+    }
+#pragma endregion
+
+#pragma region GlobalPaths
+    GlobalPaths& GlobalPaths::getInstance() noexcept
+    {
+        static GlobalPaths instance;
+        return instance;
+    }
+
+    GlobalPaths::GlobalPaths()
+        : _assetDirectory{}
+    {
+        __noop;
+    }
+
+    GlobalPaths::~GlobalPaths()
+    {
+        __noop;
     }
 #pragma endregion
 }

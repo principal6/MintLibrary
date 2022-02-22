@@ -694,13 +694,17 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
+    mint::LibraryInfo::printVersion();
+    //mint::LibraryInfo::printCoordinateSystem();
+
+    mint::Path::setAssetDirectory("Assets");
+    mint::Path testPath = mint::Path::makeAssetPath("test.cpp");
     if (mint::FileUtil::exists("Assets") == false)
     {
         MINT_ASSERT(false, "Could not find \"/Assets\" directory. Make sure to set the project's working directory as \"$(SolutionDir)\"");
     }
 
-    mint::LibraryInfo::printVersion();
-    //mint::LibraryInfo::printCoordinateSystem();
+    
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE
