@@ -2,7 +2,7 @@
 echo Generate /Out directory, containing files for importing MintLibrary
 
 : Assets Directory
-robocopy Assets Out/Assets /S
+robocopy Assets Out/MintLibrary/Include/Assets /S
 
 : Include Directory
 robocopy ./ Out/MintLibrary/Include stdafx.h

@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <MintLibrary/Include/AllHeaders.h>
+#include <MintPlatform/Include/FileUtil.hpp>
 
 
 namespace mint
@@ -9,8 +10,18 @@ namespace mint
 
     void Library::initialize() noexcept
     {
-        mint::Path::setAssetDirectory("Assets/");
-        mint::Path::setIncludeAssetDirectory("Assets/Include/");
+        if (mint::FileUtil::exists("../MintLibrary/Include/Assets"))
+        {
+            // Working Directory 가 $(ProjectDir) 일 경우
+            mint::Path::setAssetDirectory("../MintLibrary/Include/Assets/");
+            mint::Path::setIncludeAssetDirectory("../MintLibrary/Include/Assets/Include/");
+        }
+        else
+        {
+            // MintLibraryTest 프로젝트 세팅
+            mint::Path::setAssetDirectory("Assets/");
+            mint::Path::setIncludeAssetDirectory("Assets/Include/");
+        }
 
         printVersion();
     }
