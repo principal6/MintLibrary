@@ -9,7 +9,7 @@
 
 #include <MintContainer/Include/Vector.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
 #include <MintRenderingBase/Include/IDxObject.h>
 

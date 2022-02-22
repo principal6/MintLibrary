@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <cstdarg>
+#include "..\Include\CommonDefinitions.h"
 
 
 namespace mint
@@ -235,16 +236,22 @@ namespace mint
     {
         GlobalPaths::getInstance()._assetDirectory = assetDirectory;
     }
-    
-    const Path& Path::getAssetDirectory() noexcept
-    {
-        return GlobalPaths::getInstance()._assetDirectory;
-    }
 
-    Path Path::makeAssetPath(const Path& subDirectoryGlobalPaths) noexcept
+    void Path::setIncludeAssetDirectory(const Path& includeAssetDirectory) noexcept
+    {
+        GlobalPaths::getInstance()._includeAssetDirectory = includeAssetDirectory;
+    }
+    
+    Path Path::makeAssetPath(const Path& subDirectoryPath) noexcept
     {
         MINT_ASSERT(GlobalPaths::getInstance()._assetDirectory.empty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
-        return Path(GlobalPaths::getInstance()._assetDirectory, subDirectoryGlobalPaths);
+        return Path(GlobalPaths::getInstance()._assetDirectory, subDirectoryPath);
+    }
+
+    Path Path::makeIncludeAssetPath(const Path& subDirectoryPath) noexcept
+    {
+        MINT_ASSERT(GlobalPaths::getInstance()._includeAssetDirectory.empty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
+        return Path(GlobalPaths::getInstance()._includeAssetDirectory, subDirectoryPath);
     }
 
     Path::Path()

@@ -10,11 +10,14 @@
 
 namespace mint
 {
-    class LibraryInfo
+    class Library
     {
     public:
+        static void         initialize() noexcept;
+        
         static const uint16 getVersionMajor() noexcept;
         static const uint16 getVersionMinor() noexcept;
+        
         static void         printVersion() noexcept;
         static void         printCoordinateSystem() noexcept;
     };

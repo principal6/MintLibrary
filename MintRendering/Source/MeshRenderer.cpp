@@ -88,12 +88,12 @@ namespace mint
             const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultID = shaderPool.pushVertexShader(Path::makeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", &vsInputTypeMetaData, Path::makeAssetPath("HlslBinary/"));
-            _psDefaultID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", DxShaderType::PixelShader, Path::makeAssetPath("HlslBinary/"));
+            _vsDefaultID = shaderPool.pushVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", &vsInputTypeMetaData, Path::makeIncludeAssetPath("HlslBinary/"));
+            _psDefaultID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", DxShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
 
-            _gsNormalID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", DxShaderType::GeometryShader, Path::makeAssetPath("HlslBinary/"));
-            _gsTriangleEdgeID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, Path::makeAssetPath("HlslBinary/"));
-            _psTexCoordAsColorID = shaderPool.pushNonVertexShader(Path::makeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, Path::makeAssetPath("HlslBinary/"));
+            _gsNormalID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", DxShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _gsTriangleEdgeID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", DxShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _psTexCoordAsColorID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", DxShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
         }
     }
 }

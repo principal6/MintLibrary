@@ -20,7 +20,7 @@
 
 #include <MintRenderingBase/Include/IDxObject.h>
 
-#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
+#include <Assets/Include/CppHlsl/CppHlslStructuredBuffers.h>
 
 
 namespace mint

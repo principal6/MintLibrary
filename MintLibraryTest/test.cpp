@@ -694,11 +694,7 @@ int main()
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    mint::LibraryInfo::printVersion();
-    //mint::LibraryInfo::printCoordinateSystem();
-
-    mint::Path::setAssetDirectory("Assets");
-    mint::Path testPath = mint::Path::makeAssetPath("test.cpp");
+    mint::Library::initialize();
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE

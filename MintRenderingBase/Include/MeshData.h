@@ -11,7 +11,7 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
 
 namespace mint

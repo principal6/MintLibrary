@@ -5,7 +5,7 @@
 
 #include <MintMath/Include/Float2x2.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
+#include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
 
 namespace mint

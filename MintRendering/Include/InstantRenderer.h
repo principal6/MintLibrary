@@ -9,7 +9,7 @@
 
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 
-#include <Assets/CppHlsl/CppHlslConstantBuffers.h>
+#include <Assets/Include/CppHlsl/CppHlslConstantBuffers.h>
 
 
 namespace mint

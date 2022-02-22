@@ -7,23 +7,31 @@ namespace mint
     inline constexpr uint16 kMintLibraryVersionMajor  = 1;
     inline constexpr uint16 kMintLibraryVersionMinor  = 0;
 
-    const uint16 LibraryInfo::getVersionMajor() noexcept
+    void Library::initialize() noexcept
+    {
+        mint::Path::setAssetDirectory("Assets/");
+        mint::Path::setIncludeAssetDirectory("Assets/Include/");
+
+        printVersion();
+    }
+
+    const uint16 Library::getVersionMajor() noexcept
     {
         return kMintLibraryVersionMajor;
     }
 
-    const uint16 LibraryInfo::getVersionMinor() noexcept
+    const uint16 Library::getVersionMinor() noexcept
     {
         return kMintLibraryVersionMinor;
     }
 
-    void LibraryInfo::printVersion() noexcept
+    void Library::printVersion() noexcept
     {
         MINT_LOG_UNTAGGED("> This is MintLibrary");
-        MINT_LOG_UNTAGGED("> Version %d.%02d\n", LibraryInfo::getVersionMajor(), LibraryInfo::getVersionMinor());
+        MINT_LOG_UNTAGGED("> Version %d.%02d\n", Library::getVersionMajor(), Library::getVersionMinor());
     }
 
-    void LibraryInfo::printCoordinateSystem() noexcept
+    void Library::printCoordinateSystem() noexcept
     {
         MINT_LOG_UNTAGGED("> [MintLibrary Coordinate System]");
         MINT_LOG_UNTAGGED("  - MintLibrary uses a right-handed coordinate system");

@@ -24,9 +24,9 @@
 
 #include <MintMath/Include/Float4x4.h>
 
-#include <Assets/CppHlsl/CppHlslStreamData.h>
-#include <Assets/CppHlsl/CppHlslConstantBuffers.h>
-#include <Assets/CppHlsl/CppHlslStructuredBuffers.h>
+#include <Assets/Include/CppHlsl/CppHlslStreamData.h>
+#include <Assets/Include/CppHlsl/CppHlslConstantBuffers.h>
+#include <Assets/Include/CppHlsl/CppHlslStructuredBuffers.h>
 
 
 namespace mint
