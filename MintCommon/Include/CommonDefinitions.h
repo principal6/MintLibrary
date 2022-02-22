@@ -112,23 +112,23 @@ namespace mint
 #define _MINT_LOG_ERROR_ACTION exit(kErrorExitCode)
 #endif
 
-#define MINT_LOG_UNTAGGED(format, ...)              mint::Logger::getInstance().log(nullptr, nullptr, nullptr, nullptr, 0, format, __VA_ARGS__)
-#define MINT_LOG(format, ...)                       mint::Logger::getInstance().log(" _LOG_ ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-#define MINT_LOG_ALERT(format, ...)                 mint::Logger::getInstance().logAlert(" ALERT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-#define MINT_LOG_ERROR(format, ...)                 mint::Logger::getInstance().logError(" ERROR ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
+#define MINT_LOG_UNTAGGED(format, ...)          mint::Logger::getInstance().log(nullptr, nullptr, nullptr, nullptr, 0, format, __VA_ARGS__)
+#define MINT_LOG(format, ...)                   mint::Logger::getInstance().log(" _LOG_ ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+#define MINT_LOG_ALERT(format, ...)             mint::Logger::getInstance().logAlert(" ALERT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+#define MINT_LOG_ERROR(format, ...)             mint::Logger::getInstance().logError(" ERROR ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
 #pragma endregion
 
 
 #pragma region Assertion
-#define MINT_NEVER                                  { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
+#define MINT_NEVER                              { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
     // [DESCRIPTION]
     // Return false if expression is false!
-#define MINT_ASSURE(expression)                     if (!(expression)) { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
+#define MINT_ASSURE(expression)                 if (!(expression)) { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
 
 #if defined MINT_LOG_FOR_ASSURE_SILENT
-#define MINT_ASSURE_SILENT(expression)              if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
+#define MINT_ASSURE_SILENT(expression)          if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
 #else
-#define MINT_ASSURE_SILENT(expression)              if (!(expression)) { return false; }
+#define MINT_ASSURE_SILENT(expression)          if (!(expression)) { return false; }
 #endif
 
 #if defined MINT_DEBUG
@@ -136,7 +136,7 @@ namespace mint
 #else
 #define MINT_ASSERT(expression, format, ...)
 #endif
-#define MINT_RETURN_FALSE_IF_NOT(expression)        if (!(expression)) return false
+#define MINT_RETURN_FALSE_IF_NOT(expression)    if (!(expression)) return false
 #pragma endregion
 
 
@@ -145,26 +145,26 @@ namespace mint
     class SimpleString
     {
     public:
-        SimpleString(const uint32 capacity);
-        ~SimpleString();
+                        SimpleString(const uint32 capacity);
+                        ~SimpleString();
 
     public:
-        SimpleString& operator=(const char* const rhs);
-        SimpleString& operator+=(const char* const rhs);
+        SimpleString&   operator=(const char* const rhs);
+        SimpleString&   operator+=(const char* const rhs);
 
     public:
         MINT_INLINE const bool      empty() const noexcept { return _size == 0; }
-        MINT_INLINE const char* c_str() const noexcept { return _rawPointer; }
+        MINT_INLINE const char*     c_str() const noexcept { return _rawPointer; }
         MINT_INLINE const uint32    length() const noexcept { return _size; }
 
     private:
-        void                        reserve(const uint32 newCapacity) noexcept;
-        void                        release() noexcept;
+        void            reserve(const uint32 newCapacity) noexcept;
+        void            release() noexcept;
 
     private:
-        uint32                      _capacity;
-        uint32                      _size;
-        char* _rawPointer;
+        uint32          _capacity;
+        uint32          _size;
+        char*           _rawPointer;
     };
 
 
@@ -175,13 +175,13 @@ namespace mint
         static constexpr uint32 kFinalBufferSize = 1024;
 
     private:
-        Logger();
+                        Logger();
 
     public:
-        ~Logger();
+                        ~Logger();
 
     public:
-        static Logger& getInstance() noexcept;
+        static Logger&  getInstance() noexcept;
         static void     setOutputFileName(const char* const fileName) noexcept;
 
     public:
