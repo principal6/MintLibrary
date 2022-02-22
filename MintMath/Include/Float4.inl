@@ -24,8 +24,14 @@ namespace mint
         __noop;
     }
 
+    inline constexpr Float4::Float4(const Float2& rhs)
+        : Float4(rhs._x, rhs._y, 0.0f, 0.0f)
+    {
+        __noop;
+    }
+
     inline constexpr Float4::Float4(const Float3& rhs)
-        : Float4(rhs._x, rhs._y, rhs._z, 1.0f)
+        : Float4(rhs._x, rhs._y, rhs._z, 0.0f)
     {
         __noop;
     }
