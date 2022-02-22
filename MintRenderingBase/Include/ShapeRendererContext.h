@@ -26,7 +26,7 @@ namespace mint
                 QuadraticBezierTriangle,
                 SolidTriangle,
                 Circular,
-                Circle,
+                DoubleCircular,
                 TexturedTriangle,
             };
 
@@ -50,7 +50,8 @@ namespace mint
             void                                setBorderColor(const Color& borderColor) noexcept;
 
         public:
-            virtual void                        testDraw(const Float2& screenOffset);
+            virtual void                        testDraw(Float2&& screenOffset);
+            virtual void                        testDraw(Float2& screenOffset);
 
         public:
             // Independent from internal position set by setPosition() call
@@ -81,6 +82,8 @@ namespace mint
 
         public:
             void                                drawCircle(const float radius, const bool insideOut = false);
+            
+            void                                drawDoughnut(const float outerRadius, const float innerRadius);
 
             // arcAngle = [0, +pi]
             void                                drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);

@@ -54,6 +54,7 @@ namespace mint
                         result._color           = input._color;
                         result._texCoord        = input._texCoord;
                         result._info.x          = (float)shapeType;
+                        result._info.y          = input._info.y;
                         result._viewportIndex   = 0;
                         
                         return result;
@@ -102,10 +103,10 @@ namespace mint
                     
                     float4 main_shape(VS_OUTPUT_SHAPE input) : SV_Target
                     {
-                        const float u = input._texCoord.x;
-                        const float v = input._texCoord.y;
-                        const float scale = input._texCoord.w;
+                        const float u       = input._texCoord.x;
+                        const float v       = input._texCoord.y;
                         const float flipped = input._texCoord.z;
+                        const float scale   = input._texCoord.w;
                         
                         float signedDistance = 0.0;
                         if (input._info.x == 0.0)
@@ -120,13 +121,21 @@ namespace mint
                         }
                         else if (input._info.x == 2.0)
                         {
-                            // Circular section
-                            signedDistance = flipped * (1.0 -  sqrt(u * u + v * v));
+                            // Circular
+                            signedDistance = flipped * (1.0 - sqrt(u * u + v * v));
                         }
                         else if (input._info.x == 3.0)
                         {
-                            // Circle
-                            signedDistance = flipped * (1.0 - sqrt(input._texCoord.x * input._texCoord.x + input._texCoord.y * input._texCoord.y));
+                            // Double Circular
+                            const float outerRadius = scale;
+                            const float innerRadius = input._info.y;
+                            const float innerRadiusRelative = 1.0 - innerRadius / outerRadius;
+                            signedDistance = 1.0 - sqrt(u * u + v * v);
+                            if (signedDistance > innerRadiusRelative)
+                            {
+                                signedDistance = innerRadiusRelative - signedDistance;
+                            }
+                            signedDistance *= flipped;
                         }
                         else
                         {
@@ -190,7 +199,12 @@ namespace mint
             _borderColor = borderColor;
         }
 
-        void ShapeRendererContext::testDraw(const Float2& screenOffset)
+        void ShapeRendererContext::testDraw(Float2&& screenOffset)
+        {
+            testDraw(screenOffset);
+        }
+
+        void ShapeRendererContext::testDraw(Float2& screenOffset)
         {
             const float kSize = 40.0f;
             const float kHalfSize = kSize * 0.5f;
@@ -198,50 +212,55 @@ namespace mint
             setColor(Color(20, 200, 80));
             
             // First row
-
             drawQuadraticBezier(screenOffset + Float2(-kHalfSize, +kHalfSize), screenOffset + Float2(+kHalfSize, +kHalfSize), screenOffset + Float2(0, -kHalfSize));
 
             drawSolidTriangle(screenOffset + Float2(60 - kHalfSize, -kHalfSize), screenOffset + Float2(60 + kHalfSize, -kHalfSize), screenOffset + Float2(60, +kHalfSize));
             
-            const Float4 screenOffset4 = Float4(screenOffset._x, screenOffset._y, 0.0f, 1.0f);
-            setPosition(screenOffset4 + Float4(120, 0, 0, 0));
+            setPosition(Float4(screenOffset + Float2(120, 0)));
             drawCircularTriangle(kHalfSize, 0.0f, false);
             
-            setPosition(screenOffset4 + Float4(180, 0, 0, 0));
+            setPosition(Float4(screenOffset + Float2(180, 0)));
             drawQuarterCircle(kHalfSize, 0.0f);
 
-            setPosition(screenOffset4 + Float4(240, 20, 0, 0));
+            setPosition(Float4(screenOffset + Float2(240, 20)));
             drawHalfCircle(kHalfSize, 0.0f);
 
             // Second row
-
-            setPosition(screenOffset4 + Float4(0, 100, 0, 0));
+            screenOffset._y += 100.0f;
+            setPosition(Float4(screenOffset + Float2(0, 0)));
             drawCircle(kHalfSize);
+            
+            setPosition(Float4(screenOffset + Float2(60, 0)));
+            drawDoughnut(kHalfSize, kHalfSize * 0.75f);
 
-            setPosition(screenOffset4 + Float4(60, 100, 0, 0));
+            setPosition(Float4(screenOffset + Float2(120, 0)));
             drawCircularArc(kHalfSize, Math::kPiOverFour, 0.0f);
             
-            setPosition(screenOffset4 + Float4(120, 100, 0, 0));
+            setPosition(Float4(screenOffset + Float2(160, 0)));
             drawDoubleCircularArc(kHalfSize, 10.0f, Math::kPiOverFour, 0.0f);
 
-            setPosition(screenOffset4 + Float4(160, 100, 0, 0));
+            setPosition(Float4(screenOffset + Float2(240, 0)));
             drawRectangle(Float2(kSize), 1.0f, 0.0f);
 
-            setPosition(screenOffset4 + Float4(240, 100, 0, 0));
-            drawTaperedRectangle(Float2(kSize), 0.5f, 0.25f, 0.0f);
-
             // Third row
-
-            setPosition(screenOffset4 + Float4(0, 200, 0, 0));
+            screenOffset._y += 100.0f;
+            setPosition(Float4(screenOffset + Float2(0, 0)));
             drawRoundedRectangle(Float2(kSize), 4.0f, 1.0f, 0.0f);
 
-            setPosition(screenOffset4 + Float4(60, 200, 0, 0));
+            setPosition(Float4(screenOffset + Float2(60, 0)));
             drawHalfRoundedRectangle(Float2(kSize), 4.0f, 0.0f);
 
-            drawLine(screenOffset + Float2(120 - kHalfSize, 200 - kHalfSize), screenOffset + Float2(120 + kHalfSize, 200 + kHalfSize), 4.0f);
+            drawLine(screenOffset + Float2(120 - kHalfSize, -kHalfSize), screenOffset + Float2(120 + kHalfSize, kHalfSize), 4.0f);
 
-            setPosition(screenOffset4 + Float4(180 + 60, 200 + kHalfSize, 0, 0));
+            setPosition(Float4(screenOffset + Float2(180, 0)));
+            drawTaperedRectangle(Float2(kSize), 0.5f, 0.25f, 0.0f);
+
+            // Fourth row
+            screenOffset._y += 100.0f;
+            setPosition(Float4(screenOffset + Float2(60, kHalfSize)));
             drawColorPalleteXXX(kSize);
+
+            screenOffset._y += 100.0f;
         }
 
         void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
@@ -477,7 +496,7 @@ namespace mint
             const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
             VS_INPUT_SHAPE v;
-            auto& vertexArray = _lowLevelRenderer->vertices();
+            auto& vertices = _lowLevelRenderer->vertices();
             {
                 v._color = _defaultColor;
                 v._position = _position;
@@ -485,43 +504,104 @@ namespace mint
                 v._position._y = -radius;
                 v._texCoord._x = -1.0f;
                 v._texCoord._y = +1.0f;
-                v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
+                v._texCoord._z = (insideOut == true) ? -1.0f : +1.0f;
                 v._texCoord._w = radius;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circle);
-                vertexArray.push_back(v);
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                vertices.push_back(v);
 
                 v._position._x = +radius;
                 v._position._y = -radius;
                 v._texCoord._x = +1.0f;
                 v._texCoord._y = +1.0f;
-                vertexArray.push_back(v);
+                vertices.push_back(v);
 
                 v._position._x = -radius;
                 v._position._y = +radius;
                 v._texCoord._x = -1.0f;
                 v._texCoord._y = -1.0f;
-                vertexArray.push_back(v);
+                vertices.push_back(v);
 
                 v._position._x = +radius;
                 v._position._y = +radius;
                 v._texCoord._x = +1.0f;
                 v._texCoord._y = -1.0f;
-                vertexArray.push_back(v);
+                vertices.push_back(v);
             }
 
-            const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+            const uint32 vertexBase = static_cast<uint32>(vertices.size()) - kDeltaVertexCount;
             
-            auto& indexArray = _lowLevelRenderer->indices();
+            auto& indices = _lowLevelRenderer->indices();
             {
                 // Body left upper
-                indexArray.push_back(vertexBase + 0);
-                indexArray.push_back(vertexBase + 3);
-                indexArray.push_back(vertexBase + 1);
+                indices.push_back(vertexBase + 0);
+                indices.push_back(vertexBase + 3);
+                indices.push_back(vertexBase + 1);
 
                 // Body right lower
-                indexArray.push_back(vertexBase + 0);
-                indexArray.push_back(vertexBase + 2);
-                indexArray.push_back(vertexBase + 3);
+                indices.push_back(vertexBase + 0);
+                indices.push_back(vertexBase + 2);
+                indices.push_back(vertexBase + 3);
+            }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+            pushTransformToBuffer(0.0f);
+        }
+
+        void ShapeRendererContext::drawDoughnut(const float outerRadius, const float innerRadius)
+        {
+            static constexpr uint32 kDeltaVertexCount = 4;
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+            VS_INPUT_SHAPE v;
+            auto& vertices = _lowLevelRenderer->vertices();
+            {
+                v._color = _defaultColor;
+                v._position = _position;
+                v._position._x = -outerRadius;
+                v._position._y = -outerRadius;
+                v._texCoord._x = -1.0f;
+                v._texCoord._y = +1.0f;
+                v._texCoord._z = +1.0f;
+                v._texCoord._w = outerRadius;
+                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::DoubleCircular);
+                v._info._y = innerRadius;
+                vertices.push_back(v);
+
+                v._position._x = +outerRadius;
+                v._position._y = -outerRadius;
+                v._texCoord._x = +1.0f;
+                v._texCoord._y = +1.0f;
+                vertices.push_back(v);
+
+                v._position._x = -outerRadius;
+                v._position._y = +outerRadius;
+                v._texCoord._x = -1.0f;
+                v._texCoord._y = -1.0f;
+                vertices.push_back(v);
+
+                v._position._x = +outerRadius;
+                v._position._y = +outerRadius;
+                v._texCoord._x = +1.0f;
+                v._texCoord._y = -1.0f;
+                vertices.push_back(v);
+            }
+
+            const uint32 vertexBase = static_cast<uint32>(vertices.size()) - kDeltaVertexCount;
+
+            auto& indices = _lowLevelRenderer->indices();
+            {
+                // Body left upper
+                indices.push_back(vertexBase + 0);
+                indices.push_back(vertexBase + 3);
+                indices.push_back(vertexBase + 1);
+
+                // Body right lower
+                indices.push_back(vertexBase + 0);
+                indices.push_back(vertexBase + 2);
+                indices.push_back(vertexBase + 3);
             }
 
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;

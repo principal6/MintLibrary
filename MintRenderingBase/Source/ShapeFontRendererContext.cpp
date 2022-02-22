@@ -82,14 +82,19 @@ namespace mint
             return _fontRendererContext.getFontData();
         }
 
-        void ShapeFontRendererContext::testDraw(const Float2& screenOffset)
+        void ShapeFontRendererContext::testDraw(Float2&& screenOffset)
+        {
+            testDraw(screenOffset);
+        }
+
+        void ShapeFontRendererContext::testDraw(Float2& screenOffset)
         {
             __super::testDraw(screenOffset);
 
             setTextColor(Color(0, 40, 80));
 
             FontRenderingOption fontRenderingOption;
-            drawDynamicText(L"Testing`!@#$%^&*()_+ 검사 중...", Float4(screenOffset._x, screenOffset._y + 300, 0, 1), fontRenderingOption);
+            drawDynamicText(L"Testing`!@#$%^&*()_+ 검사 중...", Float4(screenOffset), fontRenderingOption);
         }
 
         void ShapeFontRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
