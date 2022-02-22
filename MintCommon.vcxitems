@@ -15,11 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)MintCommon\Include\CommonDefinitions.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)MintCommon\Include\Logger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\Logger.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\CommonDefinitions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Assets\CodingConvention.md" />

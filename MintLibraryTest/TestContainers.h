@@ -2,7 +2,6 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-#include <MintCommon/Include/Logger.h>
 
 
 namespace mint

@@ -3,8 +3,6 @@
 
 #include <MintMath/Include/Matrix.h>
 
-#include <MintCommon/Include/Logger.h>
-
 #include <MintMath/Include/VectorR.hpp>
 #include <MintMath/Include/Quaternion.h>
 

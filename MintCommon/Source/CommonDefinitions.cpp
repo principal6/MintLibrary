@@ -1,4 +1,4 @@
-﻿#include <MintCommon/Include/Logger.h>
+﻿#include <MintCommon/Include/CommonDefinitions.h>
 
 #include <Windows.h>
 #include <ctime>
@@ -9,21 +9,21 @@
 
 namespace mint
 {
-#pragma region LoggerString
-    LoggerString::LoggerString()
+#pragma region SimpleString
+    SimpleString::SimpleString(const uint32 capacity)
         : _capacity{ 0 }
         , _size{ 0 }
         , _rawPointer{ nullptr }
     {
-        reserve(2048);
+        reserve(capacity);
     }
 
-    LoggerString::~LoggerString()
+    SimpleString::~SimpleString()
     {
         release();
     }
 
-    LoggerString& LoggerString::operator=(const char* const rhs)
+    SimpleString& SimpleString::operator=(const char* const rhs)
     {
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(rhsLength + 1);
@@ -32,7 +32,7 @@ namespace mint
         return *this;
     }
 
-    LoggerString& LoggerString::operator+=(const char* const rhs)
+    SimpleString& SimpleString::operator+=(const char* const rhs)
     {
         const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
         reserve(max(_capacity * 2, _size + rhsLength + 1));
@@ -41,7 +41,7 @@ namespace mint
         return *this;
     }
 
-    void LoggerString::reserve(const uint32 newCapacity) noexcept
+    void SimpleString::reserve(const uint32 newCapacity) noexcept
     {
         if (newCapacity <= _capacity)
         {
@@ -67,7 +67,7 @@ namespace mint
         _capacity = newCapacity;
     }
 
-    void LoggerString::release() noexcept
+    void SimpleString::release() noexcept
     {
         MINT_DELETE_ARRAY(_rawPointer);
         _capacity = 0;
@@ -79,6 +79,8 @@ namespace mint
 #pragma region Logger
     Logger::Logger()
         : _basePathOffset{ 0 }
+        , _history{ 2048 }
+        , _outputFileName{ 2048 }
     {
         std::filesystem::path currentPath = std::filesystem::current_path();
         //if (currentPath.has_parent_path())

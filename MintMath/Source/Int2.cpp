@@ -1,7 +1,5 @@
 ﻿#include <MintMath/Include/Int2.h>
 
-#include <MintCommon/Include/Logger.h>
-
 
 namespace mint
 {

@@ -28,7 +28,7 @@
 
 
 #pragma region MintLibrary
-#include <MintCommon/Include/Logger.h>
+#include <MintCommon/Include/CommonDefinitions.h>
 #pragma endregion
 
 

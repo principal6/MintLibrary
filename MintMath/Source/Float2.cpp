@@ -1,7 +1,5 @@
 ﻿#include <MintMath/Include/Float2.h>
 
-#include <MintCommon/Include/Logger.h>
-
 #include <MintMath/Include/VectorR.hpp>
 #include <MintMath/Include/Int2.h>
 

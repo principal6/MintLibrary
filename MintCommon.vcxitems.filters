@@ -12,16 +12,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)MintCommon\Include\Logger.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)MintCommon\Include\CommonDefinitions.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\Logger.cpp">
+    <ClCompile Include="$(MSBuildThisFileDirectory)MintCommon\Source\CommonDefinitions.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

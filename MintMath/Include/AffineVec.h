@@ -7,8 +7,6 @@
 
 #include <MintMath/Include/MathCommon.h>
 
-#include <MintCommon/Include/Logger.h>
-
 #include <immintrin.h>
 
 

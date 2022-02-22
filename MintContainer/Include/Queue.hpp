@@ -5,8 +5,6 @@
 #define MINT_CONTAINER_QUEUE_HPP
 
 
-#include <MintCommon/Include/Logger.h>
-
 #include <MintContainer/Include/Queue.h>
 #include <MintContainer/Include/MemoryRaw.hpp>
 

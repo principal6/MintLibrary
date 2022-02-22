@@ -7,8 +7,6 @@
 
 #include <initializer_list>
 
-#include <MintCommon/Include/Logger.h>
-
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/MemoryRaw.hpp>
 
