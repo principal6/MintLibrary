@@ -177,16 +177,19 @@ namespace mint
             const char* const kFontFileNames[MathExpression::getModifierTypeCount()] =
                 { Path::makeAssetPath("cmu_s_italic"), Path::makeAssetPath("cmu_s_bold"), Path::makeAssetPath("cmu_s_bold_italic"), Path::makeAssetPath("cmu_s_roman") };
 
+            FontLoader fontLoader;
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
                 ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
                 const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
-                if (rendererContext.existsFontData(kFontFileName) == false)
+                if (FontLoader::doesExistFont(kFontFileName) == false)
                 {
-                    rendererContext.pushGlyphRange(GlyphRange(0, 0x33DD));
-                    rendererContext.bakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
+                    fontLoader.pushGlyphRange(GlyphRange(0, 0x33DD));
+                    fontLoader.bakeFontData(kFontFileName, 32, kFontFileName, 2048, 1, 1);
                 }
-                rendererContext.initializeFontData(kFontFileName);
+                fontLoader.loadFont(kFontFileName, graphicDevice);
+
+                rendererContext.initializeFont(fontLoader.getFontData());
                 rendererContext.initializeShaders();
                 rendererContext.setTextColor(Color::kBlack);
             }

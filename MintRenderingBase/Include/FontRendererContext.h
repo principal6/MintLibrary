@@ -11,11 +11,7 @@
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
-
-
-typedef struct FT_Glyph_Metrics_    FT_Glyph_Metrics;
-typedef struct FT_LibraryRec_*      FT_Library;
-typedef struct FT_FaceRec_*         FT_Face;
+#include <MintRenderingBase/Include/FontLoader.h>
 
 
 namespace mint
@@ -32,43 +28,7 @@ namespace mint
     namespace Rendering
     {
         class GraphicDevice;
-        class FontRendererContext;
 
-        using GlyphMetricType = int8;
-        class GlyphInfo
-        {
-            friend FontRendererContext;
-
-        public:
-                                    GlyphInfo();
-                                    GlyphInfo(const wchar_t charCode, const FT_Glyph_Metrics* const ftGlyphMetrics);
-
-        private:
-            wchar_t                 _charCode;
-            GlyphMetricType         _width;
-            GlyphMetricType         _height;
-            GlyphMetricType         _horiBearingX;
-            GlyphMetricType         _horiBearingY;
-            GlyphMetricType         _horiAdvance;
-            Float2                  _uv0;
-            Float2                  _uv1;
-        };
-
-        class GlyphRange
-        {
-            friend FontRendererContext;
-
-        public:
-                                    GlyphRange();
-                                    GlyphRange(const wchar_t startWchar, const wchar_t endWchar);
-
-        public:
-            const bool              operator<(const GlyphRange& rhs) const noexcept;
-
-        private:
-            wchar_t                 _startWchar;
-            wchar_t                 _endWchar;
-        };
 
         struct FontRenderingOption
         {
@@ -111,45 +71,14 @@ namespace mint
             static constexpr int32                                              kIndexCountPerGlyph = 6;
 
         public:
-            struct FontData
-            {
-                const uint32                getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
-
-                Vector<GlyphInfo>           _glyphInfoArray;
-                Vector<uint32>              _charCodeToGlyphIndexMap;
-                DxObjectID                  _fontTextureID;
-            };
-
-        public:
                                                 FontRendererContext(GraphicDevice& graphicDevice);
                                                 FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
             virtual                             ~FontRendererContext();
 
         public:
-            void                                pushGlyphRange(const GlyphRange& glyphRange) noexcept;
-
-        public:
-            const bool                          existsFontData(const char* const fontFileName) const noexcept;
-
-        private:
-            const std::string                   getFontDataFileNameWithExtension(const char* const fontFileName) const noexcept;
-            const bool                          existsFontDataInternal(const char* const fontFileNameWithExtension) const noexcept;
-
-        public:
-            const bool                          loadFontData(const char* const fontFileName);
-            const bool                          loadFontData(const FontData& fontData);
-            const bool                          bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+            const bool                          initialize(const FontData& fontData);
             const FontData&                     getFontData() const noexcept;
             const int16                         getFontSize() const noexcept;
-
-        private:
-            const bool                          initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
-            const bool                          deinitializeFreeType();
-        
-        private:
-            const bool                          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
-            void                                completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
-            void                                writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept;
 
         public:
             virtual void                        initializeShaders() noexcept override final;

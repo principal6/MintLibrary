@@ -150,10 +150,10 @@ namespace mint
             
             _caretBlinkIntervalMs = _graphicDevice.getWindow().getCaretBlinkIntervalMs();
 
-            const Rendering::FontRendererContext::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
+            const Rendering::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
             {
-                if (_rendererContexts[rendererContextIndex].initializeFontData(fontData) == false)
+                if (_rendererContexts[rendererContextIndex].initializeFont(fontData) == false)
                 {
                     MINT_ASSERT(false, "ShapeFontRendererContext::initializeFont() 에 실패했습니다!");
                 }

@@ -52,32 +52,12 @@ namespace mint
             _fontRendererContext.setClipRect(clipRect);
         }
 
-        const bool ShapeFontRendererContext::initializeFontData(const FontRendererContext::FontData& fontData) noexcept
+        const bool ShapeFontRendererContext::initializeFont(const FontData& fontData) noexcept
         {
-            return _fontRendererContext.loadFontData(fontData);
+            return _fontRendererContext.initialize(fontData);
         }
 
-        const bool ShapeFontRendererContext::initializeFontData(const char* const fontFileName) noexcept
-        {
-            return _fontRendererContext.loadFontData(fontFileName);
-        }
-
-        const bool ShapeFontRendererContext::existsFontData(const char* const fontFileName) const noexcept
-        {
-            return _fontRendererContext.existsFontData(fontFileName);
-        }
-
-        void ShapeFontRendererContext::pushGlyphRange(const GlyphRange& glyphRange) noexcept
-        {
-            _fontRendererContext.pushGlyphRange(glyphRange);
-        }
-
-        const bool ShapeFontRendererContext::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
-        {
-            return _fontRendererContext.bakeFontData(fontFaceFileName, fontSize, outputFileName, textureWidth, spaceLeft, spaceTop);
-        }
-
-        const FontRendererContext::FontData& ShapeFontRendererContext::getFontData() const noexcept
+        const FontData& ShapeFontRendererContext::getFontData() const noexcept
         {
             return _fontRendererContext.getFontData();
         }

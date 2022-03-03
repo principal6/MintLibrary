@@ -376,24 +376,27 @@ namespace mint
         const bool GraphicDevice::loadFontData()
         {
             static const Path kDefaultFontPath = Path::makeAssetPath("noto_sans_kr_medium");
-            if (_fontRendererContext.existsFontData(kDefaultFontPath) == false)
+            FontLoader fontLoader;
+            if (FontLoader::doesExistFont(kDefaultFontPath) == false)
             {
-                _fontRendererContext.pushGlyphRange(GlyphRange(0, 0x33DD));
-                _fontRendererContext.pushGlyphRange(GlyphRange(L'가', L'힣'));
-                if (_fontRendererContext.bakeFontData(kDefaultFontPath, kDefaultFontSize, kDefaultFontPath, 2048, 1, 1) == false)
+                fontLoader.pushGlyphRange(GlyphRange(0, 0x33DD));
+                fontLoader.pushGlyphRange(GlyphRange(L'가', L'힣'));
+                if (fontLoader.bakeFontData(kDefaultFontPath, kDefaultFontSize, kDefaultFontPath, 2048, 1, 1) == false)
                 {
                     MINT_LOG_ERROR("폰트 데이터를 Bake 하는 데 실패했습니다!");
                     return false;
                 }
             }
 
-            if (_fontRendererContext.loadFontData(kDefaultFontPath) == false)
+            if (fontLoader.loadFont(kDefaultFontPath, *this) == false)
             {
                 MINT_LOG_ERROR("폰트 데이터를 로드하지 못했습니다!");
                 return false;
             }
 
-            _shapeFontRendererContext.initializeFontData(_fontRendererContext.getFontData());
+            _fontRendererContext.initialize(fontLoader.getFontData());
+
+            _shapeFontRendererContext.initializeFont(_fontRendererContext.getFontData());
 
             return true;
         }

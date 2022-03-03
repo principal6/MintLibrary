@@ -1,6 +1,7 @@
 #include <MintRenderingBase/Source/DxResource.cpp>
 #include <MintRenderingBase/Source/DxShader.cpp>
 #include <MintRenderingBase/Source/DxShaderHeaderMemory.cpp>
+#include <MintRenderingBase/Source/FontLoader.cpp>
 #include <MintRenderingBase/Source/FontRendererContext.cpp>
 #include <MintRenderingBase/Source/GraphicDevice.cpp>
 #include <MintRenderingBase/Source/IDxObject.cpp>
