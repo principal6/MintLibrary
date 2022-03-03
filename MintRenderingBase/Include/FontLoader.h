@@ -25,6 +25,7 @@ namespace mint
         class GraphicDevice;
         class FontLoader;
         class FontRendererContext;
+        struct FontData;
 
 
         using GlyphMetricType = int8;
@@ -34,6 +35,7 @@ namespace mint
         {
             friend FontLoader;
             friend FontRendererContext;
+            friend FontData;
 
         public:
                                 GlyphInfo();
@@ -71,6 +73,8 @@ namespace mint
             friend FontLoader;
 
             const uint32        getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
+            const float         computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+            const uint32        computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 
             Vector<GlyphInfo>   _glyphInfoArray;
             DxObjectID          _fontTextureID;

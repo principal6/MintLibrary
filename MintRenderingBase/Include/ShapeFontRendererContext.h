@@ -43,8 +43,6 @@ namespace mint
             void                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
             void                drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
             void                drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-            const float         computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            const uint32        computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
             void                setTextColor(const Color& textColor) noexcept;
 
         private:

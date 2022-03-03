@@ -97,16 +97,6 @@ namespace mint
             _fontRendererContext.drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 
-        const float ShapeFontRendererContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
-        {
-            return _fontRendererContext.computeTextWidth(wideText, textLength);
-        }
-
-        const uint32 ShapeFontRendererContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
-        {
-            return _fontRendererContext.computeIndexFromPositionInText(wideText, textLength, positionInText);
-        }
-
         void ShapeFontRendererContext::setTextColor(const Color& textColor) noexcept
         {
             _fontRendererContext.setColor(textColor);

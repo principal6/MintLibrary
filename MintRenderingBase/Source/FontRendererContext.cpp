@@ -209,7 +209,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
             
             Float4 postTranslation;
@@ -247,7 +247,7 @@ namespace mint
 
         void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
-            const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
             const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
 
             Float4 postTranslation;
@@ -275,40 +275,6 @@ namespace mint
 
             const Float4& preTranslation = position;
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
-        }
-
-        const float FontRendererContext::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
-        {
-            int32 totalWidth = 0;
-            for (uint32 textAt = 0; textAt < textLength; ++textAt)
-            {
-                const wchar_t& wideChar = wideText[textAt];
-                
-                const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
-                const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-                totalWidth += glyphInfo._horiAdvance;
-            }
-            return static_cast<float>(totalWidth);
-        }
-
-        const uint32 FontRendererContext::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
-        {
-            const int32 positionInTextInt = static_cast<int32>(positionInText);
-            int32 totalWidth = 0;
-            for (uint32 textAt = 0; textAt < textLength; ++textAt)
-            {
-                const wchar_t& wideChar = wideText[textAt];
-
-                const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
-                const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
-                totalWidth += glyphInfo._horiAdvance;
-
-                if (positionInTextInt < totalWidth)
-                {
-                    return textAt;
-                }
-            }
-            return textLength;
         }
 
         void FontRendererContext::pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)

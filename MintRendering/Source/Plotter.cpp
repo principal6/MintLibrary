@@ -182,7 +182,7 @@ namespace mint
             _shapeFontRendererContext->drawDynamicText(_xLabel.c_str(), static_cast<uint32>(_xLabel.length()), labelPosition, labelRenderingOption);
 
             const float paddingX = -2.0f;
-            const float textWidth = _shapeFontRendererContext->computeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
+            const float textWidth = _shapeFontRendererContext->getFontData().computeTextWidth(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()));
             labelPosition = Float4(frameCenterPosition._x - _size._x * 0.5f - paddingX, frameCenterPosition._y + textWidth * 0.5f, 0.0f, 1.0f);
             labelRenderingOption._transformMatrix = Float4x4::rotationMatrixZ(-Math::kPiOverTwo);
             _shapeFontRendererContext->drawDynamicText(_yLabel.c_str(), static_cast<uint32>(_yLabel.length()), labelPosition, labelRenderingOption);
