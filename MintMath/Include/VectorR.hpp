@@ -466,7 +466,10 @@ namespace mint
     MINT_INLINE VectorR<N, T>& VectorR<N, T>::setNormalized() noexcept
     {
         const T norm_ = norm();
-        *this /= norm_;
+        if (norm_ != 0)
+        {
+            *this /= norm_;
+        }
         return *this;
     }
 
