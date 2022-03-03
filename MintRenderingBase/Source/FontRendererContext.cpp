@@ -606,32 +606,34 @@ namespace mint
 
         void FontRendererContext::render() noexcept
         {
-            if (_lowLevelRenderer->isRenderable() == true)
+            if (_lowLevelRenderer->isRenderable() == false)
             {
-                prepareTransformBuffer();
+                return;
+            }
 
-                _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
+            prepareTransformBuffer();
 
-                DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-                shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
+            _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
 
-                if (isUsingMultipleViewports() == true)
-                {
-                    shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
-                }
+            DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
 
-                shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderID);
+            if (isUsingMultipleViewports())
+            {
+                shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
+            }
 
-                DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-                DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
-                sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
+            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderID);
 
-                _lowLevelRenderer->executeRenderCommands();
+            DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
+            DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
+            sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
-                if (isUsingMultipleViewports() == true)
-                {
-                    shaderPool.unbindShader(DxShaderType::GeometryShader);
-                }
+            _lowLevelRenderer->executeRenderCommands();
+
+            if (isUsingMultipleViewports())
+            {
+                shaderPool.unbindShader(DxShaderType::GeometryShader);
             }
         }
 
