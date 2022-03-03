@@ -226,31 +226,28 @@ namespace mint
         inline void LowLevelRenderer<T>::optimizeRenderCommands() noexcept
         {
             uint32 mergeBeginIndex = 0;
-            uint32 mergePrimitiveCount = 0;
             const uint32 renderCommandCount = _renderCommands.size();
             for (uint32 renderCommandIndex = 1; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
             {
-                const RenderCommand& prevRenderCommand = _renderCommands[renderCommandIndex - 1];
-                const RenderCommand& currRenderCommand = _renderCommands[renderCommandIndex];
-
-                bool areTwoCommandsHomogeneous = false;
-                if (prevRenderCommand._primitive == currRenderCommand._primitive
-                    && prevRenderCommand._clipRect == currRenderCommand._clipRect)
+                RenderCommand& mergeDestRenderCommand = _renderCommands[mergeBeginIndex];
+                RenderCommand& currentRenderCommand = _renderCommands[renderCommandIndex];
+                bool isMerged = false;
+                if (currentRenderCommand._primitive == mergeDestRenderCommand._primitive && currentRenderCommand._clipRect == mergeDestRenderCommand._clipRect)
                 {
-                    switch (prevRenderCommand._primitive)
+                    switch (mergeDestRenderCommand._primitive)
                     {
                     case RenderingPrimitive::LineList:
-                        if (prevRenderCommand._vertexOffset + prevRenderCommand._vertexCount == currRenderCommand._vertexOffset)
+                        if (mergeDestRenderCommand._vertexOffset + mergeDestRenderCommand._vertexCount == currentRenderCommand._vertexOffset)
                         {
-                            areTwoCommandsHomogeneous = true;
-                            mergePrimitiveCount += prevRenderCommand._vertexCount;
+                            mergeDestRenderCommand._vertexCount += currentRenderCommand._vertexCount;
+                            isMerged = true;
                         }
                         break;
                     case RenderingPrimitive::TriangleList:
-                        if (prevRenderCommand._indexOffset + prevRenderCommand._indexCount == currRenderCommand._indexOffset)
+                        if (mergeDestRenderCommand._indexOffset + mergeDestRenderCommand._indexCount == currentRenderCommand._indexOffset)
                         {
-                            areTwoCommandsHomogeneous = true;
-                            mergePrimitiveCount += prevRenderCommand._indexCount;
+                            mergeDestRenderCommand._indexCount += currentRenderCommand._indexCount;
+                            isMerged = true;
                         }
                         break;
                     default:
@@ -258,36 +255,13 @@ namespace mint
                     }
                 }
 
-                if (areTwoCommandsHomogeneous == false)
+                if (isMerged)
                 {
-                    const uint32 mergeEndIndex = renderCommandIndex - 1;
-                    if (mergeBeginIndex < mergeEndIndex)
-                    {
-                        // merge previous homogeneous render commands !!!
-
-                        RenderCommand& mergeBeginRenderCommand = _renderCommands[mergeBeginIndex];
-                        const RenderCommand& mergeEndRenderCommand = _renderCommands[mergeEndIndex];
-                        switch (mergeBeginRenderCommand._primitive)
-                        {
-                        case RenderingPrimitive::LineList:
-                            mergeBeginRenderCommand._vertexCount = mergePrimitiveCount + mergeEndRenderCommand._vertexCount;
-                            break;
-                        case RenderingPrimitive::TriangleList:
-                            mergeBeginRenderCommand._indexCount = mergePrimitiveCount + mergeEndRenderCommand._indexCount;
-                            break;
-                        default:
-                            break;
-                        }
-
-                        for (uint32 mergedRenderCommandIndex = mergeBeginIndex + 1; mergedRenderCommandIndex <= mergeEndIndex; ++mergedRenderCommandIndex)
-                        {
-                            RenderCommand& mergedRenderCommand = _renderCommands[mergedRenderCommandIndex];
-                            mergedRenderCommand._isValid = false;
-                        }
-                    }
-
+                    currentRenderCommand._isValid = false;
+                }
+                else
+                {
                     mergeBeginIndex = renderCommandIndex;
-                    mergePrimitiveCount = 0;
                 }
             }
         }
