@@ -20,16 +20,64 @@ namespace mint
 {
     namespace Rendering
     {
+#pragma region GlyphInfo
+        GlyphInfo::GlyphInfo()
+            : _charCode{}
+            , _width{}
+            , _height{}
+            , _horiBearingX{}
+            , _horiBearingY{}
+            , _horiAdvance{}
+        {
+            __noop;
+        }
+
+        GlyphInfo::GlyphInfo(const wchar_t charCode, const FT_Glyph_Metrics* const ftGlyphMetrics)
+            : _charCode{ charCode }
+            , _width{ static_cast<GlyphMetricType>(ftGlyphMetrics->width >> 6) }
+            , _height{ static_cast<GlyphMetricType>(ftGlyphMetrics->height >> 6) }
+            , _horiBearingX{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiBearingX >> 6) }
+            , _horiBearingY{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiBearingY >> 6) }
+            , _horiAdvance{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiAdvance >> 6) }
+        {
+            __noop;
+        }
+#pragma endregion
+
+
+#pragma region GlyphRange
+        GlyphRange::GlyphRange()
+            : _startWchar{ 0 }
+            , _endWchar{ 0 }
+        {
+            __noop;
+        }
+
+        GlyphRange::GlyphRange(const wchar_t startWchar, const wchar_t endWchar)
+            : _startWchar{ startWchar }
+            , _endWchar{ endWchar }
+        {
+            __noop;
+        }
+
+        const bool GlyphRange::operator<(const GlyphRange& rhs) const noexcept
+        {
+            return _startWchar < rhs._startWchar;
+        }
+#pragma endregion
+
+
+#pragma region FontData
         const uint32 FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
         {
             return (_charCodeToGlyphIndexMap.size() <= static_cast<uint32>(wideChar)) ? 0 : _charCodeToGlyphIndexMap[wideChar];
         }
+#pragma endregion
 
 
         FontLoader::FontLoader()
             : _ftLibrary{ nullptr }
             , _ftFace{ nullptr }
-            , _fontSize{ 0 }
         {
             __noop;
         }
@@ -110,6 +158,8 @@ namespace mint
                 return false;
             }
 
+            _fontData._fontSize = *binaryFileReader.read<int16>();
+
             _fontImageData._width = *binaryFileReader.read<int16>();
             _fontImageData._height = *binaryFileReader.read<int16>();
 
@@ -176,14 +226,15 @@ namespace mint
             {
                 fontFaceFileNameS.append(".ttf");
             }
-
             if (FileUtil::exists(fontFaceFileNameS.c_str()) == false)
             {
                 StringUtil::excludeExtension(fontFaceFileNameS);
                 fontFaceFileNameS.append(".otf");
             }
 
-            if (initializeFreeType(fontFaceFileNameS.c_str(), fontSize) == false)
+            _fontData._fontSize = fontSize;
+
+            if (initializeFreeType(fontFaceFileNameS.c_str()) == false)
             {
                 MINT_LOG_ERROR("FreeType - 초기화에 실패했습니다.");
                 return false;
@@ -268,7 +319,7 @@ namespace mint
             return true;
         }
 
-        const bool FontLoader::initializeFreeType(const char* const fontFaceFileName, const int16 fontSize)
+        const bool FontLoader::initializeFreeType(const char* const fontFaceFileName)
         {
             if (FT_Init_FreeType(&_ftLibrary))
             {
@@ -282,8 +333,7 @@ namespace mint
                 return false;
             }
 
-            _fontSize = fontSize;
-            if (FT_Set_Pixel_Sizes(_ftFace, 0, fontSize))
+            if (FT_Set_Pixel_Sizes(_ftFace, 0, _fontData._fontSize))
             {
                 MINT_LOG_ERROR("FreeType - 폰트 크기를 지정하는 데 실패했습니다.");
                 return false;
@@ -323,7 +373,7 @@ namespace mint
             const int16 cols = static_cast<int16>(_ftFace->glyph->bitmap.width);
 
             const int16 spacedWidth = spaceLeft + cols;
-            const int16 spacedHeight = spaceTop + _fontSize + kSpaceBottom;
+            const int16 spacedHeight = spaceTop + _fontData._fontSize + kSpaceBottom;
             if (width <= pixelPositionX + spacedWidth)
             {
                 pixelPositionX = 0;
@@ -377,7 +427,10 @@ namespace mint
 
         void FontLoader::writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept
         {
-            binaryFileWriter.write("FNT");
+            binaryFileWriter.write(kFontFileMagicNumber);
+
+            binaryFileWriter.write(_fontData._fontSize);
+
             binaryFileWriter.write(textureWidth);
             binaryFileWriter.write(textureHeight);
 

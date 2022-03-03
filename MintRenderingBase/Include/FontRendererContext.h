@@ -18,10 +18,6 @@ namespace mint
 {
 #pragma region Forward declaration
     class BitVector;
-    class BinaryFileWriter;
-
-    template <typename T>
-    class Vector;
 #pragma endregion
 
 
@@ -61,61 +57,48 @@ namespace mint
         // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class FontRendererContext final : public IRendererContext
         {
-            static constexpr int16                                              kSpaceBottomForVisibility = 1;
-            static_assert(kSpaceBottomForVisibility == 1, "kSpaceBottomForVisibility must be 1");
-            static constexpr int16                                              kSpaceBottom = 1;
-            static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
-            static constexpr const char* const                                  kFontFileExtension = ".fnt";
-            static constexpr const char* const                                  kFontFileMagicNumber = "FNT";
-            static constexpr int32                                              kVertexCountPerGlyph = 4;
-            static constexpr int32                                              kIndexCountPerGlyph = 6;
+            static constexpr int32  kVertexCountPerGlyph = 4;
+            static constexpr int32  kIndexCountPerGlyph = 6;
 
         public:
-                                                FontRendererContext(GraphicDevice& graphicDevice);
-                                                FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
-            virtual                             ~FontRendererContext();
+                                    FontRendererContext(GraphicDevice& graphicDevice);
+                                    FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+            virtual                 ~FontRendererContext();
 
         public:
-            const bool                          initialize(const FontData& fontData);
-            const FontData&                     getFontData() const noexcept;
-            const int16                         getFontSize() const noexcept;
+            const bool              initialize(const FontData& fontData);
+            const FontData&         getFontData() const noexcept;
 
         public:
-            virtual void                        initializeShaders() noexcept override final;
-            virtual void                        flush() noexcept override final;
-            virtual void                        render() noexcept final;
+            virtual void            initializeShaders() noexcept override final;
+            virtual void            flush() noexcept override final;
+            virtual void            render() noexcept final;
 
         public:
-            void                                drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
-            void                                drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
-            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-            void                                drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
-            const float                         computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            const uint32                        computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
-        
+            void                    drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                    drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void                    drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+            void                    drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+            const float             computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+            const uint32            computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
+
         public:
-            void                                pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
-            const DxObjectID&                   getFontTextureID() const noexcept;
+            void                    pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
+            const DxObjectID&       getFontTextureID() const noexcept;
 
         private:
-            void                                drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
+            void                    drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
 
         private:
-            void                                prepareIndexArray();
+            void                    prepareIndexArray();
 
         private:
-            FT_Library                          _ftLibrary;
-            FT_Face                             _ftFace;
-            int16                               _fontSize;
-            Vector<GlyphRange>                  _glyphRangeArray;
-        
-        private:
-            FontData                            _fontData;
+            FontData                _fontData;
 
         private:
-            DxObjectID                          _vertexShaderID;
-            DxObjectID                          _geometryShaderID;
-            DxObjectID                          _pixelShaderID;
+            DxObjectID              _vertexShaderID;
+            DxObjectID              _geometryShaderID;
+            DxObjectID              _pixelShaderID;
         };
     }
 }

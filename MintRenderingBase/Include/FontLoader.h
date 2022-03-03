@@ -74,10 +74,12 @@ namespace mint
 
             Vector<GlyphInfo>   _glyphInfoArray;
             DxObjectID          _fontTextureID;
+            int16               _fontSize;
 
         private:
             Vector<uint32>      _charCodeToGlyphIndexMap;
         };
+
 
         class FontLoader
         {
@@ -109,7 +111,7 @@ namespace mint
             const FontData&     getFontData() const { return _fontData; }
 
         private:
-            const bool          initializeFreeType(const char* const fontFaceFileName, const int16 fontSize);
+            const bool          initializeFreeType(const char* const fontFaceFileName);
             void                deinitializeFreeType();
             
             const bool          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
@@ -119,7 +121,6 @@ namespace mint
         private:
             FT_Library          _ftLibrary;
             FT_Face             _ftFace;
-            int16               _fontSize;
             Vector<GlyphRange>  _glyphRanges;
 
         private:

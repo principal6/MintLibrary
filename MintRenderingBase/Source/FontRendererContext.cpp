@@ -22,67 +22,14 @@ namespace mint
 {
     namespace Rendering
     {
-#pragma region GlyphInfo
-        GlyphInfo::GlyphInfo()
-            : _charCode{}
-            , _width{}
-            , _height{}
-            , _horiBearingX{}
-            , _horiBearingY{}
-            , _horiAdvance{}
-        {
-            __noop;
-        }
-
-        GlyphInfo::GlyphInfo(const wchar_t charCode, const FT_Glyph_Metrics* const ftGlyphMetrics)
-            : _charCode{ charCode }
-            , _width{ static_cast<GlyphMetricType>(ftGlyphMetrics->width >> 6) }
-            , _height{ static_cast<GlyphMetricType>(ftGlyphMetrics->height >> 6) }
-            , _horiBearingX{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiBearingX >> 6) }
-            , _horiBearingY{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiBearingY >> 6) }
-            , _horiAdvance{ static_cast<GlyphMetricType>(ftGlyphMetrics->horiAdvance >> 6) }
-        {
-            __noop;
-        }
-#pragma endregion
-
-
-#pragma region GlyphRange
-        GlyphRange::GlyphRange()
-            : _startWchar{ 0 }
-            , _endWchar{ 0 }
-        {
-            __noop;
-        }
-
-        GlyphRange::GlyphRange(const wchar_t startWchar, const wchar_t endWchar)
-            : _startWchar{ startWchar }
-            , _endWchar{ endWchar }
-        {
-            __noop;
-        }
-
-        const bool GlyphRange::operator<(const GlyphRange& rhs) const noexcept
-        {
-            return _startWchar < rhs._startWchar;
-        }
-#pragma endregion
-
-
         FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice)
             : IRendererContext(graphicDevice)
-            , _ftLibrary{ nullptr }
-            , _ftFace{ nullptr }
-            , _fontSize{ 16 }
         {
             __noop;
         }
 
         FontRendererContext::FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer)
             : IRendererContext(graphicDevice, nonOwnedLowLevelRenderer)
-            , _ftLibrary{ nullptr }
-            , _ftFace{ nullptr }
-            , _fontSize{ 16 }
         {
             __noop;
         }
@@ -114,11 +61,6 @@ namespace mint
         const FontData& FontRendererContext::getFontData() const noexcept
         {
             return _fontData;
-        }
-
-        const int16 FontRendererContext::getFontSize() const noexcept
-        {
-            return _fontSize;
         }
 
         void FontRendererContext::initializeShaders() noexcept
@@ -268,7 +210,7 @@ namespace mint
         void FontRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
             const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-            const float scaledFontSize = _fontSize * fontRenderingOption._scale;
+            const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
             
             Float4 postTranslation;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
@@ -306,7 +248,7 @@ namespace mint
         void FontRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
             const float scaledTextWidth = computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-            const float scaledFontSize = _fontSize * fontRenderingOption._scale;
+            const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
 
             Float4 postTranslation;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
@@ -389,7 +331,7 @@ namespace mint
             const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
             if (leaveOnlySpace == false)
             {
-                const float scaledFontHeight = static_cast<float>(_fontSize) * scale;
+                const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
 
                 Rect glyphRect;
                 glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);

@@ -146,11 +146,10 @@ namespace mint
 
         void GUIContext::initialize()
         {
-            _fontSize = static_cast<float>(_graphicDevice.getFontRendererContext().getFontSize());
-            
             _caretBlinkIntervalMs = _graphicDevice.getWindow().getCaretBlinkIntervalMs();
 
             const Rendering::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
+            _fontSize = static_cast<float>(fontData._fontSize);
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
             {
                 if (_rendererContexts[rendererContextIndex].initializeFont(fontData) == false)
