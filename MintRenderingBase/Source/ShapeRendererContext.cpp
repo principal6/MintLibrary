@@ -149,8 +149,8 @@ namespace mint
                             signedDistance *= (scale * kDeltaPixel);
                         }
                         
-                        const float alpha = (kDeltaHalfPixel < signedDistance) ? 1.0 : 1.0 - saturate(abs(signedDistance - kDeltaHalfPixel) / kDeltaPixel);
-                        return float4(input._color.xyz, input._color.w * alpha);
+                        const float signedDistanceAlpha = (kDeltaHalfPixel < signedDistance) ? 1.0 : 1.0 - saturate(abs(signedDistance - kDeltaHalfPixel) / kDeltaPixel);
+                        return float4(input._color.xyz, input._color.w * signedDistanceAlpha);
                     }
                     )"
                 };
@@ -238,7 +238,7 @@ namespace mint
             setPosition(Float4(screenOffset + Float2(120, 0)));
             drawCircularArc(kHalfSize, Math::kPiOverFour, 0.0f);
             
-            setPosition(Float4(screenOffset + Float2(160, 0)));
+            setPosition(Float4(screenOffset + Float2(180, 0)));
             drawDoubleCircularArc(kHalfSize, 10.0f, Math::kPiOverFour, 0.0f);
 
             setPosition(Float4(screenOffset + Float2(240, 0)));
