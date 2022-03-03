@@ -76,6 +76,40 @@ Color cloneAddRGB(const float r, const float g, const float b) const;
 
 ##### Do NOT use `create-`, since this makes you confuse it with ctor.
 
+
+#### getter/setter
+##### Do not use `get-` for bool getter. The condition statements get confusing.
+<table style="border: 2px;">
+<tr>
+    <td><div style="text-align:center; color:#00AA00";>GOOD</div></td>
+    <td><div style="text-align:center; color:#CC0000";>BAD</div></td>
+</tr>
+<tr>
+<td>
+
+```cpp
+setUseFullscreen(true);
+if (doesUseFullscreen())
+{
+    // Do something.
+}
+```
+
+</td>
+<td>
+
+```cpp
+if (getUseFullscreen())
+{
+    // Do something.
+}
+```
+
+</td>
+</tr>
+</table>
+
+
 ## Code style
 #### Always use braces for single-statement blocks.
 <table style="border: 2px;">
