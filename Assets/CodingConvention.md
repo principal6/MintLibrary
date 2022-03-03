@@ -89,7 +89,7 @@ Color cloneAddRGB(const float r, const float g, const float b) const;
 
 ```cpp
 setUseFullscreen(true);
-if (doesUseFullscreen())
+if (doesUseFullscreen()) // OR isUsingFullscreen()
 {
     // Do something.
 }
