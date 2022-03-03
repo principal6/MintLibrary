@@ -320,11 +320,6 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        const DxObjectID& FontRendererContext::getFontTextureID() const noexcept
-        {
-            return _fontData._fontTextureID;
-        }
-
         void FontRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
         {
             const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);

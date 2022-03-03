@@ -84,7 +84,6 @@ namespace mint
 
         public:
             void                    pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
-            const DxObjectID&       getFontTextureID() const noexcept;
 
         private:
             void                    drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
