@@ -48,7 +48,7 @@ namespace mint
 
         public:
             void                        setUseMultipleViewports() noexcept;
-            const bool                  getUseMultipleViewports() const noexcept;
+            const bool                  isUsingMultipleViewports() const noexcept;
 
         public:
             void                        setPosition(const Float4& position) noexcept;

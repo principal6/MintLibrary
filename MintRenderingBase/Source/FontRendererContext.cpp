@@ -615,7 +615,7 @@ namespace mint
                 DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
                 shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
 
-                if (getUseMultipleViewports() == true)
+                if (isUsingMultipleViewports() == true)
                 {
                     shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
                 }
@@ -628,7 +628,7 @@ namespace mint
 
                 _lowLevelRenderer->executeRenderCommands();
 
-                if (getUseMultipleViewports() == true)
+                if (isUsingMultipleViewports() == true)
                 {
                     shaderPool.unbindShader(DxShaderType::GeometryShader);
                 }

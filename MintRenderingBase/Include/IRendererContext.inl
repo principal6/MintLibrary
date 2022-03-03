@@ -14,7 +14,7 @@ namespace mint
             _useMultipleViewports = true;
         }
 
-        MINT_INLINE const bool IRendererContext::getUseMultipleViewports() const noexcept
+        MINT_INLINE const bool IRendererContext::isUsingMultipleViewports() const noexcept
         {
             return _useMultipleViewports;
         }
