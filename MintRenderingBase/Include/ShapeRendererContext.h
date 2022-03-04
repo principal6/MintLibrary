@@ -28,7 +28,8 @@ namespace mint
                 SolidTriangle,
                 Circular,
                 DoubleCircular,
-                TexturedTriangle,
+                TexturedTriangle, // Assumes four channels are used
+                FontTriangle, // Assumes single channel is used
             };
 
         public:

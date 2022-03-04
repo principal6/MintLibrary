@@ -137,10 +137,17 @@ namespace mint
                             }
                             signedDistance *= flipped;
                         }
-                        else
+                        else if (input._info.x == 4.0)
                         {
                             // Textured triangle
                             return g_texture0.Sample(g_sampler0, input._texCoord.xy);
+                        }
+                        else
+                        {
+                            // Font triangle
+                            const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
+                            const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
+                            return sampled4;
                         }
                         
                         // Apply scale to the signed distance for more consistent anti-aliasing
