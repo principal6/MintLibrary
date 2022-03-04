@@ -1288,21 +1288,6 @@ namespace mint
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
-        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
-        {
-            return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
-        }
-
-        void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
-        {
-            SB_Transform transform;
-            transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
-            transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
-            transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
-            //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
-            _sbTransformData.push_back(transform);
-        }
-
         void ShapeRendererContext::drawColorPalleteXXX(const float radius)
         {
             static constexpr uint32 colorCount = 12;
@@ -1331,14 +1316,14 @@ namespace mint
             const uint32 outerStepCount = 5;
             const uint32 innerStepCount = 4;
             const float stepHeight = radius / (innerStepCount + outerStepCount);
-            
+
             const float deltaAngle = Math::kTwoPi / colorCount;
             const float halfDeltaAngle = deltaAngle * 0.5f;
             for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
             {
                 const float rgbDenom = (colorCount / 3.0f);
                 const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
-                
+
                 int32 colorIndexCorrected = colorIndex;
                 const Color& stepsColor = colorArray[colorIndexCorrected];
 
@@ -1356,10 +1341,25 @@ namespace mint
                 for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
                 {
                     setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
-                
+
                     drawDoubleCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, stepHeight * innerStepIndex, deltaAngle, deltaAngle * colorIndex);
                 }
             }
+        }
+
+        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
+        {
+            return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
+        }
+
+        void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
+        {
+            SB_Transform transform;
+            transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
+            transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
+            transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
+            //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
+            _sbTransformData.push_back(transform);
         }
     }
 }
