@@ -82,13 +82,10 @@ namespace mint
 
         private:
             void                    drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
-            void                    prepareIndexArray();
             void                    pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
 
         private:
             FontData                _fontData;
-
-        private:
             DxObjectID              _vertexShaderID;
             DxObjectID              _geometryShaderID;
             DxObjectID              _pixelShaderID;

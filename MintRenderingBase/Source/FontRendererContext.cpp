@@ -277,15 +277,6 @@ namespace mint
             pushTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
-        void FontRendererContext::pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
-        {
-            SB_Transform transform;
-            transform._transformMatrix.preTranslate(preTranslation.getXyz());
-            transform._transformMatrix.postTranslate(postTranslation.getXyz());
-            transform._transformMatrix *= transformMatrix;
-            _sbTransformData.push_back(transform);
-        }
-
         void FontRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
         {
             const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
@@ -302,57 +293,65 @@ namespace mint
                 if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice.getWindowSize()._x
                     && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
                 {
-                    auto& vertexArray = _lowLevelRenderer->vertices();
+                    Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->vertices();
+                    
+                    // Vertices
+                    {
+                        VS_INPUT_SHAPE v;
+                        v._position._x = glyphRect.left();
+                        v._position._y = glyphRect.top();
+                        v._position._z = 0.0f;
+                        v._color = _defaultColor;
+                        v._texCoord._x = glyphInfo._uv0._x;
+                        v._texCoord._y = glyphInfo._uv0._y;
+                        //v._info._x = _viewportIndex;
+                        v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
+                        v._info._z = 1.0f; // used by ShapeFontRendererContext
+                        vertices.push_back(v);
 
-                    VS_INPUT_SHAPE v;
-                    v._position._x = glyphRect.left();
-                    v._position._y = glyphRect.top();
-                    v._position._z = 0.0f;
-                    v._color = _defaultColor;
-                    v._texCoord._x = glyphInfo._uv0._x;
-                    v._texCoord._y = glyphInfo._uv0._y;
-                    //v._info._x = _viewportIndex;
-                    v._info._y = IRendererContext::packBits2_30AsFloat(drawShade, _sbTransformData.size());
-                    v._info._z = 1.0f; // used by ShapeFontRendererContext
-                    vertexArray.push_back(v);
+                        v._position._x = glyphRect.right();
+                        v._texCoord._x = glyphInfo._uv1._x;
+                        v._texCoord._y = glyphInfo._uv0._y;
+                        vertices.push_back(v);
 
-                    v._position._x = glyphRect.right();
-                    v._texCoord._x = glyphInfo._uv1._x;
-                    v._texCoord._y = glyphInfo._uv0._y;
-                    vertexArray.push_back(v);
+                        v._position._x = glyphRect.left();
+                        v._position._y = glyphRect.bottom();
+                        v._texCoord._x = glyphInfo._uv0._x;
+                        v._texCoord._y = glyphInfo._uv1._y;
+                        vertices.push_back(v);
 
-                    v._position._x = glyphRect.left();
-                    v._position._y = glyphRect.bottom();
-                    v._texCoord._x = glyphInfo._uv0._x;
-                    v._texCoord._y = glyphInfo._uv1._y;
-                    vertexArray.push_back(v);
+                        v._position._x = glyphRect.right();
+                        v._texCoord._x = glyphInfo._uv1._x;
+                        v._texCoord._y = glyphInfo._uv1._y;
+                        vertices.push_back(v);
+                    }
 
-                    v._position._x = glyphRect.right();
-                    v._texCoord._x = glyphInfo._uv1._x;
-                    v._texCoord._y = glyphInfo._uv1._y;
-                    vertexArray.push_back(v);
+                    // Indices
+                    {
+                        Vector<IndexElementType>& indices = _lowLevelRenderer->indices();
+                        const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.size());
+                        // 오른손 좌표계
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 0);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 3);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 1);
 
-                    prepareIndexArray();
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 0);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 2);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 3);
+                    }
                 }
             }
            
             glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
         }
 
-        void FontRendererContext::prepareIndexArray()
+        void FontRendererContext::pushTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
         {
-            const auto& vertexArray = _lowLevelRenderer->vertices();
-            const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertexArray.size());
-
-            // 오른손 좌표계
-            auto& indexArray = _lowLevelRenderer->indices();
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 1);
-
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 0);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 2);
-            indexArray.push_back((currentTotalTriangleVertexCount - 4) + 3);
+            SB_Transform transform;
+            transform._transformMatrix.preTranslate(preTranslation.getXyz());
+            transform._transformMatrix.postTranslate(postTranslation.getXyz());
+            transform._transformMatrix *= transformMatrix;
+            _sbTransformData.push_back(transform);
         }
     }
 }
