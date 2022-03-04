@@ -204,15 +204,8 @@
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
     <ClInclude Include="Include\FontLoader.h" />
     <ClInclude Include="Include\GraphicDevice.h" />
-    <ClInclude Include="Include\GUI\ControlData.h" />
-    <ClInclude Include="Include\GUI\ControlData.hpp" />
-    <ClInclude Include="Include\GUI\ControlInteractionStateSet.h" />
-    <ClInclude Include="Include\GUI\ControlMetaStateSet.h" />
-    <ClInclude Include="Include\GUI\ControlValue.h" />
     <ClInclude Include="Include\GUI\GUICommon.h" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
-    <ClInclude Include="Include\GUI\InputHelpers.h" />
-    <ClInclude Include="Include\GUI\InputHelpers.hpp" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
@@ -225,9 +218,6 @@
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
     <None Include="Include\GraphicDevice.inl" />
-    <None Include="Include\GUI\ControlMetaStateSet.inl" />
-    <None Include="Include\GUI\ControlValue.inl" />
-    <None Include="Include\GUI\GUIContext.inl" />
     <None Include="Include\IRendererContext.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -279,22 +269,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ControlInteractionStateSet.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Source\GUI\GUIContext.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUIContext_Presets.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Source\IDxObject.cpp">

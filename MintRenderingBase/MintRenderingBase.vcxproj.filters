@@ -87,31 +87,10 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\ControlData.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlData.hpp">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlInteractionStateSet.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlMetaStateSet.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Include\GUI\GUICommon.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\GUI\GUIContext.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\InputHelpers.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\InputHelpers.hpp">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlValue.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\FontLoader.h">
@@ -127,15 +106,6 @@
     </None>
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
-    </None>
-    <None Include="Include\GUI\ControlMetaStateSet.inl">
-      <Filter>Include\GUI</Filter>
-    </None>
-    <None Include="Include\GUI\GUIContext.inl">
-      <Filter>Include\GUI</Filter>
-    </None>
-    <None Include="Include\GUI\ControlValue.inl">
-      <Filter>Include\GUI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -178,13 +148,7 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ControlInteractionStateSet.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUI\GUIContext.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUIContext_Presets.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\FontLoader.cpp">

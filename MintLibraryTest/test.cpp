@@ -355,60 +355,56 @@ const bool testWindow()
         inputContext.processEvents();
         guiContext.processEvent();
 
-        const bool isInputBoxFocused = guiContext.isFocusedControlInputBox();
-        if (isInputBoxFocused == false)
+        if (inputContext.isKeyPressed())
         {
-            if (inputContext.isKeyPressed())
+            if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
             {
-                if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
-                {
-                    graphicDevice.getShaderPool().recompileAllShaders();
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
-                {
-                    graphicDevice.useSolidCullBackRasterizer();
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
-                {
-                    graphicDevice.useWireFrameCullBackRasterizer();
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
-                {
-                    graphicDevice.useWireFrameNoCullingRasterizer();
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
-                {
-                    Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
-                    meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
-                {
-                    Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
-                    meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
-                }
-                else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
-                {
-                    testCameraObject->setBoostMode(true);
-                }
+                graphicDevice.getShaderPool().recompileAllShaders();
             }
-            else if (inputContext.isKeyReleased())
+            else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
             {
-                if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
-                {
-                    testCameraObject->setBoostMode(false);
-                }
+                graphicDevice.useSolidCullBackRasterizer();
             }
-            else if (inputContext.isMouseWheelScrolled())
+            else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
             {
-                const float mouseWheelScroll = inputContext.getMouseWheelScroll();
-                if (mouseWheelScroll > 0.0f)
-                {
-                    testCameraObject->increaseMoveSpeed();
-                }
-                else
-                {
-                    testCameraObject->decreaseMoveSpeed();
-                }
+                graphicDevice.useWireFrameCullBackRasterizer();
+            }
+            else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
+            {
+                graphicDevice.useWireFrameNoCullingRasterizer();
+            }
+            else if (inputContext.isKeyDown(Platform::KeyCode::Num4) == true)
+            {
+                Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
+                meshComponent->shouldDrawNormals(!meshComponent->shouldDrawNormals());
+            }
+            else if (inputContext.isKeyDown(Platform::KeyCode::Num5) == true)
+            {
+                Rendering::MeshComponent* const meshComponent = static_cast<Rendering::MeshComponent*>(testObject->getComponent(Rendering::ObjectComponentType::MeshComponent));
+                meshComponent->shouldDrawEdges(!meshComponent->shouldDrawEdges());
+            }
+            else if (inputContext.isKeyDown(Platform::KeyCode::Shift) == true)
+            {
+                testCameraObject->setBoostMode(true);
+            }
+        }
+        else if (inputContext.isKeyReleased())
+        {
+            if (inputContext.isKeyUp(Platform::KeyCode::Shift) == true)
+            {
+                testCameraObject->setBoostMode(false);
+            }
+        }
+        else if (inputContext.isMouseWheelScrolled())
+        {
+            const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+            if (mouseWheelScroll > 0.0f)
+            {
+                testCameraObject->increaseMoveSpeed();
+            }
+            else
+            {
+                testCameraObject->decreaseMoveSpeed();
             }
         }
         
@@ -419,8 +415,7 @@ const bool testWindow()
             objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
         }
 
-        const bool isCameraMoveLocked = isInputBoxFocused;
-        testCameraObject->steer(inputContext, isCameraMoveLocked);
+        testCameraObject->steer(inputContext, false);
 
         // Rendering
         {
@@ -522,116 +517,7 @@ const bool testWindow()
 
 // GUI
 #if 1
-            {
-                GUI::ControlMetaStateSet& controlMetaStateSet = guiContext.getControlMetaStateSet();
 
-                static GUI::VisibleState testWindowVisibleState = GUI::VisibleState::Invisible;
-                static GUI::VisibleState debugControlDataViewerVisibleState = GUI::VisibleState::Invisible;
-                guiContext.makeTestWindow(testWindowVisibleState);
-                guiContext.makeDebugControlDataViewer(debugControlDataViewerVisibleState);
-                if (guiContext.beginMenuBar(MINT_FILE_LINE(), L"") == true)
-                {
-                    if (guiContext.beginMenuBarItem(MINT_FILE_LINE(), L"파일") == true)
-                    {
-                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"종료") == true)
-                        {
-                            if (guiContext.isThisControlPressed() == true)
-                            {
-                                window.destroy();
-                            }
-                            guiContext.endMenuItem();
-                        }
-                        guiContext.endMenuBarItem();
-                    }
-
-                    if (guiContext.beginMenuBarItem(MINT_FILE_LINE(), L"윈도우") == true)
-                    {
-                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"TestWindow") == true)
-                        {
-                            if (guiContext.isThisControlPressed() == true)
-                            {
-                                testWindowVisibleState = GUI::VisibleState::VisibleOpen;
-                            }
-                            
-                            guiContext.endMenuItem();
-                        }
-
-                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"ControlData Viewer") == true)
-                        {
-                            if (guiContext.isThisControlPressed() == true)
-                            {
-                                debugControlDataViewerVisibleState = GUI::VisibleState::VisibleOpen;
-                            }
-
-                            guiContext.endMenuItem();
-                        }
-
-                        guiContext.endMenuBarItem();
-                    }
-
-                    guiContext.endMenuBar();
-                }
-
-                GUI::WindowParam inspectorWindowParam;
-                controlMetaStateSet.nextSize(Float2(320.0f, 400.0f));
-                inspectorWindowParam._initialDockZone = GUI::DockZone::RightSide;
-                inspectorWindowParam._initialDockingSize._x = 320.0f;
-                static GUI::VisibleState inspectorVisibleState;
-                if (guiContext.beginWindow(MINT_FILE_LINE(), L"Inspector", inspectorWindowParam, inspectorVisibleState) == true)
-                {
-                    wchar_t tempBuffer[256];
-                    GUI::LabelParam labelParam;
-                    labelParam._common._fontColor = Rendering::Color(200, 220, 255, 255);
-                    labelParam._alignmentHorz = GUI::TextAlignmentHorz::Left;
-                    
-                    formatString(tempBuffer, L" FPS: %d", Profiler::FPSCounter::getFps());
-                    guiContext.makeLabel(MINT_FILE_LINE(), tempBuffer, labelParam);
-
-                    formatString(tempBuffer, L" CPU: %d ms", Profiler::FPSCounter::getFrameTimeMs());
-                    guiContext.makeLabel(MINT_FILE_LINE(), tempBuffer, labelParam);
-                    
-                    Float3& cameraPosition = testCameraObject->getObjectTransform()._translation;
-                    guiContext.makeLabel(MINT_FILE_LINE(), L" Camera Position:", labelParam);
-                    
-                    {
-                        labelParam._common._backgroundColor.r(1.0f);
-                        labelParam._common._backgroundColor.a(0.75f);
-                        labelParam._common._fontColor = Rendering::Color::kWhite;
-                        GUI::CommonControlParam valueSliderParam;
-                        const float maxWidth = guiContext.getCurrentAvailableDisplaySizeX();
-                        const float labelWidth = 16.0f;
-                        const Float2 valueSliderSize = Float2((maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f, 24.0f);
-                        controlMetaStateSet.pushSize(valueSliderSize);
-                        {
-                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"X", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._x) == true)
-                            {
-                                guiContext.endLabeledValueSlider();
-                            }
-
-                            controlMetaStateSet.nextSameLine();
-
-                            labelParam._common._backgroundColor.r(0.0f);
-                            labelParam._common._backgroundColor.g(0.875f);
-                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"Y", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._y) == true)
-                            {
-                                guiContext.endLabeledValueSlider();
-                            }
-
-                            controlMetaStateSet.nextSameLine();
-
-                            labelParam._common._backgroundColor.g(0.0f);
-                            labelParam._common._backgroundColor.b(1.0f);
-                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"Z", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._z) == true)
-                            {
-                                guiContext.endLabeledValueSlider();
-                            }
-                        }
-                        controlMetaStateSet.popSize();
-                    }
-                    
-                    guiContext.endWindow();
-                }
-            }
 #endif
 
 #if 1
