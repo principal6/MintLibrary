@@ -57,9 +57,6 @@ namespace mint
         // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class FontRendererContext final : public IRendererContext
         {
-            static constexpr int32  kVertexCountPerGlyph = 4;
-            static constexpr int32  kIndexCountPerGlyph = 6;
-
         public:
                                     FontRendererContext(GraphicDevice& graphicDevice);
                                     FontRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
