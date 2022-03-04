@@ -20,7 +20,7 @@
 
 namespace mint
 {
-    namespace GUI
+    namespace Rendering
     {
         GUIContext::GUIContext(Rendering::GraphicDevice& graphicDevice)
             : _graphicDevice{ graphicDevice }

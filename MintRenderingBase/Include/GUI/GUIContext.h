@@ -32,11 +32,8 @@ namespace mint
     namespace Rendering
     {
         class GraphicDevice;
-    }
 
 
-    namespace GUI
-    {
         class GUIContext final
         {
             friend Rendering::GraphicDevice;

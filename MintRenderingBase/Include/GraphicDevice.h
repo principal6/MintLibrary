@@ -173,7 +173,7 @@ namespace mint
             DxShaderPool&                               getShaderPool() noexcept;
             DxResourcePool&                             getResourcePool() noexcept;
             ShapeRendererContext&                       getShapeRendererContext() noexcept;
-            GUI::GUIContext&                            getGUIContext() noexcept;
+            Rendering::GUIContext&                      getGUIContext() noexcept;
             const Language::CppHlsl::Interpreter&       getCppHlslSteamData() const noexcept;
             const Language::CppHlsl::Interpreter&       getCppHlslConstantBuffers() const noexcept;
             StateManager&                               getStateManager() noexcept;
@@ -254,7 +254,7 @@ namespace mint
             bool                                        _needEndRenderingCall;
 
         private:
-            GUI::GUIContext                             _guiContext;
+            Rendering::GUIContext                       _guiContext;
         };
     }
 }

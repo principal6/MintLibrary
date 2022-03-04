@@ -315,7 +315,7 @@ const bool testWindow()
     graphicDevice.initialize();
 
     //Rendering::MathExpressionRenderer mathExpressionRenderer(graphicDevice);
-    GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
+    Rendering::GUIContext& guiContext = graphicDevice.getGUIContext();
     Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
     Rendering::ObjectPool objectPool;
