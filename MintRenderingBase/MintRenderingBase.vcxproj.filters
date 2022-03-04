@@ -93,9 +93,6 @@
     <ClInclude Include="Include\FontLoader.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\Control.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
