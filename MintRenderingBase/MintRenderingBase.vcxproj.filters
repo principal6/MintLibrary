@@ -87,14 +87,14 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\GUICommon.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Include\GUI\GUIContext.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\FontLoader.h">
       <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI\Control.h">
+      <Filter>Include\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -204,7 +204,7 @@
     <ClInclude Include="Include\DxShaderHeaderMemory.h" />
     <ClInclude Include="Include\FontLoader.h" />
     <ClInclude Include="Include\GraphicDevice.h" />
-    <ClInclude Include="Include\GUI\GUICommon.h" />
+    <ClInclude Include="Include\GUI\Control.h" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />

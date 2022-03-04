@@ -16,8 +16,6 @@
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/GUI/GUICommon.h>
-
 
 namespace mint
 {
