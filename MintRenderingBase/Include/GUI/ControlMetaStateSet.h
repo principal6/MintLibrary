@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_GUI_CONTROL_METASTATE_SET
-#define MINT_GUI_CONTROL_METASTATE_SET
+#ifndef _MINT_GUI_CONTROL_METASTATE_SET_H_
+#define _MINT_GUI_CONTROL_METASTATE_SET_H_
 
 
 #include <MintMath/Include/Float2.h>
@@ -73,4 +73,4 @@ namespace mint
 #include <MintRenderingBase/Include/GUI/ControlMetaStateSet.inl>
 
 
-#endif // !MINT_GUI_CONTROL_METASTATE_SET
+#endif // !_MINT_GUI_CONTROL_METASTATE_SET_H_

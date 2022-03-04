@@ -527,11 +527,11 @@ const bool testWindow()
                 static GUI::VisibleState debugControlDataViewerVisibleState = GUI::VisibleState::Invisible;
                 guiContext.makeTestWindow(testWindowVisibleState);
                 guiContext.makeDebugControlDataViewer(debugControlDataViewerVisibleState);
-                if (guiContext.beginMenuBar(MINT_GUI_CONTROL(L"")) == true)
+                if (guiContext.beginMenuBar(MINT_FILE_LINE(), L"") == true)
                 {
-                    if (guiContext.beginMenuBarItem(MINT_GUI_CONTROL(L"파일")) == true)
+                    if (guiContext.beginMenuBarItem(MINT_FILE_LINE(), L"파일") == true)
                     {
-                        if (guiContext.beginMenuItem(MINT_GUI_CONTROL(L"종료")) == true)
+                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"종료") == true)
                         {
                             if (guiContext.isThisControlPressed() == true)
                             {
@@ -542,9 +542,9 @@ const bool testWindow()
                         guiContext.endMenuBarItem();
                     }
 
-                    if (guiContext.beginMenuBarItem(MINT_GUI_CONTROL(L"윈도우")) == true)
+                    if (guiContext.beginMenuBarItem(MINT_FILE_LINE(), L"윈도우") == true)
                     {
-                        if (guiContext.beginMenuItem(MINT_GUI_CONTROL(L"TestWindow")) == true)
+                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"TestWindow") == true)
                         {
                             if (guiContext.isThisControlPressed() == true)
                             {
@@ -554,7 +554,7 @@ const bool testWindow()
                             guiContext.endMenuItem();
                         }
 
-                        if (guiContext.beginMenuItem(MINT_GUI_CONTROL(L"ControlData Viewer")) == true)
+                        if (guiContext.beginMenuItem(MINT_FILE_LINE(), L"ControlData Viewer") == true)
                         {
                             if (guiContext.isThisControlPressed() == true)
                             {
@@ -575,7 +575,7 @@ const bool testWindow()
                 inspectorWindowParam._initialDockZone = GUI::DockZone::RightSide;
                 inspectorWindowParam._initialDockingSize._x = 320.0f;
                 static GUI::VisibleState inspectorVisibleState;
-                if (guiContext.beginWindow(MINT_GUI_CONTROL(L"Inspector", inspectorWindowParam, inspectorVisibleState)) == true)
+                if (guiContext.beginWindow(MINT_FILE_LINE(), L"Inspector", inspectorWindowParam, inspectorVisibleState) == true)
                 {
                     wchar_t tempBuffer[256];
                     GUI::LabelParam labelParam;
@@ -583,13 +583,13 @@ const bool testWindow()
                     labelParam._alignmentHorz = GUI::TextAlignmentHorz::Left;
                     
                     formatString(tempBuffer, L" FPS: %d", Profiler::FPSCounter::getFps());
-                    guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
+                    guiContext.makeLabel(MINT_FILE_LINE(), tempBuffer, labelParam);
 
                     formatString(tempBuffer, L" CPU: %d ms", Profiler::FPSCounter::getFrameTimeMs());
-                    guiContext.makeLabel(MINT_GUI_CONTROL(tempBuffer, labelParam));
+                    guiContext.makeLabel(MINT_FILE_LINE(), tempBuffer, labelParam);
                     
                     Float3& cameraPosition = testCameraObject->getObjectTransform()._translation;
-                    guiContext.makeLabel(MINT_GUI_CONTROL(L" Camera Position:", labelParam));
+                    guiContext.makeLabel(MINT_FILE_LINE(), L" Camera Position:", labelParam);
                     
                     {
                         labelParam._common._backgroundColor.r(1.0f);
@@ -601,7 +601,7 @@ const bool testWindow()
                         const Float2 valueSliderSize = Float2((maxWidth - guiContext.getCurrentSameLineIntervalX() * 2.0f) / 3.0f, 24.0f);
                         controlMetaStateSet.pushSize(valueSliderSize);
                         {
-                            if (guiContext.beginLabeledValueSlider(MINT_GUI_CONTROL(L"X", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._x)) == true)
+                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"X", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._x) == true)
                             {
                                 guiContext.endLabeledValueSlider();
                             }
@@ -610,7 +610,7 @@ const bool testWindow()
 
                             labelParam._common._backgroundColor.r(0.0f);
                             labelParam._common._backgroundColor.g(0.875f);
-                            if (guiContext.beginLabeledValueSlider(MINT_GUI_CONTROL(L"Y", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._y)) == true)
+                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"Y", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._y) == true)
                             {
                                 guiContext.endLabeledValueSlider();
                             }
@@ -619,7 +619,7 @@ const bool testWindow()
 
                             labelParam._common._backgroundColor.g(0.0f);
                             labelParam._common._backgroundColor.b(1.0f);
-                            if (guiContext.beginLabeledValueSlider(MINT_GUI_CONTROL(L"Z", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._z)) == true)
+                            if (guiContext.beginLabeledValueSlider(MINT_FILE_LINE(), L"Z", labelParam, valueSliderParam, labelWidth, 0.0f, 3, cameraPosition._z) == true)
                             {
                                 guiContext.endLabeledValueSlider();
                             }

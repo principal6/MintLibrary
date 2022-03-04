@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_GUI_CONTEXT_H
-#define MINT_GUI_CONTEXT_H
+#ifndef _MINT_GUI_CONTEXT_H_
+#define _MINT_GUI_CONTEXT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -23,12 +23,18 @@
 #include <MintRenderingBase/Include/GUI/ControlInteractionStateSet.h>
 
 
-// This macro makes arguments for begin-/make- functions of GUIContext
-#define MINT_GUI_CONTROL(params, ...) __FILE__, __LINE__, params, __VA_ARGS__
-
-
 namespace mint
 {
+    // Use MINT_FILE_LINE macro!
+    struct FileLine
+    {
+        explicit FileLine(const char* const file, const int line) : _file{ file }, _line{ line } { __noop; }
+        const char* const _file;
+        const int         _line;
+    };
+    #define MINT_FILE_LINE() FileLine(__FILE__, __LINE__)
+
+
     namespace Rendering
     {
         class GraphicDevice;
@@ -201,14 +207,14 @@ namespace mint
             void                                        makeTestWindow(VisibleState& inoutVisibleState);
             void                                        makeTestDockedWindow(VisibleState& inoutVisibleState);
             void                                        makeDebugControlDataViewer(VisibleState& inoutVisibleState);
-            void                                        makeFromReflectionClass(const char* const file, const int line, const ReflectionData& reflectionData, const void* const reflectionClass);
+            void                                        makeFromReflectionClass(const FileLine& fileLine, const ReflectionData& reflectionData, const void* const reflectionClass);
     #pragma endregion
 
     #pragma region Controls - Window
         public:
             // [Window | Control with ID]
             // \param title [Used as unique id for windows]
-            const bool                                  beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
+            const bool                                  beginWindow(const FileLine& fileLine, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState);
             void                                        endWindow() { endControlInternal(ControlType::Window); }
 
         private:
@@ -226,7 +232,7 @@ namespace mint
             // A simple button control
             // \param text [Text to display on the button]
             // \returns true, if clicked
-            const bool                                  beginButton(const char* const file, const int line, const wchar_t* const text);
+            const bool                                  beginButton(const FileLine& fileLine, const wchar_t* const text);
             void                                        endButton() { endControlInternal(ControlType::Button); }
     #pragma endregion
 
@@ -234,13 +240,13 @@ namespace mint
         public:
             // [CheckBox]
             // \return true, if toggle state has changed
-            const bool                                  beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked = nullptr);
+            const bool                                  beginCheckBox(const FileLine& fileLine, const wchar_t* const text, bool* const outIsChecked = nullptr);
             void                                        endCheckBox() { endControlInternal(ControlType::CheckBox); }
     #pragma endregion
 
     #pragma region Controls - Label
         public:
-            void                                        makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
+            void                                        makeLabel(const FileLine& fileLine, const wchar_t* const text, const LabelParam& labelParam = LabelParam());
 
         private:
             Float4                                      labelComputeTextPosition(const LabelParam& labelParam, const ControlData& labelControlData) const noexcept;
@@ -250,7 +256,7 @@ namespace mint
     #pragma region Controls - Slider
         public:
             // \return true, if value has been changed
-            const bool                                  beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue);
+            const bool                                  beginSlider(const FileLine& fileLine, const SliderParam& sliderParam, float& outValue);
             void                                        endSlider() { endControlInternal(ControlType::Slider); }
 
         private:
@@ -263,7 +269,7 @@ namespace mint
             // \param textBoxParam [Various options]
             // \param outText [The content of the textbox]
             // \return true, if the content has changed
-            const bool                                  beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText);
+            const bool                                  beginTextBox(const FileLine& fileLine, const TextBoxParam& textBoxParam, StringW& outText);
             void                                        endTextBox() { endControlInternal(ControlType::TextBox); }
 
         private:
@@ -272,10 +278,10 @@ namespace mint
 
     #pragma region Controls - ValueSlider
         public:
-            const bool                                  beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            const bool                                  beginValueSlider(const FileLine& fileLine, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endValueSlider() { endControlInternal(ControlType::ValueSlider); }
             
-            const bool                                  beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value);
+            const bool                                  beginLabeledValueSlider(const FileLine& fileLine, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value);
             void                                        endLabeledValueSlider() { endControlInternal(ControlType::ValueSlider); }
 
         private:
@@ -284,21 +290,21 @@ namespace mint
 
     #pragma region Controls - List (ListView, ListItem)
         public:
-            const bool                                  beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
+            const bool                                  beginListView(const FileLine& fileLine, int16& outSelectedListItemIndex, const ListViewParam& listViewParam);
             void                                        endListView();
 
-            void                                        makeListItem(const char* const file, const int line, const wchar_t* const text);
+            void                                        makeListItem(const FileLine& fileLine, const wchar_t* const text);
     #pragma endregion
 
     #pragma region Controls - Menu (MenuBar, MenuBarItem, MenuItem)
         public:
-            const bool                                  beginMenuBar(const char* const file, const int line, const wchar_t* const name);
+            const bool                                  beginMenuBar(const FileLine& fileLine, const wchar_t* const name);
             void                                        endMenuBar() { endControlInternal(ControlType::MenuBar); }
 
-            const bool                                  beginMenuBarItem(const char* const file, const int line, const wchar_t* const text);
+            const bool                                  beginMenuBarItem(const FileLine& fileLine, const wchar_t* const text);
             void                                        endMenuBarItem() { endControlInternal(ControlType::MenuBarItem); }
 
-            const bool                                  beginMenuItem(const char* const file, const int line, const wchar_t* const text);
+            const bool                                  beginMenuItem(const FileLine& fileLine, const wchar_t* const text);
             void                                        endMenuItem() { endControlInternal(ControlType::MenuItem); }
     #pragma endregion
 
@@ -330,10 +336,10 @@ namespace mint
         private:
             const bool                                  isValidControl(const ControlID& id) const noexcept;
             const ControlID                             issueControlID(const ControlID parentControlID, const ControlType controlType, const wchar_t* const identifier, const wchar_t* const text) noexcept;
-            const ControlID                             issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept;
+            const ControlID                             issueControlID(const FileLine& fileLine, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             _createControlDataInternalXXX(const ControlID controlID, const ControlID parentControlID, const ControlType controlType, const wchar_t* const text) noexcept;
             const ControlID                             _generateControlIDXXX(const ControlID& parentControlID, const ControlType controlType, const wchar_t* const identifier) const noexcept;
-            const ControlID                             _generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept;
+            const ControlID                             _generateControlIDXXX(const FileLine& fileLine, const ControlType controlType) const noexcept;
             const ControlData&                          getControlStackTopXXX() const noexcept;
             const ControlData&                          getControlData(const ControlID& id) const noexcept;
             ControlData&                                accessControlData(const ControlID& id) noexcept;
@@ -485,4 +491,4 @@ namespace mint
 #include <MintRenderingBase/Include/GUI/GUIContext.inl>
 
 
-#endif // !MINT_GUI_CONTEXT_H
+#endif // !_MINT_GUI_CONTEXT_H_

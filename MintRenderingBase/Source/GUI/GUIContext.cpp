@@ -275,13 +275,13 @@ namespace mint
             return true;
         }
 
-        const bool GUIContext::beginWindow(const char* const file, const int line, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
+        const bool GUIContext::beginWindow(const FileLine& fileLine, const wchar_t* const title, const WindowParam& windowParam, VisibleState& inoutVisibleState)
         {
             static constexpr ControlType controlType = ControlType::Window;
             
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlID windowControlID = issueControlID(file, line, controlType, title);
+            const ControlID windowControlID = issueControlID(fileLine, controlType, title);
             
             ControlData& windowControlData = accessControlData(windowControlID);
             if (windowControlData.needInitialization())
@@ -492,11 +492,11 @@ namespace mint
             windowControlData.setClipRectForDocks(clipRectForDocks);
         }
 
-        const bool GUIContext::beginButton(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginButton(const FileLine& fileLine, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::Button;
             
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& controlData = accessControlData(controlID);
             ControlData::UpdateParam updateParam;
@@ -523,11 +523,11 @@ namespace mint
             return beginControlInternal(controlType, controlID, isClicked);
         }
 
-        const bool GUIContext::beginCheckBox(const char* const file, const int line, const wchar_t* const text, bool* const outIsChecked)
+        const bool GUIContext::beginCheckBox(const FileLine& fileLine, const wchar_t* const text, bool* const outIsChecked)
         {
             static constexpr ControlType controlType = ControlType::CheckBox;
 
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& controlData = accessControlData(controlID);
             ControlData::UpdateParam updateParam;
@@ -570,11 +570,11 @@ namespace mint
             return beginControlInternal(controlType, controlID, isClicked);
         }
 
-        void GUIContext::makeLabel(const char* const file, const int line, const wchar_t* const text, const LabelParam& labelParam)
+        void GUIContext::makeLabel(const FileLine& fileLine, const wchar_t* const text, const LabelParam& labelParam)
         {
             static constexpr ControlType controlType = ControlType::Label;
 
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& controlData = accessControlData(controlID);
             ControlData::UpdateParam updateParam;
@@ -656,13 +656,13 @@ namespace mint
             return Rendering::FontRenderingOption(textRenderDirectionHorz, textRenderDirectionVert, kFontScaleB);
         }
 
-        const bool GUIContext::beginSlider(const char* const file, const int line, const SliderParam& sliderParam, float& outValue)
+        const bool GUIContext::beginSlider(const FileLine& fileLine, const SliderParam& sliderParam, float& outValue)
         {
             static constexpr ControlType trackControlType = ControlType::Slider;
             static constexpr ControlType thumbControlType = ControlType::SliderThumb;
 
-            const ControlID trackControlID = issueControlID(file, line, trackControlType, nullptr);
-            const ControlID thumbControlID = issueControlID(file, line, thumbControlType, nullptr);
+            const ControlID trackControlID = issueControlID(fileLine, trackControlType, nullptr);
+            const ControlID thumbControlID = issueControlID(fileLine, thumbControlType, nullptr);
             
             ControlData& trackControlData = accessControlData(trackControlID);
             ControlData::UpdateParam trackUpdateParam;
@@ -771,11 +771,11 @@ namespace mint
             rendererContext.drawCircle(kSliderThumbRadius - 2.0f);
         }
 
-        const bool GUIContext::beginTextBox(const char* const file, const int line, const TextBoxParam& textBoxParam, StringW& outText)
+        const bool GUIContext::beginTextBox(const FileLine& fileLine, const TextBoxParam& textBoxParam, StringW& outText)
         {
             static constexpr ControlType controlType = ControlType::TextBox;
             
-            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(fileLine, controlType, nullptr);
             
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
@@ -878,11 +878,11 @@ namespace mint
             }
         }
 
-        const bool GUIContext::beginValueSlider(const char* const file, const int line, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GUIContext::beginValueSlider(const FileLine& fileLine, const CommonControlParam& commonControlParam, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             static constexpr ControlType controlType = ControlType::ValueSlider;
 
-            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(fileLine, controlType, nullptr);
             
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = true;
@@ -947,20 +947,20 @@ namespace mint
             return beginControlInternal(controlType, controlID, isFocused);
         }
 
-        const bool GUIContext::beginLabeledValueSlider(const char* const file, const int line, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
+        const bool GUIContext::beginLabeledValueSlider(const FileLine& fileLine, const wchar_t* const labelText, const LabelParam& labelParam, const CommonControlParam& valueSliderParam, const float labelWidth, const float roundnessInPixel, const int32 decimalDigits, float& value)
         {
             LabelParam labelParamModified = labelParam;
             labelParamModified._alignmentHorz = GUI::TextAlignmentHorz::Center;
             const Float2 desiredSize = _controlMetaStateSet.getNextDesiredSize();
             _controlMetaStateSet.pushSize(Float2(labelWidth, desiredSize._y));
-            makeLabel(file, line, labelText, labelParamModified);
+            makeLabel(fileLine, labelText, labelParamModified);
             _controlMetaStateSet.popSize();
             
             _controlMetaStateSet.nextSameLine();
             _controlMetaStateSet.nextOffInterval();
             
             _controlMetaStateSet.pushSize(Float2(desiredSize._x - labelWidth, desiredSize._y));
-            const bool result = beginValueSlider(file, line, valueSliderParam, roundnessInPixel, decimalDigits, value);
+            const bool result = beginValueSlider(fileLine, valueSliderParam, roundnessInPixel, decimalDigits, value);
             _controlMetaStateSet.popSize();
             return result;
         }
@@ -1026,11 +1026,11 @@ namespace mint
             }
         }
         
-        const bool GUIContext::beginListView(const char* const file, const int line, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
+        const bool GUIContext::beginListView(const FileLine& fileLine, int16& outSelectedListItemIndex, const ListViewParam& listViewParam)
         {
             static constexpr ControlType controlType = ControlType::ListView;
             
-            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(fileLine, controlType, nullptr);
             
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
@@ -1099,11 +1099,11 @@ namespace mint
             endControlInternal(ControlType::ListView);
         }
 
-        void GUIContext::makeListItem(const char* const file, const int line, const wchar_t* const text)
+        void GUIContext::makeListItem(const FileLine& fileLine, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::ListItem;
             
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& controlData = accessControlData(controlID);
             controlData._option._isFocusable = false;
@@ -1142,13 +1142,13 @@ namespace mint
                 Rendering::FontRenderingOption(Rendering::TextRenderDirectionHorz::Rightward, Rendering::TextRenderDirectionVert::Centered));
         }
 
-        const bool GUIContext::beginMenuBar(const char* const file, const int line, const wchar_t* const name)
+        const bool GUIContext::beginMenuBar(const FileLine& fileLine, const wchar_t* const name)
         {
             static constexpr ControlType controlType = ControlType::MenuBar;
 
             _controlMetaStateSet.nextOffAutoPosition();
 
-            const ControlID controlID = issueControlID(file, line, controlType, nullptr);
+            const ControlID controlID = issueControlID(fileLine, controlType, nullptr);
             
             ControlData& menuBar = accessControlData(controlID);
             ControlData& menuBarParent = accessControlData(menuBar.getParentID());
@@ -1207,7 +1207,7 @@ namespace mint
             return beginControlInternal(controlType, controlID, true);
         }
 
-        const bool GUIContext::beginMenuBarItem(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginMenuBarItem(const FileLine& fileLine, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuBarItem;
 
@@ -1219,7 +1219,7 @@ namespace mint
                 return false;
             }
 
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& menuBarItem = accessControlData(controlID);
             ControlData& menuBar = accessControlData(menuBarItem.getParentID());
@@ -1281,14 +1281,14 @@ namespace mint
             return beginControlInternal(controlType, controlID, result);
         }
 
-        const bool GUIContext::beginMenuItem(const char* const file, const int line, const wchar_t* const text)
+        const bool GUIContext::beginMenuItem(const FileLine& fileLine, const wchar_t* const text)
         {
             static constexpr ControlType controlType = ControlType::MenuItem;
 
             _controlMetaStateSet.nextOffAutoPosition();
             _controlMetaStateSet.nextOffSizeContraintToParent();
 
-            const ControlID controlID = issueControlID(file, line, controlType, text);
+            const ControlID controlID = issueControlID(fileLine, controlType, text);
             
             ControlData& menuItem = accessControlData(controlID);
             menuItem._option._isInteractableOutsideParent = true;
@@ -1935,9 +1935,9 @@ namespace mint
             return _createControlDataInternalXXX(controlID, parentControlID, controlType, text);
         }
 
-        const ControlID GUIContext::issueControlID(const char* const file, const int line, const ControlType controlType, const wchar_t* const text) noexcept
+        const ControlID GUIContext::issueControlID(const FileLine& fileLine, const ControlType controlType, const wchar_t* const text) noexcept
         {
-            const ControlID controlID = _generateControlIDXXX(file, line, controlType);
+            const ControlID controlID = _generateControlIDXXX(fileLine, controlType);
             const ControlID parentControlID = getControlStackTopXXX().getID();
             return _createControlDataInternalXXX(controlID, parentControlID, controlType, text);
         }
@@ -1974,12 +1974,12 @@ namespace mint
             return ControlID(computeHash(idWstring.c_str()));
         }
 
-        const ControlID GUIContext::_generateControlIDXXX(const char* const file, const int line, const ControlType controlType) const noexcept
+        const ControlID GUIContext::_generateControlIDXXX(const FileLine& fileLine, const ControlType controlType) const noexcept
         {
             static StringW idWstring;
             idWstring.clear();
-            StringUtil::convertStringAToStringW(file, idWstring);
-            idWstring.append(line);
+            StringUtil::convertStringAToStringW(fileLine._file, idWstring);
+            idWstring.append(fileLine._line);
             idWstring.append(StringUtil::convertToStringW(static_cast<uint16>(controlType)));
             return ControlID(computeHash(idWstring.c_str()));
         }

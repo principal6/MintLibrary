@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_GUI_CONTROL_VALUE_H
-#define MINT_GUI_CONTROL_VALUE_H
+#ifndef _MINT_GUI_CONTROL_VALUE_H_
+#define _MINT_GUI_CONTROL_VALUE_H_
 
 
 #include <MintRenderingBase/Include/GUI/GUICommon.h>
@@ -97,4 +97,4 @@ namespace mint
 #include <MintRenderingBase/Include/GUI/ControlValue.inl>
 
 
-#endif // !MINT_GUI_CONTROL_VALUE_H
+#endif // !_MINT_GUI_CONTROL_VALUE_H_

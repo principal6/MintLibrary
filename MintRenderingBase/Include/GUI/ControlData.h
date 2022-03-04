@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_GUI_CONTROL_DATA_H
-#define MINT_GUI_CONTROL_DATA_H
+#ifndef _MINT_GUI_CONTROL_DATA_H_
+#define _MINT_GUI_CONTROL_DATA_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -354,4 +354,4 @@ namespace mint
 }
 
 
-#endif // !MINT_GUI_CONTROL_DATA_H
+#endif // !_MINT_GUI_CONTROL_DATA_H_

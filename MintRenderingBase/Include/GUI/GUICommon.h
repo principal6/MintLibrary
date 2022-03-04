@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef MINT_GUI_COMMON_H
-#define MINT_GUI_COMMON_H
+#ifndef _MINT_GUI_COMMON_H_
+#define _MINT_GUI_COMMON_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -209,4 +209,4 @@ namespace mint
 }
 
 
-#endif // !MINT_GUI_COMMON_H
+#endif // !_MINT_GUI_COMMON_H_
