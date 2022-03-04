@@ -519,6 +519,8 @@ const bool testWindow()
 
             plotter.render();
 #endif
+
+// GUI
 #if 1
             {
                 GUI::ControlMetaStateSet& controlMetaStateSet = guiContext.getControlMetaStateSet();
@@ -630,7 +632,9 @@ const bool testWindow()
                     guiContext.endWindow();
                 }
             }
+#endif
 
+#if 1
             testSkeleton.renderSkeleton(instantRenderer, testSkeletonWorldMatrix);
 
             graphicDevice.setViewProjectionMatrix(testCameraObject->getViewMatrix(), testCameraObject->getProjectionMatrix());
