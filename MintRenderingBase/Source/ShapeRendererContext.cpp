@@ -298,7 +298,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 0.0f;
             v._texCoord._w = abs(pointA._x - pointB._x);
-            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::QuadraticBezierTriangle);
+            v._info._x = packInfoAsFloat(ShapeType::QuadraticBezierTriangle);
             vertexArray.push_back(v);
 
             v._position._x = pointArray[1 ^ flip]._x;
@@ -343,7 +343,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = pointA._x;
                 v._position._y = pointA._y;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
                 v._position._x = pointC._x;
@@ -383,7 +383,7 @@ namespace mint
             v._texCoord._x = 0.0f;
             v._texCoord._y = 1.0f;
             v._texCoord._z = (insideOut == true) ? -1.0f : 1.0f;
-            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+            v._info._x = packInfoAsFloat(ShapeType::Circular);
             vertexArray.push_back(v);
 
             v._position._y += radius;
@@ -436,7 +436,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = halfRadius * 2.0f;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packInfoAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = offset._x + halfRadius;
@@ -508,7 +508,7 @@ namespace mint
                 v._texCoord._y = +1.0f;
                 v._texCoord._z = (insideOut == true) ? -1.0f : +1.0f;
                 v._texCoord._w = radius;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packInfoAsFloat(ShapeType::Circular);
                 vertices.push_back(v);
 
                 v._position._x = +radius;
@@ -568,7 +568,7 @@ namespace mint
                 v._texCoord._y = +1.0f;
                 v._texCoord._z = +1.0f;
                 v._texCoord._w = outerRadius;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::DoubleCircular);
+                v._info._x = packInfoAsFloat(ShapeType::DoubleCircular);
                 v._info._y = innerRadius;
                 vertices.push_back(v);
 
@@ -634,7 +634,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = 1.0f;
                 v._texCoord._w = radius;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packInfoAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = +radius * sinHalfArcAngle;
@@ -719,7 +719,7 @@ namespace mint
                 v._texCoord._y = 1.0f;
                 v._texCoord._z = +1.0f; // @IMPORTANT
                 v._texCoord._w = outerRadius;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::Circular);
+                v._info._x = packInfoAsFloat(ShapeType::Circular);
                 vertexArray.push_back(v);
 
                 v._position._x = +outerRadius * tanHalfArcAngle;
@@ -902,7 +902,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = offset._x - halfSize._x;
                 v._position._y = offset._y - halfSize._y;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(shapeType);
+                v._info._x = packInfoAsFloat(shapeType);
                 v._texCoord._x = 0.0f;
                 v._texCoord._y = 0.0f;
                 vertexArray.push_back(v);
@@ -961,7 +961,7 @@ namespace mint
                 v._position = _position;
                 v._position._x = -halfSize._x + horizontalOffsetL;
                 v._position._y = -halfSize._y;
-                v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+                v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
                 vertexArray.push_back(v);
 
                 v._position._x = +halfSize._x - horizontalOffsetR;
@@ -1259,7 +1259,7 @@ namespace mint
             v._position = _position;
             v._position._x = v0._x;
             v._position._y = v0._y;
-            v._info._x = packShapeTypeAndTransformDataIndexAsFloat(ShapeType::SolidTriangle);
+            v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
             vertexArray.push_back(v);
 
             v._position._x = v1._x;
@@ -1288,7 +1288,7 @@ namespace mint
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
         }
 
-        const float ShapeRendererContext::packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept
+        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
         {
             return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }
