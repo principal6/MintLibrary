@@ -147,6 +147,17 @@ namespace mint
                             // Font triangle
                             const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
                             const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
+                            const bool drawShade = (input._info.y == 1.0);
+                            if (drawShade)
+                            {
+                                const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
+                                const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
+                                if (rbSampled > 0.0)
+                                {
+                                    const float3 rbColor = lerp(sampledColor.xyz * 0.25 * max(rbSampled, 0.25), sampledColor.xyz, sampled);
+                                    return float4(rbColor, saturate(sampled + rbSampled));
+                                }
+                            }
                             return sampled4;
                         }
                         
