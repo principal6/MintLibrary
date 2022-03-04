@@ -42,7 +42,7 @@ namespace mint
             virtual void    render() noexcept;
 
         public:
-            void            setBorderColor(const Color& borderColor) noexcept;
+            void            setShapeBorderColor(const Color& shapeBorderColor) noexcept;
 
         public:
             virtual void    testDraw(Float2&& screenOffset);
@@ -98,7 +98,7 @@ namespace mint
             DxObjectID      _vertexShaderID;
             DxObjectID      _geometryShaderID;
             DxObjectID      _pixelShaderID;
-            Color           _borderColor;
+            Color           _shapeBorderColor;
         };
     }
 }

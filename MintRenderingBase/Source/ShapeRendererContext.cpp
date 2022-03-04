@@ -14,7 +14,7 @@ namespace mint
     {
         ShapeRendererContext::ShapeRendererContext(GraphicDevice& graphicDevice)
             : IRendererContext(graphicDevice)
-            , _borderColor{ Color(1.0f, 1.0f, 1.0f) }
+            , _shapeBorderColor{ Color(1.0f, 1.0f, 1.0f) }
         {
             __noop;
         }
@@ -214,9 +214,9 @@ namespace mint
             }
         }
 
-        void ShapeRendererContext::setBorderColor(const Color& borderColor) noexcept
+        void ShapeRendererContext::setShapeBorderColor(const Color& shapeBorderColor) noexcept
         {
-            _borderColor = borderColor;
+            _shapeBorderColor = shapeBorderColor;
         }
 
         void ShapeRendererContext::testDraw(Float2&& screenOffset)
@@ -886,13 +886,13 @@ namespace mint
             
             if (borderThickness >= 1.0f)
             {
-                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
 
-                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
 
-                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
+                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
 
-                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _borderColor);
+                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
             }
 
             drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
@@ -1036,53 +1036,53 @@ namespace mint
                 {
                     pointA = Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
                     pointB = Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
-                    drawQuadraticBezierInternal(pointA, pointB, -halfSize - Float2(borderThickness), _borderColor);
+                    drawQuadraticBezierInternal(pointA, pointB, -halfSize - Float2(borderThickness), _shapeBorderColor);
 
                     pointC = Float2(-halfCoreSize._x, -halfCoreSize._y);
-                    drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+                    drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
                 }
                 
                 // Right top
                 {
                     pointA = Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
                     pointB = Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
-                    drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, -halfSize._y) + Float2(+borderThickness, -borderThickness), _borderColor);
+                    drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, -halfSize._y) + Float2(+borderThickness, -borderThickness), _shapeBorderColor);
 
                     pointC = Float2(+halfCoreSize._x, -halfCoreSize._y);
-                    drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+                    drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
                 }
 
                 // Left bottom
                 {
                     pointA = Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
                     pointB = Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
-                    drawQuadraticBezierInternal(pointA, pointB, Float2(-halfSize._x, +halfSize._y) + Float2(-borderThickness, +borderThickness), _borderColor);
+                    drawQuadraticBezierInternal(pointA, pointB, Float2(-halfSize._x, +halfSize._y) + Float2(-borderThickness, +borderThickness), _shapeBorderColor);
 
                     pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
-                    drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+                    drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
                 }
 
                 // Right bottom
                 {
                     pointA = Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
                     pointB = Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
-                    drawQuadraticBezierInternal(pointA, pointB, halfSize + Float2(borderThickness), _borderColor);
+                    drawQuadraticBezierInternal(pointA, pointB, halfSize + Float2(borderThickness), _shapeBorderColor);
 
                     pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
-                    drawSolidTriangleInternal(pointA, pointB, pointC, _borderColor);
+                    drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
                 }
 
                 // Top
-                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
 
                 // Bottom
-                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _borderColor);
+                drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
 
                 // Left
-                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
+                drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
 
                 // Right
-                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _borderColor);
+                drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
             }
 
             drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);

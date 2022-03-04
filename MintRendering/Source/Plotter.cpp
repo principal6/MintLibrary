@@ -166,7 +166,7 @@ namespace mint
 
         void Plotter::drawFrame(const Float4& frameCenterPosition) noexcept
         {
-            _shapeFontRendererContext->setBorderColor(Color::kBlack);
+            _shapeFontRendererContext->setShapeBorderColor(Color::kBlack);
             _shapeFontRendererContext->setColor(Color::kWhite);
             _shapeFontRendererContext->setPosition(frameCenterPosition);
             _shapeFontRendererContext->drawRectangle(_size, 1.0f, 0.0f);
