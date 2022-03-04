@@ -21,6 +21,7 @@ namespace mint
         // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class ShapeRendererContext : public IRendererContext
         {
+        protected:
             enum class ShapeType : uint8
             {
                 QuadraticBezierTriangle,
@@ -31,107 +32,100 @@ namespace mint
             };
 
         public:
-            static constexpr float              kRoundnessAbsoluteBase  = 2.0f;
-
-        protected:
-            static constexpr uint8              kInfoSolid              = 1;
-            static constexpr uint8              kInfoCircular           = 2;
+                                    ShapeRendererContext(GraphicDevice& graphicDevice);
+            virtual                 ~ShapeRendererContext();
 
         public:
-                                                ShapeRendererContext(GraphicDevice& graphicDevice);
-            virtual                             ~ShapeRendererContext();
+            virtual void            initializeShaders() noexcept override;
+            virtual void            flush() noexcept override;
+            virtual void            render() noexcept;
 
         public:
-            virtual void                        initializeShaders() noexcept override;
-            virtual void                        flush() noexcept override;
-            virtual void                        render() noexcept;
+            void                    setBorderColor(const Color& borderColor) noexcept;
 
         public:
-            void                                setBorderColor(const Color& borderColor) noexcept;
-
-        public:
-            virtual void                        testDraw(Float2&& screenOffset);
-            virtual void                        testDraw(Float2& screenOffset);
+            virtual void            testDraw(Float2&& screenOffset);
+            virtual void            testDraw(Float2& screenOffset);
 
         public:
             // Independent from internal position set by setPosition() call
             // No rotation allowed
-            void                                drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
+            void                    drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
 
         protected:
-            void                                drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
+            void                    drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
             
         public:
             // Independent from internal position set by setPosition() call
             // No rotation allowed
-            void                                drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
+            void                    drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
 
         protected:
-            void                                drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
+            void                    drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
 
         public:
-            void                                drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
-            void                                drawQuarterCircle(const float radius, const float rotationAngle);
-    
+            void                    drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
+            void                    drawQuarterCircle(const float radius, const float rotationAngle);
+
         protected:
-            void                                drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
+            void                    drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
 
         public:
             // This function Interprets internal positon as the center of the entire circle (= center root of half circle)
-            void                                drawHalfCircle(const float radius, const float rotationAngle);
+            void                    drawHalfCircle(const float radius, const float rotationAngle);
 
         public:
-            void                                drawCircle(const float radius, const bool insideOut = false);
-            
-            void                                drawDoughnut(const float outerRadius, const float innerRadius);
+            void                    drawCircle(const float radius, const bool insideOut = false);
+
+            void                    drawDoughnut(const float outerRadius, const float innerRadius);
 
             // arcAngle = [0, +pi]
-            void                                drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
+            void                    drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
 
             // arcAngle = [0, +pi]
-            void                                drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
+            void                    drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
 
         public:
-            void                                drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
-            void                                drawTexturedRectangle(const Float2& size, const float rotationAngle);
+            void                    drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
+            void                    drawTexturedRectangle(const Float2& size, const float rotationAngle);
 
         protected:
-            void                                drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
+            void                    drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
 
         public:
-            void                                drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
-            void                                drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
-            void                                drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
+            void                    drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
+            void                    drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
+            void                    drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
 
         protected:
-            void                                drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
-            void                                drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
+            void                    drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
+            void                    drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
 
         public:
             // Independent from internal position set by setPosition() call
             // No rotation allowed
-            void                                drawLine(const Float2& p0, const Float2& p1, const float thickness);
+            void                    drawLine(const Float2& p0, const Float2& p1, const float thickness);
 
             // Independent from internal position set by setPosition() call
             // No rotation allowed
-            const bool                          drawLineStrip(const Vector<Float2>& points, const float thickness);
+            const bool              drawLineStrip(const Vector<Float2>& points, const float thickness);
 
         protected:
-            void                                drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
-            const float                         packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept;
-            void                                pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
+            void                    drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
+            const float             packShapeTypeAndTransformDataIndexAsFloat(const ShapeType shapeType) const noexcept;
+            void                    pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
 
         public:
             // This function is slow...!!!
-            void                                drawColorPalleteXXX(const float radius);
+            void                    drawColorPalleteXXX(const float radius);
 
         protected:
-            DxObjectID                          _vertexShaderID;
-            DxObjectID                          _geometryShaderID;
-            DxObjectID                          _pixelShaderID;
+            DxObjectID              _vertexShaderID;
+            DxObjectID              _geometryShaderID;
+            DxObjectID              _pixelShaderID;
 
         protected:
-            Color                               _borderColor;
+            Color                   _borderColor;
         };
     }
 }
