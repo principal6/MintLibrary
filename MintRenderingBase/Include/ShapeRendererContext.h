@@ -10,14 +10,47 @@
 #include <MintContainer/Include/Vector.h>
 
 #include <MintRenderingBase/Include/IRendererContext.h>
+#include <MintRenderingBase/Include/FontLoader.h>
 
 #include <MintMath/Include/Int2.h>
 
 
 namespace mint
 {
+    class BitVector;
+
+
     namespace Rendering
     {
+        struct FontRenderingOption
+        {
+            FontRenderingOption()
+                : FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward, 1.0f)
+            {
+                __noop;
+            }
+            FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert)
+                : FontRenderingOption(directionHorz, directionVert, 1.0f)
+            {
+                __noop;
+            }
+            FontRenderingOption(const TextRenderDirectionHorz directionHorz, const TextRenderDirectionVert directionVert, const float scale)
+                : _directionHorz{ directionHorz }
+                , _directionVert{ directionVert }
+                , _scale{ scale }
+                , _drawShade{ false }
+            {
+                __noop;
+            }
+
+            TextRenderDirectionHorz     _directionHorz;
+            TextRenderDirectionVert     _directionVert;
+            float                       _scale;
+            bool                        _drawShade;
+            Float4x4                    _transformMatrix;
+        };
+
+
         // All draw functions use LowLevelRenderer::pushRenderCommandIndexed()
         class ShapeRendererContext : public IRendererContext
         {
@@ -40,9 +73,14 @@ namespace mint
             virtual void    initializeShaders() noexcept override;
             virtual void    flush() noexcept override;
             virtual void    render() noexcept;
+        
+        public:
+            const bool      initializeFontData(const FontData& fontData);
+            const FontData& getFontData() const noexcept { return _fontData; }
 
         public:
             void            setShapeBorderColor(const Color& shapeBorderColor) noexcept;
+            void            setTextColor(const Color& textColor) noexcept;
 
         public:
             virtual void    testDraw(Float2&& screenOffset);
@@ -81,6 +119,14 @@ namespace mint
             // This function is slow...!!!
             void            drawColorPalleteXXX(const float radius);
 
+        // Font
+        public:
+            void            drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void            drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption);
+            void            drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+            void            drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
+
+        // Shape
         protected:
             void            drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
             void            drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
@@ -89,16 +135,25 @@ namespace mint
             void            drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
             void            drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
             void            drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
+            void            pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
+        
+        // Font
+        protected:
+            void            drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
+            void            pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
         
         protected:
             const float     packInfoAsFloat(const ShapeType shapeType) const noexcept;
-            void            pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
 
         protected:
             DxObjectID      _vertexShaderID;
             DxObjectID      _geometryShaderID;
             DxObjectID      _pixelShaderID;
+
             Color           _shapeBorderColor;
+            
+            Color           _textColor;
+            FontData        _fontData;
         };
     }
 }

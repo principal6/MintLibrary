@@ -16,7 +16,6 @@
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
 #include <MintRenderingBase/Include/GUI/GUICommon.h>
 #include <MintRenderingBase/Include/GUI/ControlData.h>
 #include <MintRenderingBase/Include/GUI/InputHelpers.h>
@@ -319,12 +318,12 @@ namespace mint
             void                                        makeScrollBar(const ControlID parentControlID, const ScrollBarType scrollBarType);
             void                                        makeScrollBar_vert(const ControlID parentControlID) noexcept;
             void                                        makeScrollBar_horz(const ControlID parentControlID) noexcept;
-            ControlData&                                _makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
-            void                                        _makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            ControlData&                                _makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeRendererContext& shapeFontRendererContext, bool& outHasExtraSize);
+            void                                        _makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeRendererContext& shapeFontRendererContext);
     #pragma endregion
 
         private:
-            void                                        processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& shapeFontRendererContext);
+            void                                        processDock(const ControlData& controlData, Rendering::ShapeRendererContext& shapeFontRendererContext);
             const bool                                  beginControlInternal(const ControlType controlType, const ControlID controlID, const bool returnValue);
             void                                        endControlInternal(const ControlType controlType);
 
@@ -417,8 +416,8 @@ namespace mint
 #pragma endregion
 
         private:
-            Rendering::ShapeFontRendererContext&        getRendererContext(const ControlData& controlData) noexcept;
-            Rendering::ShapeFontRendererContext&        getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
+            Rendering::ShapeRendererContext&            getRendererContext(const ControlData& controlData) noexcept;
+            Rendering::ShapeRendererContext&            getRendererContext(const RendererContextLayer rendererContextLayer) noexcept;
             // TopMost ´Â Á¦¿Ü!!
             const RendererContextLayer                  getUpperRendererContextLayer(const ControlData& controlData) noexcept;
             void                                        render();
@@ -430,7 +429,7 @@ namespace mint
         private: // these are set externally
             float                                       _fontSize;
             uint32                                      _caretBlinkIntervalMs;
-            Rendering::ShapeFontRendererContext         _rendererContexts[getRendererContextLayerCount()];
+            Rendering::ShapeRendererContext             _rendererContexts[getRendererContextLayerCount()];
 
         private: // screen size
             int8                                        _updateScreenSizeCounter;

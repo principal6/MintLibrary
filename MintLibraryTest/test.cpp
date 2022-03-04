@@ -466,26 +466,26 @@ const bool testWindow()
             splineGenerator.generateBezierCurve(bezierControlPointSet1, bezierLinePointSet1);
             splineGenerator.generateBezierCurve(bezierControlPointSet2, bezierLinePointSet2);
             splineGenerator.generateBezierCurve(bezierControlPointSet3, bezierLinePointSet3);
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kRed);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet0, 1.0f);
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kGreen);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet1, 1.0f);
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kBlue);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet2, 1.0f);
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kCyan);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(bezierLinePointSet3, 1.0f);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kRed);
+            graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet0, 1.0f);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kGreen);
+            graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet1, 1.0f);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kBlue);
+            graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet2, 1.0f);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kCyan);
+            graphicDevice.getShapeRendererContext().drawLineStrip(bezierLinePointSet3, 1.0f);
 
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kBlack);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kBlack);
             for (uint32 sourceControlPointIndex = 0; sourceControlPointIndex < sourceControlPointCount; sourceControlPointIndex++)
             {
                 const Float2& sourceControlPoint = sourceControlPointSet[sourceControlPointIndex];
-                graphicDevice.getShapeFontRendererContext().setPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
-                graphicDevice.getShapeFontRendererContext().drawCircle(2.0f);
+                graphicDevice.getShapeRendererContext().setPosition(Float4(sourceControlPoint._x, sourceControlPoint._y, 0.0, 1.0f));
+                graphicDevice.getShapeRendererContext().drawCircle(2.0f);
 
                 if (sourceControlPointIndex > 0)
                 {
                     const Float2& previousSourceControlPoint = sourceControlPointSet[sourceControlPointIndex - 1];
-                    graphicDevice.getShapeFontRendererContext().drawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
+                    graphicDevice.getShapeRendererContext().drawLine(previousSourceControlPoint, sourceControlPoint, 1.0f);
                 }
             }
 
@@ -498,11 +498,11 @@ const bool testWindow()
             Vector<Float2> bSplineLinePointSet;
             splineGenerator.setPrecision(64);
             splineGenerator.generateBSpline(bSplineOrder, sourceControlPointSet, bSplineKnotVector, bSplineLinePointSet);
-            graphicDevice.getShapeFontRendererContext().setColor(Rendering::Color::kMagenta);
-            graphicDevice.getShapeFontRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
+            graphicDevice.getShapeRendererContext().setColor(Rendering::Color::kMagenta);
+            graphicDevice.getShapeRendererContext().drawLineStrip(bSplineLinePointSet, 2.0f);
 #endif
 #if 0 // Plotter
-            Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
+            Rendering::ShapeRendererContext& shapeFontRendererContext = graphicDevice.getShapeRendererContext();
             Rendering::Plotter plotter(shapeFontRendererContext);
             plotter.xLabel(L"weight");
             plotter.yLabel(L"length");
@@ -637,8 +637,8 @@ const bool testWindow()
 
             meshRenderer.render(objectPool);
             
-            // # ShapeFontRendererContext 테스트
-            //Rendering::ShapeFontRendererContext& shapeFontRendererContext = graphicDevice.getShapeFontRendererContext();
+            // # ShapeRendererContext 테스트
+            //Rendering::ShapeRendererContext& shapeFontRendererContext = graphicDevice.getShapeRendererContext();
             //shapeFontRendererContext.testDraw(Float2(30, 60));
 
             // # InstantRenderer 테스트

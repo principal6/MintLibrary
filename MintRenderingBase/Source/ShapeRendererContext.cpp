@@ -1,6 +1,9 @@
 #include <stdafx.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
+#include <MintContainer/Include/Vector.hpp>
+#include <MintContainer/Include/BitVector.hpp>
+
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
@@ -192,6 +195,9 @@ namespace mint
 
             prepareTransformBuffer();
 
+            // TODO : Slot 처리...
+            _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
+
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
             shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
 
@@ -214,9 +220,33 @@ namespace mint
             }
         }
 
+        const bool ShapeRendererContext::initializeFontData(const FontData& fontData)
+        {
+            if (fontData._fontTextureID.isValid() == false)
+            {
+                MINT_LOG_ERROR("FontData 의 FontTexture 가 Invalid 합니다!");
+                return false;
+            }
+
+            if (fontData._glyphInfoArray.empty() == true)
+            {
+                MINT_LOG_ERROR("FontData 의 GlyphInfo 가 비어 있습니다!");
+                return false;
+            }
+
+            _fontData = fontData;
+
+            return true;
+        }
+
         void ShapeRendererContext::setShapeBorderColor(const Color& shapeBorderColor) noexcept
         {
             _shapeBorderColor = shapeBorderColor;
+        }
+
+        void ShapeRendererContext::setTextColor(const Color& textColor) noexcept
+        {
+            _textColor = textColor;
         }
 
         void ShapeRendererContext::testDraw(Float2&& screenOffset)
@@ -281,13 +311,21 @@ namespace mint
             drawColorPalleteXXX(kSize);
 
             screenOffset._y += 100.0f;
+
+            // Font
+            {
+                setTextColor(Color(0, 40, 80));
+
+                FontRenderingOption fontRenderingOption;
+                drawDynamicText(L"Testing`!@#$%^&*()_+ 검사 중...", Float4(screenOffset), fontRenderingOption);
+            }
         }
 
         void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
         {
             drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
 
-            pushTransformToBuffer(0.0f, false);
+            pushShapeTransformToBuffer(0.0f, false);
         }
 
         void ShapeRendererContext::drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate)
@@ -345,7 +383,7 @@ namespace mint
         {
             drawSolidTriangleInternal(pointA, pointB, pointC, _defaultColor);
 
-            pushTransformToBuffer(0.0f, false);
+            pushShapeTransformToBuffer(0.0f, false);
         }
 
         void ShapeRendererContext::drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color)
@@ -425,7 +463,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
             
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawQuarterCircle(const float radius, const float rotationAngle)
@@ -434,7 +472,7 @@ namespace mint
             
             drawQuarterCircleInternal(Float2::kZero, halfRadius, _defaultColor);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color)
@@ -566,7 +604,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
-            pushTransformToBuffer(0.0f);
+            pushShapeTransformToBuffer(0.0f);
         }
 
         void ShapeRendererContext::drawDoughnut(const float outerRadius, const float innerRadius)
@@ -627,7 +665,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
-            pushTransformToBuffer(0.0f);
+            pushShapeTransformToBuffer(0.0f);
         }
 
         void ShapeRendererContext::drawCircularArc(const float radius, const float arcAngle, const float rotationAngle)
@@ -711,7 +749,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle)
@@ -877,7 +915,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
@@ -897,14 +935,14 @@ namespace mint
 
             drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
             
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawTexturedRectangle(const Float2& size, const float rotationAngle)
         {
             const Float2 halfSize = size * 0.5f;
             drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, ShapeType::TexturedTriangle);
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType)
@@ -1010,7 +1048,7 @@ namespace mint
             const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
             _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
@@ -1087,7 +1125,7 @@ namespace mint
 
             drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
@@ -1104,7 +1142,7 @@ namespace mint
 
             drawHalfRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
 
-            pushTransformToBuffer(rotationAngle);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
@@ -1238,7 +1276,7 @@ namespace mint
         void ShapeRendererContext::drawLine(const Float2& p0, const Float2& p1, const float thickness)
         {
             drawLineInternal(p0, p1, thickness);
-            pushTransformToBuffer(0.0f, false);
+            pushShapeTransformToBuffer(0.0f, false);
         }
 
         const bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
@@ -1252,7 +1290,7 @@ namespace mint
                 const Float2& p1 = points[pointIndex];
                 drawLineInternal(p0, p1, thickness);
             }
-            pushTransformToBuffer(0.0f, false);
+            pushShapeTransformToBuffer(0.0f, false);
             return true;
         }
 
@@ -1365,12 +1403,83 @@ namespace mint
             }
         }
 
-        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
+        void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
+            const uint32 textLength = StringUtil::length(wideText);
+            drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
-        void ShapeRendererContext::pushTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
+        void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
+        {
+            const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
+
+            Float4 postTranslation;
+            if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+            {
+                postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+            }
+            if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+            {
+                postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+            }
+            postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
+
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+            Float2 glyphPosition = Float2(0.0f, 0.0f);
+            for (uint32 at = 0; at < textLength; ++at)
+            {
+                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
+            }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+            const Float4& preTranslation = position;
+            pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+        }
+
+        void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+        {
+            const uint32 textLength = StringUtil::length(wideText);
+            drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
+        }
+
+        void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+        {
+            const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+            const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
+
+            Float4 postTranslation;
+            if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+            {
+                postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+            }
+            if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+            {
+                postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+            }
+            postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
+
+            const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+            const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+            Float2 glyphPosition = Float2(0.0f, 0.0f);
+            for (uint32 at = 0; at < textLength; ++at)
+            {
+                drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.get(at));
+            }
+
+            const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+            _lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+            const Float4& preTranslation = position;
+            pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+        }
+
+        void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
         {
             SB_Transform transform;
             transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
@@ -1378,6 +1487,87 @@ namespace mint
             transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
             //transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
             _sbTransformData.push_back(transform);
+        }
+
+        void ShapeRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
+        {
+            const uint32 glyphIndex = _fontData.getSafeGlyphIndex(wideChar);
+            const GlyphInfo& glyphInfo = _fontData._glyphInfoArray[glyphIndex];
+            if (leaveOnlySpace == false)
+            {
+                const float scaledFontHeight = static_cast<float>(_fontData._fontSize) * scale;
+
+                Rect glyphRect;
+                glyphRect.left(glyphPosition._x + static_cast<float>(glyphInfo._horiBearingX) * scale);
+                glyphRect.right(glyphRect.left() + static_cast<float>(glyphInfo._width) * scale);
+                glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
+                glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
+                if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice.getWindowSize()._x
+                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // 화면을 벗어나면 렌더링 할 필요가 없으므로
+                {
+                    Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->vertices();
+
+                    // Vertices
+                    {
+                        VS_INPUT_SHAPE v;
+                        v._position._x = glyphRect.left();
+                        v._position._y = glyphRect.top();
+                        v._position._z = 0.0f;
+                        v._color = _textColor;
+                        v._texCoord._x = glyphInfo._uv0._x;
+                        v._texCoord._y = glyphInfo._uv0._y;
+                        v._info._x = packInfoAsFloat(ShapeType::FontTriangle);
+                        v._info._y = (drawShade ? 1.0f : 0.0f);
+                        vertices.push_back(v);
+
+                        v._position._x = glyphRect.right();
+                        v._texCoord._x = glyphInfo._uv1._x;
+                        v._texCoord._y = glyphInfo._uv0._y;
+                        vertices.push_back(v);
+
+                        v._position._x = glyphRect.left();
+                        v._position._y = glyphRect.bottom();
+                        v._texCoord._x = glyphInfo._uv0._x;
+                        v._texCoord._y = glyphInfo._uv1._y;
+                        vertices.push_back(v);
+
+                        v._position._x = glyphRect.right();
+                        v._texCoord._x = glyphInfo._uv1._x;
+                        v._texCoord._y = glyphInfo._uv1._y;
+                        vertices.push_back(v);
+                    }
+
+                    // Indices
+                    {
+                        Vector<IndexElementType>& indices = _lowLevelRenderer->indices();
+                        const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.size());
+                        // 오른손 좌표계
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 0);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 3);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 1);
+
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 0);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 2);
+                        indices.push_back((currentTotalTriangleVertexCount - 4) + 3);
+                    }
+                }
+            }
+
+            glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+        }
+
+        void ShapeRendererContext::pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)
+        {
+            SB_Transform transform;
+            transform._transformMatrix.preTranslate(preTranslation.getXyz());
+            transform._transformMatrix.postTranslate(postTranslation.getXyz());
+            transform._transformMatrix *= transformMatrix;
+            _sbTransformData.push_back(transform);
+        }
+
+        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
+        {
+            return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }
     }
 }

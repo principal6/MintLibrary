@@ -267,8 +267,6 @@ namespace mint
             , _resourcePool{ *this }
             , _stateManager{ *this }
             , _shapeRendererContext{ *this }
-            , _fontRendererContext{ *this }
-            , _shapeFontRendererContext{ *this }
             , _needEndRenderingCall{ false }
             , _guiContext{ *this }
         {
@@ -394,9 +392,7 @@ namespace mint
                 return false;
             }
 
-            _fontRendererContext.initialize(fontLoader.getFontData());
-
-            _shapeFontRendererContext.initializeFont(_fontRendererContext.getFontData());
+            _shapeRendererContext.initializeFontData(fontLoader.getFontData());
 
             return true;
         }
@@ -549,8 +545,6 @@ namespace mint
         void GraphicDevice::initializeShaders()
         {
             _shapeRendererContext.initializeShaders();
-            _fontRendererContext.initializeShaders();
-            _shapeFontRendererContext.initializeShaders();
         }
 
         void GraphicDevice::initializeSamplerStates()
@@ -625,8 +619,6 @@ namespace mint
             _deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
             _shapeRendererContext.flush();
-            _fontRendererContext.flush();
-            _shapeFontRendererContext.flush();
         }
 
         void GraphicDevice::draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept
@@ -652,10 +644,6 @@ namespace mint
 
             _shapeRendererContext.render();
             _shapeRendererContext.flush();
-            _fontRendererContext.render();
-            _fontRendererContext.flush();
-            _shapeFontRendererContext.render();
-            _shapeFontRendererContext.flush();
             _guiContext.render();
 #pragma endregion
 

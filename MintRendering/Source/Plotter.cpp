@@ -5,14 +5,14 @@
 
 #include <MintContainer/Include/StringUtil.hpp>
 
-#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRendererContext.h>
 
 
 namespace mint
 {
     namespace Rendering
     {
-        Plotter::Plotter(ShapeFontRendererContext& shapeFontRendererContext)
+        Plotter::Plotter(ShapeRendererContext& shapeFontRendererContext)
             : _shapeFontRendererContext{ &shapeFontRendererContext }
             , _nextPlotType{ PlotType::Circle }
             , _size{ kDefaultSize }

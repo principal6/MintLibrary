@@ -148,13 +148,13 @@ namespace mint
         {
             _caretBlinkIntervalMs = _graphicDevice.getWindow().getCaretBlinkIntervalMs();
 
-            const Rendering::FontData& fontData = _graphicDevice.getFontRendererContext().getFontData();
+            const Rendering::FontData& fontData = _graphicDevice.getShapeRendererContext().getFontData();
             _fontSize = static_cast<float>(fontData._fontSize);
             for (int32 rendererContextIndex = 0; rendererContextIndex < getRendererContextLayerCount(); rendererContextIndex++)
             {
-                if (_rendererContexts[rendererContextIndex].initializeFont(fontData) == false)
+                if (_rendererContexts[rendererContextIndex].initializeFontData(fontData) == false)
                 {
-                    MINT_ASSERT(false, "ShapeFontRendererContext::initializeFont() 에 실패했습니다!");
+                    MINT_ASSERT(false, "ShapeRendererContext::initializeFont() 에 실패했습니다!");
                 }
 
                 _rendererContexts[rendererContextIndex].initializeShaders();
@@ -328,7 +328,7 @@ namespace mint
                 const bool isAncestorFocused = isAncestorControlInteractionState(windowControlData, ControlInteractionState::Focused);
                 windowControlData._rendererContextLayer = (isFocused || isAncestorFocused) ? RendererContextLayer::Foreground : RendererContextLayer::Background;
 
-                Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(windowControlData);
+                Rendering::ShapeRendererContext& rendererContext = getRendererContext(windowControlData);
                 rendererContext.setClipRect(windowControlData.getClipRects()._forMe);
 
                 const Float4& windowCenterPosition = windowControlData.getControlCenterPosition();
@@ -510,7 +510,7 @@ namespace mint
             const bool isClicked = processClickControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HoverState), getNamedColor(NamedColor::PressedState), finalBackgroundColor);
             
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -540,7 +540,7 @@ namespace mint
             const bool isClicked = processToggleControl(controlData, getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::NormalState), getNamedColor(NamedColor::HighlightColor), finalBackgroundColor);
             
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             
             // draw background
@@ -589,7 +589,7 @@ namespace mint
             processShowOnlyControl(controlData, colorWithAlpha);
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(labelParam._common._backgroundColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -721,7 +721,7 @@ namespace mint
         {
             MINT_ASSERT(trackControlData.isTypeOf(ControlType::Slider) == true, "Slider (Track) 이 아니면 사용하면 안 됩니다!");
 
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(trackControlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(trackControlData);
             const float trackRadius = kSliderTrackThicknes * 0.5f;
             const float trackRectLength = trackControlData._size._x - trackRadius * 2.0f;
 
@@ -761,7 +761,7 @@ namespace mint
         {
             MINT_ASSERT(thumbControlData.isTypeOf(ControlType::SliderThumb) == true, "Slider Thumb 이 아니면 사용하면 안 됩니다!");
 
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(thumbControlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(thumbControlData);
             const Float4& thumbCenterPosition = thumbControlData.getControlCenterPosition();
             rendererContext.setPosition(thumbCenterPosition);
             rendererContext.setColor(Rendering::Color::kWhite.cloneScaleA(thumbColor.a()));
@@ -818,7 +818,7 @@ namespace mint
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             GUI::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData, inputCandidateWidth);
 
             // Box 렌더링
@@ -930,7 +930,7 @@ namespace mint
             }
 
             // Caret 의 렌더링 위치가 TextBox 를 벗어나는 경우 처리!!
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             GUI::InputBoxHelpers::updateTextDisplayOffset(rendererContext, textLength, kTextBoxBackSpaceStride, controlData);
 
             // Box 렌더링
@@ -1070,7 +1070,7 @@ namespace mint
             }
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -1130,7 +1130,7 @@ namespace mint
             }
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(finalColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -1198,7 +1198,7 @@ namespace mint
 
             const Float4& controlCenterPosition = menuBar.getControlCenterPosition();
             menuBar._rendererContextLayer = getUpperRendererContextLayer(menuBarParent);
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuBar);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(menuBar);
             rendererContext.setClipRect(menuBar.getClipRects()._forMe);
             rendererContext.setColor(color);
             rendererContext.setPosition(controlCenterPosition);
@@ -1265,7 +1265,7 @@ namespace mint
             
             const Float4& controlCenterPosition = menuBarItem.getControlCenterPosition();
             
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuBarItem);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(menuBarItem);
             rendererContext.setClipRect(menuBarItem.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -1343,7 +1343,7 @@ namespace mint
             menuItem._controlValue._booleanData.set(isMeSelected);
 
             const Float4& controlCenterPosition = menuItem.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(menuItem);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(menuItem);
             rendererContext.setClipRect(menuItem.getClipRects()._forMe);
             rendererContext.setColor(finalBackgroundColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -1402,7 +1402,7 @@ namespace mint
             }
 
             bool hasExtraSize = false;
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
             ControlData& scrollBarTrack = _makeScrollBarTrack(parentControlID, ScrollBarType::Vert, scrollBarTrackParam, rendererContext, hasExtraSize);
             ControlData& parentControlData = accessControlData(parentControlID);
             if (hasExtraSize == true)
@@ -1433,7 +1433,7 @@ namespace mint
             }
             
             bool hasExtraSize = false;
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(getControlData(parentControlID));
             ControlData& scrollBarTrack = _makeScrollBarTrack(parentControlID, ScrollBarType::Horz, scrollBarTrackParam, rendererContext, hasExtraSize);
             ControlData& parentControlData = accessControlData(parentControlID);
             if (hasExtraSize == true)
@@ -1449,7 +1449,7 @@ namespace mint
             }
         }
 
-        ControlData& GUIContext::_makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeFontRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
+        ControlData& GUIContext::_makeScrollBarTrack(const ControlID parentControlID, const ScrollBarType scrollBarType, const ScrollBarTrackParam& scrollBarTrackParam, Rendering::ShapeRendererContext& shapeFontRendererContext, bool& outHasExtraSize)
         {
             static constexpr ControlType trackControlType = ControlType::ScrollBar;
             MINT_ASSERT((scrollBarType != ScrollBarType::Both) && (scrollBarType != ScrollBarType::None), "잘못된 scrollBarType 입력값입니다.");
@@ -1567,7 +1567,7 @@ namespace mint
             return trackControlData;
         }
 
-        void GUIContext::_makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeFontRendererContext& shapeFontRendererContext)
+        void GUIContext::_makeScrollBarThumb(const ControlID parentControlID, const ScrollBarType scrollBarType, const float visibleLength, const float totalLength, Rendering::ShapeRendererContext& shapeFontRendererContext)
         {
             static constexpr ControlType thumbControlType = ControlType::ScrollBarThumb;
             
@@ -1710,7 +1710,7 @@ namespace mint
             }
         }
 
-        void GUIContext::processDock(const ControlData& controlData, Rendering::ShapeFontRendererContext& rendererContext)
+        void GUIContext::processDock(const ControlData& controlData, Rendering::ShapeRendererContext& rendererContext)
         {
             if (controlData._dockContext.isDock() == false)
             {
@@ -1799,7 +1799,7 @@ namespace mint
                 }
             }
 
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setPosition(controlData.getControlCenterPosition());
             if (isParentControlDocking == true)
@@ -1880,7 +1880,7 @@ namespace mint
             const bool isClicked = processClickControl(controlData, color, color.cloneScaleRGB(1.5f), color.cloneScaleRGB(0.75f), controlColor);
 
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(controlData);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(controlData);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             rendererContext.setColor(controlColor);
             rendererContext.setPosition(controlCenterPosition);
@@ -1914,7 +1914,7 @@ namespace mint
             Rendering::Color dummyColor;
             processShowOnlyControl(controlData, dummyColor);
 
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(controlData.getClipRects()._forMe);
             
             const Float4& controlCenterPosition = controlData.getControlCenterPosition();
@@ -2779,7 +2779,7 @@ namespace mint
         void GUIContext::processControlCommon_dock_renderInteractionBox(const Rendering::Color& color, const Rect& interactionBoxRect, const ControlData& parentControlData) noexcept
         {
             const bool isMouseInBoxRect = interactionBoxRect.contains(_mouseStates.getPosition());
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(parentControlData.getClipRects()._forMe);
             const Rendering::Color alphaColor = color.cloneScaleA(0.75f);
             rendererContext.setColor(((isMouseInBoxRect == true) ? alphaColor.cloneScaleRGB(1.5f) : alphaColor));
@@ -2789,7 +2789,7 @@ namespace mint
 
         void GUIContext::processControlCommon_dock_renderPreviewBox(const Rendering::Color& color, const Rect& previewRect) noexcept
         {
-            Rendering::ShapeFontRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
+            Rendering::ShapeRendererContext& rendererContext = getRendererContext(RendererContextLayer::TopMost);
             rendererContext.setClipRect(_clipRectFullScreen);
             rendererContext.setColor(color.cloneScaleA(0.25f));
             rendererContext.setPosition(Float4(previewRect.center()._x, previewRect.center()._y, 0.0f, 1.0f));
@@ -3187,12 +3187,12 @@ namespace mint
             return mouseWheelScroll;
         }
 
-        Rendering::ShapeFontRendererContext& GUIContext::getRendererContext(const ControlData& controlData) noexcept
+        Rendering::ShapeRendererContext& GUIContext::getRendererContext(const ControlData& controlData) noexcept
         {
             return getRendererContext(controlData._rendererContextLayer);
         }
 
-        Rendering::ShapeFontRendererContext& GUIContext::getRendererContext(const RendererContextLayer rendererContextLayer) noexcept
+        Rendering::ShapeRendererContext& GUIContext::getRendererContext(const RendererContextLayer rendererContextLayer) noexcept
         {
             return _rendererContexts[static_cast<int32>(rendererContextLayer)];
         }

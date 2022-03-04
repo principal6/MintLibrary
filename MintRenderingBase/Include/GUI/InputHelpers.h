@@ -20,7 +20,7 @@ namespace mint
 
     namespace Rendering
     {
-        class ShapeFontRendererContext;
+        class ShapeRendererContext;
     }
 
 
@@ -98,13 +98,13 @@ namespace mint
 
 #pragma region Mouse
         public:
-            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const Rendering::ShapeFontRendererContext& rendererContext, 
+            static void             processDefaultMouseInputs(const MouseStates& mouseStates, const Rendering::ShapeRendererContext& rendererContext, 
                 ControlData& controlData, const Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
         
 #pragma region Keyboard
         public:
-            static void             processDefaultKeyboardInputs(const Window::IWindow* const window, const Rendering::ShapeFontRendererContext& rendererContext, 
+            static void             processDefaultKeyboardInputs(const Window::IWindow* const window, const Rendering::ShapeRendererContext& rendererContext, 
                 ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, Platform::KeyCode& keyCode,
                 wchar_t& wcharInput, const wchar_t wcharInputCandidate, const Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept;
 #pragma endregion
@@ -124,14 +124,14 @@ namespace mint
 
 #pragma region Keyboard - Caret movements
         public:
-            static void             processKeyCodeCaretMovements(const Rendering::ShapeFontRendererContext& rendererContext, const Platform::KeyCode keyCode,
+            static void             processKeyCodeCaretMovements(const Rendering::ShapeRendererContext& rendererContext, const Platform::KeyCode keyCode,
                 ControlData& controlData, StringW& outText) noexcept;
         
         public:
             static void             moveCaretToPrev(ControlData& controlData) noexcept;
             static void             moveCaretToNext(ControlData& controlData, const StringW& text) noexcept;
             static void             moveCaretToHead(ControlData& controlData) noexcept;
-            static void             moveCaretToTail(const Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept;
+            static void             moveCaretToTail(const Rendering::ShapeRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept;
 #pragma endregion
 
 #pragma region Keyboard - Character input
@@ -153,13 +153,13 @@ namespace mint
             static const wchar_t*   getLengthErrorMessage(const uint32 maxLength) noexcept;
 
         public:
-            static void             updateTextDisplayOffset(const Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
+            static void             updateTextDisplayOffset(const Rendering::ShapeRendererContext& rendererContext, const uint16 textLength, 
                 const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth = 0.0f) noexcept;
-            static void             drawTextWithInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+            static void             drawTextWithInputCandidate(Rendering::ShapeRendererContext& rendererContext, const CommonControlParam& commonControlParam,
                 const Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept;
-            static void             drawTextWithoutInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
+            static void             drawTextWithoutInputCandidate(Rendering::ShapeRendererContext& rendererContext, const CommonControlParam& commonControlParam, 
                 const Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept;
-            static void             drawSelection(Rendering::ShapeFontRendererContext& rendererContext, const Float4& textRenderOffset, 
+            static void             drawSelection(Rendering::ShapeRendererContext& rendererContext, const Float4& textRenderOffset, 
                 const bool isFocused, const float fontSize, const Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept;
         };
     }

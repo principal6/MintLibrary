@@ -180,7 +180,7 @@ namespace mint
             FontLoader fontLoader;
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
-                ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+                ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
                 const char* const kFontFileName = kFontFileNames[modifierTypeIndex];
                 if (FontLoader::doesExistFont(kFontFileName) == false)
                 {
@@ -189,7 +189,7 @@ namespace mint
                 }
                 fontLoader.loadFont(kFontFileName, graphicDevice);
 
-                rendererContext.initializeFont(fontLoader.getFontData());
+                rendererContext.initializeFontData(fontLoader.getFontData());
                 rendererContext.initializeShaders();
                 rendererContext.setTextColor(Color::kBlack);
             }
@@ -228,7 +228,7 @@ namespace mint
             
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
-                ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+                ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
 
                 rendererContext.drawDynamicTextBitFlagged(mathExpression.getPlainString(), Float4(screenPosition._x, screenPosition._y, 0.0f, 1.0f),
                     FontRenderingOption(TextRenderDirectionHorz::Rightward, TextRenderDirectionVert::Downward), _bitFlagsArray[modifierTypeIndex]);
@@ -239,7 +239,7 @@ namespace mint
         {
             for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
             {
-                ShapeFontRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
+                ShapeRendererContext& rendererContext = _shapeFontRendererContexts[modifierTypeIndex];
                 rendererContext.render();
                 rendererContext.flush();
             }

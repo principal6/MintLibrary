@@ -8,7 +8,7 @@
 #include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintRenderingBase/Include/GUI/ControlData.hpp>
-#include <MintRenderingBase/Include/ShapeFontRendererContext.h>
+#include <MintRenderingBase/Include/ShapeRendererContext.h>
 
 #include <MintPlatform/Include/InputContext.h>
 
@@ -154,7 +154,7 @@ namespace mint
             caretState = 0;
         }
 
-        inline void InputBoxHelpers::processDefaultMouseInputs(const MouseStates& mouseStates, const Rendering::ShapeFontRendererContext& rendererContext,
+        inline void InputBoxHelpers::processDefaultMouseInputs(const MouseStates& mouseStates, const Rendering::ShapeRendererContext& rendererContext,
             ControlData& controlData, const Float4& textRenderOffset, const StringW& outText, TextBoxProcessInputResult& result) noexcept
         {
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -183,7 +183,7 @@ namespace mint
             result._clearKeyCode = true;
         }
 
-        inline void InputBoxHelpers::processDefaultKeyboardInputs(const Window::IWindow* const window, const Rendering::ShapeFontRendererContext& rendererContext,
+        inline void InputBoxHelpers::processDefaultKeyboardInputs(const Window::IWindow* const window, const Rendering::ShapeRendererContext& rendererContext,
             ControlData& controlData, const TextInputMode textInputMode, const uint32 maxTextLength, Platform::KeyCode& keyCode,
             wchar_t& wcharInput, const wchar_t wcharInputCandidate, const Float4& textRenderOffset, StringW& outText, TextBoxProcessInputResult& result) noexcept
         {
@@ -362,7 +362,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE void InputBoxHelpers::processKeyCodeCaretMovements(const Rendering::ShapeFontRendererContext& rendererContext, const Platform::KeyCode keyCode,
+        MINT_INLINE void InputBoxHelpers::processKeyCodeCaretMovements(const Rendering::ShapeRendererContext& rendererContext, const Platform::KeyCode keyCode,
             ControlData& controlData, StringW& outText) noexcept
         {
             if (keyCode == Platform::KeyCode::Left)
@@ -409,7 +409,7 @@ namespace mint
             textDisplayOffset = 0.0f;
         }
 
-        MINT_INLINE void InputBoxHelpers::moveCaretToTail(const Rendering::ShapeFontRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept
+        MINT_INLINE void InputBoxHelpers::moveCaretToTail(const Rendering::ShapeRendererContext& rendererContext, ControlData& controlData, const StringW& text) noexcept
         {
             const uint16 textLength = static_cast<uint16>(text.length());
             uint16& caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -586,7 +586,7 @@ namespace mint
             return message;
         }
 
-        inline void InputBoxHelpers::updateTextDisplayOffset(const Rendering::ShapeFontRendererContext& rendererContext, const uint16 textLength, 
+        inline void InputBoxHelpers::updateTextDisplayOffset(const Rendering::ShapeRendererContext& rendererContext, const uint16 textLength, 
             const float backSpaceStride, ControlData& controlData, const float inputCandidateWidth) noexcept
         {
             const uint16 caretAt = controlData._controlValue._textBoxData._caretAt;
@@ -613,7 +613,7 @@ namespace mint
             }
         }
 
-        inline void InputBoxHelpers::drawTextWithInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+        inline void InputBoxHelpers::drawTextWithInputCandidate(Rendering::ShapeRendererContext& rendererContext, const CommonControlParam& commonControlParam,
             const Float4& textRenderOffset, const bool isFocused, const float fontSize, const wchar_t inputCandiate, ControlData& controlData, StringW& outText) noexcept
         {
             MINT_ASSERT(controlData.isTypeOf(ControlType::TextBox) == true, "TextBox 가 아니면 사용하면 안 됩니다!");
@@ -659,7 +659,7 @@ namespace mint
             }
         }
 
-        inline void InputBoxHelpers::drawTextWithoutInputCandidate(Rendering::ShapeFontRendererContext& rendererContext, const CommonControlParam& commonControlParam,
+        inline void InputBoxHelpers::drawTextWithoutInputCandidate(Rendering::ShapeRendererContext& rendererContext, const CommonControlParam& commonControlParam,
             const Float4& textRenderOffset, const bool isFocused, const float fontSize, const bool renderCaret, ControlData& controlData, StringW& outText) noexcept
         {
             MINT_ASSERT(controlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
@@ -690,7 +690,7 @@ namespace mint
             }
         }
 
-        inline void InputBoxHelpers::drawSelection(Rendering::ShapeFontRendererContext& rendererContext, const Float4& textRenderOffset, 
+        inline void InputBoxHelpers::drawSelection(Rendering::ShapeRendererContext& rendererContext, const Float4& textRenderOffset, 
             const bool isFocused, const float fontSize, const Rendering::Color& selectionColor, ControlData& textBoxControlData, StringW& outText) noexcept
         {
             MINT_ASSERT(textBoxControlData.isInputBoxType() == true, "호환되지 않는 컨트롤 타입입니다!");
