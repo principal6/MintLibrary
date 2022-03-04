@@ -154,7 +154,7 @@ namespace mint
                                 const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
                                 if (rbSampled > 0.0)
                                 {
-                                    const float3 rbColor = lerp(sampledColor.xyz * 0.25 * max(rbSampled, 0.25), sampledColor.xyz, sampled);
+                                    const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
                                     return float4(rbColor, saturate(sampled + rbSampled));
                                 }
                             }
