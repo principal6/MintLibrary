@@ -191,7 +191,7 @@ namespace mint
     inline String<T>& String<T>::appendInternalSmallXXX(const T* const rawString) noexcept
     {
         const uint32 length = StringUtil::length(rawString);
-        const uint64 newLength = _short._size + length;
+        const uint64 newLength = static_cast<uint64>(_short._size) + length;
         if (newLength < Short::kSmallStringCapacity)
         {
             __copyString(&_short._smallString[_short._size], rawString, length);
