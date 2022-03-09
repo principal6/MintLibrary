@@ -78,7 +78,7 @@ namespace mint
 
             Vector<GlyphInfo>   _glyphInfoArray;
             DxObjectID          _fontTextureID;
-            int16               _fontSize;
+            int16               _fontSize = 0;
 
         private:
             Vector<uint32>      _charCodeToGlyphIndexMap;
