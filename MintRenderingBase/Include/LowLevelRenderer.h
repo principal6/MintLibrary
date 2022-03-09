@@ -40,7 +40,7 @@ namespace mint
             struct RenderCommand
             {
                 bool                _isValid = true;
-                RenderingPrimitive  _primitive;
+                RenderingPrimitive  _primitive = RenderingPrimitive::INVALID;
                 Rect                _clipRect;
                 uint32              _vertexOffset = 0;
                 uint32              _vertexCount = 0;
