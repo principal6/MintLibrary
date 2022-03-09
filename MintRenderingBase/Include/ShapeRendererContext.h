@@ -107,7 +107,7 @@ namespace mint
             void            drawTexturedRectangle(const Float2& size, const float rotationAngle);
             void            drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
             void            drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
-            void            drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio);
+            void            drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio, const float rotationAngle);
             void            drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
             // Independent from internal position set by setPosition() call
             // No rotation allowed

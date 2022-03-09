@@ -1128,7 +1128,7 @@ namespace mint
             pushShapeTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio)
+        void ShapeRendererContext::drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio, const float rotationAngle)
         {
             const Float2 positionBase = Float2(_position._x, _position._y - size._y * 0.5f);
             const Float2 upperShapeSize = Float2(size._x, size._y * splitRatio);
@@ -1138,7 +1138,7 @@ namespace mint
             drawUpperHalfRoundedRectangleInternal(Float2(0.0f, -lowerShapeSize._y * 0.5f), upperShapeSize, upperShapeRoundness, _defaultColor);
             drawLowerHalfRoundedRectangleInternal(Float2(0.0f, upperShapeSize._y * 0.5f), lowerShapeSize, lowerShapeRoundness, _defaultColor);
 
-            pushShapeTransformToBuffer(0.0f);
+            pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
