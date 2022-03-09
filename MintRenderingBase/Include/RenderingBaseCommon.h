@@ -64,7 +64,7 @@ namespace mint
 
         public:
             constexpr                   Color() : Color(255, 255, 255) { __noop; }
-            constexpr                   Color(const float r, const float g, const float b, const float a) : _raw{ r, g, b, a } { __noop; }
+            constexpr                   Color(const float r, const float g, const float b, const float a) : _raw{ Math::saturate(r), Math::saturate(g), Math::saturate(b), Math::saturate(a) } { __noop; }
             constexpr                   Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
             constexpr                   Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
             constexpr                   Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
