@@ -157,8 +157,5 @@
     <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ControlData.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

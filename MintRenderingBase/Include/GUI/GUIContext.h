@@ -60,7 +60,7 @@ namespace mint
 
             Color   _normalColor = Color(0.375f, 0.375f, 0.375f);
             Color   _hoveredColor = Color(0.625f, 0.625f, 0.625f);
-            Color   _pressedColor = Color(0.5f, 0.75f, 1.0f);
+            Color   _pressedColor = Color(0.125f, 0.25f, 0.5f);
         };
 
         struct Theme
@@ -68,19 +68,21 @@ namespace mint
             float   _roundnessInPixel = 8.0f;
             float   _defaultBorderThickness = 0.0f;
             float   _windowInnerLineThickness = 1.0f;
+            float   _systemButtonRadius = 7.0f;
 
-            Rect    _defaultMargin = Rect(2.0f, 2.0f, 4.0f, 4.0f);
-            Rect    _defaultPadding = Rect(2.0f, 2.0f, 2.0f, 2.0f);
+            Rect    _defaultMargin = Rect(4.0f, 4.0f, 4.0f, 4.0f);
+            Rect    _defaultPadding = Rect(8.0f, 8.0f, 4.0f, 4.0f);
             Rect    _titleBarPadding = Rect(8.0f, 6.0f, 4.0f, 4.0f);
+
+            Color   _textColor = Color(0.875f, 0.875f, 0.875f);
 
             HoverPressColorSet  _hoverPressColorSet;
             HoverPressColorSet  _closeButtonColorSet = HoverPressColorSet(Color(1.0f, 0.25f, 0.25f), Color(1.0f, 0.375f, 0.375f), Color(1.0f, 0.5f, 0.5f));
             Color   _defaultLabelBackgroundColor = Color::kTransparent;
-            Color   _windowInnerLineColor = Color(0.875f, 0.875f, 0.875f);
-            Color   _focusedWindowColor = Color(0.125f, 0.125f, 0.125f);
-            Color   _unfocusedWindowColor = _focusedWindowColor * 2.0f;
 
-            Color   _textColor = _windowInnerLineColor;
+            Color   _windowBackgroundColor = Color(0.125f, 0.125f, 0.125f, 0.875f);
+            Color   _windowTitleBarFocusedColor = _windowBackgroundColor.cloneAddRGB(-0.0625f);
+            Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor * 2.0f;
         };
 
         struct LabelDesc
@@ -109,6 +111,11 @@ namespace mint
 
             bool                _customizeColor = false;
             HoverPressColorSet  _customizedColorSet;
+        };
+
+        struct WindowDesc
+        {
+            const wchar_t*      _title = nullptr;
         };
 #pragma endregion
 
@@ -149,18 +156,24 @@ namespace mint
         public:
             void                                makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
             const bool                          makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
+            const bool                          beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
+            void                                endWindow();
 
         private:
             void                                makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc);
             void                                makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc);
+            void                                beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData);
 
         private:
+            ControlData&                        accessControlData(const ControlID& controlID) const;
             ControlData&                        accessControlData(const ControlID& controlID, const ControlType controlType);
-            void                                fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc);
+            ControlData&                        accessStackParentControlData();
+            void                                fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                fillControlDesc_interactionState(ControlDesc& controlDesc) const;
 
         private:
             void                                drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
+            void                                drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
             Float4                              computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const;
             const float                         computeRoundness(const ControlRenderingDesc& controlRenderingDesc) const;
             const bool                          isMouseCursorInControl(const ControlRenderingDesc& controlRenderingDesc, const Float2& mouseCurosrPosition) const;
@@ -180,6 +193,8 @@ namespace mint
             // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
             // Docking 정보도 저장되어야 한다.
             HashMap<ControlID, ControlData>     _controlDataMap;
+
+            Vector<ControlID>                   _controlStack;
         };
     }
 }

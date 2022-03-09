@@ -54,6 +54,12 @@ namespace mint
 
             const Float2& windowSize = Float2(_graphicDevice.getWindowSize());
             updateScreenSize(windowSize);
+
+            // ROOT
+            const ControlID rootControlID{ ControlID(kUint64Max) };
+            ControlData& rootControlData = accessControlData(rootControlID, ControlType::COUNT);
+            rootControlData._position = Float2::kZero;
+            _controlStack.push_back(rootControlID);
         }
 
         void GUIContext::processEvent() noexcept
@@ -76,6 +82,8 @@ namespace mint
 
         void GUIContext::render() noexcept
         {
+            MINT_ASSERT(_controlStack.size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
+
             _rendererContext.render();
             _rendererContext.flush();
         }
@@ -94,11 +102,13 @@ namespace mint
         {
             static constexpr ControlType type = ControlType::Label;
             const ControlID ID = ControlData::generateID(fileLine, type, labelDesc._text);
-            ControlDesc controlDesc;
-            fillControlDesc_controlRenderingDesc(labelDesc._text, controlDesc);
-
             ControlData& controlData = accessControlData(ID, type);
-            
+            ControlData& parentControlData = accessStackParentControlData();
+
+            ControlDesc controlDesc;
+            fillControlDesc_controlRenderingDesc(labelDesc._text, controlDesc, controlData, parentControlData);
+            //fillControlDesc_interactionState(controlDesc);
+
             makeLabel_render(controlDesc, labelDesc);
         }
 
@@ -106,18 +116,62 @@ namespace mint
         {
             static constexpr ControlType type = ControlType::Button;
             const ControlID ID = ControlData::generateID(fileLine, type, buttonDesc._text);
-            ControlDesc controlDesc;
-            fillControlDesc_controlRenderingDesc(buttonDesc._text, controlDesc);
-
             ControlData& controlData = accessControlData(ID, type);
+            ControlData& parentControlData = accessStackParentControlData();
 
+            ControlDesc controlDesc;
+            fillControlDesc_controlRenderingDesc(buttonDesc._text, controlDesc, controlData, parentControlData);
             fillControlDesc_interactionState(controlDesc);
 
             makeButton_render(controlDesc, buttonDesc);
-
             return controlDesc._interactionState == InteractionState::Clicked;
         }
-        
+
+        const bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
+        {
+            static constexpr ControlType type = ControlType::Window;
+            const ControlID ID = ControlData::generateID(fileLine, type, windowDesc._title);
+            ControlData& controlData = accessControlData(ID, type);
+            ControlData& parentControlData = accessStackParentControlData();
+            
+            ControlDesc controlDesc;
+            fillControlDesc_controlRenderingDesc(windowDesc._title, controlDesc, controlData, parentControlData);
+            fillControlDesc_interactionState(controlDesc);
+            
+            beginWindow_render(controlDesc, controlData);
+
+            {
+                ButtonDesc closeButtonDesc;
+                closeButtonDesc._text = L"#CloseButton";
+                closeButtonDesc._isRoundButton = true;
+                closeButtonDesc._customizeColor = true;
+                closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
+                const float titleBarHeight = controlData.computeTitleBarZone().size()._y;
+                const float radius = _theme._systemButtonRadius;
+                nextControlPosition(controlData._position + Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
+                nextControlSize(Float2(radius * 2.0f));
+                if (makeButton(fileLine, closeButtonDesc))
+                {
+
+                }
+            }
+
+            _controlStack.push_back(ID);
+            return true;
+        }
+
+        void GUIContext::endWindow()
+        {
+            if (_controlStack.empty())
+            {
+                MINT_ASSERT(false, "end- 호출 횟수가 begin- 호출 횟수보다 많습니다!");
+                return;
+            }
+            MINT_ASSERT(accessControlData(_controlStack.back()).getType() == ControlType::Window, "Control Stack 이 비정상적입니다!");
+
+            _controlStack.pop_back();
+        }
+
         void GUIContext::makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc)
         {
             const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
@@ -160,29 +214,129 @@ namespace mint
             }
         }
 
-        ControlData& GUIContext::accessControlData(const ControlID& controlID, const ControlType controlType)
+        void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData)
         {
+            const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
+            const InteractionState& interactionState = controlDesc._interactionState;
+
+            _rendererContext.setColor(_theme._windowBackgroundColor);
+            _rendererContext.setPosition(computeShapePosition(controlRenderingDesc));
+            
+            const float titleBarHeight = controlData.computeTitleBarZone().vert();
+            ScopeVector<ShapeRendererContext::Split, 3> splits;
+            splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlRenderingDesc._size._y, _theme._windowTitleBarFocusedColor));
+            splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
+            _rendererContext.drawRoundedRectangleVertSplit(controlRenderingDesc._size, _theme._roundnessInPixel, splits, 0.0f);
+
+            FontRenderingOption fontRenderingOption;
+            fontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
+            fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
+            const Float2 titleBarTextPosition = controlData._position + Float2(_theme._titleBarPadding.left(), 0.0f);
+            const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
+            drawText(titleBarTextPosition, titleBarSize, controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
+        }
+
+        ControlData& GUIContext::accessControlData(const ControlID& controlID) const
+        {
+            static ControlData invalid;
             auto found = _controlDataMap.find(controlID);
             if (found.isValid())
             {
+                uint64& accessCount = const_cast<uint64&>(found._value->getAccessCount());
+                ++accessCount;
                 return *found._value;
             }
-
-            _controlDataMap.insert(controlID, ControlData(controlID, controlType));
-            return *_controlDataMap.find(controlID)._value;
+            return invalid;
         }
 
-        void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc)
+        ControlData& GUIContext::accessControlData(const ControlID& controlID, const ControlType controlType)
         {
-            controlDesc._controlRenderingDesc = _nextControlRenderingDesc;
-            controlDesc._controlRenderingDesc._text = text;
+            ControlData& controlData = accessControlData(controlID);
+            if (controlData.getID() != controlID)
+            {
+                _controlDataMap.insert(controlID, ControlData(controlID, controlType));
+                return *_controlDataMap.find(controlID)._value;
+            }
+            return controlData;
+        }
 
-            _nextControlRenderingDesc._borderThickness = _theme._defaultBorderThickness;
-            _nextControlRenderingDesc._margin = _theme._defaultMargin;
-            _nextControlRenderingDesc._padding = _theme._defaultPadding;
-            
-            _nextControlRenderingDesc._position = Float2::kNan;
-            _nextControlRenderingDesc._size = Float2::kNan;
+        ControlData& GUIContext::accessStackParentControlData()
+        {
+            return accessControlData(_controlStack.back());
+        }
+
+        void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
+        {
+            ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
+            controlRenderingDesc = _nextControlRenderingDesc;
+            controlRenderingDesc._text = text;
+
+            // Reset _nextControlRenderingDesc
+            {
+                _nextControlRenderingDesc._borderThickness = _theme._defaultBorderThickness;
+                _nextControlRenderingDesc._margin = _theme._defaultMargin;
+                _nextControlRenderingDesc._padding = _theme._defaultPadding;
+                _nextControlRenderingDesc._position = Float2::kNan;
+                _nextControlRenderingDesc._size = Float2::kNan;
+            }
+
+            controlData._nextChildPosition = controlData.computeContentZone().position();
+
+            if (controlData.getType() == ControlType::Window)
+            {
+                // Specified size and position are only applied the first time the control is created!
+
+                if (controlData.getAccessCount() == 0)
+                {
+                    controlData._position = controlRenderingDesc._position;
+                    controlData._size = controlRenderingDesc._size;
+
+                    float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
+                    titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
+                }
+                else
+                {
+                    controlRenderingDesc._position = controlData._position;
+                    controlRenderingDesc._size = controlData._size;
+                }
+            }
+            else
+            {
+                const bool isPositionSpecified = controlRenderingDesc._position.isNan() == false;
+                const bool isSizeSpecified = controlRenderingDesc._size.isNan() == false;
+                if (isPositionSpecified)
+                {
+                    // Specified (just turning it into a relative position)
+                    controlData._position = controlRenderingDesc._position;
+                    controlRenderingDesc._position += parentControlData._position;
+                }
+                else
+                {
+                    // Automated
+                    controlData._position = parentControlData._nextChildPosition;
+                    controlRenderingDesc._position = controlData._position + parentControlData._position;
+                    controlRenderingDesc._position._x += controlRenderingDesc._margin.left();
+                    controlRenderingDesc._position._y += controlRenderingDesc._margin.top();
+                }
+                controlRenderingDesc._position._x += controlRenderingDesc._borderThickness;
+                controlRenderingDesc._position._y += controlRenderingDesc._borderThickness;
+
+                if (isSizeSpecified == false)
+                {
+                    // Automated
+                    const FontData& fontData = _rendererContext.getFontData();
+                    const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
+                    controlRenderingDesc._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
+                    controlRenderingDesc._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
+                }
+                
+                controlData._size = controlRenderingDesc._size;
+
+                if (isPositionSpecified == false)
+                {
+                    parentControlData._nextChildPosition = controlData._position + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
+                }
+            }
         }
 
         void GUIContext::fillControlDesc_interactionState(ControlDesc& controlDesc) const
@@ -202,21 +356,27 @@ namespace mint
                 }
             }
         }
+
         void GUIContext::drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption)
+        {
+            drawText(controlRenderingDesc._position, controlRenderingDesc._size, controlRenderingDesc._text, color, fontRenderingOption);
+        }
+
+        void GUIContext::drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption)
         {
             _rendererContext.setTextColor(color);
 
-            const Float2 halfSize = controlRenderingDesc._size * 0.5f;
-            Float2 position = controlRenderingDesc._position + halfSize;
+            const Float2 halfSize = size * 0.5f;
+            Float2 finalPosition = position + halfSize;
             if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Centered)
             {
-                position._x += (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Rightward ? -halfSize._x : halfSize._x);
+                finalPosition._x += (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Rightward ? -halfSize._x : halfSize._x);
             }
             if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
             {
-                position._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Downward ? -halfSize._y : halfSize._y);
+                finalPosition._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Downward ? -halfSize._y : halfSize._y);
             }
-            _rendererContext.drawDynamicText(controlRenderingDesc._text, Float4(position), fontRenderingOption);
+            _rendererContext.drawDynamicText(text, Float4(finalPosition), fontRenderingOption);
         }
 
         Float4 GUIContext::computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const

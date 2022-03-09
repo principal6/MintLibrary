@@ -8,6 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintMath/Include/Float2.h>
+#include <MintMath/Include/Rect.h>
 
 
 namespace mint
@@ -30,6 +31,7 @@ namespace mint
         {
             Label,
             Button,
+            Window,
             COUNT
         };
 
@@ -51,24 +53,42 @@ namespace mint
         class ControlData
         {
         public:
+            union PerTypeData
+            {
+                struct WindowData
+                {
+                    float   _titleBarHeight = 0.0f;
+                    float   _menuBarHeight = 0.0f;
+                } _windowData{};
+            };
+
+        public:
             static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text);
 
         public:
                                 ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
-                                ControlData(const ControlID& ID, const ControlType type) : _ID{ ID }, _type{ type } { __noop; }
+                                ControlData(const ControlID& ID, const ControlType type) : _ID{ ID }, _type{ type }, _accessCount{ 0 } { __noop; }
                                 ~ControlData() = default;
 
         public:
             const ControlID&    getID() const { return _ID; }
             const ControlType&  getType() const { return _type; }
+            const bool          hasValidType() const { return _type != ControlType::COUNT; }
+            const uint64&       getAccessCount() const { return _accessCount; }
+            
+            Rect                computeTitleBarZone() const;
+            Rect                computeContentZone() const;
 
         public:
             Float2              _position;
             Float2              _size;
+            Float2              _nextChildPosition;
+            PerTypeData         _perTypeData;
 
         private:
             ControlID           _ID;
             ControlType         _type;
+            uint64              _accessCount;
         };
     }
 }
