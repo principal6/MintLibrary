@@ -313,6 +313,22 @@ namespace mint
         }
 
         template <typename T>
+        inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
+        {
+            ScopeStringA<256> buffer;
+            formatString(buffer, "%d", rhs);
+            return StringA(buffer.c_str());
+        }
+
+        template <typename T>
+        inline std::enable_if_t<std::is_floating_point_v<T>, StringA> convertToStringA(const T& rhs)
+        {
+            ScopeStringA<256> buffer;
+            formatString(buffer, "%f", rhs);
+            return StringA(buffer.c_str());
+        }
+
+        template <typename T>
         inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
         {
             ScopeStringW<256> buffer;

@@ -2,7 +2,9 @@
 
 
 #include <MintContainer/Include/ScopeString.h>
+
 #include <MintContainer/Include/StringUtil.h>
+#include <MintContainer/Include/Hash.hpp>
 
 
 namespace mint
@@ -350,5 +352,11 @@ namespace mint
             }
         }
         return true;
+    }
+
+    template<typename T, uint32 BufferSize>
+    inline const uint64 ScopeString<T, BufferSize>::computeHash() const noexcept
+    {
+        return mint::computeHash(c_str());
     }
 }

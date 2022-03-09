@@ -69,6 +69,7 @@ namespace mint
         const uint32                        rfind(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
         const bool                          compare(const T* const rawString) const noexcept;
         const bool                          compare(const ScopeString& rhs) const noexcept;
+        const uint64                        computeHash() const noexcept;
 
     private:
         uint32                              _length;
