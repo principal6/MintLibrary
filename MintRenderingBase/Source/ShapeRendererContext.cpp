@@ -3,6 +3,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
+#include <MintContainer/Include/ScopeVector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
@@ -1128,15 +1129,28 @@ namespace mint
             pushShapeTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio, const float rotationAngle)
+        void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const ScopeVector<Split, 3>& splits, const float rotationAngle)
         {
-            const Float2 positionBase = Float2(_position._x, _position._y - size._y * 0.5f);
-            const Float2 upperShapeSize = Float2(size._x, size._y * splitRatio);
-            const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y);
+            if (splits.size() < 2)
+            {
+                MINT_NEVER;
+                return;
+            }
+
+            const bool hasMiddleShape = splits.size() == 3;
+            const Color& upperColor = splits.front()._color;
+            const Color& lowerColor = splits.back()._color;
+            const Float2 upperShapeSize = Float2(size._x, size._y * splits[0]._ratio);
+            const Float2 middleShapeSize = (hasMiddleShape ? Float2(size._x, size._y * (splits[1]._ratio - splits[0]._ratio)) : Float2::kZero);
+            const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y - middleShapeSize._y);
             const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
             const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
-            drawUpperHalfRoundedRectangleInternal(Float2(0.0f, -lowerShapeSize._y * 0.5f), upperShapeSize, upperShapeRoundness, _defaultColor);
-            drawLowerHalfRoundedRectangleInternal(Float2(0.0f, upperShapeSize._y * 0.5f), lowerShapeSize, lowerShapeRoundness, _defaultColor);
+            drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
+            if (hasMiddleShape)
+            {
+                drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color);
+            }
+            drawLowerHalfRoundedRectangleInternal(Float2(0.0f, (upperShapeSize._y + middleShapeSize._y) * 0.5f), lowerShapeSize, lowerShapeRoundness, lowerColor);
 
             pushShapeTransformToBuffer(rotationAngle);
         }
