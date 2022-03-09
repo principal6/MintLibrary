@@ -137,7 +137,8 @@ namespace mint
             void            drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
             void            drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
             void            drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
-            void            drawHalfRoundedRectangleInternal(const Float2& size, const float roundness, const Color& color);
+            void            drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
+            void            drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
             void            drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
             void            pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
         
