@@ -107,6 +107,7 @@ namespace mint
             void            drawTexturedRectangle(const Float2& size, const float rotationAngle);
             void            drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
             void            drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
+            void            drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio);
             void            drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
             // Independent from internal position set by setPosition() call
             // No rotation allowed
@@ -126,14 +127,17 @@ namespace mint
             void            drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
             void            drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 
+        public:
+            const float     computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const;
+
         // Shape
         protected:
             void            drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
             void            drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
             void            drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
             void            drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
-            void            drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
-            void            drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color);
+            void            drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
+            void            drawHalfRoundedRectangleInternal(const Float2& size, const float roundness, const Color& color);
             void            drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
             void            pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
         

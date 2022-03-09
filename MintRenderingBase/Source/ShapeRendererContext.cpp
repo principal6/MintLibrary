@@ -1053,14 +1053,14 @@ namespace mint
 
         void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
         {
-            const float clampedRoundness = Math::saturate(roundness);
-            if (clampedRoundness == 0.0f)
+            const float normalizedRoundness = Math::saturate(roundness);
+            if (normalizedRoundness == 0.0f)
             {
                 drawRectangle(size, borderThickness, rotationAngle);
                 return;
             }
 
-            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
+            const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
             const Float2& halfSize = size * 0.5f;
             const Float2& halfCoreSize = halfSize - Float2(radius);
 
@@ -1123,29 +1123,40 @@ namespace mint
                 drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
             }
 
-            drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
+            drawRoundedRectangleInternal(radius, halfSize, _defaultColor);
 
             pushShapeTransformToBuffer(rotationAngle);
         }
 
+        void ShapeRendererContext::drawRoundedRectangleVerticallySplit(const Float2& size, const float roundnessInPixel, const float splitRatio)
+        {
+            const Float2 positionBase = Float2(_position._x, _position._y - size._y * 0.5f);
+            const Float2 upperShapeSize = Float2(size._x, size._x * splitRatio);
+            const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
+            setPosition(Float4(positionBase._x, positionBase._y + upperShapeSize._y * 0.5f, 0.0f, 0.0f));
+            drawHalfRoundedRectangle(upperShapeSize, upperShapeRoundness, Math::kPi);
+
+            const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y);
+            const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
+            setPosition(Float4(positionBase._x, positionBase._y + upperShapeSize._y + lowerShapeSize._y * 0.5f, 0.0f, 0.0f));
+            drawHalfRoundedRectangle(lowerShapeSize, lowerShapeRoundness, 0.0f);
+        }
+
         void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
         {
-            const float clampedRoundness = Math::saturate(roundness);
-            if (clampedRoundness == 0.0f)
+            const float normalizedRoundness = Math::saturate(roundness);
+            if (normalizedRoundness == 0.0f)
             {
                 drawRectangle(size, 0.0f, rotationAngle);
                 return;
             }
 
-            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
-            const Float2& halfSize = size * 0.5f;
-
-            drawHalfRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
+            drawHalfRoundedRectangleInternal(size, normalizedRoundness, _defaultColor);
 
             pushShapeTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
+        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color)
         {
             const Float2& halfCoreSize = halfSize - Float2(radius);
 
@@ -1215,9 +1226,11 @@ namespace mint
             }
         }
 
-        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
+        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const Float2& size, const float normalizedRoundness, const Color& color)
         {
-            const Float2& halfCoreSize = halfSize - Float2(radius);
+            const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+            const Float2 halfSize = size * 0.5f;
+            const Float2 halfCoreSize = halfSize - Float2(radius);
 
             Float2 pointA;
             Float2 pointB;
@@ -1477,6 +1490,11 @@ namespace mint
 
             const Float4& preTranslation = position;
             pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+        }
+
+        const float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
+        {
+            return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
         }
 
         void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
