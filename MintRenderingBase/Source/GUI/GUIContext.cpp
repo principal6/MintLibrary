@@ -106,9 +106,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
 
             ControlDesc controlDesc;
-            fillControlDesc_controlRenderingDesc(labelDesc._text, controlDesc, controlData, parentControlData);
-            //fillControlDesc_interactionState(controlDesc);
-
+            fillControlDesc(labelDesc._text, controlDesc, controlData, parentControlData);
             makeLabel_render(controlDesc, labelDesc);
         }
 
@@ -120,9 +118,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
 
             ControlDesc controlDesc;
-            fillControlDesc_controlRenderingDesc(buttonDesc._text, controlDesc, controlData, parentControlData);
-            fillControlDesc_interactionState(controlDesc);
-
+            fillControlDesc(buttonDesc._text, controlDesc, controlData, parentControlData);
             makeButton_render(controlDesc, buttonDesc);
             return controlDesc._interactionState == InteractionState::Clicked;
         }
@@ -135,9 +131,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
             
             ControlDesc controlDesc;
-            fillControlDesc_controlRenderingDesc(windowDesc._title, controlDesc, controlData, parentControlData);
-            fillControlDesc_interactionState(controlDesc);
-            
+            fillControlDesc(windowDesc._title, controlDesc, controlData, parentControlData);
             beginWindow_render(controlDesc, controlData);
 
             {
@@ -263,6 +257,12 @@ namespace mint
         ControlData& GUIContext::accessStackParentControlData()
         {
             return accessControlData(_controlStack.back());
+        }
+
+        void GUIContext::fillControlDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
+        {
+            fillControlDesc_controlRenderingDesc(text, controlDesc, controlData, parentControlData);
+            fillControlDesc_interactionState(controlDesc);
         }
 
         void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
