@@ -93,6 +93,12 @@
     <ClInclude Include="Include\FontLoader.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUI\ControlData.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\GUI\ControlData.hpp">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -150,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\ControlData.cpp">
+      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
