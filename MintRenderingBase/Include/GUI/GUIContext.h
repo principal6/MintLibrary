@@ -125,7 +125,7 @@ namespace mint
             struct ControlDesc
             {
                 ControlID               _controlID;
-                ControlRenderingDesc    _controlRenderingDesc;
+                ControlRenderingDesc    _renderingDesc;
                 InteractionState        _interactionState;
             };
 

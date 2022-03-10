@@ -173,7 +173,7 @@ namespace mint
             {
                 _rendererContext.setColor(backgroundColor);
                 _rendererContext.setPosition(computeShapePosition(controlDesc));
-                _rendererContext.drawRectangle(controlData._size, controlDesc._controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRectangle(controlData._size, controlDesc._renderingDesc._borderThickness, 0.0f);
             }
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = labelDesc._directionHorz;
@@ -195,7 +195,7 @@ namespace mint
             }
             else
             {
-                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlDesc._controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlDesc._renderingDesc._borderThickness, 0.0f);
 
                 FontRenderingOption fontRenderingOption;
                 fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
@@ -222,7 +222,7 @@ namespace mint
             fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
             const Float2 titleBarTextPosition = controlData._relativePosition + Float2(_theme._titleBarPadding.left(), 0.0f);
             const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
-            drawText(titleBarTextPosition, titleBarSize, controlDesc._controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
+            drawText(titleBarTextPosition, titleBarSize, controlDesc._renderingDesc._text, _theme._textColor, fontRenderingOption);
 
             renderControlCommon(controlData);
         }
@@ -292,7 +292,7 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
+            ControlRenderingDesc& controlRenderingDesc = controlDesc._renderingDesc;
             controlRenderingDesc = _nextControlDesc._renderingDesc;
             controlRenderingDesc._text = text;
             const Float2 controlPositionInput = _nextControlDesc._position;
@@ -383,7 +383,7 @@ namespace mint
         void GUIContext::drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption)
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
-            drawText(controlData._absolutePosition, controlData._size, controlDesc._controlRenderingDesc._text, color, fontRenderingOption);
+            drawText(controlData._absolutePosition, controlData._size, controlDesc._renderingDesc._text, color, fontRenderingOption);
         }
 
         void GUIContext::drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption)
@@ -406,7 +406,7 @@ namespace mint
         Float4 GUIContext::computeShapePosition(const ControlDesc& controlDesc) const
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
-            return computeShapePosition(controlData._absolutePosition, controlData._size, controlDesc._controlRenderingDesc._borderThickness);
+            return computeShapePosition(controlData._absolutePosition, controlData._size, controlDesc._renderingDesc._borderThickness);
         }
 
         Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const
