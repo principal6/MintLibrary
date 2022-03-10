@@ -291,12 +291,12 @@ namespace mint
         void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
             controlDesc._controlID = controlData.getID();
+
             ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
             controlRenderingDesc = _nextControlDesc._renderingDesc;
             controlRenderingDesc._text = text;
-
-            Float2 controlPositionTemp = _nextControlDesc._position;
-            Float2 controlSizeTemp = _nextControlDesc._size;
+            const Float2 controlPositionInput = _nextControlDesc._position;
+            const Float2 controlSizeInput = _nextControlDesc._size;
 
             // Reset NextControl Desc
             {
@@ -315,8 +315,8 @@ namespace mint
 
                 if (controlData.getAccessCount() == 0)
                 {
-                    controlData._relativePosition = controlData._absolutePosition = controlPositionTemp;
-                    controlData._size = controlSizeTemp;
+                    controlData._relativePosition = controlData._absolutePosition = controlPositionInput;
+                    controlData._size = controlSizeInput;
 
                     float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
                     titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
@@ -324,36 +324,37 @@ namespace mint
             }
             else
             {
-                const bool isPositionSpecified = controlPositionTemp.isNan() == false;
-                const bool isSizeSpecified = controlSizeTemp.isNan() == false;
+                const bool isPositionSpecified = controlPositionInput.isNan() == false;
                 if (isPositionSpecified)
                 {
                     // Specified (just turning it into an absolute position)
-                    controlData._relativePosition = controlPositionTemp;
-                    controlPositionTemp += parentControlData._relativePosition;
+                    controlData._relativePosition = controlData._absolutePosition = controlPositionInput;
+                    controlData._absolutePosition += parentControlData._relativePosition;
                 }
                 else
                 {
                     // Automated
                     controlData._relativePosition = parentControlData._nextChildPosition;
-                    controlPositionTemp = controlData._relativePosition + parentControlData._relativePosition;
-                    controlPositionTemp._x += controlRenderingDesc._margin.left();
-                    controlPositionTemp._y += controlRenderingDesc._margin.top();
+                    controlData._absolutePosition = controlData._relativePosition + parentControlData._relativePosition;
+                    controlData._absolutePosition._x += controlRenderingDesc._margin.left();
+                    controlData._absolutePosition._y += controlRenderingDesc._margin.top();
                 }
-                controlPositionTemp._x += controlRenderingDesc._borderThickness;
-                controlPositionTemp._y += controlRenderingDesc._borderThickness;
-                controlData._absolutePosition = controlPositionTemp;
+                controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
+                controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
 
-                if (isSizeSpecified == false)
+                const bool isSizeSpecified = controlSizeInput.isNan() == false;
+                if (isSizeSpecified)
+                {
+                    controlData._size = controlSizeInput;
+                }
+                else
                 {
                     // Automated
                     const FontData& fontData = _rendererContext.getFontData();
                     const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
-                    controlSizeTemp._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
-                    controlSizeTemp._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
+                    controlData._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
+                    controlData._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
                 }
-                
-                controlData._size = controlSizeTemp;
 
                 if (isPositionSpecified == false)
                 {
