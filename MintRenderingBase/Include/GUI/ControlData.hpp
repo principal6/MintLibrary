@@ -39,7 +39,7 @@ namespace mint
 
         inline Rect ControlData::computeTitleBarZone() const
         {
-            Rect titleBarZone = Rect(Float2::kZero, Float2::kZero);
+            Rect titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
             if (_type == ControlType::Window)
             {
                 titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
@@ -49,7 +49,7 @@ namespace mint
 
         inline Rect ControlData::computeContentZone() const
         {
-            Rect contentZone = Rect(Float2::kZero, _size);
+            Rect contentZone = Rect(Float2::kZero, Float2(max(_size._x, _contentZoneSize._x), max(_size._y, _contentZoneSize._y)));
             if (_type == ControlType::Window)
             {
                 contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);

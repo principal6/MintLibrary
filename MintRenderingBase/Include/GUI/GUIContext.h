@@ -160,9 +160,10 @@ namespace mint
             void                                endWindow();
 
         private:
-            void                                makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc);
-            void                                makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc);
+            void                                makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
+            void                                makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
             void                                beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData);
+            void                                renderControlCommon(const ControlData& controlData);
 
         private:
             ControlData&                        accessControlData(const ControlID& controlID) const;
@@ -176,6 +177,7 @@ namespace mint
             void                                drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
             void                                drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
             Float4                              computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const;
+            Float4                              computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const;
             const float                         computeRoundness(const ControlRenderingDesc& controlRenderingDesc) const;
             const bool                          isMouseCursorInControl(const ControlRenderingDesc& controlRenderingDesc, const Float2& mouseCurosrPosition) const;
 

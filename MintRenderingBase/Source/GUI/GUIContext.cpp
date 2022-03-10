@@ -107,7 +107,7 @@ namespace mint
 
             ControlDesc controlDesc;
             fillControlDesc(labelDesc._text, controlDesc, controlData, parentControlData);
-            makeLabel_render(controlDesc, labelDesc);
+            makeLabel_render(controlDesc, labelDesc, controlData);
         }
 
         const bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
@@ -119,7 +119,7 @@ namespace mint
 
             ControlDesc controlDesc;
             fillControlDesc(buttonDesc._text, controlDesc, controlData, parentControlData);
-            makeButton_render(controlDesc, buttonDesc);
+            makeButton_render(controlDesc, buttonDesc, controlData);
             return controlDesc._interactionState == InteractionState::Clicked;
         }
 
@@ -166,7 +166,7 @@ namespace mint
             _controlStack.pop_back();
         }
 
-        void GUIContext::makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc)
+        void GUIContext::makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData)
         {
             const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
             const InteractionState& interactionState = controlDesc._interactionState;
@@ -182,9 +182,11 @@ namespace mint
             fontRenderingOption._directionHorz = labelDesc._directionHorz;
             fontRenderingOption._directionVert = labelDesc._directionVert;
             drawText(controlRenderingDesc, labelDesc.getTextColor(_theme), fontRenderingOption);
+
+            renderControlCommon(controlData);
         }
 
-        void GUIContext::makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc)
+        void GUIContext::makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData)
         {
             const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
             const InteractionState& interactionState = controlDesc._interactionState;
@@ -206,6 +208,8 @@ namespace mint
                 fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
                 drawText(controlRenderingDesc, _theme._textColor, fontRenderingOption);
             }
+
+            renderControlCommon(controlData);
         }
 
         void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData)
@@ -228,6 +232,34 @@ namespace mint
             const Float2 titleBarTextPosition = controlData._position + Float2(_theme._titleBarPadding.left(), 0.0f);
             const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
             drawText(titleBarTextPosition, titleBarSize, controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
+
+            renderControlCommon(controlData);
+        }
+
+        void GUIContext::renderControlCommon(const ControlData& controlData)
+        {
+            static float OVERLAY_ALPHA = 0.25f;
+            static bool RENDER_ZONE_OVERLAY = false;
+            if (RENDER_ZONE_OVERLAY)
+            {
+                const Rect titleBarZone = controlData.computeTitleBarZone();
+                const Float2 titleBarZoneSize = titleBarZone.size();
+                if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
+                {
+                    _rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + titleBarZone.position(), titleBarZoneSize, 0.0f));
+                    _rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
+                }
+
+                const Rect contentZone = controlData.computeContentZone();
+                const Float2 contentZoneSize = contentZone.size();
+                if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
+                {
+                    _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + contentZone.position(), contentZoneSize, 0.0f));
+                    _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
+                }
+            }
         }
 
         ControlData& GUIContext::accessControlData(const ControlID& controlID) const
@@ -289,6 +321,7 @@ namespace mint
                 if (controlData.getAccessCount() == 0)
                 {
                     controlData._position = controlRenderingDesc._position;
+                    controlData._absolutePosition = controlData._position;
                     controlData._size = controlRenderingDesc._size;
 
                     float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
@@ -320,6 +353,7 @@ namespace mint
                 }
                 controlRenderingDesc._position._x += controlRenderingDesc._borderThickness;
                 controlRenderingDesc._position._y += controlRenderingDesc._borderThickness;
+                controlData._absolutePosition = controlRenderingDesc._position;
 
                 if (isSizeSpecified == false)
                 {
@@ -381,7 +415,12 @@ namespace mint
 
         Float4 GUIContext::computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const
         {
-            return Float4(controlRenderingDesc._position + controlRenderingDesc._size * 0.5f + Float2(controlRenderingDesc._borderThickness));
+            return computeShapePosition(controlRenderingDesc._position, controlRenderingDesc._size, controlRenderingDesc._borderThickness);
+        }
+
+        Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const
+        {
+            return Float4(position + size * 0.5f + Float2(borderThickness));
         }
 
         const float GUIContext::computeRoundness(const ControlRenderingDesc& controlRenderingDesc) const
