@@ -168,15 +168,12 @@ namespace mint
 
         void GUIContext::makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData)
         {
-            const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
-            const InteractionState& interactionState = controlDesc._interactionState;
-
             const Color& backgroundColor = labelDesc.getBackgroundColor(_theme);
             if (backgroundColor.a() > 0.0f)
             {
                 _rendererContext.setColor(backgroundColor);
                 _rendererContext.setPosition(computeShapePosition(controlDesc));
-                _rendererContext.drawRectangle(controlData._size, controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRectangle(controlData._size, controlDesc._controlRenderingDesc._borderThickness, 0.0f);
             }
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = labelDesc._directionHorz;
@@ -188,11 +185,8 @@ namespace mint
 
         void GUIContext::makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData)
         {
-            const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
-            const InteractionState& interactionState = controlDesc._interactionState;
-
             const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
-            _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(interactionState));
+            _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlDesc._interactionState));
             _rendererContext.setPosition(computeShapePosition(controlDesc));
             if (buttonDesc._isRoundButton)
             {
@@ -201,7 +195,7 @@ namespace mint
             }
             else
             {
-                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlDesc._controlRenderingDesc._borderThickness, 0.0f);
 
                 FontRenderingOption fontRenderingOption;
                 fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
@@ -214,9 +208,6 @@ namespace mint
 
         void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData)
         {
-            const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
-            const InteractionState& interactionState = controlDesc._interactionState;
-
             _rendererContext.setColor(_theme._windowBackgroundColor);
             _rendererContext.setPosition(computeShapePosition(controlDesc));
             
@@ -231,7 +222,7 @@ namespace mint
             fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
             const Float2 titleBarTextPosition = controlData._relativePosition + Float2(_theme._titleBarPadding.left(), 0.0f);
             const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
-            drawText(titleBarTextPosition, titleBarSize, controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
+            drawText(titleBarTextPosition, titleBarSize, controlDesc._controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
 
             renderControlCommon(controlData);
         }

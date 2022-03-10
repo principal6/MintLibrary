@@ -57,7 +57,7 @@ namespace mint
 
             Color   _normalColor = Color(0.375f, 0.375f, 0.375f);
             Color   _hoveredColor = Color(0.625f, 0.625f, 0.625f);
-            Color   _pressedColor = Color(0.125f, 0.25f, 0.5f);
+            Color   _pressedColor = Color(0.25f, 0.375f, 0.5f);
         };
 
         struct Theme
