@@ -67,11 +67,11 @@ namespace mint
             const InputContext& inputContext = InputContext::getInstance();
             if (inputContext.isMouseButtonPressed())
             {
-                _mouseDownPosition = inputContext.getMousePosition();
+                _mousePressedPosition = inputContext.getMousePosition();
             }
             if (inputContext.isMouseButtonReleased() == false && inputContext.isMouseButtonUp(MouseButton::Left) == true)
             {
-                _mouseDownPosition = Float2::kNan;
+                _mousePressedPosition = Float2::kNan;
             }
         }
 
@@ -348,9 +348,9 @@ namespace mint
             interactionState = InteractionState::None;
             if (isMouseCursorInControl(controlRenderingDesc, inputContext.getMousePosition()))
             {
-                interactionState = isMouseCursorInControl(controlRenderingDesc, _mouseDownPosition) ? InteractionState::Pressing : InteractionState::Hovering;
+                interactionState = isMouseCursorInControl(controlRenderingDesc, _mousePressedPosition) ? InteractionState::Pressing : InteractionState::Hovering;
 
-                if (inputContext.isMouseButtonUp(MouseButton::Left) && isMouseCursorInControl(controlRenderingDesc, _mouseDownPosition))
+                if (inputContext.isMouseButtonUp(MouseButton::Left) && isMouseCursorInControl(controlRenderingDesc, _mousePressedPosition))
                 {
                     interactionState = InteractionState::Clicked;
                 }

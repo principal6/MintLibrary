@@ -189,7 +189,7 @@ namespace mint
             ControlRenderingDesc                _nextControlRenderingDesc;
 
             // Interaction
-            Float2                              _mouseDownPosition;
+            Float2                              _mousePressedPosition;
 
             // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
             // Docking 정보도 저장되어야 한다.
