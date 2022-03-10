@@ -58,7 +58,7 @@ namespace mint
             // ROOT
             const ControlID rootControlID{ ControlID(kUint64Max) };
             ControlData& rootControlData = accessControlData(rootControlID, ControlType::COUNT);
-            rootControlData._position = Float2::kZero;
+            rootControlData._relativePosition = Float2::kZero;
             _controlStack.push_back(rootControlID);
         }
 
@@ -142,7 +142,7 @@ namespace mint
                 closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
                 const float titleBarHeight = controlData.computeTitleBarZone().size()._y;
                 const float radius = _theme._systemButtonRadius;
-                nextControlPosition(controlData._position + Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
+                nextControlPosition(controlData._relativePosition + Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
                 nextControlSize(Float2(radius * 2.0f));
                 if (makeButton(fileLine, closeButtonDesc))
                 {
@@ -229,7 +229,7 @@ namespace mint
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
             fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-            const Float2 titleBarTextPosition = controlData._position + Float2(_theme._titleBarPadding.left(), 0.0f);
+            const Float2 titleBarTextPosition = controlData._relativePosition + Float2(_theme._titleBarPadding.left(), 0.0f);
             const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
             drawText(titleBarTextPosition, titleBarSize, controlRenderingDesc._text, _theme._textColor, fontRenderingOption);
 
@@ -294,7 +294,7 @@ namespace mint
         void GUIContext::fillControlDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
             fillControlDesc_controlRenderingDesc(text, controlDesc, controlData, parentControlData);
-            fillControlDesc_interactionState(controlDesc);
+            fillControlDesc_interactionState(controlData, controlDesc);
         }
 
         void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
@@ -320,8 +320,7 @@ namespace mint
 
                 if (controlData.getAccessCount() == 0)
                 {
-                    controlData._position = controlRenderingDesc._position;
-                    controlData._absolutePosition = controlData._position;
+                    controlData._relativePosition = controlData._absolutePosition = controlRenderingDesc._position;
                     controlData._size = controlRenderingDesc._size;
 
                     float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
@@ -329,7 +328,7 @@ namespace mint
                 }
                 else
                 {
-                    controlRenderingDesc._position = controlData._position;
+                    controlRenderingDesc._position = controlData._absolutePosition;
                     controlRenderingDesc._size = controlData._size;
                 }
             }
@@ -339,15 +338,15 @@ namespace mint
                 const bool isSizeSpecified = controlRenderingDesc._size.isNan() == false;
                 if (isPositionSpecified)
                 {
-                    // Specified (just turning it into a relative position)
-                    controlData._position = controlRenderingDesc._position;
-                    controlRenderingDesc._position += parentControlData._position;
+                    // Specified (just turning it into an absolute position)
+                    controlData._relativePosition = controlRenderingDesc._position;
+                    controlRenderingDesc._position += parentControlData._relativePosition;
                 }
                 else
                 {
                     // Automated
-                    controlData._position = parentControlData._nextChildPosition;
-                    controlRenderingDesc._position = controlData._position + parentControlData._position;
+                    controlData._relativePosition = parentControlData._nextChildPosition;
+                    controlRenderingDesc._position = controlData._relativePosition + parentControlData._relativePosition;
                     controlRenderingDesc._position._x += controlRenderingDesc._margin.left();
                     controlRenderingDesc._position._y += controlRenderingDesc._margin.top();
                 }
@@ -368,12 +367,12 @@ namespace mint
 
                 if (isPositionSpecified == false)
                 {
-                    parentControlData._nextChildPosition = controlData._position + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
+                    parentControlData._nextChildPosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
                 }
             }
         }
 
-        void GUIContext::fillControlDesc_interactionState(ControlDesc& controlDesc) const
+        void GUIContext::fillControlDesc_interactionState(const ControlData& controlData, ControlDesc& controlDesc) const
         {
             const InputContext& inputContext = InputContext::getInstance();
 

@@ -37,6 +37,12 @@ namespace mint
 
         struct ControlRenderingDesc
         {
+            // When specifying,
+            //   Relative position, if it's a child control.
+            //   Absolute position, otherwise
+            //
+            // When rendering,
+            //   Absolute position, always
             Float2  _position;
             Float2  _size;
 
@@ -171,7 +177,7 @@ namespace mint
             ControlData&                        accessStackParentControlData();
             void                                fillControlDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                                fillControlDesc_interactionState(ControlDesc& controlDesc) const;
+            void                                fillControlDesc_interactionState(const ControlData& controlData, ControlDesc& controlDesc) const;
 
         private:
             void                                drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption);

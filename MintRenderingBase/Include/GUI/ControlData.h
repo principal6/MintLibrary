@@ -80,8 +80,8 @@ namespace mint
             Rect                computeContentZone() const;
 
         public:
-            Float2              _position; // Relative to parent control
-            Float2              _absolutePosition;
+            Float2              _relativePosition; // Relative to parent control
+            Float2              _absolutePosition; // In screen space
             Float2              _size;
             Float2              _contentZoneSize;
             Float2              _nextChildPosition;
