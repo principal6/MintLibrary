@@ -422,7 +422,7 @@ namespace mint
         const bool GUIContext::isMouseCursorInControl(const ControlDesc& controlDesc, const Float2& mouseCurosrPosition) const
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
-            return Rect::fromPositionSize(controlData._absolutePosition, controlData._size).contains(mouseCurosrPosition);
+            return Rect(controlData._absolutePosition, controlData._size).contains(mouseCurosrPosition);
         }
     }
 }
