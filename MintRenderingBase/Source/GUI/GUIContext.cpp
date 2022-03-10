@@ -295,19 +295,19 @@ namespace mint
             ControlRenderingDesc& controlRenderingDesc = controlDesc._renderingDesc;
             controlRenderingDesc = _nextControlDesc._renderingDesc;
             controlRenderingDesc._text = text;
-            const Float2 controlPositionInput = _nextControlDesc._position;
-            const Float2 controlSizeInput = _nextControlDesc._size;
+            const Float2 controlRelativePosition = _nextControlDesc._position;
+            const Float2 controlSize = _nextControlDesc._size;
 
             // Reset NextControl Desc
             {
+                _nextControlDesc._position = Float2::kNan;
+                _nextControlDesc._size = Float2::kNan;
                 _nextControlDesc._renderingDesc._borderThickness = _theme._defaultBorderThickness;
                 _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
                 _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
-                _nextControlDesc._position = Float2::kNan;
-                _nextControlDesc._size = Float2::kNan;
             }
 
-            controlData._nextChildPosition = controlData.computeContentZone().position();
+            controlData._nextChildRelativePosition = controlData.computeContentZone().position();
 
             if (controlData.getType() == ControlType::Window)
             {
@@ -315,8 +315,10 @@ namespace mint
 
                 if (controlData.getAccessCount() == 0)
                 {
-                    controlData._relativePosition = controlData._absolutePosition = controlPositionInput;
-                    controlData._size = controlSizeInput;
+                    controlData._relativePosition = controlRelativePosition;
+                    controlData._absolutePosition = controlData._relativePosition;
+
+                    controlData._size = controlSize;
 
                     float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
                     titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
@@ -324,28 +326,25 @@ namespace mint
             }
             else
             {
-                const bool isPositionSpecified = controlPositionInput.isNan() == false;
-                if (isPositionSpecified)
+                // Position
+                const bool isPositionSpecified = controlRelativePosition.isNan() == false;
+                controlData._relativePosition = (isPositionSpecified ? controlRelativePosition : parentControlData._nextChildRelativePosition);
+                controlData._absolutePosition = controlData._relativePosition;
+                controlData._absolutePosition += parentControlData._relativePosition;
+                controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
+                controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
+                if (isPositionSpecified == false)
                 {
-                    // Specified (just turning it into an absolute position)
-                    controlData._relativePosition = controlData._absolutePosition = controlPositionInput;
-                    controlData._absolutePosition += parentControlData._relativePosition;
-                }
-                else
-                {
-                    // Automated
-                    controlData._relativePosition = parentControlData._nextChildPosition;
-                    controlData._absolutePosition = controlData._relativePosition + parentControlData._relativePosition;
+                    // Only auto-positioned control needs margin
                     controlData._absolutePosition._x += controlRenderingDesc._margin.left();
                     controlData._absolutePosition._y += controlRenderingDesc._margin.top();
                 }
-                controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
-                controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
 
-                const bool isSizeSpecified = controlSizeInput.isNan() == false;
+                // Size
+                const bool isSizeSpecified = controlSize.isNan() == false;
                 if (isSizeSpecified)
                 {
-                    controlData._size = controlSizeInput;
+                    controlData._size = controlSize;
                 }
                 else
                 {
@@ -358,7 +357,7 @@ namespace mint
 
                 if (isPositionSpecified == false)
                 {
-                    parentControlData._nextChildPosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
+                    parentControlData._nextChildRelativePosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
                 }
             }
         }

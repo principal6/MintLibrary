@@ -84,7 +84,7 @@ namespace mint
             Float2              _absolutePosition; // In screen space
             Float2              _size;
             Float2              _contentZoneSize;
-            Float2              _nextChildPosition;
+            Float2              _nextChildRelativePosition;
             PerTypeData         _perTypeData;
 
         private:
