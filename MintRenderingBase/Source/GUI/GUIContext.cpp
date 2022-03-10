@@ -90,12 +90,12 @@ namespace mint
 
         void GUIContext::nextControlPosition(const Float2& position)
         {
-            _nextControlRenderingDesc._position = position;
+            _nextControlDesc._position = position;
         }
 
         void GUIContext::nextControlSize(const Float2& contentSize)
         {
-            _nextControlRenderingDesc._size = contentSize;
+            _nextControlDesc._size = contentSize;
         }
 
         void GUIContext::makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
@@ -175,13 +175,13 @@ namespace mint
             if (backgroundColor.a() > 0.0f)
             {
                 _rendererContext.setColor(backgroundColor);
-                _rendererContext.setPosition(computeShapePosition(controlRenderingDesc));
-                _rendererContext.drawRectangle(controlRenderingDesc._size, controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.setPosition(computeShapePosition(controlDesc));
+                _rendererContext.drawRectangle(controlData._size, controlRenderingDesc._borderThickness, 0.0f);
             }
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = labelDesc._directionHorz;
             fontRenderingOption._directionVert = labelDesc._directionVert;
-            drawText(controlRenderingDesc, labelDesc.getTextColor(_theme), fontRenderingOption);
+            drawText(controlDesc, labelDesc.getTextColor(_theme), fontRenderingOption);
 
             renderControlCommon(controlData);
         }
@@ -193,20 +193,20 @@ namespace mint
 
             const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
             _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(interactionState));
-            _rendererContext.setPosition(computeShapePosition(controlRenderingDesc));
+            _rendererContext.setPosition(computeShapePosition(controlDesc));
             if (buttonDesc._isRoundButton)
             {
-                const float radius = controlRenderingDesc._size._x * 0.5f;
+                const float radius = controlData._size._x * 0.5f;
                 _rendererContext.drawCircle(radius);
             }
             else
             {
-                _rendererContext.drawRoundedRectangle(controlRenderingDesc._size, computeRoundness(controlRenderingDesc), controlRenderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlRenderingDesc._borderThickness, 0.0f);
 
                 FontRenderingOption fontRenderingOption;
                 fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
                 fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-                drawText(controlRenderingDesc, _theme._textColor, fontRenderingOption);
+                drawText(controlDesc, _theme._textColor, fontRenderingOption);
             }
 
             renderControlCommon(controlData);
@@ -218,13 +218,13 @@ namespace mint
             const InteractionState& interactionState = controlDesc._interactionState;
 
             _rendererContext.setColor(_theme._windowBackgroundColor);
-            _rendererContext.setPosition(computeShapePosition(controlRenderingDesc));
+            _rendererContext.setPosition(computeShapePosition(controlDesc));
             
             const float titleBarHeight = controlData.computeTitleBarZone().vert();
             ScopeVector<ShapeRendererContext::Split, 3> splits;
-            splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlRenderingDesc._size._y, _theme._windowTitleBarFocusedColor));
+            splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, _theme._windowTitleBarFocusedColor));
             splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
-            _rendererContext.drawRoundedRectangleVertSplit(controlRenderingDesc._size, _theme._roundnessInPixel, splits, 0.0f);
+            _rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
@@ -299,17 +299,21 @@ namespace mint
 
         void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
+            controlDesc._controlID = controlData.getID();
             ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
-            controlRenderingDesc = _nextControlRenderingDesc;
+            controlRenderingDesc = _nextControlDesc._renderingDesc;
             controlRenderingDesc._text = text;
 
-            // Reset _nextControlRenderingDesc
+            Float2 controlPositionTemp = _nextControlDesc._position;
+            Float2 controlSizeTemp = _nextControlDesc._size;
+
+            // Reset NextControl Desc
             {
-                _nextControlRenderingDesc._borderThickness = _theme._defaultBorderThickness;
-                _nextControlRenderingDesc._margin = _theme._defaultMargin;
-                _nextControlRenderingDesc._padding = _theme._defaultPadding;
-                _nextControlRenderingDesc._position = Float2::kNan;
-                _nextControlRenderingDesc._size = Float2::kNan;
+                _nextControlDesc._renderingDesc._borderThickness = _theme._defaultBorderThickness;
+                _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
+                _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
+                _nextControlDesc._position = Float2::kNan;
+                _nextControlDesc._size = Float2::kNan;
             }
 
             controlData._nextChildPosition = controlData.computeContentZone().position();
@@ -320,50 +324,45 @@ namespace mint
 
                 if (controlData.getAccessCount() == 0)
                 {
-                    controlData._relativePosition = controlData._absolutePosition = controlRenderingDesc._position;
-                    controlData._size = controlRenderingDesc._size;
+                    controlData._relativePosition = controlData._absolutePosition = controlPositionTemp;
+                    controlData._size = controlSizeTemp;
 
                     float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
                     titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
                 }
-                else
-                {
-                    controlRenderingDesc._position = controlData._absolutePosition;
-                    controlRenderingDesc._size = controlData._size;
-                }
             }
             else
             {
-                const bool isPositionSpecified = controlRenderingDesc._position.isNan() == false;
-                const bool isSizeSpecified = controlRenderingDesc._size.isNan() == false;
+                const bool isPositionSpecified = controlPositionTemp.isNan() == false;
+                const bool isSizeSpecified = controlSizeTemp.isNan() == false;
                 if (isPositionSpecified)
                 {
                     // Specified (just turning it into an absolute position)
-                    controlData._relativePosition = controlRenderingDesc._position;
-                    controlRenderingDesc._position += parentControlData._relativePosition;
+                    controlData._relativePosition = controlPositionTemp;
+                    controlPositionTemp += parentControlData._relativePosition;
                 }
                 else
                 {
                     // Automated
                     controlData._relativePosition = parentControlData._nextChildPosition;
-                    controlRenderingDesc._position = controlData._relativePosition + parentControlData._relativePosition;
-                    controlRenderingDesc._position._x += controlRenderingDesc._margin.left();
-                    controlRenderingDesc._position._y += controlRenderingDesc._margin.top();
+                    controlPositionTemp = controlData._relativePosition + parentControlData._relativePosition;
+                    controlPositionTemp._x += controlRenderingDesc._margin.left();
+                    controlPositionTemp._y += controlRenderingDesc._margin.top();
                 }
-                controlRenderingDesc._position._x += controlRenderingDesc._borderThickness;
-                controlRenderingDesc._position._y += controlRenderingDesc._borderThickness;
-                controlData._absolutePosition = controlRenderingDesc._position;
+                controlPositionTemp._x += controlRenderingDesc._borderThickness;
+                controlPositionTemp._y += controlRenderingDesc._borderThickness;
+                controlData._absolutePosition = controlPositionTemp;
 
                 if (isSizeSpecified == false)
                 {
                     // Automated
                     const FontData& fontData = _rendererContext.getFontData();
                     const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
-                    controlRenderingDesc._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
-                    controlRenderingDesc._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
+                    controlSizeTemp._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
+                    controlSizeTemp._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
                 }
                 
-                controlData._size = controlRenderingDesc._size;
+                controlData._size = controlSizeTemp;
 
                 if (isPositionSpecified == false)
                 {
@@ -376,23 +375,23 @@ namespace mint
         {
             const InputContext& inputContext = InputContext::getInstance();
 
-            const ControlRenderingDesc& controlRenderingDesc = controlDesc._controlRenderingDesc;
             InteractionState& interactionState = controlDesc._interactionState;
             interactionState = InteractionState::None;
-            if (isMouseCursorInControl(controlRenderingDesc, inputContext.getMousePosition()))
+            if (isMouseCursorInControl(controlDesc, inputContext.getMousePosition()))
             {
-                interactionState = isMouseCursorInControl(controlRenderingDesc, _mousePressedPosition) ? InteractionState::Pressing : InteractionState::Hovering;
+                interactionState = isMouseCursorInControl(controlDesc, _mousePressedPosition) ? InteractionState::Pressing : InteractionState::Hovering;
 
-                if (inputContext.isMouseButtonUp(MouseButton::Left) && isMouseCursorInControl(controlRenderingDesc, _mousePressedPosition))
+                if (inputContext.isMouseButtonUp(MouseButton::Left) && isMouseCursorInControl(controlDesc, _mousePressedPosition))
                 {
                     interactionState = InteractionState::Clicked;
                 }
             }
         }
 
-        void GUIContext::drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption)
+        void GUIContext::drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption)
         {
-            drawText(controlRenderingDesc._position, controlRenderingDesc._size, controlRenderingDesc._text, color, fontRenderingOption);
+            const ControlData& controlData = accessControlData(controlDesc._controlID);
+            drawText(controlData._absolutePosition, controlData._size, controlDesc._controlRenderingDesc._text, color, fontRenderingOption);
         }
 
         void GUIContext::drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption)
@@ -412,9 +411,10 @@ namespace mint
             _rendererContext.drawDynamicText(text, Float4(finalPosition), fontRenderingOption);
         }
 
-        Float4 GUIContext::computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const
+        Float4 GUIContext::computeShapePosition(const ControlDesc& controlDesc) const
         {
-            return computeShapePosition(controlRenderingDesc._position, controlRenderingDesc._size, controlRenderingDesc._borderThickness);
+            const ControlData& controlData = accessControlData(controlDesc._controlID);
+            return computeShapePosition(controlData._absolutePosition, controlData._size, controlDesc._controlRenderingDesc._borderThickness);
         }
 
         Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const
@@ -422,14 +422,16 @@ namespace mint
             return Float4(position + size * 0.5f + Float2(borderThickness));
         }
 
-        const float GUIContext::computeRoundness(const ControlRenderingDesc& controlRenderingDesc) const
+        const float GUIContext::computeRoundness(const ControlDesc& controlDesc) const
         {
-            return _rendererContext.computeNormalizedRoundness(controlRenderingDesc._size.minElement(), _theme._roundnessInPixel);
+            const ControlData& controlData = accessControlData(controlDesc._controlID);
+            return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
         }
 
-        const bool GUIContext::isMouseCursorInControl(const ControlRenderingDesc& controlRenderingDesc, const Float2& mouseCurosrPosition) const
+        const bool GUIContext::isMouseCursorInControl(const ControlDesc& controlDesc, const Float2& mouseCurosrPosition) const
         {
-            return Rect::fromPositionSize(controlRenderingDesc._position, controlRenderingDesc._size).contains(mouseCurosrPosition);
+            const ControlData& controlData = accessControlData(controlDesc._controlID);
+            return Rect::fromPositionSize(controlData._absolutePosition, controlData._size).contains(mouseCurosrPosition);
         }
     }
 }

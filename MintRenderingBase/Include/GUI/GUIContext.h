@@ -37,18 +37,9 @@ namespace mint
 
         struct ControlRenderingDesc
         {
-            // When specifying,
-            //   Relative position, if it's a child control.
-            //   Absolute position, otherwise
-            //
-            // When rendering,
-            //   Absolute position, always
-            Float2  _position;
-            Float2  _size;
-
-            Rect    _margin;
-            float   _borderThickness = 0.0f;
-            Rect    _padding;
+            Rect            _margin;
+            float           _borderThickness = 0.0f;
+            Rect            _padding;
             const wchar_t*  _text = nullptr;
         };
 
@@ -133,8 +124,16 @@ namespace mint
 
             struct ControlDesc
             {
+                ControlID               _controlID;
                 ControlRenderingDesc    _controlRenderingDesc;
                 InteractionState        _interactionState;
+            };
+
+            struct NextControlDesc
+            {
+                Float2                  _position;
+                Float2                  _size;
+                ControlRenderingDesc    _renderingDesc;
             };
 
         private:
@@ -180,12 +179,12 @@ namespace mint
             void                                fillControlDesc_interactionState(const ControlData& controlData, ControlDesc& controlDesc) const;
 
         private:
-            void                                drawText(const ControlRenderingDesc& controlRenderingDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
+            void                                drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
             void                                drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
-            Float4                              computeShapePosition(const ControlRenderingDesc& controlRenderingDesc) const;
+            Float4                              computeShapePosition(const ControlDesc& controlDesc) const;
             Float4                              computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const;
-            const float                         computeRoundness(const ControlRenderingDesc& controlRenderingDesc) const;
-            const bool                          isMouseCursorInControl(const ControlRenderingDesc& controlRenderingDesc, const Float2& mouseCurosrPosition) const;
+            const float                         computeRoundness(const ControlDesc& controlDesc) const;
+            const bool                          isMouseCursorInControl(const ControlDesc& controlDesc, const Float2& mouseCurosrPosition) const;
 
         private:
             GraphicDevice&                      _graphicDevice;
@@ -194,7 +193,7 @@ namespace mint
             Theme                               _theme;
 
         private:
-            ControlRenderingDesc                _nextControlRenderingDesc;
+            NextControlDesc                     _nextControlDesc;
 
             // Interaction
             Float2                              _mousePressedPosition;
