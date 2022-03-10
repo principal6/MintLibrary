@@ -348,7 +348,7 @@ namespace mint
                 }
                 else
                 {
-                    // Automated
+                    // Auto-sized control
                     const FontData& fontData = _rendererContext.getFontData();
                     const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
                     controlData._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
