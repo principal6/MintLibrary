@@ -174,9 +174,9 @@ namespace mint
             ControlData&                        accessControlData(const ControlID& controlID) const;
             ControlData&                        accessControlData(const ControlID& controlID, const ControlType controlType);
             ControlData&                        accessStackParentControlData();
-            void                                fillControlDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                                fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                                fillControlDesc_interactionState(const ControlData& controlData, ControlDesc& controlDesc) const;
+            void                                updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+            void                                updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+            void                                updateControlData_interaction(const ControlData& controlData, ControlDesc& controlDesc) const;
 
         private:
             void                                drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);

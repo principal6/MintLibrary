@@ -106,7 +106,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
 
             ControlDesc controlDesc;
-            fillControlDesc(labelDesc._text, controlDesc, controlData, parentControlData);
+            updateControlData(labelDesc._text, controlDesc, controlData, parentControlData);
             makeLabel_render(controlDesc, labelDesc, controlData);
         }
 
@@ -118,7 +118,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
 
             ControlDesc controlDesc;
-            fillControlDesc(buttonDesc._text, controlDesc, controlData, parentControlData);
+            updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
             makeButton_render(controlDesc, buttonDesc, controlData);
             return controlDesc._interactionState == InteractionState::Clicked;
         }
@@ -131,12 +131,12 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
             
             ControlDesc controlDesc;
-            fillControlDesc(windowDesc._title, controlDesc, controlData, parentControlData);
+            updateControlData(windowDesc._title, controlDesc, controlData, parentControlData);
             beginWindow_render(controlDesc, controlData);
 
             {
                 ButtonDesc closeButtonDesc;
-                closeButtonDesc._text = L"#CloseButton";
+                closeButtonDesc._text = L"@CloseButton";
                 closeButtonDesc._isRoundButton = true;
                 closeButtonDesc._customizeColor = true;
                 closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
@@ -282,13 +282,13 @@ namespace mint
             return accessControlData(_controlStack.back());
         }
 
-        void GUIContext::fillControlDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
+        void GUIContext::updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
-            fillControlDesc_controlRenderingDesc(text, controlDesc, controlData, parentControlData);
-            fillControlDesc_interactionState(controlData, controlDesc);
+            updateControlData_renderingData(text, controlDesc, controlData, parentControlData);
+            updateControlData_interaction(controlData, controlDesc);
         }
 
-        void GUIContext::fillControlDesc_controlRenderingDesc(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
+        void GUIContext::updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
             controlDesc._controlID = controlData.getID();
 
@@ -362,7 +362,7 @@ namespace mint
             }
         }
 
-        void GUIContext::fillControlDesc_interactionState(const ControlData& controlData, ControlDesc& controlDesc) const
+        void GUIContext::updateControlData_interaction(const ControlData& controlData, ControlDesc& controlDesc) const
         {
             const InputContext& inputContext = InputContext::getInstance();
 
