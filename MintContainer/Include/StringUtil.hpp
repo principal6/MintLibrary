@@ -316,7 +316,7 @@ namespace mint
         inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
         {
             ScopeStringA<256> buffer;
-            formatString(buffer, "%d", rhs);
+            formatString(buffer, (std::is_signed<T>() ? "%lld" : "%llu"), rhs);
             return StringA(buffer.c_str());
         }
 
@@ -332,7 +332,7 @@ namespace mint
         inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
         {
             ScopeStringW<256> buffer;
-            formatString(buffer, L"%d", rhs);
+            formatString(buffer, (std::is_signed<T>() ? L"%lld" : L"%llu"), rhs);
             return StringW(buffer.c_str());
         }
 
