@@ -63,7 +63,7 @@ namespace mint
             };
 
         public:
-            static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text);
+            static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
         public:
                                 ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }

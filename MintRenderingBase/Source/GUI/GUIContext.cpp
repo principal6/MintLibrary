@@ -100,10 +100,10 @@ namespace mint
 
         void GUIContext::makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
         {
-            static constexpr ControlType type = ControlType::Label;
-            const ControlID ID = ControlData::generateID(fileLine, type, labelDesc._text);
-            ControlData& controlData = accessControlData(ID, type);
+            static constexpr ControlType kControlType = ControlType::Label;
             ControlData& parentControlData = accessStackParentControlData();
+            const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlData.getID());
+            ControlData& controlData = accessControlData(controlID, kControlType);
 
             ControlDesc controlDesc;
             updateControlData(labelDesc._text, controlDesc, controlData, parentControlData);
@@ -112,10 +112,10 @@ namespace mint
 
         const bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
         {
-            static constexpr ControlType type = ControlType::Button;
-            const ControlID ID = ControlData::generateID(fileLine, type, buttonDesc._text);
-            ControlData& controlData = accessControlData(ID, type);
+            static constexpr ControlType kControlType = ControlType::Button;
             ControlData& parentControlData = accessStackParentControlData();
+            const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlData.getID());
+            ControlData& controlData = accessControlData(controlID, kControlType);
 
             ControlDesc controlDesc;
             updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
@@ -125,10 +125,10 @@ namespace mint
 
         const bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
         {
-            static constexpr ControlType type = ControlType::Window;
-            const ControlID ID = ControlData::generateID(fileLine, type, windowDesc._title);
-            ControlData& controlData = accessControlData(ID, type);
+            static constexpr ControlType kControlType = ControlType::Window;
             ControlData& parentControlData = accessStackParentControlData();
+            const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
+            ControlData& controlData = accessControlData(controlID, kControlType);
             
             ControlDesc controlDesc;
             updateControlData(windowDesc._title, controlDesc, controlData, parentControlData);
@@ -150,7 +150,7 @@ namespace mint
                 }
             }
 
-            _controlStack.push_back(ID);
+            _controlStack.push_back(controlID);
             return true;
         }
 

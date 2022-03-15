@@ -23,7 +23,7 @@ namespace mint
 
     namespace Rendering
     {
-        const ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text)
+        const ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
         {
             ScopeStringA<512> file = fileLine._file;
             ScopeStringW<512> key;
@@ -34,6 +34,8 @@ namespace mint
             key.append(text);
             key.append(L"_");
             key.append(StringUtil::convertToStringW(static_cast<uint32>(type)).c_str());
+            key.append(L"_");
+            key.append(StringUtil::convertToStringW(parentControlID.getRawID()).c_str());
             return ControlID(key.computeHash());
         }
 
