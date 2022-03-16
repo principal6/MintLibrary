@@ -152,6 +152,20 @@ namespace mint
         bottom(max(top(), bottom()));
     }
 
+    MINT_INLINE void Rect::expand(const Rect& rhs) noexcept
+    {
+        top(min(top(), rhs.top()));
+        left(min(left(), rhs.left()));
+
+        expandRightBottom(rhs);
+    }
+
+    MINT_INLINE void Rect::expandRightBottom(const Rect& rhs) noexcept
+    {
+        right(max(right(), rhs.right()));
+        bottom(max(bottom(), rhs.bottom()));
+    }
+
     MINT_INLINE constexpr Float2 Rect::bound(const Float2& position) const noexcept
     {
         return Float2(boundHorz(position._x), boundVert(position._y));

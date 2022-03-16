@@ -59,6 +59,8 @@ namespace mint
 
     public:
         void                        clipBy(const Rect& outerRect) noexcept;
+        void                        expand(const Rect& rhs) noexcept;
+        void                        expandRightBottom(const Rect& rhs) noexcept;
         constexpr Float2            bound(const Float2& position) const noexcept;
         constexpr const bool        contains(const Float2& position) const noexcept;
         constexpr const bool        contains(const Rect& rhs) const noexcept;
