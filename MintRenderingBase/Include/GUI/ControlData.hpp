@@ -23,6 +23,16 @@ namespace mint
 
     namespace Rendering
     {
+        ControlData::ControlData(const ControlID& ID, const ControlType type)
+            : _relativeMousePressedPosition{ Float2::kNan }
+            , _perTypeData{}
+            , _ID{ ID }
+            , _type{ type }
+            , _accessCount{ 0 }
+        {
+            __noop;
+        }
+
         const ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
         {
             ScopeStringA<512> file = fileLine._file;
@@ -39,24 +49,38 @@ namespace mint
             return ControlID(key.computeHash());
         }
 
-        inline Rect ControlData::computeTitleBarZone() const
+        inline void ControlData::computeZones()
         {
-            Rect titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
-            if (_type == ControlType::Window)
-            {
-                titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
-            }
-            return titleBarZone;
+            computeContentZone();
+            computeTitleBarZone();
+            computeVisibleContentZone();
         }
 
-        inline Rect ControlData::computeContentZone() const
+        inline void ControlData::computeContentZone()
         {
-            Rect contentZone = Rect(Float2::kZero, Float2(max(_size._x, _contentZoneSize._x), max(_size._y, _contentZoneSize._y)));
+            _zones._contentZone = Rect(Float2::kZero, _size);
             if (_type == ControlType::Window)
             {
-                contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
+                _zones._contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
             }
-            return contentZone;
+        }
+
+        inline void ControlData::computeVisibleContentZone()
+        {
+            _zones._visibleContentZone = Rect(Float2::kZero, _size);
+            if (_type == ControlType::Window)
+            {
+                _zones._visibleContentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
+            }
+        }
+
+        inline void ControlData::computeTitleBarZone()
+        {
+            _zones._titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
+            if (_type == ControlType::Window)
+            {
+                _zones._titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
+            }
         }
     }
 }

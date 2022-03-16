@@ -16,7 +16,6 @@
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>
 
-
 namespace mint
 {
     using Platform::InputContext;
@@ -140,7 +139,7 @@ namespace mint
                 closeButtonDesc._isRoundButton = true;
                 closeButtonDesc._customizeColor = true;
                 closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
-                const float titleBarHeight = controlData.computeTitleBarZone().size()._y;
+                const float titleBarHeight = controlData._zones._titleBarZone.vert();
                 const float radius = _theme._systemButtonRadius;
                 nextControlPosition(controlData._relativePosition + Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
                 nextControlSize(Float2(radius * 2.0f));
@@ -211,7 +210,7 @@ namespace mint
             _rendererContext.setColor(_theme._windowBackgroundColor);
             _rendererContext.setPosition(computeShapePosition(controlDesc));
             
-            const float titleBarHeight = controlData.computeTitleBarZone().vert();
+            const float titleBarHeight = controlData._zones._titleBarZone.vert();
             ScopeVector<ShapeRendererContext::Split, 3> splits;
             splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, _theme._windowTitleBarFocusedColor));
             splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
@@ -229,26 +228,37 @@ namespace mint
 
         void GUIContext::renderControlCommon(const ControlData& controlData)
         {
-            static float OVERLAY_ALPHA = 0.25f;
             static bool RENDER_ZONE_OVERLAY = false;
+            static bool RENDER_MOUSE_POINTS = false;
+            
+            static const float OVERLAY_ALPHA = 0.25f;
+            static const float POINT_RADIUS = 4.0f;
             if (RENDER_ZONE_OVERLAY)
             {
-                const Rect titleBarZone = controlData.computeTitleBarZone();
-                const Float2 titleBarZoneSize = titleBarZone.size();
+                const Float2 titleBarZoneSize = controlData._zones._titleBarZone.size();
                 if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
                 {
                     _rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
-                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + titleBarZone.position(), titleBarZoneSize, 0.0f));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize, 0.0f));
                     _rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
                 }
 
-                const Rect contentZone = controlData.computeContentZone();
-                const Float2 contentZoneSize = contentZone.size();
+                const Float2 contentZoneSize = controlData._zones._contentZone.size();
                 if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
                 {
                     _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
-                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + contentZone.position(), contentZoneSize, 0.0f));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize, 0.0f));
                     _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
+                }
+            }
+
+            if (RENDER_MOUSE_POINTS)
+            {
+                if (controlData._relativeMousePressedPosition.isNan() == false)
+                {
+                    _rendererContext.setColor(Color::kRed);
+                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData._relativeMousePressedPosition));
+                    _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
         }
@@ -307,7 +317,7 @@ namespace mint
                 _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
             }
 
-            controlData._nextChildRelativePosition = controlData.computeContentZone().position();
+            controlData._nextChildRelativePosition = controlData._zones._contentZone.position();
 
             if (controlData.getType() == ControlType::Window)
             {
@@ -359,25 +369,40 @@ namespace mint
                     // If its position is specified, the control does not affect its parent's _nextChildRelativePosition.
                     parentControlData._nextChildRelativePosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
                 }
+
             }
+
+            parentControlData._zones._contentZone.expandRightBottom(Rect(controlData._relativePosition, controlData._size));
+
+            controlData.computeZones();
         }
 
-        void GUIContext::updateControlData_interaction(const ControlData& controlData, ControlDesc& controlDesc) const
+        void GUIContext::updateControlData_interaction(ControlData& controlData, ControlDesc& controlDesc) const
         {
             const InputContext& inputContext = InputContext::getInstance();
 
             InteractionState& interactionState = controlDesc._interactionState;
             interactionState = InteractionState::None;
+            const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
             const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(inputContext.getMousePosition());
             if (isMousePositionIn)
             {
-                const bool isMousePressedPositionIn = Rect(controlData._absolutePosition, controlData._size).contains(_mousePressedPosition);
-                interactionState = isMousePressedPositionIn ? InteractionState::Pressing : InteractionState::Hovering;
+                if (controlData._relativeMousePressedPosition.isNan())
+                {
+                    controlData._relativeMousePressedPosition = _mousePressedPosition - controlData._absolutePosition;
+                }
 
-                if (inputContext.isMouseButtonUp(MouseButton::Left) == true && isMousePressedPositionIn == true)
+                const bool isMousePressedPositionIn = Rect(Float2::kZero, controlData._size).contains(controlData._relativeMousePressedPosition);
+                interactionState = isMousePressedPositionIn ? InteractionState::Pressing : InteractionState::Hovering;
+                if (isMousePressedPositionIn == true && isMouseLeftUp == true)
                 {
                     interactionState = InteractionState::Clicked;
                 }
+            }
+
+            if (isMouseLeftUp)
+            {
+                controlData._relativeMousePressedPosition.setNan();
             }
         }
 

@@ -53,6 +53,46 @@ namespace mint
         class ControlData
         {
         public:
+            static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
+
+        public:
+                                ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
+                                ControlData(const ControlID& ID, const ControlType type);
+                                ~ControlData() = default;
+
+        public:
+            const ControlID&    getID() const { return _ID; }
+            const ControlType&  getType() const { return _type; }
+            const bool          hasValidType() const { return _type != ControlType::COUNT; }
+            const uint64&       getAccessCount() const { return _accessCount; }
+            void                computeZones();
+
+        private:
+            void                computeContentZone();
+            void                computeVisibleContentZone();
+            void                computeTitleBarZone();
+
+        public:
+            Float2              _relativePosition; // Relative to parent control
+            Float2              _absolutePosition; // In screen space
+            Float2              _size;
+            Float2              _nextChildRelativePosition;
+
+        public:
+            Float2              _relativeMousePressedPosition;
+
+        public:
+            struct Zones
+            {
+                Rect            _contentZone;
+                Rect            _visibleContentZone;
+                Rect            _titleBarZone;
+                Rect            _menuBarZone;
+                //Rect            _dockZone; // DockZone 은 여러 개가 될 것.
+            };
+            Zones               _zones;
+        
+        public:
             union PerTypeData
             {
                 struct WindowData
@@ -61,30 +101,6 @@ namespace mint
                     float   _menuBarHeight = 0.0f;
                 } _windowData{};
             };
-
-        public:
-            static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
-
-        public:
-                                ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
-                                ControlData(const ControlID& ID, const ControlType type) : _ID{ ID }, _type{ type }, _accessCount{ 0 } { __noop; }
-                                ~ControlData() = default;
-
-        public:
-            const ControlID&    getID() const { return _ID; }
-            const ControlType&  getType() const { return _type; }
-            const bool          hasValidType() const { return _type != ControlType::COUNT; }
-            const uint64&       getAccessCount() const { return _accessCount; }
-            
-            Rect                computeTitleBarZone() const;
-            Rect                computeContentZone() const;
-
-        public:
-            Float2              _relativePosition; // Relative to parent control
-            Float2              _absolutePosition; // In screen space
-            Float2              _size;
-            Float2              _contentZoneSize;
-            Float2              _nextChildRelativePosition;
             PerTypeData         _perTypeData;
 
         private:
