@@ -368,11 +368,13 @@ namespace mint
 
             InteractionState& interactionState = controlDesc._interactionState;
             interactionState = InteractionState::None;
-            if (isMouseCursorInControl(controlDesc, inputContext.getMousePosition()))
+            const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(inputContext.getMousePosition());
+            if (isMousePositionIn)
             {
-                interactionState = isMouseCursorInControl(controlDesc, _mousePressedPosition) ? InteractionState::Pressing : InteractionState::Hovering;
+                const bool isMousePressedPositionIn = Rect(controlData._absolutePosition, controlData._size).contains(_mousePressedPosition);
+                interactionState = isMousePressedPositionIn ? InteractionState::Pressing : InteractionState::Hovering;
 
-                if (inputContext.isMouseButtonUp(MouseButton::Left) && isMouseCursorInControl(controlDesc, _mousePressedPosition))
+                if (inputContext.isMouseButtonUp(MouseButton::Left) == true && isMousePressedPositionIn == true)
                 {
                     interactionState = InteractionState::Clicked;
                 }
@@ -417,12 +419,6 @@ namespace mint
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
             return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
-        }
-
-        const bool GUIContext::isMouseCursorInControl(const ControlDesc& controlDesc, const Float2& mouseCurosrPosition) const
-        {
-            const ControlData& controlData = accessControlData(controlDesc._controlID);
-            return Rect(controlData._absolutePosition, controlData._size).contains(mouseCurosrPosition);
         }
     }
 }

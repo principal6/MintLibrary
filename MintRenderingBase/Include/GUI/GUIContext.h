@@ -184,7 +184,6 @@ namespace mint
             Float4                              computeShapePosition(const ControlDesc& controlDesc) const;
             Float4                              computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const;
             const float                         computeRoundness(const ControlDesc& controlDesc) const;
-            const bool                          isMouseCursorInControl(const ControlDesc& controlDesc, const Float2& mouseCurosrPosition) const;
 
         private:
             GraphicDevice&                      _graphicDevice;
