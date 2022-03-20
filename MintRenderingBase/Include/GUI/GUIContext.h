@@ -155,6 +155,8 @@ namespace mint
         public:
             void                                nextControlPosition(const Float2& position);
             void                                nextControlSize(const Float2& contentSize);
+            void                                nextControlMargin(const Rect& margin);
+            void                                nextControlPadding(const Rect& padding);
 
         // make-()
         // begin-() && end-()

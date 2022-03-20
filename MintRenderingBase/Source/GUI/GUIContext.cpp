@@ -97,6 +97,16 @@ namespace mint
             _nextControlDesc._size = contentSize;
         }
 
+        void GUIContext::nextControlMargin(const Rect& margin)
+        {
+            _nextControlDesc._renderingDesc._margin = margin;
+        }
+
+        void GUIContext::nextControlPadding(const Rect& padding)
+        {
+            _nextControlDesc._renderingDesc._padding = padding;
+        }
+
         void GUIContext::makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
         {
             static constexpr ControlType kControlType = ControlType::Label;
