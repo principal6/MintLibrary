@@ -64,7 +64,7 @@ namespace mint
         public:
             void                computeZones();
             void                setPressedMousePosition(const Float2& absolutePressedMousePosition);
-            void                resetPressedMousePosition();
+            void                clearPressedMousePosition();
 
         public:
             const ControlID&    getID() const { return _ID; }

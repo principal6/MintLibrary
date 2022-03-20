@@ -408,7 +408,7 @@ namespace mint
 
             if (isMouseLeftUp)
             {
-                controlData.resetPressedMousePosition();
+                controlData.clearPressedMousePosition();
             }
             else
             {

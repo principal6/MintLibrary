@@ -71,7 +71,7 @@ namespace mint
             _relativePressedMousePosition = absolutePressedMousePosition - _absolutePressedPosition;
         }
 
-        inline void ControlData::resetPressedMousePosition()
+        inline void ControlData::clearPressedMousePosition()
         {
             _absolutePressedPosition.setNan();
             _absolutePressedMousePosition.setNan();
