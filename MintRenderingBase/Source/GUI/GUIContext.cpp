@@ -139,6 +139,17 @@ namespace mint
             const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
             ControlData& controlData = accessControlData(controlID, kControlType);
             
+            const bool isNewlyCreated = (controlData.getAccessCount() == 0);
+            if (isNewlyCreated)
+            {
+                float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
+                titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
+            }
+            nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData._relativePosition));
+            nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
+            // No margin for window controls
+            nextControlMargin(Rect());
+
             ControlDesc controlDesc;
             updateControlData(windowDesc._title, controlDesc, controlData, parentControlData);
             beginWindow_render(controlDesc, controlData);
@@ -310,15 +321,15 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            /*
             if (controlData._interactionState == ControlData::InteractionState::Dragged)
             {
+                // Dragging Ã³¸®
                 const InputContext& inputContext = InputContext::getInstance();
                 const Float2 displacement = inputContext.getMousePosition() - controlData.getRelativePressedMousePosition() - controlData.getAbsolutePressedPosition();
                 const Float2 absolutePosition = controlData.getAbsolutePressedPosition() + displacement;
-                controlData._relativePosition = controlData._absolutePosition = absolutePosition;
+                const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
+                nextControlPosition(relativePosition);
             }
-            */
 
             updateControlData_renderingData(text, controlDesc, controlData, parentControlData);
             updateControlData_interaction(controlData, controlDesc);
@@ -335,57 +346,38 @@ namespace mint
 
             controlData._nextChildRelativePosition = controlData._zones._contentZone.position();
 
-            if (controlData.getType() == ControlType::Window)
+            // Position
+            const bool isAutoPositioned = controlRelativePosition.isNan();
+            controlData._relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
+            controlData._absolutePosition = controlData._relativePosition;
+            controlData._absolutePosition += parentControlData._relativePosition;
+            controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
+            controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
+            if (isAutoPositioned)
             {
-                // Specified size and position are only applied the first time the control is created!
+                // Only auto-positioned controls need margin
+                controlData._absolutePosition._x += controlRenderingDesc._margin.left();
+                controlData._absolutePosition._y += controlRenderingDesc._margin.top();
+            }
 
-                if (controlData.getAccessCount() == 0)
-                {
-                    controlData._relativePosition = controlRelativePosition;
-                    controlData._absolutePosition = controlData._relativePosition;
-
-                    controlData._size = controlSize;
-
-                    float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
-                    titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
-                }
+            // Size
+            const bool isAutoSized = controlSize.isNan();
+            if (isAutoSized)
+            {
+                const FontData& fontData = _rendererContext.getFontData();
+                const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
+                controlData._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
+                controlData._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
             }
             else
             {
-                // Position
-                const bool isAutoPositioned = controlRelativePosition.isNan();
-                controlData._relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
-                controlData._absolutePosition = controlData._relativePosition;
-                controlData._absolutePosition += parentControlData._relativePosition;
-                controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
-                controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
-                if (isAutoPositioned)
-                {
-                    // Only auto-positioned controls need margin
-                    controlData._absolutePosition._x += controlRenderingDesc._margin.left();
-                    controlData._absolutePosition._y += controlRenderingDesc._margin.top();
-                }
+                controlData._size = controlSize;
+            }
 
-                // Size
-                const bool isAutoSized = controlSize.isNan();
-                if (isAutoSized)
-                {
-                    const FontData& fontData = _rendererContext.getFontData();
-                    const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
-                    controlData._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
-                    controlData._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
-                }
-                else
-                {
-                    controlData._size = controlSize;
-                }
-
-                if (isAutoPositioned)
-                {
-                    // If its position is specified, the control does not affect its parent's _nextChildRelativePosition.
-                    parentControlData._nextChildRelativePosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
-                }
-
+            if (isAutoPositioned)
+            {
+                // If its position is specified, the control does not affect its parent's _nextChildRelativePosition.
+                parentControlData._nextChildRelativePosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
             }
 
             parentControlData._zones._contentZone.expandRightBottom(Rect(controlData._relativePosition, controlData._size));

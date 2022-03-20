@@ -24,7 +24,9 @@ namespace mint
     namespace Rendering
     {
         ControlData::ControlData(const ControlID& ID, const ControlType type)
-            : _perTypeData{}
+            : _interactionState{ InteractionState::None }
+            , _perTypeData{}
+            , _absolutePressedPosition{ Float2::kNan }
             , _absolutePressedMousePosition{ Float2::kNan }
             , _relativePressedMousePosition{ Float2::kNan }
             , _ID{ ID }
@@ -71,6 +73,7 @@ namespace mint
 
         inline void ControlData::resetPressedMousePosition()
         {
+            _absolutePressedPosition.setNan();
             _absolutePressedMousePosition.setNan();
             _relativePressedMousePosition.setNan();
         }

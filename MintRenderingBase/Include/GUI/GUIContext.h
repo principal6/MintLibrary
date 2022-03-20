@@ -105,6 +105,8 @@ namespace mint
         struct WindowDesc
         {
             const wchar_t*      _title = nullptr;
+            Float2              _initialPosition;
+            Float2              _initialSize;
         };
 #pragma endregion
 
