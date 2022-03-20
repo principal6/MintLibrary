@@ -27,14 +27,6 @@ namespace mint
 
 
 #pragma region Controls
-        enum class InteractionState
-        {
-            None,
-            Hovering,
-            Pressing,
-            Clicked,
-        };
-
         struct ControlRenderingDesc
         {
             Rect            _margin;
@@ -48,10 +40,10 @@ namespace mint
             HoverPressColorSet() = default;
             HoverPressColorSet(const Color& normal, const Color& hover, const Color& press) : _normalColor{ normal }, _hoveredColor{ hover }, _pressedColor{ press } { __noop; }
             
-            const Color& chooseColorByInteractionState(const InteractionState interactionState) const
+            const Color& chooseColorByInteractionState(const ControlData::InteractionState interactionState) const
             {
-                const bool isPressing = interactionState == InteractionState::Pressing;
-                const bool isHovering = interactionState == InteractionState::Hovering;
+                const bool isPressing = (interactionState == ControlData::InteractionState::Pressing);
+                const bool isHovering = (interactionState == ControlData::InteractionState::Hovering);
                 return (isPressing ? _pressedColor : (isHovering ? _hoveredColor : _normalColor));
             };
 
@@ -126,7 +118,6 @@ namespace mint
             {
                 ControlID               _controlID;
                 ControlRenderingDesc    _renderingDesc;
-                InteractionState        _interactionState;
             };
 
             struct NextControlDesc
@@ -179,6 +170,7 @@ namespace mint
             void                                updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_interaction(ControlData& controlData, ControlDesc& controlDesc) const;
+            void                                updateControlData_resetNextControlDesc();
 
         private:
             void                                drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);

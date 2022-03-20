@@ -129,7 +129,7 @@ namespace mint
             ControlDesc controlDesc;
             updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
             makeButton_render(controlDesc, buttonDesc, controlData);
-            return controlDesc._interactionState == InteractionState::Clicked;
+            return controlData._interactionState == ControlData::InteractionState::Clicked;
         }
 
         const bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
@@ -195,7 +195,7 @@ namespace mint
         void GUIContext::makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData)
         {
             const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
-            _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlDesc._interactionState));
+            _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlData._interactionState));
             _rendererContext.setPosition(computeShapePosition(controlDesc));
             if (buttonDesc._isRoundButton)
             {
@@ -264,14 +264,14 @@ namespace mint
 
             if (RENDER_MOUSE_POINTS)
             {
-                if (controlData.getRelativeMousePressedPosition().isNan() == false)
+                if (controlData.getRelativePressedMousePosition().isNan() == false)
                 {
                     _rendererContext.setColor(Color::kBlue);
-                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData.getRelativeMousePressedPosition()));
+                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData.getRelativePressedMousePosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(controlData.getAbsoluteMousePressedPosition()));
+                    _rendererContext.setPosition(Float4(controlData.getAbsolutePressedMousePosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -308,28 +308,30 @@ namespace mint
 
         void GUIContext::updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
+            controlDesc._controlID = controlData.getID();
+
+            /*
+            if (controlData._interactionState == ControlData::InteractionState::Dragged)
+            {
+                const InputContext& inputContext = InputContext::getInstance();
+                const Float2 displacement = inputContext.getMousePosition() - controlData.getRelativePressedMousePosition() - controlData.getAbsolutePressedPosition();
+                const Float2 absolutePosition = controlData.getAbsolutePressedPosition() + displacement;
+                controlData._relativePosition = controlData._absolutePosition = absolutePosition;
+            }
+            */
+
             updateControlData_renderingData(text, controlDesc, controlData, parentControlData);
             updateControlData_interaction(controlData, controlDesc);
+            updateControlData_resetNextControlDesc();
         }
 
         void GUIContext::updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
-            controlDesc._controlID = controlData.getID();
-
             ControlRenderingDesc& controlRenderingDesc = controlDesc._renderingDesc;
             controlRenderingDesc = _nextControlDesc._renderingDesc;
             controlRenderingDesc._text = text;
             const Float2 controlRelativePosition = _nextControlDesc._position;
             const Float2 controlSize = _nextControlDesc._size;
-
-            // Reset NextControl Desc
-            {
-                _nextControlDesc._position = Float2::kNan;
-                _nextControlDesc._size = Float2::kNan;
-                _nextControlDesc._renderingDesc._borderThickness = _theme._defaultBorderThickness;
-                _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
-                _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
-            }
 
             controlData._nextChildRelativePosition = controlData._zones._contentZone.position();
 
@@ -395,26 +397,43 @@ namespace mint
         {
             const InputContext& inputContext = InputContext::getInstance();
 
-            InteractionState& interactionState = controlDesc._interactionState;
-            interactionState = InteractionState::None;
+            ControlData::InteractionState& interactionState = controlData._interactionState;
+            interactionState = ControlData::InteractionState::None;
+            const Float2& mousePosition = inputContext.getMousePosition();
             const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
-            const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(inputContext.getMousePosition());
+            const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(mousePosition);
             if (isMousePositionIn)
             {
-                controlData.setMousePressedPosition(_mousePressedPosition);
+                controlData.setPressedMousePosition(_mousePressedPosition);
 
-                const bool isMousePressedPositionIn = Rect(Float2::kZero, controlData._size).contains(controlData.getRelativeMousePressedPosition());
-                interactionState = isMousePressedPositionIn ? InteractionState::Pressing : InteractionState::Hovering;
-                if (isMousePressedPositionIn == true && isMouseLeftUp == true)
+                const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(controlData.getRelativePressedMousePosition());
+                interactionState = isPressedMousePositionIn ? ControlData::InteractionState::Pressing : ControlData::InteractionState::Hovering;
+                if (isPressedMousePositionIn == true && isMouseLeftUp == true)
                 {
-                    interactionState = InteractionState::Clicked;
+                    interactionState = ControlData::InteractionState::Clicked;
                 }
             }
 
             if (isMouseLeftUp)
             {
-                controlData.resetMousePressedPosition();
+                controlData.resetPressedMousePosition();
             }
+            else
+            {
+                if (controlData._zones._titleBarZone.contains(controlData.getRelativePressedMousePosition()))
+                {
+                    interactionState = ControlData::InteractionState::Dragged;
+                }
+            }
+        }
+
+        void GUIContext::updateControlData_resetNextControlDesc()
+        {
+            _nextControlDesc._position = Float2::kNan;
+            _nextControlDesc._size = Float2::kNan;
+            _nextControlDesc._renderingDesc._borderThickness = _theme._defaultBorderThickness;
+            _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
+            _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
         }
 
         void GUIContext::drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption)

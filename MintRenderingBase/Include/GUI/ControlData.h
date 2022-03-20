@@ -50,6 +50,7 @@ namespace mint
             uint64          _rawID;
         };
 
+        
         class ControlData
         {
         public:
@@ -62,16 +63,17 @@ namespace mint
 
         public:
             void                computeZones();
-            void                setMousePressedPosition(const Float2& absoluteMousePressedPosition);
-            void                resetMousePressedPosition();
+            void                setPressedMousePosition(const Float2& absolutePressedMousePosition);
+            void                resetPressedMousePosition();
 
         public:
             const ControlID&    getID() const { return _ID; }
             const ControlType&  getType() const { return _type; }
             const bool          hasValidType() const { return _type != ControlType::COUNT; }
             const uint64&       getAccessCount() const { return _accessCount; }
-            const Float2&       getAbsoluteMousePressedPosition() const { return _absoluteMousePressedPosition; }
-            const Float2&       getRelativeMousePressedPosition() const { return _relativeMousePressedPosition; }
+            const Float2&       getAbsolutePressedPosition() const { return _absolutePressedPosition; }
+            const Float2&       getAbsolutePressedMousePosition() const { return _absolutePressedMousePosition; }
+            const Float2&       getRelativePressedMousePosition() const { return _relativePressedMousePosition; }
 
         private:
             void                computeContentZone();
@@ -83,6 +85,18 @@ namespace mint
             Float2              _absolutePosition; // In screen space
             Float2              _size;
             Float2              _nextChildRelativePosition;
+
+        public:
+            enum class InteractionState
+            {
+                None,
+                Hovering,
+                Pressing,
+                Clicked,
+                Dragged,
+                //Resized,
+            };
+            InteractionState    _interactionState;
 
         public:
             struct Zones
@@ -107,8 +121,9 @@ namespace mint
             PerTypeData         _perTypeData;
 
         private:
-            Float2              _absoluteMousePressedPosition;
-            Float2              _relativeMousePressedPosition;
+            Float2              _absolutePressedPosition;
+            Float2              _absolutePressedMousePosition;
+            Float2              _relativePressedMousePosition;
 
         private:
             ControlID           _ID;

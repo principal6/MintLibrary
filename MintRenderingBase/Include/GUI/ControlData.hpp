@@ -25,8 +25,8 @@ namespace mint
     {
         ControlData::ControlData(const ControlID& ID, const ControlType type)
             : _perTypeData{}
-            , _absoluteMousePressedPosition{ Float2::kNan }
-            , _relativeMousePressedPosition{ Float2::kNan }
+            , _absolutePressedMousePosition{ Float2::kNan }
+            , _relativePressedMousePosition{ Float2::kNan }
             , _ID{ ID }
             , _type{ type }
             , _accessCount{ 0 }
@@ -57,21 +57,22 @@ namespace mint
             computeVisibleContentZone();
         }
 
-        inline void ControlData::setMousePressedPosition(const Float2& absoluteMousePressedPosition)
+        inline void ControlData::setPressedMousePosition(const Float2& absolutePressedMousePosition)
         {
-            if (_relativeMousePressedPosition.isNan() == false)
+            if (_relativePressedMousePosition.isNan() == false)
             {
                 return;
             }
 
-            _absoluteMousePressedPosition = absoluteMousePressedPosition;
-            _relativeMousePressedPosition = absoluteMousePressedPosition - _absolutePosition;
+            _absolutePressedPosition = _absolutePosition;
+            _absolutePressedMousePosition = absolutePressedMousePosition;
+            _relativePressedMousePosition = absolutePressedMousePosition - _absolutePressedPosition;
         }
 
-        inline void ControlData::resetMousePressedPosition()
+        inline void ControlData::resetPressedMousePosition()
         {
-            _absoluteMousePressedPosition.setNan();
-            _relativeMousePressedPosition.setNan();
+            _absolutePressedMousePosition.setNan();
+            _relativePressedMousePosition.setNan();
         }
 
         inline void ControlData::computeContentZone()
