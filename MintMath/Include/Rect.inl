@@ -152,6 +152,14 @@ namespace mint
         bottom(max(top(), bottom()));
     }
 
+    MINT_INLINE void Rect::moveBy(const Float2& offset) noexcept
+    {
+        left() += offset._x;
+        right() += offset._x;
+        top() += offset._y;
+        bottom() += offset._y;
+    }
+
     MINT_INLINE void Rect::expand(const Rect& rhs) noexcept
     {
         top(min(top(), rhs.top()));
