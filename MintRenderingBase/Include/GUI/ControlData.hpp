@@ -24,8 +24,9 @@ namespace mint
     namespace Rendering
     {
         ControlData::ControlData(const ControlID& ID, const ControlType type)
-            : _relativeMousePressedPosition{ Float2::kNan }
-            , _perTypeData{}
+            : _perTypeData{}
+            , _absoluteMousePressedPosition{ Float2::kNan }
+            , _relativeMousePressedPosition{ Float2::kNan }
             , _ID{ ID }
             , _type{ type }
             , _accessCount{ 0 }
@@ -54,6 +55,23 @@ namespace mint
             computeContentZone();
             computeTitleBarZone();
             computeVisibleContentZone();
+        }
+
+        inline void ControlData::setMousePressedPosition(const Float2& absoluteMousePressedPosition)
+        {
+            if (_relativeMousePressedPosition.isNan() == false)
+            {
+                return;
+            }
+
+            _absoluteMousePressedPosition = absoluteMousePressedPosition;
+            _relativeMousePressedPosition = absoluteMousePressedPosition - _absolutePosition;
+        }
+
+        inline void ControlData::resetMousePressedPosition()
+        {
+            _absoluteMousePressedPosition.setNan();
+            _relativeMousePressedPosition.setNan();
         }
 
         inline void ControlData::computeContentZone()

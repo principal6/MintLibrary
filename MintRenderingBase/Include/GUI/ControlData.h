@@ -61,11 +61,17 @@ namespace mint
                                 ~ControlData() = default;
 
         public:
+            void                computeZones();
+            void                setMousePressedPosition(const Float2& absoluteMousePressedPosition);
+            void                resetMousePressedPosition();
+
+        public:
             const ControlID&    getID() const { return _ID; }
             const ControlType&  getType() const { return _type; }
             const bool          hasValidType() const { return _type != ControlType::COUNT; }
             const uint64&       getAccessCount() const { return _accessCount; }
-            void                computeZones();
+            const Float2&       getAbsoluteMousePressedPosition() const { return _absoluteMousePressedPosition; }
+            const Float2&       getRelativeMousePressedPosition() const { return _relativeMousePressedPosition; }
 
         private:
             void                computeContentZone();
@@ -77,9 +83,6 @@ namespace mint
             Float2              _absolutePosition; // In screen space
             Float2              _size;
             Float2              _nextChildRelativePosition;
-
-        public:
-            Float2              _relativeMousePressedPosition;
 
         public:
             struct Zones
@@ -102,6 +105,10 @@ namespace mint
                 } _windowData{};
             };
             PerTypeData         _perTypeData;
+
+        private:
+            Float2              _absoluteMousePressedPosition;
+            Float2              _relativeMousePressedPosition;
 
         private:
             ControlID           _ID;

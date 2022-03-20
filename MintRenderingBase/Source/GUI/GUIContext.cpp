@@ -254,10 +254,14 @@ namespace mint
 
             if (RENDER_MOUSE_POINTS)
             {
-                if (controlData._relativeMousePressedPosition.isNan() == false)
+                if (controlData.getRelativeMousePressedPosition().isNan() == false)
                 {
+                    _rendererContext.setColor(Color::kBlue);
+                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData.getRelativeMousePressedPosition()));
+                    _rendererContext.drawCircle(POINT_RADIUS);
+
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData._relativeMousePressedPosition));
+                    _rendererContext.setPosition(Float4(controlData.getAbsoluteMousePressedPosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -387,12 +391,9 @@ namespace mint
             const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(inputContext.getMousePosition());
             if (isMousePositionIn)
             {
-                if (controlData._relativeMousePressedPosition.isNan())
-                {
-                    controlData._relativeMousePressedPosition = _mousePressedPosition - controlData._absolutePosition;
-                }
+                controlData.setMousePressedPosition(_mousePressedPosition);
 
-                const bool isMousePressedPositionIn = Rect(Float2::kZero, controlData._size).contains(controlData._relativeMousePressedPosition);
+                const bool isMousePressedPositionIn = Rect(Float2::kZero, controlData._size).contains(controlData.getRelativeMousePressedPosition());
                 interactionState = isMousePressedPositionIn ? InteractionState::Pressing : InteractionState::Hovering;
                 if (isMousePressedPositionIn == true && isMouseLeftUp == true)
                 {
@@ -402,7 +403,7 @@ namespace mint
 
             if (isMouseLeftUp)
             {
-                controlData._relativeMousePressedPosition.setNan();
+                controlData.resetMousePressedPosition();
             }
         }
 
