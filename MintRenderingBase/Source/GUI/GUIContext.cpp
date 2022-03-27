@@ -16,6 +16,7 @@
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>
 
+
 namespace mint
 {
     using Platform::InputContext;
@@ -129,13 +130,6 @@ namespace mint
             ControlDesc controlDesc;
             updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
             makeButton_render(controlDesc, buttonDesc, controlData);
-            if (controlData._interactionState == ControlData::InteractionState::Pressing)
-            {
-                if (parentControlData._interactionState == ControlData::InteractionState::Dragged)
-                {
-                    parentControlData._interactionState = ControlData::InteractionState::Hovering;
-                }
-            }
             return controlData._interactionState == ControlData::InteractionState::Clicked;
         }
 
@@ -283,14 +277,15 @@ namespace mint
 
             if (RENDER_MOUSE_POINTS)
             {
-                if (controlData.getRelativePressedMousePosition().isNan() == false)
+                const ControlData::Dragging& dragging = controlData.getDragging();
+                if (dragging.isDragging())
                 {
                     _rendererContext.setColor(Color::kBlue);
                     _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData.getRelativePressedMousePosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(controlData.getAbsolutePressedMousePosition()));
+                    _rendererContext.setPosition(Float4(dragging._absolutePressedMousePosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -329,12 +324,13 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            if (controlData._interactionState == ControlData::InteractionState::Dragged)
+            const ControlData::Dragging& dragging = controlData.getDragging();
+            if (dragging.isDragging())
             {
                 // Dragging Ã³¸®
                 const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - controlData.getRelativePressedMousePosition() - controlData.getAbsolutePressedPosition();
-                const Float2 absolutePosition = controlData.getAbsolutePressedPosition() + displacement;
+                const Float2 displacement = inputContext.getMousePosition() - dragging._absolutePressedMousePosition;
+                const Float2 absolutePosition = dragging._absolutePressedPosition + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
             }
@@ -415,12 +411,14 @@ namespace mint
             if (isMouseLeftUp)
             {
                 controlData.clearPressedMousePosition();
+
+                controlData.accessDragging().endDragging();
             }
             else
             {
                 if (controlData._zones._titleBarZone.contains(controlData.getRelativePressedMousePosition()))
                 {
-                    interactionState = ControlData::InteractionState::Dragged;
+                    controlData.accessDragging().beginDragging(controlData);
                 }
             }
         }

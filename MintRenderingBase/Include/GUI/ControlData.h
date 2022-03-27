@@ -54,6 +54,7 @@ namespace mint
         class ControlData
         {
         public:
+            struct Dragging;
             static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
         public:
@@ -67,12 +68,14 @@ namespace mint
             void                clearPressedMousePosition();
 
         public:
+            Dragging&           accessDragging() { return _dragging; }
+
+        public:
             const ControlID&    getID() const { return _ID; }
             const ControlType&  getType() const { return _type; }
             const bool          hasValidType() const { return _type != ControlType::COUNT; }
             const uint64&       getAccessCount() const { return _accessCount; }
-            const Float2&       getAbsolutePressedPosition() const { return _absolutePressedPosition; }
-            const Float2&       getAbsolutePressedMousePosition() const { return _absolutePressedMousePosition; }
+            const Dragging&     getDragging() const { return _dragging; }
             const Float2&       getRelativePressedMousePosition() const { return _relativePressedMousePosition; }
 
         private:
@@ -93,8 +96,6 @@ namespace mint
                 Hovering,
                 Pressing,
                 Clicked,
-                Dragged,
-                //Resized,
             };
             InteractionState    _interactionState;
 
@@ -120,10 +121,21 @@ namespace mint
             };
             PerTypeData         _perTypeData;
 
+        public:
+            struct Dragging
+            {
+                Float2          _absolutePressedPosition = Float2::kNan;
+                Float2          _absolutePressedMousePosition = Float2::kNan;
+                Float2          _displacement;
+
+                const bool      isDragging() const;
+                void            beginDragging(const ControlData& controlData);
+                void            endDragging();
+            };
+            Dragging            _dragging;
+
         private:
-            Float2              _absolutePressedPosition;
-            Float2              _absolutePressedMousePosition;
-            Float2              _relativePressedMousePosition;
+            Float2              _relativePressedMousePosition = Float2::kNan;
 
         private:
             ControlID           _ID;
