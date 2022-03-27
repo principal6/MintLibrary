@@ -193,7 +193,7 @@ namespace mint
             {
                 _rendererContext.setColor(backgroundColor);
                 _rendererContext.setPosition(computeShapePosition(controlDesc));
-                _rendererContext.drawRectangle(controlData._size, controlDesc._renderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRectangle(controlData._size, 0.0f, 0.0f);
             }
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = labelDesc._directionHorz;
@@ -215,7 +215,7 @@ namespace mint
             }
             else
             {
-                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), controlDesc._renderingDesc._borderThickness, 0.0f);
+                _rendererContext.drawRoundedRectangle(controlData._size, computeRoundness(controlDesc), 0.0f, 0.0f);
 
                 FontRenderingOption fontRenderingOption;
                 fontRenderingOption._directionHorz = TextRenderDirectionHorz::Centered;
@@ -260,7 +260,7 @@ namespace mint
                 if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
                 {
                     _rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
-                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize, 0.0f));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize));
                     _rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
                 }
 
@@ -268,7 +268,7 @@ namespace mint
                 if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
                 {
                     _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
-                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize, 0.0f));
+                    _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize));
                     _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
                 }
             }
@@ -351,8 +351,6 @@ namespace mint
             controlData._relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
             controlData._absolutePosition = controlData._relativePosition;
             controlData._absolutePosition += parentControlData._relativePosition;
-            controlData._absolutePosition._x += controlRenderingDesc._borderThickness;
-            controlData._absolutePosition._y += controlRenderingDesc._borderThickness;
             if (isAutoPositioned)
             {
                 // Only auto-positioned controls need margin
@@ -366,8 +364,8 @@ namespace mint
             {
                 const FontData& fontData = _rendererContext.getFontData();
                 const float textWidth = fontData.computeTextWidth(text, StringUtil::length(text));
-                controlData._size._x = textWidth + controlRenderingDesc._padding.horz() + controlRenderingDesc._borderThickness * 2.0f;
-                controlData._size._y = _fontSize + controlRenderingDesc._padding.vert() + controlRenderingDesc._borderThickness * 2.0f;
+                controlData._size._x = textWidth + controlRenderingDesc._padding.horz();
+                controlData._size._y = _fontSize + controlRenderingDesc._padding.vert();
             }
             else
             {
@@ -423,7 +421,6 @@ namespace mint
         {
             _nextControlDesc._position = Float2::kNan;
             _nextControlDesc._size = Float2::kNan;
-            _nextControlDesc._renderingDesc._borderThickness = _theme._defaultBorderThickness;
             _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
             _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
         }
@@ -454,12 +451,12 @@ namespace mint
         Float4 GUIContext::computeShapePosition(const ControlDesc& controlDesc) const
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
-            return computeShapePosition(controlData._absolutePosition, controlData._size, controlDesc._renderingDesc._borderThickness);
+            return computeShapePosition(controlData._absolutePosition, controlData._size);
         }
 
-        Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const
+        Float4 GUIContext::computeShapePosition(const Float2& position, const Float2& size) const
         {
-            return Float4(position + size * 0.5f + Float2(borderThickness));
+            return Float4(position + size * 0.5f);
         }
 
         const float GUIContext::computeRoundness(const ControlDesc& controlDesc) const

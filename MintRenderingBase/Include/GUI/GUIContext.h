@@ -30,7 +30,6 @@ namespace mint
         struct ControlRenderingDesc
         {
             Rect            _margin;
-            float           _borderThickness = 0.0f;
             Rect            _padding;
             const wchar_t*  _text = nullptr;
         };
@@ -55,7 +54,6 @@ namespace mint
         struct Theme
         {
             float   _roundnessInPixel = 8.0f;
-            float   _defaultBorderThickness = 0.0f;
             float   _windowInnerLineThickness = 1.0f;
             float   _systemButtonRadius = 7.0f;
 
@@ -178,7 +176,7 @@ namespace mint
             void                                drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
             void                                drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
             Float4                              computeShapePosition(const ControlDesc& controlDesc) const;
-            Float4                              computeShapePosition(const Float2& position, const Float2& size, const float borderThickness) const;
+            Float4                              computeShapePosition(const Float2& position, const Float2& size) const;
             const float                         computeRoundness(const ControlDesc& controlDesc) const;
 
         private:
