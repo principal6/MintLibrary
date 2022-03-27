@@ -129,6 +129,13 @@ namespace mint
             ControlDesc controlDesc;
             updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
             makeButton_render(controlDesc, buttonDesc, controlData);
+            if (controlData._interactionState == ControlData::InteractionState::Pressing)
+            {
+                if (parentControlData._interactionState == ControlData::InteractionState::Dragged)
+                {
+                    parentControlData._interactionState = ControlData::InteractionState::Hovering;
+                }
+            }
             return controlData._interactionState == ControlData::InteractionState::Clicked;
         }
 
@@ -154,6 +161,8 @@ namespace mint
             updateControlData(windowDesc._title, controlDesc, controlData, parentControlData);
             beginWindow_render(controlDesc, controlData);
 
+            _controlStack.push_back(controlID);
+
             {
                 ButtonDesc closeButtonDesc;
                 closeButtonDesc._text = L"@CloseButton";
@@ -162,7 +171,7 @@ namespace mint
                 closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
                 const float titleBarHeight = controlData._zones._titleBarZone.vert();
                 const float radius = _theme._systemButtonRadius;
-                nextControlPosition(controlData._relativePosition + Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
+                nextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
                 nextControlSize(Float2(radius * 2.0f));
                 if (makeButton(fileLine, closeButtonDesc))
                 {
@@ -170,7 +179,6 @@ namespace mint
                 }
             }
 
-            _controlStack.push_back(controlID);
             return true;
         }
 
