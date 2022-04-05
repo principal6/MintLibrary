@@ -104,6 +104,11 @@ namespace mint
         {
             _absolutePressedPosition.setNan();
         }
+
+        inline Float2 ControlData::Dragging::computeRelativeMousePressedPosition() const
+        {
+            return _absoluteMousePressedPosition - _absolutePressedPosition;
+        }
 #pragma endregion
     }
 }

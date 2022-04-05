@@ -128,6 +128,7 @@ namespace mint
                 const bool      isDragging() const;
                 void            beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition);
                 void            endDragging();
+                Float2          computeRelativeMousePressedPosition() const;
             };
             Dragging            _dragging;
 

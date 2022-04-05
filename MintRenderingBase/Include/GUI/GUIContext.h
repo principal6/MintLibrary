@@ -169,7 +169,7 @@ namespace mint
             ControlData&                        accessStackParentControlData();
             void                                updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                                updateControlData_interaction(ControlData& controlData, ControlDesc& controlDesc) const;
+            void                                updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_resetNextControlDesc();
 
         private:

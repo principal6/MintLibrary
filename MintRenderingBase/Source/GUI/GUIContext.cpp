@@ -336,7 +336,7 @@ namespace mint
             }
 
             updateControlData_renderingData(text, controlDesc, controlData, parentControlData);
-            updateControlData_interaction(controlData, controlDesc);
+            updateControlData_interaction(controlDesc, controlData, parentControlData);
             updateControlData_resetNextControlDesc();
         }
 
@@ -387,7 +387,7 @@ namespace mint
             controlData.computeZones();
         }
 
-        void GUIContext::updateControlData_interaction(ControlData& controlData, ControlDesc& controlDesc) const
+        void GUIContext::updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
         {
             const InputContext& inputContext = InputContext::getInstance();
 
@@ -413,6 +413,17 @@ namespace mint
             }
             else
             {
+                // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
+                if (parentControlData.accessDragging().isDragging())
+                {
+                    const Float2 draggingRelativePressedMousePosition = parentControlData.accessDragging().computeRelativeMousePressedPosition() - controlData._relativePosition;
+                    if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
+                    {
+                        parentControlData.accessDragging().endDragging();
+                    }
+                }
+
+                // TODO: Draggable Control 에 대한 처리도 추가
                 if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {
                     controlData.accessDragging().beginDragging(controlData, _mousePressedPosition);
