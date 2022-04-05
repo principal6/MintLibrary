@@ -26,7 +26,6 @@ namespace mint
         ControlData::ControlData(const ControlID& ID, const ControlType type)
             : _interactionState{ InteractionState::None }
             , _perTypeData{}
-            , _relativePressedMousePosition{ Float2::kNan }
             , _ID{ ID }
             , _type{ type }
             , _accessCount{ 0 }
@@ -55,21 +54,6 @@ namespace mint
             computeContentZone();
             computeTitleBarZone();
             computeVisibleContentZone();
-        }
-
-        inline void ControlData::setPressedMousePosition(const Float2& absolutePressedMousePosition)
-        {
-            if (_relativePressedMousePosition.isNan() == false)
-            {
-                return;
-            }
-
-            _relativePressedMousePosition = absolutePressedMousePosition - _absolutePosition;
-        }
-
-        inline void ControlData::clearPressedMousePosition()
-        {
-            _relativePressedMousePosition.setNan();
         }
 
         inline void ControlData::computeContentZone()
@@ -105,7 +89,7 @@ namespace mint
             return _absolutePressedPosition.isNan() == false;
         }
 
-        inline void ControlData::Dragging::beginDragging(const ControlData& controlData)
+        inline void ControlData::Dragging::beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition)
         {
             if (isDragging())
             {
@@ -113,7 +97,7 @@ namespace mint
             }
 
             _absolutePressedPosition = controlData._absolutePosition;
-            _absolutePressedMousePosition = controlData._absolutePosition + controlData.getRelativePressedMousePosition();
+            _absoluteMousePressedPosition = absoluteMousePressedPosition;
         }
 
         inline void ControlData::Dragging::endDragging()

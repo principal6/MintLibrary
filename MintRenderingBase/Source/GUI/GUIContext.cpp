@@ -281,11 +281,11 @@ namespace mint
                 if (dragging.isDragging())
                 {
                     _rendererContext.setColor(Color::kBlue);
-                    _rendererContext.setPosition(Float4(controlData._absolutePosition + controlData.getRelativePressedMousePosition()));
+                    _rendererContext.setPosition(Float4(_mousePressedPosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(dragging._absolutePressedMousePosition));
+                    _rendererContext.setPosition(Float4(dragging._absoluteMousePressedPosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -329,7 +329,7 @@ namespace mint
             {
                 // Dragging Ã³¸®
                 const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - dragging._absolutePressedMousePosition;
+                const Float2 displacement = inputContext.getMousePosition() - dragging._absoluteMousePressedPosition;
                 const Float2 absolutePosition = dragging._absolutePressedPosition + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
@@ -396,11 +396,10 @@ namespace mint
             const Float2& mousePosition = inputContext.getMousePosition();
             const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
             const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(mousePosition);
+            const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
             if (isMousePositionIn)
             {
-                controlData.setPressedMousePosition(_mousePressedPosition);
-
-                const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(controlData.getRelativePressedMousePosition());
+                const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(relativePressedMousePosition);
                 interactionState = isPressedMousePositionIn ? ControlData::InteractionState::Pressing : ControlData::InteractionState::Hovering;
                 if (isPressedMousePositionIn == true && isMouseLeftUp == true)
                 {
@@ -410,15 +409,13 @@ namespace mint
 
             if (isMouseLeftUp)
             {
-                controlData.clearPressedMousePosition();
-
                 controlData.accessDragging().endDragging();
             }
             else
             {
-                if (controlData._zones._titleBarZone.contains(controlData.getRelativePressedMousePosition()))
+                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {
-                    controlData.accessDragging().beginDragging(controlData);
+                    controlData.accessDragging().beginDragging(controlData, _mousePressedPosition);
                 }
             }
         }
