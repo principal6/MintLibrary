@@ -44,6 +44,8 @@ namespace mint
 
             const bool      operator==(const ControlID& rhs) const { return _rawID == rhs._rawID; }
             const bool      operator!=(const ControlID& rhs) const { return _rawID != rhs._rawID; }
+            void            invalidate() { _rawID = 0; }
+            const bool      isValid() const { return _rawID != 0; }
             const uint64    getRawID() const { return _rawID; }
 
         private:
