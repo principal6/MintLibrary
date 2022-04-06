@@ -58,7 +58,7 @@ namespace mint
             // ROOT
             const ControlID rootControlID{ ControlID(kUint64Max) };
             ControlData& rootControlData = accessControlData(rootControlID, ControlType::COUNT);
-            rootControlData._relativePosition = Float2::kZero;
+            rootControlData._absolutePosition = Float2::kZero;
             _controlStack.push_back(rootControlID);
         }
 
@@ -146,14 +146,14 @@ namespace mint
                 float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
                 titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
             }
-            nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData._relativePosition));
+            nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
             nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
             // No margin for window controls
             nextControlMargin(Rect());
 
             ControlDesc controlDesc;
             updateControlData(windowDesc._title, controlDesc, controlData, parentControlData);
-            beginWindow_render(controlDesc, controlData);
+            beginWindow_render(controlDesc, controlData, parentControlData);
 
             _controlStack.push_back(controlID);
 
@@ -228,7 +228,7 @@ namespace mint
             renderControlCommon(controlData);
         }
 
-        void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData)
+        void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData)
         {
             _rendererContext.setColor(_theme._windowBackgroundColor);
             _rendererContext.setPosition(computeShapePosition(controlDesc));
@@ -242,7 +242,7 @@ namespace mint
             FontRenderingOption fontRenderingOption;
             fontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
             fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
-            const Float2 titleBarTextPosition = controlData._relativePosition + Float2(_theme._titleBarPadding.left(), 0.0f);
+            const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.left(), 0.0f);
             const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
             drawText(titleBarTextPosition, titleBarSize, controlDesc._renderingDesc._text, _theme._textColor, fontRenderingOption);
 
@@ -330,7 +330,7 @@ namespace mint
                 // Dragging 처리
                 const InputContext& inputContext = InputContext::getInstance();
                 const Float2 displacement = inputContext.getMousePosition() - dragging._absoluteMousePressedPosition;
-                const Float2 absolutePosition = dragging._absolutePressedPosition + displacement;
+                const Float2 absolutePosition = dragging._absolutePositionWhenPressed + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
             }
@@ -352,9 +352,9 @@ namespace mint
 
             // Position
             const bool isAutoPositioned = controlRelativePosition.isNan();
-            controlData._relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
-            controlData._absolutePosition = controlData._relativePosition;
-            controlData._absolutePosition += parentControlData._relativePosition;
+            const Float2 relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
+            controlData._absolutePosition = relativePosition;
+            controlData._absolutePosition += parentControlData._absolutePosition;
             if (isAutoPositioned)
             {
                 // Only auto-positioned controls need margin
@@ -379,10 +379,10 @@ namespace mint
             if (isAutoPositioned)
             {
                 // If its position is specified, the control does not affect its parent's _nextChildRelativePosition.
-                parentControlData._nextChildRelativePosition = controlData._relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
+                parentControlData._nextChildRelativePosition = relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
             }
 
-            parentControlData._zones._contentZone.expandRightBottom(Rect(controlData._relativePosition, controlData._size));
+            parentControlData._zones._contentZone.expandRightBottom(Rect(relativePosition, controlData._size));
 
             controlData.updateZones();
         }
@@ -416,7 +416,7 @@ namespace mint
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
                 if (parentControlData.accessDragging().isDragging())
                 {
-                    const Float2 draggingRelativePressedMousePosition = parentControlData.accessDragging().computeRelativeMousePressedPosition() - controlData._relativePosition;
+                    const Float2 draggingRelativePressedMousePosition = parentControlData.accessDragging().computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
                     if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
                     {
                         parentControlData.accessDragging().endDragging();
@@ -424,7 +424,7 @@ namespace mint
                 }
 
                 // TODO: Draggable Control 에 대한 처리도 추가
-                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
+                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition) && controlData.accessDragging().isDragging() == false)
                 {
                     controlData.accessDragging().beginDragging(controlData, _mousePressedPosition);
                 }

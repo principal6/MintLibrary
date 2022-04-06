@@ -160,7 +160,7 @@ namespace mint
         private:
             void                                makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
             void                                makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
-            void                                beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData);
+            void                                beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData);
             void                                renderControlCommon(const ControlData& controlData);
 
         private:

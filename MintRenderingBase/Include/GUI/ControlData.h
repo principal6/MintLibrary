@@ -74,6 +74,7 @@ namespace mint
             const bool          hasValidType() const { return _type != ControlType::COUNT; }
             const uint64&       getAccessCount() const { return _accessCount; }
             const Dragging&     getDragging() const { return _dragging; }
+            Float2              computeRelativePosition(const ControlData& parentControlData) const;
 
         private:
             void                computeContentZone();
@@ -81,8 +82,7 @@ namespace mint
             void                computeTitleBarZone();
 
         public:
-            Float2              _relativePosition; // Relative to parent control
-            Float2              _absolutePosition; // In screen space
+            Float2              _absolutePosition; // Absolute position in screen space
             Float2              _size;
             Float2              _nextChildRelativePosition;
 
@@ -112,8 +112,8 @@ namespace mint
             {
                 struct WindowData
                 {
-                    float   _titleBarHeight = 0.0f;
-                    float   _menuBarHeight = 0.0f;
+                    float       _titleBarHeight = 0.0f;
+                    float       _menuBarHeight = 0.0f;
                 } _windowData{};
             };
             PerTypeData         _perTypeData;
@@ -121,7 +121,7 @@ namespace mint
         public:
             struct Dragging
             {
-                Float2          _absolutePressedPosition = Float2::kNan;
+                Float2          _absolutePositionWhenPressed = Float2::kNan;
                 Float2          _absoluteMousePressedPosition = Float2::kNan;
                 Float2          _displacement;
 

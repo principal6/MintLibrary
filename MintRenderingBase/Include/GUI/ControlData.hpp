@@ -56,6 +56,11 @@ namespace mint
             computeVisibleContentZone();
         }
 
+        inline Float2 ControlData::computeRelativePosition(const ControlData& parentControlData) const
+        {
+            return _absolutePosition - parentControlData._absolutePosition;
+        }
+
         inline void ControlData::computeContentZone()
         {
             _zones._contentZone = Rect(Float2::kZero, _size);
@@ -86,7 +91,7 @@ namespace mint
 #pragma region Dragging
         inline const bool ControlData::Dragging::isDragging() const
         {
-            return _absolutePressedPosition.isNan() == false;
+            return _absolutePositionWhenPressed.isNan() == false;
         }
 
         inline void ControlData::Dragging::beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition)
@@ -96,18 +101,18 @@ namespace mint
                 return;
             }
 
-            _absolutePressedPosition = controlData._absolutePosition;
+            _absolutePositionWhenPressed = controlData._absolutePosition;
             _absoluteMousePressedPosition = absoluteMousePressedPosition;
         }
 
         inline void ControlData::Dragging::endDragging()
         {
-            _absolutePressedPosition.setNan();
+            _absolutePositionWhenPressed.setNan();
         }
 
         inline Float2 ControlData::Dragging::computeRelativeMousePressedPosition() const
         {
-            return _absoluteMousePressedPosition - _absolutePressedPosition;
+            return _absoluteMousePressedPosition - _absolutePositionWhenPressed;
         }
 #pragma endregion
     }
