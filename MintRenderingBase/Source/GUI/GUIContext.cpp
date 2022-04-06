@@ -480,12 +480,12 @@ namespace mint
 #pragma region Dragging
         const bool GUIContext::Dragging::isDragging() const
         {
-            return _draggedControlID.isValid();
+            return _controlID.isValid();
         }
 
         const bool GUIContext::Dragging::isDragging(const ControlData& controlData) const
         {
-            return _draggedControlID == controlData.getID();
+            return _controlID == controlData.getID();
         }
 
         Float2 GUIContext::Dragging::computeRelativeMousePressedPosition() const
@@ -500,14 +500,14 @@ namespace mint
                 return;
             }
 
-            _draggedControlID = controlData.getID();
+            _controlID = controlData.getID();
             _controlPositionWhenPressed = controlData._absolutePosition;
             _mousePressedPosition = absoluteMousePressedPosition;
         }
 
         void GUIContext::Dragging::endDragging()
         {
-            _draggedControlID.invalidate();
+            _controlID.invalidate();
         }
 #pragma endregion
     }

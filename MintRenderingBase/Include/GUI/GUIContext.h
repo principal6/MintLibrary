@@ -210,7 +210,7 @@ namespace mint
                 void            endDragging();
 
             private:
-                ControlID       _draggedControlID;
+                ControlID       _controlID;
                 Float2          _mousePressedPosition = Float2::kNan;
                 Float2          _controlPositionWhenPressed = Float2::kNan;
             };
