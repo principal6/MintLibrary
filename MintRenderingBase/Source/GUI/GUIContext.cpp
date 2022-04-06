@@ -384,7 +384,7 @@ namespace mint
 
             parentControlData._zones._contentZone.expandRightBottom(Rect(controlData._relativePosition, controlData._size));
 
-            controlData.computeZones();
+            controlData.updateZones();
         }
 
         void GUIContext::updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)

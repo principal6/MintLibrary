@@ -63,7 +63,7 @@ namespace mint
                                 ~ControlData() = default;
 
         public:
-            void                computeZones();
+            void                updateZones();
 
         public:
             Dragging&           accessDragging() { return _dragging; }

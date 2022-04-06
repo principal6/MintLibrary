@@ -49,7 +49,7 @@ namespace mint
             return ControlID(key.computeHash());
         }
 
-        inline void ControlData::computeZones()
+        inline void ControlData::updateZones()
         {
             computeContentZone();
             computeTitleBarZone();
