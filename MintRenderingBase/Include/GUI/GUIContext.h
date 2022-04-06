@@ -194,8 +194,23 @@ namespace mint
             // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
             // Docking 정보도 저장되어야 한다.
             HashMap<ControlID, ControlData>     _controlDataMap;
-
             Vector<ControlID>                   _controlStack;
+
+        private:
+            struct Dragging
+            {
+                ControlID       _draggedControlID;
+                Float2          _mousePressedPosition = Float2::kNan;
+                Float2          _controlPositionWhenPressed = Float2::kNan;
+
+                const bool      isDragging() const;
+                const bool      isDragging(const ControlData& controlData) const;
+                Float2          computeRelativeMousePressedPosition() const;
+
+                void            beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition);
+                void            endDragging();
+            };
+            Dragging            _dragging;
         };
     }
 }

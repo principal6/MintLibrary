@@ -87,34 +87,6 @@ namespace mint
                 _zones._titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
             }
         }
-
-#pragma region Dragging
-        inline const bool ControlData::Dragging::isDragging() const
-        {
-            return _absolutePositionWhenPressed.isNan() == false;
-        }
-
-        inline void ControlData::Dragging::beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition)
-        {
-            if (isDragging())
-            {
-                return;
-            }
-
-            _absolutePositionWhenPressed = controlData._absolutePosition;
-            _absoluteMousePressedPosition = absoluteMousePressedPosition;
-        }
-
-        inline void ControlData::Dragging::endDragging()
-        {
-            _absolutePositionWhenPressed.setNan();
-        }
-
-        inline Float2 ControlData::Dragging::computeRelativeMousePressedPosition() const
-        {
-            return _absoluteMousePressedPosition - _absolutePositionWhenPressed;
-        }
-#pragma endregion
     }
 }
 

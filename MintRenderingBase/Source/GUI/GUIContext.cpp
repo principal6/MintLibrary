@@ -139,7 +139,7 @@ namespace mint
             ControlData& parentControlData = accessStackParentControlData();
             const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
             ControlData& controlData = accessControlData(controlID, kControlType);
-            
+
             const bool isNewlyCreated = (controlData.getAccessCount() == 0);
             if (isNewlyCreated)
             {
@@ -232,7 +232,7 @@ namespace mint
         {
             _rendererContext.setColor(_theme._windowBackgroundColor);
             _rendererContext.setPosition(computeShapePosition(controlDesc));
-            
+
             const float titleBarHeight = controlData._zones._titleBarZone.vert();
             ScopeVector<ShapeRendererContext::Split, 3> splits;
             splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, _theme._windowTitleBarFocusedColor));
@@ -253,7 +253,7 @@ namespace mint
         {
             static bool RENDER_ZONE_OVERLAY = false;
             static bool RENDER_MOUSE_POINTS = false;
-            
+
             static const float OVERLAY_ALPHA = 0.25f;
             static const float POINT_RADIUS = 4.0f;
             if (RENDER_ZONE_OVERLAY)
@@ -277,15 +277,14 @@ namespace mint
 
             if (RENDER_MOUSE_POINTS)
             {
-                const ControlData::Dragging& dragging = controlData.getDragging();
-                if (dragging.isDragging())
+                if (_dragging.isDragging())
                 {
                     _rendererContext.setColor(Color::kBlue);
                     _rendererContext.setPosition(Float4(_mousePressedPosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(dragging._absoluteMousePressedPosition));
+                    _rendererContext.setPosition(Float4(_dragging._mousePressedPosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -324,13 +323,12 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            const ControlData::Dragging& dragging = controlData.getDragging();
-            if (dragging.isDragging())
+            if (_dragging.isDragging(controlData))
             {
                 // Dragging 처리
                 const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - dragging._absoluteMousePressedPosition;
-                const Float2 absolutePosition = dragging._absolutePositionWhenPressed + displacement;
+                const Float2 displacement = inputContext.getMousePosition() - _dragging._mousePressedPosition;
+                const Float2 absolutePosition = _dragging._controlPositionWhenPressed + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
             }
@@ -409,24 +407,24 @@ namespace mint
 
             if (isMouseLeftUp)
             {
-                controlData.accessDragging().endDragging();
+                _dragging.endDragging();
             }
             else
             {
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-                if (parentControlData.accessDragging().isDragging())
+                if (_dragging.isDragging(parentControlData))
                 {
-                    const Float2 draggingRelativePressedMousePosition = parentControlData.accessDragging().computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
+                    const Float2 draggingRelativePressedMousePosition = _dragging.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
                     if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
                     {
-                        parentControlData.accessDragging().endDragging();
+                        _dragging.endDragging();
                     }
                 }
 
                 // TODO: Draggable Control 에 대한 처리도 추가
-                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition) && controlData.accessDragging().isDragging() == false)
+                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {
-                    controlData.accessDragging().beginDragging(controlData, _mousePressedPosition);
+                    _dragging.beginDragging(controlData, _mousePressedPosition);
                 }
             }
         }
@@ -478,5 +476,39 @@ namespace mint
             const ControlData& controlData = accessControlData(controlDesc._controlID);
             return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
         }
+
+#pragma region Dragging
+        const bool GUIContext::Dragging::isDragging() const
+        {
+            return _draggedControlID.isValid();
+        }
+
+        const bool GUIContext::Dragging::isDragging(const ControlData& controlData) const
+        {
+            return _draggedControlID == controlData.getID();
+        }
+
+        Float2 GUIContext::Dragging::computeRelativeMousePressedPosition() const
+        {
+            return _mousePressedPosition - _controlPositionWhenPressed;
+        }
+
+        void GUIContext::Dragging::beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition)
+        {
+            if (isDragging())
+            {
+                return;
+            }
+
+            _draggedControlID = controlData.getID();
+            _controlPositionWhenPressed = controlData._absolutePosition;
+            _mousePressedPosition = absoluteMousePressedPosition;
+        }
+
+        void GUIContext::Dragging::endDragging()
+        {
+            _draggedControlID.invalidate();
+        }
+#pragma endregion
     }
 }

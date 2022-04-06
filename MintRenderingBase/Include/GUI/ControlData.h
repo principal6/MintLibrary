@@ -68,14 +68,10 @@ namespace mint
             void                updateZones();
 
         public:
-            Dragging&           accessDragging() { return _dragging; }
-
-        public:
             const ControlID&    getID() const { return _ID; }
             const ControlType&  getType() const { return _type; }
             const bool          hasValidType() const { return _type != ControlType::COUNT; }
             const uint64&       getAccessCount() const { return _accessCount; }
-            const Dragging&     getDragging() const { return _dragging; }
             Float2              computeRelativePosition(const ControlData& parentControlData) const;
 
         private:
@@ -119,20 +115,6 @@ namespace mint
                 } _windowData{};
             };
             PerTypeData         _perTypeData;
-
-        public:
-            struct Dragging
-            {
-                Float2          _absolutePositionWhenPressed = Float2::kNan;
-                Float2          _absoluteMousePressedPosition = Float2::kNan;
-                Float2          _displacement;
-
-                const bool      isDragging() const;
-                void            beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition);
-                void            endDragging();
-                Float2          computeRelativeMousePressedPosition() const;
-            };
-            Dragging            _dragging;
 
         private:
             ControlID           _ID;
