@@ -181,6 +181,10 @@ namespace mint
 
     MINT_INLINE constexpr const bool Rect::contains(const Float2& position) const noexcept
     {
+        if (horz() == 0.0f || vert() == 0.0f)
+        {
+            return false;
+        }   
         return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
     }
 
