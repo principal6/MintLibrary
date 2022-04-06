@@ -197,24 +197,25 @@ namespace mint
             Vector<ControlID>                   _controlStack;
 
         private:
-            class Dragging
+            class InteractionModule
             {
             public:
-                const bool      isDragging() const;
-                const bool      isDragging(const ControlData& controlData) const;
+                const bool      isInteracting() const;
+                const bool      isInteracting(const ControlData& controlData) const;
                 Float2          computeRelativeMousePressedPosition() const;
                 const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
                 const Float2&   getControlPositionWhenPressed() const { return _controlPositionWhenPressed; }
 
-                void            beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition);
-                void            endDragging();
+                void            begin(const ControlData& controlData, const Float2& mousePressedPosition);
+                void            end();
 
-            private:
+            protected:
                 ControlID       _controlID;
                 Float2          _mousePressedPosition = Float2::kNan;
                 Float2          _controlPositionWhenPressed = Float2::kNan;
             };
-            Dragging            _dragging;
+
+            InteractionModule   _draggingModule;
         };
     }
 }

@@ -277,14 +277,14 @@ namespace mint
 
             if (RENDER_MOUSE_POINTS)
             {
-                if (_dragging.isDragging())
+                if (_draggingModule.isInteracting())
                 {
                     _rendererContext.setColor(Color::kBlue);
                     _rendererContext.setPosition(Float4(_mousePressedPosition));
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(_dragging.getMousePressedPosition()));
+                    _rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -323,12 +323,12 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            if (_dragging.isDragging(controlData))
+            if (_draggingModule.isInteracting(controlData))
             {
                 // Dragging 처리
                 const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - _dragging.getMousePressedPosition();
-                const Float2 absolutePosition = _dragging.getControlPositionWhenPressed() + displacement;
+                const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
+                const Float2 absolutePosition = _draggingModule.getControlPositionWhenPressed() + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
             }
@@ -407,24 +407,24 @@ namespace mint
 
             if (isMouseLeftUp)
             {
-                _dragging.endDragging();
+                _draggingModule.end();
             }
             else
             {
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-                if (_dragging.isDragging(parentControlData))
+                if (_draggingModule.isInteracting(parentControlData))
                 {
-                    const Float2 draggingRelativePressedMousePosition = _dragging.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
+                    const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
                     if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
                     {
-                        _dragging.endDragging();
+                        _draggingModule.end();
                     }
                 }
 
                 // TODO: Draggable Control 에 대한 처리도 추가
                 if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {
-                    _dragging.beginDragging(controlData, _mousePressedPosition);
+                    _draggingModule.begin(controlData, _mousePressedPosition);
                 }
             }
         }
@@ -477,35 +477,35 @@ namespace mint
             return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
         }
 
-#pragma region Dragging
-        const bool GUIContext::Dragging::isDragging() const
+#pragma region InteractionModule
+        const bool GUIContext::InteractionModule::isInteracting() const
         {
             return _controlID.isValid();
         }
 
-        const bool GUIContext::Dragging::isDragging(const ControlData& controlData) const
+        const bool GUIContext::InteractionModule::isInteracting(const ControlData& controlData) const
         {
             return _controlID == controlData.getID();
         }
 
-        Float2 GUIContext::Dragging::computeRelativeMousePressedPosition() const
+        Float2 GUIContext::InteractionModule::computeRelativeMousePressedPosition() const
         {
             return _mousePressedPosition - _controlPositionWhenPressed;
         }
 
-        void GUIContext::Dragging::beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition)
+        void GUIContext::InteractionModule::begin(const ControlData& controlData, const Float2& mousePressedPosition)
         {
-            if (isDragging())
+            if (isInteracting())
             {
                 return;
             }
 
             _controlID = controlData.getID();
             _controlPositionWhenPressed = controlData._absolutePosition;
-            _mousePressedPosition = absoluteMousePressedPosition;
+            _mousePressedPosition = mousePressedPosition;
         }
 
-        void GUIContext::Dragging::endDragging()
+        void GUIContext::InteractionModule::end()
         {
             _controlID.invalidate();
         }
