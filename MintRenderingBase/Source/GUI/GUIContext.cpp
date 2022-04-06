@@ -284,7 +284,7 @@ namespace mint
                     _rendererContext.drawCircle(POINT_RADIUS);
 
                     _rendererContext.setColor(Color::kRed);
-                    _rendererContext.setPosition(Float4(_dragging._mousePressedPosition));
+                    _rendererContext.setPosition(Float4(_dragging.getMousePressedPosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
             }
@@ -327,8 +327,8 @@ namespace mint
             {
                 // Dragging Ã³¸®
                 const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - _dragging._mousePressedPosition;
-                const Float2 absolutePosition = _dragging._controlPositionWhenPressed + displacement;
+                const Float2 displacement = inputContext.getMousePosition() - _dragging.getMousePressedPosition();
+                const Float2 absolutePosition = _dragging.getControlPositionWhenPressed() + displacement;
                 const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
                 nextControlPosition(relativePosition);
             }

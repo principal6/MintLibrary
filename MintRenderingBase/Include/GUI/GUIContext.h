@@ -197,18 +197,22 @@ namespace mint
             Vector<ControlID>                   _controlStack;
 
         private:
-            struct Dragging
+            class Dragging
             {
-                ControlID       _draggedControlID;
-                Float2          _mousePressedPosition = Float2::kNan;
-                Float2          _controlPositionWhenPressed = Float2::kNan;
-
+            public:
                 const bool      isDragging() const;
                 const bool      isDragging(const ControlData& controlData) const;
                 Float2          computeRelativeMousePressedPosition() const;
+                const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
+                const Float2&   getControlPositionWhenPressed() const { return _controlPositionWhenPressed; }
 
                 void            beginDragging(const ControlData& controlData, const Float2& absoluteMousePressedPosition);
                 void            endDragging();
+
+            private:
+                ControlID       _draggedControlID;
+                Float2          _mousePressedPosition = Float2::kNan;
+                Float2          _controlPositionWhenPressed = Float2::kNan;
             };
             Dragging            _dragging;
         };
