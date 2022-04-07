@@ -21,6 +21,7 @@ namespace mint
 {
     using Platform::InputContext;
     using Platform::MouseButton;
+    using Window::CursorType;
 
 
     namespace Rendering
@@ -29,6 +30,7 @@ namespace mint
             : _graphicDevice{ graphicDevice }
             , _rendererContext{ graphicDevice }
             , _fontSize{ 0.0f }
+            , _currentCursor{ CursorType::Arrow }
         {
             __noop;
         }
@@ -73,6 +75,8 @@ namespace mint
             {
                 _mousePressedPosition = Float2::kNan;
             }
+
+            _currentCursor = CursorType::Arrow;
         }
 
         void GUIContext::updateScreenSize(const Float2& newScreenSize)
@@ -83,6 +87,8 @@ namespace mint
         void GUIContext::render() noexcept
         {
             MINT_ASSERT(_controlStack.size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
+
+            _graphicDevice.accessWindow().setCursorType(_currentCursor);
 
             _rendererContext.render();
             _rendererContext.flush();
@@ -296,9 +302,9 @@ namespace mint
             {
                 const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
                 Rect outerRect = controlRect;
-                outerRect.expandByQuantity(_theme._outerResizingDistance);
+                outerRect.expandByQuantity(_theme._outerResizingDistances);
                 Rect innerRect = controlRect;
-                innerRect.shrinkByQuantity(_theme._innerResizingDistance);
+                innerRect.shrinkByQuantity(_theme._innerResizingDistances);
 
                 _rendererContext.setColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
                 _rendererContext.setPosition(computeShapePosition(outerRect.position(), outerRect.size()));
@@ -494,7 +500,6 @@ namespace mint
             if (isMouseLeftUp)
             {
                 _resizingModule.end();
-                return;
             }
 
             if (controlData._resizingMask.isAllFalse())
@@ -502,33 +507,43 @@ namespace mint
                 return;
             }
             
-            const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
-            Rect outerRect = controlRect;
-            outerRect.expandByQuantity(_theme._outerResizingDistance);
-            Rect innerRect = controlRect;
-            innerRect.shrinkByQuantity(_theme._innerResizingDistance);
-            if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
+            Rect outerRect;
+            Rect innerRect;
+            ResizingModule::makeOuterAndInenrRects(controlData, _theme, outerRect, innerRect);
+            const Float2& mousePosition = inputContext.getMousePosition();
+            if (outerRect.contains(mousePosition) == true && innerRect.contains(mousePosition) == false)
             {
-                ControlData::ResizingFlags resizingInteraction;
-                if (_mousePressedPosition._y >= outerRect.top() && _mousePressedPosition._y <= innerRect.top())
+                // Hover
+                const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
+                if ((resizingInteraction._top && resizingInteraction._left) || (resizingInteraction._bottom && resizingInteraction._right))
                 {
-                    resizingInteraction._top = true;
+                    _currentCursor = CursorType::SizeLeftTilted;
                 }
-                if (_mousePressedPosition._y <= outerRect.bottom() && _mousePressedPosition._y >= innerRect.bottom())
+                else if ((resizingInteraction._top && resizingInteraction._right) || (resizingInteraction._bottom && resizingInteraction._left))
                 {
-                    resizingInteraction._bottom = true;
+                    _currentCursor = CursorType::SizeRightTilted;
                 }
-                if (_mousePressedPosition._x >= outerRect.left() && _mousePressedPosition._x <= innerRect.left())
+                else if (resizingInteraction._top || resizingInteraction._bottom)
                 {
-                    resizingInteraction._left = true;
+                    _currentCursor = CursorType::SizeVert;
                 }
-                if (_mousePressedPosition._x <= outerRect.right() && _mousePressedPosition._x >= innerRect.right())
+                else if (resizingInteraction._left || resizingInteraction._right)
                 {
-                    resizingInteraction._right = true;
+                    _currentCursor = CursorType::SizeHorz;
                 }
-                resizingInteraction.maskBy(controlData._resizingMask);
+            }
 
-                _resizingModule.begin(controlData, _mousePressedPosition, resizingInteraction);
+            if (inputContext.isMouseButtonDown(MouseButton::Left))
+            {
+                if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
+                {
+                    const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
+                    _resizingModule.begin(controlData, _mousePressedPosition, resizingInteraction);
+                }
+            }
+            else
+            {
+                _resizingModule.end();
             }
         }
 
@@ -649,6 +664,38 @@ namespace mint
             _controlID.invalidate();
         }
 #pragma endregion
+
+        void GUIContext::ResizingModule::makeOuterAndInenrRects(const ControlData& controlData, const Theme& theme, Rect& outerRect, Rect& innerRect)
+        {
+            const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
+            outerRect = controlRect;
+            outerRect.expandByQuantity(theme._outerResizingDistances);
+            innerRect = controlRect;
+            innerRect.shrinkByQuantity(theme._innerResizingDistances);
+        }
+
+        ControlData::ResizingFlags GUIContext::ResizingModule::makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
+        {
+            ControlData::ResizingFlags resizingInteraction;
+            if (mousePosition._y >= outerRect.top() && mousePosition._y <= innerRect.top())
+            {
+                resizingInteraction._top = true;
+            }
+            if (mousePosition._y <= outerRect.bottom() && mousePosition._y >= innerRect.bottom())
+            {
+                resizingInteraction._bottom = true;
+            }
+            if (mousePosition._x >= outerRect.left() && mousePosition._x <= innerRect.left())
+            {
+                resizingInteraction._left = true;
+            }
+            if (mousePosition._x <= outerRect.right() && mousePosition._x >= innerRect.right())
+            {
+                resizingInteraction._right = true;
+            }
+            resizingInteraction.maskBy(controlData._resizingMask);
+            return resizingInteraction;
+        }
 
         void GUIContext::ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags)
         {

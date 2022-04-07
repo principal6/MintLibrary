@@ -18,6 +18,8 @@
 
 #include <MintRenderingBase/Include/GUI/ControlData.h>
 
+#include <MintPlatform/Include/IWindow.h>
+
 
 namespace mint
 {
@@ -57,8 +59,8 @@ namespace mint
             float   _windowInnerLineThickness = 1.0f;
             float   _systemButtonRadius = 7.0f;
 
-            Rect    _outerResizingDistance = Rect(4.0f, 4.0f, 4.0f, 4.0f);
-            Rect    _innerResizingDistance = Rect(8.0f, 8.0f, 8.0f, 8.0f);
+            Rect    _outerResizingDistances = Rect(2.0f, 2.0f, 2.0f, 2.0f);
+            Rect    _innerResizingDistances = Rect(4.0f, 4.0f, 4.0f, 4.0f);
 
             Rect    _defaultMargin = Rect(4.0f, 4.0f, 4.0f, 4.0f);
             Rect    _defaultPadding = Rect(8.0f, 8.0f, 4.0f, 4.0f);
@@ -191,6 +193,7 @@ namespace mint
             ShapeRendererContext                _rendererContext;
             float                               _fontSize;
             Theme                               _theme;
+            Window::CursorType                  _currentCursor;
 
         private:
             NextControlDesc                     _nextControlDesc;
@@ -232,6 +235,10 @@ namespace mint
 
             class ResizingModule final : public InteractionModule
             {
+            public:
+                static void                         makeOuterAndInenrRects(const ControlData& controlData, const Theme& theme, Rect& outerRect, Rect& innerRect);
+                static ControlData::ResizingFlags   makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
+
             public:
                 void            begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags);
                 void            end() { endInternal(); }
