@@ -56,7 +56,6 @@ namespace mint
         class ControlData
         {
         public:
-            struct Dragging;
             static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
         public:
@@ -115,6 +114,29 @@ namespace mint
                 } _windowData{};
             };
             PerTypeData         _perTypeData;
+
+        public:
+            struct ResizingFlags
+            {
+                void            setAllTrue() { _raw = 0b1111; }
+                void            setAllFalse() { _raw = 0; }
+                const bool      isAnyTrue() const { return (_raw & 0b1111) != 0; }
+                const bool      isAllFalse() const { return (_raw & 0b1111) == 0; }
+                void            maskBy(const ResizingFlags& mask) { _raw = _raw & mask._raw; }
+
+                union
+                {
+                    uint8       _raw{};
+                    struct
+                    {
+                        bool    _top : 1;
+                        bool    _bottom : 1;
+                        bool    _left : 1;
+                        bool    _right : 1;
+                    };
+                };
+            };
+            ResizingFlags       _resizingMask;
 
         private:
             ControlID           _ID;

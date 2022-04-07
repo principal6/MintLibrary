@@ -145,6 +145,8 @@ namespace mint
             {
                 float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
                 titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
+
+                controlData._resizingMask.setAllTrue();
             }
             nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
             nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
@@ -253,6 +255,7 @@ namespace mint
         {
             static bool RENDER_ZONE_OVERLAY = false;
             static bool RENDER_MOUSE_POINTS = false;
+            static bool RENDER_RESIZING_AREA = false;
 
             static const float OVERLAY_ALPHA = 0.25f;
             static const float POINT_RADIUS = 4.0f;
@@ -287,6 +290,23 @@ namespace mint
                     _rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
                     _rendererContext.drawCircle(POINT_RADIUS);
                 }
+            }
+
+            if (RENDER_RESIZING_AREA)
+            {
+                const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
+                Rect outerRect = controlRect;
+                outerRect.expandByQuantity(_theme._outerResizingDistance);
+                Rect innerRect = controlRect;
+                innerRect.shrinkByQuantity(_theme._innerResizingDistance);
+
+                _rendererContext.setColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
+                _rendererContext.setPosition(computeShapePosition(outerRect.position(), outerRect.size()));
+                _rendererContext.drawRectangle(outerRect.size(), 0.0f, 0.0f);
+
+                _rendererContext.setColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
+                _rendererContext.setPosition(computeShapePosition(innerRect.position(), innerRect.size()));
+                _rendererContext.drawRectangle(innerRect.size(), 0.0f, 0.0f);
             }
         }
 
@@ -323,19 +343,71 @@ namespace mint
         {
             controlDesc._controlID = controlData.getID();
 
-            if (_draggingModule.isInteracting(controlData))
-            {
-                // Dragging 처리
-                const InputContext& inputContext = InputContext::getInstance();
-                const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
-                const Float2 absolutePosition = _draggingModule.getControlPositionWhenPressed() + displacement;
-                const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
-                nextControlPosition(relativePosition);
-            }
+            updateControlData_processResizing(controlData, parentControlData);
+            updateControlData_processDragging(controlData, parentControlData);
 
             updateControlData_renderingData(text, controlDesc, controlData, parentControlData);
             updateControlData_interaction(controlDesc, controlData, parentControlData);
             updateControlData_resetNextControlDesc();
+        }
+
+        void GUIContext::updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData)
+        {
+            if (_resizingModule.isInteracting(controlData) == false)
+            {
+                return;
+            }
+
+            const InputContext& inputContext = InputContext::getInstance();
+            const ControlData::ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
+            Float2 displacementSize = inputContext.getMousePosition() - _resizingModule.getMousePressedPosition();
+            if (resizingFlags._left == false && resizingFlags._right == false)
+            {
+                displacementSize._x = 0.0f;
+            }
+            if (resizingFlags._top == false && resizingFlags._bottom == false)
+            {
+                displacementSize._y = 0.0f;
+            }
+
+            if (resizingFlags._left == true || resizingFlags._top == true)
+            {
+                Float2 displacementPosition = displacementSize;
+                if (resizingFlags._left)
+                {
+                    displacementSize._x *= -1.0f;
+                }
+                else
+                {
+                    displacementPosition._x = 0.0f;
+                }
+
+                if (resizingFlags._top)
+                {
+                    displacementSize._y *= -1.0f;
+                }
+                else
+                {
+                    displacementPosition._y *= 0.0f;
+                }
+                nextControlPosition(_resizingModule.getInitialControlPosition() + displacementPosition);
+            }
+            
+            nextControlSize(_resizingModule.getInitialControlSize() + displacementSize);
+        }
+
+        void GUIContext::updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData)
+        {
+            if (_draggingModule.isInteracting(controlData) == false)
+            {
+                return;
+            }
+            
+            const InputContext& inputContext = InputContext::getInstance();
+            const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
+            const Float2 absolutePosition = _draggingModule.getInitialControlPosition() + displacement;
+            const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
+            nextControlPosition(relativePosition);
         }
 
         void GUIContext::updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData)
@@ -405,27 +477,92 @@ namespace mint
                 }
             }
 
+            updateControlData_interaction_resizing(controlData);
+            updateControlData_interaction_dragging(controlData, parentControlData);
+        }
+
+        void GUIContext::updateControlData_interaction_resizing(ControlData& controlData)
+        {
+            // Dragging 중에는 Resizing 을 하지 않는다.
+            if (_draggingModule.isInteracting())
+            {
+                return;
+            }
+
+            const InputContext& inputContext = InputContext::getInstance();
+            const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
+            if (isMouseLeftUp)
+            {
+                _resizingModule.end();
+                return;
+            }
+
+            if (controlData._resizingMask.isAllFalse())
+            {
+                return;
+            }
+            
+            const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
+            Rect outerRect = controlRect;
+            outerRect.expandByQuantity(_theme._outerResizingDistance);
+            Rect innerRect = controlRect;
+            innerRect.shrinkByQuantity(_theme._innerResizingDistance);
+            if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
+            {
+                ControlData::ResizingFlags resizingInteraction;
+                if (_mousePressedPosition._y >= outerRect.top() && _mousePressedPosition._y <= innerRect.top())
+                {
+                    resizingInteraction._top = true;
+                }
+                if (_mousePressedPosition._y <= outerRect.bottom() && _mousePressedPosition._y >= innerRect.bottom())
+                {
+                    resizingInteraction._bottom = true;
+                }
+                if (_mousePressedPosition._x >= outerRect.left() && _mousePressedPosition._x <= innerRect.left())
+                {
+                    resizingInteraction._left = true;
+                }
+                if (_mousePressedPosition._x <= outerRect.right() && _mousePressedPosition._x >= innerRect.right())
+                {
+                    resizingInteraction._right = true;
+                }
+                resizingInteraction.maskBy(controlData._resizingMask);
+
+                _resizingModule.begin(controlData, _mousePressedPosition, resizingInteraction);
+            }
+        }
+
+        void GUIContext::updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData)
+        {
+            // Resizing 중에는 Dragging 을 하지 않는다.
+            if (_resizingModule.isInteracting())
+            {
+                return;
+            }
+
+            const InputContext& inputContext = InputContext::getInstance();
+            const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
             if (isMouseLeftUp)
             {
                 _draggingModule.end();
+                return;
             }
-            else
-            {
-                // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-                if (_draggingModule.isInteracting(parentControlData))
-                {
-                    const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
-                    if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
-                    {
-                        _draggingModule.end();
-                    }
-                }
 
-                // TODO: Draggable Control 에 대한 처리도 추가
-                if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
+            // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
+            if (_draggingModule.isInteracting(parentControlData))
+            {
+                const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
+                if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
                 {
-                    _draggingModule.begin(controlData, _mousePressedPosition);
+                    _draggingModule.end();
                 }
+            }
+
+            // TODO: Draggable Control 에 대한 처리도 추가
+            const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
+            if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
+            {
+                _draggingModule.begin(controlData, _mousePressedPosition);
             }
         }
 
@@ -490,25 +627,43 @@ namespace mint
 
         Float2 GUIContext::InteractionModule::computeRelativeMousePressedPosition() const
         {
-            return _mousePressedPosition - _controlPositionWhenPressed;
+            return _mousePressedPosition - _initialControlPosition;
         }
 
-        void GUIContext::InteractionModule::begin(const ControlData& controlData, const Float2& mousePressedPosition)
+        const bool GUIContext::InteractionModule::beginInternal(const ControlData& controlData, const Float2& mousePressedPosition)
         {
             if (isInteracting())
             {
-                return;
+                return false;
             }
 
             _controlID = controlData.getID();
-            _controlPositionWhenPressed = controlData._absolutePosition;
+            _initialControlPosition = controlData._absolutePosition;
             _mousePressedPosition = mousePressedPosition;
+
+            return true;
         }
 
-        void GUIContext::InteractionModule::end()
+        void GUIContext::InteractionModule::endInternal()
         {
             _controlID.invalidate();
         }
 #pragma endregion
+
+        void GUIContext::ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags)
+        {
+            if (resizingFlags.isAllFalse() == true)
+            {
+                return;
+            }
+            
+            if (beginInternal(controlData, mousePressedPosition) == false)
+            {
+                return;
+            }
+
+            _initialControlSize = controlData._size;
+            _resizingFlags = resizingFlags;
+        }
     }
 }

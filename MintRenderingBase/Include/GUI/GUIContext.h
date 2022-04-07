@@ -57,6 +57,9 @@ namespace mint
             float   _windowInnerLineThickness = 1.0f;
             float   _systemButtonRadius = 7.0f;
 
+            Rect    _outerResizingDistance = Rect(4.0f, 4.0f, 4.0f, 4.0f);
+            Rect    _innerResizingDistance = Rect(8.0f, 8.0f, 8.0f, 8.0f);
+
             Rect    _defaultMargin = Rect(4.0f, 4.0f, 4.0f, 4.0f);
             Rect    _defaultPadding = Rect(8.0f, 8.0f, 4.0f, 4.0f);
             Rect    _titleBarPadding = Rect(8.0f, 6.0f, 4.0f, 4.0f);
@@ -168,8 +171,12 @@ namespace mint
             ControlData&                        accessControlData(const ControlID& controlID, const ControlType controlType);
             ControlData&                        accessStackParentControlData();
             void                                updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+            void                                updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData);
+            void                                updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
             void                                updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+            void                                updateControlData_interaction_resizing(ControlData& controlData);
+            void                                updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
             void                                updateControlData_resetNextControlDesc();
 
         private:
@@ -204,18 +211,40 @@ namespace mint
                 const bool      isInteracting(const ControlData& controlData) const;
                 Float2          computeRelativeMousePressedPosition() const;
                 const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
-                const Float2&   getControlPositionWhenPressed() const { return _controlPositionWhenPressed; }
+                const Float2&   getInitialControlPosition() const { return _initialControlPosition; }
 
-                void            begin(const ControlData& controlData, const Float2& mousePressedPosition);
-                void            end();
+            protected:
+                const bool      beginInternal(const ControlData& controlData, const Float2& mousePressedPosition);
+                void            endInternal();
 
             protected:
                 ControlID       _controlID;
                 Float2          _mousePressedPosition = Float2::kNan;
-                Float2          _controlPositionWhenPressed = Float2::kNan;
+                Float2          _initialControlPosition = Float2::kNan;
             };
 
-            InteractionModule   _draggingModule;
+            class DraggingModule final : public InteractionModule
+            {
+            public:
+                void            begin(const ControlData& controlData, const Float2& mousePressedPosition) { beginInternal(controlData, mousePressedPosition); }
+                void            end() { endInternal(); }
+            };
+
+            class ResizingModule final : public InteractionModule
+            {
+            public:
+                void            begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags);
+                void            end() { endInternal(); }
+                const Float2&   getInitialControlSize() const { return _initialControlSize; }
+                const ControlData::ResizingFlags&   getResizingFlags() const { return _resizingFlags; }
+
+            private:
+                Float2                      _initialControlSize;
+                ControlData::ResizingFlags  _resizingFlags;
+            };
+
+            DraggingModule      _draggingModule;
+            ResizingModule      _resizingModule;
         };
     }
 }
