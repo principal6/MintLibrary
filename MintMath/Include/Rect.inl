@@ -147,9 +147,7 @@ namespace mint
         top(max(top(), outerRect.top()));
         bottom(min(bottom(), outerRect.bottom()));
 
-        // Rect Size 가 음수가 되지 않도록 방지!! (중요)
-        right(max(left(), right()));
-        bottom(max(top(), bottom()));
+        validate();
     }
 
     MINT_INLINE void Rect::moveBy(const Float2& offset) noexcept
@@ -158,6 +156,14 @@ namespace mint
         right() += offset._x;
         top() += offset._y;
         bottom() += offset._y;
+    }
+
+    MINT_INLINE void Rect::expandByQuantity(const Rect& quantity) noexcept
+    {
+        left() -= quantity.left();
+        right() += quantity.right();
+        top() -= quantity.top();
+        bottom() += quantity.bottom();
     }
 
     MINT_INLINE void Rect::expand(const Rect& rhs) noexcept
@@ -172,6 +178,16 @@ namespace mint
     {
         right(max(right(), rhs.right()));
         bottom(max(bottom(), rhs.bottom()));
+    }
+
+    MINT_INLINE void Rect::shrinkByQuantity(const Rect& quantity) noexcept
+    {
+        left() += quantity.left();
+        right() -= quantity.right();
+        top() += quantity.top();
+        bottom() -= quantity.bottom();
+
+        validate();
     }
 
     MINT_INLINE constexpr Float2 Rect::bound(const Float2& position) const noexcept
@@ -211,5 +227,12 @@ namespace mint
     MINT_INLINE constexpr float Rect::boundVert(const float y) const noexcept
     {
         return min(max(top(), y), bottom());
+    }
+
+    MINT_INLINE void Rect::validate() noexcept
+    {
+        // Rect Size 가 음수가 되지 않도록 방지!! (중요)
+        right(max(left(), right()));
+        bottom(max(top(), bottom()));
     }
 }

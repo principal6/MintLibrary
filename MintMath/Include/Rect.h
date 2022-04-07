@@ -60,8 +60,10 @@ namespace mint
     public:
         void                        clipBy(const Rect& outerRect) noexcept;
         void                        moveBy(const Float2& offset) noexcept;
+        void                        expandByQuantity(const Rect& quantity) noexcept;
         void                        expand(const Rect& rhs) noexcept;
         void                        expandRightBottom(const Rect& rhs) noexcept;
+        void                        shrinkByQuantity(const Rect& quantity) noexcept;
         constexpr Float2            bound(const Float2& position) const noexcept;
         constexpr const bool        contains(const Float2& position) const noexcept;
         constexpr const bool        contains(const Rect& rhs) const noexcept;
@@ -73,6 +75,7 @@ namespace mint
     private:
         constexpr float             boundHorz(const float x) const noexcept;
         constexpr float             boundVert(const float y) const noexcept;
+        void                        validate() noexcept;
 
     private:
         Float4                      _raw;
