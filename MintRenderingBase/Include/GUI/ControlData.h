@@ -42,8 +42,11 @@ namespace mint
                             ControlID(const uint64 rawID) : _rawID{ rawID } { __noop; }
                             ~ControlID() = default;
 
+        public:
             const bool      operator==(const ControlID& rhs) const { return _rawID == rhs._rawID; }
             const bool      operator!=(const ControlID& rhs) const { return _rawID != rhs._rawID; }
+
+        public:
             void            invalidate() { _rawID = 0; }
             const bool      isValid() const { return _rawID != 0; }
             const uint64    getRawID() const { return _rawID; }
