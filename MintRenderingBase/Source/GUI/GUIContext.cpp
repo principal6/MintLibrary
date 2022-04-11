@@ -153,6 +153,8 @@ namespace mint
                 titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
 
                 controlData._resizingMask.setAllTrue();
+
+                controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
             }
             nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
             nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
@@ -366,6 +368,8 @@ namespace mint
 
             const InputContext& inputContext = InputContext::getInstance();
             const ControlData::ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
+            selectResizingCursorType(resizingFlags);
+
             Float2 displacementSize = inputContext.getMousePosition() - _resizingModule.getMousePressedPosition();
             if (resizingFlags._left == false && resizingFlags._right == false)
             {
@@ -396,10 +400,12 @@ namespace mint
                 {
                     displacementPosition._y *= 0.0f;
                 }
-                nextControlPosition(_resizingModule.getInitialControlPosition() + displacementPosition);
+
+                const Float2 maxPosition = _resizingModule.getInitialControlPosition() + _resizingModule.getInitialControlSize() - controlData._resizableMinSize;
+                nextControlPosition(Float2::min(_resizingModule.getInitialControlPosition() + displacementPosition, maxPosition));
             }
             
-            nextControlSize(_resizingModule.getInitialControlSize() + displacementSize);
+            nextControlSize(Float2::max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
         }
 
         void GUIContext::updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData)
@@ -515,22 +521,7 @@ namespace mint
             {
                 // Hover
                 const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
-                if ((resizingInteraction._top && resizingInteraction._left) || (resizingInteraction._bottom && resizingInteraction._right))
-                {
-                    _currentCursor = CursorType::SizeLeftTilted;
-                }
-                else if ((resizingInteraction._top && resizingInteraction._right) || (resizingInteraction._bottom && resizingInteraction._left))
-                {
-                    _currentCursor = CursorType::SizeRightTilted;
-                }
-                else if (resizingInteraction._top || resizingInteraction._bottom)
-                {
-                    _currentCursor = CursorType::SizeVert;
-                }
-                else if (resizingInteraction._left || resizingInteraction._right)
-                {
-                    _currentCursor = CursorType::SizeHorz;
-                }
+                selectResizingCursorType(resizingInteraction);
             }
 
             if (inputContext.isMouseButtonDown(MouseButton::Left))
@@ -587,6 +578,26 @@ namespace mint
             _nextControlDesc._size = Float2::kNan;
             _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;
             _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
+        }
+
+        void GUIContext::selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
+        {
+            if ((resizingFlags._top && resizingFlags._left) || (resizingFlags._bottom && resizingFlags._right))
+            {
+                _currentCursor = CursorType::SizeLeftTilted;
+            }
+            else if ((resizingFlags._top && resizingFlags._right) || (resizingFlags._bottom && resizingFlags._left))
+            {
+                _currentCursor = CursorType::SizeRightTilted;
+            }
+            else if (resizingFlags._top || resizingFlags._bottom)
+            {
+                _currentCursor = CursorType::SizeVert;
+            }
+            else if (resizingFlags._left || resizingFlags._right)
+            {
+                _currentCursor = CursorType::SizeHorz;
+            }
         }
 
         void GUIContext::drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption)

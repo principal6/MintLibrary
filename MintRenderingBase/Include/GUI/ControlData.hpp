@@ -26,6 +26,7 @@ namespace mint
         ControlData::ControlData(const ControlID& ID, const ControlType type)
             : _interactionState{ InteractionState::None }
             , _perTypeData{}
+            , _resizableMinSize{ Float2::kOne }
             , _ID{ ID }
             , _type{ type }
             , _accessCount{ 0 }

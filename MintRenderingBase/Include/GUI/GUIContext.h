@@ -182,6 +182,9 @@ namespace mint
             void                                updateControlData_resetNextControlDesc();
 
         private:
+            void                                selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags);
+
+        private:
             void                                drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
             void                                drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
             Float4                              computeShapePosition(const ControlDesc& controlDesc) const;

@@ -140,6 +140,7 @@ namespace mint
                 };
             };
             ResizingFlags       _resizingMask;
+            Float2              _resizableMinSize;
 
         private:
             ControlID           _ID;
