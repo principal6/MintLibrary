@@ -26,6 +26,10 @@ namespace mint
         static const Float2     kNan;
 
     public:
+        static constexpr Float2 max(const Float2& a, const Float2& b) noexcept;
+        static constexpr Float2 min(const Float2& a, const Float2& b) noexcept;
+
+    public:
         constexpr               Float2();
         constexpr explicit      Float2(const float scalar);
         constexpr explicit      Float2(const float x, const float y);
