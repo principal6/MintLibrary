@@ -94,6 +94,11 @@ namespace mint
             _rendererContext.flush();
         }
 
+        void GUIContext::nextControlSameLine()
+        {
+            _nextControlDesc._sameLine = true;
+        }
+
         void GUIContext::nextControlPosition(const Float2& position)
         {
             _nextControlDesc._position = position;
@@ -430,11 +435,12 @@ namespace mint
             const Float2 controlRelativePosition = _nextControlDesc._position;
             const Float2 controlSize = _nextControlDesc._size;
 
-            controlData._nextChildRelativePosition = controlData._zones._contentZone.position();
+            controlData._nextChildNextLinePosition = controlData._zones._contentZone.position();
 
             // Position
             const bool isAutoPositioned = controlRelativePosition.isNan();
-            const Float2 relativePosition = (isAutoPositioned ? parentControlData._nextChildRelativePosition : controlRelativePosition);
+            const Float2& parentNextChildPosition = (_nextControlDesc._sameLine ? parentControlData._nextChildSameLinePosition : parentControlData._nextChildNextLinePosition);
+            const Float2 relativePosition = (isAutoPositioned ? parentNextChildPosition : controlRelativePosition);
             controlData._absolutePosition = relativePosition;
             controlData._absolutePosition += parentControlData._absolutePosition;
             if (isAutoPositioned)
@@ -460,8 +466,11 @@ namespace mint
 
             if (isAutoPositioned)
             {
-                // If its position is specified, the control does not affect its parent's _nextChildRelativePosition.
-                parentControlData._nextChildRelativePosition = relativePosition + Float2(0.0f, controlData._size._y + controlRenderingDesc._margin.bottom());
+                // If its position is specified, the control does not affect its parent's _nextChildSameLinePosition nor _nextChildNextLinePosition.
+                parentControlData._nextChildSameLinePosition = relativePosition + Float2(controlData._size._x + controlRenderingDesc._margin.right(), 0.0f);
+                
+                parentControlData._nextChildNextLinePosition._x = parentControlData._zones._contentZone.position()._x;
+                parentControlData._nextChildNextLinePosition._y = relativePosition._y + controlData._size._y + controlRenderingDesc._margin.bottom();
             }
 
             parentControlData._zones._contentZone.expandRightBottom(Rect(relativePosition, controlData._size));
@@ -574,6 +583,7 @@ namespace mint
 
         void GUIContext::updateControlData_resetNextControlDesc()
         {
+            _nextControlDesc._sameLine = false;
             _nextControlDesc._position = Float2::kNan;
             _nextControlDesc._size = Float2::kNan;
             _nextControlDesc._renderingDesc._margin = _theme._defaultMargin;

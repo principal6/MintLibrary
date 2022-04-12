@@ -84,7 +84,8 @@ namespace mint
         public:
             Float2              _absolutePosition; // Absolute position in screen space
             Float2              _size;
-            Float2              _nextChildRelativePosition;
+            Float2              _nextChildSameLinePosition;
+            Float2              _nextChildNextLinePosition;
 
         public:
             enum class InteractionState

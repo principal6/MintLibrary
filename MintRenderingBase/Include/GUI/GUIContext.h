@@ -127,6 +127,7 @@ namespace mint
 
             struct NextControlDesc
             {
+                bool                    _sameLine = false;
                 Float2                  _position;
                 Float2                  _size;
                 ControlRenderingDesc    _renderingDesc;
@@ -149,6 +150,7 @@ namespace mint
 
         // Next control's ControlRenderingDesc
         public:
+            void                                nextControlSameLine();
             void                                nextControlPosition(const Float2& position);
             void                                nextControlSize(const Float2& contentSize);
             void                                nextControlMargin(const Rect& margin);
