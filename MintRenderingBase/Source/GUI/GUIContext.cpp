@@ -538,7 +538,7 @@ namespace mint
                 if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
                 {
                     const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
-                    _resizingModule.begin(controlData, _mousePressedPosition, resizingInteraction);
+                    _resizingModule.begin(controlData, _mousePressedPosition, &resizingInteraction);
                 }
             }
             else
@@ -676,13 +676,7 @@ namespace mint
             _controlID = controlData.getID();
             _initialControlPosition = controlData._absolutePosition;
             _mousePressedPosition = mousePressedPosition;
-
             return true;
-        }
-
-        void GUIContext::InteractionModule::endInternal()
-        {
-            _controlID.invalidate();
         }
 #pragma endregion
 
@@ -718,20 +712,28 @@ namespace mint
             return resizingInteraction;
         }
 
-        void GUIContext::ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags)
+        const bool GUIContext::ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData)
         {
+            if (customData == nullptr)
+            {
+                MINT_NEVER;
+                return false;
+            }
+
+            const ControlData::ResizingFlags& resizingFlags = *reinterpret_cast<const ControlData::ResizingFlags*>(customData);
             if (resizingFlags.isAllFalse() == true)
             {
-                return;
+                return false;
             }
-            
+
             if (beginInternal(controlData, mousePressedPosition) == false)
             {
-                return;
+                return false;
             }
 
             _initialControlSize = controlData._size;
             _resizingFlags = resizingFlags;
+            return true;
         }
     }
 }

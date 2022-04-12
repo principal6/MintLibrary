@@ -215,27 +215,29 @@ namespace mint
             class InteractionModule
             {
             public:
-                const bool      isInteracting() const;
-                const bool      isInteracting(const ControlData& controlData) const;
-                Float2          computeRelativeMousePressedPosition() const;
-                const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
-                const Float2&   getInitialControlPosition() const { return _initialControlPosition; }
+                const bool                  isInteracting() const;
+                const bool                  isInteracting(const ControlData& controlData) const;
+                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) abstract;
+                MINT_INLINE virtual void    end() { _controlID.invalidate(); }
+
+            public:
+                Float2                      computeRelativeMousePressedPosition() const;
+                MINT_INLINE const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
+                MINT_INLINE const Float2&   getInitialControlPosition() const { return _initialControlPosition; }
 
             protected:
-                const bool      beginInternal(const ControlData& controlData, const Float2& mousePressedPosition);
-                void            endInternal();
+                const bool                  beginInternal(const ControlData& controlData, const Float2& mousePressedPosition);
 
             protected:
-                ControlID       _controlID;
-                Float2          _mousePressedPosition = Float2::kNan;
-                Float2          _initialControlPosition = Float2::kNan;
+                ControlID                   _controlID;
+                Float2                      _mousePressedPosition = Float2::kNan;
+                Float2                      _initialControlPosition = Float2::kNan;
             };
 
-            class DraggingModule final : public InteractionModule
+            class DraggingModule final : public InteractionModule 
             {
             public:
-                void            begin(const ControlData& controlData, const Float2& mousePressedPosition) { beginInternal(controlData, mousePressedPosition); }
-                void            end() { endInternal(); }
+                virtual const bool  begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
             };
 
             class ResizingModule final : public InteractionModule
@@ -245,10 +247,11 @@ namespace mint
                 static ControlData::ResizingFlags   makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
 
             public:
-                void            begin(const ControlData& controlData, const Float2& mousePressedPosition, const ControlData::ResizingFlags& resizingFlags);
-                void            end() { endInternal(); }
-                const Float2&   getInitialControlSize() const { return _initialControlSize; }
-                const ControlData::ResizingFlags&   getResizingFlags() const { return _resizingFlags; }
+                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) override;
+
+            public:
+                MINT_INLINE const Float2&   getInitialControlSize() const { return _initialControlSize; }
+                MINT_INLINE const ControlData::ResizingFlags&   getResizingFlags() const { return _resizingFlags; }
 
             private:
                 Float2                      _initialControlSize;
