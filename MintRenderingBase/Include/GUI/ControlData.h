@@ -142,6 +142,18 @@ namespace mint
             };
             ResizingFlags       _resizingMask;
             Float2              _resizableMinSize;
+        
+        public:
+            struct Traits
+            {
+                union
+                {
+                    uint8   _raw = 0;
+                    bool    _isFocusable : 1;
+                    bool    _isDraggable : 1;
+                };
+            };
+            Traits              _traits;
 
         private:
             ControlID           _ID;

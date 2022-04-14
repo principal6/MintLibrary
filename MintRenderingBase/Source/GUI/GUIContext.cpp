@@ -58,10 +58,11 @@ namespace mint
             updateScreenSize(windowSize);
 
             // ROOT
-            const ControlID rootControlID{ ControlID(kUint64Max) };
-            ControlData& rootControlData = accessControlData(rootControlID, ControlType::COUNT);
+            _rootControlID = ControlID(kUint64Max);
+            ControlData& rootControlData = accessControlData(_rootControlID, ControlType::COUNT);
             rootControlData._absolutePosition = Float2::kZero;
-            _controlStack.push_back(rootControlID);
+            //rootControlData._size = windowSize;
+            _controlStack.push_back(_rootControlID);
         }
 
         void GUIContext::processEvent() noexcept
@@ -160,6 +161,8 @@ namespace mint
                 controlData._resizingMask.setAllTrue();
 
                 controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
+                controlData._traits._isFocusable = true;
+                controlData._traits._isDraggable = true;
             }
             nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
             nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
@@ -248,9 +251,10 @@ namespace mint
             _rendererContext.setColor(_theme._windowBackgroundColor);
             _rendererContext.setPosition(computeShapePosition(controlDesc));
 
+            const bool isFocused = _focusingModule.isInteracting(controlData);
             const float titleBarHeight = controlData._zones._titleBarZone.vert();
             ScopeVector<ShapeRendererContext::Split, 3> splits;
-            splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, _theme._windowTitleBarFocusedColor));
+            splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
             splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
             _rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
@@ -498,8 +502,31 @@ namespace mint
                 }
             }
 
+            updateControlData_interaction_focusing(controlData);
             updateControlData_interaction_resizing(controlData);
             updateControlData_interaction_dragging(controlData, parentControlData);
+        }
+
+        void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
+        {
+            if (controlData._traits._isFocusable == false)
+            {
+                return;
+            }
+
+            // 이미 Focus 되어 있는 컨트롤
+            if (_focusingModule.isInteracting(controlData) == true)
+            {
+                return;
+            }
+
+            if (controlData._interactionState == ControlData::InteractionState::Clicked 
+                || _draggingModule.isInteracting(controlData) == true 
+                || _resizingModule.isInteracting(controlData) == true)
+            {
+                _focusingModule.end();
+                _focusingModule.begin(controlData, _mousePressedPosition);
+            }
         }
 
         void GUIContext::updateControlData_interaction_resizing(ControlData& controlData)
@@ -549,6 +576,11 @@ namespace mint
 
         void GUIContext::updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData)
         {
+            if (controlData._traits._isDraggable == false)
+            {
+                return;
+            }
+
             // Resizing 중에는 Dragging 을 하지 않는다.
             if (_resizingModule.isInteracting())
             {

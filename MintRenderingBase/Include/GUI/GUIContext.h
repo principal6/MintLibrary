@@ -74,7 +74,7 @@ namespace mint
 
             Color   _windowBackgroundColor = Color(0.125f, 0.125f, 0.125f, 0.875f);
             Color   _windowTitleBarFocusedColor = _windowBackgroundColor.cloneAddRGB(-0.0625f);
-            Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor * 2.0f;
+            Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor.cloneScaleRGB(4.0f);
         };
 
         struct LabelDesc
@@ -179,6 +179,7 @@ namespace mint
             void                                updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
             void                                updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
             void                                updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+            void                                updateControlData_interaction_focusing(ControlData& controlData);
             void                                updateControlData_interaction_resizing(ControlData& controlData);
             void                                updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
             void                                updateControlData_resetNextControlDesc();
@@ -210,6 +211,7 @@ namespace mint
             // Docking 정보도 저장되어야 한다.
             HashMap<ControlID, ControlData>     _controlDataMap;
             Vector<ControlID>                   _controlStack;
+            ControlID                           _rootControlID;
 
         private:
             class InteractionModule
@@ -258,8 +260,15 @@ namespace mint
                 ControlData::ResizingFlags  _resizingFlags;
             };
 
+            class FocusingModule final : public InteractionModule
+            {
+            public:
+                virtual const bool  begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
+            };
+
             DraggingModule      _draggingModule;
             ResizingModule      _resizingModule;
+            FocusingModule      _focusingModule;
         };
     }
 }
