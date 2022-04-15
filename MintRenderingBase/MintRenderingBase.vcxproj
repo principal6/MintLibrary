@@ -207,7 +207,7 @@
     <ClInclude Include="Include\GUI\ControlData.h" />
     <ClInclude Include="Include\GUI\ControlData.hpp" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
-    <ClInclude Include="Include\GUI\InteractionModules.h" />
+    <ClInclude Include="Include\GUI\GUIInteractionModules.h" />
     <ClInclude Include="Include\GUI\GUITheme.h" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
@@ -278,7 +278,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GUI\InteractionModules.cpp">
+    <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

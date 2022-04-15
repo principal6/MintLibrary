@@ -1,5 +1,5 @@
 #include <stdafx.h>
-#include <MintRenderingBase/Include/GUI/InteractionModules.h>
+#include <MintRenderingBase/Include/GUI/GUIInteractionModules.h>
 
 
 namespace mint

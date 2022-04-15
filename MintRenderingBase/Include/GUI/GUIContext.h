@@ -17,7 +17,7 @@
 #include <MintMath/Include/Rect.h>
 
 #include <MintRenderingBase/Include/GUI/ControlData.h>
-#include <MintRenderingBase/Include/GUI/InteractionModules.h>
+#include <MintRenderingBase/Include/GUI/GUIInteractionModules.h>
 #include <MintRenderingBase/Include/GUI/GUITheme.h>
 
 #include <MintPlatform/Include/IWindow.h>

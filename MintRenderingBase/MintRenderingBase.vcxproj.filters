@@ -99,7 +99,7 @@
     <ClInclude Include="Include\GUI\ControlData.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\InteractionModules.h">
+    <ClInclude Include="Include\GUI\GUIInteractionModules.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\GUI\GUITheme.h">
@@ -163,7 +163,7 @@
     <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\InteractionModules.cpp">
+    <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
