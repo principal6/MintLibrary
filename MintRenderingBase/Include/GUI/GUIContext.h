@@ -96,7 +96,6 @@ namespace mint
 
             public:
                 void                            initialize();
-                Theme&                          accessTheme() { return _theme; }
 
             public:
                 void                            processEvent() noexcept;
@@ -175,12 +174,12 @@ namespace mint
                     };
                 };
                 DebugSwitch                     _debugSwitch;
+                Theme                           _theme;
 
             private:
                 GraphicDevice&                  _graphicDevice;
                 ShapeRendererContext            _rendererContext;
                 float                           _fontSize;
-                Theme                           _theme;
                 Window::CursorType              _currentCursor;
 
             private:
