@@ -91,6 +91,16 @@ namespace mint
             {
                 MINT_ASSERT(_controlStack.size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
 
+                if (_debugSwitch._raw != 0)
+                {
+                    for (const ControlID& controlID : _controlIDsOfThisFrame)
+                    {
+                        ControlData& controlData = accessControlData(controlID);
+                        debugRender_control(controlData);
+                    }
+                }
+                _controlIDsOfThisFrame.clear();
+
                 _graphicDevice.accessWindow().setCursorType(_currentCursor);
 
                 _rendererContext.render();
@@ -127,8 +137,9 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Label;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlData.getID());
-                ControlData& controlData = accessControlData(controlID, kControlType);
+                _controlIDsOfThisFrame.push_back(controlID);
 
+                ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
                 updateControlData(labelDesc._text, controlDesc, controlData, parentControlData);
                 makeLabel_render(controlDesc, labelDesc, controlData);
@@ -139,8 +150,9 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Button;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlData.getID());
-                ControlData& controlData = accessControlData(controlID, kControlType);
+                _controlIDsOfThisFrame.push_back(controlID);
 
+                ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
                 updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
                 makeButton_render(controlDesc, buttonDesc, controlData);
@@ -152,8 +164,9 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Window;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
-                ControlData& controlData = accessControlData(controlID, kControlType);
+                _controlIDsOfThisFrame.push_back(controlID);
 
+                ControlData& controlData = accessControlData(controlID, kControlType);
                 const bool isNewlyCreated = (controlData.getAccessCount() == 0);
                 if (isNewlyCreated)
                 {
@@ -221,8 +234,6 @@ namespace mint
                 fontRenderingOption._directionHorz = labelDesc._directionHorz;
                 fontRenderingOption._directionVert = labelDesc._directionVert;
                 drawText(controlDesc, labelDesc.getTextColor(_theme), fontRenderingOption);
-
-                renderControlCommon(controlData);
             }
 
             void GUIContext::makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData)
@@ -244,8 +255,6 @@ namespace mint
                     fontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
                     drawText(controlDesc, _theme._textColor, fontRenderingOption);
                 }
-
-                renderControlCommon(controlData);
             }
 
             void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData)
@@ -266,67 +275,6 @@ namespace mint
                 const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.left(), 0.0f);
                 const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
                 drawText(titleBarTextPosition, titleBarSize, controlDesc._renderingDesc._text, _theme._textColor, fontRenderingOption);
-
-                renderControlCommon(controlData);
-            }
-
-            void GUIContext::renderControlCommon(const ControlData& controlData)
-            {
-                static bool RENDER_ZONE_OVERLAY = false;
-                static bool RENDER_MOUSE_POINTS = false;
-                static bool RENDER_RESIZING_AREA = false;
-
-                static const float OVERLAY_ALPHA = 0.25f;
-                static const float POINT_RADIUS = 4.0f;
-                if (RENDER_ZONE_OVERLAY)
-                {
-                    const Float2 titleBarZoneSize = controlData._zones._titleBarZone.size();
-                    if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
-                    {
-                        _rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
-                        _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize));
-                        _rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
-                    }
-
-                    const Float2 contentZoneSize = controlData._zones._contentZone.size();
-                    if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
-                    {
-                        _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
-                        _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize));
-                        _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
-                    }
-                }
-
-                if (RENDER_MOUSE_POINTS)
-                {
-                    if (_draggingModule.isInteracting())
-                    {
-                        _rendererContext.setColor(Color::kBlue);
-                        _rendererContext.setPosition(Float4(_mousePressedPosition));
-                        _rendererContext.drawCircle(POINT_RADIUS);
-
-                        _rendererContext.setColor(Color::kRed);
-                        _rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
-                        _rendererContext.drawCircle(POINT_RADIUS);
-                    }
-                }
-
-                if (RENDER_RESIZING_AREA)
-                {
-                    const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
-                    Rect outerRect = controlRect;
-                    outerRect.expandByQuantity(_theme._outerResizingDistances);
-                    Rect innerRect = controlRect;
-                    innerRect.shrinkByQuantity(_theme._innerResizingDistances);
-
-                    _rendererContext.setColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
-                    _rendererContext.setPosition(computeShapePosition(outerRect.position(), outerRect.size()));
-                    _rendererContext.drawRectangle(outerRect.size(), 0.0f, 0.0f);
-
-                    _rendererContext.setColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
-                    _rendererContext.setPosition(computeShapePosition(innerRect.position(), innerRect.size()));
-                    _rendererContext.drawRectangle(innerRect.size(), 0.0f, 0.0f);
-                }
             }
 
             ControlData& GUIContext::accessControlData(const ControlID& controlID) const
@@ -415,7 +363,7 @@ namespace mint
                     const Float2 maxPosition = _resizingModule.getInitialControlPosition() + _resizingModule.getInitialControlSize() - controlData._resizableMinSize;
                     nextControlPosition(Float2::min(_resizingModule.getInitialControlPosition() + displacementPosition, maxPosition));
                 }
-            
+
                 nextControlSize(Float2::max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
             }
 
@@ -425,7 +373,7 @@ namespace mint
                 {
                     return;
                 }
-            
+
                 const InputContext& inputContext = InputContext::getInstance();
                 const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
                 const Float2 absolutePosition = _draggingModule.getInitialControlPosition() + displacement;
@@ -474,7 +422,7 @@ namespace mint
                 {
                     // If its position is specified, the control does not affect its parent's _nextChildSameLinePosition nor _nextChildNextLinePosition.
                     parentControlData._nextChildSameLinePosition = relativePosition + Float2(controlData._size._x + controlRenderingDesc._margin.right(), 0.0f);
-                
+
                     parentControlData._nextChildNextLinePosition._x = parentControlData._zones._contentZone.position()._x;
                     parentControlData._nextChildNextLinePosition._y = relativePosition._y + controlData._size._y + controlRenderingDesc._margin.bottom();
                 }
@@ -522,8 +470,8 @@ namespace mint
                     return;
                 }
 
-                if (controlData._interactionState == ControlData::InteractionState::Clicked 
-                    || _draggingModule.isInteracting(controlData) == true 
+                if (controlData._interactionState == ControlData::InteractionState::Clicked
+                    || _draggingModule.isInteracting(controlData) == true
                     || _resizingModule.isInteracting(controlData) == true)
                 {
                     _focusingModule.end();
@@ -550,7 +498,7 @@ namespace mint
                 {
                     return;
                 }
-            
+
                 Rect outerRect;
                 Rect innerRect;
                 ResizingModule::makeOuterAndInenrRects(controlData, _theme._outerResizingDistances, _theme._innerResizingDistances, outerRect, innerRect);
@@ -682,6 +630,62 @@ namespace mint
             {
                 const ControlData& controlData = accessControlData(controlDesc._controlID);
                 return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
+            }
+
+            void GUIContext::debugRender_control(const ControlData& controlData)
+            {
+                if (_debugSwitch._renderZoneOverlay)
+                {
+                    static const float OVERLAY_ALPHA = 0.25f;
+                    const Float2 titleBarZoneSize = controlData._zones._titleBarZone.size();
+                    if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
+                    {
+                        _rendererContext.setColor(Color(1.0f, 0.5f, 0.25f, OVERLAY_ALPHA));
+                        _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._titleBarZone.position(), titleBarZoneSize));
+                        _rendererContext.drawRectangle(titleBarZoneSize, 0.0f, 0.0f);
+                    }
+
+                    const Float2 contentZoneSize = controlData._zones._contentZone.size();
+                    if (contentZoneSize._x != 0.0f && contentZoneSize._y != 0.0f)
+                    {
+                        _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
+                        _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize));
+                        _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
+                    }
+                }
+
+                if (_debugSwitch._renderMousePoints)
+                {
+                    static const float POINT_RADIUS = 4.0f;
+                    if (_draggingModule.isInteracting(controlData))
+                    {
+                        const InputContext& inputContext = InputContext::getInstance();
+                        _rendererContext.setColor(Color::kBlue);
+                        _rendererContext.setPosition(Float4(_draggingModule.getMousePressedPosition()));
+                        _rendererContext.drawCircle(POINT_RADIUS);
+
+                        _rendererContext.setColor(Color::kRed);
+                        _rendererContext.setPosition(Float4(controlData._absolutePosition + _draggingModule.getMousePressedPosition() - _draggingModule.getInitialControlPosition()));
+                        _rendererContext.drawCircle(POINT_RADIUS);
+                    }
+                }
+
+                if (_debugSwitch._renderResizingArea && controlData._resizingMask.isAnyTrue())
+                {
+                    const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
+                    Rect outerRect = controlRect;
+                    outerRect.expandByQuantity(_theme._outerResizingDistances);
+                    Rect innerRect = controlRect;
+                    innerRect.shrinkByQuantity(_theme._innerResizingDistances);
+
+                    _rendererContext.setColor(Color(0.0f, 0.0f, 1.0f, 0.25f));
+                    _rendererContext.setPosition(computeShapePosition(outerRect.position(), outerRect.size()));
+                    _rendererContext.drawRectangle(outerRect.size(), 0.0f, 0.0f);
+
+                    _rendererContext.setColor(Color(0.0f, 1.0f, 0.0f, 0.25f));
+                    _rendererContext.setPosition(computeShapePosition(innerRect.position(), innerRect.size()));
+                    _rendererContext.drawRectangle(innerRect.size(), 0.0f, 0.0f);
+                }
             }
         }
     }

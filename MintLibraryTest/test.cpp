@@ -520,6 +520,10 @@ const bool testWindow()
 #if 1
             using namespace GUI;
 
+            //guiContext._debugSwitch._renderZoneOverlay = true;
+            //guiContext._debugSwitch._renderMousePoints = true;
+            //guiContext._debugSwitch._renderResizingArea = true;
+
             WindowDesc window0Desc;
             window0Desc._title = L"윈도우0";
             window0Desc._initialPosition = Float2(100, 100);

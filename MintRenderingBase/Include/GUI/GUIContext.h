@@ -126,7 +126,6 @@ namespace mint
                 void                            makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
                 void                            makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
                 void                            beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData);
-                void                            renderControlCommon(const ControlData& controlData);
 
             private:
                 ControlData&                    accessControlData(const ControlID& controlID) const;
@@ -159,6 +158,25 @@ namespace mint
                 const float                     computeRoundness(const ControlDesc& controlDesc) const;
 
             private:
+                void                            debugRender_control(const ControlData& controlData);
+
+            public:
+                struct DebugSwitch
+                {
+                    union
+                    {
+                        uint8       _raw = 0;
+                        struct
+                        {
+                            bool    _renderZoneOverlay : 1;
+                            bool    _renderMousePoints : 1;
+                            bool    _renderResizingArea : 1;
+                        };
+                    };
+                };
+                DebugSwitch                     _debugSwitch;
+
+            private:
                 GraphicDevice&                  _graphicDevice;
                 ShapeRendererContext            _rendererContext;
                 float                           _fontSize;
@@ -181,6 +199,7 @@ namespace mint
                 HashMap<ControlID, ControlData> _controlDataMap;
                 Vector<ControlID>               _controlStack;
                 ControlID                       _rootControlID;
+                Vector<ControlID>               _controlIDsOfThisFrame;
 
             private:
                 // Interaction
