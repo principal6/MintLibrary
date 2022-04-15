@@ -10,6 +10,8 @@ void setPosition(Float3::kZero);
 #### Use pascal case for classes and structs.
 ```cpp
 class Player;
+class GUIContext;
+struct RenderCommand;
 ```
 
 ### Acronyms
