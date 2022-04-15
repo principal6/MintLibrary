@@ -29,8 +29,13 @@ GUITheme aGUITheme;
 
 class
 {
-    GUITheme _aGUITheme;
+    GUITheme    _GUITheme;
 };
+
+class Player
+{
+    uint32      _HP;
+}
 
 // How to bypass the problem
 namesapce GUI
@@ -129,6 +134,64 @@ if (getUseFullscreen())
 
 
 ## Code style
+#### Always use uniform initialization for constructor definitions. But when creating instances, prefer to use constructors explicitly.
+```cpp
+class Player
+{
+    Player(const float HP, const float MP)
+        : _HP{ HP }
+        , _MP{ MP }
+    {
+        __noop;
+    }
+    
+private:
+    float   _HP;
+    float   _MP;
+};
+
+Player player = Player(100.0f, 200.0f);
+```
+
+#### If the parameter count for a function exceeds 3, consider grouping them into a class or struct
+```cpp
+// NOT SO GOOD
+void hitTarget(const Float3& position, const float damage, const HitType hitType)
+{
+    // ...
+}
+
+// BETTER
+struct HitTargetInput
+{
+    Float3  _position;
+    float   _damage;
+    HitType _hitType;
+};
+void hitTarget(const HitTargetInput& hitTargetInput)
+{
+    // ...
+}
+```
+
+
+#### Never use C-style casting.
+```cpp
+// BAD
+int intValue = (int)value;
+
+// GOOD
+int intValue = static_cast<int>(value);
+```
+#### Variable declaration must take a whole line.
+```cpp
+// BAD
+float HPvalue = 100.0f, MPvalue = 100.0f;
+
+// GOOD
+float HPvalue = 100.0f;
+float MPvalue = 100.0f;
+```
 #### Always use braces for single-statement blocks.
 <table style="border: 2px;">
 <tr>
@@ -199,6 +262,11 @@ if (isValid() == false) {
 
 ```cpp
 if (isValid())
+{
+    return true;
+}
+
+if (isValid() && isVisible())
 {
     return true;
 }
