@@ -151,8 +151,11 @@ namespace mint
                     union
                     {
                         uint8   _raw = 0;
-                        bool    _isFocusable : 1;
-                        bool    _isDraggable : 1;
+                        struct
+                        {
+                            bool    _isFocusable : 1;
+                            bool    _isDraggable : 1;
+                        };
                     };
                 };
                 Traits              _traits;
