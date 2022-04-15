@@ -636,7 +636,7 @@ namespace mint
             {
                 if (_debugSwitch._renderZoneOverlay)
                 {
-                    static const float OVERLAY_ALPHA = 0.25f;
+                    static const float OVERLAY_ALPHA = 0.125f;
                     const Float2 titleBarZoneSize = controlData._zones._titleBarZone.size();
                     if (titleBarZoneSize._x != 0.0f && titleBarZoneSize._y != 0.0f)
                     {
@@ -651,6 +651,14 @@ namespace mint
                         _rendererContext.setColor(Color(0.25f, 1.0f, 0.5f, OVERLAY_ALPHA));
                         _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._contentZone.position(), contentZoneSize));
                         _rendererContext.drawRectangle(contentZoneSize, 0.0f, 0.0f);
+                    }
+
+                    const Float2 visibleContentZoneSize = controlData._zones._visibleContentZone.size();
+                    if (visibleContentZoneSize._x != 0.0f && visibleContentZoneSize._y != 0.0f)
+                    {
+                        _rendererContext.setColor(Color(0.25f, 0.25f, 1.0f, OVERLAY_ALPHA));
+                        _rendererContext.setPosition(computeShapePosition(controlData._absolutePosition + controlData._zones._visibleContentZone.position(), visibleContentZoneSize));
+                        _rendererContext.drawRectangle(visibleContentZoneSize, 0.0f, 0.0f);
                     }
                 }
 
