@@ -376,7 +376,7 @@ namespace mint
             }
 
             const InputContext& inputContext = InputContext::getInstance();
-            const ControlData::ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
+            const ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
             selectResizingCursorType(resizingFlags);
 
             Float2 displacementSize = inputContext.getMousePosition() - _resizingModule.getMousePressedPosition();
@@ -551,12 +551,12 @@ namespace mint
             
             Rect outerRect;
             Rect innerRect;
-            ResizingModule::makeOuterAndInenrRects(controlData, _theme, outerRect, innerRect);
+            ResizingModule::makeOuterAndInenrRects(controlData, _theme._outerResizingDistances, _theme._innerResizingDistances, outerRect, innerRect);
             const Float2& mousePosition = inputContext.getMousePosition();
             if (outerRect.contains(mousePosition) == true && innerRect.contains(mousePosition) == false)
             {
                 // Hover
-                const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
+                const ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
                 selectResizingCursorType(resizingInteraction);
             }
 
@@ -564,7 +564,7 @@ namespace mint
             {
                 if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
                 {
-                    const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
+                    const ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
                     _resizingModule.begin(controlData, _mousePressedPosition, &resizingInteraction);
                 }
             }
@@ -622,7 +622,7 @@ namespace mint
             _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
         }
 
-        void GUIContext::selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
+        void GUIContext::selectResizingCursorType(const ResizingFlags& resizingFlags)
         {
             if ((resizingFlags._top && resizingFlags._left) || (resizingFlags._bottom && resizingFlags._right))
             {
@@ -680,92 +680,6 @@ namespace mint
         {
             const ControlData& controlData = accessControlData(controlDesc._controlID);
             return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);
-        }
-
-#pragma region InteractionModule
-        const bool GUIContext::InteractionModule::isInteracting() const
-        {
-            return _controlID.isValid();
-        }
-
-        const bool GUIContext::InteractionModule::isInteracting(const ControlData& controlData) const
-        {
-            return _controlID == controlData.getID();
-        }
-
-        Float2 GUIContext::InteractionModule::computeRelativeMousePressedPosition() const
-        {
-            return _mousePressedPosition - _initialControlPosition;
-        }
-
-        const bool GUIContext::InteractionModule::beginInternal(const ControlData& controlData, const Float2& mousePressedPosition)
-        {
-            if (isInteracting())
-            {
-                return false;
-            }
-
-            _controlID = controlData.getID();
-            _initialControlPosition = controlData._absolutePosition;
-            _mousePressedPosition = mousePressedPosition;
-            return true;
-        }
-#pragma endregion
-
-        void GUIContext::ResizingModule::makeOuterAndInenrRects(const ControlData& controlData, const Theme& theme, Rect& outerRect, Rect& innerRect)
-        {
-            const Rect controlRect = Rect(controlData._absolutePosition, controlData._size);
-            outerRect = controlRect;
-            outerRect.expandByQuantity(theme._outerResizingDistances);
-            innerRect = controlRect;
-            innerRect.shrinkByQuantity(theme._innerResizingDistances);
-        }
-
-        ControlData::ResizingFlags GUIContext::ResizingModule::makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
-        {
-            ControlData::ResizingFlags resizingInteraction;
-            if (mousePosition._y >= outerRect.top() && mousePosition._y <= innerRect.top())
-            {
-                resizingInteraction._top = true;
-            }
-            if (mousePosition._y <= outerRect.bottom() && mousePosition._y >= innerRect.bottom())
-            {
-                resizingInteraction._bottom = true;
-            }
-            if (mousePosition._x >= outerRect.left() && mousePosition._x <= innerRect.left())
-            {
-                resizingInteraction._left = true;
-            }
-            if (mousePosition._x <= outerRect.right() && mousePosition._x >= innerRect.right())
-            {
-                resizingInteraction._right = true;
-            }
-            resizingInteraction.maskBy(controlData._resizingMask);
-            return resizingInteraction;
-        }
-
-        const bool GUIContext::ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData)
-        {
-            if (customData == nullptr)
-            {
-                MINT_NEVER;
-                return false;
-            }
-
-            const ControlData::ResizingFlags& resizingFlags = *reinterpret_cast<const ControlData::ResizingFlags*>(customData);
-            if (resizingFlags.isAllFalse() == true)
-            {
-                return false;
-            }
-
-            if (beginInternal(controlData, mousePressedPosition) == false)
-            {
-                return false;
-            }
-
-            _initialControlSize = controlData._size;
-            _resizingFlags = resizingFlags;
-            return true;
         }
     }
 }

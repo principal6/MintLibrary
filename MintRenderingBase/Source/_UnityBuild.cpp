@@ -11,4 +11,5 @@
 #include <MintRenderingBase/Source/CppHlsl/Interpreter.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Lexer.cpp>
 #include <MintRenderingBase/Source/CppHlsl/Parser.cpp>
+#include <MintRenderingBase/Source/GUI/InteractionModules.cpp>
 #include <MintRenderingBase/Source/GUI/GUIContext.cpp>
