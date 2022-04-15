@@ -102,6 +102,9 @@
     <ClInclude Include="Include\GUI\InteractionModules.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUI\GUITheme.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">

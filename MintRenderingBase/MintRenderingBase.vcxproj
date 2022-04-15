@@ -208,6 +208,7 @@
     <ClInclude Include="Include\GUI\ControlData.hpp" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
     <ClInclude Include="Include\GUI\InteractionModules.h" />
+    <ClInclude Include="Include\GUI\GUITheme.h" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
