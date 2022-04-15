@@ -21,6 +21,24 @@ const bool testGUI();
 void updateAI();
 ```
 
+### Edge cases
+#### Variables that start with acronyms
+```cpp
+struct GUITheme;
+GUITheme aGUITheme;
+
+class
+{
+    GUITheme _aGUITheme;
+};
+
+// How to bypass the problem
+namesapce GUI
+{
+    struct Theme;
+}
+```
+
 ## Prefix
 1. Fields start with an underscore.
 ```cpp
