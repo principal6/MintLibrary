@@ -55,8 +55,8 @@ namespace mint
             inline void ControlData::updateZones()
             {
                 computeContentZone();
-                computeTitleBarZone();
                 computeVisibleContentZone();
+                computeTitleBarZone();
             }
 
             inline Float2 ControlData::computeRelativePosition(const ControlData& parentControlData) const
