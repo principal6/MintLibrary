@@ -399,6 +399,12 @@ namespace mint
     }
 
     template<typename T>
+    MINT_INLINE T* Vector<T>::data() noexcept
+    {
+        return _rawPointer;
+    }
+    
+    template<typename T>
     MINT_INLINE const T* Vector<T>::data() const noexcept
     {
         return _rawPointer;
@@ -420,6 +426,18 @@ namespace mint
     MINT_INLINE const bool Vector<T>::empty() const noexcept
     {
         return (_size == 0);
+    }
+
+    template<typename T>
+    MINT_INLINE Vector<T>::Iterator<T> Vector<T>::begin() noexcept
+    { 
+        return Iterator(&_rawPointer[0]);
+    }
+
+    template<typename T>
+    MINT_INLINE Vector<T>::Iterator<T> Vector<T>::end() noexcept
+    { 
+        return Iterator(&_rawPointer[_size]);
     }
 }
 
