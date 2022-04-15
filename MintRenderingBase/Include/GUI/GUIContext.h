@@ -29,204 +29,207 @@ namespace mint
         class GraphicDevice;
 
 
-#pragma region Controls
-        struct HoverPressColorSet
+        namespace GUI
         {
-            HoverPressColorSet() = default;
-            HoverPressColorSet(const Color& normal, const Color& hover, const Color& press) : _normalColor{ normal }, _hoveredColor{ hover }, _pressedColor{ press } { __noop; }
-            
-            const Color& chooseColorByInteractionState(const ControlData::InteractionState interactionState) const
+#pragma region Controls
+            struct HoverPressColorSet
             {
-                const bool isPressing = (interactionState == ControlData::InteractionState::Pressing);
-                const bool isHovering = (interactionState == ControlData::InteractionState::Hovering);
-                return (isPressing ? _pressedColor : (isHovering ? _hoveredColor : _normalColor));
+                HoverPressColorSet() = default;
+                HoverPressColorSet(const Color& normal, const Color& hover, const Color& press) : _normalColor{ normal }, _hoveredColor{ hover }, _pressedColor{ press } { __noop; }
+            
+                const Color& chooseColorByInteractionState(const ControlData::InteractionState interactionState) const
+                {
+                    const bool isPressing = (interactionState == ControlData::InteractionState::Pressing);
+                    const bool isHovering = (interactionState == ControlData::InteractionState::Hovering);
+                    return (isPressing ? _pressedColor : (isHovering ? _hoveredColor : _normalColor));
+                };
+
+                Color   _normalColor = Color(0.375f, 0.375f, 0.375f);
+                Color   _hoveredColor = Color(0.625f, 0.625f, 0.625f);
+                Color   _pressedColor = Color(0.25f, 0.375f, 0.5f);
             };
 
-            Color   _normalColor = Color(0.375f, 0.375f, 0.375f);
-            Color   _hoveredColor = Color(0.625f, 0.625f, 0.625f);
-            Color   _pressedColor = Color(0.25f, 0.375f, 0.5f);
-        };
+            struct Theme
+            {
+                float   _roundnessInPixel = 8.0f;
+                float   _windowInnerLineThickness = 1.0f;
+                float   _systemButtonRadius = 7.0f;
 
-        struct Theme
-        {
-            float   _roundnessInPixel = 8.0f;
-            float   _windowInnerLineThickness = 1.0f;
-            float   _systemButtonRadius = 7.0f;
+                Rect    _outerResizingDistances = Rect(2.0f, 2.0f, 2.0f, 2.0f);
+                Rect    _innerResizingDistances = Rect(4.0f, 4.0f, 4.0f, 4.0f);
 
-            Rect    _outerResizingDistances = Rect(2.0f, 2.0f, 2.0f, 2.0f);
-            Rect    _innerResizingDistances = Rect(4.0f, 4.0f, 4.0f, 4.0f);
+                Rect    _defaultMargin = Rect(4.0f, 4.0f, 4.0f, 4.0f);
+                Rect    _defaultPadding = Rect(8.0f, 8.0f, 4.0f, 4.0f);
+                Rect    _titleBarPadding = Rect(8.0f, 6.0f, 4.0f, 4.0f);
 
-            Rect    _defaultMargin = Rect(4.0f, 4.0f, 4.0f, 4.0f);
-            Rect    _defaultPadding = Rect(8.0f, 8.0f, 4.0f, 4.0f);
-            Rect    _titleBarPadding = Rect(8.0f, 6.0f, 4.0f, 4.0f);
+                Color   _textColor = Color(0.875f, 0.875f, 0.875f);
 
-            Color   _textColor = Color(0.875f, 0.875f, 0.875f);
+                HoverPressColorSet  _hoverPressColorSet;
+                HoverPressColorSet  _closeButtonColorSet = HoverPressColorSet(Color(1.0f, 0.25f, 0.25f), Color(1.0f, 0.375f, 0.375f), Color(1.0f, 0.5f, 0.5f));
+                Color   _defaultLabelBackgroundColor = Color::kTransparent;
 
-            HoverPressColorSet  _hoverPressColorSet;
-            HoverPressColorSet  _closeButtonColorSet = HoverPressColorSet(Color(1.0f, 0.25f, 0.25f), Color(1.0f, 0.375f, 0.375f), Color(1.0f, 0.5f, 0.5f));
-            Color   _defaultLabelBackgroundColor = Color::kTransparent;
+                Color   _windowBackgroundColor = Color(0.125f, 0.125f, 0.125f, 0.875f);
+                Color   _windowTitleBarFocusedColor = _windowBackgroundColor.cloneAddRGB(-0.0625f);
+                Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor.cloneScaleRGB(4.0f);
+            };
 
-            Color   _windowBackgroundColor = Color(0.125f, 0.125f, 0.125f, 0.875f);
-            Color   _windowTitleBarFocusedColor = _windowBackgroundColor.cloneAddRGB(-0.0625f);
-            Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor.cloneScaleRGB(4.0f);
-        };
+            struct LabelDesc
+            {
+                const wchar_t*          _text = nullptr;
+                TextRenderDirectionHorz _directionHorz = TextRenderDirectionHorz::Centered;
+                TextRenderDirectionVert _directionVert = TextRenderDirectionVert::Centered;
 
-        struct LabelDesc
-        {
-            const wchar_t*          _text = nullptr;
-            TextRenderDirectionHorz _directionHorz = TextRenderDirectionHorz::Centered;
-            TextRenderDirectionVert _directionVert = TextRenderDirectionVert::Centered;
+            public:
+                void                    setBackgroundColor(const Color& color) { _useThemeColor = false; _color = color; }
+                void                    setTextColor(const Color& color) { _useThemeTextColor = false; _textColor = color; }
+                const Color&            getBackgroundColor(const Theme& theme) const { return (_useThemeColor ? theme._defaultLabelBackgroundColor : _color); }
+                const Color&            getTextColor(const Theme& theme) const { return (_useThemeTextColor ? theme._textColor : _textColor); }
 
-        public:
-            void                    setBackgroundColor(const Color& color) { _useThemeColor = false; _color = color; }
-            void                    setTextColor(const Color& color) { _useThemeTextColor = false; _textColor = color; }
-            const Color&            getBackgroundColor(const Theme& theme) const { return (_useThemeColor ? theme._defaultLabelBackgroundColor : _color); }
-            const Color&            getTextColor(const Theme& theme) const { return (_useThemeTextColor ? theme._textColor : _textColor); }
+            private:
+                bool                    _useThemeColor = true;
+                Color                   _color = Color::kTransparent;
+                bool                    _useThemeTextColor = true;
+                Color                   _textColor;
+            };
 
-        private:
-            bool                    _useThemeColor = true;
-            Color                   _color = Color::kTransparent;
-            bool                    _useThemeTextColor = true;
-            Color                   _textColor;
-        };
+            struct ButtonDesc
+            {
+                const wchar_t*      _text = nullptr;
+                bool                _isRoundButton = false;
 
-        struct ButtonDesc
-        {
-            const wchar_t*      _text = nullptr;
-            bool                _isRoundButton = false;
+                bool                _customizeColor = false;
+                HoverPressColorSet  _customizedColorSet;
+            };
 
-            bool                _customizeColor = false;
-            HoverPressColorSet  _customizedColorSet;
-        };
-
-        struct WindowDesc
-        {
-            const wchar_t*      _title = nullptr;
-            Float2              _initialPosition;
-            Float2              _initialSize;
-        };
+            struct WindowDesc
+            {
+                const wchar_t*      _title = nullptr;
+                Float2              _initialPosition;
+                Float2              _initialSize;
+            };
 #pragma endregion
 
 
-        class GUIContext final
-        {
-            // 생성자 때문에 friend 선언
-            friend GraphicDevice;
-
-            struct ControlRenderingDesc
+            class GUIContext final
             {
-                Rect                    _margin;
-                Rect                    _padding;
-                const wchar_t*          _text = nullptr;
-            };
+                // 생성자 때문에 friend 선언
+                friend GraphicDevice;
 
-            struct ControlDesc
-            {
-                ControlID               _controlID;
-                ControlRenderingDesc    _renderingDesc;
-            };
+                struct ControlRenderingDesc
+                {
+                    Rect                    _margin;
+                    Rect                    _padding;
+                    const wchar_t*          _text = nullptr;
+                };
 
-        private:
-                                            GUIContext(GraphicDevice& graphicDevice);
+                struct ControlDesc
+                {
+                    ControlID               _controlID;
+                    ControlRenderingDesc    _renderingDesc;
+                };
 
-        public:
-                                            ~GUIContext();
+            private:
+                                                GUIContext(GraphicDevice& graphicDevice);
 
-        public:
-            void                            initialize();
-            Theme&                          accessTheme() { return _theme; }
+            public:
+                                                ~GUIContext();
 
-        public:
-            void                            processEvent() noexcept;
-            void                            updateScreenSize(const Float2& newScreenSize);
-            void                            render() noexcept;
+            public:
+                void                            initialize();
+                Theme&                          accessTheme() { return _theme; }
 
-        // Next control's ControlRenderingDesc
-        public:
-            void                            nextControlSameLine();
-            void                            nextControlPosition(const Float2& position);
-            void                            nextControlSize(const Float2& contentSize);
-            void                            nextControlMargin(const Rect& margin);
-            void                            nextControlPadding(const Rect& padding);
+            public:
+                void                            processEvent() noexcept;
+                void                            updateScreenSize(const Float2& newScreenSize);
+                void                            render() noexcept;
 
-        // Control creation #0 make-()
-        public:
-            void                            makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
-            const bool                      makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
+            // Next control's ControlRenderingDesc
+            public:
+                void                            nextControlSameLine();
+                void                            nextControlPosition(const Float2& position);
+                void                            nextControlSize(const Float2& contentSize);
+                void                            nextControlMargin(const Rect& margin);
+                void                            nextControlPadding(const Rect& padding);
 
-        // Control creation #1 begin-() && end-()
-        public:
-            const bool                      beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
-            void                            endWindow();
+            // Control creation #0 make-()
+            public:
+                void                            makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
+                const bool                      makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
 
-        // Control rendering
-        private:
-            void                            makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
-            void                            makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
-            void                            beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData);
-            void                            renderControlCommon(const ControlData& controlData);
+            // Control creation #1 begin-() && end-()
+            public:
+                const bool                      beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
+                void                            endWindow();
 
-        private:
-            ControlData&                    accessControlData(const ControlID& controlID) const;
-            ControlData&                    accessControlData(const ControlID& controlID, const ControlType controlType);
-            ControlData&                    accessStackParentControlData();
+            // Control rendering
+            private:
+                void                            makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
+                void                            makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
+                void                            beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData);
+                void                            renderControlCommon(const ControlData& controlData);
 
-        private:
-            void                            updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                            updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData);
-            void                            updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
-            void                            updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                            updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-            void                            updateControlData_interaction_focusing(ControlData& controlData);
-            void                            updateControlData_interaction_resizing(ControlData& controlData);
-            void                            updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
-            void                            updateControlData_resetNextControlDesc();
+            private:
+                ControlData&                    accessControlData(const ControlID& controlID) const;
+                ControlData&                    accessControlData(const ControlID& controlID, const ControlType controlType);
+                ControlData&                    accessStackParentControlData();
 
-        private:
-            void                            selectResizingCursorType(const ResizingFlags& resizingFlags);
+            private:
+                void                            updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData);
+                void                            updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
+                void                            updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData_interaction_focusing(ControlData& controlData);
+                void                            updateControlData_interaction_resizing(ControlData& controlData);
+                void                            updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
+                void                            updateControlData_resetNextControlDesc();
 
-        // Internal rendering functions
-        private:
-            void                            drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
-            void                            drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
+            private:
+                void                            selectResizingCursorType(const ResizingFlags& resizingFlags);
+
+            // Internal rendering functions
+            private:
+                void                            drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
+                void                            drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
         
-        // Internal rendering helpers
-        private:
-            Float4                          computeShapePosition(const ControlDesc& controlDesc) const;
-            Float4                          computeShapePosition(const Float2& position, const Float2& size) const;
-            const float                     computeRoundness(const ControlDesc& controlDesc) const;
+            // Internal rendering helpers
+            private:
+                Float4                          computeShapePosition(const ControlDesc& controlDesc) const;
+                Float4                          computeShapePosition(const Float2& position, const Float2& size) const;
+                const float                     computeRoundness(const ControlDesc& controlDesc) const;
 
-        private:
-            GraphicDevice&                  _graphicDevice;
-            ShapeRendererContext            _rendererContext;
-            float                           _fontSize;
-            Theme                           _theme;
-            Window::CursorType              _currentCursor;
+            private:
+                GraphicDevice&                  _graphicDevice;
+                ShapeRendererContext            _rendererContext;
+                float                           _fontSize;
+                Theme                           _theme;
+                Window::CursorType              _currentCursor;
 
-        private:
-            struct NextControlDesc
-            {
-                bool                        _sameLine = false;
-                Float2                      _position;
-                Float2                      _size;
-                ControlRenderingDesc        _renderingDesc;
+            private:
+                struct NextControlDesc
+                {
+                    bool                        _sameLine = false;
+                    Float2                      _position;
+                    Float2                      _size;
+                    ControlRenderingDesc        _renderingDesc;
+                };
+                NextControlDesc                 _nextControlDesc;
+
+            private:
+                // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
+                // Docking 정보도 저장되어야 한다.
+                HashMap<ControlID, ControlData> _controlDataMap;
+                Vector<ControlID>               _controlStack;
+                ControlID                       _rootControlID;
+
+            private:
+                // Interaction
+                Float2                          _mousePressedPosition;
+                DraggingModule                  _draggingModule;
+                ResizingModule                  _resizingModule;
+                FocusingModule                  _focusingModule;
             };
-            NextControlDesc                 _nextControlDesc;
-
-        private:
-            // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
-            // Docking 정보도 저장되어야 한다.
-            HashMap<ControlID, ControlData> _controlDataMap;
-            Vector<ControlID>               _controlStack;
-            ControlID                       _rootControlID;
-
-        private:
-            // Interaction
-            Float2                          _mousePressedPosition;
-            DraggingModule                  _draggingModule;
-            ResizingModule                  _resizingModule;
-            FocusingModule                  _focusingModule;
-        };
+        }
     }
 }
 
