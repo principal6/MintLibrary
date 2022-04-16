@@ -146,7 +146,7 @@ namespace mint
                 Float2              _resizableMinSize;
         
             public:
-                struct Traits
+                struct GeneralTraits
                 {
                     union
                     {
@@ -158,7 +158,7 @@ namespace mint
                         };
                     };
                 };
-                Traits              _traits;
+                GeneralTraits       _generalTraits;
 
             private:
                 ControlID           _ID;

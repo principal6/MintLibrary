@@ -176,8 +176,8 @@ namespace mint
                     controlData._resizingMask.setAllTrue();
 
                     controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
-                    controlData._traits._isFocusable = true;
-                    controlData._traits._isDraggable = true;
+                    controlData._generalTraits._isFocusable = true;
+                    controlData._generalTraits._isDraggable = true;
                 }
                 nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
                 nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
@@ -459,7 +459,7 @@ namespace mint
 
             void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
             {
-                if (controlData._traits._isFocusable == false)
+                if (controlData._generalTraits._isFocusable == false)
                 {
                     return;
                 }
@@ -526,7 +526,7 @@ namespace mint
 
             void GUIContext::updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData)
             {
-                if (controlData._traits._isDraggable == false)
+                if (controlData._generalTraits._isDraggable == false)
                 {
                     return;
                 }
