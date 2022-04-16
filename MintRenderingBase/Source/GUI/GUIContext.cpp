@@ -326,7 +326,7 @@ namespace mint
                 }
 
                 const InputContext& inputContext = InputContext::getInstance();
-                const ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
+                const ControlData::ResizingFlags& resizingFlags = _resizingModule.getResizingFlags();
                 selectResizingCursorType(resizingFlags);
 
                 Float2 displacementSize = inputContext.getMousePosition() - _resizingModule.getMousePressedPosition();
@@ -506,7 +506,7 @@ namespace mint
                 if (outerRect.contains(mousePosition) == true && innerRect.contains(mousePosition) == false)
                 {
                     // Hover
-                    const ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
+                    const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
                     selectResizingCursorType(resizingInteraction);
                 }
 
@@ -514,7 +514,7 @@ namespace mint
                 {
                     if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
                     {
-                        const ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
+                        const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
                         _resizingModule.begin(controlData, _mousePressedPosition, &resizingInteraction);
                     }
                 }
@@ -572,7 +572,7 @@ namespace mint
                 _nextControlDesc._renderingDesc._padding = _theme._defaultPadding;
             }
 
-            void GUIContext::selectResizingCursorType(const ResizingFlags& resizingFlags)
+            void GUIContext::selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags)
             {
                 if ((resizingFlags._top && resizingFlags._left) || (resizingFlags._bottom && resizingFlags._right))
                 {

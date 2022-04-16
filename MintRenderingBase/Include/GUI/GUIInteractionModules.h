@@ -47,19 +47,19 @@ namespace mint
             class ResizingModule final : public InteractionModule
             {
             public:
-                static void                 makeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect);
-                static ResizingFlags        makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
+                static void                         makeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect);
+                static ControlData::ResizingFlags   makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
 
             public:
-                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) override;
+                virtual const bool                  begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) override;
 
             public:
-                MINT_INLINE const Float2&   getInitialControlSize() const { return _initialControlSize; }
-                MINT_INLINE const ResizingFlags&    getResizingFlags() const { return _resizingFlags; }
+                MINT_INLINE const Float2&           getInitialControlSize() const { return _initialControlSize; }
+                MINT_INLINE const ControlData::ResizingFlags&   getResizingFlags() const { return _resizingFlags; }
 
             private:
-                Float2                      _initialControlSize;
-                ResizingFlags               _resizingFlags;
+                Float2                              _initialControlSize;
+                ControlData::ResizingFlags          _resizingFlags;
             };
 
 

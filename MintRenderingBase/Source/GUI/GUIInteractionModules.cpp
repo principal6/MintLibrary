@@ -49,9 +49,9 @@ namespace mint
                 innerRect.shrinkByQuantity(innerResizingDistances);
             }
 
-            ResizingFlags ResizingModule::makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
+            ControlData::ResizingFlags ResizingModule::makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect)
             {
-                ResizingFlags resizingInteraction;
+                ControlData::ResizingFlags resizingInteraction;
                 if (mousePosition._y >= outerRect.top() && mousePosition._y <= innerRect.top())
                 {
                     resizingInteraction._top = true;
@@ -80,7 +80,7 @@ namespace mint
                     return false;
                 }
 
-                const ResizingFlags& resizingFlags = *reinterpret_cast<const ResizingFlags*>(customData);
+                const ControlData::ResizingFlags& resizingFlags = *reinterpret_cast<const ControlData::ResizingFlags*>(customData);
                 if (resizingFlags.isAllFalse() == true)
                 {
                     return false;

@@ -143,7 +143,7 @@ namespace mint
                 void                            updateControlData_resetNextControlDesc();
 
             private:
-                void                            selectResizingCursorType(const ResizingFlags& resizingFlags);
+                void                            selectResizingCursorType(const ControlData::ResizingFlags& resizingFlags);
 
             // Internal rendering functions
             private:
