@@ -27,8 +27,8 @@ namespace mint
                     return (isPressing ? _pressedColor : (isHovering ? _hoveredColor : _normalColor));
                 };
 
-                Color   _normalColor = Color(0.375f, 0.375f, 0.375f);
-                Color   _hoveredColor = Color(0.625f, 0.625f, 0.625f);
+                Color   _normalColor = Color(0.28125f, 0.28125f, 0.28125f);
+                Color   _hoveredColor = _normalColor.cloneScaleRGB(1.5f);
                 Color   _pressedColor = Color(0.25f, 0.375f, 0.5f);
             };
 
@@ -51,9 +51,9 @@ namespace mint
                 HoverPressColorSet  _closeButtonColorSet = HoverPressColorSet(Color(1.0f, 0.25f, 0.25f), Color(1.0f, 0.375f, 0.375f), Color(1.0f, 0.5f, 0.5f));
                 Color   _defaultLabelBackgroundColor = Color::kTransparent;
 
-                Color   _windowBackgroundColor = Color(0.125f, 0.125f, 0.125f, 0.875f);
-                Color   _windowTitleBarFocusedColor = _windowBackgroundColor.cloneAddRGB(-0.0625f);
-                Color   _windowTitleBarUnfocusedColor = _windowTitleBarFocusedColor.cloneScaleRGB(4.0f);
+                Color   _windowBackgroundColor = _hoverPressColorSet._normalColor.cloneScaleRGB(2.0f / 3.0f);
+                Color   _windowTitleBarFocusedColor = _hoverPressColorSet._normalColor.cloneScaleRGB(0.5f);
+                Color   _windowTitleBarUnfocusedColor = _hoverPressColorSet._normalColor;
             };
         }
     }
