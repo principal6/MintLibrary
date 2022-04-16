@@ -51,7 +51,7 @@ namespace mint
                 HoverPressColorSet  _closeButtonColorSet = HoverPressColorSet(Color(1.0f, 0.25f, 0.25f), Color(1.0f, 0.375f, 0.375f), Color(1.0f, 0.5f, 0.5f));
                 Color   _defaultLabelBackgroundColor = Color::kTransparent;
 
-                Color   _windowBackgroundColor = _hoverPressColorSet._normalColor.cloneScaleRGB(2.0f / 3.0f);
+                Color   _windowBackgroundColor = _hoverPressColorSet._normalColor.cloneScaleRGB(2.0f / 3.0f).cloneScaleA(0.9375f);
                 Color   _windowTitleBarFocusedColor = _hoverPressColorSet._normalColor.cloneScaleRGB(0.5f);
                 Color   _windowTitleBarUnfocusedColor = _hoverPressColorSet._normalColor;
             };
