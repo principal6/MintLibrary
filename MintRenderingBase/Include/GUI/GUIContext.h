@@ -198,7 +198,7 @@ namespace mint
                 HashMap<ControlID, ControlData> _controlDataMap;
                 Vector<ControlID>               _controlStack;
                 ControlID                       _rootControlID;
-                Vector<ControlID>               _controlIDsOfThisFrame;
+                Vector<ControlID>               _controlIDsOfCurrentFrame;
 
             private:
                 // Interaction

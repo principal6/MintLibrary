@@ -93,13 +93,13 @@ namespace mint
 
                 if (_debugSwitch._raw != 0)
                 {
-                    for (const ControlID& controlID : _controlIDsOfThisFrame)
+                    for (const ControlID& controlID : _controlIDsOfCurrentFrame)
                     {
                         ControlData& controlData = accessControlData(controlID);
                         debugRender_control(controlData);
                     }
                 }
-                _controlIDsOfThisFrame.clear();
+                _controlIDsOfCurrentFrame.clear();
 
                 _graphicDevice.accessWindow().setCursorType(_currentCursor);
 
@@ -137,7 +137,7 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Label;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlData.getID());
-                _controlIDsOfThisFrame.push_back(controlID);
+                _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
@@ -150,7 +150,7 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Button;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlData.getID());
-                _controlIDsOfThisFrame.push_back(controlID);
+                _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
@@ -164,7 +164,7 @@ namespace mint
                 static constexpr ControlType kControlType = ControlType::Window;
                 ControlData& parentControlData = accessStackParentControlData();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
-                _controlIDsOfThisFrame.push_back(controlID);
+                _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 const bool isNewlyCreated = (controlData.getAccessCount() == 0);
@@ -178,6 +178,9 @@ namespace mint
                     controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
                     controlData._generalTraits._isFocusable = true;
                     controlData._generalTraits._isDraggable = true;
+                    controlData._dockingTraits._isDock = true;
+                    controlData._dockingTraits._isShip = true;
+                    controlData._dockingState._raw = 0;
                 }
                 nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
                 nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
