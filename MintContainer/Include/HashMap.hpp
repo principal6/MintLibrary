@@ -325,7 +325,7 @@ namespace mint
     template<typename Key, typename Value>
     inline Value& HashMap<Key, Value>::getInvalidValue() noexcept
     {
-        static Value invalidValue;
+        static Value invalidValue{};
         return invalidValue;
     }
 
