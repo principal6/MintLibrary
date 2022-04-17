@@ -12,6 +12,7 @@
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/GUI/ControlData.hpp>
+#include <MintRenderingBase/Include/GUI/GUIInteractionModule.hpp>
 
 #include <MintPlatform/Include/WindowsWindow.h>
 #include <MintPlatform/Include/InputContext.h>
@@ -475,7 +476,12 @@ namespace mint
                     || _resizingModule.isInteractingWith(controlData) == true)
                 {
                     _focusingModule.end();
-                    _focusingModule.begin(controlData, _mousePressedPosition);
+
+                    InteractionMousePressModuleInput interactionMousePressModuleInput;
+                    interactionMousePressModuleInput._controlID = controlData.getID();
+                    interactionMousePressModuleInput._controlPosition = controlData._absolutePosition;
+                    interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
+                    _focusingModule.begin(interactionMousePressModuleInput);
                 }
             }
 
@@ -514,8 +520,13 @@ namespace mint
                 {
                     if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
                     {
-                        const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
-                        _resizingModule.begin(controlData, _mousePressedPosition, &resizingInteraction);
+                        ResizingModuleInput resizingModuleInput;
+                        resizingModuleInput._controlID = controlData.getID();
+                        resizingModuleInput._controlPosition = controlData._absolutePosition;
+                        resizingModuleInput._controlSize = controlData._size;
+                        resizingModuleInput._mousePressedPosition = _mousePressedPosition;
+                        resizingModuleInput._resizingInteraction = ResizingModule::makeResizingFlags(_mousePressedPosition, controlData, outerRect, innerRect);
+                        _resizingModule.begin(resizingModuleInput);
                     }
                 }
                 else
@@ -559,7 +570,11 @@ namespace mint
                 const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
                 if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {
-                    _draggingModule.begin(controlData, _mousePressedPosition);
+                    InteractionMousePressModuleInput interactionMousePressModuleInput;
+                    interactionMousePressModuleInput._controlID = controlData.getID();
+                    interactionMousePressModuleInput._controlPosition = controlData._absolutePosition;
+                    interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
+                    _draggingModule.begin(interactionMousePressModuleInput);
                 }
             }
 

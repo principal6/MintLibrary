@@ -207,6 +207,7 @@
     <ClInclude Include="Include\GUI\ControlData.h" />
     <ClInclude Include="Include\GUI\ControlData.hpp" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
+    <ClInclude Include="Include\GUI\GUIInteractionModule.hpp" />
     <ClInclude Include="Include\GUI\GUIInteractionModules.h" />
     <ClInclude Include="Include\GUI\GUITheme.h" />
     <ClInclude Include="Include\IDxObject.h" />

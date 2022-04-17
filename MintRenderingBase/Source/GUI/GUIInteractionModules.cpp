@@ -8,37 +8,6 @@ namespace mint
     {
         namespace GUI
         {
-#pragma region InteractionModule
-            const bool InteractionModule::isInteracting() const
-            {
-                return _controlID.isValid();
-            }
-
-            const bool InteractionModule::isInteractingWith(const ControlData& controlData) const
-            {
-                return _controlID == controlData.getID();
-            }
-
-            Float2 InteractionModule::computeRelativeMousePressedPosition() const
-            {
-                return _mousePressedPosition - _initialControlPosition;
-            }
-
-            const bool InteractionModule::beginInternal(const ControlData& controlData, const Float2& mousePressedPosition)
-            {
-                if (isInteracting())
-                {
-                    return false;
-                }
-
-                _controlID = controlData.getID();
-                _initialControlPosition = controlData._absolutePosition;
-                _mousePressedPosition = mousePressedPosition;
-                return true;
-            }
-#pragma endregion
-
-
 #pragma region ResizingModule
             void ResizingModule::makeOuterAndInenrRects(const ControlData& controlData, const Rect& outerResizingDistances, const Rect& innerResizingDistances, Rect& outerRect, Rect& innerRect)
             {
@@ -72,28 +41,14 @@ namespace mint
                 return resizingInteraction;
             }
 
-            const bool ResizingModule::begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData)
+            const bool ResizingModule::begin(const ResizingModuleInput& resizingModuleInput)
             {
-                if (customData == nullptr)
-                {
-                    MINT_NEVER;
-                    return false;
-                }
-
-                const ControlData::ResizingFlags& resizingFlags = *reinterpret_cast<const ControlData::ResizingFlags*>(customData);
-                if (resizingFlags.isAllFalse() == true)
+                if (resizingModuleInput._resizingInteraction.isAllFalse() == true)
                 {
                     return false;
                 }
 
-                if (beginInternal(controlData, mousePressedPosition) == false)
-                {
-                    return false;
-                }
-
-                _initialControlSize = controlData._size;
-                _resizingFlags = resizingFlags;
-                return true;
+                return __super::begin(resizingModuleInput);
             }
 #pragma endregion
         }
