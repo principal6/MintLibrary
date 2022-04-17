@@ -17,30 +17,31 @@ namespace mint
             class InteractionModule
             {
             public:
-                const bool                  isInteracting() const;
-                const bool                  isInteracting(const ControlData& controlData) const;
-                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) abstract;
-                MINT_INLINE virtual void    end() { _controlID.invalidate(); }
+                const bool                      isInteracting() const;
+                const bool                      isInteractingWith(const ControlData& controlData) const;
+                virtual const bool              begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData) abstract;
+                MINT_INLINE virtual void        end() { _controlID.invalidate(); }
 
             public:
-                Float2                      computeRelativeMousePressedPosition() const;
-                MINT_INLINE const Float2&   getMousePressedPosition() const { return _mousePressedPosition; }
-                MINT_INLINE const Float2&   getInitialControlPosition() const { return _initialControlPosition; }
+                Float2                          computeRelativeMousePressedPosition() const;
+                MINT_INLINE const Float2&       getMousePressedPosition() const { return _mousePressedPosition; }
+                MINT_INLINE const Float2&       getInitialControlPosition() const { return _initialControlPosition; }
+                MINT_INLINE const ControlID&    getControlID() const { return _controlID; }
 
             protected:
-                const bool                  beginInternal(const ControlData& controlData, const Float2& mousePressedPosition);
+                const bool                      beginInternal(const ControlData& controlData, const Float2& mousePressedPosition);
 
             protected:
-                ControlID                   _controlID;
-                Float2                      _mousePressedPosition = Float2::kNan;
-                Float2                      _initialControlPosition = Float2::kNan;
+                ControlID                       _controlID;
+                Float2                          _mousePressedPosition = Float2::kNan;
+                Float2                          _initialControlPosition = Float2::kNan;
             };
 
 
             class DraggingModule final : public InteractionModule
             {
             public:
-                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
+                virtual const bool              begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
             };
 
 
@@ -66,7 +67,7 @@ namespace mint
             class FocusingModule final : public InteractionModule
             {
             public:
-                virtual const bool          begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
+                virtual const bool              begin(const ControlData& controlData, const Float2& mousePressedPosition, const void* const customData = nullptr) override { return beginInternal(controlData, mousePressedPosition); }
             };
         }
     }

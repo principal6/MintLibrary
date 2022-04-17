@@ -14,7 +14,7 @@ namespace mint
                 return _controlID.isValid();
             }
 
-            const bool InteractionModule::isInteracting(const ControlData& controlData) const
+            const bool InteractionModule::isInteractingWith(const ControlData& controlData) const
             {
                 return _controlID == controlData.getID();
             }

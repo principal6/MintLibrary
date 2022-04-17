@@ -178,9 +178,6 @@ namespace mint
                     controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
                     controlData._generalTraits._isFocusable = true;
                     controlData._generalTraits._isDraggable = true;
-                    controlData._dockingTraits._isDock = true;
-                    controlData._dockingTraits._isShip = true;
-                    controlData._dockingState._raw = 0;
                 }
                 nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
                 nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
@@ -265,7 +262,7 @@ namespace mint
                 _rendererContext.setColor(_theme._windowBackgroundColor);
                 _rendererContext.setPosition(computeShapePosition(controlDesc));
 
-                const bool isFocused = _focusingModule.isInteracting(controlData);
+                const bool isFocused = _focusingModule.isInteractingWith(controlData);
                 const float titleBarHeight = controlData._zones._titleBarZone.vert();
                 ScopeVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
@@ -323,7 +320,7 @@ namespace mint
 
             void GUIContext::updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData)
             {
-                if (_resizingModule.isInteracting(controlData) == false)
+                if (_resizingModule.isInteractingWith(controlData) == false)
                 {
                     return;
                 }
@@ -372,7 +369,7 @@ namespace mint
 
             void GUIContext::updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData)
             {
-                if (_draggingModule.isInteracting(controlData) == false)
+                if (_draggingModule.isInteractingWith(controlData) == false)
                 {
                     return;
                 }
@@ -468,14 +465,14 @@ namespace mint
                 }
 
                 // 이미 Focus 되어 있는 컨트롤
-                if (_focusingModule.isInteracting(controlData) == true)
+                if (_focusingModule.isInteractingWith(controlData) == true)
                 {
                     return;
                 }
 
                 if (controlData._interactionState == ControlData::InteractionState::Clicked
-                    || _draggingModule.isInteracting(controlData) == true
-                    || _resizingModule.isInteracting(controlData) == true)
+                    || _draggingModule.isInteractingWith(controlData) == true
+                    || _resizingModule.isInteractingWith(controlData) == true)
                 {
                     _focusingModule.end();
                     _focusingModule.begin(controlData, _mousePressedPosition);
@@ -549,7 +546,7 @@ namespace mint
                 }
 
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-                if (_draggingModule.isInteracting(parentControlData))
+                if (_draggingModule.isInteractingWith(parentControlData))
                 {
                     const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
                     if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
@@ -668,7 +665,7 @@ namespace mint
                 if (_debugSwitch._renderMousePoints)
                 {
                     static const float POINT_RADIUS = 4.0f;
-                    if (_draggingModule.isInteracting(controlData))
+                    if (_draggingModule.isInteractingWith(controlData))
                     {
                         const InputContext& inputContext = InputContext::getInstance();
                         _rendererContext.setColor(Color::kBlue);
