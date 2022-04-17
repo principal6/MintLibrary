@@ -593,6 +593,13 @@ const bool testWindow()
             window1Desc._initialSize = Float2(200, 300);
             if (guiContext.beginWindow(MINT_FILE_LINE, window1Desc))
             {
+
+                ButtonDesc button5Desc;
+                button5Desc._text = L"버튼1-1";
+                if (guiContext.makeButton(MINT_FILE_LINE, button5Desc))
+                {
+                }
+
                 guiContext.endWindow();
             }
 

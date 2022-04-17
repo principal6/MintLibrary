@@ -17,9 +17,9 @@ namespace mint
             }
 
             template<typename Input>
-            inline const bool InteractionMousePressModule<Input>::isInteractingWith(const ControlData& controlData) const
+            inline const bool InteractionMousePressModule<Input>::isInteractingWith(const ControlID& controlID) const
             {
-                return _input._controlID == controlData.getID();
+                return _input._controlID == controlID;
             }
 
             template<typename Input>

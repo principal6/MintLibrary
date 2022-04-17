@@ -140,6 +140,7 @@ namespace mint
                 void                            updateControlData_interaction_focusing(ControlData& controlData);
                 void                            updateControlData_interaction_resizing(ControlData& controlData);
                 void                            updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
+                void                            updateControlData_interaction_docking(ControlData& controlData, const ControlData& parentControlData);
                 void                            updateControlData_resetNextControlDesc();
 
             private:
@@ -206,6 +207,7 @@ namespace mint
                 DraggingModule                  _draggingModule;
                 ResizingModule                  _resizingModule;
                 FocusingModule                  _focusingModule;
+                DockingModule                   _dockingModule;
             };
         }
     }

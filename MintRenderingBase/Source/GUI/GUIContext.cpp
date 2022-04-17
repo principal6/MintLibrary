@@ -260,14 +260,18 @@ namespace mint
 
             void GUIContext::beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData)
             {
-                _rendererContext.setColor(_theme._windowBackgroundColor);
                 _rendererContext.setPosition(computeShapePosition(controlDesc));
 
-                const bool isFocused = _focusingModule.isInteractingWith(controlData);
+                const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
                 const float titleBarHeight = controlData._zones._titleBarZone.vert();
                 ScopeVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
                 splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
+                if (_dockingModule.isShipControl(controlData.getID()))
+                {
+                    splits[0]._color = _theme._shipCandidateTitleBarColor;
+                    splits[1]._color = _theme._shipCandidateBackgroundColor;
+                }
                 _rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
                 FontRenderingOption fontRenderingOption;
@@ -321,7 +325,7 @@ namespace mint
 
             void GUIContext::updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData)
             {
-                if (_resizingModule.isInteractingWith(controlData) == false)
+                if (_resizingModule.isInteractingWith(controlData.getID()) == false)
                 {
                     return;
                 }
@@ -370,7 +374,7 @@ namespace mint
 
             void GUIContext::updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData)
             {
-                if (_draggingModule.isInteractingWith(controlData) == false)
+                if (_draggingModule.isInteractingWith(controlData.getID()) == false)
                 {
                     return;
                 }
@@ -456,6 +460,7 @@ namespace mint
                 updateControlData_interaction_focusing(controlData);
                 updateControlData_interaction_resizing(controlData);
                 updateControlData_interaction_dragging(controlData, parentControlData);
+                updateControlData_interaction_docking(controlData, parentControlData);
             }
 
             void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
@@ -466,14 +471,14 @@ namespace mint
                 }
 
                 // 이미 Focus 되어 있는 컨트롤
-                if (_focusingModule.isInteractingWith(controlData) == true)
+                if (_focusingModule.isInteractingWith(controlData.getID()) == true)
                 {
                     return;
                 }
 
                 if (controlData._interactionState == ControlData::InteractionState::Clicked
-                    || _draggingModule.isInteractingWith(controlData) == true
-                    || _resizingModule.isInteractingWith(controlData) == true)
+                    || _draggingModule.isInteractingWith(controlData.getID()) == true
+                    || _resizingModule.isInteractingWith(controlData.getID()) == true)
                 {
                     _focusingModule.end();
 
@@ -557,7 +562,7 @@ namespace mint
                 }
 
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
-                if (_draggingModule.isInteractingWith(parentControlData))
+                if (_draggingModule.isInteractingWith(parentControlData.getID()))
                 {
                     const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
                     if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
@@ -576,6 +581,40 @@ namespace mint
                     interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
                     _draggingModule.begin(interactionMousePressModuleInput);
                 }
+            }
+
+            void GUIContext::updateControlData_interaction_docking(ControlData& controlData, const ControlData& parentControlData)
+            {
+                if (_dockingModule.isDockControl(controlData.getID()) == true && _dockingModule.isShipControl(_draggingModule.getControlID()) == true)
+                {
+                    if (controlData._interactionState == ControlData::InteractionState::None)
+                    {
+                        _dockingModule.end();
+                    }
+                    return;
+                }
+
+                if (_draggingModule.isInteracting() == false)
+                {
+                    _dockingModule.end();
+                    return;
+                }
+
+                // 나 자신에게 docking 할 수는 없으므로
+                if (_draggingModule.isInteractingWith(controlData.getID()))
+                {
+                    return;
+                }
+
+                if (controlData._interactionState == ControlData::InteractionState::None)
+                {
+                    return;
+                }
+
+                DockingModuleInput dockingModuleInput;
+                dockingModuleInput._dockControlID = controlData.getID();
+                dockingModuleInput._shipControlID = _draggingModule.getControlID();
+                _dockingModule.begin(dockingModuleInput);
             }
 
             void GUIContext::updateControlData_resetNextControlDesc()
@@ -680,7 +719,7 @@ namespace mint
                 if (_debugSwitch._renderMousePoints)
                 {
                     static const float POINT_RADIUS = 4.0f;
-                    if (_draggingModule.isInteractingWith(controlData))
+                    if (_draggingModule.isInteractingWith(controlData.getID()))
                     {
                         const InputContext& inputContext = InputContext::getInstance();
                         _rendererContext.setColor(Color::kBlue);

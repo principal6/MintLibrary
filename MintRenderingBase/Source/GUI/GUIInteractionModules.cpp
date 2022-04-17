@@ -51,6 +51,41 @@ namespace mint
                 return __super::begin(resizingModuleInput);
             }
 #pragma endregion
+
+
+#pragma region DockingModule
+            const bool DockingModule::isInteracting() const
+            {
+                return _input._shipControlID.isValid();
+            }
+
+            const bool DockingModule::isDockControl(const ControlID& controlID) const
+            {
+                return _input._dockControlID == controlID;
+            }
+
+            const bool DockingModule::isShipControl(const ControlID& controlID) const
+            {
+                return _input._shipControlID == controlID;
+            }
+
+            const bool DockingModule::begin(const DockingModuleInput& input)
+            {
+                if (isInteracting())
+                {
+                    return false;
+                }
+
+                _input = input;
+                return true;
+            }
+
+            void DockingModule::end()
+            {
+                _input._dockControlID.invalidate();
+                _input._shipControlID.invalidate();
+            }
+#pragma endregion
         }
     }
 }

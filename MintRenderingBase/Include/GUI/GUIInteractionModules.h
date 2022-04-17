@@ -19,11 +19,11 @@ namespace mint
             class InteractionModule
             {
             public:
-                virtual const bool              isInteracting() const abstract;
-                virtual const bool              isInteractingWith(const ControlData& controlData) const abstract;
-
                 virtual const bool              begin(const Input& input) abstract;
                 virtual void                    end() abstract;
+
+            public:
+                virtual const bool              isInteracting() const abstract;
             };
 #pragma endregion
 
@@ -40,11 +40,12 @@ namespace mint
             class InteractionMousePressModule : public InteractionModule<Input>
             {
             public:
-                virtual const bool              isInteracting() const override;
-                virtual const bool              isInteractingWith(const ControlData& controlData) const override;
-
                 virtual const bool              begin(const Input& input) override;
                 virtual void                    end() override;
+
+            public:
+                virtual const bool              isInteracting() const override;
+                virtual const bool              isInteractingWith(const ControlID& controlID) const;
 
             public:
                 Float2                          computeRelativeMousePressedPosition() const;
@@ -79,6 +80,31 @@ namespace mint
             public:
                 MINT_INLINE const Float2&           getInitialControlSize() const { return _input._controlSize; }
                 MINT_INLINE const ControlData::ResizingFlags&   getResizingFlags() const { return _input._resizingInteraction; }
+            };
+
+
+            struct DockingModuleInput
+            {
+                ControlID _dockControlID;
+                ControlID _shipControlID;
+            };
+            class DockingModule final : public InteractionModule<DockingModuleInput>
+            {
+            public:
+                virtual const bool              begin(const DockingModuleInput& dockingShipModuleInput) override;
+                virtual void                    end() override;
+
+            public:
+                virtual const bool              isInteracting() const override;
+                const bool                      isDockControl(const ControlID& controlID) const;
+                const bool                      isShipControl(const ControlID& controlID) const;
+            
+            public:
+                const ControlID&                getDockControlID() const { return _input._dockControlID; }
+                const ControlID&                getShipControlID() const { return _input._shipControlID; }
+
+            private:
+                DockingModuleInput          _input;
             };
         }
     }

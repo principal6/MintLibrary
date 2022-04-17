@@ -54,6 +54,9 @@ namespace mint
                 Color   _windowBackgroundColor = _hoverPressColorSet._normalColor.cloneScaleRGB(2.0f / 3.0f).cloneScaleA(0.9375f);
                 Color   _windowTitleBarFocusedColor = _hoverPressColorSet._normalColor.cloneScaleRGB(0.5f);
                 Color   _windowTitleBarUnfocusedColor = _hoverPressColorSet._normalColor;
+
+                Color   _shipCandidateTitleBarColor = _hoverPressColorSet._pressedColor;
+                Color   _shipCandidateBackgroundColor = _shipCandidateTitleBarColor.cloneScaleRGB(1.25f);
             };
         }
     }
