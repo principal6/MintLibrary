@@ -39,9 +39,9 @@ namespace mint
 
     public:
         constexpr uint32    capacity() const { return Capacity; }
-        const uint32        size() const { return _size; }
-        const bool          empty() const { return size() == 0; }
-        const bool          full() const { return size() == Capacity; }
+        uint32              size() const { return _size; }
+        bool                empty() const { return size() == 0; }
+        bool                full() const { return size() == Capacity; }
 
     private:
         T           _array[Capacity];

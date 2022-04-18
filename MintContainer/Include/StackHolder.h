@@ -32,9 +32,9 @@ namespace mint
         void                                            deregisterSpace(byte*& ptr);
 
     private:
-        const bool                                      canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
-        const bool                                      canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
-        const bool                                      isInsider(const byte* const ptr) const noexcept;
+        bool                                            canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
+        bool                                            canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
+        bool                                            isInsider(const byte* const ptr) const noexcept;
 
     private:
         static constexpr uint32                         kBitMaskByteCount = sizeof(BitMaskType) * kBitsPerByte;
