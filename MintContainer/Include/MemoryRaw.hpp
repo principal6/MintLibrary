@@ -16,49 +16,49 @@ namespace mint
     {
 #pragma region Type Traits
         template<typename T>
-        MINT_INLINE constexpr const bool isConstructible() noexcept
+        MINT_INLINE constexpr bool isConstructible() noexcept
         {
             return (isDefaultConstructible<T>() || isCopyConstructible<T>() || isMoveConstructible<T>());
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isDefaultConstructible() noexcept
+        MINT_INLINE constexpr bool isDefaultConstructible() noexcept
         {
             return (std::is_default_constructible<T>::value == true);
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isCopyConstructible() noexcept
+        MINT_INLINE constexpr bool isCopyConstructible() noexcept
         {
             return (std::is_copy_constructible<T>::value == true);
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isCopyAssignable() noexcept
+        MINT_INLINE constexpr bool isCopyAssignable() noexcept
         {
             return (std::is_copy_assignable<T>::value == true);
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isCopiable() noexcept
+        MINT_INLINE constexpr bool isCopiable() noexcept
         {
             return (isCopyConstructible<T>() || isCopyAssignable<T>());
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isMoveConstructible() noexcept
+        MINT_INLINE constexpr bool isMoveConstructible() noexcept
         {
             return (std::is_move_constructible<T>::value == true);
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isMoveAssignable() noexcept
+        MINT_INLINE constexpr bool isMoveAssignable() noexcept
         {
             return (std::is_move_assignable<T>::value == true);
         }
 
         template<typename T>
-        MINT_INLINE constexpr const bool isMovable() noexcept
+        MINT_INLINE constexpr bool isMovable() noexcept
         {
             return (isMoveConstructible<T>() || isMoveAssignable<T>());
         }

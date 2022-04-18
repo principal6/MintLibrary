@@ -50,17 +50,17 @@ namespace mint
 
     namespace StringUtil
     {
-        const bool      isNullOrEmpty(const char* const rawString);
-        const bool      isNullOrEmpty(const wchar_t* const rawWideString);
+        bool            isNullOrEmpty(const char* const rawString);
+        bool            isNullOrEmpty(const wchar_t* const rawWideString);
         
-        const uint32    length(const char* const rawString);
-        const uint32    length(const wchar_t* const rawWideString);
+        uint32          length(const char* const rawString);
+        uint32          length(const wchar_t* const rawWideString);
 
         template <typename T>
-        const uint32    find(const T* const source, const T* const target, const uint32 offset = 0);
+        uint32          find(const T* const source, const T* const target, const uint32 offset = 0);
 
-        const bool      compare(const char* const a, const char* const b);
-        const bool      compare(const wchar_t* const a, const wchar_t* const b);
+        bool            compare(const char* const a, const char* const b);
+        bool            compare(const wchar_t* const a, const wchar_t* const b);
         
         template <uint32 DestSize>
         void            copy(char(&dest)[DestSize], const char* const source);

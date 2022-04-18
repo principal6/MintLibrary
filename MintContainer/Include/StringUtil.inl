@@ -6,17 +6,17 @@ namespace mint
 {
     namespace StringUtil
     {
-        MINT_INLINE const bool isNullOrEmpty(const char* const rawString)
+        MINT_INLINE bool isNullOrEmpty(const char* const rawString)
         {
             return (rawString == nullptr || rawString[0] == '\0');
         }
 
-        MINT_INLINE const bool isNullOrEmpty(const wchar_t* const rawWideString)
+        MINT_INLINE bool isNullOrEmpty(const wchar_t* const rawWideString)
         {
             return (rawWideString == nullptr || rawWideString[0] == L'\0');
         }
 
-        MINT_INLINE const uint32 length(const char* const rawString)
+        MINT_INLINE uint32 length(const char* const rawString)
         {
             if (isNullOrEmpty(rawString) == true)
             {
@@ -25,7 +25,7 @@ namespace mint
             return static_cast<uint32>(::strlen(rawString));
         }
 
-        MINT_INLINE const uint32 length(const wchar_t* const rawWideString)
+        MINT_INLINE uint32 length(const wchar_t* const rawWideString)
         {
             if (isNullOrEmpty(rawWideString) == true)
             {
@@ -35,15 +35,15 @@ namespace mint
         }
 
         template <typename T>
-        MINT_INLINE const uint32 find(const T* const source, const T* const target, const uint32 offset)
+        MINT_INLINE uint32 find(const T* const source, const T* const target, uint32 offset)
         {
             if (source == nullptr || target == nullptr)
             {
                 return kStringNPos;
             }
 
-            const uint32 sourceLength = StringUtil::length(source);
-            const uint32 targetLength = StringUtil::length(target);
+            uint32 sourceLength = StringUtil::length(source);
+            uint32 targetLength = StringUtil::length(target);
             if (sourceLength < offset + targetLength)
             {
                 return kStringNPos;
@@ -76,12 +76,12 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const bool compare(const char* const a, const char* const b)
+        MINT_INLINE bool compare(const char* const a, const char* const b)
         {
             return (::strcmp(a, b) == 0);
         }
         
-        MINT_INLINE const bool compare(const wchar_t* const a, const wchar_t* const b)
+        MINT_INLINE bool compare(const wchar_t* const a, const wchar_t* const b)
         {
             return (::wcscmp(a, b) == 0);
         }

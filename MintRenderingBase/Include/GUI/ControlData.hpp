@@ -15,7 +15,7 @@
 namespace mint
 {
     template<>
-    inline const uint64 Hasher<Rendering::GUI::ControlID>::operator()(const Rendering::GUI::ControlID& value) const noexcept
+    inline uint64 Hasher<Rendering::GUI::ControlID>::operator()(const Rendering::GUI::ControlID& value) const noexcept
     {
         return computeHash(value.getRawID());
     }

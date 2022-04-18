@@ -167,7 +167,7 @@ namespace mint
             ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
         }
 
-        MINT_INLINE const size_t computeExtenstionAt(std::string& inoutText)
+        MINT_INLINE size_t computeExtenstionAt(std::string& inoutText)
         {
             const size_t length = inoutText.size();
             size_t found = inoutText.find('.', 1);
@@ -182,7 +182,7 @@ namespace mint
             return std::string::npos;
         }
 
-        MINT_INLINE const bool hasExtension(std::string& inoutText)
+        MINT_INLINE bool hasExtension(std::string& inoutText)
         {
             const size_t found = computeExtenstionAt(inoutText);
             return (found != std::string::npos);
