@@ -121,13 +121,13 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE const bool AffineVec<float>::operator==(const AffineVec& rhs) const noexcept
+    MINT_INLINE bool AffineVec<float>::operator==(const AffineVec& rhs) const noexcept
     {
         const __m128 cmpResult = _mm_cmpeq_ps(_raw, rhs._raw);
         return (cmpResult.m128_i32[0] < 0) && (cmpResult.m128_i32[1] < 0) && (cmpResult.m128_i32[2] < 0) && (cmpResult.m128_i32[3] < 0);
     }
 
-    MINT_INLINE const bool AffineVec<float>::operator!=(const AffineVec& rhs) const noexcept
+    MINT_INLINE bool AffineVec<float>::operator!=(const AffineVec& rhs) const noexcept
     {
         const __m128 cmpResult = _mm_cmpeq_ps(_raw, rhs._raw);
         return (cmpResult.m128_i32[0] == 0) || (cmpResult.m128_i32[1] == 0) || (cmpResult.m128_i32[2] == 0) || (cmpResult.m128_i32[3] == 0);
@@ -322,13 +322,13 @@ namespace mint
         return *this;
     }
 
-    MINT_INLINE const bool AffineVec<double>::operator==(const AffineVec& rhs) const noexcept
+    MINT_INLINE bool AffineVec<double>::operator==(const AffineVec& rhs) const noexcept
     {
         const __m256d cmpResult = _mm256_cmp_pd(_raw, rhs._raw, _CMP_EQ_OQ);
         return (cmpResult.m256d_f64[0] < 0) && (cmpResult.m256d_f64[1] < 0) && (cmpResult.m256d_f64[2] < 0) && (cmpResult.m256d_f64[3] < 0);
     }
 
-    MINT_INLINE const bool AffineVec<double>::operator!=(const AffineVec& rhs) const noexcept
+    MINT_INLINE bool AffineVec<double>::operator!=(const AffineVec& rhs) const noexcept
     {
         const __m256d cmpResult = _mm256_cmp_pd(_raw, rhs._raw, _CMP_EQ_OQ);
         return (cmpResult.m256d_f64[0] == 0) || (cmpResult.m256d_f64[1] == 0) || (cmpResult.m256d_f64[2] == 0) || (cmpResult.m256d_f64[3] == 0);

@@ -22,10 +22,10 @@ namespace mint
         IID&                            operator=(IID&& rhs) noexcept      = default;
     
     public:
-        const bool                      operator==(const IID& rhs) const noexcept;
-        const bool                      operator!=(const IID& rhs) const noexcept;
-        const bool                      operator<(const IID& rhs) const noexcept;
-        const bool                      operator>(const IID& rhs) const noexcept;
+        bool                            operator==(const IID& rhs) const noexcept;
+        bool                            operator!=(const IID& rhs) const noexcept;
+        bool                            operator<(const IID& rhs) const noexcept;
+        bool                            operator>(const IID& rhs) const noexcept;
 
     public:
         bool                            isValid() const noexcept;

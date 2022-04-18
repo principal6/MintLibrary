@@ -73,25 +73,25 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator==(const T* const rawString) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator==(const T* const rawString) const noexcept
     {
         return compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator==(const ScopeString& rhs) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator==(const ScopeString& rhs) const noexcept
     {
         return compare(rhs);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
     {
         return !compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator!=(const ScopeString& rhs) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator!=(const ScopeString& rhs) const noexcept
     {
         return !compare(rhs);
     }

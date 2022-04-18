@@ -27,10 +27,10 @@ namespace mint
         ScopeString&                operator=(const T* const rawString) noexcept;
 
     public:
-        const bool                  operator==(const T* const rawString) const noexcept;
-        const bool                  operator==(const ScopeString& rhs) const noexcept;
-        const bool                  operator!=(const T* const rawString) const noexcept;
-        const bool                  operator!=(const ScopeString& rhs) const noexcept;
+        bool                        operator==(const T* const rawString) const noexcept;
+        bool                        operator==(const ScopeString& rhs) const noexcept;
+        bool                        operator!=(const T* const rawString) const noexcept;
+        bool                        operator!=(const ScopeString& rhs) const noexcept;
 
     public:
         ScopeString&                operator+=(const T* const rawString) noexcept;

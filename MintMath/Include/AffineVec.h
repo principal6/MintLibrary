@@ -62,8 +62,8 @@ namespace mint
         AffineVec&          operator=(AffineVec&& rhs) noexcept;
     
     public:
-        const bool          operator==(const AffineVec& rhs) const noexcept;
-        const bool          operator!=(const AffineVec& rhs) const noexcept;
+        bool                operator==(const AffineVec& rhs) const noexcept;
+        bool                operator!=(const AffineVec& rhs) const noexcept;
     
     public:
         AffineVec&          operator+() noexcept;
@@ -122,8 +122,8 @@ namespace mint
         AffineVec&          operator=(AffineVec&& rhs) noexcept;
     
     public:
-        const bool          operator==(const AffineVec& rhs) const noexcept;
-        const bool          operator!=(const AffineVec& rhs) const noexcept;
+        bool                operator==(const AffineVec& rhs) const noexcept;
+        bool                operator!=(const AffineVec& rhs) const noexcept;
     
     public:
         AffineVec&          operator+() noexcept;

@@ -3,22 +3,22 @@
 
 namespace mint
 {
-    MINT_INLINE const bool IID::operator==(const IID& rhs) const noexcept
+    MINT_INLINE bool IID::operator==(const IID& rhs) const noexcept
     {
         return _rawID == rhs._rawID;
     }
 
-    MINT_INLINE const bool IID::operator!=(const IID& rhs) const noexcept
+    MINT_INLINE bool IID::operator!=(const IID& rhs) const noexcept
     {
         return _rawID != rhs._rawID;
     }
 
-    MINT_INLINE const bool IID::operator<(const IID& rhs) const noexcept
+    MINT_INLINE bool IID::operator<(const IID& rhs) const noexcept
     {
         return _rawID < rhs._rawID;
     }
 
-    MINT_INLINE const bool IID::operator>(const IID& rhs) const noexcept
+    MINT_INLINE bool IID::operator>(const IID& rhs) const noexcept
     {
         return _rawID > rhs._rawID;
     }
