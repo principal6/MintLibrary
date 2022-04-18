@@ -7,7 +7,7 @@ namespace mint
 {
     namespace TestContainers
     {
-        static const bool testQueue() noexcept
+        static bool testQueue() noexcept
         {
             using Type = int32;
             //using Type = Notable<int32>;
@@ -34,7 +34,7 @@ namespace mint
             return true;
         }
 
-        static const bool testVector() noexcept
+        static bool testVector() noexcept
         {
             using namespace TestContainers;
 
@@ -91,7 +91,7 @@ namespace mint
             return true;
         }
 
-        static const bool testStaticArray() noexcept
+        static bool testStaticArray() noexcept
         {
             using namespace mint;
             constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
@@ -112,7 +112,7 @@ namespace mint
             return true;
         }
 
-        static const bool testStackHolder() noexcept
+        static bool testStackHolder() noexcept
         {
             using namespace mint;
             {
@@ -172,7 +172,7 @@ namespace mint
             return true;
         }
 
-        static const bool testBitVector() noexcept
+        static bool testBitVector() noexcept
         {
             BitVector a;
             a.reserveByteCapacity(4);
@@ -354,7 +354,7 @@ namespace mint
             return true;
         }
 
-        static const bool testHashMap() noexcept
+        static bool testHashMap() noexcept
         {
             HashMap<std::string, std::string> hashMap;
             hashMap.insert("1", "a");
@@ -373,7 +373,7 @@ namespace mint
             return true;
         }
 
-        static const bool testStringTypes() noexcept
+        static bool testStringTypes() noexcept
         {
 #pragma region ScopeString
             {
@@ -497,7 +497,7 @@ namespace mint
             return true;
         }
 
-        static const bool testStringUtil() noexcept
+        static bool testStringUtil() noexcept
         {
             const std::string testA{ "ab c   def g" };
             Vector<std::string> testATokenized;
@@ -526,7 +526,7 @@ namespace mint
             return true;
         }
 
-        static const bool testTree() noexcept
+        static bool testTree() noexcept
         {
             Tree<std::string> stringTree;
             TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
@@ -561,7 +561,7 @@ namespace mint
             return true;
         }
 
-        const bool testAll() noexcept
+        bool testAll() noexcept
         {
             MINT_ASSURE(testStaticArray());
             MINT_ASSURE(testStackHolder());

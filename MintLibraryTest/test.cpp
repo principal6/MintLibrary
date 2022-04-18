@@ -112,7 +112,7 @@ void testFloatTypes()
     }
 }
 
-const bool testFiles()
+bool testFiles()
 {
     using namespace mint;
 
@@ -144,7 +144,7 @@ const bool testFiles()
     return true;
 }
 
-const bool testLanguage()
+bool testLanguage()
 {
     using namespace mint;
     using namespace Language;
@@ -183,7 +183,7 @@ const bool testLanguage()
     return true;
 }
 
-const bool testAlgorithm()
+bool testAlgorithm()
 {
     using namespace mint;
 
@@ -200,7 +200,7 @@ const bool testAlgorithm()
     return true;
 }
 
-const bool testLinearAlgebra()
+bool testLinearAlgebra()
 {
     using namespace mint;
     
@@ -292,7 +292,7 @@ const bool testLinearAlgebra()
     return true;
 }
 
-const bool testWindow()
+bool testWindow()
 {
     using namespace mint;
     using namespace Window;
@@ -640,7 +640,7 @@ const bool testWindow()
     return true;
 }
 
-const bool testAll()
+bool testAll()
 {
     using namespace mint;
 

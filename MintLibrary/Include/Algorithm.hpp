@@ -10,7 +10,7 @@
 namespace mint
 {
     template <typename T>
-    const int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
+    int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -33,7 +33,7 @@ namespace mint
     }
 
     template <typename T>
-    const int32 binarySearch(const Vector<T>& vec, const T& value)
+    int32 binarySearch(const Vector<T>& vec, const T& value)
     {
         if (vec.empty() == true)
         {
@@ -44,7 +44,7 @@ namespace mint
 
 
     template <typename T, typename CompT>
-    const int32 binarySearchInternal(const Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
+    int32 binarySearchInternal(const Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -67,7 +67,7 @@ namespace mint
     }
 
     template<typename T, typename CompT>
-    const int32 binarySearch(const Vector<T>& vec, const CompT& value)
+    int32 binarySearch(const Vector<T>& vec, const CompT& value)
     {
         if (vec.empty() == true)
         {
