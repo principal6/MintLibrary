@@ -38,7 +38,7 @@ namespace mint
         set(_bitCount - 1, value);
     }
 
-    MINT_INLINE const bool BitVector::pop_back()
+    MINT_INLINE bool BitVector::pop_back()
     {
         if (_bitCount > 0)
         {
@@ -117,22 +117,22 @@ namespace mint
         _byteCapacity = newByteCapacity;
     }
 
-    MINT_INLINE const bool BitVector::isEmpty() const noexcept
+    MINT_INLINE bool BitVector::isEmpty() const noexcept
     {
         return (_bitCount == 0);
     }
 
-    MINT_INLINE const bool BitVector::isFull() const noexcept
+    MINT_INLINE bool BitVector::isFull() const noexcept
     {
         return (_byteCapacity < computeByteAt(_bitCount) + 1);
     }
 
-    MINT_INLINE const bool BitVector::isInSizeBoundary(const uint32 bitAt) const noexcept
+    MINT_INLINE bool BitVector::isInSizeBoundary(const uint32 bitAt) const noexcept
     {
         return (bitAt < _bitCount);
     }
 
-    MINT_INLINE const bool BitVector::get(const uint32 bitAt) const noexcept
+    MINT_INLINE bool BitVector::get(const uint32 bitAt) const noexcept
     {
         MINT_ASSERT(isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
@@ -143,19 +143,19 @@ namespace mint
         return (_byteArray[byteAt] & bitMaskOneAt);
     }
 
-    MINT_INLINE const uint8 BitVector::getByte(const uint32 byteAt) const noexcept
+    MINT_INLINE uint8 BitVector::getByte(const uint32 byteAt) const noexcept
     {
         MINT_ASSERT(byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
 
         return _byteArray[byteAt];
     }
 
-    MINT_INLINE const bool BitVector::first() const noexcept
+    MINT_INLINE bool BitVector::first() const noexcept
     {
         return get(0);
     }
 
-    MINT_INLINE const bool BitVector::last() const noexcept
+    MINT_INLINE bool BitVector::last() const noexcept
     {
         return get(_bitCount - 1);
     }
@@ -202,12 +202,12 @@ namespace mint
         set(bBitAt, a);
     }
 
-    MINT_INLINE const uint32 BitVector::bitCount() const noexcept
+    MINT_INLINE uint32 BitVector::bitCount() const noexcept
     {
         return _bitCount;
     }
 
-    MINT_INLINE const uint32 BitVector::byteCapacity() const noexcept
+    MINT_INLINE uint32 BitVector::byteCapacity() const noexcept
     {
         return _byteCapacity;
     }
@@ -227,27 +227,27 @@ namespace mint
         }
     }
 
-    MINT_INLINE const bool BitVector::getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
+    MINT_INLINE bool BitVector::getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
     {
         return (byte & makeBitMaskOneAt(bitOffsetFromLeft));
     }
 
-    MINT_INLINE const uint32 BitVector::computeByteCount(const uint32 bitCount) noexcept
+    MINT_INLINE uint32 BitVector::computeByteCount(const uint32 bitCount) noexcept
     {
         return ((bitCount - 1) / kBitsPerByte + 1);
     }
 
-    MINT_INLINE const uint32 BitVector::computeByteAt(const uint32 bitAt) noexcept
+    MINT_INLINE uint32 BitVector::computeByteAt(const uint32 bitAt) noexcept
     {
         return bitAt / kBitsPerByte;
     }
 
-    MINT_INLINE const uint32 BitVector::computeBitOffset(const uint32 bitAt) noexcept
+    MINT_INLINE uint32 BitVector::computeBitOffset(const uint32 bitAt) noexcept
     {
         return bitAt % kBitsPerByte;
     }
 
-    MINT_INLINE const uint8 BitVector::makeByte(const bool(&valueArray)[8]) noexcept
+    MINT_INLINE uint8 BitVector::makeByte(const bool(&valueArray)[8]) noexcept
     {
         return static_cast<uint8>(
              (static_cast<int32>(valueArray[0]) << 7) &
@@ -261,7 +261,7 @@ namespace mint
             );
     }
 
-    MINT_INLINE const uint8 BitVector::makeBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
+    MINT_INLINE uint8 BitVector::makeBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
     {
         return (1 << (kBitsPerByte - bitOffsetFromLeft - 1));
     }
