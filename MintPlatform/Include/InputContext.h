@@ -106,7 +106,7 @@ namespace mint
             void                    process() noexcept;
 
         public:
-            const bool              isPointerMoved() const noexcept;
+            bool                    isPointerMoved() const noexcept;
             void                    setPosition(const Float2& position) noexcept;
             void                    setDeltaPosition(const Float2& deltaPosition) noexcept;
             const Float2&           getPosition() const noexcept;
@@ -163,28 +163,28 @@ namespace mint
 
         public:
             const MouseState&       getMouseState() const noexcept;
-            const MouseButtonState  getMouseButtonState(const MouseButton mouseButton) const noexcept;
-            const bool              isMouseButtonPressed() const noexcept;
-            const bool              isMouseButtonReleased() const noexcept;
-            const bool              isMouseButtonClicked() const noexcept;
-            const bool              isMouseButtonDoubleClicked() const noexcept;
-            const bool              isMouseButtonDown(const MouseButton mouseButton) const noexcept;
-            const bool              isMouseButtonUp(const MouseButton mouseButton) const noexcept;
-            const bool              isMousePointerMoved() const noexcept;
-            const bool              isMouseWheelScrolled() const noexcept;
-            const Float2            getMousePosition() const noexcept;
-            const Float2            getMouseDeltaPosition() const noexcept;
-            const float             getMouseWheelScroll() const noexcept;
+            MouseButtonState        getMouseButtonState(const MouseButton mouseButton) const noexcept;
+            bool                    isMouseButtonPressed() const noexcept;
+            bool                    isMouseButtonReleased() const noexcept;
+            bool                    isMouseButtonClicked() const noexcept;
+            bool                    isMouseButtonDoubleClicked() const noexcept;
+            bool                    isMouseButtonDown(const MouseButton mouseButton) const noexcept;
+            bool                    isMouseButtonUp(const MouseButton mouseButton) const noexcept;
+            bool                    isMousePointerMoved() const noexcept;
+            bool                    isMouseWheelScrolled() const noexcept;
+            Float2                  getMousePosition() const noexcept;
+            Float2                  getMouseDeltaPosition() const noexcept;
+            float                   getMouseWheelScroll() const noexcept;
 
         public:
             const KeyboardState&    getKeyboardState() const noexcept;
-            const KeyState          getKeyState(const KeyCode keyCode) const noexcept;
-            const bool              isKeyPressed() const noexcept;
-            const bool              isKeyReleased() const noexcept;
-            const bool              isKeyInputCharacter() const noexcept;
-            const bool              isKeyInputCharacterCandidate() const noexcept;
-            const bool              isKeyDown(const KeyCode keyCode) const noexcept;
-            const bool              isKeyUp(const KeyCode keyCode) const noexcept;
+            KeyState                getKeyState(const KeyCode keyCode) const noexcept;
+            bool                    isKeyPressed() const noexcept;
+            bool                    isKeyReleased() const noexcept;
+            bool                    isKeyInputCharacter() const noexcept;
+            bool                    isKeyInputCharacterCandidate() const noexcept;
+            bool                    isKeyDown(const KeyCode keyCode) const noexcept;
+            bool                    isKeyUp(const KeyCode keyCode) const noexcept;
 
         private:
             Queue<InputEvent>       _events;

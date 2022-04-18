@@ -328,7 +328,7 @@ namespace mint
 
             POINT rawCursorPosition;
             ::GetCursorPos(&rawCursorPosition);
-            const Float2 cursorPosition(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
+            const Float2 cursorPosition = Float2(static_cast<float>(rawCursorPosition.x), static_cast<float>(rawCursorPosition.y));
 
             RECT rawClientRect;
             ::GetClientRect(_hWnd, &rawClientRect);
@@ -344,7 +344,7 @@ namespace mint
             }
         }
 
-        const uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
+        uint32 WindowsWindow::getCaretBlinkIntervalMs() const noexcept
         {
             return ::GetCaretBlinkTime();
         }
