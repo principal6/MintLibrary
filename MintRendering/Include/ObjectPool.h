@@ -56,7 +56,7 @@ namespace mint
             const Vector<MeshComponent*>&       getMeshComponents() const noexcept;
 
         public:
-            const uint32                        getObjectCount() const noexcept;
+            uint32                              getObjectCount() const noexcept;
             const DeltaTimer*                   getDeltaTimerXXX() const noexcept;
 
         private:

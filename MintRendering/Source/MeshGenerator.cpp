@@ -52,17 +52,17 @@ namespace mint
             return meshData._vertexArray[face._vertexIndexArray[2]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex0(const Face& face, MeshData& meshData) noexcept
+        MINT_INLINE uint32 MeshGenerator::getFaceVertexPositionIndex0(const Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[0]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex1(const Face& face, MeshData& meshData) noexcept
+        MINT_INLINE uint32 MeshGenerator::getFaceVertexPositionIndex1(const Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[1]];
         }
 
-        MINT_INLINE const uint32 MeshGenerator::getFaceVertexPositionIndex2(const Face& face, MeshData& meshData) noexcept
+        MINT_INLINE uint32 MeshGenerator::getFaceVertexPositionIndex2(const Face& face, MeshData& meshData) noexcept
         {
             return meshData._vertexToPositionTable[face._vertexIndexArray[2]];
         }
@@ -713,18 +713,18 @@ namespace mint
                 }
 
             public:
-                MINT_INLINE const int32   key() const noexcept { return _positionIndexA; }
-                MINT_INLINE const int32   value() const noexcept { return _positionIndexB; }
+                MINT_INLINE int32   key() const noexcept { return _positionIndexA; }
+                MINT_INLINE int32   value() const noexcept { return _positionIndexB; }
 
             private:
-                int32                   _positionIndexA = -1;
-                int32                   _positionIndexB = -1;
+                int32               _positionIndexA = -1;
+                int32               _positionIndexB = -1;
             };
 
             class PositionEdgeGraph
             {
             public:
-                MINT_INLINE void          setPositionCount(const uint32 positionCount) noexcept
+                MINT_INLINE void    setPositionCount(const uint32 positionCount) noexcept
                 {
                     _positionCount = positionCount;
                     _edgeTable.resize(positionCount * positionCount);
@@ -734,21 +734,21 @@ namespace mint
                         _edgeTable[index] = -1;
                     }
                 }
-                MINT_INLINE void          setMidpoint(const PositionEdge& edge, const int32 midpointPositionIndex) noexcept
+                MINT_INLINE void    setMidpoint(const PositionEdge& edge, const int32 midpointPositionIndex) noexcept
                 {
                     _edgeTable[getIndexFromEdge(edge)] = midpointPositionIndex;
                 }
-                MINT_INLINE const bool    hasMidpoint(const PositionEdge& edge) const noexcept
+                MINT_INLINE bool    hasMidpoint(const PositionEdge& edge) const noexcept
                 {
                     return (_edgeTable[getIndexFromEdge(edge)] >= 0);
                 }
-                MINT_INLINE const int32   getMidpointPositionIndex(const PositionEdge& edge) const noexcept
+                MINT_INLINE int32   getMidpointPositionIndex(const PositionEdge& edge) const noexcept
                 {
                     return _edgeTable[getIndexFromEdge(edge)];
                 }
 
             private:
-                MINT_INLINE const uint32  getIndexFromEdge(const PositionEdge& edge) const noexcept
+                MINT_INLINE uint32  getIndexFromEdge(const PositionEdge& edge) const noexcept
                 {
                     return edge.key() * _positionCount + edge.value();
                 }

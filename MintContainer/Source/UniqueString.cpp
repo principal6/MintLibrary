@@ -54,7 +54,7 @@ namespace mint
         MINT_DELETE_ARRAY(_rawMemory);
     }
 
-    const UniqueStringAID UniqueStringPoolA::registerString(const char* const rawString) noexcept
+    UniqueStringAID UniqueStringPoolA::registerString(const char* const rawString) noexcept
     {
         if (rawString == nullptr)
         {

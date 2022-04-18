@@ -37,7 +37,7 @@ namespace mint
             virtual void            assignRawID(const uint32 rawID) noexcept override final;
 
         public:
-            const uint32            getRawID() const noexcept;
+            uint32                  getRawID() const noexcept;
         };
 
 
@@ -53,8 +53,8 @@ namespace mint
             virtual                                 ~IObjectComponent() { __noop; }
 
         public:
-            MINT_INLINE const ObjectComponentType   getType() const noexcept { return _type; }
-            MINT_INLINE const bool                  isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
+            MINT_INLINE ObjectComponentType         getType() const noexcept { return _type; }
+            MINT_INLINE bool                        isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
             MINT_INLINE const ObjectComponentID&    getID() const noexcept { return _id; }
             MINT_INLINE Object*                     getOwnerObject() const noexcept { return _ownerObject; }
         

@@ -26,7 +26,7 @@ namespace mint
             return deltaTimer;
         }
 
-        const float DeltaTimer::computeDeltaTimeS() const noexcept
+        float DeltaTimer::computeDeltaTimeS() const noexcept
         {
             const uint64 currTimePointMs = Profiler::getCurrentTimeMs();
             const uint64 deltaTimeMs = currTimePointMs - _prevTimePointMs;
@@ -40,7 +40,7 @@ namespace mint
             return _deltaTimeS;
         }
 
-        const float DeltaTimer::getDeltaTimeS() const noexcept
+        float DeltaTimer::getDeltaTimeS() const noexcept
         {
             return _deltaTimeS;
         }

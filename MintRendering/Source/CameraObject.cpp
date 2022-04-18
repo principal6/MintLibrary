@@ -190,7 +190,7 @@ namespace mint
             return Float4x4::rotationMatrixFromAxes(-leftDirection, upDirection, _forwardDirection * handnessSign);
         }
 
-        const float CameraObject::getHandednessSign() const noexcept
+        float CameraObject::getHandednessSign() const noexcept
         {
             return (_isRightHanded ? -1.0f : +1.0f);
         }

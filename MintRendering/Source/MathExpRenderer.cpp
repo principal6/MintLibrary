@@ -165,7 +165,7 @@ namespace mint
             return _plainString.c_str();
         }
 
-        const uint32 MathExpression::getPlainStringLength() const noexcept
+        uint32 MathExpression::getPlainStringLength() const noexcept
         {
             return static_cast<uint32>(_plainString.length());
         }

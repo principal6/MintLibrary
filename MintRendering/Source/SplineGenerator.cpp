@@ -19,7 +19,7 @@ namespace mint
             __noop;
         }
 
-        const bool SplineGenerator::setPrecision(const uint32 precision) noexcept
+        bool SplineGenerator::setPrecision(const uint32 precision) noexcept
         {
             MINT_ASSURE(_precision > 0);
             
@@ -27,7 +27,7 @@ namespace mint
             return true;
         }
 
-        const bool SplineGenerator::generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept
+        bool SplineGenerator::generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept
         {
             MINT_ASSURE(controlPoints.size() > 1);
 
@@ -49,7 +49,7 @@ namespace mint
             return true;
         }
 
-        const bool SplineGenerator::generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
+        bool SplineGenerator::generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
         {
             const uint32 controlPointCount = controlPoints.size();
             const uint32 knotCount = knotVector.size();
@@ -132,7 +132,7 @@ namespace mint
             return result;
         }
 
-        const float SplineGenerator::computePower(const float base, const uint32 exponent) const noexcept
+        float SplineGenerator::computePower(const float base, const uint32 exponent) const noexcept
         {
             float result = 1.0f;
             for (uint32 iter = 0; iter < exponent; iter++)
@@ -142,7 +142,7 @@ namespace mint
             return result;
         }
         
-        const uint32 SplineGenerator::computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept
+        uint32 SplineGenerator::computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept
         {
             if (selectionCount == 0 || selectionCount == totalCount)
             {
@@ -156,7 +156,7 @@ namespace mint
             return computeCombination(totalCount - 1, selectionCount - 1) + computeCombination(totalCount - 1, selectionCount);
         }
 
-        const float SplineGenerator::evaluateBSplineBasisFunction(const uint32 i, const uint32 j, const Vector<float>& knotVector, const float t) const noexcept
+        float SplineGenerator::evaluateBSplineBasisFunction(const uint32 i, const uint32 j, const Vector<float>& knotVector, const float t) const noexcept
         {
             // P = Plus
             if (j == 0)

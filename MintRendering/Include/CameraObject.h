@@ -50,14 +50,14 @@ namespace mint
                 COUNT
             };
 
-            MINT_INLINE constexpr const float getMoveSpeedAsFloat(const MoveSpeed moveSpeed)
+            MINT_INLINE constexpr float getMoveSpeedAsFloat(const MoveSpeed moveSpeed)
             {
                 static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base 가 달라졌습니다!");
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
                 return 0.125f * static_cast<float>(Math::pow2_ui32(moveSpeedUint8));
             }
 
-            MINT_INLINE constexpr const MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)
+            MINT_INLINE constexpr MoveSpeed getFasterMoveSpeed(const MoveSpeed moveSpeed)
             {
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
                 const uint8 moveSpeedMax = static_cast<uint8>(MoveSpeed::COUNT) - 1;
@@ -68,7 +68,7 @@ namespace mint
                 return moveSpeed;
             }
 
-            MINT_INLINE constexpr const MoveSpeed getSlowerMoveSpeed(const MoveSpeed moveSpeed)
+            MINT_INLINE constexpr MoveSpeed getSlowerMoveSpeed(const MoveSpeed moveSpeed)
             {
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
                 if (moveSpeedUint8 > 0)
@@ -109,7 +109,7 @@ namespace mint
             void                    updatePerspectiveMatrix() noexcept;
 
             Float4x4                getRotationMatrix() const noexcept;
-            const float             getHandednessSign() const noexcept;
+            float                   getHandednessSign() const noexcept;
 
         private:
             Float4x4                _projectionMatrix;

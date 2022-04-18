@@ -32,7 +32,7 @@ namespace mint
             return _meshData;
         }
 
-        const uint32 MeshComponent::getVertexCount() const noexcept
+        uint32 MeshComponent::getVertexCount() const noexcept
         {
             return _meshData.getVertexCount();
         }
@@ -42,7 +42,7 @@ namespace mint
             return (_meshData._vertexArray.empty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
         }
 
-        const uint32 MeshComponent::getIndexCount() const noexcept
+        uint32 MeshComponent::getIndexCount() const noexcept
         {
             return _meshData.getIndexCount();
         }
@@ -57,7 +57,7 @@ namespace mint
             _shouldDrawNormals = shouldDrawNormals;
         }
         
-        const bool MeshComponent::shouldDrawNormals() const noexcept
+        bool MeshComponent::shouldDrawNormals() const noexcept
         {
             return _shouldDrawNormals;
         }
@@ -67,7 +67,7 @@ namespace mint
             _shouldDrawEdges = shouldDrawEdges;
         }
 
-        const bool MeshComponent::shouldDrawEdges() const noexcept
+        bool MeshComponent::shouldDrawEdges() const noexcept
         {
             return _shouldDrawEdges;
         }

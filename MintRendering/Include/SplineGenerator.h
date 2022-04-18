@@ -24,31 +24,31 @@ namespace mint
         class SplineGenerator
         {
         public:
-                                                SplineGenerator();
-                                                ~SplineGenerator();
+                        SplineGenerator();
+                        ~SplineGenerator();
 
         public:
-            const bool                          setPrecision(const uint32 precision) noexcept;
+            bool        setPrecision(const uint32 precision) noexcept;
 
         public:
-            const bool                          generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept;
-            const bool                          generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept;
+            bool        generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept;
+            bool        generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept;
 
         public:
-            Float2                              computeBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
-            Float2                              computeDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
-            Float2                              computeBSplinePoint(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, const float t) const noexcept;
-        
+            Float2      computeBezierPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
+            Float2      computeDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept;
+            Float2      computeBSplinePoint(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, const float t) const noexcept;
+
         private:
-            const float                         computePower(const float base, const uint32 exponent) const noexcept;
-            const uint32                        computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept;
+            float       computePower(const float base, const uint32 exponent) const noexcept;
+            uint32      computeCombination(const uint32 totalCount, const uint32 selectionCount) const noexcept;
             // B-Spline Basis Function = N_i_j(t)
             //  i = control point index
             //  j = order index
-            const float                         evaluateBSplineBasisFunction(const uint32 i, const uint32 j, const Vector<float>& knotVector, const float t) const noexcept;
+            float       evaluateBSplineBasisFunction(const uint32 i, const uint32 j, const Vector<float>& knotVector, const float t) const noexcept;
 
         private:
-            uint32                              _precision;
+            uint32      _precision;
         };
     }
 }
