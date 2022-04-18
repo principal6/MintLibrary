@@ -60,7 +60,7 @@ namespace mint
                 __noop;
             }
 
-            const bool Parser::execute()
+            bool Parser::execute()
             {
                 reset();
 
@@ -91,7 +91,7 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
+            bool Parser::parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 if (_symbolTable[symbolPosition]._symbolClassifier == SymbolClassifier::Keyword)
                 {
@@ -118,7 +118,7 @@ namespace mint
                 return false;
             }
 
-            const bool Parser::parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
+            bool Parser::parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 MINT_ASSURE(hasSymbol(symbolPosition + 3));
                 MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
@@ -134,7 +134,7 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
+            bool Parser::parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 MINT_ASSURE(hasSymbol(symbolPosition + 4)); // ; 까지!
                 MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
@@ -171,7 +171,7 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
+            bool Parser::parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 const uint32 kSemicolonMinOffset = 2;
                 MINT_ASSURE_SILENT(_symbolTable[symbolPosition]._symbolClassifier != SymbolClassifier::Grouper_Close); // 최우선 검사
@@ -205,7 +205,7 @@ namespace mint
                 return true;
             }
 
-            const bool Parser::parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
+            bool Parser::parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 const uint32 kCloseParenthesisMinOffset = 3;
                 MINT_ASSURE(hasSymbol(symbolPosition + kCloseParenthesisMinOffset));
@@ -352,7 +352,7 @@ namespace mint
                 return semanticName;
             }
 
-            const int32 Parser::getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept
+            int32 Parser::getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept
             {
                 // 0 은 자기 자신을 의미하므로
                 // 실제 Slotted StreamData 라면 InputSlot 은 1부터 시작한다!
@@ -373,7 +373,7 @@ namespace mint
                 return 0;
             }
 
-            const DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData)
+            DXGI_FORMAT Parser::convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData)
             {
                 const std::string& typeName = typeMetaData.getTypeName();
                 if (typeName == "float" || typeName == "float1")

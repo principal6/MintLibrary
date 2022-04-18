@@ -76,27 +76,27 @@ namespace mint
             friend ILexer;
 
         public:
-                                    SymbolTableItem();
-                                    SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt);
-                                    SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
+                                SymbolTableItem();
+                                SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString, const uint32 sourceAt);
+                                SymbolTableItem(const SymbolClassifier symbolClassifier, const std::string& symbolString);
 
         public:
-            const bool              operator==(const SymbolTableItem& rhs) const noexcept;
-            const bool              operator!=(const SymbolTableItem& rhs) const noexcept;
+            bool                operator==(const SymbolTableItem& rhs) const noexcept;
+            bool                operator!=(const SymbolTableItem& rhs) const noexcept;
 
         public:
-            void                    clearData();
-            const uint32            index() const noexcept;
+            void                clearData();
+            uint32              index() const noexcept;
 
         public:
-            SymbolClassifier        _symbolClassifier;
-            std::string             _symbolString;
+            SymbolClassifier    _symbolClassifier;
+            std::string         _symbolString;
 
         private:
-            uint32                  _symbolIndex;
-        
+            uint32              _symbolIndex;
+    
         public:
-            uint32                  _sourceAt;
+            uint32              _sourceAt;
         };
     }
 }

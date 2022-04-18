@@ -233,14 +233,14 @@ namespace mint
             }
         }
 
-        const uint16 ILexer::getLineSkipperNextGroupID() noexcept
+        uint16 ILexer::getLineSkipperNextGroupID() noexcept
         {
             const uint16 result = _lineSkipperNextGroupID;
             ++_lineSkipperNextGroupID;
             return result;
         }
 
-        const bool ILexer::executeDefault() noexcept
+        bool ILexer::executeDefault() noexcept
         {
             // Preprocessor
             // line 단위 parsing
@@ -408,22 +408,22 @@ namespace mint
             return true;
         }
 
-        const bool ILexer::continueExecution(const uint32 sourceAt) const noexcept
+        bool ILexer::continueExecution(const uint32 sourceAt) const noexcept
         {
             return sourceAt < _source.length();
         }
 
-        const char ILexer::getCh0(const uint32 sourceAt) const noexcept
+        char ILexer::getCh0(const uint32 sourceAt) const noexcept
         {
             return _source.at(sourceAt);
         }
 
-        const char ILexer::getCh1(const uint32 sourceAt) const noexcept
+        char ILexer::getCh1(const uint32 sourceAt) const noexcept
         {
             return (static_cast<uint64>(sourceAt) + 1 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 1) : 0;
         }
 
-        const char ILexer::getCh2(const uint32 sourceAt) const noexcept
+        char ILexer::getCh2(const uint32 sourceAt) const noexcept
         {
             return (static_cast<uint64>(sourceAt) + 2 < _source.length()) ? _source.at(static_cast<uint64>(sourceAt) + 2) : 0;
         }
@@ -579,12 +579,12 @@ namespace mint
             }
         }
 
-        const bool ILexer::isDelimiter(const char input) const noexcept
+        bool ILexer::isDelimiter(const char input) const noexcept
         {
             return _delimiterUmap.find(input).isValid() == true;
         }
 
-        const bool ILexer::isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
+        bool ILexer::isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
         {
             // 먼저 길이 2 LineSkipper 인지 확인 후
             // 아니라면 길이 1 LineSkipper 인지 확인
@@ -606,12 +606,12 @@ namespace mint
             return true;
         }
 
-        const bool ILexer::isStatementTerminator(const char input) const noexcept
+        bool ILexer::isStatementTerminator(const char input) const noexcept
         {
             return (_statementTerminator == 0) ? false : (_statementTerminator == input);
         }
 
-        const bool ILexer::isGrouper(const char input, GrouperTableItem& out) const noexcept
+        bool ILexer::isGrouper(const char input, GrouperTableItem& out) const noexcept
         {
             auto found = _grouperUmap.find(input);
             if (found.isValid() == false)
@@ -623,12 +623,12 @@ namespace mint
             return true;
         }
 
-        const bool ILexer::isStringQuote(const char input) const noexcept
+        bool ILexer::isStringQuote(const char input) const noexcept
         {
             return _stringQuoteUmap.find(input).isValid() == true;
         }
 
-        const bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
+        bool ILexer::isPunctuator(const char ch0, const char ch1, const char ch2, uint32& outAdvance) const noexcept
         {
             const char keyString3[4]{ ch0, ch1, ch2, '\0' };
             const uint64 key3 = computeHash(keyString3);
@@ -661,7 +661,7 @@ namespace mint
             return false;
         }
 
-        const bool ILexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
+        bool ILexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
         {
             // 먼저 길이 2 Operator 인지 확인 후
             // 아니라면 길이 1 Operator 인지 확인
@@ -683,7 +683,7 @@ namespace mint
             return true;
         }
 
-        const bool ILexer::isNumber(const std::string& input) const noexcept
+        bool ILexer::isNumber(const std::string& input) const noexcept
         {
             if (input.empty() == true)
             {
@@ -712,17 +712,17 @@ namespace mint
             return false;
         }
 
-        const bool ILexer::isKeyword(const std::string& input) const noexcept
+        bool ILexer::isKeyword(const std::string& input) const noexcept
         {
             return _keywordUmap.find(computeHash(input.c_str())).isValid() == true;
         }
 
-        const bool ILexer::isEscaper(const char input) const noexcept
+        bool ILexer::isEscaper(const char input) const noexcept
         {
             return _escaper == input;
         }
 
-        const uint32 ILexer::getSymbolCount() const noexcept
+        uint32 ILexer::getSymbolCount() const noexcept
         {
             return static_cast<uint32>(_symbolTable.size());
         }
@@ -737,7 +737,7 @@ namespace mint
             return _symbolTable[symbolIndex];
         }
 
-        const char ILexer::getGrouperClose(const char grouperOpen) const noexcept
+        char ILexer::getGrouperClose(const char grouperOpen) const noexcept
         {
             return *_grouperOpenToCloseMap.find(grouperOpen)._value;
         }

@@ -40,7 +40,7 @@ namespace mint
                 registerKeyword("end");
             }
 
-            virtual const bool execute() noexcept override final
+            virtual bool execute() noexcept override final
             {
                 return __super::executeDefault();
             }

@@ -40,76 +40,76 @@ namespace mint
             class TypeCustomData
             {
             public:
-                                                            TypeCustomData();
-                                                            ~TypeCustomData() = default;
+                                                        TypeCustomData();
+                                                        ~TypeCustomData() = default;
 
             public:
-                void                                        setSemanticName(const std::string& semanticName);
-                void                                        setRegisterIndex(const uint32 registerIndex);
-                void                                        setInputSlot(const uint32 inputSlot);
-                void                                        setInstanceDataStepRate(const uint32 instanceDataStepRate);
-                void                                        pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData);
+                void                                    setSemanticName(const std::string& semanticName);
+                void                                    setRegisterIndex(const uint32 registerIndex);
+                void                                    setInputSlot(const uint32 inputSlot);
+                void                                    setInstanceDataStepRate(const uint32 instanceDataStepRate);
+                void                                    pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData);
 
             public:
-                const bool                                  isRegisterIndexValid() const noexcept;
+                bool                                    isRegisterIndexValid() const noexcept;
 
             public:
-                const std::string&                          getSemanticName() const noexcept;
-                const uint32                                getRegisterIndex() const noexcept;
-                const uint32                                getInputSlot() const noexcept;
-                const uint32                                getInstanceDataStepRate() const noexcept;
-                const uint32                                getSlottedStreamDataCount() const noexcept;
-                const TypeMetaData<TypeCustomData>&         getSlottedStreamData(const uint32 inputSlot) const noexcept;
+                const std::string&                      getSemanticName() const noexcept;
+                uint32                                  getRegisterIndex() const noexcept;
+                uint32                                  getInputSlot() const noexcept;
+                uint32                                  getInstanceDataStepRate() const noexcept;
+                uint32                                  getSlottedStreamDataCount() const noexcept;
+                const TypeMetaData<TypeCustomData>&     getSlottedStreamData(const uint32 inputSlot) const noexcept;
 
             private:
-                static constexpr uint32                     kInvalidRegisterIndex = kUint32Max;
+                static constexpr uint32                 kInvalidRegisterIndex = kUint32Max;
 
             private:
-                std::string                                 _semanticName;
-                uint32                                      _registerIndex;
-                uint32                                      _inputSlot;
-                uint32                                      _instanceDataStepRate;
-                Vector<TypeMetaData<TypeCustomData>>        _slottedStreamDatas;
+                std::string                             _semanticName;
+                uint32                                  _registerIndex;
+                uint32                                  _inputSlot;
+                uint32                                  _instanceDataStepRate;
+                Vector<TypeMetaData<TypeCustomData>>    _slottedStreamDatas;
             };
 
 
             class Parser final : public IParser<TypeCustomData, SyntaxClassifier>
             {
             public:
-                                                            Parser(ILexer& lexer);
-                virtual                                     ~Parser();
+                                        Parser(ILexer& lexer);
+                virtual                 ~Parser();
 
             public:
-                virtual const bool                          execute() override final;
+                virtual bool            execute() override final;
 
             private:
-                const bool                                  parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                bool                    parseCode(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
 
             private:
-                const bool                                  parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-                const bool                                  parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
-        
-            private:
-                void                                        buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
+                bool                    parseNamespace(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                bool                    parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                bool                    parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
+                bool                    parseCustomSyntax(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept;
 
             private:
-                const int32                                 getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
+                void                    buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept;
+
+            private:
+                int32                   getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept;
 
             public:
-                static std::string                          convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
-                static const DXGI_FORMAT                    convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
+                static std::string      convertDeclarationNameToHlslSemanticName(const std::string& declarationName);
+                static DXGI_FORMAT      convertCppHlslTypeToDxgiFormat(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             public:
-                std::string                                 serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
+                std::string             serializeCppHlslTypeToHlslStreamDatum(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             private:
-                std::string                                 serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
+                std::string             serializeCppHlslTypeToHlslStreamDatumMembers(const TypeMetaData<TypeCustomData>& typeMetaData);
 
             public:
-                std::string                                 serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
-                std::string                                 serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
+                std::string             serializeCppHlslTypeToHlslConstantBuffer(const TypeMetaData<TypeCustomData>& typeMetaData, const uint32 bufferIndex);
+                std::string             serializeCppHlslTypeToHlslStructuredBufferDefinition(const TypeMetaData<TypeCustomData>& typeMetaData);
             };
         }
     }
