@@ -24,7 +24,7 @@ namespace mint
         inOut /= norm;
     }
 
-    MINT_INLINE const float dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
+    MINT_INLINE float dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept
     {
         const __m128 result = _mm_mul_ps(lhs.getRaw(), rhs.getRaw());
         return result.m128_f32[0] + result.m128_f32[1] + result.m128_f32[2] + result.m128_f32[3];
@@ -44,7 +44,7 @@ namespace mint
         return AffineVec<float>(_mm_sub_ps(a, b));
     }
 
-    MINT_INLINE const double dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
+    MINT_INLINE double dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept
     {
         const __m256d result = _mm256_mul_pd(lhs.getRaw(), rhs.getRaw());
         return result.m256d_f64[0] + result.m256d_f64[1] + result.m256d_f64[2] + result.m256d_f64[3];
@@ -229,7 +229,7 @@ namespace mint
         _mm_store_ps(vec, _raw);
     }
 
-    MINT_INLINE const float AffineVec<float>::getComponent(const int32 i) const noexcept
+    MINT_INLINE float AffineVec<float>::getComponent(const int32 i) const noexcept
     {
         return _raw.m128_f32[i];
     }
@@ -239,17 +239,17 @@ namespace mint
         return _raw;
     }
 
-    MINT_INLINE const float AffineVec<float>::dot(const AffineVec& rhs) const noexcept
+    MINT_INLINE float AffineVec<float>::dot(const AffineVec& rhs) const noexcept
     {
         return mint::dot(*this, rhs);
     }
 
-    MINT_INLINE const float AffineVec<float>::normSq() const noexcept
+    MINT_INLINE float AffineVec<float>::normSq() const noexcept
     {
         return dot(*this);
     }
 
-    MINT_INLINE const float AffineVec<float>::norm() const noexcept
+    MINT_INLINE float AffineVec<float>::norm() const noexcept
     {
         return ::sqrt(normSq());
     }
@@ -430,7 +430,7 @@ namespace mint
         _mm256_store_pd(vec, _raw);
     }
 
-    MINT_INLINE const double AffineVec<double>::getComponent(const int32 i) const noexcept
+    MINT_INLINE double AffineVec<double>::getComponent(const int32 i) const noexcept
     {
         return _raw.m256d_f64[i];
     }
@@ -440,17 +440,17 @@ namespace mint
         return _raw;
     }
 
-    MINT_INLINE const double AffineVec<double>::dot(const AffineVec& rhs) const noexcept
+    MINT_INLINE double AffineVec<double>::dot(const AffineVec& rhs) const noexcept
     {
         return mint::dot(*this, rhs);
     }
 
-    MINT_INLINE const double AffineVec<double>::normSq() const noexcept
+    MINT_INLINE double AffineVec<double>::normSq() const noexcept
     {
         return dot(*this);
     }
 
-    MINT_INLINE const double AffineVec<double>::norm() const noexcept
+    MINT_INLINE double AffineVec<double>::norm() const noexcept
     {
         return ::sqrt(normSq());
     }

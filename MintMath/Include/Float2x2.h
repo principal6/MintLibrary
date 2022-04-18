@@ -41,14 +41,14 @@ namespace mint
 
     public:
         void                        set(const uint32 row, const uint32 col, const float newValue) noexcept;
-        const float                 get(const uint32 row, const uint32 col) const noexcept;
+        float                       get(const uint32 row, const uint32 col) const noexcept;
         void                        setZero() noexcept;
         void                        setIdentity() noexcept;
 
     public:
-        const float                 determinant() const noexcept;
+        float                       determinant() const noexcept;
         Float2x2                    inverse() const noexcept;
-        const bool                  isInvertible() const noexcept;
+        bool                        isInvertible() const noexcept;
 
     public:
         Float2                      mul(const Float2& vec) const noexcept;

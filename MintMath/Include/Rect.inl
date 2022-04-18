@@ -39,42 +39,42 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE constexpr const bool Rect::operator==(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::operator==(const Rect& rhs) const noexcept
     {
         return _raw == rhs._raw;
     }
 
-    MINT_INLINE constexpr const bool Rect::operator!=(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::operator!=(const Rect& rhs) const noexcept
     {
         return _raw != rhs._raw;
     }
 
-    MINT_INLINE constexpr const float Rect::left() const noexcept
+    MINT_INLINE constexpr float Rect::left() const noexcept
     {
         return _raw._x;
     }
 
-    MINT_INLINE constexpr const float Rect::right() const noexcept
+    MINT_INLINE constexpr float Rect::right() const noexcept
     {
         return _raw._y;
     }
 
-    MINT_INLINE constexpr const float Rect::top() const noexcept
+    MINT_INLINE constexpr float Rect::top() const noexcept
     {
         return _raw._z;
     }
 
-    MINT_INLINE constexpr const float Rect::bottom() const noexcept
+    MINT_INLINE constexpr float Rect::bottom() const noexcept
     {
         return _raw._w;
     }
 
-    MINT_INLINE constexpr const float Rect::horz() const noexcept
+    MINT_INLINE constexpr float Rect::horz() const noexcept
     {
         return left() + right();
     }
 
-    MINT_INLINE constexpr const float Rect::vert() const noexcept
+    MINT_INLINE constexpr float Rect::vert() const noexcept
     {
         return top() + bottom();
     }
@@ -119,17 +119,17 @@ namespace mint
         _raw._w = s;
     }
 
-    MINT_INLINE constexpr const Float2 Rect::center() const noexcept
+    MINT_INLINE constexpr Float2 Rect::center() const noexcept
     {
         return Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
     }
 
-    MINT_INLINE constexpr const Float2 Rect::size() const noexcept
+    MINT_INLINE constexpr Float2 Rect::size() const noexcept
     {
         return Float2(right() - left(), bottom() - top());
     }
 
-    MINT_INLINE constexpr const Float2 Rect::position() const noexcept
+    MINT_INLINE constexpr Float2 Rect::position() const noexcept
     {
         return Float2(left(), top());
     }
@@ -195,7 +195,7 @@ namespace mint
         return Float2(boundHorz(position._x), boundVert(position._y));
     }
 
-    MINT_INLINE constexpr const bool Rect::contains(const Float2& position) const noexcept
+    MINT_INLINE constexpr bool Rect::contains(const Float2& position) const noexcept
     {
         if (horz() == 0.0f || vert() == 0.0f)
         {
@@ -204,12 +204,12 @@ namespace mint
         return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
     }
 
-    MINT_INLINE constexpr const bool Rect::contains(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::contains(const Rect& rhs) const noexcept
     {
         return (left() <= rhs.left()) && (rhs.right() <= right()) && (top() >= rhs.top()) && (rhs.bottom() >= bottom());
     }
 
-    MINT_INLINE const bool Rect::isNan() const noexcept
+    MINT_INLINE bool Rect::isNan() const noexcept
     {
         return _raw.isNan();
     }

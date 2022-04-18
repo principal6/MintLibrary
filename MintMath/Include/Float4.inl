@@ -102,22 +102,22 @@ namespace mint
         return Float4(_x / scalar, _y / scalar, _z / scalar, _w / scalar);
     }
 
-    MINT_INLINE constexpr const bool Float4::operator==(const Float4& rhs) const noexcept
+    MINT_INLINE constexpr bool Float4::operator==(const Float4& rhs) const noexcept
     {
         return (_x == rhs._x && _y == rhs._y && _z == rhs._z && _w == rhs._w);
     }
 
-    MINT_INLINE constexpr const bool Float4::operator!=(const Float4& rhs) const noexcept
+    MINT_INLINE constexpr bool Float4::operator!=(const Float4& rhs) const noexcept
     {
         return !(*this == rhs);
     }
 
-    MINT_INLINE const float Float4::maxComponent() const noexcept
+    MINT_INLINE float Float4::maxComponent() const noexcept
     {
         return max(max(_x, _y), max(_z, _w));
     }
 
-    MINT_INLINE const float Float4::minComponent() const noexcept
+    MINT_INLINE float Float4::minComponent() const noexcept
     {
         return min(min(_x, _y), min(_z, _w));
     }

@@ -22,7 +22,7 @@ namespace mint
     namespace Math
     {
         template <int32 M, int32 N, typename T>
-        const bool              equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon = 0) noexcept;
+        bool                    equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon = 0) noexcept;
 
         template <int32 M, int32 N, typename T>
         void                    copyMat(const T(&src)[M][N], T(&dest)[M][N]) noexcept;
@@ -75,19 +75,19 @@ namespace mint
         void                    minor(const T(&in)[M][N], const int32 row, const int32 col, T(&out)[M - 1][N - 1]) noexcept;
 
         template <int32 N, typename T>
-        const T                 trace(const T(&mat)[N][N]) noexcept;
+        T                       trace(const T(&mat)[N][N]) noexcept;
         
         template <typename T>
-        const T                 determinant(const T(&mat)[2][2]) noexcept;
+        T                       determinant(const T(&mat)[2][2]) noexcept;
         
         template <typename T>
-        const T                 determinant(const T(&mat)[3][3]) noexcept;
+        T                       determinant(const T(&mat)[3][3]) noexcept;
 
         template <typename T>
-        const T                 determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept;
+        T                       determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept;
 
         template <typename T>
-        const T                 determinant(const T(&mat)[4][4]) noexcept;
+        T                       determinant(const T(&mat)[4][4]) noexcept;
 
         template<typename T>
         void                    adjugate(const T(&in)[3][3], T(&out)[3][3]) noexcept;
@@ -138,8 +138,8 @@ namespace mint
         Matrix&                 operator=(Matrix&& rhs) noexcept = default;
 
     public:
-        const bool              operator==(const Matrix& rhs) const noexcept;
-        const bool              operator!=(const Matrix& rhs) const noexcept;
+        bool                    operator==(const Matrix& rhs) const noexcept;
+        bool                    operator!=(const Matrix& rhs) const noexcept;
 
     public:
         Matrix&                 operator*=(const T scalar) noexcept;
@@ -162,7 +162,7 @@ namespace mint
         void                    setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
         void                    addElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
         void                    mulElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept;
-        const T                 getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
+        T                       getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept;
         
     public:
         void                    setRow(const uint32 rowIndex, const VectorR<N, T>& row) noexcept;
@@ -176,22 +176,22 @@ namespace mint
 
     public:
         Matrix<N, M, T>         transpose() const noexcept;
-        const T                 trace() const noexcept;
+        T                       trace() const noexcept;
         Matrix<M - 1, N - 1, T> minor(const uint32 row, const uint32 col) const noexcept;
 
     public:
         void                    factorizeLu(Matrix<N, N, T>& l, Matrix<N, N, T>& u) const noexcept;
 
     public:
-        constexpr const bool    isSquareMatrix() const noexcept;
-        const bool              isDiagonalMatrix() const noexcept;
-        const bool              isScalarMatrix() const noexcept;
-        const bool              isIdentityMatrix() const noexcept;
-        const bool              isZeroMatrix() const noexcept;
-        const bool              isSymmetricMatrix() const noexcept;
-        const bool              isSkewSymmetricMatrix() const noexcept;
-        const bool              isUpperTriangularMatrix() const noexcept;
-        const bool              isIdempotentMatrix() const noexcept;
+        constexpr bool          isSquareMatrix() const noexcept;
+        bool                    isDiagonalMatrix() const noexcept;
+        bool                    isScalarMatrix() const noexcept;
+        bool                    isIdentityMatrix() const noexcept;
+        bool                    isZeroMatrix() const noexcept;
+        bool                    isSymmetricMatrix() const noexcept;
+        bool                    isSkewSymmetricMatrix() const noexcept;
+        bool                    isUpperTriangularMatrix() const noexcept;
+        bool                    isIdempotentMatrix() const noexcept;
 
         void                    setIdentity() noexcept;
         void                    setZero() noexcept;

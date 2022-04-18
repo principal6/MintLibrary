@@ -92,17 +92,17 @@ namespace mint
         return _c[index];
     }
 
-    const bool Float2::operator==(const Float2& rhs) const noexcept
+    bool Float2::operator==(const Float2& rhs) const noexcept
     {
         return Math::equals(_c, rhs._c);
     }
 
-    const bool Float2::operator!=(const Float2& rhs) const noexcept
+    bool Float2::operator!=(const Float2& rhs) const noexcept
     {
         return !(*this == rhs);
     }
 
-    const float Float2::dot(const Float2& lhs, const Float2& rhs) noexcept
+    float Float2::dot(const Float2& lhs, const Float2& rhs) noexcept
     {
         return Math::dot(lhs._c, rhs._c);
     }
@@ -119,22 +119,22 @@ namespace mint
         return Float2(::abs(rhs._x), ::abs(rhs._y));
     }
 
-    const float Float2::lengthSqaure() const noexcept
+    float Float2::lengthSqaure() const noexcept
     {
         return Math::normSq(_c);
     }
 
-    const float Float2::length() const noexcept
+    float Float2::length() const noexcept
     {
         return Math::norm(_c);
     }
 
-    const float Float2::maxElement() const noexcept
+    float Float2::maxElement() const noexcept
     {
         return mint::max(_x, _y);
     }
 
-    const float Float2::minElement() const noexcept
+    float Float2::minElement() const noexcept
     {
         return mint::min(_x, _y);
     }
@@ -155,12 +155,12 @@ namespace mint
         Math::setNan(_c);
     }
 
-    const bool Float2::isNan() const noexcept
+    bool Float2::isNan() const noexcept
     {
         return Math::isNan(_c);
     }
 
-    const bool Float2::hasNegativeElement() const noexcept
+    bool Float2::hasNegativeElement() const noexcept
     {
         return (_x < 0.0f) || (_y < 0.0f);
     }

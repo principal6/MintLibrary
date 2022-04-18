@@ -437,7 +437,7 @@ namespace mint
         outTranslation._z = _34;
     }
 
-    const float Float4x4::determinant() const noexcept
+    float Float4x4::determinant() const noexcept
     {
         return Math::determinant(_m);
     }

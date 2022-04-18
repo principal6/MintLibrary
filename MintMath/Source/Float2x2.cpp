@@ -66,7 +66,7 @@ namespace mint
         _m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)] = newValue;
     }
 
-    const float Float2x2::get(const uint32 row, const uint32 col) const noexcept
+    float Float2x2::get(const uint32 row, const uint32 col) const noexcept
     {
         return _m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)];
     }
@@ -81,7 +81,7 @@ namespace mint
         Math::setIdentity(_m);
     }
 
-    const float Float2x2::determinant() const noexcept
+    float Float2x2::determinant() const noexcept
     {
         return Math::determinant(_m);
     }
@@ -98,7 +98,7 @@ namespace mint
         ) / determinant();
     }
 
-    const bool Float2x2::isInvertible() const noexcept
+    bool Float2x2::isInvertible() const noexcept
     {
         return (determinant() != 0.0f);
     }

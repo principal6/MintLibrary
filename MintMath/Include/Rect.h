@@ -31,16 +31,16 @@ namespace mint
         Rect&                       operator=(Rect&& rhs) noexcept  = default;
     
     public:
-        constexpr const bool        operator==(const Rect& rhs) const noexcept;
-        constexpr const bool        operator!=(const Rect& rhs) const noexcept;
+        constexpr bool              operator==(const Rect& rhs) const noexcept;
+        constexpr bool              operator!=(const Rect& rhs) const noexcept;
 
     public:
-        constexpr const float       left() const noexcept;
-        constexpr const float       right() const noexcept;
-        constexpr const float       top() const noexcept;
-        constexpr const float       bottom() const noexcept;
-        constexpr const float       horz() const noexcept;
-        constexpr const float       vert() const noexcept;
+        constexpr float             left() const noexcept;
+        constexpr float             right() const noexcept;
+        constexpr float             top() const noexcept;
+        constexpr float             bottom() const noexcept;
+        constexpr float             horz() const noexcept;
+        constexpr float             vert() const noexcept;
 
         float&                      left() noexcept;
         float&                      right() noexcept;
@@ -52,9 +52,9 @@ namespace mint
         constexpr void              top(const float s) noexcept;
         constexpr void              bottom(const float s) noexcept;
 
-        constexpr const Float2      center() const noexcept;
-        constexpr const Float2      size() const noexcept;
-        constexpr const Float2      position() const noexcept;
+        constexpr Float2            center() const noexcept;
+        constexpr Float2            size() const noexcept;
+        constexpr Float2            position() const noexcept;
         constexpr void              position(const Float2& position) noexcept;
 
     public:
@@ -65,11 +65,11 @@ namespace mint
         void                        expandRightBottom(const Rect& rhs) noexcept;
         void                        shrinkByQuantity(const Rect& quantity) noexcept;
         constexpr Float2            bound(const Float2& position) const noexcept;
-        constexpr const bool        contains(const Float2& position) const noexcept;
-        constexpr const bool        contains(const Rect& rhs) const noexcept;
+        constexpr bool              contains(const Float2& position) const noexcept;
+        constexpr bool              contains(const Rect& rhs) const noexcept;
     
     public:
-        const bool                  isNan() const noexcept;
+        bool                        isNan() const noexcept;
         void                        setNan() noexcept;
 
     private:

@@ -14,7 +14,7 @@ namespace mint
     namespace Math
     {
         template<int32 M, int32 N, typename T>
-        const bool equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon) noexcept
+        bool equals(const T(&lhs)[M][N], const T(&rhs)[M][N], const T epsilon) noexcept
         {
             for (int32 row = 0; row < M; ++row)
             {
@@ -232,7 +232,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        const T trace(const T(&mat)[N][N]) noexcept
+        T trace(const T(&mat)[N][N]) noexcept
         {
             T result{};
             for (int32 row = 0; row < N; ++row)
@@ -246,19 +246,19 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const T determinant(const T(&mat)[2][2]) noexcept
+        MINT_INLINE T determinant(const T(&mat)[2][2]) noexcept
         {
             return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
         }
         
         template<typename T>
-        MINT_INLINE const T determinant(T _11, T _12, T _21, T _22) noexcept
+        MINT_INLINE T determinant(T _11, T _12, T _21, T _22) noexcept
         {
             return _11 * _22 - _12 * _21;
         }
 
         template<typename T>
-        MINT_INLINE const T determinant(const T(&mat)[3][3]) noexcept
+        MINT_INLINE T determinant(const T(&mat)[3][3]) noexcept
         {
             return mat[0][0] * (mat[1][1] * mat[2][2] - mat[1][2] * mat[2][1])
                  - mat[0][1] * (mat[1][0] * mat[2][2] - mat[1][2] * mat[2][0])
@@ -266,7 +266,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const T determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept
+        MINT_INLINE T determinant(T _11, T _12, T _13, T _21, T _22, T _23, T _31, T _32, T _33) noexcept
         {
             return _11 * (_22 * _33 - _23 * _32)
                  - _12 * (_21 * _33 - _23 * _31)
@@ -274,7 +274,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const T determinantOfMinor(const T(&mat)[3][3], const int32 row, const int32 col) noexcept
+        MINT_INLINE T determinantOfMinor(const T(&mat)[3][3], const int32 row, const int32 col) noexcept
         {
             // 0 => 1 2
             // 1 => 0 2
@@ -287,7 +287,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const T determinantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
+        MINT_INLINE T determinantOfMinor(const T(&mat)[4][4], const int32 row, const int32 col) noexcept
         {
             // 0 => 1 2 3
             // 1 => 0 2 3
@@ -303,7 +303,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const T determinant(const T(&mat)[4][4]) noexcept
+        MINT_INLINE T determinant(const T(&mat)[4][4]) noexcept
         {
             return mat[0][0] * determinantOfMinor(mat, 0, 0) - mat[0][1] * determinantOfMinor(mat, 0, 1)
                  + mat[0][2] * determinantOfMinor(mat, 0, 2) - mat[0][3] * determinantOfMinor(mat, 0, 3);
@@ -396,13 +396,13 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    inline const bool Matrix<M, N, T>::operator==(const Matrix& rhs) const noexcept
+    inline bool Matrix<M, N, T>::operator==(const Matrix& rhs) const noexcept
     {
         return Math::equals(_m, rhs._m);
     }
 
     template<int32 M, int32 N, typename T>
-    inline const bool Matrix<M, N, T>::operator!=(const Matrix& rhs) const noexcept
+    inline bool Matrix<M, N, T>::operator!=(const Matrix& rhs) const noexcept
     {
         return !(*this == rhs);
     }
@@ -506,7 +506,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const T Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
+    MINT_INLINE T Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
     {
         MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "범위를 벗어난 접근입니다!");
         return _m[rowIndex][columnIndex];
@@ -575,7 +575,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const T Matrix<M, N, T>::trace() const noexcept
+    MINT_INLINE T Matrix<M, N, T>::trace() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -594,13 +594,13 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE constexpr const bool Matrix<M, N, T>::isSquareMatrix() const noexcept
+    MINT_INLINE constexpr bool Matrix<M, N, T>::isSquareMatrix() const noexcept
     {
         return (M == N);
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isDiagonalMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isDiagonalMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -624,7 +624,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isScalarMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isScalarMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -646,7 +646,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isIdentityMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isIdentityMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -667,7 +667,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isZeroMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isZeroMatrix() const noexcept
     {
         for (int32 rowIndex = 0; rowIndex < M; ++rowIndex)
         {
@@ -683,7 +683,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isSymmetricMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isSymmetricMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -709,7 +709,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isSkewSymmetricMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isSkewSymmetricMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -735,7 +735,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isUpperTriangularMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isUpperTriangularMatrix() const noexcept
     {
         if (isSquareMatrix() == false)
         {
@@ -757,7 +757,7 @@ namespace mint
     }
 
     template<int32 M, int32 N, typename T>
-    MINT_INLINE const bool Matrix<M, N, T>::isIdempotentMatrix() const noexcept
+    MINT_INLINE bool Matrix<M, N, T>::isIdempotentMatrix() const noexcept
     {
         Matrix<M, N, T> squared = *this;
         squared *= *this;

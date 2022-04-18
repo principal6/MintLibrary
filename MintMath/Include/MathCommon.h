@@ -49,34 +49,34 @@ namespace mint
             return max(min(value, limitMax), limitMin);
         }
 
-        MINT_INLINE constexpr const float saturate(const float value)
+        MINT_INLINE constexpr float saturate(const float value)
         {
             return clamp(value, 0.0f, 1.0f);
         }
 
-        MINT_INLINE constexpr const double saturate(const double value)
+        MINT_INLINE constexpr double saturate(const double value)
         {
             return clamp(value, 0.0, 1.0);
         }
 
-        MINT_INLINE constexpr const float nan() noexcept
+        MINT_INLINE constexpr float nan() noexcept
         {
             return static_cast<float>(1e+300 * 1e+300) * 0.0f;
         }
 
-        const bool isNan(const float value) noexcept;
+        bool isNan(const float value) noexcept;
 
-        MINT_INLINE const float toRadian(const float degree) noexcept
+        MINT_INLINE float toRadian(const float degree) noexcept
         {
             return (degree / 360.0f * kTwoPi);
         }
 
-        MINT_INLINE const float toDegree(const float radian) noexcept
+        MINT_INLINE float toDegree(const float radian) noexcept
         {
             return (radian / kTwoPi * 360.0f);
         }
 
-        MINT_INLINE const float limitAngleToPositiveTwoPi(const float radian) noexcept
+        MINT_INLINE float limitAngleToPositiveTwoPi(const float radian) noexcept
         {
             float result = radian;
             while (+kTwoPi < result)
@@ -86,7 +86,7 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const float limitAngleToNegativeTwoPi(const float radian) noexcept
+        MINT_INLINE float limitAngleToNegativeTwoPi(const float radian) noexcept
         {
             float result = radian;
             while (result < -kTwoPi)
@@ -96,7 +96,7 @@ namespace mint
             return result;
         }
 
-        MINT_INLINE const float limitAngleToPositiveNegativeTwoPiRotation(const float radian) noexcept
+        MINT_INLINE float limitAngleToPositiveNegativeTwoPiRotation(const float radian) noexcept
         {
             if (+kTwoPi < radian)
             {
@@ -109,12 +109,12 @@ namespace mint
             return radian;
         }
 
-        MINT_INLINE const bool equals(const float a, const float b, const float epsilon = kFloatEpsilon)
+        MINT_INLINE bool equals(const float a, const float b, const float epsilon = kFloatEpsilon)
         {
             return (::abs(a - b) < epsilon);
         }
 
-        MINT_INLINE const bool equals(const double a, const double b, const double epsilon = kDoubleEpsilon)
+        MINT_INLINE bool equals(const double a, const double b, const double epsilon = kDoubleEpsilon)
         {
             return (::abs(a - b) < epsilon);
         }

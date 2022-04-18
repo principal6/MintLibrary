@@ -96,8 +96,8 @@ namespace mint
         AffineMat&          operator=(AffineMat&& rhs) noexcept = default;
     
     public:
-        const bool          operator==(const AffineMat& rhs) const noexcept;
-        const bool          operator!=(const AffineMat& rhs) const noexcept;
+        bool                operator==(const AffineMat& rhs) const noexcept;
+        bool                operator!=(const AffineMat& rhs) const noexcept;
 
     public:
         AffineMat&          operator+() noexcept;

@@ -5,18 +5,18 @@ namespace mint
 {
     namespace Math
     {
-        MINT_INLINE const float easeInQuad(const float x) noexcept
+        MINT_INLINE float easeInQuad(const float x) noexcept
         {
             return x * x;
         }
 
-        MINT_INLINE const float easeOutQuad(const float x) noexcept
+        MINT_INLINE float easeOutQuad(const float x) noexcept
         {
             const float term = (x - 1.0f);
             return 1.0f - (term * term);
         }
 
-        MINT_INLINE const float easeInOutQuad(const float x) noexcept
+        MINT_INLINE float easeInOutQuad(const float x) noexcept
         {
             if (x < 0.5f)
             {
@@ -29,7 +29,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE const float Easing::ease(const Method method, float x) noexcept
+        MINT_INLINE float Easing::ease(const Method method, float x) noexcept
         {
             x = Math::clamp(x, 0.0f, 1.0f);
 
