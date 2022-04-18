@@ -17,9 +17,9 @@ struct RenderCommand;
 ### Acronyms
 #### Use all UPPER CASE for acronyms
 ```cpp
-const uint32 getHP() const;
+uint32 getHP() const;
 uint32 HP = 10;
-const bool testGUI();
+bool testGUI();
 void updateAI();
 ```
 
@@ -72,7 +72,7 @@ class Life
 {
 public:
     void            setHP(const uint32);
-    const uint32    getHP() const;
+    uint32          getHP() const;
 
     const String&   getName() const { return _name; }
     String&         accessName() { return _name; }
