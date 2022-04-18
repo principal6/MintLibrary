@@ -16,7 +16,7 @@ namespace mint
             __noop;
         }
 
-        const bool MeshData::isEmpty() const noexcept
+        bool MeshData::isEmpty() const noexcept
         {
             return _positionArray.empty() && _vertexToPositionTable.empty() && _vertexArray.empty() && _faceArray.empty();
         }
@@ -47,22 +47,22 @@ namespace mint
             }
         }
 
-        const uint32 MeshData::getPositionCount() const noexcept
+        uint32 MeshData::getPositionCount() const noexcept
         {
             return _positionArray.size();
         }
 
-        const uint32 MeshData::getVertexCount() const noexcept
+        uint32 MeshData::getVertexCount() const noexcept
         {
             return _vertexArray.size();
         }
 
-        const uint32 MeshData::getFaceCount() const noexcept
+        uint32 MeshData::getFaceCount() const noexcept
         {
             return _faceArray.size();
         }
 
-        const uint32 MeshData::getIndexCount() const noexcept
+        uint32 MeshData::getIndexCount() const noexcept
         {
             return static_cast<uint32>(_faceArray.size() * Face::kVertexCountPerFace);
         }

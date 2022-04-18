@@ -51,15 +51,6 @@
     <ClInclude Include="Include\RenderingBaseCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -107,6 +98,15 @@
     </ClInclude>
     <ClInclude Include="Include\GUI\GUIInteractionModule.hpp">
       <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h">
+      <Filter>Assets\CppHlsl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

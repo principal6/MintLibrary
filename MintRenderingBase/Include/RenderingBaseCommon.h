@@ -80,7 +80,7 @@ namespace mint
             Color                       operator/(const float s) const { return Color(_raw / s); }
             Color                       operator+(const Color& rhs) const { return Color(_raw + rhs._raw); }
             Color                       operator-(const Color& rhs) const { return Color(_raw - rhs._raw); }
-            const bool                  operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
+            bool                        operator==(const Color& rhs) const noexcept { return _raw == rhs._raw; }
 
         public:
             MINT_INLINE constexpr float r() const noexcept { return _raw._x; }
@@ -113,7 +113,7 @@ namespace mint
             MINT_INLINE Color           cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(s / 255.0f); }
             MINT_INLINE Color           cloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
             MINT_INLINE Color           cloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
-            MINT_INLINE const bool      isTransparent() const noexcept { return (_raw._w <= 0.0f); }
+            MINT_INLINE bool            isTransparent() const noexcept { return (_raw._w <= 0.0f); }
 
         public:
             // Rec. 601
@@ -146,25 +146,25 @@ namespace mint
             template <typename T>
             struct Sample3x3
             {
-                MINT_INLINE const T NW() const noexcept { return _m[0][0]; }
-                MINT_INLINE const T N() const noexcept  { return _m[0][1]; }
-                MINT_INLINE const T NE() const noexcept { return _m[0][2]; }
+                MINT_INLINE T   NW() const noexcept { return _m[0][0]; }
+                MINT_INLINE T   N() const noexcept  { return _m[0][1]; }
+                MINT_INLINE T   NE() const noexcept { return _m[0][2]; }
                 
-                MINT_INLINE const T W() const noexcept  { return _m[1][0]; }
-                MINT_INLINE const T M() const noexcept  { return _m[1][1]; }
-                MINT_INLINE const T E() const noexcept  { return _m[1][2]; }
+                MINT_INLINE T   W() const noexcept  { return _m[1][0]; }
+                MINT_INLINE T   M() const noexcept  { return _m[1][1]; }
+                MINT_INLINE T   E() const noexcept  { return _m[1][2]; }
                 
-                MINT_INLINE const T SW() const noexcept { return _m[2][0]; }
-                MINT_INLINE const T S() const noexcept  { return _m[2][1]; }
-                MINT_INLINE const T SE() const noexcept { return _m[2][2]; }
+                MINT_INLINE T   SW() const noexcept { return _m[2][0]; }
+                MINT_INLINE T   S() const noexcept  { return _m[2][1]; }
+                MINT_INLINE T   SE() const noexcept { return _m[2][2]; }
 
-                MINT_INLINE const T maxAdjacent() const noexcept { return max(max(max(N(), S()), E()), W()); }
-                MINT_INLINE const T minAdjacent() const noexcept { return min(min(min(N(), S()), E()), W()); }
+                MINT_INLINE T   maxAdjacent() const noexcept { return max(max(max(N(), S()), E()), W()); }
+                MINT_INLINE T   minAdjacent() const noexcept { return min(min(min(N(), S()), E()), W()); }
                 
-                MINT_INLINE const T sumAdjacent() const noexcept { return N() + S() + E() + W(); }
-                MINT_INLINE const T sumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }
+                MINT_INLINE T   sumAdjacent() const noexcept { return N() + S() + E() + W(); }
+                MINT_INLINE T   sumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }
 
-                T                   _m[3][3];
+                T               _m[3][3];
             };
 
             struct Sample3x3Luma : public Sample3x3<float>
@@ -195,7 +195,7 @@ namespace mint
             void                    fillCircle(const Int2& center, const int32 radius, const Color& color) noexcept;
             void                    setPixel(const Int2& at, const Color& color) noexcept;
             const Color&            getPixel(const Int2& at) const noexcept;
-            const Color             getSubPixel(const Float2& at) const noexcept;
+            Color                   getSubPixel(const Float2& at) const noexcept;
             void                    getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
             void                    getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
             void                    sample3x3(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept;
@@ -204,7 +204,7 @@ namespace mint
             const byte*             buildPixelRgbaArray() noexcept;
 
         private:
-            const int32             convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
+            int32                   convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
             const Color&            getColorFromXy(const uint32 x, const uint32 y) const noexcept;
 
         private:

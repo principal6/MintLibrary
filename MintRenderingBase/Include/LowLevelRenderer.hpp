@@ -37,13 +37,13 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
+        MINT_INLINE uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
         {
             return _vertices.size();
         }
 
         template<typename T>
-        MINT_INLINE const uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
+        MINT_INLINE uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
         {
             return _indices.size();
         }
@@ -77,7 +77,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
+        MINT_INLINE IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
         {
             return _indexBase;
         }
@@ -91,7 +91,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const bool LowLevelRenderer<T>::isRenderable() const noexcept
+        MINT_INLINE bool LowLevelRenderer<T>::isRenderable() const noexcept
         {
             return _vertices.empty() == false;
         }

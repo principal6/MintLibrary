@@ -61,7 +61,7 @@ namespace mint
                             GlyphRange(const wchar_t startWchar, const wchar_t endWchar);
 
         public:
-            const bool      operator<(const GlyphRange& rhs) const noexcept;
+            bool            operator<(const GlyphRange& rhs) const noexcept;
 
         private:
             wchar_t         _startWchar;
@@ -72,9 +72,9 @@ namespace mint
         {
             friend FontLoader;
 
-            const uint32        getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
-            const float         computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            const uint32        computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
+            uint32              getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
+            float               computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+            uint32              computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 
             Vector<GlyphInfo>   _glyphInfoArray;
             DxObjectID          _fontTextureID;
@@ -99,26 +99,26 @@ namespace mint
                                 ~FontLoader();
 
         public:
-            static const bool   doesExistFont(const char* const fontFileNameRaw);
+            static bool         doesExistFont(const char* const fontFileNameRaw);
             static std::string  getFontFileNameWithExtension(const char* const fontFileName) noexcept;
         
         public:
             void                pushGlyphRange(const GlyphRange& glyphRange) noexcept;
         
         public:
-            const bool          loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice);
+            bool                loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice);
         
         public:
-            const bool          bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+            bool                bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
         
         public:
             const FontData&     getFontData() const { return _fontData; }
 
         private:
-            const bool          initializeFreeType(const char* const fontFaceFileName);
+            bool                initializeFreeType(const char* const fontFaceFileName);
             void                deinitializeFreeType();
             
-            const bool          bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
+            bool                bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
             void                completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
             void                writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept;
 

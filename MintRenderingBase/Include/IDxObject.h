@@ -53,50 +53,50 @@ namespace mint
             DxObjectID&                     operator=(DxObjectID&& rhs) noexcept = default;
     
         public:
-            MINT_INLINE const bool            operator==(const DxObjectID& rhs) const noexcept
+            MINT_INLINE bool                operator==(const DxObjectID& rhs) const noexcept
             {
                 return _rawID == rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator!=(const DxObjectID& rhs) const noexcept
+            MINT_INLINE bool                operator!=(const DxObjectID& rhs) const noexcept
             {
                 return _rawID != rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator<(const DxObjectID& rhs) const noexcept
+            MINT_INLINE bool                operator<(const DxObjectID& rhs) const noexcept
             {
                 return _rawID < rhs._rawID;
             }
 
-            MINT_INLINE const bool            operator>(const DxObjectID& rhs) const noexcept
+            MINT_INLINE bool                operator>(const DxObjectID& rhs) const noexcept
             {
                 return _rawID > rhs._rawID;
             }
 
         public:
-            MINT_INLINE const bool            isValid() const noexcept
+            MINT_INLINE bool                isValid() const noexcept
             {
                 return _rawID != kDxInvalidObjectRawID;
             }
 
-            MINT_INLINE const DxObjectType    getObjectType() const noexcept
+            MINT_INLINE DxObjectType        getObjectType() const noexcept
             {
                 return _objectType;
             }
 
-            MINT_INLINE const bool            isObjectType(const DxObjectType objectType) const noexcept
+            MINT_INLINE bool                isObjectType(const DxObjectType objectType) const noexcept
             {
                 return _objectType == objectType;
             }
 
         private:
-            MINT_INLINE void                  assignIDXXX() noexcept
+            MINT_INLINE void                assignIDXXX() noexcept
             {
                 ++_lastRawID;
                 _rawID = _lastRawID;
             }
 
-            MINT_INLINE void                  setObjectTypeXXX(const DxObjectType objectType) noexcept
+            MINT_INLINE void                setObjectTypeXXX(const DxObjectType objectType) noexcept
             {
                 _objectType = objectType;
             }
@@ -125,17 +125,17 @@ namespace mint
             virtual                         ~IDxObject() = default;
 
         public:
-            MINT_INLINE const bool          operator==(const DxObjectID& objectID) const noexcept
+            MINT_INLINE bool                operator==(const DxObjectID& objectID) const noexcept
             {
                 return _objectID == objectID;
             }
 
-            MINT_INLINE const bool          operator<(const DxObjectID& objectID) const noexcept
+            MINT_INLINE bool                operator<(const DxObjectID& objectID) const noexcept
             {
                 return _objectID < objectID;
             }
 
-            MINT_INLINE const bool          operator>(const DxObjectID& objectID) const noexcept
+            MINT_INLINE bool                operator>(const DxObjectID& objectID) const noexcept
             {
                 return _objectID > objectID;
             }

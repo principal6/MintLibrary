@@ -40,28 +40,28 @@ namespace mint
             class ControlID
             {
             public:
-                                ControlID() : _rawID{ 0 } { __noop; }
-                                ControlID(const uint64 rawID) : _rawID{ rawID } { __noop; }
-                                ~ControlID() = default;
+                            ControlID() : _rawID{ 0 } { __noop; }
+                            ControlID(const uint64 rawID) : _rawID{ rawID } { __noop; }
+                            ~ControlID() = default;
 
             public:
-                const bool      operator==(const ControlID& rhs) const { return _rawID == rhs._rawID; }
-                const bool      operator!=(const ControlID& rhs) const { return _rawID != rhs._rawID; }
+                bool        operator==(const ControlID& rhs) const { return _rawID == rhs._rawID; }
+                bool        operator!=(const ControlID& rhs) const { return _rawID != rhs._rawID; }
 
             public:
-                void            invalidate() { _rawID = 0; }
-                const bool      isValid() const { return _rawID != 0; }
-                const uint64    getRawID() const { return _rawID; }
+                void        invalidate() { _rawID = 0; }
+                bool        isValid() const { return _rawID != 0; }
+                uint64      getRawID() const { return _rawID; }
 
             private:
-                uint64          _rawID;
+                uint64      _rawID;
             };
 
 
             class ControlData
             {
             public:
-                static const ControlID  generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
+                static ControlID    generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID);
 
             public:
                                     ControlData() : ControlData(ControlID(), ControlType::COUNT) { __noop; }
@@ -74,7 +74,7 @@ namespace mint
             public:
                 const ControlID&    getID() const { return _ID; }
                 const ControlType&  getType() const { return _type; }
-                const bool          hasValidType() const { return _type != ControlType::COUNT; }
+                bool                hasValidType() const { return _type != ControlType::COUNT; }
                 const uint64&       getAccessCount() const { return _accessCount; }
                 Float2              computeRelativePosition(const ControlData& parentControlData) const;
 
@@ -126,8 +126,8 @@ namespace mint
                 {
                     void            setAllTrue() { _raw = 0b1111; }
                     void            setAllFalse() { _raw = 0; }
-                    const bool      isAnyTrue() const { return (_raw & 0b1111) != 0; }
-                    const bool      isAllFalse() const { return (_raw & 0b1111) == 0; }
+                    bool            isAnyTrue() const { return (_raw & 0b1111) != 0; }
+                    bool            isAllFalse() const { return (_raw & 0b1111) == 0; }
                     void            maskBy(const ResizingFlags& mask) { _raw = _raw & mask._raw; }
 
                     union

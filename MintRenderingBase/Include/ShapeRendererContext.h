@@ -86,7 +86,7 @@ namespace mint
             virtual void    render() noexcept;
         
         public:
-            const bool      initializeFontData(const FontData& fontData);
+            bool            initializeFontData(const FontData& fontData);
             const FontData& getFontData() const noexcept { return _fontData; }
 
         public:
@@ -125,7 +125,7 @@ namespace mint
             void            drawLine(const Float2& p0, const Float2& p1, const float thickness);
             // Independent from internal position set by setPosition() call
             // No rotation allowed
-            const bool      drawLineStrip(const Vector<Float2>& points, const float thickness);
+            bool            drawLineStrip(const Vector<Float2>& points, const float thickness);
 
         public:
             // This function is slow...!!!
@@ -139,7 +139,7 @@ namespace mint
             void            drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags);
 
         public:
-            const float     computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const;
+            float           computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const;
 
         // Shape
         protected:
@@ -159,7 +159,7 @@ namespace mint
             void            pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
         
         protected:
-            const float     packInfoAsFloat(const ShapeType shapeType) const noexcept;
+            float           packInfoAsFloat(const ShapeType shapeType) const noexcept;
 
         protected:
             DxObjectID      _vertexShaderID;

@@ -11,19 +11,19 @@ namespace mint
         namespace GUI
         {
             template<typename Input>
-            inline const bool InteractionMousePressModule<Input>::isInteracting() const
+            inline bool InteractionMousePressModule<Input>::isInteracting() const
             {
                 return _input._controlID.isValid();
             }
 
             template<typename Input>
-            inline const bool InteractionMousePressModule<Input>::isInteractingWith(const ControlID& controlID) const
+            inline bool InteractionMousePressModule<Input>::isInteractingWith(const ControlID& controlID) const
             {
                 return _input._controlID == controlID;
             }
 
             template<typename Input>
-            inline const bool InteractionMousePressModule<Input>::begin(const Input& input)
+            inline bool InteractionMousePressModule<Input>::begin(const Input& input)
             {
                 if (isInteracting())
                 {

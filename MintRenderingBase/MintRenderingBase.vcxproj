@@ -191,9 +191,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\CppHlsl\Interpreter.h" />
     <ClInclude Include="Include\CppHlsl\Lexer.h" />

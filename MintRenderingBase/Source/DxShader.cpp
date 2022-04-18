@@ -189,7 +189,7 @@ namespace mint
             return DxObjectID::kInvalidObjectID;
         }
 
-        const bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData)
+        bool DxShaderPool::createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData)
         {
             if (FAILED(_graphicDevice.getDxDevice()->CreateVertexShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11VertexShader**>(shader._shader.ReleaseAndGetAddressOf()))))
             {
@@ -254,7 +254,7 @@ namespace mint
             inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
         }
 
-        const bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
+        bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
         {
             if (shaderType == DxShaderType::GeometryShader)
             {
@@ -278,7 +278,7 @@ namespace mint
             return true;
         }
 
-        const bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+        bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
         {
             std::string inputShaderFilePath{ inputDirectory };
             inputShaderFilePath += inputShaderFileName;
@@ -308,7 +308,7 @@ namespace mint
             return compileShaderFromFile(inputShaderFilePath.c_str(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
         }
 
-        const bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+        bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
         {
             if (kStringNPos == StringUtil::find(inputShaderFilePath, ".hlsl"))
             {
@@ -342,7 +342,7 @@ namespace mint
             return true;
         }
 
-        const bool DxShaderPool::compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
+        bool DxShaderPool::compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
         {
             ScopeStringA<20> version;
             makeShaderVersion(version, shaderType, _shaderVersion);

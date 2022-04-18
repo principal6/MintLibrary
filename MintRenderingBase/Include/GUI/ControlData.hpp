@@ -36,7 +36,7 @@ namespace mint
                 __noop;
             }
 
-            const ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
+            ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
             {
                 ScopeStringA<512> file = fileLine._file;
                 ScopeStringW<512> key;

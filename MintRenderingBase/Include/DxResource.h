@@ -54,7 +54,7 @@ namespace mint
 
         private:
             static DXGI_FORMAT                  getDxgiFormat(const DxTextureFormat format);
-            static const uint32                 getColorCount(const DxTextureFormat format);
+            static uint32                       getColorCount(const DxTextureFormat format);
 
         private:
                                                 DxResource(GraphicDevice& graphicDevice);
@@ -63,11 +63,11 @@ namespace mint
             virtual                             ~DxResource() = default;
 
         private:
-            const bool                          createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const bool                          createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
+            bool                                createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            bool                                createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
         public:
-            const bool                          isValid() const noexcept;
+            bool                                isValid() const noexcept;
         
         public:
             void                                updateBuffer(const void* const resourceContent, const uint32 elementCount);
@@ -84,12 +84,12 @@ namespace mint
             void                                setOffset(const uint32 elementOffset);
         
         public:
-            const uint32                        getRegisterIndex() const noexcept;
+            uint32                              getRegisterIndex() const noexcept;
             ID3D11Buffer* const*                getBuffer() const noexcept;
             ID3D11ShaderResourceView* const*    getResourceView() const noexcept;
         
         public:
-            const bool                          needToBind() const noexcept;
+            bool                                needToBind() const noexcept;
             void                                bindAsInput() const noexcept;
             void                                bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
 

@@ -60,7 +60,7 @@ namespace mint
             __noop;
         }
 
-        const bool GlyphRange::operator<(const GlyphRange& rhs) const noexcept
+        bool GlyphRange::operator<(const GlyphRange& rhs) const noexcept
         {
             return _startWchar < rhs._startWchar;
         }
@@ -68,12 +68,12 @@ namespace mint
 
 
 #pragma region FontData
-        const uint32 FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
+        uint32 FontData::getSafeGlyphIndex(const wchar_t wideChar) const noexcept
         {
             return (_charCodeToGlyphIndexMap.size() <= static_cast<uint32>(wideChar)) ? 0 : _charCodeToGlyphIndexMap[wideChar];
         }
 
-        const float FontData::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
+        float FontData::computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept
         {
             int32 totalWidth = 0;
             for (uint32 textAt = 0; textAt < textLength; ++textAt)
@@ -87,7 +87,7 @@ namespace mint
             return static_cast<float>(totalWidth);
         }
 
-        const uint32 FontData::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
+        uint32 FontData::computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept
         {
             const int32 positionInTextInt = static_cast<int32>(positionInText);
             int32 totalWidth = 0;
@@ -121,7 +121,7 @@ namespace mint
             deinitializeFreeType();
         }
 
-        const bool FontLoader::doesExistFont(const char* const fontFileNameRaw)
+        bool FontLoader::doesExistFont(const char* const fontFileNameRaw)
         {
             const std::string fontFileName = getFontFileNameWithExtension(fontFileNameRaw);
             return FileUtil::exists(fontFileName.c_str());
@@ -169,7 +169,7 @@ namespace mint
             }
         }
 
-        const bool FontLoader::loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
+        bool FontLoader::loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice)
         {
             const std::string fontFileName = getFontFileNameWithExtension(fontFileNameRaw);
             if (FileUtil::exists(fontFileName.c_str()) == false)
@@ -253,7 +253,7 @@ namespace mint
             return true;
         }
 
-        const bool FontLoader::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
+        bool FontLoader::bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop)
         {
             std::string fontFaceFileNameS = fontFaceFileName;
             if (StringUtil::hasExtension(fontFaceFileNameS) == false)
@@ -353,7 +353,7 @@ namespace mint
             return true;
         }
 
-        const bool FontLoader::initializeFreeType(const char* const fontFaceFileName)
+        bool FontLoader::initializeFreeType(const char* const fontFaceFileName)
         {
             if (FT_Init_FreeType(&_ftLibrary))
             {
@@ -389,7 +389,7 @@ namespace mint
             }
         }
 
-        const bool FontLoader::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
+        bool FontLoader::bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY)
         {
             if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
             {

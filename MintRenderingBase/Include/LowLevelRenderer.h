@@ -55,19 +55,19 @@ namespace mint
         public:
             Vector<T>&                      vertices() noexcept;
             Vector<IndexElementType>&       indices() noexcept;
-            const uint32                    getVertexCount() const noexcept;
-            const uint32                    getIndexCount() const noexcept;
+            uint32                          getVertexCount() const noexcept;
+            uint32                          getIndexCount() const noexcept;
 
         public:
             void                            pushMesh(const MeshData& meshData) noexcept;
 
         public:
             void                            setIndexBaseXXX(const IndexElementType base) noexcept;
-            const IndexElementType          getIndexBaseXXX() const noexcept;
+            IndexElementType                getIndexBaseXXX() const noexcept;
 
         public:
             void                            flush() noexcept;
-            const bool                      isRenderable() const noexcept;
+            bool                            isRenderable() const noexcept;
             void                            render(const RenderingPrimitive renderingPrimitive) noexcept;
 
         public:

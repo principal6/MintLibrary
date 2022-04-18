@@ -146,7 +146,7 @@ namespace mint
                 makeLabel_render(controlDesc, labelDesc, controlData);
             }
 
-            const bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
+            bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
             {
                 static constexpr ControlType kControlType = ControlType::Button;
                 ControlData& parentControlData = accessStackParentControlData();
@@ -160,7 +160,7 @@ namespace mint
                 return controlData._interactionState == ControlData::InteractionState::Clicked;
             }
 
-            const bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
+            bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
             {
                 static constexpr ControlType kControlType = ControlType::Window;
                 ControlData& parentControlData = accessStackParentControlData();
@@ -680,7 +680,7 @@ namespace mint
                 return Float4(position + size * 0.5f);
             }
 
-            const float GUIContext::computeRoundness(const ControlDesc& controlDesc) const
+            float GUIContext::computeRoundness(const ControlDesc& controlDesc) const
             {
                 const ControlData& controlData = accessControlData(controlDesc._controlID);
                 return _rendererContext.computeNormalizedRoundness(controlData._size.minElement(), _theme._roundnessInPixel);

@@ -221,7 +221,7 @@ namespace mint
             }
         }
 
-        const bool ShapeRendererContext::initializeFontData(const FontData& fontData)
+        bool ShapeRendererContext::initializeFontData(const FontData& fontData)
         {
             if (fontData._fontTextureID.isValid() == false)
             {
@@ -1315,7 +1315,7 @@ namespace mint
             pushShapeTransformToBuffer(0.0f, false);
         }
 
-        const bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
+        bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
         {
             const uint32 pointCount = points.size();
             MINT_ASSURE(pointCount > 1);
@@ -1515,7 +1515,7 @@ namespace mint
             pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
-        const float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
+        float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
         {
             return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
         }
@@ -1606,7 +1606,7 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
+        float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
         {
             return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }

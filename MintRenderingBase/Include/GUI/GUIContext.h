@@ -113,11 +113,11 @@ namespace mint
             // Control creation #0 make-()
             public:
                 void                            makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc);
-                const bool                      makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
+                bool                            makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc);
 
             // Control creation #1 begin-() && end-()
             public:
-                const bool                      beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
+                bool                            beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc);
                 void                            endWindow();
 
             // Control rendering
@@ -155,7 +155,7 @@ namespace mint
             private:
                 Float4                          computeShapePosition(const ControlDesc& controlDesc) const;
                 Float4                          computeShapePosition(const Float2& position, const Float2& size) const;
-                const float                     computeRoundness(const ControlDesc& controlDesc) const;
+                float                           computeRoundness(const ControlDesc& controlDesc) const;
 
             private:
                 void                            debugRender_control(const ControlData& controlData);

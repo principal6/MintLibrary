@@ -19,11 +19,11 @@ namespace mint
             class InteractionModule
             {
             public:
-                virtual const bool              begin(const Input& input) abstract;
+                virtual bool                    begin(const Input& input) abstract;
                 virtual void                    end() abstract;
 
             public:
-                virtual const bool              isInteracting() const abstract;
+                virtual bool                    isInteracting() const abstract;
             };
 #pragma endregion
 
@@ -40,12 +40,12 @@ namespace mint
             class InteractionMousePressModule : public InteractionModule<Input>
             {
             public:
-                virtual const bool              begin(const Input& input) override;
+                virtual bool                    begin(const Input& input) override;
                 virtual void                    end() override;
 
             public:
-                virtual const bool              isInteracting() const override;
-                virtual const bool              isInteractingWith(const ControlID& controlID) const;
+                virtual bool                    isInteracting() const override;
+                virtual bool                    isInteractingWith(const ControlID& controlID) const;
 
             public:
                 Float2                          computeRelativeMousePressedPosition() const;
@@ -75,7 +75,7 @@ namespace mint
                 static ControlData::ResizingFlags   makeResizingFlags(const Float2& mousePosition, const ControlData& controlData, const Rect& outerRect, const Rect& innerRect);
 
             public:
-                virtual const bool                  begin(const ResizingModuleInput& resizingModuleInput) override;
+                virtual bool                        begin(const ResizingModuleInput& resizingModuleInput) override;
 
             public:
                 MINT_INLINE const Float2&           getInitialControlSize() const { return _input._controlSize; }
@@ -91,13 +91,13 @@ namespace mint
             class DockingModule final : public InteractionModule<DockingModuleInput>
             {
             public:
-                virtual const bool              begin(const DockingModuleInput& dockingShipModuleInput) override;
+                virtual bool                    begin(const DockingModuleInput& dockingShipModuleInput) override;
                 virtual void                    end() override;
 
             public:
-                virtual const bool              isInteracting() const override;
-                const bool                      isDockControl(const ControlID& controlID) const;
-                const bool                      isShipControl(const ControlID& controlID) const;
+                virtual bool                    isInteracting() const override;
+                bool                            isDockControl(const ControlID& controlID) const;
+                bool                            isShipControl(const ControlID& controlID) const;
             
             public:
                 const ControlID&                getDockControlID() const { return _input._dockControlID; }
