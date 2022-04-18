@@ -343,7 +343,7 @@ namespace mint
         return *this;
     }
 
-    const bool Path::endsWithSlash() const noexcept
+    bool Path::endsWithSlash() const noexcept
     {
         return (_length == 0) ? false : _rawString[_length - 1] == '/';
     }
