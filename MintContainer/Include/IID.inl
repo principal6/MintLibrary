@@ -23,7 +23,7 @@ namespace mint
         return _rawID > rhs._rawID;
     }
 
-    MINT_INLINE const bool IID::isValid() const noexcept
+    MINT_INLINE bool IID::isValid() const noexcept
     {
         return _rawID != kInvalidRawID;
     }
