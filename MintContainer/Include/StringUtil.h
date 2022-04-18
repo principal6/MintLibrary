@@ -25,7 +25,7 @@ namespace mint
                         StringRange(const uint64 offset, const uint64 length);
 
     public:
-        const bool      isLengthSet() const noexcept;
+        bool            isLengthSet() const noexcept;
 
     public:
         uint32          _offset;

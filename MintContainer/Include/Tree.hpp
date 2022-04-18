@@ -36,13 +36,13 @@ namespace mint
     }
 
     template<typename T>
-    const bool TreeNodeAccessor<T>::operator==(const TreeNodeAccessor<T>& rhs) const noexcept
+    bool TreeNodeAccessor<T>::operator==(const TreeNodeAccessor<T>& rhs) const noexcept
     {
         return (_nodeID == rhs._nodeID) && (_slotIndex == rhs._slotIndex);
     }
 
     template<typename T>
-    const bool TreeNodeAccessor<T>::isValid() const noexcept
+    bool TreeNodeAccessor<T>::isValid() const noexcept
     {
         if (_tree != nullptr)
         {
@@ -91,7 +91,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const uint32 TreeNodeAccessor<T>::getChildNodeCount() const noexcept
+    inline uint32 TreeNodeAccessor<T>::getChildNodeCount() const noexcept
     {
         if (_tree != nullptr)
         {
@@ -159,7 +159,7 @@ namespace mint
 
 
     template<typename T>
-    inline const bool TreeNode<T>::isValid() const noexcept
+    inline bool TreeNode<T>::isValid() const noexcept
     {
         return (_nodeID != TreeNodeAccessor<T>::kInvalidNodeID);
     }
@@ -260,7 +260,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const uint32 Tree<T>::getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
+    inline uint32 Tree<T>::getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
     {
         if (isValidNode(nodeAccessor) == false)
         {
@@ -313,7 +313,7 @@ namespace mint
     }
 
     template<typename T>
-    const bool Tree<T>::isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
+    bool Tree<T>::isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept
     {
         const TreeNode<T>& node = _nodeArray.at(nodeAccessor._slotIndex);
         return node._nodeID == nodeAccessor._nodeID;
@@ -518,7 +518,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const uint32 Tree<T>::getAvailableNodeSlot()
+    inline uint32 Tree<T>::getAvailableNodeSlot()
     {
         while (true)
         {

@@ -119,7 +119,7 @@ namespace mint
 
     public:
         const UniqueStringAID               registerString(const char* const rawString) noexcept;
-        const bool                          isValid(const UniqueStringAID id) const noexcept;
+        bool                                isValid(const UniqueStringAID id) const noexcept;
         const char*                         getRawString(const UniqueStringAID id) const noexcept;
 
     public:

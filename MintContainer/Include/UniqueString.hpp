@@ -55,7 +55,7 @@ namespace mint
 #endif
 
 
-    MINT_INLINE const bool UniqueStringPoolA::isValid(const UniqueStringAID id) const noexcept
+    MINT_INLINE bool UniqueStringPoolA::isValid(const UniqueStringAID id) const noexcept
     {
         return (id._rawID < _uniqueStringCount);
     }

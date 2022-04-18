@@ -134,7 +134,7 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE const bool StringRange::isLengthSet() const noexcept
+    MINT_INLINE bool StringRange::isLengthSet() const noexcept
     {
         return _length;
     }

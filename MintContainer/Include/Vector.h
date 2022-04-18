@@ -66,9 +66,9 @@ namespace mint
         const T*        data() const noexcept;
 
     public:
-        const uint32    capacity() const noexcept;
-        const uint32    size() const noexcept;
-        const bool      empty() const noexcept;
+        uint32          capacity() const noexcept;
+        uint32          size() const noexcept;
+        bool            empty() const noexcept;
     
     public:
         template<typename T>
@@ -78,12 +78,12 @@ namespace mint
                         Iterator(T* rawPointer) : _rawPointer{ rawPointer } { __noop; }
         
         public:
-            const bool  operator==(const Iterator& rhs) const noexcept
+            bool        operator==(const Iterator& rhs) const noexcept
             {
                 return _rawPointer == rhs._rawPointer;
             }
 
-            const bool  operator!=(const Iterator& rhs) const noexcept
+            bool        operator!=(const Iterator& rhs) const noexcept
             {
                 return !(*this == rhs);
             }

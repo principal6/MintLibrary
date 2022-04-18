@@ -40,10 +40,10 @@ namespace mint
         TreeNodeAccessor&               operator=(TreeNodeAccessor&& rhs) noexcept = default;
 
     public:
-        const bool                      operator==(const TreeNodeAccessor& rhs) const noexcept;
+        bool                            operator==(const TreeNodeAccessor& rhs) const noexcept;
 
     public:
-        const bool                      isValid() const noexcept;
+        bool                            isValid() const noexcept;
     
     public:
         void                            setNodeData(const T& data) noexcept;
@@ -52,7 +52,7 @@ namespace mint
 
     public:
         TreeNodeAccessor<T>             getParentNode() const noexcept;
-        const uint32                    getChildNodeCount() const noexcept;
+        uint32                          getChildNodeCount() const noexcept;
         TreeNodeAccessor<T>             getChildNode(const uint32 childNodeIndex) const noexcept;
         TreeNodeAccessor<T>             getNextSiblingNode() const noexcept;
 
@@ -110,7 +110,7 @@ namespace mint
         }
 
     public:
-        const bool                      isValid() const noexcept;
+        bool                            isValid() const noexcept;
         void                            invalidate() noexcept;
 
     private:
@@ -142,12 +142,12 @@ namespace mint
     
     public:
         TreeNodeAccessor<T>                 getParentNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
-        const uint32                        getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+        uint32                              getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
         TreeNodeAccessor<T>                 getChildNode(const TreeNodeAccessor<T>& nodeAccessor, const uint32 childNodeIndex) const noexcept;
         TreeNodeAccessor<T>                 getNextSiblingNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 
     public:
-        const bool                          isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+        bool                                isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
         void                                setNodeData(const TreeNodeAccessor<T>& nodeAccessor, const T& nodeData) noexcept;
         const T&                            getNodeData(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
         T&                                  getNodeDataXXX(const TreeNodeAccessor<T>& nodeAccessor) noexcept;
@@ -166,7 +166,7 @@ namespace mint
         void                                moveToParent(TreeNodeAccessor<T>& nodeAccessor, const TreeNodeAccessor<T>& newParentNodeAccessor);
 
     private:
-        const uint32                        getAvailableNodeSlot();
+        uint32                              getAvailableNodeSlot();
 
     private:
         Vector<TreeNode<T>>                 _nodeArray;
