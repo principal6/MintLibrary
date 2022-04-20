@@ -444,9 +444,7 @@ namespace mint
             void GUIContext::updateControlData_interaction(ControlData& controlData)
             {
                 const InputContext& inputContext = InputContext::getInstance();
-
-                ControlData::InteractionState& interactionState = controlData._interactionState;
-                interactionState = ControlData::InteractionState::None;
+                controlData._interactionState = ControlData::InteractionState::None;
                 const Float2& mousePosition = inputContext.getMousePosition();
                 const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
                 const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(mousePosition);
@@ -454,10 +452,10 @@ namespace mint
                 if (isMousePositionIn)
                 {
                     const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(relativePressedMousePosition);
-                    interactionState = isPressedMousePositionIn ? ControlData::InteractionState::Pressing : ControlData::InteractionState::Hovering;
+                    controlData._interactionState = isPressedMousePositionIn ? ControlData::InteractionState::Pressing : ControlData::InteractionState::Hovering;
                     if (isPressedMousePositionIn == true && isMouseLeftUp == true)
                     {
-                        interactionState = ControlData::InteractionState::Clicked;
+                        controlData._interactionState = ControlData::InteractionState::Clicked;
                     }
                 }
 
