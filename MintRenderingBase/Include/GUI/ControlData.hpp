@@ -55,9 +55,10 @@ namespace mint
 
             inline void ControlData::updateZones()
             {
-                computeContentZone();
-                computeVisibleContentZone();
-                computeTitleBarZone();
+                computeTitleBarZone(_zones._titleBarZone);
+
+                computeContentZone(_zones._contentZone);
+                computeContentZone(_zones._visibleContentZone);
             }
 
             inline Float2 ControlData::computeRelativePosition(const ControlData& parentControlData) const
@@ -65,30 +66,21 @@ namespace mint
                 return _absolutePosition - parentControlData._absolutePosition;
             }
 
-            inline void ControlData::computeContentZone()
+            inline void ControlData::computeTitleBarZone(Rect& titleBarZone)
             {
-                _zones._contentZone = Rect(Float2::kZero, _size);
+                titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
                 if (_type == ControlType::Window)
                 {
-                    _zones._contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
+                    titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
                 }
             }
 
-            inline void ControlData::computeVisibleContentZone()
+            inline void ControlData::computeContentZone(Rect& contentZone)
             {
-                _zones._visibleContentZone = Rect(Float2::kZero, _size);
+                contentZone = Rect(Float2::kZero, _size);
                 if (_type == ControlType::Window)
                 {
-                    _zones._visibleContentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
-                }
-            }
-
-            inline void ControlData::computeTitleBarZone()
-            {
-                _zones._titleBarZone = Rect(Float2::kZero, Float2(_size._x, 0.0f));
-                if (_type == ControlType::Window)
-                {
-                    _zones._titleBarZone.bottom() += (_perTypeData._windowData._titleBarHeight);
+                    contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
                 }
             }
         }

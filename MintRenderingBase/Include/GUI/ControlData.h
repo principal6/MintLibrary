@@ -79,9 +79,8 @@ namespace mint
                 Float2              computeRelativePosition(const ControlData& parentControlData) const;
 
             private:
-                void                computeContentZone();
-                void                computeVisibleContentZone();
-                void                computeTitleBarZone();
+                void                computeContentZone(Rect& contentZone);
+                void                computeTitleBarZone(Rect& titleBarZone);
 
             public:
                 ControlID           _parentID;
