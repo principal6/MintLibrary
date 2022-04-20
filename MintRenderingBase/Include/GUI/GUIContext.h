@@ -207,7 +207,7 @@ namespace mint
                 DraggingModule                  _draggingModule;
                 ResizingModule                  _resizingModule;
                 FocusingModule                  _focusingModule;
-                DockingModule                   _dockingModule;
+                DockingInteractionModule        _dockingInteractionModule;
             };
         }
     }

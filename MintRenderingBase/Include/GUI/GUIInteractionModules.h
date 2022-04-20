@@ -83,15 +83,15 @@ namespace mint
             };
 
 
-            struct DockingModuleInput
+            struct DockingInteractionModuleInput
             {
                 ControlID _dockControlID;
                 ControlID _shipControlID;
             };
-            class DockingModule final : public InteractionModule<DockingModuleInput>
+            class DockingInteractionModule final : public InteractionModule<DockingInteractionModuleInput>
             {
             public:
-                virtual bool                    begin(const DockingModuleInput& dockingShipModuleInput) override;
+                virtual bool                    begin(const DockingInteractionModuleInput& dockingShipModuleInput) override;
                 virtual void                    end() override;
 
             public:
@@ -104,7 +104,7 @@ namespace mint
                 const ControlID&                getShipControlID() const { return _input._shipControlID; }
 
             private:
-                DockingModuleInput          _input;
+                DockingInteractionModuleInput          _input;
             };
         }
     }

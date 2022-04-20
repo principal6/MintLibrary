@@ -136,12 +136,13 @@ namespace mint
             void GUIContext::makeLabel(const FileLine& fileLine, const LabelDesc& labelDesc)
             {
                 static constexpr ControlType kControlType = ControlType::Label;
-                ControlData& parentControlData = accessStackParentControlData();
-                const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlData.getID());
+                const ControlID parentControlID = accessStackParentControlData().getID();
+                const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlID);
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
+                ControlData& parentControlData = accessControlData(parentControlID);
                 updateControlData(labelDesc._text, controlDesc, controlData, parentControlData);
                 makeLabel_render(controlDesc, labelDesc, controlData);
             }
@@ -149,12 +150,13 @@ namespace mint
             bool GUIContext::makeButton(const FileLine& fileLine, const ButtonDesc& buttonDesc)
             {
                 static constexpr ControlType kControlType = ControlType::Button;
-                ControlData& parentControlData = accessStackParentControlData();
-                const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlData.getID());
+                const ControlID parentControlID = accessStackParentControlData().getID();
+                const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlID);
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 ControlDesc controlDesc;
+                ControlData& parentControlData = accessControlData(parentControlID);
                 updateControlData(buttonDesc._text, controlDesc, controlData, parentControlData);
                 makeButton_render(controlDesc, buttonDesc, controlData);
                 return controlData._interactionState == ControlData::InteractionState::Clicked;
@@ -163,25 +165,31 @@ namespace mint
             bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
             {
                 static constexpr ControlType kControlType = ControlType::Window;
-                ControlData& parentControlData = accessStackParentControlData();
-                const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlData.getID());
+                const ControlID parentControlID = accessStackParentControlData().getID();
+                const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlID);
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
+                ControlData& parentControlData = accessControlData(parentControlID);
                 const bool isNewlyCreated = (controlData.getAccessCount() == 0);
                 if (isNewlyCreated)
                 {
-                    float& titleBarHeight = controlData._perTypeData._windowData._titleBarHeight;
-                    titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
-
+                    ControlData::PerTypeData::WindowData& windowData = controlData._perTypeData._windowData;
+                    windowData._titleBarHeight = _fontSize + _theme._titleBarPadding.vert();
                     controlData._resizingMask.setAllTrue();
-
-                    controlData._resizableMinSize = Float2(titleBarHeight * 2.0f);
+                    controlData._resizableMinSize = Float2(windowData._titleBarHeight * 2.0f);
                     controlData._generalTraits._isFocusable = true;
                     controlData._generalTraits._isDraggable = true;
+
+                    nextControlPosition(windowDesc._initialPosition);
+                    nextControlSize(windowDesc._initialSize);
                 }
-                nextControlPosition((isNewlyCreated ? windowDesc._initialPosition : controlData.computeRelativePosition(parentControlData)));
-                nextControlSize((isNewlyCreated ? windowDesc._initialSize : controlData._size));
+                else
+                {
+                    nextControlPosition(controlData.computeRelativePosition(parentControlData));
+                    nextControlSize(controlData._size);
+                }
+                
                 // No margin for window controls
                 nextControlMargin(Rect());
 
@@ -267,7 +275,7 @@ namespace mint
                 ScopeVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
                 splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
-                if (_dockingModule.isShipControl(controlData.getID()))
+                if (_dockingInteractionModule.isShipControl(controlData.getID()))
                 {
                     splits[0]._color = _theme._shipCandidateTitleBarColor;
                     splits[1]._color = _theme._shipCandidateBackgroundColor;
@@ -585,18 +593,18 @@ namespace mint
 
             void GUIContext::updateControlData_interaction_docking(ControlData& controlData, const ControlData& parentControlData)
             {
-                if (_dockingModule.isDockControl(controlData.getID()) == true && _dockingModule.isShipControl(_draggingModule.getControlID()) == true)
+                if (_dockingInteractionModule.isDockControl(controlData.getID()) == true && _dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true)
                 {
                     if (controlData._interactionState == ControlData::InteractionState::None)
                     {
-                        _dockingModule.end();
+                        _dockingInteractionModule.end();
                     }
                     return;
                 }
 
                 if (_draggingModule.isInteracting() == false)
                 {
-                    _dockingModule.end();
+                    _dockingInteractionModule.end();
                     return;
                 }
 
@@ -611,10 +619,10 @@ namespace mint
                     return;
                 }
 
-                DockingModuleInput dockingModuleInput;
+                DockingInteractionModuleInput dockingModuleInput;
                 dockingModuleInput._dockControlID = controlData.getID();
                 dockingModuleInput._shipControlID = _draggingModule.getControlID();
-                _dockingModule.begin(dockingModuleInput);
+                _dockingInteractionModule.begin(dockingModuleInput);
             }
 
             void GUIContext::updateControlData_resetNextControlDesc()

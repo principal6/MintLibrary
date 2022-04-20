@@ -53,23 +53,23 @@ namespace mint
 #pragma endregion
 
 
-#pragma region DockingModule
-            bool DockingModule::isInteracting() const
+#pragma region DockingInteractionModule
+            bool DockingInteractionModule::isInteracting() const
             {
                 return _input._shipControlID.isValid();
             }
 
-            bool DockingModule::isDockControl(const ControlID& controlID) const
+            bool DockingInteractionModule::isDockControl(const ControlID& controlID) const
             {
                 return _input._dockControlID == controlID;
             }
 
-            bool DockingModule::isShipControl(const ControlID& controlID) const
+            bool DockingInteractionModule::isShipControl(const ControlID& controlID) const
             {
                 return _input._shipControlID == controlID;
             }
 
-            bool DockingModule::begin(const DockingModuleInput& input)
+            bool DockingInteractionModule::begin(const DockingInteractionModuleInput& input)
             {
                 if (isInteracting())
                 {
@@ -80,7 +80,7 @@ namespace mint
                 return true;
             }
 
-            void DockingModule::end()
+            void DockingInteractionModule::end()
             {
                 _input._dockControlID.invalidate();
                 _input._shipControlID.invalidate();
