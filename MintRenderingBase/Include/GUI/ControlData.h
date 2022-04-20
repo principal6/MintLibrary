@@ -84,6 +84,7 @@ namespace mint
                 void                computeTitleBarZone();
 
             public:
+                ControlID           _parentID;
                 Float2              _absolutePosition; // Absolute position in screen space
                 Float2              _size;
                 Float2              _nextChildSameLinePosition;

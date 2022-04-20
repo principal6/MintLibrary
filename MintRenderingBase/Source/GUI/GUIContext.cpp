@@ -141,9 +141,9 @@ namespace mint
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
+                controlData._parentID = parentControlID;
                 controlData._text = labelDesc._text;
-                ControlData& parentControlData = accessControlData(parentControlID);
-                updateControlData(controlData, parentControlData);
+                updateControlData(controlData);
                 makeLabel_render(labelDesc, controlData);
             }
 
@@ -155,9 +155,9 @@ namespace mint
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
+                controlData._parentID = parentControlID;
                 controlData._text = buttonDesc._text;
-                ControlData& parentControlData = accessControlData(parentControlID);
-                updateControlData(controlData, parentControlData);
+                updateControlData(controlData);
                 makeButton_render(buttonDesc, controlData);
                 return controlData._interactionState == ControlData::InteractionState::Clicked;
             }
@@ -170,6 +170,7 @@ namespace mint
                 _controlIDsOfCurrentFrame.push_back(controlID);
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
+                controlData._parentID = parentControlID;
                 controlData._text = windowDesc._title;
                 ControlData& parentControlData = accessControlData(parentControlID);
                 const bool isNewlyCreated = (controlData.getAccessCount() == 0);
@@ -193,8 +194,8 @@ namespace mint
                 // No margin for window controls
                 nextControlMargin(Rect());
 
-                updateControlData(controlData, parentControlData);
-                beginWindow_render(controlData, parentControlData);
+                updateControlData(controlData);
+                beginWindow_render(controlData);
                 _controlStack.push_back(controlID);
 
                 {
@@ -264,7 +265,7 @@ namespace mint
                 }
             }
 
-            void GUIContext::beginWindow_render(const ControlData& controlData, const ControlData& parentControlData)
+            void GUIContext::beginWindow_render(const ControlData& controlData)
             {
                 _rendererContext.setPosition(computeShapePosition(controlData.getID()));
 
@@ -283,6 +284,7 @@ namespace mint
                 FontRenderingOption titleBarFontRenderingOption;
                 titleBarFontRenderingOption._directionHorz = TextRenderDirectionHorz::Rightward;
                 titleBarFontRenderingOption._directionVert = TextRenderDirectionVert::Centered;
+                const ControlData& parentControlData = accessControlData(controlData._parentID);
                 const Float2 titleBarTextPosition = controlData.computeRelativePosition(parentControlData) + Float2(_theme._titleBarPadding.left(), 0.0f);
                 const Float2 titleBarSize = Float2(controlData._size._x, titleBarHeight);
                 drawText(titleBarTextPosition, titleBarSize, controlData._text, _theme._textColor, titleBarFontRenderingOption);
@@ -317,17 +319,17 @@ namespace mint
                 return accessControlData(_controlStack.back());
             }
 
-            void GUIContext::updateControlData(ControlData& controlData, ControlData& parentControlData)
+            void GUIContext::updateControlData(ControlData& controlData)
             {
-                updateControlData_processResizing(controlData, parentControlData);
-                updateControlData_processDragging(controlData, parentControlData);
+                updateControlData_processResizing(controlData);
+                updateControlData_processDragging(controlData);
 
-                updateControlData_renderingData(controlData, parentControlData);
-                updateControlData_interaction(controlData, parentControlData);
+                updateControlData_renderingData(controlData);
+                updateControlData_interaction(controlData);
                 updateControlData_resetNextControlDesc();
             }
 
-            void GUIContext::updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData)
+            void GUIContext::updateControlData_processResizing(const ControlData& controlData)
             {
                 if (_resizingModule.isInteractingWith(controlData.getID()) == false)
                 {
@@ -376,7 +378,7 @@ namespace mint
                 nextControlSize(Float2::max(_resizingModule.getInitialControlSize() + displacementSize, controlData._resizableMinSize));
             }
 
-            void GUIContext::updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData)
+            void GUIContext::updateControlData_processDragging(const ControlData& controlData)
             {
                 if (_draggingModule.isInteractingWith(controlData.getID()) == false)
                 {
@@ -386,11 +388,11 @@ namespace mint
                 const InputContext& inputContext = InputContext::getInstance();
                 const Float2 displacement = inputContext.getMousePosition() - _draggingModule.getMousePressedPosition();
                 const Float2 absolutePosition = _draggingModule.getInitialControlPosition() + displacement;
-                const Float2 relativePosition = absolutePosition - parentControlData._absolutePosition;
+                const Float2 relativePosition = absolutePosition - accessControlData(controlData._parentID)._absolutePosition;
                 nextControlPosition(relativePosition);
             }
 
-            void GUIContext::updateControlData_renderingData(ControlData& controlData, ControlData& parentControlData)
+            void GUIContext::updateControlData_renderingData(ControlData& controlData)
             {
                 const Float2 controlRelativePosition = _nextControlDesc._position;
                 const Float2 controlSize = _nextControlDesc._size;
@@ -399,6 +401,7 @@ namespace mint
 
                 // Position
                 const bool isAutoPositioned = controlRelativePosition.isNan();
+                ControlData& parentControlData = accessControlData(controlData._parentID);
                 const Float2& parentNextChildPosition = (_nextControlDesc._sameLine ? parentControlData._nextChildSameLinePosition : parentControlData._nextChildNextLinePosition);
                 const Float2 relativePosition = (isAutoPositioned ? parentNextChildPosition : controlRelativePosition);
                 controlData._absolutePosition = relativePosition;
@@ -438,7 +441,7 @@ namespace mint
                 controlData.updateZones();
             }
 
-            void GUIContext::updateControlData_interaction(ControlData& controlData, ControlData& parentControlData)
+            void GUIContext::updateControlData_interaction(ControlData& controlData)
             {
                 const InputContext& inputContext = InputContext::getInstance();
 
@@ -460,8 +463,8 @@ namespace mint
 
                 updateControlData_interaction_focusing(controlData);
                 updateControlData_interaction_resizing(controlData);
-                updateControlData_interaction_dragging(controlData, parentControlData);
-                updateControlData_interaction_docking(controlData, parentControlData);
+                updateControlData_interaction_dragging(controlData);
+                updateControlData_interaction_docking(controlData);
             }
 
             void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
@@ -541,7 +544,7 @@ namespace mint
                 }
             }
 
-            void GUIContext::updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData)
+            void GUIContext::updateControlData_interaction_dragging(ControlData& controlData)
             {
                 if (controlData._generalTraits._isDraggable == false)
                 {
@@ -563,6 +566,7 @@ namespace mint
                 }
 
                 // ParentControl 에 beginDragging 을 호출했지만 ChildControl 과도 Interaction 을 하고 있다면 ParentControl 에 endDragging 을 호출한다.
+                const ControlData& parentControlData = accessControlData(controlData._parentID);
                 if (_draggingModule.isInteractingWith(parentControlData.getID()))
                 {
                     const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
@@ -584,7 +588,7 @@ namespace mint
                 }
             }
 
-            void GUIContext::updateControlData_interaction_docking(ControlData& controlData, const ControlData& parentControlData)
+            void GUIContext::updateControlData_interaction_docking(ControlData& controlData)
             {
                 if (_dockingInteractionModule.isDockControl(controlData.getID()) == true && _dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true)
                 {

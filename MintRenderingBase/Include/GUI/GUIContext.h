@@ -111,7 +111,7 @@ namespace mint
             private:
                 void                            makeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData);
                 void                            makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData);
-                void                            beginWindow_render(const ControlData& controlData, const ControlData& parentControlData);
+                void                            beginWindow_render(const ControlData& controlData);
 
             private:
                 ControlData&                    accessControlData(const ControlID& controlID) const;
@@ -119,15 +119,15 @@ namespace mint
                 ControlData&                    accessStackParentControlData();
 
             private:
-                void                            updateControlData(ControlData& controlData, ControlData& parentControlData);
-                void                            updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData);
-                void                            updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
-                void                            updateControlData_renderingData(ControlData& controlData, ControlData& parentControlData);
-                void                            updateControlData_interaction(ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData(ControlData& controlData);
+                void                            updateControlData_processResizing(const ControlData& controlData);
+                void                            updateControlData_processDragging(const ControlData& controlData);
+                void                            updateControlData_renderingData(ControlData& controlData);
+                void                            updateControlData_interaction(ControlData& controlData);
                 void                            updateControlData_interaction_focusing(ControlData& controlData);
                 void                            updateControlData_interaction_resizing(ControlData& controlData);
-                void                            updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
-                void                            updateControlData_interaction_docking(ControlData& controlData, const ControlData& parentControlData);
+                void                            updateControlData_interaction_dragging(ControlData& controlData);
+                void                            updateControlData_interaction_docking(ControlData& controlData);
                 void                            updateControlData_resetNextControlDesc();
 
             private:
