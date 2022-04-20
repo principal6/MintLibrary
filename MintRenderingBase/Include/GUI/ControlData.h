@@ -88,6 +88,7 @@ namespace mint
                 Float2              _size;
                 Float2              _nextChildSameLinePosition;
                 Float2              _nextChildNextLinePosition;
+                const wchar_t*      _text;
 
             public:
                 enum class InteractionState

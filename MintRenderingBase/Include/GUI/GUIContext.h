@@ -75,19 +75,6 @@ namespace mint
                 // 생성자 때문에 friend 선언
                 friend GraphicDevice;
 
-                struct ControlRenderingDesc
-                {
-                    Rect                    _margin;
-                    Rect                    _padding;
-                    const wchar_t*          _text = nullptr;
-                };
-
-                struct ControlDesc
-                {
-                    ControlID               _controlID;
-                    ControlRenderingDesc    _renderingDesc;
-                };
-
             private:
                                                 GUIContext(GraphicDevice& graphicDevice);
 
@@ -122,9 +109,9 @@ namespace mint
 
             // Control rendering
             private:
-                void                            makeLabel_render(const ControlDesc& controlDesc, const LabelDesc& labelDesc, const ControlData& controlData);
-                void                            makeButton_render(const ControlDesc& controlDesc, const ButtonDesc& buttonDesc, const ControlData& controlData);
-                void                            beginWindow_render(const ControlDesc& controlDesc, const ControlData& controlData, const ControlData& parentControlData);
+                void                            makeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData);
+                void                            makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData);
+                void                            beginWindow_render(const ControlData& controlData, const ControlData& parentControlData);
 
             private:
                 ControlData&                    accessControlData(const ControlID& controlID) const;
@@ -132,11 +119,11 @@ namespace mint
                 ControlData&                    accessStackParentControlData();
 
             private:
-                void                            updateControlData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData(ControlData& controlData, ControlData& parentControlData);
                 void                            updateControlData_processResizing(const ControlData& controlData, const ControlData& parentControlData);
                 void                            updateControlData_processDragging(const ControlData& controlData, const ControlData& parentControlData);
-                void                            updateControlData_renderingData(const wchar_t* const text, ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
-                void                            updateControlData_interaction(ControlDesc& controlDesc, ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData_renderingData(ControlData& controlData, ControlData& parentControlData);
+                void                            updateControlData_interaction(ControlData& controlData, ControlData& parentControlData);
                 void                            updateControlData_interaction_focusing(ControlData& controlData);
                 void                            updateControlData_interaction_resizing(ControlData& controlData);
                 void                            updateControlData_interaction_dragging(ControlData& controlData, const ControlData& parentControlData);
@@ -148,14 +135,14 @@ namespace mint
 
             // Internal rendering functions
             private:
-                void                            drawText(const ControlDesc& controlDesc, const Color& color, const FontRenderingOption& fontRenderingOption);
+                void                            drawText(const ControlID& controlID, const Color& color, const FontRenderingOption& fontRenderingOption);
                 void                            drawText(const Float2& position, const Float2& size, const wchar_t* const text, const Color& color, const FontRenderingOption& fontRenderingOption);
         
             // Internal rendering helpers
             private:
-                Float4                          computeShapePosition(const ControlDesc& controlDesc) const;
+                Float4                          computeShapePosition(const ControlID& controlID) const;
                 Float4                          computeShapePosition(const Float2& position, const Float2& size) const;
-                float                           computeRoundness(const ControlDesc& controlDesc) const;
+                float                           computeRoundness(const ControlID& controlID) const;
 
             private:
                 void                            debugRender_control(const ControlData& controlData);
@@ -189,7 +176,8 @@ namespace mint
                     bool                        _sameLine = false;
                     Float2                      _position;
                     Float2                      _size;
-                    ControlRenderingDesc        _renderingDesc;
+                    Rect                        _margin;
+                    Rect                        _padding;
                 };
                 NextControlDesc                 _nextControlDesc;
 

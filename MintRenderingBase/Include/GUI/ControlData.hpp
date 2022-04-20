@@ -26,7 +26,8 @@ namespace mint
         namespace GUI
         {
             ControlData::ControlData(const ControlID& ID, const ControlType type)
-                : _interactionState{ InteractionState::None }
+                : _text{ nullptr }
+                , _interactionState{ InteractionState::None }
                 , _perTypeData{}
                 , _resizableMinSize{ Float2::kOne }
                 , _ID{ ID }
