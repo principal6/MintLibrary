@@ -41,6 +41,8 @@ namespace mint
         constexpr float             bottom() const noexcept;
         constexpr float             horz() const noexcept;
         constexpr float             vert() const noexcept;
+        constexpr float             width() const noexcept;
+        constexpr float             height() const noexcept;
 
         float&                      left() noexcept;
         float&                      right() noexcept;

@@ -204,7 +204,7 @@ namespace mint
                     closeButtonDesc._isRoundButton = true;
                     closeButtonDesc._customizeColor = true;
                     closeButtonDesc._customizedColorSet = _theme._closeButtonColorSet;
-                    const float titleBarHeight = controlData._zones._titleBarZone.vert();
+                    const float titleBarHeight = controlData._zones._titleBarZone.height();
                     const float radius = _theme._systemButtonRadius;
                     nextControlPosition(Float2(controlData._size._x - _theme._titleBarPadding.right() - radius * 2.0f, titleBarHeight * 0.5f - radius));
                     nextControlSize(Float2(radius * 2.0f));
@@ -270,7 +270,7 @@ namespace mint
                 _rendererContext.setPosition(computeShapePosition(controlData.getID()));
 
                 const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
-                const float titleBarHeight = controlData._zones._titleBarZone.vert();
+                const float titleBarHeight = controlData._zones._titleBarZone.height();
                 ScopeVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
                 splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));

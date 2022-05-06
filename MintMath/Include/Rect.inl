@@ -71,10 +71,20 @@ namespace mint
 
     MINT_INLINE constexpr float Rect::horz() const noexcept
     {
-        return left() + right();
+        return width();
     }
 
     MINT_INLINE constexpr float Rect::vert() const noexcept
+    {
+        return height();
+    }
+
+    MINT_INLINE constexpr float Rect::width() const noexcept
+    {
+        return left() + right();
+    }
+
+    MINT_INLINE constexpr float Rect::height() const noexcept
     {
         return top() + bottom();
     }
@@ -197,7 +207,7 @@ namespace mint
 
     MINT_INLINE constexpr bool Rect::contains(const Float2& position) const noexcept
     {
-        if (horz() == 0.0f || vert() == 0.0f)
+        if (width() == 0.0f || height() == 0.0f)
         {
             return false;
         }   

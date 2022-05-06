@@ -80,7 +80,7 @@ namespace mint
                 contentZone = Rect(Float2::kZero, _size);
                 if (_type == ControlType::Window)
                 {
-                    contentZone.top() += (_perTypeData._windowData._titleBarHeight + _perTypeData._windowData._menuBarHeight);
+                    contentZone.top() += (_zones._titleBarZone.height() + _perTypeData._windowData._menuBarHeight);
                 }
             }
         }
