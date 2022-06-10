@@ -141,7 +141,10 @@ namespace mint
             newRenderCommand._vertexCount = 0;
             newRenderCommand._indexOffset = indexOffset;
             newRenderCommand._indexCount = indexCount;
-            _renderCommands.push_back(newRenderCommand);
+            if (mergeNewRenderCommand(newRenderCommand) == false)
+            {
+                _renderCommands.push_back(newRenderCommand);
+            }
         }
 
         template<typename T>
@@ -154,8 +157,6 @@ namespace mint
 
             prepareBuffers();
             
-            optimizeRenderCommands();
-
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
             DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
@@ -166,11 +167,6 @@ namespace mint
             for (uint32 renderCommandIndex = 0; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
             {
                 const RenderCommand& renderCommand = _renderCommands[renderCommandIndex];
-                if (renderCommand._isValid == false)
-                {
-                    continue;
-                }
-
                 D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
                 _graphicDevice.getStateManager().setRsScissorRectangle(scissorRect);
 
@@ -190,6 +186,40 @@ namespace mint
             }
 
             _renderCommands.clear();
+        }
+
+        template<typename T>
+        MINT_INLINE bool LowLevelRenderer<T>::mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept
+        {
+            if (_renderCommands.empty() == true)
+            {
+                return false;
+            }
+
+            RenderCommand& mergeDestRenderCommand = _renderCommands.back();
+            if (newRenderCommand._primitive == mergeDestRenderCommand._primitive && newRenderCommand._clipRect == mergeDestRenderCommand._clipRect)
+            {
+                switch (mergeDestRenderCommand._primitive)
+                {
+                case RenderingPrimitive::LineList:
+                    if (mergeDestRenderCommand._vertexOffset + mergeDestRenderCommand._vertexCount == newRenderCommand._vertexOffset)
+                    {
+                        mergeDestRenderCommand._vertexCount += newRenderCommand._vertexCount;
+                        return true;
+                    }
+                    break;
+                case RenderingPrimitive::TriangleList:
+                    if (mergeDestRenderCommand._indexOffset + mergeDestRenderCommand._indexCount == newRenderCommand._indexOffset)
+                    {
+                        mergeDestRenderCommand._indexCount += newRenderCommand._indexCount;
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+                }
+            }
+            return false;
         }
 
         template <typename T>
@@ -219,50 +249,6 @@ namespace mint
             {
                 DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
                 indexBuffer.updateBuffer(&_indices[0], indexCount);
-            }
-        }
-
-        template<typename T>
-        inline void LowLevelRenderer<T>::optimizeRenderCommands() noexcept
-        {
-            uint32 mergeBeginIndex = 0;
-            const uint32 renderCommandCount = _renderCommands.size();
-            for (uint32 renderCommandIndex = 1; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
-            {
-                RenderCommand& mergeDestRenderCommand = _renderCommands[mergeBeginIndex];
-                RenderCommand& currentRenderCommand = _renderCommands[renderCommandIndex];
-                bool isMerged = false;
-                if (currentRenderCommand._primitive == mergeDestRenderCommand._primitive && currentRenderCommand._clipRect == mergeDestRenderCommand._clipRect)
-                {
-                    switch (mergeDestRenderCommand._primitive)
-                    {
-                    case RenderingPrimitive::LineList:
-                        if (mergeDestRenderCommand._vertexOffset + mergeDestRenderCommand._vertexCount == currentRenderCommand._vertexOffset)
-                        {
-                            mergeDestRenderCommand._vertexCount += currentRenderCommand._vertexCount;
-                            isMerged = true;
-                        }
-                        break;
-                    case RenderingPrimitive::TriangleList:
-                        if (mergeDestRenderCommand._indexOffset + mergeDestRenderCommand._indexCount == currentRenderCommand._indexOffset)
-                        {
-                            mergeDestRenderCommand._indexCount += currentRenderCommand._indexCount;
-                            isMerged = true;
-                        }
-                        break;
-                    default:
-                        break;
-                    }
-                }
-
-                if (isMerged)
-                {
-                    currentRenderCommand._isValid = false;
-                }
-                else
-                {
-                    mergeBeginIndex = renderCommandIndex;
-                }
             }
         }
     }

@@ -39,7 +39,6 @@ namespace mint
         {
             struct RenderCommand
             {
-                bool                _isValid = true;
                 RenderingPrimitive  _primitive = RenderingPrimitive::INVALID;
                 Rect                _clipRect;
                 uint32              _vertexOffset = 0;
@@ -75,8 +74,8 @@ namespace mint
             void                            executeRenderCommands() noexcept;
 
         private:
+            bool                            mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
             void                            prepareBuffers() noexcept;
-            void                            optimizeRenderCommands() noexcept;
 
         private:
             GraphicDevice&                  _graphicDevice;
