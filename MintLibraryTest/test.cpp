@@ -577,6 +577,14 @@ bool testWindow()
             //guiContext._debugSwitch._renderMousePoints = true;
             //guiContext._debugSwitch._renderResizingArea = true;
 
+            ButtonDesc button0Desc;
+            button0Desc._text = L"버튼0";
+            guiContext.nextControlPosition(Float2(100, 50));
+            guiContext.nextControlSize(Float2(100, 30));
+            if (guiContext.makeButton(MINT_FILE_LINE, button0Desc))
+            {
+            }
+
             WindowDesc window0Desc;
             window0Desc._title = L"윈도우0";
             window0Desc._initialPosition = Float2(100, 100);
@@ -632,11 +640,11 @@ bool testWindow()
                 guiContext.endWindow();
             }
 
-            ButtonDesc button0Desc;
-            button0Desc._text = L"버튼0";
-            guiContext.nextControlPosition(Float2(100, 50));
+            ButtonDesc button1Desc;
+            button1Desc._text = L"버튼1";
+            guiContext.nextControlPosition(Float2(210, 50));
             guiContext.nextControlSize(Float2(100, 30));
-            if (guiContext.makeButton(MINT_FILE_LINE, button0Desc))
+            if (guiContext.makeButton(MINT_FILE_LINE, button1Desc))
             {
             }
 

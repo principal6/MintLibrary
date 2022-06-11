@@ -39,12 +39,53 @@ namespace mint
         {
             struct RenderCommand
             {
+                bool                _isOrdinal = true;
                 RenderingPrimitive  _primitive = RenderingPrimitive::INVALID;
                 Rect                _clipRect;
                 uint32              _vertexOffset = 0;
                 uint32              _vertexCount = 0;
                 uint32              _indexOffset = 0;
                 uint32              _indexCount = 0;
+            };
+
+            struct OrdinalRenderCommandGroup
+            {
+                uint64              _key = 0;
+                uint32              _priority = 0;
+                uint32              _startRenderCommandIndex = 0;
+                uint32              _endRenderCommandIndex = 0;
+
+            public:
+                bool operator==(const uint64 key) const noexcept
+                {
+                    return _key == key;
+                }
+
+                struct Evaluator
+                {
+                    uint64 operator()(const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return rhs._key;
+                    }
+                };
+
+                struct KeyComparator
+                {
+                    bool operator()(const OrdinalRenderCommandGroup& lhs, const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return lhs._key < rhs._key;
+                    }
+                };
+
+                // Priority 가 작을 수록 먼저 그려진다.
+                // Priority 가 크면 화면 상 제일 위에 와야 하기 때문!
+                struct PriorityComparator
+                {
+                    bool operator()(const OrdinalRenderCommandGroup& lhs, const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return lhs._priority < rhs._priority;
+                    }
+                };
             };
 
         public:
@@ -71,11 +112,15 @@ namespace mint
 
         public:
             void                            pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
+            void                            beginOrdinalRenderCommands(const uint64 key) noexcept;
+            void                            endOrdinalRenderCommands() noexcept;
+            void                            setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
             void                            executeRenderCommands() noexcept;
 
         private:
             bool                            mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
             void                            prepareBuffers() noexcept;
+            void                            executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept;
 
         private:
             GraphicDevice&                  _graphicDevice;
@@ -91,7 +136,10 @@ namespace mint
             DxObjectID                      _indexBufferID;
 
         private:
-            Vector<RenderCommand>           _renderCommands;
+            bool                                _isOrdinalMode = false;
+            Vector<RenderCommand>               _renderCommands;
+            Vector<OrdinalRenderCommandGroup>   _ordinalRenderCommandGroups;
+            bool                                _isOrdinalRenderCommandGroupsSorted = false;
         };
     }
 }

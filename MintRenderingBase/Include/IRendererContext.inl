@@ -67,5 +67,10 @@ namespace mint
             const uint32 packedUint = (_4bits << 28) | (_28bits);
             return *reinterpret_cast<const float*>(&packedUint);
         }
+
+        MINT_INLINE LowLevelRenderer<VS_INPUT_SHAPE>& IRendererContext::accessLowLevelRenderer() noexcept
+        {
+            return *_lowLevelRenderer;
+        }
     }
 }

@@ -92,6 +92,12 @@ namespace mint
             {
                 MINT_ASSERT(_controlStack.size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
 
+                if (_focusingModule.isInteracting())
+                {
+                    // FocusedWindow 가 다른 Window (priority 0) 에 비해 위에 그려지도록 priority 1 로 설정.
+                    _rendererContext.accessLowLevelRenderer().setOrdinalRenderCommandGroupPriority(_focusingModule.getControlID().getRawID(), 1);
+                }
+
                 if (_debugSwitch._raw != 0)
                 {
                     for (const ControlID& controlID : _controlIDsOfCurrentFrame)
@@ -168,6 +174,7 @@ namespace mint
                 const ControlID parentControlID = accessStackParentControlData().getID();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlID);
                 _controlIDsOfCurrentFrame.push_back(controlID);
+                _rendererContext.accessLowLevelRenderer().beginOrdinalRenderCommands(controlID.getRawID());
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
                 controlData._parentID = parentControlID;
@@ -219,6 +226,8 @@ namespace mint
 
             void GUIContext::endWindow()
             {
+                _rendererContext.accessLowLevelRenderer().endOrdinalRenderCommands();
+
                 if (_controlStack.empty())
                 {
                     MINT_ASSERT(false, "end- 호출 횟수가 begin- 호출 횟수보다 많습니다!");

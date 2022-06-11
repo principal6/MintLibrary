@@ -62,6 +62,9 @@ namespace mint
             static float                packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
             static float                packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
+        public:
+            LowLevelRenderer<VS_INPUT_SHAPE>&       accessLowLevelRenderer() noexcept;
+
         protected:
             GraphicDevice&                          _graphicDevice;
             LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
