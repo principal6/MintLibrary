@@ -188,15 +188,27 @@ bool testAlgorithm()
     using namespace mint;
 
     Vector<uint32> a;
-    a.push_back(4);
     a.push_back(3);
-    a.push_back(0);
-    a.push_back(2);
     a.push_back(1);
-
+    a.push_back(2);
+    a.push_back(4);
     quickSort(a, ComparatorAscending<uint32>());
-    quickSort(a, ComparatorDescending<uint32>());
+
+    Vector<uint32> b;
+    b.push_back(4);
+    b.push_back(3);
+    b.push_back(0);
+    b.push_back(2);
+    b.push_back(1);
+    quickSort(b, ComparatorAscending<uint32>());
+    quickSort(b, ComparatorDescending<uint32>());
     
+    // #CORNER_CASE_0: sorting the same value
+    Vector<uint32> c;
+    c.push_back(0);
+    c.push_back(0);
+    c.push_back(0);
+    quickSort(c, ComparatorAscending<uint32>());
     return true;
 }
 

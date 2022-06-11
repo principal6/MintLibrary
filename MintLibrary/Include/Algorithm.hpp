@@ -90,16 +90,31 @@ namespace mint
         while (true)
         {
             while (left <= back && comparator(vector[left], vector[pivot]) == true) { ++left; }
-            while (front <= right && comparator(vector[right], vector[pivot]) == false) { --right; }
-            if (right <= left) { break; }
+            while (front <= right && comparator(vector[pivot], vector[right]) == true) { --right; }
+
+            // left, right 가 전혀 움직이지 않은 경우.
+            if (left == front && right == back - 1)
+            {
+                break;
+            }
+
+            // left - 1 까지 전부 { cmp(left, pivot) == true } 고, right + 1 부터 { cmp(pivot, right) == true } 인 경우
+            if (right <= left)
+            {
+                break;
+            }
+
             std::swap(vector[left], vector[right]);
         }
 
-        std::swap(vector[left], vector[pivot]);
-        std::swap(left, pivot);
-        
+        if (left != pivot && comparator(vector[pivot], vector[left]) == true)
+        {
+            std::swap(vector[left], vector[pivot]);
+            std::swap(left, pivot);
+        }
+
         quickSortInternal(vector, front, pivot - 1, comparator);
-        quickSortInternal(vector, pivot, back     , comparator);
+        quickSortInternal(vector, pivot, back, comparator);
     }
 
     template<typename T, typename Comparator>
