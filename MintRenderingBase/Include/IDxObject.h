@@ -125,19 +125,17 @@ namespace mint
             virtual                         ~IDxObject() = default;
 
         public:
+            struct Evaluator
+            {
+                const DxObjectID& operator()(const IDxObject& rhs) const noexcept
+                {
+                    return rhs._objectID;
+                }
+            };
+
             MINT_INLINE bool                operator==(const DxObjectID& objectID) const noexcept
             {
                 return _objectID == objectID;
-            }
-
-            MINT_INLINE bool                operator<(const DxObjectID& objectID) const noexcept
-            {
-                return _objectID < objectID;
-            }
-
-            MINT_INLINE bool                operator>(const DxObjectID& objectID) const noexcept
-            {
-                return _objectID > objectID;
             }
 
         public:

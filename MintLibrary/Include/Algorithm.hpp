@@ -43,8 +43,8 @@ namespace mint
     }
 
 
-    template <typename T, typename CompT>
-    int32 binarySearchInternal(const Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
+    template <typename T, typename ValueType, typename Evaluator>
+    int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -52,28 +52,28 @@ namespace mint
         }
 
         const int32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
-        if (vec[indexMiddle] == value)
+        if (evaluator(vec[indexMiddle]) == value)
         {
             return indexMiddle;
         }
-        else if (vec[indexMiddle] > value)
+        else if (evaluator(vec[indexMiddle]) > value)
         {
-            return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
+            return binarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
         }
         else
         {
-            return binarySearchInternal(vec, value, indexMiddle + 1, indexEnd);
+            return binarySearchInternal(vec, value, evaluator, indexMiddle + 1, indexEnd);
         }
     }
 
-    template<typename T, typename CompT>
-    int32 binarySearch(const Vector<T>& vec, const CompT& value)
+    template<typename T, typename ValueType, typename Evaluator>
+    int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
     {
         if (vec.empty() == true)
         {
             return kInt32Max;
         }
-        return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
+        return binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
     }
 
     template<typename T, typename Comparator>

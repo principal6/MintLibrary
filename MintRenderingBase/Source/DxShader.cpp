@@ -483,7 +483,7 @@ namespace mint
 
             if (shaderType == DxShaderType::VertexShader)
             {
-                const int32 index = binarySearch(_vertexShaderArray, objectID);
+                const int32 index = binarySearch(_vertexShaderArray, objectID, IDxObject::Evaluator());
                 if (index >= 0)
                 {
                     return _vertexShaderArray[index];
@@ -491,7 +491,7 @@ namespace mint
             }
             else if (shaderType == DxShaderType::GeometryShader)
             {
-                const int32 index = binarySearch(_geometryShaderArray, objectID);
+                const int32 index = binarySearch(_geometryShaderArray, objectID, IDxObject::Evaluator());
                 if (index >= 0)
                 {
                     return _geometryShaderArray[index];
@@ -499,7 +499,7 @@ namespace mint
             }
             else if (shaderType == DxShaderType::PixelShader)
             {
-                const int32 index = binarySearch(_pixelShaderArray, objectID);
+                const int32 index = binarySearch(_pixelShaderArray, objectID, IDxObject::Evaluator());
                 if (index >= 0)
                 {
                     return _pixelShaderArray[index];

@@ -18,8 +18,8 @@ namespace mint
     template <typename T>
     int32 binarySearch(const Vector<T>& vec, const T& value);
 
-    template <typename T, typename CompT>
-    int32 binarySearch(const Vector<T>& vec, const CompT& value);
+    template <typename T, typename ValueType, typename Evaluator>
+    int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator);
 
     template <typename T, typename Comparator>
     void quickSort(Vector<T>& vector, Comparator comparator);
