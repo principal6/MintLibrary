@@ -201,9 +201,8 @@ namespace mint
             _ordinalRenderCommandGroups[index]._priority = priority;
         }
 
-#pragma optimize("", off)
         template<typename T>
-        /*MINT_INLINE*/ void LowLevelRenderer<T>::executeRenderCommands() noexcept
+        MINT_INLINE void LowLevelRenderer<T>::executeRenderCommands() noexcept
         {
             if (isRenderable() == false)
             {
