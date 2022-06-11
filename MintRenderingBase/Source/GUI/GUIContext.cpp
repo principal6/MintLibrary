@@ -330,6 +330,27 @@ namespace mint
                 return controlData;
             }
 
+            ControlID GUIContext::findAncestorWindowControl(const ControlID& controlID) const
+            {
+                ControlData& controlData = accessControlData(controlID);
+                if (controlData.getType() == ControlType::Window)
+                {
+                    return controlID;
+                }
+
+                ControlID foundControlID = controlData._parentID;
+                while (foundControlID.isValid())
+                {
+                    ControlData& currentControlData = accessControlData(foundControlID);
+                    if (currentControlData.getType() == ControlType::Window)
+                    {
+                        return foundControlID;
+                    }
+                    foundControlID = currentControlData._parentID;
+                }
+                return _rootControlID;
+            }
+
             ControlData& GUIContext::accessStackParentControlData()
             {
                 return accessControlData(_controlStack.back());
@@ -462,6 +483,22 @@ namespace mint
                 const InputContext& inputContext = InputContext::getInstance();
                 controlData._interactionState = ControlData::InteractionState::None;
                 const Float2& mousePosition = inputContext.getMousePosition();
+                if (_focusingModule.isInteracting())
+                {
+                    const ControlID ancestorWindowControlID = findAncestorWindowControl(controlData.getID());
+                    if (_focusingModule.isInteractingWith(ancestorWindowControlID) == false)
+                    {
+                        // FocusedWindow 에 속하지 않은 ControlData 인데, FocusedWindow 영역 내에 Mouse 가 있는 경우,
+                        // interaction 을 진행하지 않는다!
+                        const ControlData& focusedControlData = accessControlData(_focusingModule.getControlID());
+                        const Rect focusedControlRect = Rect(focusedControlData._absolutePosition, focusedControlData._size);
+                        if (focusedControlRect.contains(mousePosition))
+                        {
+                            return;
+                        }
+                    }
+                }
+
                 const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
                 const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(mousePosition);
                 const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
