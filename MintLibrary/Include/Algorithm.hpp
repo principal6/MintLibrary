@@ -89,28 +89,51 @@ namespace mint
         int32 right = back - 1;
         while (true)
         {
-            while (left <= back && comparator(vector[left], vector[pivot]) == true) { ++left; }
-            while (front <= right && comparator(vector[pivot], vector[right]) == true) { --right; }
+            while (left < pivot && comparator(vector[left], vector[pivot]))
+            {
+                ++left;
+            }
 
-            // left, right 가 전혀 움직이지 않은 경우.
-            if (left == front && right == back - 1)
+            // 모든 entry 에 대해 { cmp(entry, pivot) == true } 이다.
+            // 예) 3, 2, 1, 4, 5
+            if (left == pivot)
             {
                 break;
             }
 
-            // left - 1 까지 전부 { cmp(left, pivot) == true } 고, right + 1 부터 { cmp(pivot, right) == true } 인 경우
+            while (right >= front && comparator(vector[pivot], vector[right])) 
+            {
+                --right;
+            }
+
+            // 모든 entry 에 대해 { cmp(pivot, entry) == true } 이다.
+            // 예) 7, 9, 8, 6, 4
+            if (right < front)
+            {
+                std::swap(vector[left], vector[pivot]);
+                pivot = left;
+                break;
+            }
+
+            // left 및 right 의 모든 entry 에 대해 cmp 가 완료되었다.
             if (right <= left)
             {
+                if (left == right)
+                {
+                    std::swap(vector[right + 1], vector[pivot]);
+                    pivot = right + 1;
+                }
+                else
+                {
+                    std::swap(vector[left], vector[pivot]);
+                    pivot = left;
+                }
                 break;
             }
 
             std::swap(vector[left], vector[right]);
-        }
-
-        if (left != pivot && comparator(vector[pivot], vector[left]) == true)
-        {
-            std::swap(vector[left], vector[pivot]);
-            std::swap(left, pivot);
+            ++left;
+            --right;
         }
 
         quickSortInternal(vector, front, pivot - 1, comparator);
