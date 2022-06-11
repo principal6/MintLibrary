@@ -188,6 +188,7 @@ namespace mint
                 Vector<ControlID>               _controlStack;
                 ControlID                       _rootControlID;
                 Vector<ControlID>               _controlIDsOfCurrentFrame;
+                bool                            _isInBeginWindow = false;
 
             private:
                 // Interaction

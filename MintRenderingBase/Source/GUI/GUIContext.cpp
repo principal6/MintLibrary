@@ -174,6 +174,12 @@ namespace mint
                 const ControlID parentControlID = accessStackParentControlData().getID();
                 const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlID);
                 _controlIDsOfCurrentFrame.push_back(controlID);
+                
+                if (_isInBeginWindow)
+                {
+                    MINT_NEVER;
+                }
+                _isInBeginWindow = true;
                 _rendererContext.accessLowLevelRenderer().beginOrdinalRenderCommands(controlID.getRawID());
 
                 ControlData& controlData = accessControlData(controlID, kControlType);
@@ -226,6 +232,7 @@ namespace mint
 
             void GUIContext::endWindow()
             {
+                _isInBeginWindow = false;
                 _rendererContext.accessLowLevelRenderer().endOrdinalRenderCommands();
 
                 if (_controlStack.empty())
