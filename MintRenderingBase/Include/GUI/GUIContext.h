@@ -72,7 +72,7 @@ namespace mint
 
             class GUIContext final
             {
-                // 생성자 때문에 friend 선언
+                // 생성자가 private 이라서 friend 선언
                 friend GraphicDevice;
 
             private:
