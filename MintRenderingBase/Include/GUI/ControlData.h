@@ -108,7 +108,6 @@ namespace mint
                     Rect            _visibleContentZone;
                     Rect            _titleBarZone;
                     Rect            _menuBarZone;
-                    //Rect            _dockZone; // DockZone 은 여러 개가 될 것.
                 };
                 Zones               _zones;
         

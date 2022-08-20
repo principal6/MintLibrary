@@ -81,31 +81,6 @@ namespace mint
                 MINT_INLINE const Float2&           getInitialControlSize() const { return _input._controlSize; }
                 MINT_INLINE const ControlData::ResizingFlags&   getResizingFlags() const { return _input._resizingInteraction; }
             };
-
-
-            struct DockingInteractionModuleInput
-            {
-                ControlID _dockControlID;
-                ControlID _shipControlID;
-            };
-            class DockingInteractionModule final : public InteractionModule<DockingInteractionModuleInput>
-            {
-            public:
-                virtual bool                    begin(const DockingInteractionModuleInput& dockingShipModuleInput) override;
-                virtual void                    end() override;
-
-            public:
-                virtual bool                    isInteracting() const override;
-                bool                            isDockControl(const ControlID& controlID) const;
-                bool                            isShipControl(const ControlID& controlID) const;
-            
-            public:
-                const ControlID&                getDockControlID() const { return _input._dockControlID; }
-                const ControlID&                getShipControlID() const { return _input._shipControlID; }
-
-            private:
-                DockingInteractionModuleInput          _input;
-            };
         }
     }
 }

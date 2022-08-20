@@ -128,7 +128,6 @@ namespace mint
                 void                            updateControlData_interaction_focusing(ControlData& controlData);
                 void                            updateControlData_interaction_resizing(ControlData& controlData);
                 void                            updateControlData_interaction_dragging(ControlData& controlData);
-                void                            updateControlData_interaction_docking(ControlData& controlData);
                 void                            updateControlData_resetNextControlDesc();
 
             private:
@@ -184,7 +183,6 @@ namespace mint
 
             private:
                 // Size, Position 등은 Control 마다 기록되어야 하는 State 이다.
-                // Docking 정보도 저장되어야 한다.
                 HashMap<ControlID, ControlData> _controlDataMap;
                 Vector<ControlID>               _controlStack;
                 ControlID                       _rootControlID;
@@ -197,7 +195,6 @@ namespace mint
                 DraggingModule                  _draggingModule;
                 ResizingModule                  _resizingModule;
                 FocusingModule                  _focusingModule;
-                DockingInteractionModule        _dockingInteractionModule;
             };
         }
     }

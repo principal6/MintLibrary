@@ -290,11 +290,6 @@ namespace mint
                 ScopeVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
                 splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
-                if (_dockingInteractionModule.isShipControl(controlData.getID()))
-                {
-                    splits[0]._color = _theme._shipCandidateTitleBarColor;
-                    splits[1]._color = _theme._shipCandidateBackgroundColor;
-                }
                 _rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
                 FontRenderingOption titleBarFontRenderingOption;
@@ -515,7 +510,6 @@ namespace mint
                 updateControlData_interaction_focusing(controlData);
                 updateControlData_interaction_resizing(controlData);
                 updateControlData_interaction_dragging(controlData);
-                updateControlData_interaction_docking(controlData);
             }
 
             void GUIContext::updateControlData_interaction_focusing(ControlData& controlData)
@@ -637,45 +631,6 @@ namespace mint
                     interactionMousePressModuleInput._mousePressedPosition = _mousePressedPosition;
                     _draggingModule.begin(interactionMousePressModuleInput);
                 }
-            }
-
-            void GUIContext::updateControlData_interaction_docking(ControlData& controlData)
-            {
-                if (_dockingInteractionModule.isDockControl(controlData.getID()))
-                {
-                    // controlData 가 dock control 일 때
-
-                    // dragging 되고 있는 control 이 ship control 이고,
-                    // controlData 에서 마우스가 아무것도 안 눌려 있을 때
-                    if (_dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true && controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
-                    {
-                        _dockingInteractionModule.end();
-                    }
-                    return;
-                }
-
-                // dragging 되고 있는 control 이 없으면 docking 을 수행할 필요가 없다.
-                if (_draggingModule.isInteracting() == false)
-                {
-                    _dockingInteractionModule.end();
-                    return;
-                }
-
-                // 나 자신에게 docking 할 수는 없으므로
-                if (_draggingModule.isInteractingWith(controlData.getID()))
-                {
-                    return;
-                }
-
-                if (controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
-                {
-                    return;
-                }
-
-                DockingInteractionModuleInput dockingModuleInput;
-                dockingModuleInput._dockControlID = controlData.getID();
-                dockingModuleInput._shipControlID = _draggingModule.getControlID();
-                _dockingInteractionModule.begin(dockingModuleInput);
             }
 
             void GUIContext::updateControlData_resetNextControlDesc()
