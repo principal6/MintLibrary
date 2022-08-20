@@ -643,7 +643,7 @@ namespace mint
             {
                 if (_dockingInteractionModule.isDockControl(controlData.getID()))
                 {
-                    // controlData 가 dock c\ontrol 일 때
+                    // controlData 가 dock control 일 때
 
                     // dragging 되고 있는 control 이 ship control 이고,
                     // controlData 에서 마우스가 아무것도 안 눌려 있을 때
