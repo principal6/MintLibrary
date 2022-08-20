@@ -32,10 +32,10 @@ namespace mint
         String&                     operator+=(const String& rhs) noexcept;
 
     public:
-        const bool                  operator==(const T* const rhs) const noexcept;
-        const bool                  operator==(const String& rhs) const noexcept;
-        const bool                  operator!=(const T* const rhs) const noexcept;
-        const bool                  operator!=(const String& rhs) const noexcept;
+        bool                        operator==(const T* const rhs) const noexcept;
+        bool                        operator==(const String& rhs) const noexcept;
+        bool                        operator!=(const T* const rhs) const noexcept;
+        bool                        operator!=(const String& rhs) const noexcept;
 
     public:
         T&                          operator[](const uint32 at) noexcept;
@@ -68,10 +68,10 @@ namespace mint
         void                        clear() noexcept;
 
     public:
-        MINT_INLINE const bool      empty() const noexcept { return (size() == 0); }
-        MINT_INLINE const uint32    size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
-        MINT_INLINE const uint32    length() const noexcept { return size(); }
-        MINT_INLINE const uint32    capacity() const noexcept { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
+        MINT_INLINE bool            empty() const noexcept { return (size() == 0); }
+        MINT_INLINE uint32          size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
+        MINT_INLINE uint32          length() const noexcept { return size(); }
+        MINT_INLINE uint32          capacity() const noexcept { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
         const T*                    c_str() const noexcept;
 
     private:
@@ -79,24 +79,24 @@ namespace mint
         static void                 __copyString(T* const destination, const T* const source, const uint64 length) noexcept;
 
     public:
-        const uint32                find(const T* const target, const uint32 offset = 0) const noexcept;
-        const uint32                find(const T target, const uint32 offset = 0) const noexcept;
+        uint32                      find(const T* const target, const uint32 offset = 0) const noexcept;
+        uint32                      find(const T target, const uint32 offset = 0) const noexcept;
         String                      substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
         void                        insert(const uint32 at, const T ch) noexcept;
         void                        insert(const uint32 at, const T* const str) noexcept;
         void                        insert(const uint32 at, const String& rhs) noexcept;
         void                        erase(const uint32 at) noexcept;
         void                        erase(const uint32 at, const uint32 length) noexcept;
-        const bool                  compare(const T* const rhs) const noexcept;
-        const bool                  compare(const String& rhs) const noexcept;
-        const uint64                computeHash() const noexcept;
+        bool                        compare(const T* const rhs) const noexcept;
+        bool                        compare(const String& rhs) const noexcept;
+        uint64                      computeHash() const noexcept;
 
     private:
         void                        release() noexcept;
         void                        toLongString() noexcept;
-        MINT_INLINE const bool      isSmallString() const noexcept { return _short._size < Short::kSmallStringCapacity; }
-        MINT_INLINE const bool      isEmpty() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._size == 0); }
-        MINT_INLINE const bool      isNotAllocated() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
+        MINT_INLINE bool            isSmallString() const noexcept { return _short._size < Short::kSmallStringCapacity; }
+        MINT_INLINE bool            isEmpty() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._size == 0); }
+        MINT_INLINE bool            isNotAllocated() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
 
     private:
         //

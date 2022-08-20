@@ -51,15 +51,6 @@
     <ClInclude Include="Include\RenderingBaseCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h">
-      <Filter>Assets\CppHlsl</Filter>
-    </ClInclude>
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -87,35 +78,35 @@
     <ClInclude Include="Include\CppHlsl\CppHlslTypes.h">
       <Filter>Include\CppHlsl</Filter>
     </ClInclude>
+    <ClInclude Include="Include\GUI\GUIContext.h">
+      <Filter>Include\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\FontLoader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
     <ClInclude Include="Include\GUI\ControlData.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Include\GUI\ControlData.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\ControlInteractionStateSet.h">
+    <ClInclude Include="Include\GUI\GUIInteractionModules.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\ControlMetaStateSet.h">
+    <ClInclude Include="Include\GUI\GUITheme.h">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\GUICommon.h">
+    <ClInclude Include="Include\GUI\GUIInteractionModule.hpp">
       <Filter>Include\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\GUIContext.h">
-      <Filter>Include\GUI</Filter>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\InputHelpers.h">
-      <Filter>Include\GUI</Filter>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
-    <ClInclude Include="Include\GUI\InputHelpers.hpp">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GUI\ControlValue.h">
-      <Filter>Include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\FontLoader.h">
-      <Filter>Include</Filter>
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h">
+      <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,15 +118,6 @@
     </None>
     <None Include="Include\CppHlsl\Parser.inl">
       <Filter>Include\CppHlsl</Filter>
-    </None>
-    <None Include="Include\GUI\ControlMetaStateSet.inl">
-      <Filter>Include\GUI</Filter>
-    </None>
-    <None Include="Include\GUI\GUIContext.inl">
-      <Filter>Include\GUI</Filter>
-    </None>
-    <None Include="Include\GUI\ControlValue.inl">
-      <Filter>Include\GUI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -178,17 +160,14 @@
     <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ControlInteractionStateSet.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GUI\GUIContext.cpp">
-      <Filter>Source\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GUI\GUIContext_Presets.cpp">
       <Filter>Source\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Source\FontLoader.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
+      <Filter>Source\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

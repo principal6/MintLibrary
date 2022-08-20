@@ -164,9 +164,9 @@ namespace mint
             return _meshComponentArray;
         }
         
-        MINT_INLINE const uint32 ObjectPool::getObjectCount() const noexcept
+        MINT_INLINE uint32 ObjectPool::getObjectCount() const noexcept
         {
-            return static_cast<uint32>(_objectArray.size());
+            return _objectArray.size();
         }
 
         MINT_INLINE const DeltaTimer* ObjectPool::getDeltaTimerXXX() const noexcept

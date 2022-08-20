@@ -3,6 +3,7 @@
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
+#include <MintContainer/Include/ScopeVector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
@@ -220,7 +221,7 @@ namespace mint
             }
         }
 
-        const bool ShapeRendererContext::initializeFontData(const FontData& fontData)
+        bool ShapeRendererContext::initializeFontData(const FontData& fontData)
         {
             if (fontData._fontTextureID.isValid() == false)
             {
@@ -1053,14 +1054,14 @@ namespace mint
 
         void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
         {
-            const float clampedRoundness = Math::saturate(roundness);
-            if (clampedRoundness == 0.0f)
+            const float normalizedRoundness = Math::saturate(roundness);
+            if (normalizedRoundness == 0.0f)
             {
                 drawRectangle(size, borderThickness, rotationAngle);
                 return;
             }
 
-            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
+            const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
             const Float2& halfSize = size * 0.5f;
             const Float2& halfCoreSize = halfSize - Float2(radius);
 
@@ -1123,29 +1124,52 @@ namespace mint
                 drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
             }
 
-            drawRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
+            drawRoundedRectangleInternal(radius, halfSize, _defaultColor);
+
+            pushShapeTransformToBuffer(rotationAngle);
+        }
+
+        void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const ScopeVector<Split, 3>& splits, const float rotationAngle)
+        {
+            if (splits.size() < 2)
+            {
+                MINT_NEVER;
+                return;
+            }
+
+            const bool hasMiddleShape = splits.size() == 3;
+            const Color& upperColor = splits.front()._color;
+            const Color& lowerColor = splits.back()._color;
+            const Float2 upperShapeSize = Float2(size._x, size._y * splits[0]._ratio);
+            const Float2 middleShapeSize = (hasMiddleShape ? Float2(size._x, size._y * (splits[1]._ratio - splits[0]._ratio)) : Float2::kZero);
+            const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y - middleShapeSize._y);
+            const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
+            const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
+            drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
+            if (hasMiddleShape)
+            {
+                drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color);
+            }
+            drawLowerHalfRoundedRectangleInternal(Float2(0.0f, (upperShapeSize._y + middleShapeSize._y) * 0.5f), lowerShapeSize, lowerShapeRoundness, lowerColor);
 
             pushShapeTransformToBuffer(rotationAngle);
         }
 
         void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
         {
-            const float clampedRoundness = Math::saturate(roundness);
-            if (clampedRoundness == 0.0f)
+            const float normalizedRoundness = Math::saturate(roundness);
+            if (normalizedRoundness == 0.0f)
             {
                 drawRectangle(size, 0.0f, rotationAngle);
                 return;
             }
 
-            const float radius = min(size._x, size._y) * 0.5f * clampedRoundness;
-            const Float2& halfSize = size * 0.5f;
-
-            drawHalfRoundedRectangleInternal(radius, halfSize, clampedRoundness, _defaultColor);
+            drawLowerHalfRoundedRectangleInternal(Float2::kZero, size, normalizedRoundness, _defaultColor);
 
             pushShapeTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
+        void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color)
         {
             const Float2& halfCoreSize = halfSize - Float2(radius);
 
@@ -1215,61 +1239,73 @@ namespace mint
             }
         }
 
-        void ShapeRendererContext::drawHalfRoundedRectangleInternal(const float radius, const Float2& halfSize, const float roundness, const Color& color)
+        void ShapeRendererContext::drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float normalizedRoundness, const Color& color)
         {
-            const Float2& halfCoreSize = halfSize - Float2(radius);
+            const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+            const Float2 halfSize = size * 0.5f;
+            const Float2 halfCoreSize = halfSize - Float2(radius);
+
+            // Center box
+            drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color);
+
+            // Left side box
+            const float halfSquareSize = (halfSize._x - halfCoreSize._x) * 0.5f;
+            drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
+
+            // Right side box
+            drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
 
             Float2 pointA;
             Float2 pointB;
-            Float2 pointC;
+            // Left top corner
+            {
+                pointA = offset + Float2(-halfSize._x, -halfCoreSize._y);
+                pointB = offset + Float2(-halfCoreSize._x, -halfSize._y);
+                drawQuadraticBezierInternal(pointA, pointB, offset + Float2(-halfSize._x, -halfSize._y), color, false);
+                drawSolidTriangleInternal(pointA, pointB, offset + Float2(-halfCoreSize._x, -halfCoreSize._y), color);
+            }
+
+            // Right top corner
+            {
+                pointA = offset + Float2(+halfSize._x, -halfCoreSize._y);
+                pointB = offset + Float2(+halfCoreSize._x, -halfSize._y);
+                drawQuadraticBezierInternal(pointB, pointA, offset + Float2(+halfSize._x, -halfSize._y), color, false);
+                drawSolidTriangleInternal(offset + Float2(+halfCoreSize._x, -halfCoreSize._y), pointB, pointA, color);
+            }
+        }
+
+        void ShapeRendererContext::drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float normalizedRoundness, const Color& color)
+        {
+            const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+            const Float2 halfSize = size * 0.5f;
+            const Float2 halfCoreSize = halfSize - Float2(radius);
 
             // Center box
-            {
-                pointA = Float2(-halfCoreSize._x, -halfSize._y);
-                pointB = Float2(+halfCoreSize._x, -halfSize._y);
-                pointC = Float2(-halfCoreSize._x, +halfSize._y);
-                drawSolidTriangleInternal(pointA, pointB, pointC, color);
-
-                pointA = Float2(+halfCoreSize._x, +halfSize._y);
-                drawSolidTriangleInternal(pointC, pointB, pointA, color);
-            }
+            drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color);
 
             // Left side box
-            {
-                pointA = Float2(-halfSize._x, -halfSize._y);
-                pointB = Float2(-halfCoreSize._x, -halfSize._y);
-                pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
-                drawSolidTriangleInternal(pointA, pointB, pointC, color);
-
-                pointB = Float2(-halfSize._x, +halfCoreSize._y);
-                drawSolidTriangleInternal(pointC, pointB, pointA, color);
-            }
-
-            // Left bottom corner
-            {
-                pointA = Float2(-halfSize._x, +halfCoreSize._y);
-                pointB = Float2(-halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointB, pointA, Float2(-halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointB, pointA, Float2(-halfCoreSize._x, +halfCoreSize._y), color);
-            }
+            const float halfSquareSize = (halfSize._x - halfCoreSize._x) * 0.5f;
+            drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
 
             // Right side box
-            {
-                pointA = Float2(+halfSize._x, -halfSize._y);
-                pointB = Float2(+halfCoreSize._x, -halfSize._y);
-                pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
-                drawSolidTriangleInternal(pointC, pointB, pointA, color);
+            drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
 
-                pointB = Float2(+halfSize._x, +halfCoreSize._y);
-                drawSolidTriangleInternal(pointA, pointB, pointC, color);
+            Float2 pointA;
+            Float2 pointB;
+            // Left bottom corner
+            {
+                pointA = offset + Float2(-halfSize._x, +halfCoreSize._y);
+                pointB = offset + Float2(-halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointB, pointA, offset + Float2(-halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointB, pointA, offset + Float2(-halfCoreSize._x, +halfCoreSize._y), color);
             }
 
             // Right bottom corner
             {
-                pointA = Float2(+halfSize._x, +halfCoreSize._y);
-                pointB = Float2(+halfCoreSize._x, +halfSize._y);
-                drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, +halfSize._y), color, false);
-                drawSolidTriangleInternal(pointA, pointB, Float2(+halfCoreSize._x, +halfCoreSize._y), color);
+                pointA = offset + Float2(+halfSize._x, +halfCoreSize._y);
+                pointB = offset + Float2(+halfCoreSize._x, +halfSize._y);
+                drawQuadraticBezierInternal(pointA, pointB, offset + Float2(+halfSize._x, +halfSize._y), color, false);
+                drawSolidTriangleInternal(pointA, pointB, offset + Float2(+halfCoreSize._x, +halfCoreSize._y), color);
             }
         }
 
@@ -1279,7 +1315,7 @@ namespace mint
             pushShapeTransformToBuffer(0.0f, false);
         }
 
-        const bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
+        bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
         {
             const uint32 pointCount = points.size();
             MINT_ASSURE(pointCount > 1);
@@ -1479,6 +1515,11 @@ namespace mint
             pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
         }
 
+        float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
+        {
+            return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
+        }
+
         void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
         {
             SB_Transform transform;
@@ -1565,7 +1606,7 @@ namespace mint
             _sbTransformData.push_back(transform);
         }
 
-        const float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
+        float ShapeRendererContext::packInfoAsFloat(const ShapeType shapeType) const noexcept
         {
             return packBits4_28AsFloat(static_cast<uint32>(shapeType), _sbTransformData.size());
         }

@@ -100,7 +100,7 @@ namespace mint
         Math::setIdentity(_m);
     }
     
-    const float Float3x3::determinant() const noexcept
+    float Float3x3::determinant() const noexcept
     {
         return Math::determinant(_m);
     }

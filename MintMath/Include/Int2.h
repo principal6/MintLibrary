@@ -45,8 +45,8 @@ namespace mint
         const int32&        operator[](const uint32 index) const noexcept;
 
     public:
-        const bool          operator==(const Int2& rhs) const noexcept;
-        const bool          operator!=(const Int2& rhs) const noexcept;
+        bool                operator==(const Int2& rhs) const noexcept;
+        bool                operator!=(const Int2& rhs) const noexcept;
 
     public:
         void                set(const int32 x, const int32 y) noexcept;

@@ -24,7 +24,7 @@ namespace mint
                 virtual                                 ~Lexer() = default;
 
             public:
-                virtual const bool                      execute() noexcept override final;
+                virtual bool                            execute() noexcept override final;
             };
         }
     }

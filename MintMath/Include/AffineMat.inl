@@ -216,12 +216,12 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE const bool AffineMat<float>::operator==(const AffineMat& rhs) const noexcept
+    MINT_INLINE bool AffineMat<float>::operator==(const AffineMat& rhs) const noexcept
     {
         return (_rows[0] == rhs._rows[0]) && (_rows[1] == rhs._rows[1]) && (_rows[2] == rhs._rows[2]) && (_rows[3] == rhs._rows[3]);
     }
 
-    MINT_INLINE const bool AffineMat<float>::operator!=(const AffineMat& rhs) const noexcept
+    MINT_INLINE bool AffineMat<float>::operator!=(const AffineMat& rhs) const noexcept
     {
         return !(*this == rhs);
     }

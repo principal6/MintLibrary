@@ -22,9 +22,9 @@ namespace mint
     template<typename Key, typename Value>
     struct KeyValuePair
     {
-        const Key*              _key = nullptr;
-        Value*                  _value = nullptr;
-        MINT_INLINE const bool    isValid() const noexcept
+        const Key*          _key = nullptr;
+        Value*              _value = nullptr;
+        MINT_INLINE bool    isValid() const noexcept
         {
             return (_key != nullptr) && (_value != nullptr);
         }
@@ -33,9 +33,9 @@ namespace mint
     template<typename Key, typename Value>
     struct KeyValuePairConst
     {
-        const Key* _key = nullptr;
-        const Value* _value = nullptr;
-        MINT_INLINE const bool    isValid() const noexcept
+        const Key*          _key = nullptr;
+        const Value*        _value = nullptr;
+        MINT_INLINE bool    isValid() const noexcept
         {
             return (_key != nullptr) && (_value != nullptr);
         }
@@ -78,7 +78,7 @@ namespace mint
                                             ~BucketViewer() = default;
 
     public:
-        const bool                          isValid() const noexcept;
+        bool                                isValid() const noexcept;
         void                                next() noexcept;
         KeyValuePairConst<Key, Value>       view() noexcept;
 
@@ -104,10 +104,10 @@ namespace mint
                                         ~HashMap();
 
     public:
-        const bool                      contains(const Key& key) const noexcept;
+        bool                            contains(const Key& key) const noexcept;
 
     private:
-        const bool                      containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
+        bool                            containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
 
     public:
         template <typename V = Value>
@@ -119,7 +119,7 @@ namespace mint
                                         insert(const Key& key, V&& value) noexcept;
 
     private:
-        const bool                      existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
+        bool                            existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
 
     public:
         const KeyValuePair<Key, Value>  find(const Key& key) const noexcept;
@@ -133,8 +133,8 @@ namespace mint
         static Value&                   getInvalidValue() noexcept;
 
     public:
-        const uint32                    size() const noexcept;
-        const bool                      empty() const noexcept;
+        uint32                          size() const noexcept;
+        bool                            empty() const noexcept;
 
     private:
         void                            resize() noexcept;
@@ -142,12 +142,12 @@ namespace mint
     private:
         void                            setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
         void                            setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
-        const bool                      displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
+        bool                            displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
         void                            displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
 
     private:
-        const uint32                    computeSegmentIndex(const uint64 keyHash) const noexcept;
-        const uint32                    computeStartBucketIndex(const uint64 keyHash) const noexcept;
+        uint32                          computeSegmentIndex(const uint64 keyHash) const noexcept;
+        uint32                          computeStartBucketIndex(const uint64 keyHash) const noexcept;
 
     private:
         Vector<Bucket<Key, Value>>      _bucketArray;

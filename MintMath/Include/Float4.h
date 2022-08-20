@@ -53,11 +53,11 @@ namespace mint
         const float&            operator[](const uint32 index) const noexcept;
 
     public:
-        constexpr const bool    operator==(const Float4& rhs) const noexcept;
-        constexpr const bool    operator!=(const Float4& rhs) const noexcept;
+        constexpr bool          operator==(const Float4& rhs) const noexcept;
+        constexpr bool          operator!=(const Float4& rhs) const noexcept;
 
     public:
-        static const float      dot(const Float4& lhs, const Float4& rhs) noexcept;
+        static float            dot(const Float4& lhs, const Float4& rhs) noexcept;
 
         // in 3D affine space
         static Float4           cross(const Float4& lhs, const Float4& rhs) noexcept;
@@ -77,12 +77,12 @@ namespace mint
         Float4                  getXyz0() const noexcept;
         Float4                  getXyz1() const noexcept;
         Float3                  getXyz() const noexcept;
-        const float             maxComponent() const noexcept;
-        const float             minComponent() const noexcept;
+        float                   maxComponent() const noexcept;
+        float                   minComponent() const noexcept;
 
     public:
-        const float             lengthSqaure() const noexcept;
-        const float             length() const noexcept;
+        float                   lengthSqaure() const noexcept;
+        float                   length() const noexcept;
 
     public:
         void                    set(const float x, const float y, const float z, const float w) noexcept;
@@ -90,7 +90,7 @@ namespace mint
         void                    setNan() noexcept;
 
     public:
-        const bool              isNan() const noexcept;
+        bool                    isNan() const noexcept;
         
     public:
         union

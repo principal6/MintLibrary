@@ -10,17 +10,17 @@ namespace mint
 {
     namespace FileUtil
     {
-        MINT_INLINE const bool isFile(const char* const fileName) noexcept
+        MINT_INLINE bool isFile(const char* const fileName) noexcept
         {
             return std::filesystem::is_regular_file(fileName);
         }
 
-        MINT_INLINE const bool isDirectory(const char* const fileName) noexcept
+        MINT_INLINE bool isDirectory(const char* const fileName) noexcept
         {
             return std::filesystem::is_directory(fileName);
         }
 
-        MINT_INLINE const bool isReadOnly(const char* const fileName) noexcept
+        MINT_INLINE bool isReadOnly(const char* const fileName) noexcept
         {
             auto status{ std::filesystem::status(fileName) };
             auto type{ status.type() };
@@ -50,7 +50,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE const bool exists(const char* const path) noexcept
+        MINT_INLINE bool exists(const char* const path) noexcept
         {
             auto status{ std::filesystem::status(path) };
             auto type{ status.type() };
@@ -61,7 +61,7 @@ namespace mint
             return true;
         }
 
-        MINT_INLINE const bool createDirectory(const char* const directoryName) noexcept
+        MINT_INLINE bool createDirectory(const char* const directoryName) noexcept
         {
             if (exists(directoryName) == true)
             {
@@ -70,7 +70,7 @@ namespace mint
             return std::filesystem::create_directory(directoryName);
         }
 
-        MINT_INLINE const bool deleteFile(const char* const fileName) noexcept
+        MINT_INLINE bool deleteFile(const char* const fileName) noexcept
         {
             if (exists(fileName) == true)
             {

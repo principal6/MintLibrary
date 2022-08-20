@@ -31,16 +31,16 @@ namespace mint
                                                 MeshData();
 
         public:
-            const bool                          isEmpty() const noexcept;
+            bool                                isEmpty() const noexcept;
             void                                clear() noexcept;
             void                                shrinkToFit() noexcept;
             void                                updateVertexFromPositions() noexcept;
 
         public:
-            const uint32                        getPositionCount() const noexcept;
-            const uint32                        getVertexCount() const noexcept;
-            const uint32                        getFaceCount() const noexcept;
-            const uint32                        getIndexCount() const noexcept;
+            uint32                              getPositionCount() const noexcept;
+            uint32                              getVertexCount() const noexcept;
+            uint32                              getFaceCount() const noexcept;
+            uint32                              getIndexCount() const noexcept;
             const VS_INPUT*                     getVertices() const noexcept;
             const IndexElementType*             getIndices() const noexcept;
 

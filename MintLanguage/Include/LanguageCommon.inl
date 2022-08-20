@@ -31,12 +31,12 @@ namespace mint
             __noop;
         }
 
-        MINT_INLINE const bool SymbolTableItem::operator==(const SymbolTableItem& rhs) const noexcept
+        MINT_INLINE bool SymbolTableItem::operator==(const SymbolTableItem& rhs) const noexcept
         {
             return (_symbolIndex == rhs._symbolIndex) && (_symbolString == rhs._symbolString);
         }
 
-        MINT_INLINE const bool SymbolTableItem::operator!=(const SymbolTableItem& rhs) const noexcept
+        MINT_INLINE bool SymbolTableItem::operator!=(const SymbolTableItem& rhs) const noexcept
         {
             return !(*this == rhs);
         }
@@ -49,7 +49,7 @@ namespace mint
             // _sourceAt 은 그냥 남겨둔다.
         }
 
-        MINT_INLINE const uint32 SymbolTableItem::index() const noexcept
+        MINT_INLINE uint32 SymbolTableItem::index() const noexcept
         {
             return _symbolIndex;
         }

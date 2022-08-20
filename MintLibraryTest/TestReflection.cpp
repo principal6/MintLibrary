@@ -11,7 +11,7 @@
 
 namespace mint
 {
-    const bool testReflection()
+    bool testReflection()
     {
         const ReflectionData& refl1 = ReflectionTesterOuter::getReflectionData();
         const ReflectionData& refl2 = ReflectionTesterInner::getReflectionData();

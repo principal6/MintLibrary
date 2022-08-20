@@ -101,7 +101,7 @@ namespace mint
             virtual void                setCursorType(const CursorType cursorType) noexcept override final;
 
         public:
-            virtual const uint32        getCaretBlinkIntervalMs() const noexcept override final;
+            virtual uint32              getCaretBlinkIntervalMs() const noexcept override final;
 
         public:
             virtual void                textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept override final;

@@ -26,8 +26,8 @@ namespace mint
         void                        setByteUnsafe(const uint32 byteAt, const byte value) noexcept;
 
     public:
-        const byte                  getByte(const uint32 byteAt) const noexcept;
-        const byte                  getByteUnsafe(const uint32 byteAt) const noexcept;
+        byte                        getByte(const uint32 byteAt) const noexcept;
+        byte                        getByteUnsafe(const uint32 byteAt) const noexcept;
 
     public:
         void                        set(const uint32 bitAt, const bool value) noexcept;
@@ -36,14 +36,14 @@ namespace mint
         void                        setUnsafe(const uint32 byteAt, const uint8 bitOffset, const bool value) noexcept;
 
     public:
-        const bool                  get(const uint32 bitAt) const noexcept;
-        const bool                  getUnsafe(const uint32 bitAt) const noexcept;
-        const bool                  get(const uint32 byteAt, const uint8 bitOffset) const noexcept;
-        const bool                  getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept;
+        bool                        get(const uint32 bitAt) const noexcept;
+        bool                        getUnsafe(const uint32 bitAt) const noexcept;
+        bool                        get(const uint32 byteAt, const uint8 bitOffset) const noexcept;
+        bool                        getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept;
 
     public:
-        const uint32                getBitCount() const noexcept;
-        const uint32                getByteCount() const noexcept;
+        uint32                      getBitCount() const noexcept;
+        uint32                      getByteCount() const noexcept;
 
     private:
         static constexpr uint32     kByteCount{ 1 + ((BitCount - 1) / kBitsPerByte) };

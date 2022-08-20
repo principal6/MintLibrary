@@ -89,7 +89,7 @@ namespace mint
                 return _hlslString.c_str();
             }
 
-            const uint32 Interpreter::getTypeMetaDataCount() const noexcept
+            uint32 Interpreter::getTypeMetaDataCount() const noexcept
             {
                 return _parser.getTypeMetaDataCount();
             }

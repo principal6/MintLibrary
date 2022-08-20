@@ -40,7 +40,7 @@ namespace mint
         _at += byteCount;
     }
 
-    MINT_INLINE const bool BinaryFileReader::canRead(const uint32 byteCount) const noexcept
+    MINT_INLINE bool BinaryFileReader::canRead(const uint32 byteCount) const noexcept
     {
         if (static_cast<uint64>(_at) + byteCount <= _byteArray.size())
         {

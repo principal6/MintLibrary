@@ -145,31 +145,31 @@ namespace mint
     class LoggerString
     {
     private:
-                        LoggerString();
+                                LoggerString();
 
     public:
-                        LoggerString(const uint32 capacity);
-                        LoggerString(const char* const rawString);
-                        ~LoggerString();
+                                LoggerString(const uint32 capacity);
+                                LoggerString(const char* const rawString);
+                                ~LoggerString();
 
     public:
-        LoggerString&   operator=(const LoggerString& rhs);
-        LoggerString&   operator=(const char* const rhs);
-        LoggerString&   operator+=(const char* const rhs);
+        LoggerString&           operator=(const LoggerString& rhs);
+        LoggerString&           operator=(const char* const rhs);
+        LoggerString&           operator+=(const char* const rhs);
 
     public:
-        MINT_INLINE const bool      empty() const noexcept { return _size == 0; }
-        MINT_INLINE const char*     c_str() const noexcept { return _rawPointer; }
-        MINT_INLINE const uint32    length() const noexcept { return _size; }
+        MINT_INLINE bool        empty() const noexcept { return _size == 0; }
+        MINT_INLINE const char* c_str() const noexcept { return _rawPointer; }
+        MINT_INLINE uint32      length() const noexcept { return _size; }
 
     private:
-        void            reserve(const uint32 newCapacity) noexcept;
-        void            release() noexcept;
+        void                    reserve(const uint32 newCapacity) noexcept;
+        void                    release() noexcept;
 
     private:
-        uint32          _capacity;
-        uint32          _size;
-        char*           _rawPointer;
+        uint32                  _capacity;
+        uint32                  _size;
+        char*                   _rawPointer;
     };
 
 
@@ -235,11 +235,11 @@ namespace mint
     public:
         void                clear() noexcept { _rawString[0] = 0; _length = 0; }
         char*               data() noexcept { return _rawString; }
-        const bool          empty() const noexcept { return _length == 0; }
+        bool                empty() const noexcept { return _length == 0; }
         const char*         c_str() const noexcept { return _rawString; }
 
     private:
-        const bool          endsWithSlash() const noexcept;
+        bool                endsWithSlash() const noexcept;
 
     private:
         char                _rawString[kMaxPath + 1];

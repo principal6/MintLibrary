@@ -26,6 +26,10 @@ namespace mint
         static const Float2     kNan;
 
     public:
+        static constexpr Float2 max(const Float2& a, const Float2& b) noexcept;
+        static constexpr Float2 min(const Float2& a, const Float2& b) noexcept;
+
+    public:
         constexpr               Float2();
         constexpr explicit      Float2(const float scalar);
         constexpr explicit      Float2(const float x, const float y);
@@ -59,19 +63,19 @@ namespace mint
         const float&            operator[](const uint32 index) const noexcept;
 
     public:
-        const bool              operator==(const Float2& rhs) const noexcept;
-        const bool              operator!=(const Float2& rhs) const noexcept;
+        bool                    operator==(const Float2& rhs) const noexcept;
+        bool                    operator!=(const Float2& rhs) const noexcept;
 
     public:
-        static const float      dot(const Float2& lhs, const Float2& rhs) noexcept;
+        static float            dot(const Float2& lhs, const Float2& rhs) noexcept;
         static Float2           normalize(const Float2& in) noexcept;
         static Float2           abs(const Float2& rhs) noexcept;
 
     public:
-        const float             lengthSqaure() const noexcept;
-        const float             length() const noexcept;
-        const float             maxElement() const noexcept;
-        const float             minElement() const noexcept;
+        float                   lengthSqaure() const noexcept;
+        float                   length() const noexcept;
+        float                   maxElement() const noexcept;
+        float                   minElement() const noexcept;
         
     public:
         void                    set(const float x, const float y) noexcept;
@@ -79,8 +83,8 @@ namespace mint
         void                    setNan() noexcept;
 
     public:
-        const bool              isNan() const noexcept;
-        const bool              hasNegativeElement() const noexcept;
+        bool                    isNan() const noexcept;
+        bool                    hasNegativeElement() const noexcept;
 
     public:
         union

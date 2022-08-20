@@ -49,7 +49,7 @@ namespace mint
                 setSource(source);
             }
 
-            const bool Lexer::execute() noexcept
+            bool Lexer::execute() noexcept
             {
                 return __super::executeDefault();
             }

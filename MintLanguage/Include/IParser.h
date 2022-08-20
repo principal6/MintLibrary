@@ -50,14 +50,14 @@ namespace mint
             void                            pushMember(const TypeMetaData& member);
 
         public:
-            const bool                      isBuiltIn() const noexcept;
+            bool                            isBuiltIn() const noexcept;
 
         public:
             const std::string&              getTypeName() const noexcept;
             const std::string&              getDeclName() const noexcept;
-            const uint32                    getSize() const noexcept;
-            const uint32                    getByteOffset() const noexcept;
-            const uint32                    getMemberCount() const noexcept;
+            uint32                          getSize() const noexcept;
+            uint32                          getByteOffset() const noexcept;
+            uint32                          getMemberCount() const noexcept;
             const TypeMetaData&             getMember(const uint32 memberIndex) const noexcept;
 
         private:
@@ -134,40 +134,40 @@ namespace mint
             void                                                registerTypeInternal(const std::string& typeFullName, const uint32 typeSize, const bool isBuiltIn = false) noexcept;
 
         public:
-            virtual const bool                                  execute() abstract;
+            virtual bool                                        execute() abstract;
 
         protected:
             void                                                reset();
 
         protected:
-            const bool                                          continueParsing() const noexcept;
+            bool                                                continueParsing() const noexcept;
 
         protected:
             void                                                advanceSymbolPositionXXX(const uint32 advanceCount);
 
         protected:
-            const bool                                          hasSymbol(const uint32 symbolPosition) const noexcept;
-            const uint32                                        getSymbolPosition() const noexcept;
+            bool                                                hasSymbol(const uint32 symbolPosition) const noexcept;
+            uint32                                              getSymbolPosition() const noexcept;
             SymbolTableItem&                                    getSymbol(const uint32 symbolPosition) const noexcept;
 
         protected:
-            const bool                                          findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept;
-            const bool                                          findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept;
-            const bool                                          findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept;
-            const bool                                          findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition = nullptr) const noexcept;
+            bool                                                findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept;
+            bool                                                findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept;
+            bool                                                findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept;
+            bool                                                findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition = nullptr) const noexcept;
         
         protected:
             void                                                reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType);
             void                                                reportError(const SymbolTableItem& symbolTableItem, const ErrorType errorType, const char* const additionalExplanation);
-            const bool                                          hasReportedErrors() const noexcept;
+            bool                                                hasReportedErrors() const noexcept;
             
         public:
-            const uint32                                        getTypeMetaDataCount() const noexcept;
+            uint32                                              getTypeMetaDataCount() const noexcept;
             const TypeMetaData<TypeCustomDataType>&             getTypeMetaData(const std::string& typeName) const noexcept;
             const TypeMetaData<TypeCustomDataType>&             getTypeMetaData(const int32 typeIndex) const noexcept;
 
         protected:
-            const bool                                          existsTypeMetaData(const std::string& typeName) const noexcept;
+            bool                                                existsTypeMetaData(const std::string& typeName) const noexcept;
             void                                                pushTypeMetaData(const std::string& typeName, const TypeMetaData<TypeCustomDataType>& typeMetaData) noexcept;
             TypeMetaData<TypeCustomDataType>&                   accessTypeMetaData(const std::string& typeName) noexcept;
 

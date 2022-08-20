@@ -26,16 +26,16 @@ namespace mint
 
         public:
             const MeshData&             getMeshData() const noexcept;
-            const uint32                getVertexCount() const noexcept;
+            uint32                      getVertexCount() const noexcept;
             const VS_INPUT*             getVertices() const noexcept;
-            const uint32                getIndexCount() const noexcept;
+            uint32                      getIndexCount() const noexcept;
             const IndexElementType*     getIndices() const noexcept;
 
         public:
             void                        shouldDrawNormals(const bool shouldDrawNormals) noexcept;
-            const bool                  shouldDrawNormals() const noexcept;
+            bool                        shouldDrawNormals() const noexcept;
             void                        shouldDrawEdges(const bool shouldDrawEdges) noexcept;
-            const bool                  shouldDrawEdges() const noexcept;
+            bool                        shouldDrawEdges() const noexcept;
 
         private:
             MeshData                    _meshData;

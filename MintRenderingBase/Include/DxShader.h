@@ -97,61 +97,61 @@ namespace mint
             static constexpr const char* const  kCompiledShaderFileExtension = ".hlslbin";
 
         public:
-                                        DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
-                                        DxShaderPool(const DxShaderPool& rhs) = delete;
-            virtual                     ~DxShaderPool() = default;
+                                    DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion);
+                                    DxShaderPool(const DxShaderPool& rhs) = delete;
+            virtual                 ~DxShaderPool() = default;
 
         public:
-            const DxObjectID&           pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectID&           pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
+            const DxObjectID&       pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const DxObjectID&       pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
         public:
-            const DxObjectID&           pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
-            const DxObjectID&           pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
+            const DxObjectID&       pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
+            const DxObjectID&       pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
-            const DxObjectID&           pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectID&           pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            const DxObjectID&       pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const DxObjectID&       pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+    
+        private:
+            bool                    createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            void                    pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
+            bool                    createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+
+        private:
+            bool                    compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+            bool                    compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+            bool                    compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
+
+        public:
+            void                    recompileAllShaders();
+
+        private:
+            void                    reportCompileError();
+
+        public:
+            void                    bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID);
+            void                    unbindShader(const DxShaderType shaderType);
         
         private:
-            const bool                  createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            void                        pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
-            const bool                  createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            const DxShader&         getShader(const DxShaderType shaderType, const DxObjectID& objectID);
 
         private:
-            const bool                  compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-            const bool                  compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-            const bool                  compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
-
-        public:
-            void                        recompileAllShaders();
+            ComPtr<ID3DBlob>        _errorMessageBlob;
+    
+        private:
+            DxShaderHeaderMemory*   _shaderHeaderMemory;
 
         private:
-            void                        reportCompileError();
-
-        public:
-            void                        bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID);
-            void                        unbindShader(const DxShaderType shaderType);
-            
-        private:
-            const DxShader&             getShader(const DxShaderType shaderType, const DxObjectID& objectID);
+            DxShaderVersion         _shaderVersion;
 
         private:
-            ComPtr<ID3DBlob>            _errorMessageBlob;
-        
-        private:
-            DxShaderHeaderMemory*       _shaderHeaderMemory;
+            Vector<DxShader>        _vertexShaderArray;
+            Vector<DxShader>        _geometryShaderArray;
+            Vector<DxShader>        _pixelShaderArray;
 
         private:
-            DxShaderVersion             _shaderVersion;
-
-        private:
-            Vector<DxShader>            _vertexShaderArray;
-            Vector<DxShader>            _geometryShaderArray;
-            Vector<DxShader>            _pixelShaderArray;
-
-        private:
-            DxObjectID                  _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
+            DxObjectID              _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
         };
     }
 }

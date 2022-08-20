@@ -60,7 +60,7 @@ namespace mint
     }
 
     template <typename T>
-    inline const bool TypeData<T>::deserialize(Serializer& serializer) noexcept
+    inline bool TypeData<T>::deserialize(Serializer& serializer) noexcept
     {
         StringA deserializedTypeName;
         serializer._deserializeInternal(deserializedTypeName, true);
@@ -135,7 +135,7 @@ namespace mint
 
 
     template <typename T>
-    inline const bool Serializer::serialize(const T& from, const char* const fileName) noexcept
+    inline bool Serializer::serialize(const T& from, const char* const fileName) noexcept
     {
         _writer.clear();
 
@@ -209,7 +209,7 @@ namespace mint
     }
 
     template <typename T>
-    inline const bool Serializer::deserialize(const char* const fileName, T& to) noexcept
+    inline bool Serializer::deserialize(const char* const fileName, T& to) noexcept
     {
         if (_reader.open(fileName) == false)
         {
@@ -231,7 +231,7 @@ namespace mint
     }
 
     template <typename T>
-    inline const bool Serializer::_deserializeInternal(T& to, const bool isTypeData) noexcept
+    inline bool Serializer::_deserializeInternal(T& to, const bool isTypeData) noexcept
     {
         _MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED;
 
@@ -265,7 +265,7 @@ namespace mint
     }
 
     template <typename T>
-    inline const bool Serializer::_deserializeInternal(String<T>& to, const bool isTypeData) noexcept
+    inline bool Serializer::_deserializeInternal(String<T>& to, const bool isTypeData) noexcept
     {
         _MINT_LOG_DESERIALIZATION_SPECIALIZED;
         
@@ -277,7 +277,7 @@ namespace mint
     }
 
     template <typename T>
-    inline const bool Serializer::_deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept
+    inline bool Serializer::_deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept
     {
         _MINT_LOG_DESERIALIZATION_SPECIALIZED;
         

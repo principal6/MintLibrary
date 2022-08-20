@@ -21,23 +21,23 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE const bool UniqueStringAID::operator==(const UniqueStringAID& rhs) const noexcept
+    MINT_INLINE bool UniqueStringAID::operator==(const UniqueStringAID& rhs) const noexcept
     {
         return _rawID == rhs._rawID;
     }
 
-    MINT_INLINE const bool UniqueStringAID::operator!=(const UniqueStringAID& rhs) const noexcept
+    MINT_INLINE bool UniqueStringAID::operator!=(const UniqueStringAID& rhs) const noexcept
     {
         return _rawID != rhs._rawID;
     }
 
 
-    MINT_INLINE const bool UniqueStringA::operator==(const UniqueStringA& rhs) const noexcept
+    MINT_INLINE bool UniqueStringA::operator==(const UniqueStringA& rhs) const noexcept
     {
         return _id == rhs._id;
     }
 
-    MINT_INLINE const bool UniqueStringA::operator!=(const UniqueStringA& rhs) const noexcept
+    MINT_INLINE bool UniqueStringA::operator!=(const UniqueStringA& rhs) const noexcept
     {
         return _id != rhs._id;
     }
@@ -48,14 +48,14 @@ namespace mint
     }
 
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    MINT_INLINE const UniqueStringAID UniqueStringA::getID() const noexcept
+    MINT_INLINE UniqueStringAID UniqueStringA::getID() const noexcept
     {
         return _id;
     }
 #endif
 
 
-    MINT_INLINE const bool UniqueStringPoolA::isValid(const UniqueStringAID id) const noexcept
+    MINT_INLINE bool UniqueStringPoolA::isValid(const UniqueStringAID id) const noexcept
     {
         return (id._rawID < _uniqueStringCount);
     }

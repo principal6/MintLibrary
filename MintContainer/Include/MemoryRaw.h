@@ -14,28 +14,28 @@ namespace mint
     {
 #pragma region Type Traits
         template<typename T>
-        constexpr const bool  isConstructible() noexcept;
+        constexpr bool  isConstructible() noexcept;
 
         template<typename T>
-        constexpr const bool  isDefaultConstructible() noexcept;
+        constexpr bool  isDefaultConstructible() noexcept;
 
         template<typename T>
-        constexpr const bool  isCopyConstructible() noexcept;
+        constexpr bool  isCopyConstructible() noexcept;
 
         template<typename T>
-        constexpr const bool  isCopyAssignable() noexcept;
+        constexpr bool  isCopyAssignable() noexcept;
 
         template<typename T>
-        constexpr const bool  isCopiable() noexcept;
+        constexpr bool  isCopiable() noexcept;
 
         template<typename T>
-        constexpr const bool  isMoveConstructible() noexcept;
+        constexpr bool  isMoveConstructible() noexcept;
 
         template<typename T>
-        constexpr const bool  isMoveAssignable() noexcept;
+        constexpr bool  isMoveAssignable() noexcept;
 
         template<typename T>
-        constexpr const bool  isMovable() noexcept;
+        constexpr bool  isMovable() noexcept;
 #pragma endregion
 
 

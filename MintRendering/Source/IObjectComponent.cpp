@@ -11,7 +11,7 @@ namespace mint
             _rawID = rawID;
         }
 
-        const uint32 ObjectComponentID::getRawID() const noexcept
+        uint32 ObjectComponentID::getRawID() const noexcept
         {
             return _rawID;
         }

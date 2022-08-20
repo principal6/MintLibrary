@@ -51,11 +51,11 @@ namespace mint
 
         public:
             void                        evaluate() const noexcept;
-            MINT_INLINE const bool      isEvaluated() const noexcept { return _isEvaluated; }
+            MINT_INLINE bool            isEvaluated() const noexcept { return _isEvaluated; }
 
         public:
             const wchar_t* const        getPlainString() const noexcept;
-            const uint32                getPlainStringLength() const noexcept;
+            uint32                      getPlainStringLength() const noexcept;
 
         private:
             std::wstring                _latexExpression;

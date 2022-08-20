@@ -1,4 +1,3 @@
-#include "Rect.h"
 #pragma once
 
 
@@ -39,44 +38,56 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE constexpr const bool Rect::operator==(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::operator==(const Rect& rhs) const noexcept
     {
         return _raw == rhs._raw;
     }
 
-    MINT_INLINE constexpr const bool Rect::operator!=(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::operator!=(const Rect& rhs) const noexcept
     {
         return _raw != rhs._raw;
     }
 
-    MINT_INLINE constexpr const float Rect::left() const noexcept
+    MINT_INLINE constexpr float Rect::left() const noexcept
     {
         return _raw._x;
     }
 
-    MINT_INLINE constexpr const float Rect::right() const noexcept
+    MINT_INLINE constexpr float Rect::right() const noexcept
     {
         return _raw._y;
     }
 
-    MINT_INLINE constexpr const float Rect::top() const noexcept
+    MINT_INLINE constexpr float Rect::top() const noexcept
     {
         return _raw._z;
     }
 
-    MINT_INLINE constexpr const float Rect::bottom() const noexcept
+    MINT_INLINE constexpr float Rect::bottom() const noexcept
     {
         return _raw._w;
     }
 
-    MINT_INLINE constexpr const float Rect::horz() const noexcept
+    MINT_INLINE constexpr float Rect::horz() const noexcept
     {
         return left() + right();
     }
 
-    MINT_INLINE constexpr const float Rect::vert() const noexcept
+    MINT_INLINE constexpr float Rect::vert() const noexcept
     {
         return top() + bottom();
+    }
+
+    MINT_INLINE constexpr float Rect::width() const noexcept
+    {
+        const float signedDifference = right() - left();
+        return (signedDifference >= 0.0f ? signedDifference : -signedDifference);
+    }
+
+    MINT_INLINE constexpr float Rect::height() const noexcept
+    {
+        const float signedDifference = top() - bottom();
+        return (signedDifference >= 0.0f ? signedDifference : -signedDifference);
     }
 
     MINT_INLINE float& Rect::left() noexcept
@@ -119,17 +130,17 @@ namespace mint
         _raw._w = s;
     }
 
-    MINT_INLINE constexpr const Float2 Rect::center() const noexcept
+    MINT_INLINE constexpr Float2 Rect::center() const noexcept
     {
         return Float2((left() + right()) * 0.5f, (top() + bottom()) * 0.5f);
     }
 
-    MINT_INLINE constexpr const Float2 Rect::size() const noexcept
+    MINT_INLINE constexpr Float2 Rect::size() const noexcept
     {
         return Float2(right() - left(), bottom() - top());
     }
 
-    MINT_INLINE constexpr const Float2 Rect::position() const noexcept
+    MINT_INLINE constexpr Float2 Rect::position() const noexcept
     {
         return Float2(left(), top());
     }
@@ -147,9 +158,47 @@ namespace mint
         top(max(top(), outerRect.top()));
         bottom(min(bottom(), outerRect.bottom()));
 
-        // Rect Size 가 음수가 되지 않도록 방지!! (중요)
-        right(max(left(), right()));
-        bottom(max(top(), bottom()));
+        validate();
+    }
+
+    MINT_INLINE void Rect::moveBy(const Float2& offset) noexcept
+    {
+        left() += offset._x;
+        right() += offset._x;
+        top() += offset._y;
+        bottom() += offset._y;
+    }
+
+    MINT_INLINE void Rect::expandByQuantity(const Rect& quantity) noexcept
+    {
+        left() -= quantity.left();
+        right() += quantity.right();
+        top() -= quantity.top();
+        bottom() += quantity.bottom();
+    }
+
+    MINT_INLINE void Rect::expand(const Rect& rhs) noexcept
+    {
+        top(min(top(), rhs.top()));
+        left(min(left(), rhs.left()));
+
+        expandRightBottom(rhs);
+    }
+
+    MINT_INLINE void Rect::expandRightBottom(const Rect& rhs) noexcept
+    {
+        right(max(right(), rhs.right()));
+        bottom(max(bottom(), rhs.bottom()));
+    }
+
+    MINT_INLINE void Rect::shrinkByQuantity(const Rect& quantity) noexcept
+    {
+        left() += quantity.left();
+        right() -= quantity.right();
+        top() += quantity.top();
+        bottom() -= quantity.bottom();
+
+        validate();
     }
 
     MINT_INLINE constexpr Float2 Rect::bound(const Float2& position) const noexcept
@@ -157,17 +206,21 @@ namespace mint
         return Float2(boundHorz(position._x), boundVert(position._y));
     }
 
-    MINT_INLINE constexpr const bool Rect::contains(const Float2& position) const noexcept
+    MINT_INLINE constexpr bool Rect::contains(const Float2& position) const noexcept
     {
+        if (width() == 0.0f || height() == 0.0f)
+        {
+            return false;
+        }   
         return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
     }
 
-    MINT_INLINE constexpr const bool Rect::contains(const Rect& rhs) const noexcept
+    MINT_INLINE constexpr bool Rect::contains(const Rect& rhs) const noexcept
     {
         return (left() <= rhs.left()) && (rhs.right() <= right()) && (top() >= rhs.top()) && (rhs.bottom() >= bottom());
     }
 
-    MINT_INLINE const bool Rect::isNan() const noexcept
+    MINT_INLINE bool Rect::isNan() const noexcept
     {
         return _raw.isNan();
     }
@@ -185,5 +238,12 @@ namespace mint
     MINT_INLINE constexpr float Rect::boundVert(const float y) const noexcept
     {
         return min(max(top(), y), bottom());
+    }
+
+    MINT_INLINE void Rect::validate() noexcept
+    {
+        // Rect Size 가 음수가 되지 않도록 방지!! (중요)
+        right(max(left(), right()));
+        bottom(max(top(), bottom()));
     }
 }

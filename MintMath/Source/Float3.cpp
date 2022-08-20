@@ -78,17 +78,17 @@ namespace mint
         return _c[index];
     }
 
-    const bool Float3::operator==(const Float3& rhs) const noexcept
+    bool Float3::operator==(const Float3& rhs) const noexcept
     {
         return Math::equals(_c, rhs._c);
     }
 
-    const bool Float3::operator!=(const Float3& rhs) const noexcept
+    bool Float3::operator!=(const Float3& rhs) const noexcept
     {
         return !(*this == rhs);
     }
 
-    const float Float3::dot(const Float3& lhs, const Float3& rhs) noexcept
+    float Float3::dot(const Float3& lhs, const Float3& rhs) noexcept
     {
         return Math::dot(lhs._c, rhs._c);
     }
@@ -117,12 +117,12 @@ namespace mint
         Math::normalize(_c);
     }
 
-    const float Float3::lengthSqaure() const noexcept
+    float Float3::lengthSqaure() const noexcept
     {
         return Math::normSq(_c);
     }
 
-    const float Float3::length() const noexcept
+    float Float3::length() const noexcept
     {
         return Math::norm(_c);
     }

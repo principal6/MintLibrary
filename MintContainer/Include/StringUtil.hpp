@@ -134,7 +134,7 @@ namespace mint
         __noop;
     }
 
-    MINT_INLINE const bool StringRange::isLengthSet() const noexcept
+    MINT_INLINE bool StringRange::isLengthSet() const noexcept
     {
         return _length;
     }
@@ -167,7 +167,7 @@ namespace mint
             ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
         }
 
-        MINT_INLINE const size_t computeExtenstionAt(std::string& inoutText)
+        MINT_INLINE size_t computeExtenstionAt(std::string& inoutText)
         {
             const size_t length = inoutText.size();
             size_t found = inoutText.find('.', 1);
@@ -182,7 +182,7 @@ namespace mint
             return std::string::npos;
         }
 
-        MINT_INLINE const bool hasExtension(std::string& inoutText)
+        MINT_INLINE bool hasExtension(std::string& inoutText)
         {
             const size_t found = computeExtenstionAt(inoutText);
             return (found != std::string::npos);
@@ -313,10 +313,26 @@ namespace mint
         }
 
         template <typename T>
+        inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
+        {
+            ScopeStringA<256> buffer;
+            formatString(buffer, (std::is_signed<T>() ? "%lld" : "%llu"), rhs);
+            return StringA(buffer.c_str());
+        }
+
+        template <typename T>
+        inline std::enable_if_t<std::is_floating_point_v<T>, StringA> convertToStringA(const T& rhs)
+        {
+            ScopeStringA<256> buffer;
+            formatString(buffer, "%f", rhs);
+            return StringA(buffer.c_str());
+        }
+
+        template <typename T>
         inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
         {
             ScopeStringW<256> buffer;
-            formatString(buffer, L"%d", rhs);
+            formatString(buffer, (std::is_signed<T>() ? L"%lld" : L"%llu"), rhs);
             return StringW(buffer.c_str());
         }
 

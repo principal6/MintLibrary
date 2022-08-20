@@ -39,13 +39,53 @@ namespace mint
         {
             struct RenderCommand
             {
-                bool                _isValid = true;
-                RenderingPrimitive  _primitive;
+                bool                _isOrdinal = true;
+                RenderingPrimitive  _primitive = RenderingPrimitive::INVALID;
                 Rect                _clipRect;
                 uint32              _vertexOffset = 0;
                 uint32              _vertexCount = 0;
                 uint32              _indexOffset = 0;
                 uint32              _indexCount = 0;
+            };
+
+            struct OrdinalRenderCommandGroup
+            {
+                uint64              _key = 0;
+                uint32              _priority = 0;
+                uint32              _startRenderCommandIndex = 0;
+                uint32              _endRenderCommandIndex = 0;
+
+            public:
+                bool operator==(const uint64 key) const noexcept
+                {
+                    return _key == key;
+                }
+
+                struct Evaluator
+                {
+                    uint64 operator()(const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return rhs._key;
+                    }
+                };
+
+                struct KeyComparator
+                {
+                    bool operator()(const OrdinalRenderCommandGroup& lhs, const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return lhs._key < rhs._key;
+                    }
+                };
+
+                // Priority 가 작을 수록 먼저 그려진다.
+                // Priority 가 크면 화면 상 제일 위에 와야 하기 때문!
+                struct PriorityComparator
+                {
+                    bool operator()(const OrdinalRenderCommandGroup& lhs, const OrdinalRenderCommandGroup& rhs) const noexcept
+                    {
+                        return lhs._priority < rhs._priority;
+                    }
+                };
             };
 
         public:
@@ -55,28 +95,32 @@ namespace mint
         public:
             Vector<T>&                      vertices() noexcept;
             Vector<IndexElementType>&       indices() noexcept;
-            const uint32                    getVertexCount() const noexcept;
-            const uint32                    getIndexCount() const noexcept;
+            uint32                          getVertexCount() const noexcept;
+            uint32                          getIndexCount() const noexcept;
 
         public:
             void                            pushMesh(const MeshData& meshData) noexcept;
 
         public:
             void                            setIndexBaseXXX(const IndexElementType base) noexcept;
-            const IndexElementType          getIndexBaseXXX() const noexcept;
+            IndexElementType                getIndexBaseXXX() const noexcept;
 
         public:
             void                            flush() noexcept;
-            const bool                      isRenderable() const noexcept;
+            bool                            isRenderable() const noexcept;
             void                            render(const RenderingPrimitive renderingPrimitive) noexcept;
 
         public:
             void                            pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept;
+            void                            beginOrdinalRenderCommands(const uint64 key) noexcept;
+            void                            endOrdinalRenderCommands() noexcept;
+            void                            setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept;
             void                            executeRenderCommands() noexcept;
 
         private:
+            bool                            mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept;
             void                            prepareBuffers() noexcept;
-            void                            optimizeRenderCommands() noexcept;
+            void                            executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept;
 
         private:
             GraphicDevice&                  _graphicDevice;
@@ -92,7 +136,10 @@ namespace mint
             DxObjectID                      _indexBufferID;
 
         private:
-            Vector<RenderCommand>           _renderCommands;
+            bool                                _isOrdinalMode = false;
+            Vector<RenderCommand>               _renderCommands;
+            Vector<OrdinalRenderCommandGroup>   _ordinalRenderCommandGroups;
+            bool                                _isOrdinalRenderCommandGroupsSorted = false;
         };
     }
 }

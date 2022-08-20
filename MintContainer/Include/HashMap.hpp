@@ -63,7 +63,7 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const bool BucketViewer<Key, Value>::isValid() const noexcept
+    inline bool BucketViewer<Key, Value>::isValid() const noexcept
     {
         return static_cast<uint32>(_bucketIndex) < _hashMap->_bucketArray.size();
     }
@@ -109,7 +109,7 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const bool HashMap<Key, Value>::contains(const Key& key) const noexcept
+    inline bool HashMap<Key, Value>::contains(const Key& key) const noexcept
     {
         const uint64 keyHash = Hasher<Key>()(key);
         const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
@@ -117,7 +117,7 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const bool HashMap<Key, Value>::containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept
+    inline bool HashMap<Key, Value>::containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept
     {
         auto& startBucket = _bucketArray[startBucketIndex];
         for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
@@ -231,7 +231,7 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const bool HashMap<Key, Value>::existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept
+    inline bool HashMap<Key, Value>::existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept
     {
         hopDistance = 0;
         for (; hopDistance < kAddRange; ++hopDistance)
@@ -325,18 +325,18 @@ namespace mint
     template<typename Key, typename Value>
     inline Value& HashMap<Key, Value>::getInvalidValue() noexcept
     {
-        static Value invalidValue;
+        static Value invalidValue{};
         return invalidValue;
     }
 
     template<typename Key, typename Value>
-    inline const uint32 HashMap<Key, Value>::size() const noexcept
+    inline uint32 HashMap<Key, Value>::size() const noexcept
     {
         return _bucketCount;
     }
 
     template<typename Key, typename Value>
-    inline const bool HashMap<Key, Value>::empty() const noexcept
+    inline bool HashMap<Key, Value>::empty() const noexcept
     {
         return _bucketCount == 0;
     }
@@ -414,7 +414,7 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    inline const bool HashMap<Key, Value>::displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept
+    inline bool HashMap<Key, Value>::displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept
     {
         const uint32 bucketH_1Index = startBucketIndex + hopDistance - (kHopRange - 1);
         auto& bucketH_1 = _bucketArray[bucketH_1Index];
@@ -460,13 +460,13 @@ namespace mint
     }
 
     template<typename Key, typename Value>
-    MINT_INLINE const uint32 HashMap<Key, Value>::computeSegmentIndex(const uint64 keyHash) const noexcept
+    MINT_INLINE uint32 HashMap<Key, Value>::computeSegmentIndex(const uint64 keyHash) const noexcept
     {
         return keyHash % (_bucketArray.capacity() / kSegmentLength);
     }
 
     template<typename Key, typename Value>
-    MINT_INLINE const uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
+    MINT_INLINE uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
     {
         return (kSegmentLength * computeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
     }

@@ -88,7 +88,7 @@ namespace mint
     }
 
     template<uint32 UnitByteSize, uint32 MaxUnitCount>
-    inline const bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
+    inline bool StackHolder<UnitByteSize, MaxUnitCount>::canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept
     {
         const BitMaskType bitMaskRightAligned = static_cast<BitMaskType>(Math::pow2_ui32(unitCount) - 1);
         const BitMaskType bitMaskLeftAligned = bitMaskRightAligned << (kBitMaskByteCount - unitCount);
@@ -113,7 +113,7 @@ namespace mint
     }
 
     template<uint32 UnitByteSize, uint32 MaxUnitCount>
-    inline const bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept
+    inline bool StackHolder<UnitByteSize, MaxUnitCount>::canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept
     {
         if (isInsider(ptr) == false)
         {
@@ -131,7 +131,7 @@ namespace mint
     }
 
     template<uint32 UnitByteSize, uint32 MaxUnitCount>
-    inline const bool StackHolder<UnitByteSize, MaxUnitCount>::isInsider(const byte* const ptr) const noexcept
+    inline bool StackHolder<UnitByteSize, MaxUnitCount>::isInsider(const byte* const ptr) const noexcept
     {
         if (ptr == nullptr)
         {

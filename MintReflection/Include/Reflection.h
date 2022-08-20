@@ -38,7 +38,7 @@ namespace mint
         virtual void        serializeValue(Serializer& serializer, const void* const memberPointer) noexcept abstract;
 
     public:
-        virtual const bool  deserialize(Serializer& serializer) noexcept abstract;
+        virtual bool        deserialize(Serializer& serializer) noexcept abstract;
         virtual void        deserializeValue(Serializer& serializer, void* const memberPointer) noexcept abstract;
     };
 
@@ -54,7 +54,7 @@ namespace mint
         virtual void        serializeValue(Serializer& serializer, const void* const memberPointer) noexcept override final;
 
     public:
-        virtual const bool  deserialize(Serializer& serializer) noexcept override final;
+        virtual bool        deserialize(Serializer& serializer) noexcept override final;
         virtual void        deserializeValue(Serializer& serializer, void* const memberPointer) noexcept override final;
     };
 
@@ -217,7 +217,7 @@ namespace mint
     
     public:
         template <typename T>
-        const bool          serialize(const T& from, const char* const fileName) noexcept;
+        bool                serialize(const T& from, const char* const fileName) noexcept;
 
     private:
         template <typename T>
@@ -231,17 +231,17 @@ namespace mint
 
     public:
         template <typename T>
-        const bool          deserialize(const char* const fileName, T& to) noexcept;
+        bool                deserialize(const char* const fileName, T& to) noexcept;
         
     private:
         template <typename T>
-        const bool          _deserializeInternal(T& to, const bool isTypeData) noexcept;
+        bool                _deserializeInternal(T& to, const bool isTypeData) noexcept;
 
         template <typename T>
-        const bool          _deserializeInternal(String<T>& to, const bool isTypeData) noexcept;
+        bool                _deserializeInternal(String<T>& to, const bool isTypeData) noexcept;
 
         template <typename T>
-        const bool          _deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept;
+        bool                _deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept;
 
     private:
         BinaryFileWriter    _writer;

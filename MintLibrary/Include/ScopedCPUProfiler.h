@@ -14,48 +14,48 @@ namespace mint
 {
     namespace Profiler
     {
-        static const uint64         getCurrentTimeMs() noexcept;
-        static const uint64         getCurrentTimeUs() noexcept;
+        static uint64       getCurrentTimeMs() noexcept;
+        static uint64       getCurrentTimeUs() noexcept;
 
 
         class FPSCounter
         {
         private:
-                                    FPSCounter() = default;
-                                    ~FPSCounter() = default;
+                            FPSCounter() = default;
+                            ~FPSCounter() = default;
 
         public:
-            static void             count() noexcept;
-            static const uint64     getFps() noexcept;
-            static const uint64     getFrameTimeUs() noexcept;
-            static const uint64     getFrameTimeMs() noexcept;
-            
+            static void     count() noexcept;
+            static uint64   getFps() noexcept;
+            static uint64   getFrameTimeUs() noexcept;
+            static uint64   getFrameTimeMs() noexcept;
+    
         private:
-            static uint64           _previousTimeUs;
-            static uint64           _frameTimeUs;
-            static uint64           _previousFpsTimeUs;
-            static uint64           _frameCounter;
-            static uint64           _fps;
+            static uint64   _previousTimeUs;
+            static uint64   _frameTimeUs;
+            static uint64   _previousFpsTimeUs;
+            static uint64   _frameCounter;
+            static uint64   _fps;
         };
 
 
         class ScopedCPUProfiler
         {
-            friend const uint64     getCurrentTimeMs() noexcept;
-            friend const uint64     getCurrentTimeUs() noexcept;
+            friend uint64   getCurrentTimeMs() noexcept;
+            friend uint64   getCurrentTimeUs() noexcept;
 
         public:
             struct Log
             {
             public:
-                                    Log() = default;
-                                    Log(const std::string& content, const uint64 startTimepointMs, const uint64 durationMs);
-                                    ~Log() = default;
+                            Log() = default;
+                            Log(const std::string& content, const uint64 startTimepointMs, const uint64 durationMs);
+                            ~Log() = default;
 
             public:
-                std::string         _content;
-                uint64              _startTimepointMs;
-                uint64              _durationMs;
+                std::string _content;
+                uint64      _startTimepointMs;
+                uint64      _durationMs;
             };
 
         private:
@@ -67,8 +67,8 @@ namespace mint
 
             public:
                 static ScopedCPUProfilerLogger&     getInstance() noexcept;
-                static const uint64                 getCurrentTimeMs() noexcept;
-                static const uint64                 getCurrentTimeUs() noexcept;
+                static uint64                       getCurrentTimeMs() noexcept;
+                static uint64                       getCurrentTimeUs() noexcept;
 
             public:
                 void                                log(const ScopedCPUProfiler& profiler, const uint64 durationMs) noexcept;

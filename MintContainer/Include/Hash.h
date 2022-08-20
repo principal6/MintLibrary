@@ -15,31 +15,31 @@
 
 namespace mint
 {
-    const uint64 computeHash(const char* const rawString, const uint32 length) noexcept;
-    const uint64 computeHash(const char* const rawString) noexcept;
-    const uint64 computeHash(const wchar_t* const rawString) noexcept;
+    uint64 computeHash(const char* const rawString, const uint32 length) noexcept;
+    uint64 computeHash(const char* const rawString) noexcept;
+    uint64 computeHash(const wchar_t* const rawString) noexcept;
 
     template <typename T>
-    const uint64 computeHash(const T& value) noexcept;
+    uint64 computeHash(const T& value) noexcept;
 
 
 
     template <typename T>
     struct Hasher final
     {
-        const uint64 operator()(const T& value) const noexcept;
+        uint64 operator()(const T& value) const noexcept;
     };
 
     template <>
     struct Hasher<std::string> final
     {
-        const uint64 operator()(const std::string& value) const noexcept;
+        uint64 operator()(const std::string& value) const noexcept;
     };
 
     template <typename T>
     struct Hasher<String<T>> final
     {
-        const uint64 operator()(const String<T>& value) const noexcept;
+        uint64 operator()(const String<T>& value) const noexcept;
     };
 }
 

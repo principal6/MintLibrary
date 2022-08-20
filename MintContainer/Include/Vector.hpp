@@ -399,27 +399,45 @@ namespace mint
     }
 
     template<typename T>
+    MINT_INLINE T* Vector<T>::data() noexcept
+    {
+        return _rawPointer;
+    }
+    
+    template<typename T>
     MINT_INLINE const T* Vector<T>::data() const noexcept
     {
         return _rawPointer;
     }
 
     template<typename T>
-    MINT_INLINE const uint32 Vector<T>::capacity() const noexcept
+    MINT_INLINE uint32 Vector<T>::capacity() const noexcept
     {
         return _capacity;
     }
 
     template<typename T>
-    MINT_INLINE const uint32 Vector<T>::size() const noexcept
+    MINT_INLINE uint32 Vector<T>::size() const noexcept
     {
         return _size;
     }
 
     template<typename T>
-    MINT_INLINE const bool Vector<T>::empty() const noexcept
+    MINT_INLINE bool Vector<T>::empty() const noexcept
     {
         return (_size == 0);
+    }
+
+    template<typename T>
+    MINT_INLINE Vector<T>::Iterator<T> Vector<T>::begin() noexcept
+    { 
+        return Iterator(&_rawPointer[0]);
+    }
+
+    template<typename T>
+    MINT_INLINE Vector<T>::Iterator<T> Vector<T>::end() noexcept
+    { 
+        return Iterator(&_rawPointer[_size]);
     }
 }
 

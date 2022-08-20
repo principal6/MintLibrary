@@ -14,7 +14,7 @@ namespace mint
             _useMultipleViewports = true;
         }
 
-        MINT_INLINE const bool IRendererContext::isUsingMultipleViewports() const noexcept
+        MINT_INLINE bool IRendererContext::isUsingMultipleViewports() const noexcept
         {
             return _useMultipleViewports;
         }
@@ -56,16 +56,21 @@ namespace mint
             return (colorCount <= index) ? _defaultColor : _colorArray[index];
         }
         
-        MINT_INLINE const float IRendererContext::packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept
+        MINT_INLINE float IRendererContext::packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept
         {
             const uint32 packedUint = (_2bits << 30) | (_30bits);
             return *reinterpret_cast<const float*>(&packedUint);
         }
 
-        MINT_INLINE const float IRendererContext::packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept
+        MINT_INLINE float IRendererContext::packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept
         {
             const uint32 packedUint = (_4bits << 28) | (_28bits);
             return *reinterpret_cast<const float*>(&packedUint);
+        }
+
+        MINT_INLINE LowLevelRenderer<VS_INPUT_SHAPE>& IRendererContext::accessLowLevelRenderer() noexcept
+        {
+            return *_lowLevelRenderer;
         }
     }
 }

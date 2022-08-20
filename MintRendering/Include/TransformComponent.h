@@ -19,12 +19,12 @@ namespace mint
         class TransformComponent : public IObjectComponent
         {
         public:
-                                    TransformComponent() : IObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
-                                    TransformComponent(const ObjectComponentType derivedType) : IObjectComponent(derivedType) { __noop; }
-            virtual                 ~TransformComponent() { __noop; }
+                        TransformComponent() : IObjectComponent(ObjectComponentType::TransformComponent) { __noop; }
+                        TransformComponent(const ObjectComponentType derivedType) : IObjectComponent(derivedType) { __noop; }
+            virtual     ~TransformComponent() { __noop; }
 
         public:
-            Transform               _transform;
+            Transform   _transform;
         };
     }
 }

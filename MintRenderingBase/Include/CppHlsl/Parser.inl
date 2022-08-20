@@ -41,7 +41,7 @@ namespace mint
                 _slottedStreamDatas.push_back(slottedStreamData);
             }
 
-            MINT_INLINE const bool TypeCustomData::isRegisterIndexValid() const noexcept
+            MINT_INLINE bool TypeCustomData::isRegisterIndexValid() const noexcept
             {
                 return (_registerIndex != kInvalidRegisterIndex);
             }
@@ -51,22 +51,22 @@ namespace mint
                 return _semanticName;
             }
 
-            MINT_INLINE const uint32 TypeCustomData::getRegisterIndex() const noexcept
+            MINT_INLINE uint32 TypeCustomData::getRegisterIndex() const noexcept
             {
                 return _registerIndex;
             }
 
-            MINT_INLINE const uint32 TypeCustomData::getInputSlot() const noexcept
+            MINT_INLINE uint32 TypeCustomData::getInputSlot() const noexcept
             {
                 return _inputSlot;
             }
 
-            MINT_INLINE const uint32 TypeCustomData::getInstanceDataStepRate() const noexcept
+            MINT_INLINE uint32 TypeCustomData::getInstanceDataStepRate() const noexcept
             {
                 return _instanceDataStepRate;
             }
 
-            MINT_INLINE const uint32 TypeCustomData::getSlottedStreamDataCount() const noexcept
+            MINT_INLINE uint32 TypeCustomData::getSlottedStreamDataCount() const noexcept
             {
                 return _slottedStreamDatas.size();
             }

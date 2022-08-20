@@ -2,7 +2,9 @@
 
 
 #include <MintContainer/Include/ScopeString.h>
+
 #include <MintContainer/Include/StringUtil.h>
+#include <MintContainer/Include/Hash.hpp>
 
 
 namespace mint
@@ -71,25 +73,25 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator==(const T* const rawString) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator==(const T* const rawString) const noexcept
     {
         return compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator==(const ScopeString& rhs) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator==(const ScopeString& rhs) const noexcept
     {
         return compare(rhs);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
     {
         return !compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::operator!=(const ScopeString& rhs) const noexcept
+    inline bool ScopeString<T, BufferSize>::operator!=(const ScopeString& rhs) const noexcept
     {
         return !compare(rhs);
     }
@@ -137,7 +139,7 @@ namespace mint
     }
 
     template<typename T, uint32 BufferSize>
-    MINT_INLINE const uint32 ScopeString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
+    MINT_INLINE uint32 ScopeString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
     {
         return StringUtil::length(rawString);
     }
@@ -155,7 +157,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE const bool ScopeString<T, BufferSize>::canInsert(const uint32 insertLength) const noexcept
+    MINT_INLINE bool ScopeString<T, BufferSize>::canInsert(const uint32 insertLength) const noexcept
     {
         if (BufferSize <= _length + insertLength)
         {
@@ -253,7 +255,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const uint32 ScopeString<T, BufferSize>::find(const T* const rawString, const uint32 offset) const noexcept
+    inline uint32 ScopeString<T, BufferSize>::find(const T* const rawString, const uint32 offset) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length < rawStringLength)
@@ -282,7 +284,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const uint32 ScopeString<T, BufferSize>::rfind(const T* const rawString, const uint32 offset) const noexcept
+    inline uint32 ScopeString<T, BufferSize>::rfind(const T* const rawString, const uint32 offset) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length < rawStringLength)
@@ -316,7 +318,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::compare(const T* const rawString) const noexcept
+    inline bool ScopeString<T, BufferSize>::compare(const T* const rawString) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length != rawStringLength)
@@ -335,7 +337,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline const bool ScopeString<T, BufferSize>::compare(const ScopeString& rhs) const noexcept
+    inline bool ScopeString<T, BufferSize>::compare(const ScopeString& rhs) const noexcept
     {
         if (_length != rhs._length)
         {
@@ -350,5 +352,11 @@ namespace mint
             }
         }
         return true;
+    }
+
+    template<typename T, uint32 BufferSize>
+    inline uint64 ScopeString<T, BufferSize>::computeHash() const noexcept
+    {
+        return mint::computeHash(c_str());
     }
 }

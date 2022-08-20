@@ -105,7 +105,7 @@ namespace mint
             return _colorArray[index];
         }
 
-        const Color ColorImage::getSubPixel(const Float2& at) const noexcept
+        Color ColorImage::getSubPixel(const Float2& at) const noexcept
         {
             static constexpr float kSubPixelEpsilon = 0.01f;
 
@@ -223,7 +223,7 @@ namespace mint
             return _byteArray.data();
         }
 
-        const int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
+        int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
         {
             return min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
         }

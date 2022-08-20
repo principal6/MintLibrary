@@ -112,7 +112,7 @@ namespace mint
         void                    decomposeSRT(Float3& outScale, Float4x4& outRotationMatrix, Float3& outTranslation) const noexcept;
 
     public:
-        const float             determinant() const noexcept;
+        float                   determinant() const noexcept;
         Float4x4                transpose() const noexcept;
         Float4x4                inverse() const noexcept;
 

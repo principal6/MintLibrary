@@ -29,10 +29,10 @@ namespace mint
     template<typename T>
     void                normalize(AffineVec<T>& inOut) noexcept;
 
-    const float         dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
+    float               dot(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
     AffineVec<float>    cross(const AffineVec<float>& lhs, const AffineVec<float>& rhs) noexcept;
 
-    const double        dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
+    double              dot(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
     AffineVec<double>   cross(const AffineVec<double>& lhs, const AffineVec<double>& rhs) noexcept;
 #pragma endregion
 
@@ -62,8 +62,8 @@ namespace mint
         AffineVec&          operator=(AffineVec&& rhs) noexcept;
     
     public:
-        const bool          operator==(const AffineVec& rhs) const noexcept;
-        const bool          operator!=(const AffineVec& rhs) const noexcept;
+        bool                operator==(const AffineVec& rhs) const noexcept;
+        bool                operator!=(const AffineVec& rhs) const noexcept;
     
     public:
         AffineVec&          operator+() noexcept;
@@ -90,13 +90,13 @@ namespace mint
     
     public:
         void                get(float(&vec)[4]) const noexcept;
-        const float         getComponent(const int32 i) const noexcept;
+        float               getComponent(const int32 i) const noexcept;
         const __m128&       getRaw() const noexcept;
     
     public:
-        const float         dot(const AffineVec& rhs) const noexcept;
-        const float         normSq() const noexcept;
-        const float         norm() const noexcept;
+        float               dot(const AffineVec& rhs) const noexcept;
+        float               normSq() const noexcept;
+        float               norm() const noexcept;
         void                normalize() noexcept;
         AffineVec<float>    cross(const AffineVec<float>& rhs) const noexcept;
 
@@ -122,8 +122,8 @@ namespace mint
         AffineVec&          operator=(AffineVec&& rhs) noexcept;
     
     public:
-        const bool          operator==(const AffineVec& rhs) const noexcept;
-        const bool          operator!=(const AffineVec& rhs) const noexcept;
+        bool                operator==(const AffineVec& rhs) const noexcept;
+        bool                operator!=(const AffineVec& rhs) const noexcept;
     
     public:
         AffineVec&          operator+() noexcept;
@@ -150,13 +150,13 @@ namespace mint
 
     public:
         void                get(double(&vec)[4]) const noexcept;
-        const double        getComponent(const int32 i) const noexcept;
+        double              getComponent(const int32 i) const noexcept;
         const __m256d&      getRaw() const noexcept;
     
     public:
-        const double        dot(const AffineVec& rhs) const noexcept;
-        const double        normSq() const noexcept;
-        const double        norm() const noexcept;
+        double              dot(const AffineVec& rhs) const noexcept;
+        double              normSq() const noexcept;
+        double              norm() const noexcept;
         void                normalize() noexcept;
         AffineVec<double>   cross(const AffineVec<double>& rhs) const noexcept;
 

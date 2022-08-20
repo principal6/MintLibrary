@@ -10,7 +10,7 @@
 namespace mint
 {
     template <typename T>
-    const int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
+    int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -33,7 +33,7 @@ namespace mint
     }
 
     template <typename T>
-    const int32 binarySearch(const Vector<T>& vec, const T& value)
+    int32 binarySearch(const Vector<T>& vec, const T& value)
     {
         if (vec.empty() == true)
         {
@@ -43,8 +43,8 @@ namespace mint
     }
 
 
-    template <typename T, typename CompT>
-    const int32 binarySearchInternal(const Vector<T>& vec, const CompT& value, const int32 indexBegin, const int32 indexEnd)
+    template <typename T, typename ValueType, typename Evaluator>
+    int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd)
     {
         if (indexEnd <= indexBegin)
         {
@@ -52,28 +52,28 @@ namespace mint
         }
 
         const int32 indexMiddle = indexBegin + (indexEnd - indexBegin) / 2;
-        if (vec[indexMiddle] == value)
+        if (evaluator(vec[indexMiddle]) == value)
         {
             return indexMiddle;
         }
-        else if (vec[indexMiddle] > value)
+        else if (evaluator(vec[indexMiddle]) > value)
         {
-            return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
+            return binarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle 이 0 일 수 있다!
         }
         else
         {
-            return binarySearchInternal(vec, value, indexMiddle + 1, indexEnd);
+            return binarySearchInternal(vec, value, evaluator, indexMiddle + 1, indexEnd);
         }
     }
 
-    template<typename T, typename CompT>
-    const int32 binarySearch(const Vector<T>& vec, const CompT& value)
+    template<typename T, typename ValueType, typename Evaluator>
+    int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
     {
         if (vec.empty() == true)
         {
             return kInt32Max;
         }
-        return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
+        return binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
     }
 
     template<typename T, typename Comparator>
@@ -89,17 +89,55 @@ namespace mint
         int32 right = back - 1;
         while (true)
         {
-            while (left <= back && comparator(vector[left], vector[pivot]) == true) { ++left; }
-            while (front <= right && comparator(vector[right], vector[pivot]) == false) { --right; }
-            if (right <= left) { break; }
+            while (left < pivot && comparator(vector[left], vector[pivot]))
+            {
+                ++left;
+            }
+
+            // 모든 entry 에 대해 { cmp(entry, pivot) == true } 이다.
+            // 예) 3, 2, 1, 4, 5
+            if (left == pivot)
+            {
+                break;
+            }
+
+            while (right >= front && comparator(vector[pivot], vector[right])) 
+            {
+                --right;
+            }
+
+            // 모든 entry 에 대해 { cmp(pivot, entry) == true } 이다.
+            // 예) 7, 9, 8, 6, 4
+            if (right < front)
+            {
+                std::swap(vector[left], vector[pivot]);
+                pivot = left;
+                break;
+            }
+
+            // left 및 right 의 모든 entry 에 대해 cmp 가 완료되었다.
+            if (right <= left)
+            {
+                if (left == right)
+                {
+                    std::swap(vector[right + 1], vector[pivot]);
+                    pivot = right + 1;
+                }
+                else
+                {
+                    std::swap(vector[left], vector[pivot]);
+                    pivot = left;
+                }
+                break;
+            }
+
             std::swap(vector[left], vector[right]);
+            ++left;
+            --right;
         }
 
-        std::swap(vector[left], vector[pivot]);
-        std::swap(left, pivot);
-        
         quickSortInternal(vector, front, pivot - 1, comparator);
-        quickSortInternal(vector, pivot, back     , comparator);
+        quickSortInternal(vector, pivot, back, comparator);
     }
 
     template<typename T, typename Comparator>

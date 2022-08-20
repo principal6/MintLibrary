@@ -75,7 +75,7 @@ namespace mint
             }
         }
 
-        const uint32 Object::getComponentCount() const noexcept
+        uint32 Object::getComponentCount() const noexcept
         {
             return static_cast<uint32>(_componentArray.size());
         }
@@ -118,7 +118,7 @@ namespace mint
             return static_cast<TransformComponent*>(_componentArray[0]);
         }
 
-        const float Object::getDeltaTimeS() const noexcept
+        float Object::getDeltaTimeS() const noexcept
         {
             const DeltaTimer& deltaTimer = *_objectPool->getDeltaTimerXXX();
             return deltaTimer.getDeltaTimeS();

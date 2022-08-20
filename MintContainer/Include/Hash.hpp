@@ -9,7 +9,7 @@
 
 namespace mint
 {
-    MINT_INLINE const uint64 computeHash(const char* const rawString, const uint32 length) noexcept
+    MINT_INLINE uint64 computeHash(const char* const rawString, const uint32 length) noexcept
     {
         // Hashing algorithm: FNV1a
 
@@ -30,13 +30,13 @@ namespace mint
         return hash;
     }
 
-    MINT_INLINE const uint64 computeHash(const char* const rawString) noexcept
+    MINT_INLINE uint64 computeHash(const char* const rawString) noexcept
     {
         const uint32 rawStringLength = StringUtil::length(rawString);
         return computeHash(rawString, rawStringLength);
     }
 
-    MINT_INLINE const uint64 computeHash(const wchar_t* const rawString) noexcept
+    MINT_INLINE uint64 computeHash(const wchar_t* const rawString) noexcept
     {
         const uint32 rawStringLength = StringUtil::length(rawString);
         const char* const rawStringA = reinterpret_cast<const char*>(rawString);
@@ -44,7 +44,7 @@ namespace mint
     }
 
     template <typename T>
-    const uint64 computeHash(const T& value) noexcept
+    uint64 computeHash(const T& value) noexcept
     {
         if constexpr (std::is_arithmetic<T>::value == true)
         {
@@ -65,19 +65,19 @@ namespace mint
 
 
     template<typename T>
-    inline const uint64 Hasher<T>::operator()(const T& value) const noexcept
+    inline uint64 Hasher<T>::operator()(const T& value) const noexcept
     {
         return computeHash<T>(value);
         //return uint64(value); // ### FOR TEST ###
     }
 
-    inline const uint64 Hasher<std::string>::operator()(const std::string& value) const noexcept
+    inline uint64 Hasher<std::string>::operator()(const std::string& value) const noexcept
     {
         return computeHash(value.c_str(), static_cast<uint32>(value.length()));
     }
 
     template<typename T>
-    inline const uint64 Hasher<String<T>>::operator()(const String<T>& value) const noexcept
+    inline uint64 Hasher<String<T>>::operator()(const String<T>& value) const noexcept
     {
         return value.computeHash();
     }

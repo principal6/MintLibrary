@@ -8,7 +8,7 @@
 namespace mint
 {
 #pragma region Binary File Reader
-    const bool BinaryFileReader::open(const char* const fileName)
+    bool BinaryFileReader::open(const char* const fileName)
     {
         _at = 0;
         _byteArray.clear();
@@ -36,12 +36,12 @@ namespace mint
         return true;
     }
 
-    const bool BinaryFileReader::isOpen() const noexcept
+    bool BinaryFileReader::isOpen() const noexcept
     {
         return !_byteArray.empty();
     }
 
-    const uint32 BinaryFileReader::getFileSize() const noexcept
+    uint32 BinaryFileReader::getFileSize() const noexcept
     {
         return static_cast<uint32>(_byteArray.size());
     }
@@ -49,7 +49,7 @@ namespace mint
 
 
 #pragma region Binary File Writer
-    const bool BinaryFileWriter::save(const char* const fileName)
+    bool BinaryFileWriter::save(const char* const fileName)
     {
         std::ofstream ofs{ fileName, std::ofstream::binary };
         if (ofs.is_open() == false)

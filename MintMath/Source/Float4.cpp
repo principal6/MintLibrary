@@ -20,7 +20,7 @@ namespace mint
         return _c[index];
     }
 
-    const float Float4::dot(const Float4& lhs, const Float4& rhs) noexcept
+    float Float4::dot(const Float4& lhs, const Float4& rhs) noexcept
     {
         return Math::dot(lhs._c, rhs._c);
     }
@@ -91,12 +91,12 @@ namespace mint
         return Float3(_x, _y, _z);
     }
 
-    const float Float4::lengthSqaure() const noexcept
+    float Float4::lengthSqaure() const noexcept
     {
         return Math::normSq(_c);
     }
 
-    const float Float4::length() const noexcept
+    float Float4::length() const noexcept
     {
         return Math::norm(_c);
     }
@@ -114,7 +114,7 @@ namespace mint
         Math::setZeroVec(_c);
     }
 
-    const bool Float4::isNan() const noexcept
+    bool Float4::isNan() const noexcept
     {
         return Math::isNan(_c);
     }

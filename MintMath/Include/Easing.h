@@ -23,11 +23,11 @@ namespace mint
             };
 
         public:
-            static const float  ease(const Method method, float x) noexcept;
+            static float    ease(const Method method, float x) noexcept;
 
         private:
-                                Easing() = default;
-                                ~Easing() = default;
+                            Easing() = default;
+                            ~Easing() = default;
         };
     }
 }

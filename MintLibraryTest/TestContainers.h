@@ -114,16 +114,16 @@ namespace mint
         };
 
 
-        const bool testQueue() noexcept;
-        const bool testVector() noexcept;
-        const bool testStaticArray() noexcept;
-        const bool testStackHolder() noexcept;
-        const bool testBitVector() noexcept;
-        const bool testHashMap() noexcept;
-        const bool testStringTypes() noexcept;
-        const bool testStringUtil() noexcept;
-        const bool testTree() noexcept;
+        bool testQueue() noexcept;
+        bool testVector() noexcept;
+        bool testStaticArray() noexcept;
+        bool testStackHolder() noexcept;
+        bool testBitVector() noexcept;
+        bool testHashMap() noexcept;
+        bool testStringTypes() noexcept;
+        bool testStringUtil() noexcept;
+        bool testTree() noexcept;
 
-        const bool testAll() noexcept;
+        bool testAll() noexcept;
     }
 }

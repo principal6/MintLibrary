@@ -40,7 +40,7 @@ namespace mint
             _isPointerMoved = false;
         }
 
-        const bool MouseState::isPointerMoved() const noexcept
+        bool MouseState::isPointerMoved() const noexcept
         {
             return _isPointerMoved;
         }
@@ -221,63 +221,63 @@ namespace mint
             return _mouseState;
         }
 
-        const MouseButtonState InputContext::getMouseButtonState(const MouseButton mouseButton) const noexcept
+        MouseButtonState InputContext::getMouseButtonState(const MouseButton mouseButton) const noexcept
         {
             const int32 mouseButtonIndex = static_cast<int32>(mouseButton);
             return _mouseState._buttonStates[mouseButtonIndex];
         }
 
-        const bool InputContext::isMouseButtonPressed() const noexcept
+        bool InputContext::isMouseButtonPressed() const noexcept
         {
             return _mouseState._pressedButton != MouseButton::COUNT;
         }
 
-        const bool InputContext::isMouseButtonReleased() const noexcept
+        bool InputContext::isMouseButtonReleased() const noexcept
         {
             return _mouseState._releasedButton != MouseButton::COUNT;
         }
 
-        const bool InputContext::isMouseButtonClicked() const noexcept
+        bool InputContext::isMouseButtonClicked() const noexcept
         {
             return _mouseState._clickedButton != MouseButton::COUNT;
         }
 
-        const bool InputContext::isMouseButtonDoubleClicked() const noexcept
+        bool InputContext::isMouseButtonDoubleClicked() const noexcept
         {
             return _mouseState._doubleClickedButton != MouseButton::COUNT;
         }
 
-        const bool InputContext::isMouseButtonDown(const MouseButton mouseButton) const noexcept
+        bool InputContext::isMouseButtonDown(const MouseButton mouseButton) const noexcept
         {
             return getMouseButtonState(mouseButton) == MouseButtonState::Down || getMouseButtonState(mouseButton) == MouseButtonState::Pressed;
         }
 
-        const bool InputContext::isMouseButtonUp(const MouseButton mouseButton) const noexcept
+        bool InputContext::isMouseButtonUp(const MouseButton mouseButton) const noexcept
         {
             return getMouseButtonState(mouseButton) == MouseButtonState::Released || getMouseButtonState(mouseButton) == MouseButtonState::Up;
         }
 
-        const bool InputContext::isMousePointerMoved() const noexcept
+        bool InputContext::isMousePointerMoved() const noexcept
         {
             return _mouseState.isPointerMoved();
         }
 
-        const bool InputContext::isMouseWheelScrolled() const noexcept
+        bool InputContext::isMouseWheelScrolled() const noexcept
         {
             return _mouseState._wheelScroll != 0.0f;
         }
 
-        const Float2 InputContext::getMousePosition() const noexcept
+        Float2 InputContext::getMousePosition() const noexcept
         {
             return _mouseState.getPosition();
         }
 
-        const Float2 InputContext::getMouseDeltaPosition() const noexcept
+        Float2 InputContext::getMouseDeltaPosition() const noexcept
         {
             return _mouseState.getDeltaPosition();
         }
 
-        const float InputContext::getMouseWheelScroll() const noexcept
+        float InputContext::getMouseWheelScroll() const noexcept
         {
             return _mouseState._wheelScroll;
         }
@@ -287,38 +287,38 @@ namespace mint
             return _keyboardState;
         }
 
-        const KeyState InputContext::getKeyState(const KeyCode keyCode) const noexcept
+        KeyState InputContext::getKeyState(const KeyCode keyCode) const noexcept
         {
             const int32 keyIndex = static_cast<int32>(keyCode);
             return _keyboardState._keyStates[keyIndex];
         }
 
-        const bool InputContext::isKeyPressed() const noexcept
+        bool InputContext::isKeyPressed() const noexcept
         {
             return _keyboardState._pressedKeyCode != KeyCode::NONE;
         }
 
-        const bool InputContext::isKeyReleased() const noexcept
+        bool InputContext::isKeyReleased() const noexcept
         {
             return _keyboardState._releasedKeyCode != KeyCode::NONE;
         }
 
-        const bool InputContext::isKeyInputCharacter() const noexcept
+        bool InputContext::isKeyInputCharacter() const noexcept
         {
             return _keyboardState._character != L'\0';
         }
         
-        const bool InputContext::isKeyInputCharacterCandidate() const noexcept
+        bool InputContext::isKeyInputCharacterCandidate() const noexcept
         {
             return _keyboardState._characterCandidate != L'\0';
         }
 
-        const bool InputContext::isKeyDown(const KeyCode keyCode) const noexcept
+        bool InputContext::isKeyDown(const KeyCode keyCode) const noexcept
         {
             return getKeyState(keyCode) == KeyState::Down || getKeyState(keyCode) == KeyState::Pressed;
         }
 
-        const bool InputContext::isKeyUp(const KeyCode keyCode) const noexcept
+        bool InputContext::isKeyUp(const KeyCode keyCode) const noexcept
         {
             return getKeyState(keyCode) == KeyState::Up || getKeyState(keyCode) == KeyState::Released;
         }

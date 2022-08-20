@@ -20,13 +20,13 @@ namespace mint
     namespace Math
     {
         template <int32 N, typename T>
-        const bool                      equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon = 0) noexcept;
+        bool                            equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon = 0) noexcept;
         
         template <int32 N, typename T>
         void                            copyVec(const T(&src)[N], T(&dest)[N]) noexcept;
         
         template <int32 N, typename T>
-        const T                         dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept;
+        T                               dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept;
         
         template <typename T>
         void                            cross(const T(&lhs)[3], const T(&rhs)[3], T(&out)[3]) noexcept;
@@ -35,10 +35,10 @@ namespace mint
         void                            cross(const T(&lhs)[4], const T(&rhs)[4], T(&out)[4]) noexcept;
 
         template <int32 N, typename T>
-        const T                         normSq(const T(&vec)[N]) noexcept;
+        T                               normSq(const T(&vec)[N]) noexcept;
 
         template <int32 N, typename T>
-        const T                         norm(const T(&vec)[N]) noexcept;
+        T                               norm(const T(&vec)[N]) noexcept;
         
         template <int32 N, typename T>
         void                            normalize(T(&inOut)[N]) noexcept;
@@ -50,7 +50,7 @@ namespace mint
         void                            setNan(T(&vec)[N]) noexcept;
 
         template <int32 N, typename T>
-        const bool                      isNan(const T(&vec)[N]) noexcept;
+        bool                            isNan(const T(&vec)[N]) noexcept;
 
         template <int32 N, typename T>
         void                            setAddVec(T(&lhs)[N], const T(&rhs)[N]) noexcept;
@@ -73,10 +73,10 @@ namespace mint
 
     public:
         static VectorR<N, T>            standardUnitVector(const int32 math_i) noexcept;
-        static const T                  dot(const VectorR& lhs, const VectorR& rhs) noexcept;
-        static const T                  distance(const VectorR& lhs, const VectorR& rhs) noexcept;
-        static const T                  angle(const VectorR& lhs, const VectorR& rhs) noexcept;
-        static const bool               isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept;
+        static T                        dot(const VectorR& lhs, const VectorR& rhs) noexcept;
+        static T                        distance(const VectorR& lhs, const VectorR& rhs) noexcept;
+        static T                        angle(const VectorR& lhs, const VectorR& rhs) noexcept;
+        static bool                     isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept;
         static VectorR<N, T>            projectUOntoV(const VectorR& u, const VectorR& v) noexcept;
 
     public:
@@ -113,15 +113,15 @@ namespace mint
         const T&                        operator[](const uint32 index) const noexcept;
 
     public:
-        const bool                      operator==(const VectorR& rhs) const noexcept;
-        const bool                      operator!=(const VectorR& rhs) const noexcept;
+        bool                            operator==(const VectorR& rhs) const noexcept;
+        bool                            operator!=(const VectorR& rhs) const noexcept;
 
     public:
         void                            setZero() noexcept;
         
     public:
         VectorR<N, T>&                  setComponent(const uint32 index, const T value) noexcept;
-        const T                         getComponent(const uint32 index) const noexcept;
+        T                               getComponent(const uint32 index) const noexcept;
         T&                              x() noexcept;
         T&                              y() noexcept;
         T&                              z() noexcept;
@@ -132,21 +132,21 @@ namespace mint
         const T&                        w() const noexcept;
         
     public:
-        const T                         maxComponent() const noexcept;
-        const T                         minComponent() const noexcept;
+        T                               maxComponent() const noexcept;
+        T                               minComponent() const noexcept;
 
     public:
-        const T                         normSquared() const noexcept;
-        const T                         norm() const noexcept;
+        T                               normSquared() const noexcept;
+        T                               norm() const noexcept;
         VectorR<N, T>&                  setNormalized() noexcept;
         VectorR<N, T>                   normalize() const noexcept;
-        const bool                      isUnitVector() const noexcept;
+        bool                            isUnitVector() const noexcept;
 
     public:
-        const T                         dot(const VectorR& rhs) const noexcept;
-        const T                         distance(const VectorR& rhs) const noexcept;
-        const T                         angle(const VectorR& rhs) const noexcept;
-        const bool                      isOrthogonalTo(const VectorR& rhs) const noexcept;
+        T                               dot(const VectorR& rhs) const noexcept;
+        T                               distance(const VectorR& rhs) const noexcept;
+        T                               angle(const VectorR& rhs) const noexcept;
+        bool                            isOrthogonalTo(const VectorR& rhs) const noexcept;
         VectorR<N, T>                   projectOnto(const VectorR& rhs) const noexcept;
 
     public:
@@ -184,7 +184,7 @@ namespace mint
         void setNan(VectorR<N, T>& in) noexcept;
 
         template <int32 N, typename T>
-        const bool isNan(const VectorR<N, T>& in) noexcept;
+        bool isNan(const VectorR<N, T>& in) noexcept;
     }
 }
 

@@ -54,11 +54,11 @@ namespace mint
         const float&                operator[](const uint32 index) const noexcept;
 
     public:
-        const bool                  operator==(const Float3& rhs) const noexcept;
-        const bool                  operator!=(const Float3& rhs) const noexcept;
+        bool                        operator==(const Float3& rhs) const noexcept;
+        bool                        operator!=(const Float3& rhs) const noexcept;
 
     public:
-        static const float          dot(const Float3& lhs, const Float3& rhs) noexcept;
+        static float                dot(const Float3& lhs, const Float3& rhs) noexcept;
         static Float3               cross(const Float3& lhs, const Float3& rhs) noexcept;
         static Float3               crossAndNormalize(const Float3& lhs, const Float3& rhs) noexcept;
         static Float3               normalize(const Float3& in) noexcept;
@@ -67,8 +67,8 @@ namespace mint
         void                        normalize() noexcept;
 
     public:
-        const float                 lengthSqaure() const noexcept;
-        const float                 length() const noexcept;
+        float                       lengthSqaure() const noexcept;
+        float                       length() const noexcept;
 
     public:
         void                        set(const float x, const float y, const float z) noexcept;

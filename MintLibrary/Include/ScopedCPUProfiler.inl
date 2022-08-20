@@ -6,12 +6,12 @@ namespace mint
 {
     namespace Profiler
     {
-        MINT_INLINE const uint64 getCurrentTimeMs() noexcept
+        MINT_INLINE uint64 getCurrentTimeMs() noexcept
         {
             return ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeMs();
         }
 
-        MINT_INLINE const uint64 getCurrentTimeUs() noexcept
+        MINT_INLINE uint64 getCurrentTimeUs() noexcept
         {
             return ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeUs();
         }
@@ -38,17 +38,17 @@ namespace mint
             _previousTimeUs = currentTimeUs;
         }
 
-        MINT_INLINE const uint64 FPSCounter::getFps() noexcept
+        MINT_INLINE uint64 FPSCounter::getFps() noexcept
         {
             return _fps;
         }
 
-        inline const uint64 FPSCounter::getFrameTimeUs() noexcept
+        inline uint64 FPSCounter::getFrameTimeUs() noexcept
         {
             return _frameTimeUs;
         }
 
-        inline const uint64 FPSCounter::getFrameTimeMs() noexcept
+        inline uint64 FPSCounter::getFrameTimeMs() noexcept
         {
             return (_frameTimeUs / 1'000);
         }
@@ -86,13 +86,13 @@ namespace mint
             return instance;
         }
 
-        MINT_INLINE const uint64 ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeMs() noexcept
+        MINT_INLINE uint64 ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeMs() noexcept
         {
             static std::chrono::steady_clock steadyClock;
             return std::chrono::duration_cast<std::chrono::milliseconds>(steadyClock.now().time_since_epoch()).count();
         }
 
-        MINT_INLINE const uint64 ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeUs() noexcept
+        MINT_INLINE uint64 ScopedCPUProfiler::ScopedCPUProfilerLogger::getCurrentTimeUs() noexcept
         {
             static std::chrono::steady_clock steadyClock;
             return std::chrono::duration_cast<std::chrono::microseconds>(steadyClock.now().time_since_epoch()).count();

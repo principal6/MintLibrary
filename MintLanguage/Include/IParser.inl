@@ -71,7 +71,7 @@ namespace mint
         }
 
         template <typename CustomDataType>
-        MINT_INLINE const bool TypeMetaData<CustomDataType>::isBuiltIn() const noexcept
+        MINT_INLINE bool TypeMetaData<CustomDataType>::isBuiltIn() const noexcept
         {
             return _isBuiltIn;
         }
@@ -89,19 +89,19 @@ namespace mint
         }
 
         template <typename CustomDataType>
-        MINT_INLINE const uint32 TypeMetaData<CustomDataType>::getSize() const noexcept
+        MINT_INLINE uint32 TypeMetaData<CustomDataType>::getSize() const noexcept
         {
             return _size;
         }
 
         template <typename CustomDataType>
-        MINT_INLINE const uint32 TypeMetaData<CustomDataType>::getByteOffset() const noexcept
+        MINT_INLINE uint32 TypeMetaData<CustomDataType>::getByteOffset() const noexcept
         {
             return _byteOffset;
         }
 
         template <typename CustomDataType>
-        MINT_INLINE const uint32 TypeMetaData<CustomDataType>::getMemberCount() const noexcept
+        MINT_INLINE uint32 TypeMetaData<CustomDataType>::getMemberCount() const noexcept
         {
             return _memberArray.size();
         }
@@ -184,7 +184,7 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::continueParsing() const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::continueParsing() const noexcept
         {
             return _symbolAt < _symbolTable.size();
         }
@@ -196,13 +196,13 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasSymbol(const uint32 symbolPosition) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasSymbol(const uint32 symbolPosition) const noexcept
         {
             return (symbolPosition < _symbolTable.size());
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getSymbolPosition() const noexcept
+        inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getSymbolPosition() const noexcept
         {
             return _symbolAt;
         }
@@ -214,7 +214,7 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const char* const cmp, uint32& outSymbolPosition) const noexcept
         {
             for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
@@ -229,7 +229,7 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbol(const uint32 symbolPosition, const SymbolClassifier symbolClassifier, uint32& outSymbolPosition) const noexcept
         {
             for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
@@ -244,7 +244,7 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextSymbolEither(const uint32 symbolPosition, const char* const cmp0, const char* const cmp1, uint32& outSymbolPosition) const noexcept
         {
             for (uint32 symbolIter = symbolPosition + 1; symbolIter < _symbolTable.size(); ++symbolIter)
             {
@@ -259,7 +259,7 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::findNextDepthMatchingGrouperCloseSymbol(const uint32 openSymbolPosition, uint32* const outCloseSymbolPosition) const noexcept
         {
             const SymbolTableItem& openSymbol = getSymbol(openSymbolPosition);
             if (openSymbol._symbolClassifier != SymbolClassifier::Grouper_Open)
@@ -309,13 +309,13 @@ namespace mint
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasReportedErrors() const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::hasReportedErrors() const noexcept
         {
             return !_errorMessageArray.empty();
         }
 
         template <typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaDataCount() const noexcept
+        inline uint32 IParser<TypeCustomDataType, SyntaxClassifierType>::getTypeMetaDataCount() const noexcept
         {
             return _typeMetaDatas.size();
         }
@@ -337,7 +337,7 @@ namespace mint
         }
 
         template<typename TypeCustomDataType, typename SyntaxClassifierType>
-        inline const bool IParser<TypeCustomDataType, SyntaxClassifierType>::existsTypeMetaData(const std::string& typeName) const noexcept
+        inline bool IParser<TypeCustomDataType, SyntaxClassifierType>::existsTypeMetaData(const std::string& typeName) const noexcept
         {
             return _typeMetaDataMap.find(typeName).isValid();
         }

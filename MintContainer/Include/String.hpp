@@ -91,25 +91,25 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE const bool String<T>::operator==(const T* const rhs) const noexcept
+    MINT_INLINE bool String<T>::operator==(const T* const rhs) const noexcept
     {
         return compare(rhs);
     }
 
     template<typename T>
-    MINT_INLINE const bool String<T>::operator==(const String& rhs) const noexcept
+    MINT_INLINE bool String<T>::operator==(const String& rhs) const noexcept
     {
         return compare(rhs);
     }
 
     template<typename T>
-    inline const bool String<T>::operator!=(const T* const rhs) const noexcept
+    inline bool String<T>::operator!=(const T* const rhs) const noexcept
     {
         return !compare(rhs);
     }
 
     template<typename T>
-    inline const bool String<T>::operator!=(const String& rhs) const noexcept
+    inline bool String<T>::operator!=(const String& rhs) const noexcept
     {
         return !compare(rhs);
     }
@@ -191,7 +191,7 @@ namespace mint
     inline String<T>& String<T>::appendInternalSmallXXX(const T* const rawString) noexcept
     {
         const uint32 length = StringUtil::length(rawString);
-        const uint64 newLength = _short._size + length;
+        const uint64 newLength = static_cast<uint64>(_short._size) + length;
         if (newLength < Short::kSmallStringCapacity)
         {
             __copyString(&_short._smallString[_short._size], rawString, length);
@@ -321,7 +321,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const uint32 String<T>::find(const T* const target, const uint32 offset) const noexcept
+    inline uint32 String<T>::find(const T* const target, const uint32 offset) const noexcept
     {
         const uint32 sourceLength = length();
         const uint32 targetLength = StringUtil::length(target);
@@ -358,7 +358,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const uint32 String<T>::find(const T target, const uint32 offset) const noexcept
+    inline uint32 String<T>::find(const T target, const uint32 offset) const noexcept
     {
         T targets[2] = { target, 0 };
         return find(targets, offset);
@@ -461,7 +461,7 @@ namespace mint
     }
 
     template<typename T>
-    inline const bool String<T>::compare(const T* const rhs) const noexcept
+    inline bool String<T>::compare(const T* const rhs) const noexcept
     {
         const uint32 lhsLength = length();
         const uint32 rhsLength = StringUtil::length(rhs);
@@ -482,13 +482,13 @@ namespace mint
     }
 
     template<typename T>
-    inline const bool String<T>::compare(const String& rhs) const noexcept
+    inline bool String<T>::compare(const String& rhs) const noexcept
     {
         return compare(rhs.c_str());
     }
 
     template<typename T>
-    inline const uint64 String<T>::computeHash() const noexcept
+    inline uint64 String<T>::computeHash() const noexcept
     {
         return mint::computeHash(c_str());
     }

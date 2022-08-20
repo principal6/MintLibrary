@@ -48,7 +48,7 @@ namespace mint
 
         public:
             void                        setUseMultipleViewports() noexcept;
-            const bool                  isUsingMultipleViewports() const noexcept;
+            bool                        isUsingMultipleViewports() const noexcept;
 
         public:
             void                        setPosition(const Float4& position) noexcept;
@@ -59,8 +59,11 @@ namespace mint
 
         protected:
             const Float4&               getColorInternal(const uint32 index) const noexcept;
-            static const float          packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
-            static const float          packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
+            static float                packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+            static float                packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
+
+        public:
+            LowLevelRenderer<VS_INPUT_SHAPE>&       accessLowLevelRenderer() noexcept;
 
         protected:
             GraphicDevice&                          _graphicDevice;

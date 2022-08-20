@@ -14,37 +14,37 @@ namespace mint
     class Queue
     {
     public:
-                                    Queue();
-                                    ~Queue();
+                            Queue();
+                            ~Queue();
 
     public:
-        void                        reserve(const uint32 capacity) noexcept;
+        void                reserve(uint32 capacity) noexcept;
 
     public:
-        MINT_INLINE const uint32    size() const noexcept { return _size; }
-        MINT_INLINE const uint32    capacity() const noexcept { return _capacity; }
-        MINT_INLINE const bool      empty() const noexcept { return (_size == 0); }
+        MINT_INLINE uint32  size() const noexcept { return _size; }
+        MINT_INLINE uint32  capacity() const noexcept { return _capacity; }
+        MINT_INLINE bool    empty() const noexcept { return (_size == 0); }
 
     public:
-        void                        push(const T& newEntry) noexcept;
-        void                        push(T&& newEntry) noexcept;
-        void                        pop() noexcept;
-        void                        flush() noexcept;
+        void                push(const T& newEntry) noexcept;
+        void                push(T&& newEntry) noexcept;
+        void                pop() noexcept;
+        void                flush() noexcept;
 
     public:
-        T&                          peek() noexcept;
-        const T&                    peek() const noexcept;
+        T&                  peek() noexcept;
+        const T&            peek() const noexcept;
 
     private:
-        void                        saveBackup(T*& backUpPointer) noexcept;
-        void                        restoreBackup(const T* const backUpPointer) noexcept;
+        void                saveBackup(T*& backUpPointer) noexcept;
+        void                restoreBackup(const T* const backUpPointer) noexcept;
 
     private:
-        T*                          _rawPointer;
-        uint32                      _size;
-        uint32                      _capacity;
-        uint32                      _headAt;
-        uint32                      _tailAt;
+        T*                  _rawPointer;
+        uint32              _size;
+        uint32              _capacity;
+        uint32              _headAt;
+        uint32              _tailAt;
     };
 }
 

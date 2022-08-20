@@ -84,12 +84,12 @@ namespace mint
         return (&_x)[index];
     }
 
-    const bool Int2::operator==(const Int2& rhs) const noexcept
+    bool Int2::operator==(const Int2& rhs) const noexcept
     {
         return (_x == rhs._x && _y == rhs._y);
     }
 
-    const bool Int2::operator!=(const Int2& rhs) const noexcept
+    bool Int2::operator!=(const Int2& rhs) const noexcept
     {
         return !(*this == rhs);
     }

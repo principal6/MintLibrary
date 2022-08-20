@@ -40,7 +40,7 @@ namespace mint
                 registerKeyword("end");
             }
 
-            virtual const bool execute() noexcept override final
+            virtual bool execute() noexcept override final
             {
                 return __super::executeDefault();
             }
@@ -165,7 +165,7 @@ namespace mint
             return _plainString.c_str();
         }
 
-        const uint32 MathExpression::getPlainStringLength() const noexcept
+        uint32 MathExpression::getPlainStringLength() const noexcept
         {
             return static_cast<uint32>(_plainString.length());
         }

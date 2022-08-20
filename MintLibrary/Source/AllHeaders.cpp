@@ -32,12 +32,12 @@ namespace mint
         printVersion();
     }
 
-    const uint16 Library::getVersionMajor() noexcept
+    uint16 Library::getVersionMajor() noexcept
     {
         return kMintLibraryVersionMajor;
     }
 
-    const uint16 Library::getVersionMinor() noexcept
+    uint16 Library::getVersionMinor() noexcept
     {
         return kMintLibraryVersionMinor;
     }

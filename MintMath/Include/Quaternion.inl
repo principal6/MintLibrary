@@ -10,7 +10,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE const T Quaternion<T>::norm(const Quaternion& q) noexcept
+    MINT_INLINE T Quaternion<T>::norm(const Quaternion& q) noexcept
     {
         return VectorR4<T>({ q._x, q._y, q._z, q._w }).norm();
         //return Float4(q._x, q._y, q._z, q._w).length();

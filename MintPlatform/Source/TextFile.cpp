@@ -8,7 +8,7 @@
 
 namespace mint
 {
-    const bool TextFileReader::open(const char* const fileName)
+    bool TextFileReader::open(const char* const fileName)
     {
         std::ifstream ifs{ fileName, std::ifstream::binary };
         if (ifs.is_open() == false)
@@ -52,17 +52,17 @@ namespace mint
         return true;
     }
 
-    const bool TextFileReader::isOpen() const noexcept
+    bool TextFileReader::isOpen() const noexcept
     {
         return !_byteArray.empty();
     }
 
-    const uint32 TextFileReader::getFileSize() const noexcept
+    uint32 TextFileReader::getFileSize() const noexcept
     {
         return static_cast<uint32>(_byteArray.size());
     }
 
-    const char TextFileReader::get(const uint32 at) const noexcept
+    char TextFileReader::get(const uint32 at) const noexcept
     {
         return static_cast<char>(_byteArray.at(at));
     }
@@ -72,7 +72,7 @@ namespace mint
         return reinterpret_cast<const char*>(&_byteArray.front());
     }
 
-    const bool TextFileWriter::save(const char* const fileName)
+    bool TextFileWriter::save(const char* const fileName)
     {
         std::ofstream ofs{ fileName, std::ofstream::binary };
         if (ofs.is_open() == false)

@@ -50,7 +50,7 @@ namespace mint
                                         ~SafeResourceMapper();
 
         public:
-            const bool                  isValid() const noexcept;
+            bool                        isValid() const noexcept;
             void                        set(const void* const data, const uint32 size) noexcept;
 
         private:
@@ -135,18 +135,18 @@ namespace mint
                                                         ~GraphicDevice() = default;
 
         public:
-            const bool                                  initialize();
+            bool                                        initialize();
             void                                        updateScreenSize();
 
         private:
             void                                        createDxDevice();
-            const bool                                  loadFontData();
+            bool                                        loadFontData();
 
         private:
-            const bool                                  createSwapChain(const Int2& windowSize, const HWND windowHandle);
-            const bool                                  initializeBackBuffer();
-            const bool                                  initializeDepthStencilBufferAndView(const Int2& windowSize);
-            const bool                                  initializeDepthStencilStates();
+            bool                                        createSwapChain(const Int2& windowSize, const HWND windowHandle);
+            bool                                        initializeBackBuffer();
+            bool                                        initializeDepthStencilBufferAndView(const Int2& windowSize);
+            bool                                        initializeDepthStencilStates();
             void                                        initializeShaderHeaderMemory();
             void                                        initializeShaders();
             void                                        initializeSamplerStates();

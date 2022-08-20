@@ -85,7 +85,7 @@ namespace mint
         public:
             virtual void                setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true;  }
             const Int2&                 getSize() const noexcept { return _creationData._size; }
-            MINT_INLINE const bool      isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
+            MINT_INLINE bool            isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
         
             const Int2&                 getEntireSize() const noexcept { return _entireSize; }
 
@@ -95,9 +95,9 @@ namespace mint
             const Float3&               getBackgroundColor() const noexcept { return _creationData._bgColor; }
 
             virtual void                setCursorType(const CursorType cursorType) noexcept { _currentCursorType = cursorType; }
-            const CursorType            getCursorType() const noexcept { return _currentCursorType; }
+            CursorType                  getCursorType() const noexcept { return _currentCursorType; }
 
-            virtual const uint32        getCaretBlinkIntervalMs() const noexcept abstract;
+            virtual uint32              getCaretBlinkIntervalMs() const noexcept abstract;
 
             virtual void                textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
             virtual void                textFromClipboard(StringW& outText) const noexcept abstract;

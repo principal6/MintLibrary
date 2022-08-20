@@ -50,7 +50,7 @@ namespace mint
             }
         }
 
-        const bool SafeResourceMapper::isValid() const noexcept
+        bool SafeResourceMapper::isValid() const noexcept
         {
             return _mappedSubresource.pData != nullptr;
         }
@@ -273,7 +273,7 @@ namespace mint
             __noop;
         }
 
-        const bool GraphicDevice::initialize()
+        bool GraphicDevice::initialize()
         {
             _clearColor = _window.getBackgroundColor();
             _lastWindowSize = _window.getSize();
@@ -371,7 +371,7 @@ namespace mint
             setDefaultRenderTargetsAndDepthStencil();
         }
 
-        const bool GraphicDevice::loadFontData()
+        bool GraphicDevice::loadFontData()
         {
             static const Path kDefaultFontPath = Path::makeAssetPath("noto_sans_kr_medium");
             FontLoader fontLoader;
@@ -397,7 +397,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::createSwapChain(const Int2& windowSize, const HWND windowHandle)
+        bool GraphicDevice::createSwapChain(const Int2& windowSize, const HWND windowHandle)
         {
             DXGI_SWAP_CHAIN_DESC swapChainDescriptor{};
             swapChainDescriptor.BufferCount = 1;
@@ -425,7 +425,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::initializeBackBuffer()
+        bool GraphicDevice::initializeBackBuffer()
         {
             ComPtr<ID3D11Texture2D> backBuffer;
             _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(backBuffer.ReleaseAndGetAddressOf()));
@@ -438,7 +438,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::initializeDepthStencilBufferAndView(const Int2& windowSize)
+        bool GraphicDevice::initializeDepthStencilBufferAndView(const Int2& windowSize)
         {
             D3D11_TEXTURE2D_DESC depthStencilBufferDescriptor;
             depthStencilBufferDescriptor.Width = static_cast<UINT>(windowSize._x);
@@ -468,7 +468,7 @@ namespace mint
             return true;
         }
 
-        const bool GraphicDevice::initializeDepthStencilStates()
+        bool GraphicDevice::initializeDepthStencilStates()
         {
             D3D11_DEPTH_STENCIL_DESC depthStencilDescriptor;
             depthStencilDescriptor.DepthEnable = TRUE;

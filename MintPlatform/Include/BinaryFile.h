@@ -21,9 +21,9 @@ namespace mint
         virtual                 ~BinaryFileReader() = default;
 
     public:
-        virtual const bool      open(const char* const fileName) override;
-        virtual const bool      isOpen() const noexcept override;
-        virtual const uint32    getFileSize() const noexcept override;
+        virtual bool            open(const char* const fileName) override;
+        virtual bool            isOpen() const noexcept override;
+        virtual uint32          getFileSize() const noexcept override;
 
     public:
         template <typename T>
@@ -35,7 +35,7 @@ namespace mint
         void                    skip(const uint32 byteCount) const noexcept;
 
     private:
-        const bool              canRead(const uint32 byteCount) const noexcept;
+        bool                    canRead(const uint32 byteCount) const noexcept;
 
     private:
         Vector<byte>            _byteArray;
@@ -50,7 +50,7 @@ namespace mint
         virtual                 ~BinaryFileWriter() = default;
 
     public:
-        virtual const bool      save(const char* const fileName) override;
+        virtual bool            save(const char* const fileName) override;
 
     public:
         void                    clear();

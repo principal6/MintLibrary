@@ -50,13 +50,13 @@ namespace mint
     }
 
     template<uint32 BitCount>
-    inline const byte StaticBitArray<BitCount>::getByte(const uint32 byteAt) const noexcept
+    inline byte StaticBitArray<BitCount>::getByte(const uint32 byteAt) const noexcept
     {
         return _byteArray[mint::min(byteAt, kByteCount - 1)];
     }
 
     template<uint32 BitCount>
-    inline const byte StaticBitArray<BitCount>::getByteUnsafe(const uint32 byteAt) const noexcept
+    inline byte StaticBitArray<BitCount>::getByteUnsafe(const uint32 byteAt) const noexcept
     {
         return _byteArray[byteAt];
     }
@@ -95,7 +95,7 @@ namespace mint
     }
 
     template<uint32 BitCount>
-    inline const bool StaticBitArray<BitCount>::get(const uint32 bitAt) const noexcept
+    inline bool StaticBitArray<BitCount>::get(const uint32 bitAt) const noexcept
     {
         const uint32 clampedBitAt = mint::min(bitAt, BitCount - 1);
         const uint32 byteAt = BitVector::computeByteAt(clampedBitAt);
@@ -104,7 +104,7 @@ namespace mint
     }
 
     template<uint32 BitCount>
-    inline const bool StaticBitArray<BitCount>::getUnsafe(const uint32 bitAt) const noexcept
+    inline bool StaticBitArray<BitCount>::getUnsafe(const uint32 bitAt) const noexcept
     {
         const uint32 byteAt = BitVector::computeByteAt(bitAt);
         const uint32 bitOffset = BitVector::computeBitOffset(bitAt);
@@ -112,26 +112,26 @@ namespace mint
     }
 
     template<uint32 BitCount>
-    inline const bool StaticBitArray<BitCount>::get(const uint32 byteAt, const uint8 bitOffset) const noexcept
+    inline bool StaticBitArray<BitCount>::get(const uint32 byteAt, const uint8 bitOffset) const noexcept
     {
         const uint32 clampedByteAt = mint::min(byteAt, kByteCount - 1);
         return BitVector::getBit(_byteArray[clampedByteAt], bitOffset);
     }
 
     template<uint32 BitCount>
-    inline const bool StaticBitArray<BitCount>::getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept
+    inline bool StaticBitArray<BitCount>::getUnsafe(const uint32 byteAt, const uint8 bitOffset) const noexcept
     {
         return BitVector::getBit(_byteArray[byteAt], bitOffset);
     }
 
     template<uint32 BitCount>
-    inline const uint32 StaticBitArray<BitCount>::getBitCount() const noexcept
+    inline uint32 StaticBitArray<BitCount>::getBitCount() const noexcept
     {
         return BitCount;
     }
 
     template<uint32 BitCount>
-    inline const uint32 StaticBitArray<BitCount>::getByteCount() const noexcept
+    inline uint32 StaticBitArray<BitCount>::getByteCount() const noexcept
     {
         return kByteCount;
     }

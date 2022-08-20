@@ -8,6 +8,8 @@
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/MeshData.h>
 
+#include <MintLibrary/Include/Algorithm.hpp>
+
 
 namespace mint
 {
@@ -37,13 +39,13 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
+        MINT_INLINE uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
         {
             return _vertices.size();
         }
 
         template<typename T>
-        MINT_INLINE const uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
+        MINT_INLINE uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
         {
             return _indices.size();
         }
@@ -77,7 +79,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
+        MINT_INLINE IndexElementType LowLevelRenderer<T>::getIndexBaseXXX() const noexcept
         {
             return _indexBase;
         }
@@ -91,7 +93,7 @@ namespace mint
         }
 
         template<typename T>
-        MINT_INLINE const bool LowLevelRenderer<T>::isRenderable() const noexcept
+        MINT_INLINE bool LowLevelRenderer<T>::isRenderable() const noexcept
         {
             return _vertices.empty() == false;
         }
@@ -130,18 +132,73 @@ namespace mint
                 break;
             }
         }
-        
+
         template<typename T>
         MINT_INLINE void LowLevelRenderer<T>::pushRenderCommandIndexed(const RenderingPrimitive primitive, const uint32 vertexOffset, const uint32 indexOffset, const uint32 indexCount, const Rect& clipRect) noexcept
         {
             RenderCommand newRenderCommand;
+            newRenderCommand._isOrdinal = _isOrdinalMode;
             newRenderCommand._primitive = primitive;
             newRenderCommand._clipRect = clipRect;
             newRenderCommand._vertexOffset = vertexOffset;
             newRenderCommand._vertexCount = 0;
             newRenderCommand._indexOffset = indexOffset;
             newRenderCommand._indexCount = indexCount;
-            _renderCommands.push_back(newRenderCommand);
+            if (mergeNewRenderCommand(newRenderCommand) == false)
+            {
+                _renderCommands.push_back(newRenderCommand);
+            }
+        }
+
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::beginOrdinalRenderCommands(const uint64 key) noexcept
+        {
+            _isOrdinalMode = true;
+            _isOrdinalRenderCommandGroupsSorted = false;
+
+            OrdinalRenderCommandGroup ordinalRenderCommandGroup;
+            ordinalRenderCommandGroup._key = key;
+            ordinalRenderCommandGroup._startRenderCommandIndex = _renderCommands.size();
+            _ordinalRenderCommandGroups.push_back(ordinalRenderCommandGroup);
+        }
+
+        template<typename T>
+        MINT_INLINE void LowLevelRenderer<T>::endOrdinalRenderCommands() noexcept
+        {
+            _isOrdinalMode = false;
+
+            if (_ordinalRenderCommandGroups.empty())
+            {
+                return;
+            }
+
+            OrdinalRenderCommandGroup& last = _ordinalRenderCommandGroups.back();
+            if (last._startRenderCommandIndex == _renderCommands.size())
+            {
+                // 아무런 RenderCommand 도 등록되지 않았다. 무의미한 Group 이므로 제거한다!
+                _ordinalRenderCommandGroups.pop_back();
+                return;
+            }
+
+            last._endRenderCommandIndex = _renderCommands.size() - 1;
+        }
+
+        template<typename T>
+        inline void LowLevelRenderer<T>::setOrdinalRenderCommandGroupPriority(const uint64 key, const uint32 priority) noexcept
+        {
+            if (_isOrdinalRenderCommandGroupsSorted == false)
+            {
+                mint::quickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::KeyComparator());
+                _isOrdinalRenderCommandGroupsSorted = true;
+            }
+
+            const int32 index = mint::binarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
+            if (index < 0)
+            {
+                return;
+            }
+
+            _ordinalRenderCommandGroups[index]._priority = priority;
         }
 
         template<typename T>
@@ -153,8 +210,6 @@ namespace mint
             }
 
             prepareBuffers();
-            
-            optimizeRenderCommands();
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
@@ -166,44 +221,93 @@ namespace mint
             for (uint32 renderCommandIndex = 0; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
             {
                 const RenderCommand& renderCommand = _renderCommands[renderCommandIndex];
-                if (renderCommand._isValid == false)
+                if (renderCommand._isOrdinal)
                 {
                     continue;
                 }
 
-                D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
-                _graphicDevice.getStateManager().setRsScissorRectangle(scissorRect);
+                executeRenderCommands_draw(renderCommand);
+            }
 
-                _graphicDevice.getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
+            // Ordinal 그릴 차례.
+            {
+                // Priority 가 작을 수록 먼저 그려진다.
+                // Priority 가 크면 화면 상 제일 위에 와야 하기 때문!
+                mint::quickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::PriorityComparator());
 
-                switch (renderCommand._primitive)
+                for (const OrdinalRenderCommandGroup& ordinalRenderCommandGroup : _ordinalRenderCommandGroups)
+                {
+                    const uint32 start = ordinalRenderCommandGroup._startRenderCommandIndex;
+                    const uint32 end = ordinalRenderCommandGroup._endRenderCommandIndex;
+                    for (uint32 renderCommandIndex = start; renderCommandIndex <= end; renderCommandIndex++)
+                    {
+                        executeRenderCommands_draw(_renderCommands[renderCommandIndex]);
+                    }
+                }
+            }
+
+            _ordinalRenderCommandGroups.clear();
+            _isOrdinalRenderCommandGroupsSorted = false;
+
+            _renderCommands.clear();
+        }
+
+        template<typename T>
+        MINT_INLINE bool LowLevelRenderer<T>::mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept
+        {
+            if (_renderCommands.empty())
+            {
+                return false;
+            }
+
+            RenderCommand& mergeDestRenderCommand = _renderCommands.back();
+            if (mergeDestRenderCommand._isOrdinal != newRenderCommand._isOrdinal)
+            {
+                return false;
+            }
+
+            if (_isOrdinalMode == true && _renderCommands.size() <= _ordinalRenderCommandGroups.back()._startRenderCommandIndex)
+            {
+                return false;
+            }
+
+            if (newRenderCommand._primitive == mergeDestRenderCommand._primitive && newRenderCommand._clipRect == mergeDestRenderCommand._clipRect)
+            {
+                switch (mergeDestRenderCommand._primitive)
                 {
                 case RenderingPrimitive::LineList:
-                    _graphicDevice.draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+                    if (mergeDestRenderCommand._vertexOffset + mergeDestRenderCommand._vertexCount == newRenderCommand._vertexOffset)
+                    {
+                        mergeDestRenderCommand._vertexCount += newRenderCommand._vertexCount;
+                        return true;
+                    }
                     break;
                 case RenderingPrimitive::TriangleList:
-                    _graphicDevice.drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+                    if (mergeDestRenderCommand._indexOffset + mergeDestRenderCommand._indexCount == newRenderCommand._indexOffset)
+                    {
+                        mergeDestRenderCommand._indexCount += newRenderCommand._indexCount;
+                        return true;
+                    }
                     break;
                 default:
                     break;
                 }
             }
-
-            _renderCommands.clear();
+            return false;
         }
 
         template <typename T>
         inline void LowLevelRenderer<T>::prepareBuffers() noexcept
         {
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
-            
+
             const uint32 vertexCount = static_cast<uint32>(_vertices.size());
             if (_vertexBufferID.isValid() == false && vertexCount > 0)
             {
                 _vertexBufferID = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
             }
 
-            if (_vertexBufferID.isValid() == true)
+            if (_vertexBufferID.isValid())
             {
                 DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
                 vertexBuffer.updateBuffer(&_vertices[0], vertexCount);
@@ -215,7 +319,7 @@ namespace mint
                 _indexBufferID = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
             }
 
-            if (_indexBufferID.isValid() == true)
+            if (_indexBufferID.isValid())
             {
                 DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
                 indexBuffer.updateBuffer(&_indices[0], indexCount);
@@ -223,46 +327,23 @@ namespace mint
         }
 
         template<typename T>
-        inline void LowLevelRenderer<T>::optimizeRenderCommands() noexcept
+        inline void LowLevelRenderer<T>::executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept
         {
-            uint32 mergeBeginIndex = 0;
-            const uint32 renderCommandCount = _renderCommands.size();
-            for (uint32 renderCommandIndex = 1; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
-            {
-                RenderCommand& mergeDestRenderCommand = _renderCommands[mergeBeginIndex];
-                RenderCommand& currentRenderCommand = _renderCommands[renderCommandIndex];
-                bool isMerged = false;
-                if (currentRenderCommand._primitive == mergeDestRenderCommand._primitive && currentRenderCommand._clipRect == mergeDestRenderCommand._clipRect)
-                {
-                    switch (mergeDestRenderCommand._primitive)
-                    {
-                    case RenderingPrimitive::LineList:
-                        if (mergeDestRenderCommand._vertexOffset + mergeDestRenderCommand._vertexCount == currentRenderCommand._vertexOffset)
-                        {
-                            mergeDestRenderCommand._vertexCount += currentRenderCommand._vertexCount;
-                            isMerged = true;
-                        }
-                        break;
-                    case RenderingPrimitive::TriangleList:
-                        if (mergeDestRenderCommand._indexOffset + mergeDestRenderCommand._indexCount == currentRenderCommand._indexOffset)
-                        {
-                            mergeDestRenderCommand._indexCount += currentRenderCommand._indexCount;
-                            isMerged = true;
-                        }
-                        break;
-                    default:
-                        break;
-                    }
-                }
+            D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
+            _graphicDevice.getStateManager().setRsScissorRectangle(scissorRect);
 
-                if (isMerged)
-                {
-                    currentRenderCommand._isValid = false;
-                }
-                else
-                {
-                    mergeBeginIndex = renderCommandIndex;
-                }
+            _graphicDevice.getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
+
+            switch (renderCommand._primitive)
+            {
+            case RenderingPrimitive::LineList:
+                _graphicDevice.draw(renderCommand._vertexCount, renderCommand._vertexOffset);
+                break;
+            case RenderingPrimitive::TriangleList:
+                _graphicDevice.drawIndexed(renderCommand._indexCount, renderCommand._indexOffset, renderCommand._vertexOffset);
+                break;
+            default:
+                break;
             }
         }
     }

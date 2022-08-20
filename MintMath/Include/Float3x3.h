@@ -45,7 +45,7 @@ namespace mint
         void                setIdentity() noexcept;
 
     public:
-        const float         determinant() const noexcept;
+        float               determinant() const noexcept;
         Float3x3            transpose() const noexcept;
         Float3x3            inverse() const noexcept;
 

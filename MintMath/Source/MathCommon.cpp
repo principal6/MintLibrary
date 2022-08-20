@@ -8,7 +8,7 @@ namespace mint
 {
     namespace Math
     {
-        const bool isNan(const float value) noexcept
+        bool isNan(const float value) noexcept
         {
             return ::_isnan(value) != 0;
         }

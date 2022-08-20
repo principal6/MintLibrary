@@ -28,7 +28,7 @@ namespace mint
             return DXGI_FORMAT();
         }
 
-        const uint32 DxResource::getColorCount(const DxTextureFormat format)
+        uint32 DxResource::getColorCount(const DxTextureFormat format)
         {
             switch (format)
             {
@@ -60,7 +60,7 @@ namespace mint
             __noop;
         }
 
-        const bool DxResource::createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+        bool DxResource::createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
         {
             switch (_resourceType)
             {
@@ -159,7 +159,7 @@ namespace mint
             return false;
         }
 
-        const bool DxResource::createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height)
+        bool DxResource::createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height)
         {
             switch (_resourceType)
             {
@@ -211,7 +211,7 @@ namespace mint
             return false;
         }
 
-        const bool DxResource::isValid() const noexcept
+        bool DxResource::isValid() const noexcept
         {
             return (_resource.Get() != nullptr);
         }
@@ -287,7 +287,7 @@ namespace mint
             _elementOffset = elementOffset;
         }
 
-        const uint32 DxResource::getRegisterIndex() const noexcept
+        uint32 DxResource::getRegisterIndex() const noexcept
         {
             return _registerIndex;
         }
@@ -302,7 +302,7 @@ namespace mint
             return reinterpret_cast<ID3D11ShaderResourceView* const*>(_view.GetAddressOf());
         }
 
-        const bool DxResource::needToBind() const noexcept
+        bool DxResource::needToBind() const noexcept
         {
             return _needToBind;
         }
@@ -480,7 +480,7 @@ namespace mint
         {
             MINT_ASSERT(objectID.isObjectType(DxObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
-            const int32 index = binarySearch(_resourceArray, objectID);
+            const int32 index = binarySearch(_resourceArray, objectID, IDxObject::Evaluator());
             if (index >= 0)
             {
                 return _resourceArray[index];

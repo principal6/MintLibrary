@@ -10,7 +10,7 @@
 
 namespace mint
 {
-    const bool testReflection();
+    bool testReflection();
 }
 
 

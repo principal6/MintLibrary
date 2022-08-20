@@ -49,8 +49,8 @@ namespace mint
 
         public:
             const char*                 getName() const noexcept;
-            const bool                  hasParent() const noexcept;
-            const JointIndexType        getParentIndex() const noexcept;
+            bool                        hasParent() const noexcept;
+            JointIndexType              getParentIndex() const noexcept;
             const Float4x4&             getBindPoseLocalMatrix() const noexcept;
             const Float4x4&             getBindPoseModelMatrix() const noexcept;
 
@@ -90,7 +90,7 @@ namespace mint
                                             ~Skeleton();
 
         public:
-            const bool                      createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
+            bool                            createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept;
 
         public:
             const SkeletonJoint&            getJoint(const JointIndexType jointIndex) const noexcept;

@@ -57,8 +57,8 @@ namespace mint
 #else
     private:
 #endif
-        const bool              operator==(const UniqueStringAID& rhs) const noexcept;
-        const bool              operator!=(const UniqueStringAID& rhs) const noexcept;
+        bool                    operator==(const UniqueStringAID& rhs) const noexcept;
+        bool                    operator!=(const UniqueStringAID& rhs) const noexcept;
 
     private:
         uint32                  _rawID;
@@ -85,13 +85,13 @@ namespace mint
         UniqueStringA&                  operator=(UniqueStringA&& rhs) noexcept = default;
 
     public:
-        const bool                      operator==(const UniqueStringA& rhs) const noexcept;
-        const bool                      operator!=(const UniqueStringA& rhs) const noexcept;
+        bool                            operator==(const UniqueStringA& rhs) const noexcept;
+        bool                            operator!=(const UniqueStringA& rhs) const noexcept;
 
     public:
         const char*                     c_str() const noexcept;
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-        const UniqueStringAID           getID() const noexcept;
+        UniqueStringAID                 getID() const noexcept;
 #endif
 
     private:
@@ -118,8 +118,8 @@ namespace mint
                                             ~UniqueStringPoolA();
 
     public:
-        const UniqueStringAID               registerString(const char* const rawString) noexcept;
-        const bool                          isValid(const UniqueStringAID id) const noexcept;
+        UniqueStringAID                     registerString(const char* const rawString) noexcept;
+        bool                                isValid(const UniqueStringAID id) const noexcept;
         const char*                         getRawString(const UniqueStringAID id) const noexcept;
 
     public:

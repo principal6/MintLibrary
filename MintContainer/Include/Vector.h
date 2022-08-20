@@ -62,12 +62,49 @@ namespace mint
         const T&        back() const noexcept;
         T&              at(const uint32 index) noexcept;
         const T&        at(const uint32 index) const noexcept;
+        T*              data() noexcept;
         const T*        data() const noexcept;
 
     public:
-        const uint32    capacity() const noexcept;
-        const uint32    size() const noexcept;
-        const bool      empty() const noexcept;
+        uint32          capacity() const noexcept;
+        uint32          size() const noexcept;
+        bool            empty() const noexcept;
+    
+    public:
+        template<typename T>
+        class Iterator
+        {
+        public:
+                        Iterator(T* rawPointer) : _rawPointer{ rawPointer } { __noop; }
+        
+        public:
+            bool        operator==(const Iterator& rhs) const noexcept
+            {
+                return _rawPointer == rhs._rawPointer;
+            }
+
+            bool        operator!=(const Iterator& rhs) const noexcept
+            {
+                return !(*this == rhs);
+            }
+
+            Iterator&   operator++() noexcept
+            {
+                ++_rawPointer;
+                return *this;
+            }
+
+            T&          operator*() noexcept
+            {
+                return *_rawPointer;
+            }
+
+        private:
+            T*          _rawPointer;
+        };
+
+        Iterator<T>     begin() noexcept;
+        Iterator<T>     end() noexcept;
 
     private:
         T*              _rawPointer;

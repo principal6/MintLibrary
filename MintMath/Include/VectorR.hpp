@@ -15,7 +15,7 @@ namespace mint
     namespace Math
     {
         template<int32 N, typename T>
-        MINT_INLINE const bool equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon) noexcept
+        MINT_INLINE bool equals(const T(&lhs)[N], const T(&rhs)[N], const T epsilon) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -38,7 +38,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE const T dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
+        MINT_INLINE T dot(const T(&lhs)[N], const T(&rhs)[N]) noexcept
         {
             T result{};
             for (int32 i = 0; i < N; ++i)
@@ -66,13 +66,13 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE const T normSq(const T(&vec)[N]) noexcept
+        MINT_INLINE T normSq(const T(&vec)[N]) noexcept
         {
             return dot(vec, vec);
         }
 
         template<int32 N, typename T>
-        MINT_INLINE const T norm(const T(&vec)[N]) noexcept
+        MINT_INLINE T norm(const T(&vec)[N]) noexcept
         {
             return ::sqrt(normSq(vec));
         }
@@ -103,7 +103,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        MINT_INLINE const bool isNan(const T(&vec)[N]) noexcept
+        MINT_INLINE bool isNan(const T(&vec)[N]) noexcept
         {
             for (int32 i = 0; i < N; ++i)
             {
@@ -163,25 +163,25 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
+    MINT_INLINE T VectorR<N, T>::dot(const VectorR& lhs, const VectorR& rhs) noexcept
     {
         return Math::dot(lhs._c, rhs._c);
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::distance(const VectorR& lhs, const VectorR& rhs) noexcept
+    MINT_INLINE T VectorR<N, T>::distance(const VectorR& lhs, const VectorR& rhs) noexcept
     {
         return (rhs - lhs).norm();
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::angle(const VectorR& lhs, const VectorR& rhs) noexcept
+    MINT_INLINE T VectorR<N, T>::angle(const VectorR& lhs, const VectorR& rhs) noexcept
     {
         return ::acos(lhs.normalize().dot(rhs.normalize()));
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const bool VectorR<N, T>::isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
+    MINT_INLINE bool VectorR<N, T>::isOrthogonal(const VectorR& lhs, const VectorR& rhs) noexcept
     {
         return Math::equals(lhs.dot(rhs), 0.0);
     }
@@ -324,7 +324,7 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const bool VectorR<N, T>::operator==(const VectorR& rhs) const noexcept
+    MINT_INLINE bool VectorR<N, T>::operator==(const VectorR& rhs) const noexcept
     {
         for (int32 i = 0; i < N; ++i)
         {
@@ -337,7 +337,7 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const bool VectorR<N, T>::operator!=(const VectorR& rhs) const noexcept
+    MINT_INLINE bool VectorR<N, T>::operator!=(const VectorR& rhs) const noexcept
     {
         return !(rhs == *this);
     }
@@ -362,7 +362,7 @@ namespace mint
     }
         
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::getComponent(const uint32 index) const noexcept
+    MINT_INLINE T VectorR<N, T>::getComponent(const uint32 index) const noexcept
     {
         MINT_ASSERT(index < static_cast<uint32>(N), "범위를 벗어난 접근입니다!");
         return _c[index];
@@ -423,7 +423,7 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::maxComponent() const noexcept
+    MINT_INLINE T VectorR<N, T>::maxComponent() const noexcept
     {
         T result = 1.0e-323;
         for (int32 index = 0; index < N; ++index)
@@ -437,7 +437,7 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::minComponent() const noexcept
+    MINT_INLINE T VectorR<N, T>::minComponent() const noexcept
     {
         T result = 1.0e+308;
         for (int32 index = 0; index < N; ++index)
@@ -451,13 +451,13 @@ namespace mint
     }
         
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::normSquared() const noexcept
+    MINT_INLINE T VectorR<N, T>::normSquared() const noexcept
     {
         return Math::normSq(_c);
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::norm() const noexcept
+    MINT_INLINE T VectorR<N, T>::norm() const noexcept
     {
         return Math::norm(_c);
     }
@@ -481,31 +481,31 @@ namespace mint
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const bool VectorR<N, T>::isUnitVector() const noexcept
+    MINT_INLINE bool VectorR<N, T>::isUnitVector() const noexcept
     {
         return Math::equals(normSquared(), static_cast<T>(1.0));
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::dot(const VectorR& rhs) const noexcept
+    MINT_INLINE T VectorR<N, T>::dot(const VectorR& rhs) const noexcept
     {
         return dot(*this, rhs);
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::distance(const VectorR& rhs) const noexcept
+    MINT_INLINE T VectorR<N, T>::distance(const VectorR& rhs) const noexcept
     {
         return distance(*this, rhs);
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const T VectorR<N, T>::angle(const VectorR& rhs) const noexcept
+    MINT_INLINE T VectorR<N, T>::angle(const VectorR& rhs) const noexcept
     {
         return angle(*this, rhs);
     }
 
     template<int32 N, typename T>
-    MINT_INLINE const bool VectorR<N, T>::isOrthogonalTo(const VectorR& rhs) const noexcept
+    MINT_INLINE bool VectorR<N, T>::isOrthogonalTo(const VectorR& rhs) const noexcept
     {
         return isOrthogonal(*this, rhs);
     }
@@ -562,7 +562,7 @@ namespace mint
         }
 
         template<int32 N, typename T>
-        const bool isNan(const VectorR<N, T>& in) noexcept
+        bool isNan(const VectorR<N, T>& in) noexcept
         {
             for (uint32 i = 0; i < N; ++i)
             {

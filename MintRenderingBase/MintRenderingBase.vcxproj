@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -191,9 +191,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslConstantBuffers.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStreamData.h" />
-    <ClInclude Include="..\Assets\CppHlsl\CppHlslStructuredBuffers.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslConstantBuffers.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStreamData.h" />
+    <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\CppHlsl\Interpreter.h" />
     <ClInclude Include="Include\CppHlsl\Lexer.h" />
@@ -206,13 +206,10 @@
     <ClInclude Include="Include\GraphicDevice.h" />
     <ClInclude Include="Include\GUI\ControlData.h" />
     <ClInclude Include="Include\GUI\ControlData.hpp" />
-    <ClInclude Include="Include\GUI\ControlInteractionStateSet.h" />
-    <ClInclude Include="Include\GUI\ControlMetaStateSet.h" />
-    <ClInclude Include="Include\GUI\ControlValue.h" />
-    <ClInclude Include="Include\GUI\GUICommon.h" />
     <ClInclude Include="Include\GUI\GUIContext.h" />
-    <ClInclude Include="Include\GUI\InputHelpers.h" />
-    <ClInclude Include="Include\GUI\InputHelpers.hpp" />
+    <ClInclude Include="Include\GUI\GUIInteractionModule.hpp" />
+    <ClInclude Include="Include\GUI\GUIInteractionModules.h" />
+    <ClInclude Include="Include\GUI\GUITheme.h" />
     <ClInclude Include="Include\IDxObject.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
@@ -225,9 +222,6 @@
   <ItemGroup>
     <None Include="Include\CppHlsl\Parser.inl" />
     <None Include="Include\GraphicDevice.inl" />
-    <None Include="Include\GUI\ControlMetaStateSet.inl" />
-    <None Include="Include\GUI\ControlValue.inl" />
-    <None Include="Include\GUI\GUIContext.inl" />
     <None Include="Include\IRendererContext.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -279,19 +273,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GUI\ControlInteractionStateSet.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Source\GUI\GUIContext.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GUI\GUIContext_Presets.cpp">
+    <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

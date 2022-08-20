@@ -35,12 +35,12 @@ namespace mint
             return _name;
         }
 
-        const bool SkeletonJoint::hasParent() const noexcept
+        bool SkeletonJoint::hasParent() const noexcept
         {
             return (_parentIndex >= 0);
         }
 
-        const JointIndexType SkeletonJoint::getParentIndex() const noexcept
+        JointIndexType SkeletonJoint::getParentIndex() const noexcept
         {
             return _parentIndex;
         }
@@ -130,7 +130,7 @@ namespace mint
             __noop;
         }
 
-        const bool Skeleton::createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept
+        bool Skeleton::createFromGenerator(const SkeletonGenerator& skeletonGenerator) noexcept
         {
             _joints = skeletonGenerator.getJoints();
             return true;

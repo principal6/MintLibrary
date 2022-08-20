@@ -40,7 +40,7 @@ namespace mint
                 const char*                             getHlslString() const noexcept;
 
             public:
-                const uint32                            getTypeMetaDataCount() const noexcept;
+                uint32                                  getTypeMetaDataCount() const noexcept;
                 const TypeMetaData<TypeCustomData>&     getTypeMetaData(const uint32 typeIndex) const noexcept;
                 const TypeMetaData<TypeCustomData>&     getTypeMetaData(const std::string& typeName) const noexcept;
                 const TypeMetaData<TypeCustomData>&     getTypeMetaData(const std::type_info& stdTypeInfo) const noexcept;
