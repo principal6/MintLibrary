@@ -641,15 +641,20 @@ namespace mint
 
             void GUIContext::updateControlData_interaction_docking(ControlData& controlData)
             {
-                if (_dockingInteractionModule.isDockControl(controlData.getID()) == true && _dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true)
+                if (_dockingInteractionModule.isDockControl(controlData.getID()))
                 {
-                    if (controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
+                    // controlData 가 dock c\ontrol 일 때
+
+                    // dragging 되고 있는 control 이 ship control 이고,
+                    // controlData 에서 마우스가 아무것도 안 눌려 있을 때
+                    if (_dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true && controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
                     {
                         _dockingInteractionModule.end();
                     }
                     return;
                 }
 
+                // dragging 되고 있는 control 이 없으면 docking 을 수행할 필요가 없다.
                 if (_draggingModule.isInteracting() == false)
                 {
                     _dockingInteractionModule.end();
