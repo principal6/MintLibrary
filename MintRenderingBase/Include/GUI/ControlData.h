@@ -92,14 +92,14 @@ namespace mint
                 const wchar_t*      _text;
 
             public:
-                enum class InteractionState
+                enum class MouseInteractionState
                 {
                     None,
                     Hovering,
                     Pressing,
                     Clicked,
                 };
-                InteractionState    _interactionState;
+                MouseInteractionState   _mouseInteractionState;
 
             public:
                 struct Zones

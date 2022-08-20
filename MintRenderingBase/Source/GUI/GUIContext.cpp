@@ -165,7 +165,7 @@ namespace mint
                 controlData._text = buttonDesc._text;
                 updateControlData(controlData);
                 makeButton_render(buttonDesc, controlData);
-                return controlData._interactionState == ControlData::InteractionState::Clicked;
+                return controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked;
             }
 
             bool GUIContext::beginWindow(const FileLine& fileLine, const WindowDesc& windowDesc)
@@ -263,7 +263,7 @@ namespace mint
             void GUIContext::makeButton_render(const ButtonDesc& buttonDesc, const ControlData& controlData)
             {
                 const HoverPressColorSet& hoverPressColorSet = (buttonDesc._customizeColor) ? buttonDesc._customizedColorSet : _theme._hoverPressColorSet;
-                _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlData._interactionState));
+                _rendererContext.setColor(hoverPressColorSet.chooseColorByInteractionState(controlData._mouseInteractionState));
                 _rendererContext.setPosition(computeShapePosition(controlData.getID()));
                 if (buttonDesc._isRoundButton)
                 {
@@ -481,7 +481,7 @@ namespace mint
             void GUIContext::updateControlData_interaction(ControlData& controlData)
             {
                 const InputContext& inputContext = InputContext::getInstance();
-                controlData._interactionState = ControlData::InteractionState::None;
+                controlData._mouseInteractionState = ControlData::MouseInteractionState::None;
                 const Float2& mousePosition = inputContext.getMousePosition();
                 if (_focusingModule.isInteracting())
                 {
@@ -505,10 +505,10 @@ namespace mint
                 if (isMousePositionIn)
                 {
                     const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(relativePressedMousePosition);
-                    controlData._interactionState = isPressedMousePositionIn ? ControlData::InteractionState::Pressing : ControlData::InteractionState::Hovering;
+                    controlData._mouseInteractionState = isPressedMousePositionIn ? ControlData::MouseInteractionState::Pressing : ControlData::MouseInteractionState::Hovering;
                     if (isPressedMousePositionIn == true && isMouseLeftUp == true)
                     {
-                        controlData._interactionState = ControlData::InteractionState::Clicked;
+                        controlData._mouseInteractionState = ControlData::MouseInteractionState::Clicked;
                     }
                 }
 
@@ -531,7 +531,7 @@ namespace mint
                     return;
                 }
 
-                if (controlData._interactionState == ControlData::InteractionState::Clicked
+                if (controlData._mouseInteractionState == ControlData::MouseInteractionState::Clicked
                     || _draggingModule.isInteractingWith(controlData.getID()) == true
                     || _resizingModule.isInteractingWith(controlData.getID()) == true)
                 {
@@ -643,7 +643,7 @@ namespace mint
             {
                 if (_dockingInteractionModule.isDockControl(controlData.getID()) == true && _dockingInteractionModule.isShipControl(_draggingModule.getControlID()) == true)
                 {
-                    if (controlData._interactionState == ControlData::InteractionState::None)
+                    if (controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
                     {
                         _dockingInteractionModule.end();
                     }
@@ -662,7 +662,7 @@ namespace mint
                     return;
                 }
 
-                if (controlData._interactionState == ControlData::InteractionState::None)
+                if (controlData._mouseInteractionState == ControlData::MouseInteractionState::None)
                 {
                     return;
                 }

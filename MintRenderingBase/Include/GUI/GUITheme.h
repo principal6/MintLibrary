@@ -20,10 +20,10 @@ namespace mint
                 HoverPressColorSet() = default;
                 HoverPressColorSet(const Color& normal, const Color& hover, const Color& press) : _normalColor{ normal }, _hoveredColor{ hover }, _pressedColor{ press } { __noop; }
             
-                const Color& chooseColorByInteractionState(const ControlData::InteractionState interactionState) const
+                const Color& chooseColorByInteractionState(const ControlData::MouseInteractionState interactionState) const
                 {
-                    const bool isPressing = (interactionState == ControlData::InteractionState::Pressing);
-                    const bool isHovering = (interactionState == ControlData::InteractionState::Hovering);
+                    const bool isPressing = (interactionState == ControlData::MouseInteractionState::Pressing);
+                    const bool isHovering = (interactionState == ControlData::MouseInteractionState::Hovering);
                     return (isPressing ? _pressedColor : (isHovering ? _hoveredColor : _normalColor));
                 };
 

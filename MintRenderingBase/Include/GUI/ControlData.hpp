@@ -27,7 +27,7 @@ namespace mint
         {
             ControlData::ControlData(const ControlID& ID, const ControlType type)
                 : _text{ nullptr }
-                , _interactionState{ InteractionState::None }
+                , _mouseInteractionState{ MouseInteractionState::None }
                 , _perTypeData{}
                 , _resizableMinSize{ Float2::kOne }
                 , _ID{ ID }
