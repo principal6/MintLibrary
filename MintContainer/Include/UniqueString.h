@@ -18,120 +18,135 @@
 
 namespace mint
 {
-    class UniqueStringAID;
-    class UniqueStringA;
-    class UniqueStringPoolA;
+    template <typename T>
+    class UniqueStringID;
+
+    template <typename T>
+    class UniqueString;
+
+    template <typename T>
+    class UniqueStringPool;
+    
+    using UniqueStringA = UniqueString<char>;
+    using UniqueStringW = UniqueString<wchar_t>;
+
+    using UniqueStringPoolA = UniqueStringPool<char>;
+    using UniqueStringPoolW = UniqueStringPool<wchar_t>;
 
 
-    class UniqueStringAID
+    template <typename T>
+    class UniqueStringID
     {
-        friend UniqueStringA;
-        friend UniqueStringPoolA;
+        friend UniqueString;
+        friend UniqueStringPool;
 
     private:
         static constexpr uint32 kInvalidRawID = kUint32Max;
 
     public:
-                                UniqueStringAID();
+                                UniqueStringID();
 
 #if !defined MINT_UNIQUE_STRING_EXPOSE_ID
     private:
 #endif
-                                UniqueStringAID(const uint32 newRawID);
+                                UniqueStringID(const uint32 newRawID);
 
     public:
-                                UniqueStringAID(const UniqueStringAID& rhs) = default;
-                                UniqueStringAID(UniqueStringAID&& rhs) noexcept = default;
-                                ~UniqueStringAID() = default;
+                                UniqueStringID(const UniqueStringID& rhs) = default;
+                                UniqueStringID(UniqueStringID&& rhs) noexcept = default;
+                                ~UniqueStringID() = default;
 
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
     public:
 #else
     private:
 #endif
-        UniqueStringAID&        operator=(const UniqueStringAID& rhs) = default;
-        UniqueStringAID&        operator=(UniqueStringAID && rhs) noexcept = default;
+        UniqueStringID&         operator=(const UniqueStringID& rhs) = default;
+        UniqueStringID&         operator=(UniqueStringID && rhs) noexcept = default;
         
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
     public:
 #else
     private:
 #endif
-        bool                    operator==(const UniqueStringAID& rhs) const noexcept;
-        bool                    operator!=(const UniqueStringAID& rhs) const noexcept;
+        bool                    operator==(const UniqueStringID& rhs) const noexcept;
+        bool                    operator!=(const UniqueStringID& rhs) const noexcept;
 
     private:
         uint32                  _rawID;
     };
 
 
-    class UniqueStringA
+    template <typename T>
+    class UniqueString
     {
     public:
-        static const UniqueStringAID    kInvalidID;
+        static const UniqueStringID<T>  kInvalidID;
 
     public:
-                                        UniqueStringA();
-    explicit                            UniqueStringA(const char* const rawString);
+                                        UniqueString();
+    explicit                            UniqueString(const T* const rawString);
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    explicit                            UniqueStringA(const UniqueStringAID id);
+    explicit                            UniqueString(const UniqueStringID<T> id);
 #endif
-                                        UniqueStringA(const UniqueStringA& rhs) = default;
-                                        UniqueStringA(UniqueStringA&& rhs) noexcept = default;
-                                        ~UniqueStringA() = default;
+                                        UniqueString(const UniqueString& rhs) = default;
+                                        UniqueString(UniqueString&& rhs) noexcept = default;
+                                        ~UniqueString() = default;
 
     public:
-        UniqueStringA&                  operator=(const UniqueStringA& rhs) = default;
-        UniqueStringA&                  operator=(UniqueStringA&& rhs) noexcept = default;
+        UniqueString&                   operator=(const UniqueString& rhs) = default;
+        UniqueString&                   operator=(UniqueString&& rhs) noexcept = default;
 
     public:
-        bool                            operator==(const UniqueStringA& rhs) const noexcept;
-        bool                            operator!=(const UniqueStringA& rhs) const noexcept;
+        bool                            operator==(const UniqueString& rhs) const noexcept;
+        bool                            operator!=(const UniqueString& rhs) const noexcept;
 
     public:
-        const char*                     c_str() const noexcept;
+        const T*                        c_str() const noexcept;
 #if defined MINT_UNIQUE_STRING_EXPOSE_ID
-        UniqueStringAID                 getID() const noexcept;
+        UniqueStringID<T>               getID() const noexcept;
 #endif
 
     private:
-        static UniqueStringPoolA        _pool;
+        static UniqueStringPool<T>      _pool;
 
     private:
-        UniqueStringAID                 _id;
+        UniqueStringID<T>               _id;
 
 #if defined MINT_DEBUG
     private:
-        const char*                     _str;
+        const T*                        _str;
 #endif
     };
     
 
-    class UniqueStringPoolA final
+    template <typename T>
+    class UniqueStringPool final
     {
-        friend UniqueStringA;
+        friend UniqueString;
 
         static constexpr uint32     kDefaultRawCapacity = 1024;
 
     private:
-                                    UniqueStringPoolA();
-                                    ~UniqueStringPoolA();
+                                    UniqueStringPool();
+                                    ~UniqueStringPool();
 
     public:
-        UniqueStringAID             registerString(const char* const rawString) noexcept;
-        bool                        isValid(const UniqueStringAID id) const noexcept;
-        const char*                 getRawString(const UniqueStringAID id) const noexcept;
+        UniqueStringID<T>           registerString(const T* const rawString) noexcept;
+        bool                        isValid(const UniqueStringID<T> id) const noexcept;
+        const T*                    getRawString(const UniqueStringID<T> id) const noexcept;
 
     public:
         void                        reserve(const uint32 rawCapacity);
 
     private:
         std::mutex                  _mutex;
-        HashMap<const char*, UniqueStringAID>   _registrationMap;
+
+        HashMap<const T*, UniqueStringID<T>>    _registrationMap;
 
     private:
         Vector<uint32>              _offsetArray;
-        char*                       _rawMemory;
+        T*                          _rawMemory;
         uint32                      _rawCapacity;
         uint32                      _totalLength;
         uint32                      _uniqueStringCount;
