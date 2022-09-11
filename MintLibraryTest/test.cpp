@@ -572,13 +572,6 @@ bool testWindow()
 // GUI
 #if 1
             using namespace GUI;
-            U8Viewer u8viewer(u8"가나다");
-            for (auto i : u8viewer)
-            {
-                std::string string;
-                StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(i)), string);
-                MINT_LOG("CONVERTED: %s", string.c_str());
-            }
             //guiContext._debugSwitch._renderZoneOverlay = true;
             //guiContext._debugSwitch._renderMousePoints = true;
             //guiContext._debugSwitch._renderResizingArea = true;

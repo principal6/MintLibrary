@@ -517,23 +517,31 @@ namespace mint
 
             std::string testB{
                 R"(
-            #include <ShaderStructDefinitions>
-            #include <VsConstantBuffers>
+                #include <ShaderStructDefinitions>
+                #include <VsConstantBuffers>
 
-            VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
-            {
-                VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
-                result._position    = mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
-                result._color       = input._color;
-                result._texCoord    = input._texCoord;
-                result._flag        = input._flag;
-                return result;
-            }
-        )"
+                VS_OUTPUT_COLOR main(VS_INPUT_COLOR input)
+                {
+                    VS_OUTPUT_COLOR result = (VS_OUTPUT_COLOR)0;
+                    result._position    = mul(float4(input._position.xyz, 1.0), _cb2DProjectionMatrix);
+                    result._color       = input._color;
+                    result._texCoord    = input._texCoord;
+                    result._flag        = input._flag;
+                    return result;
+                }
+                )"
             };
             const Vector<char> delimiterArray{ ' ', '\t', '\n' };
             Vector<std::string> testBTokenized;
             StringUtil::tokenize(testB, delimiterArray, testBTokenized);
+
+            U8Viewer u8viewer(u8"가나다");
+            for (auto i : u8viewer)
+            {
+                std::string string;
+                StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(i)), string);
+                //MINT_LOG("CONVERTED: %s", string.c_str());
+            }
 
             return true;
         }
