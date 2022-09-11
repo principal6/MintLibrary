@@ -1,11 +1,11 @@
-#include "StaticArray.h"
+ï»¿#include "Array.h"
 #pragma once
 
 
 namespace mint
 {
     template <typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(const std::initializer_list<T>& il)
+    inline constexpr Array<T, maxSize>::Array(const std::initializer_list<T>& il)
     {
         const size_t    count = il.size();
         const T* const    first = il.begin();
@@ -16,13 +16,13 @@ namespace mint
     }
     
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(T value)
+    inline constexpr Array<T, maxSize>::Array(T value)
     {
         _data[0] = value;
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(const T& s)
+    inline constexpr Array<T, maxSize>::Array(const T& s)
     {
         for (uint32 index = 0; index < maxSize; ++index)
         {
@@ -31,7 +31,7 @@ namespace mint
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(const T* const arr, const uint32 arrSize)
+    inline constexpr Array<T, maxSize>::Array(const T* const arr, const uint32 arrSize)
     {
         for (uint32 index = 0; index < arrSize; ++index)
         {
@@ -40,7 +40,7 @@ namespace mint
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(const StaticArray& rhs)
+    inline constexpr Array<T, maxSize>::Array(const Array& rhs)
     {
         for (uint32 index = 0; index < maxSize; ++index)
         {
@@ -49,13 +49,13 @@ namespace mint
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>::StaticArray(StaticArray&& rhs) noexcept
+    inline constexpr Array<T, maxSize>::Array(Array&& rhs) noexcept
     {
         std::swap(_data, rhs._data);
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>& StaticArray<T, maxSize>::operator=(const StaticArray& rhs)
+    inline constexpr Array<T, maxSize>& Array<T, maxSize>::operator=(const Array& rhs)
     {
         for (uint32 index = 0; index < maxSize; ++index)
         {
@@ -65,7 +65,7 @@ namespace mint
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr StaticArray<T, maxSize>& StaticArray<T, maxSize>::operator=(StaticArray&& rhs) noexcept
+    inline constexpr Array<T, maxSize>& Array<T, maxSize>::operator=(Array&& rhs) noexcept
     {
         if (this != &rhs)
         {
@@ -75,21 +75,21 @@ namespace mint
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr T& StaticArray<T, maxSize>::operator[](const uint32 index) noexcept
+    inline constexpr T& Array<T, maxSize>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT(index < maxSize, "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(index < maxSize, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤.");
         return _data[index];
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr const T& StaticArray<T, maxSize>::operator[](const uint32 index) const noexcept
+    inline constexpr const T& Array<T, maxSize>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < maxSize, "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(index < maxSize, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤.");
         return _data[index];
     }
 
     template<typename T, uint32 maxSize>
-    inline constexpr uint32 StaticArray<T, maxSize>::size() const noexcept
+    inline constexpr uint32 Array<T, maxSize>::size() const noexcept
     {
         return maxSize;
     }

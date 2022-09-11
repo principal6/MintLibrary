@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_HASH_MAP_H
@@ -8,8 +8,8 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Hash.h>
-#include <MintContainer/Include/StaticArray.h>
-#include <MintContainer/Include/StaticBitArray.h>
+#include <MintContainer/Include/Array.h>
+#include <MintContainer/Include/BitArray.h>
 #include <MintContainer/Include/Vector.h>
 
 
@@ -58,7 +58,7 @@ namespace mint
                                     ~Bucket() = default;
 
     public:
-        StaticBitArray<kHopRange>   _hopInfo;
+        BitArray<kHopRange>   _hopInfo;
         bool                        _isUsed;
         Key                         _key;
         Value                       _value;

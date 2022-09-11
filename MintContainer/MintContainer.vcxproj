@@ -195,9 +195,9 @@
     <ClInclude Include="Include\ScopeVector.hpp" />
     <ClInclude Include="Include\StackHolder.h" />
     <ClInclude Include="Include\StackHolder.hpp" />
-    <ClInclude Include="Include\StaticArray.h" />
-    <ClInclude Include="Include\StaticBitArray.h" />
-    <ClInclude Include="Include\StaticBitArray.hpp" />
+    <ClInclude Include="Include\Array.h" />
+    <ClInclude Include="Include\BitArray.h" />
+    <ClInclude Include="Include\BitArray.hpp" />
     <ClInclude Include="Include\String.h" />
     <ClInclude Include="Include\String.hpp" />
     <ClInclude Include="Include\StringUtil.h" />
@@ -212,7 +212,7 @@
   <ItemGroup>
     <None Include="Include\Hash.hpp" />
     <None Include="Include\IID.inl" />
-    <None Include="Include\StaticArray.inl" />
+    <None Include="Include\Array.inl" />
     <None Include="Include\StringUtil.inl" />
   </ItemGroup>
   <ItemGroup>

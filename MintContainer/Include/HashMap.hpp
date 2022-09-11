@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_HASH_MAP_HPP
@@ -8,7 +8,7 @@
 #include <MintContainer/Include/HashMap.h>
 
 #include <MintContainer/Include/Hash.hpp>
-#include <MintContainer/Include/StaticBitArray.hpp>
+#include <MintContainer/Include/BitArray.hpp>
 #include <MintContainer/Include/Vector.hpp>
 
 
@@ -436,9 +436,9 @@ namespace mint
         auto& baseBucket = _bucketArray[bucketIndex];
         auto& bucketA = _bucketArray[bucketIndex + hopDistanceA];
         auto& bucketB = _bucketArray[bucketIndex + hopDistanceB];
-        MINT_ASSERT(hopDistanceA < kHopRange, "HopDistance ´Â ¹Ýµå½Ã HopRange ¾È¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù!!!");
-        MINT_ASSERT(hopDistanceB < kHopRange, "HopDistance ´Â ¹Ýµå½Ã HopRange ¾È¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù!!!");
-        MINT_ASSERT(bucketB._isUsed == false, "BucketB ´Â ºñ¾î ÀÖ¾î¾ß¸¸ ÇÕ´Ï´Ù!!!");
+        MINT_ASSERT(hopDistanceA < kHopRange, "HopDistance ëŠ” ë°˜ë“œì‹œ HopRange ì•ˆì— ìžˆì–´ì•¼ í•©ë‹ˆë‹¤!!!");
+        MINT_ASSERT(hopDistanceB < kHopRange, "HopDistance ëŠ” ë°˜ë“œì‹œ HopRange ì•ˆì— ìžˆì–´ì•¼ í•©ë‹ˆë‹¤!!!");
+        MINT_ASSERT(bucketB._isUsed == false, "BucketB ëŠ” ë¹„ì–´ ìžˆì–´ì•¼ë§Œ í•©ë‹ˆë‹¤!!!");
         
         baseBucket._hopInfo.set(hopDistanceA, false);
         baseBucket._hopInfo.set(hopDistanceB, true);

@@ -9,7 +9,7 @@
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StackHolder.hpp>
-#include <MintContainer/Include/StaticBitArray.hpp>
+#include <MintContainer/Include/BitArray.hpp>
 #include <MintContainer/Include/UniqueString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Tree.hpp>

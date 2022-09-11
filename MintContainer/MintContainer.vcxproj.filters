@@ -33,7 +33,7 @@
     <ClInclude Include="Include\StackHolder.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\StaticArray.h">
+    <ClInclude Include="Include\Array.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\StringUtil.h">
@@ -63,10 +63,10 @@
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\StaticBitArray.h">
+    <ClInclude Include="Include\BitArray.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\StaticBitArray.hpp">
+    <ClInclude Include="Include\BitArray.hpp">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\HashMap.h">
@@ -110,7 +110,7 @@
     <None Include="Include\IID.inl">
       <Filter>Include</Filter>
     </None>
-    <None Include="Include\StaticArray.inl">
+    <None Include="Include\Array.inl">
       <Filter>Include</Filter>
     </None>
     <None Include="Include\StringUtil.inl">

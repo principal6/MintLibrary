@@ -91,12 +91,12 @@ namespace mint
             return true;
         }
 
-        static bool testStaticArray() noexcept
+        static bool testArray() noexcept
         {
             using namespace mint;
-            constexpr StaticArray<int32, 3> arr{ 4, 5, 999 };
+            constexpr Array<int32, 3> arr{ 4, 5, 999 };
 
-            StaticBitArray<3> ba(true);
+            BitArray<3> ba(true);
             const uint32 bitCount = ba.getBitCount();
             const uint32 byteCount = ba.getByteCount();
             ba.setByte(0, 0xFF);
@@ -565,7 +565,7 @@ namespace mint
 
         bool testAll() noexcept
         {
-            MINT_ASSURE(testStaticArray());
+            MINT_ASSURE(testArray());
             MINT_ASSURE(testStackHolder());
             MINT_ASSURE(testBitVector());
             MINT_ASSURE(testHashMap());

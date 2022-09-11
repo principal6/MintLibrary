@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/StaticArray.h>
+#include <MintContainer/Include/Array.h>
 #include <MintContainer/Include/StackString.h>
 #include <MintContainer/Include/UniqueString.h>
 

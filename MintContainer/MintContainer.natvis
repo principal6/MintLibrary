@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?> 
+﻿<?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
     <Type Name="mint::Vector&lt;*&gt;">
         <DisplayString>{{ size = {_size} capacity = {_capacity} }}</DisplayString>
@@ -41,7 +41,7 @@
         </Expand>
     </Type>
 
-    <Type Name="mint::StaticBitArray&lt;*&gt;">
+    <Type Name="mint::BitArray&lt;*&gt;">
         <DisplayString>{{{$T1} Bits, Byte[0] = {_byteArray[0], b}}}</DisplayString>
         <Expand>
             <Item Name="[Bits]" ExcludeView="simple">$T1</Item>

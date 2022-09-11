@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_STATIC_BIT_ARRAY_H
@@ -11,12 +11,12 @@
 namespace mint
 {
     template <uint32 BitCount>
-    class StaticBitArray
+    class BitArray
     {
     public:
-                                    StaticBitArray();
-                                    StaticBitArray(const bool initialValue);
-                                    ~StaticBitArray();
+                                    BitArray();
+                                    BitArray(const bool initialValue);
+                                    ~BitArray();
 
     public:
         void                        setAll(const bool value) noexcept;

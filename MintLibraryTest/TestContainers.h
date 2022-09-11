@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -116,7 +116,7 @@ namespace mint
 
         bool testQueue() noexcept;
         bool testVector() noexcept;
-        bool testStaticArray() noexcept;
+        bool testArray() noexcept;
         bool testStackHolder() noexcept;
         bool testBitVector() noexcept;
         bool testHashMap() noexcept;

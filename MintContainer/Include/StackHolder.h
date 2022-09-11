@@ -6,7 +6,7 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-#include <MintContainer/Include/StaticArray.h>
+#include <MintContainer/Include/Array.h>
 
 
 namespace mint
@@ -39,15 +39,15 @@ namespace mint
     private:
         static constexpr uint32                         kBitMaskByteCount = sizeof(BitMaskType) * kBitsPerByte;
 
-        StaticArray<CountMetaDataType, MaxUnitCount>    _allocCountDataArray;
+        Array<CountMetaDataType, MaxUnitCount>    _allocCountDataArray;
         
         static constexpr uint32                         kAllocMetaDataCount = ((MaxUnitCount - 1) / kBitMaskByteCount) + 1;
         
-        StaticArray<BitMaskType, kAllocMetaDataCount>   _allocMetaDataArray;
+        Array<BitMaskType, kAllocMetaDataCount>   _allocMetaDataArray;
 
         static constexpr uint32                         kRawByteCount = UnitByteSize * MaxUnitCount;
 
-        StaticArray<byte, kRawByteCount>                _rawByteArray;
+        Array<byte, kRawByteCount>                _rawByteArray;
     };
 }
 

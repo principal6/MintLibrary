@@ -8,8 +8,8 @@
 #include <MintContainer/Include/BitVector.h>
 #include <MintContainer/Include/StackString.h>
 #include <MintContainer/Include/StackHolder.h>
-#include <MintContainer/Include/StaticArray.h>
-#include <MintContainer/Include/StaticBitArray.h>
+#include <MintContainer/Include/Array.h>
+#include <MintContainer/Include/BitArray.h>
 #include <MintContainer/Include/UniqueString.h>
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/Tree.h>
