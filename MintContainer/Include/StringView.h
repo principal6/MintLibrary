@@ -25,6 +25,7 @@ namespace mint
     {
     public:
                     StringView() = default;
+                    StringView(const T* const string);
                     StringView(const String<T>& string);
                     template <uint32 BufferSize>
                     StringView(const StackString<T, BufferSize>& string);

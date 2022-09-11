@@ -14,6 +14,13 @@
 namespace mint
 {
     template<typename T>
+    inline StringView<T>::StringView(const T* const string)
+    {
+        _rawString = string;
+        _length = StringUtil::length(string);
+    }
+    
+    template<typename T>
     inline StringView<T>::StringView(const String<T>& string)
     {
         _rawString = string.c_str();
