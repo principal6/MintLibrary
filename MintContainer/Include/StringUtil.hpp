@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_STRING_UTIL_HPP
@@ -8,7 +8,7 @@
 #include <MintContainer/Include/StringUtil.h>
 
 #include <MintContainer/Include/String.hpp>
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Tree.hpp>
 
@@ -43,9 +43,9 @@ namespace mint
     }
     
     template <uint32 BufferSize>
-    MINT_INLINE void formatString(ScopeStringA<BufferSize>& buffer, const char* format, ...)
+    MINT_INLINE void formatString(StackStringA<BufferSize>& buffer, const char* format, ...)
     {
-        ScopeStringA<BufferSize> temp;
+        StackStringA<BufferSize> temp;
 
         va_list args;
         va_start(args, format);
@@ -84,9 +84,9 @@ namespace mint
     }
 
     template <uint32 BufferSize>
-    MINT_INLINE void formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...)
+    MINT_INLINE void formatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...)
     {
-        ScopeStringW<BufferSize> temp;
+        StackStringW<BufferSize> temp;
 
         va_list args;
         va_start(args, format);
@@ -119,14 +119,14 @@ namespace mint
         __noop;
     }
 
-    // ³ªÁß¿¡ string ±¸ÇöÇÏ°í ³ª¸é ¾ø¾Ù °Í!!!
+    // ë‚˜ì¤‘ì— string êµ¬í˜„í•˜ê³  ë‚˜ë©´ ì—†ì•¨ ê²ƒ!!!
     inline StringRange::StringRange(const uint64 offset, const uint32 length)
         : _offset{ static_cast<uint32>(offset) }
         , _length{ length }
     {
     }
 
-    // ³ªÁß¿¡ string ±¸ÇöÇÏ°í ³ª¸é ¾ø¾Ù °Í!!!
+    // ë‚˜ì¤‘ì— string êµ¬í˜„í•˜ê³  ë‚˜ë©´ ì—†ì•¨ ê²ƒ!!!
     inline StringRange::StringRange(const uint64 offset, const uint64 length)
         : _offset{ static_cast<uint32>(offset) }
         , _length{ static_cast<uint32>(length) }
@@ -161,7 +161,7 @@ namespace mint
         }
 
         template<uint32 BufferSize>
-        inline void convertScopeStringAToScopeStringW(const ScopeStringA<BufferSize>& source, ScopeStringW<BufferSize>& destination) noexcept
+        inline void convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept
         {
             destination.resize(source.length());
             ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
@@ -315,7 +315,7 @@ namespace mint
         template <typename T>
         inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
         {
-            ScopeStringA<256> buffer;
+            StackStringA<256> buffer;
             formatString(buffer, (std::is_signed<T>() ? "%lld" : "%llu"), rhs);
             return StringA(buffer.c_str());
         }
@@ -323,7 +323,7 @@ namespace mint
         template <typename T>
         inline std::enable_if_t<std::is_floating_point_v<T>, StringA> convertToStringA(const T& rhs)
         {
-            ScopeStringA<256> buffer;
+            StackStringA<256> buffer;
             formatString(buffer, "%f", rhs);
             return StringA(buffer.c_str());
         }
@@ -331,7 +331,7 @@ namespace mint
         template <typename T>
         inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
         {
-            ScopeStringW<256> buffer;
+            StackStringW<256> buffer;
             formatString(buffer, (std::is_signed<T>() ? L"%lld" : L"%llu"), rhs);
             return StringW(buffer.c_str());
         }
@@ -339,7 +339,7 @@ namespace mint
         template <typename T>
         inline std::enable_if_t<std::is_floating_point_v<T>, StringW> convertToStringW(const T& rhs)
         {
-            ScopeStringW<256> buffer;
+            StackStringW<256> buffer;
             formatString(buffer, L"%f", rhs);
             return StringW(buffer.c_str());
         }

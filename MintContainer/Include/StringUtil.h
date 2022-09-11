@@ -11,7 +11,7 @@
 
 #include <MintContainer/Include/Vector.h>
 #include <MintContainer/Include/String.h>
-#include <MintContainer/Include/ScopeString.h>
+#include <MintContainer/Include/StackString.h>
 
 
 namespace mint
@@ -38,14 +38,14 @@ namespace mint
     void                formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
     void                formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...);
     template <uint32 BufferSize>
-    void                formatString(ScopeStringA<BufferSize>& buffer, const char* format, ...);
+    void                formatString(StackStringA<BufferSize>& buffer, const char* format, ...);
     
     template <uint32 BufferSize>
     void                formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...);
     void                formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
     void                formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
     template <uint32 BufferSize>
-    void                formatString(ScopeStringW<BufferSize>& buffer, const wchar_t* format, ...);
+    void                formatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...);
 
 
     namespace StringUtil
@@ -73,7 +73,7 @@ namespace mint
         void            convertStringAToStringW(const StringA& source, StringW& destination) noexcept;
         
         template <uint32 BufferSize>
-        void            convertScopeStringAToScopeStringW(const ScopeStringA<BufferSize>& source, ScopeStringW<BufferSize>& destination) noexcept;
+        void            convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;
         
         void            excludeExtension(std::string& inoutText);
 

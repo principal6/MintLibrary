@@ -12,29 +12,29 @@
 namespace mint
 {
     template <typename T, uint32 BufferSize>
-    class ScopeString
+    class StackString
     {
     public:
-                                    ScopeString();
-                                    ScopeString(const T* const rawString);
-                                    ScopeString(const ScopeString& rhs);
-                                    ScopeString(ScopeString&& rhs) noexcept;
-                                    ~ScopeString();
+                                    StackString();
+                                    StackString(const T* const rawString);
+                                    StackString(const StackString& rhs);
+                                    StackString(StackString&& rhs) noexcept;
+                                    ~StackString();
 
     public:
-        ScopeString&                operator=(const ScopeString& rhs) noexcept;
-        ScopeString&                operator=(ScopeString&& rhs) noexcept;
-        ScopeString&                operator=(const T* const rawString) noexcept;
+        StackString&                operator=(const StackString& rhs) noexcept;
+        StackString&                operator=(StackString&& rhs) noexcept;
+        StackString&                operator=(const T* const rawString) noexcept;
 
     public:
         bool                        operator==(const T* const rawString) const noexcept;
-        bool                        operator==(const ScopeString& rhs) const noexcept;
+        bool                        operator==(const StackString& rhs) const noexcept;
         bool                        operator!=(const T* const rawString) const noexcept;
-        bool                        operator!=(const ScopeString& rhs) const noexcept;
+        bool                        operator!=(const StackString& rhs) const noexcept;
 
     public:
-        ScopeString&                operator+=(const T* const rawString) noexcept;
-        ScopeString&                operator+=(const ScopeString& rhs) noexcept;
+        StackString&                operator+=(const T* const rawString) noexcept;
+        StackString&                operator+=(const StackString& rhs) noexcept;
 
     public:
         T&                          operator[](const uint32 at) noexcept;
@@ -57,18 +57,18 @@ namespace mint
 
     public:
         void                        clear() noexcept;
-        ScopeString&                append(const T* const rawString) noexcept;
-        ScopeString&                append(const ScopeString& rhs) noexcept;
-        ScopeString&                assign(const T* const rawString) noexcept;
-        ScopeString&                assign(const ScopeString& rhs) noexcept;
+        StackString&                append(const T* const rawString) noexcept;
+        StackString&                append(const StackString& rhs) noexcept;
+        StackString&                assign(const T* const rawString) noexcept;
+        StackString&                assign(const StackString& rhs) noexcept;
         void                        resize(const uint32 newSize) noexcept;
 
     public:
-        ScopeString                 substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
+        StackString                 substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
         uint32                      find(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
         uint32                      rfind(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
         bool                        compare(const T* const rawString) const noexcept;
-        bool                        compare(const ScopeString& rhs) const noexcept;
+        bool                        compare(const StackString& rhs) const noexcept;
         uint64                      computeHash() const noexcept;
 
     private:
@@ -78,10 +78,10 @@ namespace mint
 
 
     template <uint32 BufferSize>
-    using ScopeStringA = ScopeString<char, BufferSize>;
+    using StackStringA = StackString<char, BufferSize>;
     
     template <uint32 BufferSize>
-    using ScopeStringW = ScopeString<wchar_t, BufferSize>;
+    using StackStringW = StackString<wchar_t, BufferSize>;
 }
 
 

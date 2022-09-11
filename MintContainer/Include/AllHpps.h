@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_CONTAINER_ALL_HPPS_H
@@ -7,7 +7,7 @@
 
 #include <MintContainer/Include/MemoryRaw.hpp>
 #include <MintContainer/Include/BitVector.hpp>
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StackHolder.hpp>
 #include <MintContainer/Include/StaticBitArray.hpp>
 #include <MintContainer/Include/UniqueString.hpp>

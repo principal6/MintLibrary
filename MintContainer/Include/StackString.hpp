@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <MintContainer/Include/ScopeString.h>
+#include <MintContainer/Include/StackString.h>
 
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/Hash.hpp>
@@ -10,7 +10,7 @@
 namespace mint
 {
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>::ScopeString()
+    inline StackString<T, BufferSize>::StackString()
         : _length{}
         , _raw{}
     {
@@ -18,7 +18,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>::ScopeString(const T* const rawString)
+    inline StackString<T, BufferSize>::StackString(const T* const rawString)
         : _length{}
         , _raw{}
     {
@@ -27,27 +27,27 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>::ScopeString(const ScopeString& rhs)
+    inline StackString<T, BufferSize>::StackString(const StackString& rhs)
     {
         _length = rhs._length;
         _copyString(&_raw[0], &rhs._raw[0], _length);
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>::ScopeString(ScopeString&& rhs) noexcept
+    inline StackString<T, BufferSize>::StackString(StackString&& rhs) noexcept
     {
         std::swap(_length, rhs._length);
         std::swap(_raw, rhs._raw);
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>::~ScopeString()
+    inline StackString<T, BufferSize>::~StackString()
     {
         __noop;
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator=(const ScopeString& rhs) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::operator=(const StackString& rhs) noexcept
     {
         _length = rhs._length;
         _copyString(&_raw[0], &rhs._raw[0], _length);
@@ -56,7 +56,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator=(ScopeString&& rhs) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::operator=(StackString&& rhs) noexcept
     {
         if (this != &rhs)
         {
@@ -67,97 +67,97 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator=(const T* const rawString) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::operator=(const T* const rawString) noexcept
     {
         return assign(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::operator==(const T* const rawString) const noexcept
+    inline bool StackString<T, BufferSize>::operator==(const T* const rawString) const noexcept
     {
         return compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::operator==(const ScopeString& rhs) const noexcept
+    inline bool StackString<T, BufferSize>::operator==(const StackString& rhs) const noexcept
     {
         return compare(rhs);
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
+    inline bool StackString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
     {
         return !compare(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::operator!=(const ScopeString& rhs) const noexcept
+    inline bool StackString<T, BufferSize>::operator!=(const StackString& rhs) const noexcept
     {
         return !compare(rhs);
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator+=(const T* const rawString) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::operator+=(const T* const rawString) noexcept
     {
         return append(rawString);
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::operator+=(const ScopeString& rhs) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::operator+=(const StackString& rhs) noexcept
     {
         return append(rhs);
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE T& ScopeString<T, BufferSize>::operator[](const uint32 at) noexcept
+    MINT_INLINE T& StackString<T, BufferSize>::operator[](const uint32 at) noexcept
     {
         return _raw[at];
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE const T& ScopeString<T, BufferSize>::operator[](const uint32 at) const noexcept
+    MINT_INLINE const T& StackString<T, BufferSize>::operator[](const uint32 at) const noexcept
     {
         return _raw[at];
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE uint32 ScopeString<T, BufferSize>::capacity() const noexcept
+    MINT_INLINE uint32 StackString<T, BufferSize>::capacity() const noexcept
     {
         return BufferSize;
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE uint32 ScopeString<T, BufferSize>::length() const noexcept
+    MINT_INLINE uint32 StackString<T, BufferSize>::length() const noexcept
     {
         return _length;
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE const T* ScopeString<T, BufferSize>::c_str() const noexcept
+    MINT_INLINE const T* StackString<T, BufferSize>::c_str() const noexcept
     {
         return &_raw[0];
     }
 
     template<typename T, uint32 BufferSize>
-    MINT_INLINE uint32 ScopeString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
+    MINT_INLINE uint32 StackString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
     {
         return StringUtil::length(rawString);
     }
 
     template<typename T, uint32 BufferSize>
-    MINT_INLINE void ScopeString<T, BufferSize>::_copyString(T* const destination, const T* const source, const uint64 length) noexcept
+    MINT_INLINE void StackString<T, BufferSize>::_copyString(T* const destination, const T* const source, const uint64 length) noexcept
     {
         ::memcpy(destination, source, sizeof(T) * length);
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE T* ScopeString<T, BufferSize>::data() noexcept
+    MINT_INLINE T* StackString<T, BufferSize>::data() noexcept
     {
         return &_raw[0];
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE bool ScopeString<T, BufferSize>::canInsert(const uint32 insertLength) const noexcept
+    MINT_INLINE bool StackString<T, BufferSize>::canInsert(const uint32 insertLength) const noexcept
     {
         if (BufferSize <= _length + insertLength)
         {
@@ -168,14 +168,14 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE void ScopeString<T, BufferSize>::clear() noexcept
+    MINT_INLINE void StackString<T, BufferSize>::clear() noexcept
     {
         _length = 0;
         _raw[0] = 0; // NULL
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::append(const T* const rawString) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::append(const T* const rawString) noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (canInsert(rawStringLength))
@@ -189,7 +189,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::append(const ScopeString& rhs) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::append(const StackString& rhs) noexcept
     {
         if (canInsert(rhs._length))
         {
@@ -202,7 +202,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::assign(const T* const rawString) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::assign(const T* const rawString) noexcept
     {
         uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (BufferSize <= rawStringLength)
@@ -217,7 +217,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize>& ScopeString<T, BufferSize>::assign(const ScopeString& rhs) noexcept
+    inline StackString<T, BufferSize>& StackString<T, BufferSize>::assign(const StackString& rhs) noexcept
     {
         if (this != &rhs)
         {
@@ -227,7 +227,7 @@ namespace mint
     }
 
     template<typename T, uint32 BufferSize>
-    inline void ScopeString<T, BufferSize>::resize(const uint32 newSize) noexcept
+    inline void StackString<T, BufferSize>::resize(const uint32 newSize) noexcept
     {
         const uint32 oldSize = length();
         if (oldSize < newSize)
@@ -246,16 +246,16 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline ScopeString<T, BufferSize> ScopeString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
+    inline StackString<T, BufferSize> StackString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
     {
-        ScopeString<T, BufferSize> result; // { &_raw[offset] };
+        StackString<T, BufferSize> result; // { &_raw[offset] };
         result._length = min(count, _length - offset - 1);
         _copyString(&result._raw[0], &_raw[offset], result._length);
         return result;
     }
 
     template <typename T, uint32 BufferSize>
-    inline uint32 ScopeString<T, BufferSize>::find(const T* const rawString, const uint32 offset) const noexcept
+    inline uint32 StackString<T, BufferSize>::find(const T* const rawString, const uint32 offset) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length < rawStringLength)
@@ -284,7 +284,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline uint32 ScopeString<T, BufferSize>::rfind(const T* const rawString, const uint32 offset) const noexcept
+    inline uint32 StackString<T, BufferSize>::rfind(const T* const rawString, const uint32 offset) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length < rawStringLength)
@@ -318,7 +318,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::compare(const T* const rawString) const noexcept
+    inline bool StackString<T, BufferSize>::compare(const T* const rawString) const noexcept
     {
         const uint32 rawStringLength = static_cast<uint32>(_getRawStringLength(rawString));
         if (_length != rawStringLength)
@@ -337,7 +337,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline bool ScopeString<T, BufferSize>::compare(const ScopeString& rhs) const noexcept
+    inline bool StackString<T, BufferSize>::compare(const StackString& rhs) const noexcept
     {
         if (_length != rhs._length)
         {
@@ -355,7 +355,7 @@ namespace mint
     }
 
     template<typename T, uint32 BufferSize>
-    inline uint64 ScopeString<T, BufferSize>::computeHash() const noexcept
+    inline uint64 StackString<T, BufferSize>::computeHash() const noexcept
     {
         return mint::computeHash(c_str());
     }

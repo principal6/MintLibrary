@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef _MINT_GUI_CONTROL_DATA_HPP_
@@ -8,7 +8,7 @@
 #include <MintRenderingBase/Include/GUI/ControlData.h>
 
 #include <MintContainer/Include/Hash.hpp>
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 
 
@@ -39,9 +39,9 @@ namespace mint
 
             ControlID ControlData::generateID(const FileLine& fileLine, const ControlType type, const wchar_t* const text, const ControlID& parentControlID)
             {
-                ScopeStringA<512> file = fileLine._file;
-                ScopeStringW<512> key;
-                StringUtil::convertScopeStringAToScopeStringW(file, key);
+                StackStringA<512> file = fileLine._file;
+                StackStringW<512> key;
+                StringUtil::convertStackStringAToStackStringW(file, key);
                 key.append(L"_");
                 key.append(StringUtil::convertToStringW(fileLine._line).c_str());
                 key.append(L"_");

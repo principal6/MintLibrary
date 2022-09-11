@@ -10,7 +10,7 @@
 #include <MintPlatform/Include/IWindow.h>
 #include <MintPlatform/Include/WindowsWindow.h>
 
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/HashMap.hpp>
 
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>

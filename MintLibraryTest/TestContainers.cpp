@@ -375,10 +375,10 @@ namespace mint
 
         static bool testStringTypes() noexcept
         {
-#pragma region ScopeString
+#pragma region StackString
             {
-                ScopeStringA<256> a{ "abcd" };
-                ScopeStringA<256> b = a;
+                StackStringA<256> a{ "abcd" };
+                StackStringA<256> b = a;
                 b += b;
                 b += b;
                 b += b;

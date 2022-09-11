@@ -2,7 +2,7 @@
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 
 #include <MintContainer/Include/Vector.hpp>
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 
 
 namespace mint
@@ -27,7 +27,7 @@ namespace mint
                     return S_OK;
                 }
             }
-            ScopeStringA<kMaxPath> asssertMessage{ "셰이더 파일명을 찾지 못했습니다! 파일명:" };
+            StackStringA<kMaxPath> asssertMessage{ "셰이더 파일명을 찾지 못했습니다! 파일명:" };
             asssertMessage.append(pFileName);
             MINT_ASSERT(false, asssertMessage.c_str());
             return E_FAIL;

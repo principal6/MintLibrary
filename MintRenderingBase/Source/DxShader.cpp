@@ -1,11 +1,11 @@
-#include <stdafx.h>
+Ôªø#include <stdafx.h>
 #include <MintRenderingBase/Include/DxShader.h>
 
 #include <d3dcompiler.h>
 
 #include <MintLibrary/Include/Algorithm.hpp>
 
-#include <MintContainer/Include/ScopeString.hpp>
+#include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Vector.hpp>
 
@@ -27,7 +27,7 @@ namespace mint
     {
 #pragma region Static function definitions
         template<uint32 BufferSize>
-        static void makeShaderVersion(ScopeStringA<BufferSize>& out, const DxShaderType shaderType, const DxShaderVersion shaderVersion)
+        static void makeShaderVersion(StackStringA<BufferSize>& out, const DxShaderType shaderType, const DxShaderVersion shaderVersion)
         {
             out.clear();
 
@@ -211,7 +211,7 @@ namespace mint
                     }
                 }
                 
-                // Input slot √≥∏Æ
+                // Input slot Ï≤òÎ¶¨
                 const uint32 slottedStreamDataCount = inputElementTypeMetaData->_customData.getSlottedStreamDataCount();
                 for (uint32 slottedStreamDataIndex = 0; slottedStreamDataIndex < slottedStreamDataCount; ++slottedStreamDataIndex)
                 {
@@ -226,7 +226,7 @@ namespace mint
                 if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(&shader._inputElementSet._inputElementDescriptorArray[0], static_cast<UINT>(shader._inputElementSet._inputElementDescriptorArray.size()),
                     shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), shader._inputLayout.ReleaseAndGetAddressOf())))
                 {
-                    MINT_LOG_ERROR("VertexShader [[%s]] ¿« InputLayout ª˝º∫ø° Ω«∆–«ﬂΩ¿¥œ¥Ÿ. Input ¿⁄∑·«¸ ¿∏∑Œ [[%s]] ¿ª æ≤¥¬∞‘ ∏¬¥¬¡ˆ »Æ¿Œ«ÿ ¡÷ººø‰.", shader._hlslFileName.c_str(), inputElementTypeMetaData->getTypeName().c_str());
+                    MINT_LOG_ERROR("VertexShader [[%s]] Ïùò InputLayout ÏÉùÏÑ±Ïóê Ïã§Ìå®ÌñàÏäµÎãàÎã§. Input ÏûêÎ£åÌòï ÏúºÎ°ú [[%s]] ÏùÑ Ïì∞ÎäîÍ≤å ÎßûÎäîÏßÄ ÌôïÏù∏Ìï¥ Ï£ºÏÑ∏Ïöî.", shader._hlslFileName.c_str(), inputElementTypeMetaData->getTypeName().c_str());
                     return false;
                 }
             }
@@ -294,7 +294,7 @@ namespace mint
             {
                 if (FileUtil::exists(outputDirectory) == false)
                 {
-                    MINT_ASSERT(FileUtil::createDirectory(outputDirectory) == true, "∞Ê∑Œ ª˝º∫ø° Ω«∆–«ﬂΩ¿¥œ¥Ÿ!");
+                    MINT_ASSERT(FileUtil::createDirectory(outputDirectory) == true, "Í≤ΩÎ°ú ÏÉùÏÑ±Ïóê Ïã§Ìå®ÌñàÏäµÎãàÎã§!");
                 }
 
                 outputShaderFilePath = outputDirectory + outputShaderFilePath;
@@ -344,7 +344,7 @@ namespace mint
 
         bool DxShaderPool::compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
         {
-            ScopeStringA<20> version;
+            StackStringA<20> version;
             makeShaderVersion(version, shaderType, _shaderVersion);
 
             const char* content{};
