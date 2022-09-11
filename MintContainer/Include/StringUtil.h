@@ -16,6 +16,8 @@
 
 namespace mint
 {
+    using U8CharCode = uint32;
+
     struct StringRange final
     {
                         StringRange();
@@ -30,6 +32,24 @@ namespace mint
     public:
         uint32          _offset;
         uint32          _length;
+    };
+
+    class U8Viewer
+    {
+    public:
+                        U8Viewer(const char8_t* const string) : _string{ string }, _byteAt{ 0 } { __noop; }
+                        ~U8Viewer() = default;
+
+    public:
+        bool            operator!=(const U8Viewer& rhs) const;
+        U8CharCode      operator*() const noexcept;
+        U8Viewer        operator++();
+        U8Viewer        begin() const;
+        U8Viewer        end() const;
+
+    private:
+        const char8_t*  _string;
+        uint32          _byteAt;
     };
 
 
@@ -50,11 +70,14 @@ namespace mint
 
     namespace StringUtil
     {
-        bool            isNullOrEmpty(const char* const rawString);
-        bool            isNullOrEmpty(const wchar_t* const rawWideString);
+        template<typename T>
+        bool            isNullOrEmpty(const T* const rawString);
         
-        uint32          length(const char* const rawString);
-        uint32          length(const wchar_t* const rawWideString);
+        constexpr uint32    countByte(const char8_t* const string);
+        constexpr uint32    countCharByte(const U8CharCode u8CharCode);
+        constexpr uint32    countCharByte(const char8_t* const string, const uint32 byteAt);
+        uint32              length(const char* const rawString);
+        uint32              length(const wchar_t* const rawWideString);
 
         template <typename T>
         uint32          find(const T* const source, const T* const target, const uint32 offset = 0);
@@ -63,10 +86,21 @@ namespace mint
         bool            compare(const wchar_t* const a, const wchar_t* const b);
         
         template <uint32 DestSize>
+        void            copy(char8_t(&dest)[DestSize], const char8_t* const source);
+        template <uint32 DestSize>
         void            copy(char(&dest)[DestSize], const char* const source);
         template <uint32 DestSize>
         void            copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
 
+        constexpr U8CharCode    encode(const char8_t ch);
+        constexpr U8CharCode    encode(const char8_t(&ch)[2]);
+        constexpr U8CharCode    encode(const char8_t(&ch)[3]);
+        constexpr U8CharCode    encode(const char8_t(&ch)[4]);
+        constexpr U8CharCode    encode(const char8_t* const string, const uint32 byteAt);
+        std::string             decode(const U8CharCode code);
+
+        std::string     convertWideStringToUTF8(const std::wstring& source);
+        std::wstring    convertUTF8ToWideString(const std::string& source);
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
         
