@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_CONTAINER_STRING_HPP
@@ -36,7 +36,7 @@ namespace mint
     inline String<T>::String(String&& rhs) noexcept
     {
         _long = rhs._long;
-        
+
         rhs._long._capacity = 0;
         rhs._long._size = 0;
         rhs._long._rawPointer = nullptr;
@@ -79,6 +79,27 @@ namespace mint
     }
 
     template<typename T>
+    MINT_INLINE String<T> String<T>::operator+(const T* const rhs) const noexcept
+    {
+        const uint32 rhsLength = StringUtil::length(rhs);
+        String<T> newString;
+        newString.reserve(length() + rhsLength);
+        newString += *this;
+        newString += rhs;
+        return newString;
+    }
+
+    template<typename T>
+    MINT_INLINE String<T> String<T>::operator+(const String& rhs) const noexcept
+    {
+        String<T> newString;
+        newString.reserve(length() + rhs.length());
+        newString += *this;
+        newString += rhs;
+        return newString;
+    }
+
+    template<typename T>
     MINT_INLINE String<T>& String<T>::operator+=(const T* const rhs) noexcept
     {
         return append(rhs);
@@ -103,13 +124,13 @@ namespace mint
     }
 
     template<typename T>
-    inline bool String<T>::operator!=(const T* const rhs) const noexcept
+    MINT_INLINE bool String<T>::operator!=(const T* const rhs) const noexcept
     {
         return !compare(rhs);
     }
 
     template<typename T>
-    inline bool String<T>::operator!=(const String& rhs) const noexcept
+    MINT_INLINE bool String<T>::operator!=(const String& rhs) const noexcept
     {
         return !compare(rhs);
     }
@@ -175,14 +196,14 @@ namespace mint
     }
 
     template<typename T>
-    inline String<T>& String<T>::append(const T ch) noexcept
+    MINT_INLINE String<T>& String<T>::append(const T ch) noexcept
     {
         T rawString[2] = { ch, 0 };
         return append(rawString);
     }
 
     template<typename T>
-    inline String<T>& String<T>::append(const String& rhs) noexcept
+    MINT_INLINE String<T>& String<T>::append(const String& rhs) noexcept
     {
         return append(rhs.c_str());
     }
@@ -236,7 +257,7 @@ namespace mint
         __copyString(temp, (isSmallString()) ? _short._smallString : _long._rawPointer, oldLength);
 
         release();
-        
+
         _long._rawPointer = MemoryRaw::allocateMemory<T>(newCapacity);
         __copyString(_long._rawPointer, temp, oldLength);
         _long._capacity = newCapacity;
@@ -341,7 +362,7 @@ namespace mint
                 {
                     result = sourceIter;
                 }
-                
+
                 ++targetIter;
                 if (targetIter == targetLength)
                 {
@@ -482,13 +503,13 @@ namespace mint
     }
 
     template<typename T>
-    inline bool String<T>::compare(const String& rhs) const noexcept
+    MINT_INLINE bool String<T>::compare(const String& rhs) const noexcept
     {
         return compare(rhs.c_str());
     }
 
     template<typename T>
-    inline uint64 String<T>::computeHash() const noexcept
+    MINT_INLINE uint64 String<T>::computeHash() const noexcept
     {
         return mint::computeHash(c_str());
     }
@@ -515,7 +536,7 @@ namespace mint
 
         Short tempShort;
         ::memcpy_s(&tempShort, sizeof(Short), &_short, sizeof(Short));
-        
+
         assignInternalLongXXX(tempShort._smallString);
     }
 }

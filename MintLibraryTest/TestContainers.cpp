@@ -1,4 +1,4 @@
-#include <MintLibraryTest/TestContainers.h>
+Ôªø#include <MintLibraryTest/TestContainers.h>
 
 #include <MintContainer/Include/AllHpps.h>
 
@@ -75,7 +75,7 @@ namespace mint
             Vector<uint32> b(20);
             b.push_back(9);
 
-            // Move semantic ¡°∞À!
+            // Move semantic Ï†êÍ≤Ä!
             std::swap(a, b);
 
             Vector<uint32> c(3);
@@ -476,6 +476,8 @@ namespace mint
             stringSmallA += "+testing...";
             stringSmallA += "+testing..!";
             stringSmallA.clear();
+            
+            StringA stringA1 = StringA("Hello, there! My friend!!!") + " This is test for append function!";
 
             StringW stringW = StringW(L"Hello, there!");
             stringW += L" I'm testing...";

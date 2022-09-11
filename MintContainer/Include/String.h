@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_CONTAINER_STRING_H
@@ -28,6 +28,8 @@ namespace mint
         String&                     operator=(String&& rhs) noexcept;
 
     public:
+        String                      operator+(const T* const rhs) const noexcept;
+        String                      operator+(const String& rhs) const noexcept;
         String&                     operator+=(const T* const rhs) noexcept;
         String&                     operator+=(const String& rhs) noexcept;
 
