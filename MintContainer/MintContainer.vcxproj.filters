@@ -99,12 +99,8 @@
     <ClInclude Include="Include\String.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\ScopeVector.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ScopeVector.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
+    <ClInclude Include="Include\StackVector.h" />
+    <ClInclude Include="Include\StackVector.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">

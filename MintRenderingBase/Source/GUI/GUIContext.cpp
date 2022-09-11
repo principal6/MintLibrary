@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/GUI/GUIContext.h>
 
 #include <MintContainer/Include/Hash.hpp>
@@ -51,7 +51,7 @@ namespace mint
                 _fontSize = static_cast<float>(fontData._fontSize);
                 if (_rendererContext.initializeFontData(fontData) == false)
                 {
-                    MINT_ASSERT(false, "ShapeRendererContext::initializeFont() ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+                    MINT_ASSERT(false, "ShapeRendererContext::initializeFont() ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
                 }
 
                 _rendererContext.initializeShaders();
@@ -90,11 +90,11 @@ namespace mint
 
             void GUIContext::render() noexcept
             {
-                MINT_ASSERT(_controlStack.size() <= 1, "begin- È£Ãâ È½¼ö°¡ end- È£Ãâ È½¼öº¸´Ù ¸¹½À´Ï´Ù!!!");
+                MINT_ASSERT(_controlStack.size() <= 1, "begin- í˜¸ì¶œ íšŸìˆ˜ê°€ end- í˜¸ì¶œ íšŸìˆ˜ë³´ë‹¤ ë§ìŠµë‹ˆë‹¤!!!");
 
                 if (_focusingModule.isInteracting())
                 {
-                    // FocusedWindow °¡ ´Ù¸¥ Window (priority 0) ¿¡ ºñÇØ À§¿¡ ±×·ÁÁöµµ·Ï priority 1 ·Î ¼³Á¤.
+                    // FocusedWindow ê°€ ë‹¤ë¥¸ Window (priority 0) ì— ë¹„í•´ ìœ„ì— ê·¸ë ¤ì§€ë„ë¡ priority 1 ë¡œ ì„¤ì •.
                     _rendererContext.accessLowLevelRenderer().setOrdinalRenderCommandGroupPriority(_focusingModule.getControlID().getRawID(), 1);
                 }
 
@@ -237,10 +237,10 @@ namespace mint
 
                 if (_controlStack.empty())
                 {
-                    MINT_ASSERT(false, "end- È£Ãâ È½¼ö°¡ begin- È£Ãâ È½¼öº¸´Ù ¸¹½À´Ï´Ù!");
+                    MINT_ASSERT(false, "end- í˜¸ì¶œ íšŸìˆ˜ê°€ begin- í˜¸ì¶œ íšŸìˆ˜ë³´ë‹¤ ë§ìŠµë‹ˆë‹¤!");
                     return;
                 }
-                MINT_ASSERT(accessControlData(_controlStack.back()).getType() == ControlType::Window, "Control Stack ÀÌ ºñÁ¤»óÀûÀÔ´Ï´Ù!");
+                MINT_ASSERT(accessControlData(_controlStack.back()).getType() == ControlType::Window, "Control Stack ì´ ë¹„ì •ìƒì ì…ë‹ˆë‹¤!");
 
                 _controlStack.pop_back();
             }
@@ -287,7 +287,7 @@ namespace mint
 
                 const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
                 const float titleBarHeight = controlData._zones._titleBarZone.height();
-                ScopeVector<ShapeRendererContext::Split, 3> splits;
+                StackVector<ShapeRendererContext::Split, 3> splits;
                 splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
                 splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
                 _rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
@@ -483,8 +483,8 @@ namespace mint
                     const ControlID ancestorWindowControlID = findAncestorWindowControl(controlData.getID());
                     if (_focusingModule.isInteractingWith(ancestorWindowControlID) == false)
                     {
-                        // FocusedWindow ¿¡ ¼ÓÇÏÁö ¾ÊÀº ControlData ÀÎµ¥, FocusedWindow ¿µ¿ª ³»¿¡ Mouse °¡ ÀÖ´Â °æ¿ì,
-                        // interaction À» ÁøÇàÇÏÁö ¾Ê´Â´Ù!
+                        // FocusedWindow ì— ì†í•˜ì§€ ì•Šì€ ControlData ì¸ë°, FocusedWindow ì˜ì—­ ë‚´ì— Mouse ê°€ ìˆëŠ” ê²½ìš°,
+                        // interaction ì„ ì§„í–‰í•˜ì§€ ì•ŠëŠ”ë‹¤!
                         const ControlData& focusedControlData = accessControlData(_focusingModule.getControlID());
                         const Rect focusedControlRect = Rect(focusedControlData._absolutePosition, focusedControlData._size);
                         if (focusedControlRect.contains(mousePosition))
@@ -519,7 +519,7 @@ namespace mint
                     return;
                 }
 
-                // ÀÌ¹Ì Focus µÇ¾î ÀÖ´Â ÄÁÆ®·Ñ
+                // ì´ë¯¸ Focus ë˜ì–´ ìˆëŠ” ì»¨íŠ¸ë¡¤
                 if (_focusingModule.isInteractingWith(controlData.getID()) == true)
                 {
                     return;
@@ -541,7 +541,7 @@ namespace mint
 
             void GUIContext::updateControlData_interaction_resizing(ControlData& controlData)
             {
-                // Dragging Áß¿¡´Â Resizing À» ÇÏÁö ¾Ê´Â´Ù.
+                // Dragging ì¤‘ì—ëŠ” Resizing ì„ í•˜ì§€ ì•ŠëŠ”ë‹¤.
                 if (_draggingModule.isInteracting())
                 {
                     return;
@@ -596,7 +596,7 @@ namespace mint
                     return;
                 }
 
-                // Resizing Áß¿¡´Â Dragging À» ÇÏÁö ¾Ê´Â´Ù.
+                // Resizing ì¤‘ì—ëŠ” Dragging ì„ í•˜ì§€ ì•ŠëŠ”ë‹¤.
                 if (_resizingModule.isInteracting())
                 {
                     return;
@@ -610,7 +610,7 @@ namespace mint
                     return;
                 }
 
-                // ParentControl ¿¡ beginDragging À» È£ÃâÇßÁö¸¸ ChildControl °úµµ Interaction À» ÇÏ°í ÀÖ´Ù¸é ParentControl ¿¡ endDragging À» È£ÃâÇÑ´Ù.
+                // ParentControl ì— beginDragging ì„ í˜¸ì¶œí–ˆì§€ë§Œ ChildControl ê³¼ë„ Interaction ì„ í•˜ê³  ìˆë‹¤ë©´ ParentControl ì— endDragging ì„ í˜¸ì¶œí•œë‹¤.
                 const ControlData& parentControlData = accessControlData(controlData._parentID);
                 if (_draggingModule.isInteractingWith(parentControlData.getID()))
                 {
@@ -621,7 +621,7 @@ namespace mint
                     }
                 }
 
-                // TODO: Draggable Control ¿¡ ´ëÇÑ Ã³¸®µµ Ãß°¡
+                // TODO: Draggable Control ì— ëŒ€í•œ ì²˜ë¦¬ë„ ì¶”ê°€
                 const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
                 if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
                 {

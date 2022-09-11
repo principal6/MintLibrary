@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_SHAPE_RENDERER_CONTEXT_H
@@ -8,7 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
-#include <MintContainer/Include/ScopeVector.h>
+#include <MintContainer/Include/StackVector.h>
 
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/FontLoader.h>
@@ -118,7 +118,7 @@ namespace mint
             void            drawTexturedRectangle(const Float2& size, const float rotationAngle);
             void            drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
             void            drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
-            void            drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const ScopeVector<Split, 3>& splits, const float rotationAngle);
+            void            drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
             void            drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
             // Independent from internal position set by setPosition() call
             // No rotation allowed

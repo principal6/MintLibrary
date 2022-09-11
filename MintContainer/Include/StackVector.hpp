@@ -1,17 +1,17 @@
-#pragma once
+Ôªø#pragma once
 
 
 #ifndef _MINT_CONTAINER_SCOPE_VECTOR_HPP_
 #define _MINT_CONTAINER_SCOPE_VECTOR_HPP_
 
 
-#include <MintContainer/Include/ScopeVector.h>
+#include <MintContainer/Include/StackVector.h>
 
 
 namespace mint
 {
     template<typename T, const uint32 Capacity>
-    inline ScopeVector<T, Capacity>::ScopeVector()
+    inline StackVector<T, Capacity>::StackVector()
         : _array{}
         , _size{ 0 }
     {
@@ -19,29 +19,29 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline ScopeVector<T, Capacity>::~ScopeVector()
+    inline StackVector<T, Capacity>::~StackVector()
     {
         __noop;
     }
 
     template<typename T, uint32 Capacity>
-    inline T& ScopeVector<T, Capacity>::operator[](const uint32 index)
+    inline T& StackVector<T, Capacity>::operator[](const uint32 index)
     {
-        MINT_ASSERT(index < _size, "π¸¿ß∏¶ π˛æÓ≥≠ ¡¢±Ÿ¿‘¥œ¥Ÿ. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "Î≤îÏúÑÎ•º Î≤óÏñ¥ÎÇú Ï†ëÍ∑ºÏûÖÎãàÎã§. [index: %d / size: %d]", index, _size);
         return _array[index];
     }
 
     template<typename T, uint32 Capacity>
-    inline const T& ScopeVector<T, Capacity>::operator[](const uint32 index) const
+    inline const T& StackVector<T, Capacity>::operator[](const uint32 index) const
     {
-        MINT_ASSERT(index < _size, "π¸¿ß∏¶ π˛æÓ≥≠ ¡¢±Ÿ¿‘¥œ¥Ÿ. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "Î≤îÏúÑÎ•º Î≤óÏñ¥ÎÇú Ï†ëÍ∑ºÏûÖÎãàÎã§. [index: %d / size: %d]", index, _size);
         return _array[index];
     }
 
     template<typename T, uint32 Capacity>
-    inline void ScopeVector<T, Capacity>::resize(const uint32 size)
+    inline void StackVector<T, Capacity>::resize(const uint32 size)
     {
-        MINT_ASSERT(size <= Capacity, "size ¥¬ Capacity ∫∏¥Ÿ ƒø¡˙ ºˆ æ¯Ω¿¥œ¥Ÿ!", size, Capacity);
+        MINT_ASSERT(size <= Capacity, "size Îäî Capacity Î≥¥Îã§ Ïª§Ïßà Ïàò ÏóÜÏäµÎãàÎã§!", size, Capacity);
         if (size == _size)
         {
             return;
@@ -51,11 +51,11 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline void ScopeVector<T, Capacity>::push_back(const T& entry)
+    inline void StackVector<T, Capacity>::push_back(const T& entry)
     {
         if (full())
         {
-            MINT_ASSERT(false, "ScopeVector ∞° ¿ÃπÃ ∞°µÊ ¬˜¿÷Ω¿¥œ¥Ÿ!");
+            MINT_ASSERT(false, "StackVector Í∞Ä Ïù¥ÎØ∏ Í∞ÄÎìù Ï∞®ÏûàÏäµÎãàÎã§!");
             return;
         }
 
@@ -64,11 +64,11 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline void ScopeVector<T, Capacity>::push_back(T&& entry)
+    inline void StackVector<T, Capacity>::push_back(T&& entry)
     {
         if (full())
         {
-            MINT_ASSERT(false, "ScopeVector ∞° ¿ÃπÃ ∞°µÊ ¬˜¿÷Ω¿¥œ¥Ÿ!");
+            MINT_ASSERT(false, "StackVector Í∞Ä Ïù¥ÎØ∏ Í∞ÄÎìù Ï∞®ÏûàÏäµÎãàÎã§!");
             return;
         }
 
@@ -77,11 +77,11 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline void ScopeVector<T, Capacity>::pop_back()
+    inline void StackVector<T, Capacity>::pop_back()
     {
         if (empty())
         {
-            MINT_ASSERT(false, "ScopeVector ∞° ¿ÃπÃ ∫ÒæÓ ¿÷Ω¿¥œ¥Ÿ!");
+            MINT_ASSERT(false, "StackVector Í∞Ä Ïù¥ÎØ∏ ÎπÑÏñ¥ ÏûàÏäµÎãàÎã§!");
             return;
         }
 
@@ -89,7 +89,7 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline void ScopeVector<T, Capacity>::clear()
+    inline void StackVector<T, Capacity>::clear()
     {
         while (empty() == false)
         {
@@ -98,7 +98,7 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline T& ScopeVector<T, Capacity>::front()
+    inline T& StackVector<T, Capacity>::front()
     {
         if (_size == 0)
         {
@@ -108,7 +108,7 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline const T& ScopeVector<T, Capacity>::front() const
+    inline const T& StackVector<T, Capacity>::front() const
     {
         if (_size == 0)
         {
@@ -118,7 +118,7 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline T& ScopeVector<T, Capacity>::back()
+    inline T& StackVector<T, Capacity>::back()
     {
         if (_size == 0)
         {
@@ -128,7 +128,7 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    inline const T& ScopeVector<T, Capacity>::back() const
+    inline const T& StackVector<T, Capacity>::back() const
     {
         if (_size == 0)
         {
@@ -138,16 +138,16 @@ namespace mint
     }
 
     template<typename T, uint32 Capacity>
-    MINT_INLINE T& ScopeVector<T, Capacity>::at(const uint32 index) noexcept
+    MINT_INLINE T& StackVector<T, Capacity>::at(const uint32 index) noexcept
     {
-        MINT_ASSERT(index < _size, "π¸¿ß∏¶ π˛æÓ≥≠ ¡¢±Ÿ¿‘¥œ¥Ÿ.");
+        MINT_ASSERT(index < _size, "Î≤îÏúÑÎ•º Î≤óÏñ¥ÎÇú Ï†ëÍ∑ºÏûÖÎãàÎã§.");
         return _array[mint::min(index, _size - 1)];
     }
 
     template<typename T, uint32 Capacity>
-    MINT_INLINE const T& ScopeVector<T, Capacity>::at(const uint32 index) const noexcept
+    MINT_INLINE const T& StackVector<T, Capacity>::at(const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < _size, "π¸¿ß∏¶ π˛æÓ≥≠ ¡¢±Ÿ¿‘¥œ¥Ÿ.");
+        MINT_ASSERT(index < _size, "Î≤îÏúÑÎ•º Î≤óÏñ¥ÎÇú Ï†ëÍ∑ºÏûÖÎãàÎã§.");
         return _array[mint::min(index, _size - 1)];
     }
 }

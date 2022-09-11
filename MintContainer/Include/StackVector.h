@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef _MINT_CONTAINER_SCOPE_VECTOR_H_
@@ -11,11 +11,11 @@
 namespace mint
 {
     template<typename T, const uint32 Capacity>
-    class ScopeVector
+    class StackVector
     {
     public:
-                    ScopeVector();
-                    ~ScopeVector();
+                    StackVector();
+                    ~StackVector();
 
     public:
         T&          operator[](const uint32 index);

@@ -191,8 +191,8 @@
     <ClInclude Include="Include\Queue.hpp" />
     <ClInclude Include="Include\StackString.h" />
     <ClInclude Include="Include\StackString.hpp" />
-    <ClInclude Include="Include\ScopeVector.h" />
-    <ClInclude Include="Include\ScopeVector.hpp" />
+    <ClInclude Include="Include\StackVector.h" />
+    <ClInclude Include="Include\StackVector.hpp" />
     <ClInclude Include="Include\StackHolder.h" />
     <ClInclude Include="Include\StackHolder.hpp" />
     <ClInclude Include="Include\Array.h" />

@@ -1,9 +1,9 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
-#include <MintContainer/Include/ScopeVector.hpp>
+#include <MintContainer/Include/StackVector.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
@@ -196,7 +196,7 @@ namespace mint
 
             prepareTransformBuffer();
 
-            // TODO : Slot Ã³¸®...
+            // TODO : Slot ì²˜ë¦¬...
             _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
@@ -225,13 +225,13 @@ namespace mint
         {
             if (fontData._fontTextureID.isValid() == false)
             {
-                MINT_LOG_ERROR("FontData ÀÇ FontTexture °¡ Invalid ÇÕ´Ï´Ù!");
+                MINT_LOG_ERROR("FontData ì˜ FontTexture ê°€ Invalid í•©ë‹ˆë‹¤!");
                 return false;
             }
 
             if (fontData._glyphInfoArray.empty() == true)
             {
-                MINT_LOG_ERROR("FontData ÀÇ GlyphInfo °¡ ºñ¾î ÀÖ½À´Ï´Ù!");
+                MINT_LOG_ERROR("FontData ì˜ GlyphInfo ê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤!");
                 return false;
             }
 
@@ -318,7 +318,7 @@ namespace mint
                 setTextColor(Color(0, 40, 80));
 
                 FontRenderingOption fontRenderingOption;
-                drawDynamicText(L"Testing`!@#$%^&*()_+ °Ë»ç Áß...", Float4(screenOffset), fontRenderingOption);
+                drawDynamicText(L"Testing`!@#$%^&*()_+ ê²€ì‚¬ ì¤‘...", Float4(screenOffset), fontRenderingOption);
             }
         }
 
@@ -343,7 +343,7 @@ namespace mint
                 const Float3 ac = Float3(controlPoint - pointA);
                 const Float3 ab = Float3(pointB - pointA);
                 const Float3& cross = Float3::cross(ab, ac);
-                flip = (cross._z > 0.0f) ? 1 : 0; // y ÁÂÇ¥°è°¡ (¾Æ·¡°¡ + ¹æÇâÀ¸·Î) µÚÁıÇô ÀÖ¾î¼­ z °ª ºñ±³µµ µÚÁıÇû´Ù.
+                flip = (cross._z > 0.0f) ? 1 : 0; // y ì¢Œí‘œê³„ê°€ (ì•„ë˜ê°€ + ë°©í–¥ìœ¼ë¡œ) ë’¤ì§‘í˜€ ìˆì–´ì„œ z ê°’ ë¹„êµë„ ë’¤ì§‘í˜”ë‹¤.
             }
 
             VS_INPUT_SHAPE v;
@@ -1129,7 +1129,7 @@ namespace mint
             pushShapeTransformToBuffer(rotationAngle);
         }
 
-        void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const ScopeVector<Split, 3>& splits, const float rotationAngle)
+        void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle)
         {
             if (splits.size() < 2)
             {
@@ -1544,7 +1544,7 @@ namespace mint
                 glyphRect.top(glyphPosition._y + scaledFontHeight - static_cast<float>(glyphInfo._horiBearingY) * scale);
                 glyphRect.bottom(glyphRect.top() + static_cast<float>(glyphInfo._height) * scale);
                 if (glyphRect.right() >= 0.0f && glyphRect.left() <= _graphicDevice.getWindowSize()._x
-                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // È­¸éÀ» ¹ş¾î³ª¸é ·»´õ¸µ ÇÒ ÇÊ¿ä°¡ ¾øÀ¸¹Ç·Î
+                    && glyphRect.bottom() >= 0.0f && glyphRect.top() <= _graphicDevice.getWindowSize()._y) // í™”ë©´ì„ ë²—ì–´ë‚˜ë©´ ë Œë”ë§ í•  í•„ìš”ê°€ ì—†ìœ¼ë¯€ë¡œ
                 {
                     Vector<VS_INPUT_SHAPE>& vertices = _lowLevelRenderer->vertices();
 
@@ -1582,7 +1582,7 @@ namespace mint
                     {
                         Vector<IndexElementType>& indices = _lowLevelRenderer->indices();
                         const uint32 currentTotalTriangleVertexCount = static_cast<uint32>(vertices.size());
-                        // ¿À¸¥¼Õ ÁÂÇ¥°è
+                        // ì˜¤ë¥¸ì† ì¢Œí‘œê³„
                         indices.push_back((currentTotalTriangleVertexCount - 4) + 0);
                         indices.push_back((currentTotalTriangleVertexCount - 4) + 3);
                         indices.push_back((currentTotalTriangleVertexCount - 4) + 1);
