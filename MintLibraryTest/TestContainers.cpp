@@ -3,6 +3,9 @@
 #include <MintContainer/Include/AllHpps.h>
 
 
+#pragma optimize("", off)
+
+
 namespace mint
 {
     namespace TestContainers
@@ -376,44 +379,44 @@ namespace mint
         static bool testStringTypes() noexcept
         {
 #pragma region StackString
+            StackStringA<256> ss0{ "abcd" };
+            StackStringA<256> ss1 = ss0;
             {
-                StackStringA<256> a{ "abcd" };
-                StackStringA<256> b = a;
-                b += b;
-                b += b;
-                b += b;
-                b = "abcdefgh";
-                a = b.substr(3);
-                const uint32 found0 = b.rfind("def");
-                const uint32 found1 = b.rfind("fgh");
-                const uint32 found2 = b.rfind("ghi");
-                const uint32 found3 = b.rfind("abc");
-                const uint32 found4 = b.rfind("abcdc");
-                const uint32 found5 = b.rfind("zab");
-                if (b == "abcdefgh")
+                ss1 += ss1;
+                ss1 += ss1;
+                ss1 += ss1;
+                ss1 = "abcdefgh";
+                ss0 = ss1.substr(3);
+                const uint32 found0 = ss1.rfind("def");
+                const uint32 found1 = ss1.rfind("fgh");
+                const uint32 found2 = ss1.rfind("ghi");
+                const uint32 found3 = ss1.rfind("abc");
+                const uint32 found4 = ss1.rfind("abcdc");
+                const uint32 found5 = ss1.rfind("zab");
+                if (ss1 == "abcdefgh")
                 {
-                    a = b;
+                    ss0 = ss1;
                 }
-                if (a == b)
+                if (ss0 == ss1)
                 {
-                    b = "YEAH!";
+                    ss1 = "YEAH!";
                 }
             }
 #pragma endregion
 
 #pragma region UniqueString
+            UniqueStringA us0{ "ab" };
+            UniqueStringA us1{ "cdef" };
+            UniqueStringA us2{ "ab" };
+            UniqueStringA us3{ "" };
+            UniqueStringA us4{ nullptr };
+            UniqueStringA us5;
+            UniqueStringA us6 = us3;
+            UniqueStringA us7{ us1 };
             {
-                UniqueStringA a{ "ab" };
-                UniqueStringA b{ "cdef" };
-                UniqueStringA c{ "ab" };
-                UniqueStringA d{ "" };
-                UniqueStringA e{ nullptr };
-                UniqueStringA f;
-                UniqueStringA g = d;
-                UniqueStringA h{ b };
-                g = a;
-                a = b;
-                const bool cmp0 = (a == b);
+                us6 = us0;
+                us0 = us1;
+                const bool cmp0 = (us0 == us1);
             }
 #pragma endregion
 
@@ -468,33 +471,40 @@ namespace mint
 #endif
 #pragma endregion
 
-            StringA stringA = StringA("Hello, there! My friend!!!");
-            stringA += "I'm testing...";
+            StringA sa0 = StringA("Hello, there! My friend!!!");
+            sa0 += "I'm testing...";
 
-            StringA stringSmallA = StringA("abcde");
-            stringSmallA.resize(3);
-            stringSmallA += "+testing...";
-            stringSmallA += "+testing..!";
-            stringSmallA.clear();
+            StringA saSmall0 = StringA("abcde");
+            saSmall0.resize(3);
+            saSmall0 += "+testing...";
+            saSmall0 += "+testing..!";
+            saSmall0.clear();
             
-            StringA stringA1 = StringA("Hello, there! My friend!!!") + " This is test for append function!";
+            StringA sa1 = StringA("Hello, there! My friend!!!") + " This is test for append function!";
 
-            StringW stringW = StringW(L"Hello, there!");
-            stringW += L" I'm testing...";
+            StringW sw0 = StringW(L"Hello, there!");
+            sw0 += L" I'm testing...";
 
-            StringW stringW1 = StringW(L"TestStringW1");
-            stringW1 += L" ";
-            stringW1 += stringW;
+            StringW sw1 = StringW(L"TestStringW1");
+            sw1 += L" ";
+            sw1 += sw0;
 
-            StringW ss = stringW1.substr(4, 6);
+            StringW sw2 = sw1.substr(4, 6);
 
-            const uint32 found = stringW1.find(L"Str", 3);
-            stringW1.resize(3);
-            stringW1.resize(10, 'z');
-            const uint64 hash = stringW1.computeHash();
+            const uint32 found = sw1.find(L"Str", 3);
+            sw1.resize(3);
+            sw1.resize(10, 'z');
+            const uint64 hash = sw1.computeHash();
 
-            const bool cmp0 = (ss == stringW1);
-            const bool cmp1 = (ss == StringW(L"String"));
+            const bool cmp0 = (sw2 == sw1);
+            const bool cmp1 = (sw2 == StringW(L"String"));
+
+            StringView sv0{ ss0 };
+            StringView sv1{ us0 };
+            StringView sv2{ sa0 };
+            StringView sv3{ sw0 };
+            const bool svCmp0 = sv0 == sv1;
+            //const bool svCmp1 = sv2 == sv3;
 
             return true;
         }

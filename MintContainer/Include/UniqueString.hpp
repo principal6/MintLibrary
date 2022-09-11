@@ -44,9 +44,8 @@ namespace mint
     template <typename T>
     inline UniqueString<T>::UniqueString()
         : _id{ kInvalidID }
-#if defined MINT_DEBUG
-        , _str{}
-#endif
+        , _str{ nullptr }
+        , _length{ 0 }
     {
         __noop;
     }
@@ -54,25 +53,12 @@ namespace mint
     template <typename T>
     inline UniqueString<T>::UniqueString(const T* const rawString)
         : _id{ _pool.registerString(rawString) }
-#if defined MINT_DEBUG
         , _str{ _pool.getRawString(_id) }
-#endif
+        , _length{ StringUtil::length(_str) }
     {
         __noop;
     }
-
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    template <typename T>
-    inline UniqueString<T>::UniqueString(const UniqueStringID<T> id)
-        : _id{ (_pool.isValid(id)) ? id : UniqueString::kInvalidID }
-#if defined MINT_DEBUG
-        , _str{ _pool.getRawString(_id) }
-#endif
-    {
-        __noop;
-    }
-#endif
-
+    
     template <typename T>
     MINT_INLINE bool UniqueString<T>::operator==(const UniqueString<T>& rhs) const noexcept
     {
@@ -88,16 +74,14 @@ namespace mint
     template <typename T>
     MINT_INLINE const T* UniqueString<T>::c_str() const noexcept
     {
-        return _pool.getRawString(_id);
+        return _str;
     }
-
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
+    
     template <typename T>
-    MINT_INLINE UniqueStringID<T> UniqueString<T>::getID() const noexcept
+    MINT_INLINE uint32 UniqueString<T>::length() const noexcept
     {
-        return _id;
+        return _length;
     }
-#endif
 #pragma endregion
 
 

@@ -202,6 +202,8 @@
     <ClInclude Include="Include\String.hpp" />
     <ClInclude Include="Include\StringUtil.h" />
     <ClInclude Include="Include\StringUtil.hpp" />
+    <ClInclude Include="Include\StringView.h" />
+    <ClInclude Include="Include\StringView.hpp" />
     <ClInclude Include="Include\Tree.h" />
     <ClInclude Include="Include\Tree.hpp" />
     <ClInclude Include="Include\UniqueString.h" />

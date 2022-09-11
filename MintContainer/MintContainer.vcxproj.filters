@@ -101,6 +101,12 @@
     </ClInclude>
     <ClInclude Include="Include\StackVector.h" />
     <ClInclude Include="Include\StackVector.hpp" />
+    <ClInclude Include="Include\StringView.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StringView.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">

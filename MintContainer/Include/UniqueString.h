@@ -13,9 +13,6 @@
 #include <MintContainer/Include/HashMap.h>
 
 
-//#define MINT_UNIQUE_STRING_EXPOSE_ID
-
-
 namespace mint
 {
     template <typename T>
@@ -26,6 +23,9 @@ namespace mint
 
     template <typename T>
     class UniqueStringPool;
+
+    template<typename T>
+    class StringView;
     
     using UniqueStringA = UniqueString<char>;
     using UniqueStringW = UniqueString<wchar_t>;
@@ -37,6 +37,7 @@ namespace mint
     template <typename T>
     class UniqueStringID
     {
+        friend StringView;
         friend UniqueString;
         friend UniqueStringPool;
 
@@ -46,9 +47,7 @@ namespace mint
     public:
                                 UniqueStringID();
 
-#if !defined MINT_UNIQUE_STRING_EXPOSE_ID
     private:
-#endif
                                 UniqueStringID(const uint32 newRawID);
 
     public:
@@ -56,19 +55,11 @@ namespace mint
                                 UniqueStringID(UniqueStringID&& rhs) noexcept = default;
                                 ~UniqueStringID() = default;
 
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    public:
-#else
     private:
-#endif
         UniqueStringID&         operator=(const UniqueStringID& rhs) = default;
         UniqueStringID&         operator=(UniqueStringID && rhs) noexcept = default;
         
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    public:
-#else
     private:
-#endif
         bool                    operator==(const UniqueStringID& rhs) const noexcept;
         bool                    operator!=(const UniqueStringID& rhs) const noexcept;
 
@@ -80,15 +71,17 @@ namespace mint
     template <typename T>
     class UniqueString
     {
+        friend StringView;
+
     public:
         static const UniqueStringID<T>  kInvalidID;
+
+    private:
+        static UniqueStringPool<T>      _pool;
 
     public:
                                         UniqueString();
     explicit                            UniqueString(const T* const rawString);
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
-    explicit                            UniqueString(const UniqueStringID<T> id);
-#endif
                                         UniqueString(const UniqueString& rhs) = default;
                                         UniqueString(UniqueString&& rhs) noexcept = default;
                                         ~UniqueString() = default;
@@ -103,20 +96,12 @@ namespace mint
 
     public:
         const T*                        c_str() const noexcept;
-#if defined MINT_UNIQUE_STRING_EXPOSE_ID
-        UniqueStringID<T>               getID() const noexcept;
-#endif
-
-    private:
-        static UniqueStringPool<T>      _pool;
+        uint32                          length() const noexcept;
 
     private:
         UniqueStringID<T>               _id;
-
-#if defined MINT_DEBUG
-    private:
         const T*                        _str;
-#endif
+        uint32                          _length;
     };
     
 
