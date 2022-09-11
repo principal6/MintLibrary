@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef _MINT_FONT_LOADER_H_
@@ -7,6 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/Vector.h>
 #include <MintMath/Include/Float2.h>
 
 

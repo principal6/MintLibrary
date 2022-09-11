@@ -1,7 +1,11 @@
 ﻿#include <stdafx.h>
 #include <MintRenderingBase/Include/FontLoader.h>
 
+#include <MintContainer/Include/Vector.hpp>
+#include <MintPlatform/Include/FileUtil.hpp>
 #include <MintPlatform/Include/BinaryFile.hpp>
+#include <MintLibrary/Include/Algorithm.hpp>
+#include <MintRenderingBase/Include/GraphicDevice.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
