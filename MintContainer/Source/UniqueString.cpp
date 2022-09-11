@@ -1,4 +1,4 @@
-#include <MintContainer/Include/UniqueString.h>
+﻿#include <MintContainer/Include/UniqueString.h>
 #include <MintContainer/Include/UniqueString.hpp>
 
 #include <MintContainer/Include/Hash.hpp>
@@ -61,13 +61,10 @@ namespace mint
             return UniqueStringA::kInvalidID;
         }
 
-        const uint64 hash = computeHash(rawString);
+        auto found = _registrationMap.find(rawString);
+        if (found.isValid() == true)
         {
-            auto found = _registrationMap.find(hash);
-            if (found.isValid() == true)
-            {
-                return *found._value;
-            }
+            return *found._value;
         }
 
         const uint32 lengthNullIncluded = StringUtil::length(rawString) + 1;
@@ -82,7 +79,7 @@ namespace mint
 
         _totalLength += lengthNullIncluded;
         ++_uniqueStringCount;
-        _registrationMap.insert(hash, newID);
+        _registrationMap.insert(rawString, newID);
 
         return newID;
     }

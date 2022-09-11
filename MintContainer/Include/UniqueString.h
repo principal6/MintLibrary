@@ -111,30 +111,30 @@ namespace mint
     {
         friend UniqueStringA;
 
-        static constexpr uint32             kDefaultRawCapacity = 1024;
+        static constexpr uint32     kDefaultRawCapacity = 1024;
 
     private:
-                                            UniqueStringPoolA();
-                                            ~UniqueStringPoolA();
+                                    UniqueStringPoolA();
+                                    ~UniqueStringPoolA();
 
     public:
-        UniqueStringAID                     registerString(const char* const rawString) noexcept;
-        bool                                isValid(const UniqueStringAID id) const noexcept;
-        const char*                         getRawString(const UniqueStringAID id) const noexcept;
+        UniqueStringAID             registerString(const char* const rawString) noexcept;
+        bool                        isValid(const UniqueStringAID id) const noexcept;
+        const char*                 getRawString(const UniqueStringAID id) const noexcept;
 
     public:
-        void                                reserve(const uint32 rawCapacity);
+        void                        reserve(const uint32 rawCapacity);
 
     private:
-        std::mutex                          _mutex;
-        HashMap<uint64, UniqueStringAID>    _registrationMap;
+        std::mutex                  _mutex;
+        HashMap<const char*, UniqueStringAID>   _registrationMap;
 
     private:
-        Vector<uint32>                      _offsetArray;
-        char*                               _rawMemory;
-        uint32                              _rawCapacity;
-        uint32                              _totalLength;
-        uint32                              _uniqueStringCount;
+        Vector<uint32>              _offsetArray;
+        char*                       _rawMemory;
+        uint32                      _rawCapacity;
+        uint32                      _totalLength;
+        uint32                      _uniqueStringCount;
     };
 }
 
