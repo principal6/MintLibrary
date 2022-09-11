@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 namespace mint
@@ -36,8 +36,8 @@ namespace mint
         lhs.get(l);
         float r[4];
         rhs.get(r);
-        const __m128 a = _mm_mul_ps(_mm_set_ps(0.0f, l[0], l[2], l[1]), _mm_set_ps(0.0f, r[1], r[0], r[2])); // ¼ø¼­¿¡ ÁÖÀÇ!!!
-        const __m128 b = _mm_mul_ps(_mm_set_ps(0.0f, l[1], l[0], l[2]), _mm_set_ps(0.0f, r[0], r[2], r[1])); // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        const __m128 a = _mm_mul_ps(_mm_set_ps(0.0f, l[0], l[2], l[1]), _mm_set_ps(0.0f, r[1], r[0], r[2])); // ìˆœì„œì— ì£¼ì˜!!!
+        const __m128 b = _mm_mul_ps(_mm_set_ps(0.0f, l[1], l[0], l[2]), _mm_set_ps(0.0f, r[0], r[2], r[1])); // ìˆœì„œì— ì£¼ì˜!!!
         // x == ly * rz - lz * ry
         // y == lz * rx - lx * rz
         // z == lx * ry - ly * rx
@@ -56,8 +56,8 @@ namespace mint
         lhs.get(l);
         double r[4];
         rhs.get(r);
-        const __m256d a = _mm256_mul_pd(_mm256_set_pd(0.0f, l[0], l[2], l[1]), _mm256_set_pd(0.0f, r[1], r[0], r[2])); // ¼ø¼­¿¡ ÁÖÀÇ!!!
-        const __m256d b = _mm256_mul_pd(_mm256_set_pd(0.0f, l[1], l[0], l[2]), _mm256_set_pd(0.0f, r[0], r[2], r[1])); // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        const __m256d a = _mm256_mul_pd(_mm256_set_pd(0.0f, l[0], l[2], l[1]), _mm256_set_pd(0.0f, r[1], r[0], r[2])); // ìˆœì„œì— ì£¼ì˜!!!
+        const __m256d b = _mm256_mul_pd(_mm256_set_pd(0.0f, l[1], l[0], l[2]), _mm256_set_pd(0.0f, r[0], r[2], r[1])); // ìˆœì„œì— ì£¼ì˜!!!
         // x == ly * rz - lz * ry
         // y == lz * rx - lx * rz
         // z == lx * ry - ly * rx
@@ -79,7 +79,7 @@ namespace mint
     }
 
     inline AffineVec<float>::AffineVec(const float x, const float y, const float z, const float w)
-        : _raw{ _mm_set_ps(w, z, y, x) } // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        : _raw{ _mm_set_ps(w, z, y, x) } // ìˆœì„œì— ì£¼ì˜!!!
     {
         __noop;
     }
@@ -211,7 +211,7 @@ namespace mint
 
     MINT_INLINE void AffineVec<float>::set(const float x, const float y, const float z, const float w) noexcept
     {
-        _raw = _mm_set_ps(w, z, y, x); // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        _raw = _mm_set_ps(w, z, y, x); // ìˆœì„œì— ì£¼ì˜!!!
     }
 
     MINT_INLINE void AffineVec<float>::setComponent(const int32 i, const float scalar) noexcept
@@ -280,7 +280,7 @@ namespace mint
     }
 
     inline AffineVec<double>::AffineVec(const double x, const double y, const double z, const double w)
-        : _raw{ _mm256_set_pd(w, z, y, x) } // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        : _raw{ _mm256_set_pd(w, z, y, x) } // ìˆœì„œì— ì£¼ì˜!!!
     {
         __noop;
     }
@@ -412,7 +412,7 @@ namespace mint
 
     MINT_INLINE void AffineVec<double>::set(const double x, const double y, const double z, const double w) noexcept
     {
-        _raw = _mm256_set_pd(w, z, y, x); // ¼ø¼­¿¡ ÁÖÀÇ!!!
+        _raw = _mm256_set_pd(w, z, y, x); // ìˆœì„œì— ì£¼ì˜!!!
     }
 
     MINT_INLINE void AffineVec<double>::setComponent(const int32 i, const double scalar) noexcept

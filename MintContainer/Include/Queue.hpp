@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_CONTAINER_QUEUE_HPP
@@ -33,7 +33,7 @@ namespace mint
     template<typename T>
     MINT_INLINE void Queue<T>::reserve(uint32 capacity) noexcept
     {
-        capacity = mint::max(capacity, static_cast<uint32>(1)); // capacity °¡ 0 ÀÌ µÇÁö ¾Êµµ·Ï º¸Àå!
+        capacity = mint::max(capacity, static_cast<uint32>(1)); // capacity ê°€ 0 ì´ ë˜ì§€ ì•Šë„ë¡ ë³´ì¥!
         if (capacity < _capacity)
         {
             return;
@@ -170,14 +170,14 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Queue<T>::peek() noexcept
     {
-        MINT_ASSERT(_size > 0, "_size °¡ 0 ÀÎ Queue ÀÔ´Ï´Ù!!!");
+        MINT_ASSERT(_size > 0, "_size ê°€ 0 ì¸ Queue ì…ë‹ˆë‹¤!!!");
         return _rawPointer[_headAt];
     }
 
     template<typename T>
     MINT_INLINE const T& Queue<T>::peek() const noexcept
     {
-        MINT_ASSERT(_size > 0, "_size °¡ 0 ÀÎ Queue ÀÔ´Ï´Ù!!!");
+        MINT_ASSERT(_size > 0, "_size ê°€ 0 ì¸ Queue ì…ë‹ˆë‹¤!!!");
         return _rawPointer[_headAt];
     }
 }

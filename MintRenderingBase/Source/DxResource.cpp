@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/DxResource.h>
 
 #include <MintContainer/Include/Vector.hpp>
@@ -24,7 +24,7 @@ namespace mint
             default:
                 break;
             }
-            MINT_ASSERT(false, "¹ÌÁö¿ø Texture Format ÀÔ´Ï´Ù!!!");
+            MINT_ASSERT(false, "ë¯¸ì§€ì› Texture Format ì…ë‹ˆë‹¤!!!");
             return DXGI_FORMAT();
         }
 
@@ -39,7 +39,7 @@ namespace mint
             default:
                 break;
             }
-            MINT_ASSERT(false, "¹ÌÁö¿ø Texture Format ÀÔ´Ï´Ù!!!");
+            MINT_ASSERT(false, "ë¯¸ì§€ì› Texture Format ì…ë‹ˆë‹¤!!!");
             return 0;
         }
 
@@ -244,16 +244,16 @@ namespace mint
         {
             if (resourceContent == nullptr)
             {
-                MINT_LOG_ERROR("nullptr ÀÎ µ¥ÀÌÅÍ°¡ µé¾î¿À¸é ¾È µË´Ï´Ù!");
+                MINT_LOG_ERROR("nullptr ì¸ ë°ì´í„°ê°€ ë“¤ì–´ì˜¤ë©´ ì•ˆ ë©ë‹ˆë‹¤!");
                 return;
             }
 
             const bool needToReset = (_elementStride != elementStride) || (_elementMaxCount < elementCount);
             if (needToReset == true)
             {
-                // elementStride => ÀÚ·áÇüÀÌ ´Ş¶óÁø °æ¿ì
-                // elementCount => µ¥ÀÌÅÍ°¡ ´Ã¾î³­ °æ¿ì
-                // ¹öÆÛ Àç»ı¼º
+                // elementStride => ìë£Œí˜•ì´ ë‹¬ë¼ì§„ ê²½ìš°
+                // elementCount => ë°ì´í„°ê°€ ëŠ˜ì–´ë‚œ ê²½ìš°
+                // ë²„í¼ ì¬ìƒì„±
 
                 if (_resourceType < DxResourceType::Texture2D)
                 {
@@ -263,7 +263,7 @@ namespace mint
                 {
                     if (width == 0)
                     {
-                        MINT_LOG_ERROR("Texture ÀÇ Width °¡ 0 ÀÌ¸é ¾È µË´Ï´Ù!!!");
+                        MINT_LOG_ERROR("Texture ì˜ Width ê°€ 0 ì´ë©´ ì•ˆ ë©ë‹ˆë‹¤!!!");
                         return;
                     }
 
@@ -319,7 +319,7 @@ namespace mint
             }
             else
             {
-                MINT_LOG_ERROR("bindToShader ¸¦ È£ÃâÇØ¾ß ÇÕ´Ï´Ù!");
+                MINT_LOG_ERROR("bindToShader ë¥¼ í˜¸ì¶œí•´ì•¼ í•©ë‹ˆë‹¤!");
             }
 
             _needToBind = false;
@@ -343,7 +343,7 @@ namespace mint
                 }
                 else
                 {
-                    MINT_LOG_ERROR("¹ÌÁö¿ø ShaderType ÀÔ´Ï´Ù!");
+                    MINT_LOG_ERROR("ë¯¸ì§€ì› ShaderType ì…ë‹ˆë‹¤!");
                 }
             }
             else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
@@ -362,12 +362,12 @@ namespace mint
                 }
                 else
                 {
-                    MINT_LOG_ERROR("¹ÌÁö¿ø ShaderType ÀÔ´Ï´Ù!");
+                    MINT_LOG_ERROR("ë¯¸ì§€ì› ShaderType ì…ë‹ˆë‹¤!");
                 }
             }
             else
             {
-                MINT_LOG_ERROR("bindAsInpt À» È£ÃâÇØ¾ß ÇÕ´Ï´Ù!");
+                MINT_LOG_ERROR("bindAsInpt ì„ í˜¸ì¶œí•´ì•¼ í•©ë‹ˆë‹¤!");
             }
 
             _needToBind = false;
@@ -392,7 +392,7 @@ namespace mint
                 _resourceArray.push_back(std::move(resource));
                 return _resourceArray.back().getID();
             }
-            MINT_ASSERT(false, "pushConstantBuffer ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+            MINT_ASSERT(false, "pushConstantBuffer ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -407,7 +407,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT(false, "pushVertexBuffer ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+            MINT_ASSERT(false, "pushVertexBuffer ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -422,7 +422,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT(false, "pushIndexBuffer ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+            MINT_ASSERT(false, "pushIndexBuffer ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -439,7 +439,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT(false, "pushStructuredBuffer ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+            MINT_ASSERT(false, "pushStructuredBuffer ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -454,7 +454,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
 
-            MINT_ASSERT(false, "pushTexture2D ¿¡ ½ÇÆĞÇß½À´Ï´Ù!");
+            MINT_ASSERT(false, "pushTexture2D ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!");
             return DxObjectID::kInvalidObjectID;
         }
 
@@ -486,7 +486,7 @@ namespace mint
                 return _resourceArray[index];
             }
 
-            MINT_ASSERT(false, "Resource ¸¦ Ã£Áö ¸øÇß½À´Ï´Ù!!!");
+            MINT_ASSERT(false, "Resource ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤!!!");
             return DxResource::s_invalidInstance;
         }
     }

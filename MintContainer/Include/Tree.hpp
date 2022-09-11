@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #include <stdafx.h>
@@ -168,7 +168,7 @@ namespace mint
     inline void TreeNode<T>::invalidate() noexcept
     {
         _nodeID = TreeNodeAccessor<T>::kInvalidNodeID;
-        _data = T(); // T °¡ µ¿Àû ÇÒ´çµÈ ¸Ş¸ğ¸®¸¦ µé°í ÀÖ´Ù¸é ÀÌ°Ô ´õ ºñ¿ëÀÌ ½Ò °¡´É¼ºÀÌ ³ôÀ¸¹Ç·Î...
+        _data = T(); // T ê°€ ë™ì  í• ë‹¹ëœ ë©”ëª¨ë¦¬ë¥¼ ë“¤ê³  ìˆë‹¤ë©´ ì´ê²Œ ë” ë¹„ìš©ì´ ìŒ€ ê°€ëŠ¥ì„±ì´ ë†’ìœ¼ë¯€ë¡œ...
         _parentNodeAccessor = TreeNodeAccessor<T>::kInvalidTreeNodeAccessor;
     }
 
@@ -222,7 +222,7 @@ namespace mint
     inline TreeNodeAccessor<T> Tree<T>::getRootNode() noexcept
     {
         const TreeNode<T>& rootNode = _nodeArray.front();
-        return TreeNodeAccessor<T>::TreeNodeAccessor(this, static_cast<uint32>(0), rootNode._nodeID); // this == Tree<T>* °¡ const ÀÌ¸é ¾È µÇ¹Ç·Î ÀÌ ÇÔ¼ö´Â const ÇÔ¼öÀÏ ¼ö ¾ø´Ù!!!
+        return TreeNodeAccessor<T>::TreeNodeAccessor(this, static_cast<uint32>(0), rootNode._nodeID); // this == Tree<T>* ê°€ const ì´ë©´ ì•ˆ ë˜ë¯€ë¡œ ì´ í•¨ìˆ˜ëŠ” const í•¨ìˆ˜ì¼ ìˆ˜ ì—†ë‹¤!!!
     }
 
     template<typename T>
@@ -422,7 +422,7 @@ namespace mint
 
             if (childAt == kUint32Max)
             {
-                MINT_ASSERT(false, "ÀÚ½ÄÀÌ ¾Æ´Ñ ³ëµå¸¦ Áö¿ì·Á ÇÕ´Ï´Ù...!!!");
+                MINT_ASSERT(false, "ìì‹ì´ ì•„ë‹Œ ë…¸ë“œë¥¼ ì§€ìš°ë ¤ í•©ë‹ˆë‹¤...!!!");
                 return;
             }
 
@@ -436,11 +436,11 @@ namespace mint
                 }
             }
 
-            // childNode ¸¦ _nodeArray ¿¡¼­ Á¦°Å
+            // childNode ë¥¼ _nodeArray ì—ì„œ ì œê±°
             TreeNode<T>& childNode = getNodeXXX(childNodeAccessor);
             childNode.invalidate();
 
-            // childNodeAccessor ¸¦ node ÀÇ _childNodeAccessorArray ¿¡¼­ Á¦°Å
+            // childNodeAccessor ë¥¼ node ì˜ _childNodeAccessorArray ì—ì„œ ì œê±°
             node._childNodeAccessorArray.erase(node._childNodeAccessorArray.begin() + childAt);
 
             --_nodeCount;
@@ -463,11 +463,11 @@ namespace mint
 
                     clearChildNodes(childNodeAccessor);
 
-                    // childNode ¸¦ _nodeArray ¿¡¼­ Á¦°Å
+                    // childNode ë¥¼ _nodeArray ì—ì„œ ì œê±°
                     TreeNode<T>& childNode = getNodeXXX(childNodeAccessor);
                     childNode.invalidate();
 
-                    // childNodeAccessor ¸¦ node ÀÇ _childNodeAccessorArray ¿¡¼­ Á¦°Å
+                    // childNodeAccessor ë¥¼ node ì˜ _childNodeAccessorArray ì—ì„œ ì œê±°
                     node._childNodeAccessorArray.erase(childIndex);
 
                     --_nodeCount;
@@ -486,7 +486,7 @@ namespace mint
 
         if (getRootNode() == nodeAccessor)
         {
-            MINT_ASSERT(false, "·çÆ® ³ëÆ®¸¦ ¿Å±æ ¼ö ¾ø½À´Ï´Ù!!!");
+            MINT_ASSERT(false, "ë£¨íŠ¸ ë…¸íŠ¸ë¥¼ ì˜®ê¸¸ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!!!");
             return;
         }
 
@@ -505,7 +505,7 @@ namespace mint
                 }
             }
 
-            MINT_ASSERT(childAt != kUint32Max, "¹ß»ıÇÏ¸é ¾È µÇ´Â »óÈ²!!!");
+            MINT_ASSERT(childAt != kUint32Max, "ë°œìƒí•˜ë©´ ì•ˆ ë˜ëŠ” ìƒí™©!!!");
 
             oldParnetNode._childNodeAccessorArray.erase(childAt);
         }

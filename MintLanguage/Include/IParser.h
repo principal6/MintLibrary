@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_LANGUAGE_I_PARSER_H
@@ -99,14 +99,14 @@ namespace mint
         private:
             static constexpr const char* const kErrorTypeStringArray[][2]
             {
-                { "Grouper mismatch"                    ,  "¿­°í ´Ý´Â ±âÈ£°¡ ¼­·Î ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù."                                      },
-                { "No matching grouper"                 ,  "¿©´Â ±âÈ£¸¸ ÀÖ°í ´Ý´Â ±âÈ£°¡ ¾ø½À´Ï´Ù."                                        },
-                { "Wrong predecessor"                   ,  "¾Õ¿¡ ¿Â °ÍÀÌ ¹®¹ýÀûÀ¸·Î ¸ÂÁö ¾Ê½À´Ï´Ù."                                        },
-                { "Wrong successor"                     ,  "µÚ¿¡ ¿Â °ÍÀÌ ¹®¹ýÀûÀ¸·Î ¸ÂÁö ¾Ê½À´Ï´Ù."                                        },
-                { "Lack of code"                        ,  "´õ ÀÖ¾î¾ß ÇÒ ÄÚµå°¡ ¾ø½À´Ï´Ù."                                                 },
-                { "Repetition of code"                  ,  "ÄÚµå°¡ Áßº¹µË´Ï´Ù."                                                            },
-                { "Symbol not found"                    ,  "ÇØ´ç ½Éº¼À» Ã£À» ¼ö ¾ø½À´Ï´Ù."                                                 },
-                { "Wrong scope"                         ,  "ÀÌ°÷¿¡ »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù."                                                    },
+                { "Grouper mismatch"                    ,  "ì—´ê³  ë‹«ëŠ” ê¸°í˜¸ê°€ ì„œë¡œ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."                                      },
+                { "No matching grouper"                 ,  "ì—¬ëŠ” ê¸°í˜¸ë§Œ ìžˆê³  ë‹«ëŠ” ê¸°í˜¸ê°€ ì—†ìŠµë‹ˆë‹¤."                                        },
+                { "Wrong predecessor"                   ,  "ì•žì— ì˜¨ ê²ƒì´ ë¬¸ë²•ì ìœ¼ë¡œ ë§žì§€ ì•ŠìŠµë‹ˆë‹¤."                                        },
+                { "Wrong successor"                     ,  "ë’¤ì— ì˜¨ ê²ƒì´ ë¬¸ë²•ì ìœ¼ë¡œ ë§žì§€ ì•ŠìŠµë‹ˆë‹¤."                                        },
+                { "Lack of code"                        ,  "ë” ìžˆì–´ì•¼ í•  ì½”ë“œê°€ ì—†ìŠµë‹ˆë‹¤."                                                 },
+                { "Repetition of code"                  ,  "ì½”ë“œê°€ ì¤‘ë³µë©ë‹ˆë‹¤."                                                            },
+                { "Symbol not found"                    ,  "í•´ë‹¹ ì‹¬ë³¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."                                                 },
+                { "Wrong scope"                         ,  "ì´ê³³ì— ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤."                                                    },
             };
 
         protected:

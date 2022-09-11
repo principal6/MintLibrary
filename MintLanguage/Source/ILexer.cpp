@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintLanguage/Include/ILexer.h>
 
 #include <MintContainer/Include/Hash.hpp>
@@ -99,7 +99,7 @@ namespace mint
             const uint32 lengthClose = StringUtil::length(lineSkipperClose);
             if ((lengthOpen == 0 || lengthOpen > 2) || (lengthClose == 0 || lengthClose > 2))
             {
-                MINT_LOG_ERROR("lineSkipper ÀÇ ±æÀÌ°¡ Àß¸øµÇ¾ú½À´Ï´Ù!! ÇöÀç ±æÀÌ: Open[%d] Close[%d]", lengthOpen, lengthClose);
+                MINT_LOG_ERROR("lineSkipper ì˜ ê¸¸ì´ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤!! í˜„ì¬ ê¸¸ì´: Open[%d] Close[%d]", lengthOpen, lengthClose);
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace mint
             const uint32 length = StringUtil::length(lineSkipper);
             if (length == 0 || length > 2)
             {
-                MINT_LOG_ERROR("lineSkipper ÀÇ ±æÀÌ°¡ Àß¸øµÇ¾ú½À´Ï´Ù!! ÇöÀç ±æÀÌ: %d", length);
+                MINT_LOG_ERROR("lineSkipper ì˜ ê¸¸ì´ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤!! í˜„ì¬ ê¸¸ì´: %d", length);
                 return;
             }
 
@@ -196,7 +196,7 @@ namespace mint
             const uint32 length = StringUtil::length(punctuator);
             if (length == 0 || length > 3)
             {
-                MINT_LOG_ERROR("punctuator ÀÇ ±æÀÌ°¡ Àß¸øµÇ¾ú½À´Ï´Ù!! ÇöÀç ±æÀÌ: %d", length);
+                MINT_LOG_ERROR("punctuator ì˜ ê¸¸ì´ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤!! í˜„ì¬ ê¸¸ì´: %d", length);
                 return;
             }
 
@@ -215,12 +215,12 @@ namespace mint
             const uint32 length = StringUtil::length(operator_);
             if (length == 0 || length > 2)
             {
-                MINT_LOG_ERROR("operator ÀÇ ±æÀÌ°¡ Àß¸øµÇ¾ú½À´Ï´Ù!! ÇöÀç ±æÀÌ: %d", length);
+                MINT_LOG_ERROR("operator ì˜ ê¸¸ì´ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤!! í˜„ì¬ ê¸¸ì´: %d", length);
                 return;
             }
             if (operatorClassifier == OperatorClassifier::COUNT)
             {
-                MINT_LOG_ERROR("Àß¸øµÈ OperatorClassifier!!");
+                MINT_LOG_ERROR("ì˜ëª»ëœ OperatorClassifier!!");
                 return;
             }
 
@@ -243,8 +243,8 @@ namespace mint
         bool ILexer::executeDefault() noexcept
         {
             // Preprocessor
-            // line ´ÜÀ§ parsing
-            // comment µµ °Å¸£±â!
+            // line ë‹¨ìœ„ parsing
+            // comment ë„ ê±°ë¥´ê¸°!
             {
                 std::string preprocessedSource;
 
@@ -326,7 +326,7 @@ namespace mint
                             }
                             else
                             {
-                                MINT_ASSERT(false, "¾ÆÁ÷ Áö¿øµÇÁö ¾Ê´Â LineSkipperSemantic ÀÔ´Ï´Ù!!!");
+                                MINT_ASSERT(false, "ì•„ì§ ì§€ì›ë˜ì§€ ì•ŠëŠ” LineSkipperSemantic ì…ë‹ˆë‹¤!!!");
                                 return false;
                             }
                         }
@@ -369,14 +369,14 @@ namespace mint
                             }
                             else if (lineSkipperTableItem.checkClassifier(LineSkipperClassifier::CloseMarker) == true)
                             {
-                                MINT_LOG_ERROR("Open LineSkipper °¡ ¾ø´Âµ¥ Close LineSkipper °¡ ¿Ô½À´Ï´Ù!!!");
+                                MINT_LOG_ERROR("Open LineSkipper ê°€ ì—†ëŠ”ë° Close LineSkipper ê°€ ì™”ìŠµë‹ˆë‹¤!!!");
                                 return false;
                             }
                         }
 
                         if (isSuccess == false)
                         {
-                            MINT_LOG_ERROR("½ÇÆĞ!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
+                            MINT_LOG_ERROR("ì‹¤íŒ¨!! lineSkipperClassifier[%d] sourceAt[%d]", static_cast<int32>(lineSkipperTableItem.getClassifier()), sourceAt);
                             return false;
                         }
                     }
@@ -521,7 +521,7 @@ namespace mint
                     _symbolTable.push_back(SymbolTableItem(tokenSymbolClassifier, tokenString, sourceAt));
                 }
 
-                // Delimiter Á¦¿Ü ÀÚ±â ÀÚ½Åµµ symbol ÀÌ´Ù!!!
+                // Delimiter ì œì™¸ ìê¸° ìì‹ ë„ symbol ì´ë‹¤!!!
                 if (symbolClassifier != SymbolClassifier::Delimiter)
                 {
                     char symbolStringRaw[4] = { ch0, (advance == 2) ? ch1 : 0, (advance == 3) ? ch2 : 0, 0 };
@@ -546,7 +546,7 @@ namespace mint
 
         void ILexer::setStringLiterals()
         {
-            // StringQuote »çÀÌ¿¡ ÀÖ´Â SymbolClassifier ¸¦ _defaultSymbolClassifier ¿¡¼­ StringLiteral ·Î ¹Ù²ãÁØ´Ù!!
+            // StringQuote ì‚¬ì´ì— ìˆëŠ” SymbolClassifier ë¥¼ _defaultSymbolClassifier ì—ì„œ StringLiteral ë¡œ ë°”ê¿”ì¤€ë‹¤!!
             const uint32 symbolCount = _symbolTable.size();
             uint32 symbolIndex = 0;
             while (symbolIndex < symbolCount)
@@ -586,8 +586,8 @@ namespace mint
 
         bool ILexer::isLineSkipper(const char ch0, const char ch1, LineSkipperTableItem& out) const noexcept
         {
-            // ¸ÕÀú ±æÀÌ 2 LineSkipper ÀÎÁö È®ÀÎ ÈÄ
-            // ¾Æ´Ï¶ó¸é ±æÀÌ 1 LineSkipper ÀÎÁö È®ÀÎ
+            // ë¨¼ì € ê¸¸ì´ 2 LineSkipper ì¸ì§€ í™•ì¸ í›„
+            // ì•„ë‹ˆë¼ë©´ ê¸¸ì´ 1 LineSkipper ì¸ì§€ í™•ì¸
             const uint64 key = static_cast<uint64>(ch1) * 255 + ch0;
             auto found = _lineSkipperUmap.find(key);
             if (found.isValid() == false)
@@ -663,8 +663,8 @@ namespace mint
 
         bool ILexer::isOperator(const char ch0, const char ch1, OperatorTableItem& out) const noexcept
         {
-            // ¸ÕÀú ±æÀÌ 2 Operator ÀÎÁö È®ÀÎ ÈÄ
-            // ¾Æ´Ï¶ó¸é ±æÀÌ 1 Operator ÀÎÁö È®ÀÎ
+            // ë¨¼ì € ê¸¸ì´ 2 Operator ì¸ì§€ í™•ì¸ í›„
+            // ì•„ë‹ˆë¼ë©´ ê¸¸ì´ 1 Operator ì¸ì§€ í™•ì¸
             const uint64 key = static_cast<uint64>(ch1) * 255 + ch0;
             auto found = _operatorUmap.find(key);
             if (found.isValid() == false)

@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRendering/Include/Object.h>
 
 #include <MintContainer/Include/Vector.hpp>
@@ -36,7 +36,7 @@ namespace mint
             {
                 if (getComponent(objectComponent->getType()) != nullptr)
                 {
-                    MINT_LOG_ERROR("µ¿ÀÏÇÑ Type ÀÇ Component ¸¦ Attach ÇÏ´Â °ÍÀº ¾ÆÁ÷ Áö¿øµÇÁö ¾Ê½À´Ï´Ù!");
+                    MINT_LOG_ERROR("ë™ì¼í•œ Type ì˜ Component ë¥¼ Attach í•˜ëŠ” ê²ƒì€ ì•„ì§ ì§€ì›ë˜ì§€ ì•ŠìŠµë‹ˆë‹¤!");
                     return;
                 }
 

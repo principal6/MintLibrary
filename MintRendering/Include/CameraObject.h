@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 
 #ifndef MINT_CAMERA_OBJECT_H
@@ -52,7 +52,7 @@ namespace mint
 
             MINT_INLINE constexpr float getMoveSpeedAsFloat(const MoveSpeed moveSpeed)
             {
-                static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base ∞° ¥ﬁ∂Û¡≥Ω¿¥œ¥Ÿ!");
+                static_assert(static_cast<uint8>(MoveSpeed::x0_125) == 0, "Base Í∞Ä Îã¨ÎùºÏ°åÏäµÎãàÎã§!");
                 const uint8 moveSpeedUint8 = static_cast<uint8>(moveSpeed);
                 return 0.125f * static_cast<float>(Math::pow2_ui32(moveSpeedUint8));
             }

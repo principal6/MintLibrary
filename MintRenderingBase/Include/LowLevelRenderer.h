@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_LOW_LEVEL_RENDERER_H
@@ -77,8 +77,8 @@ namespace mint
                     }
                 };
 
-                // Priority °¡ ÀÛÀ» ¼ö·Ï ¸ÕÀú ±×·ÁÁø´Ù.
-                // Priority °¡ Å©¸é È­¸é »ó Á¦ÀÏ À§¿¡ ¿Í¾ß ÇÏ±â ¶§¹®!
+                // Priority ê°€ ì‘ì„ ìˆ˜ë¡ ë¨¼ì € ê·¸ë ¤ì§„ë‹¤.
+                // Priority ê°€ í¬ë©´ í™”ë©´ ìƒ ì œì¼ ìœ„ì— ì™€ì•¼ í•˜ê¸° ë•Œë¬¸!
                 struct PriorityComparator
                 {
                     bool operator()(const OrdinalRenderCommandGroup& lhs, const OrdinalRenderCommandGroup& rhs) const noexcept

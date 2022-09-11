@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintLibrary/Include/AllHeaders.h>
 #include <MintPlatform/Include/FileUtil.hpp>
 
@@ -10,19 +10,19 @@ namespace mint
 
     void Library::initialize() noexcept
     {
-        // #1(°³¹ß¿ë): MintLibrary ¼Ö·ç¼Ç¿¡¼­ MintLibraryTest °¡ ½ÃÀÛ ÇÁ·ÎÁ§Æ®ÀÌ°í, Working Directory °¡ $(ProjectDir) ÀÏ °æ¿ì
+        // #1(ê°œë°œìš©): MintLibrary ì†”ë£¨ì…˜ì—ì„œ MintLibraryTest ê°€ ì‹œì‘ í”„ë¡œì íŠ¸ì´ê³ , Working Directory ê°€ $(ProjectDir) ì¼ ê²½ìš°
         if (mint::FileUtil::exists("../Assets"))
         {
             mint::Path::setAssetDirectory("../Assets/");
             mint::Path::setIncludeAssetDirectory("../Assets/Include/");
         }
-        // #2(¹èÆ÷¿ë): ½Å±Ô ¼Ö·ç¼Ç¿¡¼­ Working Directory °¡ $(ProjectDir) ÀÏ °æ¿ì
+        // #2(ë°°í¬ìš©): ì‹ ê·œ ì†”ë£¨ì…˜ì—ì„œ Working Directory ê°€ $(ProjectDir) ì¼ ê²½ìš°
         else if (mint::FileUtil::exists("../MintLibrary/Include/Assets"))
         {
             mint::Path::setAssetDirectory("../MintLibrary/Include/Assets/");
             mint::Path::setIncludeAssetDirectory("../MintLibrary/Include/Assets/Include/");
         }
-        // #3(Fallback): ±âº» ¼¼ÆÃ
+        // #3(Fallback): ê¸°ë³¸ ì„¸íŒ…
         else
         {
             mint::Path::setAssetDirectory("Assets/");

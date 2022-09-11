@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_CPP_HLSL_STRUCTURED_BUFFER_H
@@ -12,7 +12,7 @@ namespace mint
 {
     namespace Rendering
     {
-        // 128 ºñÆ®ÀÇ ¹è¼ö·Î struct »çÀÌÁî¸¦ ¸ÂÃâ °Í!!
+        // 128 ë¹„íŠ¸ì˜ ë°°ìˆ˜ë¡œ struct ì‚¬ì´ì¦ˆë¥¼ ë§ì¶œ ê²ƒ!!
 
         struct SB_Transform CPP_HLSL_REGISTER_INDEX(0)
         {

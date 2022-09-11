@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
 #include <MintContainer/Include/Vector.hpp>
@@ -25,7 +25,7 @@ namespace mint
                 TextFileReader textFileReader;
                 if (textFileReader.open(fileName) == false)
                 {
-                    MINT_LOG_ERROR("CppHlsl ÆÄÀÏ[%s] À» ¿©´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù!!", fileName);
+                    MINT_LOG_ERROR("CppHlsl íŒŒì¼[%s] ì„ ì—¬ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤!!", fileName);
                     return;
                 }
 
@@ -80,7 +80,7 @@ namespace mint
 
                 if (_hlslString.empty() == true)
                 {
-                    MINT_LOG_ERROR("Hlsl String À» Generate ÇÏÁö ¸øÇß½À´Ï´Ù!! typeMetaDataCount: %d", typeMetaDataCount);
+                    MINT_LOG_ERROR("Hlsl String ì„ Generate í•˜ì§€ ëª»í–ˆìŠµë‹ˆë‹¤!! typeMetaDataCount: %d", typeMetaDataCount);
                 }
             }
 

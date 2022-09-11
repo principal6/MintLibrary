@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <stdafx.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
@@ -62,8 +62,8 @@ namespace mint
                 _vertices.push_back(meshVertices[vertexIter]);
             }
 
-            // ¿©·¯ ¸Ş½Ã°¡ push µÉ °æ¿ì, Ãß°¡µÇ´Â ¸Ş½ÃÀÇ vertex index °¡
-            // ¹Ù·Î ÀÌÀü ¸Ş½ÃÀÇ ¸¶Áö¸· vertex index ÀÌÈÄºÎÅÍ ½ÃÀÛµÇµµ·Ï º¸ÀåÇÑ´Ù.
+            // ì—¬ëŸ¬ ë©”ì‹œê°€ push ë  ê²½ìš°, ì¶”ê°€ë˜ëŠ” ë©”ì‹œì˜ vertex index ê°€
+            // ë°”ë¡œ ì´ì „ ë©”ì‹œì˜ ë§ˆì§€ë§‰ vertex index ì´í›„ë¶€í„° ì‹œì‘ë˜ë„ë¡ ë³´ì¥í•œë‹¤.
             IndexElementType indexBase = getIndexBaseXXX();
             for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
             {
@@ -175,7 +175,7 @@ namespace mint
             OrdinalRenderCommandGroup& last = _ordinalRenderCommandGroups.back();
             if (last._startRenderCommandIndex == _renderCommands.size())
             {
-                // ¾Æ¹«·± RenderCommand µµ µî·ÏµÇÁö ¾Ê¾Ò´Ù. ¹«ÀÇ¹ÌÇÑ Group ÀÌ¹Ç·Î Á¦°ÅÇÑ´Ù!
+                // ì•„ë¬´ëŸ° RenderCommand ë„ ë“±ë¡ë˜ì§€ ì•Šì•˜ë‹¤. ë¬´ì˜ë¯¸í•œ Group ì´ë¯€ë¡œ ì œê±°í•œë‹¤!
                 _ordinalRenderCommandGroups.pop_back();
                 return;
             }
@@ -229,10 +229,10 @@ namespace mint
                 executeRenderCommands_draw(renderCommand);
             }
 
-            // Ordinal ±×¸± Â÷·Ê.
+            // Ordinal ê·¸ë¦´ ì°¨ë¡€.
             {
-                // Priority °¡ ÀÛÀ» ¼ö·Ï ¸ÕÀú ±×·ÁÁø´Ù.
-                // Priority °¡ Å©¸é È­¸é »ó Á¦ÀÏ À§¿¡ ¿Í¾ß ÇÏ±â ¶§¹®!
+                // Priority ê°€ ì‘ì„ ìˆ˜ë¡ ë¨¼ì € ê·¸ë ¤ì§„ë‹¤.
+                // Priority ê°€ í¬ë©´ í™”ë©´ ìƒ ì œì¼ ìœ„ì— ì™€ì•¼ í•˜ê¸° ë•Œë¬¸!
                 mint::quickSort(_ordinalRenderCommandGroups, OrdinalRenderCommandGroup::PriorityComparator());
 
                 for (const OrdinalRenderCommandGroup& ordinalRenderCommandGroup : _ordinalRenderCommandGroups)

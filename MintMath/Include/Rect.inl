@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 namespace mint
@@ -242,7 +242,7 @@ namespace mint
 
     MINT_INLINE void Rect::validate() noexcept
     {
-        // Rect Size °¡ À½¼ö°¡ µÇÁö ¾Êµµ·Ï ¹æÁö!! (Áß¿ä)
+        // Rect Size ê°€ ìŒìˆ˜ê°€ ë˜ì§€ ì•Šë„ë¡ ë°©ì§€!! (ì¤‘ìš”)
         right(max(left(), right()));
         bottom(max(top(), bottom()));
     }

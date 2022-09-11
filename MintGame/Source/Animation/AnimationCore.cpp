@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintGame/Include/Animation/AnimationCore.h>
 
 #include <MintContainer/Include/Vector.hpp>
@@ -70,13 +70,13 @@ namespace mint
         {
             if (_joints.empty() == false && parentJointIndex < 0)
             {
-                MINT_LOG_ERROR("ÀÌ¹Ì RootJoint °¡ ÀÖ´Âµ¥ ¶Ç ¸¸µé ¼ö ¾ø½À´Ï´Ù!");
+                MINT_LOG_ERROR("ì´ë¯¸ RootJoint ê°€ ìˆëŠ”ë° ë˜ ë§Œë“¤ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
                 return SkeletonJoint::kInvalidJointIndex;
             }
 
             if (_joints.empty() == false && _joints.size() <= static_cast<uint32>(parentJointIndex))
             {
-                MINT_LOG_ERROR("Parent Joint Index °¡ Àß¸øµÇ¾ú½À´Ï´Ù!");
+                MINT_LOG_ERROR("Parent Joint Index ê°€ ì˜ëª»ë˜ì—ˆìŠµë‹ˆë‹¤!");
                 return SkeletonJoint::kInvalidJointIndex;
             }
 

@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 
 #ifndef MINT_PLATFORM_INPUT_CONTEXT_H
@@ -86,7 +86,7 @@ namespace mint
             Up,
             Pressed,
             Down,
-            Released, // Click µµ ø©±‚
+            Released, // Click ÎèÑ Ïó¨Í∏∞
             DoubleClicked,
             COUNT
         };

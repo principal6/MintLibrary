@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_REFLECTION_REFLECTION_H
@@ -141,11 +141,11 @@ namespace mint
     template <typename T, typename = void>
     class IsReflectionClass : public std::false_type {};
     
-    // ### getReflectionData() °¡ static ¸â¹ö ÇÔ¼öÀÎ °æ¿ì
+    // ### getReflectionData() ê°€ static ë©¤ë²„ í•¨ìˆ˜ì¸ ê²½ìš°
     template <typename T>
     class IsReflectionClass<T, std::enable_if_t<std::is_function<decltype(T::getReflectionData)>::value, void>> : public std::true_type {};
 
-    // ### kReflectionData °¡ ¸â¹öÀÏ °æ¿ì
+    // ### kReflectionData ê°€ ë©¤ë²„ì¼ ê²½ìš°
     //template <typename T>
     //class IsReflectionClass<T, std::enable_if_t<std::is_same_v<const ReflectionData, decltype(T::kReflectionData)>, void>> : public std::true_type {};
 

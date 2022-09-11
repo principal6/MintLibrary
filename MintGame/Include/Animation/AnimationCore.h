@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_GAME_ANIMATION_CORE_H
@@ -58,7 +58,7 @@ namespace mint
             char                        _name[kJointNameLengthMax];
             JointIndexType              _parentIndex;
             Float4x4                    _bindPoseLocalMatrix;
-            Float4x4                    _bindPoseModelMatrix; // TODO: ¿©±â ÀÖ´Â °Ô ¸ÂÀ»Áö Skeleton À¸·Î ¿Å±æÁö?
+            Float4x4                    _bindPoseModelMatrix; // TODO: ì—¬ê¸° ìˆëŠ” ê²Œ ë§ì„ì§€ Skeleton ìœ¼ë¡œ ì˜®ê¸¸ì§€?
 
         public:
             static const SkeletonJoint  kInvalidSkeletonJoint;

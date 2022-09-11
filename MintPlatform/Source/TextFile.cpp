@@ -1,4 +1,4 @@
-#include <MintPlatform/Include/TextFile.h>
+﻿#include <MintPlatform/Include/TextFile.h>
 
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Vector.hpp>
@@ -25,7 +25,7 @@ namespace mint
             byte readByte{ static_cast<byte>(ifs.get()) };
             _byteArray.push_back(readByte);
 
-            // BOM Ȯ��
+            // BOM 확인
             if (isBomChecked == false && _byteArray.size() == 3)
             {
                 if (_byteArray.at(0) == 0xEF &&

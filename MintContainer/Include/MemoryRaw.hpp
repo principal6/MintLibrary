@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_CONTAINER_MEMORY_RAW_HPP
@@ -65,8 +65,8 @@ namespace mint
 #pragma endregion
 
 
-        // ctor ¸¦ È£ÃâÇÏÁö ¾Ê°í ¸Ş¸ğ¸®¸¸ ÇÒ´çÇÑ´Ù.
-        // ÀÌ ÇÔ¼ö È£Ãâ ÀÌÈÄ ¸í½ÃÀûÀ¸·Î ctor ¸¦ È£ÃâÇØ¾ß ÇÑ´Ù!
+        // ctor ë¥¼ í˜¸ì¶œí•˜ì§€ ì•Šê³  ë©”ëª¨ë¦¬ë§Œ í• ë‹¹í•œë‹¤.
+        // ì´ í•¨ìˆ˜ í˜¸ì¶œ ì´í›„ ëª…ì‹œì ìœ¼ë¡œ ctor ë¥¼ í˜¸ì¶œí•´ì•¼ í•œë‹¤!
         template<typename T>
         MINT_INLINE T* allocateMemory(const uint32 size) noexcept
         {
@@ -76,16 +76,16 @@ namespace mint
         }
 
         template<typename T>
-        // memory ¸¦ move ÇÑ´Ù. (to ¿Í from ÀÇ ¸Ş¸ğ¸®°¡ °ãÄ¡´õ¶óµµ ¾ÈÀüÇÏ°Ô ¿Å±ä´Ù)
-        // move ctor, copy ctor ¶Ç´Â move assignment, copy assignment °¡ È£ÃâµÇÁö ¾Ê´Â´Ù!!!
+        // memory ë¥¼ move í•œë‹¤. (to ì™€ from ì˜ ë©”ëª¨ë¦¬ê°€ ê²¹ì¹˜ë”ë¼ë„ ì•ˆì „í•˜ê²Œ ì˜®ê¸´ë‹¤)
+        // move ctor, copy ctor ë˜ëŠ” move assignment, copy assignment ê°€ í˜¸ì¶œë˜ì§€ ì•ŠëŠ”ë‹¤!!!
         MINT_INLINE void moveMemory(T* const to, const T* const from, const uint32 count) noexcept
         {
             std::memmove(to, from, sizeof(T) * count);
         }
 
         template<typename T>
-        // dtor ¸¦ È£ÃâÇÏÁö ¾Ê°í ¸Ş¸ğ¸®¸¸ ÇØÁ¦ÇÑ´Ù!!
-        // ÀÌ ÇÔ¼ö È£Ãâ Àü¿¡ ¸í½ÃÀûÀ¸·Î dtor ¸¦ È£ÃâÇß¾î¾ß ÇÑ´Ù!
+        // dtor ë¥¼ í˜¸ì¶œí•˜ì§€ ì•Šê³  ë©”ëª¨ë¦¬ë§Œ í•´ì œí•œë‹¤!!
+        // ì´ í•¨ìˆ˜ í˜¸ì¶œ ì „ì— ëª…ì‹œì ìœ¼ë¡œ dtor ë¥¼ í˜¸ì¶œí–ˆì–´ì•¼ í•œë‹¤!
         MINT_INLINE void deallocateMemory(T*& rawPointer) noexcept
         {
             if (rawPointer == nullptr)
@@ -97,7 +97,7 @@ namespace mint
         }
 
         template<typename T>
-        // at °¡ »ì¾ÆÀÖ´Â instance ¶ó¸é ÀÌ ÇÔ¼ö È£Ãâ Àü¿¡ ¹İµå½Ã dtor ¸¦ ¸í½ÃÀûÀ¸·Î È£ÃâÇß¾î¾ß ÇÑ´Ù!
+        // at ê°€ ì‚´ì•„ìˆëŠ” instance ë¼ë©´ ì´ í•¨ìˆ˜ í˜¸ì¶œ ì „ì— ë°˜ë“œì‹œ dtor ë¥¼ ëª…ì‹œì ìœ¼ë¡œ í˜¸ì¶œí–ˆì–´ì•¼ í•œë‹¤!
         MINT_INLINE void construct(T& at) noexcept
         {
             static_assert(isDefaultConstructible<T>(), "Not default-constructible!!!");
@@ -106,21 +106,21 @@ namespace mint
         }
 
         template<typename T>
-        // to °¡ »ì¾ÆÀÖ´Â instance ¶ó¸é ¹İµå½Ã dtor ¸¦ ¸í½ÃÀûÀ¸·Î È£ÃâÇØ¾ß ÇÑ´Ù!
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ë¼ë©´ ë°˜ë“œì‹œ dtor ë¥¼ ëª…ì‹œì ìœ¼ë¡œ í˜¸ì¶œí•´ì•¼ í•œë‹¤!
         MINT_INLINE void copyConstructRaw(T& to, const T& from) noexcept
         {
             MINT_PLACEMNT_NEW(&to, T(from));
         }
 
         template<typename T>
-        // to °¡ »ì¾ÆÀÖ´Â instance ¶ó¸é ¹İµå½Ã dtor ¸¦ ¸í½ÃÀûÀ¸·Î È£ÃâÇØ¾ß ÇÑ´Ù!
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ë¼ë©´ ë°˜ë“œì‹œ dtor ë¥¼ ëª…ì‹œì ìœ¼ë¡œ í˜¸ì¶œí•´ì•¼ í•œë‹¤!
         MINT_INLINE void moveConstructRaw(T& to, T&& from) noexcept
         {
             MINT_PLACEMNT_NEW(&to, T(std::move(from)));
         }
 
         template<typename T>
-        // to °¡ »ì¾ÆÀÖ´Â instance ¿©¾ß¸¸ ÇÑ´Ù!
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ì—¬ì•¼ë§Œ í•œë‹¤!
         MINT_INLINE void copyAssign(T& to, const T& from) noexcept
         {
             static_assert(isCopyAssignable<T>(), "Not copy-assignable!!!");
@@ -129,7 +129,7 @@ namespace mint
         }
 
         template<typename T>
-        // to °¡ »ì¾ÆÀÖ´Â instance ¿©¾ß¸¸ ÇÑ´Ù!
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ì—¬ì•¼ë§Œ í•œë‹¤!
         MINT_INLINE void moveAssign(T& to, T&& from) noexcept
         {
             static_assert(isMoveAssignable<T>(), "Not move-assignable!!!");
@@ -138,8 +138,8 @@ namespace mint
         }
 
         template<typename T>
-        // ctor °¡ ¹İµå½Ã È£ÃâµÇ´Â °ÍÀ» º¸ÀåÇÑ´Ù.
-        // to °¡ »ì¾ÆÀÖ´Â instance ¶ó¸é ÀÌ ÇÔ¼ö È£Ãâ Àü¿¡ ¹İµå½Ã dtor ¸¦ ¸í½ÃÀûÀ¸·Î È£ÃâÇß¾î¾ß ÇÑ´Ù!
+        // ctor ê°€ ë°˜ë“œì‹œ í˜¸ì¶œë˜ëŠ” ê²ƒì„ ë³´ì¥í•œë‹¤.
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ë¼ë©´ ì´ í•¨ìˆ˜ í˜¸ì¶œ ì „ì— ë°˜ë“œì‹œ dtor ë¥¼ ëª…ì‹œì ìœ¼ë¡œ í˜¸ì¶œí–ˆì–´ì•¼ í•œë‹¤!
         MINT_INLINE void copyConstruct(T& to, const T& from) noexcept
         {
             static_assert(isCopyConstructible<T>() || (isDefaultConstructible<T>() == true && isCopyAssignable<T>() == true), "Not copiable!!!");
@@ -157,8 +157,8 @@ namespace mint
         }
 
         template<typename T>
-        // ctor °¡ ¹İµå½Ã È£ÃâµÇ´Â °ÍÀ» º¸ÀåÇÑ´Ù.
-        // to °¡ »ì¾ÆÀÖ´Â instance ¶ó¸é ÀÌ ÇÔ¼ö È£Ãâ Àü¿¡ ¹İµå½Ã dtor ¸¦ ¸í½ÃÀûÀ¸·Î È£ÃâÇß¾î¾ß ÇÑ´Ù!
+        // ctor ê°€ ë°˜ë“œì‹œ í˜¸ì¶œë˜ëŠ” ê²ƒì„ ë³´ì¥í•œë‹¤.
+        // to ê°€ ì‚´ì•„ìˆëŠ” instance ë¼ë©´ ì´ í•¨ìˆ˜ í˜¸ì¶œ ì „ì— ë°˜ë“œì‹œ dtor ë¥¼ ëª…ì‹œì ìœ¼ë¡œ í˜¸ì¶œí–ˆì–´ì•¼ í•œë‹¤!
         MINT_INLINE void moveConstruct(T& to, T&& from) noexcept
         {
             static_assert(isMoveConstructible<T>() || (isDefaultConstructible<T>() == true && isMoveAssignable<T>() == true), "Not movable!!!");
@@ -176,7 +176,7 @@ namespace mint
         }
 
         template<typename T>
-        // at ÀÌ »ì¾ÆÀÖ´Â instance ¿©¾ß¸¸ ÇÑ´Ù!
+        // at ì´ ì‚´ì•„ìˆëŠ” instance ì—¬ì•¼ë§Œ í•œë‹¤!
         MINT_INLINE void destroy(T& at) noexcept
         {
             at.~T();

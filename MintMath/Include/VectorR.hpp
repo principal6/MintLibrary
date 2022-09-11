@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #include <MintMath/Include/VectorR.h>
@@ -145,7 +145,7 @@ namespace mint
         template<int32 N, typename T>
         MINT_INLINE void setDivVec(T(&vec)[N], const float scalar) noexcept
         {
-            MINT_ASSERT(scalar != 0.0, "0 À¸·Î ³ª´©·Á ÇÕ´Ï´Ù!");
+            MINT_ASSERT(scalar != 0.0, "0 ìœ¼ë¡œ ë‚˜ëˆ„ë ¤ í•©ë‹ˆë‹¤!");
             for (int32 i = 0; i < N; ++i)
             {
                 vec[i] /= scalar;
@@ -231,7 +231,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE VectorR<N, T>& VectorR<N, T>::operator/=(const T scalar) noexcept
     {
-        MINT_ASSERT(scalar != 0.0, "0 À¸·Î ³ª´©·Á ÇÕ´Ï´Ù!");
+        MINT_ASSERT(scalar != 0.0, "0 ìœ¼ë¡œ ë‚˜ëˆ„ë ¤ í•©ë‹ˆë‹¤!");
 
         for (int32 index = 0; index < N; ++index)
         {
@@ -312,14 +312,14 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE T& VectorR<N, T>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT(index < static_cast<uint32>(N), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         return _c[index];
     }
 
     template<int32 N, typename T>
     MINT_INLINE const T& VectorR<N, T>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < static_cast<uint32>(N), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         return _c[index];
     }
 
@@ -364,7 +364,7 @@ namespace mint
     template<int32 N, typename T>
     MINT_INLINE T VectorR<N, T>::getComponent(const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < static_cast<uint32>(N), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT(index < static_cast<uint32>(N), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         return _c[index];
     }
 

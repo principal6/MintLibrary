@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 namespace mint
@@ -107,7 +107,7 @@ namespace mint
     template<typename T>
     MINT_INLINE AffineMat<T> rotationMatrixAxisAngle(const AffineVec<T>& axis, const T angle) noexcept
     {
-        // (v * r)r(1 - cos¥è) + vcos¥è + (r X v)sin¥è
+        // (v * r)r(1 - cosÎ¸) + vcosÎ¸ + (r X v)sinÎ¸
 
         T r[4];
         normalize(axis).get(r);

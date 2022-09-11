@@ -1,4 +1,4 @@
-#include <MintRendering/Include/MathExpRenderer.h>
+ï»¿#include <MintRendering/Include/MathExpRenderer.h>
 
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
@@ -47,7 +47,7 @@ namespace mint
         };
 
 
-        // TODO: IParser »ó¼ÓÇØ¼­ Á¦´ë·Î ¸¸µé¾î º¸±â...
+        // TODO: IParser ìƒì†í•´ì„œ ì œëŒ€ë¡œ ë§Œë“¤ì–´ ë³´ê¸°...
         struct LatexParser
         {
             using StringType = std::wstring;
@@ -73,14 +73,14 @@ namespace mint
                         const size_t escapeOpenAt = latexString.find(kEscapeOpenCh, at + 1);
                         if (escapeOpenAt == StringTypeNpos)
                         {
-                            MINT_LOG_ERROR("%d ÀÌÈÄ Àß¸øµÈ Çü½ÄÀÌ ³ª¿Ô½À´Ï´Ù!", at);
+                            MINT_LOG_ERROR("%d ì´í›„ ì˜ëª»ëœ í˜•ì‹ì´ ë‚˜ì™”ìŠµë‹ˆë‹¤!", at);
                             break;
                         }
 
                         const size_t escapeCloseAt = latexString.find(kEscapeCloseCh, escapeOpenAt + 1);
                         if (escapeCloseAt == StringTypeNpos)
                         {
-                            MINT_LOG_ERROR("%d ÀÌÈÄ Àß¸øµÈ Çü½ÄÀÌ ³ª¿Ô½À´Ï´Ù!", escapeOpenAt);
+                            MINT_LOG_ERROR("%d ì´í›„ ì˜ëª»ëœ í˜•ì‹ì´ ë‚˜ì™”ìŠµë‹ˆë‹¤!", escapeOpenAt);
                             break;
                         }
 
@@ -114,7 +114,7 @@ namespace mint
                         {
                             std::string modifierStr;
                             StringUtil::convertWideStringToString(modifierString, modifierStr);
-                            MINT_LOG_ERROR("¾ÆÁ÷ Áö¿øµÇÁö ¾Ê´Â modifier ÀÔ´Ï´Ù! [%s]", modifierStr.c_str());
+                            MINT_LOG_ERROR("ì•„ì§ ì§€ì›ë˜ì§€ ì•ŠëŠ” modifier ì…ë‹ˆë‹¤! [%s]", modifierStr.c_str());
                         }
                     }
                     else

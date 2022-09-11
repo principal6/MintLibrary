@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRendering/Include/SplineGenerator.h>
 
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
@@ -55,7 +55,7 @@ namespace mint
             const uint32 knotCount = knotVector.size();
             if (knotCount != order + controlPointCount + 1)
             {
-                MINT_ASSERT(false, "Knot ÀÇ °³¼ö´Â Order + ControlPoint °³¼ö + 1 ÀÌ¾î¾ß ÇÕ´Ï´Ù!");
+                MINT_ASSERT(false, "Knot ì˜ ê°œìˆ˜ëŠ” Order + ControlPoint ê°œìˆ˜ + 1 ì´ì–´ì•¼ í•©ë‹ˆë‹¤!");
                 return false;
             }
 
@@ -90,7 +90,7 @@ namespace mint
 
         Float2 SplineGenerator::computeDeCasteljauPoint(const Vector<Float2>& controlPoints, const float t) const noexcept
         {
-            // TODO: Stack Vector ±¸ÇöÀ¸·Î ¹Ù²Ù¸é ÈÎ¾À ¼º´É¿¡ ³ªÀ» µí
+            // TODO: Stack Vector êµ¬í˜„ìœ¼ë¡œ ë°”ê¾¸ë©´ í›¨ì”¬ ì„±ëŠ¥ì— ë‚˜ì„ ë“¯
 
             if (controlPoints.size() < 2)
             {
@@ -119,7 +119,7 @@ namespace mint
             const uint32 controlPointCount = controlPoints.size();
             if (knotVector.size() != order + controlPointCount + 1)
             {
-                MINT_ASSERT(false, "Knot ÀÇ °³¼ö´Â Order + ControlPoint °³¼ö + 1 ÀÌ¾î¾ß ÇÕ´Ï´Ù!");
+                MINT_ASSERT(false, "Knot ì˜ ê°œìˆ˜ëŠ” Order + ControlPoint ê°œìˆ˜ + 1 ì´ì–´ì•¼ í•©ë‹ˆë‹¤!");
                 return result;
             }
 

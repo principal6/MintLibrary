@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_VECTOR_H
@@ -40,7 +40,7 @@ namespace mint
 
     public:
         void            reserve(const uint32 capacity) noexcept;
-        void            resize(const uint32 size) noexcept; // default-constructible ÀÇ °æ¿ì¿¡¸¸ È£Ãâ °¡´ÉÇÏ´Ù!
+        void            resize(const uint32 size) noexcept; // default-constructible ì˜ ê²½ìš°ì—ë§Œ í˜¸ì¶œ ê°€ëŠ¥í•˜ë‹¤!
         void            shrink_to_fit() noexcept;
 
     public:

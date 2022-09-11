@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/CppHlsl/Parser.h>
 
 #include <MintContainer/Include/BitVector.hpp>
@@ -36,7 +36,7 @@ namespace mint
                 : IParser(lexer)
             {
                 registerTypeInternal("void"       ,  0, true);
-                registerTypeInternal("bool"       ,  4, true); // TypeSize = 4 ÀÓ¿¡ ÁÖÀÇ!!!
+                registerTypeInternal("bool"       ,  4, true); // TypeSize = 4 ì„ì— ì£¼ì˜!!!
                 registerTypeInternal("int"        ,  4, true);
                 registerTypeInternal("int1"       ,  4, true);
                 registerTypeInternal("int2"       ,  8, true);
@@ -83,7 +83,7 @@ namespace mint
 
                 if (hasReportedErrors() == true)
                 {
-                    MINT_LOG_ERROR("¿¡·¯°¡ ÀÖ¾ú½À´Ï´Ù!!!");
+                    MINT_LOG_ERROR("ì—ëŸ¬ê°€ ìˆì—ˆìŠµë‹ˆë‹¤!!!");
 
                     return false;
                 }
@@ -136,7 +136,7 @@ namespace mint
 
             bool Parser::parseStruct(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
-                MINT_ASSURE(hasSymbol(symbolPosition + 4)); // ; ±îÁö!
+                MINT_ASSURE(hasSymbol(symbolPosition + 4)); // ; ê¹Œì§€!
                 MINT_ASSURE(_symbolTable[symbolPosition + 1]._symbolClassifier == SymbolClassifier::Identifier);
 
                 bool hasCustomSyntax = false;
@@ -174,7 +174,7 @@ namespace mint
             bool Parser::parseStructMember(const uint32 symbolPosition, SyntaxTreeNode& currentNode, uint32& outAdvanceCount) noexcept
             {
                 const uint32 kSemicolonMinOffset = 2;
-                MINT_ASSURE_SILENT(_symbolTable[symbolPosition]._symbolClassifier != SymbolClassifier::Grouper_Close); // ÃÖ¿ì¼± °Ë»ç
+                MINT_ASSURE_SILENT(_symbolTable[symbolPosition]._symbolClassifier != SymbolClassifier::Grouper_Close); // ìµœìš°ì„  ê²€ì‚¬
                 MINT_ASSURE(hasSymbol(symbolPosition + kSemicolonMinOffset));
 
                 SyntaxTreeNodeData syntaxTreeItem;
@@ -182,7 +182,7 @@ namespace mint
                 syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
                 SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
                 {
-                    // DataType Àº Variable Identifier ³ëµåÀÇ ÀÚ½Ä!
+                    // DataType ì€ Variable Identifier ë…¸ë“œì˜ ìì‹!
                     SyntaxTreeNodeData syntaxTreeItemChild;
                     syntaxTreeItemChild._classifier = SyntaxClassifier::DataType;
                     syntaxTreeItemChild._IDentifier = _symbolTable[symbolPosition]._symbolString;
@@ -190,7 +190,7 @@ namespace mint
 
                     if (_symbolTable[symbolPosition + kSemicolonMinOffset]._symbolString == "{")
                     {
-                        // ÃÊ±âÈ­! HLSL ¿¡¼­ ¸â¹ö ÃÊ±âÈ­¸¦ ÇÏÁö ¾ÊÀ¸¹Ç·Î ÆĞ½º!
+                        // ì´ˆê¸°í™”! HLSL ì—ì„œ ë©¤ë²„ ì´ˆê¸°í™”ë¥¼ í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ íŒ¨ìŠ¤!
                         outAdvanceCount += 3;
                     }
                     else if (_symbolTable[symbolPosition + kSemicolonMinOffset]._symbolClassifier == SymbolClassifier::Identifier)
@@ -354,8 +354,8 @@ namespace mint
 
             int32 Parser::getSlottedStreamDataInputSlot(const std::string& typeName, std::string& streamDataTypeName) const noexcept
             {
-                // 0 Àº ÀÚ±â ÀÚ½ÅÀ» ÀÇ¹ÌÇÏ¹Ç·Î
-                // ½ÇÁ¦ Slotted StreamData ¶ó¸é InputSlot Àº 1ºÎÅÍ ½ÃÀÛÇÑ´Ù!
+                // 0 ì€ ìê¸° ìì‹ ì„ ì˜ë¯¸í•˜ë¯€ë¡œ
+                // ì‹¤ì œ Slotted StreamData ë¼ë©´ InputSlot ì€ 1ë¶€í„° ì‹œì‘í•œë‹¤!
 
                 const bool isBackDigit = ::isdigit(typeName.back());
                 if (isBackDigit == false)
@@ -416,7 +416,7 @@ namespace mint
             {
                 std::string pureTypeName = TypeUtils::extractPureTypeName(typeMetaData.getTypeName());
 
-                // inputSlot 0 Àº ³ª ÀÚ½ÅÀÌ´Ù!
+                // inputSlot 0 ì€ ë‚˜ ìì‹ ì´ë‹¤!
                 Vector<TypeMetaData<TypeCustomData>> slottedDatas;
                 for (int32 inputSlot = 1; inputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT; ++inputSlot)
                 {

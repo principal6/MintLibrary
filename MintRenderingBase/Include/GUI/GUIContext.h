@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef _MINT_GUI_CONTEXT_H_
@@ -72,7 +72,7 @@ namespace mint
 
             class GUIContext final
             {
-                // »ı¼ºÀÚ°¡ private ÀÌ¶ó¼­ friend ¼±¾ğ
+                // ìƒì„±ìê°€ private ì´ë¼ì„œ friend ì„ ì–¸
                 friend GraphicDevice;
 
             private:
@@ -182,7 +182,7 @@ namespace mint
                 NextControlDesc                 _nextControlDesc;
 
             private:
-                // Size, Position µîÀº Control ¸¶´Ù ±â·ÏµÇ¾î¾ß ÇÏ´Â State ÀÌ´Ù.
+                // Size, Position ë“±ì€ Control ë§ˆë‹¤ ê¸°ë¡ë˜ì–´ì•¼ í•˜ëŠ” State ì´ë‹¤.
                 HashMap<ControlID, ControlData> _controlDataMap;
                 Vector<ControlID>               _controlStack;
                 ControlID                       _rootControlID;

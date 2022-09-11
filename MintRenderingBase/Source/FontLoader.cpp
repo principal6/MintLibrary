@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRenderingBase/Include/FontLoader.h>
 
 #include <MintPlatform/Include/BinaryFile.hpp>
@@ -174,21 +174,21 @@ namespace mint
             const std::string fontFileName = getFontFileNameWithExtension(fontFileNameRaw);
             if (FileUtil::exists(fontFileName.c_str()) == false)
             {
-                MINT_LOG_ERROR("ÇØ´ç FontFile ÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù: %s", fontFileName.c_str());
+                MINT_LOG_ERROR("í•´ë‹¹ FontFile ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤: %s", fontFileName.c_str());
                 return false;
             }
 
             BinaryFileReader binaryFileReader;
             if (binaryFileReader.open(fontFileName.c_str()) == false)
             {
-                MINT_LOG_ERROR("ÇØ´ç FontFile À» ¿©´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù: %s", fontFileName.c_str());
+                MINT_LOG_ERROR("í•´ë‹¹ FontFile ì„ ì—¬ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤: %s", fontFileName.c_str());
                 return false;
             }
 
             const char kMagicNumber[4]{ *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>(), *binaryFileReader.read<char>() };
             if (StringUtil::compare(kMagicNumber, kFontFileMagicNumber) == false)
             {
-                MINT_LOG_ERROR("%s ÆÄÀÏÀÌ ¾Æ´Õ´Ï´Ù!", kFontFileMagicNumber);
+                MINT_LOG_ERROR("%s íŒŒì¼ì´ ì•„ë‹™ë‹ˆë‹¤!", kFontFileMagicNumber);
                 return false;
             }
 
@@ -270,7 +270,7 @@ namespace mint
 
             if (initializeFreeType(fontFaceFileNameS.c_str()) == false)
             {
-                MINT_LOG_ERROR("FreeType - ÃÊ±âÈ­¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - ì´ˆê¸°í™”ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
@@ -286,7 +286,7 @@ namespace mint
             const uint32 glyphRangeCount = _glyphRanges.size();
             if (glyphRangeCount == 0)
             {
-                MINT_LOG_ERROR("glyphRangeCount °¡ 0 ÀÔ´Ï´Ù!! pushGlyphRange() ÇÔ¼ö¸¦ ¸ÕÀú È£ÃâÇØÁÖ¼¼¿ä!");
+                MINT_LOG_ERROR("glyphRangeCount ê°€ 0 ì…ë‹ˆë‹¤!! pushGlyphRange() í•¨ìˆ˜ë¥¼ ë¨¼ì € í˜¸ì¶œí•´ì£¼ì„¸ìš”!");
                 return false;
             }
 
@@ -325,7 +325,7 @@ namespace mint
             unsigned char* png = stbi_write_png_to_mem(reinterpret_cast<unsigned char*>(&pixelArray[0]), textureWidth * 1, textureWidth, textureHeight, 1, &length);
             if (png == nullptr)
             {
-                MINT_LOG_ERROR("FreeType - ÅØ½ºÃ³ Á¤º¸¸¦ ÃßÃâÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - í…ìŠ¤ì²˜ ì •ë³´ë¥¼ ì¶”ì¶œí•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
@@ -357,19 +357,19 @@ namespace mint
         {
             if (FT_Init_FreeType(&_ftLibrary))
             {
-                MINT_LOG_ERROR("FreeType - ¶óÀÌºê·¯¸® ÃÊ±âÈ­¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - ë¼ì´ë¸ŒëŸ¬ë¦¬ ì´ˆê¸°í™”ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
             if (FT_New_Face(_ftLibrary, fontFaceFileName, 0, &_ftFace))
             {
-                MINT_LOG_ERROR("FreeType - ÆùÆ®¸¦ ÀĞ¾î¿À´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - í°íŠ¸ë¥¼ ì½ì–´ì˜¤ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
             if (FT_Set_Pixel_Sizes(_ftFace, 0, _fontData._fontSize))
             {
-                MINT_LOG_ERROR("FreeType - ÆùÆ® Å©±â¸¦ ÁöÁ¤ÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - í°íŠ¸ í¬ê¸°ë¥¼ ì§€ì •í•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
@@ -393,13 +393,13 @@ namespace mint
         {
             if (FT_Load_Glyph(_ftFace, FT_Get_Char_Index(_ftFace, wch), FT_LOAD_PEDANTIC | FT_FACE_FLAG_HINTER | FT_LOAD_TARGET_NORMAL))
             {
-                MINT_LOG_ERROR("FreeType - Glyph ¸¦ ºÒ·¯¿À´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - Glyph ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
             if (FT_Render_Glyph(_ftFace->glyph, FT_RENDER_MODE_NORMAL))
             {
-                MINT_LOG_ERROR("FreeType - Glyph ¸¦ ·»´õÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù.");
+                MINT_LOG_ERROR("FreeType - Glyph ë¥¼ ë Œë”í•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
                 return false;
             }
 
@@ -431,7 +431,7 @@ namespace mint
             GlyphInfo glyphInfo{ wch, &_ftFace->glyph->metrics };
             glyphInfo._uv0._x = static_cast<float>(spaceLeft + pixelPositionX);
             glyphInfo._uv0._y = static_cast<float>(spaceTop + pixelPositionY);
-            //if (wch == L' ' && glyphInfo._width == 0) // ¶ç¾î¾²±â ·»´õ¸µÀÌ ¾È µÇ´Â °æ¿ì ¿¹¿Ü Ã³¸®...
+            //if (wch == L' ' && glyphInfo._width == 0) // ë„ì–´ì“°ê¸° ë Œë”ë§ì´ ì•ˆ ë˜ëŠ” ê²½ìš° ì˜ˆì™¸ ì²˜ë¦¬...
             //{
             //    glyphInfo._width = glyphInfo._horiAdvance;
             //    glyphInfo._horiAdvance = _fontData._glyphInfoArray.front()._horiAdvance;

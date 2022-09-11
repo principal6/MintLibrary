@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_VECTOR_HPP
@@ -110,14 +110,14 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::operator[](const uint32 index) noexcept
     {
-        MINT_ASSERT(index < _size, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::operator[](const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < _size, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù. [index: %d / size: %d]", index, _size);
+        MINT_ASSERT(index < _size, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤. [index: %d / size: %d]", index, _size);
         return _rawPointer[index];
     }
 
@@ -129,7 +129,7 @@ namespace mint
             return;
         }
 
-        // ÀæÀº reserve ½Ã ¼º´É ÃÖÀûÈ­!!!
+        // ì¦ì€ reserve ì‹œ ì„±ëŠ¥ ìµœì í™”!!!
         _capacity = mint::max(capacity, _capacity * 2);
 
         if (_size == 0)
@@ -230,9 +230,9 @@ namespace mint
             return;
         }
         
-        // valid ÇÑ ¹üÀ§ ³» [0, _size - 1] element ´Â
-        // ¸ğµÎ ctor ÀÇ È£ÃâÀÌ º¸ÀåµÇ¾úÀ¸¹Ç·Î
-        // ¹İµå½Ã destroy() ¸¦ È£ÃâÇØ¾ß ÇÑ´Ù.
+        // valid í•œ ë²”ìœ„ ë‚´ [0, _size - 1] element ëŠ”
+        // ëª¨ë‘ ctor ì˜ í˜¸ì¶œì´ ë³´ì¥ë˜ì—ˆìœ¼ë¯€ë¡œ
+        // ë°˜ë“œì‹œ destroy() ë¥¼ í˜¸ì¶œí•´ì•¼ í•œë‹¤.
         MemoryRaw::destroy<T>(_rawPointer[_size - 1]);
         
         --_size;
@@ -258,7 +258,7 @@ namespace mint
                     MemoryRaw::moveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
                 }
             }
-            else // ºñÈ¿À²ÀûÀÌÁö¸¸ µ¿ÀÛÀº ÇÏµµ·Ï ÇÑ´Ù.
+            else // ë¹„íš¨ìœ¨ì ì´ì§€ë§Œ ë™ì‘ì€ í•˜ë„ë¡ í•œë‹¤.
             {
                 MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
 
@@ -296,7 +296,7 @@ namespace mint
 
                 MemoryRaw::moveAssign<T>(_rawPointer[at], std::move(newEntry));
             }
-            else // ºñÈ¿À²ÀûÀÌÁö¸¸ µ¿ÀÛÀº ÇÏµµ·Ï ÇÑ´Ù.
+            else // ë¹„íš¨ìœ¨ì ì´ì§€ë§Œ ë™ì‘ì€ í•˜ë„ë¡ í•œë‹¤.
             {
                 MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
                 
@@ -333,7 +333,7 @@ namespace mint
                     MemoryRaw::moveAssign<T>(_rawPointer[iter - 1], std::move(_rawPointer[iter]));
                 }
             }
-            else // ºñÈ¿À²ÀûÀÌÁö¸¸ µ¿ÀÛÀº ÇÏµµ·Ï ÇÑ´Ù.
+            else // ë¹„íš¨ìœ¨ì ì´ì§€ë§Œ ë™ì‘ì€ í•˜ë„ë¡ í•œë‹¤.
             {
                 for (uint32 iter = at + 1; iter < _size; ++iter)
                 {
@@ -359,42 +359,42 @@ namespace mint
     template<typename T>
     MINT_INLINE T& Vector<T>::front() noexcept
     {
-        MINT_ASSERT(_size > 0, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(_size > 0, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::front() const noexcept
     {
-        MINT_ASSERT(_size > 0, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(_size > 0, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[0];
     }
 
     template<typename T>
     MINT_INLINE T& Vector<T>::back() noexcept
     {
-        MINT_ASSERT(_size > 0, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(_size > 0, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[_size - 1];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::back() const noexcept
     {
-        MINT_ASSERT(_size > 0, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(_size > 0, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[_size - 1];
     }
 
     template<typename T>
     MINT_INLINE T& Vector<T>::at(const uint32 index) noexcept
     {
-        MINT_ASSERT(index < _size, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(index < _size, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[std::min(index, _size - 1)];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::at(const uint32 index) const noexcept
     {
-        MINT_ASSERT(index < _size, "¹üÀ§¸¦ ¹ş¾î³­ Á¢±ÙÀÔ´Ï´Ù.");
+        MINT_ASSERT(index < _size, "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ì…ë‹ˆë‹¤.");
         return _rawPointer[std::min(index, _size - 1)];
     }
 

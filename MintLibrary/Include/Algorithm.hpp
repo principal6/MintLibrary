@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #include <stdafx.h>
@@ -24,7 +24,7 @@ namespace mint
         }
         else if (value < vec[indexMiddle])
         {
-            return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle ÀÌ 0 ÀÏ ¼ö ÀÖ´Ù!
+            return binarySearchInternal(vec, value, indexBegin, indexMiddle - 1); // indexMiddle ì´ 0 ì¼ ìˆ˜ ìˆë‹¤!
         }
         else
         {
@@ -58,7 +58,7 @@ namespace mint
         }
         else if (evaluator(vec[indexMiddle]) > value)
         {
-            return binarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle ÀÌ 0 ÀÏ ¼ö ÀÖ´Ù!
+            return binarySearchInternal(vec, value, evaluator, indexBegin, indexMiddle - 1); // indexMiddle ì´ 0 ì¼ ìˆ˜ ìˆë‹¤!
         }
         else
         {
@@ -94,8 +94,8 @@ namespace mint
                 ++left;
             }
 
-            // ¸ğµç entry ¿¡ ´ëÇØ { cmp(entry, pivot) == true } ÀÌ´Ù.
-            // ¿¹) 3, 2, 1, 4, 5
+            // ëª¨ë“  entry ì— ëŒ€í•´ { cmp(entry, pivot) == true } ì´ë‹¤.
+            // ì˜ˆ) 3, 2, 1, 4, 5
             if (left == pivot)
             {
                 break;
@@ -106,8 +106,8 @@ namespace mint
                 --right;
             }
 
-            // ¸ğµç entry ¿¡ ´ëÇØ { cmp(pivot, entry) == true } ÀÌ´Ù.
-            // ¿¹) 7, 9, 8, 6, 4
+            // ëª¨ë“  entry ì— ëŒ€í•´ { cmp(pivot, entry) == true } ì´ë‹¤.
+            // ì˜ˆ) 7, 9, 8, 6, 4
             if (right < front)
             {
                 std::swap(vector[left], vector[pivot]);
@@ -115,7 +115,7 @@ namespace mint
                 break;
             }
 
-            // left ¹× right ÀÇ ¸ğµç entry ¿¡ ´ëÇØ cmp °¡ ¿Ï·áµÇ¾ú´Ù.
+            // left ë° right ì˜ ëª¨ë“  entry ì— ëŒ€í•´ cmp ê°€ ì™„ë£Œë˜ì—ˆë‹¤.
             if (right <= left)
             {
                 if (left == right)

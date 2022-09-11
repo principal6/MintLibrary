@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #include <stdafx.h>
@@ -57,7 +57,7 @@ namespace mint
         MINT_INLINE Object* ObjectPool::createObjectInternalXXX(Object* const object)
         {
             _objectArray.push_back(object);
-            object->attachComponent(createTransformComponent()); // ¸ðµç Object´Â TransformComponent ¸¦ ÇÊ¼ö·Î °¡Áý´Ï´Ù.
+            object->attachComponent(createTransformComponent()); // ëª¨ë“  ObjectëŠ” TransformComponent ë¥¼ í•„ìˆ˜ë¡œ ê°€ì§‘ë‹ˆë‹¤.
             return object;
         }
 

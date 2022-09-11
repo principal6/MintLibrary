@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #include <MintMath/Include/Matrix.h>
@@ -78,7 +78,7 @@ namespace mint
         template<int32 M, int32 N, typename T>
         void setDivMat(T(&mat)[M][N], const T scalar) noexcept
         {
-            MINT_ASSERT(scalar != 0.0, "0 À¸·Î ³ª´©·Á ÇÕ´Ï´Ù!");
+            MINT_ASSERT(scalar != 0.0, "0 ìœ¼ë¡œ ë‚˜ëˆ„ë ¤ í•©ë‹ˆë‹¤!");
             for (int32 row = 0; row < M; ++row)
             {
                 for (int32 col = 0; col < N; ++col)
@@ -487,28 +487,28 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::setElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         _m[rowIndex][columnIndex] = value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::addElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         _m[rowIndex][columnIndex] += value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE void Matrix<M, N, T>::mulElement(const uint32 rowIndex, const uint32 columnIndex, const T value) noexcept
     {
-        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         _m[rowIndex][columnIndex] *= value;
     }
 
     template<int32 M, int32 N, typename T>
     MINT_INLINE T Matrix<M, N, T>::getElement(const uint32 rowIndex, const uint32 columnIndex) const noexcept
     {
-        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT((rowIndex < static_cast<uint32>(M) && columnIndex < static_cast<uint32>(N)), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
         return _m[rowIndex][columnIndex];
     }
 
@@ -524,7 +524,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE VectorR<N, T> Matrix<M, N, T>::getRow(const uint32 rowIndex) const noexcept
     {
-        MINT_ASSERT(rowIndex < static_cast<uint32>(M), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT(rowIndex < static_cast<uint32>(M), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
 
         VectorR<N, T> result;
         Math::getRow(_m, rowIndex, result._c);
@@ -543,7 +543,7 @@ namespace mint
     template<int32 M, int32 N, typename T>
     MINT_INLINE VectorR<M, T> Matrix<M, N, T>::getColumn(const uint32 columnIndex) const noexcept
     {
-        MINT_ASSERT(columnIndex < static_cast<uint32>(N), "¹üÀ§¸¦ ¹þ¾î³­ Á¢±ÙÀÔ´Ï´Ù!");
+        MINT_ASSERT(columnIndex < static_cast<uint32>(N), "ë²”ìœ„ë¥¼ ë²—ì–´ë‚œ ì ‘ê·¼ìž…ë‹ˆë‹¤!");
 
         VectorR<M, T> result;
         Math::getCol(_m, columnIndex, result._c);

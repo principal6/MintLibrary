@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 #ifndef MINT_LANGUAGE_COMMON_H
@@ -29,8 +29,8 @@ namespace mint
 
             GROUPER_BEGINS,
             //
-            Grouper_Open,               // () {} []   ´Ü <> ´Â Á¦¿Ü!!!
-            Grouper_Close,              // () {} []   ´Ü <> ´Â Á¦¿Ü!!!
+            Grouper_Open,               // () {} []   ë‹¨ <> ëŠ” ì œì™¸!!!
+            Grouper_Close,              // () {} []   ë‹¨ <> ëŠ” ì œì™¸!!!
             //
             GROUPER_ENDS,
 
@@ -40,7 +40,7 @@ namespace mint
 
             Punctuator,                 // ,
 
-            OPERATOR_BEGINS,            // µÎ °³Â¥¸® operator ÀÇ Ã¹ ¹®ÀÚµµ ¹İµå½Ã operator ´Ù!?
+            OPERATOR_BEGINS,            // ë‘ ê°œì§œë¦¬ operator ì˜ ì²« ë¬¸ìë„ ë°˜ë“œì‹œ operator ë‹¤!?
             //
             AssignmentOperator,
             RelationalOperator,

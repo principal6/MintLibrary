@@ -1,4 +1,4 @@
-#include <stdafx.h>
+ï»¿#include <stdafx.h>
 #include <MintRendering/Include/MeshGenerator.h>
 
 #include <MintContainer/Include/Vector.hpp>
@@ -84,7 +84,7 @@ namespace mint
 
         void MeshGenerator::pushTriFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
-            // Vertex winding ¿¡ »ó°ü¾øÀÌ Ç×»ó ÀÌ ¼ø¼­.
+            // Vertex winding ì— ìƒê´€ì—†ì´ í•­ìƒ ì´ ìˆœì„œ.
             Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
@@ -95,7 +95,7 @@ namespace mint
 
         void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
         {
-            // Vertex winding ¿¡ »ó°ü¾øÀÌ Ç×»ó ÀÌ ¼ø¼­.
+            // Vertex winding ì— ìƒê´€ì—†ì´ í•­ìƒ ì´ ìˆœì„œ.
             Face face;
             face._vertexIndexArray[0] = vertexOffset + 0;
             face._vertexIndexArray[1] = vertexOffset + 1;
@@ -157,7 +157,7 @@ namespace mint
             Float4 bitangent;
             if (uvMatrix.isInvertible() == false)
             {
-                MINT_ASSERT(false, "uvMatrix °¡ Invertible ÇÏÁö ¾Ê½À´Ï´Ù!!!");
+                MINT_ASSERT(false, "uvMatrix ê°€ Invertible í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤!!!");
 
                 tangent.setXyz(+1.0f, 0.0f, 0.0f);
                 bitangent.setXyz(0.0f, 0.0f, -1.0f);
@@ -518,7 +518,7 @@ namespace mint
 
         void MeshGenerator::_pushUpperUmbrellaTris(const int32 centerIndex, const int32 indexBase, const uint8 triangleCount, MeshData& meshData) noexcept
         {
-            // ¿¹½Ã) triCount = 8
+            // ì˜ˆì‹œ) triCount = 8
             //
             //    VERTEX INPUT   ||       TRI[0]               TRI[1]               TRI[2]            
             //                   ||                                                                   
@@ -551,10 +551,10 @@ namespace mint
 
         void MeshGenerator::_pushRingQuads(const int32 indexBase, const uint8 quadCount, MeshData& meshData) noexcept
         {
-            // ¿¹½Ã) quadCount = 4
+            // ì˜ˆì‹œ) quadCount = 4
             //
-            // Vertex ´Â ¾Æ·¡Ã³·³ À­ÁÙ ¼ø¼­´ë·Î ¸ÕÀú, ±×´ÙÀ½ ¾Æ·§ÁÙ µ¿ÀÏÇÑ ¼ø¼­´ë·Î µé¾î¿Í¾ß ÇÏ¸ç
-            // ¹İµå½Ã À­ÁÙ°ú ¾Æ·§ÁÙÀÇ Vertex °³¼ö°¡ ÀÏÄ¡ÇØ¾ß ÇÑ´Ù!
+            // Vertex ëŠ” ì•„ë˜ì²˜ëŸ¼ ìœ—ì¤„ ìˆœì„œëŒ€ë¡œ ë¨¼ì €, ê·¸ë‹¤ìŒ ì•„ë«ì¤„ ë™ì¼í•œ ìˆœì„œëŒ€ë¡œ ë“¤ì–´ì™€ì•¼ í•˜ë©°
+            // ë°˜ë“œì‹œ ìœ—ì¤„ê³¼ ì•„ë«ì¤„ì˜ Vertex ê°œìˆ˜ê°€ ì¼ì¹˜í•´ì•¼ í•œë‹¤!
             //
             // VERTEX INPUT  ||  QUAD[0]      QUAD[1]       QUAD[2]        QUAD[3]
             //               ||                                                   

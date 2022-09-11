@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 
 namespace mint
@@ -46,7 +46,7 @@ namespace mint
             _symbolClassifier = SymbolClassifier::POST_CLEARED;
             _symbolString.clear();
             _symbolIndex = kUint32Max;
-            // _sourceAt Àº ±×³É ³²°ÜµĞ´Ù.
+            // _sourceAt ì€ ê·¸ëƒ¥ ë‚¨ê²¨ë‘”ë‹¤.
         }
 
         MINT_INLINE uint32 SymbolTableItem::index() const noexcept
