@@ -3,18 +3,18 @@
 
 namespace mint
 {
-#pragma region U8Viewer
-    MINT_INLINE bool U8Viewer::operator!=(const U8Viewer& rhs) const
+#pragma region U8CharCodeViewer
+    MINT_INLINE bool U8CharCodeViewer::operator!=(const U8CharCodeViewer& rhs) const
     {
         return _string[_byteAt] != rhs._string[rhs._byteAt];
     }
 
-    MINT_INLINE U8CharCode U8Viewer::operator*() const noexcept
+    MINT_INLINE U8CharCode U8CharCodeViewer::operator*() const noexcept
     {
         return StringUtil::encode(_string, _byteAt);
     }
 
-    MINT_INLINE U8Viewer U8Viewer::operator++()
+    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::operator++()
     {
         if (_string != nullptr && _string[_byteAt] != 0)
         {
@@ -23,15 +23,15 @@ namespace mint
         return (*this);
     }
 
-    MINT_INLINE U8Viewer U8Viewer::begin() const
+    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::begin() const
     {
-        return U8Viewer(_string);
+        return U8CharCodeViewer(_string);
     }
 
-    MINT_INLINE U8Viewer U8Viewer::end() const
+    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::end() const
     {
         constexpr char8_t endString[1]{};
-        return U8Viewer(endString);
+        return U8CharCodeViewer(endString);
     }
 #pragma endregion
 

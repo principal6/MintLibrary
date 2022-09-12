@@ -32,18 +32,18 @@ namespace mint
         uint32          _length;
     };
 
-    class U8Viewer
+    class U8CharCodeViewer
     {
     public:
-                        U8Viewer(const char8_t* const string) : _string{ string }, _byteAt{ 0 } { __noop; }
-                        ~U8Viewer() = default;
+                            U8CharCodeViewer(const char8_t* const string) : _string{ string }, _byteAt{ 0 } { __noop; }
+                            ~U8CharCodeViewer() = default;
 
     public:
-        bool            operator!=(const U8Viewer& rhs) const;
-        U8CharCode      operator*() const noexcept;
-        U8Viewer        operator++();
-        U8Viewer        begin() const;
-        U8Viewer        end() const;
+        bool                operator!=(const U8CharCodeViewer& rhs) const;
+        U8CharCode          operator*() const noexcept;
+        U8CharCodeViewer    operator++();
+        U8CharCodeViewer    begin() const;
+        U8CharCodeViewer    end() const;
 
     private:
         const char8_t*  _string;

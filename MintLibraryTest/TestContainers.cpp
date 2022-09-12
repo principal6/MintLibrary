@@ -535,11 +535,11 @@ namespace mint
             Vector<std::string> testBTokenized;
             StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
-            U8Viewer u8viewer(u8"가나다");
-            for (auto i : u8viewer)
+            U8CharCodeViewer u8CharCodeViewer(u8"가나다");
+            for (auto charCode : u8CharCodeViewer)
             {
                 std::string string;
-                StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(i)), string);
+                StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(charCode)), string);
                 //MINT_LOG("CONVERTED: %s", string.c_str());
             }
 
