@@ -81,6 +81,7 @@ namespace mint
 
 #pragma region String
     static constexpr    uint32 kStringNPos      = kUint32Max;
+    using               U8CharCode              = uint32;
 #pragma endregion
 
 

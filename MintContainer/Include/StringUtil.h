@@ -16,8 +16,6 @@
 
 namespace mint
 {
-    using U8CharCode = uint32;
-
     struct StringRange final
     {
                         StringRange();
