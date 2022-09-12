@@ -195,7 +195,7 @@ namespace mint
         {
             const int length = ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
             std::u8string destination(length, 0);
-            ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
+            ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), reinterpret_cast<char*>(&destination[0]), static_cast<int>(destination.length()), nullptr, nullptr);
             return destination;
         }
 
