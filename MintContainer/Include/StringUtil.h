@@ -97,10 +97,10 @@ namespace mint
         constexpr U8CharCode    encode(const char8_t(&ch)[3]);
         constexpr U8CharCode    encode(const char8_t(&ch)[4]);
         constexpr U8CharCode    encode(const char8_t* const string, const uint32 byteAt);
-        std::string             decode(const U8CharCode code);
+        std::u8string           decode(const U8CharCode code);
 
-        std::string     convertWideStringToUTF8(const std::wstring& source);
-        std::wstring    convertUTF8ToWideString(const std::string& source);
+        std::u8string   convertWideStringToUTF8(const std::wstring& source);
+        std::wstring    convertUTF8ToWideString(const std::u8string& source);
         void            convertWideStringToString(const std::wstring& source, std::string& destination);
         void            convertStringToWideString(const std::string& source, std::wstring& destination);
         
