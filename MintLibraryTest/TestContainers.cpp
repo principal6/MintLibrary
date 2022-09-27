@@ -535,15 +535,16 @@ namespace mint
             Vector<std::string> testBTokenized;
             StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
-            static_assert(StringUtil::countCharByte(0b11111111) == 4);
-            static_assert(StringUtil::countCharByte(0b11110000) == 4);
-            static_assert(StringUtil::countCharByte(0b11101111) == 3);
-            static_assert(StringUtil::countCharByte(0b11100000) == 3);
-            static_assert(StringUtil::countCharByte(0b11011111) == 2);
-            static_assert(StringUtil::countCharByte(0b11000000) == 2);
-            static_assert(StringUtil::countCharByte(0b01111111) == 1);
-            static_assert(StringUtil::countCharByte(0b00000000) == 1);
+            static_assert(StringUtil::countByteInCharCode(0b11111111) == 4);
+            static_assert(StringUtil::countByteInCharCode(0b11110000) == 4);
+            static_assert(StringUtil::countByteInCharCode(0b11101111) == 3);
+            static_assert(StringUtil::countByteInCharCode(0b11100000) == 3);
+            static_assert(StringUtil::countByteInCharCode(0b11011111) == 2);
+            static_assert(StringUtil::countByteInCharCode(0b11000000) == 2);
+            static_assert(StringUtil::countByteInCharCode(0b01111111) == 1);
+            static_assert(StringUtil::countByteInCharCode(0b00000000) == 1);
 
+            constexpr uint32 l = StringUtil::length(u8"가나다abc");
             U8CharCodeViewer u8CharCodeViewer(u8"가나다");
             for (auto charCode : u8CharCodeViewer)
             {

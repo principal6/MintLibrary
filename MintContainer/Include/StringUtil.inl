@@ -18,7 +18,7 @@ namespace mint
     {
         if (_string != nullptr && _string[_byteAt] != 0)
         {
-            _byteAt += StringUtil::countCharByte(_string, _byteAt);
+            _byteAt += StringUtil::countByteInCharCode(_string, _byteAt);
         }
         return (*this);
     }
@@ -39,9 +39,9 @@ namespace mint
     namespace StringUtil
     {
         template<typename T>
-        MINT_INLINE constexpr bool isNullOrEmpty(const T* const rawString)
+        MINT_INLINE constexpr bool isNullOrEmpty(const T* const string)
         {
-            return (rawString == nullptr || rawString[0] == 0);
+            return (string == nullptr || string[0] == 0);
         }
 
         MINT_INLINE constexpr uint32 countByte(const char8_t* const string)
@@ -60,7 +60,7 @@ namespace mint
             }
         }
 
-        MINT_INLINE constexpr uint32 countCharByte(const U8CharCode u8CharCode)
+        MINT_INLINE constexpr uint32 countByteInCharCode(const U8CharCode u8CharCode)
         {
             //                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
             //                      ----------------------------------------------------------------------------------------------
@@ -73,36 +73,50 @@ namespace mint
             return ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) );
         }
 
-        MINT_INLINE constexpr uint32 countCharByte(const char8_t* const string, const uint32 byteAt)
+        MINT_INLINE constexpr uint32 countByteInCharCode(const char8_t* const string, const uint32 byteAt)
         {
             if (string == nullptr)
             {
                 return 0;
             }
-            return countCharByte(string[byteAt]);
+            return countByteInCharCode(string[byteAt]);
         }
 
-        MINT_INLINE uint32 length(const char* const rawString)
+        MINT_INLINE uint32 length(const char* const string)
         {
-            if (rawString == nullptr)
+            if (string == nullptr)
             {
                 return 0;
             }
-            return static_cast<uint32>(::strlen(rawString));
+            return static_cast<uint32>(::strlen(string));
         }
 
-        MINT_INLINE uint32 length(const wchar_t* const rawString)
+        MINT_INLINE uint32 length(const wchar_t* const string)
         {
-            if (rawString == nullptr)
+            if (string == nullptr)
             {
                 return 0;
             }
-            return static_cast<uint32>(::wcslen(rawString));
+            return static_cast<uint32>(::wcslen(string));
         }
         
-        MINT_INLINE constexpr uint32 length(const char8_t* const rawString)
+        MINT_INLINE constexpr uint32 length(const char8_t* const string)
         {
-            return countByte(rawString);
+            if (string == nullptr)
+            {
+                return 0;
+            }
+
+            uint32 at = 0;
+            for (uint32 length = 0; ; ++length)
+            {
+                if (string[at] == 0)
+                {
+                    return length;
+                }
+
+                at += countByteInCharCode(string[at]);
+            }
         }
 
         template <typename T>
