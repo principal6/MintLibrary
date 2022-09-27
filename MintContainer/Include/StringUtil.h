@@ -69,13 +69,15 @@ namespace mint
     namespace StringUtil
     {
         template<typename T>
-        bool            isNullOrEmpty(const T* const rawString);
+        constexpr bool      isNullOrEmpty(const T* const rawString);
         
         constexpr uint32    countByte(const char8_t* const string);
         constexpr uint32    countCharByte(const U8CharCode u8CharCode);
         constexpr uint32    countCharByte(const char8_t* const string, const uint32 byteAt);
         uint32              length(const char* const rawString);
-        uint32              length(const wchar_t* const rawWideString);
+        uint32              length(const wchar_t* const rawString);
+        // returns the count of bytes in the string
+        constexpr uint32    length(const char8_t* const rawString);
 
         template <typename T>
         uint32          find(const T* const source, const T* const target, const uint32 offset = 0);

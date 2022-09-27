@@ -39,13 +39,18 @@ namespace mint
     namespace StringUtil
     {
         template<typename T>
-        MINT_INLINE bool isNullOrEmpty(const T* const rawString)
+        MINT_INLINE constexpr bool isNullOrEmpty(const T* const rawString)
         {
             return (rawString == nullptr || rawString[0] == 0);
         }
 
         MINT_INLINE constexpr uint32 countByte(const char8_t* const string)
         {
+            if (string == nullptr)
+            {
+                return 0;
+            }
+
             for (uint32 at = 0; ; ++at)
             {
                 if (string[at] == 0)
@@ -57,16 +62,15 @@ namespace mint
 
         MINT_INLINE constexpr uint32 countCharByte(const U8CharCode u8CharCode)
         {
+            //                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
+            //                      ----------------------------------------------------------------------------------------------
+            // x == 1111 ==  15   =>    4   == (      0     ) + (   1  ) * ( 1 + (      1     ) + (      1     ) + (      1     ) )
+            // x == 1110 ==  14   =>    3   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      1     ) )
+            // x == 110? == 12~13 =>    2   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      0     ) )
+            // x == 0??? ==  0~7  =>    1   == (      1     ) + (   0  ) * ( 1 + (      0     ) + (      ?     ) + (      ?     ) )
             const char8_t head = u8CharCode & 0xFF;
-            if (head & 0b10000000)
-            {
-                // 1111 ^ 1111 = 0000
-                // 1110 ^ 1111 = 0001
-                // 1100 ^ 1111 = 0011
-                const char8_t x = (head >> 4) ^ 0b1111;
-                return (x == 0 ? 4 : (x == 1 ? 3 : 2));
-            }
-            return 0;
+            const char8_t x = head >> 4;
+            return ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) );
         }
 
         MINT_INLINE constexpr uint32 countCharByte(const char8_t* const string, const uint32 byteAt)
@@ -75,35 +79,30 @@ namespace mint
             {
                 return 0;
             }
-
-            const char8_t head = string[byteAt];
-            if (head & 0b10000000)
-            {
-                // 1111 ^ 1111 = 0000
-                // 1110 ^ 1111 = 0001
-                // 1100 ^ 1111 = 0011
-                const char8_t x = (head >> 4) ^ 0b1111;
-                return (x == 0 ? 4 : (x == 1 ? 3 : 2));
-            }
-            return 0;
+            return countCharByte(string[byteAt]);
         }
 
         MINT_INLINE uint32 length(const char* const rawString)
         {
-            if (isNullOrEmpty(rawString) == true)
+            if (rawString == nullptr)
             {
                 return 0;
             }
             return static_cast<uint32>(::strlen(rawString));
         }
 
-        MINT_INLINE uint32 length(const wchar_t* const rawWideString)
+        MINT_INLINE uint32 length(const wchar_t* const rawString)
         {
-            if (isNullOrEmpty(rawWideString) == true)
+            if (rawString == nullptr)
             {
                 return 0;
             }
-            return static_cast<uint32>(::wcslen(rawWideString));
+            return static_cast<uint32>(::wcslen(rawString));
+        }
+        
+        MINT_INLINE constexpr uint32 length(const char8_t* const rawString)
+        {
+            return countByte(rawString);
         }
 
         template <typename T>
