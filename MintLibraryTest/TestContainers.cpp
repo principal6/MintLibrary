@@ -544,6 +544,35 @@ namespace mint
             static_assert(StringUtil::countByteInCharCode(0b01111111) == 1);
             static_assert(StringUtil::countByteInCharCode(0b00000000) == 1);
 
+            {
+                const char* a = nullptr;
+                const char* b = nullptr;
+                MINT_ASSURE(StringUtil::compare(a, b));
+                MINT_ASSURE(StringUtil::compare(nullptr, "abc") == false);
+                MINT_ASSURE(StringUtil::compare("abc", nullptr) == false);
+                MINT_ASSURE(StringUtil::compare("abc", "abc"));
+                MINT_ASSURE(StringUtil::compare("abc", "abcd") == false);
+                MINT_ASSURE(StringUtil::compare("abcd", "abc") == false);
+
+                const wchar_t* c = nullptr;
+                const wchar_t* d = nullptr;
+                MINT_ASSURE(StringUtil::compare(c, d));
+                MINT_ASSURE(StringUtil::compare(nullptr, L"abc") == false);
+                MINT_ASSURE(StringUtil::compare(L"abc", nullptr) == false);
+                MINT_ASSURE(StringUtil::compare(L"abc", L"abc"));
+                MINT_ASSURE(StringUtil::compare(L"abc", L"abcd") == false);
+                MINT_ASSURE(StringUtil::compare(L"abcd", L"abc") == false);
+
+                constexpr const char8_t* e = nullptr;
+                constexpr const char8_t* f = nullptr;
+                static_assert(StringUtil::compare(e, f));
+                static_assert(StringUtil::compare(nullptr, u8"abc") == false);
+                static_assert(StringUtil::compare(u8"abc", nullptr) == false);
+                static_assert(StringUtil::compare(u8"abc", u8"abc"));
+                static_assert(StringUtil::compare(u8"abc", u8"abcd") == false);
+                static_assert(StringUtil::compare(u8"abcd", u8"abc") == false);
+            }
+            
             constexpr uint32 l = StringUtil::length(u8"가나다abc");
             U8CharCodeViewer u8CharCodeViewer(u8"가나다");
             for (auto charCode : u8CharCodeViewer)

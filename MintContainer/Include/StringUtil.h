@@ -85,6 +85,7 @@ namespace mint
 
         bool            compare(const char* const a, const char* const b);
         bool            compare(const wchar_t* const a, const wchar_t* const b);
+        constexpr bool  compare(const char8_t* const a, const char8_t* const b);
         
         template <uint32 DestSize>
         void            copy(char8_t(&dest)[DestSize], const char8_t* const source);

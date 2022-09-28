@@ -163,12 +163,58 @@ namespace mint
 
         MINT_INLINE bool compare(const char* const a, const char* const b)
         {
+            // nullptr == nullptr
+            // ptr == ptr
+            if (a == b)
+            {
+                return true;
+            }
+            // either a or b is nullptr
+            if (a == nullptr || b == nullptr)
+            {
+                return false;
+            }
             return (::strcmp(a, b) == 0);
         }
         
         MINT_INLINE bool compare(const wchar_t* const a, const wchar_t* const b)
         {
+            // nullptr == nullptr
+            // ptr == ptr
+            if (a == b)
+            {
+                return true;
+            }
+            // either a or b is nullptr
+            if (a == nullptr || b == nullptr)
+            {
+                return false;
+            }
             return (::wcscmp(a, b) == 0);
+        }
+        
+        MINT_INLINE constexpr bool compare(const char8_t* const a, const char8_t* const b)
+		{
+            // nullptr == nullptr
+            // ptr == ptr
+            if (a == b)
+            {
+                return true;
+            }
+            // either a or b is nullptr
+            if (a == nullptr || b == nullptr)
+            {
+                return false;
+            }
+            uint32 at = 0;
+			for (; a[at] != 0; ++at)
+			{
+                if (a[at] != b[at])
+                {
+                    return false;
+                }
+			}
+            return (b[at] == 0);
         }
 
         template<uint32 DestSize>
@@ -186,7 +232,7 @@ namespace mint
         template<uint32 DestSize>
         MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
         {
-            ::strcpy_s(dest, source);
+            ::wcscpy_s(dest, source);
         }
     }
 }
