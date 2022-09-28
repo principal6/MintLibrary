@@ -610,6 +610,7 @@ namespace mint
             static_assert(StringUtil::is7BitASCII(u8"abc"));
             static_assert(StringUtil::is7BitASCII(u8"0.125f"));
             static_assert(StringUtil::is7BitASCII(u8"가나다") == false);
+            static_assert(StringUtil::is7BitASCII(u8"韓國") == false);
 
             constexpr uint32 l = StringUtil::length(u8"가나다abc");
             U8CharCodeViewer u8CharCodeViewer(u8"가나다");
