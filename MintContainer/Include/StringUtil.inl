@@ -44,6 +44,18 @@ namespace mint
             return (string == nullptr || string[0] == 0);
         }
 
+		constexpr bool is7BitASCII(const char8_t* const string)
+		{
+			for (uint32 at = 0; string[at] != 0; ++at)
+			{
+                if ((string[at] >> 7) & 1)
+                {
+                    return false;
+                }
+			}
+            return true;
+		}
+
         MINT_INLINE constexpr uint32 countByte(const char8_t* const string)
         {
             if (string == nullptr)

@@ -69,7 +69,9 @@ namespace mint
     namespace StringUtil
     {
         template<typename T>
-        constexpr bool      isNullOrEmpty(const T* const rawString);
+        constexpr bool      isNullOrEmpty(const T* const string);
+
+        constexpr bool      is7BitASCII(const char8_t* const string);
         
         // returns the count of bytes in the string
         constexpr uint32    countByte(const char8_t* const string);
