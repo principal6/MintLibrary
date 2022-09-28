@@ -77,13 +77,14 @@ namespace mint
         constexpr uint32    computeCharacterByteSizeFromLeadingByte(const T leadingByte);
 
         // returns the count of bytes in the string
-        constexpr uint32    countBytesInString(const char* const string);
-        constexpr uint32    countBytesInString(const wchar_t* const string);
-        constexpr uint32    countBytesInString(const char8_t* const string);
-        constexpr uint32    countBytesInCharCode(const U8CharCode u8CharCode);
+        constexpr uint32    computeByteCountInString(const char* const string);
+        constexpr uint32    computeByteCountInString(const wchar_t* const string);
+        constexpr uint32    computeByteCountInString(const char8_t* const string);
+
+        constexpr uint32    computeByteCountInCharCode(const U8CharCode u8CharCode);
 
         template <typename T>
-        constexpr uint32    computeIndexFromCharacterPosition(const T* const string, const uint32 characterPosition);
+        constexpr uint32    computeBytePositionFromCharacterPosition(const T* const string, const uint32 characterPosition);
 
         constexpr uint32    length(const char* const string);
         constexpr uint32    length(const wchar_t* const string);
@@ -98,11 +99,11 @@ namespace mint
         constexpr bool      compare(const T* const a, const T* const b);
         
         template <uint32 DestSize>
-        void            copy(char8_t(&dest)[DestSize], const char8_t* const source);
+        void                copy(char8_t(&dest)[DestSize], const char8_t* const source);
         template <uint32 DestSize>
-        void            copy(char(&dest)[DestSize], const char* const source);
+        void                copy(char(&dest)[DestSize], const char* const source);
         template <uint32 DestSize>
-        void            copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
+        void                copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
 
         constexpr U8CharCode    encode(const char8_t ch);
         constexpr U8CharCode    encode(const char8_t(&ch)[2]);

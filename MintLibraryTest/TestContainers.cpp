@@ -549,14 +549,14 @@ namespace mint
 				static_assert(StringUtil::length(u8"韓國") == 2);
 			}
 
-            static_assert(StringUtil::countBytesInCharCode(0b11111111) == 4);
-            static_assert(StringUtil::countBytesInCharCode(0b11110000) == 4);
-            static_assert(StringUtil::countBytesInCharCode(0b11101111) == 3);
-            static_assert(StringUtil::countBytesInCharCode(0b11100000) == 3);
-            static_assert(StringUtil::countBytesInCharCode(0b11011111) == 2);
-            static_assert(StringUtil::countBytesInCharCode(0b11000000) == 2);
-            static_assert(StringUtil::countBytesInCharCode(0b01111111) == 1);
-            static_assert(StringUtil::countBytesInCharCode(0b00000000) == 1);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11111111) == 4);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11110000) == 4);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11101111) == 3);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11100000) == 3);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11011111) == 2);
+            static_assert(StringUtil::computeByteCountInCharCode(0b11000000) == 2);
+            static_assert(StringUtil::computeByteCountInCharCode(0b01111111) == 1);
+            static_assert(StringUtil::computeByteCountInCharCode(0b00000000) == 1);
 
             {
                 static_assert(StringUtil::find("abcde", "abc") != kStringNPos);

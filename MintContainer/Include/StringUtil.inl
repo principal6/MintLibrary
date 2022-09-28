@@ -18,7 +18,7 @@ namespace mint
     {
         if (_string != nullptr && _string[_byteAt] != 0)
         {
-            _byteAt += StringUtil::countBytesInCharCode(_string[_byteAt]);
+            _byteAt += StringUtil::computeByteCountInCharCode(_string[_byteAt]);
         }
         return (*this);
     }
@@ -44,7 +44,7 @@ namespace mint
             return (string == nullptr || string[0] == 0);
         }
 
-		constexpr bool is7BitASCII(const char8_t* const string)
+		MINT_INLINE constexpr bool is7BitASCII(const char8_t* const string)
 		{
 			for (uint32 at = 0; string[at] != 0; ++at)
 			{
@@ -69,7 +69,7 @@ namespace mint
 		}
 
 		template <>
-		constexpr uint32 computeCharacterByteSizeFromLeadingByte(const char8_t leadingByte)
+		MINT_INLINE constexpr uint32 computeCharacterByteSizeFromLeadingByte(const char8_t leadingByte)
 		{
 			//                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
 			//                      ----------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ namespace mint
             return 1 + ((leadingByte >> 7) & 1);
 		}
 
-		MINT_INLINE constexpr uint32 countBytesInString(const char* const string)
+		MINT_INLINE constexpr uint32 computeByteCountInString(const char* const string)
 		{
 			if (string == nullptr)
 			{
@@ -103,7 +103,7 @@ namespace mint
 			}
 		}
 		
-		MINT_INLINE constexpr uint32 countBytesInString(const wchar_t* const string)
+		MINT_INLINE constexpr uint32 computeByteCountInString(const wchar_t* const string)
 		{
 			if (string == nullptr)
 			{
@@ -119,7 +119,7 @@ namespace mint
 			}
 		}
 		
-		MINT_INLINE constexpr uint32 countBytesInString(const char8_t* const string)
+		MINT_INLINE constexpr uint32 computeByteCountInString(const char8_t* const string)
 		{
 			if (string == nullptr)
 			{
@@ -135,13 +135,13 @@ namespace mint
 			}
 		}
 
-		MINT_INLINE constexpr uint32 countBytesInCharCode(const U8CharCode u8CharCode)
+		MINT_INLINE constexpr uint32 computeByteCountInCharCode(const U8CharCode u8CharCode)
 		{
 			return computeCharacterByteSizeFromLeadingByte(static_cast<char8_t>(u8CharCode & 0xFF));
 		}
 
 		template <typename T>
-		constexpr uint32 computeIndexFromCharacterPosition(const T* const string, const uint32 characterPosition)
+		MINT_INLINE constexpr uint32 computeBytePositionFromCharacterPosition(const T* const string, const uint32 characterPosition)
 		{
 			if (characterPosition == 0)
 			{
@@ -163,9 +163,9 @@ namespace mint
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 computeIndexFromCharacterPosition(const wchar_t* const string, const uint32 characterPosition)
+		MINT_INLINE constexpr uint32 computeBytePositionFromCharacterPosition(const wchar_t* const string, const uint32 characterPosition)
 		{
-			return characterPosition;
+			return characterPosition * 2;
 		}
 
         MINT_INLINE constexpr uint32 length(const char* const string)
@@ -216,12 +216,12 @@ namespace mint
                     return length;
                 }
 
-                at += countBytesInCharCode(string[at]);
+                at += computeByteCountInCharCode(string[at]);
             }
         }
 
 		template <typename T>
-		constexpr uint32 find(const T* const string, const T* const substring, uint32 offset)
+		MINT_INLINE constexpr uint32 find(const T* const string, const T* const substring, uint32 offset)
 		{
 			if (string == nullptr || substring == nullptr)
 			{
@@ -235,8 +235,8 @@ namespace mint
 				return kStringNPos;
 			}
 
-			const uint32 stringByteOffset = computeIndexFromCharacterPosition<T>(string, offset);
-			const uint32 stringByteCount = countBytesInString(string);
+			const uint32 stringByteOffset = computeBytePositionFromCharacterPosition<T>(string, offset);
+			const uint32 stringByteCount = computeByteCountInString(string);
 			uint32 result = kStringNPos;
 			uint32 stringCharacterByteCount = computeCharacterByteSizeFromLeadingByte<T>(string[stringByteOffset]);
 			uint32 substringBytePosition = 0;
