@@ -73,22 +73,29 @@ namespace mint
 
         constexpr bool      is7BitASCII(const char8_t* const string);
         
+        template <typename T>
+        constexpr uint32    computeCharacterByteSizeFromLeadingByte(const T leadingByte);
+
         // returns the count of bytes in the string
-        constexpr uint32    countByte(const char8_t* const string);
-        constexpr uint32    countByte(const char8_t leadingByte);
-        constexpr uint32    countByteInCharCode(const U8CharCode u8CharCode);
+        constexpr uint32    countBytesInString(const char* const string);
+        constexpr uint32    countBytesInString(const wchar_t* const string);
+        constexpr uint32    countBytesInString(const char8_t* const string);
+        constexpr uint32    countBytesInCharCode(const U8CharCode u8CharCode);
+
+        template <typename T>
+        constexpr uint32    computeIndexFromCharacterPosition(const T* const string, const uint32 characterPosition);
 
         constexpr uint32    length(const char* const string);
         constexpr uint32    length(const wchar_t* const string);
         // returns the count of characters in the string
         constexpr uint32    length(const char8_t* const string);
 
+        // here 'offset' refers to character offset (not byte offset!)
         template <typename T>
-        uint32          find(const T* const source, const T* const target, const uint32 offset = 0);
+        constexpr uint32    find(const T* const string, const T* const substring, const uint32 offset = 0);
 
-        bool            compare(const char* const a, const char* const b);
-        bool            compare(const wchar_t* const a, const wchar_t* const b);
-        constexpr bool  compare(const char8_t* const a, const char8_t* const b);
+        template <typename T>
+        constexpr bool      compare(const T* const a, const T* const b);
         
         template <uint32 DestSize>
         void            copy(char8_t(&dest)[DestSize], const char8_t* const source);

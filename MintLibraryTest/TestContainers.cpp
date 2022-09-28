@@ -549,39 +549,59 @@ namespace mint
 				static_assert(StringUtil::length(u8"韓國") == 2);
 			}
 
-            static_assert(StringUtil::countByteInCharCode(0b11111111) == 4);
-            static_assert(StringUtil::countByteInCharCode(0b11110000) == 4);
-            static_assert(StringUtil::countByteInCharCode(0b11101111) == 3);
-            static_assert(StringUtil::countByteInCharCode(0b11100000) == 3);
-            static_assert(StringUtil::countByteInCharCode(0b11011111) == 2);
-            static_assert(StringUtil::countByteInCharCode(0b11000000) == 2);
-            static_assert(StringUtil::countByteInCharCode(0b01111111) == 1);
-            static_assert(StringUtil::countByteInCharCode(0b00000000) == 1);
+            static_assert(StringUtil::countBytesInCharCode(0b11111111) == 4);
+            static_assert(StringUtil::countBytesInCharCode(0b11110000) == 4);
+            static_assert(StringUtil::countBytesInCharCode(0b11101111) == 3);
+            static_assert(StringUtil::countBytesInCharCode(0b11100000) == 3);
+            static_assert(StringUtil::countBytesInCharCode(0b11011111) == 2);
+            static_assert(StringUtil::countBytesInCharCode(0b11000000) == 2);
+            static_assert(StringUtil::countBytesInCharCode(0b01111111) == 1);
+            static_assert(StringUtil::countBytesInCharCode(0b00000000) == 1);
 
             {
-                const char* a = nullptr;
-                const char* b = nullptr;
-                MINT_ASSURE(StringUtil::compare(a, b));
-                MINT_ASSURE(StringUtil::compare(nullptr, "abc") == false);
-                MINT_ASSURE(StringUtil::compare("abc", nullptr) == false);
-                MINT_ASSURE(StringUtil::compare("abc", "abc"));
-                MINT_ASSURE(StringUtil::compare("abc", "abcd") == false);
-                MINT_ASSURE(StringUtil::compare("abcd", "abc") == false);
+                static_assert(StringUtil::find("abcde", "abc") != kStringNPos);
+                static_assert(StringUtil::find("abc가나다라def", "나다") != kStringNPos);
+                static_assert(StringUtil::find("abc가나다라def", "나다", 4) != kStringNPos);
+                static_assert(StringUtil::find("abc가나다라def", "나다", 5) == kStringNPos);
+                static_assert(StringUtil::find("abc가나다라def", "나다", 100) == kStringNPos);
 
-                const wchar_t* c = nullptr;
-                const wchar_t* d = nullptr;
-                MINT_ASSURE(StringUtil::compare(c, d));
-                MINT_ASSURE(StringUtil::compare(nullptr, L"abc") == false);
-                MINT_ASSURE(StringUtil::compare(L"abc", nullptr) == false);
-                MINT_ASSURE(StringUtil::compare(L"abc", L"abc"));
-                MINT_ASSURE(StringUtil::compare(L"abc", L"abcd") == false);
-                MINT_ASSURE(StringUtil::compare(L"abcd", L"abc") == false);
+                static_assert(StringUtil::find(L"abcde", L"abc") != kStringNPos);
+                static_assert(StringUtil::find(L"abc가나다라def", L"나다") != kStringNPos);
+                static_assert(StringUtil::find(L"abc가나다라def", L"나다", 4) != kStringNPos);
+                static_assert(StringUtil::find(L"abc가나다라def", L"나다", 5) == kStringNPos);
+                static_assert(StringUtil::find(L"abc가나다라def", L"나다", 100) == kStringNPos);
+
+                static_assert(StringUtil::find(u8"abcde", u8"abc") != kStringNPos);
+                static_assert(StringUtil::find(u8"abc가나다라def", u8"나다") != kStringNPos);
+                static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 4) != kStringNPos);
+                static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 5) == kStringNPos);
+                static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 100) == kStringNPos);
+            }
+
+            {
+                constexpr const char* a = nullptr;
+                constexpr const char* b = nullptr;
+                static_assert(StringUtil::compare(a, b));
+                static_assert(StringUtil::compare(a, "abc") == false);
+                static_assert(StringUtil::compare("abc", b) == false);
+                static_assert(StringUtil::compare("abc", "abc"));
+                static_assert(StringUtil::compare("abc", "abcd") == false);
+                static_assert(StringUtil::compare("abcd", "abc") == false);
+
+                constexpr const wchar_t* c = nullptr;
+                constexpr const wchar_t* d = nullptr;
+                static_assert(StringUtil::compare(c, d));
+                static_assert(StringUtil::compare(c, L"abc") == false);
+                static_assert(StringUtil::compare(L"abc", d) == false);
+                static_assert(StringUtil::compare(L"abc", L"abc"));
+                static_assert(StringUtil::compare(L"abc", L"abcd") == false);
+                static_assert(StringUtil::compare(L"abcd", L"abc") == false);
 
                 constexpr const char8_t* e = nullptr;
                 constexpr const char8_t* f = nullptr;
                 static_assert(StringUtil::compare(e, f));
-                static_assert(StringUtil::compare(nullptr, u8"abc") == false);
-                static_assert(StringUtil::compare(u8"abc", nullptr) == false);
+                static_assert(StringUtil::compare(e, u8"abc") == false);
+                static_assert(StringUtil::compare(u8"abc", f) == false);
                 static_assert(StringUtil::compare(u8"abc", u8"abc"));
                 static_assert(StringUtil::compare(u8"abc", u8"abcd") == false);
                 static_assert(StringUtil::compare(u8"abcd", u8"abc") == false);
