@@ -360,7 +360,7 @@ namespace mint
         template<uint32 DestSize>
         MINT_INLINE void copy(char8_t(&dest)[DestSize], const char8_t* const source)
         {
-            ::strcpy_s(dest, source);
+            ::strcpy_s(reinterpret_cast<char*>(dest), DestSize, reinterpret_cast<const char*>(source));
         }
         
         template<uint32 DestSize>

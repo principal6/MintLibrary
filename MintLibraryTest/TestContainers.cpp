@@ -607,6 +607,16 @@ namespace mint
                 static_assert(StringUtil::compare(u8"abcd", u8"abc") == false);
             }
             
+            {
+                constexpr uint32 kSize = 256;
+                char bufferA[kSize]{};
+                wchar_t bufferB[kSize]{};
+                char8_t bufferC[kSize]{};
+                StringUtil::copy(bufferA, "가나다라");
+                StringUtil::copy(bufferB, L"가나다라");
+                StringUtil::copy(bufferC, u8"가나다라");
+            }
+
             static_assert(StringUtil::is7BitASCII(u8"abc"));
             static_assert(StringUtil::is7BitASCII(u8"0.125f"));
             static_assert(StringUtil::is7BitASCII(u8"가나다") == false);
