@@ -75,10 +75,11 @@ namespace mint
         
         // returns the count of bytes in the string
         constexpr uint32    countByte(const char8_t* const string);
+        constexpr uint32    countByte(const char8_t leadingByte);
         constexpr uint32    countByteInCharCode(const U8CharCode u8CharCode);
-        constexpr uint32    countByteInCharCode(const char8_t* const string, const uint32 byteAt);
-        uint32              length(const char* const string);
-        uint32              length(const wchar_t* const string);
+
+        constexpr uint32    length(const char* const string);
+        constexpr uint32    length(const wchar_t* const string);
         // returns the count of characters in the string
         constexpr uint32    length(const char8_t* const string);
 

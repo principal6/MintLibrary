@@ -535,12 +535,19 @@ namespace mint
             Vector<std::string> testBTokenized;
             StringUtil::tokenize(testB, delimiterArray, testBTokenized);
 
-            {
-                static_assert(StringUtil::length("abc") == 3);
-                static_assert(StringUtil::length("가나다라") == 4);
-                static_assert(StringUtil::length(L"abc") == 3);
-                static_assert(StringUtil::length(L"가나다라") == 4);
-            }
+			{
+				static_assert(StringUtil::length("abc") == 3);
+				static_assert(StringUtil::length("가나다라") == 4);
+				static_assert(StringUtil::length("韓國") == 2);
+
+				static_assert(StringUtil::length(L"abc") == 3);
+				static_assert(StringUtil::length(L"가나다라") == 4);
+				static_assert(StringUtil::length(L"韓國") == 2);
+
+				static_assert(StringUtil::length(u8"abc") == 3);
+				static_assert(StringUtil::length(u8"가나다라") == 4);
+				static_assert(StringUtil::length(u8"韓國") == 2);
+			}
 
             static_assert(StringUtil::countByteInCharCode(0b11111111) == 4);
             static_assert(StringUtil::countByteInCharCode(0b11110000) == 4);

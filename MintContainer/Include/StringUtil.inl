@@ -18,7 +18,7 @@ namespace mint
     {
         if (_string != nullptr && _string[_byteAt] != 0)
         {
-            _byteAt += StringUtil::countByteInCharCode(_string, _byteAt);
+            _byteAt += StringUtil::countByteInCharCode(_string[_byteAt]);
         }
         return (*this);
     }
@@ -72,46 +72,56 @@ namespace mint
             }
         }
 
-        MINT_INLINE constexpr uint32 countByteInCharCode(const U8CharCode u8CharCode)
-        {
-            //                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
-            //                      ----------------------------------------------------------------------------------------------
-            // x == 1111 ==  15   =>    4   == (      0     ) + (   1  ) * ( 1 + (      1     ) + (      1     ) + (      1     ) )
-            // x == 1110 ==  14   =>    3   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      1     ) )
-            // x == 110? == 12~13 =>    2   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      0     ) )
-            // x == 0??? ==  0~7  =>    1   == (      1     ) + (   0  ) * ( 1 + (      0     ) + (      ?     ) + (      ?     ) )
-            const char8_t head = u8CharCode & 0xFF;
-            const char8_t x = head >> 4;
-            return ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) );
-        }
+		MINT_INLINE constexpr uint32 countByte(const char8_t leadingByte)
+		{
+			//                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
+			//                      ----------------------------------------------------------------------------------------------
+			// x == 1111 ==  15   =>    4   == (      0     ) + (   1  ) * ( 1 + (      1     ) + (      1     ) + (      1     ) )
+			// x == 1110 ==  14   =>    3   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      1     ) )
+			// x == 110? == 12~13 =>    2   == (      0     ) + (   1  ) * ( 1 + (      0     ) + (      1     ) + (      0     ) )
+			// x == 0??? ==  0~7  =>    1   == (      1     ) + (   0  ) * ( 1 + (      0     ) + (      ?     ) + (      ?     ) )
+			const char8_t x = leadingByte >> 4;
+			return ((x >> 3) ^ 1) + (x >> 3) * (1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1));
+		}
 
-        MINT_INLINE constexpr uint32 countByteInCharCode(const char8_t* const string, const uint32 byteAt)
-        {
-            if (string == nullptr)
-            {
-                return 0;
-            }
-            return countByteInCharCode(string[byteAt]);
-        }
+		MINT_INLINE constexpr uint32 countByteInCharCode(const U8CharCode u8CharCode)
+		{
+			return countByte((u8CharCode & 0xFF));
+		}
 
-        MINT_INLINE uint32 length(const char* const string)
-        {
-            if (string == nullptr)
-            {
-                return 0;
-            }
-            return static_cast<uint32>(::strlen(string));
-        }
+        MINT_INLINE constexpr uint32 length(const char* const string)
+		{
+			if (string == nullptr)
+			{
+				return 0;
+			}
+			uint32 length = 0;
+			for (uint32 at = 0; string[at] != 0; ++at)
+			{
+                // handle DBCS(Double-Byte Character Sets)
+				if ((string[at] >> 7) & 1)
+				{
+					++at;
+				}
+				++length;
+			}
+			return length;
+		}
 
-        MINT_INLINE uint32 length(const wchar_t* const string)
-        {
-            if (string == nullptr)
-            {
-                return 0;
-            }
-            return static_cast<uint32>(::wcslen(string));
-        }
-        
+		MINT_INLINE constexpr uint32 length(const wchar_t* const string)
+		{
+			if (string == nullptr)
+			{
+				return 0;
+			}
+			uint32 at = 0;
+			for (; string[at] != 0; ++at)
+			{
+				__noop;
+			}
+			return at;
+		}
+
         MINT_INLINE constexpr uint32 length(const char8_t* const string)
         {
             if (string == nullptr)
