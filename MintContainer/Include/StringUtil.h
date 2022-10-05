@@ -86,6 +86,8 @@ namespace mint
         template <typename T>
         constexpr uint32    computeBytePositionFromCharacterPosition(const T* const string, const uint32 characterPosition);
 
+        // The implementation of this function is too naive.
+        // Prefer to use utf8 encoding (char8_t).
         constexpr uint32    length(const char* const string);
         constexpr uint32    length(const wchar_t* const string);
         // returns the count of characters in the string
