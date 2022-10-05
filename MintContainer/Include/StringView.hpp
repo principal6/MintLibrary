@@ -15,31 +15,35 @@ namespace mint
 {
     template<typename T>
     inline StringView<T>::StringView(const T* const string)
+        : _rawString{ string }
+        , _length{ StringUtil::length(string) }
     {
-        _rawString = string;
-        _length = StringUtil::length(string);
+        __noop;
     }
     
     template<typename T>
     inline StringView<T>::StringView(const String<T>& string)
+        : _rawString{ string.c_str() }
+        , _length{ string.length() }
     {
-        _rawString = string.c_str();
-        _length = string.length();
+        __noop;
     }
     
     template<typename T>
     template<uint32 BufferSize>
     inline StringView<T>::StringView(const StackString<T, BufferSize>& string)
+        : _rawString{ string.c_str() }
+        , _length{ string.length() }
     {
-        _rawString = string.c_str();
-        _length = string.length();
+        __noop;
     }
     
     template<typename T>
     inline StringView<T>::StringView(const UniqueString<T>& string)
+        : _rawString{ string.c_str() }
+        , _length{ string.length() }
     {
-        _rawString = string.c_str();
-        _length = string.length();
+        __noop;
     }
 
     template<typename T>

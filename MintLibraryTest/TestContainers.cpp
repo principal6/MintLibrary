@@ -511,12 +511,13 @@ namespace mint
 
         static bool testStringUtil() noexcept
         {
-            const std::string testA{ "ab c   def g" };
-            Vector<std::string> testATokens;
-            StringUtil::tokenize(testA, ' ', testATokens);
+            {
+                const std::string testA{ "ab c   def g" };
+                Vector<std::string> testATokens;
+                StringUtil::tokenize(testA, ' ', testATokens);
 
-            std::string testB{
-                R"(
+                std::string testB{
+                    R"(
                 #include <ShaderStructDefinitions>
                 #include <VsConstantBuffers>
 
@@ -530,10 +531,11 @@ namespace mint
                     return result;
                 }
                 )"
-            };
-            const Vector<char> delimiters{ ' ', '\t', '\n' };
-            Vector<std::string> testBTokens;
-            StringUtil::tokenize(testB, delimiters, testBTokens);
+                };
+                const Vector<char> delimiters{ ' ', '\t', '\n' };
+                Vector<std::string> testBTokens;
+                StringUtil::tokenize(testB, delimiters, testBTokens);
+            }
 
 			{
 				static_assert(StringUtil::length("abc") == 3);
@@ -631,14 +633,38 @@ namespace mint
             static_assert(StringUtil::is7BitASCII(u8"0.125f"));
             static_assert(StringUtil::is7BitASCII(u8"가나다") == false);
             static_assert(StringUtil::is7BitASCII(u8"韓國") == false);
-
-            constexpr uint32 l = StringUtil::length(u8"가나다abc");
-            U8CharCodeViewer u8CharCodeViewer(u8"가나다");
-            for (auto charCode : u8CharCodeViewer)
             {
-                std::string string;
-                StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(charCode)), string);
-                //MINT_LOG("CONVERTED: %s", string.c_str());
+                constexpr uint32 l = StringUtil::length(u8"가나다abc");
+                U8CharCodeViewer u8CharCodeViewer(u8"가나다");
+                for (auto charCode : u8CharCodeViewer)
+                {
+                    std::string string;
+                    StringUtil::convertWideStringToString(StringUtil::convertUTF8ToWideString(StringUtil::decode(charCode)), string);
+                    //MINT_LOG("CONVERTED: %s", string.c_str());
+                }
+            }
+
+            {
+                constexpr uint32 kSize = 256;
+                char stringA[kSize]{ "테스트!" };
+                wchar_t stringB[kSize]{ L"테스트!" };
+                char8_t stringC[kSize]{ u8"테스트!" };
+                StringA stringD{ "테스트!" };
+                StringW stringE{ L"테스트!" };
+                StackStringA<kSize> stringF{ "테스트!" };
+                StackStringW<kSize> stringG{ L"테스트!" };
+                UniqueStringA stringH{ "테스트!" };
+                UniqueStringW stringI{ L"테스트!" };
+
+                StringViewA stringViewA{ stringA };
+                StringViewW stringViewB{ stringB };
+                StringViewU8 stringViewC{ stringC };
+                StringViewA stringViewD{ stringD };
+                StringViewW stringViewE{ stringE };
+                StringViewA stringViewF{ stringF };
+                StringViewW stringViewG{ stringG };
+                StringViewA stringViewH{ stringH };
+                StringViewW stringViewI{ stringI };
             }
 
             return true;

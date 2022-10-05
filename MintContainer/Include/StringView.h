@@ -24,28 +24,28 @@ namespace mint
     class StringView
     {
     public:
-                    StringView() = default;
-                    StringView(const T* const string);
-                    StringView(const String<T>& string);
-                    template <uint32 BufferSize>
-                    StringView(const StackString<T, BufferSize>& string);
-                    StringView(const UniqueString<T>& string);
-                    ~StringView() = default;
+                        StringView(const T* const string);
+                        StringView(const String<T>& string);
+                        template <uint32 BufferSize>
+                        StringView(const StackString<T, BufferSize>& string);
+                        StringView(const UniqueString<T>& string);
+                        ~StringView() = default;
 
     public:
-        bool        operator==(const StringView& rhs) const noexcept;
-        bool        operator!=(const StringView& rhs) const noexcept;
-        const T&    operator[](const uint32 at) const noexcept;
-        const T*    c_str() const noexcept;
+        bool            operator==(const StringView& rhs) const noexcept;
+        bool            operator!=(const StringView& rhs) const noexcept;
+        const T&        operator[](const uint32 at) const noexcept;
+        const T*        c_str() const noexcept;
 
     private:
-        const T*    _rawString = nullptr;
-        uint32      _length = 0;
+        const T* const  _rawString;
+        const uint32    _length;
     };
 
 
     using StringViewA = StringView<char>;
     using StringViewW = StringView<wchar_t>;
+    using StringViewU8 = StringView<char8_t>;
 }
 
 
