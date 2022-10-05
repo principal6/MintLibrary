@@ -613,8 +613,18 @@ namespace mint
                 wchar_t bufferB[kSize]{};
                 char8_t bufferC[kSize]{};
                 StringUtil::copy(bufferA, "가나다라");
+                StringUtil::copy(bufferA, nullptr);
                 StringUtil::copy(bufferB, L"가나다라");
+                StringUtil::copy(bufferB, nullptr);
                 StringUtil::copy(bufferC, u8"가나다라");
+                StringUtil::copy(bufferC, nullptr);
+
+                char bufferD[4]{};
+                //StringUtil::copy(bufferD, "가나다라");
+                wchar_t bufferE[4]{};
+                //StringUtil::copy(bufferE, L"가나다라");
+                char8_t bufferF[4]{};
+                StringUtil::copy(bufferF, u8"가나다라");
             }
 
             static_assert(StringUtil::is7BitASCII(u8"abc"));

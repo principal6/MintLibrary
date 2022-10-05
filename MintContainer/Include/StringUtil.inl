@@ -360,18 +360,32 @@ namespace mint
         template<uint32 DestSize>
         MINT_INLINE void copy(char8_t(&dest)[DestSize], const char8_t* const source)
         {
-            ::strcpy_s(reinterpret_cast<char*>(dest), DestSize, reinterpret_cast<const char*>(source));
+			if (source == nullptr)
+			{
+				return;
+			}
+			const uint32 byteCountToCopy = min(DestSize - 1, computeByteCountInString(source));
+            ::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * byteCountToCopy);
+			dest[byteCountToCopy] = 0;
         }
         
         template<uint32 DestSize>
         MINT_INLINE void copy(char(&dest)[DestSize], const char* const source)
         {
+			if (source == nullptr)
+			{
+				return;
+			}
             ::strcpy_s(dest, source);
         }
 
         template<uint32 DestSize>
         MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
         {
+			if (source == nullptr)
+			{
+				return;
+			}
             ::wcscpy_s(dest, source);
         }
     }
