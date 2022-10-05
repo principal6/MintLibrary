@@ -512,8 +512,8 @@ namespace mint
         static bool testStringUtil() noexcept
         {
             const std::string testA{ "ab c   def g" };
-            Vector<std::string> testATokenized;
-            StringUtil::tokenize(testA, ' ', testATokenized);
+            Vector<std::string> testATokens;
+            StringUtil::tokenize(testA, ' ', testATokens);
 
             std::string testB{
                 R"(
@@ -531,9 +531,9 @@ namespace mint
                 }
                 )"
             };
-            const Vector<char> delimiterArray{ ' ', '\t', '\n' };
-            Vector<std::string> testBTokenized;
-            StringUtil::tokenize(testB, delimiterArray, testBTokenized);
+            const Vector<char> delimiters{ ' ', '\t', '\n' };
+            Vector<std::string> testBTokens;
+            StringUtil::tokenize(testB, delimiters, testBTokens);
 
 			{
 				static_assert(StringUtil::length("abc") == 3);

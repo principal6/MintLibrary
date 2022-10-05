@@ -266,57 +266,36 @@ namespace mint
             }
         }
 
-        inline void tokenize(const std::string& inputString, const char delimiter, Vector<std::string>& outArray)
+        template <typename T>
+        inline void tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens)
         {
-            if (inputString.empty() == true)
-            {
-                return;
-            }
-
-            outArray.clear();
-
-            uint32 prevAt = 0;
-            const uint32 length = static_cast<uint32>(inputString.length());
-            for (uint32 at = 0; at < length; ++at)
-            {
-                if (inputString.at(at) == delimiter)
-                {
-                    if (prevAt < at)
-                    {
-                        outArray.push_back(inputString.substr(prevAt, at - prevAt));
-                    }
-
-                    prevAt = at + 1;
-                }
-            }
-
-            if (prevAt < length)
-            {
-                outArray.push_back(inputString.substr(prevAt, length - prevAt));
-            }
+            Vector<char> delimiters;
+            delimiters.push_back(delimiter);
+            tokenize(inputString, delimiters, outTokens);
         }
 
-        inline void tokenize(const std::string& inputString, const Vector<char>& delimiterArray, Vector<std::string>& outArray)
+        template <typename T>
+        inline void tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens)
         {
+            outTokens.clear();
+
             if (inputString.empty() == true)
             {
                 return;
             }
 
-            outArray.clear();
-
             uint32 prevAt = 0;
-            const uint32 delimiterCount = static_cast<uint32>(delimiterArray.size());
+            const uint32 delimiterCount = static_cast<uint32>(delimiters.size());
             const uint32 length = static_cast<uint32>(inputString.length());
             for (uint32 at = 0; at < length; ++at)
             {
                 for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
                 {
-                    if (inputString.at(at) == delimiterArray.at(delimiterIndex))
+                    if (inputString.at(at) == delimiters.at(delimiterIndex))
                     {
                         if (prevAt < at)
                         {
-                            outArray.push_back(inputString.substr(prevAt, at - prevAt));
+                            outTokens.push_back(inputString.substr(prevAt, at - prevAt));
                         }
 
                         prevAt = at + 1;
@@ -326,44 +305,7 @@ namespace mint
 
             if (prevAt < length)
             {
-                outArray.push_back(inputString.substr(prevAt, length - prevAt));
-            }
-        }
-
-        inline void tokenize(const std::string& inputString, const std::string& delimiterString, Vector<std::string>& outArray)
-        {
-            if (inputString.empty() == true || delimiterString.empty() == true)
-            {
-                return;
-            }
-
-            outArray.clear();
-
-            const uint64 length = inputString.length();
-            const uint64 delimiterLength = delimiterString.length();
-            uint64 at = 0;
-            uint64 prevAt = 0;
-            while (at < length)
-            {
-                if (inputString.compare(at, delimiterLength, delimiterString) == 0)
-                {
-                    if (prevAt < at)
-                    {
-                        outArray.push_back(inputString.substr(prevAt, at - prevAt));
-                    }
-
-                    at += delimiterLength;
-                    prevAt = at;
-                }
-                else
-                {
-                    ++at;
-                }
-            }
-
-            if (prevAt < length)
-            {
-                outArray.push_back(inputString.substr(prevAt, length - prevAt));
+                outTokens.push_back(inputString.substr(prevAt, length - prevAt));
             }
         }
 
