@@ -102,22 +102,21 @@ namespace mint
 
     private:
         //
-        // |                  LC                   |                  LS                   |                  RP                   |
-        // | cS | 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 |
-        // |   wS    |   w00   |   w01   |   w02   |   w03   |   w04   |   w05   |   w06   |   w07   |   w08   |   w09   |   w10   |
+        // LONG                     |                capacity               |                  size                 |              rawPointer               |
+        // SHORT(1 byte-wide char ) |size| 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 |
+        // SHORT(2 bytes-wide char) |   size  |    00   |    01   |    02   |    03   |    04   |    05   |    06   |    07   |    08   |    09   |    10   |
+        // SHORT(4 bytes-wide char) |        s32        |         00        |         01        |         02        |         03        |         04        |
         //
         struct Long
         {
-            //static constexpr uint64 kStringMaxCapacity = 0x0000FFFFFFFFFFFF;
-
-            uint64  _capacity;          // 8
-            uint64  _size;              // 8
-            T*      _rawPointer;        // 8
+            uint64  _capacity;      // 8 bytes
+            uint64  _size;          // 8 bytes
+            T*      _rawPointer;    // 8 bytes
         };
         struct Short
         {
             static constexpr uint32 kSmallStringCapacity = (24 / kTypeSize) - 1;
-
+            
             T       _size;                              //  1 (char) or  2 (wchar_t)
             T       _smallString[kSmallStringCapacity]; // 23 (char) or 22 (wchar_t)
         };
