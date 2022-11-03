@@ -8,7 +8,6 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <initializer_list>
-#include <utility>
 
 
 namespace mint

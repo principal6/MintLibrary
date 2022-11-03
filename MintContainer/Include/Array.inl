@@ -1,5 +1,4 @@
-﻿#include "Array.h"
-#pragma once
+﻿#pragma once
 
 
 namespace mint
