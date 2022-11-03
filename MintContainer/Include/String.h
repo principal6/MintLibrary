@@ -105,7 +105,7 @@ namespace mint
         // LONG                     |                capacity               |                  size                 |              rawPointer               |
         // SHORT(1 byte-wide char ) |size| 00 | 01 | 02 | 03 | 04 | 05 | 06 | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 |
         // SHORT(2 bytes-wide char) |   size  |    00   |    01   |    02   |    03   |    04   |    05   |    06   |    07   |    08   |    09   |    10   |
-        // SHORT(4 bytes-wide char) |        s32        |         00        |         01        |         02        |         03        |         04        |
+        // SHORT(4 bytes-wide char) |        size       |         00        |         01        |         02        |         03        |         04        |
         //
         struct Long
         {
