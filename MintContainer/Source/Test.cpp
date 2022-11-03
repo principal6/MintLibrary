@@ -4,6 +4,8 @@
 
 #pragma optimize("", off)
 
+//#define MINT_TEST_PERFORMANCE
+
 
 namespace mint
 {
@@ -138,64 +140,6 @@ namespace mint
 			BitArray<33> bitArray1(true);
 			MINT_ASSURE(bitArray1.getBitCount() == 33);
 			MINT_ASSURE(bitArray1.getByteCount() == 5);
-			return true;
-		}
-
-		static bool test_StackHolder() noexcept
-		{
-			{
-				StackHolder<16, 6> sh;
-
-				byte* shTestA = sh.registerSpace(2);
-				memcpy(shTestA + (16 * 0), "1__abcdefghijk__", 16);
-				memcpy(shTestA + (16 * 1), "2__lmnopqrstuv__", 16);
-
-				byte* shTestB = sh.registerSpace(1);
-				memcpy(shTestB + (16 * 0), "3__wxyzabcdefg__", 16);
-
-				byte* shTestC = sh.registerSpace(1);
-				memcpy(shTestC + (16 * 0), "4__helloMyFrie__", 16);
-
-				sh.deregisterSpace(shTestB);
-
-				byte* shTestD = sh.registerSpace(2);
-				memcpy(shTestD + (16 * 0), "5__nd!!IAmLege__", 16);
-			}
-			{
-				StackHolder<8, 12> sh;
-
-				byte* shTestA = sh.registerSpace(7);
-				memcpy(shTestA + (8 * 0), "01_abcd_", 8);
-				memcpy(shTestA + (8 * 1), "02_efgh_", 8);
-				memcpy(shTestA + (8 * 2), "03_ijkl_", 8);
-				memcpy(shTestA + (8 * 3), "04_mnop_", 8);
-				memcpy(shTestA + (8 * 4), "05_qrst_", 8);
-				memcpy(shTestA + (8 * 5), "06_uvwx_", 8);
-				memcpy(shTestA + (8 * 6), "07_yzab_", 8);
-
-				byte* shTestB = sh.registerSpace(3);
-				memcpy(shTestB + (8 * 0), "08_cdef_", 8);
-				memcpy(shTestB + (8 * 1), "09_ghij_", 8);
-				memcpy(shTestB + (8 * 2), "10_klmn_", 8);
-
-				sh.deregisterSpace(shTestB);
-			}
-#ifdef MINT_TEST_FAILURES
-			{
-				StackHolder<0, 0> shA; // THIS MUST FAIL!
-				StackHolder<1, 0> shB; // THIS MUST FAIL!
-				StackHolder<0, 1> shC; // THIS MUST FAIL!
-			}
-			{
-				StackHolder<32, 16> sh;
-
-				byte* shTestA = sh.registerSpace(16);
-				memcpy((char*)(shTestA), "01_abcd_", 8);
-
-				byte* shTestB = sh.registerSpace(8); // THIS MUST FAIL!
-				sh.deregisterSpace(shTestB); // THIS MUST FAIL!
-			}
-#endif
 			return true;
 		}
 
@@ -375,11 +319,67 @@ namespace mint
 
 				Vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
 				const bool isEmpty = logArray.empty();
-		}
 #endif
-
 			return true;
-	}
+		}
+
+		static bool test_StackHolder() noexcept
+		{
+			{
+				StackHolder<16, 6> sh;
+
+				byte* shTestA = sh.registerSpace(2);
+				memcpy(shTestA + (16 * 0), "1__abcdefghijk__", 16);
+				memcpy(shTestA + (16 * 1), "2__lmnopqrstuv__", 16);
+
+				byte* shTestB = sh.registerSpace(1);
+				memcpy(shTestB + (16 * 0), "3__wxyzabcdefg__", 16);
+
+				byte* shTestC = sh.registerSpace(1);
+				memcpy(shTestC + (16 * 0), "4__helloMyFrie__", 16);
+
+				sh.deregisterSpace(shTestB);
+
+				byte* shTestD = sh.registerSpace(2);
+				memcpy(shTestD + (16 * 0), "5__nd!!IAmLege__", 16);
+			}
+			{
+				StackHolder<8, 12> sh;
+
+				byte* shTestA = sh.registerSpace(7);
+				memcpy(shTestA + (8 * 0), "01_abcd_", 8);
+				memcpy(shTestA + (8 * 1), "02_efgh_", 8);
+				memcpy(shTestA + (8 * 2), "03_ijkl_", 8);
+				memcpy(shTestA + (8 * 3), "04_mnop_", 8);
+				memcpy(shTestA + (8 * 4), "05_qrst_", 8);
+				memcpy(shTestA + (8 * 5), "06_uvwx_", 8);
+				memcpy(shTestA + (8 * 6), "07_yzab_", 8);
+
+				byte* shTestB = sh.registerSpace(3);
+				memcpy(shTestB + (8 * 0), "08_cdef_", 8);
+				memcpy(shTestB + (8 * 1), "09_ghij_", 8);
+				memcpy(shTestB + (8 * 2), "10_klmn_", 8);
+
+				sh.deregisterSpace(shTestB);
+			}
+#ifdef MINT_TEST_FAILURES
+			{
+				StackHolder<0, 0> shA; // THIS MUST FAIL!
+				StackHolder<1, 0> shB; // THIS MUST FAIL!
+				StackHolder<0, 1> shC; // THIS MUST FAIL!
+			}
+			{
+				StackHolder<32, 16> sh;
+
+				byte* shTestA = sh.registerSpace(16);
+				memcpy((char*)(shTestA), "01_abcd_", 8);
+
+				byte* shTestB = sh.registerSpace(8); // THIS MUST FAIL!
+				sh.deregisterSpace(shTestB); // THIS MUST FAIL!
+			}
+#endif
+			return true;
+		}
 
 		static bool test_Vector() noexcept
 		{
