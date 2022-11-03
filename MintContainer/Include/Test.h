@@ -13,6 +13,7 @@ namespace mint
 	namespace TestContainers
 	{
 		bool test_Array() noexcept;
+		bool test_BitArray() noexcept;
 		bool test_StackHolder() noexcept;
 		bool test_BitVector() noexcept;
 		bool test_Vector() noexcept;

@@ -2,6 +2,9 @@
 #include <MintContainer/Include/AllHpps.h>
 
 
+#pragma optimize("", off)
+
+
 namespace mint
 {
 	template <typename T>
@@ -114,28 +117,32 @@ namespace mint
 	{
 		static bool test_Array() noexcept
 		{
-			using namespace mint;
 			constexpr Array<int32, 3> arr{ 4, 5, 999 };
+			return true;
+		}
 
-			BitArray<3> ba(true);
-			const uint32 bitCount = ba.getBitCount();
-			const uint32 byteCount = ba.getByteCount();
-			ba.setByte(0, 0xFF);
-			ba.setAll(false);
-			ba.set(0, true);
-			ba.set(3, true);
-			ba.setUnsafe(5, true);
-			const bool test0 = ba.get(0);
-			const bool test1 = ba.get(1);
-			const bool test3 = ba.get(3);
-			const bool test5 = ba.getUnsafe(5);
+		static bool test_BitArray() noexcept
+		{
+			BitArray<3> bitArray0(true);
+			MINT_ASSURE(bitArray0.getBitCount() == 3);
+			MINT_ASSURE(bitArray0.getByteCount() == 1);
+			bitArray0.setByte(0, 0xFF);
+			bitArray0.setAll(false);
+			bitArray0.set(0, true);
+			bitArray0.set(3, true);
+			MINT_ASSURE(bitArray0.get(3) == false);
+			bitArray0.setUnsafe(5, true);
+			MINT_ASSURE(bitArray0.getUnsafe(5) == true);
+			MINT_ASSURE(bitArray0.get(5) == false);
 
+			BitArray<33> bitArray1(true);
+			MINT_ASSURE(bitArray1.getBitCount() == 33);
+			MINT_ASSURE(bitArray1.getByteCount() == 5);
 			return true;
 		}
 
 		static bool test_StackHolder() noexcept
 		{
-			using namespace mint;
 			{
 				StackHolder<16, 6> sh;
 
@@ -189,7 +196,6 @@ namespace mint
 				sh.deregisterSpace(shTestB); // THIS MUST FAIL!
 			}
 #endif
-
 			return true;
 		}
 
@@ -369,11 +375,11 @@ namespace mint
 
 				Vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
 				const bool isEmpty = logArray.empty();
-			}
+		}
 #endif
 
 			return true;
-		}
+	}
 
 		static bool test_Vector() noexcept
 		{
@@ -812,6 +818,7 @@ namespace mint
 		bool test() noexcept
 		{
 			MINT_ASSURE(test_Array());
+			MINT_ASSURE(test_BitArray());
 			MINT_ASSURE(test_StackHolder());
 			MINT_ASSURE(test_BitVector());
 			MINT_ASSURE(test_Vector());
@@ -822,5 +829,5 @@ namespace mint
 			MINT_ASSURE(test_Tree());
 			return true;
 		}
-	}
 }
+		}
