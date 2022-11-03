@@ -111,6 +111,9 @@
     <ClInclude Include="Include\StackVector.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Test.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">
@@ -128,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\UniqueString.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

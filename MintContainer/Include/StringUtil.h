@@ -35,19 +35,34 @@ namespace mint
     class U8CharCodeViewer
     {
     public:
-                            U8CharCodeViewer(const char8_t* const string) : _string{ string }, _byteAt{ 0 } { __noop; }
+        class ConstIterator;
+
+    public:
+                            U8CharCodeViewer(const char8_t* const string) : _string{ string } { __noop; }
                             ~U8CharCodeViewer() = default;
 
     public:
-        bool                operator!=(const U8CharCodeViewer& rhs) const;
-        U8CharCode          operator*() const noexcept;
-        U8CharCodeViewer    operator++();
-        U8CharCodeViewer    begin() const;
-        U8CharCodeViewer    end() const;
+        ConstIterator       begin() const;
+        ConstIterator       end() const;
+
+    public:
+        class ConstIterator
+        {
+        public:
+                            ConstIterator(const char8_t* const string, const uint32 byteAt);
+        
+        public:
+            ConstIterator&  operator++();
+            U8CharCode      operator*() const noexcept;
+            bool            operator!=(const ConstIterator& rhs) const;
+
+        private:
+            const char8_t* const    _string;
+            uint32                  _byteAt;
+        };
 
     private:
         const char8_t*  _string;
-        uint32          _byteAt;
     };
 
 

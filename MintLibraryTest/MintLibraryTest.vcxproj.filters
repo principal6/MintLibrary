@@ -2,11 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="test.cpp" />
-    <ClCompile Include="TestContainers.cpp" />
     <ClCompile Include="TestReflection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestContainers.h" />
     <ClInclude Include="TestReflection.h" />
   </ItemGroup>
 </Project>

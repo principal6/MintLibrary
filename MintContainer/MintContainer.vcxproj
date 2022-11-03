@@ -204,6 +204,7 @@
     <ClInclude Include="Include\StringUtil.hpp" />
     <ClInclude Include="Include\StringView.h" />
     <ClInclude Include="Include\StringView.hpp" />
+    <ClInclude Include="Include\Test.h" />
     <ClInclude Include="Include\Tree.h" />
     <ClInclude Include="Include\Tree.hpp" />
     <ClInclude Include="Include\UniqueString.h" />
@@ -218,6 +219,7 @@
     <None Include="Include\StringUtil.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Test.cpp" />
     <ClCompile Include="Source\UniqueString.cpp" />
   </ItemGroup>
   <ItemGroup>

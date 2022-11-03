@@ -2,7 +2,7 @@
 #include <MintLibrary/Include/AllHpps.h>
 
 
-#include <MintLibraryTest/TestContainers.h>
+#include <MintContainer/Include/Test.h>
 #include <MintLibraryTest/TestReflection.h>
 
 
@@ -709,7 +709,7 @@ bool testAll()
 
     testFloatTypes();
 
-    TestContainers::testAll();
+    TestContainers::test();
 
     testReflection();
 

@@ -182,7 +182,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="test.cpp" />
-    <ClCompile Include="TestContainers.cpp" />
     <ClCompile Include="TestReflection.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -191,7 +190,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestContainers.h" />
     <ClInclude Include="TestReflection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

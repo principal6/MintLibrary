@@ -4,35 +4,42 @@
 namespace mint
 {
 #pragma region U8CharCodeViewer
-    MINT_INLINE bool U8CharCodeViewer::operator!=(const U8CharCodeViewer& rhs) const
+    MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::begin() const
     {
-        return _string[_byteAt] != rhs._string[rhs._byteAt];
+		return ConstIterator(_string, 0);
     }
 
-    MINT_INLINE U8CharCode U8CharCodeViewer::operator*() const noexcept
+    MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::end() const
     {
-        return StringUtil::encode(_string, _byteAt);
+		static constexpr const char8_t kNullString[2]{};
+		return ConstIterator(kNullString, 0);
     }
 
-    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::operator++()
-    {
-        if (_string != nullptr && _string[_byteAt] != 0)
-        {
-            _byteAt += StringUtil::computeByteCountInCharCode(_string[_byteAt]);
-        }
-        return (*this);
-    }
+	inline U8CharCodeViewer::ConstIterator::ConstIterator(const char8_t* const string, const uint32 byteAt)
+		: _string{ string }
+		, _byteAt{ byteAt }
+	{
+		__noop;
+	}
 
-    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::begin() const
-    {
-        return U8CharCodeViewer(_string);
-    }
+	MINT_INLINE U8CharCodeViewer::ConstIterator& U8CharCodeViewer::ConstIterator::operator++()
+	{
+		if (_string != nullptr && _string[_byteAt] != 0)
+		{
+			_byteAt += StringUtil::computeByteCountInCharCode(_string[_byteAt]);
+		}
+		return (*this);
+	}
 
-    MINT_INLINE U8CharCodeViewer U8CharCodeViewer::end() const
-    {
-        constexpr char8_t endString[1]{};
-        return U8CharCodeViewer(endString);
-    }
+	MINT_INLINE U8CharCode U8CharCodeViewer::ConstIterator::operator*() const noexcept
+	{
+		return StringUtil::encode(_string, _byteAt);
+	}
+
+	MINT_INLINE bool U8CharCodeViewer::ConstIterator::operator!=(const ConstIterator& rhs) const
+	{
+		return _string[_byteAt] != rhs._string[rhs._byteAt];
+	}
 #pragma endregion
 
 
