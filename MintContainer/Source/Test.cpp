@@ -552,6 +552,7 @@ namespace mint
 #endif
 #pragma endregion
 
+#pragma region String
 			StringA sa0 = StringA("Hello, there! My friend!!!");
 			sa0 += "I'm testing...";
 
@@ -579,14 +580,16 @@ namespace mint
 
 			const bool cmp0 = (sw2 == sw1);
 			const bool cmp1 = (sw2 == StringW(L"String"));
+#pragma endregion
 
+#pragma region StringView
 			StringView sv0{ ss0 };
 			StringView sv1{ us0 };
 			StringView sv2{ sa0 };
 			StringView sv3{ sw0 };
 			const bool svCmp0 = sv0 == sv1;
 			//const bool svCmp1 = sv2 == sv3;
-
+#pragma endregion
 			return true;
 		}
 
