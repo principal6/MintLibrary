@@ -26,8 +26,8 @@
     <ClCompile Include="Source\Reflection.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MintCommon\MintCommon.vcxproj">
-      <Project>{6ad298c4-cc66-44ca-8fdd-8f9390ddee5a}</Project>
+    <ProjectReference Include="..\MintContainer\MintContainer.vcxproj">
+      <Project>{0152168d-27a5-4c7d-be25-1310b5c023c9}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -32,9 +32,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MintCommon\MintCommon.vcxproj">
-      <Project>{6ad298c4-cc66-44ca-8fdd-8f9390ddee5a}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\MintGame\MintGame.vcxproj">
       <Project>{4d507120-3ff8-4f58-bcd9-db6f72cd014d}</Project>
     </ProjectReference>

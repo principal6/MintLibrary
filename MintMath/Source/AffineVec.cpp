@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintMath/Include/AffineVec.h>
+﻿#include <MintMath/Include/AffineVec.h>
 
 
 namespace mint

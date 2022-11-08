@@ -1,6 +1,5 @@
-#include <MintMath/Include/MathCommon.h>
+﻿#include <MintMath/Include/MathCommon.h>
 
-#include <cmath>
 #include <cfloat>
 
 
