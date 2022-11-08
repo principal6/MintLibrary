@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 
-#include <stdafx.h>
 #include <MintContainer/Include/Tree.h>
 
 #include <MintContainer/Include/Vector.hpp>

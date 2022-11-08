@@ -1,4 +1,3 @@
-#include <stdafx.h>
 #include <MintLibraryTest/TestReflection.h>
 
 #include <MintContainer/Include/Vector.hpp>

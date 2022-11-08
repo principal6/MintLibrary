@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/GUI/GUIContext.h>
+﻿#include <MintRenderingBase/Include/GUI/GUIContext.h>
 
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/String.hpp>

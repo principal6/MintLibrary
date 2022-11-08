@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRendering/Include/Object.h>
+﻿#include <MintRendering/Include/Object.h>
 
 #include <MintContainer/Include/Vector.hpp>
 

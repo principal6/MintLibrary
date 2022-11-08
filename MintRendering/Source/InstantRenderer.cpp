@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRendering/Include/InstantRenderer.h>
+﻿#include <MintRendering/Include/InstantRenderer.h>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>

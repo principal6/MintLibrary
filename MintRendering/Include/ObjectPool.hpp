@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 
-#include <stdafx.h>
 #include <MintRendering/Include/ObjectPool.h>
 
 #include <MintContainer/Include/Vector.hpp>

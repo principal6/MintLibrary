@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRenderingBase/Include/CppHlsl/Lexer.h>
+﻿#include <MintRenderingBase/Include/CppHlsl/Lexer.h>
 
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/HashMap.hpp>

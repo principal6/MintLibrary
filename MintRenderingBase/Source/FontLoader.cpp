@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/FontLoader.h>
+﻿#include <MintRenderingBase/Include/FontLoader.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintPlatform/Include/FileUtil.hpp>

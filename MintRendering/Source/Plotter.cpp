@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRendering/Include/Plotter.h>
+﻿#include <MintRendering/Include/Plotter.h>
 
 #include <MintContainer/Include/Vector.hpp>
 

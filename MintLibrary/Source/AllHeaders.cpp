@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintLibrary/Include/AllHeaders.h>
+﻿#include <MintLibrary/Include/AllHeaders.h>
 #include <MintPlatform/Include/FileUtil.hpp>
 
 

@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
+﻿#include <MintRenderingBase/Include/CppHlsl/Interpreter.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/HashMap.hpp>

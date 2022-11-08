@@ -5,6 +5,10 @@
 #define MINT_STRING_UTIL_HPP
 
 
+#include <Windows.h>
+
+#include <varargs.h>
+
 #include <MintContainer/Include/StringUtil.h>
 
 #include <MintContainer/Include/String.hpp>

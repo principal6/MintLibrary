@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRenderingBase/Include/IDxObject.h>
+﻿#include <MintRenderingBase/Include/IDxObject.h>
 
 
 namespace mint

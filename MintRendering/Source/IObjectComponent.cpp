@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRendering/Include/IObjectComponent.h>
+﻿#include <MintRendering/Include/IObjectComponent.h>
 
 
 namespace mint

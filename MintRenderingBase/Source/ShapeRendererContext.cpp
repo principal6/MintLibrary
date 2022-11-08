@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/ShapeRendererContext.h>
+﻿#include <MintRenderingBase/Include/ShapeRendererContext.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>

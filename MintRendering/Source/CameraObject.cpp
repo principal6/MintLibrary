@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRendering/Include/CameraObject.h>
+﻿#include <MintRendering/Include/CameraObject.h>
 #include <MintRendering/Include/ObjectPool.hpp>
 
 #include <MintPlatform/Include/InputContext.h>

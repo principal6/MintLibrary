@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/DxResource.h>
+﻿#include <MintRenderingBase/Include/DxResource.h>
 
 #include <MintContainer/Include/Vector.hpp>
 

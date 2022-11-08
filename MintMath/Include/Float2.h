@@ -5,6 +5,8 @@
 #define MINT_FLOAT2_H
 
 
+#include <MintCommon/Include/CommonDefinitions.h>
+
 #include <MintMath/Include/MathCommon.h>
 
 

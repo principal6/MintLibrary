@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <stdafx.h>
+
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 #include <MintContainer/Include/Vector.hpp>

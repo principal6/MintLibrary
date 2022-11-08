@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/DxShader.h>
+﻿#include <MintRenderingBase/Include/DxShader.h>
 
 #include <d3dcompiler.h>
 

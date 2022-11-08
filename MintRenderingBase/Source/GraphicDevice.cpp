@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/GraphicDevice.h>
+﻿#include <MintRenderingBase/Include/GraphicDevice.h>
 
 #include <d3dcompiler.h>
 #include <functional>

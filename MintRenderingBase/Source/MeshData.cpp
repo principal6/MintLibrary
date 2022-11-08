@@ -1,5 +1,4 @@
-#include <stdafx.h>
-#include <MintRenderingBase/Include/MeshData.h>
+﻿#include <MintRenderingBase/Include/MeshData.h>
 
 #include <MintContainer/Include/Vector.hpp>
 

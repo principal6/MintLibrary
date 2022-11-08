@@ -7,6 +7,8 @@
 
 #define MINT_INLINE __forceinline
 
+#define NOMINMAX
+
 
 #if defined(DEBUG) | defined(_DEBUG)
 #define MINT_DEBUG
@@ -16,12 +18,6 @@
 #include <cstdint>
 
 #include <mutex>
-
-
-#if defined(WIN32)
-#undef max
-#undef min
-#endif
 
 
 namespace mint

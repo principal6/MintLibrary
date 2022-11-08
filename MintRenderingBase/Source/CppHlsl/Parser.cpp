@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRenderingBase/Include/CppHlsl/Parser.h>
+﻿#include <MintRenderingBase/Include/CppHlsl/Parser.h>
 
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/Vector.hpp>

@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintLanguage/Include/ILexer.h>
+﻿#include <MintLanguage/Include/ILexer.h>
 
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/Vector.hpp>

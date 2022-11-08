@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintRendering/Include/DeltaTimer.h>
+﻿#include <MintRendering/Include/DeltaTimer.h>
 
 #include <MintCommon/Include/ScopedCPUProfiler.h>
 

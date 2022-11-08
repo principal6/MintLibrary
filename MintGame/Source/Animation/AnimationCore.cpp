@@ -1,5 +1,4 @@
-﻿#include <stdafx.h>
-#include <MintGame/Include/Animation/AnimationCore.h>
+﻿#include <MintGame/Include/Animation/AnimationCore.h>
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/StringUtil.hpp>

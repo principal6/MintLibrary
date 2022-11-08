@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 
-#include <stdafx.h>
 #include <MintLibrary/Include/Algorithm.h>
 
 #include <MintContainer/Include/Vector.hpp>
