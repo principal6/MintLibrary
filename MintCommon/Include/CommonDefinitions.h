@@ -14,7 +14,14 @@
 
 
 #include <cstdint>
+
 #include <mutex>
+
+
+#if defined(WIN32)
+#undef max
+#undef min
+#endif
 
 
 namespace mint

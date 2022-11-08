@@ -1,7 +1,7 @@
-#include <stdafx.h>
+﻿#include <stdafx.h>
 #include <MintRendering/Include/DeltaTimer.h>
 
-#include <MintLibrary/Include/Profiler.h>
+#include <MintCommon/Include/ScopedCPUProfiler.h>
 
 
 namespace mint

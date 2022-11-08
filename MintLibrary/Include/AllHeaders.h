@@ -5,7 +5,7 @@
 #define MINT_LIBRARY_ALL_HEADERS_H
 
 
-#include <MintCommon/Include/CommonDefinitions.h>
+#include <MintCommon/Include/AllHeaders.h>
 
 
 namespace mint
@@ -25,8 +25,6 @@ namespace mint
 
 
 #include <MintLibrary/Include/Algorithm.h>
-
-#include <MintLibrary/Include/Profiler.h>
 
 #include <MintMath/Include/AllHeaders.h>
 

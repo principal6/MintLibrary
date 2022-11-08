@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_SCOPED_CPU_PROFILER_H
@@ -6,6 +6,7 @@
 
 
 #include <vector>
+#include <string>
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
@@ -93,7 +94,7 @@ namespace mint
 }
 
 
-#include <MintLibrary/Include/ScopedCPUProfiler.inl>
+#include <MintCommon/Include/ScopedCPUProfiler.inl>
 
 
 #endif // !MINT_SCOPED_CPU_PROFILER_H

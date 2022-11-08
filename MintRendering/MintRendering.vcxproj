@@ -180,6 +180,11 @@
   <ItemGroup>
     <None Include="Include\Object.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MintRenderingBase\MintRenderingBase.vcxproj">
+      <Project>{aec380b7-4d57-424b-a65d-2f0f02b95d50}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

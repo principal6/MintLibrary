@@ -1,11 +1,12 @@
 ﻿#include <MintCommon/Include/CommonDefinitions.h>
 
 #include <Windows.h>
+
 #include <ctime>
+#include <cstdarg>
+
 #include <fstream>
 #include <filesystem>
-#include <cstdarg>
-#include "..\Include\CommonDefinitions.h"
 
 
 namespace mint

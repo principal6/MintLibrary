@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30413.136
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintLibrary", "MintLibrary\MintLibrary.vcxproj", "{EB56A391-E5F8-4065-8F48-60333641A232}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,8 +18,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintLibraryTest", "MintLibr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintMath", "MintMath\MintMath.vcxproj", "{0869F124-8534-423E-8221-F15CB19C17DD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintCommon", "MintCommon.vcxitems", "{08274C87-6720-46DA-B1DF-DBA3A406EF4A}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintContainer", "MintContainer\MintContainer.vcxproj", "{0152168D-27A5-4C7D-BE25-1310B5C023C9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintPlatform", "MintPlatform\MintPlatform.vcxproj", "{CB8B86B8-2DBD-4F5F-A98F-A8BC70B7726C}"
@@ -34,11 +32,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintLanguage", "MintLanguag
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintReflection", "MintReflection\MintReflection.vcxproj", "{837C9D1F-D52B-43B8-AA39-6900B21BEBCF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MintCommon", "MintCommon\MintCommon.vcxproj", "{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		MintCommon.vcxitems*{08274c87-6720-46da-b1df-dba3a406ef4a}*SharedItemsImports = 9
-		MintCommon.vcxitems*{0869f124-8534-423e-8221-f15cb19c17dd}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
@@ -126,6 +122,14 @@ Global
 		{837C9D1F-D52B-43B8-AA39-6900B21BEBCF}.Release|x64.Build.0 = Release|x64
 		{837C9D1F-D52B-43B8-AA39-6900B21BEBCF}.Release|x86.ActiveCfg = Release|Win32
 		{837C9D1F-D52B-43B8-AA39-6900B21BEBCF}.Release|x86.Build.0 = Release|Win32
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Debug|x64.ActiveCfg = Debug|x64
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Debug|x64.Build.0 = Debug|x64
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Debug|x86.ActiveCfg = Debug|Win32
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Debug|x86.Build.0 = Debug|Win32
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Release|x64.ActiveCfg = Release|x64
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Release|x64.Build.0 = Release|x64
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Release|x86.ActiveCfg = Release|Win32
+		{6AD298C4-CC66-44CA-8FDD-8F9390DDEE5A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

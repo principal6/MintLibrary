@@ -181,6 +181,11 @@
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MintCommon\MintCommon.vcxproj">
+      <Project>{6ad298c4-cc66-44ca-8fdd-8f9390ddee5a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -11,12 +11,6 @@
     <ClInclude Include="Include\AllHeaders.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Profiler.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ScopedCPUProfiler.h">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\AllHpps.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -28,11 +22,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{d3a7e132-64da-425f-88c2-71c799663c2a}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Include\ScopedCPUProfiler.inl">
-      <Filter>Include</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AllHeaders.cpp">
