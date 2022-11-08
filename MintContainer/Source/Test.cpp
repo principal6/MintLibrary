@@ -1,6 +1,8 @@
 ﻿#include <MintContainer/Include/AllHeaders.h>
 #include <MintContainer/Include/AllHpps.h>
 
+#include <MintCommon/Include/ScopedCPUProfiler.h>
+
 
 #pragma optimize("", off)
 
@@ -317,8 +319,9 @@ namespace mint
 					}
 				}
 
-				Vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
+				std::vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
 				const bool isEmpty = logArray.empty();
+			}
 #endif
 			return true;
 		}
@@ -510,7 +513,7 @@ namespace mint
 				dnsArray.resize(kCount);
 				for (uint32 i = 0; i < kCount; ++i)
 				{
-					dnsArray.set(i, "abcdefg");
+					dnsArray[i] = "abcdefg";
 				}
 			}
 
@@ -532,7 +535,7 @@ namespace mint
 				dnsArray.resize(kCount);
 				for (uint32 i = 0; i < kCount; ++i)
 				{
-					dnsArray.set(i, "abcdefg");
+					dnsArray[i] = "abcdefg";
 				}
 			}
 
@@ -832,5 +835,5 @@ namespace mint
 			MINT_ASSURE(test_Tree());
 			return true;
 		}
+	}
 }
-		}
