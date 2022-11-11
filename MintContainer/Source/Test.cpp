@@ -593,6 +593,46 @@ namespace mint
 			const bool svCmp0 = sv0 == sv1;
 			//const bool svCmp1 = sv2 == sv3;
 #pragma endregion
+
+			{
+				String<char> string{ "abc" };
+				StackString<char, 256> stackString{ "abc" };
+				LiteralString<char> literalString{ "abc" };
+
+				MutableString<char>& a = string;
+				MutableString<char>& b = stackString;
+				ConstantString<char>& c = literalString;
+				MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
+				MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
+				MINT_LOG("c: %s", c.c_str());
+				MINT_LOG("a == b: %s", (a == b ? "T" : "F"));
+				MINT_LOG("a == c: %s", (a == c ? "T" : "F"));
+				MINT_LOG("b == c: %s", (b == c ? "T" : "F"));
+
+				a.clear();
+				b.clear();
+				MINT_LOG("a(%s) == b(%s): %s", a.c_str(), b.c_str(), (a == b ? "T" : "F"));
+				
+				a.assign(LiteralString("efg"));
+				b.assign(LiteralString("hij"));
+				MINT_LOG("a(%s) == b(%s): %s", a.c_str(), b.c_str(), (a == b ? "T" : "F"));
+
+				a.append(LiteralString("life!"));
+				b.append(LiteralString("life?"));
+				MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
+				MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
+
+				MINT_LOG("find \"life!!!\" in a: %d", a.find(LiteralString("life!!!")));
+				MINT_LOG("find \"life!\" in a: %d", a.find(LiteralString("life!")));
+				MINT_LOG("find \"fe!\" in a: %d", a.find(LiteralString("fe!")));
+				MINT_LOG("find \"life???\" in b: %d", b.find(LiteralString("life???")));
+				MINT_LOG("find \"life?\" in b: %d", b.find(LiteralString("life?")));
+				MINT_LOG("find \"fe?\" in b: %d", b.find(LiteralString("fe?")));
+
+				MINT_LOG("hash of a: %llX", a.computeHash());
+				MINT_LOG("hash of b: %llX", b.computeHash());
+			}
+
 			return true;
 		}
 

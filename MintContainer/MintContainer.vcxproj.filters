@@ -114,6 +114,12 @@
     <ClInclude Include="Include\Test.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\StringBase.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\StringBase.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">

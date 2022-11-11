@@ -16,24 +16,28 @@ namespace mint
 {
     template <typename T>
     inline String<T>::String()
+        : MutableString<T>(StringType::HeapString)
     {
         __noop;
     }
 
     template<typename T>
     inline String<T>::String(const T* const rhs)
+        : String()
     {
         assignInternalXXX(rhs);
     }
 
     template<typename T>
     inline String<T>::String(const String& rhs)
+        : String()
     {
         assignInternalXXX(rhs.c_str());
     }
 
     template<typename T>
     inline String<T>::String(String&& rhs) noexcept
+        : String()
     {
         _long = rhs._long;
 
@@ -148,6 +152,14 @@ namespace mint
     }
 
     template<typename T>
+    inline MutableString<T>& String<T>::assign(const StringBase<T>& rhs)
+    {
+        release();
+        
+        return assignInternalXXX(rhs.c_str());
+    }
+
+    template<typename T>
     inline String<T>& String<T>::assign(const T* const rawString) noexcept
     {
         release();
@@ -178,6 +190,12 @@ namespace mint
         _long._rawPointer = MemoryRaw::allocateMemory<T>(capacity());
         __copyString(_long._rawPointer, rawString, _long._size);
         return *this;
+    }
+
+    template<typename T>
+    inline MutableString<T>& String<T>::append(const StringBase<T>& rhs)
+    {
+        return append(rhs.c_str());
     }
 
     template<typename T>
@@ -303,7 +321,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE void String<T>::clear() noexcept
+    MINT_INLINE void String<T>::clear()
     {
         _setSize(0);
 
@@ -318,7 +336,7 @@ namespace mint
     }
 
     template<typename T>
-    MINT_INLINE const T* String<T>::c_str() const noexcept
+    MINT_INLINE const T* String<T>::c_str() const
     {
         return (isSmallString() == true) ? _short._smallString : _long._rawPointer;
     }

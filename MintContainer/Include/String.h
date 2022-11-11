@@ -7,11 +7,13 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
+#include <MintContainer/Include/StringBase.h>
+
 
 namespace mint
 {
     template <typename T>
-    class String
+    class String : public MutableString<T>
     {
         static constexpr uint32     kTypeSize = sizeof(T);
 
@@ -44,6 +46,7 @@ namespace mint
         const T&                    operator[](const uint32 at) const noexcept;
 
     public:
+        virtual MutableString<T>&   assign(const StringBase<T>& rhs) override;
         String&                     assign(const T* const rawString) noexcept;
 
     private:
@@ -51,6 +54,7 @@ namespace mint
         String&                     assignInternalLongXXX(const T* const rawString) noexcept;
 
     public:
+        virtual MutableString<T>&   append(const StringBase<T>& rhs) override;
         String&                     append(const T* const rawString) noexcept;
         String&                     append(const T ch) noexcept;
         String&                     append(const String& rhs) noexcept;
@@ -67,14 +71,14 @@ namespace mint
         void                        _setSize(const uint32 newSize) noexcept;
 
     public:
-        void                        clear() noexcept;
+        virtual void                clear() override;
 
     public:
         MINT_INLINE bool            empty() const noexcept { return (size() == 0); }
         MINT_INLINE uint32          size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
         MINT_INLINE uint32          length() const noexcept { return size(); }
-        MINT_INLINE uint32          capacity() const noexcept { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
-        const T*                    c_str() const noexcept;
+        virtual uint32              capacity() const override { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
+        virtual const T*            c_str() const override;
 
     private:
         T*                          data() noexcept;

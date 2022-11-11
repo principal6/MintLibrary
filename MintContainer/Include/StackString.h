@@ -6,13 +6,15 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
+
 #include <MintContainer/Include/Array.h>
+#include <MintContainer/Include/StringBase.h>
 
 
 namespace mint
 {
     template <typename T, uint32 BufferSize>
-    class StackString
+    class StackString : public MutableString<T>
     {
     public:
                                 StackString();
@@ -41,9 +43,9 @@ namespace mint
         const T&                operator[](const uint32 at) const noexcept;
 
     public:
-        uint32                  capacity() const noexcept;
+        virtual uint32          capacity() const override;
         uint32                  length() const noexcept;
-        const T*                c_str() const noexcept;
+        virtual const T*        c_str() const override;
 
     private:
         static uint32           _getRawStringLength(const T* const rawString) noexcept;
@@ -56,9 +58,11 @@ namespace mint
         bool                    canInsert(const uint32 insertLength) const noexcept;
 
     public:
-        void                    clear() noexcept;
+        virtual void            clear();
+        virtual MutableString<T>&   append(const StringBase<T>& rhs) override;
         StackString&            append(const T* const rawString) noexcept;
         StackString&            append(const StackString& rhs) noexcept;
+        virtual MutableString<T>&   assign(const StringBase<T>& rhs) override;
         StackString&            assign(const T* const rawString) noexcept;
         StackString&            assign(const StackString& rhs) noexcept;
         void                    resize(const uint32 newSize) noexcept;
