@@ -19,6 +19,7 @@ namespace mint
 
     public:
                                     String();
+                                    String(const uint32 size, const T ch);
                                     String(const T* const rhs);
                                     String(const String& rhs);
                                     String(String&& rhs) noexcept;
@@ -60,8 +61,8 @@ namespace mint
         String&                     append(const String& rhs) noexcept;
 
     private:
-        String&                     appendInternalSmallXXX(const T* const rawString) noexcept;
-        String&                     appendInternalLongXXX(const T* const rawString) noexcept;
+        String&                     appendInternalSmallXXX(const T* const rhs) noexcept;
+        String&                     appendInternalLongXXX(const T* const rhs) noexcept;
 
     public:
         void                        reserve(const uint32 newCapacity) noexcept;
@@ -82,7 +83,7 @@ namespace mint
 
     private:
         T*                          data() noexcept;
-        static void                 __copyString(T* const destination, const T* const source, const uint64 length) noexcept;
+        static void                 __copyString(T* const destination, const T* const source, const uint64 byteCount) noexcept;
 
     public:
         uint32                      find(const T* const target, const uint32 offset = 0) const noexcept;
@@ -92,7 +93,7 @@ namespace mint
         void                        insert(const uint32 at, const T* const str) noexcept;
         void                        insert(const uint32 at, const String& rhs) noexcept;
         void                        erase(const uint32 at) noexcept;
-        void                        erase(const uint32 at, const uint32 length) noexcept;
+        void                        erase(const uint32 at, const uint32 byteCount) noexcept;
         bool                        compare(const T* const rhs) const noexcept;
         bool                        compare(const String& rhs) const noexcept;
         uint64                      computeHash() const noexcept;

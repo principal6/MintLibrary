@@ -602,35 +602,38 @@ namespace mint
 				MutableString<char>& a = string;
 				MutableString<char>& b = stackString;
 				ConstantString<char>& c = literalString;
-				MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
-				MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
-				MINT_LOG("c: %s", c.c_str());
-				MINT_LOG("a == b: %s", (a == b ? "T" : "F"));
-				MINT_LOG("a == c: %s", (a == c ? "T" : "F"));
-				MINT_LOG("b == c: %s", (b == c ? "T" : "F"));
+				//MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
+				//MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
+				//MINT_LOG("c: %s", c.c_str());
+				MINT_ASSURE(a == b);
+				MINT_ASSURE(a == c);
+				MINT_ASSURE(b == c);
 
 				a.clear();
 				b.clear();
-				MINT_LOG("a(%s) == b(%s): %s", a.c_str(), b.c_str(), (a == b ? "T" : "F"));
+				MINT_ASSURE(a.length() == 0);
+				MINT_ASSURE(b.length() == 0);
+				MINT_ASSURE(a == b);
 				
 				a.assign(LiteralString("efg"));
 				b.assign(LiteralString("hij"));
-				MINT_LOG("a(%s) == b(%s): %s", a.c_str(), b.c_str(), (a == b ? "T" : "F"));
+				MINT_ASSURE(a != b);
 
 				a.append(LiteralString("life!"));
 				b.append(LiteralString("life?"));
-				MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
-				MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
+				MINT_ASSURE(a != b);
+				//MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
+				//MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
 
-				MINT_LOG("find \"life!!!\" in a: %d", a.find(LiteralString("life!!!")));
-				MINT_LOG("find \"life!\" in a: %d", a.find(LiteralString("life!")));
-				MINT_LOG("find \"fe!\" in a: %d", a.find(LiteralString("fe!")));
-				MINT_LOG("find \"life???\" in b: %d", b.find(LiteralString("life???")));
-				MINT_LOG("find \"life?\" in b: %d", b.find(LiteralString("life?")));
-				MINT_LOG("find \"fe?\" in b: %d", b.find(LiteralString("fe?")));
+				MINT_ASSURE(a.contains(LiteralString("life!!!")) == false);
+				MINT_ASSURE(a.contains(LiteralString("life!")) == true);
+				MINT_ASSURE(a.contains(LiteralString("fe!")) == true);
+				MINT_ASSURE(b.contains(LiteralString("life???")) == false);
+				MINT_ASSURE(b.contains(LiteralString("life?")) == true);
+				MINT_ASSURE(b.contains(LiteralString("fe?")) == true);
 
-				MINT_LOG("hash of a: %llX", a.computeHash());
-				MINT_LOG("hash of b: %llX", b.computeHash());
+				//MINT_LOG("hash of a: %llX", a.computeHash());
+				//MINT_LOG("hash of b: %llX", b.computeHash());
 			}
 
 			return true;
@@ -761,14 +764,14 @@ namespace mint
 			static_assert(StringUtil::is7BitASCII(u8"가나다") == false);
 			static_assert(StringUtil::is7BitASCII(u8"韓國") == false);
 			{
-				constexpr uint32 l = StringUtil::length(u8"가나다abc");
+				static_assert(StringUtil::length(u8"가나다abc") == 6);
 				U8CharCodeViewer u8CharCodeViewer(u8"가나다");
 				for (auto charCode : u8CharCodeViewer)
 				{
-					const std::u8string u8str = StringUtil::decode(charCode);
-					const std::wstring wstr = StringUtil::convertUTF8ToWideString(u8str);
-					std::string string;
-					StringUtil::convertWideStringToString(wstr, string);
+					const StringU8 u8String = StringUtil::decode(charCode);
+					const StringW wideString = StringUtil::convertUTF8ToWideString(u8String);
+					StringA string;
+					StringUtil::convertWideStringToString(wideString, string);
 					MINT_LOG("CONVERTED: %s", string.c_str());
 				}
 			}

@@ -189,26 +189,33 @@ namespace mint
             return charCode;
         }
 
-        MINT_INLINE std::u8string decode(const U8CharCode code)
+        MINT_INLINE StringU8 decode(const U8CharCode code)
         {
             char8_t ch[4]{ static_cast<uint8>(code), static_cast<uint8>(code >> 8), static_cast<uint8>(code >> 16), static_cast<uint8>(code >> 24) };
-            return std::u8string(ch);
+            return StringU8(ch);
         }
 
-        MINT_INLINE std::u8string convertWideStringToUTF8(const std::wstring& source)
+        MINT_INLINE StringU8 convertWideStringToUTF8(const StringW& source)
         {
             const int length = ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
-            std::u8string destination(length, 0);
-            ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), reinterpret_cast<char*>(&destination[0]), static_cast<int>(destination.length()), nullptr, nullptr);
+            StringU8 destination(length, 0);
+            ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), reinterpret_cast<char*>(&destination[0]), length, nullptr, nullptr);
             return destination;
         }
 
-        MINT_INLINE std::wstring convertUTF8ToWideString(const std::u8string& source)
+        MINT_INLINE StringW convertUTF8ToWideString(const StringU8& source)
         {
             const int length = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.c_str()), static_cast<int>(source.length()), nullptr, 0);
-            std::wstring destination(length, 0);
-            ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.c_str()), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()));
+            StringW destination(length, 0);
+            ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.c_str()), static_cast<int>(source.length()), &destination[0], length);
             return destination;
+        }
+
+        MINT_INLINE void convertWideStringToString(const StringW& source, StringA& destination)
+        {
+            const int length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
+            destination.resize(length);
+            ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
         }
 
         MINT_INLINE void convertWideStringToString(const std::wstring& source, std::string& destination)

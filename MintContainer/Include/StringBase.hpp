@@ -55,6 +55,12 @@ namespace mint
 	}
 
 	template <typename T>
+	bool StringBase<T>::contains(const StringBase<T>& token, const uint32 offset) const
+	{
+		return find(token, offset) != kStringNPos;
+	}
+
+	template <typename T>
 	uint64 StringBase<T>::computeHash() const
 	{
 		return mint::computeHash(c_str());

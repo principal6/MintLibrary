@@ -30,6 +30,7 @@ namespace mint
 		virtual const T* c_str() const abstract;
 		virtual uint32 length() const;
 		virtual uint32 find(const StringBase<T>& token, const uint32 offset = 0) const;
+		virtual bool contains(const StringBase<T>& token, const uint32 offset = 0) const;
 		virtual uint64 computeHash() const;
 
 	protected:

@@ -709,7 +709,7 @@ bool testAll()
 
     testFloatTypes();
 
-    //TestContainers::test();
+    TestContainers::test();
 
     testReflection();
 
