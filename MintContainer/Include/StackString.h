@@ -86,6 +86,9 @@ namespace mint
     
     template <uint32 BufferSize>
     using StackStringW = StackString<wchar_t, BufferSize>;
+
+    template <uint32 BufferSize>
+    using StackStringU8 = StackString<char8_t, BufferSize>;
 }
 
 

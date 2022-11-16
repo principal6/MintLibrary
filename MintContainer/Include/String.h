@@ -134,6 +134,7 @@ namespace mint
 
     using StringA = String<char>;
     using StringW = String<wchar_t>;
+    using StringU8 = String<char8_t>;
 }
 
 
