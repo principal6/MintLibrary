@@ -80,6 +80,8 @@ namespace mint
         MINT_INLINE uint32          length() const noexcept { return size(); }
         virtual uint32              capacity() const override { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
         virtual const T*            c_str() const override;
+        T                           at(const uint32 index) const;
+        T                           back() const;
 
     private:
         T*                          data() noexcept;
@@ -94,6 +96,7 @@ namespace mint
         void                        insert(const uint32 at, const String& rhs) noexcept;
         void                        erase(const uint32 at) noexcept;
         void                        erase(const uint32 at, const uint32 byteCount) noexcept;
+        void                        pop_back();
         bool                        compare(const T* const rhs) const noexcept;
         bool                        compare(const String& rhs) const noexcept;
         uint64                      computeHash() const noexcept;
