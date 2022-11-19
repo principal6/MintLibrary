@@ -8,6 +8,8 @@
 
 #include <MintLanguage/Include/ILexer.h>
 
+#include <MintRenderingBase/Include/RenderingBaseCommon.h>
+
 #include <functional>
 
 
