@@ -488,22 +488,6 @@ namespace mint
 			}
 #pragma endregion
 
-#pragma region UniqueString
-			UniqueStringA us0{ "ab" };
-			UniqueStringA us1{ "cdef" };
-			UniqueStringA us2{ "ab" };
-			UniqueStringA us3{ "" };
-			UniqueStringA us4{ nullptr };
-			UniqueStringA us5;
-			UniqueStringA us6 = us3;
-			UniqueStringA us7{ us1 };
-			{
-				us6 = us0;
-				us0 = us1;
-				const bool cmp0 = (us0 == us1);
-			}
-#pragma endregion
-
 #if defined MINT_TEST_PERFORMANCE
 			static constexpr uint32 kCount = 20'000;
 			{
@@ -587,11 +571,8 @@ namespace mint
 
 #pragma region StringView
 			StringView sv0{ ss0 };
-			StringView sv1{ us0 };
-			StringView sv2{ sa0 };
-			StringView sv3{ sw0 };
-			const bool svCmp0 = sv0 == sv1;
-			//const bool svCmp1 = sv2 == sv3;
+			StringView sv1{ sa0 };
+			StringView sv2{ sw0 };
 #pragma endregion
 
 			{
@@ -785,8 +766,6 @@ namespace mint
 				StringW stringE{ L"테스트!" };
 				StackStringA<kSize> stringF{ "테스트!" };
 				StackStringW<kSize> stringG{ L"테스트!" };
-				UniqueStringA stringH{ "테스트!" };
-				UniqueStringW stringI{ L"테스트!" };
 
 				StringViewA stringViewA{ stringA };
 				StringViewW stringViewB{ stringB };
@@ -795,8 +774,6 @@ namespace mint
 				StringViewW stringViewE{ stringE };
 				StringViewA stringViewF{ stringF };
 				StringViewW stringViewG{ stringG };
-				StringViewA stringViewH{ stringH };
-				StringViewW stringViewI{ stringI };
 			}
 
 			return true;

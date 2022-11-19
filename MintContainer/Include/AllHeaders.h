@@ -11,7 +11,6 @@
 #include <MintContainer/Include/StackHolder.h>
 #include <MintContainer/Include/Array.h>
 #include <MintContainer/Include/BitArray.h>
-#include <MintContainer/Include/UniqueString.h>
 #include <MintContainer/Include/StringUtil.h>
 #include <MintContainer/Include/Tree.h>
 #include <MintContainer/Include/Vector.h>

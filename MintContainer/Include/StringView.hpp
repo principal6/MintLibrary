@@ -8,7 +8,6 @@
 #include <MintContainer/Include/StringView.h>
 #include <MintContainer/Include/String.hpp>
 #include <MintContainer/Include/StackString.hpp>
-#include <MintContainer/Include/UniqueString.hpp>
 
 
 namespace mint
@@ -38,14 +37,6 @@ namespace mint
         __noop;
     }
     
-    template<typename T>
-    inline StringView<T>::StringView(const UniqueString<T>& string)
-        : _rawString{ string.c_str() }
-        , _length{ string.length() }
-    {
-        __noop;
-    }
-
     template<typename T>
     bool StringView<T>::operator==(const StringView& rhs) const noexcept
     {

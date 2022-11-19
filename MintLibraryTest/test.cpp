@@ -570,7 +570,7 @@ bool testWindow()
 #endif
 
 // GUI
-#if 1
+#if 0
             using namespace GUI;
             //guiContext._debugSwitch._renderZoneOverlay = true;
             //guiContext._debugSwitch._renderMousePoints = true;

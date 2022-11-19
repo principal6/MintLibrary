@@ -48,12 +48,6 @@
     <ClInclude Include="Include\Tree.hpp">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\UniqueString.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\UniqueString.hpp">
-      <Filter>Include</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Vector.h">
       <Filter>Include</Filter>
     </ClInclude>
@@ -136,9 +130,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\UniqueString.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Test.cpp">
       <Filter>Source</Filter>
     </ClCompile>

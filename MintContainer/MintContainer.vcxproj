@@ -209,8 +209,6 @@
     <ClInclude Include="Include\Test.h" />
     <ClInclude Include="Include\Tree.h" />
     <ClInclude Include="Include\Tree.hpp" />
-    <ClInclude Include="Include\UniqueString.h" />
-    <ClInclude Include="Include\UniqueString.hpp" />
     <ClInclude Include="Include\Vector.h" />
     <ClInclude Include="Include\Vector.hpp" />
   </ItemGroup>
@@ -222,7 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Test.cpp" />
-    <ClCompile Include="Source\UniqueString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="MintContainer.natvis" />

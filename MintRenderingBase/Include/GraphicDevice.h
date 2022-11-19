@@ -9,7 +9,6 @@
 
 #include <MintContainer/Include/Array.h>
 #include <MintContainer/Include/StackString.h>
-#include <MintContainer/Include/UniqueString.h>
 
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/DxShader.h>

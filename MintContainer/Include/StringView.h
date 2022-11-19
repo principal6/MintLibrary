@@ -16,9 +16,6 @@ namespace mint
     template<typename T, uint32 BufferSize>
     class StackString;
 
-    template<typename T>
-    class UniqueString;
-
 
     template<typename T>
     class StringView
@@ -28,7 +25,6 @@ namespace mint
                         StringView(const String<T>& string);
                         template <uint32 BufferSize>
                         StringView(const StackString<T, BufferSize>& string);
-                        StringView(const UniqueString<T>& string);
                         ~StringView() = default;
 
     public:
