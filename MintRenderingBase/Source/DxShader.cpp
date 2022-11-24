@@ -365,7 +365,7 @@ namespace mint
             else
             {
                 content = compileParam._shaderTextContent;
-                contentLength = StringUtil::length(compileParam._shaderTextContent);
+                contentLength = StringUtil::countChars(compileParam._shaderTextContent);
                 identifier = compileParam._shaderIdentifier;
             }
 

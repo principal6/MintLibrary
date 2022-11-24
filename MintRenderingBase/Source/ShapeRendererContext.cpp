@@ -1440,7 +1440,7 @@ namespace mint
 
         void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const uint32 textLength = StringUtil::length(wideText);
+            const uint32 textLength = StringUtil::countChars(wideText);
             drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
@@ -1478,7 +1478,7 @@ namespace mint
 
         void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
-            const uint32 textLength = StringUtil::length(wideText);
+            const uint32 textLength = StringUtil::countChars(wideText);
             drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 

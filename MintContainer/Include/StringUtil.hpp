@@ -56,7 +56,7 @@ namespace mint
         ::vsprintf_s(temp.data(), BufferSize, format, args);
         va_end(args);
 
-        buffer.resize(StringUtil::length(temp.c_str()));
+        buffer.resize(StringUtil::countChars(temp.c_str()));
         buffer.assign(temp.c_str());
     }
 
@@ -97,7 +97,7 @@ namespace mint
         ::vswprintf_s(temp.data(), BufferSize, format, args);
         va_end(args);
 
-        buffer.resize(StringUtil::length(temp.c_str()));
+        buffer.resize(StringUtil::countChars(temp.c_str()));
         buffer.assign(temp.c_str());
     }
 

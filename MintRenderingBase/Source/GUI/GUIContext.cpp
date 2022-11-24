@@ -449,7 +449,7 @@ namespace mint
                 if (isAutoSized)
                 {
                     const FontData& fontData = _rendererContext.getFontData();
-                    const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::length(controlData._text));
+                    const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::countChars(controlData._text));
                     controlData._size._x = textWidth + _nextControlDesc._padding.horz();
                     controlData._size._y = _fontSize + _nextControlDesc._padding.vert();
                 }

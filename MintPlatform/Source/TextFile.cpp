@@ -127,7 +127,7 @@ namespace mint
             return;
         }
 
-        const uint32 length = StringUtil::length(text);
+        const uint32 length = StringUtil::countChars(text);
         for (uint32 at = 0; at < length; ++at)
         {
             _byteArray.push_back(text[at]);

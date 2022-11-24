@@ -175,7 +175,7 @@ namespace mint
 			return characterPosition * 2;
 		}
 
-        MINT_INLINE constexpr uint32 length(const char* const string)
+        MINT_INLINE constexpr uint32 countChars(const char* const string)
 		{
 			if (string == nullptr)
 			{
@@ -194,7 +194,7 @@ namespace mint
 			return length;
 		}
 
-		MINT_INLINE constexpr uint32 length(const wchar_t* const string)
+		MINT_INLINE constexpr uint32 countChars(const wchar_t* const string)
 		{
 			if (string == nullptr)
 			{
@@ -208,7 +208,7 @@ namespace mint
 			return at;
 		}
 
-        MINT_INLINE constexpr uint32 length(const char8_t* const string)
+        MINT_INLINE constexpr uint32 countChars(const char8_t* const string)
         {
             if (string == nullptr)
             {
@@ -235,8 +235,8 @@ namespace mint
 				return kStringNPos;
 			}
 
-			uint32 stringLength = StringUtil::length(string);
-			uint32 substringLength = StringUtil::length(substring);
+			uint32 stringLength = StringUtil::countChars(string);
+			uint32 substringLength = StringUtil::countChars(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;
@@ -306,8 +306,8 @@ namespace mint
 				return kStringNPos;
 			}
 
-			uint32 stringLength = StringUtil::length(string);
-			uint32 substringLength = StringUtil::length(substring);
+			uint32 stringLength = StringUtil::countChars(string);
+			uint32 substringLength = StringUtil::countChars(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;

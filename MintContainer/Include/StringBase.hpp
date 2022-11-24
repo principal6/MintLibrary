@@ -11,7 +11,7 @@ namespace mint
 	template <typename T>
 	uint32 StringBase<T>::length() const
 	{
-		return StringUtil::length(c_str());
+		return StringUtil::countChars(c_str());
 	}
 
 	template <typename T>

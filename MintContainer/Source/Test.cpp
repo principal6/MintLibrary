@@ -649,17 +649,17 @@ namespace mint
 			}
 
 			{
-				static_assert(StringUtil::length("abc") == 3);
-				static_assert(StringUtil::length("가나다라") == 4);
-				static_assert(StringUtil::length("韓國") == 2);
+				static_assert(StringUtil::countChars("abc") == 3);
+				static_assert(StringUtil::countChars("가나다라") == 4);
+				static_assert(StringUtil::countChars("韓國") == 2);
 
-				static_assert(StringUtil::length(L"abc") == 3);
-				static_assert(StringUtil::length(L"가나다라") == 4);
-				static_assert(StringUtil::length(L"韓國") == 2);
+				static_assert(StringUtil::countChars(L"abc") == 3);
+				static_assert(StringUtil::countChars(L"가나다라") == 4);
+				static_assert(StringUtil::countChars(L"韓國") == 2);
 
-				static_assert(StringUtil::length(u8"abc") == 3);
-				static_assert(StringUtil::length(u8"가나다라") == 4);
-				static_assert(StringUtil::length(u8"韓國") == 2);
+				static_assert(StringUtil::countChars(u8"abc") == 3);
+				static_assert(StringUtil::countChars(u8"가나다라") == 4);
+				static_assert(StringUtil::countChars(u8"韓國") == 2);
 			}
 
 			static_assert(StringUtil::countBytesInCharCode(0b11111111) == 4);
@@ -745,7 +745,7 @@ namespace mint
 			static_assert(StringUtil::is7BitASCII(u8"가나다") == false);
 			static_assert(StringUtil::is7BitASCII(u8"韓國") == false);
 			{
-				static_assert(StringUtil::length(u8"가나다abc") == 6);
+				static_assert(StringUtil::countChars(u8"가나다abc") == 6);
 				U8CharCodeViewer u8CharCodeViewer(u8"가나다");
 				for (auto charCode : u8CharCodeViewer)
 				{

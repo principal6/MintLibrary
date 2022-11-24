@@ -15,7 +15,7 @@ namespace mint
     template<typename T>
     inline StringView<T>::StringView(const T* const string)
         : _rawString{ string }
-        , _length{ StringUtil::length(string) }
+        , _length{ StringUtil::countChars(string) }
     {
         __noop;
     }

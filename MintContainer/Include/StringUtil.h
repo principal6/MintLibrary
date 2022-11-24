@@ -102,10 +102,10 @@ namespace mint
 
         // The implementation of this function is too naive.
         // Prefer to use utf8 encoding (char8_t).
-        constexpr uint32    length(const char* const string);
-        constexpr uint32    length(const wchar_t* const string);
+        constexpr uint32    countChars(const char* const string);
+        constexpr uint32    countChars(const wchar_t* const string);
         // returns the count of characters in the string
-        constexpr uint32    length(const char8_t* const string);
+        constexpr uint32    countChars(const char8_t* const string);
 
         // here 'offset' refers to character offset (not byte offset!)
         template <typename T>

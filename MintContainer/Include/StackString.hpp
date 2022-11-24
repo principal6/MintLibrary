@@ -143,7 +143,7 @@ namespace mint
     template<typename T, uint32 BufferSize>
     MINT_INLINE uint32 StackString<T, BufferSize>::_getRawStringLength(const T* const rawString) noexcept
     {
-        return StringUtil::length(rawString);
+        return StringUtil::countChars(rawString);
     }
 
     template<typename T, uint32 BufferSize>
@@ -220,7 +220,7 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline MutableString<T>& StackString<T, BufferSize>::assign(const StringBase<T>& rhs)
     {
-        uint32 rhsLength = StringUtil::length(rhs.c_str());
+        uint32 rhsLength = StringUtil::countChars(rhs.c_str());
         if (BufferSize <= rhsLength)
         {
             MINT_ASSERT(false, "버퍼 크기를 초과하여 문자열이 잘립니다.");

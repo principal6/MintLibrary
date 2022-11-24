@@ -386,7 +386,7 @@ namespace mint
                 wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(::GlobalLock(hClipboardData));
                 if (lockedWstring != nullptr)
                 {
-                    const uint32 textLength = StringUtil::length(lockedWstring);
+                    const uint32 textLength = StringUtil::countChars(lockedWstring);
                     outText = lockedWstring;
                     ::GlobalUnlock(hClipboardData);
                 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #include <MintPlatform/Include/BinaryFile.h>
@@ -76,7 +76,7 @@ namespace mint
     MINT_INLINE void BinaryFileWriter::write(const char* const in) noexcept
     {
         const uint32 currentSize{ static_cast<uint32>(_byteArray.size()) };
-        const uint32 deltaSize{ StringUtil::length(in) + 1 };
+        const uint32 deltaSize{ StringUtil::countChars(in) + 1 };
         _writeInternal(in, currentSize, deltaSize);
     }
 

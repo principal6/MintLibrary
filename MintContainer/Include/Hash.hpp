@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #include <MintContainer/Include/Hash.h>
@@ -32,13 +32,13 @@ namespace mint
 
     MINT_INLINE uint64 computeHash(const char* const rawString) noexcept
     {
-        const uint32 rawStringLength = StringUtil::length(rawString);
+        const uint32 rawStringLength = StringUtil::countChars(rawString);
         return computeHash(rawString, rawStringLength);
     }
 
     MINT_INLINE uint64 computeHash(const wchar_t* const rawString) noexcept
     {
-        const uint32 rawStringLength = StringUtil::length(rawString);
+        const uint32 rawStringLength = StringUtil::countChars(rawString);
         const char* const rawStringA = reinterpret_cast<const char*>(rawString);
         return computeHash(rawStringA, rawStringLength * 2);
     }

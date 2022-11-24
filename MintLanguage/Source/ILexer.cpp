@@ -94,8 +94,8 @@ namespace mint
 
         void ILexer::registerLineSkipper(const char* const lineSkipperOpen, const char* const lineSkipperClose, const LineSkipperSemantic lineSkipperSemantic)
         {
-            const uint32 lengthOpen = StringUtil::length(lineSkipperOpen);
-            const uint32 lengthClose = StringUtil::length(lineSkipperClose);
+            const uint32 lengthOpen = StringUtil::countChars(lineSkipperOpen);
+            const uint32 lengthClose = StringUtil::countChars(lineSkipperClose);
             if ((lengthOpen == 0 || lengthOpen > 2) || (lengthClose == 0 || lengthClose > 2))
             {
                 MINT_LOG_ERROR("lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: Open[%d] Close[%d]", lengthOpen, lengthClose);
@@ -138,7 +138,7 @@ namespace mint
 
         void ILexer::registerLineSkipper(const char* const lineSkipper, const LineSkipperSemantic lineSkipperSemantic)
         {
-            const uint32 length = StringUtil::length(lineSkipper);
+            const uint32 length = StringUtil::countChars(lineSkipper);
             if (length == 0 || length > 2)
             {
                 MINT_LOG_ERROR("lineSkipper 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
@@ -192,7 +192,7 @@ namespace mint
 
         void ILexer::registerPunctuator(const char* const punctuator)
         {
-            const uint32 length = StringUtil::length(punctuator);
+            const uint32 length = StringUtil::countChars(punctuator);
             if (length == 0 || length > 3)
             {
                 MINT_LOG_ERROR("punctuator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
@@ -211,7 +211,7 @@ namespace mint
         
         void ILexer::registerOperator(const char* const operator_, const OperatorClassifier operatorClassifier)
         {
-            const uint32 length = StringUtil::length(operator_);
+            const uint32 length = StringUtil::countChars(operator_);
             if (length == 0 || length > 2)
             {
                 MINT_LOG_ERROR("operator 의 길이가 잘못되었습니다!! 현재 길이: %d", length);
