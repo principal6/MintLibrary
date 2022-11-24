@@ -89,17 +89,16 @@ namespace mint
         constexpr bool      is7BitASCII(const char8_t* const string);
         
         template <typename T>
-        constexpr uint32    computeCharacterByteSizeFromLeadingByte(const T leadingByte);
+        constexpr uint32    countBytesFromLeadingByte(const T leadingByte);
+        constexpr uint32    countBytesInCharCode(const U8CharCode u8CharCode);
 
         // returns the count of bytes in the string
-        constexpr uint32    computeByteCountInString(const char* const string);
-        constexpr uint32    computeByteCountInString(const wchar_t* const string);
-        constexpr uint32    computeByteCountInString(const char8_t* const string);
-
-        constexpr uint32    computeByteCountInCharCode(const U8CharCode u8CharCode);
+        constexpr uint32    countBytes(const char* const string);
+        constexpr uint32    countBytes(const wchar_t* const string);
+        constexpr uint32    countBytes(const char8_t* const string);
 
         template <typename T>
-        constexpr uint32    computeBytePositionFromCharacterPosition(const T* const string, const uint32 characterPosition);
+        constexpr uint32    getBytePosition(const T* const string, const uint32 charPosition);
 
         // The implementation of this function is too naive.
         // Prefer to use utf8 encoding (char8_t).

@@ -92,7 +92,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE String<T> String<T>::operator+(const T* const rhs) const noexcept
 	{
-		const uint32 rhsByteCount = StringUtil::computeByteCountInString(rhs);
+		const uint32 rhsByteCount = StringUtil::countBytes(rhs);
 		String<T> newString;
 		newString.reserve(size() + rhsByteCount);
 		newString += *this;
@@ -177,7 +177,7 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::assignInternalXXX(const T* const rawString) noexcept
 	{
-		const uint32 byteCount = StringUtil::computeByteCountInString(rawString);
+		const uint32 byteCount = StringUtil::countBytes(rawString);
 		if (byteCount < Short::kSmallStringCapacity)
 		{
 			_short._size = byteCount;
@@ -190,7 +190,7 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::assignInternalLongXXX(const T* const rawString) noexcept
 	{
-		const uint32 byteCount = StringUtil::computeByteCountInString(rawString);
+		const uint32 byteCount = StringUtil::countBytes(rawString);
 		_long._size = byteCount;
 		_long._capacity = _long._size + 1;
 
@@ -236,7 +236,7 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::appendInternalSmallXXX(const T* const rhs) noexcept
 	{
-		const uint32 rhsSize = StringUtil::computeByteCountInString(rhs);
+		const uint32 rhsSize = StringUtil::countBytes(rhs);
 		const uint64 newSize = static_cast<uint64>(_short._size) + rhsSize;
 		if (newSize < Short::kSmallStringCapacity)
 		{
@@ -252,7 +252,7 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::appendInternalLongXXX(const T* const rhs) noexcept
 	{
-		const uint32 rhsSize = StringUtil::computeByteCountInString(rhs);
+		const uint32 rhsSize = StringUtil::countBytes(rhs);
 		const uint64 newSize = _long._size + rhsSize;
 		if (_long._capacity <= newSize)
 		{
@@ -385,7 +385,7 @@ namespace mint
 	inline uint32 String<T>::find(const T* const target, const uint32 offset) const noexcept
 	{
 		const uint32 sourceSize = size();
-		const uint32 targetSize = StringUtil::computeByteCountInString(target);
+		const uint32 targetSize = StringUtil::countBytes(target);
 		if (sourceSize < offset + targetSize)
 		{
 			return kStringNPos;
@@ -453,7 +453,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::insert(const uint32 at, const T* const str) noexcept
 	{
-		const uint32 rhsSize = StringUtil::computeByteCountInString(str);
+		const uint32 rhsSize = StringUtil::countBytes(str);
 		const uint32 oldSize = size();
 		const uint32 newSize = oldSize + rhsSize;
 		if (capacity() <= newSize)
@@ -538,7 +538,7 @@ namespace mint
 	inline bool String<T>::compare(const T* const rhs) const noexcept
 	{
 		const uint32 lhsSize = size();
-		const uint32 rhsSize = StringUtil::computeByteCountInString(rhs);
+		const uint32 rhsSize = StringUtil::countBytes(rhs);
 		if (lhsSize != rhsSize)
 		{
 			return false;
