@@ -395,5 +395,15 @@ namespace mint
 			}
             ::wcscpy_s(dest, source);
         }
+
+		template<typename T>
+		MINT_INLINE void copy(T* dest, const T* const source, const uint32 byteCount)
+		{
+			if (dest == nullptr || source == nullptr)
+			{
+				return;
+			}
+			::memcpy(dest, source, sizeof(T) * byteCount);
+		}
     }
 }

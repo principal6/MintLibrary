@@ -114,12 +114,14 @@ namespace mint
         template <typename T>
         constexpr bool      compare(const T* const a, const T* const b);
         
-        template <uint32 DestSize>
+        template<uint32 DestSize>
         void                copy(char8_t(&dest)[DestSize], const char8_t* const source);
-        template <uint32 DestSize>
+        template<uint32 DestSize>
         void                copy(char(&dest)[DestSize], const char* const source);
-        template <uint32 DestSize>
+        template<uint32 DestSize>
         void                copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
+        template<typename T>
+        void                copy(T* dest, const T* const source, const uint32 byteCount);
 
         constexpr U8CharCode    encode(const char8_t ch);
         constexpr U8CharCode    encode(const char8_t(&ch)[2]);

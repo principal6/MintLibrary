@@ -471,21 +471,18 @@ namespace mint
 				ss1 += ss1;
 				ss1 = "abcdefgh";
 				ss0 = ss1.substr(3);
-				const uint32 found0 = ss1.rfind("def");
-				const uint32 found1 = ss1.rfind("fgh");
-				const uint32 found2 = ss1.rfind("ghi");
-				const uint32 found3 = ss1.rfind("abc");
-				const uint32 found4 = ss1.rfind("abcdc");
-				const uint32 found5 = ss1.rfind("zab");
-				if (ss1 == "abcdefgh")
-				{
-					ss0 = ss1;
-				}
-				if (ss0 == ss1)
-				{
-					ss1 = "YEAH!";
-				}
+				MINT_ASSURE(ss1.rfind("def") == 3);
+				MINT_ASSURE(ss1.rfind("fgh") == 5);
+				MINT_ASSURE(ss1.rfind("ghi") == kStringNPos);
+				MINT_ASSURE(ss1.rfind("abc") == 0);
+				MINT_ASSURE(ss1.rfind("abcdc") == kStringNPos);
+				MINT_ASSURE(ss1.rfind("zab") == kStringNPos);
+				MINT_ASSURE(ss1 == "abcdefgh");
+				ss0 = ss1;
+				MINT_ASSURE(ss0 == ss1);
 			}
+			//StackStringU8<256> ss2{ u8"abc가나다123!@#" };
+			//MINT_ASSURE(ss2.rfind(u8"abc") == 11);
 #pragma endregion
 
 #if defined MINT_TEST_PERFORMANCE
@@ -595,7 +592,7 @@ namespace mint
 				MINT_ASSURE(a.length() == 0);
 				MINT_ASSURE(b.length() == 0);
 				MINT_ASSURE(a == b);
-				
+
 				a.assign(LiteralString("efg"));
 				b.assign(LiteralString("hij"));
 				MINT_ASSURE(a != b);
@@ -618,7 +615,7 @@ namespace mint
 			}
 
 			return true;
-		}
+			}
 
 		static bool test_StringUtil() noexcept
 		{
@@ -766,6 +763,7 @@ namespace mint
 				StringW stringE{ L"테스트!" };
 				StackStringA<kSize> stringF{ "테스트!" };
 				StackStringW<kSize> stringG{ L"테스트!" };
+				StackStringU8<kSize> stringH{ u8"테스트!" };
 
 				StringViewA stringViewA{ stringA };
 				StringViewW stringViewB{ stringB };
@@ -774,6 +772,8 @@ namespace mint
 				StringViewW stringViewE{ stringE };
 				StringViewA stringViewF{ stringF };
 				StringViewW stringViewG{ stringG };
+				StringViewU8 stringViewH{ stringH };
+				MINT_LOG("StrnigH ByteCount:%d, CharCount:%d", stringH.countBytes(), stringH.countChars());
 			}
 
 			return true;
@@ -855,5 +855,5 @@ namespace mint
 			MINT_ASSURE(test_Tree());
 			return true;
 		}
-	}
-}
+		}
+		}

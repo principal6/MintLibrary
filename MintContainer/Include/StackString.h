@@ -44,39 +44,35 @@ namespace mint
 
     public:
         virtual uint32          capacity() const override;
-        uint32                  length() const noexcept;
+        uint32                  countBytes() const noexcept;
+        uint32                  countChars() const noexcept;
         virtual const T*        c_str() const override;
-
-    private:
-        static uint32           _getRawStringLength(const T* const rawString) noexcept;
-        static void             _copyString(T* const destination, const T* const source, const uint64 length) noexcept;
 
     public:
         T*                      data() noexcept;
 
     private:
-        bool                    canInsert(const uint32 insertLength) const noexcept;
+        bool                    canInsert(const uint32 byteCount) const noexcept;
 
     public:
         virtual void            clear();
         virtual MutableString<T>&   append(const StringBase<T>& rhs) override;
-        StackString&            append(const T* const rawString) noexcept;
+        StackString&            append(const T* const rhs) noexcept;
         StackString&            append(const StackString& rhs) noexcept;
         virtual MutableString<T>&   assign(const StringBase<T>& rhs) override;
-        StackString&            assign(const T* const rawString) noexcept;
+        StackString&            assign(const T* const rhs) noexcept;
         StackString&            assign(const StackString& rhs) noexcept;
-        void                    resize(const uint32 newSize) noexcept;
+        void                    resize(const uint32 newByteCount) noexcept;
 
     public:
         StackString             substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
-        uint32                  find(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
-        uint32                  rfind(const T* const rawString, const uint32 offset = kStringNPos) const noexcept;
-        bool                    compare(const T* const rawString) const noexcept;
+        uint32                  rfind(const T* const token, const uint32 offset = 0) const noexcept;
+        bool                    compare(const T* const rhs) const noexcept;
         bool                    compare(const StackString& rhs) const noexcept;
         uint64                  computeHash() const noexcept;
 
     private:
-        uint32                  _length;
+        uint32                  _byteCount;
         Array<T, BufferSize>    _raw;
     };
 
