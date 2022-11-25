@@ -11,7 +11,7 @@ namespace mint
 {
     template <typename T, uint32 BufferSize>
     inline StackString<T, BufferSize>::StackString()
-        : MutableString<T>(StringType::StackString)
+        : MutableString<T>()
         , _byteCount{}
         , _raw{}
     {

@@ -10,8 +10,8 @@ namespace mint
 	enum class StringType
 	{
 		ConstantLiteralString,
-		StackString,
-		HeapString,
+		MutableStackString,
+		MutableHeapString,
 		COUNT
 	};
 
@@ -20,23 +20,25 @@ namespace mint
 	class StringReference
 	{
 	public:
-		StringReference(const T* const rhs) : _stringType{ StringType::ConstantLiteralString }, _capacity{ reinterpret_cast<uint64>(rhs) } { __noop; }
-		StringReference(const StringType stringType) : _stringType{ stringType }, _capacity{ 0 } { __noop; }
+		StringReference() : _literalString{ nullptr } { __noop; }
+		StringReference(const T* const rhs) : _literalString{ rhs } { __noop; }
 		virtual ~StringReference() = default;
 
 	public:
-		StringType			getStringType() const { return _stringType; }
+		bool	operator==(const StringReference<T>& rhs) const;
+
+	public:
+		virtual StringType	getStringType() const { return StringType::ConstantLiteralString; }
 		bool				isLiteral() const { return true; }
 		virtual bool		isMutable() const { return false; }
-		virtual const T*	c_str() const { return reinterpret_cast<const T*>(_capacity); }
+		virtual const T*	c_str() const { return _literalString; }
 		virtual uint32		length() const;
 		virtual uint32		find(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual bool		contains(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual uint64		computeHash() const;
 
-	protected:
-		StringType	_stringType;
-		uint64		_capacity;
+	private:
+		const T*			_literalString;
 	};
 
 
@@ -44,22 +46,20 @@ namespace mint
 	class MutableString abstract : public StringReference<T>
 	{
 	public:
-		MutableString(const StringType stringType) : StringReference<T>(stringType) { __noop; }
+		MutableString() : StringReference<T>() { __noop; }
 		virtual ~MutableString() = default;
 
 	public:
-		virtual bool	isMutable() const override final { return true; }
-		virtual uint32	capacity() const { return 0; }
+		virtual StringType	getStringType() const abstract;
+		virtual bool		isMutable() const override final { return true; }
+		virtual const T*	c_str() const abstract;
+		virtual uint32		capacity() const { return 0; }
 
 	public:
-		virtual void	clear() abstract;
+		virtual void		clear() abstract;
 		virtual MutableString<T>& append(const StringReference<T>& rhs) abstract;
 		virtual MutableString<T>& assign(const StringReference<T>& rhs) abstract;
 	};
-
-
-	template <typename T>
-	bool operator==(const StringReference<T>& lhs, const StringReference<T>& rhs);
 }
 
 

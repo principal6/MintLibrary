@@ -43,6 +43,7 @@ namespace mint
         const T&                operator[](const uint32 at) const noexcept;
 
     public:
+        virtual StringType      getStringType() const override { return StringType::MutableStackString; }
         virtual uint32          capacity() const override;
         uint32                  countBytes() const noexcept;
         uint32                  countChars() const noexcept;

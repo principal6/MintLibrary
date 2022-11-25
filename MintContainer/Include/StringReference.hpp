@@ -9,6 +9,12 @@
 namespace mint
 {
 	template <typename T>
+	bool StringReference<T>::operator==(const StringReference<T>& rhs) const
+	{
+		return StringUtil::compare(c_str(), rhs.c_str());
+	}
+
+	template <typename T>
 	uint32 StringReference<T>::length() const
 	{
 		return StringUtil::countChars(c_str());
@@ -64,19 +70,5 @@ namespace mint
 	uint64 StringReference<T>::computeHash() const
 	{
 		return mint::computeHash(c_str());
-	}
-
-
-	template <typename T>
-	bool operator==(const StringReference<T>& lhs, const StringReference<T>& rhs)
-	{
-		return StringUtil::compare(lhs.c_str(), rhs.c_str());
-
-		//if (lhs.isMutable() || rhs.isMutable())
-		//{
-		//	return StringUtil::compare(lhs.c_str(), rhs.c_str());
-		//}
-		////TODO
-		//return false;
 	}
 }

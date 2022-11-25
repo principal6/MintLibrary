@@ -16,7 +16,7 @@ namespace mint
 {
 	template <typename T>
 	inline String<T>::String()
-		: MutableString<T>(StringType::HeapString)
+		: MutableString<T>()
 	{
 		__noop;
 	}

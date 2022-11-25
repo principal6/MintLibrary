@@ -78,6 +78,7 @@ namespace mint
         MINT_INLINE bool            empty() const noexcept { return (size() == 0); }
         MINT_INLINE uint32          size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
         MINT_INLINE uint32          length() const noexcept { return size(); }
+        virtual StringType          getStringType() const override { return StringType::MutableHeapString; }
         virtual uint32              capacity() const override { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
         virtual const T*            c_str() const override;
         T                           at(const uint32 index) const;
