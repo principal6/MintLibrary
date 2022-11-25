@@ -108,10 +108,10 @@
     <ClInclude Include="Include\Test.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\StringBase.h">
+    <ClInclude Include="Include\StringReference.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\StringBase.hpp">
+    <ClInclude Include="Include\StringReference.hpp">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

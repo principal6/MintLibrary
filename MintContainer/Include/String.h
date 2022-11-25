@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintContainer/Include/StringBase.h>
+#include <MintContainer/Include/StringReference.h>
 
 
 namespace mint
@@ -47,7 +47,7 @@ namespace mint
         const T&                    operator[](const uint32 at) const noexcept;
 
     public:
-        virtual MutableString<T>&   assign(const StringBase<T>& rhs) override;
+        virtual MutableString<T>&   assign(const StringReference<T>& rhs) override;
         String&                     assign(const T* const rawString) noexcept;
 
     private:
@@ -55,7 +55,7 @@ namespace mint
         String&                     assignInternalLongXXX(const T* const rawString) noexcept;
 
     public:
-        virtual MutableString<T>&   append(const StringBase<T>& rhs) override;
+        virtual MutableString<T>&   append(const StringReference<T>& rhs) override;
         String&                     append(const T* const rawString) noexcept;
         String&                     append(const T ch) noexcept;
         String&                     append(const String& rhs) noexcept;

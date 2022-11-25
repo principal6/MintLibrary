@@ -8,7 +8,7 @@
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Array.h>
-#include <MintContainer/Include/StringBase.h>
+#include <MintContainer/Include/StringReference.h>
 
 
 namespace mint
@@ -56,10 +56,10 @@ namespace mint
 
     public:
         virtual void            clear();
-        virtual MutableString<T>&   append(const StringBase<T>& rhs) override;
+        virtual MutableString<T>&   append(const StringReference<T>& rhs) override;
         StackString&            append(const T* const rhs) noexcept;
         StackString&            append(const StackString& rhs) noexcept;
-        virtual MutableString<T>&   assign(const StringBase<T>& rhs) override;
+        virtual MutableString<T>&   assign(const StringReference<T>& rhs) override;
         StackString&            assign(const T* const rhs) noexcept;
         StackString&            assign(const StackString& rhs) noexcept;
         void                    resize(const uint32 newByteCount) noexcept;

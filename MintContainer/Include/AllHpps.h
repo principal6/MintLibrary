@@ -6,7 +6,7 @@
 
 
 #include <MintContainer/Include/MemoryRaw.hpp>
-#include <MintContainer/Include/StringBase.hpp>
+#include <MintContainer/Include/StringReference.hpp>
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StackHolder.hpp>

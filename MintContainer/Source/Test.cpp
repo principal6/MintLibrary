@@ -575,11 +575,11 @@ namespace mint
 			{
 				String<char> string{ "abc" };
 				StackString<char, 256> stackString{ "abc" };
-				LiteralString<char> literalString{ "abc" };
+				StringReference<char> literalString{ "abc" };
 
 				MutableString<char>& a = string;
 				MutableString<char>& b = stackString;
-				ConstantString<char>& c = literalString;
+				StringReference<char>& c = literalString;
 				//MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
 				//MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
 				//MINT_LOG("c: %s", c.c_str());
@@ -593,22 +593,22 @@ namespace mint
 				MINT_ASSURE(b.length() == 0);
 				MINT_ASSURE(a == b);
 
-				a.assign(LiteralString("efg"));
-				b.assign(LiteralString("hij"));
+				a.assign("efg");
+				b.assign("hij");
 				MINT_ASSURE(a != b);
 
-				a.append(LiteralString("life!"));
-				b.append(LiteralString("life?"));
+				a.append("life!");
+				b.append("life?");
 				MINT_ASSURE(a != b);
 				//MINT_LOG("a: %s, capacity: %d", a.c_str(), a.capacity());
 				//MINT_LOG("b: %s, capacity: %d", b.c_str(), b.capacity());
 
-				MINT_ASSURE(a.contains(LiteralString("life!!!")) == false);
-				MINT_ASSURE(a.contains(LiteralString("life!")) == true);
-				MINT_ASSURE(a.contains(LiteralString("fe!")) == true);
-				MINT_ASSURE(b.contains(LiteralString("life???")) == false);
-				MINT_ASSURE(b.contains(LiteralString("life?")) == true);
-				MINT_ASSURE(b.contains(LiteralString("fe?")) == true);
+				MINT_ASSURE(a.contains("life!!!") == false);
+				MINT_ASSURE(a.contains("life!") == true);
+				MINT_ASSURE(a.contains("fe!") == true);
+				MINT_ASSURE(b.contains("life???") == false);
+				MINT_ASSURE(b.contains("life?") == true);
+				MINT_ASSURE(b.contains("fe?") == true);
 
 				//MINT_LOG("hash of a: %llX", a.computeHash());
 				//MINT_LOG("hash of b: %llX", b.computeHash());

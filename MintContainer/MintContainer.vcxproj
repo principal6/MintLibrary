@@ -200,8 +200,8 @@
     <ClInclude Include="Include\BitArray.hpp" />
     <ClInclude Include="Include\String.h" />
     <ClInclude Include="Include\String.hpp" />
-    <ClInclude Include="Include\StringBase.h" />
-    <ClInclude Include="Include\StringBase.hpp" />
+    <ClInclude Include="Include\StringReference.h" />
+    <ClInclude Include="Include\StringReference.hpp" />
     <ClInclude Include="Include\StringUtil.h" />
     <ClInclude Include="Include\StringUtil.hpp" />
     <ClInclude Include="Include\StringView.h" />

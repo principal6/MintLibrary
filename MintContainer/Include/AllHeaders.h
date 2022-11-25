@@ -6,7 +6,7 @@
 
 
 #include <MintContainer/Include/BitVector.h>
-#include <MintContainer/Include/StringBase.h>
+#include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/StackString.h>
 #include <MintContainer/Include/StackHolder.h>
 #include <MintContainer/Include/Array.h>

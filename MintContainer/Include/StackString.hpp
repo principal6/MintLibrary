@@ -171,7 +171,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MutableString<T>& StackString<T, BufferSize>::append(const StringBase<T>& rhs)
+    MutableString<T>& StackString<T, BufferSize>::append(const StringReference<T>& rhs)
     {
         const uint32 rhsByteCount = static_cast<uint32>(StringUtil::countBytes(rhs.c_str()));
         if (canInsert(rhsByteCount))
@@ -212,7 +212,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline MutableString<T>& StackString<T, BufferSize>::assign(const StringBase<T>& rhs)
+    inline MutableString<T>& StackString<T, BufferSize>::assign(const StringReference<T>& rhs)
     {
         uint32 rhsByteCount = StringUtil::countChars(rhs.c_str());
         if (BufferSize <= rhsByteCount)

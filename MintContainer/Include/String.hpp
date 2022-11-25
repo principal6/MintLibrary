@@ -159,7 +159,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline MutableString<T>& String<T>::assign(const StringBase<T>& rhs)
+	inline MutableString<T>& String<T>::assign(const StringReference<T>& rhs)
 	{
 		release();
 
@@ -200,7 +200,7 @@ namespace mint
 	}
 
 	template<typename T>
-	inline MutableString<T>& String<T>::append(const StringBase<T>& rhs)
+	inline MutableString<T>& String<T>::append(const StringReference<T>& rhs)
 	{
 		return append(rhs.c_str());
 	}

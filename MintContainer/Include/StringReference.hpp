@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include <MintContainer/Include/StringBase.h>
+#include <MintContainer/Include/StringReference.h>
 #include <MintContainer/Include/StringUtil.hpp>
 #include <MintContainer/Include/Hash.hpp>
 
@@ -9,13 +9,13 @@
 namespace mint
 {
 	template <typename T>
-	uint32 StringBase<T>::length() const
+	uint32 StringReference<T>::length() const
 	{
 		return StringUtil::countChars(c_str());
 	}
 
 	template <typename T>
-	uint32 StringBase<T>::find(const StringBase<T>& token, const uint32 offset) const
+	uint32 StringReference<T>::find(const StringReference<T>& token, const uint32 offset) const
 	{
 		const uint32 sourceLength = length();
 		const uint32 tokenLength = token.length();
@@ -55,20 +55,20 @@ namespace mint
 	}
 
 	template <typename T>
-	bool StringBase<T>::contains(const StringBase<T>& token, const uint32 offset) const
+	bool StringReference<T>::contains(const StringReference<T>& token, const uint32 offset) const
 	{
 		return find(token, offset) != kStringNPos;
 	}
 
 	template <typename T>
-	uint64 StringBase<T>::computeHash() const
+	uint64 StringReference<T>::computeHash() const
 	{
 		return mint::computeHash(c_str());
 	}
 
 
 	template <typename T>
-	bool operator==(const StringBase<T>& lhs, const StringBase<T>& rhs)
+	bool operator==(const StringReference<T>& lhs, const StringReference<T>& rhs)
 	{
 		return StringUtil::compare(lhs.c_str(), rhs.c_str());
 
