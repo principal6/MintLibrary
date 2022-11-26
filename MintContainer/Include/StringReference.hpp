@@ -71,6 +71,43 @@ namespace mint
 		}
 		return result;
 	}
+	
+	template <typename T>
+	inline uint32 StringReference<T>::rfind(const StringReference<T>& token, const uint32 offset) const
+	{
+		const uint32 stringByteCount = countBytes();
+		const uint32 tokenByteCount = token.countBytes();
+		if (stringByteCount < tokenByteCount)
+		{
+			return kStringNPos;
+		}
+
+		const uint32 stringByteStart = stringByteCount - tokenByteCount;
+		if (stringByteStart < offset)
+		{
+			return kStringNPos;
+		}
+		const T* const string = c_str();
+		const T* const tokenString = token.c_str();
+		for (uint32 stringByteAt = stringByteStart - offset; stringByteAt != kUint32Max; --stringByteAt)
+		{
+			uint32 tokenByteAt = 0;
+			while (tokenByteAt < tokenByteCount)
+			{
+				if (string[stringByteAt + tokenByteAt] != tokenString[tokenByteAt])
+				{
+					break;
+				}
+				++tokenByteAt;
+			}
+
+			if (tokenByteAt == tokenByteCount)
+			{
+				return stringByteAt;
+			}
+		}
+		return kStringNPos;
+	}
 
 	template <typename T>
 	bool StringReference<T>::contains(const StringReference<T>& token, const uint32 offset) const

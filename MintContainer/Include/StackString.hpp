@@ -280,40 +280,6 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    inline uint32 StackString<T, BufferSize>::rfind(const T* const token, const uint32 offset) const noexcept
-    {
-        const uint32 tokenByteCount = static_cast<uint32>(StringUtil::countBytes(token));
-        if (_byteCount < tokenByteCount)
-        {
-            return kStringNPos;
-        }
-
-        const uint32 byteStart = _byteCount - tokenByteCount;
-        if (byteStart < offset)
-        {
-            return kStringNPos;
-        }
-        for (uint32 byteAt = byteStart - offset; byteAt != kUint32Max; --byteAt)
-        {
-            uint32 tokenByteAt = 0;
-            while (tokenByteAt < tokenByteCount)
-            {
-                if (_raw[byteAt + tokenByteAt] != token[tokenByteAt])
-                {
-                    break;
-                }
-                ++tokenByteAt;
-            }
-
-            if (tokenByteAt == tokenByteCount)
-            {
-                return byteAt;
-            }
-        }
-        return kStringNPos;
-    }
-
-    template <typename T, uint32 BufferSize>
     inline bool StackString<T, BufferSize>::compare(const T* const rhs) const noexcept
     {
         const uint32 rhsByteCount = static_cast<uint32>(StringUtil::countBytes(rhs));

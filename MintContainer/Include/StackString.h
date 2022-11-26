@@ -67,7 +67,6 @@ namespace mint
 
     public:
         StackString             substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
-        uint32                  rfind(const T* const token, const uint32 offset = 0) const noexcept;
         bool                    compare(const T* const rhs) const noexcept;
         bool                    compare(const StackString& rhs) const noexcept;
         uint64                  computeHash() const noexcept;

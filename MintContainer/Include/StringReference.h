@@ -33,9 +33,10 @@ namespace mint
 		virtual bool		isMutable() const { return false; }
 		virtual const T*	c_str() const { return _literalString; }
 		virtual uint32		length() const;
-		uint32				countBytes() const;
-		uint32				countChars() const;
+		virtual uint32		countBytes() const;
+		virtual uint32		countChars() const;
 		virtual uint32		find(const StringReference<T>& token, const uint32 offset = 0) const;
+		uint32              rfind(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual bool		contains(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual uint64		computeHash() const;
 
