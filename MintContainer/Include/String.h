@@ -85,7 +85,7 @@ namespace mint
         T                           back() const;
 
     private:
-        T*                          data() noexcept;
+        virtual T*                  data() override;
         static void                 __copyString(T* const destination, const T* const source, const uint64 byteCount) noexcept;
 
     public:

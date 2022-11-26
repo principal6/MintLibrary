@@ -364,7 +364,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE T* String<T>::data() noexcept
+	MINT_INLINE T* String<T>::data()
 	{
 		return (isSmallString() == true) ? _short._smallString : _long._rawPointer;
 	}

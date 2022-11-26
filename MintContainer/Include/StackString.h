@@ -45,12 +45,9 @@ namespace mint
     public:
         virtual StringType      getStringType() const override { return StringType::MutableStackString; }
         virtual uint32          capacity() const override;
-        uint32                  countBytes() const noexcept;
-        uint32                  countChars() const noexcept;
+        virtual uint32          countBytes() const override;
         virtual const T*        c_str() const override;
-
-    public:
-        T*                      data() noexcept;
+        virtual T*              data() override;
 
     private:
         bool                    canInsert(const uint32 byteCount) const noexcept;

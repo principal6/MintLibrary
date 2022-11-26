@@ -129,15 +129,9 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE uint32 StackString<T, BufferSize>::countBytes() const noexcept
+    MINT_INLINE uint32 StackString<T, BufferSize>::countBytes() const
     {
         return _byteCount;
-    }
-    
-    template <typename T, uint32 BufferSize>
-    MINT_INLINE uint32 StackString<T, BufferSize>::countChars() const noexcept
-    {
-        return StringUtil::countChars(c_str());
     }
 
     template <typename T, uint32 BufferSize>
@@ -147,7 +141,7 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE T* StackString<T, BufferSize>::data() noexcept
+    MINT_INLINE T* StackString<T, BufferSize>::data()
     {
         return &_raw[0];
     }

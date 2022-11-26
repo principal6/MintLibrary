@@ -31,10 +31,10 @@ namespace mint
 		virtual StringType	getStringType() const { return StringType::ConstantLiteralString; }
 		bool				isLiteral() const { return true; }
 		virtual bool		isMutable() const { return false; }
-		virtual const T*	c_str() const { return _literalString; }
 		virtual uint32		length() const;
 		virtual uint32		countBytes() const;
 		virtual uint32		countChars() const;
+		virtual const T*	c_str() const { return _literalString; }
 		virtual uint32		find(const StringReference<T>& token, const uint32 offset = 0) const;
 		uint32              rfind(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual bool		contains(const StringReference<T>& token, const uint32 offset = 0) const;
@@ -55,8 +55,9 @@ namespace mint
 	public:
 		virtual StringType	getStringType() const abstract;
 		virtual bool		isMutable() const override final { return true; }
-		virtual const T*	c_str() const abstract;
 		virtual uint32		capacity() const { return 0; }
+		virtual const T*	c_str() const abstract;
+		virtual T*			data() abstract;
 
 	public:
 		virtual void		clear() abstract;
