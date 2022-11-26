@@ -19,6 +19,18 @@ namespace mint
 	{
 		return StringUtil::countChars(c_str());
 	}
+	
+	template <typename T>
+	uint32 StringReference<T>::countBytes() const
+	{
+		return StringUtil::countChars(c_str());
+	}
+	
+	template <typename T>
+	uint32 StringReference<T>::countChars() const
+	{
+		return StringUtil::countChars(c_str());
+	}
 
 	template <typename T>
 	uint32 StringReference<T>::find(const StringReference<T>& token, const uint32 offset) const
