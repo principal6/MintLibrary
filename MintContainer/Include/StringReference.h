@@ -53,6 +53,12 @@ namespace mint
 		virtual ~MutableString() = default;
 
 	public:
+		MutableString<T>&	operator=(const StringReference<T>& rhs);
+		// TODO: 구현 최적화
+		MutableString<T>&	operator=(StringReference<T>&& rhs);
+		MutableString<T>&	operator+=(const StringReference<T>& rhs);
+
+	public:
 		virtual StringType	getStringType() const abstract;
 		virtual bool		isMutable() const override final { return true; }
 		virtual uint32		capacity() const { return 0; }

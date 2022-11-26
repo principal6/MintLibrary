@@ -24,19 +24,14 @@ namespace mint
                                 ~StackString();
 
     public:
-        StackString&            operator=(const StackString& rhs) noexcept;
-        StackString&            operator=(StackString&& rhs) noexcept;
-        StackString&            operator=(const T* const rawString) noexcept;
+        MutableString<T>&       operator=(const StackString& rhs) { return assign(rhs); }
+        MutableString<T>&       operator=(StackString&& rhs) { return assign(rhs); }
 
     public:
         bool                    operator==(const T* const rawString) const noexcept;
         bool                    operator==(const StackString& rhs) const noexcept;
         bool                    operator!=(const T* const rawString) const noexcept;
         bool                    operator!=(const StackString& rhs) const noexcept;
-
-    public:
-        StackString&            operator+=(const T* const rawString) noexcept;
-        StackString&            operator+=(const StackString& rhs) noexcept;
 
     public:
         T&                      operator[](const uint32 at) noexcept;
@@ -55,11 +50,7 @@ namespace mint
     public:
         virtual void            clear();
         virtual MutableString<T>&   append(const StringReference<T>& rhs) override;
-        StackString&            append(const T* const rhs) noexcept;
-        StackString&            append(const StackString& rhs) noexcept;
         virtual MutableString<T>&   assign(const StringReference<T>& rhs) override;
-        StackString&            assign(const T* const rhs) noexcept;
-        StackString&            assign(const StackString& rhs) noexcept;
         void                    resize(const uint32 newByteCount) noexcept;
 
     public:

@@ -120,4 +120,25 @@ namespace mint
 	{
 		return mint::computeHash(c_str());
 	}
+
+
+#pragma region MutableString
+	template<typename T>
+	inline MutableString<T>& mint::MutableString<T>::operator=(const StringReference<T>& rhs)
+	{
+		return assign(rhs);
+	}
+
+	template<typename T>
+	inline MutableString<T>& mint::MutableString<T>::operator=(StringReference<T>&& rhs)
+	{
+		return assign(rhs);
+	}
+
+	template<typename T>
+	inline MutableString<T>& mint::MutableString<T>::operator+=(const StringReference<T>& rhs)
+	{
+		return append(rhs);
+	}
+#pragma endregion
 }
