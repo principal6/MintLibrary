@@ -349,14 +349,6 @@ namespace mint
 	}
 	
 	template<typename T>
-	MINT_INLINE T String<T>::at(const uint32 index) const
-	{
-		const uint32 size_ = size();
-		MINT_ASSERT(index < size, "!!!");
-		return c_str()[index];
-	}
-	
-	template<typename T>
 	MINT_INLINE T String<T>::back() const
 	{
 		MINT_ASSERT(empty() == false, "!!!");

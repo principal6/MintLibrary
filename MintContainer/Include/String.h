@@ -81,7 +81,6 @@ namespace mint
         virtual StringType          getStringType() const override { return StringType::MutableHeapString; }
         virtual uint32              capacity() const override { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
         virtual const T*            c_str() const override;
-        T                           at(const uint32 index) const;
         T                           back() const;
 
     private:
