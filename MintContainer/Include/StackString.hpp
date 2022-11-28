@@ -117,7 +117,7 @@ namespace mint
     template <typename T, uint32 BufferSize>
     MutableString<T>& StackString<T, BufferSize>::append(const StringReference<T>& rhs)
     {
-        const uint32 rhsByteCount = static_cast<uint32>(StringUtil::countBytes(rhs.c_str()));
+        const uint32 rhsByteCount = rhs.countBytes();
         if (canInsert(rhsByteCount))
         {
             StringUtil::copy(&_raw[_byteCount], rhs.c_str(), rhsByteCount);
@@ -131,10 +131,10 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline MutableString<T>& StackString<T, BufferSize>::assign(const StringReference<T>& rhs)
     {
-        uint32 rhsByteCount = StringUtil::countChars(rhs.c_str());
+        uint32 rhsByteCount = rhs.countBytes();
         if (BufferSize <= rhsByteCount)
         {
-            MINT_ASSERT(false, "버퍼 크기를 초과하여 문자열이 잘립니다.");
+            MINT_LOG("버퍼 크기를 초과하여 문자열이 잘립니다.");
             rhsByteCount = BufferSize - 1;
         }
         _byteCount = rhsByteCount;
