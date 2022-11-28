@@ -25,7 +25,7 @@ namespace mint
 
     public:
         MutableString<T>&       operator=(const StackString& rhs) { return assign(rhs); }
-        MutableString<T>&       operator=(StackString&& rhs) { return assign(rhs); }
+        MutableString<T>&       operator=(StackString&& rhs) noexcept { return assign(rhs); }
 
     public:
         bool                    operator==(const T* const rawString) const noexcept;

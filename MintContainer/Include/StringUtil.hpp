@@ -320,20 +320,6 @@ namespace mint
             }
         }
 
-        inline float convertStringWToFloat(const StringW& rhs)
-        {
-            float result = 0.0f;
-            try
-            {
-                result = std::stof(rhs.c_str());
-            }
-            catch (std::invalid_argument e)
-            {
-                throw(e);
-            }
-            return result;
-        }
-
         template <typename T>
         inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
         {
@@ -364,6 +350,42 @@ namespace mint
             StackStringW<256> buffer;
             formatString(buffer, L"%f", rhs);
             return StringW(buffer.c_str());
+        }
+
+        template<typename INT, typename T>
+        inline std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<T>& outString)
+        {
+            constexpr uint32 kBufferSize = 32;
+            thread_local static char buffer[kBufferSize]{};
+            ::sprintf_s(buffer, kBufferSize, "%d", i);
+            outString = reinterpret_cast<T*>(buffer);
+        }
+
+        template<typename INT>
+        inline std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<wchar_t>& outString)
+        {
+            constexpr uint32 kBufferSize = 32;
+            thread_local static wchar_t buffer[kBufferSize]{};
+            ::swprintf_s(buffer, kBufferSize, L"%d", i);
+            outString = buffer;
+        }
+
+        template<typename FLT, typename T>
+        inline std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<T>& outString)
+        {
+            constexpr uint32 kBufferSize = 64;
+            thread_local static char buffer[kBufferSize]{};
+            ::sprintf_s(buffer, kBufferSize, "%f", f);
+            outString = reinterpret_cast<T*>(buffer);
+        }
+
+        template<typename FLT>
+        inline std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<wchar_t>& outString)
+        {
+            constexpr uint32 kBufferSize = 64;
+            thread_local static wchar_t buffer[kBufferSize]{};
+            ::swprintf_s(buffer, kBufferSize, L"%f", f);
+            outString = buffer;
         }
     }
 }

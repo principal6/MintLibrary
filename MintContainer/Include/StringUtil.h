@@ -158,7 +158,10 @@ namespace mint
         template <typename T>
         std::enable_if_t<std::is_floating_point_v<T>, StringW>  convertToStringW(const T& rhs);
 
-        float           convertStringWToFloat(const StringW& rhs);
+        template<typename INT, typename T>
+        std::enable_if_t<std::is_integral_v<INT>, void>         toString(const INT i, MutableString<T>& outString);
+        template<typename FLT, typename T>
+        std::enable_if_t<std::is_floating_point_v<FLT>, void>   toString(const FLT f, MutableString<T>& outString);
     }
 }
 

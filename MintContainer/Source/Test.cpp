@@ -776,6 +776,28 @@ namespace mint
 				MINT_LOG("StrnigH ByteCount:%d, CharCount:%d", stringH.countBytes(), stringH.countChars());
 			}
 
+			{
+				StackStringA<256> ssa0;
+				StackStringW<256> ssw0;
+				StackStringU8<256> ssu0;
+				StringA stra0;
+				StringW strw0;
+				StringU8 stru0;
+				StringUtil::toString(1234, ssa0);
+				StringUtil::toString(1234, stra0);
+				StringUtil::toString(1234, ssw0);
+				StringUtil::toString(1234, strw0);
+				StringUtil::toString(1234, ssu0);
+				StringUtil::toString(1234, stru0);
+
+				StringUtil::toString(12.34f, ssa0);
+				StringUtil::toString(12.34f, stra0);
+				StringUtil::toString(12.34f, ssw0);
+				StringUtil::toString(12.34f, strw0);
+				StringUtil::toString(12.34f, ssu0);
+				StringUtil::toString(12.34f, stru0);
+			}
+
 			return true;
 		}
 
