@@ -34,10 +34,6 @@ namespace mint
         bool                    operator!=(const StackString& rhs) const noexcept;
 
     public:
-        T&                      operator[](const uint32 at) noexcept;
-        const T&                operator[](const uint32 at) const noexcept;
-
-    public:
         virtual StringType      getStringType() const override { return StringType::MutableStackString; }
         virtual uint32          capacity() const override;
         virtual uint32          countBytes() const override;

@@ -43,10 +43,6 @@ namespace mint
         bool                        operator!=(const String& rhs) const noexcept;
 
     public:
-        T&                          operator[](const uint32 at) noexcept;
-        const T&                    operator[](const uint32 at) const noexcept;
-
-    public:
         virtual MutableString<T>&   assign(const StringReference<T>& rhs) override;
         String&                     assign(const T* const rawString) noexcept;
 

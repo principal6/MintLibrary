@@ -25,7 +25,8 @@ namespace mint
 		virtual ~StringReference() = default;
 
 	public:
-		bool	operator==(const StringReference<T>& rhs) const;
+		bool		operator==(const StringReference<T>& rhs) const;
+		const T&	operator[](const uint32 index) const { return at(index); }
 
 	public:
 		virtual StringType	getStringType() const { return StringType::ConstantLiteralString; }
@@ -58,6 +59,8 @@ namespace mint
 		// TODO: 구현 최적화
 		MutableString<T>&	operator=(StringReference<T>&& rhs);
 		MutableString<T>&	operator+=(const StringReference<T>& rhs);
+
+		T&					operator[](const uint32 index) { return at(index); }
 
 	public:
 		virtual StringType	getStringType() const abstract;

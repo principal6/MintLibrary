@@ -147,18 +147,6 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE T& String<T>::operator[](const uint32 at) noexcept
-	{
-		return data()[at];
-	}
-
-	template<typename T>
-	MINT_INLINE const T& String<T>::operator[](const uint32 at) const noexcept
-	{
-		return c_str()[at];
-	}
-
-	template<typename T>
 	inline MutableString<T>& String<T>::assign(const StringReference<T>& rhs)
 	{
 		release();

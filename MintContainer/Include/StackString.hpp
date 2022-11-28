@@ -73,18 +73,6 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE T& StackString<T, BufferSize>::operator[](const uint32 at) noexcept
-    {
-        return _raw[at];
-    }
-
-    template <typename T, uint32 BufferSize>
-    MINT_INLINE const T& StackString<T, BufferSize>::operator[](const uint32 at) const noexcept
-    {
-        return _raw[at];
-    }
-
-    template <typename T, uint32 BufferSize>
     MINT_INLINE uint32 StackString<T, BufferSize>::capacity() const
     {
         return BufferSize;
