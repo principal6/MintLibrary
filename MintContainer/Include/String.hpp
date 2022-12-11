@@ -562,7 +562,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::toLongString() noexcept
 	{
-		if (isSmallString() == false || isEmpty() == true)
+		if (isSmallString() == false || this->empty() == true)
 		{
 			return;
 		}

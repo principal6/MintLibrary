@@ -100,7 +100,6 @@ namespace mint
 		void release() noexcept;
 		void toLongString() noexcept;
 		MINT_INLINE bool isSmallString() const noexcept { return _short._size < Short::kSmallStringCapacity; }
-		MINT_INLINE bool isEmpty() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._size == 0); }
 		MINT_INLINE bool isNotAllocated() const noexcept { return (isSmallString() == true) ? (_short._size == 0) : (_long._rawPointer == nullptr); }
 
 	private:
