@@ -339,7 +339,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE T String<T>::back() const
 	{
-		MINT_ASSERT(empty() == false, "!!!");
+		MINT_ASSERT(this->empty() == false, "!!!");
 		return c_str()[size() - 1];
 	}
 
@@ -473,7 +473,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::erase(const uint32 at, const uint32 byteCount) noexcept
 	{
-		if (empty() == true)
+		if (this->empty() == true)
 		{
 			return;
 		}
@@ -504,7 +504,7 @@ namespace mint
 	template<typename T>
 	inline void String<T>::pop_back()
 	{
-		if (empty())
+		if (this->empty())
 		{
 			return;
 		}
@@ -567,9 +567,7 @@ namespace mint
 			return;
 		}
 
-		Short tempShort;
-		::memcpy_s(&tempShort, sizeof(Short), &_short, sizeof(Short));
-
+		Short tempShort{ _short };
 		assignInternalLongXXX(tempShort._smallString);
 	}
 }

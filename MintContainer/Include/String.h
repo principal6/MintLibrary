@@ -71,11 +71,10 @@ namespace mint
 		virtual void clear() override;
 
 	public:
-		MINT_INLINE bool empty() const noexcept { return (size() == 0); }
-		MINT_INLINE uint32 size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
-		virtual uint32 length() const override { return size(); }
 		virtual StringType getStringType() const override { return StringType::MutableHeapString; }
 		virtual uint32 capacity() const override { return static_cast<uint32>(isSmallString() ? Short::kSmallStringCapacity : _long._capacity); }
+		MINT_INLINE uint32 size() const noexcept { return static_cast<uint32>(isSmallString() ? _short._size : _long._size); }
+		virtual uint32 length() const override { return size(); }
 		virtual const T* c_str() const override;
 		T back() const;
 

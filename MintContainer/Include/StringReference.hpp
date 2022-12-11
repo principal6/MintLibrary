@@ -19,7 +19,7 @@ namespace mint
 	{
 		return StringUtil::length(c_str());
 	}
-	
+
 	template <typename T>
 	uint32 StringReference<T>::countChars() const
 	{
@@ -65,7 +65,7 @@ namespace mint
 		}
 		return result;
 	}
-	
+
 	template <typename T>
 	inline uint32 StringReference<T>::rfind(const StringReference<T>& token, const uint32 offset) const
 	{
