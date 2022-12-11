@@ -787,7 +787,7 @@ namespace mint
 				StringViewA stringViewF{ stringF };
 				StringViewW stringViewG{ stringG };
 				StringViewU8 stringViewH{ stringH };
-				MINT_LOG("StrnigH ByteCount:%d, CharCount:%d", stringH.countBytes(), stringH.countChars());
+				MINT_LOG("StrnigH Length:%d, CharCount:%d", stringH.length(), stringH.countChars());
 			}
 
 			{

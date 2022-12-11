@@ -17,13 +17,7 @@ namespace mint
 	template <typename T>
 	uint32 StringReference<T>::length() const
 	{
-		return StringUtil::countChars(c_str());
-	}
-	
-	template <typename T>
-	uint32 StringReference<T>::countBytes() const
-	{
-		return StringUtil::countChars(c_str());
+		return StringUtil::length(c_str());
 	}
 	
 	template <typename T>
@@ -75,24 +69,24 @@ namespace mint
 	template <typename T>
 	inline uint32 StringReference<T>::rfind(const StringReference<T>& token, const uint32 offset) const
 	{
-		const uint32 stringByteCount = countBytes();
-		const uint32 tokenByteCount = token.countBytes();
-		if (stringByteCount < tokenByteCount)
+		const uint32 stringLength = length();
+		const uint32 tokenLength = token.length();
+		if (stringLength < tokenLength)
 		{
 			return kStringNPos;
 		}
 
-		const uint32 stringByteStart = stringByteCount - tokenByteCount;
-		if (stringByteStart < offset)
+		const uint32 stringStart = stringLength - tokenLength;
+		if (stringStart < offset)
 		{
 			return kStringNPos;
 		}
 		const T* const string = c_str();
 		const T* const tokenString = token.c_str();
-		for (uint32 stringByteAt = stringByteStart - offset; stringByteAt != kUint32Max; --stringByteAt)
+		for (uint32 stringByteAt = stringStart - offset; stringByteAt != kUint32Max; --stringByteAt)
 		{
 			uint32 tokenByteAt = 0;
-			while (tokenByteAt < tokenByteCount)
+			while (tokenByteAt < tokenLength)
 			{
 				if (string[stringByteAt + tokenByteAt] != tokenString[tokenByteAt])
 				{
@@ -101,7 +95,7 @@ namespace mint
 				++tokenByteAt;
 			}
 
-			if (tokenByteAt == tokenByteCount)
+			if (tokenByteAt == tokenLength)
 			{
 				return stringByteAt;
 			}

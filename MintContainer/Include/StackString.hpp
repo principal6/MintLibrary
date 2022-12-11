@@ -12,7 +12,7 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline StackString<T, BufferSize>::StackString()
         : MutableString<T>()
-        , _byteCount{}
+        , _length{}
         , _raw{}
     {
         __noop;
@@ -22,23 +22,23 @@ namespace mint
     inline StackString<T, BufferSize>::StackString(const T* const rawString)
         : StackString()
     {
-        _byteCount = min(static_cast<uint32>(StringUtil::countBytes(rawString)), BufferSize - 1);
-        StringUtil::copy(&_raw[0], rawString, _byteCount);
+        _length = min(StringUtil::length(rawString), BufferSize - 1);
+        StringUtil::copy(&_raw[0], rawString, _length);
     }
 
     template <typename T, uint32 BufferSize>
     inline StackString<T, BufferSize>::StackString(const StackString& rhs)
         : StackString()
     {
-        _byteCount = rhs._byteCount;
-        StringUtil::copy(&_raw[0], &rhs._raw[0], _byteCount);
+        _length = rhs._length;
+        StringUtil::copy(&_raw[0], &rhs._raw[0], _length);
     }
 
     template <typename T, uint32 BufferSize>
     inline StackString<T, BufferSize>::StackString(StackString&& rhs) noexcept
         : StackString()
     {
-        std::swap(_byteCount, rhs._byteCount);
+        std::swap(_length, rhs._length);
         std::swap(_raw, rhs._raw);
     }
 
@@ -79,12 +79,6 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE uint32 StackString<T, BufferSize>::countBytes() const
-    {
-        return _byteCount;
-    }
-
-    template <typename T, uint32 BufferSize>
     MINT_INLINE const T* StackString<T, BufferSize>::c_str() const
     {
         return &_raw[0];
@@ -97,9 +91,9 @@ namespace mint
     }
 
     template <typename T, uint32 BufferSize>
-    MINT_INLINE bool StackString<T, BufferSize>::canInsert(const uint32 byteCount) const noexcept
+    MINT_INLINE bool StackString<T, BufferSize>::canInsert(const uint32 length) const noexcept
     {
-        if (BufferSize <= _byteCount + byteCount)
+        if (BufferSize <= _length + length)
         {
             MINT_ASSERT(false, "버퍼 크기를 초과해서 insert 할 수 없습니다.");
             return false;
@@ -110,19 +104,19 @@ namespace mint
     template <typename T, uint32 BufferSize>
     MINT_INLINE void StackString<T, BufferSize>::clear()
     {
-        _byteCount = 0;
+        _length = 0;
         _raw[0] = 0; // NULL
     }
 
     template <typename T, uint32 BufferSize>
     MutableString<T>& StackString<T, BufferSize>::append(const StringReference<T>& rhs)
     {
-        const uint32 rhsByteCount = rhs.countBytes();
-        if (canInsert(rhsByteCount))
+        const uint32 rhsLength = rhs.length();
+        if (canInsert(rhsLength))
         {
-            StringUtil::copy(&_raw[_byteCount], rhs.c_str(), rhsByteCount);
-            _byteCount += rhsByteCount;
-            _raw[_byteCount] = 0; // NULL
+            StringUtil::copy(&_raw[_length], rhs.c_str(), rhsLength);
+            _length += rhsLength;
+            _raw[_length] = 0; // NULL
             return *this;
         }
         return *this;
@@ -131,56 +125,56 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline MutableString<T>& StackString<T, BufferSize>::assign(const StringReference<T>& rhs)
     {
-        uint32 rhsByteCount = rhs.countBytes();
-        if (BufferSize <= rhsByteCount)
+        uint32 rhsLength = rhs.length();
+        if (BufferSize <= rhsLength)
         {
             MINT_LOG("버퍼 크기를 초과하여 문자열이 잘립니다.");
-            rhsByteCount = BufferSize - 1;
+            rhsLength = BufferSize - 1;
         }
-        _byteCount = rhsByteCount;
-        StringUtil::copy(&_raw[0], rhs.c_str(), _byteCount);
-        _raw[_byteCount] = 0; // NULL
+        _length = rhsLength;
+        StringUtil::copy(&_raw[0], rhs.c_str(), _length);
+        _raw[_length] = 0; // NULL
         return *this;
     }
 
     template<typename T, uint32 BufferSize>
-    inline void StackString<T, BufferSize>::resize(const uint32 newByteCount) noexcept
+    inline void StackString<T, BufferSize>::resize(const uint32 length) noexcept
     {
-        const uint32 oldByteCount = countBytes();
-        if (oldByteCount < newByteCount)
+        const uint32 oldLength = this->length();
+        if (oldLength < length)
         {
-            for (uint32 iter = oldByteCount; iter < newByteCount; ++iter)
+            for (uint32 iter = oldLength; iter < length; ++iter)
             {
                 _raw[iter] = 0;
             }
         }
         else
         {
-            _raw[newByteCount] = 0;
+            _raw[length] = 0;
         }
 
-        _byteCount = newByteCount;
+        _length = length;
     }
 
     template <typename T, uint32 BufferSize>
     inline StackString<T, BufferSize> StackString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
     {
         StackString<T, BufferSize> result; // { &_raw[offset] };
-        result._byteCount = min(count, _byteCount - offset - 1);
-        StringUtil::copy(&result._raw[0], &_raw[offset], result._byteCount);
+        result._length = min(count, _length - offset - 1);
+        StringUtil::copy(&result._raw[0], &_raw[offset], result._length);
         return result;
     }
 
     template <typename T, uint32 BufferSize>
     inline bool StackString<T, BufferSize>::compare(const T* const rhs) const noexcept
     {
-        const uint32 rhsByteCount = static_cast<uint32>(StringUtil::countBytes(rhs));
-        if (_byteCount != rhsByteCount)
+        const uint32 rhsLength = StringUtil::length(rhs);
+        if (_length != rhsLength)
         {
             return false;
         }
 
-        for (uint32 at = 0; at < _byteCount; ++at)
+        for (uint32 at = 0; at < _length; ++at)
         {
             if (_raw[at] != rhs[at])
             {
@@ -193,12 +187,12 @@ namespace mint
     template <typename T, uint32 BufferSize>
     inline bool StackString<T, BufferSize>::compare(const StackString& rhs) const noexcept
     {
-        if (_byteCount != rhs._byteCount)
+        if (_length != rhs._length)
         {
             return false;
         }
 
-        for (uint32 at = 0; at < _byteCount; ++at)
+        for (uint32 at = 0; at < _length; ++at)
         {
             if (_raw[at] != rhs._raw[at])
             {

@@ -33,7 +33,6 @@ namespace mint
 		bool				isLiteral() const { return true; }
 		virtual bool		isMutable() const { return false; }
 		virtual uint32		length() const;
-		virtual uint32		countBytes() const;
 		virtual uint32		countChars() const;
 		virtual const T&	at(const uint32 index) const { return c_str()[index]; }
 		virtual const T*	c_str() const { return _literalString; }
