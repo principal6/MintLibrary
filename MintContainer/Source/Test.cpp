@@ -469,6 +469,7 @@ namespace mint
 				ss1 += ss1;
 				ss1 += ss1;
 				ss1 += ss1;
+				ss1 += "test";
 				ss1 = "abcdefgh";
 				ss0 = ss1.substr(3);
 				MINT_ASSURE(ss1.rfind("def") == 3);
