@@ -646,6 +646,20 @@ namespace mint
 			}
 
 			{
+				static_assert(StringUtil::length("abc") == 3);
+				static_assert(StringUtil::length("가나다라") == 8);
+				static_assert(StringUtil::length("韓國") == 4);
+
+				static_assert(StringUtil::length(L"abc") == 3);
+				static_assert(StringUtil::length(L"가나다라") == 4);
+				static_assert(StringUtil::length(L"韓國") == 2);
+
+				static_assert(StringUtil::length(u8"abc") == 3);
+				static_assert(StringUtil::length(u8"가나다라") == 12);
+				static_assert(StringUtil::length(u8"韓國") == 6);
+			}
+
+			{
 				static_assert(StringUtil::countChars("abc") == 3);
 				static_assert(StringUtil::countChars("가나다라") == 4);
 				static_assert(StringUtil::countChars("韓國") == 2);

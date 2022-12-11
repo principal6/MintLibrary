@@ -4,16 +4,16 @@
 namespace mint
 {
 #pragma region U8CharCodeViewer
-    MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::begin() const
-    {
+	MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::begin() const
+	{
 		return ConstIterator(_string, 0);
-    }
+	}
 
-    MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::end() const
-    {
+	MINT_INLINE U8CharCodeViewer::ConstIterator U8CharCodeViewer::end() const
+	{
 		static constexpr const char8_t kNullString[2]{};
 		return ConstIterator(kNullString, 0);
-    }
+	}
 
 	inline U8CharCodeViewer::ConstIterator::ConstIterator(const char8_t* const string, const uint32 byteAt)
 		: _string{ string }
@@ -43,24 +43,41 @@ namespace mint
 #pragma endregion
 
 
-    namespace StringUtil
-    {
-        template<typename T>
-        MINT_INLINE constexpr bool isNullOrEmpty(const T* const string)
-        {
-            return (string == nullptr || string[0] == 0);
-        }
+	namespace StringUtil
+	{
+		template<typename T>
+		MINT_INLINE constexpr bool isNullOrEmpty(const T* const string)
+		{
+			return (string == nullptr || string[0] == 0);
+		}
 
 		MINT_INLINE constexpr bool is7BitASCII(const char8_t* const string)
 		{
 			for (uint32 at = 0; string[at] != 0; ++at)
 			{
-                if ((string[at] >> 7) & 1)
-                {
-                    return false;
-                }
+				if ((string[at] >> 7) & 1)
+				{
+					return false;
+				}
 			}
-            return true;
+			return true;
+		}
+
+		template<typename T>
+		MINT_INLINE constexpr uint32 length(const T* const string)
+		{
+			if (string == nullptr)
+			{
+				return 0;
+			}
+
+			for (uint32 at = 0; ; ++at)
+			{
+				if (string[at] == 0)
+				{
+					return at;
+				}
+			}
 		}
 
 		template <typename T>
@@ -68,7 +85,7 @@ namespace mint
 		{
 			return 1;
 		}
-		
+
 		template <>
 		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const wchar_t leadingByte)
 		{
@@ -87,11 +104,11 @@ namespace mint
 			const char8_t x = leadingByte >> 4;
 			return ((x >> 3) ^ 1) + (x >> 3) * (1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1));
 		}
-        
+
 		template <>
 		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const char leadingByte)
 		{
-            return 1 + ((leadingByte >> 7) & 1);
+			return 1 + ((leadingByte >> 7) & 1);
 		}
 
 		MINT_INLINE constexpr uint32 countBytesInCharCode(const U8CharCode u8CharCode)
@@ -114,7 +131,7 @@ namespace mint
 				}
 			}
 		}
-		
+
 		MINT_INLINE constexpr uint32 countBytes(const wchar_t* const string)
 		{
 			if (string == nullptr)
@@ -130,7 +147,7 @@ namespace mint
 				}
 			}
 		}
-		
+
 		MINT_INLINE constexpr uint32 countBytes(const char8_t* const string)
 		{
 			if (string == nullptr)
@@ -175,7 +192,7 @@ namespace mint
 			return characterPosition * 2;
 		}
 
-        MINT_INLINE constexpr uint32 countChars(const char* const string)
+		MINT_INLINE constexpr uint32 countChars(const char* const string)
 		{
 			if (string == nullptr)
 			{
@@ -184,7 +201,7 @@ namespace mint
 			uint32 length = 0;
 			for (uint32 at = 0; string[at] != 0; ++at)
 			{
-                // handle DBCS(Double-Byte Character Sets)
+				// handle DBCS(Double-Byte Character Sets)
 				if ((string[at] >> 7) & 1)
 				{
 					++at;
@@ -208,24 +225,24 @@ namespace mint
 			return at;
 		}
 
-        MINT_INLINE constexpr uint32 countChars(const char8_t* const string)
-        {
-            if (string == nullptr)
-            {
-                return 0;
-            }
+		MINT_INLINE constexpr uint32 countChars(const char8_t* const string)
+		{
+			if (string == nullptr)
+			{
+				return 0;
+			}
 
-            uint32 at = 0;
-            for (uint32 length = 0; ; ++length)
-            {
-                if (string[at] == 0)
-                {
-                    return length;
-                }
+			uint32 at = 0;
+			for (uint32 length = 0; ; ++length)
+			{
+				if (string[at] == 0)
+				{
+					return length;
+				}
 
-                at += countBytesInCharCode(string[at]);
-            }
-        }
+				at += countBytesInCharCode(string[at]);
+			}
+		}
 
 		template <typename T>
 		MINT_INLINE constexpr uint32 find(const T* const string, const T* const substring, uint32 offset)
@@ -339,62 +356,62 @@ namespace mint
 			return result;
 		}
 
-        template <typename T>
-        MINT_INLINE constexpr bool compare(const T* const a, const T* const b)
+		template <typename T>
+		MINT_INLINE constexpr bool compare(const T* const a, const T* const b)
 		{
-            // nullptr == nullptr
-            // ptr == ptr
-            if (a == b)
-            {
-                return true;
-            }
-            // either a or b is nullptr
-            if (a == nullptr || b == nullptr)
-            {
-                return false;
-            }
-            uint32 at = 0;
+			// nullptr == nullptr
+			// ptr == ptr
+			if (a == b)
+			{
+				return true;
+			}
+			// either a or b is nullptr
+			if (a == nullptr || b == nullptr)
+			{
+				return false;
+			}
+			uint32 at = 0;
 			for (; a[at] != 0; ++at)
 			{
-                if (a[at] != b[at])
-                {
-                    return false;
-                }
+				if (a[at] != b[at])
+				{
+					return false;
+				}
 			}
-            return (b[at] == 0);
-        }
+			return (b[at] == 0);
+		}
 
-        template<uint32 DestSize>
-        MINT_INLINE void copy(char8_t(&dest)[DestSize], const char8_t* const source)
-        {
+		template<uint32 DestSize>
+		MINT_INLINE void copy(char8_t(&dest)[DestSize], const char8_t* const source)
+		{
 			if (source == nullptr)
 			{
 				return;
 			}
 			const uint32 byteCountToCopy = min(DestSize - 1, countBytes(source));
-            ::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * byteCountToCopy);
+			::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * byteCountToCopy);
 			dest[byteCountToCopy] = 0;
-        }
-        
-        template<uint32 DestSize>
-        MINT_INLINE void copy(char(&dest)[DestSize], const char* const source)
-        {
-			if (source == nullptr)
-			{
-				return;
-			}
-            ::strcpy_s(dest, source);
-        }
+		}
 
-        template<uint32 DestSize>
-        MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
-        {
+		template<uint32 DestSize>
+		MINT_INLINE void copy(char(&dest)[DestSize], const char* const source)
+		{
 			if (source == nullptr)
 			{
 				return;
 			}
-            ::wcscpy_s(dest, source);
-        }
+			::strcpy_s(dest, source);
+		}
+
+		template<uint32 DestSize>
+		MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
+		{
+			if (source == nullptr)
+			{
+				return;
+			}
+			::wcscpy_s(dest, source);
+		}
 
 		template<typename T>
 		MINT_INLINE void copy(T* dest, const T* const source, const uint32 byteCount)
@@ -405,5 +422,5 @@ namespace mint
 			}
 			::memcpy(dest, source, sizeof(T) * byteCount);
 		}
-    }
+	}
 }
