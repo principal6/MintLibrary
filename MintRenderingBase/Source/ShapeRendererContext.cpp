@@ -3,6 +3,7 @@
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/BitVector.hpp>
 #include <MintContainer/Include/StackVector.hpp>
+#include <MintContainer/Include/StringUtil.hpp>
 
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
@@ -1440,7 +1441,7 @@ namespace mint
 
         void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
         {
-            const uint32 textLength = StringUtil::countChars(wideText);
+            const uint32 textLength = StringUtil::length(wideText);
             drawDynamicText(wideText, textLength, position, fontRenderingOption);
         }
 
@@ -1478,7 +1479,7 @@ namespace mint
 
         void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
         {
-            const uint32 textLength = StringUtil::countChars(wideText);
+            const uint32 textLength = StringUtil::length(wideText);
             drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
         }
 

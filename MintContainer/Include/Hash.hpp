@@ -9,11 +9,11 @@
 
 namespace mint
 {
-    MINT_INLINE uint64 computeHash(const char* const rawString, const uint32 length) noexcept
+    MINT_INLINE uint64 computeHash(const char* const rhs, const uint32 length) noexcept
     {
         // Hashing algorithm: FNV1a
 
-        if (StringUtil::isNullOrEmpty(rawString) == true)
+        if (StringUtil::isNullOrEmpty(rhs) == true)
         {
             return kUint64Max;
         }
@@ -24,23 +24,23 @@ namespace mint
         uint64 hash = kOffset;
         for (uint32 rawStringAt = 0; rawStringAt < length; ++rawStringAt)
         {
-            hash ^= static_cast<uint8>(rawString[rawStringAt]);
+            hash ^= static_cast<uint8>(rhs[rawStringAt]);
             hash *= kPrime;
         }
         return hash;
     }
 
-    MINT_INLINE uint64 computeHash(const char* const rawString) noexcept
+    MINT_INLINE uint64 computeHash(const char* const rhs) noexcept
     {
-        const uint32 rawStringLength = StringUtil::countChars(rawString);
-        return computeHash(rawString, rawStringLength);
+        const uint32 rhsLength = StringUtil::length(rhs);
+        return computeHash(rhs, rhsLength);
     }
 
-    MINT_INLINE uint64 computeHash(const wchar_t* const rawString) noexcept
+    MINT_INLINE uint64 computeHash(const wchar_t* const rhs) noexcept
     {
-        const uint32 rawStringLength = StringUtil::countChars(rawString);
-        const char* const rawStringA = reinterpret_cast<const char*>(rawString);
-        return computeHash(rawStringA, rawStringLength * 2);
+        const uint32 rhsLength = StringUtil::length(rhs);
+        const char* const rhsA = reinterpret_cast<const char*>(rhs);
+        return computeHash(rhsA, rhsLength * 2);
     }
 
     template <typename T>

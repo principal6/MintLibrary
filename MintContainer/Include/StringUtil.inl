@@ -259,33 +259,33 @@ namespace mint
 				return kStringNPos;
 			}
 
-			uint32 stringLength = StringUtil::countChars(string);
-			uint32 substringLength = StringUtil::countChars(substring);
+			const uint32 stringLength = StringUtil::length(string);
+			const uint32 substringLength = StringUtil::length(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;
 			}
 
 			uint32 result = kStringNPos;
-			uint32 substringCharacterPosition = 0;
-			for (uint32 stringCharacterPosition = offset; stringCharacterPosition < stringLength; ++stringCharacterPosition)
+			uint32 substringAt = 0;
+			for (uint32 stringAt = offset; stringAt < stringLength; ++stringAt)
 			{
-				if (string[stringCharacterPosition] == substring[substringCharacterPosition])
+				if (string[stringAt] == substring[substringAt])
 				{
-					if (substringCharacterPosition == 0)
+					if (substringAt == 0)
 					{
-						result = stringCharacterPosition;
+						result = stringAt;
 					}
 
-					++substringCharacterPosition;
-					if (substringCharacterPosition == substringLength)
+					++substringAt;
+					if (substringAt == substringLength)
 					{
 						break;
 					}
 				}
 				else
 				{
-					substringCharacterPosition = 0;
+					substringAt = 0;
 					result = kStringNPos;
 				}
 			}
