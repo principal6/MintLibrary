@@ -116,54 +116,6 @@ namespace mint
 			return countBytesFromLeadingByte(static_cast<char8_t>(u8CharCode & 0xFF));
 		}
 
-		MINT_INLINE constexpr uint32 countBytes(const char* const string)
-		{
-			if (string == nullptr)
-			{
-				return 0;
-			}
-
-			for (uint32 at = 0; ; ++at)
-			{
-				if (string[at] == 0)
-				{
-					return at;
-				}
-			}
-		}
-
-		MINT_INLINE constexpr uint32 countBytes(const wchar_t* const string)
-		{
-			if (string == nullptr)
-			{
-				return 0;
-			}
-
-			for (uint32 at = 0; ; ++at)
-			{
-				if (string[at] == 0)
-				{
-					return at * 2;
-				}
-			}
-		}
-
-		MINT_INLINE constexpr uint32 countBytes(const char8_t* const string)
-		{
-			if (string == nullptr)
-			{
-				return 0;
-			}
-
-			for (uint32 at = 0; ; ++at)
-			{
-				if (string[at] == 0)
-				{
-					return at;
-				}
-			}
-		}
-
 		template <typename T>
 		MINT_INLINE constexpr uint32 getBytePosition(const T* const string, const uint32 charPosition)
 		{
@@ -252,64 +204,48 @@ namespace mint
 				return kStringNPos;
 			}
 
-			uint32 stringLength = StringUtil::countChars(string);
-			uint32 substringLength = StringUtil::countChars(substring);
+			const uint32 stringLength = StringUtil::length(string);
+			const uint32 substringLength = StringUtil::length(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;
 			}
 
-			const uint32 stringByteOffset = getBytePosition<T>(string, offset);
-			const uint32 stringByteCount = countBytes(string);
 			uint32 result = kStringNPos;
-			uint32 stringCharacterByteCount = countBytesFromLeadingByte<T>(string[stringByteOffset]);
-			uint32 substringBytePosition = 0;
-			uint32 stringCharacterPosition = offset;
-			for (uint32 stringBytePosition = stringByteOffset; stringBytePosition < stringByteCount; __noop)
+			uint32 substringAt = 0;
+			for (uint32 stringAt = offset; stringAt < stringLength; __noop)
 			{
-				if (string[stringBytePosition] == substring[substringBytePosition])
+				if (string[stringAt] == substring[substringAt])
 				{
-					if (substringBytePosition == 0)
+					if (substringAt == 0)
 					{
-						result = stringCharacterPosition;
+						result = stringAt;
 					}
-					++substringBytePosition;
-					++stringBytePosition;
-					--stringCharacterByteCount;
+					++substringAt;
+					++stringAt;
 
-					if (stringCharacterByteCount != 0)
+					if (substringAt > substringLength)
 					{
-						continue;
-					}
-
-					if (substringBytePosition > substringLength)
-					{
-						result = stringCharacterPosition;
+						result = stringAt;
 						break;
 					}
 
-					if ((string[stringBytePosition] | substring[substringBytePosition]) == 0)
+					if ((string[stringAt] | substring[substringAt]) == 0)
 					{
 						return result;
 					}
-
-					stringCharacterByteCount = countBytesFromLeadingByte<T>(string[stringBytePosition]);
-					++stringCharacterPosition;
 				}
 				else
 				{
-					if (substringBytePosition == substringLength)
+					if (substringAt == substringLength)
 					{
-						result = stringCharacterPosition;
+						result = stringAt;
 						break;
 					}
 
 					result = kStringNPos;
-					substringBytePosition = 0;
-					stringBytePosition += stringCharacterByteCount;
-
-					stringCharacterByteCount = countBytesFromLeadingByte<T>(string[stringBytePosition]);
-					++stringCharacterPosition;
+					substringAt = 0;
+					++stringAt;
 				}
 			}
 			return result;
@@ -388,9 +324,9 @@ namespace mint
 			{
 				return;
 			}
-			const uint32 byteCountToCopy = min(DestSize - 1, countBytes(source));
-			::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * byteCountToCopy);
-			dest[byteCountToCopy] = 0;
+			const uint32 length = min(DestSize - 1, StringUtil::length(source));
+			::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * length);
+			dest[length] = 0;
 		}
 
 		template<uint32 DestSize>

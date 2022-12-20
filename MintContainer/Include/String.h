@@ -87,7 +87,7 @@ namespace mint
 		uint32 find(const T target, const uint32 offset = 0) const noexcept;
 		String substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
 		void insert(const uint32 at, const T ch) noexcept;
-		void insert(const uint32 at, const T* const str) noexcept;
+		void insert(const uint32 at, const T* const rhs) noexcept;
 		void insert(const uint32 at, const String& rhs) noexcept;
 		void erase(const uint32 at) noexcept;
 		void erase(const uint32 at, const uint32 byteCount) noexcept;

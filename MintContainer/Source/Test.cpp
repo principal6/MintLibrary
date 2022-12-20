@@ -687,7 +687,7 @@ namespace mint
 				static_assert(StringUtil::find("abcde", "abc") != kStringNPos);
 				static_assert(StringUtil::find("abc가나다라def", "나다") != kStringNPos);
 				static_assert(StringUtil::find("abc가나다라def", "나다", 4) != kStringNPos);
-				static_assert(StringUtil::find("abc가나다라def", "나다", 5) == kStringNPos);
+				static_assert(StringUtil::find("abc가나다라def", "나다", 6) == kStringNPos);
 				static_assert(StringUtil::find("abc가나다라def", "나다", 100) == kStringNPos);
 
 				static_assert(StringUtil::find(L"abcde", L"abc") != kStringNPos);
@@ -699,7 +699,7 @@ namespace mint
 				static_assert(StringUtil::find(u8"abcde", u8"abc") != kStringNPos);
 				static_assert(StringUtil::find(u8"abc가나다라def", u8"나다") != kStringNPos);
 				static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 4) != kStringNPos);
-				static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 5) == kStringNPos);
+				static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 7) == kStringNPos);
 				static_assert(StringUtil::find(u8"abc가나다라def", u8"나다", 100) == kStringNPos);
 			}
 

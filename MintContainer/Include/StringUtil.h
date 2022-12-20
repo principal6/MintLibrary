@@ -96,11 +96,6 @@ namespace mint
 		constexpr uint32    countBytesFromLeadingByte(const T leadingByte);
 		constexpr uint32    countBytesInCharCode(const U8CharCode u8CharCode);
 
-		// returns the count of bytes in the string
-		constexpr uint32    countBytes(const char* const string);
-		constexpr uint32    countBytes(const wchar_t* const string);
-		constexpr uint32    countBytes(const char8_t* const string);
-
 		template <typename T>
 		constexpr uint32    getBytePosition(const T* const string, const uint32 charPosition);
 

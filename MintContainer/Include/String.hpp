@@ -92,9 +92,9 @@ namespace mint
 	template<typename T>
 	MINT_INLINE String<T> String<T>::operator+(const T* const rhs) const noexcept
 	{
-		const uint32 rhsByteCount = StringUtil::countBytes(rhs);
+		const uint32 rhsLength = StringUtil::length(rhs);
 		String<T> newString;
-		newString.reserve(size() + rhsByteCount);
+		newString.reserve(size() + rhsLength);
 		newString += *this;
 		newString += rhs;
 		return newString;
@@ -165,11 +165,11 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::assignInternalXXX(const T* const rawString) noexcept
 	{
-		const uint32 byteCount = StringUtil::countBytes(rawString);
-		if (byteCount < Short::kSmallStringCapacity)
+		const uint32 length = StringUtil::length(rawString);
+		if (length < Short::kSmallStringCapacity)
 		{
-			_short._size = byteCount;
-			__copyString(_short._smallString, rawString, byteCount);
+			_short._size = length;
+			__copyString(_short._smallString, rawString, length);
 			return *this;
 		}
 		return assignInternalLongXXX(rawString);
@@ -178,8 +178,8 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::assignInternalLongXXX(const T* const rawString) noexcept
 	{
-		const uint32 byteCount = StringUtil::countBytes(rawString);
-		_long._size = byteCount;
+		const uint32 length = StringUtil::length(rawString);
+		_long._size = length;
 		_long._capacity = _long._size + 1;
 
 		_long._rawPointer = MemoryRaw::allocateMemory<T>(capacity());
@@ -224,31 +224,31 @@ namespace mint
 	template<typename T>
 	inline String<T>& String<T>::appendInternalSmallXXX(const T* const rhs) noexcept
 	{
-		const uint32 rhsSize = StringUtil::countBytes(rhs);
-		const uint64 newSize = static_cast<uint64>(_short._size) + rhsSize;
-		if (newSize < Short::kSmallStringCapacity)
+		const uint32 rhsLength = StringUtil::length(rhs);
+		const uint64 newLength = static_cast<uint64>(_short._size) + rhsLength;
+		if (newLength < Short::kSmallStringCapacity)
 		{
-			__copyString(&_short._smallString[_short._size], rhs, rhsSize);
-			_short._size = static_cast<T>(newSize);
+			__copyString(&_short._smallString[_short._size], rhs, rhsLength);
+			_short._size = static_cast<T>(newLength);
 			return *this;
 		}
 
-		reserve(max(capacity() * 2, static_cast<uint32>(newSize + 1)));
+		reserve(max(capacity() * 2, static_cast<uint32>(newLength + 1)));
 		return appendInternalLongXXX(rhs);
 	}
 
 	template<typename T>
 	inline String<T>& String<T>::appendInternalLongXXX(const T* const rhs) noexcept
 	{
-		const uint32 rhsSize = StringUtil::countBytes(rhs);
-		const uint64 newSize = _long._size + rhsSize;
-		if (_long._capacity <= newSize)
+		const uint32 rhsLength = StringUtil::length(rhs);
+		const uint64 newLength = _long._size + rhsLength;
+		if (_long._capacity <= newLength)
 		{
-			reserve(max(static_cast<uint32>(_long._capacity * 2), static_cast<uint32>(newSize + 1)));
+			reserve(max(static_cast<uint32>(_long._capacity * 2), static_cast<uint32>(newLength + 1)));
 		}
 
-		__copyString(&_long._rawPointer[_long._size], rhs, rhsSize);
-		_long._size = newSize;
+		__copyString(&_long._rawPointer[_long._size], rhs, rhsLength);
+		_long._size = newLength;
 		return *this;
 	}
 
@@ -364,9 +364,9 @@ namespace mint
 	template<typename T>
 	inline uint32 String<T>::find(const T* const target, const uint32 offset) const noexcept
 	{
-		const uint32 sourceSize = size();
-		const uint32 targetSize = StringUtil::countBytes(target);
-		if (sourceSize < offset + targetSize)
+		const uint32 sourceLength = size();
+		const uint32 targetLength = StringUtil::length(target);
+		if (sourceLength < offset + targetLength)
 		{
 			return kStringNPos;
 		}
@@ -374,7 +374,7 @@ namespace mint
 		const T* const dataPointer = c_str();
 		uint32 result = kStringNPos;
 		uint32 targetIter = 0;
-		for (uint32 sourceIter = offset; sourceIter < sourceSize; ++sourceIter)
+		for (uint32 sourceIter = offset; sourceIter < sourceLength; ++sourceIter)
 		{
 			if (dataPointer[sourceIter] == target[targetIter])
 			{
@@ -384,7 +384,7 @@ namespace mint
 				}
 
 				++targetIter;
-				if (targetIter == targetSize)
+				if (targetIter == targetLength)
 				{
 					break;
 				}
@@ -431,30 +431,30 @@ namespace mint
 	}
 
 	template<typename T>
-	inline void String<T>::insert(const uint32 at, const T* const str) noexcept
+	inline void String<T>::insert(const uint32 at, const T* const rhs) noexcept
 	{
-		const uint32 rhsSize = StringUtil::countBytes(str);
-		const uint32 oldSize = size();
-		const uint32 newSize = oldSize + rhsSize;
-		if (capacity() <= newSize)
+		const uint32 rhsLength = StringUtil::length(rhs);
+		const uint32 oldLength = size();
+		const uint32 newLength = oldLength + rhsLength;
+		if (capacity() <= newLength)
 		{
-			reserve(newSize + 1);
+			reserve(newLength + 1);
 		}
 
-		if (oldSize <= at)
+		if (oldLength <= at)
 		{
-			append(str);
+			append(rhs);
 		}
 		else
 		{
-			const uint32 movedSize = oldSize - at;
-			__copyString(data() + at + rhsSize, data() + at, movedSize);
-			for (uint32 iter = 0; iter < rhsSize; ++iter)
+			const uint32 movedSize = oldLength - at;
+			__copyString(data() + at + rhsLength, data() + at, movedSize);
+			for (uint32 iter = 0; iter < rhsLength; ++iter)
 			{
-				data()[at + iter] = str[iter];
+				data()[at + iter] = rhs[iter];
 			}
 
-			_setSize(newSize);
+			_setSize(newLength);
 		}
 	}
 
@@ -517,15 +517,15 @@ namespace mint
 	template<typename T>
 	inline bool String<T>::compare(const T* const rhs) const noexcept
 	{
-		const uint32 lhsSize = size();
-		const uint32 rhsSize = StringUtil::countBytes(rhs);
-		if (lhsSize != rhsSize)
+		const uint32 lhsLength = size();
+		const uint32 rhsLength = StringUtil::length(rhs);
+		if (lhsLength != rhsLength)
 		{
 			return false;
 		}
 
 		const T* const lhs = c_str();
-		for (uint32 iter = 0; iter < lhsSize; ++iter)
+		for (uint32 iter = 0; iter < lhsLength; ++iter)
 		{
 			if (lhs[iter] != rhs[iter])
 			{
