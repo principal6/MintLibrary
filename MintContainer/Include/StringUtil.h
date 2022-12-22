@@ -151,6 +151,15 @@ namespace mint
 		std::enable_if_t<std::is_integral_v<INT>, void>         toString(const INT i, MutableString<T>& outString);
 		template<typename FLT, typename T>
 		std::enable_if_t<std::is_floating_point_v<FLT>, void>   toString(const FLT f, MutableString<T>& outString);
+
+		template<typename T>
+		int32 stringToInt32(const StringReference<T>& string);
+		template<typename T>
+		int64 stringToInt64(const StringReference<T>& string);
+		template<typename T>
+		float stringToFloat(const StringReference<T>& string);
+		template<typename T>
+		double stringToDouble(const StringReference<T>& string);
 	}
 }
 

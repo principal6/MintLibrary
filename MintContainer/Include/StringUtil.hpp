@@ -355,6 +355,30 @@ namespace mint
             ::swprintf_s(buffer, kBufferSize, L"%f", f);
             outString = buffer;
         }
+        
+        template<typename T>
+        inline int32 stringToInt32(const StringReference<T>& string)
+        {
+            return ::atoi(string.c_str());
+        }
+
+        template<typename T>
+        inline int64 stringToInt64(const StringReference<T>& string)
+        {
+            return ::atoll(string.c_str());
+        }
+
+        template<typename T>
+        inline float stringToFloat(const StringReference<T>& string)
+        {
+            return static_cast<float>(::atof(string.c_str()));
+        }
+
+        template<typename T>
+        inline double stringToDouble(const StringReference<T>& string)
+        {
+            return ::atof(string.c_str());
+        }
     }
 }
 

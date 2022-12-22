@@ -811,6 +811,11 @@ namespace mint
 				StringUtil::toString(12.34f, strw0);
 				StringUtil::toString(12.34f, ssu0);
 				StringUtil::toString(12.34f, stru0);
+
+				const int32 i32_0 = StringUtil::stringToInt32(StringReference("12345"));
+				const int64 i64_0 = StringUtil::stringToInt64(StringReference("1234567890"));
+				const float f0 = StringUtil::stringToFloat(StringReference("12345"));
+				const double d0 = StringUtil::stringToDouble(StringReference("1234567890"));
 			}
 
 			return true;
