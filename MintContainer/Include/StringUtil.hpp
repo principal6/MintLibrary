@@ -320,45 +320,13 @@ namespace mint
             }
         }
 
-        template <typename T>
-        inline std::enable_if_t<std::is_integral_v<T>, StringA> convertToStringA(const T& rhs)
-        {
-            StackStringA<256> buffer;
-            formatString(buffer, (std::is_signed<T>() ? "%lld" : "%llu"), rhs);
-            return StringA(buffer.c_str());
-        }
-
-        template <typename T>
-        inline std::enable_if_t<std::is_floating_point_v<T>, StringA> convertToStringA(const T& rhs)
-        {
-            StackStringA<256> buffer;
-            formatString(buffer, "%f", rhs);
-            return StringA(buffer.c_str());
-        }
-
-        template <typename T>
-        inline std::enable_if_t<std::is_integral_v<T>, StringW> convertToStringW(const T& rhs)
-        {
-            StackStringW<256> buffer;
-            formatString(buffer, (std::is_signed<T>() ? L"%lld" : L"%llu"), rhs);
-            return StringW(buffer.c_str());
-        }
-
-        template <typename T>
-        inline std::enable_if_t<std::is_floating_point_v<T>, StringW> convertToStringW(const T& rhs)
-        {
-            StackStringW<256> buffer;
-            formatString(buffer, L"%f", rhs);
-            return StringW(buffer.c_str());
-        }
-
         template<typename INT, typename T>
         inline std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<T>& outString)
         {
-            constexpr uint32 kBufferSize = 32;
-            thread_local static char buffer[kBufferSize]{};
-            ::sprintf_s(buffer, kBufferSize, "%d", i);
-            outString = reinterpret_cast<T*>(buffer);
+			constexpr uint32 kBufferSize = 32;
+			thread_local static char buffer[kBufferSize]{};
+			::sprintf_s(buffer, kBufferSize, (std::is_unsigned_v<INT> ? "%llu" : "%lld"), (std::is_unsigned_v<INT> ? static_cast<uint64>(i) : static_cast<int64>(i)));
+			outString = reinterpret_cast<T*>(buffer);
         }
 
         template<typename INT>
@@ -366,7 +334,7 @@ namespace mint
         {
             constexpr uint32 kBufferSize = 32;
             thread_local static wchar_t buffer[kBufferSize]{};
-            ::swprintf_s(buffer, kBufferSize, L"%d", i);
+            ::swprintf_s(buffer, kBufferSize, (std::is_unsigned_v<INT> ? L"%llu" : L"%lld"), (std::is_unsigned_v<INT> ? static_cast<uint64>(i) : static_cast<int64>(i)));
             outString = buffer;
         }
 

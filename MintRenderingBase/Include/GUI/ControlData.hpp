@@ -10,6 +10,7 @@
 #include <MintContainer/Include/Hash.hpp>
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/StringUtil.hpp>
+#include <MintContainer/Include/StringReference.hpp>
 
 
 namespace mint
@@ -41,15 +42,19 @@ namespace mint
             {
                 StackStringA<512> file = fileLine._file;
                 StackStringW<512> key;
+                StackStringW<512> conv;
                 StringUtil::convertStackStringAToStackStringW(file, key);
                 key.append(L"_");
-                key.append(StringUtil::convertToStringW(fileLine._line).c_str());
+                StringUtil::toString(fileLine._line, conv);
+                key.append(conv);
                 key.append(L"_");
                 key.append(text);
                 key.append(L"_");
-                key.append(StringUtil::convertToStringW(static_cast<uint32>(type)).c_str());
+                StringUtil::toString(static_cast<uint32>(type), conv);
+                key.append(conv);
                 key.append(L"_");
-                key.append(StringUtil::convertToStringW(parentControlID.getRawID()).c_str());
+                StringUtil::toString(parentControlID.getRawID(), conv);
+                key.append(conv);
                 return ControlID(key.computeHash());
             }
 

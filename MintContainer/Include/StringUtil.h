@@ -147,16 +147,6 @@ namespace mint
 		template <typename T>
 		void            tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens);
 
-		template <typename T>
-		std::enable_if_t<std::is_integral_v<T>, StringA>        convertToStringA(const T& rhs);
-		template <typename T>
-		std::enable_if_t<std::is_floating_point_v<T>, StringA>  convertToStringA(const T& rhs);
-
-		template <typename T>
-		std::enable_if_t<std::is_integral_v<T>, StringW>        convertToStringW(const T& rhs);
-		template <typename T>
-		std::enable_if_t<std::is_floating_point_v<T>, StringW>  convertToStringW(const T& rhs);
-
 		template<typename INT, typename T>
 		std::enable_if_t<std::is_integral_v<INT>, void>         toString(const INT i, MutableString<T>& outString);
 		template<typename FLT, typename T>
