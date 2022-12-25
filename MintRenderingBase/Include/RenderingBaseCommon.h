@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 #ifndef MINT_SIMPLE_RENDERING_COMMON_H
@@ -68,6 +68,7 @@ namespace mint
             constexpr                   Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
             constexpr                   Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
             constexpr                   Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
+            constexpr                   Color(const uint8 c) : Color(c, c, c, 255) { __noop; }
             constexpr                   Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
             constexpr explicit          Color(const Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
 
@@ -193,6 +194,7 @@ namespace mint
             void                    fill(const Color& color) noexcept;
             void                    fillRect(const Int2& position, const Int2& size, const Color& color) noexcept;
             void                    fillCircle(const Int2& center, const int32 radius, const Color& color) noexcept;
+            void                    setPixel(const int32 index, const Color& color) noexcept;
             void                    setPixel(const Int2& at, const Color& color) noexcept;
             const Color&            getPixel(const Int2& at) const noexcept;
             Color                   getSubPixel(const Float2& at) const noexcept;

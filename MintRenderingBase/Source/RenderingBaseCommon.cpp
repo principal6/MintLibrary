@@ -92,6 +92,11 @@ namespace mint
             }
         }
 
+        void ColorImage::setPixel(const int32 index, const Color& color) noexcept
+        {
+            _colorArray[index] = color;
+        }
+
         void ColorImage::setPixel(const Int2& at, const Color& color) noexcept
         {
             const int32 index = convertXyToIndex(at._x, at._y);

@@ -5,14 +5,10 @@
 #include <MintPlatform/Include/BinaryFile.hpp>
 #include <MintLibrary/Include/Algorithm.hpp>
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintRenderingBase/Include/ImageLoader.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
 
 
 //#define MINT_FONT_RENDERER_SAVE_PNG_FOR_TEST
@@ -230,18 +226,8 @@ namespace mint
                 pngData[pngAt] = *binaryFileReader.read<byte>();
             }
 
-            int32 width{};
-            int32 height{};
-            int32 comp{};
-            int32 req_comp{ 1 };
-            stbi_uc* const tempDataPtr = stbi_load_from_memory(&pngData[0], pngLength, &width, &height, &comp, req_comp);
-            const int32 dimension = static_cast<int32>(static_cast<int64>(width) * height);
-            _fontImageData._imageData.resize(dimension);
-            for (int32 at = 0; at < dimension; ++at)
-            {
-                _fontImageData._imageData[at] = tempDataPtr[at];
-            }
-            stbi_image_free(tempDataPtr);
+            ImageLoader imageLoader;
+            imageLoader.loadImage(1, pngData, _fontImageData._imageData);
 #else
             const uint32 pixelCount = *binaryFileReader.read<uint32>();
             _fontImageData._imageData.resize(pixelCount);
@@ -324,20 +310,8 @@ namespace mint
             writeMetaData(textureWidth, textureHeight, binaryFileWriter);
 
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
-            int32 length{ 0 };
-            unsigned char* png = stbi_write_png_to_mem(reinterpret_cast<unsigned char*>(&pixelArray[0]), textureWidth * 1, textureWidth, textureHeight, 1, &length);
-            if (png == nullptr)
-            {
-                MINT_LOG_ERROR("FreeType - 텍스처 정보를 추출하는 데 실패했습니다.");
-                return false;
-            }
-
-            binaryFileWriter.write(length);
-            for (int32 at = 0; at < length; ++at)
-            {
-                binaryFileWriter.write(png[at]);
-            }
-            STBIW_FREE(png);
+            ImageLoader imageLoader;
+            imageLoader.saveImagePNG(pixelArray, textureWidth, textureHeight, 1, binaryFileWriter);
 #else
             const uint32 pixelCount = static_cast<uint32>(pixelArray.size());
             binaryFileWriter.write(pixelArray.size());

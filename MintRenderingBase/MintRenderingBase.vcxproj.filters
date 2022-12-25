@@ -108,6 +108,9 @@
     <ClInclude Include="..\Assets\Include\CppHlsl\CppHlslStructuredBuffers.h">
       <Filter>Assets\CppHlsl</Filter>
     </ClInclude>
+    <ClInclude Include="Include\ImageLoader.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\GraphicDevice.inl">
@@ -168,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="Source\GUI\GUIInteractionModules.cpp">
       <Filter>Source\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImageLoader.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
