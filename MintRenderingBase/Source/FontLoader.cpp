@@ -154,8 +154,8 @@ namespace mint
 
                 if (curr._startWchar <= prev._endWchar)
                 {
-                    curr._startWchar = std::min(curr._startWchar, prev._startWchar);
-                    curr._endWchar = std::max(curr._endWchar, prev._endWchar);
+                    curr._startWchar = mint::min(curr._startWchar, prev._startWchar);
+                    curr._endWchar = mint::max(curr._endWchar, prev._endWchar);
 
                     deletionList.push_back(glyphRangeIndex - 1);
                 }

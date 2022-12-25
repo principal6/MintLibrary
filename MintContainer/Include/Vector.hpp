@@ -388,14 +388,14 @@ namespace mint
     MINT_INLINE T& Vector<T>::at(const uint32 index) noexcept
     {
         MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-        return _rawPointer[std::min(index, _size - 1)];
+        return _rawPointer[mint::min(index, _size - 1)];
     }
 
     template<typename T>
     MINT_INLINE const T& Vector<T>::at(const uint32 index) const noexcept
     {
         MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-        return _rawPointer[std::min(index, _size - 1)];
+        return _rawPointer[mint::min(index, _size - 1)];
     }
 
     template<typename T>

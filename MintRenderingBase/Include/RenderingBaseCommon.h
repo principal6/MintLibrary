@@ -5,6 +5,8 @@
 #define MINT_SIMPLE_RENDERING_COMMON_H
 
 
+#include <MintCommon/Include/CommonDefinitions.h>
+
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -13,10 +15,6 @@
 #include <MintMath/Include/Float3.h>
 #include <MintMath/Include/Float4.h>
 #include <MintMath/Include/Int2.h>
-
-
-#undef max
-#undef min
 
 
 namespace mint

@@ -1,8 +1,4 @@
-#pragma once
-
-
-#undef max
-#undef min
+﻿#pragma once
 
 
 namespace mint
