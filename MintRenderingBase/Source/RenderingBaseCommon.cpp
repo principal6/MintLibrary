@@ -46,15 +46,15 @@ namespace mint
                 return;
             }
             
-            const int32 beginX = max(position._x, 0);
-            const int32 beginY = max(position._y, 0);
+            const int32 beginX = std::max(position._x, 0);
+            const int32 beginY = std::max(position._y, 0);
             if (_size._x <= beginX || _size._y <= beginY)
             {
                 return;
             }
 
-            const int32 endX = min(position._x + size._x, _size._x);
-            const int32 endY = min(position._y + size._y, _size._y);
+            const int32 endX = std::min(position._x + size._x, _size._x);
+            const int32 endY = std::min(position._y + size._y, _size._y);
             if (endX < 0 || endY < 0)
             {
                 return;
@@ -224,7 +224,7 @@ namespace mint
 
         int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
         {
-            return min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
+            return std::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
         }
 
         const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept
