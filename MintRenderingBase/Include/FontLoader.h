@@ -6,7 +6,6 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-
 #include <MintContainer/Include/Vector.h>
 #include <MintMath/Include/Float2.h>
 
