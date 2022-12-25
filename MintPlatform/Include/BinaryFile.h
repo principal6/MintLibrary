@@ -6,10 +6,8 @@
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
-
-#include <MintPlatform/Include/IFile.h>
-
 #include <MintContainer/Include/Vector.h>
+#include <MintPlatform/Include/IFile.h>
 
 
 namespace mint
