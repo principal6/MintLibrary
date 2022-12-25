@@ -47,6 +47,11 @@ namespace mint
 	};
 
 
+	using StringReferenceA = StringReference<char>;
+	using StringReferenceW = StringReference<wchar_t>;
+	using StringReferenceU8 = StringReference<char8_t>;
+
+
 	template <typename T>
 	class MutableString abstract : public StringReference<T>
 	{
