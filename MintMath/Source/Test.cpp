@@ -3,6 +3,9 @@
 #include <MintMath/Include/AllHpps.h>
 
 
+#pragma optimize("", off)
+
+
 namespace mint
 {
 	namespace TestMath
@@ -193,8 +196,9 @@ namespace mint
 
         bool test()
         {
-            MINT_ASSURE(test_intTypes);
-            MINT_ASSURE(test_floatTypes);
+            MINT_ASSURE(test_intTypes());
+            MINT_ASSURE(test_floatTypes());
+            MINT_ASSURE(test_linearAlgebra());
             return true;
         }
     }
