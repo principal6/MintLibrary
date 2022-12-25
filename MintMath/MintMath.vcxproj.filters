@@ -72,6 +72,9 @@
     <ClInclude Include="Include\Transform.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Test.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Float2.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\AffineVec.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

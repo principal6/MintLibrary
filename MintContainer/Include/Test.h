@@ -12,6 +12,8 @@ namespace mint
 {
 	namespace TestContainers
 	{
+		bool test() noexcept;
+
 		bool test_Array() noexcept;
 		bool test_BitArray() noexcept;
 		bool test_BitVector() noexcept;
@@ -22,8 +24,6 @@ namespace mint
 		bool test_StringUtil() noexcept;
 		bool test_Queue() noexcept;
 		bool test_Tree() noexcept;
-
-		bool test() noexcept;
 	}
 }
 

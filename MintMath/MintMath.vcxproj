@@ -25,6 +25,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp" />
     <ClInclude Include="Include\AllHpps.h" />
     <ClInclude Include="Include\Easing.h" />
@@ -92,6 +98,7 @@
     <ClInclude Include="Include\Quaternion.inl" />
     <ClInclude Include="Include\Rect.h" />
     <ClInclude Include="Include\AffineVec.h" />
+    <ClInclude Include="Include\Test.h" />
     <ClInclude Include="Include\Transform.h" />
     <ClInclude Include="Include\VectorR.h" />
     <ClInclude Include="Include\VectorR.hpp" />
