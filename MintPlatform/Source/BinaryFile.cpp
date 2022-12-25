@@ -8,61 +8,61 @@
 namespace mint
 {
 #pragma region Binary File Reader
-    bool BinaryFileReader::open(const char* const fileName)
-    {
-        _at = 0;
-        _byteArray.clear();
-        
-        std::ifstream ifs{ fileName, std::ifstream::binary };
-        if (ifs.is_open() == false)
-        {
-            return false;
-        }
+	bool BinaryFileReader::open(const char* const fileName)
+	{
+		_at = 0;
+		_bytes.clear();
 
-        ifs.seekg(0, ifs.end);
-        const uint64 legth = ifs.tellg();
-        ifs.seekg(0, ifs.beg);
-        _byteArray.reserve(static_cast<uint32>(legth));
-        while (true)
-        {
-            const byte readByte{ static_cast<byte>(ifs.get()) };
-            if (ifs.eof() == true)
-            {
-                break;
-            }
+		std::ifstream ifs{ fileName, std::ifstream::binary };
+		if (ifs.is_open() == false)
+		{
+			return false;
+		}
 
-            _byteArray.push_back(readByte);
-        }
-        return true;
-    }
+		ifs.seekg(0, ifs.end);
+		const uint64 legth = ifs.tellg();
+		ifs.seekg(0, ifs.beg);
+		_bytes.reserve(static_cast<uint32>(legth));
+		while (true)
+		{
+			const byte readByte{ static_cast<byte>(ifs.get()) };
+			if (ifs.eof() == true)
+			{
+				break;
+			}
 
-    bool BinaryFileReader::isOpen() const noexcept
-    {
-        return !_byteArray.empty();
-    }
+			_bytes.push_back(readByte);
+		}
+		return true;
+	}
 
-    uint32 BinaryFileReader::getFileSize() const noexcept
-    {
-        return static_cast<uint32>(_byteArray.size());
-    }
+	bool BinaryFileReader::isOpen() const noexcept
+	{
+		return !_bytes.empty();
+	}
+
+	uint32 BinaryFileReader::getFileSize() const noexcept
+	{
+		return static_cast<uint32>(_bytes.size());
+	}
 #pragma endregion
 
 
 #pragma region Binary File Writer
-    bool BinaryFileWriter::save(const char* const fileName)
-    {
-        std::ofstream ofs{ fileName, std::ofstream::binary };
-        if (ofs.is_open() == false)
-        {
-            return false;
-        }
-        if (_byteArray.empty() == true)
-        {
-            return false;
-        }
+	bool BinaryFileWriter::save(const char* const fileName)
+	{
+		std::ofstream ofs{ fileName, std::ofstream::binary };
+		if (ofs.is_open() == false)
+		{
+			return false;
+		}
+		if (_bytes.empty() == true)
+		{
+			return false;
+		}
 
-        ofs.write((const char*)&_byteArray[0], _byteArray.size());
-        return false;
-    }
+		ofs.write((const char*)&_bytes[0], _bytes.size());
+		return false;
+	}
 #pragma endregion
 }
