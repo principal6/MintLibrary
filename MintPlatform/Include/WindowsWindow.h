@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_WINDOWS_WINDOW_H
-#define MINT_WINDOWS_WINDOW_H
+#ifndef _MINT_PLATFORM_WINDOWS_WINDOW_H_
+#define _MINT_PLATFORM_WINDOWS_WINDOW_H_
 
 
 #include <MintPlatform/Include/IWindow.h>
@@ -129,4 +129,4 @@ namespace mint
 }
 
 
-#endif // !MINT_WINDOWS_WINDOW_H
+#endif // !_MINT_PLATFORM_WINDOWS_WINDOW_H_

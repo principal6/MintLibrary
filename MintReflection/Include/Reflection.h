@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_REFLECTION_REFLECTION_H
-#define MINT_REFLECTION_REFLECTION_H
+#ifndef _MINT_REFLECTION_REFLECTION_H_
+#define _MINT_REFLECTION_REFLECTION_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -253,4 +253,4 @@ namespace mint
 }
 
 
-#endif // !MINT_REFLECTION_REFLECTION_H
+#endif // !_MINT_REFLECTION_REFLECTION_H_

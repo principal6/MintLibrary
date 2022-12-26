@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_TRANSFORM_COMPONENT_H
-#define MINT_TRANSFORM_COMPONENT_H
+#ifndef _MINT_RENDERING_TRANSFORM_COMPONENT_H_
+#define _MINT_RENDERING_TRANSFORM_COMPONENT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -30,4 +30,4 @@ namespace mint
 }
 
 
-#endif // !MINT_TRANSFORM_COMPONENT_H
+#endif // !_MINT_RENDERING_TRANSFORM_COMPONENT_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CAMERA_OBJECT_H
-#define MINT_CAMERA_OBJECT_H
+#ifndef _MINT_RENDERING_CAMERA_OBJECT_H_
+#define _MINT_RENDERING_CAMERA_OBJECT_H_
 
 
 #include <MintRendering/Include/Object.h>
@@ -133,4 +133,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CAMERA_OBJECT_H
+#endif // !_MINT_RENDERING_CAMERA_OBJECT_H_

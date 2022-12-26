@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERING_PLOTTER_H
-#define MINT_RENDERING_PLOTTER_H
+#ifndef _MINT_RENDERING_PLOTTER_H_
+#define _MINT_RENDERING_PLOTTER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -92,4 +92,4 @@ namespace mint
 }
 
 
-#endif // !MINT_RENDERING_PLOTTER_H
+#endif // !_MINT_RENDERING_PLOTTER_H_

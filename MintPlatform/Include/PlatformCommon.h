@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_PLATFORM_COMMON_H
-#define MINT_PLATFORM_COMMON_H
+#ifndef _MINT_PLATFORM_COMMON_H_
+#define _MINT_PLATFORM_COMMON_H_
 
 
 namespace mint
@@ -98,4 +98,4 @@ namespace mint
 }
 
 
-#endif // !MINT_PLATFORM_COMMON_H
+#endif // !_MINT_PLATFORM_COMMON_H_

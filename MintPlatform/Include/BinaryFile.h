@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_PLATFORM_BINARY_FILE_H
-#define MINT_PLATFORM_BINARY_FILE_H
+#ifndef _MINT_PLATFORM_BINARY_FILE_H_
+#define _MINT_PLATFORM_BINARY_FILE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -75,4 +75,4 @@ namespace mint
 }
 
 
-#endif // !MINT_PLATFORM_BINARY_FILE_H
+#endif // !_MINT_PLATFORM_BINARY_FILE_H_

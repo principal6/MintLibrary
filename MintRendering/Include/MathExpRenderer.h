@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERING_MATH_EXPRESSION_RENDERER
-#define MINT_RENDERING_MATH_EXPRESSION_RENDERER
+#ifndef _MINT_RENDERING_MATH__EXPRESSION_RENDERER
+#define _MINT_RENDERING_MATH__EXPRESSION_RENDERER
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -87,4 +87,4 @@ namespace mint
 }
 
 
-#endif // !MINT_RENDERING_MATH_EXPRESSION_RENDERER
+#endif // !_MINT_RENDERING_MATH__EXPRESSION_RENDERER

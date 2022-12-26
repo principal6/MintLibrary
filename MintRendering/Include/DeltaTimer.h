@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_DELTA_TIMER_H
-#define MINT_DELTA_TIMER_H
+#ifndef _MINT_RENDERING_DELTA_TIMER_H_
+#define _MINT_RENDERING_DELTA_TIMER_H_
 
 
 #include <mutex>
@@ -36,4 +36,4 @@ namespace mint
 }
 
 
-#endif // !MINT_DELTA_TIMER_H
+#endif // !_MINT_RENDERING_DELTA_TIMER_H_

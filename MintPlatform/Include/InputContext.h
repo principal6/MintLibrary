@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_PLATFORM_INPUT_CONTEXT_H
-#define MINT_PLATFORM_INPUT_CONTEXT_H
+#ifndef _MINT_PLATFORM_INPUT_CONTEXT_H_
+#define _MINT_PLATFORM_INPUT_CONTEXT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -197,4 +197,4 @@ namespace mint
 }
 
 
-#endif // !MINT_PLATFORM_INPUT_CONTEXT_H
+#endif // !_MINT_PLATFORM_INPUT_CONTEXT_H_

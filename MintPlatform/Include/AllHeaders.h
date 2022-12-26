@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_PLATFORM_ALL_HEADERS_H
-#define MINT_PLATFORM_ALL_HEADERS_H
+#ifndef _MINT_PLATFORM_ALL_HEADERS_H_
+#define _MINT_PLATFORM_ALL_HEADERS_H_
 
 
 #include <MintPlatform/Include/IWindow.h>
@@ -15,4 +15,4 @@
 #include <MintPlatform/Include/InputContext.h>
 
 
-#endif // !MINT_PLATFORM_ALL_HEADERS_H
+#endif // !_MINT_PLATFORM_ALL_HEADERS_H_

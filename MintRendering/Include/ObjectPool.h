@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERER_CONTEXT_H
-#define MINT_RENDERER_CONTEXT_H
+#ifndef _MINT_RENDERING_OBJECT_POOL_H_
+#define _MINT_RENDERING_OBJECT_POOL_H_
 
 
 #include <MintRendering/Include/Object.h>
@@ -72,4 +72,4 @@ namespace mint
 }
 
 
-#endif // !MINT_RENDERER_CONTEXT_H
+#endif // !_MINT_RENDERING_OBJECT_POOL_H_

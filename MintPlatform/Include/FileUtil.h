@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 
+#ifndef __MINT_PLATFORM_FILE_UTIL_H__
+#define __MINT_PLATFORM_FILE_UTIL_H__
+
+
 namespace mint
 {
     namespace FileUtil
@@ -14,3 +18,6 @@ namespace mint
         bool    deleteFile(const char* const fileName) noexcept;
     }
 }
+
+
+#endif // !__MINT_PLATFORM_FILE_UTIL_H__

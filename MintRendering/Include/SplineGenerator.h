@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERING_SPLINE_RENDERER_H
-#define MINT_RENDERING_SPLINE_RENDERER_H
+#ifndef _MINT_RENDERING_SPLINE_GENERATOR_H_
+#define _MINT_RENDERING_SPLINE_GENERATOR_H_
 
 
 #include <MintContainer/Include/Vector.h>
@@ -54,4 +54,4 @@ namespace mint
 }
 
 
-#endif // !MINT_RENDERING_SPLINE_RENDERER_H
+#endif // !_MINT_RENDERING_SPLINE_GENERATOR_H_

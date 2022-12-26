@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_I_FILE_H
-#define MINT_I_FILE_H
+#ifndef _MINT_PLATFORM_I_FILE_H_
+#define _MINT_PLATFORM_I_FILE_H_
 
 
 namespace mint
