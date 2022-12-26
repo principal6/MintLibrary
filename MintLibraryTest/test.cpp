@@ -6,8 +6,8 @@
 #include <MintContainer/Include/Test.h>
 #include <MintPlatform/Include/Test.h>
 #include <MintLanguage/Include/Test.h>
+#include <MintReflection/Include/Test.h>
 #include <MintLibrary/Include/Test.h>
-#include <MintLibraryTest/TestReflection.h>
 
 
 #ifdef MINT_DEBUG
@@ -398,7 +398,7 @@ int main()
         //Logger::setOutputFileName("LOG.txt");
         TestMath::test();
         TestContainers::test();
-        testReflection();
+        TestReflection::test();
         TestPlatform::test();
         TestLanguage::test();
         TestLibrary::test();

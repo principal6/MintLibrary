@@ -15,9 +15,18 @@
     <ClInclude Include="Include\Reflection.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Test.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Reflection.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\_UnityBuild.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
