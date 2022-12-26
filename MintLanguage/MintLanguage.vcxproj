@@ -159,6 +159,7 @@
     <ClInclude Include="Include\ILexer.h" />
     <ClInclude Include="Include\IParser.h" />
     <ClInclude Include="Include\LanguageCommon.h" />
+    <ClInclude Include="Include\Test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\ILexer.inl" />
@@ -167,6 +168,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\ILexer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

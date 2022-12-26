@@ -4,6 +4,8 @@
 
 #include <MintMath/Include/Test.h>
 #include <MintContainer/Include/Test.h>
+#include <MintPlatform/Include/Test.h>
+#include <MintLanguage/Include/Test.h>
 #include <MintLibrary/Include/Test.h>
 #include <MintLibraryTest/TestReflection.h>
 
@@ -23,77 +25,6 @@
 //#define MINT_TEST_FAILURES
 //#define MINT_TEST_PERFORMANCE
 
-
-bool testFiles()
-{
-    using namespace mint;
-
-    static constexpr const char* const kFileName = "MintLibraryTest/test.bin";
-    static constexpr const char* const kRawString = "abc";
-    BinaryFileWriter bfw;
-    bfw.write(3.14f);
-    bfw.write(true);
-    bfw.write(static_cast<uint16>(0xABCD));
-    bfw.write("hello");
-    bfw.write(kRawString);
-    bfw.save(kFileName);
-
-    BinaryFileReader bfr;
-    bfr.open(kFileName);
-    if (bfr.isOpen() == true)
-    {
-        auto a = bfr.read<float>();
-        auto b = bfr.read<bool>();
-        auto c = bfr.read<uint16>();
-        auto d = bfr.read<char>(6);
-        auto e = bfr.read<char>(4);
-        printf("File[%s] %s %s\n", kFileName, d, e);
-    }
-
-    TextFileReader tfr;
-    tfr.open("MintLibraryTest/test.cpp");
-
-    return true;
-}
-
-bool testLanguage()
-{
-    using namespace mint;
-    using namespace Language;
-    
-    TextFileReader textFileReader;
-    if (textFileReader.open(Path::makeAssetPath("CppHlsl/CppHlslStreamData.h")) == false)
-    {
-        return false;
-    }
-
-    CppHlsl::Lexer cppHlslLexer{ textFileReader.get() };
-    cppHlslLexer.execute();
-    
-    CppHlsl::Parser cppHlslParser{ cppHlslLexer };
-    cppHlslParser.execute();
-
-    struct TestStruct
-    {
-        float1 _a           = 1.0f;                         // v[0]
-        float1 _b           = 2.0f;
-        float2 _padding0    = float2(4.0f, 8.0f);
-        float3 _c           = float3(16.0f, 32.0f, 64.0f);  // v[1]
-        float1 _padding1    = 128.0f;
-    };
-    Rendering::VS_INPUT_SHAPE vsInput;
-    uint64 a = sizeof(Rendering::VS_INPUT_SHAPE);
-    uint64 b = sizeof(Rendering::VS_OUTPUT_SHAPE);
-    uint64 c = sizeof(Rendering::CB_View);
-    TestStruct ts;
-    uint64 tss = sizeof(TestStruct);
-
-    //std::string syntaxTreeString = cppHlslParser.getSyntaxTreeString();
-    //const TypeMetaData& typeMetaData0 = cppHlslParser.getTypeMetaData("VS_INPUT_SHAPE");
-    //const TypeMetaData& typeMetaData1 = cppHlslParser.getTypeMetaData(1);
-    //const TypeMetaData& typeMetaData2 = cppHlslParser.getTypeMetaData(2);
-    return true;
-}
 
 bool runTestWindow()
 {
@@ -468,8 +399,8 @@ int main()
         TestMath::test();
         TestContainers::test();
         testReflection();
-        testFiles();
-        testLanguage();
+        TestPlatform::test();
+        TestLanguage::test();
         TestLibrary::test();
     #endif
 #else

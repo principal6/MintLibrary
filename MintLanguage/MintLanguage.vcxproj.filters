@@ -21,6 +21,9 @@
     <ClInclude Include="Include\LanguageCommon.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Test.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\ILexer.inl">
@@ -38,6 +41,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\_UnityBuild.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Test.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
