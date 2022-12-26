@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_SCOPED_CPU_PROFILER_H
-#define MINT_SCOPED_CPU_PROFILER_H
+#ifndef _MINT_COMMON_SCOPED_CPU_PROFILER_H_
+#define _MINT_COMMON_SCOPED_CPU_PROFILER_H_
 
 
 #include <vector>
@@ -97,4 +97,4 @@ namespace mint
 #include <MintCommon/Include/ScopedCPUProfiler.inl>
 
 
-#endif // !MINT_SCOPED_CPU_PROFILER_H
+#endif // !_MINT_COMMON_SCOPED_CPU_PROFILER_H_

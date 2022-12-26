@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_LANGUAGE_I_LEXER_H
-#define MINT_LANGUAGE_I_LEXER_H
+#ifndef _MINT_LANGUAGE_I_LEXER_H_
+#define _MINT_LANGUAGE_I_LEXER_H_
 
 
 #include <MintContainer/Include/Vector.h>
@@ -236,4 +236,4 @@ namespace mint
 #include <MintLanguage/Include/ILexer.inl>
 
 
-#endif // !MINT_LANGUAGE_I_LEXER_H
+#endif // !_MINT_LANGUAGE_I_LEXER_H_

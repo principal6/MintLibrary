@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 
-#ifndef MINT_COMMON_ALL_HEADERS_H
-#define MINT_COMMON_ALL_HEADERS_H
+#ifndef _MINT_COMMON_ALL_HEADERS_H_
+#define _MINT_COMMON_ALL_HEADERS_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
 #include <MintCommon/Include/ScopedCPUProfiler.h>
 
 
-#endif // !MINT_COMMON_ALL_HEADERS_H
+#endif // !_MINT_COMMON_ALL_HEADERS_H_

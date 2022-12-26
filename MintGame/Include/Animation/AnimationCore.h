@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_GAME_ANIMATION_CORE_H
-#define MINT_GAME_ANIMATION_CORE_H
+#ifndef _MINT_GAME_ANIMATION_CORE_H_
+#define _MINT_GAME_ANIMATION_CORE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -105,4 +105,4 @@ namespace mint
 }
 
 
-#endif // !MINT_GAME_ANIMATION_CORE_H
+#endif // !_MINT_GAME_ANIMATION_CORE_H_

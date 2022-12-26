@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_LANGUAGE_COMMON_H
-#define MINT_LANGUAGE_COMMON_H
+#ifndef _MINT_LANGUAGE_COMMON_H_
+#define _MINT_LANGUAGE_COMMON_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -105,4 +105,4 @@ namespace mint
 #include <MintLanguage/Include/LanguageCommon.inl>
 
 
-#endif // !MINT_LANGUAGE_COMMON_H
+#endif // !_MINT_LANGUAGE_COMMON_H_

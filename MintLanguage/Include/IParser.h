@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_LANGUAGE_I_PARSER_H
-#define MINT_LANGUAGE_I_PARSER_H
+#ifndef _MINT_LANGUAGE_I_PARSER_H_
+#define _MINT_LANGUAGE_I_PARSER_H_
 
 
 #include <MintContainer/Include/Vector.h>
@@ -196,4 +196,4 @@ namespace mint
 #include <MintLanguage/Include/IParser.inl>
 
 
-#endif // !MINT_LANGUAGE_I_PARSER_H
+#endif // !_MINT_LANGUAGE_I_PARSER_H_

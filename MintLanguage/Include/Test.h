@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_LANGUAGE_TEST_H
-#define MINT_LANGUAGE_TEST_H
+#ifndef _MINT_LANGUAGE_TEST_H_
+#define _MINT_LANGUAGE_TEST_H_
 
 
 namespace mint
@@ -14,4 +14,4 @@ namespace mint
 }
 
 
-#endif // !MINT_LANGUAGE_TEST_H
+#endif // !_MINT_LANGUAGE_TEST_H_

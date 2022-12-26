@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_LANGUAGE_ALL_HEADERS_H
-#define MINT_LANGUAGE_ALL_HEADERS_H
+#ifndef _MINT_LANGUAGE_ALL_HEADERS_H_
+#define _MINT_LANGUAGE_ALL_HEADERS_H_
 
 
 #include <MintLanguage/Include/LanguageCommon.h>
@@ -10,4 +10,4 @@
 #include <MintLanguage/Include/IParser.h>
 
 
-#endif // !MINT_LANGUAGE_ALL_HEADERS_H
+#endif // !_MINT_LANGUAGE_ALL_HEADERS_H_

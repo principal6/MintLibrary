@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_COMMON_DEFINITIONS_H
-#define MINT_COMMON_DEFINITIONS_H
+#ifndef _MINT_COMMON_COMMON_DEFINITIONS_H_
+#define _MINT_COMMON_COMMON_DEFINITIONS_H_
 
 
 #define MINT_INLINE __forceinline
@@ -268,4 +268,4 @@ namespace mint
 }
 
 
-#endif // !MINT_COMMON_DEFINITIONS_H
+#endif // !_MINT_COMMON_COMMON_DEFINITIONS_H_

@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_GAME_ALL_HEADERS_H
-#define MINT_GAME_ALL_HEADERS_H
+#ifndef _MINT_GAME_ALL_HEADERS_H_
+#define _MINT_GAME_ALL_HEADERS_H_
 
 
 #include <MintGame/Include/Animation/AnimationCore.h>
 
 
-#endif // !MINT_GAME_ALL_HEADERS_H
+#endif // !_MINT_GAME_ALL_HEADERS_H_
