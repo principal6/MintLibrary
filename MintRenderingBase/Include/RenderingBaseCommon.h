@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_SIMPLE_RENDERING_COMMON_H
-#define MINT_SIMPLE_RENDERING_COMMON_H
+#ifndef _MINT_RENDERING_BASE_RENDERING_BASE_COMMON_H_
+#define _MINT_RENDERING_BASE_RENDERING_BASE_COMMON_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -216,4 +216,4 @@ namespace mint
 }
 
 
-#endif // !MINT_SIMPLE_RENDERING_COMMON_H
+#endif // !_MINT_RENDERING_BASE_RENDERING_BASE_COMMON_H_

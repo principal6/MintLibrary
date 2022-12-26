@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_GUI_CONTEXT_H_
-#define _MINT_GUI_CONTEXT_H_
+#ifndef _MINT_RENDERING_BASE_GUI_CONTEXT_H_
+#define _MINT_RENDERING_BASE_GUI_CONTEXT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -201,4 +201,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GUI_CONTEXT_H_
+#endif // !_MINT_RENDERING_BASE_GUI_CONTEXT_H_

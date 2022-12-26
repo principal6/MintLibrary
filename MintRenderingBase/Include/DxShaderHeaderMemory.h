@@ -1,6 +1,10 @@
 ﻿#pragma once
 
 
+#ifndef _MINT_RENDERING_BASE_DX_SHADER_HEADER_MEMORY_H_
+#define _MINT_RENDERING_BASE_DX_SHADER_HEADER_MEMORY_H_
+
+
 #include <MintCommon/Include/CommonDefinitions.h>
 
 #include <MintContainer/Include/Vector.h>
@@ -31,3 +35,6 @@ namespace mint
         };
     }
 }
+
+
+#endif // !_MINT_RENDERING_BASE_DX_SHADER_HEADER_MEMORY_H_

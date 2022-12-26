@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_LOW_LEVEL_RENDERER_H
-#define MINT_LOW_LEVEL_RENDERER_H
+#ifndef _MINT_RENDERING_BASE_LOW_LEVEL_RENDERER_H_
+#define _MINT_RENDERING_BASE_LOW_LEVEL_RENDERER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -145,4 +145,4 @@ namespace mint
 }
 
 
-#endif // !MINT_LOW_LEVEL_RENDERER_H
+#endif // !_MINT_RENDERING_BASE_LOW_LEVEL_RENDERER_H_

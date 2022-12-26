@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_CPP_HLSL_CONSTANT_BUFFERS_H
-#define MINT_CPP_HLSL_CONSTANT_BUFFERS_H
+#ifndef _MINT_RENDERING_BASE_CPP_HLSL_CONSTANT_BUFFERS_H_
+#define _MINT_RENDERING_BASE_CPP_HLSL_CONSTANT_BUFFERS_H_
 
 
 #include <MintRenderingBase/Include/CppHlsl/CppHlslTypes.h>
@@ -28,4 +28,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CPP_HLSL_CONSTANT_BUFFERS_H
+#endif // !_MINT_RENDERING_BASE_CPP_HLSL_CONSTANT_BUFFERS_H_

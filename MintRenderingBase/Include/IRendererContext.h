@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_I_RENDERER_CONTEXT_H
-#define MINT_I_RENDERER_CONTEXT_H
+#ifndef _MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_
+#define _MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -91,4 +91,4 @@ namespace mint
 #include <MintRenderingBase/Include/IRendererContext.inl>
 
 
-#endif // !MINT_I_RENDERER_CONTEXT_H
+#endif // !_MINT_RENDERING_BASE_I_RENDERER_CONTEXT_H_

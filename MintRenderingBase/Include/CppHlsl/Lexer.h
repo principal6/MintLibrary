@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_CPP_LEXER_H
-#define MINT_CPP_LEXER_H
+#ifndef _MINT_RENDERING_BASE_CPP_HLSL_LEXER_H_
+#define _MINT_RENDERING_BASE_CPP_HLSL_LEXER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -31,4 +31,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CPP_LEXER_H
+#endif // !_MINT_RENDERING_BASE_CPP_HLSL_LEXER_H_

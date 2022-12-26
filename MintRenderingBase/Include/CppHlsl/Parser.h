@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_CPP_PARSER_H
-#define MINT_CPP_PARSER_H
+#ifndef _MINT_RENDERING_BASE_CPP_HLSL_PARSER_H_
+#define _MINT_RENDERING_BASE_CPP_HLSL_PARSER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -119,4 +119,4 @@ namespace mint
 #include <MintRenderingBase/Include/CppHlsl/Parser.inl>
 
 
-#endif // !MINT_CPP_PARSER_H
+#endif // !_MINT_RENDERING_BASE_CPP_HLSL_PARSER_H_

@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_MESH_RENDERER_H
-#define MINT_MESH_RENDERER_H
+#ifndef _MINT_RENDERING_MESH_RENDERER_H_
+#define _MINT_RENDERING_MESH_RENDERER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -54,4 +54,4 @@ namespace mint
 }
 
 
-#endif // !MINT_MESH_RENDERER_H
+#endif // !_MINT_RENDERING_MESH_RENDERER_H_

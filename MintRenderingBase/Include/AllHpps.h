@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERING_BASE_ALL_HPPS_H
-#define MINT_RENDERING_BASE_ALL_HPPS_H
+#ifndef _MINT_RENDERING_BASE_ALL_HPPS_H_
+#define _MINT_RENDERING_BASE_ALL_HPPS_H_
 
 
 #include <MintRenderingBase/Include/LowLevelRenderer.hpp>
 
 
-#endif // !MINT_RENDERING_BASE_ALL_HPPS_H
+#endif // !_MINT_RENDERING_BASE_ALL_HPPS_H_

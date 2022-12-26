@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef _MINT_GUI_CONTROL_DATA_H_
-#define _MINT_GUI_CONTROL_DATA_H_
+#ifndef _MINT_RENDERING_BASE_GUI_CONTROL_DATA_H_
+#define _MINT_RENDERING_BASE_GUI_CONTROL_DATA_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -171,4 +171,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GUI_CONTROL_DATA_H_
+#endif // !_MINT_RENDERING_BASE_GUI_CONTROL_DATA_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_RENDERING_BASE_IMAGE_LOADER_H
-#define MINT_RENDERING_BASE_IMAGE_LOADER_H
+#ifndef _MINT_RENDERING_BASE_IMAGE_LOADER_H_
+#define _MINT_RENDERING_BASE_IMAGE_LOADER_H_
 
 
 #include <MintContainer/Include/Vector.h>
@@ -31,4 +31,4 @@ namespace mint
 }
 
 
-#endif // !MINT_RENDERING_BASE_IMAGE_LOADER_H
+#endif // !_MINT_RENDERING_BASE_IMAGE_LOADER_H_

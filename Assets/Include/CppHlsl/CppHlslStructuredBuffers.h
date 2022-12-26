@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CPP_HLSL_STRUCTURED_BUFFER_H
-#define MINT_CPP_HLSL_STRUCTURED_BUFFER_H
+#ifndef _MINT_RENDERING_BASE_CPP_HLSL_STRUCTURED_BUFFER_H_
+#define _MINT_RENDERING_BASE_CPP_HLSL_STRUCTURED_BUFFER_H_
 
 
 #include <MintRenderingBase/Include/CppHlsl/CppHlslTypes.h>
@@ -27,4 +27,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CPP_HLSL_STRUCTURED_BUFFER_H
+#endif // !_MINT_RENDERING_BASE_CPP_HLSL_STRUCTURED_BUFFER_H_

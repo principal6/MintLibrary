@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_SHAPE_RENDERER_CONTEXT_H
-#define MINT_SHAPE_RENDERER_CONTEXT_H
+#ifndef _MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_
+#define _MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -175,4 +175,4 @@ namespace mint
 }
 
 
-#endif // !MINT_SHAPE_RENDERER_CONTEXT_H
+#endif // !_MINT_RENDERING_BASE_SHAPE_RENDERER_CONTEXT_H_

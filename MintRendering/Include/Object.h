@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_OBJECT_H
-#define MINT_OBJECT_H
+#ifndef _MINT_RENDERING_OBJECT_H_
+#define _MINT_RENDERING_OBJECT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -80,4 +80,4 @@ namespace mint
 #include <MintRendering/Include/Object.inl>
 
 
-#endif // !MINT_OBJECT_H
+#endif // !_MINT_RENDERING_OBJECT_H_

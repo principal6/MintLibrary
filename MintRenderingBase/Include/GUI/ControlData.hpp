@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_GUI_CONTROL_DATA_HPP_
-#define _MINT_GUI_CONTROL_DATA_HPP_
+#ifndef _MINT_RENDERING_BASE_GUI_CONTROL_DATA_HPP_
+#define _MINT_RENDERING_BASE_GUI_CONTROL_DATA_HPP_
 
 
 #include <MintRenderingBase/Include/GUI/ControlData.h>
@@ -99,4 +99,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_GUI_CONTROL_DATA_HPP_
+#endif // !_MINT_RENDERING_BASE_GUI_CONTROL_DATA_HPP_

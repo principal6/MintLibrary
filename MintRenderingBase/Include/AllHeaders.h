@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RENDERING_BASE_ALL_HEADERS_H
-#define MINT_RENDERING_BASE_ALL_HEADERS_H
+#ifndef _MINT_RENDERING_BASE_ALL_HEADERS_H_
+#define _MINT_RENDERING_BASE_ALL_HEADERS_H_
 
 
 #include <MintRenderingBase/Include/RenderingBaseCommon.h>
@@ -18,4 +18,4 @@
 #include <MintRenderingBase/Include/LowLevelRenderer.h>
 
 
-#endif // !MINT_RENDERING_BASE_ALL_HEADERS_H
+#endif // !_MINT_RENDERING_BASE_ALL_HEADERS_H_

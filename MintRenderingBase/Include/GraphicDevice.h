@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_GRAPHIC_DEVICE_H
-#define MINT_GRAPHIC_DEVICE_H
+#ifndef _MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_
+#define _MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -262,4 +262,4 @@ namespace mint
 #include <MintRenderingBase/Include/GraphicDevice.inl>
 
 
-#endif // !MINT_GRAPHIC_DEVICE_H
+#endif // !_MINT_RENDERING_BASE_GRAPHIC_DEVICE_H_

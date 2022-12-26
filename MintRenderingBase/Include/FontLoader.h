@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_FONT_LOADER_H_
-#define _MINT_FONT_LOADER_H_
+#ifndef _MINT_RENDERING_BASE_FONT_LOADER_H_
+#define _MINT_RENDERING_BASE_FONT_LOADER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -141,4 +141,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_FONT_LOADER_H_
+#endif // !_MINT_RENDERING_BASE_FONT_LOADER_H_

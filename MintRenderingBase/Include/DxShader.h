@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_DX_SHADER_H
-#define MINT_DX_SHADER_H
+#ifndef _MINT_RENDERING_BASE_DX_SHADER_H_
+#define _MINT_RENDERING_BASE_DX_SHADER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -157,4 +157,4 @@ namespace mint
 }
 
 
-#endif // !MINT_DX_SHADER_H
+#endif // !_MINT_RENDERING_BASE_DX_SHADER_H_
