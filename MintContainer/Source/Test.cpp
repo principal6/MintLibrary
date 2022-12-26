@@ -1,4 +1,6 @@
-﻿#include <MintContainer/Include/AllHeaders.h>
+﻿#include <MintContainer/Include/Test.h>
+
+#include <MintContainer/Include/AllHeaders.h>
 #include <MintContainer/Include/AllHpps.h>
 
 #include <MintCommon/Include/ScopedCPUProfiler.h>
@@ -119,13 +121,28 @@ namespace mint
 
 	namespace TestContainers
 	{
-		static bool test_Array() noexcept
+		bool test()
+		{
+			MINT_ASSURE(test_Array());
+			MINT_ASSURE(test_BitArray());
+			MINT_ASSURE(test_StackHolder());
+			MINT_ASSURE(test_BitVector());
+			MINT_ASSURE(test_Vector());
+			MINT_ASSURE(test_HashMap());
+			MINT_ASSURE(test_StringTypes());
+			MINT_ASSURE(test_StringUtil());
+			MINT_ASSURE(test_Queue());
+			MINT_ASSURE(test_Tree());
+			return true;
+		}
+
+		bool test_Array()
 		{
 			constexpr Array<int32, 3> arr{ 4, 5, 999 };
 			return true;
 		}
 
-		static bool test_BitArray() noexcept
+		bool test_BitArray()
 		{
 			BitArray<3> bitArray0(true);
 			MINT_ASSURE(bitArray0.getBitCount() == 3);
@@ -145,7 +162,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_BitVector() noexcept
+		bool test_BitVector()
 		{
 			BitVector a;
 			a.reserveByteCapacity(4);
@@ -326,7 +343,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_StackHolder() noexcept
+		bool test_StackHolder()
 		{
 			{
 				StackHolder<16, 6> sh;
@@ -384,10 +401,8 @@ namespace mint
 			return true;
 		}
 
-		static bool test_Vector() noexcept
+		bool test_Vector()
 		{
-			using namespace TestContainers;
-
 			using Type = int32;
 			//using Type = Notable<int32>;
 			{
@@ -441,7 +456,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_HashMap() noexcept
+		bool test_HashMap()
 		{
 			HashMap<std::string, std::string> hashMap;
 			hashMap.insert("1", "a");
@@ -460,7 +475,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_StringTypes() noexcept
+		bool test_StringTypes()
 		{
 #pragma region StackString
 			StackStringA<256> ss0{ "abcd" };
@@ -616,9 +631,9 @@ namespace mint
 			}
 
 			return true;
-			}
+		}
 
-		static bool test_StringUtil() noexcept
+		bool test_StringUtil()
 		{
 			{
 				const std::string testA{ "ab c   def g" };
@@ -821,7 +836,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_Queue() noexcept
+		bool test_Queue()
 		{
 			using Type = int32;
 			//using Type = Notable<int32>;
@@ -848,7 +863,7 @@ namespace mint
 			return true;
 		}
 
-		static bool test_Tree() noexcept
+		bool test_Tree()
 		{
 			Tree<std::string> stringTree;
 			TreeNodeAccessor rootNode = stringTree.createRootNode("ROOT");
@@ -879,23 +894,7 @@ namespace mint
 #if defined MINT_TEST_FAILURES
 			stringTree.moveToParent(rootNode, d);
 #endif
-
 			return true;
 		}
-
-		bool test() noexcept
-		{
-			MINT_ASSURE(test_Array());
-			MINT_ASSURE(test_BitArray());
-			MINT_ASSURE(test_StackHolder());
-			MINT_ASSURE(test_BitVector());
-			MINT_ASSURE(test_Vector());
-			MINT_ASSURE(test_HashMap());
-			MINT_ASSURE(test_StringTypes());
-			MINT_ASSURE(test_StringUtil());
-			MINT_ASSURE(test_Queue());
-			MINT_ASSURE(test_Tree());
-			return true;
-		}
-		}
-		}
+	}
+}
