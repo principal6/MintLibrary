@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_VECTOR_R_H
-#define MINT_VECTOR_R_H
+#ifndef _MINT_MATH_VECTOR_R_H_
+#define _MINT_MATH_VECTOR_R_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -189,4 +189,4 @@ namespace mint
 }
 
 
-#endif // !MINT_VECTOR_R_H
+#endif // !_MINT_MATH_VECTOR_R_H_

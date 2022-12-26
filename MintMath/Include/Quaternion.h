@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_QUATERNION_H
-#define MINT_QUATERNION_H
+#ifndef _MINT_MATH_QUATERNION_H_
+#define _MINT_MATH_QUATERNION_H_
 
 
 #include <MintMath/Include/Float4.h>
@@ -105,4 +105,4 @@ namespace mint
 #include <MintMath/Include/Quaternion.inl>
 
 
-#endif // !MINT_QUATERNION_H
+#endif // !_MINT_MATH_QUATERNION_H_

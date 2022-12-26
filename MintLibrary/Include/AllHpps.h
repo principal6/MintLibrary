@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_LIBRARY_ALL_HPPS_H
-#define MINT_LIBRARY_ALL_HPPS_H
+#ifndef _MINT_LIBRARY_ALL_HPPS_H_
+#define _MINT_LIBRARY_ALL_HPPS_H_
 
 
 #include <MintLibrary/Include/Algorithm.hpp>
@@ -18,4 +18,4 @@
 #include <MintRendering/Include/AllHpps.h>
 
 
-#endif // !MINT_LIBRARY_ALL_HPPS_H
+#endif // !_MINT_LIBRARY_ALL_HPPS_H_

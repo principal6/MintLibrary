@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_FLOAT3X3_H
-#define MINT_FLOAT3X3_H
+#ifndef _MINT_MATH_FLOAT3X3_H_
+#define _MINT_MATH_FLOAT3X3_H_
 
 
 #include <MintMath/Include/Float3.h>
@@ -68,4 +68,4 @@ namespace mint
 }
 
 
-#endif // !MINT_FLOAT3X3_H
+#endif // !_MINT_MATH_FLOAT3X3_H_

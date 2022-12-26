@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_MATH_ALL_HEADERS_H
-#define MINT_MATH_ALL_HEADERS_H
+#ifndef _MINT_MATH_ALL_HEADERS_H_
+#define _MINT_MATH_ALL_HEADERS_H_
 
 
 #include <MintMath/Include/MathCommon.h>
@@ -25,4 +25,4 @@
 #include <MintMath/Include/Easing.h>
 
 
-#endif // !MINT_MATH_ALL_HEADERS_H
+#endif // !_MINT_MATH_ALL_HEADERS_H_

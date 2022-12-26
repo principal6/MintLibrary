@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_INT2_H
-#define MINT_INT2_H
+#ifndef _MINT_MATH_INT2_H_
+#define _MINT_MATH_INT2_H_
 
 
 #include <MintMath/Include/MathCommon.h>
@@ -58,4 +58,4 @@ namespace mint
 }
 
 
-#endif // !MINT_INT2_H
+#endif // !_MINT_MATH_INT2_H_

@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_TRANSFORM_H
-#define MINT_TRANSFORM_H
+#ifndef _MINT_MATH_TRANSFORM_H_
+#define _MINT_MATH_TRANSFORM_H_
 
 
 #include <MintMath/Include/Float4x4.h>
@@ -31,4 +31,4 @@ namespace mint
 #include <MintMath/Include/Transform.inl>
 
 
-#endif // !MINT_TRANSFORM_H
+#endif // !_MINT_MATH_TRANSFORM_H_

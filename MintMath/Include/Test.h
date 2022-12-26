@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_MATH_TEST_H
-#define MINT_MATH_TEST_H
+#ifndef _MINT_MATH_TEST_H_
+#define _MINT_MATH_TEST_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -21,4 +21,4 @@ namespace mint
 }
 
 
-#endif // !MINT_MATH_TEST_H
+#endif // !_MINT_MATH_TEST_H_

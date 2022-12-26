@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_MATRIX_H
-#define MINT_MATRIX_H
+#ifndef _MINT_MATH_MATRIX_H_
+#define _MINT_MATH_MATRIX_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -228,4 +228,4 @@ namespace mint
 }
 
 
-#endif // !MINT_MATRIX_H
+#endif // !_MINT_MATH_MATRIX_H_

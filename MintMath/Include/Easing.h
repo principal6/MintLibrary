@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#ifndef MINT_MATH_EASING_H
+#ifndef _MINT_MATH_EASING_H_
 
 
 #include <MintMath/Include/MathCommon.h>
@@ -36,4 +36,4 @@ namespace mint
 #include <MintMath/Include/Easing.inl>
 
 
-#endif // !MINT_MATH_EASING_H
+#endif // !_MINT_MATH_EASING_H_

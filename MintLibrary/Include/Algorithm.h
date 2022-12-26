@@ -1,4 +1,8 @@
-#pragma once
+﻿#pragma once
+
+
+#ifndef _MINT_LIBRARY_ALGORITHM_H_
+#define _MINT_LIBRARY_ALGORITHM_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -24,3 +28,6 @@ namespace mint
     template <typename T, typename Comparator>
     void quickSort(Vector<T>& vector, Comparator comparator);
 }
+
+
+#endif // !_MINT_LIBRARY_ALGORITHM_H_

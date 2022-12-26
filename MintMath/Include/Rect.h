@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_RECT_H
-#define MINT_RECT_H
+#ifndef _MINT_MATH_RECT_H_
+#define _MINT_MATH_RECT_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -88,4 +88,4 @@ namespace mint
 #include <MintMath/Include/Rect.inl>
 
 
-#endif // !MINT_RECT_H
+#endif // !_MINT_MATH_RECT_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_LIBRARY_ALL_HEADERS_H
-#define MINT_LIBRARY_ALL_HEADERS_H
+#ifndef _MINT_LIBRARY_ALL_HEADERS_H_
+#define _MINT_LIBRARY_ALL_HEADERS_H_
 
 
 #include <MintCommon/Include/AllHeaders.h>
@@ -41,4 +41,4 @@ namespace mint
 #include <MintGame/Include/AllHeaders.h>
 
 
-#endif // !MINT_LIBRARY_ALL_HEADERS_H
+#endif // !_MINT_LIBRARY_ALL_HEADERS_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_MATH_COMMON_H
-#define MINT_MATH_COMMON_H
+#ifndef _MINT_MATH_COMMON_H_
+#define _MINT_MATH_COMMON_H_
 
 
 #include <cmath>
@@ -128,4 +128,4 @@ namespace mint
 }
 
 
-#endif // !MINT_MATH_COMMON_H
+#endif // !_MINT_MATH_COMMON_H_

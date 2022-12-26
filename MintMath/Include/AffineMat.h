@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_MATH_MATRIX4X4_H
-#define MINT_MATH_MATRIX4X4_H
+#ifndef _MINT_MATH_AFFINE_MAT_H_
+#define _MINT_MATH_AFFINE_MAT_H_
 
 
 #include <MintMath/Include/AffineVec.h>
@@ -160,4 +160,4 @@ namespace mint
 #include <MintMath/Include/AffineMat.inl>
 
 
-#endif // !MINT_MATH_MATRIX4X4_H
+#endif // !_MINT_MATH_AFFINE_MAT_H_

@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_TRANSFORM_INL
-#define MINT_TRANSFORM_INL
+#ifndef _MINT_MATH_TRANSFORM_INL_
+#define _MINT_MATH_TRANSFORM_INL_
 
 
 namespace mint
@@ -22,4 +22,4 @@ namespace mint
 }
 
 
-#endif // !MINT_TRANSFORM_INL
+#endif // !_MINT_MATH_TRANSFORM_INL_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_FLOAT4X4_H
-#define MINT_FLOAT4X4_H
+#ifndef _MINT_MATH_FLOAT4X4_H_
+#define _MINT_MATH_FLOAT4X4_H_
 
 
 #include <MintMath/Include/Float4.h>
@@ -142,4 +142,4 @@ namespace mint
 }
 
 
-#endif // !MINT_FLOAT4X4_H
+#endif // !_MINT_MATH_FLOAT4X4_H_
