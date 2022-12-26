@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_CONTAINER_SCOPE_VECTOR_HPP_
-#define _MINT_CONTAINER_SCOPE_VECTOR_HPP_
+#ifndef _MINT_CONTAINER_STACK_VECTOR_HPP_
+#define _MINT_CONTAINER_STACK_VECTOR_HPP_
 
 
 #include <MintContainer/Include/StackVector.h>
@@ -153,4 +153,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_CONTAINER_SCOPE_VECTOR_HPP_
+#endif // !_MINT_CONTAINER_STACK_VECTOR_HPP_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STATIC_ARRAY_H
-#define MINT_STATIC_ARRAY_H
+#ifndef _MINT_CONTAINER_ARRAY_H_
+#define _MINT_CONTAINER_ARRAY_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -47,4 +47,4 @@ namespace mint
 #include <MintContainer/Include/Array.inl>
 
 
-#endif // !MINT_STATIC_ARRAY_H
+#endif // !_MINT_CONTAINER_ARRAY_H_

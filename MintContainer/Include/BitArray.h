@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STATIC_BIT_ARRAY_H
-#define MINT_STATIC_BIT_ARRAY_H
+#ifndef _MINT_CONTAINER_BIT_ARRAY_H_
+#define _MINT_CONTAINER_BIT_ARRAY_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -54,4 +54,4 @@ namespace mint
 }
 
 
-#endif // !MINT_STATIC_BIT_ARRAY_H
+#endif // !_MINT_CONTAINER_BIT_ARRAY_H_

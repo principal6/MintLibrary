@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_OWN_PTR
-#define MINT_CONTAINER_OWN_PTR
+#ifndef _MINT_CONTAINER_OWN_PTR
+#define _MINT_CONTAINER_OWN_PTR
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -51,4 +51,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_OWN_PTR
+#endif // !_MINT_CONTAINER_OWN_PTR

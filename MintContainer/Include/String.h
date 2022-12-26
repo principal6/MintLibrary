@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_STRING_H
-#define MINT_CONTAINER_STRING_H
+#ifndef _MINT_CONTAINER_STRING_H_
+#define _MINT_CONTAINER_STRING_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -136,4 +136,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_STRING_H
+#endif // !_MINT_CONTAINER_STRING_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_MEMORY_RAW_HPP
-#define MINT_CONTAINER_MEMORY_RAW_HPP
+#ifndef _MINT_CONTAINER_MEMORY_RAW_HPP_
+#define _MINT_CONTAINER_MEMORY_RAW_HPP_
 
 
 #include <MintContainer/Include/MemoryRaw.h>
@@ -185,4 +185,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_MEMORY_RAW_HPP
+#endif // !_MINT_CONTAINER_MEMORY_RAW_HPP_

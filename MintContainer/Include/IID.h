@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_IID_H
-#define MINT_IID_H
+#ifndef _MINT_CONTAINER_IID_H_
+#define _MINT_CONTAINER_IID_H_
 
 
 namespace mint
@@ -42,4 +42,4 @@ namespace mint
 #include <MintContainer/Include/IID.inl>
 
 
-#endif // !MINT_IID_H
+#endif // !_MINT_CONTAINER_IID_H_

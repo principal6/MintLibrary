@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_ALL_HEADERS_H
-#define MINT_CONTAINER_ALL_HEADERS_H
+#ifndef _MINT_CONTAINER_ALL_HEADERS_H_
+#define _MINT_CONTAINER_ALL_HEADERS_H_
 
 
 #include <MintContainer/Include/BitVector.h>
@@ -22,4 +22,4 @@
 #include <MintContainer/Include/StringView.h>
 
 
-#endif // !MINT_CONTAINER_ALL_HEADERS_H
+#endif // !_MINT_CONTAINER_ALL_HEADERS_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_HASH_H
-#define MINT_HASH_H
+#ifndef _MINT_CONTAINER_HASH_H_
+#define _MINT_CONTAINER_HASH_H_
 
 
 #include <type_traits>
@@ -44,4 +44,4 @@ namespace mint
 }
 
 
-#endif // !MINT_HASH_H
+#endif // !_MINT_CONTAINER_HASH_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_BIT_VECTOR_H
-#define MINT_BIT_VECTOR_H
+#ifndef _MINT_CONTAINER_BIT_VECTOR_H_
+#define _MINT_CONTAINER_BIT_VECTOR_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -63,4 +63,4 @@ namespace mint
 }
 
 
-#endif // !MINT_BIT_VECTOR_H
+#endif // !_MINT_CONTAINER_BIT_VECTOR_H_

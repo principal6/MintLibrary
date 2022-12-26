@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_VECTOR_HPP
-#define MINT_VECTOR_HPP
+#ifndef _MINT_CONTAINER_VECTOR_HPP_
+#define _MINT_CONTAINER_VECTOR_HPP_
 
 
 #include <initializer_list>
@@ -442,4 +442,4 @@ namespace mint
 }
 
 
-#endif // !MINT_VECTOR_HPP
+#endif // !_MINT_CONTAINER_VECTOR_HPP_

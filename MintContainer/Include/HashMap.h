@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_HASH_MAP_H
-#define MINT_HASH_MAP_H
+#ifndef _MINT_CONTAINER_HASH_MAP_H_
+#define _MINT_CONTAINER_HASH_MAP_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -156,4 +156,4 @@ namespace mint
 }
 
 
-#endif // !MINT_HASH_MAP_H
+#endif // !_MINT_CONTAINER_HASH_MAP_H_

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_HASH_MAP_HPP
-#define MINT_HASH_MAP_HPP
+#ifndef _MINT_CONTAINER_HASH_MAP_HPP_
+#define _MINT_CONTAINER_HASH_MAP_HPP_
 
 
 #include <MintContainer/Include/HashMap.h>
@@ -473,4 +473,4 @@ namespace mint
 }
 
 
-#endif // !MINT_HASH_MAP_HPP
+#endif // !_MINT_CONTAINER_HASH_MAP_HPP_

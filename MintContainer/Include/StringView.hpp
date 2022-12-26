@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_STRING_VIEW_HPP
-#define MINT_CONTAINER_STRING_VIEW_HPP
+#ifndef _MINT_CONTAINER_STRING_VIEW_HPP_
+#define _MINT_CONTAINER_STRING_VIEW_HPP_
 
 
 #include <MintContainer/Include/StringView.h>
@@ -63,4 +63,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_STRING_VIEW_HPP
+#endif // !_MINT_CONTAINER_STRING_VIEW_HPP_

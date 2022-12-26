@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STACK_HOLDER_H
-#define MINT_STACK_HOLDER_H
+#ifndef _MINT_CONTAINER_STACK_HOLDER_H_
+#define _MINT_CONTAINER_STACK_HOLDER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -52,4 +52,4 @@ namespace mint
 }
 
 
-#endif // !MINT_STACK_HOLDER_H
+#endif // !_MINT_CONTAINER_STACK_HOLDER_H_

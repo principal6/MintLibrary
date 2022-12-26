@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STATIC_BIT_ARRAY_HPP
-#define MINT_STATIC_BIT_ARRAY_HPP
+#ifndef _MINT_CONTAINER_BIT_ARRAY_HPP_
+#define _MINT_CONTAINER_BIT_ARRAY_HPP_
 
 
 #include <MintContainer/Include/BitArray.h>
@@ -138,4 +138,4 @@ namespace mint
 }
 
 
-#endif // !MINT_STATIC_BIT_ARRAY_HPP
+#endif // !_MINT_CONTAINER_BIT_ARRAY_HPP_

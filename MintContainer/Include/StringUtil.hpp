@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STRING_UTIL_HPP
-#define MINT_STRING_UTIL_HPP
+#ifndef _MINT_CONTAINER_STRING_UTIL_HPP_
+#define _MINT_CONTAINER_STRING_UTIL_HPP_
 
 
 #include <Windows.h>
@@ -383,4 +383,4 @@ namespace mint
 }
 
 
-#endif // !MINT_STRING_UTIL_HPP
+#endif // !_MINT_CONTAINER_STRING_UTIL_HPP_

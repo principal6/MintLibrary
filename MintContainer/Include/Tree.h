@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 
-#ifndef MINT_TREE_H
-#define MINT_TREE_H
+#ifndef _MINT_CONTAINER_TREE_H_
+#define _MINT_CONTAINER_TREE_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -176,4 +176,4 @@ namespace mint
 }
 
 
-#endif // !MINT_TREE_H
+#endif // !_MINT_CONTAINER_TREE_H_

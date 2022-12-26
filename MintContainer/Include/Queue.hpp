@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_QUEUE_HPP
-#define MINT_CONTAINER_QUEUE_HPP
+#ifndef _MINT_CONTAINER_QUEUE_HPP_
+#define _MINT_CONTAINER_QUEUE_HPP_
 
 
 #include <MintContainer/Include/Queue.h>
@@ -183,4 +183,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_QUEUE_HPP
+#endif // !_MINT_CONTAINER_QUEUE_HPP_

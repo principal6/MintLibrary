@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_STRING_VIEW_H
-#define MINT_CONTAINER_STRING_VIEW_H
+#ifndef _MINT_CONTAINER_STRING_VIEW_H_
+#define _MINT_CONTAINER_STRING_VIEW_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -47,4 +47,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_STRING_VIEW_H
+#endif // !_MINT_CONTAINER_STRING_VIEW_H_

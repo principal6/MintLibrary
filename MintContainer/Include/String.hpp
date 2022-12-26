@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_CONTAINER_STRING_HPP
-#define MINT_CONTAINER_STRING_HPP
+#ifndef _MINT_CONTAINER_STRING_HPP_
+#define _MINT_CONTAINER_STRING_HPP_
 
 
 #include <MintContainer/Include/String.h>
@@ -573,4 +573,4 @@ namespace mint
 }
 
 
-#endif // !MINT_CONTAINER_STRING_HPP
+#endif // !_MINT_CONTAINER_STRING_HPP_

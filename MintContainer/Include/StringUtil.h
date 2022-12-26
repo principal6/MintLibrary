@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef MINT_STRING_UTIL_H
-#define MINT_STRING_UTIL_H
+#ifndef _MINT_CONTAINER_STRING_UTIL_H_
+#define _MINT_CONTAINER_STRING_UTIL_H_
 
 
 #include <string>
@@ -167,4 +167,4 @@ namespace mint
 #include <MintContainer/Include/StringUtil.inl>
 
 
-#endif // !MINT_STRING_UTIL_H
+#endif // !_MINT_CONTAINER_STRING_UTIL_H_
