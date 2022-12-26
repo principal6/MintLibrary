@@ -382,11 +382,12 @@ bool runTestWindow()
 
 int main()
 {
+    using namespace mint;
 #ifdef MINT_DEBUG
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-    mint::Library::initialize();
+    Library::initialize();
 
 #if defined MINT_DEBUG
     #if defined MINT_TEST_PERFORMANCE
@@ -394,7 +395,6 @@ int main()
         testBitVector();
         //testStringTypes();
     #else
-        using namespace mint;
         //Logger::setOutputFileName("LOG.txt");
         TestMath::test();
         TestContainers::test();

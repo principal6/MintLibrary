@@ -311,7 +311,7 @@ namespace mint
 
 #if defined MINT_FONT_RENDERER_COMPRESS_AS_PNG
             ImageLoader imageLoader;
-            imageLoader.saveImagePNG(pixelArray, textureWidth, textureHeight, 1, binaryFileWriter);
+            imageLoader.saveImagePNG(pixelArray, textureWidth, textureHeight, 1, binaryFileWriter, true);
 #else
             const uint32 pixelCount = static_cast<uint32>(pixelArray.size());
             binaryFileWriter.write(pixelArray.size());

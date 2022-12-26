@@ -21,7 +21,7 @@ namespace mint
 		void ColorImage::setSize(const Int2& size) noexcept
 		{
 			_size = size;
-			_colorArray.resize(_size._x * _size._y);
+			_colors.resize(_size._x * _size._y);
 		}
 
 		const Int2& ColorImage::getSize() const noexcept
@@ -31,10 +31,10 @@ namespace mint
 
 		void ColorImage::fill(const Color& color) noexcept
 		{
-			const uint32 colorCount = _colorArray.size();
+			const uint32 colorCount = _colors.size();
 			for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
 			{
-				Color& colorEntry = _colorArray[colorIndex];
+				Color& colorEntry = _colors[colorIndex];
 				colorEntry = color;
 			}
 		}
@@ -65,7 +65,7 @@ namespace mint
 				const int32 base = _size._x * y;
 				for (int32 x = beginX; x < endX; ++x)
 				{
-					_colorArray[base + x] = color;
+					_colors[base + x] = color;
 				}
 			}
 		}
@@ -94,19 +94,19 @@ namespace mint
 
 		void ColorImage::setPixel(const int32 index, const Color& color) noexcept
 		{
-			_colorArray[index] = color;
+			_colors[index] = color;
 		}
 
 		void ColorImage::setPixel(const Int2& at, const Color& color) noexcept
 		{
 			const int32 index = convertXyToIndex(at._x, at._y);
-			_colorArray[index] = color;
+			_colors[index] = color;
 		}
 
 		const Color& ColorImage::getPixel(const Int2& at) const noexcept
 		{
 			const int32 index = convertXyToIndex(at._x, at._y);
-			return _colorArray[index];
+			return _colors[index];
 		}
 
 		Color ColorImage::getSubPixel(const Float2& at) const noexcept
@@ -211,30 +211,29 @@ namespace mint
 			pixels[2][2] = getColorFromXy(at._x + 1, at._y + 1);
 		}
 
-		const byte* ColorImage::buildPixelRgbaArray() noexcept
+		void ColorImage::buildPixelRgbaArray(Vector<byte>& outBytes) const noexcept
 		{
 			static constexpr uint32 kByteCountPerPixel = 4;
-			const uint32 pixelCount = static_cast<uint32>(_colorArray.size());
-			_byteArray.resize(pixelCount * kByteCountPerPixel);
+			const uint32 pixelCount = static_cast<uint32>(_colors.size());
+			outBytes.resize(pixelCount * kByteCountPerPixel);
 			for (uint32 pixelIndex = 0; pixelIndex < pixelCount; ++pixelIndex)
 			{
-				const Color& color = _colorArray[pixelIndex];
-				_byteArray[pixelIndex * kByteCountPerPixel + 0] = color.rAsByte();
-				_byteArray[pixelIndex * kByteCountPerPixel + 1] = color.gAsByte();
-				_byteArray[pixelIndex * kByteCountPerPixel + 2] = color.bAsByte();
-				_byteArray[pixelIndex * kByteCountPerPixel + 3] = color.aAsByte();
+				const Color& color = _colors[pixelIndex];
+				outBytes[pixelIndex * kByteCountPerPixel + 0] = color.rAsByte();
+				outBytes[pixelIndex * kByteCountPerPixel + 1] = color.gAsByte();
+				outBytes[pixelIndex * kByteCountPerPixel + 2] = color.bAsByte();
+				outBytes[pixelIndex * kByteCountPerPixel + 3] = color.aAsByte();
 			}
-			return _byteArray.data();
 		}
 
 		int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
 		{
-			return mint::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colorArray.size() - 1));
+			return mint::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.size() - 1));
 		}
 
 		const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept
 		{
-			return (x < static_cast<uint32>(_size._x) && y < static_cast<uint32>(_size._y)) ? _colorArray[(_size._x * y) + x] : Color::kTransparent;
+			return (x < static_cast<uint32>(_size._x) && y < static_cast<uint32>(_size._y)) ? _colors[(_size._x * y) + x] : Color::kTransparent;
 		}
 	}
 }

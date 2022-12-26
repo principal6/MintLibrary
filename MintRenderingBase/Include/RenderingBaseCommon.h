@@ -201,7 +201,7 @@ namespace mint
 			void sample3x3(const Int2& at, ColorImage::Sample3x3<Color>& outSample3x3) const noexcept;
 
 		public:
-			const byte* buildPixelRgbaArray() noexcept;
+			void buildPixelRgbaArray(Vector<byte>& outBytes) const noexcept;
 
 		private:
 			int32 convertXyToIndex(const uint32 x, const uint32 y) const noexcept;
@@ -209,8 +209,7 @@ namespace mint
 
 		private:
 			Int2 _size;
-			Vector<Color> _colorArray;
-			Vector<byte> _byteArray;
+			Vector<Color> _colors;
 		};
 	}
 }
