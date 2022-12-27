@@ -146,9 +146,9 @@ namespace mint
 			DxShaderVersion _shaderVersion;
 
 		private:
-			Vector<DxShader> _vertexShaderArray;
-			Vector<DxShader> _geometryShaderArray;
-			Vector<DxShader> _pixelShaderArray;
+			Vector<DxShader> _vertexShaders;
+			Vector<DxShader> _geometryShaders;
+			Vector<DxShader> _pixelShaders;
 
 		private:
 			GraphicObjectID _boundShaderIDArray[static_cast<uint32>(GraphicShaderType::COUNT)];

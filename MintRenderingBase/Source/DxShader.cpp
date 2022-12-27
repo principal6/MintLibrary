@@ -162,8 +162,8 @@ namespace mint
 			if (createVertexShaderInternal(shader, inputElementTypeMetaData) == true)
 			{
 				shader.assignIDXXX();
-				_vertexShaderArray.push_back(std::move(shader));
-				return _vertexShaderArray.back().getID();
+				_vertexShaders.push_back(std::move(shader));
+				return _vertexShaders.back().getID();
 			}
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
@@ -175,14 +175,14 @@ namespace mint
 				if (shaderType == GraphicShaderType::GeometryShader)
 				{
 					shader.assignIDXXX();
-					_geometryShaderArray.push_back(std::move(shader));
-					return _geometryShaderArray.back().getID();
+					_geometryShaders.push_back(std::move(shader));
+					return _geometryShaders.back().getID();
 				}
 				else if (shaderType == GraphicShaderType::PixelShader)
 				{
 					shader.assignIDXXX();
-					_pixelShaderArray.push_back(std::move(shader));
-					return _pixelShaderArray.back().getID();
+					_pixelShaders.push_back(std::move(shader));
+					return _pixelShaders.back().getID();
 				}
 			}
 			return GraphicObjectID::kInvalidGraphicObjectID;
@@ -402,26 +402,26 @@ namespace mint
 				}
 			}
 
-			const uint32 vertexShaderCount = _vertexShaderArray.size();
+			const uint32 vertexShaderCount = _vertexShaders.size();
 			for (uint32 vertexShaderIndex = 0; vertexShaderIndex < vertexShaderCount; ++vertexShaderIndex)
 			{
-				DxShader& shader = _vertexShaderArray[vertexShaderIndex];
+				DxShader& shader = _vertexShaders[vertexShaderIndex];
 				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
 				createVertexShaderInternal(shader, nullptr);
 			}
 
-			const uint32 geometryShaderCount = _geometryShaderArray.size();
+			const uint32 geometryShaderCount = _geometryShaders.size();
 			for (uint32 geometryShaderIndex = 0; geometryShaderIndex < geometryShaderCount; ++geometryShaderIndex)
 			{
-				DxShader& shader = _geometryShaderArray[geometryShaderIndex];
+				DxShader& shader = _geometryShaders[geometryShaderIndex];
 				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
 				createNonVertexShaderInternal(shader, GraphicShaderType::GeometryShader);
 			}
 
-			const uint32 pixelShaderCount = _pixelShaderArray.size();
+			const uint32 pixelShaderCount = _pixelShaders.size();
 			for (uint32 pixelShaderIndex = 0; pixelShaderIndex < pixelShaderCount; ++pixelShaderIndex)
 			{
-				DxShader& shader = _pixelShaderArray[pixelShaderIndex];
+				DxShader& shader = _pixelShaders[pixelShaderIndex];
 				compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
 				createNonVertexShaderInternal(shader, GraphicShaderType::PixelShader);
 			}
@@ -482,26 +482,26 @@ namespace mint
 
 			if (shaderType == GraphicShaderType::VertexShader)
 			{
-				const int32 index = binarySearch(_vertexShaderArray, objectID, IGraphicObject::Evaluator());
+				const int32 index = binarySearch(_vertexShaders, objectID, IGraphicObject::Evaluator());
 				if (index >= 0)
 				{
-					return _vertexShaderArray[index];
+					return _vertexShaders[index];
 				}
 			}
 			else if (shaderType == GraphicShaderType::GeometryShader)
 			{
-				const int32 index = binarySearch(_geometryShaderArray, objectID, IGraphicObject::Evaluator());
+				const int32 index = binarySearch(_geometryShaders, objectID, IGraphicObject::Evaluator());
 				if (index >= 0)
 				{
-					return _geometryShaderArray[index];
+					return _geometryShaders[index];
 				}
 			}
 			else if (shaderType == GraphicShaderType::PixelShader)
 			{
-				const int32 index = binarySearch(_pixelShaderArray, objectID, IGraphicObject::Evaluator());
+				const int32 index = binarySearch(_pixelShaders, objectID, IGraphicObject::Evaluator());
 				if (index >= 0)
 				{
-					return _pixelShaderArray[index];
+					return _pixelShaders[index];
 				}
 			}
 			return DxShader::kNullInstance;
