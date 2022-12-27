@@ -32,21 +32,21 @@ bool runTestWindow()
     using namespace Window;
     using namespace Rendering;
 
-    CreationData windowCreationData;
-    windowCreationData._style = Style::Default;
-    windowCreationData._position.set(200, 100);
-    windowCreationData._size.set(1024, 768);
-    windowCreationData._title = L"HI";
-    windowCreationData._bgColor.set(0.875f, 0.875f, 0.875f);
+    WindowCreationDesc windowCreationDesc;
+    windowCreationDesc._style = Style::Default;
+    windowCreationDesc._position.set(200, 100);
+    windowCreationDesc._size.set(1024, 768);
+    windowCreationDesc._title = L"HI";
+    windowCreationDesc._backgroundColor.set(0.875f, 0.875f, 0.875f);
 
     WindowsWindow window;
-    if (window.create(windowCreationData) == false)
+    if (window.create(windowCreationDesc) == false)
     {
-        CreationError error = window.getCreationError();
+        WindowCreationError windowCreationError = window.getWindowCreationError();
         return false;
     }
 
-    GraphicDevice graphicDevice(window);
+    GraphicDevice graphicDevice{ window };
     graphicDevice.initialize();
 
     //MathExpressionRenderer mathExpressionRenderer(graphicDevice);

@@ -22,8 +22,8 @@ namespace mint
 {
     namespace Window
     {
-#define MINT_WINDOW_RETURN_OK _creationError = CreationError::None; return true
-#define MINT_WINDOW_RETURN_FAIL(error) _creationError = error; return false
+#define MINT_WINDOW_RETURN_OK _windowCreationError = WindowCreationError::None; return true
+#define MINT_WINDOW_RETURN_FAIL(error) _windowCreationError = error; return false
 
 
 #pragma region Windows Window Pool
@@ -79,25 +79,25 @@ namespace mint
             __noop;
         }
 
-        bool WindowsWindow::create(const CreationData& creationData) noexcept
+        bool WindowsWindow::create(const WindowCreationDesc& windowCreationDesc) noexcept
         {
-            _creationData = creationData;
+            _windowCreationDesc = windowCreationDesc;
 
             _hInstance = ::GetModuleHandleW(nullptr);
             if (_hInstance == nullptr)
             {
-                MINT_WINDOW_RETURN_FAIL(CreationError::FailedToGetInstanceHandle);
+                MINT_WINDOW_RETURN_FAIL(WindowCreationError::FailedToGetInstanceHandle);
             }
 
-            if (_creationData._title == nullptr)
+            if (_windowCreationDesc._title == nullptr)
             {
-                MINT_WINDOW_RETURN_FAIL(CreationError::NullptrString);
+                MINT_WINDOW_RETURN_FAIL(WindowCreationError::NullptrString);
             }
 
             const COLORREF backgroundColor = RGB(
-                static_cast<uint8>(_creationData._bgColor[0] * 255.0f),
-                static_cast<uint8>(_creationData._bgColor[1] * 255.0f), 
-                static_cast<uint8>(_creationData._bgColor[2] * 255.0f));
+                static_cast<uint8>(_windowCreationDesc._backgroundColor[0] * 255.0f),
+                static_cast<uint8>(_windowCreationDesc._backgroundColor[1] * 255.0f), 
+                static_cast<uint8>(_windowCreationDesc._backgroundColor[2] * 255.0f));
 
             WNDCLASSEXW windowClass{};
             windowClass.cbClsExtra = 0;
@@ -114,7 +114,7 @@ namespace mint
             ::RegisterClassExW(&windowClass);
 
             _windowStyle = WS_OVERLAPPED;
-            switch (_creationData._style)
+            switch (_windowCreationDesc._style)
             {
             case Style::Default:
                 _windowStyle = WS_OVERLAPPEDWINDOW;
@@ -129,20 +129,20 @@ namespace mint
                 break;
             }
 
-            const int32 x = (_creationData._position._x == kInt32Min) ? CW_USEDEFAULT : _creationData._position._x;
-            const int32 y = (_creationData._position._y == kInt32Min) ? CW_USEDEFAULT : _creationData._position._y;
-            _hWnd = ::CreateWindowExW(0, windowClass.lpszClassName, _creationData._title, _windowStyle, x, y,
-                _creationData._size._x, _creationData._size._y, nullptr, nullptr, _hInstance, nullptr);
+            const int32 x = (_windowCreationDesc._position._x == kInt32Min) ? CW_USEDEFAULT : _windowCreationDesc._position._x;
+            const int32 y = (_windowCreationDesc._position._y == kInt32Min) ? CW_USEDEFAULT : _windowCreationDesc._position._y;
+            _hWnd = ::CreateWindowExW(0, windowClass.lpszClassName, _windowCreationDesc._title, _windowStyle, x, y,
+                _windowCreationDesc._size._x, _windowCreationDesc._size._y, nullptr, nullptr, _hInstance, nullptr);
             if (_hWnd == nullptr)
             {
-                MINT_WINDOW_RETURN_FAIL(CreationError::FailedToCreateWindow);
+                MINT_WINDOW_RETURN_FAIL(WindowCreationError::FailedToCreateWindow);
             }
 
             RECT rawWindowRect;
             ::GetWindowRect(_hWnd, &rawWindowRect);
-            _creationData._position.set(rawWindowRect.left, rawWindowRect.top);
+            _windowCreationDesc._position.set(rawWindowRect.left, rawWindowRect.top);
 
-            setSize(_creationData._size, false);
+            setSize(_windowCreationDesc._size, false);
 
             ::ShowWindow(_hWnd, SW_SHOWDEFAULT);
 
@@ -170,7 +170,7 @@ namespace mint
             rawInputDevice.usUsagePage = HID_USAGE_PAGE_GENERIC;
             if (::RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE)) == FALSE)
             {
-                MINT_WINDOW_RETURN_FAIL(CreationError::FailedToRegisterRawInputDevices);
+                MINT_WINDOW_RETURN_FAIL(WindowCreationError::FailedToRegisterRawInputDevices);
             }
 
 
@@ -293,16 +293,16 @@ namespace mint
                 return;
             }
 
-            ::SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
+            ::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireSize._x, _entireSize._y, 0);
         }
 
         void WindowsWindow::setSizeData(const Int2& newSize)
         {
-            _creationData._size = newSize;
+            _windowCreationDesc._size = newSize;
 
             RECT windowRect;
-            windowRect.left = _creationData._position._x;
-            windowRect.top = _creationData._position._y;
+            windowRect.left = _windowCreationDesc._position._x;
+            windowRect.top = _windowCreationDesc._position._y;
             windowRect.bottom = windowRect.top + newSize._y;
             windowRect.right = windowRect.left + newSize._x;
             ::AdjustWindowRect(&windowRect, _windowStyle, FALSE);
@@ -312,9 +312,9 @@ namespace mint
 
         void WindowsWindow::setPosition(const Int2& newPosition)
         {
-            _creationData._position = newPosition;
+            _windowCreationDesc._position = newPosition;
 
-            ::SetWindowPos(_hWnd, nullptr, _creationData._position._x, _creationData._position._y, _entireSize._x, _entireSize._y, 0);
+            ::SetWindowPos(_hWnd, nullptr, _windowCreationDesc._position._x, _windowCreationDesc._position._y, _entireSize._x, _entireSize._y, 0);
         }
 
         HWND WindowsWindow::getHandle() const noexcept

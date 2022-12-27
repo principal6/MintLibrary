@@ -76,7 +76,7 @@ namespace mint
             virtual                     ~WindowsWindow() = default;
 
         public:
-            virtual bool                create(const CreationData& creationData) noexcept override;
+            virtual bool                create(const WindowCreationDesc& windowCreationDesc) noexcept override;
             virtual void                destroy() noexcept override;
 
         private:

@@ -1,4 +1,4 @@
-#include <MintPlatform/Include/IWindow.h>
+﻿#include <MintPlatform/Include/IWindow.h>
 
 
 namespace mint
@@ -14,7 +14,7 @@ namespace mint
         IWindow::IWindow(const Platform::PlatformType platformType)
             : _isRunning{ false }
             , _platformType{ platformType }
-            , _creationError{ CreationError::None }
+            , _windowCreationError{ WindowCreationError::None }
             , _isWindowResized{ false }
             , _currentCursorType{ CursorType::Arrow }
         {
