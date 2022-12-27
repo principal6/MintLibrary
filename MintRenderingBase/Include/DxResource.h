@@ -91,7 +91,7 @@ namespace mint
         public:
             bool                                needToBind() const noexcept;
             void                                bindAsInput() const noexcept;
-            void                                bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept;
+            void                                bindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept;
 
         private:
             ComPtr<ID3D11Resource>              _resource;
@@ -137,7 +137,7 @@ namespace mint
 
         public:
             void                    bindAsInput(const GraphicObjectID& objectID) noexcept;
-            void                    bindToShader(const GraphicObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
+            void                    bindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept;
 
         public:
             DxResource&             getResource(const GraphicObjectID& objectID);

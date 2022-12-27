@@ -507,9 +507,9 @@ namespace mint
 					_cbViewID = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
 
 					DxResource& cbView = _resourcePool.getResource(_cbViewID);
-					cbView.bindToShader(DxShaderType::VertexShader, cbView.getRegisterIndex());
-					cbView.bindToShader(DxShaderType::GeometryShader, cbView.getRegisterIndex());
-					cbView.bindToShader(DxShaderType::PixelShader, cbView.getRegisterIndex());
+					cbView.bindToShader(GraphicShaderType::VertexShader, cbView.getRegisterIndex());
+					cbView.bindToShader(GraphicShaderType::GeometryShader, cbView.getRegisterIndex());
+					cbView.bindToShader(GraphicShaderType::PixelShader, cbView.getRegisterIndex());
 				}
 
 				{

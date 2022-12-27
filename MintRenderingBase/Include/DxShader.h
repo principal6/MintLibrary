@@ -55,7 +55,7 @@ namespace mint
             friend DxShaderPool;
 
         private:
-                                        DxShader(GraphicDevice& graphicDevice, const DxShaderType shaderType);
+                                        DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType);
 
         public:
             virtual                     ~DxShader() = default;
@@ -69,7 +69,7 @@ namespace mint
             ComPtr<ID3D11InputLayout>   _inputLayout;
             ComPtr<ID3D10Blob>          _shaderBlob;
             ComPtr<ID3D11DeviceChild>   _shader;
-            DxShaderType                _shaderType;
+            GraphicShaderType                _shaderType;
             std::string                 _hlslFileName;
             std::string                 _hlslBinaryFileName;
             std::string                 _entryPoint;
@@ -103,25 +103,25 @@ namespace mint
 
         public:
             const GraphicObjectID&       pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const GraphicObjectID&       pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
+            const GraphicObjectID&       pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
 
         public:
             const GraphicObjectID&       pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
-            const GraphicObjectID&       pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
+            const GraphicObjectID&       pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
             const GraphicObjectID&       pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const GraphicObjectID&       pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            const GraphicObjectID&       pushNonVertexShaderInternal(DxShader& shader, const GraphicShaderType shaderType);
     
         private:
             bool                    createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
             void                    pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData);
-            bool                    createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            bool                    createNonVertexShaderInternal(DxShader& shader, const GraphicShaderType shaderType);
 
         private:
-            bool                    compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-            bool                    compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
-            bool                    compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
+            bool                    compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+            bool                    compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader);
+            bool                    compileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob);
 
         public:
             void                    recompileAllShaders();
@@ -130,11 +130,11 @@ namespace mint
             void                    reportCompileError();
 
         public:
-            void                    bindShaderIfNot(const DxShaderType shaderType, const GraphicObjectID& objectID);
-            void                    unbindShader(const DxShaderType shaderType);
+            void                    bindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID);
+            void                    unbindShader(const GraphicShaderType shaderType);
         
         private:
-            const DxShader&         getShader(const DxShaderType shaderType, const GraphicObjectID& objectID);
+            const DxShader&         getShader(const GraphicShaderType shaderType, const GraphicObjectID& objectID);
 
         private:
             ComPtr<ID3DBlob>        _errorMessageBlob;
@@ -151,7 +151,7 @@ namespace mint
             Vector<DxShader>        _pixelShaderArray;
 
         private:
-            GraphicObjectID              _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
+            GraphicObjectID              _boundShaderIDArray[static_cast<uint32>(GraphicShaderType::COUNT)];
         };
     }
 }

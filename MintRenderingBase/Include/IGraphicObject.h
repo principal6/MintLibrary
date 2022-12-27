@@ -18,7 +18,7 @@ namespace mint
 		class IGraphicObject;
 
 
-		enum class DxShaderType
+		enum class GraphicShaderType
 		{
 			VertexShader,
 			GeometryShader,

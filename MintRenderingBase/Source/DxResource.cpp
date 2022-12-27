@@ -324,19 +324,19 @@ namespace mint
             _needToBind = false;
         }
 
-        void DxResource::bindToShader(const DxShaderType shaderType, const uint32 bindingSlot) const noexcept
+        void DxResource::bindToShader(const GraphicShaderType shaderType, const uint32 bindingSlot) const noexcept
         {
             if (_resourceType == DxResourceType::ConstantBuffer)
             {
-                if (shaderType == DxShaderType::VertexShader)
+                if (shaderType == GraphicShaderType::VertexShader)
                 {
                     _graphicDevice.getStateManager().setVsConstantBuffers(*this);
                 }
-                else if (shaderType == DxShaderType::GeometryShader)
+                else if (shaderType == GraphicShaderType::GeometryShader)
                 {
                     _graphicDevice.getStateManager().setGsConstantBuffers(*this);
                 }
-                else if (shaderType == DxShaderType::PixelShader)
+                else if (shaderType == GraphicShaderType::PixelShader)
                 {
                     _graphicDevice.getStateManager().setPsConstantBuffers(*this);
                 }
@@ -347,15 +347,15 @@ namespace mint
             }
             else if (_resourceType == DxResourceType::StructuredBuffer || DxResourceType::Texture2D <= _resourceType)
             {
-                if (shaderType == DxShaderType::VertexShader)
+                if (shaderType == GraphicShaderType::VertexShader)
                 {
                     _graphicDevice.getStateManager().setVsResources(*this);
                 }
-                else if (shaderType == DxShaderType::GeometryShader)
+                else if (shaderType == GraphicShaderType::GeometryShader)
                 {
                     _graphicDevice.getStateManager().setGsResources(*this);
                 }
-                else if (shaderType == DxShaderType::PixelShader)
+                else if (shaderType == GraphicShaderType::PixelShader)
                 {
                     _graphicDevice.getStateManager().setPsResources(*this);
                 }
@@ -466,7 +466,7 @@ namespace mint
             }
         }
 
-        void DxResourcePool::bindToShader(const GraphicObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept
+        void DxResourcePool::bindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept
         {
             DxResource& resource = getResource(objectID);
             if (resource.isValid() == true)

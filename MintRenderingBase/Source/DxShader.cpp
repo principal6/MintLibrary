@@ -26,19 +26,19 @@ namespace mint
     {
 #pragma region Static function definitions
         template<uint32 BufferSize>
-        static void makeShaderVersion(StackStringA<BufferSize>& out, const DxShaderType shaderType, const DxShaderVersion shaderVersion)
+        static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicShaderType shaderType, const DxShaderVersion shaderVersion)
         {
             out.clear();
 
-            if (shaderType == DxShaderType::VertexShader)
+            if (shaderType == GraphicShaderType::VertexShader)
             {
                 out.append("vs_");
             }
-            else if (shaderType == DxShaderType::GeometryShader)
+            else if (shaderType == GraphicShaderType::GeometryShader)
             {
                 out.append("gs_");
             }
-            else if (shaderType == DxShaderType::PixelShader)
+            else if (shaderType == GraphicShaderType::PixelShader)
             {
                 out.append("ps_");
             }
@@ -55,8 +55,8 @@ namespace mint
 #pragma endregion
 
 
-        const DxShader DxShader::kNullInstance(GraphicDevice::getInvalidInstance(), DxShaderType::VertexShader);
-        DxShader::DxShader(GraphicDevice& graphicDevice, const DxShaderType shaderType)
+        const DxShader DxShader::kNullInstance(GraphicDevice::getInvalidInstance(), GraphicShaderType::VertexShader);
+        DxShader::DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
             : IGraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
         {
             __noop;
@@ -64,16 +64,16 @@ namespace mint
 
         void DxShader::bind() const noexcept
         {
-            if (_shaderType == DxShaderType::VertexShader)
+            if (_shaderType == GraphicShaderType::VertexShader)
             {
                 _graphicDevice.getStateManager().setVsShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
                 _graphicDevice.getStateManager().setIaInputLayout(_inputLayout.Get());
             }
-            else if (_shaderType == DxShaderType::GeometryShader)
+            else if (_shaderType == GraphicShaderType::GeometryShader)
             {
                 _graphicDevice.getStateManager().setGsShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
             }
-            else if (_shaderType == DxShaderType::PixelShader)
+            else if (_shaderType == GraphicShaderType::PixelShader)
             {
                 _graphicDevice.getStateManager().setPsShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
             }
@@ -81,16 +81,16 @@ namespace mint
 
         void DxShader::unbind() const noexcept
         {
-            if (_shaderType == DxShaderType::VertexShader)
+            if (_shaderType == GraphicShaderType::VertexShader)
             {
                 _graphicDevice.getStateManager().setVsShader(nullptr);
                 _graphicDevice.getStateManager().setIaInputLayout(nullptr);
             }
-            else if (_shaderType == DxShaderType::GeometryShader)
+            else if (_shaderType == GraphicShaderType::GeometryShader)
             {
                 _graphicDevice.getStateManager().setGsShader(nullptr);
             }
-            else if (_shaderType == DxShaderType::PixelShader)
+            else if (_shaderType == GraphicShaderType::PixelShader)
             {
                 _graphicDevice.getStateManager().setPsShader(nullptr);
             }
@@ -107,12 +107,12 @@ namespace mint
 
         const GraphicObjectID& DxShaderPool::pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData)
         {
-            DxShader shader(_graphicDevice, DxShaderType::VertexShader);
+            DxShader shader(_graphicDevice, GraphicShaderType::VertexShader);
 
             DxShaderCompileParam compileParam;
             compileParam._shaderIdentifier = shaderIdentifier;
             compileParam._shaderTextContent = textContent;
-            if (compileShaderInternalXXX(DxShaderType::VertexShader, compileParam, entryPoint, shader._shaderBlob.ReleaseAndGetAddressOf()) == false)
+            if (compileShaderInternalXXX(GraphicShaderType::VertexShader, compileParam, entryPoint, shader._shaderBlob.ReleaseAndGetAddressOf()) == false)
             {
                 return GraphicObjectID::kInvalidGraphicObjectID;
             }
@@ -121,7 +121,7 @@ namespace mint
             return pushVertexShaderInternal(shader, inputElementTypeMetaData);
         }
 
-        const GraphicObjectID& DxShaderPool::pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType)
+        const GraphicObjectID& DxShaderPool::pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
         {
             DxShader shader(_graphicDevice, shaderType);
 
@@ -139,15 +139,15 @@ namespace mint
 
         const GraphicObjectID& DxShaderPool::pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory)
         {
-            DxShader shader(_graphicDevice, DxShaderType::VertexShader);
-            if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, DxShaderType::VertexShader, false, shader) == false)
+            DxShader shader(_graphicDevice, GraphicShaderType::VertexShader);
+            if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, GraphicShaderType::VertexShader, false, shader) == false)
             {
                 return GraphicObjectID::kInvalidGraphicObjectID;
             }
             return pushVertexShaderInternal(shader, inputElementTypeMetaData);
         }
 
-        const GraphicObjectID& DxShaderPool::pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory)
+        const GraphicObjectID& DxShaderPool::pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
         {
             DxShader shader(_graphicDevice, shaderType);
             if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
@@ -168,17 +168,17 @@ namespace mint
             return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
-        const GraphicObjectID& DxShaderPool::pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
+        const GraphicObjectID& DxShaderPool::pushNonVertexShaderInternal(DxShader& shader, const GraphicShaderType shaderType)
         {
             if (createNonVertexShaderInternal(shader, shaderType) == true)
             {
-                if (shaderType == DxShaderType::GeometryShader)
+                if (shaderType == GraphicShaderType::GeometryShader)
                 {
                     shader.assignIDXXX();
                     _geometryShaderArray.push_back(std::move(shader));
                     return _geometryShaderArray.back().getID();
                 }
-                else if (shaderType == DxShaderType::PixelShader)
+                else if (shaderType == GraphicShaderType::PixelShader)
                 {
                     shader.assignIDXXX();
                     _pixelShaderArray.push_back(std::move(shader));
@@ -253,16 +253,16 @@ namespace mint
             inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
         }
 
-        bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType)
+        bool DxShaderPool::createNonVertexShaderInternal(DxShader& shader, const GraphicShaderType shaderType)
         {
-            if (shaderType == DxShaderType::GeometryShader)
+            if (shaderType == GraphicShaderType::GeometryShader)
             {
                 if (FAILED(_graphicDevice.getDxDevice()->CreateGeometryShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11GeometryShader**>(shader._shader.ReleaseAndGetAddressOf()))))
                 {
                     return false;
                 }
             }
-            else if (shaderType == DxShaderType::PixelShader)
+            else if (shaderType == GraphicShaderType::PixelShader)
             {
                 if (FAILED(_graphicDevice.getDxDevice()->CreatePixelShader(shader._shaderBlob->GetBufferPointer(), shader._shaderBlob->GetBufferSize(), NULL, reinterpret_cast<ID3D11PixelShader**>(shader._shader.ReleaseAndGetAddressOf()))))
                 {
@@ -277,7 +277,7 @@ namespace mint
             return true;
         }
 
-        bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+        bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
         {
             std::string inputShaderFilePath{ inputDirectory };
             inputShaderFilePath += inputShaderFileName;
@@ -307,7 +307,7 @@ namespace mint
             return compileShaderFromFile(inputShaderFilePath.c_str(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
         }
 
-        bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const DxShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
+        bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
         {
             if (kStringNPos == StringUtil::find(inputShaderFilePath, ".hlsl"))
             {
@@ -341,7 +341,7 @@ namespace mint
             return true;
         }
 
-        bool DxShaderPool::compileShaderInternalXXX(const DxShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
+        bool DxShaderPool::compileShaderInternalXXX(const GraphicShaderType shaderType, const DxShaderCompileParam& compileParam, const char* const entryPoint, ID3D10Blob** outBlob)
         {
             StackStringA<20> version;
             makeShaderVersion(version, shaderType, _shaderVersion);
@@ -391,10 +391,10 @@ namespace mint
 
         void DxShaderPool::recompileAllShaders()
         {
-            const uint32 shaderTypeCount = static_cast<uint32>(DxShaderType::COUNT);
+            const uint32 shaderTypeCount = static_cast<uint32>(GraphicShaderType::COUNT);
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
+                const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
                 const GraphicObjectID objectID = _boundShaderIDArray[shaderTypeIndex];
                 if (objectID.isValid() == true)
                 {
@@ -415,7 +415,7 @@ namespace mint
             {
                 DxShader& shader = _geometryShaderArray[geometryShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, DxShaderType::GeometryShader);
+                createNonVertexShaderInternal(shader, GraphicShaderType::GeometryShader);
             }
 
             const uint32 pixelShaderCount = _pixelShaderArray.size();
@@ -423,12 +423,12 @@ namespace mint
             {
                 DxShader& shader = _pixelShaderArray[pixelShaderIndex];
                 compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
-                createNonVertexShaderInternal(shader, DxShaderType::PixelShader);
+                createNonVertexShaderInternal(shader, GraphicShaderType::PixelShader);
             }
 
             for (uint32 shaderTypeIndex = 0; shaderTypeIndex < shaderTypeCount; ++shaderTypeIndex)
             {
-                const DxShaderType shaderType = static_cast<DxShaderType>(shaderTypeIndex);
+                const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
                 const GraphicObjectID objectID = _boundShaderIDArray[shaderTypeIndex];
                 if (objectID.isValid() == true)
                 {
@@ -448,7 +448,7 @@ namespace mint
             MINT_LOG_ERROR("Shader Compile Error\n\n%s", errorMessages.c_str());
         }
 
-        void DxShaderPool::bindShaderIfNot(const DxShaderType shaderType, const GraphicObjectID& objectID)
+        void DxShaderPool::bindShaderIfNot(const GraphicShaderType shaderType, const GraphicObjectID& objectID)
         {
             const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
             if (_boundShaderIDArray[shaderTypeIndex] != objectID)
@@ -459,9 +459,9 @@ namespace mint
             }
         }
 
-        void DxShaderPool::unbindShader(const DxShaderType shaderType)
+        void DxShaderPool::unbindShader(const GraphicShaderType shaderType)
         {
-            if (shaderType == DxShaderType::COUNT)
+            if (shaderType == GraphicShaderType::COUNT)
             {
                 return;
             }
@@ -476,11 +476,11 @@ namespace mint
             _boundShaderIDArray[shaderTypeIndex] = GraphicObjectID::kInvalidGraphicObjectID;
         }
 
-        const DxShader& DxShaderPool::getShader(const DxShaderType shaderType, const GraphicObjectID& objectID)
+        const DxShader& DxShaderPool::getShader(const GraphicShaderType shaderType, const GraphicObjectID& objectID)
         {
             MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - ObjectType !!");
 
-            if (shaderType == DxShaderType::VertexShader)
+            if (shaderType == GraphicShaderType::VertexShader)
             {
                 const int32 index = binarySearch(_vertexShaderArray, objectID, IGraphicObject::Evaluator());
                 if (index >= 0)
@@ -488,7 +488,7 @@ namespace mint
                     return _vertexShaderArray[index];
                 }
             }
-            else if (shaderType == DxShaderType::GeometryShader)
+            else if (shaderType == GraphicShaderType::GeometryShader)
             {
                 const int32 index = binarySearch(_geometryShaderArray, objectID, IGraphicObject::Evaluator());
                 if (index >= 0)
@@ -496,7 +496,7 @@ namespace mint
                     return _geometryShaderArray[index];
                 }
             }
-            else if (shaderType == DxShaderType::PixelShader)
+            else if (shaderType == GraphicShaderType::PixelShader)
             {
                 const int32 index = binarySearch(_pixelShaderArray, objectID, IGraphicObject::Evaluator());
                 if (index >= 0)

@@ -88,7 +88,7 @@ namespace mint
                     }
                     )"
                 };
-                _geometryShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", DxShaderType::GeometryShader);
+                _geometryShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", GraphicShaderType::GeometryShader);
             }
 
             {
@@ -176,7 +176,7 @@ namespace mint
                     }
                     )"
                 };
-                _pixelShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", DxShaderType::PixelShader);
+                _pixelShaderID = shaderPool.pushNonVertexShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", GraphicShaderType::PixelShader);
             }
         }
 
@@ -197,27 +197,27 @@ namespace mint
             prepareTransformBuffer();
 
             // TODO : Slot 처리...
-            _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, DxShaderType::PixelShader, 0);
+            _graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, GraphicShaderType::PixelShader, 0);
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            shaderPool.bindShaderIfNot(DxShaderType::VertexShader, _vertexShaderID);
+            shaderPool.bindShaderIfNot(GraphicShaderType::VertexShader, _vertexShaderID);
 
             if (isUsingMultipleViewports())
             {
-                shaderPool.bindShaderIfNot(DxShaderType::GeometryShader, _geometryShaderID);
+                shaderPool.bindShaderIfNot(GraphicShaderType::GeometryShader, _geometryShaderID);
             }
 
-            shaderPool.bindShaderIfNot(DxShaderType::PixelShader, _pixelShaderID);
+            shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _pixelShaderID);
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
             DxResource& sbTransformBuffer = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
-            sbTransformBuffer.bindToShader(DxShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
+            sbTransformBuffer.bindToShader(GraphicShaderType::VertexShader, sbTransformBuffer.getRegisterIndex());
 
             _lowLevelRenderer->executeRenderCommands();
 
             if (isUsingMultipleViewports())
             {
-                shaderPool.unbindShader(DxShaderType::GeometryShader);
+                shaderPool.unbindShader(GraphicShaderType::GeometryShader);
             }
         }
 
