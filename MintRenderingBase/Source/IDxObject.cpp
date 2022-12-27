@@ -3,9 +3,9 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        const DxObjectID    DxObjectID::kInvalidObjectID;
-        std::atomic<uint32> DxObjectID::_lastRawID{ DxObjectID::kDxInvalidObjectRawID };
-    }
+	namespace Rendering
+	{
+		const DxObjectID DxObjectID::kInvalidObjectID;
+		std::atomic<uint32> DxObjectID::_lastRawID{ DxObjectID::kDxInvalidObjectRawID };
+	}
 }
