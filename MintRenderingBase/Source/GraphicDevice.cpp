@@ -678,11 +678,6 @@ namespace mint
 			_currentRasterizerFor3D = _rasterizerStateSolidCullBack.Get();
 		}
 
-		const D3D11_VIEWPORT& GraphicDevice::getFullScreenViewport() const noexcept
-		{
-			return _fullScreenViewport;
-		}
-
 		const Rect& GraphicDevice::getFullScreenClipRect() const noexcept
 		{
 			return _fullScreenClipRect;

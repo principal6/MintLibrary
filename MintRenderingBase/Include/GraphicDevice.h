@@ -165,7 +165,6 @@ namespace mint
 			void useWireFrameNoCullingRasterizer() noexcept;
 			void useWireFrameCullBackRasterizer() noexcept;
 			void useSolidCullBackRasterizer() noexcept;
-			const D3D11_VIEWPORT& getFullScreenViewport() const noexcept;
 			const Rect& getFullScreenClipRect() const noexcept;
 
 		public:
