@@ -18,6 +18,7 @@ robocopy MintRendering/Include Out/MintLibrary/Include/MintRendering/Include /S
 robocopy MintRenderingBase/Include Out/MintLibrary/Include/MintRenderingBase/Include /S
 
 : Lib Directory (DEBUG)
+robocopy _output/Debug Out/MintLibrary/Lib/Debug MintCommon.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintContainer.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintGame.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintLanguage.lib
@@ -29,6 +30,7 @@ robocopy _output/Debug Out/MintLibrary/Lib/Debug MintRendering.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintRenderingBase.lib
 
 : Lib Directory (RELEASE)
+robocopy _output/Release Out/MintLibrary/Lib/Release MintCommon.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintContainer.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintGame.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintLanguage.lib
