@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 namespace mint
@@ -51,17 +51,17 @@ namespace mint
             return _stateManager;
         }
 
-        MINT_INLINE DxObjectID GraphicDevice::getCommonCbTransformID() const noexcept
+        MINT_INLINE GraphicObjectID GraphicDevice::getCommonCbTransformID() const noexcept
         {
             return _cbTransformID;
         }
 
-        MINT_INLINE DxObjectID GraphicDevice::getCommonSBTransformID() const noexcept
+        MINT_INLINE GraphicObjectID GraphicDevice::getCommonSBTransformID() const noexcept
         {
             return _sbTransformID;
         }
 
-        MINT_INLINE DxObjectID GraphicDevice::getCommonSBMaterialID() const noexcept
+        MINT_INLINE GraphicObjectID GraphicDevice::getCommonSBMaterialID() const noexcept
         {
             return _sbMaterialID;
         }

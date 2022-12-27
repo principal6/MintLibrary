@@ -18,7 +18,7 @@
 #include <MintMath/Include/Int2.h>
 #include <MintMath/Include/Rect.h>
 
-#include <MintRenderingBase/Include/IDxObject.h>
+#include <MintRenderingBase/Include/IGraphicObject.h>
 
 #include <Assets/Include/CppHlsl/CppHlslStructuredBuffers.h>
 

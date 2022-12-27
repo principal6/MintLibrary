@@ -39,7 +39,7 @@
     <ClInclude Include="Include\GraphicDevice.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\IDxObject.h">
+    <ClInclude Include="Include\IGraphicObject.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\IRendererContext.h">
@@ -136,7 +136,7 @@
     <ClCompile Include="Source\GraphicDevice.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\IDxObject.cpp">
+    <ClCompile Include="Source\IGraphicObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\ShapeRendererContext.cpp">

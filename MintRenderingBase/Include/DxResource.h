@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/IDxObject.h>
+#include <MintRenderingBase/Include/IGraphicObject.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -45,7 +45,7 @@ namespace mint
         };
 
 
-        class DxResource final : public IDxObject
+        class DxResource final : public IGraphicObject
         {
             friend DxResourcePool;
 
@@ -119,7 +119,7 @@ namespace mint
         };
 
 
-        class DxResourcePool final : public IDxObject
+        class DxResourcePool final : public IGraphicObject
         {
         public:
                                     DxResourcePool(GraphicDevice& graphicDevice);
@@ -127,20 +127,20 @@ namespace mint
             virtual                 ~DxResourcePool() = default;
 
         public:
-            const DxObjectID&       pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-            const DxObjectID&       pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-            const DxObjectID&       pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-            const DxObjectID&       pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+            const GraphicObjectID&       pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+            const GraphicObjectID&       pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+            const GraphicObjectID&       pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+            const GraphicObjectID&       pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
         public:
-            const DxObjectID&       pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+            const GraphicObjectID&       pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
         public:
-            void                    bindAsInput(const DxObjectID& objectID) noexcept;
-            void                    bindToShader(const DxObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
+            void                    bindAsInput(const GraphicObjectID& objectID) noexcept;
+            void                    bindToShader(const GraphicObjectID& objectID, const DxShaderType shaderType, const uint32 bindingSlot) noexcept;
 
         public:
-            DxResource&             getResource(const DxObjectID& objectID);
+            DxResource&             getResource(const GraphicObjectID& objectID);
 
         private:
             Vector<DxResource>      _resourceArray{};

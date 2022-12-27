@@ -162,9 +162,9 @@ namespace mint
             float           packInfoAsFloat(const ShapeType shapeType) const noexcept;
 
         protected:
-            DxObjectID      _vertexShaderID;
-            DxObjectID      _geometryShaderID;
-            DxObjectID      _pixelShaderID;
+            GraphicObjectID      _vertexShaderID;
+            GraphicObjectID      _geometryShaderID;
+            GraphicObjectID      _pixelShaderID;
 
             Color           _shapeBorderColor;
             

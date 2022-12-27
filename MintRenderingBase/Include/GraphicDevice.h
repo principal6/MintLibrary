@@ -113,14 +113,14 @@ namespace mint
 				ID3D11PixelShader* _psShader;
 
 			private: // Resources
-				Vector<DxObjectID> _vsShaderResources;
-				Vector<DxObjectID> _gsShaderResources;
-				Vector<DxObjectID> _psShaderResources;
+				Vector<GraphicObjectID> _vsShaderResources;
+				Vector<GraphicObjectID> _gsShaderResources;
+				Vector<GraphicObjectID> _psShaderResources;
 
 			private: // Constant Buffers
-				Vector<DxObjectID> _vsConstantBuffers;
-				Vector<DxObjectID> _gsConstantBuffers;
-				Vector<DxObjectID> _psConstantBuffers;
+				Vector<GraphicObjectID> _vsConstantBuffers;
+				Vector<GraphicObjectID> _gsConstantBuffers;
+				Vector<GraphicObjectID> _psConstantBuffers;
 			};
 
 			friend SafeResourceMapper;
@@ -177,9 +177,9 @@ namespace mint
 			StateManager& getStateManager() noexcept;
 
 		public: // Common buffers
-			DxObjectID getCommonCbTransformID() const noexcept;
-			DxObjectID getCommonSBTransformID() const noexcept;
-			DxObjectID getCommonSBMaterialID() const noexcept;
+			GraphicObjectID getCommonCbTransformID() const noexcept;
+			GraphicObjectID getCommonSBTransformID() const noexcept;
+			GraphicObjectID getCommonSBMaterialID() const noexcept;
 
 		public:
 			void initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
@@ -227,12 +227,12 @@ namespace mint
 
 		private:
 			CB_View _cbViewData;
-			DxObjectID _cbViewID;
+			GraphicObjectID _cbViewID;
 
 		private: // Common buffers
-			DxObjectID _cbTransformID;
-			DxObjectID _sbTransformID;
-			DxObjectID _sbMaterialID;
+			GraphicObjectID _cbTransformID;
+			GraphicObjectID _sbTransformID;
+			GraphicObjectID _sbMaterialID;
 
 		private:
 			ComPtr<ID3D11SamplerState> _samplerState;

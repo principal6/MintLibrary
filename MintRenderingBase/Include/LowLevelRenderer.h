@@ -11,7 +11,7 @@
 
 #include <Assets/Include/CppHlsl/CppHlslStreamData.h>
 
-#include <MintRenderingBase/Include/IDxObject.h>
+#include <MintRenderingBase/Include/IGraphicObject.h>
 
 #include <MintMath/Include/Rect.h>
 
@@ -128,12 +128,12 @@ namespace mint
         
         private:
             Vector<T>                       _vertices;
-            DxObjectID                      _vertexBufferID;
+            GraphicObjectID                      _vertexBufferID;
 
         private:
             Vector<IndexElementType>        _indices;
             IndexElementType                _indexBase;
-            DxObjectID                      _indexBufferID;
+            GraphicObjectID                      _indexBufferID;
 
         private:
             bool                                _isOrdinalMode = false;

@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/IDxObject.h>
+#include <MintRenderingBase/Include/IGraphicObject.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -50,7 +50,7 @@ namespace mint
         };
 
 
-        class DxShader final : public IDxObject
+        class DxShader final : public IGraphicObject
         {
             friend DxShaderPool;
 
@@ -87,7 +87,7 @@ namespace mint
             const char*         _shaderTextContent = nullptr;
         };
 
-        class DxShaderPool final : public IDxObject
+        class DxShaderPool final : public IGraphicObject
         {
             template <typename CustomDataType>
             using TypeMetaData = Language::TypeMetaData<CustomDataType>;
@@ -102,16 +102,16 @@ namespace mint
             virtual                 ~DxShaderPool() = default;
 
         public:
-            const DxObjectID&       pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectID&       pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
+            const GraphicObjectID&       pushVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const GraphicObjectID&       pushNonVertexShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const DxShaderType shaderType);
 
         public:
-            const DxObjectID&       pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
-            const DxObjectID&       pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
+            const GraphicObjectID&       pushVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData, const char* const outputDirectory = nullptr);
+            const GraphicObjectID&       pushNonVertexShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const DxShaderType shaderType, const char* const outputDirectory = nullptr);
 
         private:
-            const DxObjectID&       pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
-            const DxObjectID&       pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
+            const GraphicObjectID&       pushVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
+            const GraphicObjectID&       pushNonVertexShaderInternal(DxShader& shader, const DxShaderType shaderType);
     
         private:
             bool                    createVertexShaderInternal(DxShader& shader, const TypeMetaData<TypeCustomData>* const inputElementTypeMetaData);
@@ -130,11 +130,11 @@ namespace mint
             void                    reportCompileError();
 
         public:
-            void                    bindShaderIfNot(const DxShaderType shaderType, const DxObjectID& objectID);
+            void                    bindShaderIfNot(const DxShaderType shaderType, const GraphicObjectID& objectID);
             void                    unbindShader(const DxShaderType shaderType);
         
         private:
-            const DxShader&         getShader(const DxShaderType shaderType, const DxObjectID& objectID);
+            const DxShader&         getShader(const DxShaderType shaderType, const GraphicObjectID& objectID);
 
         private:
             ComPtr<ID3DBlob>        _errorMessageBlob;
@@ -151,7 +151,7 @@ namespace mint
             Vector<DxShader>        _pixelShaderArray;
 
         private:
-            DxObjectID              _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
+            GraphicObjectID              _boundShaderIDArray[static_cast<uint32>(DxShaderType::COUNT)];
         };
     }
 }

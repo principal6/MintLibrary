@@ -77,7 +77,7 @@ namespace mint
             uint32              computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 
             Vector<GlyphInfo>   _glyphInfoArray;
-            DxObjectID          _fontTextureID;
+            GraphicObjectID          _fontTextureID;
             int16               _fontSize = 0;
 
         private:
