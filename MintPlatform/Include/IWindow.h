@@ -95,8 +95,10 @@ namespace mint
 
 			virtual uint32 getCaretBlinkIntervalMs() const noexcept abstract;
 
+		public:
 			virtual void textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept abstract;
 			virtual void textFromClipboard(StringW& outText) const noexcept abstract;
+
 			virtual void showMessageBox(const std::wstring& title, const std::wstring& message, const MessageBoxType messageBoxType) const noexcept abstract;
 
 		protected:
