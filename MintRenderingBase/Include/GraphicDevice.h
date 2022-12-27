@@ -70,30 +70,30 @@ namespace mint
 				~StateManager() = default;
 
 			public: // IA
-				void setIaInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
-				void setIaRenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
-				void setIaVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
-				void setIaIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
+				void setIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
+				void setIARenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
+				void setIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
+				void setIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
 
 			public: // RS
-				void setRsRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
-				void setRsViewport(const D3D11_VIEWPORT rsViewport) noexcept;
-				void setRsScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
+				void setRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
+				void setRSViewport(const D3D11_VIEWPORT rsViewport) noexcept;
+				void setRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
 
 			public: // Shader
-				void setVsShader(ID3D11VertexShader* const shader) noexcept;
-				void setGsShader(ID3D11GeometryShader* const shader) noexcept;
-				void setPsShader(ID3D11PixelShader* const shader) noexcept;
+				void setVSShader(ID3D11VertexShader* const shader) noexcept;
+				void setGSShader(ID3D11GeometryShader* const shader) noexcept;
+				void setPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void setVsResources(const DxResource& resource) noexcept;
-				void setGsResources(const DxResource& resource) noexcept;
-				void setPsResources(const DxResource& resource) noexcept;
+				void setVSResources(const DxResource& resource) noexcept;
+				void setGSResources(const DxResource& resource) noexcept;
+				void setPSResources(const DxResource& resource) noexcept;
 
 			public: // Constant Buffers
-				void setVsConstantBuffers(const DxResource& constantBuffer);
-				void setGsConstantBuffers(const DxResource& constantBuffer);
-				void setPsConstantBuffers(const DxResource& constantBuffer);
+				void setVSConstantBuffers(const DxResource& constantBuffer);
+				void setGSConstantBuffers(const DxResource& constantBuffer);
+				void setPSConstantBuffers(const DxResource& constantBuffer);
 
 			private:
 				GraphicDevice& _graphicDevice;

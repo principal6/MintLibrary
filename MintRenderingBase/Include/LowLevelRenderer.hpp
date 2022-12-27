@@ -117,7 +117,7 @@ namespace mint
 			const uint32 vertexCount = static_cast<uint32>(_vertices.size());
 			const uint32 indexCount = static_cast<uint32>(_indices.size());
 
-			_graphicDevice.getStateManager().setIaRenderingPrimitive(renderingPrimitive);
+			_graphicDevice.getStateManager().setIARenderingPrimitive(renderingPrimitive);
 
 			switch (renderingPrimitive)
 			{
@@ -330,9 +330,9 @@ namespace mint
 		inline void LowLevelRenderer<T>::executeRenderCommands_draw(const RenderCommand& renderCommand) const noexcept
 		{
 			D3D11_RECT scissorRect = rectToD3dRect(renderCommand._clipRect);
-			_graphicDevice.getStateManager().setRsScissorRectangle(scissorRect);
+			_graphicDevice.getStateManager().setRSScissorRectangle(scissorRect);
 
-			_graphicDevice.getStateManager().setIaRenderingPrimitive(renderCommand._primitive);
+			_graphicDevice.getStateManager().setIARenderingPrimitive(renderCommand._primitive);
 
 			switch (renderCommand._primitive)
 			{

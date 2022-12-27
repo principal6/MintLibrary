@@ -74,14 +74,14 @@ namespace mint
 			__noop;
 		}
 
-		void GraphicDevice::StateManager::setIaInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept
+		void GraphicDevice::StateManager::setIAInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept
 		{
 			MINT_CHECK_STATE(_iaInputLayout, iaInputLayout);
 
 			_graphicDevice._deviceContext->IASetInputLayout(_iaInputLayout);
 		}
 
-		void GraphicDevice::StateManager::setIaRenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
+		void GraphicDevice::StateManager::setIARenderingPrimitive(const RenderingPrimitive iaRenderingPrimitive) noexcept
 		{
 			MINT_CHECK_STATE(_iaRenderingPrimitive, iaRenderingPrimitive);
 
@@ -101,59 +101,59 @@ namespace mint
 			}
 		}
 
-		void GraphicDevice::StateManager::setIaVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept
+		void GraphicDevice::StateManager::setIAVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept
 		{
 			_graphicDevice._deviceContext->IASetVertexBuffers(bindingStartSlot, bufferCount, buffers, strides, offsets);
 		}
 
-		void GraphicDevice::StateManager::setIaIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept
+		void GraphicDevice::StateManager::setIAIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept
 		{
 			_graphicDevice._deviceContext->IASetIndexBuffer(buffer, format, offset);
 		}
 
-		void GraphicDevice::StateManager::setRsRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
+		void GraphicDevice::StateManager::setRSRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept
 		{
 			MINT_CHECK_STATE(_rsRasterizerState, rsRasterizerState);
 
 			_graphicDevice._deviceContext->RSSetState(_rsRasterizerState);
 		}
 
-		void GraphicDevice::StateManager::setRsViewport(const D3D11_VIEWPORT rsViewport) noexcept
+		void GraphicDevice::StateManager::setRSViewport(const D3D11_VIEWPORT rsViewport) noexcept
 		{
 			MINT_CHECK_STATE(_rsViewport, rsViewport);
 
 			_graphicDevice._deviceContext->RSSetViewports(1, &rsViewport);
 		}
 
-		void GraphicDevice::StateManager::setRsScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
+		void GraphicDevice::StateManager::setRSScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept
 		{
 			MINT_CHECK_STATE(_rsScissorRectangle, rsScissorRectangle);
 
 			_graphicDevice._deviceContext->RSSetScissorRects(1, &rsScissorRectangle);
 		}
 
-		void GraphicDevice::StateManager::setVsShader(ID3D11VertexShader* const shader) noexcept
+		void GraphicDevice::StateManager::setVSShader(ID3D11VertexShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_vsShader, shader);
 
 			_graphicDevice._deviceContext->VSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setGsShader(ID3D11GeometryShader* const shader) noexcept
+		void GraphicDevice::StateManager::setGSShader(ID3D11GeometryShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_gsShader, shader);
 
 			_graphicDevice._deviceContext->GSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setPsShader(ID3D11PixelShader* const shader) noexcept
+		void GraphicDevice::StateManager::setPSShader(ID3D11PixelShader* const shader) noexcept
 		{
 			MINT_CHECK_STATE(_psShader, shader);
 
 			_graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setVsResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setVSResources(const DxResource& resource) noexcept
 		{
 			Vector<GraphicObjectID>& shaderResources = _vsShaderResources;
 			if (shaderResources.size() <= resource.getRegisterIndex())
@@ -169,7 +169,7 @@ namespace mint
 			_graphicDevice._deviceContext->VSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setGsResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setGSResources(const DxResource& resource) noexcept
 		{
 			Vector<GraphicObjectID>& shaderResources = _gsShaderResources;
 			if (shaderResources.size() <= resource.getRegisterIndex())
@@ -185,7 +185,7 @@ namespace mint
 			_graphicDevice._deviceContext->GSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setPsResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setPSResources(const DxResource& resource) noexcept
 		{
 			Vector<GraphicObjectID>& shaderResources = _psShaderResources;
 			if (shaderResources.size() <= resource.getRegisterIndex())
@@ -201,7 +201,7 @@ namespace mint
 			_graphicDevice._deviceContext->PSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setVsConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setVSConstantBuffers(const DxResource& constantBuffer)
 		{
 			Vector<GraphicObjectID>& constantBuffers = _vsConstantBuffers;
 			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
@@ -217,7 +217,7 @@ namespace mint
 			_graphicDevice._deviceContext->VSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
 		}
 
-		void GraphicDevice::StateManager::setGsConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setGSConstantBuffers(const DxResource& constantBuffer)
 		{
 			Vector<GraphicObjectID>& constantBuffers = _gsConstantBuffers;
 			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
@@ -233,7 +233,7 @@ namespace mint
 			_graphicDevice._deviceContext->GSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
 		}
 
-		void GraphicDevice::StateManager::setPsConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setPSConstantBuffers(const DxResource& constantBuffer)
 		{
 			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
 			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
@@ -653,14 +653,14 @@ namespace mint
 
 		void GraphicDevice::useScissorRectangles() noexcept
 		{
-			_stateManager.setRsRasterizerState(_rasterizerStateScissorRectangles.Get());
-			_stateManager.setRsViewport(_fullScreenViewport);
+			_stateManager.setRSRasterizerState(_rasterizerStateScissorRectangles.Get());
+			_stateManager.setRSViewport(_fullScreenViewport);
 		}
 
 		void GraphicDevice::useFullScreenViewport() noexcept
 		{
-			_stateManager.setRsRasterizerState(_currentRasterizerFor3D);
-			_stateManager.setRsViewport(_fullScreenViewport);
+			_stateManager.setRSRasterizerState(_currentRasterizerFor3D);
+			_stateManager.setRSViewport(_fullScreenViewport);
 		}
 
 		void GraphicDevice::useWireFrameNoCullingRasterizer() noexcept

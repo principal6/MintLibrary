@@ -310,11 +310,11 @@ namespace mint
         {
             if (_resourceType == DxResourceType::VertexBuffer)
             {
-                _graphicDevice.getStateManager().setIaVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
+                _graphicDevice.getStateManager().setIAVertexBuffers(0, 1, reinterpret_cast<ID3D11Buffer* const *>(_resource.GetAddressOf()), &_elementStride, &_elementOffset);
             }
             else if (_resourceType == DxResourceType::IndexBuffer)
             {
-                _graphicDevice.getStateManager().setIaIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
+                _graphicDevice.getStateManager().setIAIndexBuffer(reinterpret_cast<ID3D11Buffer*>(_resource.Get()), kIndexBufferFormat, _elementOffset);
             }
             else
             {
@@ -330,15 +330,15 @@ namespace mint
             {
                 if (shaderType == GraphicShaderType::VertexShader)
                 {
-                    _graphicDevice.getStateManager().setVsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setVSConstantBuffers(*this);
                 }
                 else if (shaderType == GraphicShaderType::GeometryShader)
                 {
-                    _graphicDevice.getStateManager().setGsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setGSConstantBuffers(*this);
                 }
                 else if (shaderType == GraphicShaderType::PixelShader)
                 {
-                    _graphicDevice.getStateManager().setPsConstantBuffers(*this);
+                    _graphicDevice.getStateManager().setPSConstantBuffers(*this);
                 }
                 else
                 {
@@ -349,15 +349,15 @@ namespace mint
             {
                 if (shaderType == GraphicShaderType::VertexShader)
                 {
-                    _graphicDevice.getStateManager().setVsResources(*this);
+                    _graphicDevice.getStateManager().setVSResources(*this);
                 }
                 else if (shaderType == GraphicShaderType::GeometryShader)
                 {
-                    _graphicDevice.getStateManager().setGsResources(*this);
+                    _graphicDevice.getStateManager().setGSResources(*this);
                 }
                 else if (shaderType == GraphicShaderType::PixelShader)
                 {
-                    _graphicDevice.getStateManager().setPsResources(*this);
+                    _graphicDevice.getStateManager().setPSResources(*this);
                 }
                 else
                 {

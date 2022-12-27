@@ -66,16 +66,16 @@ namespace mint
         {
             if (_shaderType == GraphicShaderType::VertexShader)
             {
-                _graphicDevice.getStateManager().setVsShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
-                _graphicDevice.getStateManager().setIaInputLayout(_inputLayout.Get());
+                _graphicDevice.getStateManager().setVSShader(static_cast<ID3D11VertexShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setIAInputLayout(_inputLayout.Get());
             }
             else if (_shaderType == GraphicShaderType::GeometryShader)
             {
-                _graphicDevice.getStateManager().setGsShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setGSShader(static_cast<ID3D11GeometryShader*>(_shader.Get()));
             }
             else if (_shaderType == GraphicShaderType::PixelShader)
             {
-                _graphicDevice.getStateManager().setPsShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
+                _graphicDevice.getStateManager().setPSShader(static_cast<ID3D11PixelShader*>(_shader.Get()));
             }
         }
 
@@ -83,16 +83,16 @@ namespace mint
         {
             if (_shaderType == GraphicShaderType::VertexShader)
             {
-                _graphicDevice.getStateManager().setVsShader(nullptr);
-                _graphicDevice.getStateManager().setIaInputLayout(nullptr);
+                _graphicDevice.getStateManager().setVSShader(nullptr);
+                _graphicDevice.getStateManager().setIAInputLayout(nullptr);
             }
             else if (_shaderType == GraphicShaderType::GeometryShader)
             {
-                _graphicDevice.getStateManager().setGsShader(nullptr);
+                _graphicDevice.getStateManager().setGSShader(nullptr);
             }
             else if (_shaderType == GraphicShaderType::PixelShader)
             {
-                _graphicDevice.getStateManager().setPsShader(nullptr);
+                _graphicDevice.getStateManager().setPSShader(nullptr);
             }
         }
 
