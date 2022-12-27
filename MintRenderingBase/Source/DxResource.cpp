@@ -392,7 +392,7 @@ namespace mint
                 return _resourceArray.back().getID();
             }
             MINT_ASSERT(false, "pushConstantBuffer 에 실패했습니다!");
-            return GraphicObjectID::kInvalidObjectID;
+            return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
         const GraphicObjectID& DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
@@ -407,7 +407,7 @@ namespace mint
             }
 
             MINT_ASSERT(false, "pushVertexBuffer 에 실패했습니다!");
-            return GraphicObjectID::kInvalidObjectID;
+            return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
         const GraphicObjectID& DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
@@ -422,7 +422,7 @@ namespace mint
             }
 
             MINT_ASSERT(false, "pushIndexBuffer 에 실패했습니다!");
-            return GraphicObjectID::kInvalidObjectID;
+            return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
         const GraphicObjectID& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
@@ -439,7 +439,7 @@ namespace mint
             }
 
             MINT_ASSERT(false, "pushStructuredBuffer 에 실패했습니다!");
-            return GraphicObjectID::kInvalidObjectID;
+            return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
         const GraphicObjectID& DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
@@ -454,7 +454,7 @@ namespace mint
             }
 
             MINT_ASSERT(false, "pushTexture2D 에 실패했습니다!");
-            return GraphicObjectID::kInvalidObjectID;
+            return GraphicObjectID::kInvalidGraphicObjectID;
         }
 
         void DxResourcePool::bindAsInput(const GraphicObjectID& objectID) noexcept

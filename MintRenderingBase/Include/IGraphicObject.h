@@ -109,7 +109,7 @@ namespace mint
 			static std::atomic<uint32> _lastRawID;
 
 		public:
-			static const GraphicObjectID kInvalidObjectID;
+			static const GraphicObjectID kInvalidGraphicObjectID;
 		};
 
 
