@@ -33,7 +33,7 @@ bool runTestWindow()
     using namespace Rendering;
 
     WindowCreationDesc windowCreationDesc;
-    windowCreationDesc._style = Style::Default;
+    windowCreationDesc._style = WindowStyle::Default;
     windowCreationDesc._position.set(200, 100);
     windowCreationDesc._size.set(1024, 768);
     windowCreationDesc._title = L"HI";

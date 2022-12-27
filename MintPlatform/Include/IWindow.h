@@ -21,11 +21,20 @@ namespace mint
 {
 	namespace Window
 	{
-		enum class Style
+		enum class WindowStyle
 		{
 			Default,
 			Clean,
 			Resizable,
+		};
+
+		struct WindowCreationDesc
+		{
+			Int2 _size{ 800, 600 };
+			Int2 _position{ kInt32Min, kInt32Min };
+			const wchar_t* _title{ L"MintLibrary" };
+			WindowStyle _style{ WindowStyle::Default };
+			Float3 _backgroundColor{ 1.0f, 1.0f, 1.0f };
 		};
 
 		enum class WindowCreationError
@@ -42,15 +51,6 @@ namespace mint
 			Ok,
 			Warning,
 			Error,
-		};
-
-		struct WindowCreationDesc
-		{
-			Int2 _size{ 800, 600 };
-			Int2 _position{ kInt32Min, kInt32Min };
-			const wchar_t* _title{ L"MintLibrary" };
-			Style _style{ Style::Default };
-			Float3 _backgroundColor{ 1.0f, 1.0f, 1.0f };
 		};
 
 		enum class CursorType
@@ -75,19 +75,15 @@ namespace mint
 		public:
 			virtual bool create(const WindowCreationDesc& windowCreationDesc) noexcept abstract;
 			virtual void destroy() noexcept { _isRunning = false; }
+			WindowCreationError getWindowCreationError() const noexcept { return _windowCreationError; }
 
 		public:
 			virtual bool isRunning() noexcept { return _isRunning; }
 
 		public:
-			WindowCreationError getWindowCreationError() const noexcept { return _windowCreationError; }
-
-		public:
 			virtual void setSize(const Int2& newSize, const bool onlyUpdateData) noexcept { _isWindowResized = true; }
 			const Int2& getSize() const noexcept { return _windowCreationDesc._size; }
 			MINT_INLINE bool isResized() const noexcept { bool result = _isWindowResized; _isWindowResized = false; return result; }
-
-			const Int2& getEntireSize() const noexcept { return _entireSize; }
 
 			virtual void setPosition(const Int2& newPosition) abstract;
 			const Int2& getPosition() const noexcept { return _windowCreationDesc._position; }
@@ -110,8 +106,8 @@ namespace mint
 			bool _isRunning;
 			Platform::PlatformType _platformType;
 			WindowCreationDesc _windowCreationDesc;
-			Int2 _entireSize;
 			WindowCreationError _windowCreationError;
+			Int2 _entireWindowSize;
 
 		private:
 			mutable bool _isWindowResized;
