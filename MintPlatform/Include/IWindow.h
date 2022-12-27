@@ -19,7 +19,7 @@
 
 namespace mint
 {
-	namespace Window
+	namespace Platform
 	{
 		enum class WindowStyle
 		{

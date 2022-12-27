@@ -3,7 +3,7 @@
 
 namespace mint
 {
-	namespace Window
+	namespace Platform
 	{
 		IWindow::IWindow()
 			: IWindow(Platform::PlatformType::INVALID)

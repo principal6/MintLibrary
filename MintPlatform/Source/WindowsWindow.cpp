@@ -20,7 +20,7 @@
 
 namespace mint
 {
-	namespace Window
+	namespace Platform
 	{
 #define MINT_WINDOW_RETURN_OK _windowCreationError = WindowCreationError::None; return true
 #define MINT_WINDOW_RETURN_FAIL(error) _windowCreationError = error; return false

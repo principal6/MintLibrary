@@ -29,7 +29,7 @@
 bool runTestWindow()
 {
     using namespace mint;
-    using namespace Window;
+    using namespace Platform;
     using namespace Rendering;
 
     WindowCreationDesc windowCreationDesc;

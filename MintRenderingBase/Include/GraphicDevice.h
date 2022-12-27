@@ -29,233 +29,233 @@
 
 namespace mint
 {
-    namespace Window
-    {
-        class IWindow;
-    }
+	namespace Platform
+	{
+		class IWindow;
+	}
 
-    namespace Rendering
-    {
-        using Microsoft::WRL::ComPtr;
-
-
-        D3D11_RECT  rectToD3dRect(const Rect& rect) noexcept;
+	namespace Rendering
+	{
+		using Microsoft::WRL::ComPtr;
 
 
-        class SafeResourceMapper
-        {
-        public:
-                                        SafeResourceMapper(GraphicDevice& graphicDevice, ID3D11Resource* const resource, const uint32 subresource);
-                                        ~SafeResourceMapper();
-
-        public:
-            bool                        isValid() const noexcept;
-            void                        set(const void* const data, const uint32 size) noexcept;
-
-        private:
-            GraphicDevice&              _graphicDevice;
-            ID3D11Resource* const       _resource;
-            const uint32                _subresource;
-            D3D11_MAPPED_SUBRESOURCE    _mappedSubresource;
-        };
+		D3D11_RECT rectToD3dRect(const Rect& rect) noexcept;
 
 
-        class GraphicDevice final
-        {
-        public:
-            class StateManager
-            {
-            public:
-                                        StateManager(GraphicDevice& graphicDevice);
-                                        ~StateManager() = default;
+		class SafeResourceMapper
+		{
+		public:
+			SafeResourceMapper(GraphicDevice& graphicDevice, ID3D11Resource* const resource, const uint32 subresource);
+			~SafeResourceMapper();
 
-            public: // IA
-                void                    setIaInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
-                void                    setIaRenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
-                void                    setIaVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
-                void                    setIaIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
+		public:
+			bool isValid() const noexcept;
+			void set(const void* const data, const uint32 size) noexcept;
 
-            public: // RS
-                void                    setRsRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
-                void                    setRsViewport(const D3D11_VIEWPORT rsViewport) noexcept;
-                void                    setRsScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
+		private:
+			GraphicDevice& _graphicDevice;
+			ID3D11Resource* const _resource;
+			const uint32 _subresource;
+			D3D11_MAPPED_SUBRESOURCE _mappedSubresource;
+		};
 
-            public: // Shader
-                void                    setVsShader(ID3D11VertexShader* const shader) noexcept;
-                void                    setGsShader(ID3D11GeometryShader* const shader) noexcept;
-                void                    setPsShader(ID3D11PixelShader* const shader) noexcept;
 
-            public: // Resources
-                void                    setVsResources(const DxResource& resource) noexcept;
-                void                    setGsResources(const DxResource& resource) noexcept;
-                void                    setPsResources(const DxResource& resource) noexcept;
-            
-            public: // Constant Buffers
-                void                    setVsConstantBuffers(const DxResource& constantBuffer);
-                void                    setGsConstantBuffers(const DxResource& constantBuffer);
-                void                    setPsConstantBuffers(const DxResource& constantBuffer);
-            
-            private:
-                GraphicDevice&          _graphicDevice;
+		class GraphicDevice final
+		{
+		public:
+			class StateManager
+			{
+			public:
+				StateManager(GraphicDevice& graphicDevice);
+				~StateManager() = default;
 
-            private: // IA
-                RenderingPrimitive      _iaRenderingPrimitive;
-                ID3D11InputLayout*      _iaInputLayout;
+			public: // IA
+				void setIaInputLayout(ID3D11InputLayout* const iaInputLayout) noexcept;
+				void setIaRenderingPrimitive(const RenderingPrimitive renderingPrimitive) noexcept;
+				void setIaVertexBuffers(const int32 bindingStartSlot, const uint32 bufferCount, ID3D11Buffer* const* const buffers, const uint32* const strides, const uint32* const offsets) noexcept;
+				void setIaIndexBuffer(ID3D11Buffer* const buffer, const DXGI_FORMAT format, const uint32 offset) noexcept;
 
-            private: // RS
-                ID3D11RasterizerState*  _rsRasterizerState;
-                D3D11_VIEWPORT          _rsViewport;
-                D3D11_RECT              _rsScissorRectangle;
+			public: // RS
+				void setRsRasterizerState(ID3D11RasterizerState* const rsRasterizerState) noexcept;
+				void setRsViewport(const D3D11_VIEWPORT rsViewport) noexcept;
+				void setRsScissorRectangle(const D3D11_RECT rsScissorRectangle) noexcept;
 
-            private: // Shaders
-                ID3D11VertexShader*     _vsShader;
-                ID3D11GeometryShader*   _gsShader;
-                ID3D11PixelShader*      _psShader;
+			public: // Shader
+				void setVsShader(ID3D11VertexShader* const shader) noexcept;
+				void setGsShader(ID3D11GeometryShader* const shader) noexcept;
+				void setPsShader(ID3D11PixelShader* const shader) noexcept;
 
-            private: // Resources
-                Vector<DxObjectID>      _vsShaderResources;
-                Vector<DxObjectID>      _gsShaderResources;
-                Vector<DxObjectID>      _psShaderResources;
+			public: // Resources
+				void setVsResources(const DxResource& resource) noexcept;
+				void setGsResources(const DxResource& resource) noexcept;
+				void setPsResources(const DxResource& resource) noexcept;
 
-            private: // Constant Buffers
-                Vector<DxObjectID>      _vsConstantBuffers;
-                Vector<DxObjectID>      _gsConstantBuffers;
-                Vector<DxObjectID>      _psConstantBuffers;
-            };
-            
-            friend SafeResourceMapper;
-            friend StateManager;
+			public: // Constant Buffers
+				void setVsConstantBuffers(const DxResource& constantBuffer);
+				void setGsConstantBuffers(const DxResource& constantBuffer);
+				void setPsConstantBuffers(const DxResource& constantBuffer);
 
-        public:
-            static GraphicDevice&                       getInvalidInstance();
+			private:
+				GraphicDevice& _graphicDevice;
 
-        public:
-                                                        GraphicDevice(Window::IWindow& window);
-                                                        ~GraphicDevice() = default;
+			private: // IA
+				RenderingPrimitive _iaRenderingPrimitive;
+				ID3D11InputLayout* _iaInputLayout;
 
-        public:
-            bool                                        initialize();
-            void                                        updateScreenSize();
+			private: // RS
+				ID3D11RasterizerState* _rsRasterizerState;
+				D3D11_VIEWPORT _rsViewport;
+				D3D11_RECT _rsScissorRectangle;
 
-        private:
-            void                                        createDxDevice();
-            bool                                        loadFontData();
+			private: // Shaders
+				ID3D11VertexShader* _vsShader;
+				ID3D11GeometryShader* _gsShader;
+				ID3D11PixelShader* _psShader;
 
-        private:
-            bool                                        createSwapChain(const Int2& windowSize, const HWND windowHandle);
-            bool                                        initializeBackBuffer();
-            bool                                        initializeDepthStencilBufferAndView(const Int2& windowSize);
-            bool                                        initializeDepthStencilStates();
-            void                                        initializeShaderHeaderMemory();
-            void                                        initializeShaders();
-            void                                        initializeSamplerStates();
-            void                                        initializeBlendStates();
-            void                                        initializeFullScreenData(const Int2& windowSize);
-            void                                        setDefaultRenderTargetsAndDepthStencil();
+			private: // Resources
+				Vector<DxObjectID> _vsShaderResources;
+				Vector<DxObjectID> _gsShaderResources;
+				Vector<DxObjectID> _psShaderResources;
 
-        public:
-            void                                        beginRendering();
-            void                                        draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
-            void                                        drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
-            void                                        endRendering();
+			private: // Constant Buffers
+				Vector<DxObjectID> _vsConstantBuffers;
+				Vector<DxObjectID> _gsConstantBuffers;
+				Vector<DxObjectID> _psConstantBuffers;
+			};
 
-        public:
-            void                                        useScissorRectangles() noexcept;
-            void                                        useFullScreenViewport() noexcept;
-            void                                        useWireFrameNoCullingRasterizer() noexcept;
-            void                                        useWireFrameCullBackRasterizer() noexcept;
-            void                                        useSolidCullBackRasterizer() noexcept;
-            const D3D11_VIEWPORT&                       getFullScreenViewport() const noexcept;
-            const Rect&                                 getFullScreenClipRect() const noexcept;
+			friend SafeResourceMapper;
+			friend StateManager;
 
-        public:
-            DxShaderPool&                               getShaderPool() noexcept;
-            DxResourcePool&                             getResourcePool() noexcept;
-            ShapeRendererContext&                       getShapeRendererContext() noexcept;
-            GUI::GUIContext&                            getGUIContext() noexcept;
-            const Language::CppHlsl::Interpreter&       getCppHlslSteamData() const noexcept;
-            const Language::CppHlsl::Interpreter&       getCppHlslConstantBuffers() const noexcept;
-            StateManager&                               getStateManager() noexcept;
+		public:
+			static GraphicDevice& getInvalidInstance();
 
-        public: // Common buffers
-            DxObjectID                                  getCommonCbTransformID() const noexcept;
-            DxObjectID                                  getCommonSBTransformID() const noexcept;
-            DxObjectID                                  getCommonSBMaterialID() const noexcept;
+		public:
+			GraphicDevice(Platform::IWindow& window);
+			~GraphicDevice() = default;
 
-        public:
-            void                                        initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
-            void                                        setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
+		public:
+			bool initialize();
+			void updateScreenSize();
 
-        public:
-            ID3D11Device*                               getDxDevice() noexcept;
-            const Int2&                                 getWindowSize() const noexcept;
-            Float2                                      getWindowSizeFloat2() const noexcept;
-            Window::IWindow&                            accessWindow() noexcept;
-            const Window::IWindow&                      getWindow() const noexcept;
+		private:
+			void createDxDevice();
+			bool loadFontData();
 
-        private:
-            Window::IWindow&                            _window;
-            Int2                                        _lastWindowSize;
+		private:
+			bool createSwapChain(const Int2& windowSize, const HWND windowHandle);
+			bool initializeBackBuffer();
+			bool initializeDepthStencilBufferAndView(const Int2& windowSize);
+			bool initializeDepthStencilStates();
+			void initializeShaderHeaderMemory();
+			void initializeShaders();
+			void initializeSamplerStates();
+			void initializeBlendStates();
+			void initializeFullScreenData(const Int2& windowSize);
+			void setDefaultRenderTargetsAndDepthStencil();
 
-        private:
-            Color                                       _clearColor;
+		public:
+			void beginRendering();
+			void draw(const uint32 vertexCount, const uint32 vertexOffset) noexcept;
+			void drawIndexed(const uint32 indexCount, const uint32 indexOffset, const uint32 vertexOffset) noexcept;
+			void endRendering();
 
-    #pragma region DirectX
-        private:
-            ComPtr<IDXGISwapChain>                      _swapChain;
-            ComPtr<ID3D11Device>                        _device;
-            ComPtr<ID3D11DeviceContext>                 _deviceContext;
+		public:
+			void useScissorRectangles() noexcept;
+			void useFullScreenViewport() noexcept;
+			void useWireFrameNoCullingRasterizer() noexcept;
+			void useWireFrameCullBackRasterizer() noexcept;
+			void useSolidCullBackRasterizer() noexcept;
+			const D3D11_VIEWPORT& getFullScreenViewport() const noexcept;
+			const Rect& getFullScreenClipRect() const noexcept;
 
-        private:
-            ComPtr<ID3D11RenderTargetView>              _backBufferRtv;
-            ComPtr<ID3D11Texture2D>                     _depthStencilBuffer;
-            ComPtr<ID3D11DepthStencilView>              _depthStencilView;
-            ComPtr<ID3D11DepthStencilState>             _depthStencilStateLessEqual;
+		public:
+			DxShaderPool& getShaderPool() noexcept;
+			DxResourcePool& getResourcePool() noexcept;
+			ShapeRendererContext& getShapeRendererContext() noexcept;
+			GUI::GUIContext& getGUIContext() noexcept;
+			const Language::CppHlsl::Interpreter& getCppHlslSteamData() const noexcept;
+			const Language::CppHlsl::Interpreter& getCppHlslConstantBuffers() const noexcept;
+			StateManager& getStateManager() noexcept;
 
-        private:
-            ID3D11RasterizerState*                      _currentRasterizerFor3D;
-            ComPtr<ID3D11RasterizerState>               _rasterizerStateSolidCullBack;
-            ComPtr<ID3D11RasterizerState>               _rasterizerStateWireFrameNoCulling;
-            ComPtr<ID3D11RasterizerState>               _rasterizerStateWireFrameCullBack;
-            ComPtr<ID3D11RasterizerState>               _rasterizerStateScissorRectangles;
-            D3D11_VIEWPORT                              _fullScreenViewport;
-            Rect                                        _fullScreenClipRect;
+		public: // Common buffers
+			DxObjectID getCommonCbTransformID() const noexcept;
+			DxObjectID getCommonSBTransformID() const noexcept;
+			DxObjectID getCommonSBMaterialID() const noexcept;
 
-        private:
-            DxShaderHeaderMemory                        _shaderHeaderMemory;
-            DxShaderPool                                _shaderPool;
-            DxResourcePool                              _resourcePool;
+		public:
+			void initialize2DProjectionMatrix(const Float2& windowSize) noexcept;
+			void setViewProjectionMatrix(const Float4x4& viewMatrix, const Float4x4& projectionMatrix) noexcept;
 
-        private:
-            CB_View                                     _cbViewData;
-            DxObjectID                                  _cbViewID;
+		public:
+			ID3D11Device* getDxDevice() noexcept;
+			const Int2& getWindowSize() const noexcept;
+			Float2 getWindowSizeFloat2() const noexcept;
+			Platform::IWindow& accessWindow() noexcept;
+			const Platform::IWindow& getWindow() const noexcept;
 
-        private: // Common buffers
-            DxObjectID                                  _cbTransformID;
-            DxObjectID                                  _sbTransformID;
-            DxObjectID                                  _sbMaterialID;
+		private:
+			Platform::IWindow& _window;
+			Int2 _lastWindowSize;
 
-        private:
-            ComPtr<ID3D11SamplerState>                  _samplerState;
-            ComPtr<ID3D11BlendState>                    _blendState;
-    #pragma endregion
+		private:
+			Color _clearColor;
 
-        private:
-            StateManager                                _stateManager;
+#pragma region DirectX
+		private:
+			ComPtr<IDXGISwapChain> _swapChain;
+			ComPtr<ID3D11Device> _device;
+			ComPtr<ID3D11DeviceContext> _deviceContext;
 
-        private:
-            Language::CppHlsl::Interpreter              _cppHlslStreamData;
-            Language::CppHlsl::Interpreter              _cppHlslConstantBuffers;
-            Language::CppHlsl::Interpreter              _cppHlslStructuredBuffers;
+		private:
+			ComPtr<ID3D11RenderTargetView> _backBufferRtv;
+			ComPtr<ID3D11Texture2D> _depthStencilBuffer;
+			ComPtr<ID3D11DepthStencilView> _depthStencilView;
+			ComPtr<ID3D11DepthStencilState> _depthStencilStateLessEqual;
 
-        private:
-            ShapeRendererContext                        _shapeRendererContext;
-            bool                                        _needEndRenderingCall;
+		private:
+			ID3D11RasterizerState* _currentRasterizerFor3D;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateSolidCullBack;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameNoCulling;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateWireFrameCullBack;
+			ComPtr<ID3D11RasterizerState> _rasterizerStateScissorRectangles;
+			D3D11_VIEWPORT _fullScreenViewport;
+			Rect _fullScreenClipRect;
 
-        private:
-            GUI::GUIContext                             _guiContext;
-        };
-    }
+		private:
+			DxShaderHeaderMemory _shaderHeaderMemory;
+			DxShaderPool _shaderPool;
+			DxResourcePool _resourcePool;
+
+		private:
+			CB_View _cbViewData;
+			DxObjectID _cbViewID;
+
+		private: // Common buffers
+			DxObjectID _cbTransformID;
+			DxObjectID _sbTransformID;
+			DxObjectID _sbMaterialID;
+
+		private:
+			ComPtr<ID3D11SamplerState> _samplerState;
+			ComPtr<ID3D11BlendState> _blendState;
+#pragma endregion
+
+		private:
+			StateManager _stateManager;
+
+		private:
+			Language::CppHlsl::Interpreter _cppHlslStreamData;
+			Language::CppHlsl::Interpreter _cppHlslConstantBuffers;
+			Language::CppHlsl::Interpreter _cppHlslStructuredBuffers;
+
+		private:
+			ShapeRendererContext _shapeRendererContext;
+			bool _needEndRenderingCall;
+
+		private:
+			GUI::GUIContext _guiContext;
+		};
+	}
 }
 
 

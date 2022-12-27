@@ -36,7 +36,7 @@ constexpr uint32 kRawInputByteSize = 48;
 
 namespace mint
 {
-	namespace Window
+	namespace Platform
 	{
 #pragma region Windows Window Pool
 		class WindowsWindow;
