@@ -198,7 +198,10 @@ namespace mint
 			prepareTransformBuffer();
 
 			// TODO : Slot 처리...
-			_graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, GraphicShaderType::PixelShader, 0);
+			if (_fontData._fontTextureID.isValid())
+			{
+				_graphicDevice.getResourcePool().bindToShader(_fontData._fontTextureID, GraphicShaderType::PixelShader, 0);
+			}
 
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
 			shaderPool.bindInputLayoutIfNot(_inputLayoutID);
