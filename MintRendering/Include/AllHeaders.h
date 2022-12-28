@@ -18,6 +18,7 @@
 #include <MintRendering/Include/Plotter.h>
 #include <MintRendering/Include/MathExpRenderer.h>
 #include <MintRendering/Include/SplineGenerator.h>
+#include <MintRendering/Include/SpriteRenderer.h>
 
 
 #endif // !_MINT_RENDERING_ALL_HEADERS_H_

@@ -1,4 +1,4 @@
-#include <MintRendering/Source/CameraObject.cpp>
+﻿#include <MintRendering/Source/CameraObject.cpp>
 #include <MintRendering/Source/DeltaTimer.cpp>
 #include <MintRendering/Source/InstantRenderer.cpp>
 #include <MintRendering/Source/IObjectComponent.cpp>
@@ -9,3 +9,4 @@
 #include <MintRendering/Source/Plotter.cpp>
 #include <MintRendering/Source/MathExpRenderer.cpp>
 #include <MintRendering/Source/SplineGenerator.cpp>
+#include <MintRendering/Source/SpriteRenderer.cpp>

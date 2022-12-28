@@ -63,6 +63,9 @@
     <ClInclude Include="Include\SplineGenerator.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SpriteRenderer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Object.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\SplineGenerator.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SpriteRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

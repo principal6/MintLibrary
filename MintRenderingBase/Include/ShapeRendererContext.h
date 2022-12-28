@@ -81,7 +81,7 @@ namespace mint
 		public:
 			virtual void initializeShaders() noexcept override;
 			virtual void flush() noexcept override;
-			virtual void render() noexcept;
+			virtual void render() noexcept override;
 
 		public:
 			bool initializeFontData(const FontData& fontData);
@@ -146,7 +146,7 @@ namespace mint
 		protected:
 			void drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
 			void drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
-			void drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
+			void drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType);
 			void drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
 			void drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
 			void drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
@@ -172,6 +172,9 @@ namespace mint
 
 			Color _textColor;
 			FontData _fontData;
+
+			Float2 _uv0 = Float2(0, 0);
+			Float2 _uv1 = Float2(1, 1);
 		};
 	}
 }

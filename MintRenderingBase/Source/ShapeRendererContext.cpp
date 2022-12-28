@@ -401,19 +401,19 @@ namespace mint
 		void ShapeRendererContext::drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
 		{
 			const Float2 halfSize = size * 0.5f;
-
+			const ShapeType shapeType = ShapeType::SolidTriangle;
 			if (borderThickness >= 1.0f)
 			{
-				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor, shapeType);
 
-				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor, shapeType);
 
-				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor, shapeType);
 
-				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor, shapeType);
 			}
 
-			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
+			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, shapeType);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
@@ -421,7 +421,8 @@ namespace mint
 		void ShapeRendererContext::drawTexturedRectangle(const Float2& size, const float rotationAngle)
 		{
 			const Float2 halfSize = size * 0.5f;
-			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, ShapeType::TexturedTriangle);
+			const ShapeType shapeType = ShapeType::TexturedTriangle;
+			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, shapeType);
 			pushShapeTransformToBuffer(rotationAngle);
 		}
 
@@ -536,16 +537,17 @@ namespace mint
 				}
 
 				// Top
-				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
+				const ShapeType shapeType = ShapeType::SolidTriangle;
+				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor, shapeType);
 
 				// Bottom
-				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
+				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor, shapeType);
 
 				// Left
-				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
+				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor, shapeType);
 
 				// Right
-				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
+				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor, shapeType);
 			}
 
 			drawRoundedRectangleInternal(radius, halfSize, _defaultColor);
@@ -572,7 +574,8 @@ namespace mint
 			drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
 			if (hasMiddleShape)
 			{
-				drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color);
+				const ShapeType shapeType = ShapeType::SolidTriangle;
+				drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color, shapeType);
 			}
 			drawLowerHalfRoundedRectangleInternal(Float2(0.0f, (upperShapeSize._y + middleShapeSize._y) * 0.5f), lowerShapeSize, lowerShapeRoundness, lowerColor);
 
@@ -1240,26 +1243,26 @@ namespace mint
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y - halfSize._y;
 				v._info._x = packInfoAsFloat(shapeType);
-				v._texCoord._x = 0.0f;
-				v._texCoord._y = 0.0f;
+				v._texCoord._x = _uv0._x;
+				v._texCoord._y = _uv0._y;
 				vertexArray.push_back(v);
 
 				v._position._x = offset._x + halfSize._x;
 				v._position._y = offset._y - halfSize._y;
-				v._texCoord._x = 1.0f;
-				v._texCoord._y = 0.0f;
+				v._texCoord._x = _uv1._x;
+				v._texCoord._y = _uv0._y;
 				vertexArray.push_back(v);
 
 				v._position._x = offset._x - halfSize._x;
 				v._position._y = offset._y + halfSize._y;
-				v._texCoord._x = 0.0f;
-				v._texCoord._y = 1.0f;
+				v._texCoord._x = _uv0._x;
+				v._texCoord._y = _uv1._y;
 				vertexArray.push_back(v);
 
 				v._position._x = offset._x + halfSize._x;
 				v._position._y = offset._y + halfSize._y;
-				v._texCoord._x = 1.0f;
-				v._texCoord._y = 1.0f;
+				v._texCoord._x = _uv1._x;
+				v._texCoord._y = _uv1._y;
 				vertexArray.push_back(v);
 			}
 
@@ -1356,16 +1359,17 @@ namespace mint
 			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
 			const Float2 halfSize = size * 0.5f;
 			const Float2 halfCoreSize = halfSize - Float2(radius);
+			const ShapeType shapeType = ShapeType::SolidTriangle;
 
 			// Center box
-			drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color);
+			drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color, shapeType);
 
 			// Left side box
 			const float halfSquareSize = (halfSize._x - halfCoreSize._x) * 0.5f;
-			drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
+			drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color, shapeType);
 
 			// Right side box
-			drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
+			drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, +halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color, shapeType);
 
 			Float2 pointA;
 			Float2 pointB;
@@ -1391,16 +1395,17 @@ namespace mint
 			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
 			const Float2 halfSize = size * 0.5f;
 			const Float2 halfCoreSize = halfSize - Float2(radius);
+			const ShapeType shapeType = ShapeType::SolidTriangle;
 
 			// Center box
-			drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color);
+			drawRectangleInternal(offset, Float2(halfCoreSize._x, halfSize._y), color, shapeType);
 
 			// Left side box
 			const float halfSquareSize = (halfSize._x - halfCoreSize._x) * 0.5f;
-			drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
+			drawRectangleInternal(offset + Float2(-halfCoreSize._x - halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color, shapeType);
 
 			// Right side box
-			drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color);
+			drawRectangleInternal(offset + Float2(halfCoreSize._x + halfSquareSize, -halfSquareSize), Float2(halfSquareSize, halfSize._y - halfSquareSize), color, shapeType);
 
 			Float2 pointA;
 			Float2 pointB;
