@@ -111,9 +111,9 @@ namespace mint
 		//
 		struct Long
 		{
-			uint64 _capacity;      // 8 bytes
-			uint64 _size;          // 8 bytes
-			T* _rawPointer;    // 8 bytes
+			uint64 _capacity; // 8 bytes
+			uint64 _size;     // 8 bytes
+			T* _rawPointer;   // 8 bytes
 		};
 		struct Short
 		{

@@ -335,7 +335,7 @@ namespace mint
 	{
 		return (isSmallString() == true) ? _short._smallString : _long._rawPointer;
 	}
-	
+
 	template<typename T>
 	MINT_INLINE T String<T>::back() const
 	{

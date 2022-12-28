@@ -10,42 +10,42 @@
 
 namespace mint
 {
-    template <typename T>
-    class Queue
-    {
-    public:
-                            Queue();
-                            ~Queue();
+	template <typename T>
+	class Queue
+	{
+	public:
+		Queue();
+		~Queue();
 
-    public:
-        void                reserve(uint32 capacity) noexcept;
+	public:
+		void reserve(uint32 capacity) noexcept;
 
-    public:
-        MINT_INLINE uint32  size() const noexcept { return _size; }
-        MINT_INLINE uint32  capacity() const noexcept { return _capacity; }
-        MINT_INLINE bool    empty() const noexcept { return (_size == 0); }
+	public:
+		MINT_INLINE uint32 size() const noexcept { return _size; }
+		MINT_INLINE uint32 capacity() const noexcept { return _capacity; }
+		MINT_INLINE bool empty() const noexcept { return (_size == 0); }
 
-    public:
-        void                push(const T& newEntry) noexcept;
-        void                push(T&& newEntry) noexcept;
-        void                pop() noexcept;
-        void                flush() noexcept;
+	public:
+		void push(const T& newEntry) noexcept;
+		void push(T&& newEntry) noexcept;
+		void pop() noexcept;
+		void flush() noexcept;
 
-    public:
-        T&                  peek() noexcept;
-        const T&            peek() const noexcept;
+	public:
+		T& peek() noexcept;
+		const T& peek() const noexcept;
 
-    private:
-        void                saveBackup(T*& backUpPointer) noexcept;
-        void                restoreBackup(const T* const backUpPointer) noexcept;
+	private:
+		void saveBackup(T*& backUpPointer) noexcept;
+		void restoreBackup(const T* const backUpPointer) noexcept;
 
-    private:
-        T*                  _rawPointer;
-        uint32              _size;
-        uint32              _capacity;
-        uint32              _headAt;
-        uint32              _tailAt;
-    };
+	private:
+		T* _rawPointer;
+		uint32 _size;
+		uint32 _capacity;
+		uint32 _headAt;
+		uint32 _tailAt;
+	};
 }
 
 

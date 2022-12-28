@@ -12,54 +12,54 @@
 
 namespace mint
 {
-    template<typename T>
-    inline StringView<T>::StringView(const T* const string)
-        : _rawString{ string }
-        , _length{ StringUtil::length(string) }
-    {
-        __noop;
-    }
-    
-    template<typename T>
-    inline StringView<T>::StringView(const String<T>& string)
-        : _rawString{ string.c_str() }
-        , _length{ string.length() }
-    {
-        __noop;
-    }
-    
-    template<typename T>
-    template<uint32 BufferSize>
-    inline StringView<T>::StringView(const StackString<T, BufferSize>& string)
-        : _rawString{ string.c_str() }
-        , _length{ string.length() }
-    {
-        __noop;
-    }
-    
-    template<typename T>
-    bool StringView<T>::operator==(const StringView& rhs) const noexcept
-    {
-        return StringUtil::compare(_rawString, rhs._rawString);
-    }
-    
-    template<typename T>
-    bool StringView<T>::operator!=(const StringView& rhs) const noexcept
-    {
-        return !(*this == rhs);
-    }
+	template<typename T>
+	inline StringView<T>::StringView(const T* const string)
+		: _rawString{ string }
+		, _length{ StringUtil::length(string) }
+	{
+		__noop;
+	}
 
-    template<typename T>
-    const T& StringView<T>::operator[](const uint32 at) const noexcept
-    {
-        return _rawString[at];
-    }
+	template<typename T>
+	inline StringView<T>::StringView(const String<T>& string)
+		: _rawString{ string.c_str() }
+		, _length{ string.length() }
+	{
+		__noop;
+	}
 
-    template<typename T>
-    const T* StringView<T>::c_str() const noexcept
-    {
-        return _rawString;
-    }
+	template<typename T>
+	template<uint32 BufferSize>
+	inline StringView<T>::StringView(const StackString<T, BufferSize>& string)
+		: _rawString{ string.c_str() }
+		, _length{ string.length() }
+	{
+		__noop;
+	}
+
+	template<typename T>
+	bool StringView<T>::operator==(const StringView& rhs) const noexcept
+	{
+		return StringUtil::compare(_rawString, rhs._rawString);
+	}
+
+	template<typename T>
+	bool StringView<T>::operator!=(const StringView& rhs) const noexcept
+	{
+		return !(*this == rhs);
+	}
+
+	template<typename T>
+	const T& StringView<T>::operator[](const uint32 at) const noexcept
+	{
+		return _rawString[at];
+	}
+
+	template<typename T>
+	const T* StringView<T>::c_str() const noexcept
+	{
+		return _rawString;
+	}
 }
 
 
