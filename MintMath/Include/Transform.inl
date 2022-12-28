@@ -7,18 +7,18 @@
 
 namespace mint
 {
-    MINT_INLINE Transform::Transform()
-        : Transform(Float3::kZero)
-    {
-        __noop;
-    }
+	MINT_INLINE Transform::Transform()
+		: Transform(Float3::kZero)
+	{
+		__noop;
+	}
 
-    MINT_INLINE Transform::Transform(const Float3& translation)
-        : _scale{ Float3::kUnitScale }
-        , _translation{ translation }
-    {
-        __noop;
-    }
+	MINT_INLINE Transform::Transform(const Float3& translation)
+		: _scale{ Float3::kUnitScale }
+		, _translation{ translation }
+	{
+		__noop;
+	}
 }
 
 

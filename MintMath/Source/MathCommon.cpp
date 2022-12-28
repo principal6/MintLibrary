@@ -5,11 +5,11 @@
 
 namespace mint
 {
-    namespace Math
-    {
-        bool isNan(const float value) noexcept
-        {
-            return ::_isnan(value) != 0;
-        }
-    }
+	namespace Math
+	{
+		bool isNan(const float value) noexcept
+		{
+			return ::_isnan(value) != 0;
+		}
+	}
 }

@@ -7,9 +7,9 @@ namespace mint
 {
 	namespace TestLanguage
 	{
-        bool test()
-        {
-            return true;
-        }
+		bool test()
+		{
+			return true;
+		}
 	}
 }

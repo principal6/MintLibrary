@@ -9,27 +9,27 @@
 
 namespace mint
 {
-    namespace Math
-    {
-        class Easing
-        {
-        public:
-            enum class Method
-            {
-                InQuad,
-                OutQuad,
-                InOutQuad,
-                COUNT
-            };
+	namespace Math
+	{
+		class Easing
+		{
+		public:
+			enum class Method
+			{
+				InQuad,
+				OutQuad,
+				InOutQuad,
+				COUNT
+			};
 
-        public:
-            static float    ease(const Method method, float x) noexcept;
+		public:
+			static float ease(const Method method, float x) noexcept;
 
-        private:
-                            Easing() = default;
-                            ~Easing() = default;
-        };
-    }
+		private:
+			Easing() = default;
+			~Easing() = default;
+		};
+	}
 }
 
 
