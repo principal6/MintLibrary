@@ -7,28 +7,28 @@
 
 namespace mint
 {
-    class IFileReader abstract
-    {
-    public:
-                                IFileReader()   = default;
-        virtual                 ~IFileReader()  = default;
+	class IFileReader abstract
+	{
+	public:
+		IFileReader() = default;
+		virtual ~IFileReader() = default;
 
-    public:
-        virtual bool            open(const char* const fileName) abstract;
-        virtual bool            isOpen() const noexcept abstract;
-        virtual uint32          getFileSize() const noexcept abstract;
-    };
+	public:
+		virtual bool open(const char* const fileName) abstract;
+		virtual bool isOpen() const noexcept abstract;
+		virtual uint32 getFileSize() const noexcept abstract;
+	};
 
 
-    class IFileWriter abstract
-    {
-    public:
-                                IFileWriter()   = default;
-        virtual                 ~IFileWriter()  = default;
+	class IFileWriter abstract
+	{
+	public:
+		IFileWriter() = default;
+		virtual ~IFileWriter() = default;
 
-    public:
-        virtual bool            save(const char* const fileName) abstract;
-    };
+	public:
+		virtual bool save(const char* const fileName) abstract;
+	};
 }
 
 

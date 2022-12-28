@@ -25,66 +25,66 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        class GraphicDevice;
+	namespace Rendering
+	{
+		class GraphicDevice;
 
 
-        class IRendererContext abstract
-        {
-        public:
-                                        IRendererContext(GraphicDevice& graphicDevice);
-                                        IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
-            virtual                     ~IRendererContext();
+		class IRendererContext abstract
+		{
+		public:
+			IRendererContext(GraphicDevice& graphicDevice);
+			IRendererContext(GraphicDevice& graphicDevice, LowLevelRenderer<VS_INPUT_SHAPE>* const nonOwnedLowLevelRenderer);
+			virtual ~IRendererContext();
 
-        public:
-            virtual void                initializeShaders() noexcept abstract;
-            virtual void                flush() noexcept abstract;
-            virtual void                render() noexcept abstract;
+		public:
+			virtual void initializeShaders() noexcept abstract;
+			virtual void flush() noexcept abstract;
+			virtual void render() noexcept abstract;
 
-        protected:
-            void                        flushTransformBuffer() noexcept;
-            void                        prepareTransformBuffer() noexcept;
+		protected:
+			void flushTransformBuffer() noexcept;
+			void prepareTransformBuffer() noexcept;
 
-        public:
-            void                        setUseMultipleViewports() noexcept;
-            bool                        isUsingMultipleViewports() const noexcept;
+		public:
+			void setUseMultipleViewports() noexcept;
+			bool isUsingMultipleViewports() const noexcept;
 
-        public:
-            void                        setPosition(const Float4& position) noexcept;
-            void                        setPositionZ(const float s) noexcept;
-            void                        setColor(const Color& color) noexcept;
-            void                        setColor(const Vector<Color>& colorArray) noexcept;
-            virtual void                setClipRect(const Rect& clipRect) noexcept;
+		public:
+			void setPosition(const Float4& position) noexcept;
+			void setPositionZ(const float s) noexcept;
+			void setColor(const Color& color) noexcept;
+			void setColor(const Vector<Color>& colorArray) noexcept;
+			virtual void setClipRect(const Rect& clipRect) noexcept;
 
-        protected:
-            const Float4&               getColorInternal(const uint32 index) const noexcept;
-            static float                packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
-            static float                packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
+		protected:
+			const Float4& getColorInternal(const uint32 index) const noexcept;
+			static float packBits2_30AsFloat(const uint32 _2bits, const uint32 _30bits) noexcept;
+			static float packBits4_28AsFloat(const uint32 _4bits, const uint32 _28bits) noexcept;
 
-        public:
-            LowLevelRenderer<VS_INPUT_SHAPE>&       accessLowLevelRenderer() noexcept;
+		public:
+			LowLevelRenderer<VS_INPUT_SHAPE>& accessLowLevelRenderer() noexcept;
 
-        protected:
-            GraphicDevice&                          _graphicDevice;
-            LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
+		protected:
+			GraphicDevice& _graphicDevice;
+			LowLevelRenderer<VS_INPUT_SHAPE>* const _lowLevelRenderer;
 
-        private:
-            bool                                    _doesOwnLowLevelRenderer;
+		private:
+			bool _doesOwnLowLevelRenderer;
 
-        protected:
-            Float4                      _position;
-            Vector<Color>               _colorArray;
-            Color                       _defaultColor;
-            Rect                        _clipRect;
+		protected:
+			Float4 _position;
+			Vector<Color> _colorArray;
+			Color _defaultColor;
+			Rect _clipRect;
 
-        protected:
-            Vector<SB_Transform>        _sbTransformData;
+		protected:
+			Vector<SB_Transform> _sbTransformData;
 
-        private:
-            bool                        _useMultipleViewports;
-        };
-    }
+		private:
+			bool _useMultipleViewports;
+		};
+	}
 }
 
 

@@ -17,12 +17,12 @@ namespace mint
 #define CPP_HLSL_INSTANCE_DATA(DataStepRate)
 
 
-    using uint              = uint32;
-    using float1            = float;
-    using float2            = Float2;
-    using float3            = Float3;
-    using float4            = Float4;
-    using float4x4          = Float4x4;
+	using uint = uint32;
+	using float1 = float;
+	using float2 = Float2;
+	using float3 = Float3;
+	using float4 = Float4;
+	using float4x4 = Float4x4;
 }
 
 

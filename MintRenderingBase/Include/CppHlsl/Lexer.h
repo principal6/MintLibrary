@@ -12,22 +12,22 @@
 
 namespace mint
 {
-    namespace Language
-    {
-        namespace CppHlsl
-        {
-            class Lexer final : public ILexer
-            {
-            public:
-                Lexer();
-                Lexer(const std::string& source);
-                virtual                                 ~Lexer() = default;
+	namespace Language
+	{
+		namespace CppHlsl
+		{
+			class Lexer final : public ILexer
+			{
+			public:
+				Lexer();
+				Lexer(const std::string& source);
+				virtual ~Lexer() = default;
 
-            public:
-                virtual bool                            execute() noexcept override final;
-            };
-        }
-    }
+			public:
+				virtual bool execute() noexcept override final;
+			};
+		}
+	}
 }
 
 

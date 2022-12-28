@@ -13,8 +13,6 @@
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/FontLoader.h>
 
-#include <MintMath/Include/Int2.h>
-
 
 namespace mint
 {
