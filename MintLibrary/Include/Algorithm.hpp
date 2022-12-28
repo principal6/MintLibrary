@@ -36,7 +36,7 @@ namespace mint
     {
         if (vec.empty() == true)
         {
-            return kInt32Max;
+            return kInvalidIndexInt32;
         }
         return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
     }
@@ -70,7 +70,7 @@ namespace mint
     {
         if (vec.empty() == true)
         {
-            return kInt32Max;
+            return kInvalidIndexInt32;
         }
         return binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
     }

@@ -59,6 +59,7 @@ namespace mint
 		private:
 			CB_Transform _cbTransformData;
 			Vector<SB_Material> _sbMaterialDatas;
+			GraphicObjectID _inputLayoutDefaultID;
 			GraphicObjectID _vsDefaultID;
 			GraphicObjectID _psDefaultID;
 			GraphicObjectID _psColorID;

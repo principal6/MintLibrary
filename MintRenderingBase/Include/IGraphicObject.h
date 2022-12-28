@@ -33,6 +33,7 @@ namespace mint
 			None,
 			Pool,
 			Resource,
+			InputLayout,
 			Shader,
 		};
 
@@ -87,6 +88,11 @@ namespace mint
 			MINT_INLINE bool isObjectType(const GraphicObjectType objectType) const noexcept
 			{
 				return _objectType == objectType;
+			}
+
+			MINT_INLINE void invalidate() noexcept
+			{
+				_rawID = kInvalidGraphicObjectRawID;
 			}
 
 		private:

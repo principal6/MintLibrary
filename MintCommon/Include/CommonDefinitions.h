@@ -79,6 +79,10 @@ namespace mint
     static_assert(kBitsPerByte == 8, "Number of Bits per Byte must be 8!!!");
 
     static constexpr    uint32 kStackSizeLimit  = 1 << 14;
+
+    // TODO: Index 를 class 로 만들 것
+    static constexpr    int32 kInvalidIndexInt32 = -1;
+    constexpr bool isValidIndex(int32 index) { return index >= 0; }
 #pragma endregion
 
 

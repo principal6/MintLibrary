@@ -193,7 +193,7 @@ namespace mint
 			}
 
 			const int32 index = mint::binarySearch(_ordinalRenderCommandGroups, key, OrdinalRenderCommandGroup::Evaluator());
-			if (index < 0)
+			if (isValidIndex(index) == false)
 			{
 				return;
 			}

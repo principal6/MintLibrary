@@ -151,13 +151,16 @@ namespace mint
 		void InstantRenderer::initialize() noexcept
 		{
 			using namespace Language;
-			const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
-			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			_vsDefaultID = shaderPool.pushVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", &vsInputTypeMetaData, Path::makeIncludeAssetPath("HlslBinary/"));
-			_psDefaultID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
-			_psColorID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+			_vsDefaultID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::makeIncludeAssetPath("HlslBinary/"));
+
+			const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
+			_inputLayoutDefaultID = shaderPool.pushInputLayout(_vsDefaultID, vsInputTypeMetaData);
+
+			_psDefaultID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+			_psColorID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "PsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
 		}
 
 		void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
@@ -175,6 +178,7 @@ namespace mint
 		void InstantRenderer::render() noexcept
 		{
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+			shaderPool.bindInputLayoutIfNot(_inputLayoutDefaultID);
 			shaderPool.bindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
 			shaderPool.unbindShader(GraphicShaderType::GeometryShader);
 

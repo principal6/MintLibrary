@@ -44,6 +44,7 @@ namespace mint
             Vector<SB_Material>             _sbMaterialDatas;
 
         private:
+            GraphicObjectID                      _inputLayoutDefaultID;
             GraphicObjectID                      _vsDefaultID;
             GraphicObjectID                      _gsNormalID;
             GraphicObjectID                      _gsTriangleEdgeID;

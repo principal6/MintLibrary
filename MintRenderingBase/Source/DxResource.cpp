@@ -480,13 +480,12 @@ namespace mint
             MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
             const int32 index = binarySearch(_resourceArray, objectID, IGraphicObject::Evaluator());
-            if (index >= 0)
+            if (isValidIndex(index) == false)
             {
-                return _resourceArray[index];
+                MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
+                return DxResource::s_invalidInstance;
             }
-
-            MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
-            return DxResource::s_invalidInstance;
+            return _resourceArray[index];
         }
     }
 }

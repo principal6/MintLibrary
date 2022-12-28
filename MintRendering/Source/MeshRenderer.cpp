@@ -31,6 +31,7 @@ namespace mint
             const Vector<MeshComponent*>& meshComponents = objectPool.getMeshComponents();
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
+            shaderPool.bindInputLayoutIfNot(_inputLayoutDefaultID);
             shaderPool.bindShaderIfNot(GraphicShaderType::VertexShader, _vsDefaultID);
 
             DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
@@ -83,16 +84,19 @@ namespace mint
         void MeshRenderer::initialize() noexcept
         {
             using namespace Language;
-            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
-            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 
             DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-            _vsDefaultID = shaderPool.pushVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", &vsInputTypeMetaData, Path::makeIncludeAssetPath("HlslBinary/"));
-            _psDefaultID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _vsDefaultID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            
+            const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
+            const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
+            _inputLayoutDefaultID = shaderPool.pushInputLayout(_vsDefaultID, vsInputTypeMetaData);
+            
+            _psDefaultID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
 
-            _gsNormalID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
-            _gsTriangleEdgeID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
-            _psTexCoordAsColorID = shaderPool.pushNonVertexShader(Path::makeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _gsNormalID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _gsTriangleEdgeID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
+            _psTexCoordAsColorID = shaderPool.pushShader(Path::makeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
         }
     }
 }
