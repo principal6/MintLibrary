@@ -10,134 +10,134 @@
 #include <MintMath/Include/Float2.h>
 
 
-typedef struct FT_Glyph_Metrics_    FT_Glyph_Metrics;
-typedef struct FT_LibraryRec_*      FT_Library;
-typedef struct FT_FaceRec_*         FT_Face;
+typedef struct FT_Glyph_Metrics_ FT_Glyph_Metrics;
+typedef struct FT_LibraryRec_* FT_Library;
+typedef struct FT_FaceRec_* FT_Face;
 
 
 namespace mint
 {
-    class BinaryFileWriter;
+	class BinaryFileWriter;
 
 
-    namespace Rendering
-    {
-        struct FontData;
-        class GraphicDevice;
-        class FontLoader;
-        class ShapeRendererContext;
+	namespace Rendering
+	{
+		struct FontData;
+		class GraphicDevice;
+		class FontLoader;
+		class ShapeRendererContext;
 
 
-        using GlyphMetricType = int8;
+		using GlyphMetricType = int8;
 
 
-        class GlyphInfo
-        {
-            friend FontLoader;
-            friend FontData;
-            friend ShapeRendererContext;
+		class GlyphInfo
+		{
+			friend FontLoader;
+			friend FontData;
+			friend ShapeRendererContext;
 
-        public:
-                                GlyphInfo();
-                                GlyphInfo(const wchar_t charCode, const FT_Glyph_Metrics* const ftGlyphMetrics);
+		public:
+			GlyphInfo();
+			GlyphInfo(const wchar_t charCode, const FT_Glyph_Metrics* const ftGlyphMetrics);
 
-        private:
-            wchar_t             _charCode;
-            GlyphMetricType     _width;
-            GlyphMetricType     _height;
-            GlyphMetricType     _horiBearingX;
-            GlyphMetricType     _horiBearingY;
-            GlyphMetricType     _horiAdvance;
-            Float2              _uv0;
-            Float2              _uv1;
-        };
+		private:
+			wchar_t _charCode;
+			GlyphMetricType _width;
+			GlyphMetricType _height;
+			GlyphMetricType _horiBearingX;
+			GlyphMetricType _horiBearingY;
+			GlyphMetricType _horiAdvance;
+			Float2 _uv0;
+			Float2 _uv1;
+		};
 
-        class GlyphRange
-        {
-            friend FontLoader;
+		class GlyphRange
+		{
+			friend FontLoader;
 
-        public:
-                            GlyphRange();
-                            GlyphRange(const wchar_t startWchar, const wchar_t endWchar);
+		public:
+			GlyphRange();
+			GlyphRange(const wchar_t startWchar, const wchar_t endWchar);
 
-        public:
-            bool            operator<(const GlyphRange& rhs) const noexcept;
+		public:
+			bool operator<(const GlyphRange& rhs) const noexcept;
 
-        private:
-            wchar_t         _startWchar;
-            wchar_t         _endWchar;
-        };
+		private:
+			wchar_t _startWchar;
+			wchar_t _endWchar;
+		};
 
-        struct FontData
-        {
-            friend FontLoader;
+		struct FontData
+		{
+			friend FontLoader;
 
-            uint32              getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
-            float               computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
-            uint32              computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
+			uint32 getSafeGlyphIndex(const wchar_t wideChar) const noexcept;
+			float computeTextWidth(const wchar_t* const wideText, const uint32 textLength) const noexcept;
+			uint32 computeIndexFromPositionInText(const wchar_t* const wideText, const uint32 textLength, const float positionInText) const noexcept;
 
-            Vector<GlyphInfo>   _glyphInfoArray;
-            GraphicObjectID          _fontTextureID;
-            int16               _fontSize = 0;
+			Vector<GlyphInfo> _glyphInfoArray;
+			GraphicObjectID _fontTextureID;
+			int16 _fontSize = 0;
 
-        private:
-            Vector<uint32>      _charCodeToGlyphIndexMap;
-        };
+		private:
+			Vector<uint32> _charCodeToGlyphIndexMap;
+		};
 
 
-        class FontLoader
-        {
-            static constexpr int16              kSpaceBottomForVisibility = 1;
-            static_assert(kSpaceBottomForVisibility == 1, "kSpaceBottomForVisibility must be 1");
-            static constexpr int16              kSpaceBottom = 1;
-            static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
-            static constexpr const char* const  kFontFileExtension = ".fnt";
-            static constexpr const char* const  kFontFileMagicNumber = "FNT";
+		class FontLoader
+		{
+			static constexpr int16 kSpaceBottomForVisibility = 1;
+			static_assert(kSpaceBottomForVisibility == 1, "kSpaceBottomForVisibility must be 1");
+			static constexpr int16 kSpaceBottom = 1;
+			static_assert(kSpaceBottomForVisibility <= kSpaceBottom, "kSpaceBottom must be greater than or equal to kSpaceBottomForVisibility");
+			static constexpr const char* const kFontFileExtension = ".fnt";
+			static constexpr const char* const kFontFileMagicNumber = "FNT";
 
-        public:
-                                FontLoader();
-                                ~FontLoader();
+		public:
+			FontLoader();
+			~FontLoader();
 
-        public:
-            static bool         doesExistFont(const char* const fontFileNameRaw);
-            static std::string  getFontFileNameWithExtension(const char* const fontFileName) noexcept;
-        
-        public:
-            void                pushGlyphRange(const GlyphRange& glyphRange) noexcept;
-        
-        public:
-            bool                loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice);
-        
-        public:
-            bool                bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
-        
-        public:
-            const FontData&     getFontData() const { return _fontData; }
+		public:
+			static bool doesExistFont(const char* const fontFileNameRaw);
+			static std::string getFontFileNameWithExtension(const char* const fontFileName) noexcept;
 
-        private:
-            bool                initializeFreeType(const char* const fontFaceFileName);
-            void                deinitializeFreeType();
-            
-            bool                bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
-            void                completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
-            void                writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept;
+		public:
+			void pushGlyphRange(const GlyphRange& glyphRange) noexcept;
 
-        private:
-            FT_Library          _ftLibrary;
-            FT_Face             _ftFace;
-            Vector<GlyphRange>  _glyphRanges;
+		public:
+			bool loadFont(const char* const fontFileNameRaw, GraphicDevice& graphicDevice);
 
-        private:
-            FontData            _fontData;
-            struct FontImageData
-            {
-                Vector<byte>    _imageData;
-                int16           _width = 0;
-                int16           _height = 0;
-            };
-            FontImageData       _fontImageData;
-        };
-    }
+		public:
+			bool bakeFontData(const char* const fontFaceFileName, const int16 fontSize, const char* const outputFileName, const int16 textureWidth, const int16 spaceLeft, const int16 spaceTop);
+
+		public:
+			const FontData& getFontData() const { return _fontData; }
+
+		private:
+			bool initializeFreeType(const char* const fontFaceFileName);
+			void deinitializeFreeType();
+
+			bool bakeGlyph(const wchar_t wch, const int16 width, const int16 spaceLeft, const int16 spaceTop, Vector<uint8>& pixelArray, int16& pixelPositionX, int16& pixelPositionY);
+			void completeGlyphInfoArray(const int16 textureWidth, const int16 textureHeight);
+			void writeMetaData(const int16 textureWidth, const int16 textureHeight, BinaryFileWriter& binaryFileWriter) const noexcept;
+
+		private:
+			FT_Library _ftLibrary;
+			FT_Face _ftFace;
+			Vector<GlyphRange> _glyphRanges;
+
+		private:
+			FontData _fontData;
+			struct FontImageData
+			{
+				Vector<byte> _imageData;
+				int16 _width = 0;
+				int16 _height = 0;
+			};
+			FontImageData _fontImageData;
+		};
+	}
 }
 
 

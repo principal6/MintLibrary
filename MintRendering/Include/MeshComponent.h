@@ -15,34 +15,34 @@
 
 
 namespace mint
-{    
-    namespace Rendering
-    {
-        class MeshComponent final : public TransformComponent
-        {
-        public:
-                                        MeshComponent();
-            virtual                     ~MeshComponent();
+{
+	namespace Rendering
+	{
+		class MeshComponent final : public TransformComponent
+		{
+		public:
+			MeshComponent();
+			virtual ~MeshComponent();
 
-        public:
-            const MeshData&             getMeshData() const noexcept;
-            uint32                      getVertexCount() const noexcept;
-            const VS_INPUT*             getVertices() const noexcept;
-            uint32                      getIndexCount() const noexcept;
-            const IndexElementType*     getIndices() const noexcept;
+		public:
+			const MeshData& getMeshData() const noexcept;
+			uint32 getVertexCount() const noexcept;
+			const VS_INPUT* getVertices() const noexcept;
+			uint32 getIndexCount() const noexcept;
+			const IndexElementType* getIndices() const noexcept;
 
-        public:
-            void                        shouldDrawNormals(const bool shouldDrawNormals) noexcept;
-            bool                        shouldDrawNormals() const noexcept;
-            void                        shouldDrawEdges(const bool shouldDrawEdges) noexcept;
-            bool                        shouldDrawEdges() const noexcept;
+		public:
+			void shouldDrawNormals(const bool shouldDrawNormals) noexcept;
+			bool shouldDrawNormals() const noexcept;
+			void shouldDrawEdges(const bool shouldDrawEdges) noexcept;
+			bool shouldDrawEdges() const noexcept;
 
-        private:
-            MeshData                    _meshData;
-            bool                        _shouldDrawNormals;
-            bool                        _shouldDrawEdges;
-        };
-    }
+		private:
+			MeshData _meshData;
+			bool _shouldDrawNormals;
+			bool _shouldDrawEdges;
+		};
+	}
 }
 
 

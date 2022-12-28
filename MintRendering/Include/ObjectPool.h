@@ -12,63 +12,63 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        class GraphicDevice;
-        class TransformComponent;
-        class MeshComponent;
-        class CameraObject;
-        class DeltaTimer;
+	namespace Rendering
+	{
+		class GraphicDevice;
+		class TransformComponent;
+		class MeshComponent;
+		class CameraObject;
+		class DeltaTimer;
 
 
-        class ObjectPool final
-        {
-        public:
-                                                ObjectPool();
-                                                ~ObjectPool();
+		class ObjectPool final
+		{
+		public:
+			ObjectPool();
+			~ObjectPool();
 
-        public:
-            Object*                             createObject();
-            CameraObject*                       createCameraObject();
+		public:
+			Object* createObject();
+			CameraObject* createCameraObject();
 
-        private:
-            void                                destroyObjects();
+		private:
+			void destroyObjects();
 
-        private:
-            Object*                             createObjectInternalXXX(Object* const object);
+		private:
+			Object* createObjectInternalXXX(Object* const object);
 
-        public:
-            TransformComponent*                 createTransformComponent();
-            MeshComponent*                      createMeshComponent();
+		public:
+			TransformComponent* createTransformComponent();
+			MeshComponent* createMeshComponent();
 
-        public:
-            void                                destroyObjectComponents(Object& object);
+		public:
+			void destroyObjectComponents(Object& object);
 
-        public:
-            void                                registerMeshComponent(MeshComponent* const meshComponent);
-            void                                deregisterMeshComponent(MeshComponent* const meshComponent);
+		public:
+			void registerMeshComponent(MeshComponent* const meshComponent);
+			void deregisterMeshComponent(MeshComponent* const meshComponent);
 
-        public:
-            void                                computeDeltaTime() const noexcept;
-            void                                updateScreenSize(const Float2& screenSize);
+		public:
+			void computeDeltaTime() const noexcept;
+			void updateScreenSize(const Float2& screenSize);
 
-        public:
-            const Vector<MeshComponent*>&       getMeshComponents() const noexcept;
+		public:
+			const Vector<MeshComponent*>& getMeshComponents() const noexcept;
 
-        public:
-            uint32                              getObjectCount() const noexcept;
-            const DeltaTimer*                   getDeltaTimerXXX() const noexcept;
+		public:
+			uint32 getObjectCount() const noexcept;
+			const DeltaTimer* getDeltaTimerXXX() const noexcept;
 
-        private:
-            const DeltaTimer* const             _deltaTimer;
+		private:
+			const DeltaTimer* const _deltaTimer;
 
-        private:
-            Vector<Object*>                     _objectArray;
+		private:
+			Vector<Object*> _objectArray;
 
-        private:
-            Vector<MeshComponent*>              _meshComponentArray;
-        };
-    }
+		private:
+			Vector<MeshComponent*> _meshComponentArray;
+		};
+	}
 }
 
 

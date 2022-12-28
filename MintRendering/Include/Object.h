@@ -16,64 +16,64 @@
 
 namespace mint
 {
-    struct Transform;
+	struct Transform;
 
 
-    namespace Rendering
-    {
-        class IObjectComponent;
-        class TransformComponent;
-        class ObjectPool;
-        enum class ObjectComponentType;
+	namespace Rendering
+	{
+		class IObjectComponent;
+		class TransformComponent;
+		class ObjectPool;
+		enum class ObjectComponentType;
 
-        enum class ObjectType
-        {
-            INVALID,
-            Object,
-            CameraObject
-        };
+		enum class ObjectType
+		{
+			INVALID,
+			Object,
+			CameraObject
+		};
 
 
-        class Object
-        {
-            friend ObjectPool;
+		class Object
+		{
+			friend ObjectPool;
 
-        private:
-                                        Object(const ObjectPool* const objectPool);
+		private:
+			Object(const ObjectPool* const objectPool);
 
-        protected:
-                                        Object(const ObjectPool* const objectPool, const ObjectType objectType);
-            virtual                     ~Object();
-    
-        public:
-            void                        attachComponent(IObjectComponent* const objectComponent);
-            void                        detachComponent(IObjectComponent* const objectComponent);
-    
-        public:
-            ObjectType                  getType() const noexcept;
-            bool                        isTypeOf(const ObjectType objectType) const noexcept;
-            uint32                      getComponentCount() const noexcept;
-            IObjectComponent*           getComponent(const ObjectComponentType type) const noexcept;
+		protected:
+			Object(const ObjectPool* const objectPool, const ObjectType objectType);
+			virtual ~Object();
 
-        public:
-            void                        setObjectTransform(const Transform& transform) noexcept;
-            Transform&                  getObjectTransform() noexcept;
-            const Transform&            getObjectTransform() const noexcept;
-            Float4x4                    getObjectTransformMatrix() const noexcept;
+		public:
+			void attachComponent(IObjectComponent* const objectComponent);
+			void detachComponent(IObjectComponent* const objectComponent);
 
-        protected:
-            TransformComponent*         getObjectTransformComponent() const noexcept;
-            float                       getDeltaTimeS() const noexcept;
+		public:
+			ObjectType getType() const noexcept;
+			bool isTypeOf(const ObjectType objectType) const noexcept;
+			uint32 getComponentCount() const noexcept;
+			IObjectComponent* getComponent(const ObjectComponentType type) const noexcept;
 
-        protected:
-            const ObjectPool* const     _objectPool;
-            const ObjectType            _objectType;
+		public:
+			void setObjectTransform(const Transform& transform) noexcept;
+			Transform& getObjectTransform() noexcept;
+			const Transform& getObjectTransform() const noexcept;
+			Float4x4 getObjectTransformMatrix() const noexcept;
 
-        protected:
-            Vector<IObjectComponent*>   _componentArray;
-        };
+		protected:
+			TransformComponent* getObjectTransformComponent() const noexcept;
+			float getDeltaTimeS() const noexcept;
 
-    }
+		protected:
+			const ObjectPool* const _objectPool;
+			const ObjectType _objectType;
+
+		protected:
+			Vector<IObjectComponent*> _componentArray;
+		};
+
+	}
 }
 
 

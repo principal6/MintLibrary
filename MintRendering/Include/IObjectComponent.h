@@ -15,55 +15,55 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        class Object;
-        class IObjectComponent;
+	namespace Rendering
+	{
+		class Object;
+		class IObjectComponent;
 
 
-        enum class ObjectComponentType
-        {
-            Invalid,
-            TransformComponent,
-            MeshComponent,
-        };
+		enum class ObjectComponentType
+		{
+			Invalid,
+			TransformComponent,
+			MeshComponent,
+		};
 
 
-        class ObjectComponentID final : public IID
-        {
-            friend IObjectComponent;
+		class ObjectComponentID final : public IID
+		{
+			friend IObjectComponent;
 
-        private:
-            virtual void            assignRawID(const uint32 rawID) noexcept override final;
+		private:
+			virtual void assignRawID(const uint32 rawID) noexcept override final;
 
-        public:
-            uint32                  getRawID() const noexcept;
-        };
+		public:
+			uint32 getRawID() const noexcept;
+		};
 
 
-        class IObjectComponent abstract
-        {
-            friend Object;
+		class IObjectComponent abstract
+		{
+			friend Object;
 
-        private:
-            static std::atomic<uint32>              _nextRawID;
+		private:
+			static std::atomic<uint32> _nextRawID;
 
-        public:
-                                                    IObjectComponent(const ObjectComponentType type);
-            virtual                                 ~IObjectComponent() { __noop; }
+		public:
+			IObjectComponent(const ObjectComponentType type);
+			virtual ~IObjectComponent() { __noop; }
 
-        public:
-            MINT_INLINE ObjectComponentType         getType() const noexcept { return _type; }
-            MINT_INLINE bool                        isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
-            MINT_INLINE const ObjectComponentID&    getID() const noexcept { return _id; }
-            MINT_INLINE Object*                     getOwnerObject() const noexcept { return _ownerObject; }
-        
-        protected:
-            Object*                                 _ownerObject;
-            ObjectComponentType                     _type;
-            ObjectComponentID                       _id;
-        };
-    }
+		public:
+			MINT_INLINE ObjectComponentType getType() const noexcept { return _type; }
+			MINT_INLINE bool isTypeOf(const ObjectComponentType type) const noexcept { return _type == type; }
+			MINT_INLINE const ObjectComponentID& getID() const noexcept { return _id; }
+			MINT_INLINE Object* getOwnerObject() const noexcept { return _ownerObject; }
+
+		protected:
+			Object* _ownerObject;
+			ObjectComponentType _type;
+			ObjectComponentID _id;
+		};
+	}
 }
 
 

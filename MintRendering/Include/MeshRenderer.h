@@ -16,42 +16,42 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        class GraphicDevice;
-        struct SB_Material;
-        class MeshComponent;
+	namespace Rendering
+	{
+		class GraphicDevice;
+		struct SB_Material;
+		class MeshComponent;
 
 
-        class MeshRenderer final
-        {
-        public:
-                                            MeshRenderer(GraphicDevice& graphicDevice);
-                                            ~MeshRenderer();
+		class MeshRenderer final
+		{
+		public:
+			MeshRenderer(GraphicDevice& graphicDevice);
+			~MeshRenderer();
 
-        public:
-            void                            render(const ObjectPool& objectPool) noexcept;
+		public:
+			void render(const ObjectPool& objectPool) noexcept;
 
-        private:
-            void                            initialize() noexcept;
+		private:
+			void initialize() noexcept;
 
-        private:
-            GraphicDevice&                  _graphicDevice;
+		private:
+			GraphicDevice& _graphicDevice;
 
-        private:
-            LowLevelRenderer<VS_INPUT>      _lowLevelRenderer;
-            CB_Transform                    _cbTransformData;
-            Vector<SB_Material>             _sbMaterialDatas;
+		private:
+			LowLevelRenderer<VS_INPUT> _lowLevelRenderer;
+			CB_Transform _cbTransformData;
+			Vector<SB_Material> _sbMaterialDatas;
 
-        private:
-            GraphicObjectID                      _inputLayoutDefaultID;
-            GraphicObjectID                      _vsDefaultID;
-            GraphicObjectID                      _gsNormalID;
-            GraphicObjectID                      _gsTriangleEdgeID;
-            GraphicObjectID                      _psDefaultID;
-            GraphicObjectID                      _psTexCoordAsColorID;
-        };
-    }
+		private:
+			GraphicObjectID _inputLayoutDefaultID;
+			GraphicObjectID _vsDefaultID;
+			GraphicObjectID _gsNormalID;
+			GraphicObjectID _gsTriangleEdgeID;
+			GraphicObjectID _psDefaultID;
+			GraphicObjectID _psTexCoordAsColorID;
+		};
+	}
 }
 
 

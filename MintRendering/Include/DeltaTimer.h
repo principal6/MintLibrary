@@ -12,27 +12,27 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        class DeltaTimer final
-        {
-        private:
-                                        DeltaTimer();
+	namespace Rendering
+	{
+		class DeltaTimer final
+		{
+		private:
+			DeltaTimer();
 
-        public:
-                                        ~DeltaTimer();
-        
-        public:
-            static const DeltaTimer&    getDeltaTimer() noexcept;
-            float                       computeDeltaTimeS() const noexcept;
-            float                       getDeltaTimeS() const noexcept;
+		public:
+			~DeltaTimer();
 
-        private:
-            mutable float               _deltaTimeS;
-            mutable uint64              _prevTimePointMs;
-            mutable std::mutex          _mutex;
-        };
-    }
+		public:
+			static const DeltaTimer& getDeltaTimer() noexcept;
+			float computeDeltaTimeS() const noexcept;
+			float getDeltaTimeS() const noexcept;
+
+		private:
+			mutable float _deltaTimeS;
+			mutable uint64 _prevTimePointMs;
+			mutable std::mutex _mutex;
+		};
+	}
 }
 
 

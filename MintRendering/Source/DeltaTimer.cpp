@@ -5,44 +5,44 @@
 
 namespace mint
 {
-    namespace Rendering
-    {
-        DeltaTimer::DeltaTimer()
-            : _deltaTimeS{ 0.0f }
-            , _prevTimePointMs{ 0 }
-        {
-            __noop;
-        }
-        
-        DeltaTimer::~DeltaTimer()
-        {
-            __noop;
-        }
+	namespace Rendering
+	{
+		DeltaTimer::DeltaTimer()
+			: _deltaTimeS{ 0.0f }
+			, _prevTimePointMs{ 0 }
+		{
+			__noop;
+		}
 
-        const DeltaTimer& DeltaTimer::getDeltaTimer() noexcept
-        {
-            static DeltaTimer deltaTimer;
-            return deltaTimer;
-        }
+		DeltaTimer::~DeltaTimer()
+		{
+			__noop;
+		}
 
-        float DeltaTimer::computeDeltaTimeS() const noexcept
-        {
-            const uint64 currTimePointMs = Profiler::getCurrentTimeMs();
-            const uint64 deltaTimeMs = currTimePointMs - _prevTimePointMs;
-            
-            std::scoped_lock<std::mutex> scopedLock{ _mutex };
+		const DeltaTimer& DeltaTimer::getDeltaTimer() noexcept
+		{
+			static DeltaTimer deltaTimer;
+			return deltaTimer;
+		}
 
-            _deltaTimeS = deltaTimeMs * 0.001f;
+		float DeltaTimer::computeDeltaTimeS() const noexcept
+		{
+			const uint64 currTimePointMs = Profiler::getCurrentTimeMs();
+			const uint64 deltaTimeMs = currTimePointMs - _prevTimePointMs;
 
-            _prevTimePointMs = currTimePointMs;
+			std::scoped_lock<std::mutex> scopedLock{ _mutex };
 
-            return _deltaTimeS;
-        }
+			_deltaTimeS = deltaTimeMs * 0.001f;
 
-        float DeltaTimer::getDeltaTimeS() const noexcept
-        {
-            return _deltaTimeS;
-        }
+			_prevTimePointMs = currTimePointMs;
 
-    }
+			return _deltaTimeS;
+		}
+
+		float DeltaTimer::getDeltaTimeS() const noexcept
+		{
+			return _deltaTimeS;
+		}
+
+	}
 }
