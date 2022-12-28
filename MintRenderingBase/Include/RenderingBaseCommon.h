@@ -187,6 +187,8 @@ namespace mint
 		public:
 			void setSize(const Int2& size) noexcept;
 			const Int2& getSize() const noexcept;
+			int32 getWidth() const noexcept { return _size._x; }
+			int32 getHeight() const noexcept { return _size._y; }
 
 		public:
 			void fill(const Color& color) noexcept;

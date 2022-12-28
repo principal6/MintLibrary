@@ -23,6 +23,7 @@
 #pragma optimize("", off)
 
 
+bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
 bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice);
 
 
@@ -71,10 +72,85 @@ int main()
 	::SendMessageW(handleToConsoleWindow, WM_CLOSE, 0, 0);
 #endif
 
+	//run2DTestWindow(window, graphicDevice);
 	run3DTestWindow(window, graphicDevice);
 	return 0;
 }
 
+
+bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
+{
+	using namespace mint;
+	using namespace Platform;
+	using namespace Rendering;
+
+	Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
+	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
+	SpriteRenderer spriteRenderer{ graphicDevice };
+	ColorImage colorImage;
+	ImageLoader imageLoader;
+	imageLoader.loadImage("Assets/test_image.png", colorImage);
+	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
+	Vector<byte> textureBytes;
+	colorImage.buildPixelRgbaArray(textureBytes);
+	const GraphicObjectID textureID = resourcePool.pushTexture2D(DxTextureFormat::R8G8B8A8_UNORM, textureBytes.data(), colorImage.getWidth(), colorImage.getHeight());
+	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);
+	while (window.isRunning() == true)
+	{
+		// Events
+		inputContext.processEvents();
+
+		if (inputContext.isKeyPressed())
+		{
+			if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
+			{
+				graphicDevice.getShaderPool().recompileAllShaders();
+			}
+			else if (inputContext.isKeyDown(Platform::KeyCode::Num1) == true)
+			{
+				graphicDevice.useSolidCullBackRasterizer();
+			}
+			else if (inputContext.isKeyDown(Platform::KeyCode::Num2) == true)
+			{
+				graphicDevice.useWireFrameCullBackRasterizer();
+			}
+			else if (inputContext.isKeyDown(Platform::KeyCode::Num3) == true)
+			{
+				graphicDevice.useWireFrameNoCullingRasterizer();
+			}
+		}
+		else if (inputContext.isKeyReleased())
+		{
+			__noop;
+		}
+		else if (inputContext.isMouseWheelScrolled())
+		{
+			const float mouseWheelScroll = inputContext.getMouseWheelScroll();
+		}
+
+		if (window.isResized())
+		{
+			graphicDevice.updateScreenSize();
+		}
+
+		// Rendering
+		{
+			graphicDevice.beginRendering();
+
+			graphicDevice.setViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
+
+			spriteRenderer.drawRectangle(Float2(50, 50), Float2(100, 100), Float2(0, 0), Float2(1, 1));
+			spriteRenderer.render();
+			spriteRenderer.flush();
+
+			graphicDevice.endRendering();
+		}
+
+		Profiler::FPSCounter::count();
+	}
+	return true;
+}
 
 bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDevice& graphicDevice)
 {
