@@ -68,7 +68,7 @@ namespace mint
 
 				using namespace Language;
 				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_vertexShaderID = shaderPool.pushShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", GraphicShaderType::VertexShader);				
+				_vertexShaderID = shaderPool.pushShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", GraphicShaderType::VertexShader);
 				_inputLayoutID = shaderPool.pushInputLayout(_vertexShaderID, typeMetaData);
 			}
 
@@ -324,62 +324,25 @@ namespace mint
 			}
 		}
 
-		void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
+		void ShapeRendererContext::drawLine(const Float2& p0, const Float2& p1, const float thickness)
 		{
-			drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
-
+			drawLineInternal(p0, p1, thickness);
 			pushShapeTransformToBuffer(0.0f, false);
 		}
 
-		void ShapeRendererContext::drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate)
+		bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
 		{
-			static constexpr uint32 kDeltaVertexCount = 3;
-			const Float2(&pointArray)[2] = { pointA, pointB };
-			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+			const uint32 pointCount = points.size();
+			MINT_ASSURE(pointCount > 1);
 
-			uint8 flip = 0;
-			if (validate == true)
+			for (uint32 pointIndex = 1; pointIndex < pointCount; ++pointIndex)
 			{
-				// The control point must be on the left side of the AB segment!
-				const Float3 ac = Float3(controlPoint - pointA);
-				const Float3 ab = Float3(pointB - pointA);
-				const Float3& cross = Float3::cross(ab, ac);
-				flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
+				const Float2& p0 = points[pointIndex - 1];
+				const Float2& p1 = points[pointIndex];
+				drawLineInternal(p0, p1, thickness);
 			}
-
-			VS_INPUT_SHAPE v;
-			auto& vertexArray = _lowLevelRenderer->vertices();
-			v._color = color;
-			v._position = _position;
-			v._position._x = pointArray[0 ^ flip]._x;
-			v._position._y = pointArray[0 ^ flip]._y;
-			v._texCoord._x = 0.0f;
-			v._texCoord._y = 0.0f;
-			v._texCoord._w = abs(pointA._x - pointB._x);
-			v._info._x = packInfoAsFloat(ShapeType::QuadraticBezierTriangle);
-			vertexArray.push_back(v);
-
-			v._position._x = pointArray[1 ^ flip]._x;
-			v._position._y = pointArray[1 ^ flip]._y;
-			v._texCoord._x = 1.0f;
-			v._texCoord._y = 1.0f;
-			vertexArray.push_back(v);
-
-			v._position._x = controlPoint._x;
-			v._position._y = controlPoint._y;
-			v._texCoord._x = 0.5f;
-			v._texCoord._y = 0.0f;
-			vertexArray.push_back(v);
-
-			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			auto& indexArray = _lowLevelRenderer->indices();
-			indexArray.push_back(vertexBase + 0);
-			indexArray.push_back(vertexBase + 1);
-			indexArray.push_back(vertexBase + 2);
-
-			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+			pushShapeTransformToBuffer(0.0f, false);
+			return true;
 		}
 
 		void ShapeRendererContext::drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC)
@@ -387,43 +350,6 @@ namespace mint
 			drawSolidTriangleInternal(pointA, pointB, pointC, _defaultColor);
 
 			pushShapeTransformToBuffer(0.0f, false);
-		}
-
-		void ShapeRendererContext::drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color)
-		{
-			static constexpr uint32 kDeltaVertexCount = 3;
-			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
-
-			VS_INPUT_SHAPE v;
-			auto& vertexArray = _lowLevelRenderer->vertices();
-			{
-				v._color = color;
-				v._position = _position;
-				v._position._x = pointA._x;
-				v._position._y = pointA._y;
-				v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
-				vertexArray.push_back(v);
-
-				v._position._x = pointC._x;
-				v._position._y = pointC._y;
-				vertexArray.push_back(v);
-
-				v._position._x = pointB._x;
-				v._position._y = pointB._y;
-				vertexArray.push_back(v);
-			}
-
-			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			auto& indexArray = _lowLevelRenderer->indices();
-			{
-				indexArray.push_back(vertexBase + 0);
-				indexArray.push_back(vertexBase + 1);
-				indexArray.push_back(vertexBase + 2);
-			}
-
-			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut)
@@ -469,53 +395,67 @@ namespace mint
 			pushShapeTransformToBuffer(rotationAngle);
 		}
 
-		void ShapeRendererContext::drawQuarterCircle(const float radius, const float rotationAngle)
+		void ShapeRendererContext::drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
 		{
-			const float halfRadius = radius * 0.5f;
+			const Float2 halfSize = size * 0.5f;
 
-			drawQuarterCircleInternal(Float2::kZero, halfRadius, _defaultColor);
+			if (borderThickness >= 1.0f)
+			{
+				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+
+				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+
+				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+
+				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+			}
+
+			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
 
 			pushShapeTransformToBuffer(rotationAngle);
 		}
 
-		void ShapeRendererContext::drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color)
+		void ShapeRendererContext::drawTexturedRectangle(const Float2& size, const float rotationAngle)
 		{
+			const Float2 halfSize = size * 0.5f;
+			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, ShapeType::TexturedTriangle);
+			pushShapeTransformToBuffer(rotationAngle);
+		}
+
+		void ShapeRendererContext::drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle)
+		{
+			const Float2 halfSize = size * 0.5f;
+			const float horizontalSpace = size._x * (1.0f - tapering);
 			static constexpr uint32 kDeltaVertexCount = 4;
+			const float horizontalOffsetL = horizontalSpace * bias;
+			const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
 			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
 			VS_INPUT_SHAPE v;
 			auto& vertexArray = _lowLevelRenderer->vertices();
 			{
-				v._color = color;
+				v._color = _defaultColor;
 				v._position = _position;
-				v._position._x = offset._x - halfRadius;
-				v._position._y = offset._y - halfRadius;
-				v._texCoord._x = 0.0f;
-				v._texCoord._y = 1.0f;
-				v._texCoord._z = 1.0f;
-				v._texCoord._w = halfRadius * 2.0f;
-				v._info._x = packInfoAsFloat(ShapeType::Circular);
+				v._position._x = -halfSize._x + horizontalOffsetL;
+				v._position._y = -halfSize._y;
+				v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
 				vertexArray.push_back(v);
 
-				v._position._x = offset._x + halfRadius;
-				v._texCoord._x = 1.0f;
-				v._texCoord._y = 1.0f;
+				v._position._x = +halfSize._x - horizontalOffsetR;
+				v._position._y = -halfSize._y;
 				vertexArray.push_back(v);
 
-				v._position._x = offset._x - halfRadius;
-				v._position._y = offset._y + halfRadius;
-				v._texCoord._x = 0.0f;
-				v._texCoord._y = 0.0f;
+				v._position._x = -halfSize._x;
+				v._position._y = +halfSize._y;
 				vertexArray.push_back(v);
 
-				v._position._x = offset._x + halfRadius;
-				v._texCoord._x = 1.0f;
-				v._texCoord._y = 0.0f;
+				v._position._x = +halfSize._x;
+				v._position._y = +halfSize._y;
 				vertexArray.push_back(v);
 			}
 
-			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - 4;
+			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			auto& indexArray = _lowLevelRenderer->indices();
 			{
 				indexArray.push_back(vertexBase + 0);
@@ -529,6 +469,141 @@ namespace mint
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
 			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+			pushShapeTransformToBuffer(rotationAngle);
+		}
+
+		void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
+		{
+			const float normalizedRoundness = Math::saturate(roundness);
+			if (normalizedRoundness == 0.0f)
+			{
+				drawRectangle(size, borderThickness, rotationAngle);
+				return;
+			}
+
+			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+			const Float2& halfSize = size * 0.5f;
+			const Float2& halfCoreSize = halfSize - Float2(radius);
+
+			if (borderThickness >= 1.0f)
+			{
+				Float2 pointA;
+				Float2 pointB;
+				Float2 pointC;
+
+				// Left top
+				{
+					pointA = Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
+					pointB = Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
+					drawQuadraticBezierInternal(pointA, pointB, -halfSize - Float2(borderThickness), _shapeBorderColor);
+
+					pointC = Float2(-halfCoreSize._x, -halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
+				}
+
+				// Right top
+				{
+					pointA = Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
+					pointB = Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
+					drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, -halfSize._y) + Float2(+borderThickness, -borderThickness), _shapeBorderColor);
+
+					pointC = Float2(+halfCoreSize._x, -halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
+				}
+
+				// Left bottom
+				{
+					pointA = Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
+					pointB = Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
+					drawQuadraticBezierInternal(pointA, pointB, Float2(-halfSize._x, +halfSize._y) + Float2(-borderThickness, +borderThickness), _shapeBorderColor);
+
+					pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
+				}
+
+				// Right bottom
+				{
+					pointA = Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
+					pointB = Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
+					drawQuadraticBezierInternal(pointA, pointB, halfSize + Float2(borderThickness), _shapeBorderColor);
+
+					pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
+					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
+				}
+
+				// Top
+				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
+
+				// Bottom
+				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
+
+				// Left
+				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
+
+				// Right
+				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
+			}
+
+			drawRoundedRectangleInternal(radius, halfSize, _defaultColor);
+
+			pushShapeTransformToBuffer(rotationAngle);
+		}
+
+		void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle)
+		{
+			if (splits.size() < 2)
+			{
+				MINT_NEVER;
+				return;
+			}
+
+			const bool hasMiddleShape = splits.size() == 3;
+			const Color& upperColor = splits.front()._color;
+			const Color& lowerColor = splits.back()._color;
+			const Float2 upperShapeSize = Float2(size._x, size._y * splits[0]._ratio);
+			const Float2 middleShapeSize = (hasMiddleShape ? Float2(size._x, size._y * (splits[1]._ratio - splits[0]._ratio)) : Float2::kZero);
+			const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y - middleShapeSize._y);
+			const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
+			const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
+			drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
+			if (hasMiddleShape)
+			{
+				drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color);
+			}
+			drawLowerHalfRoundedRectangleInternal(Float2(0.0f, (upperShapeSize._y + middleShapeSize._y) * 0.5f), lowerShapeSize, lowerShapeRoundness, lowerColor);
+
+			pushShapeTransformToBuffer(rotationAngle);
+		}
+
+		void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
+		{
+			const float normalizedRoundness = Math::saturate(roundness);
+			if (normalizedRoundness == 0.0f)
+			{
+				drawRectangle(size, 0.0f, rotationAngle);
+				return;
+			}
+
+			drawLowerHalfRoundedRectangleInternal(Float2::kZero, size, normalizedRoundness, _defaultColor);
+
+			pushShapeTransformToBuffer(rotationAngle);
+		}
+
+		void ShapeRendererContext::drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate)
+		{
+			drawQuadraticBezierInternal(pointA, pointB, controlPoint, _defaultColor, validate);
+
+			pushShapeTransformToBuffer(0.0f, false);
+		}
+
+		void ShapeRendererContext::drawQuarterCircle(const float radius, const float rotationAngle)
+		{
+			const float halfRadius = radius * 0.5f;
+
+			drawQuarterCircleInternal(Float2::kZero, halfRadius, _defaultColor);
+
+			pushShapeTransformToBuffer(rotationAngle);
 		}
 
 		void ShapeRendererContext::drawHalfCircle(const float radius, const float rotationAngle)
@@ -921,31 +996,231 @@ namespace mint
 			pushShapeTransformToBuffer(rotationAngle);
 		}
 
-		void ShapeRendererContext::drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle)
+		void ShapeRendererContext::drawColorPalleteXXX(const float radius)
 		{
-			const Float2 halfSize = size * 0.5f;
+			static constexpr uint32 colorCount = 12;
+			static const Color colorArray[colorCount] = {
+				// Red => Green
+				Color(1.0f, 0.0f, 0.0f, 1.0f),
+				Color(1.0f, 0.25f, 0.0f, 1.0f),
+				Color(1.0f, 0.5f, 0.0f, 1.0f),
+				Color(1.0f, 0.75f, 0.0f, 1.0f),
+				Color(1.0f, 1.0f, 0.0f, 1.0f),
+				Color(0.5f, 1.0f, 0.0f, 1.0f),
 
-			if (borderThickness >= 1.0f)
+				// Gren => Blue
+				Color(0.0f, 0.875f, 0.125f, 1.0f),
+				Color(0.0f, 0.666f, 1.0f, 1.0f),
+				Color(0.0f, 0.333f, 1.0f, 1.0f),
+				Color(0.0f, 0.0f, 1.0f, 1.0f),
+
+				// Blue => Red
+				Color(0.5f, 0.0f, 1.0f, 1.0f),
+				Color(1.0f, 0.0f, 0.5f, 1.0f),
+			};
+
+			static constexpr uint32 outerStepSmoothingOffset = 4;
+			static constexpr uint32 innerStepSmoothingOffset = 0;
+			const uint32 outerStepCount = 5;
+			const uint32 innerStepCount = 4;
+			const float stepHeight = radius / (innerStepCount + outerStepCount);
+
+			const float deltaAngle = Math::kTwoPi / colorCount;
+			const float halfDeltaAngle = deltaAngle * 0.5f;
+			for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
 			{
-				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+				const float rgbDenom = (colorCount / 3.0f);
+				const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
 
-				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfSize._x + borderThickness, borderThickness * 0.5f), _shapeBorderColor);
+				int32 colorIndexCorrected = colorIndex;
+				const Color& stepsColor = colorArray[colorIndexCorrected];
 
-				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+				// Outer steps
+				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
+				{
+					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
+					setColor(stepsColor * outerStepRatio + Color(0.0f, 0.0f, 0.0f, 1.0f));
 
-				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfSize._y), _shapeBorderColor);
+					drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
+				}
+
+				// Inner steps
+				const Color deltaColor = Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
+				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
+				{
+					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
+
+					drawDoubleCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, stepHeight * innerStepIndex, deltaAngle, deltaAngle * colorIndex);
+				}
 			}
-
-			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor);
-
-			pushShapeTransformToBuffer(rotationAngle);
 		}
 
-		void ShapeRendererContext::drawTexturedRectangle(const Float2& size, const float rotationAngle)
+		void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
 		{
-			const Float2 halfSize = size * 0.5f;
-			drawRectangleInternal(Float2::kZero, halfSize, _defaultColor, ShapeType::TexturedTriangle);
-			pushShapeTransformToBuffer(rotationAngle);
+			const uint32 textLength = StringUtil::length(wideText);
+			drawDynamicText(wideText, textLength, position, fontRenderingOption);
+		}
+
+		void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
+		{
+			const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
+
+			Float4 postTranslation;
+			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+			{
+				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+			}
+			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+			{
+				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+			}
+			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
+
+			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+			Float2 glyphPosition = Float2(0.0f, 0.0f);
+			for (uint32 at = 0; at < textLength; ++at)
+			{
+				drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
+			}
+
+			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+			const Float4& preTranslation = position;
+			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+		}
+
+		void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		{
+			const uint32 textLength = StringUtil::length(wideText);
+			drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
+		}
+
+		void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
+		{
+			const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
+			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
+
+			Float4 postTranslation;
+			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
+			{
+				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
+			}
+			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
+			{
+				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
+			}
+			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
+
+			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+			Float2 glyphPosition = Float2(0.0f, 0.0f);
+			for (uint32 at = 0; at < textLength; ++at)
+			{
+				drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.get(at));
+			}
+
+			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+			const Float4& preTranslation = position;
+			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
+		}
+
+		float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
+		{
+			return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
+		}
+
+		void ShapeRendererContext::drawLineInternal(const Float2& p0, const Float2& p1, const float thickness)
+		{
+			static constexpr uint32 kDeltaVertexCount = 4;
+			const Float2& dir = Float2::normalize(p1 - p0);
+			const Float2& normal = Float2(-dir._y, dir._x);
+			const float halfThickness = thickness * 0.5f;
+
+			const Float2 v0 = p0 - normal * halfThickness;
+			const Float2 v1 = p1 - normal * halfThickness;
+			const Float2 v2 = p0 + normal * halfThickness;
+			const Float2 v3 = p1 + normal * halfThickness;
+
+			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+			VS_INPUT_SHAPE v;
+			auto& vertexArray = _lowLevelRenderer->vertices();
+			v._color = _defaultColor;
+			v._position = _position;
+			v._position._x = v0._x;
+			v._position._y = v0._y;
+			v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
+			vertexArray.push_back(v);
+
+			v._position._x = v1._x;
+			v._position._y = v1._y;
+			vertexArray.push_back(v);
+
+			v._position._x = v2._x;
+			v._position._y = v2._y;
+			vertexArray.push_back(v);
+
+			v._position._x = v3._x;
+			v._position._y = v3._y;
+			vertexArray.push_back(v);
+
+			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+			auto& indexArray = _lowLevelRenderer->indices();
+			indexArray.push_back(vertexBase + 0);
+			indexArray.push_back(vertexBase + 3);
+			indexArray.push_back(vertexBase + 1);
+
+			indexArray.push_back(vertexBase + 0);
+			indexArray.push_back(vertexBase + 2);
+			indexArray.push_back(vertexBase + 3);
+
+			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+		}
+
+		void ShapeRendererContext::drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color)
+		{
+			static constexpr uint32 kDeltaVertexCount = 3;
+			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+			VS_INPUT_SHAPE v;
+			auto& vertexArray = _lowLevelRenderer->vertices();
+			{
+				v._color = color;
+				v._position = _position;
+				v._position._x = pointA._x;
+				v._position._y = pointA._y;
+				v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
+				vertexArray.push_back(v);
+
+				v._position._x = pointC._x;
+				v._position._y = pointC._y;
+				vertexArray.push_back(v);
+
+				v._position._x = pointB._x;
+				v._position._y = pointB._y;
+				vertexArray.push_back(v);
+			}
+
+			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
+			auto& indexArray = _lowLevelRenderer->indices();
+			{
+				indexArray.push_back(vertexBase + 0);
+				indexArray.push_back(vertexBase + 1);
+				indexArray.push_back(vertexBase + 2);
+			}
+
+			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 		}
 
 		void ShapeRendererContext::drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType)
@@ -1001,174 +1276,6 @@ namespace mint
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
 			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
-		}
-
-		void ShapeRendererContext::drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle)
-		{
-			const Float2 halfSize = size * 0.5f;
-			const float horizontalSpace = size._x * (1.0f - tapering);
-			static constexpr uint32 kDeltaVertexCount = 4;
-			const float horizontalOffsetL = horizontalSpace * bias;
-			const float horizontalOffsetR = horizontalSpace * (1.0f - bias);
-			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
-
-			VS_INPUT_SHAPE v;
-			auto& vertexArray = _lowLevelRenderer->vertices();
-			{
-				v._color = _defaultColor;
-				v._position = _position;
-				v._position._x = -halfSize._x + horizontalOffsetL;
-				v._position._y = -halfSize._y;
-				v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
-				vertexArray.push_back(v);
-
-				v._position._x = +halfSize._x - horizontalOffsetR;
-				v._position._y = -halfSize._y;
-				vertexArray.push_back(v);
-
-				v._position._x = -halfSize._x;
-				v._position._y = +halfSize._y;
-				vertexArray.push_back(v);
-
-				v._position._x = +halfSize._x;
-				v._position._y = +halfSize._y;
-				vertexArray.push_back(v);
-			}
-
-			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
-			auto& indexArray = _lowLevelRenderer->indices();
-			{
-				indexArray.push_back(vertexBase + 0);
-				indexArray.push_back(vertexBase + 3);
-				indexArray.push_back(vertexBase + 1);
-
-				indexArray.push_back(vertexBase + 0);
-				indexArray.push_back(vertexBase + 2);
-				indexArray.push_back(vertexBase + 3);
-			}
-
-			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
-
-			pushShapeTransformToBuffer(rotationAngle);
-		}
-
-		void ShapeRendererContext::drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle)
-		{
-			const float normalizedRoundness = Math::saturate(roundness);
-			if (normalizedRoundness == 0.0f)
-			{
-				drawRectangle(size, borderThickness, rotationAngle);
-				return;
-			}
-
-			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
-			const Float2& halfSize = size * 0.5f;
-			const Float2& halfCoreSize = halfSize - Float2(radius);
-
-			if (borderThickness >= 1.0f)
-			{
-				Float2 pointA;
-				Float2 pointB;
-				Float2 pointC;
-
-				// Left top
-				{
-					pointA = Float2(-halfSize._x - borderThickness, -halfCoreSize._y);
-					pointB = Float2(-halfCoreSize._x, -halfSize._y - borderThickness);
-					drawQuadraticBezierInternal(pointA, pointB, -halfSize - Float2(borderThickness), _shapeBorderColor);
-
-					pointC = Float2(-halfCoreSize._x, -halfCoreSize._y);
-					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
-				}
-
-				// Right top
-				{
-					pointA = Float2(+halfCoreSize._x, -halfSize._y - borderThickness);
-					pointB = Float2(+halfSize._x + borderThickness, -halfCoreSize._y);
-					drawQuadraticBezierInternal(pointA, pointB, Float2(+halfSize._x, -halfSize._y) + Float2(+borderThickness, -borderThickness), _shapeBorderColor);
-
-					pointC = Float2(+halfCoreSize._x, -halfCoreSize._y);
-					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
-				}
-
-				// Left bottom
-				{
-					pointA = Float2(-halfCoreSize._x, +halfSize._y + borderThickness);
-					pointB = Float2(-halfSize._x - borderThickness, +halfCoreSize._y);
-					drawQuadraticBezierInternal(pointA, pointB, Float2(-halfSize._x, +halfSize._y) + Float2(-borderThickness, +borderThickness), _shapeBorderColor);
-
-					pointC = Float2(-halfCoreSize._x, +halfCoreSize._y);
-					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
-				}
-
-				// Right bottom
-				{
-					pointA = Float2(+halfSize._x + borderThickness, +halfCoreSize._y);
-					pointB = Float2(+halfCoreSize._x, +halfSize._y + borderThickness);
-					drawQuadraticBezierInternal(pointA, pointB, halfSize + Float2(borderThickness), _shapeBorderColor);
-
-					pointC = Float2(+halfCoreSize._x, +halfCoreSize._y);
-					drawSolidTriangleInternal(pointA, pointB, pointC, _shapeBorderColor);
-				}
-
-				// Top
-				drawRectangleInternal(Float2(0.0f, -halfSize._y - borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
-
-				// Bottom
-				drawRectangleInternal(Float2(0.0f, +halfSize._y + borderThickness * 0.5f), Float2(halfCoreSize._x, borderThickness * 0.5f), _shapeBorderColor);
-
-				// Left
-				drawRectangleInternal(Float2(-halfSize._x - borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
-
-				// Right
-				drawRectangleInternal(Float2(+halfSize._x + borderThickness * 0.5f, 0.0f), Float2(borderThickness * 0.5f, halfCoreSize._y), _shapeBorderColor);
-			}
-
-			drawRoundedRectangleInternal(radius, halfSize, _defaultColor);
-
-			pushShapeTransformToBuffer(rotationAngle);
-		}
-
-		void ShapeRendererContext::drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle)
-		{
-			if (splits.size() < 2)
-			{
-				MINT_NEVER;
-				return;
-			}
-
-			const bool hasMiddleShape = splits.size() == 3;
-			const Color& upperColor = splits.front()._color;
-			const Color& lowerColor = splits.back()._color;
-			const Float2 upperShapeSize = Float2(size._x, size._y * splits[0]._ratio);
-			const Float2 middleShapeSize = (hasMiddleShape ? Float2(size._x, size._y * (splits[1]._ratio - splits[0]._ratio)) : Float2::kZero);
-			const Float2 lowerShapeSize = Float2(size._x, size._y - upperShapeSize._y - middleShapeSize._y);
-			const float upperShapeRoundness = computeNormalizedRoundness(upperShapeSize.minElement(), roundnessInPixel);
-			const float lowerShapeRoundness = computeNormalizedRoundness(lowerShapeSize.minElement(), roundnessInPixel);
-			drawUpperHalfRoundedRectangleInternal(Float2(0.0f, (-lowerShapeSize._y - middleShapeSize._y) * 0.5f), upperShapeSize, upperShapeRoundness, upperColor);
-			if (hasMiddleShape)
-			{
-				drawRectangleInternal(Float2(0.0f, -middleShapeSize._y * 0.5f), middleShapeSize * 0.5f, splits[1]._color);
-			}
-			drawLowerHalfRoundedRectangleInternal(Float2(0.0f, (upperShapeSize._y + middleShapeSize._y) * 0.5f), lowerShapeSize, lowerShapeRoundness, lowerColor);
-
-			pushShapeTransformToBuffer(rotationAngle);
-		}
-
-		void ShapeRendererContext::drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle)
-		{
-			const float normalizedRoundness = Math::saturate(roundness);
-			if (normalizedRoundness == 0.0f)
-			{
-				drawRectangle(size, 0.0f, rotationAngle);
-				return;
-			}
-
-			drawLowerHalfRoundedRectangleInternal(Float2::kZero, size, normalizedRoundness, _defaultColor);
-
-			pushShapeTransformToBuffer(rotationAngle);
 		}
 
 		void ShapeRendererContext::drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color)
@@ -1311,225 +1418,108 @@ namespace mint
 			}
 		}
 
-		void ShapeRendererContext::drawLine(const Float2& p0, const Float2& p1, const float thickness)
+		void ShapeRendererContext::drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate)
 		{
-			drawLineInternal(p0, p1, thickness);
-			pushShapeTransformToBuffer(0.0f, false);
-		}
-
-		bool ShapeRendererContext::drawLineStrip(const Vector<Float2>& points, const float thickness)
-		{
-			const uint32 pointCount = points.size();
-			MINT_ASSURE(pointCount > 1);
-
-			for (uint32 pointIndex = 1; pointIndex < pointCount; ++pointIndex)
-			{
-				const Float2& p0 = points[pointIndex - 1];
-				const Float2& p1 = points[pointIndex];
-				drawLineInternal(p0, p1, thickness);
-			}
-			pushShapeTransformToBuffer(0.0f, false);
-			return true;
-		}
-
-		void ShapeRendererContext::drawLineInternal(const Float2& p0, const Float2& p1, const float thickness)
-		{
-			static constexpr uint32 kDeltaVertexCount = 4;
-			const Float2& dir = Float2::normalize(p1 - p0);
-			const Float2& normal = Float2(-dir._y, dir._x);
-			const float halfThickness = thickness * 0.5f;
-
-			const Float2 v0 = p0 - normal * halfThickness;
-			const Float2 v1 = p1 - normal * halfThickness;
-			const Float2 v2 = p0 + normal * halfThickness;
-			const Float2 v3 = p1 + normal * halfThickness;
-
+			static constexpr uint32 kDeltaVertexCount = 3;
+			const Float2(&pointArray)[2] = { pointA, pointB };
 			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
+			uint8 flip = 0;
+			if (validate == true)
+			{
+				// The control point must be on the left side of the AB segment!
+				const Float3 ac = Float3(controlPoint - pointA);
+				const Float3 ab = Float3(pointB - pointA);
+				const Float3& cross = Float3::cross(ab, ac);
+				flip = (cross._z > 0.0f) ? 1 : 0; // y 좌표계가 (아래가 + 방향으로) 뒤집혀 있어서 z 값 비교도 뒤집혔다.
+			}
+
 			VS_INPUT_SHAPE v;
 			auto& vertexArray = _lowLevelRenderer->vertices();
-			v._color = _defaultColor;
+			v._color = color;
 			v._position = _position;
-			v._position._x = v0._x;
-			v._position._y = v0._y;
-			v._info._x = packInfoAsFloat(ShapeType::SolidTriangle);
+			v._position._x = pointArray[0 ^ flip]._x;
+			v._position._y = pointArray[0 ^ flip]._y;
+			v._texCoord._x = 0.0f;
+			v._texCoord._y = 0.0f;
+			v._texCoord._w = abs(pointA._x - pointB._x);
+			v._info._x = packInfoAsFloat(ShapeType::QuadraticBezierTriangle);
 			vertexArray.push_back(v);
 
-			v._position._x = v1._x;
-			v._position._y = v1._y;
+			v._position._x = pointArray[1 ^ flip]._x;
+			v._position._y = pointArray[1 ^ flip]._y;
+			v._texCoord._x = 1.0f;
+			v._texCoord._y = 1.0f;
 			vertexArray.push_back(v);
 
-			v._position._x = v2._x;
-			v._position._y = v2._y;
-			vertexArray.push_back(v);
-
-			v._position._x = v3._x;
-			v._position._y = v3._y;
+			v._position._x = controlPoint._x;
+			v._position._y = controlPoint._y;
+			v._texCoord._x = 0.5f;
+			v._texCoord._y = 0.0f;
 			vertexArray.push_back(v);
 
 			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - kDeltaVertexCount;
 			auto& indexArray = _lowLevelRenderer->indices();
 			indexArray.push_back(vertexBase + 0);
-			indexArray.push_back(vertexBase + 3);
 			indexArray.push_back(vertexBase + 1);
-
-			indexArray.push_back(vertexBase + 0);
 			indexArray.push_back(vertexBase + 2);
-			indexArray.push_back(vertexBase + 3);
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
 			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
 		}
 
-		void ShapeRendererContext::drawColorPalleteXXX(const float radius)
+		void ShapeRendererContext::drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color)
 		{
-			static constexpr uint32 colorCount = 12;
-			static const Color colorArray[colorCount] = {
-				// Red => Green
-				Color(1.0f, 0.0f, 0.0f, 1.0f),
-				Color(1.0f, 0.25f, 0.0f, 1.0f),
-				Color(1.0f, 0.5f, 0.0f, 1.0f),
-				Color(1.0f, 0.75f, 0.0f, 1.0f),
-				Color(1.0f, 1.0f, 0.0f, 1.0f),
-				Color(0.5f, 1.0f, 0.0f, 1.0f),
-
-				// Gren => Blue
-				Color(0.0f, 0.875f, 0.125f, 1.0f),
-				Color(0.0f, 0.666f, 1.0f, 1.0f),
-				Color(0.0f, 0.333f, 1.0f, 1.0f),
-				Color(0.0f, 0.0f, 1.0f, 1.0f),
-
-				// Blue => Red
-				Color(0.5f, 0.0f, 1.0f, 1.0f),
-				Color(1.0f, 0.0f, 0.5f, 1.0f),
-			};
-
-			static constexpr uint32 outerStepSmoothingOffset = 4;
-			static constexpr uint32 innerStepSmoothingOffset = 0;
-			const uint32 outerStepCount = 5;
-			const uint32 innerStepCount = 4;
-			const float stepHeight = radius / (innerStepCount + outerStepCount);
-
-			const float deltaAngle = Math::kTwoPi / colorCount;
-			const float halfDeltaAngle = deltaAngle * 0.5f;
-			for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
-			{
-				const float rgbDenom = (colorCount / 3.0f);
-				const uint32 rgb = static_cast<uint32>(colorIndex / rgbDenom);
-
-				int32 colorIndexCorrected = colorIndex;
-				const Color& stepsColor = colorArray[colorIndexCorrected];
-
-				// Outer steps
-				for (uint32 outerStepIndex = 0; outerStepIndex < outerStepCount; ++outerStepIndex)
-				{
-					const float outerStepRatio = 1.0f - static_cast<float>(outerStepIndex) / (outerStepCount + outerStepSmoothingOffset);
-					setColor(stepsColor * outerStepRatio + Color(0.0f, 0.0f, 0.0f, 1.0f));
-
-					drawDoubleCircularArc(stepHeight * (innerStepCount + outerStepIndex + 1) + 1.0f, stepHeight * (innerStepCount + outerStepIndex), deltaAngle, deltaAngle * colorIndex);
-				}
-
-				// Inner steps
-				const Color deltaColor = Color(1.0f, 1.0f, 1.0f, 0.0f) / (innerStepCount + innerStepSmoothingOffset);
-				for (uint32 innerStepIndex = 0; innerStepIndex < innerStepCount; ++innerStepIndex)
-				{
-					setColor(stepsColor + deltaColor * static_cast<float>(innerStepCount - innerStepIndex));
-
-					drawDoubleCircularArc(stepHeight * (innerStepIndex + 1) + 1.0f, stepHeight * innerStepIndex, deltaAngle, deltaAngle * colorIndex);
-				}
-			}
-		}
-
-		void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption)
-		{
-			const uint32 textLength = StringUtil::length(wideText);
-			drawDynamicText(wideText, textLength, position, fontRenderingOption);
-		}
-
-		void ShapeRendererContext::drawDynamicText(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption)
-		{
-			const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
-
-			Float4 postTranslation;
-			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
-			{
-				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
-			}
-			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
-			{
-				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-			}
-			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
-
+			static constexpr uint32 kDeltaVertexCount = 4;
 			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
 			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
 
-			Float2 glyphPosition = Float2(0.0f, 0.0f);
-			for (uint32 at = 0; at < textLength; ++at)
+			VS_INPUT_SHAPE v;
+			auto& vertexArray = _lowLevelRenderer->vertices();
 			{
-				drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, false);
+				v._color = color;
+				v._position = _position;
+				v._position._x = offset._x - halfRadius;
+				v._position._y = offset._y - halfRadius;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 1.0f;
+				v._texCoord._z = 1.0f;
+				v._texCoord._w = halfRadius * 2.0f;
+				v._info._x = packInfoAsFloat(ShapeType::Circular);
+				vertexArray.push_back(v);
+
+				v._position._x = offset._x + halfRadius;
+				v._texCoord._x = 1.0f;
+				v._texCoord._y = 1.0f;
+				vertexArray.push_back(v);
+
+				v._position._x = offset._x - halfRadius;
+				v._position._y = offset._y + halfRadius;
+				v._texCoord._x = 0.0f;
+				v._texCoord._y = 0.0f;
+				vertexArray.push_back(v);
+
+				v._position._x = offset._x + halfRadius;
+				v._texCoord._x = 1.0f;
+				v._texCoord._y = 0.0f;
+				vertexArray.push_back(v);
+			}
+
+			const uint32 vertexBase = static_cast<uint32>(vertexArray.size()) - 4;
+			auto& indexArray = _lowLevelRenderer->indices();
+			{
+				indexArray.push_back(vertexBase + 0);
+				indexArray.push_back(vertexBase + 3);
+				indexArray.push_back(vertexBase + 1);
+
+				indexArray.push_back(vertexBase + 0);
+				indexArray.push_back(vertexBase + 2);
+				indexArray.push_back(vertexBase + 3);
 			}
 
 			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
 			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
-
-			const Float4& preTranslation = position;
-			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
-		}
-
-		void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
-		{
-			const uint32 textLength = StringUtil::length(wideText);
-			drawDynamicTextBitFlagged(wideText, textLength, position, fontRenderingOption, bitFlags);
-		}
-
-		void ShapeRendererContext::drawDynamicTextBitFlagged(const wchar_t* const wideText, const uint32 textLength, const Float4& position, const FontRenderingOption& fontRenderingOption, const BitVector& bitFlags)
-		{
-			const float scaledTextWidth = _fontData.computeTextWidth(wideText, textLength) * fontRenderingOption._scale;
-			const float scaledFontSize = _fontData._fontSize * fontRenderingOption._scale;
-
-			Float4 postTranslation;
-			if (fontRenderingOption._directionHorz != TextRenderDirectionHorz::Rightward)
-			{
-				postTranslation._x -= (fontRenderingOption._directionHorz == TextRenderDirectionHorz::Centered) ? scaledTextWidth * 0.5f : scaledTextWidth;
-			}
-			if (fontRenderingOption._directionVert != TextRenderDirectionVert::Centered)
-			{
-				postTranslation._y += (fontRenderingOption._directionVert == TextRenderDirectionVert::Upward) ? -scaledFontSize * 0.5f : +scaledFontSize * 0.5f;
-			}
-			postTranslation._y += (-scaledFontSize * 0.5f - 1.0f);
-
-			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
-			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
-
-			Float2 glyphPosition = Float2(0.0f, 0.0f);
-			for (uint32 at = 0; at < textLength; ++at)
-			{
-				drawGlyph(wideText[at], glyphPosition, fontRenderingOption._scale, fontRenderingOption._drawShade, !bitFlags.get(at));
-			}
-
-			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
-			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
-
-			const Float4& preTranslation = position;
-			pushFontTransformToBuffer(preTranslation, fontRenderingOption._transformMatrix, postTranslation);
-		}
-
-		float ShapeRendererContext::computeNormalizedRoundness(const float minSize, const float roundnessInPixel) const
-		{
-			return Math::clamp((roundnessInPixel * 2.0f) / minSize, 0.0f, 1.0f);
-		}
-
-		void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
-		{
-			SB_Transform transform;
-			transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
-			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
-			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
-			//transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
-			_sbTransformData.push_back(transform);
 		}
 
 		void ShapeRendererContext::drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace)
@@ -1597,6 +1587,16 @@ namespace mint
 			}
 
 			glyphPosition._x += static_cast<float>(glyphInfo._horiAdvance) * scale;
+		}
+
+		void ShapeRendererContext::pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition)
+		{
+			SB_Transform transform;
+			transform._transformMatrix = Float4x4::rotationMatrixZ(-rotationAngle);
+			transform._transformMatrix._m[0][3] = (applyInternalPosition == true) ? _position._x : 0.0f;
+			transform._transformMatrix._m[1][3] = (applyInternalPosition == true) ? _position._y : 0.0f;
+			//transform._transformMatrix._m[2][3] = (applyInternalPosition == true) ? _position._z : 0.0f;
+			_sbTransformData.push_back(transform);
 		}
 
 		void ShapeRendererContext::pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation)

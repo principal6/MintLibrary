@@ -100,11 +100,26 @@ namespace mint
 		public:
 			// Independent from internal position set by setPosition() call
 			// No rotation allowed
-			void drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
+			void drawLine(const Float2& p0, const Float2& p1, const float thickness);
+			// Independent from internal position set by setPosition() call
+			// No rotation allowed
+			bool drawLineStrip(const Vector<Float2>& points, const float thickness);
+
 			// Independent from internal position set by setPosition() call
 			// No rotation allowed
 			void drawSolidTriangle(const Float2& pointA, const Float2& pointB, const Float2& pointC);
 			void drawCircularTriangle(const float radius, const float rotationAngle, const bool insideOut = false);
+
+			void drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
+			void drawTexturedRectangle(const Float2& size, const float rotationAngle);
+			void drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
+			void drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
+			void drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
+			void drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
+
+			// Independent from internal position set by setPosition() call
+			// No rotation allowed
+			void drawQuadraticBezier(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const bool validate = true);
 			void drawQuarterCircle(const float radius, const float rotationAngle);
 			// This function Interprets internal positon as the center of the entire circle (= center root of half circle)
 			void drawHalfCircle(const float radius, const float rotationAngle);
@@ -114,18 +129,6 @@ namespace mint
 			void drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
 			// arcAngle = [0, +pi]
 			void drawDoubleCircularArc(const float outerRadius, const float innerRadius, const float arcAngle, const float rotationAngle);
-			void drawRectangle(const Float2& size, const float borderThickness, const float rotationAngle);
-			void drawTexturedRectangle(const Float2& size, const float rotationAngle);
-			void drawTaperedRectangle(const Float2& size, const float tapering, const float bias, const float rotationAngle);
-			void drawRoundedRectangle(const Float2& size, const float roundness, const float borderThickness, const float rotationAngle);
-			void drawRoundedRectangleVertSplit(const Float2& size, const float roundnessInPixel, const StackVector<Split, 3>& splits, const float rotationAngle);
-			void drawHalfRoundedRectangle(const Float2& size, const float roundness, const float rotationAngle);
-			// Independent from internal position set by setPosition() call
-			// No rotation allowed
-			void drawLine(const Float2& p0, const Float2& p1, const float thickness);
-			// Independent from internal position set by setPosition() call
-			// No rotation allowed
-			bool drawLineStrip(const Vector<Float2>& points, const float thickness);
 
 		public:
 			// This function is slow...!!!
@@ -143,22 +146,22 @@ namespace mint
 
 			// Shape
 		protected:
-			void drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
+			void drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
 			void drawSolidTriangleInternal(const Float2& pointA, const Float2& pointB, const Float2& pointC, const Color& color);
-			void drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
 			void drawRectangleInternal(const Float2& offset, const Float2& halfSize, const Color& color, const ShapeType shapeType = ShapeType::SolidTriangle);
 			void drawRoundedRectangleInternal(const float radius, const Float2& halfSize, const Color& color);
 			void drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
 			void drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float roundness, const Color& color);
-			void drawLineInternal(const Float2& p0, const Float2& p1, const float thickness);
-			void pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
+			void drawQuadraticBezierInternal(const Float2& pointA, const Float2& pointB, const Float2& controlPoint, const Color& color, const bool validate = true);
+			void drawQuarterCircleInternal(const Float2& offset, const float halfRadius, const Color& color);
 
 			// Font
 		protected:
 			void drawGlyph(const wchar_t wideChar, Float2& glyphPosition, const float scale, const bool drawShade, const bool leaveOnlySpace);
-			void pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
 
 		protected:
+			void pushShapeTransformToBuffer(const float rotationAngle, const bool applyInternalPosition = true);
+			void pushFontTransformToBuffer(const Float4& preTranslation, Float4x4 transformMatrix, const Float4& postTranslation);
 			float packInfoAsFloat(const ShapeType shapeType) const noexcept;
 
 		protected:
