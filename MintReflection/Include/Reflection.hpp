@@ -171,19 +171,20 @@ namespace mint
 
 		if constexpr (IsReflectionClass<T>::value == true)
 		{
-			TypeBaseData* const typeData = from.getReflectionData()._typeData;
+			const ReflectionData& reflectionData = from.getReflectionData();
+			TypeBaseData* const typeData = reflectionData._typeData;
 			typeData->serialize(*this);
 
-			const uint32 memberCount = from.getReflectionData()._memberTypeDatas.size();
+			const uint32 memberCount = reflectionData._memberTypeDatas.size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = from.getReflectionData()._memberTypeDatas[memberIndex];
+				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
 				memberTypeData->serialize(*this);
 			}
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = from.getReflectionData()._memberTypeDatas[memberIndex];
+				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
 				memberTypeData->serializeValue(*this, reinterpret_cast<const char*>(&from) + memberTypeData->_offset, memberTypeData->_arrayItemCount);
 			}
 		}
@@ -246,22 +247,23 @@ namespace mint
 
 		if constexpr (IsReflectionClass<T>::value == true)
 		{
-			TypeBaseData* const typeData = to.getReflectionData()._typeData;
+			const ReflectionData& reflectionData = to.getReflectionData();
+			TypeBaseData* const typeData = reflectionData._typeData;
 			if (typeData->deserialize(*this) == false)
 			{
 				return false;
 			}
 
-			const uint32 memberCount = to.getReflectionData()._memberTypeDatas.size();
+			const uint32 memberCount = reflectionData._memberTypeDatas.size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = to.getReflectionData()._memberTypeDatas[memberIndex];
+				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
 				memberTypeData->deserialize(*this);
 			}
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = to.getReflectionData()._memberTypeDatas[memberIndex];
+				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
 				memberTypeData->deserializeValue(*this, reinterpret_cast<char*>(&to) + memberTypeData->_offset, memberTypeData->_arrayItemCount);
 			}
 		}

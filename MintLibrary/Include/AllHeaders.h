@@ -32,6 +32,8 @@ namespace mint
 
 #include <MintPlatform/Include/AllHeaders.h>
 
+#include <MintReflection/Include/Reflection.h>
+
 #include <MintRenderingBase/Include/AllHeaders.h>
 
 #include <MintLanguage/Include/AllHeaders.h>
