@@ -57,7 +57,7 @@ namespace mint
 	template <typename T>
 	inline void TypeData<T>::serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept
 	{
-		for (uint32 arrayItemIndex = 0; arrayItemIndex < arrayItemCount; ++arrayItemIndex)
+		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
 			serializer._serializeInternal(*(castedMemberPointer + arrayItemIndex), false);
@@ -87,7 +87,7 @@ namespace mint
 	template <typename T>
 	inline void TypeData<T>::deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept
 	{
-		for (uint32 arrayItemIndex = 0; arrayItemIndex < arrayItemCount; ++arrayItemIndex)
+		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			T* const castedMemberPointer = reinterpret_cast<T*>(memberPointer);
 			serializer._deserializeInternal(*(castedMemberPointer + arrayItemIndex), false);
