@@ -88,13 +88,11 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 	SpriteRenderer spriteRenderer{ graphicDevice };
-	ColorImage colorImage;
+	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
-	imageLoader.loadImage("Assets/test_image.png", colorImage);
+	imageLoader.loadImage("Assets/test_image.png", byteColorImage);
 	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
-	Vector<byte> textureBytes;
-	colorImage.buildPixelRgbaArray(textureBytes);
-	const GraphicObjectID textureID = resourcePool.pushTexture2D(DxTextureFormat::R8G8B8A8_UNORM, textureBytes.data(), colorImage.getWidth(), colorImage.getHeight());
+	const GraphicObjectID textureID = resourcePool.pushTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
 	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);
 	while (window.isRunning() == true)
 	{
