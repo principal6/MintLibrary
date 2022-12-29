@@ -25,12 +25,15 @@ namespace mint
 
 	public:
 		template <typename T>
-		const T* const read() const noexcept;
+		const T* const peek() const noexcept;
 
 		template <typename T>
-		const T* const read(const uint32 count) const noexcept;
+		const T* const read() noexcept;
 
-		void skip(const uint32 byteCount) const noexcept;
+		template <typename T>
+		const T* const read(const uint32 count) noexcept;
+
+		void skip(const uint32 byteCount) noexcept;
 
 		const Vector<byte>& getBytes() const { return _bytes; }
 
@@ -39,7 +42,7 @@ namespace mint
 
 	private:
 		Vector<byte> _bytes;
-		mutable uint32 _at{ 0 };
+		uint32 _at{ 0 };
 	};
 
 

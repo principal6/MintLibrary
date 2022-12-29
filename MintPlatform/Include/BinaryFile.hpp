@@ -10,7 +10,19 @@ namespace mint
 {
 #pragma region Binary File Reader
 	template <typename T>
-	MINT_INLINE const T* const BinaryFileReader::read() const noexcept
+	MINT_INLINE const T* const BinaryFileReader::peek() const noexcept
+	{
+		const uint32 byteCount = static_cast<uint32>(sizeof(T));
+		if (canRead(byteCount) == true)
+		{
+			const T* const ptr = reinterpret_cast<const T*>(&_bytes[_at]);
+			return ptr;
+		}
+		return nullptr;
+	}
+
+	template <typename T>
+	MINT_INLINE const T* const BinaryFileReader::read() noexcept
 	{
 		const uint32 byteCount = static_cast<uint32>(sizeof(T));
 		if (canRead(byteCount) == true)
@@ -23,7 +35,7 @@ namespace mint
 	}
 
 	template <typename T>
-	MINT_INLINE const T* const BinaryFileReader::read(const uint32 count) const noexcept
+	MINT_INLINE const T* const BinaryFileReader::read(const uint32 count) noexcept
 	{
 		const uint32 byteCount = static_cast<uint32>(sizeof(T) * count);
 		if (canRead(byteCount) == true)
@@ -35,7 +47,7 @@ namespace mint
 		return nullptr;
 	}
 
-	MINT_INLINE void BinaryFileReader::skip(const uint32 byteCount) const noexcept
+	MINT_INLINE void BinaryFileReader::skip(const uint32 byteCount) noexcept
 	{
 		_at += byteCount;
 	}
