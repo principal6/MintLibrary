@@ -55,10 +55,15 @@ namespace mint
 			constexpr ByteColor(byte c) : ByteColor(c, c, c, c) { __noop; }
 			constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
 
-			MINT_INLINE constexpr byte r() const noexcept { return _c[0]; }
-			MINT_INLINE constexpr byte g() const noexcept { return _c[1]; }
-			MINT_INLINE constexpr byte b() const noexcept { return _c[2]; }
-			MINT_INLINE constexpr byte a() const noexcept { return _c[3]; }
+			MINT_INLINE byte& r() noexcept { return _c[0]; }
+			MINT_INLINE byte& g() noexcept { return _c[1]; }
+			MINT_INLINE byte& b() noexcept { return _c[2]; }
+			MINT_INLINE byte& a() noexcept { return _c[3]; }
+
+			MINT_INLINE constexpr const byte& r() const noexcept { return _c[0]; }
+			MINT_INLINE constexpr const byte& g() const noexcept { return _c[1]; }
+			MINT_INLINE constexpr const byte& b() const noexcept { return _c[2]; }
+			MINT_INLINE constexpr const byte& a() const noexcept { return _c[3]; }
 
 			MINT_INLINE constexpr void r(byte value) noexcept { _c[0] = value; }
 			MINT_INLINE constexpr void g(byte value) noexcept { _c[1] = value; }
