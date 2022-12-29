@@ -58,10 +58,12 @@ namespace mint
 	template<typename T>
 	inline Vector<T>::Vector(Vector&& rhs) noexcept
 		: _rawPointer{ rhs._rawPointer }
-		, _capacity{ std::move(rhs._capacity) }
-		, _size{ std::move(rhs._size) }
+		, _capacity{ rhs._capacity }
+		, _size{ rhs._size }
 	{
 		rhs._rawPointer = nullptr;
+		rhs._capacity = 0;
+		rhs._size = 0;
 	}
 
 	template<typename T>
@@ -99,10 +101,12 @@ namespace mint
 			MemoryRaw::deallocateMemory<T>(_rawPointer);
 
 			_rawPointer = rhs._rawPointer;
-			_capacity = std::move(rhs._capacity);
-			_size = std::move(rhs._size);
+			_capacity = rhs._capacity;
+			_size = rhs._size;
 
 			rhs._rawPointer = nullptr;
+			rhs._capacity = 0;
+			rhs._size = 0;
 		}
 		return *this;
 	}
