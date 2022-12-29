@@ -63,7 +63,7 @@
     <ClInclude Include="Include\SplineGenerator.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="Include\SpriteRenderer.h">
+    <ClInclude Include="Include\ImageRenderer.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="Include\Test.h">
@@ -107,7 +107,7 @@
     <ClCompile Include="Source\SplineGenerator.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SpriteRenderer.cpp">
+    <ClCompile Include="Source\ImageRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\Test.cpp">
