@@ -691,6 +691,66 @@ namespace mint
 			pushShapeTransformToBuffer(0.0f);
 		}
 
+		void ShapeRendererContext::drawEllipse(const float xRadius, const float yRadius, const float rotationAngle)
+		{
+			static constexpr uint32 kDeltaVertexCount = 4;
+			const uint32 vertexOffset = _lowLevelRenderer->getVertexCount();
+			const uint32 indexOffset = _lowLevelRenderer->getIndexCount();
+
+			VS_INPUT_SHAPE v;
+			auto& vertices = _lowLevelRenderer->vertices();
+			{
+				v._color = _defaultColor;
+				v._position = _position;
+				v._position._x = -xRadius;
+				v._position._y = -yRadius;
+				v._texCoord._x = -1.0f;
+				v._texCoord._y = +1.0f;
+				v._texCoord._z = +1.0f;
+				v._texCoord._w = 0.0f;
+				v._info._x = packInfoAsFloat(ShapeType::Circular);
+				vertices.push_back(v);
+
+				v._position._x = +xRadius;
+				v._position._y = -yRadius;
+				v._texCoord._x = +1.0f;
+				v._texCoord._y = +1.0f;
+				vertices.push_back(v);
+
+				v._position._x = -xRadius;
+				v._position._y = +yRadius;
+				v._texCoord._x = -1.0f;
+				v._texCoord._y = -1.0f;
+				vertices.push_back(v);
+
+				v._position._x = +xRadius;
+				v._position._y = +yRadius;
+				v._texCoord._x = +1.0f;
+				v._texCoord._y = -1.0f;
+				vertices.push_back(v);
+			}
+
+			const uint32 vertexBase = static_cast<uint32>(vertices.size()) - kDeltaVertexCount;
+
+			auto& indices = _lowLevelRenderer->indices();
+			{
+				// Body left upper
+				indices.push_back(vertexBase + 0);
+				indices.push_back(vertexBase + 3);
+				indices.push_back(vertexBase + 1);
+
+				// Body right lower
+				indices.push_back(vertexBase + 0);
+				indices.push_back(vertexBase + 2);
+				indices.push_back(vertexBase + 3);
+			}
+
+			const uint32 indexCount = _lowLevelRenderer->getIndexCount() - indexOffset;
+			_lowLevelRenderer->pushRenderCommandIndexed(RenderingPrimitive::TriangleList, kVertexOffsetZero, indexOffset, indexCount, _clipRect);
+
+			pushShapeTransformToBuffer(0.0f);
+		}
+
 		void ShapeRendererContext::drawDoughnut(const float outerRadius, const float innerRadius)
 		{
 			static constexpr uint32 kDeltaVertexCount = 4;

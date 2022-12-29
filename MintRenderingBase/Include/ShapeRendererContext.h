@@ -122,6 +122,7 @@ namespace mint
 			// This function Interprets internal positon as the center of the entire circle (= center root of half circle)
 			void drawHalfCircle(const float radius, const float rotationAngle);
 			void drawCircle(const float radius, const bool insideOut = false);
+			void drawEllipse(const float xRadius, const float yRadius, const float rotationAngle);
 			void drawDoughnut(const float outerRadius, const float innerRadius);
 			// arcAngle = [0, +pi]
 			void drawCircularArc(const float radius, const float arcAngle, const float rotationAngle);
