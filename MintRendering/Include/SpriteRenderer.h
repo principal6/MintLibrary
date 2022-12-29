@@ -19,6 +19,7 @@ namespace mint
 			virtual ~SpriteRenderer() = default;
 
 		public:
+			virtual void initializeShaders() noexcept override;
 			virtual void flush() noexcept override;
 			virtual void render() noexcept override;
 
