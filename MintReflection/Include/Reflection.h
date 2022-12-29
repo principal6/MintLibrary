@@ -227,13 +227,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		void _serializeInternal(const T& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		void _serializeInternal(const T& from, const bool isTypeData) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const String<T>& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		void _serializeInternal(const String<T>& from, const bool isTypeData) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const Vector<T>& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		void _serializeInternal(const Vector<T>& from, const bool isTypeData) noexcept;
 
 	public:
 		template <typename T>
@@ -241,13 +241,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		bool _deserializeInternal(T& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		bool _deserializeInternal(T& to, const bool isTypeData) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(String<T>& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		bool _deserializeInternal(String<T>& to, const bool isTypeData) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(Vector<T>& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
+		bool _deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept;
 
 	private:
 		BinaryFileWriter _writer;

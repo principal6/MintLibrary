@@ -16,19 +16,21 @@ namespace mint
 {
 	namespace TestReflection
 	{
-		class StructOfArray
+		class StructOfArrays
 		{
-			REFLECTION_CLASS(StructOfArray)
+			REFLECTION_CLASS(StructOfArrays)
 
 		public:
-			StructOfArray() { initializeReflection(); }
+			StructOfArrays() { initializeReflection(); }
 
 		public:
 			REFLECTION_MEMBER_ARRAY(byte, _arr, 3)
+			REFLECTION_MEMBER_ARRAY(StringA, _strs, 2)
 			
 		private:
 			REFLECTION_BIND_BEGIN
 			REFLECTION_BIND(_arr)
+			REFLECTION_BIND(_strs)
 			REFLECTION_BIND_END
 		};
 
@@ -36,12 +38,14 @@ namespace mint
 		{
 			const ReflectionData& refl1 = ReflectionTesterOuter::getReflectionData();
 			const ReflectionData& refl2 = ReflectionTesterInner::getReflectionData();
-			const ReflectionData& refl3 = StructOfArray::getReflectionData();
+			const ReflectionData& refl3 = StructOfArrays::getReflectionData();
 
-			StructOfArray struct_of_array;
-			struct_of_array._arr[0] = 2;
-			struct_of_array._arr[1] = 5;
-			struct_of_array._arr[2] = 7;
+			StructOfArrays struct_of_arrays;
+			struct_of_arrays._arr[0] = 2;
+			struct_of_arrays._arr[1] = 5;
+			struct_of_arrays._arr[2] = 7;
+			struct_of_arrays._strs[0] = "ABCD";
+			struct_of_arrays._strs[1] = "WXYZ";
 
 			ReflectionTesterOuter outer0;
 			outer0._id = 0xAABBCCDD;
@@ -57,14 +61,14 @@ namespace mint
 			serializer.serialize(outer0, "assets/serialization_test_outer0.bin");
 			serializer.serialize(inner0, "assets/serialization_test_inner0.bin");
 			serializer.serialize(Float3(1, 2, 3), "assets/serialization_test_float3_0.bin");
-			serializer.serialize(struct_of_array, "assets/serialization_test_struct_of_array.bin");
+			serializer.serialize(struct_of_arrays, "assets/serialization_test_struct_of_arrays.bin");
 
 			ReflectionTesterOuter outer1;
 			Float3 float3_1 = Float3(9, 9, 9);
 			serializer.deserialize("assets/serialization_test_outer0.bin", outer1);
 			//serializer.deserialize("assets/serialization_test_outer0.bin", inner0); // This line must fail!!!
 			serializer.deserialize("assets/serialization_test_float3_0.bin", float3_1);
-			serializer.deserialize("assets/serialization_test_struct_of_array.bin", struct_of_array);
+			serializer.deserialize("assets/serialization_test_struct_of_arrays.bin", struct_of_arrays);
 			return true;
 		}
 	}
