@@ -6,6 +6,8 @@
 #include <MintReflection/Include/Reflection.h>
 #include <MintReflection/Include/Reflection.hpp>
 
+#include <MintMath/Include/Float3.h>
+
 
 namespace mint
 {
@@ -26,7 +28,6 @@ namespace mint
 			outer0._uis.push_back(0xBA);
 			ReflectionTesterInner inner0;
 
-#if defined TEST_SERIALIZATION
 			Serializer serializer;
 			serializer.serialize(outer0, "assets/serialization_test_outer0.bin");
 			serializer.serialize(inner0, "assets/serialization_test_inner0.bin");
@@ -34,11 +35,9 @@ namespace mint
 
 			ReflectionTesterOuter outer1;
 			Float3 float3_1 = Float3(9, 9, 9);
-
 			serializer.deserialize("assets/serialization_test_outer0.bin", outer1);
 			//serializer.deserialize("assets/serialization_test_outer0.bin", inner0); // This line fails!!!
 			serializer.deserialize("assets/serialization_test_float3_0.bin", float3_1);
-#endif
 			return true;
 		}
 	}
