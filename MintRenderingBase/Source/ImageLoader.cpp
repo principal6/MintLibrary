@@ -15,7 +15,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		bool ImageLoader::loadImage(const StringReferenceA& fileName, ColorImage& outColorImage) const
+		bool ImageLoader::loadImage(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const
 		{
 			BinaryFileReader binaryFileReader;
 			if (binaryFileReader.open(fileName.c_str()) == false)
@@ -23,23 +23,23 @@ namespace mint
 				return false;
 			}
 			binaryFileReader.getBytes();
-			return loadImage(binaryFileReader.getBytes(), outColorImage);
+			return loadImage(binaryFileReader.getBytes(), outByteColorImage);
 		}
 
-		bool ImageLoader::loadImage(const Vector<byte>& bytes, ColorImage& outColorImage) const
+		bool ImageLoader::loadImage(const Vector<byte>& bytes, ByteColorImage& outByteColorImage) const
 		{
 			int32 width{};
 			int32 height{};
 			int32 comp{};
 			const int32 req_comp{ 4 };
 			stbi_uc* rawImageData = stbi_load_from_memory(bytes.data(), bytes.size(), &width, &height, &comp, req_comp);
-			outColorImage.setSize(Int2(width, height));
+			outByteColorImage.setSize(Int2(width, height));
 			const int32 dimension = static_cast<int32>(static_cast<int64>(width) * height * req_comp);
 			for (int32 at = 0; at < dimension; ++at)
 			{
 				if (at % req_comp == 0)
 				{
-					outColorImage.setPixel(at / req_comp, Color(rawImageData[at], rawImageData[at + 1], rawImageData[at + 2], rawImageData[at + 3]));
+					outByteColorImage.setPixel(at / req_comp, ByteColor(rawImageData[at], rawImageData[at + 1], rawImageData[at + 2], rawImageData[at + 3]));
 				}
 			}
 			stbi_image_free(rawImageData);
@@ -65,14 +65,12 @@ namespace mint
 			return true;
 		}
 
-		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const ColorImage& colorImage) const
+		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const ByteColorImage& byteColorImage) const
 		{
-			Vector<byte> decompressedBytes;
-			colorImage.buildPixelRgbaArray(decompressedBytes);
-			return saveImagePNG(fileName, decompressedBytes, colorImage.getSize()._x, colorImage.getSize()._y, 4);
+			return saveImagePNG(fileName, byteColorImage.getBytes(), byteColorImage.getSize()._x, byteColorImage.getSize()._y, 4);
 		}
 
-		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const Vector<byte>& decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const
+		bool ImageLoader::saveImagePNG(const StringReferenceA& fileName, const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components) const
 		{
 			BinaryFileWriter binaryFileWriter;
 			if (saveImagePNG(decompressedBytes, width, height, components, binaryFileWriter, false) == true)
@@ -82,10 +80,10 @@ namespace mint
 			return false;
 		}
 
-		bool ImageLoader::saveImagePNG(const Vector<byte>& decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const
+		bool ImageLoader::saveImagePNG(const byte* decompressedBytes, const uint32 width, const uint32 height, const uint32 components, BinaryFileWriter& binaryFileWriter, const bool prependLength) const
 		{
 			int32 length{ 0 };
-			unsigned char* png = stbi_write_png_to_mem(decompressedBytes.data(), width * components, width, height, components, &length);
+			unsigned char* png = stbi_write_png_to_mem(decompressedBytes, width * components, width, height, components, &length);
 			if (png == nullptr)
 			{
 				MINT_LOG_ERROR("ImageLoader - 이미지 정보를 PNG 형식으로 추출하는 데 실패했습니다.");

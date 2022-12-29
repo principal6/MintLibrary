@@ -18,6 +18,222 @@ namespace mint
 		const Color Color::kYellow = Color(255, 255, 0, 255);
 
 
+		MINT_INLINE int32 computeIndexFromXY(const uint32 width, const uint32 x, const uint32 y)
+		{
+			return static_cast<int32>((width * y) + x);
+		}
+
+
+#pragma region ByteColorImage
+		void ByteColorImage::setSize(const Int2& size)
+		{
+			_size = size;
+			_pixels.resize(_size._x * _size._y);
+		}
+
+		void ByteColorImage::setPixel(const Int2& at, const ByteColor& pixel)
+		{
+			setPixel(at._x, at._y, pixel);
+		}
+
+		void ByteColorImage::setPixel(const int32 x, const int32 y, const ByteColor& pixel)
+		{
+			setPixel(computeIndexFromXY(_size._x, x, y), pixel);
+		}
+
+		void ByteColorImage::setPixel(const int32 index, const ByteColor& pixel)
+		{
+			_pixels[index] = pixel;
+		}
+
+		uint32 ByteColorImage::getPixelCount() const
+		{
+			return _pixels.size();
+		}
+
+		const ByteColor& ByteColorImage::getPixel(const Int2& at) const
+		{
+			return getPixel(at._x, at._y);
+		}
+
+		const ByteColor& ByteColorImage::getPixel(const int32 x, const int32 y) const
+		{
+			return getPixel(computeIndexFromXY(_size._x, x, y));
+		}
+
+		const ByteColor& ByteColorImage::getPixel(const int32 index) const
+		{
+			return _pixels[index];
+		}
+
+		uint32 ByteColorImage::getByteCount() const
+		{
+			return getPixelCount() * 4;
+		}
+
+		const byte* ByteColorImage::getBytes() const
+		{
+			if (_pixels.empty())
+			{
+				return nullptr;
+			}
+			return reinterpret_cast<const byte*>(_pixels.data());
+		}
+#pragma endregion
+
+
+#pragma region ByteColorImageAtlas
+		ByteColorImageAtlas::ByteColorImageAtlas()
+			: _interPadding{ 1, 1 }
+			, _width{ 512 }
+			, _height{ 0 }
+		{
+			__noop;
+		}
+
+		void ByteColorImageAtlas::clearByteColorImages()
+		{
+			_byteColorImagePositions.clear();
+			_byteColorImageSizes.clear();
+			_byteColorImages.clear();
+			_height = 0;
+		}
+
+		int32 ByteColorImageAtlas::pushByteColorImage(ByteColorImage&& byteColorImage)
+		{
+			if (byteColorImage.getWidth() > _width)
+			{
+				MINT_LOG_ERROR("ColorImage 의 Width 가 Atlas 의 Width 보다 큽니다! Atlas 의 Width 를 먼저 충분히 크게 늘려주세요!!");
+				return -1;
+			}
+
+			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
+			const Int2 byteColorImageSize = byteColorImage.getSize();
+			_byteColorImagePositions.push_back(byteColorImagePosition);
+			_byteColorImageSizes.push_back(byteColorImageSize);
+			_byteColorImages.push_back(std::move(byteColorImage));
+			_height = max(_height, byteColorImagePosition._y + byteColorImageSize._y);
+			return static_cast<int32>(_byteColorImages.size() - 1);
+		}
+
+		int32 ByteColorImageAtlas::pushByteColorImage(const ByteColorImage& byteColorImage)
+		{
+			if (byteColorImage.getWidth() > _width)
+			{
+				MINT_LOG_ERROR("ColorImage 의 Width 가 Atlas 의 Width 보다 큽니다! Atlas 의 Width 를 먼저 충분히 크게 늘려주세요!!");
+				return -1;
+			}
+
+			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
+			_byteColorImagePositions.push_back(byteColorImagePosition);
+			_byteColorImageSizes.push_back(byteColorImage.getSize());
+			_byteColorImages.push_back(byteColorImage);
+			_height = max(_height, byteColorImagePosition._y + byteColorImage.getHeight());
+			return static_cast<int32>(_byteColorImages.size() - 1);
+		}
+
+		bool ByteColorImageAtlas::bakeRGBABytes()
+		{
+			if (_byteColorImages.empty())
+			{
+				return false;
+			}
+
+			static constexpr uint32 kByteCountPerPixel = 4;
+			const uint32 atlasPixelCount = static_cast<uint32>(_width * _height);
+			_rgbaBytes.clear();
+			_rgbaBytes.resize(atlasPixelCount * kByteCountPerPixel);
+			const uint32 colorImageCount = _byteColorImages.size();
+			for (uint32 colorImageIndex = 0; colorImageIndex < colorImageCount; ++colorImageIndex)
+			{
+				const ByteColorImage& byteColorImage = _byteColorImages[colorImageIndex];
+				const Int2& byteColorImagePosition = _byteColorImagePositions[colorImageIndex];
+				const uint32 byteColorImageHeight = byteColorImage.getHeight();
+				const uint32 byteColorImageWidth = byteColorImage.getWidth();
+				for (uint32 localY = 0; localY < byteColorImageHeight; ++localY)
+				{
+					for (uint32 localX = 0; localX < byteColorImageWidth; ++localX)
+					{
+						const int32 yInAtlas = byteColorImagePosition._y + localY;
+						const int32 xInAtlas = byteColorImagePosition._x + localX;
+						const int32 byteIndexInAtlas = (_width * yInAtlas + xInAtlas) * kByteCountPerPixel;
+						const ByteColor& pixel = byteColorImage.getPixel(localX, localY);
+						_rgbaBytes[byteIndexInAtlas + 0] = pixel.r();
+						_rgbaBytes[byteIndexInAtlas + 1] = pixel.g();
+						_rgbaBytes[byteIndexInAtlas + 2] = pixel.b();
+						_rgbaBytes[byteIndexInAtlas + 3] = pixel.a();
+					}
+				}
+			}
+			_byteColorImages.clear();
+			return true;
+		}
+
+		Int2 ByteColorImageAtlas::computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const
+		{
+			if (static_cast<uint32>(byteColorImageIndex) >= _byteColorImagePositions.size())
+			{
+				return Int2::kZero;
+			}
+
+			return _byteColorImagePositions[byteColorImageIndex] + positionInByteColorImage;
+		}
+
+		Int2 ByteColorImageAtlas::pushColorImage_computeByteColorImagePosition(const ByteColorImage& byteColorImage) const
+		{
+			if (_byteColorImages.empty())
+			{
+				return Int2::kZero;
+			}
+			const int32 sameLinePositionX = _byteColorImagePositions.back()._x + _byteColorImages.back().getWidth() + _interPadding._x;
+			const int32 sameLinePositionY = _byteColorImagePositions.back()._y;
+			const bool needsNewLine = sameLinePositionX + byteColorImage.getWidth() > _width;
+			if (needsNewLine)
+			{
+				const int32 newLinePositionX = 0;
+				const int32 newLinePositionY = _height + _interPadding._y;
+				return Int2(newLinePositionX, newLinePositionY);
+			}
+			return Int2(sameLinePositionX, sameLinePositionY);
+		}
+#pragma endregion
+
+
+#pragma region ColorImage
+		ColorImage::ColorImage(const ColorImage& rhs)
+			: _size{ rhs._size }
+			, _colors{ rhs._colors }
+		{
+			__noop;
+		}
+
+		ColorImage::ColorImage(ColorImage&& rhs) noexcept
+			: _size{ std::move(rhs._size) }
+			, _colors{ std::move(rhs._colors) }
+		{
+			__noop;
+		}
+
+		ColorImage& ColorImage::operator=(const ColorImage& rhs)
+		{
+			if (this != &rhs)
+			{
+				_size = rhs._size;
+				_colors = rhs._colors;
+			}
+			return *this;
+		}
+
+		ColorImage& ColorImage::operator=(ColorImage&& rhs) noexcept
+		{
+			if (this != &rhs)
+			{
+				_size = std::move(rhs._size);
+				_colors = std::move(rhs._colors);
+			}
+			return *this;
+		}
+
 		void ColorImage::setSize(const Int2& size) noexcept
 		{
 			_size = size;
@@ -103,9 +319,19 @@ namespace mint
 			_colors[index] = color;
 		}
 
+		uint32 ColorImage::getPixelCount() const noexcept
+		{
+			return _colors.size();
+		}
+
 		const Color& ColorImage::getPixel(const Int2& at) const noexcept
 		{
 			const int32 index = convertXyToIndex(at._x, at._y);
+			return _colors[index];
+		}
+
+		const Color& ColorImage::getPixel(const int32 index) const noexcept
+		{
 			return _colors[index];
 		}
 
@@ -235,5 +461,6 @@ namespace mint
 		{
 			return (x < static_cast<uint32>(_size._x) && y < static_cast<uint32>(_size._y)) ? _colors[(_size._x * y) + x] : Color::kTransparent;
 		}
+#pragma endregion
 	}
 }

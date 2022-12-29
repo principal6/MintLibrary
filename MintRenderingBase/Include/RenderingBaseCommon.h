@@ -47,6 +47,54 @@ namespace mint
 			IndexElementType _vertexIndexArray[kVertexCountPerFace];
 		};
 
+
+		class ByteColor
+		{
+		public:
+			constexpr ByteColor() : ByteColor(255) { __noop; }
+			constexpr ByteColor(byte c) : ByteColor(c, c, c, c) { __noop; }
+			constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
+
+			MINT_INLINE constexpr byte r() const noexcept { return _c[0]; }
+			MINT_INLINE constexpr byte g() const noexcept { return _c[1]; }
+			MINT_INLINE constexpr byte b() const noexcept { return _c[2]; }
+			MINT_INLINE constexpr byte a() const noexcept { return _c[3]; }
+
+			MINT_INLINE constexpr void r(byte value) noexcept { _c[0] = value; }
+			MINT_INLINE constexpr void g(byte value) noexcept { _c[1] = value; }
+			MINT_INLINE constexpr void a(byte value) noexcept { _c[2] = value; }
+			MINT_INLINE constexpr void b(byte value) noexcept { _c[3] = value; }
+
+		private:
+			byte _c[4];
+		};
+
+		class ByteColorImage
+		{
+		public:
+			void setSize(const Int2& size);
+			const Int2& getSize() const { return _size; }
+			int32 getWidth() const { return _size._x; }
+			int32 getHeight() const { return _size._y; }
+
+			void setPixel(const Int2& at, const ByteColor& pixel);
+			void setPixel(const int32 x, const int32 y, const ByteColor& pixel);
+			void setPixel(const int32 index, const ByteColor& pixel);
+
+			uint32 getPixelCount() const;
+			const ByteColor& getPixel(const Int2& at) const;
+			const ByteColor& getPixel(const int32 x, const int32 y) const;
+			const ByteColor& getPixel(const int32 index) const;
+
+			uint32 getByteCount() const;
+			const byte* getBytes() const;
+
+		private:
+			Int2 _size;
+			Vector<ByteColor> _pixels;
+		};
+
+
 		class Color
 		{
 		public:
@@ -122,7 +170,6 @@ namespace mint
 			Float4 _raw;
 		};
 
-
 		class ColorImage
 		{
 		public:
@@ -182,7 +229,13 @@ namespace mint
 
 		public:
 			ColorImage() = default;
+			ColorImage(const ColorImage& rhs);
+			ColorImage(ColorImage&& rhs) noexcept;
 			~ColorImage() = default;
+
+		public:
+			ColorImage& operator=(const ColorImage& rhs);
+			ColorImage& operator=(ColorImage&& rhs) noexcept;
 
 		public:
 			void setSize(const Int2& size) noexcept;
@@ -196,7 +249,9 @@ namespace mint
 			void fillCircle(const Int2& center, const int32 radius, const Color& color) noexcept;
 			void setPixel(const int32 index, const Color& color) noexcept;
 			void setPixel(const Int2& at, const Color& color) noexcept;
+			uint32 getPixelCount() const noexcept;
 			const Color& getPixel(const Int2& at) const noexcept;
+			const Color& getPixel(const int32 index) const noexcept;
 			Color getSubPixel(const Float2& at) const noexcept;
 			void getAdjacentPixels(const Int2& at, ColorImage::AdjacentPixels& outAdjacentPixels) const noexcept;
 			void getCoAdjacentPixels(const Int2& at, ColorImage::CoAdjacentPixels& outCoAdjacentPixels) const noexcept;
@@ -212,6 +267,47 @@ namespace mint
 		private:
 			Int2 _size;
 			Vector<Color> _colors;
+		};
+
+
+		class ByteColorImageAtlas
+		{
+		public:
+			ByteColorImageAtlas();
+			~ByteColorImageAtlas() = default;
+
+		public:
+			void setInterPadding(const Int2& interPadding) { _interPadding = interPadding; }
+			const Int2& getInterPadding() const { return _interPadding; }
+
+			void setWidth(const uint32 width) { _width = width; }
+			int32 getWidth() const { return _width; }
+			int32 getHeight() const { return _height; }
+
+			void clearByteColorImages();
+			int32 pushByteColorImage(ByteColorImage&& byteColorImage);
+			int32 pushByteColorImage(const ByteColorImage& byteColorImage);
+
+		public:
+			bool bakeRGBABytes();
+			const Vector<byte>& getRGBABytes() const { return _rgbaBytes; }
+
+		public:
+			Int2 computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const;
+
+		private:
+			Int2 pushColorImage_computeByteColorImagePosition(const ByteColorImage& byteColorImage) const;
+
+		private:
+			Int2 _interPadding;
+			int32 _width;
+			int32 _height;
+			Vector<Int2> _byteColorImagePositions;
+			Vector<Int2> _byteColorImageSizes;
+
+		private:
+			Vector<ByteColorImage> _byteColorImages;
+			Vector<byte> _rgbaBytes;
 		};
 	}
 }
