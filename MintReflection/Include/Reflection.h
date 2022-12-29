@@ -32,14 +32,15 @@ namespace mint
 		uint32 _size;
 		uint32 _alignment;
 		uint32 _offset;
+		uint32 _arrayItemCount;
 
 	public:
 		virtual void serialize(Serializer& serializer) noexcept abstract;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer) noexcept abstract;
+		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
 
 	public:
 		virtual bool deserialize(Serializer& serializer) noexcept abstract;
-		virtual void deserializeValue(Serializer& serializer, void* const memberPointer) noexcept abstract;
+		virtual void deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
 	};
 
 	template <typename T>
@@ -51,11 +52,11 @@ namespace mint
 
 	public:
 		virtual void serialize(Serializer& serializer) noexcept override final;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer) noexcept override final;
+		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
 
 	public:
 		virtual bool deserialize(Serializer& serializer) noexcept override final;
-		virtual void deserializeValue(Serializer& serializer, void* const memberPointer) noexcept override final;
+		virtual void deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
 	};
 
 
@@ -112,13 +113,17 @@ namespace mint
 
 #define REFLECTION_MEMBER(type, name) \
  type name; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name)
+ __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
+	
+#define REFLECTION_MEMBER_ARRAY(type, name, arrayItemCount) \
+ type name[arrayItemCount]; \
+ __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount)
 
 #define REFLECTION_MEMBER_INIT(type, name, init) \
  type name{ init }; \
- __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name)
+ __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, 0)
 
-#define __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name) \
+#define __REFLECTION_MEMBER_DEFINE_REGISTRATION(type, name, arrayItemCount) \
  void _bind##name()\
  {\
  ReflectionData& reflectionData = const_cast<ReflectionData&>(getReflectionData()); \
@@ -128,6 +133,7 @@ namespace mint
  newTypeData->_size = sizeof(type);\
  newTypeData->_alignment = alignof(type);\
  newTypeData->_offset = offsetof(__classType, name); \
+ newTypeData->_arrayItemCount = arrayItemCount; \
  reflectionData._memberTypeDatas.push_back(newTypeData);\
  }
 
@@ -221,13 +227,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		void _serializeInternal(const T& from, const bool isTypeData) noexcept;
+		void _serializeInternal(const T& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const String<T>& from, const bool isTypeData) noexcept;
+		void _serializeInternal(const String<T>& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const Vector<T>& from, const bool isTypeData) noexcept;
+		void _serializeInternal(const Vector<T>& from, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 	public:
 		template <typename T>
@@ -235,13 +241,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		bool _deserializeInternal(T& to, const bool isTypeData) noexcept;
+		bool _deserializeInternal(T& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(String<T>& to, const bool isTypeData) noexcept;
+		bool _deserializeInternal(String<T>& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept;
+		bool _deserializeInternal(Vector<T>& to, const bool isTypeData, const uint32 arrayItemCount) noexcept;
 
 	private:
 		BinaryFileWriter _writer;
