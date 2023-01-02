@@ -330,15 +330,15 @@ namespace mint
 			{
 				if (shaderType == GraphicShaderType::VertexShader)
 				{
-					_graphicDevice.getStateManager().setVSConstantBuffers(*this);
+					_graphicDevice.getStateManager().setVSConstantBuffers(*this, bindingSlot);
 				}
 				else if (shaderType == GraphicShaderType::GeometryShader)
 				{
-					_graphicDevice.getStateManager().setGSConstantBuffers(*this);
+					_graphicDevice.getStateManager().setGSConstantBuffers(*this, bindingSlot);
 				}
 				else if (shaderType == GraphicShaderType::PixelShader)
 				{
-					_graphicDevice.getStateManager().setPSConstantBuffers(*this);
+					_graphicDevice.getStateManager().setPSConstantBuffers(*this, bindingSlot);
 				}
 				else
 				{
@@ -349,15 +349,15 @@ namespace mint
 			{
 				if (shaderType == GraphicShaderType::VertexShader)
 				{
-					_graphicDevice.getStateManager().setVSResources(*this);
+					_graphicDevice.getStateManager().setVSResources(*this, bindingSlot);
 				}
 				else if (shaderType == GraphicShaderType::GeometryShader)
 				{
-					_graphicDevice.getStateManager().setGSResources(*this);
+					_graphicDevice.getStateManager().setGSResources(*this, bindingSlot);
 				}
 				else if (shaderType == GraphicShaderType::PixelShader)
 				{
-					_graphicDevice.getStateManager().setPSResources(*this);
+					_graphicDevice.getStateManager().setPSResources(*this, bindingSlot);
 				}
 				else
 				{

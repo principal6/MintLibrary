@@ -153,100 +153,130 @@ namespace mint
 			_graphicDevice._deviceContext->PSSetShader(shader, nullptr, 0);
 		}
 
-		void GraphicDevice::StateManager::setVSResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setVSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
+			if (bindingSlot == kUint32Max)
+			{
+				bindingSlot = resource.getRegisterIndex();
+			}
+
 			Vector<GraphicObjectID>& shaderResources = _vsShaderResources;
-			if (shaderResources.size() <= resource.getRegisterIndex())
+			if (shaderResources.size() <= bindingSlot)
 			{
-				shaderResources.resize(resource.getRegisterIndex() + 1);
+				shaderResources.resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
-				shaderResources[resource.getRegisterIndex()] = GraphicObjectID();
+				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
 
-			_graphicDevice._deviceContext->VSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+			_graphicDevice._deviceContext->VSSetShaderResources(bindingSlot, 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setGSResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setGSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
+			if (bindingSlot == kUint32Max)
+			{
+				bindingSlot = resource.getRegisterIndex();
+			}
+
 			Vector<GraphicObjectID>& shaderResources = _gsShaderResources;
-			if (shaderResources.size() <= resource.getRegisterIndex())
+			if (shaderResources.size() <= bindingSlot)
 			{
-				shaderResources.resize(resource.getRegisterIndex() + 1);
+				shaderResources.resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
-				shaderResources[resource.getRegisterIndex()] = GraphicObjectID();
+				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
 
-			_graphicDevice._deviceContext->GSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+			_graphicDevice._deviceContext->GSSetShaderResources(bindingSlot, 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setPSResources(const DxResource& resource) noexcept
+		void GraphicDevice::StateManager::setPSResources(const DxResource& resource, uint32 bindingSlot) noexcept
 		{
+			if (bindingSlot == kUint32Max)
+			{
+				bindingSlot = resource.getRegisterIndex();
+			}
+
 			Vector<GraphicObjectID>& shaderResources = _psShaderResources;
-			if (shaderResources.size() <= resource.getRegisterIndex())
+			if (shaderResources.size() <= bindingSlot)
 			{
-				shaderResources.resize(resource.getRegisterIndex() + 1);
+				shaderResources.resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
-				shaderResources[resource.getRegisterIndex()] = GraphicObjectID();
+				shaderResources[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(shaderResources[resource.getRegisterIndex()], resource.getID());
+			MINT_CHECK_STATE(shaderResources[bindingSlot], resource.getID());
 
-			_graphicDevice._deviceContext->PSSetShaderResources(resource.getRegisterIndex(), 1, resource.getResourceView());
+			_graphicDevice._deviceContext->PSSetShaderResources(bindingSlot, 1, resource.getResourceView());
 		}
 
-		void GraphicDevice::StateManager::setVSConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
+			if (bindingSlot == kUint32Max)
+			{
+				bindingSlot = constantBuffer.getRegisterIndex();
+			}
+
 			Vector<GraphicObjectID>& constantBuffers = _vsConstantBuffers;
-			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
+			if (constantBuffers.size() <= bindingSlot)
 			{
-				constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
+				constantBuffers.resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{
-				constantBuffers[constantBuffer.getRegisterIndex()] = GraphicObjectID();
+				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
 
-			_graphicDevice._deviceContext->VSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->VSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
 		}
 
-		void GraphicDevice::StateManager::setGSConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
+			if (bindingSlot == kUint32Max)
+			{
+				bindingSlot = constantBuffer.getRegisterIndex();
+			}
+
 			Vector<GraphicObjectID>& constantBuffers = _gsConstantBuffers;
-			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
+			if (constantBuffers.size() <= bindingSlot)
 			{
-				constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
+				constantBuffers.resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{
-				constantBuffers[constantBuffer.getRegisterIndex()] = GraphicObjectID();
+				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
 
-			_graphicDevice._deviceContext->GSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->GSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
 		}
 
-		void GraphicDevice::StateManager::setPSConstantBuffers(const DxResource& constantBuffer)
+		void GraphicDevice::StateManager::setPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot)
 		{
-			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
-			if (constantBuffers.size() <= constantBuffer.getRegisterIndex())
+			if (bindingSlot == kUint32Max)
 			{
-				constantBuffers.resize(constantBuffer.getRegisterIndex() + 1);
+				bindingSlot = constantBuffer.getRegisterIndex();
+			}
+
+			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
+			if (constantBuffers.size() <= bindingSlot)
+			{
+				constantBuffers.resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{
-				constantBuffers[constantBuffer.getRegisterIndex()] = GraphicObjectID();
+				constantBuffers[bindingSlot] = GraphicObjectID();
 			}
-			MINT_CHECK_STATE(constantBuffers[constantBuffer.getRegisterIndex()], constantBuffer.getID());
+			MINT_CHECK_STATE(constantBuffers[bindingSlot], constantBuffer.getID());
 
-			_graphicDevice._deviceContext->PSSetConstantBuffers(constantBuffer.getRegisterIndex(), 1, constantBuffer.getBuffer());
+			_graphicDevice._deviceContext->PSSetConstantBuffers(bindingSlot, 1, constantBuffer.getBuffer());
 		}
 
 

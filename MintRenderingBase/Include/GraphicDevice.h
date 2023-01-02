@@ -86,14 +86,14 @@ namespace mint
 				void setPSShader(ID3D11PixelShader* const shader) noexcept;
 
 			public: // Resources
-				void setVSResources(const DxResource& resource) noexcept;
-				void setGSResources(const DxResource& resource) noexcept;
-				void setPSResources(const DxResource& resource) noexcept;
+				void setVSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
+				void setGSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
+				void setPSResources(const DxResource& resource, uint32 bindingSlot) noexcept;
 
 			public: // Constant Buffers
-				void setVSConstantBuffers(const DxResource& constantBuffer);
-				void setGSConstantBuffers(const DxResource& constantBuffer);
-				void setPSConstantBuffers(const DxResource& constantBuffer);
+				void setVSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void setGSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
+				void setPSConstantBuffers(const DxResource& constantBuffer, uint32 bindingSlot);
 
 			private:
 				GraphicDevice& _graphicDevice;
