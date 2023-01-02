@@ -15,6 +15,7 @@
 #include <MintContainer/Include/StackString.hpp>
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/Tree.hpp>
+#include <MintContainer/Include/StringReference.hpp>
 
 
 namespace mint
