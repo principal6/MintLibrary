@@ -87,7 +87,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
-	ImageRenderer imageRenderer{ graphicDevice };
+	ImageRenderer imageRenderer{ graphicDevice, 0 };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
 	imageLoader.loadImage("Assets/test_image.png", byteColorImage);

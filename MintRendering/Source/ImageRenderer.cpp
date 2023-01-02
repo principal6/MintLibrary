@@ -1,13 +1,15 @@
 ﻿#include <MintRendering/Include/ImageRenderer.h>
 #include <MintRenderingBase/Include/GraphicDevice.h>
+#include <MintContainer/Include/StringUtil.hpp>
 
 
 namespace mint
 {
 	namespace Rendering
 	{
-		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice)
+		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot)
 			: ShapeRendererContext(graphicDevice)
+			, _psTextureSlot{ psTextureSlot }
 		{
 			initializeShaders();
 		}
@@ -77,15 +79,16 @@ namespace mint
 			}
 
 			{
-				static constexpr const char kShaderString[]
+				static constexpr const char kShaderStringInclude[]
 				{
 					R"(
 					#include <ShaderStructDefinitions>
 					#include <ShaderConstantBuffers>
-					
-					sampler g_sampler0;
-					Texture2D<float4> g_texture0;
-					
+					)"
+				};
+				static constexpr const char kShaderStringContent[]
+				{
+					R"(
 					float4 main_shape(VS_OUTPUT_SHAPE input) : SV_Target
 					{
 						float4 color = g_texture0.Sample(g_sampler0, input._texCoord.xy);
@@ -98,7 +101,15 @@ namespace mint
 					}
 					)"
 				};
-				_pixelShaderID = shaderPool.addShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", GraphicShaderType::PixelShader);
+				StackStringA<256> textureSlotString;
+				StringUtil::toString(_psTextureSlot, textureSlotString);
+				StackStringA<1024> shaderString = kShaderStringInclude;
+				shaderString += "sampler g_sampler0 : register(s0);\n";
+				shaderString += "Texture2D<float4> g_texture0 : register(t";
+				shaderString += textureSlotString.c_str();
+				shaderString += "0);\n";
+				shaderString += kShaderStringContent;
+				_pixelShaderID = shaderPool.addShaderFromMemory("ShapeRendererPS", shaderString.c_str(), "main_shape", GraphicShaderType::PixelShader);
 			}
 		}
 
