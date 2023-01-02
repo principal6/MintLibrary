@@ -133,6 +133,7 @@ namespace mint
 			GraphicObjectID addShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
 			GraphicObjectID addInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 			void removeShader(const GraphicObjectID& shaderID);
+			void removeInputLayout(const GraphicObjectID& shaderID);
 
 		private:
 			GraphicObjectID addShaderInternal(const GraphicShaderType shaderType, DxShader& shader);

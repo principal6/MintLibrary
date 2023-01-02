@@ -166,6 +166,7 @@ namespace mint
 		{
 			if (shaderID.isValid() == false)
 			{
+				MINT_NEVER;
 				return;
 			}
 
@@ -179,6 +180,25 @@ namespace mint
 						shaders.erase(shaderIndex);
 						break;
 					}
+				}
+			}
+		}
+		
+		void DxShaderPool::removeInputLayout(const GraphicObjectID& shaderID)
+		{
+			if (shaderID.isValid() == false)
+			{
+				MINT_NEVER;
+				return;
+			}
+
+			const uint32 inputLayoutCount = _inputLayouts.size();
+			for (uint32 inputLayoutIndex = 0; inputLayoutIndex < inputLayoutCount; ++inputLayoutIndex)
+			{
+				if (_inputLayouts[inputLayoutIndex] == shaderID)
+				{
+					_inputLayouts.erase(inputLayoutIndex);
+					break;
 				}
 			}
 		}
