@@ -59,9 +59,9 @@ namespace mint
 
 	public:
 		BitArray<kHopRange> _hopInfo;
-		bool   _isUsed;
-		Key    _key;
-		Value   _value;
+		bool _isUsed;
+		Key _key;
+		Value _value;
 	};
 
 
@@ -78,13 +78,13 @@ namespace mint
 		~BucketViewer() = default;
 
 	public:
-		bool    isValid() const noexcept;
-		void    next() noexcept;
+		bool isValid() const noexcept;
+		void next() noexcept;
 		KeyValuePairConst<Key, Value> view() noexcept;
 
 	private:
 		const HashMap<Key, Value>* const _hashMap;
-		int32    _bucketIndex;
+		int32 _bucketIndex;
 	};
 
 
@@ -95,63 +95,61 @@ namespace mint
 		template<typename Key, typename Value>
 		friend class BucketViewer;
 
-	private:
-		static constexpr uint32 kAddRange = 32;
-		static constexpr uint32 kSegmentLength = 127;
-
 	public:
 		HashMap();
 		~HashMap();
 
 	public:
-		bool    contains(const Key& key) const noexcept;
-
-	private:
-		bool    containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
+		bool contains(const Key& key) const noexcept;
 
 	public:
-		template <typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
-			insert(const Key& key, const V& value) noexcept;
+		template<typename V = Value>
+		std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> insert(const Key& key, const V& value) noexcept;
 
-		template <typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
-			insert(const Key& key, V&& value) noexcept;
-
-	private:
-		bool    existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
+		template<typename V = Value>
+		std::enable_if_t<std::is_copy_constructible<V>::value == false, void> insert(const Key& key, V&& value) noexcept;
 
 	public:
 		const KeyValuePair<Key, Value> find(const Key& key) const noexcept;
 		const Value& at(const Key& key) const noexcept;
 		Value& at(const Key& key) noexcept;
-		void    erase(const Key& key) noexcept;
-		void    clear() noexcept;
+		void erase(const Key& key) noexcept;
+		void clear() noexcept;
 		BucketViewer<Key, Value> getBucketViewer() const noexcept;
+
+	public:
+		uint32 size() const noexcept;
+		bool empty() const noexcept;
+
+	private:
+		bool containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
+
+	private:
+		bool existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
 
 	private:
 		static Value& getInvalidValue() noexcept;
 
-	public:
-		uint32    size() const noexcept;
-		bool    empty() const noexcept;
+	private:
+		void resize() noexcept;
 
 	private:
-		void    resize() noexcept;
+		void setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
+		void setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
+		bool displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
+		void displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
 
 	private:
-		void    setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
-		void    setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
-		bool    displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
-		void    displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
+		uint32 computeSegmentIndex(const uint64 keyHash) const noexcept;
+		uint32 computeStartBucketIndex(const uint64 keyHash) const noexcept;
 
 	private:
-		uint32    computeSegmentIndex(const uint64 keyHash) const noexcept;
-		uint32    computeStartBucketIndex(const uint64 keyHash) const noexcept;
+		static constexpr uint32 kAddRange = 32;
+		static constexpr uint32 kSegmentLength = 127;
 
 	private:
 		Vector<Bucket<Key, Value>> _bucketArray;
-		uint32    _bucketCount;
+		uint32 _bucketCount;
 	};
 }
 
