@@ -87,7 +87,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
-	ImageRenderer imageRenderer{ graphicDevice, 0 };
+	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
 	imageLoader.loadImage("Assets/test_image.png", byteColorImage);
@@ -138,7 +138,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 			graphicDevice.setViewProjectionMatrix(Float4x4::kIdentity, projectionMatrix);
 
-			imageRenderer.drawImage(Float2(50, 50), Float2(100, 100), Float2(0, 0), Float2(1, 1));
+			imageRenderer.drawImage(Float2(50, 50), Float2(80, 20), Float2(0, 0), Float2(1, 1));
 			imageRenderer.render();
 			imageRenderer.flush();
 

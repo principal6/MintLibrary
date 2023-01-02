@@ -7,9 +7,10 @@ namespace mint
 {
 	namespace Rendering
 	{
-		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot)
+		ImageRenderer::ImageRenderer(GraphicDevice& graphicDevice, const uint32 psTextureSlot, const ByteColor& transparentColor)
 			: ShapeRendererContext(graphicDevice)
 			, _psTextureSlot{ psTextureSlot }
+			, _transparentColor{ transparentColor }
 		{
 			initializeShaders();
 		}
@@ -51,29 +52,26 @@ namespace mint
 					#include <ShaderConstantBuffers>
 					)"
 				};
-				static constexpr const char kShaderStringContent[]
-				{
-					R"(
-					float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target
-					{
-						float4 color = g_texture0.Sample(g_sampler0, input._texCoord.xy);
-						if (color.b >= 0.5 && color.r < 0.5 && color.g < 0.5)
-						{
-							color.a = 1.0f - color.b;
-							color.rgb = 0.0f;
-						}
-						return color;
-					}
-					)"
-				};
-				StackStringA<256> textureSlotString;
-				StringUtil::toString(_psTextureSlot, textureSlotString);
+				StackStringA<256> textBuffer;
+				StringUtil::toString(_psTextureSlot, textBuffer);
 				StackStringA<1024> shaderString = kShaderStringInclude;
 				shaderString += "sampler g_sampler0 : register(s0);\n";
 				shaderString += "Texture2D<float4> g_texture0 : register(t";
-				shaderString += textureSlotString.c_str();
+				shaderString += textBuffer.c_str();
 				shaderString += ");\n";
-				shaderString += kShaderStringContent;
+
+				StackStringA<256> transparentColorString;
+				formatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.rAsFloat(), _transparentColor.gAsFloat(), _transparentColor.bAsFloat(), _transparentColor.aAsFloat());
+
+				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
+				shaderString += "{\n";
+				shaderString += "	const float4 kTransparentColor = ";
+				shaderString += transparentColorString;
+				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_sampler0, input._texCoord.xy);\n";
+				shaderString += "	float4 result = sampledColor;\n";
+				shaderString += "	result.a = lerp(1.0 - kTransparentColor.a, distance(sampledColor.rgb, kTransparentColor.rgb), kTransparentColor.a);\n";
+				shaderString += "	return result;\n";
+				shaderString += "}";
 				if (_pixelShaderID.isValid())
 				{
 					shaderPool.removeShader(_pixelShaderID);
