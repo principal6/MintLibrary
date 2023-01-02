@@ -64,6 +64,11 @@ namespace mint
 			MINT_INLINE constexpr const byte& g() const noexcept { return _c[1]; }
 			MINT_INLINE constexpr const byte& b() const noexcept { return _c[2]; }
 			MINT_INLINE constexpr const byte& a() const noexcept { return _c[3]; }
+			
+			MINT_INLINE constexpr float rAsFloat() const noexcept { return _c[0] / 255.0f; }
+			MINT_INLINE constexpr float gAsFloat() const noexcept { return _c[1] / 255.0f; }
+			MINT_INLINE constexpr float bAsFloat() const noexcept { return _c[2] / 255.0f; }
+			MINT_INLINE constexpr float aAsFloat() const noexcept { return _c[3] / 255.0f; }
 
 			MINT_INLINE constexpr void r(byte value) noexcept { _c[0] = value; }
 			MINT_INLINE constexpr void g(byte value) noexcept { _c[1] = value; }
