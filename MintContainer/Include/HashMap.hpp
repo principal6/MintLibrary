@@ -47,54 +47,6 @@ namespace mint
 
 
 	template<typename Key, typename Value>
-	inline BucketViewer<Key, Value>::BucketViewer(const HashMap<Key, Value>* const hashMap)
-		: _hashMap{ hashMap }
-		, _bucketIndex{ 0 }
-	{
-		const int32 bucketArraySize = static_cast<int32>(_hashMap->_bucketArray.size());
-		for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
-		{
-			if (_hashMap->_bucketArray[bucketIndex]._isUsed == true)
-			{
-				_bucketIndex = bucketIndex;
-				break;
-			}
-		}
-	}
-
-	template<typename Key, typename Value>
-	inline bool BucketViewer<Key, Value>::isValid() const noexcept
-	{
-		return static_cast<uint32>(_bucketIndex) < _hashMap->_bucketArray.size();
-	}
-
-	template<typename Key, typename Value>
-	inline void BucketViewer<Key, Value>::next() noexcept
-	{
-		const int32 bucketArraySize = static_cast<int32>(_hashMap->_bucketArray.size());
-		for (int32 bucketIndex = _bucketIndex + 1; bucketIndex < bucketArraySize; ++bucketIndex)
-		{
-			if (_hashMap->_bucketArray[bucketIndex]._isUsed == true)
-			{
-				_bucketIndex = bucketIndex;
-				return;
-			}
-		}
-		_bucketIndex = -1;
-	}
-
-	template<typename Key, typename Value>
-	inline KeyValuePairConst<Key, Value> BucketViewer<Key, Value>::view() noexcept
-	{
-		const Bucket<Key, Value>& bucket = _hashMap->_bucketArray[_bucketIndex];
-		KeyValuePairConst<Key, Value> keyValuePairConst;
-		keyValuePairConst._key = &bucket._key;
-		keyValuePairConst._value = &bucket._value;
-		return keyValuePairConst;
-	}
-
-
-	template<typename Key, typename Value>
 	inline HashMap<Key, Value>::HashMap()
 		: _bucketArray{ kSegmentLength }
 		, _bucketCount{ 0 }
@@ -132,8 +84,7 @@ namespace mint
 
 	template<typename Key, typename Value>
 	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void>
-		HashMap<Key, Value>::insert(const Key& key, const V& value) noexcept
+	inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> HashMap<Key, Value>::insert(const Key& key, const V& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
 		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
@@ -182,8 +133,7 @@ namespace mint
 
 	template<typename Key, typename Value>
 	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void>
-		HashMap<Key, Value>::insert(const Key& key, V&& value) noexcept
+	inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void> HashMap<Key, Value>::insert(const Key& key, V&& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
 		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
@@ -314,12 +264,6 @@ namespace mint
 		_bucketArray.resize(kSegmentLength);
 
 		_bucketCount = 0;
-	}
-
-	template<typename Key, typename Value>
-	inline BucketViewer<Key, Value> HashMap<Key, Value>::getBucketViewer() const noexcept
-	{
-		return BucketViewer<Key, Value>(this);
 	}
 
 	template<typename Key, typename Value>
@@ -469,6 +413,43 @@ namespace mint
 	MINT_INLINE uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
 	{
 		return (kSegmentLength * computeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
+	}
+	
+	template<typename Key, typename Value>
+	MINT_INLINE uint32 HashMap<Key, Value>::getNextValidBucketIndex(const uint32 currentBucketIndex) const
+	{
+		const uint32 bucketArraySize = _bucketArray.size();
+		for (uint32 bucketIndex = currentBucketIndex + 1; bucketIndex < bucketArraySize; ++bucketIndex)
+		{
+			if (_bucketArray[bucketIndex]._isUsed == true)
+			{
+				return bucketIndex;
+			}
+		}
+		return bucketArraySize;
+	}
+
+	template<typename Key, typename Value>
+	MINT_INLINE HashMap<Key, Value>::Iterator HashMap<Key, Value>::begin() noexcept
+	{
+		int32 firstBucketIndex = 0;
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.size());
+		for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
+		{
+			if (_bucketArray[bucketIndex]._isUsed == true)
+			{
+				firstBucketIndex = bucketIndex;
+				break;
+			}
+		}
+		return Iterator(*this, firstBucketIndex);
+	}
+
+	template<typename Key, typename Value>
+	MINT_INLINE HashMap<Key, Value>::Iterator HashMap<Key, Value>::end() noexcept
+	{
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.size());
+		return Iterator(*this, bucketArraySize);
 	}
 }
 

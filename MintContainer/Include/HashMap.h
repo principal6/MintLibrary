@@ -65,29 +65,6 @@ namespace mint
 	};
 
 
-	template<typename Key, typename Value>
-	class BucketViewer
-	{
-		template<typename Key, typename Value>
-		friend class HashMap;
-
-	private:
-		BucketViewer(const HashMap<Key, Value>* const hashMap);
-
-	public:
-		~BucketViewer() = default;
-
-	public:
-		bool isValid() const noexcept;
-		void next() noexcept;
-		KeyValuePairConst<Key, Value> view() noexcept;
-
-	private:
-		const HashMap<Key, Value>* const _hashMap;
-		int32 _bucketIndex;
-	};
-
-
 	// Hopscotch algorithm
 	template<typename Key, typename Value>
 	class HashMap final
@@ -115,11 +92,44 @@ namespace mint
 		Value& at(const Key& key) noexcept;
 		void erase(const Key& key) noexcept;
 		void clear() noexcept;
-		BucketViewer<Key, Value> getBucketViewer() const noexcept;
 
 	public:
 		uint32 size() const noexcept;
 		bool empty() const noexcept;
+
+	public:
+		class Iterator
+		{
+		public:
+			Iterator(HashMap<Key, Value>& hashMap, const uint32 bucketIndex) : _hashMap{ hashMap }, _bucketIndex{ bucketIndex } { __noop; }
+
+		public:
+			bool operator==(const Iterator& rhs) const noexcept
+			{
+				return &_hashMap == &rhs._hashMap && _bucketIndex == rhs._bucketIndex;
+			}
+			bool operator!=(const Iterator& rhs) const noexcept
+			{
+				return !(*this == rhs);
+			}
+			Iterator& operator++() noexcept
+			{
+				_bucketIndex = _hashMap.getNextValidBucketIndex(_bucketIndex);
+				return *this;
+			}
+			Value& operator*() noexcept
+			{
+				Bucket<Key, Value>& bucket = _hashMap._bucketArray[_bucketIndex];
+				return bucket._value;
+			}
+
+		private:
+			HashMap<Key, Value>& _hashMap;
+			uint32 _bucketIndex;
+		};
+
+		Iterator begin() noexcept;
+		Iterator end() noexcept;
 
 	private:
 		bool containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
@@ -142,6 +152,7 @@ namespace mint
 	private:
 		uint32 computeSegmentIndex(const uint64 keyHash) const noexcept;
 		uint32 computeStartBucketIndex(const uint64 keyHash) const noexcept;
+		uint32 getNextValidBucketIndex(const uint32 currentBucketIndex) const;
 
 	private:
 		static constexpr uint32 kAddRange = 32;
