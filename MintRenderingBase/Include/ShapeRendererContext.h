@@ -83,6 +83,10 @@ namespace mint
 			virtual void flush() noexcept override;
 			virtual void render() noexcept override;
 
+		protected:
+			const char* getDefaultVertexShaderString() const;
+			const char* getDefaultGeometryShaderString() const;
+
 		public:
 			bool initializeFontData(const FontData& fontData);
 			const FontData& getFontData() const noexcept { return _fontData; }

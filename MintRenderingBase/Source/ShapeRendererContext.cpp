@@ -28,6 +28,62 @@ namespace mint
 			__noop;
 		}
 
+		const char* ShapeRendererContext::getDefaultVertexShaderString() const
+		{
+			static constexpr const char kShaderString[]
+			{
+				R"(
+				#include <ShaderStructDefinitions>
+				#include <ShaderConstantBuffers>
+				#include <ShaderStructuredBufferDefinitions>
+					
+				StructuredBuffer<SB_Transform> sbTransform : register(t0);
+					
+				VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
+				{
+					const uint packedInfo = asuint(input._info.x);
+					const uint shapeType = (packedInfo >> 28) & 0xF;
+					const uint transformIndex = packedInfo & 0x3FFFFFFF;
+						
+					float4 transformedPosition = float4(input._position.xyz, 1.0);
+					transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
+						
+					VS_OUTPUT_SHAPE result = (VS_OUTPUT_SHAPE)0;
+					result._position = float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);
+					result._color = input._color;
+					result._texCoord = input._texCoord;
+					result._info.x = (float)shapeType;
+					result._info.y = input._info.y;
+					result._viewportIndex = 0;
+						
+					return result;
+				}
+				)"
+			};
+			return kShaderString;
+		}
+
+		const char* ShapeRendererContext::getDefaultGeometryShaderString() const
+		{
+			static constexpr const char kShaderString[]
+			{
+				R"(
+				#include <ShaderStructDefinitions>
+					
+				[maxvertexcount(3)]
+				void main_shape(triangle VS_OUTPUT_SHAPE input[3], inout TriangleStream<VS_OUTPUT_SHAPE> OutputStream)
+				{
+					for (int i = 0; i < 3; ++i)
+					{
+						OutputStream.Append(input[i]);
+					}
+					OutputStream.RestartStrip();
+				}
+				)"
+			};
+			return kShaderString;
+		}
+
 		void ShapeRendererContext::initializeShaders() noexcept
 		{
 			_clipRect = _graphicDevice.getFullScreenClipRect();
@@ -35,148 +91,118 @@ namespace mint
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
 
 			{
-				static constexpr const char kShaderString[]
+				if (_vertexShaderID.isValid())
 				{
-					R"(
-                    #include <ShaderStructDefinitions>
-                    #include <ShaderConstantBuffers>
-                    #include <ShaderStructuredBufferDefinitions>
-                    
-                    StructuredBuffer<SB_Transform> sbTransform : register(t0);
-                    
-                    VS_OUTPUT_SHAPE main_shape(VS_INPUT_SHAPE input)
-                    {
-                        const uint packedInfo       = asuint(input._info.x);
-                        const uint shapeType        = (packedInfo >> 28) & 0xF;
-                        const uint transformIndex   = packedInfo & 0x3FFFFFFF;
-                        
-                        float4 transformedPosition = float4(input._position.xyz, 1.0);
-                        transformedPosition = mul(transformedPosition, sbTransform[transformIndex]._transformMatrix);
-                        
-                        VS_OUTPUT_SHAPE result  = (VS_OUTPUT_SHAPE)0;
-                        result._position        = float4(mul(transformedPosition, _cb2DProjectionMatrix).xyz, 1.0);
-                        result._color           = input._color;
-                        result._texCoord        = input._texCoord;
-                        result._info.x          = (float)shapeType;
-                        result._info.y          = input._info.y;
-                        result._viewportIndex   = 0;
-                        
-                        return result;
-                    }
-                    )"
-				};
+					shaderPool.removeShader(_vertexShaderID);
+				}
+				_vertexShaderID = shaderPool.addShaderFromMemory("ShapeRendererVS", getDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
 
+				if (_inputLayoutID.isValid())
+				{
+					shaderPool.removeInputLayout(_inputLayoutID);
+				}
 				using namespace Language;
 				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_vertexShaderID = shaderPool.addShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", GraphicShaderType::VertexShader);
 				_inputLayoutID = shaderPool.addInputLayout(_vertexShaderID, typeMetaData);
 			}
 
 			{
-				static constexpr const char kShaderString[]
+				if (_geometryShaderID.isValid())
 				{
-					R"(
-                    #include <ShaderStructDefinitions>
-                    
-                    [maxvertexcount(3)]
-                    void main_shape(triangle VS_OUTPUT_SHAPE input[3], inout TriangleStream<VS_OUTPUT_SHAPE> OutputStream)
-                    {
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            OutputStream.Append(input[i]);
-                        }
-                        OutputStream.RestartStrip();
-                    }
-                    )"
-				};
-				_geometryShaderID = shaderPool.addShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", GraphicShaderType::GeometryShader);
+					shaderPool.removeShader(_geometryShaderID);
+				}
+				_geometryShaderID = shaderPool.addShaderFromMemory("ShapeRendererGS", getDefaultGeometryShaderString(), "main_shape", GraphicShaderType::GeometryShader);
 			}
 
 			{
 				static constexpr const char kShaderString[]
 				{
 					R"(
-                    #include <ShaderStructDefinitions>
-                    #include <ShaderConstantBuffers>
-                    
-                    sampler                 g_sampler0;
-                    Texture2D<float4>       g_texture0;
-                    
-                    static const float kDeltaDoublePixel = _cb2DProjectionMatrix[0][0];
-                    static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
-                    static const float kDeltaHalfPixel = kDeltaPixel * 0.5;
-                    
-                    float4 main_shape(VS_OUTPUT_SHAPE input) : SV_Target
-                    {
-                        const float u       = input._texCoord.x;
-                        const float v       = input._texCoord.y;
-                        const float flipped = input._texCoord.z;
-                        const float scale   = input._texCoord.w;
-                        
-                        float signedDistance = 0.0;
-                        if (input._info.x == 0.0)
-                        {
-                            // Quadratic Bezier
-                            signedDistance = -(u * u - v);
-                        }
-                        else if (input._info.x == 1.0)
-                        {
-                            // Solid triangle
-                            return input._color;
-                        }
-                        else if (input._info.x == 2.0)
-                        {
-                            // Circular
-                            signedDistance = flipped * (1.0 - sqrt(u * u + v * v));
-                        }
-                        else if (input._info.x == 3.0)
-                        {
-                            // Double Circular
-                            const float outerRadius = scale;
-                            const float innerRadius = input._info.y;
-                            const float innerRadiusRelative = 1.0 - innerRadius / outerRadius;
-                            signedDistance = 1.0 - sqrt(u * u + v * v);
-                            if (signedDistance > innerRadiusRelative)
-                            {
-                                signedDistance = innerRadiusRelative - signedDistance;
-                            }
-                            signedDistance *= flipped;
-                        }
-                        else if (input._info.x == 4.0)
-                        {
-                            // Textured triangle
-                            return g_texture0.Sample(g_sampler0, input._texCoord.xy);
-                        }
-                        else
-                        {
-                            // Font triangle
-                            const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
-                            const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
-                            const bool drawShade = (input._info.y == 1.0);
-                            if (drawShade)
-                            {
-                                const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
-                                const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
-                                if (rbSampled > 0.0)
-                                {
-                                    const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
-                                    return float4(rbColor, saturate(sampled + rbSampled));
-                                }
-                            }
-                            return sampled4;
-                        }
-                        
-                        // Apply scale to the signed distance for more consistent anti-aliasing
-                        if (scale > 0.0)
-                        {
-                            signedDistance *= (scale * kDeltaPixel);
-                        }
-                        
-                        const float signedDistanceAlpha = (kDeltaHalfPixel < signedDistance) ? 1.0 : 1.0 - saturate(abs(signedDistance - kDeltaHalfPixel) / kDeltaPixel);
-                        return float4(input._color.xyz, input._color.w * signedDistanceAlpha);
-                    }
-                    )"
+					#include <ShaderStructDefinitions>
+					#include <ShaderConstantBuffers>
+					
+					sampler				 g_sampler0;
+					Texture2D<float4>	   g_texture0;
+					
+					static const float kDeltaDoublePixel = _cb2DProjectionMatrix[0][0];
+					static const float kDeltaPixel = kDeltaDoublePixel * 0.5;
+					static const float kDeltaHalfPixel = kDeltaPixel * 0.5;
+					
+					float4 main_shape(VS_OUTPUT_SHAPE input) : SV_Target
+					{
+						const float u	   = input._texCoord.x;
+						const float v	   = input._texCoord.y;
+						const float flipped = input._texCoord.z;
+						const float scale   = input._texCoord.w;
+						
+						float signedDistance = 0.0;
+						if (input._info.x == 0.0)
+						{
+							// Quadratic Bezier
+							signedDistance = -(u * u - v);
+						}
+						else if (input._info.x == 1.0)
+						{
+							// Solid triangle
+							return input._color;
+						}
+						else if (input._info.x == 2.0)
+						{
+							// Circular
+							signedDistance = flipped * (1.0 - sqrt(u * u + v * v));
+						}
+						else if (input._info.x == 3.0)
+						{
+							// Double Circular
+							const float outerRadius = scale;
+							const float innerRadius = input._info.y;
+							const float innerRadiusRelative = 1.0 - innerRadius / outerRadius;
+							signedDistance = 1.0 - sqrt(u * u + v * v);
+							if (signedDistance > innerRadiusRelative)
+							{
+								signedDistance = innerRadiusRelative - signedDistance;
+							}
+							signedDistance *= flipped;
+						}
+						else if (input._info.x == 4.0)
+						{
+							// Textured triangle
+							return g_texture0.Sample(g_sampler0, input._texCoord.xy);
+						}
+						else
+						{
+							// Font triangle
+							const float sampled = g_texture0.Sample(g_sampler0, input._texCoord.xy);
+							const float4 sampled4 = float4(input._color.xyz * ((sampled > 0.0) ? 1.0 : 0.0), sampled * input._color.a);
+							const bool drawShade = (input._info.y == 1.0);
+							if (drawShade)
+							{
+								const float2 rbCoord = input._texCoord - float2(ddx(input._texCoord.x), ddy(input._texCoord.y));
+								const float rbSampled = g_texture0.Sample(g_sampler0, rbCoord);
+								if (rbSampled > 0.0)
+								{
+									const float3 rbColor = lerp(sampled4.xyz * 0.25 * max(rbSampled, 0.25), sampled4.xyz, sampled);
+									return float4(rbColor, saturate(sampled + rbSampled));
+								}
+							}
+							return sampled4;
+						}
+						
+						// Apply scale to the signed distance for more consistent anti-aliasing
+						if (scale > 0.0)
+						{
+							signedDistance *= (scale * kDeltaPixel);
+						}
+						
+						const float signedDistanceAlpha = (kDeltaHalfPixel < signedDistance) ? 1.0 : 1.0 - saturate(abs(signedDistance - kDeltaHalfPixel) / kDeltaPixel);
+						return float4(input._color.xyz, input._color.w * signedDistanceAlpha);
+					}
+					)"
 				};
+				if (_pixelShaderID.isValid())
+				{
+					shaderPool.removeShader(_pixelShaderID);
+				}
 				_pixelShaderID = shaderPool.addShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", GraphicShaderType::PixelShader);
 			}
 		}
