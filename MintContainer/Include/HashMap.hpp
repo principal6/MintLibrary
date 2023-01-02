@@ -200,22 +200,22 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline const KeyValuePair<Key, Value> HashMap<Key, Value>::find(const Key& key) const noexcept
+	inline KeyValuePair<Key, Value> HashMap<Key, Value>::find(const Key& key) const noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
 		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
-		auto& startBucket = _bucketArray[startBucketIndex];
-		KeyValuePair<Key, Value> keyValuePair;
+		const Bucket<Key, Value>& startBucket = _bucketArray[startBucketIndex];
+		KeyValuePair<Key, Value> findResult;
 		for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
 		{
 			if (startBucket._hopInfo.get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
 			{
-				keyValuePair._key = &_bucketArray[startBucketIndex + hopAt]._key;
-				keyValuePair._value = const_cast<Value*>(&_bucketArray[startBucketIndex + hopAt]._value);
+				findResult._key = &_bucketArray[startBucketIndex + hopAt]._key;
+				findResult._value = const_cast<Value*>(&_bucketArray[startBucketIndex + hopAt]._value);
 				break;
 			}
 		}
-		return keyValuePair;
+		return findResult;
 	}
 
 	template<typename Key, typename Value>

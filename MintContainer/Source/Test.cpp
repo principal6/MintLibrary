@@ -466,11 +466,11 @@ namespace mint
 			hashMap.insert("33", "e");
 			hashMap.insert("41", "f");
 
-			KeyValuePair<std::string, std::string> keyValuePair0 = hashMap.find("1");
+			KeyValuePair keyValuePair0 = hashMap.find("1");
 
 			hashMap.erase("21");
 
-			KeyValuePair<std::string, std::string> keyValuePair1 = hashMap.find("21");
+			KeyValuePair keyValuePair1 = hashMap.find("21");
 
 			return true;
 		}

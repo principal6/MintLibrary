@@ -87,7 +87,7 @@ namespace mint
 		std::enable_if_t<std::is_copy_constructible<V>::value == false, void> insert(const Key& key, V&& value) noexcept;
 
 	public:
-		const KeyValuePair<Key, Value> find(const Key& key) const noexcept;
+		KeyValuePair<Key, Value> find(const Key& key) const noexcept;
 		const Value& at(const Key& key) const noexcept;
 		Value& at(const Key& key) noexcept;
 		void erase(const Key& key) noexcept;
