@@ -250,6 +250,12 @@ namespace mint
 			}
 			return result;
 		}
+		
+		template <typename T>
+		MINT_INLINE constexpr bool contains(const T* const string, const T* const substring)
+		{
+			return StringUtil::find(string, substring, 0) != kStringNPos;
+		}
 
 		template <>
 		MINT_INLINE constexpr uint32 find(const wchar_t* const string, const wchar_t* const substring, uint32 offset)

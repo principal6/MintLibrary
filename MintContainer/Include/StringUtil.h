@@ -107,8 +107,11 @@ namespace mint
 		constexpr uint32 countChars(const char8_t* const string);
 
 		// here 'offset' refers to character offset (not byte offset!)
-		template <typename T>
+		template<typename T>
 		constexpr uint32 find(const T* const string, const T* const substring, const uint32 offset = 0);
+		
+		template<typename T>
+		constexpr bool contains(const T* const string, const T* const substring);
 
 		template <typename T>
 		constexpr bool compare(const T* const a, const T* const b);
@@ -136,6 +139,7 @@ namespace mint
 		void convertStringToWideString(const std::string& source, std::wstring& destination);
 
 		void convertStringAToStringW(const StringA& source, StringW& destination) noexcept;
+		void convertStringWToStringA(const StringW& source, StringA& destination) noexcept;
 
 		template <uint32 BufferSize>
 		void convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;

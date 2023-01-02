@@ -239,12 +239,35 @@ namespace mint
 			::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
 		}
 
+		MINT_INLINE void convertStringWToStringA(const StringW& source, StringA& destination) noexcept
+		{
+			const int length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
+			destination.resize(length);
+			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
+		}
+
 		template<uint32 BufferSize>
 		inline void convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept
 		{
 			const int length = ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0);
 			destination.resize(length);
 			::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
+		}
+
+		template<typename T>
+		MINT_INLINE uint32 computeExtenstionAt(const StringReference<T>& inoutText)
+		{
+			const uint32 length = inoutText.length();
+			uint32 found = inoutText.find('.', 1);
+			while (found < length - 1)
+			{
+				if (::isalpha(inoutText[found - 1]) == true && ::isalpha(inoutText[found + 1]) == true)
+				{
+					return found;
+				}
+				found = inoutText.find('.', found + 1);
+			}
+			return kStringNPos;
 		}
 
 		MINT_INLINE size_t computeExtenstionAt(std::string& inoutText)

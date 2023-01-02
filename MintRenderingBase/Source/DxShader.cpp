@@ -281,7 +281,7 @@ namespace mint
 
 		bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
 		{
-			std::string inputShaderFilePath{ inputDirectory };
+			StringA inputShaderFilePath{ inputDirectory };
 			inputShaderFilePath += inputShaderFileName;
 			if (FileUtil::exists(inputShaderFilePath.c_str()) == false)
 			{
@@ -311,7 +311,7 @@ namespace mint
 
 		bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
 		{
-			if (kStringNPos == StringUtil::find(inputShaderFilePath, ".hlsl"))
+			if (StringUtil::contains(inputShaderFilePath, ".hlsl") == false)
 			{
 				return false;
 			}
@@ -328,9 +328,9 @@ namespace mint
 			}
 			else
 			{
-				std::wstring compiledShaderFileNameWide;
-				StringUtil::convertStringToWideString(outputShaderFilePath, compiledShaderFileNameWide);
-				if (FAILED(D3DReadFileToBlob(compiledShaderFileNameWide.c_str(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
+				StringW compiledShaderFileNameW;
+				StringUtil::convertStringAToStringW(outputShaderFilePath, compiledShaderFileNameW);
+				if (FAILED(D3DReadFileToBlob(compiledShaderFileNameW.c_str(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
 				{
 					return false;
 				}
@@ -339,7 +339,6 @@ namespace mint
 			inoutShader._entryPoint = entryPoint;
 			inoutShader._hlslFileName = inputShaderFilePath;
 			inoutShader._hlslBinaryFileName = outputShaderFilePath;
-
 			return true;
 		}
 
@@ -351,9 +350,15 @@ namespace mint
 			const char* content{};
 			const char* identifier{};
 			uint32 contentLength{};
-			TextFileReader textFileReader;
-			if (compileParam._inputFileName != nullptr)
+			if (compileParam._inputFileName == nullptr)
 			{
+				content = compileParam._shaderTextContent;
+				contentLength = StringUtil::length(compileParam._shaderTextContent);
+				identifier = compileParam._shaderIdentifier;
+			}
+			else
+			{
+				TextFileReader textFileReader;
 				if (textFileReader.open(compileParam._inputFileName) == false)
 				{
 					MINT_LOG_ERROR("Input file not found : %s", compileParam._inputFileName);
@@ -363,12 +368,6 @@ namespace mint
 				content = textFileReader.get();
 				contentLength = textFileReader.getFileSize();
 				identifier = compileParam._inputFileName;
-			}
-			else
-			{
-				content = compileParam._shaderTextContent;
-				contentLength = StringUtil::length(compileParam._shaderTextContent);
-				identifier = compileParam._shaderIdentifier;
 			}
 
 			const UINT debugFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -387,7 +386,6 @@ namespace mint
 					return false;
 				}
 			}
-
 			return true;
 		}
 
