@@ -379,7 +379,7 @@ namespace mint
 			__noop;
 		}
 
-		const GraphicObjectID& DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
+		GraphicObjectID DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::ConstantBuffer;
@@ -395,7 +395,7 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		const GraphicObjectID& DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+		GraphicObjectID DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::VertexBuffer;
@@ -410,7 +410,7 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		const GraphicObjectID& DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
+		GraphicObjectID DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::IndexBuffer;
@@ -425,7 +425,7 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		const GraphicObjectID& DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
+		GraphicObjectID DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::StructuredBuffer;
@@ -442,7 +442,7 @@ namespace mint
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		const GraphicObjectID& DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
+		GraphicObjectID DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::Texture2D;
