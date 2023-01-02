@@ -156,8 +156,9 @@ namespace mint
 			int32 getShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const;
 			int32 getInputLayoutIndex(const GraphicObjectID& objectID) const;
 			uint32 getShaderCount(const GraphicShaderType shaderType) const;
-			DxShader& accessShader(const GraphicShaderType shaderType, const int32 shaderIndex);
 			GraphicObjectID& accessBoundShaderID(const GraphicShaderType shaderType);
+			const Vector<DxShader>& getShaders(const GraphicShaderType shaderType) const;
+			Vector<DxShader>& accessShaders(const GraphicShaderType shaderType);
 
 		private:
 			ComPtr<ID3DBlob> _errorMessageBlob;
@@ -170,11 +171,11 @@ namespace mint
 
 		private:
 			Vector<GraphicInputLayout> _inputLayouts;
-			Vector<DxShader> _shaders[static_cast<uint32>(GraphicShaderType::COUNT)];
+			Vector<DxShader> _shadersPerType[static_cast<uint32>(GraphicShaderType::COUNT)];
 
 		private:
 			GraphicObjectID	_boundInputLayoutID;
-			GraphicObjectID _boundShaderIDs[static_cast<uint32>(GraphicShaderType::COUNT)];
+			GraphicObjectID _boundShaderIDPerType[static_cast<uint32>(GraphicShaderType::COUNT)];
 		};
 	}
 }

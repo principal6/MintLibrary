@@ -159,7 +159,7 @@ namespace mint
 				return GraphicObjectID::kInvalidGraphicObjectID;
 			}
 
-			const DxShader& vertexShader = accessShader(GraphicShaderType::VertexShader, vertexShaderIndex);
+			const DxShader& vertexShader = accessShaders(GraphicShaderType::VertexShader)[vertexShaderIndex];
 			return pushInputLayoutInternal(vertexShader, inputElementTypeMetaData);
 		}
 
@@ -171,8 +171,8 @@ namespace mint
 			}
 
 			shader.assignIDXXX();
-			_shaders[static_cast<uint32>(shaderType)].push_back(std::move(shader));
-			return _shaders[static_cast<uint32>(shaderType)].back().getID();
+			accessShaders(shaderType).push_back(std::move(shader));
+			return getShaders(shaderType).back().getID();
 		}
 
 		GraphicObjectID DxShaderPool::pushInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
@@ -399,13 +399,13 @@ namespace mint
 				if (boundShaderID.isValid())
 				{
 					const int32 boundShaderIndex = getShaderIndex(shaderType, boundShaderID);
-					accessShader(shaderType, boundShaderIndex).unbind();
+					accessShaders(shaderType)[boundShaderIndex].unbind();
 				}
 
 				const uint32 shaderCount = getShaderCount(shaderType);
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
-					DxShader& shader = accessShader(shaderType, shaderIndex);
+					DxShader& shader = accessShaders(shaderType)[shaderIndex];
 					compileShaderFromFile(shader._hlslFileName.c_str(), shader._entryPoint.c_str(), shader._hlslBinaryFileName.c_str(), shader._shaderType, true, shader);
 					createShaderInternal(shaderType, shader);
 				}
@@ -418,7 +418,7 @@ namespace mint
 				if (boundShaderID.isValid())
 				{
 					const int32 boundShaderIndex = getShaderIndex(shaderType, boundShaderID);
-					accessShader(shaderType, boundShaderIndex).bind();
+					accessShaders(shaderType)[boundShaderIndex].bind();
 				}
 			}
 		}
@@ -449,7 +449,7 @@ namespace mint
 			}
 
 			boundShaderID = objectID;
-			accessShader(shaderType, shaderIndex).bind();
+			accessShaders(shaderType)[shaderIndex].bind();
 		}
 
 		void DxShaderPool::bindInputLayoutIfNot(const GraphicObjectID& objectID)
@@ -490,15 +490,14 @@ namespace mint
 			}
 
 			boundShaderID.invalidate();
-			accessShader(shaderType, shaderIndex).unbind();
+			accessShaders(shaderType)[shaderIndex].unbind();
 		}
 
 		int32 DxShaderPool::getShaderIndex(const GraphicShaderType shaderType, const GraphicObjectID& objectID) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - check ObjectType");
-			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			return binarySearch(_shaders[shaderTypeIndex], objectID, GraphicObject::Evaluator());
+			return binarySearch(getShaders(shaderType), objectID, GraphicObject::Evaluator());
 		}
 
 		int32 DxShaderPool::getInputLayoutIndex(const GraphicObjectID& objectID) const
@@ -510,23 +509,26 @@ namespace mint
 		uint32 DxShaderPool::getShaderCount(const GraphicShaderType shaderType) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
-			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			return _shaders[shaderTypeIndex].size();
-		}
-
-		DxShader& DxShaderPool::accessShader(const GraphicShaderType shaderType, const int32 shaderIndex)
-		{
-			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
-			MINT_ASSERT(isValidIndex(shaderIndex), "Invalid parameter - check shaderIndex");
-			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			return _shaders[shaderTypeIndex][shaderIndex];
+			return getShaders(shaderType).size();
 		}
 
 		GraphicObjectID& DxShaderPool::accessBoundShaderID(const GraphicShaderType shaderType)
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			return _boundShaderIDs[shaderTypeIndex];
+			return _boundShaderIDPerType[shaderTypeIndex];
+		}
+
+		const Vector<DxShader>& DxShaderPool::getShaders(const GraphicShaderType shaderType) const
+		{
+			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
+			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
+			return _shadersPerType[shaderTypeIndex];
+		}
+
+		Vector<DxShader>& DxShaderPool::accessShaders(const GraphicShaderType shaderType)
+		{
+			return const_cast<Vector<DxShader>&>(getShaders(shaderType));
 		}
 	}
 }
