@@ -157,6 +157,14 @@ namespace mint
 				}
 			};
 
+			struct AscendingComparator
+			{
+				bool operator()(const GraphicObject& lhs, const GraphicObject& rhs) const noexcept
+				{
+					return lhs._objectID < rhs._objectID;
+				}
+			};
+
 			MINT_INLINE bool operator==(const GraphicObjectID& objectID) const noexcept
 			{
 				return _objectID == objectID;
