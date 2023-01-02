@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/IGraphicObject.h>
+#include <MintRenderingBase/Include/GraphicObject.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -45,7 +45,7 @@ namespace mint
 		};
 
 
-		class DxResource final : public IGraphicObject
+		class DxResource final : public GraphicObject
 		{
 			friend DxResourcePool;
 
@@ -60,6 +60,7 @@ namespace mint
 			DxResource(GraphicDevice& graphicDevice);
 
 		public:
+			DxResource(DxResource&& rhs) noexcept = default;
 			virtual ~DxResource() = default;
 
 		private:
@@ -119,7 +120,7 @@ namespace mint
 		};
 
 
-		class DxResourcePool final : public IGraphicObject
+		class DxResourcePool final : public GraphicObject
 		{
 		public:
 			DxResourcePool(GraphicDevice& graphicDevice);

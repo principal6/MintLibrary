@@ -44,7 +44,7 @@ namespace mint
 
 
 		DxResource::DxResource(GraphicDevice& graphicDevice)
-			: IGraphicObject(graphicDevice, GraphicObjectType::Resource)
+			: GraphicObject(graphicDevice, GraphicObjectType::Resource)
 			, _resourceType{ DxResourceType::INVALID }
 			, _resourceCapacity{ 0 }
 			, _elementStride{ 0 }
@@ -374,7 +374,7 @@ namespace mint
 
 
 		DxResourcePool::DxResourcePool(GraphicDevice& graphicDevice)
-			: IGraphicObject(graphicDevice, GraphicObjectType::Pool)
+			: GraphicObject(graphicDevice, GraphicObjectType::Pool)
 		{
 			__noop;
 		}
@@ -479,7 +479,7 @@ namespace mint
 		{
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
-			const int32 index = binarySearch(_resourceArray, objectID, IGraphicObject::Evaluator());
+			const int32 index = binarySearch(_resourceArray, objectID, GraphicObject::Evaluator());
 			if (isValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");

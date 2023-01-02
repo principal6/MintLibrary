@@ -210,7 +210,7 @@
     <ClInclude Include="Include\GUI\GUIInteractionModule.hpp" />
     <ClInclude Include="Include\GUI\GUIInteractionModules.h" />
     <ClInclude Include="Include\GUI\GUITheme.h" />
-    <ClInclude Include="Include\IGraphicObject.h" />
+    <ClInclude Include="Include\GraphicObject.h" />
     <ClInclude Include="Include\ImageLoader.h" />
     <ClInclude Include="Include\IRendererContext.h" />
     <ClInclude Include="Include\MeshData.h" />
@@ -286,7 +286,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\IGraphicObject.cpp">
+    <ClCompile Include="Source\GraphicObject.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

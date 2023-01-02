@@ -58,7 +58,7 @@ namespace mint
 #pragma region GraphicInputLayout
 		const GraphicInputLayout GraphicInputLayout::kNullInstance{ GraphicDevice::getInvalidInstance() };
 		GraphicInputLayout::GraphicInputLayout(GraphicDevice& graphicDevice)
-			: IGraphicObject(graphicDevice, GraphicObjectType::InputLayout)
+			: GraphicObject(graphicDevice, GraphicObjectType::InputLayout)
 		{
 			__noop;
 		}
@@ -78,7 +78,7 @@ namespace mint
 #pragma region DxShader
 		const DxShader DxShader::kNullInstance{ GraphicDevice::getInvalidInstance(), GraphicShaderType::VertexShader };
 		DxShader::DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType)
-			: IGraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
+			: GraphicObject(graphicDevice, GraphicObjectType::Shader), _shaderType{ shaderType }
 		{
 			__noop;
 		}
@@ -118,7 +118,7 @@ namespace mint
 
 
 		DxShaderPool::DxShaderPool(GraphicDevice& graphicDevice, DxShaderHeaderMemory* const shaderHeaderMemory, const DxShaderVersion shaderVersion)
-			: IGraphicObject(graphicDevice, GraphicObjectType::Pool)
+			: GraphicObject(graphicDevice, GraphicObjectType::Pool)
 			, _shaderHeaderMemory{ shaderHeaderMemory }
 			, _shaderVersion{ shaderVersion }
 		{
@@ -184,7 +184,7 @@ namespace mint
 			}
 
 			inputLayout.assignIDXXX();
-			_inputLayouts.push_back(inputLayout);
+			_inputLayouts.push_back(std::move(inputLayout));
 			return _inputLayouts.back().getID();
 		}
 
@@ -498,13 +498,13 @@ namespace mint
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Shader) == true, "Invalid parameter - check ObjectType");
 			const uint32 shaderTypeIndex = static_cast<uint32>(shaderType);
-			return binarySearch(_shaders[shaderTypeIndex], objectID, IGraphicObject::Evaluator());
+			return binarySearch(_shaders[shaderTypeIndex], objectID, GraphicObject::Evaluator());
 		}
 
 		int32 DxShaderPool::getInputLayoutIndex(const GraphicObjectID& objectID) const
 		{
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::InputLayout) == true, "Invalid parameter - check ObjectType");
-			return binarySearch(_inputLayouts, objectID, IGraphicObject::Evaluator());
+			return binarySearch(_inputLayouts, objectID, GraphicObject::Evaluator());
 		}
 
 		uint32 DxShaderPool::getShaderCount(const GraphicShaderType shaderType) const

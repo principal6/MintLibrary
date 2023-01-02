@@ -7,7 +7,7 @@
 
 #include <MintCommon/Include/CommonDefinitions.h>
 
-#include <MintRenderingBase/Include/IGraphicObject.h>
+#include <MintRenderingBase/Include/GraphicObject.h>
 
 #include <MintContainer/Include/Vector.h>
 
@@ -50,26 +50,29 @@ namespace mint
 		};
 
 
-		class GraphicInputLayout final : public IGraphicObject
+		class GraphicInputLayout final : public GraphicObject
 		{
 			friend DxShaderPool;
 
 		public:
 			static const GraphicInputLayout kNullInstance;
 
+		private:
+			GraphicInputLayout(GraphicDevice& graphicDevice);
+
+		public:
+			GraphicInputLayout(GraphicInputLayout&& rhs) noexcept = default;
+
 		public:
 			void bind() const;
 			void unbind() const;
-
-		private:
-			GraphicInputLayout(GraphicDevice& graphicDevice);
 
 		private:
 			DxInputElementSet _inputElementSet;
 			ComPtr<ID3D11InputLayout> _inputLayout;
 		};
 
-		class DxShader final : public IGraphicObject
+		class DxShader final : public GraphicObject
 		{
 			friend DxShaderPool;
 
@@ -77,6 +80,7 @@ namespace mint
 			DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType);
 
 		public:
+			DxShader(DxShader&& rhs) = default;
 			virtual ~DxShader() = default;
 
 		public:
@@ -104,7 +108,7 @@ namespace mint
 			const char* _shaderTextContent = nullptr;
 		};
 
-		class DxShaderPool final : public IGraphicObject
+		class DxShaderPool final : public GraphicObject
 		{
 			template <typename CustomDataType>
 			using TypeMetaData = Language::TypeMetaData<CustomDataType>;

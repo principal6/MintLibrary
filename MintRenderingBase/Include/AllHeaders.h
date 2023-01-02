@@ -12,7 +12,7 @@
 #include <MintRenderingBase/Include/DxShaderHeaderMemory.h>
 #include <MintRenderingBase/Include/GraphicDevice.h>
 #include <MintRenderingBase/Include/GUI/GUIContext.h>
-#include <MintRenderingBase/Include/IGraphicObject.h>
+#include <MintRenderingBase/Include/GraphicObject.h>
 #include <MintRenderingBase/Include/IRendererContext.h>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
 #include <MintRenderingBase/Include/LowLevelRenderer.h>

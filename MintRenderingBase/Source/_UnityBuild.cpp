@@ -4,7 +4,7 @@
 #include <MintRenderingBase/Source/ImageLoader.cpp>
 #include <MintRenderingBase/Source/FontLoader.cpp>
 #include <MintRenderingBase/Source/GraphicDevice.cpp>
-#include <MintRenderingBase/Source/IGraphicObject.cpp>
+#include <MintRenderingBase/Source/GraphicObject.cpp>
 #include <MintRenderingBase/Source/IRendererContext.cpp>
 #include <MintRenderingBase/Source/MeshData.cpp>
 #include <MintRenderingBase/Source/RenderingBaseCommon.cpp>
