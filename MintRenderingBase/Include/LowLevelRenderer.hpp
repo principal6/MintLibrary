@@ -304,7 +304,7 @@ namespace mint
 			const uint32 vertexCount = static_cast<uint32>(_vertices.size());
 			if (_vertexBufferID.isValid() == false && vertexCount > 0)
 			{
-				_vertexBufferID = resourcePool.pushVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
+				_vertexBufferID = resourcePool.addVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
 			}
 
 			if (_vertexBufferID.isValid())
@@ -316,7 +316,7 @@ namespace mint
 			const uint32 indexCount = static_cast<uint32>(_indices.size());
 			if (_indexBufferID.isValid() == false && indexCount > 0)
 			{
-				_indexBufferID = resourcePool.pushIndexBuffer(&_indices[0], indexCount);
+				_indexBufferID = resourcePool.addIndexBuffer(&_indices[0], indexCount);
 			}
 
 			if (_indexBufferID.isValid())

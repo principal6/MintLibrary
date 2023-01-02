@@ -52,8 +52,8 @@ namespace mint
 
 				using namespace Language;
 				const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _graphicDevice.getCppHlslSteamData().getTypeMetaData(typeid(VS_INPUT_SHAPE));
-				_vertexShaderID = shaderPool.pushShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", GraphicShaderType::VertexShader);
-				_inputLayoutID = shaderPool.pushInputLayout(_vertexShaderID, typeMetaData);
+				_vertexShaderID = shaderPool.addShaderFromMemory("ShapeRendererVS", kShaderString, "main_shape", GraphicShaderType::VertexShader);
+				_inputLayoutID = shaderPool.addInputLayout(_vertexShaderID, typeMetaData);
 			}
 
 			{
@@ -73,7 +73,7 @@ namespace mint
 					}
 					)"
 				};
-				_geometryShaderID = shaderPool.pushShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", GraphicShaderType::GeometryShader);
+				_geometryShaderID = shaderPool.addShaderFromMemory("ShapeRendererGS", kShaderString, "main_shape", GraphicShaderType::GeometryShader);
 			}
 
 			{
@@ -98,7 +98,7 @@ namespace mint
 					}
 					)"
 				};
-				_pixelShaderID = shaderPool.pushShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", GraphicShaderType::PixelShader);
+				_pixelShaderID = shaderPool.addShaderFromMemory("ShapeRendererPS", kShaderString, "main_shape", GraphicShaderType::PixelShader);
 			}
 		}
 

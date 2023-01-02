@@ -125,10 +125,9 @@ namespace mint
 			__noop;
 		}
 
-		GraphicObjectID DxShaderPool::pushShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
+		GraphicObjectID DxShaderPool::addShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType)
 		{
 			DxShader shader(_graphicDevice, shaderType);
-
 			DxShaderCompileParam compileParam;
 			compileParam._shaderIdentifier = shaderIdentifier;
 			compileParam._shaderTextContent = textContent;
@@ -138,20 +137,20 @@ namespace mint
 			}
 			shader._hlslFileName = shaderIdentifier;
 
-			return pushShaderInternal(shaderType, shader);
+			return addShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID DxShaderPool::pushShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
+		GraphicObjectID DxShaderPool::addShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory)
 		{
 			DxShader shader(_graphicDevice, shaderType);
 			if (compileShaderFromFile(inputDirectory, inputShaderFileName, entryPoint, outputDirectory, shaderType, false, shader) == false)
 			{
 				return GraphicObjectID::kInvalidGraphicObjectID;
 			}
-			return pushShaderInternal(shaderType, shader);
+			return addShaderInternal(shaderType, shader);
 		}
 
-		GraphicObjectID DxShaderPool::pushInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicObjectID DxShaderPool::addInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			const int32 vertexShaderIndex = getShaderIndex(GraphicShaderType::VertexShader, vertexShaderID);
 			if (isValidIndex(vertexShaderIndex) == false)
@@ -160,10 +159,31 @@ namespace mint
 			}
 
 			const DxShader& vertexShader = accessShaders(GraphicShaderType::VertexShader)[vertexShaderIndex];
-			return pushInputLayoutInternal(vertexShader, inputElementTypeMetaData);
+			return addInputLayoutInternal(vertexShader, inputElementTypeMetaData);
+		}
+		
+		void DxShaderPool::removeShader(const GraphicObjectID& shaderID)
+		{
+			if (shaderID.isValid() == false)
+			{
+				return;
+			}
+
+			for (auto& shaders : _shadersPerType)
+			{
+				const uint32 shaderCount = shaders.size();
+				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
+				{
+					if (shaders[shaderIndex] == shaderID)
+					{
+						shaders.erase(shaderIndex);
+						break;
+					}
+				}
+			}
 		}
 
-		GraphicObjectID DxShaderPool::pushShaderInternal(const GraphicShaderType shaderType, DxShader& shader)
+		GraphicObjectID DxShaderPool::addShaderInternal(const GraphicShaderType shaderType, DxShader& shader)
 		{
 			if (createShaderInternal(shaderType, shader) == false)
 			{
@@ -177,7 +197,7 @@ namespace mint
 			return graphicObjectID;
 		}
 
-		GraphicObjectID DxShaderPool::pushInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
+		GraphicObjectID DxShaderPool::addInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			GraphicInputLayout inputLayout(_graphicDevice);
 			if (createInputLayoutInternal(vertexShader, inputElementTypeMetaData, inputLayout) == false)

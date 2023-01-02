@@ -379,7 +379,7 @@ namespace mint
 			__noop;
 		}
 
-		GraphicObjectID DxResourcePool::pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
+		GraphicObjectID DxResourcePool::addConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::ConstantBuffer;
@@ -393,11 +393,11 @@ namespace mint
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
-			MINT_ASSERT(false, "pushConstantBuffer 에 실패했습니다!");
+			MINT_ASSERT(false, "addConstantBuffer 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
+		GraphicObjectID DxResourcePool::addVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::VertexBuffer;
@@ -411,11 +411,11 @@ namespace mint
 				return graphicObjectID;
 			}
 
-			MINT_ASSERT(false, "pushVertexBuffer 에 실패했습니다!");
+			MINT_ASSERT(false, "addVertexBuffer 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::pushIndexBuffer(const void* const resourceContent, const uint32 elementCount)
+		GraphicObjectID DxResourcePool::addIndexBuffer(const void* const resourceContent, const uint32 elementCount)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::IndexBuffer;
@@ -429,11 +429,11 @@ namespace mint
 				return graphicObjectID;
 			}
 
-			MINT_ASSERT(false, "pushIndexBuffer 에 실패했습니다!");
+			MINT_ASSERT(false, "addIndexBuffer 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
+		GraphicObjectID DxResourcePool::addStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::StructuredBuffer;
@@ -448,11 +448,11 @@ namespace mint
 				return graphicObjectID;
 			}
 
-			MINT_ASSERT(false, "pushStructuredBuffer 에 실패했습니다!");
+			MINT_ASSERT(false, "addStructuredBuffer 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 
-		GraphicObjectID DxResourcePool::pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
+		GraphicObjectID DxResourcePool::addTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height)
 		{
 			DxResource resource{ _graphicDevice };
 			resource._resourceType = DxResourceType::Texture2D;
@@ -466,7 +466,7 @@ namespace mint
 				return graphicObjectID;
 			}
 
-			MINT_ASSERT(false, "pushTexture2D 에 실패했습니다!");
+			MINT_ASSERT(false, "addTexture2D 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
 		}
 

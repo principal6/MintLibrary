@@ -131,13 +131,13 @@ namespace mint
 			virtual ~DxResourcePool() = default;
 
 		public:
-			GraphicObjectID pushConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
-			GraphicObjectID pushVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
-			GraphicObjectID pushIndexBuffer(const void* const resourceContent, const uint32 elementCount);
-			GraphicObjectID pushStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
+			GraphicObjectID addConstantBuffer(const void* const resourceContent, const uint32 bufferSize, const uint32 registerIndex);
+			GraphicObjectID addVertexBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
+			GraphicObjectID addIndexBuffer(const void* const resourceContent, const uint32 elementCount);
+			GraphicObjectID addStructuredBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount, const uint32 registerIndex);
 
 		public:
-			GraphicObjectID pushTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
+			GraphicObjectID addTexture2D(const DxTextureFormat format, const byte* const textureContent, const uint32 width, const uint32 height);
 
 		public:
 			void bindAsInput(const GraphicObjectID& objectID) noexcept;

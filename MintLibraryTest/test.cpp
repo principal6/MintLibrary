@@ -92,7 +92,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	ImageLoader imageLoader;
 	imageLoader.loadImage("Assets/test_image.png", byteColorImage);
 	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
-	const GraphicObjectID textureID = resourcePool.pushTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
+	const GraphicObjectID textureID = resourcePool.addTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
 	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);
 	while (window.isRunning() == true)
 	{

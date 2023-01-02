@@ -238,7 +238,7 @@ namespace mint
 #endif
 
 			DxResourcePool& resourcePool = graphicDevice.getResourcePool();
-			_fontData._fontTextureID = resourcePool.pushTexture2D(DxTextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
+			_fontData._fontTextureID = resourcePool.addTexture2D(DxTextureFormat::R8_UNORM, &_fontImageData._imageData[0], _fontImageData._width, _fontImageData._height);
 			return true;
 		}
 

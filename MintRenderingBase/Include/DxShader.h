@@ -129,13 +129,14 @@ namespace mint
 			virtual ~DxShaderPool() = default;
 
 		public:
-			GraphicObjectID pushShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
-			GraphicObjectID pushShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
-			GraphicObjectID pushInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			GraphicObjectID addShaderFromMemory(const char* const shaderIdentifier, const char* const textContent, const char* const entryPoint, const GraphicShaderType shaderType);
+			GraphicObjectID addShader(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const GraphicShaderType shaderType, const char* const outputDirectory = nullptr);
+			GraphicObjectID addInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			void removeShader(const GraphicObjectID& shaderID);
 
 		private:
-			GraphicObjectID pushShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
-			GraphicObjectID pushInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
+			GraphicObjectID addShaderInternal(const GraphicShaderType shaderType, DxShader& shader);
+			GraphicObjectID addInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData);
 
 		private:
 			bool createShaderInternal(const GraphicShaderType shaderType, DxShader& shader);

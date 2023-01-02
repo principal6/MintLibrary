@@ -504,7 +504,7 @@ namespace mint
 
 				{
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(_cbViewData));
-					_cbViewID = _resourcePool.pushConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
+					_cbViewID = _resourcePool.addConstantBuffer(&_cbViewData, sizeof(_cbViewData), typeMetaData._customData.getRegisterIndex());
 
 					DxResource& cbView = _resourcePool.getResource(_cbViewID);
 					cbView.bindToShader(GraphicShaderType::VertexShader, cbView.getRegisterIndex());
@@ -515,7 +515,7 @@ namespace mint
 				{
 					CB_Transform cbTransformData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslConstantBuffers.getTypeMetaData(typeid(cbTransformData));
-					_cbTransformID = _resourcePool.pushConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
+					_cbTransformID = _resourcePool.addConstantBuffer(&cbTransformData, sizeof(cbTransformData), typeMetaData._customData.getRegisterIndex());
 				}
 
 				initialize2DProjectionMatrix(Float2(windowSize));
@@ -530,13 +530,13 @@ namespace mint
 				{
 					SB_Transform sbTransformData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbTransformData));
-					_sbTransformID = _resourcePool.pushStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
+					_sbTransformID = _resourcePool.addStructuredBuffer(&sbTransformData, sizeof(sbTransformData), 1, typeMetaData._customData.getRegisterIndex());
 				}
 
 				{
 					SB_Material sbMaterialData;
 					const TypeMetaData<CppHlsl::TypeCustomData>& typeMetaData = _cppHlslStructuredBuffers.getTypeMetaData(typeid(sbMaterialData));
-					_sbMaterialID = _resourcePool.pushStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
+					_sbMaterialID = _resourcePool.addStructuredBuffer(&sbMaterialData, sizeof(sbMaterialData), 1, typeMetaData._customData.getRegisterIndex());
 				}
 			}
 		}
