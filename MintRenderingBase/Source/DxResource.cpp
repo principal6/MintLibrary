@@ -388,8 +388,10 @@ namespace mint
 				resource.assignIDXXX();
 				resource._registerIndex = registerIndex;
 
+				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.push_back(std::move(resource));
-				return _resourceArray.back().getID();
+				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				return graphicObjectID;
 			}
 			MINT_ASSERT(false, "pushConstantBuffer 에 실패했습니다!");
 			return GraphicObjectID::kInvalidGraphicObjectID;
@@ -402,8 +404,11 @@ namespace mint
 			if (resource.createBuffer(resourceContent, elementStride, elementCount) == true)
 			{
 				resource.assignIDXXX();
+
+				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.push_back(std::move(resource));
-				return _resourceArray.back().getID();
+				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				return graphicObjectID;
 			}
 
 			MINT_ASSERT(false, "pushVertexBuffer 에 실패했습니다!");
@@ -417,8 +422,11 @@ namespace mint
 			if (resource.createBuffer(resourceContent, DxResource::kIndexBufferElementStride, elementCount) == true)
 			{
 				resource.assignIDXXX();
+
+				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.push_back(std::move(resource));
-				return _resourceArray.back().getID();
+				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				return graphicObjectID;
 			}
 
 			MINT_ASSERT(false, "pushIndexBuffer 에 실패했습니다!");
@@ -434,8 +442,10 @@ namespace mint
 				resource.assignIDXXX();
 				resource._registerIndex = registerIndex;
 
+				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.push_back(std::move(resource));
-				return _resourceArray.back().getID();
+				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				return graphicObjectID;
 			}
 
 			MINT_ASSERT(false, "pushStructuredBuffer 에 실패했습니다!");
@@ -449,8 +459,11 @@ namespace mint
 			if (resource.createTexture(format, textureContent, width, height) == true)
 			{
 				resource.assignIDXXX();
+				
+				const GraphicObjectID graphicObjectID = resource.getID();
 				_resourceArray.push_back(std::move(resource));
-				return _resourceArray.back().getID();
+				quickSort(_resourceArray, GraphicObject::AscendingComparator());
+				return graphicObjectID;
 			}
 
 			MINT_ASSERT(false, "pushTexture2D 에 실패했습니다!");

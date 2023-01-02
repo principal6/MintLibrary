@@ -63,6 +63,9 @@ namespace mint
 			DxResource(DxResource&& rhs) noexcept = default;
 			virtual ~DxResource() = default;
 
+		public:
+			DxResource& operator=(DxResource&& rhs) noexcept = default;
+
 		private:
 			bool createBuffer(const void* const resourceContent, const uint32 elementStride, const uint32 elementCount);
 			bool createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
@@ -144,7 +147,7 @@ namespace mint
 			DxResource& getResource(const GraphicObjectID& objectID);
 
 		private:
-			Vector<DxResource> _resourceArray{};
+			Vector<DxResource> _resourceArray;
 		};
 	}
 }

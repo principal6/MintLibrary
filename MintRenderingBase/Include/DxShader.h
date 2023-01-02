@@ -62,6 +62,9 @@ namespace mint
 
 		public:
 			GraphicInputLayout(GraphicInputLayout&& rhs) noexcept = default;
+		
+		public:
+			GraphicInputLayout& operator=(GraphicInputLayout&& rhs) noexcept = default;
 
 		public:
 			void bind() const;
@@ -80,8 +83,11 @@ namespace mint
 			DxShader(GraphicDevice& graphicDevice, const GraphicShaderType shaderType);
 
 		public:
-			DxShader(DxShader&& rhs) = default;
+			DxShader(DxShader&& rhs) noexcept = default;
 			virtual ~DxShader() = default;
+
+		public:
+			DxShader& operator=(DxShader&& rhs) noexcept = default;
 
 		public:
 			void bind() const noexcept;

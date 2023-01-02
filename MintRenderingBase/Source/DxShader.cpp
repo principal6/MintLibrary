@@ -171,8 +171,10 @@ namespace mint
 			}
 
 			shader.assignIDXXX();
+			const GraphicObjectID graphicObjectID = shader.getID();
 			accessShaders(shaderType).push_back(std::move(shader));
-			return getShaders(shaderType).back().getID();
+			quickSort(accessShaders(shaderType), GraphicObject::AscendingComparator());
+			return graphicObjectID;
 		}
 
 		GraphicObjectID DxShaderPool::pushInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
@@ -184,8 +186,10 @@ namespace mint
 			}
 
 			inputLayout.assignIDXXX();
+			const GraphicObjectID graphicObjectID = inputLayout.getID();
 			_inputLayouts.push_back(std::move(inputLayout));
-			return _inputLayouts.back().getID();
+			quickSort(_inputLayouts, GraphicObject::AscendingComparator());
+			return graphicObjectID;
 		}
 
 		bool DxShaderPool::createShaderInternal(const GraphicShaderType shaderType, DxShader& shader)
