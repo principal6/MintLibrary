@@ -12,6 +12,7 @@ robocopy MintGame/Include Out/MintLibrary/Include/MintGame/Include /S
 robocopy MintLanguage/Include Out/MintLibrary/Include/MintLanguage/Include /S
 robocopy MintLibrary/Include Out/MintLibrary/Include/MintLibrary/Include /S
 robocopy MintMath/Include Out/MintLibrary/Include/MintMath/Include /S
+robocopy MintPhysics/Include Out/MintLibrary/Include/MintPhysics/Include /S
 robocopy MintPlatform/Include Out/MintLibrary/Include/MintPlatform/Include /S
 robocopy MintReflection/Include Out/MintLibrary/Include/MintReflection/Include /S
 robocopy MintRendering/Include Out/MintLibrary/Include/MintRendering/Include /S
@@ -24,6 +25,7 @@ robocopy _output/Debug Out/MintLibrary/Lib/Debug MintGame.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintLanguage.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintLibrary.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintMath.lib
+robocopy _output/Debug Out/MintLibrary/Lib/Debug MintPhysics.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintPlatform.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintReflection.lib
 robocopy _output/Debug Out/MintLibrary/Lib/Debug MintRendering.lib
@@ -36,6 +38,7 @@ robocopy _output/Release Out/MintLibrary/Lib/Release MintGame.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintLanguage.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintLibrary.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintMath.lib
+robocopy _output/Release Out/MintLibrary/Lib/Release MintPhysics.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintPlatform.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintReflection.lib
 robocopy _output/Release Out/MintLibrary/Lib/Release MintRendering.lib

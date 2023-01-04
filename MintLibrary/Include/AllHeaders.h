@@ -40,6 +40,8 @@ namespace mint
 
 #include <MintRendering/Include/AllHeaders.h>
 
+#include <MintPhysics/Include/AllHeaders.h>
+
 #include <MintGame/Include/AllHeaders.h>
 
 

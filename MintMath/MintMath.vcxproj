@@ -179,6 +179,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)_output\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)_intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
