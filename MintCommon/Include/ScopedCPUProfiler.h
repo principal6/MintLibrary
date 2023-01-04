@@ -29,7 +29,7 @@ namespace mint
 			static void count() noexcept;
 			static uint64 getFps() noexcept;
 			static uint64 getFrameTimeUs() noexcept;
-			static uint64 getFrameTimeMs() noexcept;
+			static double getFrameTimeMs() noexcept;
 
 		private:
 			static uint64 _previousTimeUs;

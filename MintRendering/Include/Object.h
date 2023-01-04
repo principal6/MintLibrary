@@ -63,7 +63,7 @@ namespace mint
 
 		protected:
 			TransformComponent* getObjectTransformComponent() const noexcept;
-			float getDeltaTimeS() const noexcept;
+			float getDeltaTimeSec() const noexcept;
 
 		protected:
 			const ObjectPool* const _objectPool;

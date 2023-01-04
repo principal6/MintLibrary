@@ -18,7 +18,7 @@ namespace mint
 	namespace Rendering
 	{
 		inline ObjectPool::ObjectPool()
-			: _deltaTimer{ &DeltaTimer::getDeltaTimer() }
+			: _deltaTimer{ &DeltaTimer::getInstance() }
 		{
 			__noop;
 		}
@@ -140,7 +140,7 @@ namespace mint
 
 		MINT_INLINE void ObjectPool::computeDeltaTime() const noexcept
 		{
-			_deltaTimer->computeDeltaTimeS();
+			_deltaTimer->computeDeltaTimeSec();
 		}
 
 		MINT_INLINE void ObjectPool::updateScreenSize(const Float2& screenSize)

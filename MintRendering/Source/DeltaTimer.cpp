@@ -9,7 +9,7 @@ namespace mint
 	{
 		DeltaTimer::DeltaTimer()
 			: _deltaTimeS{ 0.0f }
-			, _prevTimePointMs{ 0 }
+			, _prevTimePointUs{ 0 }
 		{
 			__noop;
 		}
@@ -19,27 +19,27 @@ namespace mint
 			__noop;
 		}
 
-		const DeltaTimer& DeltaTimer::getDeltaTimer() noexcept
+		const DeltaTimer& DeltaTimer::getInstance() noexcept
 		{
 			static DeltaTimer deltaTimer;
 			return deltaTimer;
 		}
 
-		float DeltaTimer::computeDeltaTimeS() const noexcept
+		float DeltaTimer::computeDeltaTimeSec() const noexcept
 		{
-			const uint64 currTimePointMs = Profiler::getCurrentTimeMs();
-			const uint64 deltaTimeMs = currTimePointMs - _prevTimePointMs;
+			const uint64 currTimePointUs = Profiler::getCurrentTimeUs();
+			const uint64 deltaTimeUs = currTimePointUs - _prevTimePointUs;
 
 			std::scoped_lock<std::mutex> scopedLock{ _mutex };
 
-			_deltaTimeS = deltaTimeMs * 0.001f;
+			_deltaTimeS = deltaTimeUs * 0.000001f;
 
-			_prevTimePointMs = currTimePointMs;
+			_prevTimePointUs = currTimePointUs;
 
 			return _deltaTimeS;
 		}
 
-		float DeltaTimer::getDeltaTimeS() const noexcept
+		float DeltaTimer::getDeltaTimeSec() const noexcept
 		{
 			return _deltaTimeS;
 		}

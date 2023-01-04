@@ -100,7 +100,7 @@ namespace mint
 
 		void CameraObject::move(const MoveDirection moveDirection)
 		{
-			const float deltaTimeS = getDeltaTimeS();
+			const float deltaTimeSec = getDeltaTimeSec();
 
 			const float handnessSign = getHandednessSign();
 			const Float3& leftDirection = Float3::cross(_forwardDirection, Float3::kAxisY) * handnessSign;
@@ -111,22 +111,22 @@ namespace mint
 			switch (moveDirection)
 			{
 			case CameraObject::MoveDirection::Forward:
-				transform._translation += _forwardDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation += _forwardDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			case CameraObject::MoveDirection::Backward:
-				transform._translation -= _forwardDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation -= _forwardDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			case CameraObject::MoveDirection::Leftward:
-				transform._translation += leftDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation += leftDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			case CameraObject::MoveDirection::Rightward:
-				transform._translation -= leftDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation -= leftDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			case CameraObject::MoveDirection::Upward:
-				transform._translation += upDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation += upDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			case CameraObject::MoveDirection::Downward:
-				transform._translation -= upDirection * moveSpeedFloat * deltaTimeS;
+				transform._translation -= upDirection * moveSpeedFloat * deltaTimeSec;
 				break;
 			default:
 				break;

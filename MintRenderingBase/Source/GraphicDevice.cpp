@@ -642,6 +642,12 @@ namespace mint
 				return;
 			}
 
+			if (_window.isResized())
+			{
+				updateScreenSize();
+				_guiContext.updateScreenSize(getWindowSizeFloat2());
+			}
+
 			_needEndRenderingCall = true;
 
 			_deviceContext->ClearRenderTargetView(_backBufferRtv.Get(), _clearColor);

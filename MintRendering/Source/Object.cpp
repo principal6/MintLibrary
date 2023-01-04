@@ -117,10 +117,10 @@ namespace mint
 			return static_cast<TransformComponent*>(_componentArray[0]);
 		}
 
-		float Object::getDeltaTimeS() const noexcept
+		float Object::getDeltaTimeSec() const noexcept
 		{
 			const DeltaTimer& deltaTimer = *_objectPool->getDeltaTimerXXX();
-			return deltaTimer.getDeltaTimeS();
+			return deltaTimer.getDeltaTimeSec();
 		}
 	}
 }

@@ -127,11 +127,6 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			const float mouseWheelScroll = inputContext.getMouseWheelScroll();
 		}
 
-		if (window.isResized())
-		{
-			graphicDevice.updateScreenSize();
-		}
-
 		// Rendering
 		{
 			graphicDevice.beginRendering();
@@ -251,8 +246,6 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 		if (window.isResized())
 		{
-			graphicDevice.updateScreenSize();
-			guiContext.updateScreenSize(graphicDevice.getWindowSizeFloat2());
 			objectPool.updateScreenSize(graphicDevice.getWindowSizeFloat2());
 		}
 

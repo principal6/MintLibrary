@@ -47,9 +47,9 @@ namespace mint
 			return _frameTimeUs;
 		}
 
-		inline uint64 FPSCounter::getFrameTimeMs() noexcept
+		inline double FPSCounter::getFrameTimeMs() noexcept
 		{
-			return (_frameTimeUs / 1'000);
+			return (_frameTimeUs / 1'000.0);
 		}
 
 

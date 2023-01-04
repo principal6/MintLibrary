@@ -23,13 +23,13 @@ namespace mint
 			~DeltaTimer();
 
 		public:
-			static const DeltaTimer& getDeltaTimer() noexcept;
-			float computeDeltaTimeS() const noexcept;
-			float getDeltaTimeS() const noexcept;
+			static const DeltaTimer& getInstance() noexcept;
+			float computeDeltaTimeSec() const noexcept;
+			float getDeltaTimeSec() const noexcept;
 
 		private:
 			mutable float _deltaTimeS;
-			mutable uint64 _prevTimePointMs;
+			mutable uint64 _prevTimePointUs;
 			mutable std::mutex _mutex;
 		};
 	}

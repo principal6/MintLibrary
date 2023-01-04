@@ -47,6 +47,7 @@ namespace mint
 			Shift,
 			Control,
 			Alt,
+			SpaceBar,
 			A,
 			B,
 			C,

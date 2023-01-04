@@ -199,6 +199,7 @@ namespace mint
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SHIFT, Platform::KeyCode::Shift));
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_CONTROL, Platform::KeyCode::Control));
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_MENU, Platform::KeyCode::Alt));
+			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SPACE, Platform::KeyCode::SpaceBar));
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('A', Platform::KeyCode::A));
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('B', Platform::KeyCode::B));
 			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('C', Platform::KeyCode::C));
