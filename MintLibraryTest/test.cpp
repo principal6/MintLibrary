@@ -11,13 +11,6 @@
 #include <MintLibrary/Include/Test.h>
 
 
-#ifdef MINT_DEBUG
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-#endif
-
-
 #pragma comment(lib, "MintLibrary.lib")
 
 #pragma optimize("", off)
@@ -29,14 +22,9 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 
 int main()
 {
+	mint::Library::initialize();
+
 	using namespace mint;
-
-#ifdef MINT_DEBUG
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-#endif
-
-	Library::initialize();
-
 	using namespace Platform;
 	using namespace Rendering;
 
@@ -66,10 +54,6 @@ int main()
 	TestReflection::test();
 	//TestRendering::test(graphicDevice);
 	TestLibrary::test();
-#else
-	HWND handleToConsoleWindow = ::GetConsoleWindow();
-	::FreeConsole();
-	::SendMessageW(handleToConsoleWindow, WM_CLOSE, 0, 0);
 #endif
 
 	//run2DTestWindow(window, graphicDevice);
@@ -84,7 +68,6 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	using namespace Platform;
 	using namespace Rendering;
 
-	Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 	const Float2 windowSize = graphicDevice.getWindowSizeFloat2();
 	const Float4x4 projectionMatrix = Float4x4::projectionMatrix2DFromTopLeft(windowSize._x, windowSize._y);
 	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
@@ -94,11 +77,9 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
 	const GraphicObjectID textureID = resourcePool.addTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
 	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);
+	const Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 	while (window.isRunning() == true)
 	{
-		// Events
-		inputContext.processEvents();
-
 		if (inputContext.isKeyPressed())
 		{
 			if (inputContext.isKeyDown(Platform::KeyCode::Enter) == true)
@@ -151,8 +132,6 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	using namespace Platform;
 	using namespace Rendering;
 
-	GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
-	Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 
 	ObjectPool objectPool;
 	Object* const testObject = objectPool.createObject();
@@ -182,13 +161,14 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	testSkeletonGenerator.buildBindPoseModelSpace();
 	Game::Skeleton testSkeleton(testSkeletonGenerator);
 
+	const Platform::InputContext& inputContext = Platform::InputContext::getInstance();
+	GUI::GUIContext& guiContext = graphicDevice.getGUIContext();
 	uint64 previousFrameTimeMs = 0;
 	while (window.isRunning() == true)
 	{
 		objectPool.computeDeltaTime();
 
 		// Events
-		inputContext.processEvents();
 		guiContext.processEvent();
 
 		if (inputContext.isKeyPressed())

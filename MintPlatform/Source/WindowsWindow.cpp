@@ -279,6 +279,8 @@ namespace mint
 				::TranslateMessage(&_msg);
 				::DispatchMessageW(&_msg);
 			}
+			inputContext.processEvents();
+
 			return __super::isRunning();
 		}
 

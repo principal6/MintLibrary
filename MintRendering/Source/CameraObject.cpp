@@ -54,7 +54,7 @@ namespace mint
 			_projectionMatrix = Float4x4::projectionMatrixPerspectiveYUP(_isRightHanded, _fov, _nearZ, _farZ, _screenRatio);
 		}
 
-		void CameraObject::steer(Platform::InputContext& inputContext, const bool isMoveLocked)
+		void CameraObject::steer(const Platform::InputContext& inputContext, const bool isMoveLocked)
 		{
 			if (isMoveLocked == false)
 			{

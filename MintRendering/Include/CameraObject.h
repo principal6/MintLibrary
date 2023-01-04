@@ -90,7 +90,7 @@ namespace mint
 			void setPerspectiveScreenRatio(const float screenRatio);
 
 		public:
-			void steer(Platform::InputContext& inputContext, const bool isMoveLocked);
+			void steer(const Platform::InputContext& inputContext, const bool isMoveLocked);
 			void move(const MoveDirection moveDirection);
 			void rotatePitch(const float angle);
 			void rotateYaw(const float angle);

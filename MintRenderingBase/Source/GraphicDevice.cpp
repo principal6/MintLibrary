@@ -645,7 +645,6 @@ namespace mint
 			if (_window.isResized())
 			{
 				updateScreenSize();
-				_guiContext.updateScreenSize(getWindowSizeFloat2());
 			}
 
 			_needEndRenderingCall = true;
