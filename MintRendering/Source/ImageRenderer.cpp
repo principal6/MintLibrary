@@ -68,8 +68,8 @@ namespace mint
 				shaderString += "	const float4 kTransparentColor = ";
 				shaderString += transparentColorString;
 				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_sampler0, input._texCoord.xy);\n";
-				shaderString += "	float4 result = sampledColor;\n";
-				shaderString += "	result.a = lerp(1.0 - kTransparentColor.a, distance(sampledColor.rgb, kTransparentColor.rgb), kTransparentColor.a);\n";
+				shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
+				shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
 				shaderString += "	return result;\n";
 				shaderString += "}";
 				if (_pixelShaderID.isValid())

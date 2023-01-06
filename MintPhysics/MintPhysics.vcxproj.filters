@@ -15,6 +15,15 @@
     <ClInclude Include="Include\TimeStepCalculator.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Intersection.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Intersection.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\TimeStepCalculator.cpp">

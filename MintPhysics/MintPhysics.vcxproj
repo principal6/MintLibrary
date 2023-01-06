@@ -152,6 +152,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\AllHeaders.h" />
+    <ClInclude Include="Include\AllHpps.h" />
+    <ClInclude Include="Include\Intersection.h" />
+    <ClInclude Include="Include\Intersection.hpp" />
     <ClInclude Include="Include\TimeStepCalculator.h" />
   </ItemGroup>
   <ItemGroup>

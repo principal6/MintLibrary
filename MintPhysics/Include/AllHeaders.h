@@ -6,6 +6,7 @@
 
 
 #include <MintPhysics/Include/TimeStepCalculator.h>
+#include <MintPhysics/Include/Intersection.h>
 
 
 #endif // !_MINT_PHYSICS_ALL_HEADERS_H_
