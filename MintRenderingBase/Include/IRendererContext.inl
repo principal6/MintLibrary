@@ -25,6 +25,11 @@ namespace mint
 			_position._z = s;
 		}
 
+		MINT_INLINE void IRendererContext::setColor(const ByteColor& color) noexcept
+		{
+			setColor(Color(color.r(), color.g(), color.b(), color.a()));
+		}
+
 		MINT_INLINE void IRendererContext::setColor(const Color& color) noexcept
 		{
 			_colorArray.clear();

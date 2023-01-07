@@ -53,6 +53,7 @@ namespace mint
 		public:
 			void setPosition(const Float4& position) noexcept;
 			void setPositionZ(const float s) noexcept;
+			void setColor(const ByteColor& color) noexcept;
 			void setColor(const Color& color) noexcept;
 			void setColor(const Vector<Color>& colorArray) noexcept;
 			virtual void setClipRect(const Rect& clipRect) noexcept;
