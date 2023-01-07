@@ -74,6 +74,8 @@ namespace mint
 		static Float2 abs(const Float2& rhs) noexcept;
 
 	public:
+		float dot(const Float2& rhs) const noexcept;
+		void normalize() noexcept;
 		float lengthSqaure() const noexcept;
 		float length() const noexcept;
 		float maxElement() const noexcept;

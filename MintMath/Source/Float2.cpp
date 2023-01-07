@@ -119,6 +119,16 @@ namespace mint
 		return Float2(::abs(rhs._x), ::abs(rhs._y));
 	}
 
+	float Float2::dot(const Float2& rhs) const noexcept
+	{
+		return Math::dot(_c, rhs._c);
+	}
+
+	void Float2::normalize() noexcept
+	{
+		Math::normalize(_c);
+	}
+
 	float Float2::lengthSqaure() const noexcept
 	{
 		return Math::normSq(_c);
