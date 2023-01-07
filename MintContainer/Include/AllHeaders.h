@@ -18,6 +18,7 @@
 #include <MintContainer/Include/HashMap.h>
 #include <MintContainer/Include/Queue.h>
 #include <MintContainer/Include/OwnPtr.h>
+#include <MintContainer/Include/SharedPtr.h>
 #include <MintContainer/Include/String.h>
 #include <MintContainer/Include/StringView.h>
 

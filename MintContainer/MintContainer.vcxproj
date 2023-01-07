@@ -189,6 +189,7 @@
     <ClInclude Include="Include\OwnPtr.h" />
     <ClInclude Include="Include\Queue.h" />
     <ClInclude Include="Include\Queue.hpp" />
+    <ClInclude Include="Include\SharedPtr.h" />
     <ClInclude Include="Include\StackString.h" />
     <ClInclude Include="Include\StackString.hpp" />
     <ClInclude Include="Include\StackVector.h" />

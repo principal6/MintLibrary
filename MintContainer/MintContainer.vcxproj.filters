@@ -114,6 +114,9 @@
     <ClInclude Include="Include\StringReference.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SharedPtr.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\IID.inl">

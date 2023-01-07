@@ -269,15 +269,15 @@ namespace mint
 			Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 			inputContext.flushInputEvents();
 
-			if (::PeekMessageW(&_msg, nullptr, 0, 0, PM_REMOVE) == TRUE)
+			if (::PeekMessageW(_msg.get(), nullptr, 0, 0, PM_REMOVE) == TRUE)
 			{
 				if (_msg->message == WM_QUIT)
 				{
 					destroy();
 				}
 
-				::TranslateMessage(&_msg);
-				::DispatchMessageW(&_msg);
+				::TranslateMessage(_msg.get());
+				::DispatchMessageW(_msg.get());
 			}
 			inputContext.processEvents();
 

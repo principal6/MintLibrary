@@ -34,7 +34,8 @@ namespace mint
 		}
 
 	public:
-		T* operator&() noexcept { return _rawPointer; }
+		// this is really dangerous ...
+		//T* operator&() noexcept { return _rawPointer; }
 		T& operator*() noexcept { return *_rawPointer; }
 		const T& operator*() const noexcept { return *_rawPointer; }
 		T* operator->() noexcept { return _rawPointer; }
@@ -43,6 +44,7 @@ namespace mint
 	public:
 		void assign(T*&& rawPointer) noexcept { release(); _rawPointer = rawPointer; rawPointer = nullptr; }
 		void release() noexcept { MINT_DELETE(_rawPointer); }
+		T* get() noexcept { return _rawPointer; }
 		constexpr uint64 size() { return sizeof(T); }
 
 	private:
