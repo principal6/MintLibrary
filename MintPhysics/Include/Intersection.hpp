@@ -12,7 +12,7 @@ namespace mint
 	{
 #pragma region Shape2D - AABBShape2D
 		inline AABBShape2D::AABBShape2D(const Float2& center, const Float2& halfSize)
-			: _center{ center }
+			: Shape2D( center )
 			, _halfSize{ halfSize }
 		{
 			__noop;
@@ -21,7 +21,7 @@ namespace mint
 
 #pragma region Shape2D - CircleShape2D
 		inline CircleShape2D::CircleShape2D(const Float2& center, const float radius)
-			: _center{ center }
+			: Shape2D(center)
 			, _radius{ radius }
 		{
 			MINT_ASSERT(radius > 0.0f, "radius(%f) 가 0 이하입니다. 의도한 게 맞나요?", radius);
@@ -30,7 +30,7 @@ namespace mint
 
 #pragma region Shape2D - ConvexShape2D
 		inline ConvexShape2D::ConvexShape2D(const Float2& center, const Vector<Float2>& vertices)
-			: _center{ center }
+			: Shape2D(center)
 			, _vertices{ vertices }
 		{
 			__noop;

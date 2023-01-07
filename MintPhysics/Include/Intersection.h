@@ -32,6 +32,7 @@ namespace mint
 		{
 		public:
 			Shape2D() = default;
+			Shape2D(const Float2& center) : _center{ center } { __noop; }
 			virtual ~Shape2D() = default;
 
 		public:
