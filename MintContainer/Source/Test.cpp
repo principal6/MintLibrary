@@ -129,6 +129,7 @@ namespace mint
 			MINT_ASSURE(test_BitVector());
 			MINT_ASSURE(test_Vector());
 			MINT_ASSURE(test_HashMap());
+			MINT_ASSURE(test_SharedPtr());
 			MINT_ASSURE(test_StringTypes());
 			MINT_ASSURE(test_StringUtil());
 			MINT_ASSURE(test_Queue());
@@ -472,6 +473,15 @@ namespace mint
 
 			KeyValuePair keyValuePair1 = hashMap.find("21");
 
+			return true;
+		}
+
+		bool test_SharedPtr()
+		{
+			SharedPtr<StringA> sp0;
+			sp0 = makeShared<StringA>();
+			sp0 = makeShared<StringA>("abc");
+			sp0 = makeShared<StringA>("abcasad sads dsa qew w eq d asd s z");
 			return true;
 		}
 

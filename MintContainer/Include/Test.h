@@ -19,6 +19,7 @@ namespace mint
 		bool test_StackHolder();
 		bool test_Vector();
 		bool test_HashMap();
+		bool test_SharedPtr();
 		bool test_StringTypes();
 		bool test_StringUtil();
 		bool test_Queue();
