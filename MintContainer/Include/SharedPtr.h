@@ -15,6 +15,9 @@ namespace mint
 
 	template<typename T>
 	static SharedPtr<T> makeShared();
+	
+	template<typename T>
+	static SharedPtr<T> makeShared(T&& rhs);
 
 
 	class ReferenceCounter
@@ -61,6 +64,9 @@ namespace mint
 		template<typename T>
 		friend static SharedPtr<T> makeShared();
 
+		template<typename T>
+		friend static SharedPtr<T> makeShared(T&& rhs);
+
 	public:
 		SharedPtr()
 			: _referenceCounter{ nullptr }
@@ -104,6 +110,16 @@ namespace mint
 		{
 			if (this != &rhs)
 			{
+				if (_referenceCounter != nullptr)
+				{
+					_referenceCounter->decreaseReferenceCount();
+					if (_referenceCounter->getReferenceCount() == 0)
+					{
+						MINT_DELETE(_referenceCounter);
+						MINT_DELETE(_rawPointer);
+					}
+				}
+
 				_referenceCounter = rhs._referenceCounter;
 				_rawPointer = rhs._rawPointer;
 
@@ -118,6 +134,16 @@ namespace mint
 		{
 			if (this != &rhs)
 			{
+				if (_referenceCounter != nullptr)
+				{
+					_referenceCounter->decreaseReferenceCount();
+					if (_referenceCounter->getReferenceCount() == 0)
+					{
+						MINT_DELETE(_referenceCounter);
+						MINT_DELETE(_rawPointer);
+					}
+				}
+
 				_referenceCounter = rhs._referenceCounter;
 				_rawPointer = rhs._rawPointer;
 
@@ -157,6 +183,12 @@ namespace mint
 	static SharedPtr<T> makeShared()
 	{
 		return SharedPtr<T>(MINT_NEW(T));
+	}
+
+	template<typename T>
+	static SharedPtr<T> makeShared(T&& rhs)
+	{
+		return SharedPtr<T>(MINT_NEW(T, rhs));
 	}
 }
 
