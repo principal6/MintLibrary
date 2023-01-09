@@ -1,6 +1,7 @@
 ﻿#include <MintPhysics/Include/Intersection.h>
 #include <MintPhysics/Include/Intersection.hpp>
 #include <MintRenderingBase/Include/ShapeRendererContext.h>
+#include <MintLibrary/Include/Algorithm.hpp>
 
 
 namespace mint
@@ -49,6 +50,30 @@ namespace mint
 			return _center + Float2(-_halfSize._x, (direction._y > 0.0f ? +_halfSize._y : -_halfSize._y));
 		}
 
+		ConvexShape2D ConvexShape2D::makeFromPoints(const Float2& center, const Vector<Float2>& points)
+		{
+			ConvexShape2D shape(center, points);
+			GrahamScan_convexify(shape._vertices);
+			return shape;
+		}
+
+		ConvexShape2D ConvexShape2D::makeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b)
+		{
+			ConvexShape2D shape;
+			shape._center = Float2(0, 0);
+
+			shape._vertices.clear();
+			for (uint32 i = 0; i < a._vertices.size(); i++)
+			{
+				for (uint32 j = 0; j < b._vertices.size(); j++)
+				{
+					shape._vertices.push_back(a._vertices[i] - b._vertices[j]);
+				}
+			}
+			GrahamScan_convexify(shape._vertices);
+			return shape;
+		}
+
 		void ConvexShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color)
 		{
 			shapeRendererContext.setColor(color);
@@ -80,6 +105,116 @@ namespace mint
 				}
 			}
 			return _center + _vertices[targetVertexIndex];
+		}
+		
+		uint32 ConvexShape2D::GrahamScan_findStartPoint(const Vector<Float2>& points)
+		{
+			Float2 min = Float2(10000.0f, -10000.0f);
+			const uint32 pointCount = points.size();
+			uint32 startPointIndex = 0;
+			for (uint32 pointIndex = 0; pointIndex < pointCount; pointIndex++)
+			{
+				if (points[pointIndex]._y >= min._y)
+				{
+					if (points[pointIndex]._y == min._y)
+					{
+						if (points[pointIndex]._x < min._x)
+						{
+							min._x = points[pointIndex]._x;
+							startPointIndex = pointIndex;
+						}
+					}
+					else
+					{
+						min._y = points[pointIndex]._y;
+						min._x = points[pointIndex]._x;
+						startPointIndex = pointIndex;
+					}
+				}
+			}
+			return startPointIndex;
+		}
+
+		void ConvexShape2D::GrahamScan_sortPoints(Vector<Float2>& inoutPoints)
+		{
+			const uint32 startPointIndex = GrahamScan_findStartPoint(inoutPoints);
+			const Float2& startPoint = inoutPoints[startPointIndex];
+			struct AngleIndex
+			{
+				AngleIndex(const float theta, const uint32 index) : _theta{ theta }, _index{ index } { __noop; }
+				float _theta = 0.0f;
+				uint32 _index = 0;
+			};
+			struct AngleIndexComparator
+			{
+				bool operator()(const AngleIndex& lhs, const AngleIndex& rhs) const { return lhs._theta < rhs._theta; }
+			};
+			const uint32 pointCount = inoutPoints.size();
+			Vector<AngleIndex> angleIndices;
+			for (uint32 pointIndex = 0; pointIndex < pointCount; pointIndex++)
+			{
+				if (pointIndex == startPointIndex)
+				{
+					continue;
+				}
+
+				const float2 v = inoutPoints[pointIndex] - startPoint;
+				const float theta = ::atan2f(-v._y, v._x);
+				angleIndices.push_back(AngleIndex(theta, pointIndex));
+			}
+			quickSort(angleIndices, AngleIndexComparator());
+			Vector<Float2> orderedPoints;
+			orderedPoints.push_back(startPoint);
+			for (const AngleIndex& angleIndex : angleIndices)
+			{
+				orderedPoints.push_back(inoutPoints[angleIndex._index]);
+			}
+			inoutPoints = orderedPoints;
+		}
+
+		void ConvexShape2D::GrahamScan_convexify(Vector<Float2>& inoutPoints)
+		{
+			if (inoutPoints.empty())
+			{
+				return;
+			}
+
+			GrahamScan_sortPoints(inoutPoints);
+
+			Vector<uint32> convexPointIndices;
+			convexPointIndices.reserve(inoutPoints.size());
+			convexPointIndices.push_back(0);
+			convexPointIndices.push_back(1);
+			for (uint32 i = 2; i < inoutPoints.size(); i++)
+			{
+				const uint32 index_c = convexPointIndices[convexPointIndices.size() - 2];
+				const uint32 index_b = convexPointIndices[convexPointIndices.size() - 1];
+				const uint32 index_a = i;
+				const Float2& c = inoutPoints[index_c];
+				const Float2& b = inoutPoints[index_b];
+				const Float2& a = inoutPoints[index_a];
+				const Float3 cb = Float3(b - c);
+				const Float3 ba = Float3(a - b);
+				const Float3 ba_x_cb = ba.cross(cb);
+				const bool is_counter_clockwise_or_straight = ba_x_cb._z >= 0.0f;
+				if (is_counter_clockwise_or_straight)
+				{
+					convexPointIndices.push_back(index_a);
+				}
+				else
+				{
+					convexPointIndices.pop_back();
+					--i;
+				}
+			}
+
+			Vector<Float2> convexPoints;
+			convexPoints.reserve(convexPointIndices.size());
+			for (const uint32 convexPointIndex : convexPointIndices)
+			{
+				convexPoints.push_back(inoutPoints[convexPointIndex]);
+			}
+			inoutPoints = convexPoints;
 		}
 
 		GJKSimplex2D::GJKSimplex2D(const Float2& pointA)

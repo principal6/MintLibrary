@@ -35,6 +35,11 @@ namespace mint
 		{
 			__noop;
 		}
+		inline ConvexShape2D::ConvexShape2D()
+			: Shape2D(Float2::kZero)
+		{
+			__noop;
+		}
 #pragma endregion
 
 

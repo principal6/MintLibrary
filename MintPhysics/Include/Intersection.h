@@ -73,11 +73,23 @@ namespace mint
 		class ConvexShape2D : public Shape2D
 		{
 		public:
+			static ConvexShape2D makeFromPoints(const Float2& center, const Vector<Float2>& points);
+			static ConvexShape2D makeMinkowskiDifferenceShape(const ConvexShape2D& a, const ConvexShape2D& b);
+
+		public:
 			ConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
 			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color) override final;
 			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
+
+		private:
+			ConvexShape2D();
+
+		private:
+			static uint32 GrahamScan_findStartPoint(const Vector<Float2>& points);
+			static void GrahamScan_sortPoints(Vector<Float2>& inoutPoints);
+			static void GrahamScan_convexify(Vector<Float2>& inoutPoints);
 
 		private:
 			Vector<Float2> _vertices;
