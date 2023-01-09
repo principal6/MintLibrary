@@ -112,9 +112,14 @@ namespace mint
 		return result;
 	}
 
-	void Float3::normalize() noexcept
+	float Float3::dot(const Float3& rhs) const noexcept
 	{
-		Math::normalize(_c);
+		return Float3::dot(*this, rhs);
+	}
+
+	Float3 Float3::cross(const Float3& rhs) const noexcept
+	{
+		return Float3::cross(*this, rhs);
 	}
 
 	float Float3::lengthSqaure() const noexcept
@@ -125,6 +130,11 @@ namespace mint
 	float Float3::length() const noexcept
 	{
 		return Math::norm(_c);
+	}
+
+	void Float3::normalize() noexcept
+	{
+		Math::normalize(_c);
 	}
 
 	void Float3::set(const float x, const float y, const float z) noexcept

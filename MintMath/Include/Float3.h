@@ -64,11 +64,11 @@ namespace mint
 		static Float3 normalize(const Float3& in) noexcept;
 
 	public:
-		void normalize() noexcept;
-
-	public:
+		float dot(const Float3& rhs) const noexcept;
+		Float3 cross(const Float3& rhs) const noexcept;
 		float lengthSqaure() const noexcept;
 		float length() const noexcept;
+		void normalize() noexcept;
 
 	public:
 		void set(const float x, const float y, const float z) noexcept;
