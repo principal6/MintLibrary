@@ -199,9 +199,9 @@ namespace mint
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
-		_writer.write(from.length());
+		_serializeInternal(from.length(), false);
 
-		_writer.write(from.c_str());
+		_serializeInternal(from.c_str(), false);
 	}
 
 	template <typename T>
@@ -210,7 +210,7 @@ namespace mint
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
 		const uint32 count = from.size();
-		_writer.write(count);
+		_serializeInternal(count, false);
 
 		for (uint32 index = 0; index < count; ++index)
 		{

@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Include\Reflection.h" />
     <ClInclude Include="Include\Reflection.hpp" />
-    <ClInclude Include="Include\Test.h" />
+    <ClInclude Include="Include\TestReflection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Reflection.cpp">
@@ -30,7 +30,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\Test.cpp">
+    <ClCompile Include="Source\TestReflection.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

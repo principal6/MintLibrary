@@ -6,7 +6,7 @@
 #include <MintContainer/Include/Test.h>
 #include <MintPlatform/Include/Test.h>
 #include <MintLanguage/Include/Test.h>
-#include <MintReflection/Include/Test.h>
+#include <MintReflection/Include/TestReflection.h>
 #include <MintRendering/Include/Test.h>
 #include <MintLibrary/Include/Test.h>
 
