@@ -27,7 +27,7 @@ namespace mint
 
 
 	template <typename T>
-	inline void TypeData<T>::serialize(Serializer& serializer) noexcept
+	inline void TypeData<T>::serialize(Serializer& serializer) const noexcept
 	{
 		serializer.serialize_internal(_typeName);
 		serializer.serialize_internal(_declarationName);
@@ -38,7 +38,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void TypeData<T>::serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept
+	inline void TypeData<T>::serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
 	{
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{

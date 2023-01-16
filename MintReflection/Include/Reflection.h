@@ -35,8 +35,8 @@ namespace mint
 		uint32 _arrayItemCount;
 
 	public:
-		virtual void serialize(Serializer& serializer) noexcept abstract;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
+		virtual void serialize(Serializer& serializer) const noexcept abstract;
+		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
 
 	public:
 		virtual bool deserialize(Serializer& serializer) noexcept abstract;
@@ -51,8 +51,8 @@ namespace mint
 		virtual ~TypeData() = default;
 
 	public:
-		virtual void serialize(Serializer& serializer) noexcept override final;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
+		virtual void serialize(Serializer& serializer) const noexcept override final;
+		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
 
 	public:
 		virtual bool deserialize(Serializer& serializer) noexcept override final;
