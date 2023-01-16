@@ -156,6 +156,13 @@ namespace mint
 		template<typename FLT, typename T>
 		std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<T>& outString);
 
+		template <typename ValueType, typename CharType, typename = void>
+		struct isToStringAvailable : std::false_type {};
+
+		template <typename ValueType, typename CharType>
+		struct isToStringAvailable<ValueType, CharType,
+			std::void_t<decltype(toString(std::declval<const ValueType>(), std::declval<mint::MutableString<CharType>&>()))>> : std::true_type {};
+
 		template<typename T>
 		int32 stringToInt32(const StringReference<T>& string);
 		template<typename T>
