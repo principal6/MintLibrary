@@ -24,7 +24,7 @@ namespace mint
 	{
 	public:
 		TypeBaseData();
-		virtual ~TypeBaseData();
+		virtual ~TypeBaseData() = default;
 
 	public:
 		StringA _typeName;
@@ -47,8 +47,8 @@ namespace mint
 	class TypeData : public TypeBaseData
 	{
 	public:
-		TypeData();
-		virtual ~TypeData();
+		TypeData() = default;
+		virtual ~TypeData() = default;
 
 	public:
 		virtual void serialize(Serializer& serializer) noexcept override final;
@@ -227,13 +227,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		void _serializeInternal(const T& from, const bool isTypeData) noexcept;
+		void serialize_internal(const T& from) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const String<T>& from, const bool isTypeData) noexcept;
+		void serialize_internal(const String<T>& from) noexcept;
 
 		template <typename T>
-		void _serializeInternal(const Vector<T>& from, const bool isTypeData) noexcept;
+		void serialize_internal(const Vector<T>& from) noexcept;
 
 	public:
 		template <typename T>
@@ -241,13 +241,13 @@ namespace mint
 
 	private:
 		template <typename T>
-		bool _deserializeInternal(T& to, const bool isTypeData) noexcept;
+		bool deserialize_internal(T& to) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(String<T>& to, const bool isTypeData) noexcept;
+		bool deserialize_internal(String<T>& to) noexcept;
 
 		template <typename T>
-		bool _deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept;
+		bool deserialize_internal(Vector<T>& to) noexcept;
 
 	private:
 		BinaryFileWriter _writer;

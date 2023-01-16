@@ -25,33 +25,16 @@ namespace mint
 		__noop;
 	}
 
-	inline TypeBaseData::~TypeBaseData()
-	{
-		__noop;
-	}
-
-
-	template <typename T>
-	inline TypeData<T>::TypeData()
-	{
-		__noop;
-	}
-
-	template <typename T>
-	inline TypeData<T>::~TypeData()
-	{
-		__noop;
-	}
 
 	template <typename T>
 	inline void TypeData<T>::serialize(Serializer& serializer) noexcept
 	{
-		serializer._serializeInternal(_typeName, true);
-		serializer._serializeInternal(_declarationName, true);
-		serializer._serializeInternal(_size, true);
-		serializer._serializeInternal(_alignment, true);
-		serializer._serializeInternal(_offset, true);
-		serializer._serializeInternal(_arrayItemCount, true);
+		serializer.serialize_internal(_typeName);
+		serializer.serialize_internal(_declarationName);
+		serializer.serialize_internal(_size);
+		serializer.serialize_internal(_alignment);
+		serializer.serialize_internal(_offset);
+		serializer.serialize_internal(_arrayItemCount);
 	}
 
 	template <typename T>
@@ -60,7 +43,7 @@ namespace mint
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
-			serializer._serializeInternal(*(castedMemberPointer + arrayItemIndex), false);
+			serializer.serialize_internal(*(castedMemberPointer + arrayItemIndex));
 		}
 	}
 
@@ -68,19 +51,18 @@ namespace mint
 	inline bool TypeData<T>::deserialize(Serializer& serializer) noexcept
 	{
 		StringA deserializedTypeName;
-		serializer._deserializeInternal(deserializedTypeName, true);
+		serializer.deserialize_internal(deserializedTypeName);
 		if (_typeName != deserializedTypeName)
 		{
 			MINT_LOG_ERROR("type name of the class [%s] does not match that of the source binary [%s]", _typeName.c_str(), deserializedTypeName.c_str());
 			return false;
 		}
 
-		serializer._deserializeInternal(_declarationName, true);
-		serializer._deserializeInternal(_size, true);
-		serializer._deserializeInternal(_alignment, true);
-		serializer._deserializeInternal(_offset, true);
-		serializer._deserializeInternal(_arrayItemCount, true);
-
+		serializer.deserialize_internal(_declarationName);
+		serializer.deserialize_internal(_size);
+		serializer.deserialize_internal(_alignment);
+		serializer.deserialize_internal(_offset);
+		serializer.deserialize_internal(_arrayItemCount);
 		return true;
 	}
 
@@ -90,7 +72,7 @@ namespace mint
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
 			T* const castedMemberPointer = reinterpret_cast<T*>(memberPointer);
-			serializer._deserializeInternal(*(castedMemberPointer + arrayItemIndex), false);
+			serializer.deserialize_internal(*(castedMemberPointer + arrayItemIndex));
 		}
 	}
 #pragma endregion
@@ -159,13 +141,13 @@ namespace mint
 		}
 #endif
 
-		_serializeInternal(from, false);
+		serialize_internal(from);
 
 		return _writer.save(fileName);
 	}
 
 	template <typename T>
-	inline void Serializer::_serializeInternal(const T& from, const bool isTypeData) noexcept
+	inline void Serializer::serialize_internal(const T& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_NOT_SPECIALIZED;
 
@@ -195,26 +177,26 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void Serializer::_serializeInternal(const String<T>& from, const bool isTypeData) noexcept
+	inline void Serializer::serialize_internal(const String<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
-		_serializeInternal(from.length(), false);
+		serialize_internal(from.length());
 
-		_serializeInternal(from.c_str(), false);
+		serialize_internal(from.c_str());
 	}
 
 	template <typename T>
-	inline void Serializer::_serializeInternal(const Vector<T>& from, const bool isTypeData) noexcept
+	inline void Serializer::serialize_internal(const Vector<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
 		const uint32 count = from.size();
-		_serializeInternal(count, false);
+		serialize_internal(count);
 
 		for (uint32 index = 0; index < count; ++index)
 		{
-			_serializeInternal(from[index], false);
+			serialize_internal(from[index]);
 		}
 	}
 
@@ -237,11 +219,11 @@ namespace mint
 		}
 #endif
 
-		return _deserializeInternal(to, false);
+		return deserialize_internal(to);
 	}
 
 	template <typename T>
-	inline bool Serializer::_deserializeInternal(T& to, const bool isTypeData) noexcept
+	inline bool Serializer::deserialize_internal(T& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED;
 
@@ -276,7 +258,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::_deserializeInternal(String<T>& to, const bool isTypeData) noexcept
+	inline bool Serializer::deserialize_internal(String<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
@@ -287,7 +269,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::_deserializeInternal(Vector<T>& to, const bool isTypeData) noexcept
+	inline bool Serializer::deserialize_internal(Vector<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
@@ -296,7 +278,7 @@ namespace mint
 
 		for (uint32 index = 0; index < count; ++index)
 		{
-			_deserializeInternal(to[index], false);
+			deserialize_internal(to[index]);
 		}
 		return true;
 	}

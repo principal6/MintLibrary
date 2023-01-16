@@ -40,13 +40,6 @@ namespace mint
 			const ReflectionData& refl2 = ReflectionTesterInner::getReflectionData();
 			const ReflectionData& refl3 = StructOfArrays::getReflectionData();
 
-			StructOfArrays struct_of_arrays;
-			struct_of_arrays._arr[0] = 2;
-			struct_of_arrays._arr[1] = 5;
-			struct_of_arrays._arr[2] = 7;
-			struct_of_arrays._strs[0] = "ABCD";
-			struct_of_arrays._strs[1] = "WXYZ";
-
 			ReflectionTesterOuter outer0;
 			outer0._id = 0xAABBCCDD;
 			outer0._inner._ui = 0xEEEEEEEE;
@@ -56,19 +49,31 @@ namespace mint
 			outer0._uis.push_back(0xDC);
 			outer0._uis.push_back(0xBA);
 			ReflectionTesterInner inner0;
+			Float3 float3_0 = Float3(1, 2, 3);
+			StructOfArrays struct_of_arrays0;
+			struct_of_arrays0._arr[0] = 2;
+			struct_of_arrays0._arr[1] = 5;
+			struct_of_arrays0._arr[2] = 7;
+			struct_of_arrays0._strs[0] = "ABCD";
+			struct_of_arrays0._strs[1] = "WXYZ";
 
 			Serializer serializer;
 			serializer.serialize(outer0, "assets/serialization_test_outer0.bin");
 			serializer.serialize(inner0, "assets/serialization_test_inner0.bin");
-			serializer.serialize(Float3(1, 2, 3), "assets/serialization_test_float3_0.bin");
-			serializer.serialize(struct_of_arrays, "assets/serialization_test_struct_of_arrays.bin");
+			serializer.serialize(float3_0, "assets/serialization_test_float3_0.bin");
+			serializer.serialize(struct_of_arrays0, "assets/serialization_test_struct_of_arrays0.bin");
 
 			ReflectionTesterOuter outer1;
 			Float3 float3_1 = Float3(9, 9, 9);
+			StructOfArrays struct_of_arrays1;
 			serializer.deserialize("assets/serialization_test_outer0.bin", outer1);
 			//serializer.deserialize("assets/serialization_test_outer0.bin", inner0); // This line must fail!!!
 			serializer.deserialize("assets/serialization_test_float3_0.bin", float3_1);
-			serializer.deserialize("assets/serialization_test_struct_of_arrays.bin", struct_of_arrays);
+			serializer.deserialize("assets/serialization_test_struct_of_arrays0.bin", struct_of_arrays1);
+
+			//MINT_ASSURE(outer0 == outer1);
+			MINT_ASSURE(float3_0 == float3_1);
+			//MINT_ASSURE(struct_of_arrays0 == struct_of_arrays1);
 			return true;
 		}
 	}
