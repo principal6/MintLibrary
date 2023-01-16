@@ -141,8 +141,6 @@ namespace mint
 #define REFLECTION_BIND(name) _bind##name();
 #define REFLECTION_BIND_END }
 
-#define REFLECTION_REGISTER(className) const ReflectionData className::getReflectionData(){};
-
 
 	template <typename T, typename = void>
 	class IsReflectionClass : public std::false_type {};
