@@ -17,7 +17,8 @@
 
 namespace mint
 {
-	class Serializer;
+	class BinarySerializer;
+	class JSONSerializer;
 
 
 	class TypeBaseData abstract
@@ -35,12 +36,13 @@ namespace mint
 		uint32 _arrayItemCount;
 
 	public:
-		virtual void serialize(Serializer& serializer) const noexcept abstract;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
+		virtual void serialize(BinarySerializer& serializer) const noexcept abstract;
+		virtual void serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
+		virtual void serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept abstract;
 
 	public:
-		virtual bool deserialize(Serializer& serializer) noexcept abstract;
-		virtual void deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
+		virtual bool deserialize(BinarySerializer& serializer) noexcept abstract;
+		virtual void deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept abstract;
 	};
 
 	template <typename T>
@@ -51,12 +53,13 @@ namespace mint
 		virtual ~TypeData() = default;
 
 	public:
-		virtual void serialize(Serializer& serializer) const noexcept override final;
-		virtual void serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
+		virtual void serialize(BinarySerializer& serializer) const noexcept override final;
+		virtual void serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
+		virtual void serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept override final;
 
 	public:
-		virtual bool deserialize(Serializer& serializer) noexcept override final;
-		virtual void deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
+		virtual bool deserialize(BinarySerializer& serializer) noexcept override final;
+		virtual void deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept override final;
 	};
 
 
@@ -200,15 +203,15 @@ namespace mint
 	class SerializerScopedDepth
 	{
 	public:
-		SerializerScopedDepth(Serializer* const serializer);
+		SerializerScopedDepth(BinarySerializer* const serializer);
 		~SerializerScopedDepth();
 
 	private:
-		Serializer* _serializer;
+		BinarySerializer* _serializer;
 	};
 
 
-	class Serializer
+	class BinarySerializer
 	{
 		template <typename T>
 		friend class TypeData;
@@ -216,8 +219,8 @@ namespace mint
 		friend SerializerScopedDepth;
 
 	public:
-		Serializer() = default;
-		~Serializer() = default;
+		BinarySerializer() = default;
+		~BinarySerializer() = default;
 
 	public:
 		template <typename T>

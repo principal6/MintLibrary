@@ -13,7 +13,7 @@
 
 #include <MintPlatform/Include/AllHpps.h>
 
-#include <MintReflection/Include/Reflection.hpp>
+#include <MintReflection/Include/AllHpps.h>
 
 #include <MintRenderingBase/Include/AllHpps.h>
 

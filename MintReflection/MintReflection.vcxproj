@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\AllHeaders.h" />
+    <ClInclude Include="Include\AllHpps.h" />
+    <ClInclude Include="Include\JSONSerializer.h" />
+    <ClInclude Include="Include\JSONSerializer.hpp" />
     <ClInclude Include="Include\Reflection.h" />
     <ClInclude Include="Include\Reflection.hpp" />
     <ClInclude Include="Include\TestReflection.h" />

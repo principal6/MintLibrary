@@ -1,11 +1,10 @@
 ﻿#include <MintReflection/Include/TestReflection.h>
 
+#include <MintReflection/Include/AllHeaders.h>
+#include <MintReflection/Include/AllHpps.h>
+
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/String.hpp>
-
-#include <MintReflection/Include/Reflection.h>
-#include <MintReflection/Include/Reflection.hpp>
-
 #include <MintMath/Include/Float3.h>
 
 
@@ -57,7 +56,7 @@ namespace mint
 			struct_of_arrays0._strs[0] = "ABCD";
 			struct_of_arrays0._strs[1] = "WXYZ";
 
-			Serializer serializer;
+			BinarySerializer serializer;
 			serializer.serialize(outer0, "assets/serialization_test_outer0.bin");
 			serializer.serialize(inner0, "assets/serialization_test_inner0.bin");
 			serializer.serialize(float3_0, "assets/serialization_test_float3_0.bin");
@@ -74,6 +73,12 @@ namespace mint
 			//MINT_ASSURE(outer0 == outer1);
 			MINT_ASSURE(float3_0 == float3_1);
 			//MINT_ASSURE(struct_of_arrays0 == struct_of_arrays1);
+
+			JSONSerializer jsonSerializer;
+			jsonSerializer.serialize(outer0, "assets/serialization_test_outer0.json");
+			jsonSerializer.serialize(inner0, "assets/serialization_test_inner0.json");
+			//jsonSerializer.serialize(float3_0, "assets/serialization_test_float3_0.json"); // This line must fail!!!
+			jsonSerializer.serialize(struct_of_arrays0, "assets/serialization_test_struct_of_arrays0.json");
 			return true;
 		}
 	}

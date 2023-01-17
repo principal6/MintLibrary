@@ -9,8 +9,10 @@
 
 #include <MintContainer/Include/Vector.hpp>
 #include <MintContainer/Include/String.hpp>
+#include <MintContainer/Include/StringReference.hpp>
 
 #include <MintPlatform/Include/BinaryFile.hpp>
+#include <MintReflection/Include/JSONSerializer.hpp>
 
 
 namespace mint
@@ -27,7 +29,7 @@ namespace mint
 
 
 	template <typename T>
-	inline void TypeData<T>::serialize(Serializer& serializer) const noexcept
+	inline void TypeData<T>::serialize(BinarySerializer& serializer) const noexcept
 	{
 		serializer.serialize_internal(_typeName);
 		serializer.serialize_internal(_declarationName);
@@ -38,7 +40,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void TypeData<T>::serializeValue(Serializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
+	inline void TypeData<T>::serializeValue(BinarySerializer& serializer, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
 	{
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
@@ -46,9 +48,31 @@ namespace mint
 			serializer.serialize_internal(*(castedMemberPointer + arrayItemIndex));
 		}
 	}
+	
+	template <typename T>
+	inline void TypeData<T>::serializeValue(JSONSerializer& serializer, const uint32 depth, const void* const memberPointer, const uint32 arrayItemCount) const noexcept
+	{
+		if (arrayItemCount == 0)
+		{
+			const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
+			serializer.serialize_internal(depth, _declarationName, *castedMemberPointer);
+		}
+		else
+		{
+			serializer.serialize_helper_arrayPrefix(depth, _declarationName);
+			
+			for (uint32 arrayItemIndex = 0; arrayItemIndex < arrayItemCount; ++arrayItemIndex)
+			{
+				const T* const castedMemberPointer = reinterpret_cast<const T*>(memberPointer);
+				serializer.serialize_helper_arrayItem(depth, _declarationName, *(castedMemberPointer + arrayItemIndex), arrayItemIndex == arrayItemCount - 1);
+			}
+
+			serializer.serialize_helper_arrayPostfix(depth);
+		}
+	}
 
 	template <typename T>
-	inline bool TypeData<T>::deserialize(Serializer& serializer) noexcept
+	inline bool TypeData<T>::deserialize(BinarySerializer& serializer) noexcept
 	{
 		StringA deserializedTypeName;
 		serializer.deserialize_internal(deserializedTypeName);
@@ -67,7 +91,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void TypeData<T>::deserializeValue(Serializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept
+	inline void TypeData<T>::deserializeValue(BinarySerializer& serializer, void* const memberPointer, const uint32 arrayItemCount) noexcept
 	{
 		for (uint32 arrayItemIndex = 0; arrayItemIndex < mint::max(static_cast<uint32>(1), arrayItemCount); ++arrayItemIndex)
 		{
@@ -79,7 +103,7 @@ namespace mint
 
 
 #pragma region SerializerScopedDepth
-	inline SerializerScopedDepth::SerializerScopedDepth(Serializer* const serializer)
+	inline SerializerScopedDepth::SerializerScopedDepth(BinarySerializer* const serializer)
 		: _serializer{ serializer }
 	{
 		++_serializer->_depth;
@@ -92,7 +116,7 @@ namespace mint
 #pragma endregion
 
 
-#pragma region Serializer
+#pragma region BinarySerializer
 	namespace SerializerUtil
 	{
 		MINT_INLINE const char* getDepthPrefix(const uint32 depth) noexcept
@@ -126,7 +150,7 @@ namespace mint
 
 
 	template <typename T>
-	inline bool Serializer::serialize(const T& from, const char* const fileName) noexcept
+	inline bool BinarySerializer::serialize(const T& from, const char* const fileName) noexcept
 	{
 		_writer.clear();
 
@@ -147,7 +171,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void Serializer::serialize_internal(const T& from) noexcept
+	inline void BinarySerializer::serialize_internal(const T& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_NOT_SPECIALIZED;
 
@@ -160,14 +184,14 @@ namespace mint
 			const uint32 memberCount = reflectionData._memberTypeDatas.size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData->serialize(*this);
+				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
+				memberTypeData.serialize(*this);
 			}
 
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
-				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
-				memberTypeData->serializeValue(*this, reinterpret_cast<const char*>(&from) + memberTypeData->_offset, memberTypeData->_arrayItemCount);
+				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
+				memberTypeData.serializeValue(*this, reinterpret_cast<const char*>(&from) + memberTypeData._offset, memberTypeData._arrayItemCount);
 			}
 		}
 		else
@@ -177,7 +201,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void Serializer::serialize_internal(const String<T>& from) noexcept
+	inline void BinarySerializer::serialize_internal(const String<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
@@ -187,7 +211,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline void Serializer::serialize_internal(const Vector<T>& from) noexcept
+	inline void BinarySerializer::serialize_internal(const Vector<T>& from) noexcept
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
@@ -201,7 +225,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::deserialize(const char* const fileName, T& to) noexcept
+	inline bool BinarySerializer::deserialize(const char* const fileName, T& to) noexcept
 	{
 		if (_reader.open(fileName) == false)
 		{
@@ -223,7 +247,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::deserialize_internal(T& to) noexcept
+	inline bool BinarySerializer::deserialize_internal(T& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_NOT_SPECIALIZED;
 
@@ -258,7 +282,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::deserialize_internal(String<T>& to) noexcept
+	inline bool BinarySerializer::deserialize_internal(String<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
@@ -269,7 +293,7 @@ namespace mint
 	}
 
 	template <typename T>
-	inline bool Serializer::deserialize_internal(Vector<T>& to) noexcept
+	inline bool BinarySerializer::deserialize_internal(Vector<T>& to) noexcept
 	{
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 

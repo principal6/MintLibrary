@@ -18,6 +18,18 @@
     <ClInclude Include="Include\TestReflection.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\JSONSerializer.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHeaders.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\AllHpps.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\JSONSerializer.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Reflection.cpp">
