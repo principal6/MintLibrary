@@ -7,11 +7,33 @@
 
 namespace mint
 {
+#pragma region BinaryPointerReader
+	BinaryPointerReader::BinaryPointerReader()
+		: BinaryPointerReader(nullptr, 0)
+	{
+		__noop;
+	}
+
+	BinaryPointerReader::BinaryPointerReader(const byte* const bytes, const uint32 byteCount)
+		: _bytes{ bytes }
+		, _byteCount{ byteCount }
+	{
+		__noop;
+	}
+
+	BinaryPointerReader::BinaryPointerReader(const BinaryFileReader& binaryFileReader)
+		: BinaryPointerReader(binaryFileReader.getBytes().data(), binaryFileReader.getFileSize())
+	{
+		__noop;
+	}
+#pragma endregion
+
+
 #pragma region Binary File Reader
 	bool BinaryFileReader::open(const char* const fileName)
 	{
-		_at = 0;
 		_bytes.clear();
+		_binaryPointerReader.reset(nullptr, 0);
 
 		std::ifstream ifs{ fileName, std::ifstream::binary };
 		if (ifs.is_open() == false)
@@ -20,19 +42,11 @@ namespace mint
 		}
 
 		ifs.seekg(0, ifs.end);
-		const uint64 legth = ifs.tellg();
+		const uint64 length = ifs.tellg();
 		ifs.seekg(0, ifs.beg);
-		_bytes.reserve(static_cast<uint32>(legth));
-		while (true)
-		{
-			const byte readByte{ static_cast<byte>(ifs.get()) };
-			if (ifs.eof() == true)
-			{
-				break;
-			}
-
-			_bytes.push_back(readByte);
-		}
+		_bytes.resize(static_cast<uint32>(length));
+		ifs.read(reinterpret_cast<char*>(&_bytes[0]), length);
+		_binaryPointerReader.reset(_bytes.data(), static_cast<uint32>(length));
 		return true;
 	}
 

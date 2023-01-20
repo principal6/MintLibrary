@@ -8,9 +8,19 @@
 
 namespace mint
 {
-#pragma region Binary File Reader
+#pragma region BinaryPointerReader
+	MINT_INLINE void BinaryPointerReader::goTo(const uint32 at) const
+	{
+		_at = mint::min(at, _byteCount);
+	}
+
+	MINT_INLINE bool BinaryPointerReader::canRead(const uint32 count) const
+	{
+		return (static_cast<uint64>(_at) + count <= _byteCount);
+	}
+
 	template <typename T>
-	MINT_INLINE const T* const BinaryFileReader::peek() const noexcept
+	MINT_INLINE const T* const BinaryPointerReader::peek() const
 	{
 		const uint32 byteCount = static_cast<uint32>(sizeof(T));
 		if (canRead(byteCount) == true)
@@ -22,7 +32,7 @@ namespace mint
 	}
 
 	template <typename T>
-	MINT_INLINE const T* const BinaryFileReader::read() noexcept
+	MINT_INLINE const T* const BinaryPointerReader::read() const
 	{
 		const uint32 byteCount = static_cast<uint32>(sizeof(T));
 		if (canRead(byteCount) == true)
@@ -35,7 +45,7 @@ namespace mint
 	}
 
 	template <typename T>
-	MINT_INLINE const T* const BinaryFileReader::read(const uint32 count) noexcept
+	MINT_INLINE const T* const BinaryPointerReader::read(const uint32 count) const
 	{
 		const uint32 byteCount = static_cast<uint32>(sizeof(T) * count);
 		if (canRead(byteCount) == true)
@@ -47,18 +57,45 @@ namespace mint
 		return nullptr;
 	}
 
-	MINT_INLINE void BinaryFileReader::skip(const uint32 byteCount) noexcept
+	MINT_INLINE void BinaryPointerReader::skip(const uint32 count) const
 	{
-		_at += byteCount;
+		_at += count;
+	}
+#pragma endregion
+
+
+#pragma region Binary File Reader
+	MINT_INLINE void BinaryFileReader::goTo(const uint32 at)
+	{
+		_binaryPointerReader.goTo(at);
 	}
 
-	MINT_INLINE bool BinaryFileReader::canRead(const uint32 byteCount) const noexcept
+	template <typename T>
+	MINT_INLINE const T* const BinaryFileReader::peek() const noexcept
 	{
-		if (static_cast<uint64>(_at) + byteCount <= _bytes.size())
-		{
-			return true;
-		}
-		return false;
+		return _binaryPointerReader.peek();
+	}
+
+	template <typename T>
+	MINT_INLINE const T* const BinaryFileReader::read() noexcept
+	{
+		return _binaryPointerReader.read<T>();
+	}
+
+	template <typename T>
+	MINT_INLINE const T* const BinaryFileReader::read(const uint32 count) noexcept
+	{
+		return _binaryPointerReader.read<T>(count);
+	}
+
+	MINT_INLINE void BinaryFileReader::skip(const uint32 count) noexcept
+	{
+		return _binaryPointerReader.skip(count);
+	}
+
+	MINT_INLINE bool BinaryFileReader::canRead(const uint32 count) const noexcept
+	{
+		return _binaryPointerReader.canRead(count);
 	}
 #pragma endregion
 

@@ -12,6 +12,42 @@
 
 namespace mint
 {
+	class BinaryFileReader;
+
+
+	class BinaryPointerReader final
+	{
+	public:
+		BinaryPointerReader();
+		BinaryPointerReader(const byte* const bytes, const uint32 byteCount);
+		BinaryPointerReader(const BinaryFileReader& binaryFileReader);
+		~BinaryPointerReader() = default;
+
+	public:
+		void reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; }
+
+		void goTo(const uint32 at) const;
+
+		bool canRead(const uint32 count) const;
+		
+		template <typename T>
+		const T* const peek() const;
+
+		template <typename T>
+		const T* const read() const;
+
+		template <typename T>
+		const T* const read(const uint32 count) const;
+
+		void skip(const uint32 count) const;
+
+	private:
+		const byte* _bytes;
+		uint32 _byteCount;
+		mutable uint32 _at{ 0 };
+	};
+
+
 	class BinaryFileReader final : public IFileReader
 	{
 	public:
@@ -24,6 +60,10 @@ namespace mint
 		virtual uint32 getFileSize() const noexcept override;
 
 	public:
+		void goTo(const uint32 at);
+
+		bool canRead(const uint32 count) const noexcept;
+
 		template <typename T>
 		const T* const peek() const noexcept;
 
@@ -33,16 +73,13 @@ namespace mint
 		template <typename T>
 		const T* const read(const uint32 count) noexcept;
 
-		void skip(const uint32 byteCount) noexcept;
+		void skip(const uint32 count) noexcept;
 
 		const Vector<byte>& getBytes() const { return _bytes; }
 
 	private:
-		bool canRead(const uint32 byteCount) const noexcept;
-
-	private:
 		Vector<byte> _bytes;
-		uint32 _at{ 0 };
+		BinaryPointerReader _binaryPointerReader;
 	};
 
 
