@@ -8,25 +8,25 @@
 
 namespace mint
 {
-	template <typename T>
+	template<typename T>
 	bool StringReference<T>::operator==(const StringReference<T>& rhs) const
 	{
 		return StringUtil::compare(c_str(), rhs.c_str());
 	}
 
-	template <typename T>
+	template<typename T>
 	uint32 StringReference<T>::length() const
 	{
 		return StringUtil::length(c_str());
 	}
 
-	template <typename T>
+	template<typename T>
 	uint32 StringReference<T>::countChars() const
 	{
 		return StringUtil::countChars(c_str());
 	}
 
-	template <typename T>
+	template<typename T>
 	uint32 StringReference<T>::find(const StringReference<T>& token, const uint32 offset) const
 	{
 		const uint32 sourceLength = length();
@@ -66,7 +66,7 @@ namespace mint
 		return result;
 	}
 
-	template <typename T>
+	template<typename T>
 	inline uint32 StringReference<T>::rfind(const StringReference<T>& token, const uint32 offset) const
 	{
 		const uint32 stringLength = length();
@@ -103,13 +103,25 @@ namespace mint
 		return kStringNPos;
 	}
 
-	template <typename T>
+	template<typename T>
 	bool StringReference<T>::contains(const StringReference<T>& token, const uint32 offset) const
 	{
 		return find(token, offset) != kStringNPos;
 	}
 
-	template <typename T>
+	template<typename T>
+	bool StringReference<T>::startsWith(const StringReference<T>& token) const
+	{
+		return find(token, 0) != kStringNPos;
+	}
+	
+	template<typename T>
+	bool StringReference<T>::endsWith(const StringReference<T>& token) const
+	{
+		return find(token, length() - token.length()) != kStringNPos;
+	}
+
+	template<typename T>
 	uint64 StringReference<T>::computeHash() const
 	{
 		return mint::computeHash(c_str());

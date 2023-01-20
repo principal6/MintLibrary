@@ -40,6 +40,8 @@ namespace mint
 		virtual uint32 find(const StringReference<T>& token, const uint32 offset = 0) const;
 		uint32 rfind(const StringReference<T>& token, const uint32 offset = 0) const;
 		virtual bool contains(const StringReference<T>& token, const uint32 offset = 0) const;
+		bool startsWith(const StringReference<T>& token) const;
+		bool endsWith(const StringReference<T>& token) const;
 		virtual uint64 computeHash() const;
 
 	private:
