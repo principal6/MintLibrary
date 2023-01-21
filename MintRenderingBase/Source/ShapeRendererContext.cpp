@@ -294,9 +294,9 @@ namespace mint
 			setColor(Color(20, 200, 80));
 
 			// First row
-			drawQuadraticBezier(screenOffset + Float2(-kHalfSize, +kHalfSize), screenOffset + Float2(+kHalfSize, +kHalfSize), screenOffset + Float2(0, -kHalfSize));
+			drawQuadraticBezier(screenOffset + Float2(-kHalfSize, +kHalfSize), screenOffset + Float2(+kHalfSize, +kHalfSize), screenOffset + Float2(0.0f, -kHalfSize));
 
-			drawSolidTriangle(screenOffset + Float2(60 - kHalfSize, -kHalfSize), screenOffset + Float2(60 + kHalfSize, -kHalfSize), screenOffset + Float2(60, +kHalfSize));
+			drawSolidTriangle(screenOffset + Float2(60 - kHalfSize, -kHalfSize), screenOffset + Float2(60 + kHalfSize, -kHalfSize), screenOffset + Float2(60.0f, +kHalfSize));
 
 			setPosition(Float4(screenOffset + Float2(120, 0)));
 			drawCircularTriangle(kHalfSize, 0.0f, false);
@@ -339,7 +339,7 @@ namespace mint
 
 			// Fourth row
 			screenOffset._y += 100.0f;
-			setPosition(Float4(screenOffset + Float2(60, kHalfSize)));
+			setPosition(Float4(screenOffset + Float2(60.0f, kHalfSize)));
 			drawColorPalleteXXX(kSize);
 
 			screenOffset._y += 100.0f;
