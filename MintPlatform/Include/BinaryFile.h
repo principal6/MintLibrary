@@ -24,7 +24,7 @@ namespace mint
 		~BinaryPointerReader() = default;
 
 	public:
-		void reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; }
+		void reset(const byte* const bytes, const uint32 byteCount) { _bytes = bytes; _byteCount = byteCount; _at = 0; }
 
 		void goTo(const uint32 at) const;
 
