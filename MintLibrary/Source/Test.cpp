@@ -81,6 +81,30 @@ namespace mint
 			quickSort(t6, ComparatorAscending<uint32>());
 			quickSort(t6, ComparatorDescending<uint32>());
 
+			struct StringWithComparator
+			{
+				StringWithComparator(const StringReferenceA& string) : _string{ string.c_str() } { __noop; }
+
+				StackStringA<kMaxPath> _string;
+				bool operator==(const StringWithComparator& rhs) const
+				{
+					return _string == rhs._string;
+				}
+				bool operator<(const StringWithComparator& rhs) const
+				{
+					return ::strcmp(_string.c_str(), rhs._string.c_str()) < 0;
+				}
+				bool operator>(const StringWithComparator& rhs) const
+				{
+					return ::strcmp(_string.c_str(), rhs._string.c_str()) > 0;
+				}
+			};
+			Vector<StringWithComparator> fileNames;
+			fileNames.push_back(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_01.pgf"));
+			fileNames.push_back(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_02.pgf"));
+			fileNames.push_back(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.pgf"));
+			fileNames.push_back(StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_04.pgf"));
+			MINT_ASSURE(binarySearch(fileNames, StringWithComparator("images\\game\\map\\forest\\forest1\\tile\\t_dg_03.bmp")) < 0);
 			return true;
 		}
 	}

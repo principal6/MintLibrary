@@ -9,6 +9,31 @@
 namespace mint
 {
 	template <typename T>
+	int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd);
+
+	template <typename T, typename ValueType, typename Evaluator>
+	int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd);
+
+	template<typename T, typename Comparator>
+	void quickSortInternal(Vector<T>& vector, const int32 front, const int32 back, Comparator comparator);
+
+
+	template <typename T>
+	int32 binarySearch(const Vector<T>& vec, const T& value)
+	{
+		if (vec.empty() == true)
+		{
+			return kInvalidIndexInt32;
+		}
+		const int32 resultIndex = binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
+		if (vec[resultIndex] == value)
+		{
+			return resultIndex;
+		}
+		return -1;
+	}
+
+	template <typename T>
 	int32 binarySearchInternal(const Vector<T>& vec, const T& value, const int32 indexBegin, const int32 indexEnd)
 	{
 		if (indexEnd <= indexBegin)
@@ -31,16 +56,20 @@ namespace mint
 		}
 	}
 
-	template <typename T>
-	int32 binarySearch(const Vector<T>& vec, const T& value)
+	template<typename T, typename ValueType, typename Evaluator>
+	int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
 	{
 		if (vec.empty() == true)
 		{
 			return kInvalidIndexInt32;
 		}
-		return binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
+		const int32 resultIndex = binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
+		if (vec[resultIndex] == value)
+		{
+			return resultIndex;
+		}
+		return -1;
 	}
-
 
 	template <typename T, typename ValueType, typename Evaluator>
 	int32 binarySearchInternal(const Vector<T>& vec, const ValueType& value, Evaluator evaluator, const int32 indexBegin, const int32 indexEnd)
@@ -65,14 +94,12 @@ namespace mint
 		}
 	}
 
-	template<typename T, typename ValueType, typename Evaluator>
-	int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
+	template<typename T, typename Comparator>
+	void quickSort(Vector<T>& vector, Comparator comparator)
 	{
-		if (vec.empty() == true)
-		{
-			return kInvalidIndexInt32;
-		}
-		return binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
+		const int32 begin = 0;
+		const int32 end = static_cast<int32>(vector.size() - 1);
+		quickSortInternal(vector, begin, end, comparator);
 	}
 
 	template<typename T, typename Comparator>
@@ -137,13 +164,5 @@ namespace mint
 
 		quickSortInternal(vector, front, pivot - 1, comparator);
 		quickSortInternal(vector, pivot, back, comparator);
-	}
-
-	template<typename T, typename Comparator>
-	void quickSort(Vector<T>& vector, Comparator comparator)
-	{
-		const int32 begin = 0;
-		const int32 end = static_cast<int32>(vector.size() - 1);
-		quickSortInternal(vector, begin, end, comparator);
 	}
 }
