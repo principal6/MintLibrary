@@ -31,4 +31,11 @@ namespace mint
 	{
 		__noop;
 	}
+
+	inline constexpr Float2::Float2(const int32 x, const int32 y)
+		: _x{ static_cast<float>(x) }
+		, _y{ static_cast<float>(y) }
+	{
+		__noop;
+	}
 }

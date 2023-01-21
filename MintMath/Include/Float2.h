@@ -35,6 +35,7 @@ namespace mint
 		constexpr Float2();
 		constexpr explicit Float2(const float scalar);
 		constexpr explicit Float2(const float x, const float y);
+		constexpr explicit Float2(const int32 x, const int32 y);
 		explicit Float2(const Int2& rhs);
 		constexpr Float2(const Float2& rhs) = default;
 		constexpr Float2(Float2&& rhs) noexcept = default;
