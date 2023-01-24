@@ -51,6 +51,15 @@ namespace mint
 		class ByteColor
 		{
 		public:
+			static float computeAlphaFromColorKey(const ByteColor& color, const ByteColor& colorKey)
+			{
+				const Float3 a = Float3(color.rAsFloat(), color.gAsFloat(), color.bAsFloat());
+				const Float3 b = Float3(colorKey.rAsFloat(), colorKey.gAsFloat(), colorKey.bAsFloat());
+				const float distance = (b - a).length();
+				return min(distance, 1.0f);
+			}
+
+		public:
 			constexpr ByteColor() : ByteColor(255) { __noop; }
 			constexpr ByteColor(byte c) : ByteColor(c, c, c, c) { __noop; }
 			constexpr ByteColor(byte r, byte g, byte b, byte a) : _c{ r, g, b, a } { __noop; }
@@ -64,7 +73,7 @@ namespace mint
 			MINT_INLINE constexpr const byte& g() const noexcept { return _c[1]; }
 			MINT_INLINE constexpr const byte& b() const noexcept { return _c[2]; }
 			MINT_INLINE constexpr const byte& a() const noexcept { return _c[3]; }
-			
+
 			MINT_INLINE constexpr float rAsFloat() const noexcept { return _c[0] / 255.0f; }
 			MINT_INLINE constexpr float gAsFloat() const noexcept { return _c[1] / 255.0f; }
 			MINT_INLINE constexpr float bAsFloat() const noexcept { return _c[2] / 255.0f; }
@@ -90,6 +99,8 @@ namespace mint
 			void setPixel(const Int2& at, const ByteColor& pixel);
 			void setPixel(const int32 x, const int32 y, const ByteColor& pixel);
 			void setPixel(const int32 index, const ByteColor& pixel);
+
+			void setPixelWithAlphaBlending(const Int2& at, const ByteColor& pixel, const float alpha);
 
 			uint32 getPixelCount() const;
 			const ByteColor& getPixel(const Int2& at) const;
@@ -301,6 +312,7 @@ namespace mint
 		public:
 			bool bakeRGBABytes();
 			const Vector<byte>& getRGBABytes() const { return _rgbaBytes; }
+			ByteColor getPixel(const Int2& positionInAtlas) const;
 
 		public:
 			Int2 computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const;

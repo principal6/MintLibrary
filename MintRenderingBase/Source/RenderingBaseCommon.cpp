@@ -46,6 +46,17 @@ namespace mint
 			_pixels[index] = pixel;
 		}
 
+		void ByteColorImage::setPixelWithAlphaBlending(const Int2& at, const ByteColor& pixel, const float alpha)
+		{
+			const int32 index = computeIndexFromXY(_size._x, at._x, at._y);
+			const ByteColor source = _pixels[index];
+			const ByteColor& destination = pixel;
+			_pixels[index].r() = min(static_cast<byte>((1.0f - alpha) * source.r()) + static_cast<byte>(alpha * destination.r()), 255);
+			_pixels[index].g() = min(static_cast<byte>((1.0f - alpha) * source.g()) + static_cast<byte>(alpha * destination.g()), 255);
+			_pixels[index].b() = min(static_cast<byte>((1.0f - alpha) * source.b()) + static_cast<byte>(alpha * destination.b()), 255);
+			_pixels[index].a() = 255;
+		}
+
 		uint32 ByteColorImage::getPixelCount() const
 		{
 			return _pixels.size();
@@ -167,6 +178,16 @@ namespace mint
 			}
 			_byteColorImages.clear();
 			return true;
+		}
+
+		ByteColor ByteColorImageAtlas::getPixel(const Int2& positionInAtlas) const
+		{
+			const int32 indexBase = positionInAtlas._y * getWidth() * 4 + positionInAtlas._x * 4;
+			const byte r = getRGBABytes()[indexBase + 0];
+			const byte g = getRGBABytes()[indexBase + 1];
+			const byte b = getRGBABytes()[indexBase + 2];
+			const byte a = getRGBABytes()[indexBase + 3];
+			return ByteColor(r, g, b, a);
 		}
 
 		Int2 ByteColorImageAtlas::computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const
