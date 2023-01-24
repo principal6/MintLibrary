@@ -1,4 +1,5 @@
 ﻿#include <MintMath/Include/Int2.h>
+#include <MintMath/Include/Float2.h>
 
 
 namespace mint
@@ -20,6 +21,13 @@ namespace mint
 	Int2::Int2(const int32 x, const int32 y)
 		: _x{ x }
 		, _y{ y }
+	{
+		__noop;
+	}
+
+	Int2::Int2(const Float2& rhs)
+		: _x{ static_cast<int32>(rhs._x) }
+		, _y{ static_cast<int32>(rhs._y) }
 	{
 		__noop;
 	}

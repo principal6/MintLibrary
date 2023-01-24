@@ -10,6 +10,9 @@
 
 namespace mint
 {
+	class Float2;
+
+
 	// pair of int32
 	class Int2 final
 	{
@@ -20,6 +23,7 @@ namespace mint
 		Int2();
 		explicit Int2(const int32 s);
 		explicit Int2(const int32 x, const int32 y);
+		explicit Int2(const Float2& rhs);
 		Int2(const Int2& rhs) = default;
 		Int2(Int2&& rhs) noexcept = default;
 		~Int2() = default;
