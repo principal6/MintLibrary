@@ -47,6 +47,8 @@ namespace mint
 			IndexElementType _vertexIndexArray[kVertexCountPerFace];
 		};
 
+		MINT_INLINE constexpr float convertByteToNormalizedFloat(const byte v) { return static_cast<float>(v) / 255.0f; }
+		MINT_INLINE constexpr byte convertNormalizedFloatToByte(const float v) { return static_cast<byte>(v * 255.99f); }
 
 		class ByteColor
 		{
@@ -74,10 +76,10 @@ namespace mint
 			MINT_INLINE constexpr const byte& b() const noexcept { return _c[2]; }
 			MINT_INLINE constexpr const byte& a() const noexcept { return _c[3]; }
 
-			MINT_INLINE constexpr float rAsFloat() const noexcept { return _c[0] / 255.0f; }
-			MINT_INLINE constexpr float gAsFloat() const noexcept { return _c[1] / 255.0f; }
-			MINT_INLINE constexpr float bAsFloat() const noexcept { return _c[2] / 255.0f; }
-			MINT_INLINE constexpr float aAsFloat() const noexcept { return _c[3] / 255.0f; }
+			MINT_INLINE constexpr float rAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[0]); }
+			MINT_INLINE constexpr float gAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[1]); }
+			MINT_INLINE constexpr float bAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[2]); }
+			MINT_INLINE constexpr float aAsFloat() const noexcept { return convertByteToNormalizedFloat(_c[3]); }
 
 			MINT_INLINE constexpr void r(byte value) noexcept { _c[0] = value; }
 			MINT_INLINE constexpr void g(byte value) noexcept { _c[1] = value; }
@@ -132,10 +134,10 @@ namespace mint
 		public:
 			constexpr Color() : Color(255, 255, 255) { __noop; }
 			constexpr Color(const float r, const float g, const float b, const float a) : _raw{ Math::saturate(r), Math::saturate(g), Math::saturate(b), Math::saturate(a) } { __noop; }
-			constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f) { __noop; }
+			constexpr Color(const int32 r, const int32 g, const int32 b, const int32 a) : Color(convertByteToNormalizedFloat(r), convertByteToNormalizedFloat(g), convertByteToNormalizedFloat(b), convertByteToNormalizedFloat(a)) { __noop; }
 			constexpr Color(const float r, const float g, const float b) : Color(r, g, b, 1.0f) { __noop; }
 			constexpr Color(const int32 r, const int32 g, const int32 b) : Color(r, g, b, 255) { __noop; }
-			constexpr Color(const uint8 c) : Color(c, c, c, 255) { __noop; }
+			constexpr Color(const int32 c) : Color(c, c, c, 255) { __noop; }
 			constexpr Color(const Float3& rgb) : Color(rgb._x, rgb._y, rgb._z, 1.0f) { __noop; }
 			constexpr explicit Color(const Float4& float4) : Color(float4._x, float4._y, float4._z, float4._w) { __noop; }
 
@@ -156,15 +158,15 @@ namespace mint
 			MINT_INLINE constexpr float b() const noexcept { return _raw._z; }
 			MINT_INLINE constexpr float a() const noexcept { return _raw._w; }
 
-			MINT_INLINE constexpr byte rAsByte() const noexcept { return static_cast<byte>(_raw._x * 255.99f); }
-			MINT_INLINE constexpr byte gAsByte() const noexcept { return static_cast<byte>(_raw._y * 255.99f); }
-			MINT_INLINE constexpr byte bAsByte() const noexcept { return static_cast<byte>(_raw._z * 255.99f); }
-			MINT_INLINE constexpr byte aAsByte() const noexcept { return static_cast<byte>(_raw._w * 255.99f); }
+			MINT_INLINE constexpr byte rAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._x); }
+			MINT_INLINE constexpr byte gAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._y); }
+			MINT_INLINE constexpr byte bAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._z); }
+			MINT_INLINE constexpr byte aAsByte() const noexcept { return convertNormalizedFloatToByte(_raw._w); }
 
-			MINT_INLINE constexpr void r(const int32 value) noexcept { _raw._x = (value / 255.0f); }
-			MINT_INLINE constexpr void g(const int32 value) noexcept { _raw._y = (value / 255.0f); }
-			MINT_INLINE constexpr void a(const int32 value) noexcept { _raw._w = (value / 255.0f); }
-			MINT_INLINE constexpr void b(const int32 value) noexcept { _raw._z = (value / 255.0f); }
+			MINT_INLINE constexpr void r(const int32 value) noexcept { _raw._x = convertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void g(const int32 value) noexcept { _raw._y = convertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void a(const int32 value) noexcept { _raw._w = convertByteToNormalizedFloat(value); }
+			MINT_INLINE constexpr void b(const int32 value) noexcept { _raw._z = convertByteToNormalizedFloat(value); }
 
 			MINT_INLINE constexpr void r(const float value) noexcept { _raw._x = value; }
 			MINT_INLINE constexpr void g(const float value) noexcept { _raw._y = value; }
@@ -178,7 +180,7 @@ namespace mint
 			MINT_INLINE void scaleB(const float s) noexcept { _raw._z *= s; }
 			MINT_INLINE void scaleA(const float s) noexcept { _raw._w *= s; }
 			MINT_INLINE Color cloneAddRGB(const float s) const noexcept { return Color(Math::saturate(_raw._x + s), Math::saturate(_raw._y + s), Math::saturate(_raw._z + s), _raw._w); }
-			MINT_INLINE Color cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(s / 255.0f); }
+			MINT_INLINE Color cloneAddRGB(const int32 s) const noexcept { return cloneAddRGB(convertByteToNormalizedFloat(s)); }
 			MINT_INLINE Color cloneScaleRGB(const float s) const noexcept { return Color(_raw._x * s, _raw._y * s, _raw._z * s, _raw._w); }
 			MINT_INLINE Color cloneScaleA(const float s) const noexcept { return Color(_raw._x, _raw._y, _raw._z, _raw._w * s); }
 			MINT_INLINE bool isTransparent() const noexcept { return (_raw._w <= 0.0f); }
