@@ -1,4 +1,4 @@
-﻿#include <MintContainer/Include/Test.h>
+﻿#include <MintContainer/Include/TestContainer.h>
 
 #include <MintContainer/Include/AllHeaders.h>
 #include <MintContainer/Include/AllHpps.h>
@@ -437,6 +437,17 @@ namespace mint
 			a.push_back(3);
 			a.insert(2, 5);
 			a.erase(1);
+
+			Vector<Type> resizeTest;
+			resizeTest.push_back(1);
+			resizeTest.push_back(2);
+			resizeTest.push_back(3);
+			resizeTest.push_back(4);
+			resizeTest.push_back(5);
+			resizeTest.push_back(6);
+			resizeTest.push_back(7);
+			resizeTest.resize(1);
+			MINT_ASSURE(resizeTest.size() == 1);
 
 			Vector<uint32> b(20);
 			b.push_back(9);

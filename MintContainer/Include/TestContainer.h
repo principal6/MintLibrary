@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 
-#ifndef _MINT_CONTAINER_TEST_H_
-#define _MINT_CONTAINER_TEST_H_
+#ifndef _MINT_CONTAINER_TEST_CONTAINER_H_
+#define _MINT_CONTAINER_TEST_CONTAINER_H_
 
 
 #include <MintCommon/Include/CommonDefinitions.h>
@@ -28,4 +28,4 @@ namespace mint
 }
 
 
-#endif // !_MINT_CONTAINER_TEST_H_
+#endif // !_MINT_CONTAINER_TEST_CONTAINER_H_
