@@ -157,24 +157,23 @@ namespace mint
 	template<typename T>
 	MINT_INLINE void Vector<T>::resize(const uint32 size) noexcept
 	{
-		reserve(size);
-
 		if (_size < size)
 		{
+			reserve(size);
 			for (uint32 index = _size; index < size; ++index)
 			{
 				MemoryRaw::construct(_rawPointer[index]);
 			}
+			_size = size;
 		}
 		else if (size < _size)
 		{
-			for (uint32 index = size; index < _size; ++index)
+			const uint32 oldSize = _size;
+			for (uint32 index = size; index < oldSize; ++index)
 			{
 				pop_back();
 			}
 		}
-
-		_size = size;
 	}
 
 	template<typename T>
