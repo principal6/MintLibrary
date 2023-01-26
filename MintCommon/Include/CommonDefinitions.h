@@ -45,6 +45,18 @@ namespace mint
 	{
 		return (a > b) ? b : a;
 	}
+
+	template<typename T>
+	MINT_INLINE constexpr const T& clamp(const T& value, const T& lowerBound, const T& upperBound)
+	{
+		return min(max(value, lowerBound), upperBound);
+	}
+
+	template<typename T>
+	MINT_INLINE constexpr const T& clamp(T&& value, T&& lowerBound, T&& upperBound)
+	{
+		return min(max(value, lowerBound), upperBound);
+	}
 }
 
 
