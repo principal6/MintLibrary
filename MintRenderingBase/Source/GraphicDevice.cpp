@@ -588,8 +588,21 @@ namespace mint
 				samplerDescriptor.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
 				samplerDescriptor.MinLOD = 0.0f;
 				samplerDescriptor.MaxLOD = 0.0f;
-				_device->CreateSamplerState(&samplerDescriptor, _samplerState.ReleaseAndGetAddressOf());
-				_deviceContext->PSSetSamplers(0, 1, _samplerState.GetAddressOf());
+				_device->CreateSamplerState(&samplerDescriptor, _linearSamplerState.ReleaseAndGetAddressOf());
+				_deviceContext->PSSetSamplers(0, 1, _linearSamplerState.GetAddressOf());
+			}
+			{
+				D3D11_SAMPLER_DESC samplerDescriptor{};
+				samplerDescriptor.Filter = D3D11_FILTER::D3D11_FILTER_MIN_MAG_MIP_POINT;
+				samplerDescriptor.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+				samplerDescriptor.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+				samplerDescriptor.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+				samplerDescriptor.MipLODBias = 0.0f;
+				samplerDescriptor.ComparisonFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+				samplerDescriptor.MinLOD = 0.0f;
+				samplerDescriptor.MaxLOD = 0.0f;
+				_device->CreateSamplerState(&samplerDescriptor, _pointSamplerState.ReleaseAndGetAddressOf());
+				_deviceContext->PSSetSamplers(1, 1, _pointSamplerState.GetAddressOf());
 			}
 		}
 

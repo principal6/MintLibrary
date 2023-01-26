@@ -55,7 +55,8 @@ namespace mint
 				StackStringA<256> textBuffer;
 				StringUtil::toString(_psTextureSlot, textBuffer);
 				StackStringA<1024> shaderString = kShaderStringInclude;
-				shaderString += "sampler g_sampler0 : register(s0);\n";
+				shaderString += "sampler g_linearSampler : register(s0);\n";
+				shaderString += "sampler g_pointSampler : register(s1);\n";
 				shaderString += "Texture2D<float4> g_texture0 : register(t";
 				shaderString += textBuffer.c_str();
 				shaderString += ");\n";
@@ -67,7 +68,7 @@ namespace mint
 				shaderString += "{\n";
 				shaderString += "	const float4 kTransparentColor = ";
 				shaderString += transparentColorString;
-				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_sampler0, input._texCoord.xy);\n";
+				shaderString += "	const float4 sampledColor = g_texture0.Sample(g_pointSampler, input._texCoord.xy);\n";
 				shaderString += "	const float alpha = clamp(distance(sampledColor.rgb, kTransparentColor.rgb), 0.0, 1.0);\n";
 				shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
 				shaderString += "	return result;\n";

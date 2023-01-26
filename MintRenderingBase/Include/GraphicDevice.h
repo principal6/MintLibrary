@@ -235,7 +235,8 @@ namespace mint
 			GraphicObjectID _sbMaterialID;
 
 		private:
-			ComPtr<ID3D11SamplerState> _samplerState;
+			ComPtr<ID3D11SamplerState> _pointSamplerState;
+			ComPtr<ID3D11SamplerState> _linearSamplerState;
 			ComPtr<ID3D11BlendState> _blendState;
 #pragma endregion
 
