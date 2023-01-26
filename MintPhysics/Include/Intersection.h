@@ -36,7 +36,7 @@ namespace mint
 			virtual ~Shape2D() = default;
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color) { __noop; }
+			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) { __noop; }
 			virtual Float2 computeSupportPoint(const Float2& direction) const abstract;
 
 		public:
@@ -49,7 +49,7 @@ namespace mint
 			CircleShape2D(const Float2& center, const float radius);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color) override final;
+			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
 			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
 
 		public:
@@ -62,7 +62,7 @@ namespace mint
 			AABBShape2D(const Float2& center, const Float2& halfSize);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color) override final;
+			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
 			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
 		
 		public:
@@ -80,7 +80,7 @@ namespace mint
 			ConvexShape2D(const Float2& center, const Vector<Float2>& vertices);
 
 		public:
-			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color) override final;
+			virtual void debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset) override final;
 			virtual Float2 computeSupportPoint(const Float2& direction) const override final;
 
 		private:

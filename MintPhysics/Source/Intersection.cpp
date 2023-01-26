@@ -8,7 +8,7 @@ namespace mint
 {
 	namespace Physics
 	{
-		void CircleShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color)
+		void CircleShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.setColor(color);
 
@@ -20,7 +20,7 @@ namespace mint
 				const float thetaB = kThetaUnit * sideIndex;
 				const Float2 pointA = Float2(::cos(thetaA) * _radius, -::sin(thetaA) * _radius);
 				const Float2 pointB = Float2(::cos(thetaB) * _radius, -::sin(thetaB) * _radius);
-				shapeRendererContext.drawLine(_center + pointA, _center + pointB, 1.0f);
+				shapeRendererContext.drawLine(offset + _center + pointA, offset + _center + pointB, 1.0f);
 			}
 		}
 
@@ -29,16 +29,16 @@ namespace mint
 			return _center + direction * _radius;
 		}
 
-		void AABBShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color)
+		void AABBShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.setColor(color);
 
 			const Float2 halfSizeX = Float2(_halfSize._x, 0.0f);
 			const Float2 halfSizeY = Float2(0.0f, _halfSize._y);
-			shapeRendererContext.drawLine(_center - halfSizeX + halfSizeY, _center + halfSizeX + halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(_center - halfSizeX - halfSizeY, _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(_center + halfSizeX + halfSizeY, _center + halfSizeX - halfSizeY, 1.0f);
-			shapeRendererContext.drawLine(_center - halfSizeX + halfSizeY, _center - halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.drawLine(offset + _center - halfSizeX + halfSizeY, offset + _center + halfSizeX + halfSizeY, 1.0f);
+			shapeRendererContext.drawLine(offset + _center - halfSizeX - halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.drawLine(offset + _center + halfSizeX + halfSizeY, offset + _center + halfSizeX - halfSizeY, 1.0f);
+			shapeRendererContext.drawLine(offset + _center - halfSizeX + halfSizeY, offset + _center - halfSizeX - halfSizeY, 1.0f);
 		}
 
 		Float2 AABBShape2D::computeSupportPoint(const Float2& direction) const
@@ -74,14 +74,14 @@ namespace mint
 			return shape;
 		}
 
-		void ConvexShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color)
+		void ConvexShape2D::debug_drawShape(ShapeRendererContext& shapeRendererContext, const ByteColor& color, const Float2& offset)
 		{
 			shapeRendererContext.setColor(color);
 
 			const uint32 vertexCount = _vertices.size();
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
-				shapeRendererContext.drawLine(_vertices[vertexIndex - 1], _vertices[vertexIndex], 1.0f);
+				shapeRendererContext.drawLine(offset + _vertices[vertexIndex - 1], offset + _vertices[vertexIndex], 1.0f);
 			}
 		}
 
@@ -106,7 +106,7 @@ namespace mint
 			}
 			return _center + _vertices[targetVertexIndex];
 		}
-		
+
 		uint32 ConvexShape2D::GrahamScan_findStartPoint(const Vector<Float2>& points)
 		{
 			Float2 min = Float2(10000.0f, -10000.0f);
