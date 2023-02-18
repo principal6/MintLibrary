@@ -49,7 +49,7 @@ namespace mint
 			~SafeResourceMapper();
 
 		public:
-			bool isValid() const noexcept;
+			bool IsValid() const noexcept;
 			void set(const void* const data, const uint32 size) noexcept;
 
 		private:

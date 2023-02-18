@@ -210,7 +210,7 @@ namespace mint
 			return false;
 		}
 
-		bool DxResource::isValid() const noexcept
+		bool DxResource::IsValid() const noexcept
 		{
 			return (_resource.Get() != nullptr);
 		}
@@ -274,7 +274,7 @@ namespace mint
 			else
 			{
 				SafeResourceMapper safeResourceMapper{ _graphicDevice, _resource.Get(), 0 };
-				if (safeResourceMapper.isValid() == true)
+				if (safeResourceMapper.IsValid() == true)
 				{
 					safeResourceMapper.set(resourceContent, _elementStride * elementCount);
 				}
@@ -389,7 +389,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicObjectID graphicObjectID = resource.getID();
-				_resourceArray.push_back(std::move(resource));
+				_resourceArray.PushBack(std::move(resource));
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
@@ -406,7 +406,7 @@ namespace mint
 				resource.assignIDXXX();
 
 				const GraphicObjectID graphicObjectID = resource.getID();
-				_resourceArray.push_back(std::move(resource));
+				_resourceArray.PushBack(std::move(resource));
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
@@ -424,7 +424,7 @@ namespace mint
 				resource.assignIDXXX();
 
 				const GraphicObjectID graphicObjectID = resource.getID();
-				_resourceArray.push_back(std::move(resource));
+				_resourceArray.PushBack(std::move(resource));
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
@@ -443,7 +443,7 @@ namespace mint
 				resource._registerIndex = registerIndex;
 
 				const GraphicObjectID graphicObjectID = resource.getID();
-				_resourceArray.push_back(std::move(resource));
+				_resourceArray.PushBack(std::move(resource));
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
@@ -461,7 +461,7 @@ namespace mint
 				resource.assignIDXXX();
 				
 				const GraphicObjectID graphicObjectID = resource.getID();
-				_resourceArray.push_back(std::move(resource));
+				_resourceArray.PushBack(std::move(resource));
 				quickSort(_resourceArray, GraphicObject::AscendingComparator());
 				return graphicObjectID;
 			}
@@ -473,7 +473,7 @@ namespace mint
 		void DxResourcePool::bindAsInput(const GraphicObjectID& objectID) noexcept
 		{
 			DxResource& resource = getResource(objectID);
-			if (resource.isValid() == true)
+			if (resource.IsValid() == true)
 			{
 				resource.bindAsInput();
 			}
@@ -482,7 +482,7 @@ namespace mint
 		void DxResourcePool::bindToShader(const GraphicObjectID& objectID, const GraphicShaderType shaderType, const uint32 bindingSlot) noexcept
 		{
 			DxResource& resource = getResource(objectID);
-			if (resource.isValid() == true)
+			if (resource.IsValid() == true)
 			{
 				resource.bindToShader(shaderType, bindingSlot);
 			}

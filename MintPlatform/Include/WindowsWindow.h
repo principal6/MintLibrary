@@ -77,7 +77,7 @@ namespace mint
 
 		public:
 			virtual bool create(const WindowCreationDesc& windowCreationDesc) noexcept override;
-			virtual void destroy() noexcept override;
+			virtual void Destroy() noexcept override;
 
 		private:
 			void buildWparamKeyCodePairArray() noexcept;

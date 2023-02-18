@@ -14,10 +14,10 @@ namespace mint
 	class SharedPtr;
 
 	template<typename T>
-	static SharedPtr<T> makeShared();
+	static SharedPtr<T> MakeShared();
 	
 	template<typename T>
-	static SharedPtr<T> makeShared(T&& rhs);
+	static SharedPtr<T> MakeShared(T&& rhs);
 
 
 	class ReferenceCounter
@@ -50,9 +50,9 @@ namespace mint
 			return *this;
 		}
 	public:
-		MINT_INLINE void increaseReferenceCount() { ++_referenceCount; }
-		MINT_INLINE void decreaseReferenceCount() { --_referenceCount; }
-		MINT_INLINE int32 getReferenceCount() const { return _referenceCount; }
+		MINT_INLINE void IncreaseReferenceCount() { ++_referenceCount; }
+		MINT_INLINE void DecreaseReferenceCount() { --_referenceCount; }
+		MINT_INLINE int32 GetReferenceCount() const { return _referenceCount; }
 	private:
 		int32 _referenceCount;
 	};
@@ -62,10 +62,10 @@ namespace mint
 	class SharedPtr
 	{
 		template<typename T>
-		friend static SharedPtr<T> makeShared();
+		friend static SharedPtr<T> MakeShared();
 
 		template<typename T>
-		friend static SharedPtr<T> makeShared(T&& rhs);
+		friend static SharedPtr<T> MakeShared(T&& rhs);
 
 	public:
 		SharedPtr()
@@ -82,7 +82,7 @@ namespace mint
 			{
 				return;
 			}
-			_referenceCounter->increaseReferenceCount();
+			_referenceCounter->IncreaseReferenceCount();
 		}
 		SharedPtr(SharedPtr&& rhs)
 			: _referenceCounter{ rhs._referenceCounter }
@@ -97,8 +97,8 @@ namespace mint
 			{
 				return;
 			}
-			_referenceCounter->decreaseReferenceCount();
-			if (_referenceCounter->getReferenceCount() == 0)
+			_referenceCounter->DecreaseReferenceCount();
+			if (_referenceCounter->GetReferenceCount() == 0)
 			{
 				MINT_DELETE(_referenceCounter);
 				MINT_DELETE(_rawPointer);
@@ -112,8 +112,8 @@ namespace mint
 			{
 				if (_referenceCounter != nullptr)
 				{
-					_referenceCounter->decreaseReferenceCount();
-					if (_referenceCounter->getReferenceCount() == 0)
+					_referenceCounter->DecreaseReferenceCount();
+					if (_referenceCounter->GetReferenceCount() == 0)
 					{
 						MINT_DELETE(_referenceCounter);
 						MINT_DELETE(_rawPointer);
@@ -125,7 +125,7 @@ namespace mint
 
 				if (_referenceCounter != nullptr)
 				{
-					_referenceCounter->increaseReferenceCount();
+					_referenceCounter->IncreaseReferenceCount();
 				}
 			}
 			return *this;
@@ -136,8 +136,8 @@ namespace mint
 			{
 				if (_referenceCounter != nullptr)
 				{
-					_referenceCounter->decreaseReferenceCount();
-					if (_referenceCounter->getReferenceCount() == 0)
+					_referenceCounter->DecreaseReferenceCount();
+					if (_referenceCounter->GetReferenceCount() == 0)
 					{
 						MINT_DELETE(_referenceCounter);
 						MINT_DELETE(_rawPointer);
@@ -162,8 +162,8 @@ namespace mint
 		const T* operator->() const noexcept { return _rawPointer; }
 
 	public:
-		constexpr uint64 size() { return sizeof(T); }
-		bool isValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->getReferenceCount() > 0); }
+		constexpr uint64 Size() { return sizeof(T); }
+		bool IsValid() const { return (_referenceCounter == nullptr ? false : _referenceCounter->GetReferenceCount() > 0); }
 
 	private:
 		SharedPtr(T* const rawPointer)
@@ -180,13 +180,13 @@ namespace mint
 
 
 	template<typename T>
-	static SharedPtr<T> makeShared()
+	static SharedPtr<T> MakeShared()
 	{
 		return SharedPtr<T>(MINT_NEW(T));
 	}
 
 	template<typename T>
-	static SharedPtr<T> makeShared(T&& rhs)
+	static SharedPtr<T> MakeShared(T&& rhs)
 	{
 		return SharedPtr<T>(MINT_NEW(T, rhs));
 	}

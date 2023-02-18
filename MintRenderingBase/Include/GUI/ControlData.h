@@ -49,8 +49,8 @@ namespace mint
 				bool operator!=(const ControlID& rhs) const { return _rawID != rhs._rawID; }
 
 			public:
-				void invalidate() { _rawID = 0; }
-				bool isValid() const { return _rawID != 0; }
+				void Invalidate() { _rawID = 0; }
+				bool IsValid() const { return _rawID != 0; }
 				uint64 getRawID() const { return _rawID; }
 
 			private:

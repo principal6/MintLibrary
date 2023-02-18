@@ -89,7 +89,7 @@ namespace mint
 							MathExpression::Modifier italicModifier;
 							italicModifier._type = MathExpression::ModifierType::Italic;
 							italicModifier._range = StringRange(nextModifierBeginAt, plainStringLength - nextModifierBeginAt);
-							mathExpression._modifiers.push_back(italicModifier);
+							mathExpression._modifiers.PushBack(italicModifier);
 						}
 
 						const StringRange modifierStringRange{ at + 1, escapeOpenAt - at - 1 };
@@ -104,7 +104,7 @@ namespace mint
 							MathExpression::Modifier modifier;
 							modifier._type = MathExpression::ModifierType::Bold;
 							modifier._range = StringRange(plainStringLength, innerStringRange._length);
-							mathExpression._modifiers.push_back(modifier);
+							mathExpression._modifiers.PushBack(modifier);
 
 							nextModifierBeginAt = modifier._range._offset + modifier._range._length;
 
@@ -113,7 +113,7 @@ namespace mint
 						else
 						{
 							std::string modifierStr;
-							StringUtil::convertWideStringToString(modifierString, modifierStr);
+							StringUtil::ConvertWideStringToString(modifierString, modifierStr);
 							MINT_LOG_ERROR("아직 지원되지 않는 modifier 입니다! [%s]", modifierStr.c_str());
 						}
 					}
@@ -130,7 +130,7 @@ namespace mint
 					MathExpression::Modifier italicModifier;
 					italicModifier._type = MathExpression::ModifierType::Italic;
 					italicModifier._range = StringRange(nextModifierBeginAt, mathExpression._plainString.length() - nextModifierBeginAt);
-					mathExpression._modifiers.push_back(italicModifier);
+					mathExpression._modifiers.PushBack(italicModifier);
 				}
 			}
 		};
@@ -151,7 +151,7 @@ namespace mint
 
 			LatexLexer lexer;
 			std::string latexExpressionStr;
-			StringUtil::convertWideStringToString(_latexExpression, latexExpressionStr);
+			StringUtil::ConvertWideStringToString(_latexExpression, latexExpressionStr);
 			lexer.setSource(latexExpressionStr);
 			lexer.execute();
 
@@ -208,11 +208,11 @@ namespace mint
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)
 			{
 				BitVector& bitFlags = _bitFlagsArray[modifierTypeIndex];
-				bitFlags.resizeBitCount(plainStringLength);
-				bitFlags.fill(false);
+				bitFlags.ResizeBitCount(plainStringLength);
+				bitFlags.Fill(false);
 			}
 
-			const uint32 modifierCount = mathExpression._modifiers.size();
+			const uint32 modifierCount = mathExpression._modifiers.Size();
 			for (uint32 modifierIndex = 0; modifierIndex < modifierCount; modifierIndex++)
 			{
 				const MathExpression::Modifier& modifier = mathExpression._modifiers[modifierIndex];
@@ -222,7 +222,7 @@ namespace mint
 				for (uint32 iter = 0; iter < modifier._range._length; iter++)
 				{
 					const uint32 at = modifier._range._offset + iter;
-					bitFlags.set(at, true);
+					bitFlags.Set(at, true);
 				}
 			}
 

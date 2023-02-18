@@ -38,7 +38,7 @@ namespace mint
 
 			MINT_INLINE void TypeCustomData::pushSlottedStreamData(const TypeMetaData<TypeCustomData>& slottedStreamData)
 			{
-				_slottedStreamDatas.push_back(slottedStreamData);
+				_slottedStreamDatas.PushBack(slottedStreamData);
 			}
 
 			MINT_INLINE bool TypeCustomData::isRegisterIndexValid() const noexcept
@@ -68,7 +68,7 @@ namespace mint
 
 			MINT_INLINE uint32 TypeCustomData::getSlottedStreamDataCount() const noexcept
 			{
-				return _slottedStreamDatas.size();
+				return _slottedStreamDatas.Size();
 			}
 
 			MINT_INLINE const TypeMetaData<TypeCustomData>& TypeCustomData::getSlottedStreamData(const uint32 inputSlot) const noexcept

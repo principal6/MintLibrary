@@ -16,51 +16,51 @@ namespace mint
 	{
 #pragma region Type Traits
 		template<typename T>
-		MINT_INLINE constexpr bool isConstructible() noexcept
+		MINT_INLINE constexpr bool IsConstructible() noexcept
 		{
-			return (isDefaultConstructible<T>() || isCopyConstructible<T>() || isMoveConstructible<T>());
+			return (IsDefaultConstructible<T>() || IsCopyConstructible<T>() || IsMoveConstructible<T>());
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isDefaultConstructible() noexcept
+		MINT_INLINE constexpr bool IsDefaultConstructible() noexcept
 		{
 			return (std::is_default_constructible<T>::value == true);
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isCopyConstructible() noexcept
+		MINT_INLINE constexpr bool IsCopyConstructible() noexcept
 		{
 			return (std::is_copy_constructible<T>::value == true);
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isCopyAssignable() noexcept
+		MINT_INLINE constexpr bool IsCopyAssignable() noexcept
 		{
 			return (std::is_copy_assignable<T>::value == true);
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isCopiable() noexcept
+		MINT_INLINE constexpr bool IsCopiable() noexcept
 		{
-			return (isCopyConstructible<T>() || isCopyAssignable<T>());
+			return (IsCopyConstructible<T>() || IsCopyAssignable<T>());
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isMoveConstructible() noexcept
+		MINT_INLINE constexpr bool IsMoveConstructible() noexcept
 		{
 			return (std::is_move_constructible<T>::value == true);
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isMoveAssignable() noexcept
+		MINT_INLINE constexpr bool IsMoveAssignable() noexcept
 		{
 			return (std::is_move_assignable<T>::value == true);
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr bool isMovable() noexcept
+		MINT_INLINE constexpr bool IsMovable() noexcept
 		{
-			return (isMoveConstructible<T>() || isMoveAssignable<T>());
+			return (IsMoveConstructible<T>() || IsMoveAssignable<T>());
 		}
 #pragma endregion
 
@@ -68,9 +68,9 @@ namespace mint
 		// ctor 를 호출하지 않고 메모리만 할당한다.
 		// 이 함수 호출 이후 명시적으로 ctor 를 호출해야 한다!
 		template<typename T>
-		MINT_INLINE T* allocateMemory(const uint32 size) noexcept
+		MINT_INLINE T* AllocateMemory(const uint32 size) noexcept
 		{
-			static_assert(isConstructible<T>(), "Not constructible type!!!");
+			static_assert(IsConstructible<T>(), "Not constructible type!!!");
 
 			return MINT_MALLOC(T, size);
 		}
@@ -78,7 +78,7 @@ namespace mint
 		template<typename T>
 		// memory 를 move 한다. (to 와 from 의 메모리가 겹치더라도 안전하게 옮긴다)
 		// move ctor, copy ctor 또는 move assignment, copy assignment 가 호출되지 않는다!!!
-		MINT_INLINE void moveMemory(T* const to, const T* const from, const uint32 count) noexcept
+		MINT_INLINE void MoveMemory_(T* const to, const T* const from, const uint32 count) noexcept
 		{
 			std::memmove(to, from, sizeof(T) * count);
 		}
@@ -86,7 +86,7 @@ namespace mint
 		template<typename T>
 		// dtor 를 호출하지 않고 메모리만 해제한다!!
 		// 이 함수 호출 전에 명시적으로 dtor 를 호출했어야 한다!
-		MINT_INLINE void deallocateMemory(T*& rawPointer) noexcept
+		MINT_INLINE void DeallocateMemory(T*& rawPointer) noexcept
 		{
 			if (rawPointer == nullptr)
 			{
@@ -98,9 +98,9 @@ namespace mint
 
 		template<typename T>
 		// at 가 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
-		MINT_INLINE void construct(T& at) noexcept
+		MINT_INLINE void Construct(T& at) noexcept
 		{
-			static_assert(isDefaultConstructible<T>(), "Not default-constructible!!!");
+			static_assert(IsDefaultConstructible<T>(), "Not default-constructible!!!");
 
 			MINT_PLACEMNT_NEW(&at, T());
 		}
@@ -121,18 +121,18 @@ namespace mint
 
 		template<typename T>
 		// to 가 살아있는 instance 여야만 한다!
-		MINT_INLINE void copyAssign(T& to, const T& from) noexcept
+		MINT_INLINE void CopyAssign(T& to, const T& from) noexcept
 		{
-			static_assert(isCopyAssignable<T>(), "Not copy-assignable!!!");
+			static_assert(IsCopyAssignable<T>(), "Not copy-assignable!!!");
 
 			to = from;
 		}
 
 		template<typename T>
 		// to 가 살아있는 instance 여야만 한다!
-		MINT_INLINE void moveAssign(T& to, T&& from) noexcept
+		MINT_INLINE void MoveAssign(T& to, T&& from) noexcept
 		{
-			static_assert(isMoveAssignable<T>(), "Not move-assignable!!!");
+			static_assert(IsMoveAssignable<T>(), "Not move-assignable!!!");
 
 			to = std::move(from);
 		}
@@ -140,17 +140,17 @@ namespace mint
 		template<typename T>
 		// ctor 가 반드시 호출되는 것을 보장한다.
 		// to 가 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
-		MINT_INLINE void copyConstruct(T& to, const T& from) noexcept
+		MINT_INLINE void CopyConstruct(T& to, const T& from) noexcept
 		{
-			static_assert(isCopyConstructible<T>() || (isDefaultConstructible<T>() == true && isCopyAssignable<T>() == true), "Not copiable!!!");
+			static_assert(IsCopyConstructible<T>() || (IsDefaultConstructible<T>() == true && IsCopyAssignable<T>() == true), "Not copiable!!!");
 
-			if constexpr (isCopyConstructible<T>() == true)
+			if constexpr (IsCopyConstructible<T>() == true)
 			{
 				copyConstructRaw<T>(to, from);
 			}
-			else if constexpr (isDefaultConstructible<T>() == true && isCopyAssignable<T>() == true)
+			else if constexpr (IsDefaultConstructible<T>() == true && IsCopyAssignable<T>() == true)
 			{
-				construct<T>(to);
+				Construct<T>(to);
 
 				to = from;
 			}
@@ -159,17 +159,17 @@ namespace mint
 		template<typename T>
 		// ctor 가 반드시 호출되는 것을 보장한다.
 		// to 가 살아있는 instance 라면 이 함수 호출 전에 반드시 dtor 를 명시적으로 호출했어야 한다!
-		MINT_INLINE void moveConstruct(T& to, T&& from) noexcept
+		MINT_INLINE void MoveConstruct(T& to, T&& from) noexcept
 		{
-			static_assert(isMoveConstructible<T>() || (isDefaultConstructible<T>() == true && isMoveAssignable<T>() == true), "Not movable!!!");
+			static_assert(IsMoveConstructible<T>() || (IsDefaultConstructible<T>() == true && IsMoveAssignable<T>() == true), "Not movable!!!");
 
-			if constexpr (isMoveConstructible<T>() == true)
+			if constexpr (IsMoveConstructible<T>() == true)
 			{
 				moveConstructRaw<T>(to, std::move(from));
 			}
-			else if constexpr (isDefaultConstructible<T>() == true && isMoveAssignable<T>() == true)
+			else if constexpr (IsDefaultConstructible<T>() == true && IsMoveAssignable<T>() == true)
 			{
-				construct<T>(to);
+				Construct<T>(to);
 
 				to = std::move(from);
 			}
@@ -177,7 +177,7 @@ namespace mint
 
 		template<typename T>
 		// at 이 살아있는 instance 여야만 한다!
-		MINT_INLINE void destroy(T& at) noexcept
+		MINT_INLINE void Destroy(T& at) noexcept
 		{
 			at.~T();
 		}

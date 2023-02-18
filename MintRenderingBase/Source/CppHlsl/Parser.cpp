@@ -69,7 +69,7 @@ namespace mint
 				SyntaxTreeNodeData rootItem;
 				rootItem._classifier = SyntaxClassifier::ROOT;
 				rootItem._IDentifier = "ROOT";
-				SyntaxTreeNode syntaxTreeRootNode = _syntaxTree.createRootNode(rootItem);
+				SyntaxTreeNode syntaxTreeRootNode = _syntaxTree.CreateRootNode(rootItem);
 				while (continueParsing() == true)
 				{
 					if (parseCode(getSymbolPosition(), syntaxTreeRootNode, advanceCount) == false)
@@ -112,7 +112,7 @@ namespace mint
 				}
 				else if (_symbolTable[symbolPosition]._symbolClassifier == SymbolClassifier::Grouper_Close)
 				{
-					currentNode = currentNode.getParentNode();
+					currentNode = currentNode.GetParentNode();
 					outAdvanceCount = 1;
 					return true;
 				}
@@ -128,7 +128,7 @@ namespace mint
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Namespace;
 				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
-				SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				currentNode = newNode;
 
 				outAdvanceCount += 2 + 1;
@@ -153,7 +153,7 @@ namespace mint
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Struct;
 				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
-				SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				currentNode = newNode;
 				outAdvanceCount += 2 + 1;
 
@@ -181,13 +181,13 @@ namespace mint
 				SyntaxTreeNodeData syntaxTreeItem;
 				syntaxTreeItem._classifier = SyntaxClassifier::Variable;
 				syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 1]._symbolString;
-				SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+				SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 				{
 					// DataType 은 Variable Identifier 노드의 자식!
 					SyntaxTreeNodeData syntaxTreeItemChild;
 					syntaxTreeItemChild._classifier = SyntaxClassifier::DataType;
 					syntaxTreeItemChild._IDentifier = _symbolTable[symbolPosition]._symbolString;
-					newNode.insertChildNode(syntaxTreeItemChild);
+					newNode.InsertChildNode(syntaxTreeItemChild);
 
 					if (_symbolTable[symbolPosition + kSemicolonMinOffset]._symbolString == "{")
 					{
@@ -217,21 +217,21 @@ namespace mint
 				{
 					syntaxTreeItem._classifier = SyntaxClassifier::SemanticName;
 					syntaxTreeItem._IDentifier = _symbolTable[symbolPosition + 2]._symbolString;
-					SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+					SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 					outAdvanceCount += 3 + 1;
 				}
 				else if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_REGISTER_INDEX")
 				{
 					syntaxTreeItem._classifier = SyntaxClassifier::RegisterIndex;
 					syntaxTreeItem._value = _symbolTable[symbolPosition + 2]._symbolString;
-					SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+					SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 					outAdvanceCount += 3 + 1;
 				}
 				else if (_symbolTable[symbolPosition]._symbolString == "CPP_HLSL_INSTANCE_DATA")
 				{
 					syntaxTreeItem._classifier = SyntaxClassifier::InstanceData;
 					syntaxTreeItem._value = _symbolTable[symbolPosition + 2]._symbolString;
-					SyntaxTreeNode newNode = currentNode.insertChildNode(syntaxTreeItem);
+					SyntaxTreeNode newNode = currentNode.InsertChildNode(syntaxTreeItem);
 					outAdvanceCount += 3 + 1;
 				}
 				else
@@ -245,30 +245,30 @@ namespace mint
 			void Parser::buildTypeMetaData(const SyntaxTreeNode& structNode) noexcept
 			{
 				Vector<std::string> namespaceStack;
-				SyntaxTreeNode parentNode = structNode.getParentNode();
-				while (parentNode.isValid() == true)
+				SyntaxTreeNode parentNode = structNode.GetParentNode();
+				while (parentNode.IsValid() == true)
 				{
-					if (parentNode.getNodeData()._classifier == SyntaxClassifier::ROOT)
+					if (parentNode.GetNodeData()._classifier == SyntaxClassifier::ROOT)
 					{
 						break;
 					}
 
-					namespaceStack.push_back(parentNode.getNodeData()._IDentifier);
-					parentNode = parentNode.getParentNode();
+					namespaceStack.PushBack(parentNode.GetNodeData()._IDentifier);
+					parentNode = parentNode.GetParentNode();
 				}
 
 				std::string fullTypeName;
-				while (namespaceStack.empty() == false)
+				while (namespaceStack.IsEmpty() == false)
 				{
-					fullTypeName += namespaceStack.back();
+					fullTypeName += namespaceStack.Back();
 					fullTypeName += "::";
-					namespaceStack.pop_back();
+					namespaceStack.PopBack();
 				}
-				const SyntaxTreeNodeData& structNodeSyntaxTreeItem = structNode.getNodeData();
+				const SyntaxTreeNodeData& structNodeSyntaxTreeItem = structNode.GetNodeData();
 				fullTypeName += structNodeSyntaxTreeItem._IDentifier;
 
-				KeyValuePair found = _typeMetaDataMap.find(fullTypeName);
-				if (found.isValid() == true)
+				KeyValuePair found = _typeMetaDataMap.Find(fullTypeName);
+				if (found.IsValid() == true)
 				{
 					return;
 				}
@@ -279,16 +279,16 @@ namespace mint
 				uint32 structSize = 0;
 				std::string streamDataTypeNameForSlots;
 				const int32 inputSlot = getSlottedStreamDataInputSlot(fullTypeName, streamDataTypeNameForSlots);
-				const uint32 childNodeCount = structNode.getChildNodeCount();
+				const uint32 childNodeCount = structNode.GetChildNodeCount();
 				for (uint32 childNodeIndex = 0; childNodeIndex < childNodeCount; ++childNodeIndex)
 				{
-					SyntaxTreeNode childNode = structNode.getChildNode(childNodeIndex);
-					const SyntaxTreeNodeData& childNodeData = childNode.getNodeData();
+					SyntaxTreeNode childNode = structNode.GetChildNode(childNodeIndex);
+					const SyntaxTreeNodeData& childNodeData = childNode.GetNodeData();
 					if (childNodeData._classifier == SyntaxClassifier::Variable)
 					{
-						const uint32 attributeCount = childNode.getChildNodeCount();
-						SyntaxTreeNode dataTypeNode = childNode.getChildNode(0);
-						TypeMetaData<TypeCustomData> memberTypeMetaData = getTypeMetaData(dataTypeNode.getNodeData()._IDentifier);
+						const uint32 attributeCount = childNode.GetChildNodeCount();
+						SyntaxTreeNode dataTypeNode = childNode.GetChildNode(0);
+						TypeMetaData<TypeCustomData> memberTypeMetaData = getTypeMetaData(dataTypeNode.GetNodeData()._IDentifier);
 						memberTypeMetaData.setByteOffset(structSize);
 						structSize += memberTypeMetaData.getSize();
 						memberTypeMetaData.setDeclName(childNodeData._IDentifier);
@@ -297,8 +297,8 @@ namespace mint
 						if (attributeCount >= 2)
 						{
 							// SemanticName
-							SyntaxTreeNode attribute1 = childNode.getChildNode(1);
-							const SyntaxTreeNodeData& attribute1Data = attribute1.getNodeData();
+							SyntaxTreeNode attribute1 = childNode.GetChildNode(1);
+							const SyntaxTreeNodeData& attribute1Data = attribute1.GetNodeData();
 							if (attribute1Data._classifier == SyntaxClassifier::SemanticName)
 							{
 								memberTypeMetaData._customData.setSemanticName(attribute1Data._IDentifier);
@@ -427,7 +427,7 @@ namespace mint
 						break;
 					}
 
-					slottedDatas.push_back(getTypeMetaData(typeName));
+					slottedDatas.PushBack(getTypeMetaData(typeName));
 				}
 
 				std::string result;
@@ -436,7 +436,7 @@ namespace mint
 				result.append("\n{\n");
 				result.append(serializeCppHlslTypeToHlslStreamDatumMembers(typeMetaData));
 
-				const uint32 slottedDataCount = slottedDatas.size();
+				const uint32 slottedDataCount = slottedDatas.Size();
 				for (uint32 slottedDataIndex = 0; slottedDataIndex < slottedDataCount; ++slottedDataIndex)
 				{
 					result += serializeCppHlslTypeToHlslStreamDatumMembers(slottedDatas[slottedDataIndex]);

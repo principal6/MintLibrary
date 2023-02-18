@@ -18,26 +18,26 @@ namespace mint
 		~Queue();
 
 	public:
-		void reserve(uint32 capacity) noexcept;
+		void Reserve(uint32 capacity) noexcept;
 
 	public:
-		MINT_INLINE uint32 size() const noexcept { return _size; }
-		MINT_INLINE uint32 capacity() const noexcept { return _capacity; }
-		MINT_INLINE bool empty() const noexcept { return (_size == 0); }
+		MINT_INLINE uint32 Size() const noexcept { return _size; }
+		MINT_INLINE uint32 Capacity() const noexcept { return _capacity; }
+		MINT_INLINE bool IsEmpty() const noexcept { return (_size == 0); }
 
 	public:
-		void push(const T& newEntry) noexcept;
-		void push(T&& newEntry) noexcept;
-		void pop() noexcept;
-		void flush() noexcept;
+		void Push(const T& newEntry) noexcept;
+		void Push(T&& newEntry) noexcept;
+		void Pop() noexcept;
+		void Flush() noexcept;
 
 	public:
-		T& peek() noexcept;
-		const T& peek() const noexcept;
+		T& Peek() noexcept;
+		const T& Peek() const noexcept;
 
 	private:
-		void saveBackup(T*& backUpPointer) noexcept;
-		void restoreBackup(const T* const backUpPointer) noexcept;
+		void SaveBackup(T*& backUpPointer) noexcept;
+		void RestoreBackup(const T* const backUpPointer) noexcept;
 
 	private:
 		T* _rawPointer;

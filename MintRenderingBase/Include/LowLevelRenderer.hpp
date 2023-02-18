@@ -41,13 +41,13 @@ namespace mint
 		template<typename T>
 		MINT_INLINE uint32 LowLevelRenderer<T>::getVertexCount() const noexcept
 		{
-			return _vertices.size();
+			return _vertices.Size();
 		}
 
 		template<typename T>
 		MINT_INLINE uint32 LowLevelRenderer<T>::getIndexCount() const noexcept
 		{
-			return _indices.size();
+			return _indices.Size();
 		}
 
 		template<typename T>
@@ -59,7 +59,7 @@ namespace mint
 			const IndexElementType* const meshIndices = meshData.getIndices();
 			for (uint32 vertexIter = 0; vertexIter < vertexCount; ++vertexIter)
 			{
-				_vertices.push_back(meshVertices[vertexIter]);
+				_vertices.PushBack(meshVertices[vertexIter]);
 			}
 
 			// 여러 메시가 push 될 경우, 추가되는 메시의 vertex index 가
@@ -67,7 +67,7 @@ namespace mint
 			IndexElementType indexBase = getIndexBaseXXX();
 			for (uint32 indexIter = 0; indexIter < indexCount; ++indexIter)
 			{
-				_indices.push_back(indexBase + meshIndices[indexIter]);
+				_indices.PushBack(indexBase + meshIndices[indexIter]);
 			}
 			setIndexBaseXXX(indexBase + vertexCount);
 		}
@@ -87,15 +87,15 @@ namespace mint
 		template <typename T>
 		MINT_INLINE void LowLevelRenderer<T>::flush() noexcept
 		{
-			_vertices.clear();
-			_indices.clear();
+			_vertices.Clear();
+			_indices.Clear();
 			_indexBase = 0;
 		}
 
 		template<typename T>
 		MINT_INLINE bool LowLevelRenderer<T>::isRenderable() const noexcept
 		{
-			return _vertices.empty() == false;
+			return _vertices.IsEmpty() == false;
 		}
 
 		template <typename T>
@@ -114,8 +114,8 @@ namespace mint
 			vertexBuffer.bindAsInput();
 			indexBuffer.bindAsInput();
 
-			const uint32 vertexCount = static_cast<uint32>(_vertices.size());
-			const uint32 indexCount = static_cast<uint32>(_indices.size());
+			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
+			const uint32 indexCount = static_cast<uint32>(_indices.Size());
 
 			_graphicDevice.getStateManager().setIARenderingPrimitive(renderingPrimitive);
 
@@ -146,7 +146,7 @@ namespace mint
 			newRenderCommand._indexCount = indexCount;
 			if (mergeNewRenderCommand(newRenderCommand) == false)
 			{
-				_renderCommands.push_back(newRenderCommand);
+				_renderCommands.PushBack(newRenderCommand);
 			}
 		}
 
@@ -158,8 +158,8 @@ namespace mint
 
 			OrdinalRenderCommandGroup ordinalRenderCommandGroup;
 			ordinalRenderCommandGroup._key = key;
-			ordinalRenderCommandGroup._startRenderCommandIndex = _renderCommands.size();
-			_ordinalRenderCommandGroups.push_back(ordinalRenderCommandGroup);
+			ordinalRenderCommandGroup._startRenderCommandIndex = _renderCommands.Size();
+			_ordinalRenderCommandGroups.PushBack(ordinalRenderCommandGroup);
 		}
 
 		template<typename T>
@@ -167,20 +167,20 @@ namespace mint
 		{
 			_isOrdinalMode = false;
 
-			if (_ordinalRenderCommandGroups.empty())
+			if (_ordinalRenderCommandGroups.IsEmpty())
 			{
 				return;
 			}
 
-			OrdinalRenderCommandGroup& last = _ordinalRenderCommandGroups.back();
-			if (last._startRenderCommandIndex == _renderCommands.size())
+			OrdinalRenderCommandGroup& last = _ordinalRenderCommandGroups.Back();
+			if (last._startRenderCommandIndex == _renderCommands.Size())
 			{
 				// 아무런 RenderCommand 도 등록되지 않았다. 무의미한 Group 이므로 제거한다!
-				_ordinalRenderCommandGroups.pop_back();
+				_ordinalRenderCommandGroups.PopBack();
 				return;
 			}
 
-			last._endRenderCommandIndex = _renderCommands.size() - 1;
+			last._endRenderCommandIndex = _renderCommands.Size() - 1;
 		}
 
 		template<typename T>
@@ -217,7 +217,7 @@ namespace mint
 			vertexBuffer.bindAsInput();
 			indexBuffer.bindAsInput();
 
-			const uint32 renderCommandCount = _renderCommands.size();
+			const uint32 renderCommandCount = _renderCommands.Size();
 			for (uint32 renderCommandIndex = 0; renderCommandIndex < renderCommandCount; ++renderCommandIndex)
 			{
 				const RenderCommand& renderCommand = _renderCommands[renderCommandIndex];
@@ -246,27 +246,27 @@ namespace mint
 				}
 			}
 
-			_ordinalRenderCommandGroups.clear();
+			_ordinalRenderCommandGroups.Clear();
 			_isOrdinalRenderCommandGroupsSorted = false;
 
-			_renderCommands.clear();
+			_renderCommands.Clear();
 		}
 
 		template<typename T>
 		MINT_INLINE bool LowLevelRenderer<T>::mergeNewRenderCommand(const RenderCommand& newRenderCommand) noexcept
 		{
-			if (_renderCommands.empty())
+			if (_renderCommands.IsEmpty())
 			{
 				return false;
 			}
 
-			RenderCommand& mergeDestRenderCommand = _renderCommands.back();
+			RenderCommand& mergeDestRenderCommand = _renderCommands.Back();
 			if (mergeDestRenderCommand._isOrdinal != newRenderCommand._isOrdinal)
 			{
 				return false;
 			}
 
-			if (_isOrdinalMode == true && _renderCommands.size() <= _ordinalRenderCommandGroups.back()._startRenderCommandIndex)
+			if (_isOrdinalMode == true && _renderCommands.Size() <= _ordinalRenderCommandGroups.Back()._startRenderCommandIndex)
 			{
 				return false;
 			}
@@ -301,25 +301,25 @@ namespace mint
 		{
 			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
 
-			const uint32 vertexCount = static_cast<uint32>(_vertices.size());
-			if (_vertexBufferID.isValid() == false && vertexCount > 0)
+			const uint32 vertexCount = static_cast<uint32>(_vertices.Size());
+			if (_vertexBufferID.IsValid() == false && vertexCount > 0)
 			{
 				_vertexBufferID = resourcePool.addVertexBuffer(&_vertices[0], _vertexStride, vertexCount);
 			}
 
-			if (_vertexBufferID.isValid())
+			if (_vertexBufferID.IsValid())
 			{
 				DxResource& vertexBuffer = resourcePool.getResource(_vertexBufferID);
 				vertexBuffer.updateBuffer(&_vertices[0], vertexCount);
 			}
 
-			const uint32 indexCount = static_cast<uint32>(_indices.size());
-			if (_indexBufferID.isValid() == false && indexCount > 0)
+			const uint32 indexCount = static_cast<uint32>(_indices.Size());
+			if (_indexBufferID.IsValid() == false && indexCount > 0)
 			{
 				_indexBufferID = resourcePool.addIndexBuffer(&_indices[0], indexCount);
 			}
 
-			if (_indexBufferID.isValid())
+			if (_indexBufferID.IsValid())
 			{
 				DxResource& indexBuffer = resourcePool.getResource(_indexBufferID);
 				indexBuffer.updateBuffer(&_indices[0], indexCount);

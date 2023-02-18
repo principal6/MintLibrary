@@ -9,46 +9,46 @@ namespace mint
 	{
 		bool test(Rendering::GraphicDevice& graphicDevice)
 		{
-			MINT_ASSURE(test_SplineGenerator(graphicDevice));
-			MINT_ASSURE(test_Plotter(graphicDevice));
-			MINT_ASSURE(test_MathExpressionRenderer(graphicDevice));
-			MINT_ASSURE(test_GUI(graphicDevice));
+			MINT_ASSURE(Test_SplineGenerator(graphicDevice));
+			MINT_ASSURE(Test_Plotter(graphicDevice));
+			MINT_ASSURE(Test_MathExpressionRenderer(graphicDevice));
+			MINT_ASSURE(Test_GUI(graphicDevice));
 			return true;
 		}
 
-		bool test_SplineGenerator(Rendering::GraphicDevice& graphicDevice)
+		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice)
 		{
 			using namespace Rendering;
 
 			Vector<Float2> sourceControlPointSet;
-			sourceControlPointSet.push_back(Float2(30, 100));
-			sourceControlPointSet.push_back(Float2(50, 200));
-			sourceControlPointSet.push_back(Float2(100, 200));
-			sourceControlPointSet.push_back(Float2(110, 100));
-			sourceControlPointSet.push_back(Float2(160, 200));
-			sourceControlPointSet.push_back(Float2(200, 100));
-			sourceControlPointSet.push_back(Float2(250, 200));
-			const uint32 sourceControlPointCount = sourceControlPointSet.size();
+			sourceControlPointSet.PushBack(Float2(30, 100));
+			sourceControlPointSet.PushBack(Float2(50, 200));
+			sourceControlPointSet.PushBack(Float2(100, 200));
+			sourceControlPointSet.PushBack(Float2(110, 100));
+			sourceControlPointSet.PushBack(Float2(160, 200));
+			sourceControlPointSet.PushBack(Float2(200, 100));
+			sourceControlPointSet.PushBack(Float2(250, 200));
+			const uint32 sourceControlPointCount = sourceControlPointSet.Size();
 			Vector<Float2> bezierControlPointSet0;
-			bezierControlPointSet0.push_back(sourceControlPointSet[0]);
-			bezierControlPointSet0.push_back(sourceControlPointSet[1]);
-			bezierControlPointSet0.push_back(sourceControlPointSet[2]);
-			bezierControlPointSet0.push_back(sourceControlPointSet[3]);
+			bezierControlPointSet0.PushBack(sourceControlPointSet[0]);
+			bezierControlPointSet0.PushBack(sourceControlPointSet[1]);
+			bezierControlPointSet0.PushBack(sourceControlPointSet[2]);
+			bezierControlPointSet0.PushBack(sourceControlPointSet[3]);
 			Vector<Float2> bezierControlPointSet1;
-			bezierControlPointSet1.push_back(sourceControlPointSet[1]);
-			bezierControlPointSet1.push_back(sourceControlPointSet[2]);
-			bezierControlPointSet1.push_back(sourceControlPointSet[3]);
-			bezierControlPointSet1.push_back(sourceControlPointSet[4]);
+			bezierControlPointSet1.PushBack(sourceControlPointSet[1]);
+			bezierControlPointSet1.PushBack(sourceControlPointSet[2]);
+			bezierControlPointSet1.PushBack(sourceControlPointSet[3]);
+			bezierControlPointSet1.PushBack(sourceControlPointSet[4]);
 			Vector<Float2> bezierControlPointSet2;
-			bezierControlPointSet2.push_back(sourceControlPointSet[2]);
-			bezierControlPointSet2.push_back(sourceControlPointSet[3]);
-			bezierControlPointSet2.push_back(sourceControlPointSet[4]);
-			bezierControlPointSet2.push_back(sourceControlPointSet[5]);
+			bezierControlPointSet2.PushBack(sourceControlPointSet[2]);
+			bezierControlPointSet2.PushBack(sourceControlPointSet[3]);
+			bezierControlPointSet2.PushBack(sourceControlPointSet[4]);
+			bezierControlPointSet2.PushBack(sourceControlPointSet[5]);
 			Vector<Float2> bezierControlPointSet3;
-			bezierControlPointSet3.push_back(sourceControlPointSet[3]);
-			bezierControlPointSet3.push_back(sourceControlPointSet[4]);
-			bezierControlPointSet3.push_back(sourceControlPointSet[5]);
-			bezierControlPointSet3.push_back(sourceControlPointSet[6]);
+			bezierControlPointSet3.PushBack(sourceControlPointSet[3]);
+			bezierControlPointSet3.PushBack(sourceControlPointSet[4]);
+			bezierControlPointSet3.PushBack(sourceControlPointSet[5]);
+			bezierControlPointSet3.PushBack(sourceControlPointSet[6]);
 			SplineGenerator splineGenerator;
 			Vector<Float2> bezierLinePointSet0;
 			Vector<Float2> bezierLinePointSet1;
@@ -86,7 +86,7 @@ namespace mint
 			Vector<float> bSplineKnotVector;
 			for (uint32 knotIndex = 0; knotIndex < sourceControlPointCount + bSplineOrder + 1; knotIndex++)
 			{
-				bSplineKnotVector.push_back(static_cast<float>(knotIndex));
+				bSplineKnotVector.PushBack(static_cast<float>(knotIndex));
 			}
 			Vector<Float2> bSplineLinePointSet;
 			splineGenerator.setPrecision(64);
@@ -96,7 +96,7 @@ namespace mint
 			return true;
 		}
 
-		bool test_Plotter(Rendering::GraphicDevice& graphicDevice)
+		bool Test_Plotter(Rendering::GraphicDevice& graphicDevice)
 		{
 			using namespace Rendering;
 
@@ -119,7 +119,7 @@ namespace mint
 			return true;
 		}
 
-		bool test_MathExpressionRenderer(Rendering::GraphicDevice& graphicDevice)
+		bool Test_MathExpressionRenderer(Rendering::GraphicDevice& graphicDevice)
 		{
 			using namespace Rendering;
 
@@ -129,7 +129,7 @@ namespace mint
 			return true;
 		}
 
-		bool test_GUI(Rendering::GraphicDevice& graphicDevice)
+		bool Test_GUI(Rendering::GraphicDevice& graphicDevice)
 		{
 			using namespace Rendering;
 			using namespace GUI;

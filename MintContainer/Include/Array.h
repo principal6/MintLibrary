@@ -36,7 +36,7 @@ namespace mint
 		constexpr const T& operator[](const uint32 index) const noexcept;
 
 	public:
-		constexpr uint32 size() const noexcept;
+		constexpr uint32 Size() const noexcept;
 
 	private:
 		T _data[maxSize]{};

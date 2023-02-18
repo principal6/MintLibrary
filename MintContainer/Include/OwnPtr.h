@@ -19,7 +19,7 @@ namespace mint
 		OwnPtr(T* const rawPointer) : _rawPointer{ rawPointer } { __noop; }
 		OwnPtr(const OwnPtr& rhs) = delete;
 		OwnPtr(OwnPtr&& rhs) : _rawPointer{ rhs._rawPointer } { rhs._rawPointer = nullptr; }
-		~OwnPtr() { release(); }
+		~OwnPtr() { Release(); }
 
 	public:
 		OwnPtr& operator=(const OwnPtr& rhs) noexcept = delete;
@@ -42,10 +42,10 @@ namespace mint
 		const T* operator->() const noexcept { return _rawPointer; }
 
 	public:
-		void assign(T*&& rawPointer) noexcept { release(); _rawPointer = rawPointer; rawPointer = nullptr; }
-		void release() noexcept { MINT_DELETE(_rawPointer); }
-		T* get() noexcept { return _rawPointer; }
-		constexpr uint64 size() { return sizeof(T); }
+		void Assign(T*&& rawPointer) noexcept { Release(); _rawPointer = rawPointer; rawPointer = nullptr; }
+		void Release() noexcept { MINT_DELETE(_rawPointer); }
+		T* Get() noexcept { return _rawPointer; }
+		constexpr uint64 Size() { return sizeof(T); }
 
 	private:
 		T* _rawPointer;

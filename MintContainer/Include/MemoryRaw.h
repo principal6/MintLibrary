@@ -14,58 +14,58 @@ namespace mint
 	{
 #pragma region Type Traits
 		template<typename T>
-		constexpr bool isConstructible() noexcept;
+		constexpr bool IsConstructible() noexcept;
 
 		template<typename T>
-		constexpr bool isDefaultConstructible() noexcept;
+		constexpr bool IsDefaultConstructible() noexcept;
 
 		template<typename T>
-		constexpr bool isCopyConstructible() noexcept;
+		constexpr bool IsCopyConstructible() noexcept;
 
 		template<typename T>
-		constexpr bool isCopyAssignable() noexcept;
+		constexpr bool IsCopyAssignable() noexcept;
 
 		template<typename T>
-		constexpr bool isCopiable() noexcept;
+		constexpr bool IsCopiable() noexcept;
 
 		template<typename T>
-		constexpr bool isMoveConstructible() noexcept;
+		constexpr bool IsMoveConstructible() noexcept;
 
 		template<typename T>
-		constexpr bool isMoveAssignable() noexcept;
+		constexpr bool IsMoveAssignable() noexcept;
 
 		template<typename T>
-		constexpr bool isMovable() noexcept;
+		constexpr bool IsMovable() noexcept;
 #pragma endregion
 
 
 		template<typename T>
-		T* allocateMemory(const uint32 size) noexcept;
+		T* AllocateMemory(const uint32 size) noexcept;
 
 		template<typename T>
-		void moveMemory(T* const to, const T* const from, const uint32 count) noexcept;
+		void MoveMemory_(T* const to, const T* const from, const uint32 count) noexcept;
 
 		template<typename T>
-		void deallocateMemory(T*& rawPointer) noexcept;
+		void DeallocateMemory(T*& rawPointer) noexcept;
 
 
 		template<typename T>
-		void construct(T& at) noexcept;
+		void Construct(T& at) noexcept;
 
 		template<typename T>
-		void copyAssign(T& to, const T& from) noexcept;
+		void CopyAssign(T& to, const T& from) noexcept;
 
 		template<typename T>
-		void moveAssign(T& to, T&& from) noexcept;
+		void MoveAssign(T& to, T&& from) noexcept;
 
 		template<typename T>
-		void copyConstruct(T& to, const T& from) noexcept;
+		void CopyConstruct(T& to, const T& from) noexcept;
 
 		template<typename T>
-		void moveConstruct(T& to, T&& from) noexcept;
+		void MoveConstruct(T& to, T&& from) noexcept;
 
 		template<typename T>
-		void destroy(T& at) noexcept;
+		void Destroy(T& at) noexcept;
 	}
 }
 

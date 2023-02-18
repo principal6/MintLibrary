@@ -103,13 +103,13 @@ namespace mint
 #pragma region Binary File Writer
 	MINT_INLINE void BinaryFileWriter::clear()
 	{
-		_bytes.clear();
+		_bytes.Clear();
 	}
 
 	template <typename T>
 	MINT_INLINE void BinaryFileWriter::write(const T& in) noexcept
 	{
-		const uint32 currentSize{ static_cast<uint32>(_bytes.size()) };
+		const uint32 currentSize{ static_cast<uint32>(_bytes.Size()) };
 		const uint32 deltaSize{ static_cast<uint32>(sizeof(in)) };
 		_writeInternal(&in, currentSize, deltaSize);
 	}
@@ -117,28 +117,28 @@ namespace mint
 	template <typename T>
 	MINT_INLINE void BinaryFileWriter::write(T&& in) noexcept
 	{
-		const uint32 currentSize{ static_cast<uint32>(_bytes.size()) };
+		const uint32 currentSize{ static_cast<uint32>(_bytes.Size()) };
 		const uint32 deltaSize{ static_cast<uint32>(sizeof(in)) };
 		_writeInternal(&in, currentSize, deltaSize);
 	}
 
 	MINT_INLINE void BinaryFileWriter::write(const char* const in) noexcept
 	{
-		const uint32 currentSize{ static_cast<uint32>(_bytes.size()) };
-		const uint32 deltaSize{ StringUtil::length(in) + 1 };
+		const uint32 currentSize{ static_cast<uint32>(_bytes.Size()) };
+		const uint32 deltaSize{ StringUtil::Length(in) + 1 };
 		_writeInternal(in, currentSize, deltaSize);
 	}
 
 	MINT_INLINE void BinaryFileWriter::write(const void* const in, const uint32 byteCount) noexcept
 	{
-		const uint32 currentSize{ static_cast<uint32>(_bytes.size()) };
+		const uint32 currentSize{ static_cast<uint32>(_bytes.Size()) };
 		const uint32 deltaSize{ byteCount };
 		_writeInternal(in, currentSize, deltaSize);
 	}
 
 	MINT_INLINE void BinaryFileWriter::_writeInternal(const void* const in, const uint32 currentSize, const uint32 deltaSize) noexcept
 	{
-		_bytes.resize(static_cast<uint64>(currentSize) + deltaSize);
+		_bytes.Resize(static_cast<uint64>(currentSize) + deltaSize);
 		::memcpy(&_bytes[currentSize], in, deltaSize);
 	}
 #pragma endregion

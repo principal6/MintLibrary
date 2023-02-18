@@ -62,12 +62,12 @@ namespace mint
 			ConvexShape2D shape;
 			shape._center = Float2(0, 0);
 
-			shape._vertices.clear();
-			for (uint32 i = 0; i < a._vertices.size(); i++)
+			shape._vertices.Clear();
+			for (uint32 i = 0; i < a._vertices.Size(); i++)
 			{
-				for (uint32 j = 0; j < b._vertices.size(); j++)
+				for (uint32 j = 0; j < b._vertices.Size(); j++)
 				{
-					shape._vertices.push_back(a._vertices[i] - b._vertices[j]);
+					shape._vertices.PushBack(a._vertices[i] - b._vertices[j]);
 				}
 			}
 			GrahamScan_convexify(shape._vertices);
@@ -78,7 +78,7 @@ namespace mint
 		{
 			shapeRendererContext.setColor(color);
 
-			const uint32 vertexCount = _vertices.size();
+			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 1; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				shapeRendererContext.drawLine(offset + _vertices[vertexIndex - 1], offset + _vertices[vertexIndex], 1.0f);
@@ -87,14 +87,14 @@ namespace mint
 
 		Float2 ConvexShape2D::computeSupportPoint(const Float2& direction) const
 		{
-			if (_vertices.empty())
+			if (_vertices.IsEmpty())
 			{
 				return Float2::kZero;
 			}
 
 			float maxDotProduct = -Math::kFloatMax;
 			uint32 targetVertexIndex = 0;
-			const uint32 vertexCount = _vertices.size();
+			const uint32 vertexCount = _vertices.Size();
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				const float dotProduct = direction.dot(_vertices[vertexIndex]);
@@ -110,7 +110,7 @@ namespace mint
 		uint32 ConvexShape2D::GrahamScan_findStartPoint(const Vector<Float2>& points)
 		{
 			Float2 min = Float2(10000.0f, -10000.0f);
-			const uint32 pointCount = points.size();
+			const uint32 pointCount = points.Size();
 			uint32 startPointIndex = 0;
 			for (uint32 pointIndex = 0; pointIndex < pointCount; pointIndex++)
 			{
@@ -149,7 +149,7 @@ namespace mint
 			{
 				bool operator()(const AngleIndex& lhs, const AngleIndex& rhs) const { return lhs._theta < rhs._theta; }
 			};
-			const uint32 pointCount = inoutPoints.size();
+			const uint32 pointCount = inoutPoints.Size();
 			Vector<AngleIndex> angleIndices;
 			for (uint32 pointIndex = 0; pointIndex < pointCount; pointIndex++)
 			{
@@ -160,21 +160,21 @@ namespace mint
 
 				const float2 v = inoutPoints[pointIndex] - startPoint;
 				const float theta = ::atan2f(-v._y, v._x);
-				angleIndices.push_back(AngleIndex(theta, pointIndex));
+				angleIndices.PushBack(AngleIndex(theta, pointIndex));
 			}
 			quickSort(angleIndices, AngleIndexComparator());
 			Vector<Float2> orderedPoints;
-			orderedPoints.push_back(startPoint);
+			orderedPoints.PushBack(startPoint);
 			for (const AngleIndex& angleIndex : angleIndices)
 			{
-				orderedPoints.push_back(inoutPoints[angleIndex._index]);
+				orderedPoints.PushBack(inoutPoints[angleIndex._index]);
 			}
 			inoutPoints = orderedPoints;
 		}
 
 		void ConvexShape2D::GrahamScan_convexify(Vector<Float2>& inoutPoints)
 		{
-			if (inoutPoints.empty())
+			if (inoutPoints.IsEmpty())
 			{
 				return;
 			}
@@ -182,13 +182,13 @@ namespace mint
 			GrahamScan_sortPoints(inoutPoints);
 
 			Vector<uint32> convexPointIndices;
-			convexPointIndices.reserve(inoutPoints.size());
-			convexPointIndices.push_back(0);
-			convexPointIndices.push_back(1);
-			for (uint32 i = 2; i < inoutPoints.size(); i++)
+			convexPointIndices.Reserve(inoutPoints.Size());
+			convexPointIndices.PushBack(0);
+			convexPointIndices.PushBack(1);
+			for (uint32 i = 2; i < inoutPoints.Size(); i++)
 			{
-				const uint32 index_c = convexPointIndices[convexPointIndices.size() - 2];
-				const uint32 index_b = convexPointIndices[convexPointIndices.size() - 1];
+				const uint32 index_c = convexPointIndices[convexPointIndices.Size() - 2];
+				const uint32 index_b = convexPointIndices[convexPointIndices.Size() - 1];
 				const uint32 index_a = i;
 				const Float2& c = inoutPoints[index_c];
 				const Float2& b = inoutPoints[index_b];
@@ -199,20 +199,20 @@ namespace mint
 				const bool is_counter_clockwise_or_straight = ba_x_cb._z >= 0.0f;
 				if (is_counter_clockwise_or_straight)
 				{
-					convexPointIndices.push_back(index_a);
+					convexPointIndices.PushBack(index_a);
 				}
 				else
 				{
-					convexPointIndices.pop_back();
+					convexPointIndices.PopBack();
 					--i;
 				}
 			}
 
 			Vector<Float2> convexPoints;
-			convexPoints.reserve(convexPointIndices.size());
+			convexPoints.Reserve(convexPointIndices.Size());
 			for (const uint32 convexPointIndex : convexPointIndices)
 			{
-				convexPoints.push_back(inoutPoints[convexPointIndex]);
+				convexPoints.PushBack(inoutPoints[convexPointIndex]);
 			}
 			inoutPoints = convexPoints;
 		}

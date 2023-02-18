@@ -48,7 +48,7 @@ int main()
 #if defined MINT_DEBUG
 	//Logger::setOutputFileName("LOG.txt");
 	TestMath::test();
-	TestContainers::test();
+	TestContainers::Test();
 	TestPlatform::test();
 	TestLanguage::test();
 	TestReflection::test();
@@ -73,7 +73,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 	ImageRenderer imageRenderer{ graphicDevice, 0, ByteColor(0, 0, 0, 0) };
 	ByteColorImage byteColorImage;
 	ImageLoader imageLoader;
-	imageLoader.loadImage("Assets/test_image.png", byteColorImage);
+	imageLoader.loadImage("Assets/Test_image.png", byteColorImage);
 	DxResourcePool& resourcePool = graphicDevice.getResourcePool();
 	const GraphicObjectID textureID = resourcePool.addTexture2D(DxTextureFormat::R8G8B8A8_UNORM, byteColorImage.getBytes(), byteColorImage.getWidth(), byteColorImage.getHeight());
 	resourcePool.getResource(textureID).bindToShader(GraphicShaderType::PixelShader, 0);

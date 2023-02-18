@@ -26,14 +26,14 @@ namespace mint
 	{
 		if (_string != nullptr && _string[_byteAt] != 0)
 		{
-			_byteAt += StringUtil::countBytesInCharCode(_string[_byteAt]);
+			_byteAt += StringUtil::CountBytesInCharCode(_string[_byteAt]);
 		}
 		return (*this);
 	}
 
 	MINT_INLINE U8CharCode U8CharCodeViewer::ConstIterator::operator*() const noexcept
 	{
-		return StringUtil::encode(_string, _byteAt);
+		return StringUtil::Encode(_string, _byteAt);
 	}
 
 	MINT_INLINE bool U8CharCodeViewer::ConstIterator::operator!=(const ConstIterator& rhs) const
@@ -46,12 +46,12 @@ namespace mint
 	namespace StringUtil
 	{
 		template<typename T>
-		MINT_INLINE constexpr bool isNullOrEmpty(const T* const string)
+		MINT_INLINE constexpr bool IsNullOrEmpty(const T* const string)
 		{
 			return (string == nullptr || string[0] == 0);
 		}
 
-		MINT_INLINE constexpr bool is7BitASCII(const char8_t* const string)
+		MINT_INLINE constexpr bool Is7BitASCII(const char8_t* const string)
 		{
 			for (uint32 at = 0; string[at] != 0; ++at)
 			{
@@ -64,7 +64,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE constexpr uint32 length(const T* const string)
+		MINT_INLINE constexpr uint32 Length(const T* const string)
 		{
 			if (string == nullptr)
 			{
@@ -81,19 +81,19 @@ namespace mint
 		}
 
 		template <typename T>
-		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const T leadingByte)
+		MINT_INLINE constexpr uint32 CountBytesFromLeadingByte(const T leadingByte)
 		{
 			return 1;
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const wchar_t leadingByte)
+		MINT_INLINE constexpr uint32 CountBytesFromLeadingByte(const wchar_t leadingByte)
 		{
 			return 2;
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const char8_t leadingByte)
+		MINT_INLINE constexpr uint32 CountBytesFromLeadingByte(const char8_t leadingByte)
 		{
 			//                       RESULT == ((x >> 3) ^ 1) + (x >> 3) * ( 1 + ((x + 1) >> 4) + ((x >> 2) & 1) + ((x >> 1) & 1) )
 			//                      ----------------------------------------------------------------------------------------------
@@ -106,18 +106,18 @@ namespace mint
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 countBytesFromLeadingByte(const char leadingByte)
+		MINT_INLINE constexpr uint32 CountBytesFromLeadingByte(const char leadingByte)
 		{
 			return 1 + ((leadingByte >> 7) & 1);
 		}
 
-		MINT_INLINE constexpr uint32 countBytesInCharCode(const U8CharCode u8CharCode)
+		MINT_INLINE constexpr uint32 CountBytesInCharCode(const U8CharCode u8CharCode)
 		{
-			return countBytesFromLeadingByte(static_cast<char8_t>(u8CharCode & 0xFF));
+			return CountBytesFromLeadingByte(static_cast<char8_t>(u8CharCode & 0xFF));
 		}
 
 		template <typename T>
-		MINT_INLINE constexpr uint32 getBytePosition(const T* const string, const uint32 charPosition)
+		MINT_INLINE constexpr uint32 GetBytePosition(const T* const string, const uint32 charPosition)
 		{
 			if (charPosition == 0)
 			{
@@ -127,7 +127,7 @@ namespace mint
 			uint32 characterPositionCmp = 0;
 			for (uint32 bytePosition = 0; string[bytePosition] != 0;)
 			{
-				bytePosition += countBytesFromLeadingByte<T>(string[bytePosition]);
+				bytePosition += CountBytesFromLeadingByte<T>(string[bytePosition]);
 				++characterPositionCmp;
 
 				if (characterPositionCmp == charPosition)
@@ -139,12 +139,12 @@ namespace mint
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 getBytePosition(const wchar_t* const string, const uint32 characterPosition)
+		MINT_INLINE constexpr uint32 GetBytePosition(const wchar_t* const string, const uint32 characterPosition)
 		{
 			return characterPosition * 2;
 		}
 
-		MINT_INLINE constexpr uint32 countChars(const char* const string)
+		MINT_INLINE constexpr uint32 CountChars(const char* const string)
 		{
 			if (string == nullptr)
 			{
@@ -163,7 +163,7 @@ namespace mint
 			return length;
 		}
 
-		MINT_INLINE constexpr uint32 countChars(const wchar_t* const string)
+		MINT_INLINE constexpr uint32 CountChars(const wchar_t* const string)
 		{
 			if (string == nullptr)
 			{
@@ -177,7 +177,7 @@ namespace mint
 			return at;
 		}
 
-		MINT_INLINE constexpr uint32 countChars(const char8_t* const string)
+		MINT_INLINE constexpr uint32 CountChars(const char8_t* const string)
 		{
 			if (string == nullptr)
 			{
@@ -192,20 +192,20 @@ namespace mint
 					return length;
 				}
 
-				at += countBytesInCharCode(string[at]);
+				at += CountBytesInCharCode(string[at]);
 			}
 		}
 
 		template <typename T>
-		MINT_INLINE constexpr uint32 find(const T* const string, const T* const substring, uint32 offset)
+		MINT_INLINE constexpr uint32 Find(const T* const string, const T* const substring, uint32 offset)
 		{
 			if (string == nullptr || substring == nullptr)
 			{
 				return kStringNPos;
 			}
 
-			const uint32 stringLength = StringUtil::length(string);
-			const uint32 substringLength = StringUtil::length(substring);
+			const uint32 stringLength = StringUtil::Length(string);
+			const uint32 substringLength = StringUtil::Length(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;
@@ -252,21 +252,21 @@ namespace mint
 		}
 		
 		template <typename T>
-		MINT_INLINE constexpr bool contains(const T* const string, const T* const substring)
+		MINT_INLINE constexpr bool Contains(const T* const string, const T* const substring)
 		{
-			return StringUtil::find(string, substring, 0) != kStringNPos;
+			return StringUtil::Find(string, substring, 0) != kStringNPos;
 		}
 
 		template <>
-		MINT_INLINE constexpr uint32 find(const wchar_t* const string, const wchar_t* const substring, uint32 offset)
+		MINT_INLINE constexpr uint32 Find(const wchar_t* const string, const wchar_t* const substring, uint32 offset)
 		{
 			if (string == nullptr || substring == nullptr)
 			{
 				return kStringNPos;
 			}
 
-			const uint32 stringLength = StringUtil::length(string);
-			const uint32 substringLength = StringUtil::length(substring);
+			const uint32 stringLength = StringUtil::Length(string);
+			const uint32 substringLength = StringUtil::Length(substring);
 			if (stringLength < offset + substringLength)
 			{
 				return kStringNPos;
@@ -299,7 +299,7 @@ namespace mint
 		}
 
 		template <typename T>
-		MINT_INLINE constexpr bool compare(const T* const a, const T* const b)
+		MINT_INLINE constexpr bool Equals(const T* const a, const T* const b)
 		{
 			// nullptr == nullptr
 			// ptr == ptr
@@ -324,19 +324,19 @@ namespace mint
 		}
 
 		template<uint32 DestSize>
-		MINT_INLINE void copy(char8_t(&dest)[DestSize], const char8_t* const source)
+		MINT_INLINE void Copy(char8_t(&dest)[DestSize], const char8_t* const source)
 		{
 			if (source == nullptr)
 			{
 				return;
 			}
-			const uint32 length = Min(DestSize - 1, StringUtil::length(source));
+			const uint32 length = Min(DestSize - 1, StringUtil::Length(source));
 			::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * length);
 			dest[length] = 0;
 		}
 
 		template<uint32 DestSize>
-		MINT_INLINE void copy(char(&dest)[DestSize], const char* const source)
+		MINT_INLINE void Copy(char(&dest)[DestSize], const char* const source)
 		{
 			if (source == nullptr)
 			{
@@ -346,7 +346,7 @@ namespace mint
 		}
 
 		template<uint32 DestSize>
-		MINT_INLINE void copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
+		MINT_INLINE void Copy(wchar_t(&dest)[DestSize], const wchar_t* const source)
 		{
 			if (source == nullptr)
 			{
@@ -356,7 +356,7 @@ namespace mint
 		}
 
 		template<typename T>
-		MINT_INLINE void copy(T* dest, const T* const source, const uint32 byteCount)
+		MINT_INLINE void Copy(T* dest, const T* const source, const uint32 byteCount)
 		{
 			if (dest == nullptr || source == nullptr)
 			{

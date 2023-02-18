@@ -13,39 +13,39 @@ namespace mint
 		std::ifstream ifs{ fileName, std::ifstream::binary };
 		if (ifs.is_open() == false)
 		{
-			_byteArray.clear();
+			_byteArray.Clear();
 			return false;
 		}
 
-		_byteArray.clear();
+		_byteArray.Clear();
 
 		bool isBomChecked = false;
 		while (ifs.eof() == false)
 		{
 			byte readByte{ static_cast<byte>(ifs.get()) };
-			_byteArray.push_back(readByte);
+			_byteArray.PushBack(readByte);
 
 			// BOM 확인
-			if (isBomChecked == false && _byteArray.size() == 3)
+			if (isBomChecked == false && _byteArray.Size() == 3)
 			{
-				if (_byteArray.at(0) == 0xEF &&
-					_byteArray.at(1) == 0xBB &&
-					_byteArray.at(2) == 0xBF)
+				if (_byteArray.At(0) == 0xEF &&
+					_byteArray.At(1) == 0xBB &&
+					_byteArray.At(2) == 0xBF)
 				{
 					// UTF-8 (BOM)
 					_encoding = TextFileEncoding::UTF8_BOM;
-					_byteArray.clear();
+					_byteArray.Clear();
 
 					isBomChecked = true;
 				}
 			}
 		}
 
-		if (_byteArray.empty() == false)
+		if (_byteArray.IsEmpty() == false)
 		{
-			if (_byteArray.back() == 255)
+			if (_byteArray.Back() == 255)
 			{
-				_byteArray.back() = 0;
+				_byteArray.Back() = 0;
 			}
 		}
 
@@ -54,22 +54,22 @@ namespace mint
 
 	bool TextFileReader::isOpen() const noexcept
 	{
-		return !_byteArray.empty();
+		return !_byteArray.IsEmpty();
 	}
 
 	uint32 TextFileReader::getFileSize() const noexcept
 	{
-		return static_cast<uint32>(_byteArray.size());
+		return static_cast<uint32>(_byteArray.Size());
 	}
 
 	char TextFileReader::get(const uint32 at) const noexcept
 	{
-		return static_cast<char>(_byteArray.at(at));
+		return static_cast<char>(_byteArray.At(at));
 	}
 
 	const char* TextFileReader::get() const noexcept
 	{
-		return reinterpret_cast<const char*>(&_byteArray.front());
+		return reinterpret_cast<const char*>(&_byteArray.Front());
 	}
 
 	bool TextFileWriter::save(const char* const fileName)
@@ -79,7 +79,7 @@ namespace mint
 		{
 			return false;
 		}
-		if (_byteArray.empty() == true)
+		if (_byteArray.IsEmpty() == true)
 		{
 			return false;
 		}
@@ -87,11 +87,11 @@ namespace mint
 		if (_encoding == TextFileEncoding::UTF8_BOM)
 		{
 			bool writeBom = true;
-			if (_byteArray.size() >= 3)
+			if (_byteArray.Size() >= 3)
 			{
-				if (_byteArray.at(0) == 0xEF &&
-					_byteArray.at(1) == 0xBB &&
-					_byteArray.at(2) == 0xBF)
+				if (_byteArray.At(0) == 0xEF &&
+					_byteArray.At(1) == 0xBB &&
+					_byteArray.At(2) == 0xBF)
 				{
 					writeBom = false;
 				}
@@ -106,18 +106,18 @@ namespace mint
 			}
 		}
 
-		ofs.write(reinterpret_cast<const char*>(&_byteArray.front()), _byteArray.size());
+		ofs.write(reinterpret_cast<const char*>(&_byteArray.Front()), _byteArray.Size());
 		return false;
 	}
 
 	void TextFileWriter::clear()
 	{
-		_byteArray.clear();
+		_byteArray.Clear();
 	}
 
 	void TextFileWriter::write(const char ch) noexcept
 	{
-		_byteArray.push_back(ch);
+		_byteArray.PushBack(ch);
 	}
 
 	void TextFileWriter::write(const char* const text) noexcept
@@ -127,10 +127,10 @@ namespace mint
 			return;
 		}
 
-		const uint32 length = StringUtil::length(text);
+		const uint32 length = StringUtil::Length(text);
 		for (uint32 at = 0; at < length; ++at)
 		{
-			_byteArray.push_back(text[at]);
+			_byteArray.PushBack(text[at]);
 		}
 	}
 }

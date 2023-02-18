@@ -36,7 +36,7 @@ namespace mint
 
 		serialize_internal(0, StringReferenceA(""), from);
 
-		return _writer.save(fileName.c_str());
+		return _writer.save(fileName.CString());
 	}
 
 	template<typename CharType, typename T>
@@ -53,7 +53,7 @@ namespace mint
 			_writer.write("{\n");
 
 			const ReflectionData& reflectionData = from.getReflectionData();
-			const uint32 memberCount = reflectionData._memberTypeDatas.size();
+			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
@@ -79,8 +79,8 @@ namespace mint
 			serialize_helper_declaration(declarationName);
 
 			StackString<CharType, 256> buffer;
-			StringUtil::toString(from, buffer);
-			_writer.write(buffer.c_str());
+			StringUtil::ToString(from, buffer);
+			_writer.write(buffer.CString());
 		}
 		else
 		{
@@ -95,7 +95,7 @@ namespace mint
 		serialize_helper_declaration(declarationName);
 
 		_writer.write("\"");
-		_writer.write(from.c_str());
+		_writer.write(from.CString());
 		_writer.write("\"");
 	}
 
@@ -106,7 +106,7 @@ namespace mint
 		serialize_helper_declaration(declarationName);
 
 		_writer.write("\"");
-		_writer.write(from.c_str());
+		_writer.write(from.CString());
 		_writer.write("\"");
 	}
 
@@ -115,7 +115,7 @@ namespace mint
 	{
 		serialize_helper_arrayPrefix(depth, declarationName);
 
-		const uint32 count = from.size();
+		const uint32 count = from.Size();
 		for (uint32 index = 0; index < count; ++index)
 		{
 			serialize_helper_arrayItem(depth, declarationName, from[index], index == count - 1);
@@ -144,7 +144,7 @@ namespace mint
 	inline void JSONSerializer::serialize_helper_declaration(const StringReference<CharType>& declarationName)
 	{
 		_writer.write("\"");
-		_writer.write(declarationName.c_str());
+		_writer.write(declarationName.CString());
 		_writer.write("\": ");
 	}
 

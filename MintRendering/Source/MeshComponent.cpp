@@ -38,7 +38,7 @@ namespace mint
 
 		const VS_INPUT* MeshComponent::getVertices() const noexcept
 		{
-			return (_meshData._vertexArray.empty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
+			return (_meshData._vertexArray.IsEmpty()) ? &MeshData::kNullVertex : &_meshData._vertexArray[0];
 		}
 
 		uint32 MeshComponent::getIndexCount() const noexcept
@@ -48,7 +48,7 @@ namespace mint
 
 		const IndexElementType* MeshComponent::getIndices() const noexcept
 		{
-			return (_meshData._faceArray.empty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
+			return (_meshData._faceArray.IsEmpty() == true) ? &MeshData::kNullIndex : &_meshData._faceArray[0]._vertexIndexArray[0];
 		}
 
 		void MeshComponent::shouldDrawNormals(const bool shouldDrawNormals) noexcept

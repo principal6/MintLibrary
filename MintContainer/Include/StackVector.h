@@ -10,7 +10,7 @@
 
 namespace mint
 {
-	template<typename T, const uint32 Capacity>
+	template<typename T, const uint32 kCapacity>
 	class StackVector
 	{
 	public:
@@ -22,29 +22,29 @@ namespace mint
 		const T& operator[](const uint32 index) const;
 
 	public:
-		void resize(const uint32 size);
-		void push_back(const T& entry);
-		void push_back(T&& entry);
-		void pop_back();
-		void clear();
+		void Resize(const uint32 size);
+		void PushBack(const T& entry);
+		void PushBack(T&& entry);
+		void PopBack();
+		void Clear();
 
 	public:
-		T& front();
-		const T& front() const;
-		T& back();
-		const T& back() const;
-		T& at(const uint32 index) noexcept;
-		const T& at(const uint32 index) const noexcept;
-		const T* data() const noexcept { return _array; }
+		T& Front();
+		const T& Front() const;
+		T& Back();
+		const T& Back() const;
+		T& At(const uint32 index) noexcept;
+		const T& At(const uint32 index) const noexcept;
+		const T* Data() const noexcept { return _array; }
 
 	public:
-		constexpr uint32 capacity() const { return Capacity; }
-		uint32 size() const { return _size; }
-		bool empty() const { return size() == 0; }
-		bool full() const { return size() == Capacity; }
+		constexpr uint32 Capacity() const { return kCapacity; }
+		uint32 Size() const { return _size; }
+		bool IsEmpty() const { return Size() == 0; }
+		bool IsFull() const { return Size() == kCapacity; }
 
 	private:
-		T _array[Capacity];
+		T _array[kCapacity];
 		uint32 _size;
 	};
 }

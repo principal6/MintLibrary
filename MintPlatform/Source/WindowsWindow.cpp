@@ -33,18 +33,18 @@ namespace mint
 			static std::mutex mutex;
 			std::lock_guard<std::mutex> lock{ mutex };
 
-			if (_hWndMap.find(hWnd).isValid() == false)
+			if (_hWndMap.Find(hWnd).IsValid() == false)
 			{
-				_windowArray.push_back(windowsWindow);
-				_hWndMap.insert(hWnd, static_cast<uint8>(_windowArray.size() - 1));
+				_windowArray.PushBack(windowsWindow);
+				_hWndMap.Insert(hWnd, static_cast<uint8>(_windowArray.Size() - 1));
 			}
 		}
 
 		LRESULT WindowsWindowPool::redirectMessage(const HWND hWnd, const UINT Msg, const WPARAM wParam, const LPARAM lParam)
 		{
-			if (_hWndMap.find(hWnd).isValid() == true)
+			if (_hWndMap.Find(hWnd).IsValid() == true)
 			{
-				const uint8 at = _hWndMap.at(hWnd);
+				const uint8 at = _hWndMap.At(hWnd);
 				return _windowArray[at]->processDefaultMessage(Msg, wParam, lParam);
 			}
 			return ::DefWindowProcW(hWnd, Msg, wParam, lParam);
@@ -176,71 +176,71 @@ namespace mint
 			MINT_WINDOW_RETURN_OK;
 		}
 
-		void WindowsWindow::destroy() noexcept
+		void WindowsWindow::Destroy() noexcept
 		{
-			__super::destroy();
+			__super::Destroy();
 
 			::DestroyWindow(_hWnd);
 		}
 
 		void WindowsWindow::buildWparamKeyCodePairArray() noexcept
 		{
-			_wParamKeyCodePairArray.clear();
+			_wParamKeyCodePairArray.Clear();
 
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_ESCAPE, Platform::KeyCode::Escape));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RETURN, Platform::KeyCode::Enter));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_UP, Platform::KeyCode::Up));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DOWN, Platform::KeyCode::Down));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_LEFT, Platform::KeyCode::Left));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_RIGHT, Platform::KeyCode::Right));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_DELETE, Platform::KeyCode::Delete));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_HOME, Platform::KeyCode::Home));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_END, Platform::KeyCode::End));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SHIFT, Platform::KeyCode::Shift));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_CONTROL, Platform::KeyCode::Control));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_MENU, Platform::KeyCode::Alt));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair(VK_SPACE, Platform::KeyCode::SpaceBar));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('A', Platform::KeyCode::A));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('B', Platform::KeyCode::B));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('C', Platform::KeyCode::C));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('D', Platform::KeyCode::D));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('E', Platform::KeyCode::E));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('F', Platform::KeyCode::F));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('G', Platform::KeyCode::G));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('H', Platform::KeyCode::H));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('I', Platform::KeyCode::I));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('J', Platform::KeyCode::J));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('K', Platform::KeyCode::K));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('L', Platform::KeyCode::L));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('M', Platform::KeyCode::M));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('N', Platform::KeyCode::N));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('O', Platform::KeyCode::O));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('P', Platform::KeyCode::P));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('Q', Platform::KeyCode::Q));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('R', Platform::KeyCode::R));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('S', Platform::KeyCode::S));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('T', Platform::KeyCode::T));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('U', Platform::KeyCode::U));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('V', Platform::KeyCode::V));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('W', Platform::KeyCode::W));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('X', Platform::KeyCode::X));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('Y', Platform::KeyCode::Y));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('Z', Platform::KeyCode::Z));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('0', Platform::KeyCode::Num0));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('1', Platform::KeyCode::Num1));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('2', Platform::KeyCode::Num2));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('3', Platform::KeyCode::Num3));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('4', Platform::KeyCode::Num4));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('5', Platform::KeyCode::Num5));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('6', Platform::KeyCode::Num6));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('7', Platform::KeyCode::Num7));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('8', Platform::KeyCode::Num8));
-			_wParamKeyCodePairArray.push_back(WparamKeyCodePair('9', Platform::KeyCode::Num9));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_ESCAPE, Platform::KeyCode::Escape));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_RETURN, Platform::KeyCode::Enter));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_UP, Platform::KeyCode::Up));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_DOWN, Platform::KeyCode::Down));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_LEFT, Platform::KeyCode::Left));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_RIGHT, Platform::KeyCode::Right));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_DELETE, Platform::KeyCode::Delete));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_HOME, Platform::KeyCode::Home));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_END, Platform::KeyCode::End));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_SHIFT, Platform::KeyCode::Shift));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_CONTROL, Platform::KeyCode::Control));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_MENU, Platform::KeyCode::Alt));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair(VK_SPACE, Platform::KeyCode::SpaceBar));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('A', Platform::KeyCode::A));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('B', Platform::KeyCode::B));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('C', Platform::KeyCode::C));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('D', Platform::KeyCode::D));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('E', Platform::KeyCode::E));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('F', Platform::KeyCode::F));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('G', Platform::KeyCode::G));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('H', Platform::KeyCode::H));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('I', Platform::KeyCode::I));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('J', Platform::KeyCode::J));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('K', Platform::KeyCode::K));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('L', Platform::KeyCode::L));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('M', Platform::KeyCode::M));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('N', Platform::KeyCode::N));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('O', Platform::KeyCode::O));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('P', Platform::KeyCode::P));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('Q', Platform::KeyCode::Q));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('R', Platform::KeyCode::R));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('S', Platform::KeyCode::S));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('T', Platform::KeyCode::T));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('U', Platform::KeyCode::U));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('V', Platform::KeyCode::V));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('W', Platform::KeyCode::W));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('X', Platform::KeyCode::X));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('Y', Platform::KeyCode::Y));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('Z', Platform::KeyCode::Z));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('0', Platform::KeyCode::Num0));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('1', Platform::KeyCode::Num1));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('2', Platform::KeyCode::Num2));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('3', Platform::KeyCode::Num3));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('4', Platform::KeyCode::Num4));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('5', Platform::KeyCode::Num5));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('6', Platform::KeyCode::Num6));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('7', Platform::KeyCode::Num7));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('8', Platform::KeyCode::Num8));
+			_wParamKeyCodePairArray.PushBack(WparamKeyCodePair('9', Platform::KeyCode::Num9));
 		}
 
 		Platform::KeyCode WindowsWindow::convertWparamToKeyCode(const WPARAM wParam) const noexcept
 		{
-			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
+			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.Size());
 			for (uint32 iter = 0; iter < count; ++iter)
 			{
 				if (_wParamKeyCodePairArray[iter]._wParam == wParam)
@@ -253,7 +253,7 @@ namespace mint
 
 		WPARAM WindowsWindow::convertKeyCodeToWparam(const Platform::KeyCode keyCode) const noexcept
 		{
-			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.size());
+			const uint32 count = static_cast<uint32>(_wParamKeyCodePairArray.Size());
 			for (uint32 iter = 0; iter < count; ++iter)
 			{
 				if (_wParamKeyCodePairArray[iter]._keyCode == keyCode)
@@ -269,15 +269,15 @@ namespace mint
 			Platform::InputContext& inputContext = Platform::InputContext::getInstance();
 			inputContext.flushInputEvents();
 
-			if (::PeekMessageW(_msg.get(), nullptr, 0, 0, PM_REMOVE) == TRUE)
+			if (::PeekMessageW(_msg.Get(), nullptr, 0, 0, PM_REMOVE) == TRUE)
 			{
 				if (_msg->message == WM_QUIT)
 				{
-					destroy();
+					Destroy();
 				}
 
-				::TranslateMessage(_msg.get());
-				::DispatchMessageW(_msg.get());
+				::TranslateMessage(_msg.Get());
+				::DispatchMessageW(_msg.Get());
 			}
 			inputContext.processEvents();
 
@@ -340,7 +340,7 @@ namespace mint
 			::ClientToScreen(_hWnd, &rightBottom);
 
 			const Rect clientRect = Rect::fromLongs(leftTop.x, rightBottom.x, leftTop.y, rightBottom.y);
-			if (clientRect.contains(cursorPosition) == true)
+			if (clientRect.Contains(cursorPosition) == true)
 			{
 				::SetCursor(_cursorArray[static_cast<uint32>(_currentCursorType)]);
 			}
@@ -353,7 +353,7 @@ namespace mint
 
 		void WindowsWindow::textToClipboard(const wchar_t* const text, const uint32 textLength) const noexcept
 		{
-			if (StringUtil::isNullOrEmpty(text) == true)
+			if (StringUtil::IsNullOrEmpty(text) == true)
 			{
 				return;
 			}
@@ -388,7 +388,7 @@ namespace mint
 				wchar_t* const lockedWstring = reinterpret_cast<wchar_t*>(::GlobalLock(hClipboardData));
 				if (lockedWstring != nullptr)
 				{
-					const uint32 textLength = StringUtil::length(lockedWstring);
+					const uint32 textLength = StringUtil::Length(lockedWstring);
 					outText = lockedWstring;
 					::GlobalUnlock(hClipboardData);
 				}

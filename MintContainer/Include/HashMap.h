@@ -24,7 +24,7 @@ namespace mint
 	{
 		const Key* _key = nullptr;
 		Value* _value = nullptr;
-		MINT_INLINE bool isValid() const noexcept
+		MINT_INLINE bool IsValid() const noexcept
 		{
 			return (_key != nullptr) && (_value != nullptr);
 		}
@@ -35,7 +35,7 @@ namespace mint
 	{
 		const Key* _key = nullptr;
 		const Value* _value = nullptr;
-		MINT_INLINE bool isValid() const noexcept
+		MINT_INLINE bool IsValid() const noexcept
 		{
 			return (_key != nullptr) && (_value != nullptr);
 		}
@@ -77,25 +77,26 @@ namespace mint
 		~HashMap();
 
 	public:
-		bool contains(const Key& key) const noexcept;
+		bool Contains(const Key& key) const noexcept;
 
 	public:
 		template<typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> insert(const Key& key, const V& value) noexcept;
+		std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> Insert(const Key& key, const V& value) noexcept;
 
 		template<typename V = Value>
-		std::enable_if_t<std::is_copy_constructible<V>::value == false, void> insert(const Key& key, V&& value) noexcept;
+		std::enable_if_t<std::is_copy_constructible<V>::value == false, void> Insert(const Key& key, V&& value) noexcept;
+		
+		void Erase(const Key& key) noexcept;
+		void Clear() noexcept;
 
 	public:
-		KeyValuePair<Key, Value> find(const Key& key) const noexcept;
-		const Value& at(const Key& key) const noexcept;
-		Value& at(const Key& key) noexcept;
-		void erase(const Key& key) noexcept;
-		void clear() noexcept;
+		KeyValuePair<Key, Value> Find(const Key& key) const noexcept;
+		const Value& At(const Key& key) const noexcept;
+		Value& At(const Key& key) noexcept;
 
 	public:
-		uint32 size() const noexcept;
-		bool empty() const noexcept;
+		uint32 Size() const noexcept;
+		bool IsEmpty() const noexcept;
 
 	public:
 		class Iterator
@@ -114,7 +115,7 @@ namespace mint
 			}
 			Iterator& operator++() noexcept
 			{
-				_bucketIndex = _hashMap.getNextValidBucketIndex(_bucketIndex);
+				_bucketIndex = _hashMap.GetNextValidBucketIndex(_bucketIndex);
 				return *this;
 			}
 			Value& operator*() noexcept
@@ -132,27 +133,27 @@ namespace mint
 		Iterator end() noexcept;
 
 	private:
-		bool containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
+		bool ContainsInternal(const uint32 startBucketIndex, const Key& key) const noexcept;
 
 	private:
-		bool existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
+		bool ExistsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept;
 
 	private:
-		static Value& getInvalidValue() noexcept;
+		static Value& GetInvalidValue() noexcept;
 
 	private:
-		void resize() noexcept;
+		void Resize() noexcept;
 
 	private:
-		void setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
-		void setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
-		bool displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
-		void displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
+		void SetBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept;
+		void SetBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept;
+		bool Displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept;
+		void DisplaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept;
 
 	private:
-		uint32 computeSegmentIndex(const uint64 keyHash) const noexcept;
-		uint32 computeStartBucketIndex(const uint64 keyHash) const noexcept;
-		uint32 getNextValidBucketIndex(const uint32 currentBucketIndex) const;
+		uint32 ComputeSegmentIndex(const uint64 keyHash) const noexcept;
+		uint32 ComputeStartBucketIndex(const uint64 keyHash) const noexcept;
+		uint32 GetNextValidBucketIndex(const uint32 currentBucketIndex) const;
 
 	private:
 		static constexpr uint32 kAddRange = 32;

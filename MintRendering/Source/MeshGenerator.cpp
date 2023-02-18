@@ -15,8 +15,8 @@ namespace mint
 		{
 			VS_INPUT vertex;
 			vertex._positionU = meshData._positionArray[positionIndex];
-			meshData._vertexArray.push_back(vertex);
-			meshData._vertexToPositionTable.push_back(positionIndex);
+			meshData._vertexArray.PushBack(vertex);
+			meshData._vertexToPositionTable.PushBack(positionIndex);
 		}
 
 		MINT_INLINE void MeshGenerator::setVertexUv(MeshData& meshData, const uint32 vertexIndex, const float u, const float v) noexcept
@@ -89,7 +89,7 @@ namespace mint
 			face._vertexIndexArray[1] = vertexOffset + 1;
 			face._vertexIndexArray[2] = vertexOffset + 2;
 			computeTangentBitangent(face, meshData._vertexArray);
-			meshData._faceArray.push_back(face);
+			meshData._faceArray.PushBack(face);
 		}
 
 		void MeshGenerator::pushQuadFaceXXX(const uint32 vertexOffset, MeshData& meshData) noexcept
@@ -100,13 +100,13 @@ namespace mint
 			face._vertexIndexArray[1] = vertexOffset + 1;
 			face._vertexIndexArray[2] = vertexOffset + 2;
 			computeTangentBitangent(face, meshData._vertexArray);
-			meshData._faceArray.push_back(face);
+			meshData._faceArray.PushBack(face);
 
 			face._vertexIndexArray[0] = vertexOffset + 0;
 			face._vertexIndexArray[1] = vertexOffset + 2;
 			face._vertexIndexArray[2] = vertexOffset + 3;
 			computeTangentBitangent(face, meshData._vertexArray);
-			meshData._faceArray.push_back(face);
+			meshData._faceArray.PushBack(face);
 		}
 
 		void MeshGenerator::recomputeTangentBitangentFromNormal(const Float4& normal, VS_INPUT& vertex) noexcept
@@ -223,7 +223,7 @@ namespace mint
 				meshData._vertexArray[vertexIndex]._tangentV = tangent;
 				meshData._vertexArray[vertexIndex]._bitangentW = bitangent;
 			}
-			normalArray.clear();
+			normalArray.Clear();
 		}
 
 		void MeshGenerator::generateBox(const BoxParam& boxParam, MeshData& meshData) noexcept
@@ -231,7 +231,7 @@ namespace mint
 			meshData.clear();
 
 			// Vertex positions
-			meshData._positionArray.reserve(8);
+			meshData._positionArray.Reserve(8);
 			const Float3 halfExtents{ boxParam._width * 0.5f, boxParam._height * 0.5f, boxParam._depth * 0.5f };
 			pushPosition({ -halfExtents._x, +halfExtents._y, -halfExtents._z }, meshData);
 			pushPosition({ -halfExtents._x, +halfExtents._y, +halfExtents._z }, meshData);
@@ -255,7 +255,7 @@ namespace mint
 
 			// Position
 			{
-				meshData._positionArray.reserve(coneParam._sideCount + 2);
+				meshData._positionArray.Reserve(coneParam._sideCount + 2);
 
 				pushPosition({ 0.0f, coneParam._height, 0.0f }, meshData);
 
@@ -265,7 +265,7 @@ namespace mint
 			}
 
 			const int32 positionIndexTopCenter = 0;
-			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.size() - 1);
+			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.Size() - 1);
 
 			// Cone sides
 			_pushUpperUmbrellaTris(positionIndexTopCenter, 1, static_cast<uint8>(coneParam._sideCount), meshData);
@@ -284,7 +284,7 @@ namespace mint
 
 			// Position
 			{
-				meshData._positionArray.reserve(cylinderParam._sideCount * 2 + 2);
+				meshData._positionArray.Reserve(cylinderParam._sideCount * 2 + 2);
 
 				pushPosition({ 0.0f, cylinderParam._height, 0.0f }, meshData);
 
@@ -295,7 +295,7 @@ namespace mint
 			}
 
 			const int32 positionIndexTopCenter = 0;
-			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.size() - 1);
+			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.Size() - 1);
 
 			// Clylinder sides
 			_pushRingQuads(1, static_cast<uint8>(cylinderParam._sideCount), meshData);
@@ -324,7 +324,7 @@ namespace mint
 			const float polarAngleStep = Math::kPi / polarDetail;
 
 			// Position
-			meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
+			meshData._positionArray.Reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
 			for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
 			{
 				const float polarAngle = polarAngleStep * polarIter;
@@ -365,7 +365,7 @@ namespace mint
 
 			// Position
 			{
-				meshData._positionArray.reserve(6);
+				meshData._positionArray.Reserve(6);
 				pushPosition({ 0.0f, +radiusParam._radius, 0.0f }, meshData);
 
 				_pushCirclularPoints(radiusParam._radius, 0.0f, 4, meshData);
@@ -374,7 +374,7 @@ namespace mint
 			}
 
 			const int32 positionIndexTopCenter = 0;
-			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.size() - 1);
+			const int32 positionIndexBottomCenter = static_cast<int32>(meshData._positionArray.Size() - 1);
 			_pushUpperUmbrellaTris(positionIndexTopCenter, 1, 4, meshData);
 			_pushLowerUmbrellaTris(positionIndexBottomCenter, 1, 4, meshData);
 		}
@@ -385,7 +385,7 @@ namespace mint
 
 			// Position
 			{
-				meshData._positionArray.reserve(6);
+				meshData._positionArray.Reserve(6);
 				pushPosition({ 0.0f, +radiusParam._radius, 0.0f }, meshData);
 
 				_pushCirclularPoints(radiusParam._radius, 0.0f, 4, meshData);
@@ -454,7 +454,7 @@ namespace mint
 
 			// Position
 			{
-				meshData._positionArray.reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
+				meshData._positionArray.Reserve(1 + (polarDetail - 1) * azimuthalDetail + 1);
 
 				// Upper half-sphere
 				for (uint8 polarIter = 0; polarIter < halfPolarDetail + 1; ++polarIter)
@@ -587,7 +587,7 @@ namespace mint
 
 		void MeshGenerator::setMaterialID(MeshData& meshData, const uint32 materialID) noexcept
 		{
-			const uint32 vertexCount = meshData._vertexArray.size();
+			const uint32 vertexCount = meshData._vertexArray.Size();
 			for (uint32 vertexIndex = 0; vertexIndex < vertexCount; ++vertexIndex)
 			{
 				meshData._vertexArray[vertexIndex]._materialID = materialID;
@@ -613,7 +613,7 @@ namespace mint
 
 		void MeshGenerator::mergeMeshData(const MeshData& sourceMeshData, MeshData& inoutTargetMeshData) noexcept
 		{
-			if (inoutTargetMeshData.isEmpty() == true)
+			if (inoutTargetMeshData.IsEmpty() == true)
 			{
 				inoutTargetMeshData = sourceMeshData;
 				return;
@@ -621,24 +621,24 @@ namespace mint
 
 			const uint32 oldPositionCount = inoutTargetMeshData.getPositionCount();
 			const uint32 deltaPositionCount = sourceMeshData.getPositionCount();
-			inoutTargetMeshData._positionArray.reserve(inoutTargetMeshData._positionArray.size() + deltaPositionCount);
+			inoutTargetMeshData._positionArray.Reserve(inoutTargetMeshData._positionArray.Size() + deltaPositionCount);
 			for (uint32 deltaPositionIndex = 0; deltaPositionIndex < deltaPositionCount; ++deltaPositionIndex)
 			{
-				inoutTargetMeshData._positionArray.push_back(sourceMeshData._positionArray[deltaPositionIndex]);
+				inoutTargetMeshData._positionArray.PushBack(sourceMeshData._positionArray[deltaPositionIndex]);
 			}
 
 			const uint32 oldVertexCount = inoutTargetMeshData.getVertexCount();
 			const uint32 deltaVertexCount = sourceMeshData.getVertexCount();
-			inoutTargetMeshData._vertexArray.reserve(inoutTargetMeshData._vertexArray.size() + deltaVertexCount);
-			inoutTargetMeshData._vertexToPositionTable.reserve(inoutTargetMeshData._vertexToPositionTable.size() + deltaVertexCount);
+			inoutTargetMeshData._vertexArray.Reserve(inoutTargetMeshData._vertexArray.Size() + deltaVertexCount);
+			inoutTargetMeshData._vertexToPositionTable.Reserve(inoutTargetMeshData._vertexToPositionTable.Size() + deltaVertexCount);
 			for (uint32 deltaVertexIndex = 0; deltaVertexIndex < deltaVertexCount; ++deltaVertexIndex)
 			{
-				inoutTargetMeshData._vertexArray.push_back(sourceMeshData._vertexArray[deltaVertexIndex]);
-				inoutTargetMeshData._vertexToPositionTable.push_back(oldPositionCount + sourceMeshData._vertexToPositionTable[deltaVertexIndex]);
+				inoutTargetMeshData._vertexArray.PushBack(sourceMeshData._vertexArray[deltaVertexIndex]);
+				inoutTargetMeshData._vertexToPositionTable.PushBack(oldPositionCount + sourceMeshData._vertexToPositionTable[deltaVertexIndex]);
 			}
 
 			const uint32 deltaFaceCount = sourceMeshData.getFaceCount();
-			inoutTargetMeshData._faceArray.reserve(inoutTargetMeshData._faceArray.size() + deltaFaceCount);
+			inoutTargetMeshData._faceArray.Reserve(inoutTargetMeshData._faceArray.Size() + deltaFaceCount);
 			Face face;
 			for (uint32 deltaFaceIndex = 0; deltaFaceIndex < deltaFaceCount; ++deltaFaceIndex)
 			{
@@ -646,18 +646,18 @@ namespace mint
 				face._vertexIndexArray[1] = oldVertexCount + sourceMeshData._faceArray[deltaFaceIndex]._vertexIndexArray[1];
 				face._vertexIndexArray[2] = oldVertexCount + sourceMeshData._faceArray[deltaFaceIndex]._vertexIndexArray[2];
 
-				inoutTargetMeshData._faceArray.push_back(face);
+				inoutTargetMeshData._faceArray.PushBack(face);
 			}
 		}
 
 		MINT_INLINE void MeshGenerator::pushPosition(const float(&xyz)[3], MeshData& meshData) noexcept
 		{
-			meshData._positionArray.push_back(Float4(xyz[0], xyz[1], xyz[2], 1.0f));
+			meshData._positionArray.PushBack(Float4(xyz[0], xyz[1], xyz[2], 1.0f));
 		}
 
 		MINT_INLINE void MeshGenerator::pushPosition(const Float4& xyzw, MeshData& meshData) noexcept
 		{
-			meshData._positionArray.push_back(xyzw);
+			meshData._positionArray.PushBack(xyzw);
 		}
 
 		void MeshGenerator::pushTri(const int32(&positionIndices)[3], MeshData& meshData, const Float2(&uvs)[3]) noexcept
@@ -696,10 +696,10 @@ namespace mint
 		{
 			MeshData newMeshData;
 			newMeshData._positionArray = oldMeshData._positionArray;
-			newMeshData._positionArray.reserve((newMeshData._positionArray.size() - 2) * 4 + 2);
-			newMeshData._vertexArray.reserve(oldMeshData.getVertexCount() * 4);
-			newMeshData._vertexToPositionTable.reserve(oldMeshData.getVertexCount() * 4);
-			newMeshData._faceArray.reserve(oldMeshData.getFaceCount() * 4);
+			newMeshData._positionArray.Reserve((newMeshData._positionArray.Size() - 2) * 4 + 2);
+			newMeshData._vertexArray.Reserve(oldMeshData.getVertexCount() * 4);
+			newMeshData._vertexToPositionTable.Reserve(oldMeshData.getVertexCount() * 4);
+			newMeshData._faceArray.Reserve(oldMeshData.getFaceCount() * 4);
 
 			struct PositionEdge
 			{
@@ -726,8 +726,8 @@ namespace mint
 				MINT_INLINE void    setPositionCount(const uint32 positionCount) noexcept
 				{
 					_positionCount = positionCount;
-					_edgeTable.resize(positionCount * positionCount);
-					const uint32 length = _edgeTable.size();
+					_edgeTable.Resize(positionCount * positionCount);
+					const uint32 length = _edgeTable.Size();
 					for (uint32 index = 0; index < length; ++index)
 					{
 						_edgeTable[index] = -1;
@@ -759,7 +759,7 @@ namespace mint
 
 			PositionEdgeGraph positionEdgeGraph;
 			positionEdgeGraph.setPositionCount(oldMeshData.getPositionCount());
-			const uint32 oldFaceCount = static_cast<uint32>(oldMeshData._faceArray.size());
+			const uint32 oldFaceCount = static_cast<uint32>(oldMeshData._faceArray.Size());
 			for (uint32 oldFaceIndex = 0; oldFaceIndex < oldFaceCount; ++oldFaceIndex)
 			{
 				const Face& face = oldMeshData._faceArray[oldFaceIndex];
@@ -782,7 +782,7 @@ namespace mint
 					const Float4& faceVertexPosition1 = getFaceVertexPosition1(face, oldMeshData);
 					const Float4& faceVertexPosition2 = getFaceVertexPosition2(face, oldMeshData);
 
-					const int32 newPositionIndexBase = static_cast<int32>(newMeshData._positionArray.size());
+					const int32 newPositionIndexBase = static_cast<int32>(newMeshData._positionArray.Size());
 					int8 addedPointCount = 0;
 					// Midpoint 0-1
 					if (positionEdgeGraph.hasMidpoint(positionEdge01) == false)

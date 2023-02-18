@@ -47,7 +47,7 @@ namespace mint
 			}
 
 			SB_Material sbMaterialData;
-			const uint32 meshComponentCount = meshComponents.size();
+			const uint32 meshComponentCount = meshComponents.Size();
 			for (uint32 meshCompnentIndex = 0; meshCompnentIndex < meshComponentCount; ++meshCompnentIndex)
 			{
 				const MeshComponent* const meshComponent = meshComponents[meshCompnentIndex];

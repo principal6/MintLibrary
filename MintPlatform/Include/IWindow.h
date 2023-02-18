@@ -74,7 +74,7 @@ namespace mint
 
 		public:
 			virtual bool create(const WindowCreationDesc& windowCreationDesc) noexcept abstract;
-			virtual void destroy() noexcept { _isRunning = false; }
+			virtual void Destroy() noexcept { _isRunning = false; }
 			WindowCreationError getWindowCreationError() const noexcept { return _windowCreationError; }
 
 		public:

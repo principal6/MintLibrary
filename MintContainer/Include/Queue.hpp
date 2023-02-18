@@ -25,13 +25,13 @@ namespace mint
 	template<typename T>
 	inline Queue<T>::~Queue()
 	{
-		flush();
+		Flush();
 
-		MemoryRaw::deallocateMemory<T>(_rawPointer);
+		MemoryRaw::DeallocateMemory<T>(_rawPointer);
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::reserve(uint32 capacity) noexcept
+	MINT_INLINE void Queue<T>::Reserve(uint32 capacity) noexcept
 	{
 		capacity = Max(capacity, static_cast<uint32>(1)); // capacity 가 0 이 되지 않도록 보장!
 		if (capacity < _capacity)
@@ -41,21 +41,21 @@ namespace mint
 
 		if (_size == 0)
 		{
-			MemoryRaw::deallocateMemory<T>(_rawPointer);
-			_rawPointer = MemoryRaw::allocateMemory<T>(capacity);
+			MemoryRaw::DeallocateMemory<T>(_rawPointer);
+			_rawPointer = MemoryRaw::AllocateMemory<T>(capacity);
 			_capacity = capacity;
 			return;
 		}
 
-		T* copyPointer = MemoryRaw::allocateMemory<T>(_size);
-		saveBackup(copyPointer);
+		T* copyPointer = MemoryRaw::AllocateMemory<T>(_size);
+		SaveBackup(copyPointer);
 
 		// Reallocate _rawPointer
-		MemoryRaw::deallocateMemory<T>(_rawPointer);
-		_rawPointer = MemoryRaw::allocateMemory<T>(capacity);
+		MemoryRaw::DeallocateMemory<T>(_rawPointer);
+		_rawPointer = MemoryRaw::AllocateMemory<T>(capacity);
 
-		restoreBackup(copyPointer);
-		MemoryRaw::deallocateMemory<T>(copyPointer);
+		RestoreBackup(copyPointer);
+		MemoryRaw::DeallocateMemory<T>(copyPointer);
 
 		// Reset head and tail position!!!
 		_headAt = 0;
@@ -65,49 +65,49 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::saveBackup(T*& backUpPointer) noexcept
+	MINT_INLINE void Queue<T>::SaveBackup(T*& backUpPointer) noexcept
 	{
 		// Copy data from _rawPointer to copyPointer 
 		if (_headAt < _tailAt)
 		{
-			MemoryRaw::moveMemory<T>(backUpPointer, &_rawPointer[_headAt], _size);
+			MemoryRaw::MoveMemory_<T>(backUpPointer, &_rawPointer[_headAt], _size);
 			return;
 		}
 
 		// Head part
 		const uint32 headPartLength = _capacity - _headAt;
-		MemoryRaw::moveMemory<T>(&backUpPointer[0], &_rawPointer[_headAt], headPartLength);
+		MemoryRaw::MoveMemory_<T>(&backUpPointer[0], &_rawPointer[_headAt], headPartLength);
 
 		// Tail part
 		if (headPartLength < _size)
 		{
-			MemoryRaw::moveMemory<T>(&backUpPointer[headPartLength], &_rawPointer[0], _tailAt + 1);
+			MemoryRaw::MoveMemory_<T>(&backUpPointer[headPartLength], &_rawPointer[0], _tailAt + 1);
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::restoreBackup(const T* const backUpPointer) noexcept
+	MINT_INLINE void Queue<T>::RestoreBackup(const T* const backUpPointer) noexcept
 	{
-		MemoryRaw::moveMemory<T>(_rawPointer, backUpPointer, _size);
+		MemoryRaw::MoveMemory_<T>(_rawPointer, backUpPointer, _size);
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::push(const T& newEntry) noexcept
+	MINT_INLINE void Queue<T>::Push(const T& newEntry) noexcept
 	{
 		if (_size == _capacity)
 		{
-			reserve(_capacity * 2);
+			Reserve(_capacity * 2);
 		}
 
 		if (_tailAt == _capacity - 1)
 		{
-			MemoryRaw::copyConstruct<T>(_rawPointer[0], newEntry);
+			MemoryRaw::CopyConstruct<T>(_rawPointer[0], newEntry);
 
 			_tailAt = 0;
 		}
 		else
 		{
-			MemoryRaw::copyConstruct<T>(_rawPointer[_tailAt + 1], newEntry);
+			MemoryRaw::CopyConstruct<T>(_rawPointer[_tailAt + 1], newEntry);
 
 			++_tailAt;
 		}
@@ -116,22 +116,22 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::push(T&& newEntry) noexcept
+	MINT_INLINE void Queue<T>::Push(T&& newEntry) noexcept
 	{
 		if (_size == _capacity)
 		{
-			reserve(_capacity * 2);
+			Reserve(_capacity * 2);
 		}
 
 		if (_tailAt == _capacity - 1)
 		{
-			MemoryRaw::moveConstruct<T>(_rawPointer[0], std::move(newEntry));
+			MemoryRaw::MoveConstruct<T>(_rawPointer[0], std::move(newEntry));
 
 			_tailAt = 0;
 		}
 		else
 		{
-			MemoryRaw::moveConstruct<T>(_rawPointer[_tailAt + 1], std::move(newEntry));
+			MemoryRaw::MoveConstruct<T>(_rawPointer[_tailAt + 1], std::move(newEntry));
 
 			++_tailAt;
 		}
@@ -140,14 +140,14 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::pop() noexcept
+	MINT_INLINE void Queue<T>::Pop() noexcept
 	{
-		if (empty())
+		if (IsEmpty())
 		{
 			return;
 		}
 
-		MemoryRaw::destroy<T>(_rawPointer[_headAt]);
+		MemoryRaw::Destroy<T>(_rawPointer[_headAt]);
 		++_headAt;
 
 		if (_headAt == _capacity)
@@ -159,23 +159,23 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Queue<T>::flush() noexcept
+	MINT_INLINE void Queue<T>::Flush() noexcept
 	{
-		while (empty() == false)
+		while (IsEmpty() == false)
 		{
-			pop();
+			Pop();
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE T& Queue<T>::peek() noexcept
+	MINT_INLINE T& Queue<T>::Peek() noexcept
 	{
 		MINT_ASSERT(_size > 0, "_size 가 0 인 Queue 입니다!!!");
 		return _rawPointer[_headAt];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Queue<T>::peek() const noexcept
+	MINT_INLINE const T& Queue<T>::Peek() const noexcept
 	{
 		MINT_ASSERT(_size > 0, "_size 가 0 인 Queue 입니다!!!");
 		return _rawPointer[_headAt];

@@ -26,23 +26,23 @@ namespace mint
 
 	public:
 		bool operator==(const StringReference<T>& rhs) const;
-		const T& operator[](const uint32 index) const { return at(index); }
+		const T& operator[](const uint32 index) const { return At(index); }
 
 	public:
-		virtual StringType getStringType() const { return StringType::ConstantLiteralString; }
-		virtual bool isLiteral() const { return true; }
-		virtual bool isMutable() const { return false; }
-		bool empty() const noexcept { return length() == 0; }
-		virtual uint32 length() const;
-		virtual uint32 countChars() const;
-		virtual const T& at(const uint32 index) const { return c_str()[index]; }
-		virtual const T* c_str() const { return _literalString; }
-		virtual uint32 find(const StringReference<T>& token, const uint32 offset = 0) const;
-		uint32 rfind(const StringReference<T>& token, const uint32 offset = 0) const;
-		virtual bool contains(const StringReference<T>& token, const uint32 offset = 0) const;
-		bool startsWith(const StringReference<T>& token) const;
-		bool endsWith(const StringReference<T>& token) const;
-		virtual uint64 computeHash() const;
+		virtual StringType GetStringType() const { return StringType::ConstantLiteralString; }
+		virtual bool IsLiteral() const { return true; }
+		virtual bool IsMutable() const { return false; }
+		bool IsEmpty() const noexcept { return Length() == 0; }
+		virtual uint32 Length() const;
+		virtual uint32 CountChars() const;
+		virtual const T& At(const uint32 index) const { return CString()[index]; }
+		virtual const T* CString() const { return _literalString; }
+		virtual uint32 Find(const StringReference<T>& token, const uint32 offset = 0) const;
+		uint32 RFind(const StringReference<T>& token, const uint32 offset = 0) const;
+		virtual bool Contains(const StringReference<T>& token, const uint32 offset = 0) const;
+		bool StartsWith(const StringReference<T>& token) const;
+		bool EndsWith(const StringReference<T>& token) const;
+		virtual uint64 ComputeHash() const;
 
 	private:
 		const T* _literalString;
@@ -67,21 +67,21 @@ namespace mint
 		MutableString<T>& operator=(StringReference<T>&& rhs);
 		MutableString<T>& operator+=(const StringReference<T>& rhs);
 
-		T& operator[](const uint32 index) { return at(index); }
+		T& operator[](const uint32 index) { return At(index); }
 
 	public:
-		virtual StringType getStringType() const abstract;
-		virtual bool isLiteral() const override final { return false; }
-		virtual bool isMutable() const override final { return true; }
-		virtual uint32 capacity() const { return 0; }
-		virtual T& at(const uint32 index) { return data()[index]; }
-		virtual const T* c_str() const abstract;
-		virtual T* data() abstract;
+		virtual StringType GetStringType() const abstract;
+		virtual bool IsLiteral() const override final { return false; }
+		virtual bool IsMutable() const override final { return true; }
+		virtual uint32 Capacity() const { return 0; }
+		virtual T& At(const uint32 index) { return Data()[index]; }
+		virtual const T* CString() const abstract;
+		virtual T* Data() abstract;
 
 	public:
-		virtual void clear() abstract;
-		virtual MutableString<T>& append(const StringReference<T>& rhs) abstract;
-		virtual MutableString<T>& assign(const StringReference<T>& rhs) abstract;
+		virtual void Clear() abstract;
+		virtual MutableString<T>& Append(const StringReference<T>& rhs) abstract;
+		virtual MutableString<T>& Assign(const StringReference<T>& rhs) abstract;
 	};
 }
 

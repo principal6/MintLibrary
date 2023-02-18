@@ -88,7 +88,7 @@ namespace mint
 	}
 
 	template<typename T, uint32 maxSize>
-	inline constexpr uint32 Array<T, maxSize>::size() const noexcept
+	inline constexpr uint32 Array<T, maxSize>::Size() const noexcept
 	{
 		return maxSize;
 	}

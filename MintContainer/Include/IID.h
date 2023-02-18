@@ -28,10 +28,10 @@ namespace mint
 		bool operator>(const IID& rhs) const noexcept;
 
 	public:
-		bool isValid() const noexcept;
+		bool IsValid() const noexcept;
 
 	protected:
-		virtual void assignRawID(const uint32 rawID) noexcept abstract;
+		virtual void AssignRawID(const uint32 rawID) noexcept abstract;
 
 	protected:
 		uint32 _rawID{ kInvalidRawID };

@@ -15,25 +15,25 @@ namespace mint
 			__noop;
 		}
 
-		bool MeshData::isEmpty() const noexcept
+		bool MeshData::IsEmpty() const noexcept
 		{
-			return _positionArray.empty() && _vertexToPositionTable.empty() && _vertexArray.empty() && _faceArray.empty();
+			return _positionArray.IsEmpty() && _vertexToPositionTable.IsEmpty() && _vertexArray.IsEmpty() && _faceArray.IsEmpty();
 		}
 
 		void MeshData::clear() noexcept
 		{
-			_positionArray.clear();
-			_vertexToPositionTable.clear();
-			_vertexArray.clear();
-			_faceArray.clear();
+			_positionArray.Clear();
+			_vertexToPositionTable.Clear();
+			_vertexArray.Clear();
+			_faceArray.Clear();
 		}
 
 		void MeshData::shrinkToFit() noexcept
 		{
-			_positionArray.shrink_to_fit();
-			_vertexToPositionTable.shrink_to_fit();
-			_vertexArray.shrink_to_fit();
-			_faceArray.shrink_to_fit();
+			_positionArray.ShrinkToFit();
+			_vertexToPositionTable.ShrinkToFit();
+			_vertexArray.ShrinkToFit();
+			_faceArray.ShrinkToFit();
 		}
 
 		void MeshData::updateVertexFromPositions() noexcept
@@ -48,32 +48,32 @@ namespace mint
 
 		uint32 MeshData::getPositionCount() const noexcept
 		{
-			return _positionArray.size();
+			return _positionArray.Size();
 		}
 
 		uint32 MeshData::getVertexCount() const noexcept
 		{
-			return _vertexArray.size();
+			return _vertexArray.Size();
 		}
 
 		uint32 MeshData::getFaceCount() const noexcept
 		{
-			return _faceArray.size();
+			return _faceArray.Size();
 		}
 
 		uint32 MeshData::getIndexCount() const noexcept
 		{
-			return static_cast<uint32>(_faceArray.size() * Face::kVertexCountPerFace);
+			return static_cast<uint32>(_faceArray.Size() * Face::kVertexCountPerFace);
 		}
 
 		const VS_INPUT* MeshData::getVertices() const noexcept
 		{
-			return (_vertexArray.empty()) ? &MeshData::kNullVertex : &_vertexArray[0];
+			return (_vertexArray.IsEmpty()) ? &MeshData::kNullVertex : &_vertexArray[0];
 		}
 
 		const IndexElementType* MeshData::getIndices() const noexcept
 		{
-			return (_faceArray.empty() == true) ? &MeshData::kNullIndex : &_faceArray[0]._vertexIndexArray[0];
+			return (_faceArray.IsEmpty() == true) ? &MeshData::kNullIndex : &_faceArray[0]._vertexIndexArray[0];
 		}
 	}
 }

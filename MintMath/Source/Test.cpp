@@ -10,7 +10,7 @@ namespace mint
 {
 	namespace TestMath
 	{
-		bool test_intTypes()
+		bool Test_intTypes()
 		{
 			using namespace mint;
 			Int2 ni;
@@ -22,7 +22,7 @@ namespace mint
 			return true;
 		}
 
-		bool test_floatTypes()
+		bool Test_floatTypes()
 		{
 			using namespace mint;
 			float a = 15.000001f;
@@ -102,7 +102,7 @@ namespace mint
 			return true;
 		}
 
-		bool test_linearAlgebra()
+		bool Test_linearAlgebra()
 		{
 			using namespace mint;
 
@@ -196,9 +196,9 @@ namespace mint
 
 		bool test()
 		{
-			MINT_ASSURE(test_intTypes());
-			MINT_ASSURE(test_floatTypes());
-			MINT_ASSURE(test_linearAlgebra());
+			MINT_ASSURE(Test_intTypes());
+			MINT_ASSURE(Test_floatTypes());
+			MINT_ASSURE(Test_linearAlgebra());
 			return true;
 		}
 	}

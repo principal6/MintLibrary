@@ -21,7 +21,7 @@ namespace mint
 		SkeletonJoint::SkeletonJoint(const char* const jointName)
 			: _parentIndex{ kInvalidJointIndex }
 		{
-			StringUtil::copy(_name, jointName);
+			StringUtil::Copy(_name, jointName);
 		}
 
 		SkeletonJoint::~SkeletonJoint()
@@ -67,29 +67,29 @@ namespace mint
 
 		JointIndexType SkeletonGenerator::createJoint(const JointIndexType parentJointIndex, const char* const jointName, const Float4x4& bindPoseLocalMatrix) noexcept
 		{
-			if (_joints.empty() == false && parentJointIndex < 0)
+			if (_joints.IsEmpty() == false && parentJointIndex < 0)
 			{
 				MINT_LOG_ERROR("이미 RootJoint 가 있는데 또 만들 수 없습니다!");
 				return SkeletonJoint::kInvalidJointIndex;
 			}
 
-			if (_joints.empty() == false && _joints.size() <= static_cast<uint32>(parentJointIndex))
+			if (_joints.IsEmpty() == false && _joints.Size() <= static_cast<uint32>(parentJointIndex))
 			{
 				MINT_LOG_ERROR("Parent Joint Index 가 잘못되었습니다!");
 				return SkeletonJoint::kInvalidJointIndex;
 			}
 
 			SkeletonJoint newJoint;
-			StringUtil::copy(newJoint._name, jointName);
+			StringUtil::Copy(newJoint._name, jointName);
 			newJoint._parentIndex = parentJointIndex;
 			newJoint._bindPoseLocalMatrix = bindPoseLocalMatrix;
-			_joints.push_back(newJoint);
-			return static_cast<JointIndexType>(_joints.size() - 1);
+			_joints.PushBack(newJoint);
+			return static_cast<JointIndexType>(_joints.Size() - 1);
 		}
 
 		const SkeletonJoint* SkeletonGenerator::getJoint(const JointIndexType jointIndex) const noexcept
 		{
-			return (static_cast<uint32>(jointIndex) < _joints.size()) ? &_joints[jointIndex] : nullptr;
+			return (static_cast<uint32>(jointIndex) < _joints.Size()) ? &_joints[jointIndex] : nullptr;
 		}
 
 		const Vector<SkeletonJoint>& SkeletonGenerator::getJoints() const noexcept
@@ -99,7 +99,7 @@ namespace mint
 
 		void SkeletonGenerator::buildBindPoseModelSpace() noexcept
 		{
-			const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
+			const JointIndexType jointCount = static_cast<JointIndexType>(_joints.Size());
 			for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 			{
 				SkeletonJoint& joint = _joints[jointIndex];
@@ -137,17 +137,17 @@ namespace mint
 
 		const SkeletonJoint& Skeleton::getJoint(const JointIndexType jointIndex) const noexcept
 		{
-			return (static_cast<uint32>(jointIndex) < _joints.size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
+			return (static_cast<uint32>(jointIndex) < _joints.Size()) ? _joints[jointIndex] : SkeletonJoint::kInvalidSkeletonJoint;
 		}
 
 		void Skeleton::renderSkeleton(Rendering::InstantRenderer& instantRenderer, const Float4x4& worldMatrix) const noexcept
 		{
-			if (_joints.empty() == true)
+			if (_joints.IsEmpty() == true)
 			{
 				return;
 			}
 
-			const JointIndexType jointCount = static_cast<JointIndexType>(_joints.size());
+			const JointIndexType jointCount = static_cast<JointIndexType>(_joints.Size());
 			for (JointIndexType jointIndex = 0; jointIndex < jointCount; ++jointIndex)
 			{
 				const SkeletonJoint& joint = _joints[jointIndex];

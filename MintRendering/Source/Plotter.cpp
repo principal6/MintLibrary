@@ -26,10 +26,10 @@ namespace mint
 
 		void Plotter::scatter(const Vector<float>& xData, const Vector<float>& yData)
 		{
-			_xDataSets.push_back(xData);
-			_yDataSets.push_back(yData);
+			_xDataSets.PushBack(xData);
+			_yDataSets.PushBack(yData);
 
-			const uint32 dataCount = xData.size();
+			const uint32 dataCount = xData.Size();
 			for (uint32 dataIndex = 0; dataIndex < dataCount; ++dataIndex)
 			{
 				_min._x = Min(_min._x, xData[dataIndex]);
@@ -43,8 +43,8 @@ namespace mint
 
 			updateFrameValues();
 
-			_colorArray.push_back(Color::kTransparent);
-			_plotTypeArray.push_back(_nextPlotType);
+			_colorArray.PushBack(Color::kTransparent);
+			_plotTypeArray.PushBack(_nextPlotType);
 		}
 
 		void Plotter::updateFrameValues()
@@ -73,14 +73,14 @@ namespace mint
 			drawLabels(frameCenterPosition);
 
 			uint32 autoColorIndex = 0;
-			const uint32 setCount = _xDataSets.size();
+			const uint32 setCount = _xDataSets.Size();
 			for (uint32 setIndex = 0; setIndex < setCount; ++setIndex)
 			{
 				const bool useAutoColor = (_colorArray[setIndex] == Color::kTransparent);
 				const PlotType plotType = _plotTypeArray[setIndex];
 				const Color& color = (useAutoColor == true) ? kAutoColorArray[autoColorIndex] : _colorArray[setIndex];
 
-				const uint32 dataCount = _xDataSets[setIndex].size();
+				const uint32 dataCount = _xDataSets[setIndex].Size();
 				for (uint32 dataIndex = 0; dataIndex < dataCount; ++dataIndex)
 				{
 					const float xDatum = _xDataSets[setIndex][dataIndex];

@@ -21,13 +21,13 @@ namespace mint
 
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
 			{
-				if (_vertexShaderID.isValid())
+				if (_vertexShaderID.IsValid())
 				{
 					shaderPool.removeShader(_vertexShaderID);
 				}
 				_vertexShaderID = shaderPool.addShaderFromMemory("ImageRendererVS", getDefaultVertexShaderString(), "main_shape", GraphicShaderType::VertexShader);
 
-				if (_inputLayoutID.isValid())
+				if (_inputLayoutID.IsValid())
 				{
 					shaderPool.removeInputLayout(_inputLayoutID);
 				}
@@ -37,7 +37,7 @@ namespace mint
 			}
 
 			{
-				if (_geometryShaderID.isValid())
+				if (_geometryShaderID.IsValid())
 				{
 					shaderPool.removeShader(_geometryShaderID);
 				}
@@ -53,16 +53,16 @@ namespace mint
 					)"
 				};
 				StackStringA<256> textBuffer;
-				StringUtil::toString(_psTextureSlot, textBuffer);
+				StringUtil::ToString(_psTextureSlot, textBuffer);
 				StackStringA<1024> shaderString = kShaderStringInclude;
 				shaderString += "sampler g_linearSampler : register(s0);\n";
 				shaderString += "sampler g_pointSampler : register(s1);\n";
 				shaderString += "Texture2D<float4> g_texture0 : register(t";
-				shaderString += textBuffer.c_str();
+				shaderString += textBuffer.CString();
 				shaderString += ");\n";
 
 				StackStringA<256> transparentColorString;
-				formatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.rAsFloat(), _transparentColor.gAsFloat(), _transparentColor.bAsFloat(), _transparentColor.aAsFloat());
+				FormatString(transparentColorString, "float4(%.1f, %.1f, %.1f, %.1f);\n", _transparentColor.rAsFloat(), _transparentColor.gAsFloat(), _transparentColor.bAsFloat(), _transparentColor.aAsFloat());
 
 				shaderString += "float4 main_image(VS_OUTPUT_SHAPE input) : SV_Target\n";
 				shaderString += "{\n";
@@ -73,11 +73,11 @@ namespace mint
 				shaderString += "	float4 result = float4(sampledColor.rgb * alpha, alpha);\n";
 				shaderString += "	return result;\n";
 				shaderString += "}";
-				if (_pixelShaderID.isValid())
+				if (_pixelShaderID.IsValid())
 				{
 					shaderPool.removeShader(_pixelShaderID);
 				}
-				_pixelShaderID = shaderPool.addShaderFromMemory("ImageRendererPS", shaderString.c_str(), "main_image", GraphicShaderType::PixelShader);
+				_pixelShaderID = shaderPool.addShaderFromMemory("ImageRendererPS", shaderString.CString(), "main_image", GraphicShaderType::PixelShader);
 			}
 		}
 

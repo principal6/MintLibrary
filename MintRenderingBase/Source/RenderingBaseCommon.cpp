@@ -28,7 +28,7 @@ namespace mint
 		void ByteColorImage::setSize(const Int2& size)
 		{
 			_size = size;
-			_pixels.resize(_size._x * _size._y);
+			_pixels.Resize(_size._x * _size._y);
 		}
 
 		void ByteColorImage::setPixel(const Int2& at, const ByteColor& pixel)
@@ -59,7 +59,7 @@ namespace mint
 
 		uint32 ByteColorImage::getPixelCount() const
 		{
-			return _pixels.size();
+			return _pixels.Size();
 		}
 
 		const ByteColor& ByteColorImage::getPixel(const Int2& at) const
@@ -84,11 +84,11 @@ namespace mint
 
 		const byte* ByteColorImage::getBytes() const
 		{
-			if (_pixels.empty())
+			if (_pixels.IsEmpty())
 			{
 				return nullptr;
 			}
-			return reinterpret_cast<const byte*>(_pixels.data());
+			return reinterpret_cast<const byte*>(_pixels.Data());
 		}
 #pragma endregion
 
@@ -104,9 +104,9 @@ namespace mint
 
 		void ByteColorImageAtlas::clearByteColorImages()
 		{
-			_byteColorImagePositions.clear();
-			_byteColorImageSizes.clear();
-			_byteColorImages.clear();
+			_byteColorImagePositions.Clear();
+			_byteColorImageSizes.Clear();
+			_byteColorImages.Clear();
 			_height = 0;
 		}
 
@@ -120,11 +120,11 @@ namespace mint
 
 			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
 			const Int2 byteColorImageSize = byteColorImage.getSize();
-			_byteColorImagePositions.push_back(byteColorImagePosition);
-			_byteColorImageSizes.push_back(byteColorImageSize);
-			_byteColorImages.push_back(std::move(byteColorImage));
+			_byteColorImagePositions.PushBack(byteColorImagePosition);
+			_byteColorImageSizes.PushBack(byteColorImageSize);
+			_byteColorImages.PushBack(std::move(byteColorImage));
 			_height = Max(_height, byteColorImagePosition._y + byteColorImageSize._y);
-			return static_cast<int32>(_byteColorImages.size() - 1);
+			return static_cast<int32>(_byteColorImages.Size() - 1);
 		}
 
 		int32 ByteColorImageAtlas::pushByteColorImage(const ByteColorImage& byteColorImage)
@@ -136,25 +136,25 @@ namespace mint
 			}
 
 			const Int2 byteColorImagePosition = pushColorImage_computeByteColorImagePosition(byteColorImage);
-			_byteColorImagePositions.push_back(byteColorImagePosition);
-			_byteColorImageSizes.push_back(byteColorImage.getSize());
-			_byteColorImages.push_back(byteColorImage);
+			_byteColorImagePositions.PushBack(byteColorImagePosition);
+			_byteColorImageSizes.PushBack(byteColorImage.getSize());
+			_byteColorImages.PushBack(byteColorImage);
 			_height = Max(_height, byteColorImagePosition._y + byteColorImage.getHeight());
-			return static_cast<int32>(_byteColorImages.size() - 1);
+			return static_cast<int32>(_byteColorImages.Size() - 1);
 		}
 
 		bool ByteColorImageAtlas::bakeRGBABytes()
 		{
-			if (_byteColorImages.empty())
+			if (_byteColorImages.IsEmpty())
 			{
 				return false;
 			}
 
 			static constexpr uint32 kByteCountPerPixel = 4;
 			const uint32 atlasPixelCount = static_cast<uint32>(_width * _height);
-			_rgbaBytes.clear();
-			_rgbaBytes.resize(atlasPixelCount * kByteCountPerPixel);
-			const uint32 colorImageCount = _byteColorImages.size();
+			_rgbaBytes.Clear();
+			_rgbaBytes.Resize(atlasPixelCount * kByteCountPerPixel);
+			const uint32 colorImageCount = _byteColorImages.Size();
 			for (uint32 colorImageIndex = 0; colorImageIndex < colorImageCount; ++colorImageIndex)
 			{
 				const ByteColorImage& byteColorImage = _byteColorImages[colorImageIndex];
@@ -176,7 +176,7 @@ namespace mint
 					}
 				}
 			}
-			_byteColorImages.clear();
+			_byteColorImages.Clear();
 			return true;
 		}
 
@@ -192,7 +192,7 @@ namespace mint
 
 		Int2 ByteColorImageAtlas::computePositionInAtlas(const int32 byteColorImageIndex, const Int2& positionInByteColorImage) const
 		{
-			if (static_cast<uint32>(byteColorImageIndex) >= _byteColorImagePositions.size())
+			if (static_cast<uint32>(byteColorImageIndex) >= _byteColorImagePositions.Size())
 			{
 				return Int2::kZero;
 			}
@@ -202,12 +202,12 @@ namespace mint
 
 		Int2 ByteColorImageAtlas::pushColorImage_computeByteColorImagePosition(const ByteColorImage& byteColorImage) const
 		{
-			if (_byteColorImages.empty())
+			if (_byteColorImages.IsEmpty())
 			{
 				return Int2::kZero;
 			}
-			const int32 sameLinePositionX = _byteColorImagePositions.back()._x + _byteColorImages.back().getWidth() + _interPadding._x;
-			const int32 sameLinePositionY = _byteColorImagePositions.back()._y;
+			const int32 sameLinePositionX = _byteColorImagePositions.Back()._x + _byteColorImages.Back().getWidth() + _interPadding._x;
+			const int32 sameLinePositionY = _byteColorImagePositions.Back()._y;
 			const bool needsNewLine = sameLinePositionX + byteColorImage.getWidth() > _width;
 			if (needsNewLine)
 			{
@@ -258,7 +258,7 @@ namespace mint
 		void ColorImage::setSize(const Int2& size) noexcept
 		{
 			_size = size;
-			_colors.resize(_size._x * _size._y);
+			_colors.Resize(_size._x * _size._y);
 		}
 
 		const Int2& ColorImage::getSize() const noexcept
@@ -268,7 +268,7 @@ namespace mint
 
 		void ColorImage::fill(const Color& color) noexcept
 		{
-			const uint32 colorCount = _colors.size();
+			const uint32 colorCount = _colors.Size();
 			for (uint32 colorIndex = 0; colorIndex < colorCount; ++colorIndex)
 			{
 				Color& colorEntry = _colors[colorIndex];
@@ -342,7 +342,7 @@ namespace mint
 
 		uint32 ColorImage::getPixelCount() const noexcept
 		{
-			return _colors.size();
+			return _colors.Size();
 		}
 
 		const Color& ColorImage::getPixel(const Int2& at) const noexcept
@@ -461,8 +461,8 @@ namespace mint
 		void ColorImage::buildPixelRgbaArray(Vector<byte>& outBytes) const noexcept
 		{
 			static constexpr uint32 kByteCountPerPixel = 4;
-			const uint32 pixelCount = static_cast<uint32>(_colors.size());
-			outBytes.resize(pixelCount * kByteCountPerPixel);
+			const uint32 pixelCount = static_cast<uint32>(_colors.Size());
+			outBytes.Resize(pixelCount * kByteCountPerPixel);
 			for (uint32 pixelIndex = 0; pixelIndex < pixelCount; ++pixelIndex)
 			{
 				const Color& color = _colors[pixelIndex];
@@ -475,7 +475,7 @@ namespace mint
 
 		int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
 		{
-			return Min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.size() - 1));
+			return Min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.Size() - 1));
 		}
 
 		const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept

@@ -15,12 +15,12 @@
 
 namespace mint
 {
-	uint64 computeHash(const char* const rhs, const uint32 length) noexcept;
-	uint64 computeHash(const char* const rhs) noexcept;
-	uint64 computeHash(const wchar_t* const rhs) noexcept;
+	uint64 ComputeHash(const char* const rhs, const uint32 length) noexcept;
+	uint64 ComputeHash(const char* const rhs) noexcept;
+	uint64 ComputeHash(const wchar_t* const rhs) noexcept;
 
 	template <typename T>
-	uint64 computeHash(const T& value) noexcept;
+	uint64 ComputeHash(const T& value) noexcept;
 
 
 

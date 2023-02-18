@@ -38,7 +38,7 @@ namespace mint
 
 		void InstantRenderer::drawLine(const Float3& a, const Float3& b, const Color& color) noexcept
 		{
-			const uint32 materialID = _sbMaterialDatas.size();
+			const uint32 materialID = _sbMaterialDatas.Size();
 			auto& vertices = _lowLevelRendererLine.vertices();
 			auto& indices = _lowLevelRendererLine.indices();
 
@@ -46,18 +46,18 @@ namespace mint
 			vertex._materialID = materialID;
 
 			vertex._positionU.setXyz(a);
-			vertices.push_back(vertex);
+			vertices.PushBack(vertex);
 
 			vertex._positionU.setXyz(b);
-			vertices.push_back(vertex);
+			vertices.PushBack(vertex);
 
-			IndexElementType index = static_cast<IndexElementType>(indices.size());
-			indices.push_back(index + 0);
-			indices.push_back(index + 1);
+			IndexElementType index = static_cast<IndexElementType>(indices.Size());
+			indices.PushBack(index + 0);
+			indices.PushBack(index + 1);
 
 			SB_Material sbMaterialData;
 			sbMaterialData._diffuseColor = color;
-			_sbMaterialDatas.push_back(sbMaterialData);
+			_sbMaterialDatas.PushBack(sbMaterialData);
 		}
 
 		void InstantRenderer::drawBox(const Transform& worldTransform, const Float3& extents, const Color& color) noexcept
@@ -165,14 +165,14 @@ namespace mint
 
 		void InstantRenderer::pushMeshWithMaterial(MeshData& meshData, const Color& diffuseColor) noexcept
 		{
-			const uint32 materialID = _sbMaterialDatas.size();
+			const uint32 materialID = _sbMaterialDatas.Size();
 			MeshGenerator::setMaterialID(meshData, materialID);
 
 			_lowLevelRendererMesh.pushMesh(meshData);
 
 			SB_Material sbMaterialData;
 			sbMaterialData._diffuseColor = diffuseColor;
-			_sbMaterialDatas.push_back(sbMaterialData);
+			_sbMaterialDatas.PushBack(sbMaterialData);
 		}
 
 		void InstantRenderer::render() noexcept
@@ -196,7 +196,7 @@ namespace mint
 			{
 				sbMaterial.bindToShader(GraphicShaderType::PixelShader, sbMaterial.getRegisterIndex());
 
-				sbMaterial.updateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.size());
+				sbMaterial.updateBuffer(&_sbMaterialDatas[0], _sbMaterialDatas.Size());
 			}
 
 			shaderPool.bindShaderIfNot(GraphicShaderType::PixelShader, _psColorID);
@@ -207,7 +207,7 @@ namespace mint
 			_lowLevelRendererMesh.render(RenderingPrimitive::TriangleList);
 			_lowLevelRendererMesh.flush();
 
-			_sbMaterialDatas.clear();
+			_sbMaterialDatas.Clear();
 		}
 	}
 }

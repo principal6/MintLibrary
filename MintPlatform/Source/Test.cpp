@@ -10,11 +10,11 @@ namespace mint
 	{
 		bool test()
 		{
-			MINT_ASSURE(test_files());
+			MINT_ASSURE(Test_files());
 			return true;
 		}
 
-		bool test_files()
+		bool Test_files()
 		{
 			using namespace mint;
 

@@ -22,8 +22,8 @@ namespace mint
 	inline StackString<T, BufferSize>::StackString(const T* const rawString)
 		: StackString()
 	{
-		_length = Min(StringUtil::length(rawString), BufferSize - 1);
-		StringUtil::copy(&_raw[0], rawString, _length);
+		_length = Min(StringUtil::Length(rawString), BufferSize - 1);
+		StringUtil::Copy(&_raw[0], rawString, _length);
 	}
 
 	template <typename T, uint32 BufferSize>
@@ -31,7 +31,7 @@ namespace mint
 		: StackString()
 	{
 		_length = rhs._length;
-		StringUtil::copy(&_raw[0], &rhs._raw[0], _length);
+		StringUtil::Copy(&_raw[0], &rhs._raw[0], _length);
 	}
 
 	template <typename T, uint32 BufferSize>
@@ -51,47 +51,47 @@ namespace mint
 	template <typename T, uint32 BufferSize>
 	inline bool StackString<T, BufferSize>::operator==(const T* const rawString) const noexcept
 	{
-		return compare(rawString);
+		return Equals(rawString);
 	}
 
 	template <typename T, uint32 BufferSize>
 	inline bool StackString<T, BufferSize>::operator==(const StackString& rhs) const noexcept
 	{
-		return compare(rhs);
+		return Equals(rhs);
 	}
 
 	template <typename T, uint32 BufferSize>
 	inline bool StackString<T, BufferSize>::operator!=(const T* const rawString) const noexcept
 	{
-		return !compare(rawString);
+		return !Equals(rawString);
 	}
 
 	template <typename T, uint32 BufferSize>
 	inline bool StackString<T, BufferSize>::operator!=(const StackString& rhs) const noexcept
 	{
-		return !compare(rhs);
+		return !Equals(rhs);
 	}
 
 	template <typename T, uint32 BufferSize>
-	MINT_INLINE uint32 StackString<T, BufferSize>::capacity() const
+	MINT_INLINE uint32 StackString<T, BufferSize>::Capacity() const
 	{
 		return BufferSize;
 	}
 
 	template <typename T, uint32 BufferSize>
-	MINT_INLINE const T* StackString<T, BufferSize>::c_str() const
+	MINT_INLINE const T* StackString<T, BufferSize>::CString() const
 	{
 		return &_raw[0];
 	}
 
 	template <typename T, uint32 BufferSize>
-	MINT_INLINE T* StackString<T, BufferSize>::data()
+	MINT_INLINE T* StackString<T, BufferSize>::Data()
 	{
 		return &_raw[0];
 	}
 
 	template <typename T, uint32 BufferSize>
-	MINT_INLINE bool StackString<T, BufferSize>::canInsert(const uint32 length) const noexcept
+	MINT_INLINE bool StackString<T, BufferSize>::CanInsert(const uint32 length) const noexcept
 	{
 		if (BufferSize <= _length + length)
 		{
@@ -102,19 +102,19 @@ namespace mint
 	}
 
 	template <typename T, uint32 BufferSize>
-	MINT_INLINE void StackString<T, BufferSize>::clear()
+	MINT_INLINE void StackString<T, BufferSize>::Clear()
 	{
 		_length = 0;
 		_raw[0] = 0; // NULL
 	}
 
 	template <typename T, uint32 BufferSize>
-	MutableString<T>& StackString<T, BufferSize>::append(const StringReference<T>& rhs)
+	MutableString<T>& StackString<T, BufferSize>::Append(const StringReference<T>& rhs)
 	{
-		const uint32 rhsLength = rhs.length();
-		if (canInsert(rhsLength))
+		const uint32 rhsLength = rhs.Length();
+		if (CanInsert(rhsLength))
 		{
-			StringUtil::copy(&_raw[_length], rhs.c_str(), rhsLength);
+			StringUtil::Copy(&_raw[_length], rhs.CString(), rhsLength);
 			_length += rhsLength;
 			_raw[_length] = 0; // NULL
 			return *this;
@@ -123,24 +123,24 @@ namespace mint
 	}
 
 	template <typename T, uint32 BufferSize>
-	inline MutableString<T>& StackString<T, BufferSize>::assign(const StringReference<T>& rhs)
+	inline MutableString<T>& StackString<T, BufferSize>::Assign(const StringReference<T>& rhs)
 	{
-		uint32 rhsLength = rhs.length();
+		uint32 rhsLength = rhs.Length();
 		if (BufferSize <= rhsLength)
 		{
 			MINT_LOG("버퍼 크기를 초과하여 문자열이 잘립니다.");
 			rhsLength = BufferSize - 1;
 		}
 		_length = rhsLength;
-		StringUtil::copy(&_raw[0], rhs.c_str(), _length);
+		StringUtil::Copy(&_raw[0], rhs.CString(), _length);
 		_raw[_length] = 0; // NULL
 		return *this;
 	}
 
 	template<typename T, uint32 BufferSize>
-	inline void StackString<T, BufferSize>::resize(const uint32 length) noexcept
+	inline void StackString<T, BufferSize>::Resize(const uint32 length) noexcept
 	{
-		const uint32 oldLength = this->length();
+		const uint32 oldLength = this->Length();
 		if (oldLength < length)
 		{
 			for (uint32 iter = oldLength; iter < length; ++iter)
@@ -157,18 +157,18 @@ namespace mint
 	}
 
 	template <typename T, uint32 BufferSize>
-	inline StackString<T, BufferSize> StackString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
+	inline StackString<T, BufferSize> StackString<T, BufferSize>::Substring(const uint32 offset, const uint32 count) const noexcept
 	{
 		StackString<T, BufferSize> result; // { &_raw[offset] };
 		result._length = Min(count, _length - offset - 1);
-		StringUtil::copy(&result._raw[0], &_raw[offset], result._length);
+		StringUtil::Copy(&result._raw[0], &_raw[offset], result._length);
 		return result;
 	}
 
 	template <typename T, uint32 BufferSize>
-	inline bool StackString<T, BufferSize>::compare(const T* const rhs) const noexcept
+	inline bool StackString<T, BufferSize>::Equals(const T* const rhs) const noexcept
 	{
-		const uint32 rhsLength = StringUtil::length(rhs);
+		const uint32 rhsLength = StringUtil::Length(rhs);
 		if (_length != rhsLength)
 		{
 			return false;
@@ -185,7 +185,7 @@ namespace mint
 	}
 
 	template <typename T, uint32 BufferSize>
-	inline bool StackString<T, BufferSize>::compare(const StackString& rhs) const noexcept
+	inline bool StackString<T, BufferSize>::Equals(const StackString& rhs) const noexcept
 	{
 		if (_length != rhs._length)
 		{
@@ -203,8 +203,8 @@ namespace mint
 	}
 
 	template<typename T, uint32 BufferSize>
-	inline uint64 StackString<T, BufferSize>::computeHash() const noexcept
+	inline uint64 StackString<T, BufferSize>::ComputeHash() const noexcept
 	{
-		return mint::computeHash(c_str());
+		return mint::ComputeHash(CString());
 	}
 }

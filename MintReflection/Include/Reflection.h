@@ -73,12 +73,12 @@ namespace mint
 
 		~ReflectionData()
 		{
-			const uint32 memberCount = _memberTypeDatas.size();
+			const uint32 memberCount = _memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				MINT_DELETE(_memberTypeDatas[memberIndex]);
 			}
-			_memberTypeDatas.clear();
+			_memberTypeDatas.Clear();
 
 			MINT_DELETE(_typeData);
 		}
@@ -137,7 +137,7 @@ namespace mint
  newTypeData->_alignment = alignof(type);\
  newTypeData->_offset = offsetof(__classType, name); \
  newTypeData->_arrayItemCount = arrayItemCount; \
- reflectionData._memberTypeDatas.push_back(newTypeData);\
+ reflectionData._memberTypeDatas.PushBack(newTypeData);\
  }
 
 #define REFLECTION_BIND_BEGIN private: void __buildMemberReflectionData() {

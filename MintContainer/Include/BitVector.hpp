@@ -15,11 +15,11 @@ namespace mint
 		_byteArray = MINT_NEW_ARRAY(uint8, kMinByteCapacity);
 	}
 
-	MINT_INLINE BitVector::BitVector(const uint32 byteCapacity)
+	MINT_INLINE BitVector::BitVector(const uint32 ByteCapacity)
 		: _byteCapacity{ 0 }
 		, _bitCount{ 0 }
 	{
-		reserveByteCapacity(Max(byteCapacity, kMinByteCapacity));
+		ReserveByteCapacity(Max(ByteCapacity, kMinByteCapacity));
 	}
 
 	MINT_INLINE BitVector::~BitVector()
@@ -27,25 +27,25 @@ namespace mint
 		MINT_DELETE_ARRAY(_byteArray);
 	}
 
-	MINT_INLINE void BitVector::push_back(const bool value)
+	MINT_INLINE void BitVector::PushBack(const bool value)
 	{
-		if (isFull() == true)
+		if (IsFull() == true)
 		{
-			reserveByteCapacity(_byteCapacity * 2);
+			ReserveByteCapacity(_byteCapacity * 2);
 		}
 
 		++_bitCount;
-		set(_bitCount - 1, value);
+		Set(_bitCount - 1, value);
 	}
 
-	MINT_INLINE bool BitVector::pop_back()
+	MINT_INLINE bool BitVector::PopBack()
 	{
 		if (_bitCount > 0)
 		{
-			const bool value = last();
+			const bool value = Last();
 			if (value == true)
 			{
-				set(_bitCount - 1, false);
+				Set(_bitCount - 1, false);
 			}
 			--_bitCount;
 			return value;
@@ -53,7 +53,7 @@ namespace mint
 		return false;
 	}
 
-	MINT_INLINE void BitVector::resizeBitCount(const uint32 newBitCount)
+	MINT_INLINE void BitVector::ResizeBitCount(const uint32 newBitCount)
 	{
 		if (_bitCount == newBitCount)
 		{
@@ -88,7 +88,7 @@ namespace mint
 		_bitCount = newBitCount;
 	}
 
-	MINT_INLINE void BitVector::reserveByteCapacity(const uint32 newByteCapacity)
+	MINT_INLINE void BitVector::ReserveByteCapacity(const uint32 newByteCapacity)
 	{
 		if (newByteCapacity <= _byteCapacity)
 		{
@@ -117,73 +117,73 @@ namespace mint
 		_byteCapacity = newByteCapacity;
 	}
 
-	MINT_INLINE bool BitVector::isEmpty() const noexcept
+	MINT_INLINE bool BitVector::IsEmpty() const noexcept
 	{
 		return (_bitCount == 0);
 	}
 
-	MINT_INLINE bool BitVector::isFull() const noexcept
+	MINT_INLINE bool BitVector::IsFull() const noexcept
 	{
-		return (_byteCapacity < computeByteAt(_bitCount) + 1);
+		return (_byteCapacity < ComputeByteAt(_bitCount) + 1);
 	}
 
-	MINT_INLINE bool BitVector::isInSizeBoundary(const uint32 bitAt) const noexcept
+	MINT_INLINE bool BitVector::IsInSizeBoundary(const uint32 bitAt) const noexcept
 	{
 		return (bitAt < _bitCount);
 	}
 
-	MINT_INLINE bool BitVector::get(const uint32 bitAt) const noexcept
+	MINT_INLINE bool BitVector::Get(const uint32 bitAt) const noexcept
 	{
-		MINT_ASSERT(isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
+		MINT_ASSERT(IsInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
-		const uint32 byteAt = computeByteAt(bitAt);
-		const uint32 byteBitOffsetFromLeft = computeBitOffset(bitAt);
+		const uint32 byteAt = ComputeByteAt(bitAt);
+		const uint32 byteBitOffsetFromLeft = ComputeBitOffset(bitAt);
 
-		const uint8 bitMaskOneAt = makeBitMaskOneAt(byteBitOffsetFromLeft);
+		const uint8 bitMaskOneAt = MakeBitMaskOneAt(byteBitOffsetFromLeft);
 		return (_byteArray[byteAt] & bitMaskOneAt);
 	}
 
-	MINT_INLINE uint8 BitVector::getByte(const uint32 byteAt) const noexcept
+	MINT_INLINE uint8 BitVector::GetByte(const uint32 byteAt) const noexcept
 	{
 		MINT_ASSERT(byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
 
 		return _byteArray[byteAt];
 	}
 
-	MINT_INLINE bool BitVector::first() const noexcept
+	MINT_INLINE bool BitVector::First() const noexcept
 	{
-		return get(0);
+		return Get(0);
 	}
 
-	MINT_INLINE bool BitVector::last() const noexcept
+	MINT_INLINE bool BitVector::Last() const noexcept
 	{
-		return get(_bitCount - 1);
+		return Get(_bitCount - 1);
 	}
 
-	MINT_INLINE void BitVector::set(const uint32 bitAt, const bool value) noexcept
+	MINT_INLINE void BitVector::Set(const uint32 bitAt, const bool value) noexcept
 	{
-		MINT_ASSERT(isInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
+		MINT_ASSERT(IsInSizeBoundary(bitAt), "범위를 벗어난 접근입니다.");
 
-		const uint32 byteAt = computeByteAt(bitAt);
-		const uint32 bitOffsetFromLeft = computeBitOffset(bitAt);
-		setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
+		const uint32 byteAt = ComputeByteAt(bitAt);
+		const uint32 bitOffsetFromLeft = ComputeBitOffset(bitAt);
+		SetBit(_byteArray[byteAt], bitOffsetFromLeft, value);
 	}
 
-	MINT_INLINE void BitVector::set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept
+	MINT_INLINE void BitVector::Set(const uint32 byteAt, const uint32 bitOffsetFromLeft, const bool value) noexcept
 	{
-		MINT_ASSERT(isInSizeBoundary(byteAt * kBitsPerByte + bitOffsetFromLeft), "범위를 벗어난 접근입니다.");
+		MINT_ASSERT(IsInSizeBoundary(byteAt * kBitsPerByte + bitOffsetFromLeft), "범위를 벗어난 접근입니다.");
 
-		setBit(_byteArray[byteAt], bitOffsetFromLeft, value);
+		SetBit(_byteArray[byteAt], bitOffsetFromLeft, value);
 	}
 
-	MINT_INLINE void BitVector::setByte(const uint32 byteAt, const uint8 byte) noexcept
+	MINT_INLINE void BitVector::SetByte(const uint32 byteAt, const uint8 byte) noexcept
 	{
 		MINT_ASSERT(byteAt < _byteCapacity, "범위를 벗어난 접근입니다.");
 
 		_byteArray[byteAt] = byte;
 	}
 
-	MINT_INLINE void BitVector::fill(const bool value) noexcept
+	MINT_INLINE void BitVector::Fill(const bool value) noexcept
 	{
 		const uint8 byteValue = (value == true) ? 255 : 0;
 		for (uint32 byteAt = 0; byteAt < _byteCapacity; ++byteAt)
@@ -192,62 +192,62 @@ namespace mint
 		}
 	}
 
-	MINT_INLINE void BitVector::swap(const uint32 aBitAt, const uint32 bBitAt) noexcept
+	MINT_INLINE void BitVector::Swap(const uint32 aBitAt, const uint32 bBitAt) noexcept
 	{
-		MINT_ASSERT(isInSizeBoundary(aBitAt) == true && isInSizeBoundary(bBitAt) == true, "범위를 벗어난 접근입니다.");
+		MINT_ASSERT(IsInSizeBoundary(aBitAt) == true && IsInSizeBoundary(bBitAt) == true, "범위를 벗어난 접근입니다.");
 
-		const bool a = get(aBitAt);
-		const bool b = get(bBitAt);
-		set(aBitAt, b);
-		set(bBitAt, a);
+		const bool a = Get(aBitAt);
+		const bool b = Get(bBitAt);
+		Set(aBitAt, b);
+		Set(bBitAt, a);
 	}
 
-	MINT_INLINE uint32 BitVector::bitCount() const noexcept
+	MINT_INLINE uint32 BitVector::BitCount() const noexcept
 	{
 		return _bitCount;
 	}
 
-	MINT_INLINE uint32 BitVector::byteCapacity() const noexcept
+	MINT_INLINE uint32 BitVector::ByteCapacity() const noexcept
 	{
 		return _byteCapacity;
 	}
 
-	MINT_INLINE void BitVector::setBit(uint8& inOutByte, const uint32 bitOffsetFromLeft, const bool value) noexcept
+	MINT_INLINE void BitVector::SetBit(uint8& inOutByte, const uint32 bitOffsetFromLeft, const bool value) noexcept
 	{
 		// EUREKA
 		// 이 경우 만큼은... 분기를 타는 게 더 빠르구나!!!
 
 		if (value == true)
 		{
-			inOutByte |= makeBitMaskOneAt(bitOffsetFromLeft);
+			inOutByte |= MakeBitMaskOneAt(bitOffsetFromLeft);
 		}
 		else
 		{
-			inOutByte &= ~makeBitMaskOneAt(bitOffsetFromLeft);
+			inOutByte &= ~MakeBitMaskOneAt(bitOffsetFromLeft);
 		}
 	}
 
-	MINT_INLINE bool BitVector::getBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
+	MINT_INLINE bool BitVector::GetBit(const uint8 byte, const uint32 bitOffsetFromLeft) noexcept
 	{
-		return (byte & makeBitMaskOneAt(bitOffsetFromLeft));
+		return (byte & MakeBitMaskOneAt(bitOffsetFromLeft));
 	}
 
-	MINT_INLINE uint32 BitVector::computeByteCount(const uint32 bitCount) noexcept
+	MINT_INLINE uint32 BitVector::ComputeByteCount(const uint32 BitCount) noexcept
 	{
-		return ((bitCount - 1) / kBitsPerByte + 1);
+		return ((BitCount - 1) / kBitsPerByte + 1);
 	}
 
-	MINT_INLINE uint32 BitVector::computeByteAt(const uint32 bitAt) noexcept
+	MINT_INLINE uint32 BitVector::ComputeByteAt(const uint32 bitAt) noexcept
 	{
 		return bitAt / kBitsPerByte;
 	}
 
-	MINT_INLINE uint32 BitVector::computeBitOffset(const uint32 bitAt) noexcept
+	MINT_INLINE uint32 BitVector::ComputeBitOffset(const uint32 bitAt) noexcept
 	{
 		return bitAt % kBitsPerByte;
 	}
 
-	MINT_INLINE uint8 BitVector::makeByte(const bool(&valueArray)[8]) noexcept
+	MINT_INLINE uint8 BitVector::MakeByte(const bool(&valueArray)[8]) noexcept
 	{
 		return static_cast<uint8>(
 			(static_cast<int32>(valueArray[0]) << 7) &
@@ -261,7 +261,7 @@ namespace mint
 			);
 	}
 
-	MINT_INLINE uint8 BitVector::makeBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
+	MINT_INLINE uint8 BitVector::MakeBitMaskOneAt(const uint32 bitOffsetFromLeft) noexcept
 	{
 		return (1 << (kBitsPerByte - bitOffsetFromLeft - 1));
 	}

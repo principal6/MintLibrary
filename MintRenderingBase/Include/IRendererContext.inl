@@ -32,7 +32,7 @@ namespace mint
 
 		MINT_INLINE void IRendererContext::setColor(const Color& color) noexcept
 		{
-			_colorArray.clear();
+			_colorArray.Clear();
 			_defaultColor = color;
 		}
 
@@ -40,9 +40,9 @@ namespace mint
 		{
 			_colorArray = colorArray;
 
-			if (_colorArray.empty() == false)
+			if (_colorArray.IsEmpty() == false)
 			{
-				_defaultColor = _colorArray.back();
+				_defaultColor = _colorArray.Back();
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace mint
 
 		MINT_INLINE const Float4& IRendererContext::getColorInternal(const uint32 index) const noexcept
 		{
-			const uint32 colorCount = static_cast<uint32>(_colorArray.size());
+			const uint32 colorCount = static_cast<uint32>(_colorArray.Size());
 			return (colorCount <= index) ? _defaultColor : _colorArray[index];
 		}
 

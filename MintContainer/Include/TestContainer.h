@@ -12,18 +12,18 @@ namespace mint
 {
 	namespace TestContainers
 	{
-		bool test();
-		bool test_Array();
-		bool test_BitArray();
-		bool test_BitVector();
-		bool test_StackHolder();
-		bool test_Vector();
-		bool test_HashMap();
-		bool test_SharedPtr();
-		bool test_StringTypes();
-		bool test_StringUtil();
-		bool test_Queue();
-		bool test_Tree();
+		bool Test();
+		bool Test_Array();
+		bool Test_BitArray();
+		bool Test_BitVector();
+		bool Test_StackHolder();
+		bool Test_Vector();
+		bool Test_HashMap();
+		bool Test_SharedPtr();
+		bool Test_StringTypes();
+		bool Test_StringUtil();
+		bool Test_Queue();
+		bool Test_Tree();
 	};
 }
 

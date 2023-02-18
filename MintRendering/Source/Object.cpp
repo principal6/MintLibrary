@@ -41,7 +41,7 @@ namespace mint
 
 				objectComponent->_ownerObject = this;
 
-				_componentArray.push_back(objectComponent);
+				_componentArray.PushBack(objectComponent);
 			}
 		}
 
@@ -53,7 +53,7 @@ namespace mint
 			}
 
 			int32 foundComponentIndex = -1;
-			const int32 componentCount = static_cast<int32>(_componentArray.size());
+			const int32 componentCount = static_cast<int32>(_componentArray.Size());
 			for (int32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
 			{
 				if (_componentArray[componentIndex] == objectComponent)
@@ -67,16 +67,16 @@ namespace mint
 			{
 				if (foundComponentIndex < componentCount - 1)
 				{
-					std::swap(_componentArray[foundComponentIndex], _componentArray.back());
+					std::swap(_componentArray[foundComponentIndex], _componentArray.Back());
 				}
-				_componentArray.back()->_ownerObject = nullptr;
-				_componentArray.pop_back();
+				_componentArray.Back()->_ownerObject = nullptr;
+				_componentArray.PopBack();
 			}
 		}
 
 		uint32 Object::getComponentCount() const noexcept
 		{
-			return static_cast<uint32>(_componentArray.size());
+			return static_cast<uint32>(_componentArray.Size());
 		}
 
 		IObjectComponent* Object::getComponent(const ObjectComponentType type) const noexcept

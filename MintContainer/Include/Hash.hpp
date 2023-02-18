@@ -9,11 +9,11 @@
 
 namespace mint
 {
-	MINT_INLINE uint64 computeHash(const char* const rhs, const uint32 length) noexcept
+	MINT_INLINE uint64 ComputeHash(const char* const rhs, const uint32 length) noexcept
 	{
 		// Hashing algorithm: FNV1a
 
-		if (StringUtil::isNullOrEmpty(rhs) == true)
+		if (StringUtil::IsNullOrEmpty(rhs) == true)
 		{
 			return kUint64Max;
 		}
@@ -30,33 +30,33 @@ namespace mint
 		return hash;
 	}
 
-	MINT_INLINE uint64 computeHash(const char* const rhs) noexcept
+	MINT_INLINE uint64 ComputeHash(const char* const rhs) noexcept
 	{
-		const uint32 rhsLength = StringUtil::length(rhs);
-		return computeHash(rhs, rhsLength);
+		const uint32 rhsLength = StringUtil::Length(rhs);
+		return ComputeHash(rhs, rhsLength);
 	}
 
-	MINT_INLINE uint64 computeHash(const wchar_t* const rhs) noexcept
+	MINT_INLINE uint64 ComputeHash(const wchar_t* const rhs) noexcept
 	{
-		const uint32 rhsLength = StringUtil::length(rhs);
+		const uint32 rhsLength = StringUtil::Length(rhs);
 		const char* const rhsA = reinterpret_cast<const char*>(rhs);
-		return computeHash(rhsA, rhsLength * 2);
+		return ComputeHash(rhsA, rhsLength * 2);
 	}
 
 	template <typename T>
-	uint64 computeHash(const T& value) noexcept
+	uint64 ComputeHash(const T& value) noexcept
 	{
 		if constexpr (std::is_arithmetic<T>::value == true)
 		{
 			const char* const str = reinterpret_cast<const char*>(&value);
 			const uint32 length = sizeof(value);
-			return computeHash(str, length);
+			return ComputeHash(str, length);
 		}
 		else if constexpr (std::is_pointer<T>::value == true)
 		{
 			const char* const str = reinterpret_cast<const char*>(&value);
 			const uint32 length = sizeof(value);
-			return computeHash(str, length);
+			return ComputeHash(str, length);
 		}
 
 		MINT_ASSERT(false, "Hash computation not implemented for this type!");
@@ -67,18 +67,18 @@ namespace mint
 	template<typename T>
 	inline uint64 Hasher<T>::operator()(const T& value) const noexcept
 	{
-		return computeHash<T>(value);
+		return ComputeHash<T>(value);
 		//return uint64(value); // ### FOR TEST ###
 	}
 
 	inline uint64 Hasher<std::string>::operator()(const std::string& value) const noexcept
 	{
-		return computeHash(value.c_str(), static_cast<uint32>(value.length()));
+		return ComputeHash(value.c_str(), static_cast<uint32>(value.length()));
 	}
 
 	template<typename T>
 	inline uint64 Hasher<String<T>>::operator()(const String<T>& value) const noexcept
 	{
-		return value.computeHash();
+		return value.ComputeHash();
 	}
 }

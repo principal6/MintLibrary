@@ -28,28 +28,28 @@ namespace mint
 		template<uint32 BufferSize>
 		static void makeShaderVersion(StackStringA<BufferSize>& out, const GraphicShaderType shaderType, const DxShaderVersion shaderVersion)
 		{
-			out.clear();
+			out.Clear();
 
 			if (shaderType == GraphicShaderType::VertexShader)
 			{
-				out.append("vs_");
+				out.Append("vs_");
 			}
 			else if (shaderType == GraphicShaderType::GeometryShader)
 			{
-				out.append("gs_");
+				out.Append("gs_");
 			}
 			else if (shaderType == GraphicShaderType::PixelShader)
 			{
-				out.append("ps_");
+				out.Append("ps_");
 			}
 
 			if (shaderVersion == DxShaderVersion::v_4_0)
 			{
-				out.append("4_0");
+				out.Append("4_0");
 			}
 			else if (shaderVersion == DxShaderVersion::v_5_0)
 			{
-				out.append("5_0");
+				out.Append("5_0");
 			}
 		}
 #pragma endregion
@@ -164,7 +164,7 @@ namespace mint
 		
 		void DxShaderPool::removeShader(const GraphicObjectID& shaderID)
 		{
-			if (shaderID.isValid() == false)
+			if (shaderID.IsValid() == false)
 			{
 				MINT_NEVER;
 				return;
@@ -172,12 +172,12 @@ namespace mint
 
 			for (auto& shaders : _shadersPerType)
 			{
-				const uint32 shaderCount = shaders.size();
+				const uint32 shaderCount = shaders.Size();
 				for (uint32 shaderIndex = 0; shaderIndex < shaderCount; ++shaderIndex)
 				{
 					if (shaders[shaderIndex] == shaderID)
 					{
-						shaders.erase(shaderIndex);
+						shaders.Erase(shaderIndex);
 						break;
 					}
 				}
@@ -186,18 +186,18 @@ namespace mint
 		
 		void DxShaderPool::removeInputLayout(const GraphicObjectID& shaderID)
 		{
-			if (shaderID.isValid() == false)
+			if (shaderID.IsValid() == false)
 			{
 				MINT_NEVER;
 				return;
 			}
 
-			const uint32 inputLayoutCount = _inputLayouts.size();
+			const uint32 inputLayoutCount = _inputLayouts.Size();
 			for (uint32 inputLayoutIndex = 0; inputLayoutIndex < inputLayoutCount; ++inputLayoutIndex)
 			{
 				if (_inputLayouts[inputLayoutIndex] == shaderID)
 				{
-					_inputLayouts.erase(inputLayoutIndex);
+					_inputLayouts.Erase(inputLayoutIndex);
 					break;
 				}
 			}
@@ -212,7 +212,7 @@ namespace mint
 
 			shader.assignIDXXX();
 			const GraphicObjectID graphicObjectID = shader.getID();
-			accessShaders(shaderType).push_back(std::move(shader));
+			accessShaders(shaderType).PushBack(std::move(shader));
 			quickSort(accessShaders(shaderType), GraphicObject::AscendingComparator());
 			return graphicObjectID;
 		}
@@ -227,7 +227,7 @@ namespace mint
 
 			inputLayout.assignIDXXX();
 			const GraphicObjectID graphicObjectID = inputLayout.getID();
-			_inputLayouts.push_back(std::move(inputLayout));
+			_inputLayouts.PushBack(std::move(inputLayout));
 			quickSort(_inputLayouts, GraphicObject::AscendingComparator());
 			return graphicObjectID;
 		}
@@ -270,8 +270,8 @@ namespace mint
 
 		bool DxShaderPool::createInputLayoutInternal(const DxShader& vertexShader, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData, GraphicInputLayout& outInputLayout)
 		{
-			outInputLayout._inputElementSet._semanticNameArray.clear();
-			outInputLayout._inputElementSet._inputElementDescriptorArray.clear();
+			outInputLayout._inputElementSet._semanticNameArray.Clear();
+			outInputLayout._inputElementSet._inputElementDescriptorArray.Clear();
 
 			{
 				const uint32 memberCount = inputElementTypeMetaData.getMemberCount();
@@ -294,7 +294,7 @@ namespace mint
 				}
 			}
 
-			if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.size()),
+			if (FAILED(_graphicDevice.getDxDevice()->CreateInputLayout(outInputLayout._inputElementSet._inputElementDescriptorArray.Data(), static_cast<UINT>(outInputLayout._inputElementSet._inputElementDescriptorArray.Size()),
 				vertexShader._shaderBlob->GetBufferPointer(), vertexShader._shaderBlob->GetBufferSize(), outInputLayout._inputLayout.ReleaseAndGetAddressOf())))
 			{
 				MINT_LOG_ERROR("VertexShader [[%s]] 의 InputLayout 생성에 실패했습니다. Input 자료형 으로 [[%s]] 을 쓰는게 맞는지 확인해 주세요.", vertexShader._hlslFileName.c_str(), inputElementTypeMetaData.getTypeName().c_str());
@@ -305,10 +305,10 @@ namespace mint
 
 		void DxShaderPool::pushInputElement(DxInputElementSet& inputElementSet, const TypeMetaData<TypeCustomData>& outerDataTypeMetaData, const TypeMetaData<TypeCustomData>& memberTypeMetaData)
 		{
-			inputElementSet._semanticNameArray.push_back(Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
+			inputElementSet._semanticNameArray.PushBack(Language::CppHlsl::Parser::convertDeclarationNameToHlslSemanticName(memberTypeMetaData.getDeclName()));
 
 			D3D11_INPUT_ELEMENT_DESC inputElementDescriptor;
-			inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.back().c_str();
+			inputElementDescriptor.SemanticName = inputElementSet._semanticNameArray.Back().c_str();
 			inputElementDescriptor.SemanticIndex = 0;
 			inputElementDescriptor.Format = Language::CppHlsl::Parser::convertCppHlslTypeToDxgiFormat(memberTypeMetaData);
 			inputElementDescriptor.InputSlot = memberTypeMetaData._customData.getInputSlot();
@@ -320,21 +320,21 @@ namespace mint
 				inputElementDescriptor.InputSlotClass = D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA;
 			}
 
-			inputElementSet._inputElementDescriptorArray.push_back(inputElementDescriptor);
+			inputElementSet._inputElementDescriptorArray.PushBack(inputElementDescriptor);
 		}
 
 		bool DxShaderPool::compileShaderFromFile(const char* const inputDirectory, const char* const inputShaderFileName, const char* const entryPoint, const char* const outputDirectory, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
 		{
 			StringA inputShaderFilePath{ inputDirectory };
 			inputShaderFilePath += inputShaderFileName;
-			if (FileUtil::exists(inputShaderFilePath.c_str()) == false)
+			if (FileUtil::exists(inputShaderFilePath.CString()) == false)
 			{
-				MINT_LOG_ERROR("Input shader file not found : %s", inputShaderFilePath.c_str());
+				MINT_LOG_ERROR("Input shader file not found : %s", inputShaderFilePath.CString());
 				return false;
 			}
 
 			std::string outputShaderFilePath{ inputShaderFileName };
-			StringUtil::excludeExtension(outputShaderFilePath);
+			StringUtil::ExcludeExtension(outputShaderFilePath);
 			if (outputDirectory != nullptr)
 			{
 				if (FileUtil::exists(outputDirectory) == false)
@@ -350,12 +350,12 @@ namespace mint
 			}
 			outputShaderFilePath.append(kCompiledShaderFileExtension);
 
-			return compileShaderFromFile(inputShaderFilePath.c_str(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
+			return compileShaderFromFile(inputShaderFilePath.CString(), entryPoint, outputShaderFilePath.c_str(), shaderType, forceCompilation, inoutShader);
 		}
 
 		bool DxShaderPool::compileShaderFromFile(const char* const inputShaderFilePath, const char* const entryPoint, const char* const outputShaderFilePath, const GraphicShaderType shaderType, const bool forceCompilation, DxShader& inoutShader)
 		{
-			if (StringUtil::contains(inputShaderFilePath, ".hlsl") == false)
+			if (StringUtil::Contains(inputShaderFilePath, ".hlsl") == false)
 			{
 				return false;
 			}
@@ -373,8 +373,8 @@ namespace mint
 			else
 			{
 				StringW compiledShaderFileNameW;
-				StringUtil::convertStringAToStringW(outputShaderFilePath, compiledShaderFileNameW);
-				if (FAILED(D3DReadFileToBlob(compiledShaderFileNameW.c_str(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
+				StringUtil::ConvertStringAToStringW(outputShaderFilePath, compiledShaderFileNameW);
+				if (FAILED(D3DReadFileToBlob(compiledShaderFileNameW.CString(), inoutShader._shaderBlob.ReleaseAndGetAddressOf())))
 				{
 					return false;
 				}
@@ -398,7 +398,7 @@ namespace mint
 			if (compileParam._inputFileName == nullptr)
 			{
 				content = compileParam._shaderTextContent;
-				contentLength = StringUtil::length(compileParam._shaderTextContent);
+				contentLength = StringUtil::Length(compileParam._shaderTextContent);
 				identifier = compileParam._shaderIdentifier;
 			}
 			else
@@ -415,7 +415,7 @@ namespace mint
 			}
 
 			const UINT debugFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-			if (FAILED(D3DCompile(content, contentLength, identifier, nullptr, _shaderHeaderMemory, entryPoint, version.c_str(), debugFlag, 0, outBlob, _errorMessageBlob.ReleaseAndGetAddressOf())))
+			if (FAILED(D3DCompile(content, contentLength, identifier, nullptr, _shaderHeaderMemory, entryPoint, version.CString(), debugFlag, 0, outBlob, _errorMessageBlob.ReleaseAndGetAddressOf())))
 			{
 				reportCompileError();
 				return false;
@@ -424,7 +424,7 @@ namespace mint
 			if (compileParam._outputFileName != nullptr)
 			{
 				std::wstring outputFileNameWideString;
-				StringUtil::convertStringToWideString(compileParam._outputFileName, outputFileNameWideString);
+				StringUtil::ConvertStringToWideString(compileParam._outputFileName, outputFileNameWideString);
 				if (FAILED(D3DWriteBlobToFile(*outBlob, outputFileNameWideString.c_str(), TRUE)))
 				{
 					return false;
@@ -440,7 +440,7 @@ namespace mint
 			{
 				const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
 				const GraphicObjectID& boundShaderID = accessBoundShaderID(shaderType);
-				if (boundShaderID.isValid())
+				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = getShaderIndex(shaderType, boundShaderID);
 					accessShaders(shaderType)[boundShaderIndex].unbind();
@@ -459,7 +459,7 @@ namespace mint
 			{
 				const GraphicShaderType shaderType = static_cast<GraphicShaderType>(shaderTypeIndex);
 				const GraphicObjectID& boundShaderID = accessBoundShaderID(shaderType);
-				if (boundShaderID.isValid())
+				if (boundShaderID.IsValid())
 				{
 					const int32 boundShaderIndex = getShaderIndex(shaderType, boundShaderID);
 					accessShaders(shaderType)[boundShaderIndex].bind();
@@ -521,7 +521,7 @@ namespace mint
 			}
 
 			GraphicObjectID& boundShaderID = accessBoundShaderID(shaderType);
-			if (boundShaderID.isValid() == false)
+			if (boundShaderID.IsValid() == false)
 			{
 				return;
 			}
@@ -533,7 +533,7 @@ namespace mint
 				return;
 			}
 
-			boundShaderID.invalidate();
+			boundShaderID.Invalidate();
 			accessShaders(shaderType)[shaderIndex].unbind();
 		}
 
@@ -553,7 +553,7 @@ namespace mint
 		uint32 DxShaderPool::getShaderCount(const GraphicShaderType shaderType) const
 		{
 			MINT_ASSERT(shaderType != GraphicShaderType::COUNT, "Invalid parameter - check ShaderType");
-			return getShaders(shaderType).size();
+			return getShaders(shaderType).Size();
 		}
 
 		GraphicObjectID& DxShaderPool::accessBoundShaderID(const GraphicShaderType shaderType)

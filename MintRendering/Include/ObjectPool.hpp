@@ -50,12 +50,12 @@ namespace mint
 					MINT_DELETE(_objectArray[objectIndex]);
 				}
 			}
-			_objectArray.clear();
+			_objectArray.Clear();
 		}
 
 		MINT_INLINE Object* ObjectPool::createObjectInternalXXX(Object* const object)
 		{
-			_objectArray.push_back(object);
+			_objectArray.PushBack(object);
 			object->attachComponent(createTransformComponent()); // 모든 Object는 TransformComponent 를 필수로 가집니다.
 			return object;
 		}
@@ -68,13 +68,13 @@ namespace mint
 		MINT_INLINE MeshComponent* ObjectPool::createMeshComponent()
 		{
 			MeshComponent* result = MINT_NEW(MeshComponent);
-			_meshComponentArray.push_back(std::move(result));
-			return _meshComponentArray.back();
+			_meshComponentArray.PushBack(std::move(result));
+			return _meshComponentArray.Back();
 		}
 
 		MINT_INLINE void ObjectPool::destroyObjectComponents(Object& object)
 		{
-			const uint32 componentCount = static_cast<uint32>(object._componentArray.size());
+			const uint32 componentCount = static_cast<uint32>(object._componentArray.Size());
 			for (uint32 componentIndex = 0; componentIndex < componentCount; ++componentIndex)
 			{
 				IObjectComponent*& component = object._componentArray[componentIndex];
@@ -98,7 +98,7 @@ namespace mint
 				return;
 			}
 
-			const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.size());
+			const uint32 meshComponentCount = static_cast<uint32>(_meshComponentArray.Size());
 			for (uint32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
 				if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
@@ -107,7 +107,7 @@ namespace mint
 				}
 			}
 
-			_meshComponentArray.push_back(meshComponent);
+			_meshComponentArray.PushBack(meshComponent);
 		}
 
 		MINT_INLINE void ObjectPool::deregisterMeshComponent(MeshComponent* const meshComponent)
@@ -118,7 +118,7 @@ namespace mint
 			}
 
 			int32 foundIndex = -1;
-			const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.size());
+			const int32 meshComponentCount = static_cast<int32>(_meshComponentArray.Size());
 			for (int32 meshComponentIndex = 0; meshComponentIndex < meshComponentCount; ++meshComponentIndex)
 			{
 				if (_meshComponentArray[meshComponentIndex]->getID() == meshComponent->getID())
@@ -132,9 +132,9 @@ namespace mint
 			{
 				if (foundIndex < meshComponentCount)
 				{
-					std::swap(_meshComponentArray[foundIndex], _meshComponentArray.back());
+					std::swap(_meshComponentArray[foundIndex], _meshComponentArray.Back());
 				}
-				_meshComponentArray.pop_back();
+				_meshComponentArray.PopBack();
 			}
 		}
 
@@ -146,7 +146,7 @@ namespace mint
 		MINT_INLINE void ObjectPool::updateScreenSize(const Float2& screenSize)
 		{
 			const float screenRatio = (screenSize._x / screenSize._y);
-			const uint32 objectCount = _objectArray.size();
+			const uint32 objectCount = _objectArray.Size();
 			for (uint32 objectIndex = 0; objectIndex < objectCount; ++objectIndex)
 			{
 				Object*& object = _objectArray[objectIndex];
@@ -165,7 +165,7 @@ namespace mint
 
 		MINT_INLINE uint32 ObjectPool::getObjectCount() const noexcept
 		{
-			return _objectArray.size();
+			return _objectArray.Size();
 		}
 
 		MINT_INLINE const DeltaTimer* ObjectPool::getDeltaTimerXXX() const noexcept

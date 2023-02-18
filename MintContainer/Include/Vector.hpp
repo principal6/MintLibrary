@@ -26,7 +26,7 @@ namespace mint
 	inline Vector<T>::Vector(const uint32 size)
 		: Vector()
 	{
-		resize(size);
+		Resize(size);
 	}
 
 	template<typename T>
@@ -34,12 +34,12 @@ namespace mint
 		: Vector()
 	{
 		const uint32 count = static_cast<uint32>(initializerList.size());
-		reserve(count);
+		Reserve(count);
 
 		const T* const rawPointer = initializerList.begin();
 		for (uint32 index = 0; index < count; ++index)
 		{
-			push_back(rawPointer[index]);
+			PushBack(rawPointer[index]);
 		}
 	}
 
@@ -47,11 +47,11 @@ namespace mint
 	inline Vector<T>::Vector(const Vector& rhs) noexcept
 		: Vector()
 	{
-		reserve(rhs._size);
+		Reserve(rhs._size);
 
 		for (uint32 index = 0; index < rhs._size; ++index)
 		{
-			push_back(rhs._rawPointer[index]);
+			PushBack(rhs._rawPointer[index]);
 		}
 	}
 
@@ -69,9 +69,9 @@ namespace mint
 	template<typename T>
 	inline Vector<T>::~Vector()
 	{
-		clear();
+		Clear();
 
-		MemoryRaw::deallocateMemory<T>(_rawPointer);
+		MemoryRaw::DeallocateMemory<T>(_rawPointer);
 	}
 
 	template<typename T>
@@ -79,13 +79,13 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			clear();
+			Clear();
 
-			reserve(rhs._size);
+			Reserve(rhs._size);
 
 			for (uint32 index = 0; index < rhs._size; ++index)
 			{
-				push_back(rhs._rawPointer[index]);
+				PushBack(rhs._rawPointer[index]);
 			}
 		}
 		return *this;
@@ -96,9 +96,9 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			clear();
+			Clear();
 
-			MemoryRaw::deallocateMemory<T>(_rawPointer);
+			MemoryRaw::DeallocateMemory<T>(_rawPointer);
 
 			_rawPointer = rhs._rawPointer;
 			_capacity = rhs._capacity;
@@ -126,43 +126,43 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::reserve(const uint32 capacity) noexcept
+	MINT_INLINE void Vector<T>::Reserve(const uint32 capacity) noexcept
 	{
 		if (capacity <= _capacity)
 		{
 			return;
 		}
 
-		// 잦은 reserve 시 성능 최적화!!!
+		// 잦은 Reserve 시 성능 최적화!!!
 		_capacity = Max(capacity, _capacity * 2);
 
 		if (_size == 0)
 		{
-			MemoryRaw::deallocateMemory<T>(_rawPointer);
-			_rawPointer = MemoryRaw::allocateMemory<T>(_capacity);
+			MemoryRaw::DeallocateMemory<T>(_rawPointer);
+			_rawPointer = MemoryRaw::AllocateMemory<T>(_capacity);
 		}
 		else
 		{
-			T* temp = MemoryRaw::allocateMemory<T>(_size);
-			MemoryRaw::moveMemory<T>(temp, _rawPointer, _size);
+			T* temp = MemoryRaw::AllocateMemory<T>(_size);
+			MemoryRaw::MoveMemory_<T>(temp, _rawPointer, _size);
 
-			MemoryRaw::deallocateMemory<T>(_rawPointer);
-			_rawPointer = MemoryRaw::allocateMemory<T>(_capacity);
+			MemoryRaw::DeallocateMemory<T>(_rawPointer);
+			_rawPointer = MemoryRaw::AllocateMemory<T>(_capacity);
 
-			MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
-			MemoryRaw::deallocateMemory<T>(temp);
+			MemoryRaw::MoveMemory_<T>(_rawPointer, temp, _size);
+			MemoryRaw::DeallocateMemory<T>(temp);
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::resize(const uint32 size) noexcept
+	MINT_INLINE void Vector<T>::Resize(const uint32 size) noexcept
 	{
 		if (_size < size)
 		{
-			reserve(size);
+			Reserve(size);
 			for (uint32 index = _size; index < size; ++index)
 			{
-				MemoryRaw::construct(_rawPointer[index]);
+				MemoryRaw::Construct(_rawPointer[index]);
 			}
 			_size = size;
 		}
@@ -171,62 +171,62 @@ namespace mint
 			const uint32 oldSize = _size;
 			for (uint32 index = size; index < oldSize; ++index)
 			{
-				pop_back();
+				PopBack();
 			}
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::shrink_to_fit() noexcept
+	MINT_INLINE void Vector<T>::ShrinkToFit() noexcept
 	{
 		if (_capacity <= _size)
 		{
 			return;
 		}
 
-		T* temp = MemoryRaw::allocateMemory<T>(_size);
-		MemoryRaw::moveMemory<T>(temp, _rawPointer, _size);
+		T* temp = MemoryRaw::AllocateMemory<T>(_size);
+		MemoryRaw::MoveMemory_<T>(temp, _rawPointer, _size);
 
-		MemoryRaw::deallocateMemory<T>(_rawPointer);
-		_rawPointer = MemoryRaw::allocateMemory<T>(_size);
+		MemoryRaw::DeallocateMemory<T>(_rawPointer);
+		_rawPointer = MemoryRaw::AllocateMemory<T>(_size);
 
-		MemoryRaw::moveMemory<T>(_rawPointer, temp, _size);
-		MemoryRaw::deallocateMemory<T>(temp);
+		MemoryRaw::MoveMemory_<T>(_rawPointer, temp, _size);
+		MemoryRaw::DeallocateMemory<T>(temp);
 
 		_capacity = _size;
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::clear() noexcept
+	MINT_INLINE void Vector<T>::Clear() noexcept
 	{
-		while (empty() == false)
+		while (IsEmpty() == false)
 		{
-			pop_back();
+			PopBack();
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::push_back(const T& newEntry) noexcept
+	MINT_INLINE void Vector<T>::PushBack(const T& newEntry) noexcept
 	{
-		expandCapacityIfNecessary();
+		ExpandCapacityIfNecessary();
 
-		MemoryRaw::copyConstruct<T>(_rawPointer[_size], newEntry);
+		MemoryRaw::CopyConstruct<T>(_rawPointer[_size], newEntry);
 
 		++_size;
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::push_back(T&& newEntry) noexcept
+	MINT_INLINE void Vector<T>::PushBack(T&& newEntry) noexcept
 	{
-		expandCapacityIfNecessary();
+		ExpandCapacityIfNecessary();
 
-		MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(newEntry));
+		MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(newEntry));
 
 		++_size;
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::pop_back() noexcept
+	MINT_INLINE void Vector<T>::PopBack() noexcept
 	{
 		if (_size == 0)
 		{
@@ -235,80 +235,80 @@ namespace mint
 
 		// valid 한 범위 내 [0, _size - 1] element 는
 		// 모두 ctor 의 호출이 보장되었으므로
-		// 반드시 destroy() 를 호출해야 한다.
-		MemoryRaw::destroy<T>(_rawPointer[_size - 1]);
+		// 반드시 Destroy() 를 호출해야 한다.
+		MemoryRaw::Destroy<T>(_rawPointer[_size - 1]);
 
 		--_size;
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::insert(const T& newEntry, const uint32 at) noexcept
+	MINT_INLINE void Vector<T>::Insert(const T& newEntry, const uint32 at) noexcept
 	{
 		if (_size <= at)
 		{
-			push_back(newEntry);
+			PushBack(newEntry);
 		}
 		else
 		{
-			expandCapacityIfNecessary();
+			ExpandCapacityIfNecessary();
 
-			if constexpr (MemoryRaw::isMovable<T>() == true)
+			if constexpr (MemoryRaw::IsMovable<T>() == true)
 			{
-				MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::moveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+					MemoryRaw::MoveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
 				}
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
-				MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+				MemoryRaw::CopyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::copyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+					MemoryRaw::CopyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
 				}
 			}
 
-			MemoryRaw::copyAssign<T>(_rawPointer[at], newEntry);
+			MemoryRaw::CopyAssign<T>(_rawPointer[at], newEntry);
 
 			++_size;
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::insert(T&& newEntry, const uint32 at) noexcept
+	MINT_INLINE void Vector<T>::Insert(T&& newEntry, const uint32 at) noexcept
 	{
 		if (_size <= at)
 		{
-			push_back(newEntry);
+			PushBack(newEntry);
 		}
 		else
 		{
-			expandCapacityIfNecessary();
+			ExpandCapacityIfNecessary();
 
-			if constexpr (MemoryRaw::isMovable<T>() == true)
+			if constexpr (MemoryRaw::IsMovable<T>() == true)
 			{
-				MemoryRaw::moveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
+				MemoryRaw::MoveConstruct<T>(_rawPointer[_size], std::move(_rawPointer[_size - 1]));
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::moveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
+					MemoryRaw::MoveAssign<T>(_rawPointer[iter], std::move(_rawPointer[iter - 1]));
 				}
 
-				MemoryRaw::moveAssign<T>(_rawPointer[at], std::move(newEntry));
+				MemoryRaw::MoveAssign<T>(_rawPointer[at], std::move(newEntry));
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
-				MemoryRaw::copyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
+				MemoryRaw::CopyConstruct<T>(_rawPointer[_size], _rawPointer[_size - 1]);
 
 				for (uint32 iter = _size - 1; iter > at; --iter)
 				{
-					MemoryRaw::copyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
+					MemoryRaw::CopyAssign<T>(_rawPointer[iter], _rawPointer[iter - 1]);
 				}
 
-				MemoryRaw::copyAssign<T>(_rawPointer[at], newEntry);
+				MemoryRaw::CopyAssign<T>(_rawPointer[at], newEntry);
 			}
 
 			++_size;
@@ -316,7 +316,7 @@ namespace mint
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::erase(const uint32 at) noexcept
+	MINT_INLINE void Vector<T>::Erase(const uint32 at) noexcept
 	{
 		if (_size == 0)
 		{
@@ -325,108 +325,108 @@ namespace mint
 
 		if (at == _size - 1)
 		{
-			pop_back();
+			PopBack();
 		}
 		else
 		{
-			if constexpr (MemoryRaw::isMovable<T>() == true)
+			if constexpr (MemoryRaw::IsMovable<T>() == true)
 			{
 				for (uint32 iter = at + 1; iter < _size; ++iter)
 				{
-					MemoryRaw::moveAssign<T>(_rawPointer[iter - 1], std::move(_rawPointer[iter]));
+					MemoryRaw::MoveAssign<T>(_rawPointer[iter - 1], std::move(_rawPointer[iter]));
 				}
 			}
 			else // 비효율적이지만 동작은 하도록 한다.
 			{
 				for (uint32 iter = at + 1; iter < _size; ++iter)
 				{
-					MemoryRaw::copyAssign<T>(_rawPointer[iter - 1], _rawPointer[iter]);
+					MemoryRaw::CopyAssign<T>(_rawPointer[iter - 1], _rawPointer[iter]);
 				}
 			}
 
-			MemoryRaw::destroy<T>(_rawPointer[_size - 1]);
+			MemoryRaw::Destroy<T>(_rawPointer[_size - 1]);
 
 			--_size;
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE void Vector<T>::expandCapacityIfNecessary() noexcept
+	MINT_INLINE void Vector<T>::ExpandCapacityIfNecessary() noexcept
 	{
 		if (_size == _capacity)
 		{
-			reserve((_capacity == 0) ? kBaseCapacity : _capacity * 2);
+			Reserve((_capacity == 0) ? kBaseCapacity : _capacity * 2);
 		}
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::front() noexcept
+	MINT_INLINE T& Vector<T>::Front() noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[0];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::front() const noexcept
+	MINT_INLINE const T& Vector<T>::Front() const noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[0];
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::back() noexcept
+	MINT_INLINE T& Vector<T>::Back() noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[_size - 1];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::back() const noexcept
+	MINT_INLINE const T& Vector<T>::Back() const noexcept
 	{
 		MINT_ASSERT(_size > 0, "범위를 벗어난 접근입니다.");
 		return _rawPointer[_size - 1];
 	}
 
 	template<typename T>
-	MINT_INLINE T& Vector<T>::at(const uint32 index) noexcept
+	MINT_INLINE T& Vector<T>::At(const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>
-	MINT_INLINE const T& Vector<T>::at(const uint32 index) const noexcept
+	MINT_INLINE const T& Vector<T>::At(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
 		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>
-	MINT_INLINE T* Vector<T>::data() noexcept
+	MINT_INLINE T* Vector<T>::Data() noexcept
 	{
 		return _rawPointer;
 	}
 
 	template<typename T>
-	MINT_INLINE const T* Vector<T>::data() const noexcept
+	MINT_INLINE const T* Vector<T>::Data() const noexcept
 	{
 		return _rawPointer;
 	}
 
 	template<typename T>
-	MINT_INLINE uint32 Vector<T>::capacity() const noexcept
+	MINT_INLINE uint32 Vector<T>::Capacity() const noexcept
 	{
 		return _capacity;
 	}
 
 	template<typename T>
-	MINT_INLINE uint32 Vector<T>::size() const noexcept
+	MINT_INLINE uint32 Vector<T>::Size() const noexcept
 	{
 		return _size;
 	}
 
 	template<typename T>
-	MINT_INLINE bool Vector<T>::empty() const noexcept
+	MINT_INLINE bool Vector<T>::IsEmpty() const noexcept
 	{
 		return (_size == 0);
 	}

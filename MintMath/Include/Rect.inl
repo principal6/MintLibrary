@@ -206,7 +206,7 @@ namespace mint
 		return Float2(boundHorz(position._x), boundVert(position._y));
 	}
 
-	MINT_INLINE constexpr bool Rect::contains(const Float2& position) const noexcept
+	MINT_INLINE constexpr bool Rect::Contains(const Float2& position) const noexcept
 	{
 		if (width() == 0.0f || height() == 0.0f)
 		{
@@ -215,7 +215,7 @@ namespace mint
 		return (left() <= position._x && position._x <= right() && top() <= position._y && position._y <= bottom());
 	}
 
-	MINT_INLINE constexpr bool Rect::contains(const Rect& rhs) const noexcept
+	MINT_INLINE constexpr bool Rect::Contains(const Rect& rhs) const noexcept
 	{
 		return (left() <= rhs.left()) && (rhs.right() <= right()) && (top() >= rhs.top()) && (rhs.bottom() >= bottom());
 	}

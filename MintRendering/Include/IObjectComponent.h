@@ -34,7 +34,7 @@ namespace mint
 			friend IObjectComponent;
 
 		private:
-			virtual void assignRawID(const uint32 rawID) noexcept override final;
+			virtual void AssignRawID(const uint32 rawID) noexcept override final;
 
 		public:
 			uint32 getRawID() const noexcept;

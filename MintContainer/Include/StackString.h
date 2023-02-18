@@ -24,8 +24,8 @@ namespace mint
 		~StackString();
 
 	public:
-		MutableString<T>& operator=(const StackString& rhs) { return assign(rhs); }
-		MutableString<T>& operator=(StackString&& rhs) noexcept { return assign(rhs); }
+		MutableString<T>& operator=(const StackString& rhs) { return Assign(rhs); }
+		MutableString<T>& operator=(StackString&& rhs) noexcept { return Assign(rhs); }
 
 	public:
 		bool operator==(const T* const rawString) const noexcept;
@@ -34,25 +34,25 @@ namespace mint
 		bool operator!=(const StackString& rhs) const noexcept;
 
 	public:
-		virtual StringType getStringType() const override { return StringType::MutableStackString; }
-		virtual uint32 capacity() const override;
-		virtual const T* c_str() const override;
-		virtual T* data() override;
+		virtual StringType GetStringType() const override { return StringType::MutableStackString; }
+		virtual uint32 Capacity() const override;
+		virtual const T* CString() const override;
+		virtual T* Data() override;
 
 	private:
-		bool canInsert(const uint32 length) const noexcept;
+		bool CanInsert(const uint32 length) const noexcept;
 
 	public:
-		virtual void clear();
-		virtual MutableString<T>& append(const StringReference<T>& rhs) override;
-		virtual MutableString<T>& assign(const StringReference<T>& rhs) override;
-		void resize(const uint32 length) noexcept;
+		virtual void Clear();
+		virtual MutableString<T>& Append(const StringReference<T>& rhs) override;
+		virtual MutableString<T>& Assign(const StringReference<T>& rhs) override;
+		void Resize(const uint32 length) noexcept;
 
 	public:
-		StackString substr(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
-		bool compare(const T* const rhs) const noexcept;
-		bool compare(const StackString& rhs) const noexcept;
-		uint64 computeHash() const noexcept;
+		StackString Substring(const uint32 offset, const uint32 count = kStringNPos) const noexcept;
+		bool Equals(const T* const rhs) const noexcept;
+		bool Equals(const StackString& rhs) const noexcept;
+		uint64 ComputeHash() const noexcept;
 
 	private:
 		uint32 _length;

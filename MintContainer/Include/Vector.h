@@ -39,36 +39,36 @@ namespace mint
 		const T& operator[](const uint32 index) const noexcept;
 
 	public:
-		void reserve(const uint32 capacity) noexcept;
-		void resize(const uint32 size) noexcept; // default-constructible 의 경우에만 호출 가능하다!
-		void shrink_to_fit() noexcept;
+		void Reserve(const uint32 capacity) noexcept;
+		void Resize(const uint32 size) noexcept; // default-constructible 의 경우에만 호출 가능하다!
+		void ShrinkToFit() noexcept;
 
 	public:
-		void clear() noexcept;
-		void push_back(const T& newEntry) noexcept;
-		void push_back(T&& newEntry) noexcept;
-		void pop_back() noexcept;
-		void insert(const T& newEntry, const uint32 at) noexcept;
-		void insert(T&& newEntry, const uint32 at) noexcept;
-		void erase(const uint32 at) noexcept;
+		void Clear() noexcept;
+		void PushBack(const T& newEntry) noexcept;
+		void PushBack(T&& newEntry) noexcept;
+		void PopBack() noexcept;
+		void Insert(const T& newEntry, const uint32 at) noexcept;
+		void Insert(T&& newEntry, const uint32 at) noexcept;
+		void Erase(const uint32 at) noexcept;
 
 	private:
-		void expandCapacityIfNecessary() noexcept;
+		void ExpandCapacityIfNecessary() noexcept;
 
 	public:
-		T& front() noexcept;
-		const T& front() const noexcept;
-		T& back() noexcept;
-		const T& back() const noexcept;
-		T& at(const uint32 index) noexcept;
-		const T& at(const uint32 index) const noexcept;
-		T* data() noexcept;
-		const T* data() const noexcept;
+		T& Front() noexcept;
+		const T& Front() const noexcept;
+		T& Back() noexcept;
+		const T& Back() const noexcept;
+		T& At(const uint32 index) noexcept;
+		const T& At(const uint32 index) const noexcept;
+		T* Data() noexcept;
+		const T* Data() const noexcept;
 
 	public:
-		uint32 capacity() const noexcept;
-		uint32 size() const noexcept;
-		bool empty() const noexcept;
+		uint32 Capacity() const noexcept;
+		uint32 Size() const noexcept;
+		bool IsEmpty() const noexcept;
 
 	public:
 		template<typename T>

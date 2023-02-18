@@ -28,30 +28,30 @@ namespace mint
 
 		bool SplineGenerator::generateBezierCurve(const Vector<Float2>& controlPoints, Vector<Float2>& outLinePoints) noexcept
 		{
-			MINT_ASSURE(controlPoints.size() > 1);
+			MINT_ASSURE(controlPoints.Size() > 1);
 
-			const uint32 order = controlPoints.size() - 1;
+			const uint32 order = controlPoints.Size() - 1;
 
 			const float tBegin = 0.0f;
 			const float tEnd = 1.0f;
 			const float tStep = tEnd / static_cast<float>(_precision);
 			const uint32 stepCount = _precision;
-			outLinePoints.clear();
-			outLinePoints.reserve(stepCount + 1);
+			outLinePoints.Clear();
+			outLinePoints.Reserve(stepCount + 1);
 			//outLinePoints.push_back(computeDeCasteljauPoint(controlPoints, t0));
-			outLinePoints.push_back(computeBezierPoint(controlPoints, tBegin));
+			outLinePoints.PushBack(computeBezierPoint(controlPoints, tBegin));
 			for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
 			{
 				//outLinePoints.push_back(computeDeCasteljauPoint(controlPoints, t0 + tStep * (stepIndex + 1)));
-				outLinePoints.push_back(computeBezierPoint(controlPoints, tBegin + tStep * (stepIndex + 1)));
+				outLinePoints.PushBack(computeBezierPoint(controlPoints, tBegin + tStep * (stepIndex + 1)));
 			}
 			return true;
 		}
 
 		bool SplineGenerator::generateBSpline(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, Vector<Float2>& outLinePoints) noexcept
 		{
-			const uint32 controlPointCount = controlPoints.size();
-			const uint32 knotCount = knotVector.size();
+			const uint32 controlPointCount = controlPoints.Size();
+			const uint32 knotCount = knotVector.Size();
 			if (knotCount != order + controlPointCount + 1)
 			{
 				MINT_ASSERT(false, "Knot 의 개수는 Order + ControlPoint 개수 + 1 이어야 합니다!");
@@ -59,15 +59,15 @@ namespace mint
 			}
 
 			const float tBegin = knotVector[order];
-			const float tEnd = knotVector[(knotVector.size() - 1) - (2 * order)];
+			const float tEnd = knotVector[(knotVector.Size() - 1) - (2 * order)];
 			const float tStep = tEnd / static_cast<float>(_precision);
 			const uint32 stepCount = _precision;
-			outLinePoints.clear();
-			outLinePoints.reserve(stepCount + 1);
-			outLinePoints.push_back(computeBSplinePoint(order, controlPoints, knotVector, tBegin));
+			outLinePoints.Clear();
+			outLinePoints.Reserve(stepCount + 1);
+			outLinePoints.PushBack(computeBSplinePoint(order, controlPoints, knotVector, tBegin));
 			for (uint32 stepIndex = 0; stepIndex < stepCount; ++stepIndex)
 			{
-				outLinePoints.push_back(computeBSplinePoint(order, controlPoints, knotVector, tBegin + tStep * (stepIndex + 1)));
+				outLinePoints.PushBack(computeBSplinePoint(order, controlPoints, knotVector, tBegin + tStep * (stepIndex + 1)));
 			}
 			return true;
 		}
@@ -76,7 +76,7 @@ namespace mint
 		{
 			const float s = 1.0f - t;
 			Float2 result = Float2::kZero;
-			const uint32 controlPointCount = controlPoints.size();
+			const uint32 controlPointCount = controlPoints.Size();
 			const uint32 order = controlPointCount - 1;
 			for (uint32 controlPointIndex = 0; controlPointIndex < controlPointCount; controlPointIndex++)
 			{
@@ -91,22 +91,22 @@ namespace mint
 		{
 			// TODO: Stack Vector 구현으로 바꾸면 훨씬 성능에 나을 듯
 
-			if (controlPoints.size() < 2)
+			if (controlPoints.Size() < 2)
 			{
 				MINT_NEVER;
 			}
 
-			if (controlPoints.size() == 2)
+			if (controlPoints.Size() == 2)
 			{
 				return Math::lerp(controlPoints[0], controlPoints[1], t);
 			}
 
-			const uint32 order = controlPoints.size() - 1;
+			const uint32 order = controlPoints.Size() - 1;
 			Vector<Float2> result;
-			result.reserve(order - 1);
+			result.Reserve(order - 1);
 			for (uint32 orderIter = 0; orderIter < order; ++orderIter)
 			{
-				result.push_back(Math::lerp(controlPoints[orderIter], controlPoints[orderIter + 1], t));
+				result.PushBack(Math::lerp(controlPoints[orderIter], controlPoints[orderIter + 1], t));
 			}
 
 			return computeDeCasteljauPoint(result, t);
@@ -115,8 +115,8 @@ namespace mint
 		Float2 SplineGenerator::computeBSplinePoint(const uint32 order, const Vector<Float2>& controlPoints, const Vector<float>& knotVector, const float t) const noexcept
 		{
 			Float2 result = Float2::kZero;
-			const uint32 controlPointCount = controlPoints.size();
-			if (knotVector.size() != order + controlPointCount + 1)
+			const uint32 controlPointCount = controlPoints.Size();
+			if (knotVector.Size() != order + controlPointCount + 1)
 			{
 				MINT_ASSERT(false, "Knot 의 개수는 Order + ControlPoint 개수 + 1 이어야 합니다!");
 				return result;

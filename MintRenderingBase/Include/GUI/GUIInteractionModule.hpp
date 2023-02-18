@@ -13,7 +13,7 @@ namespace mint
 			template<typename Input>
 			inline bool InteractionMousePressModule<Input>::isInteracting() const
 			{
-				return _input._controlID.isValid();
+				return _input._controlID.IsValid();
 			}
 
 			template<typename Input>
@@ -37,7 +37,7 @@ namespace mint
 			template<typename Input>
 			inline void InteractionMousePressModule<Input>::end()
 			{
-				_input._controlID.invalidate();
+				_input._controlID.Invalidate();
 			}
 
 			template<typename Input>

@@ -43,26 +43,26 @@ namespace mint
 		bool operator==(const TreeNodeAccessor& rhs) const noexcept;
 
 	public:
-		bool isValid() const noexcept;
+		bool IsValid() const noexcept;
 
 	public:
-		void setNodeData(const T& data) noexcept;
-		const T& getNodeData() const noexcept;
-		T& getNodeDataXXX() noexcept;
+		void SetNodeData(const T& data) noexcept;
+		const T& GetNodeData() const noexcept;
+		T& GetNodeDataXXX() noexcept;
 
 	public:
-		TreeNodeAccessor<T> getParentNode() const noexcept;
-		uint32 getChildNodeCount() const noexcept;
-		TreeNodeAccessor<T> getChildNode(const uint32 childNodeIndex) const noexcept;
-		TreeNodeAccessor<T> getNextSiblingNode() const noexcept;
+		TreeNodeAccessor<T> GetParentNode() const noexcept;
+		uint32 GetChildNodeCount() const noexcept;
+		TreeNodeAccessor<T> GetChildNode(const uint32 childNodeIndex) const noexcept;
+		TreeNodeAccessor<T> GetNextSiblingNode() const noexcept;
 
 	public:
-		TreeNodeAccessor insertChildNode(const T& data);
-		void eraseChildNode(TreeNodeAccessor<T>& childNodeAccessor);
-		void clearChildNodes();
+		TreeNodeAccessor InsertChildNode(const T& data);
+		void EraseChildNode(TreeNodeAccessor<T>& childNodeAccessor);
+		void ClearChildNodes();
 
 	public:
-		void moveToParent(const TreeNodeAccessor<T>& newParentNodeAccessor);
+		void MoveToParent(const TreeNodeAccessor<T>& newParentNodeAccessor);
 
 	private:
 		Tree<T>* _tree;
@@ -110,8 +110,8 @@ namespace mint
 		}
 
 	public:
-		bool isValid() const noexcept;
-		void invalidate() noexcept;
+		bool IsValid() const noexcept;
+		void Invalidate() noexcept;
 
 	private:
 		uint32 _nodeID;
@@ -133,40 +133,40 @@ namespace mint
 		~Tree();
 
 	public:
-		TreeNodeAccessor<T> createRootNode(const T& rootNodeData);
-		void destroyRootNode();
-		TreeNodeAccessor<T> getRootNode() noexcept;
+		TreeNodeAccessor<T> CreateRootNode(const T& rootNodeData);
+		void DestroyRootNode();
+		TreeNodeAccessor<T> GetRootNode() noexcept;
 
 	public:
-		TreeNodeAccessor<T> findNode(const TreeNodeAccessor<T>& startNodeAccessor, const T& nodeData) const noexcept;
+		TreeNodeAccessor<T> FindNode(const TreeNodeAccessor<T>& startNodeAccessor, const T& nodeData) const noexcept;
 
 	public:
-		TreeNodeAccessor<T> getParentNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
-		uint32 getChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
-		TreeNodeAccessor<T> getChildNode(const TreeNodeAccessor<T>& nodeAccessor, const uint32 childNodeIndex) const noexcept;
-		TreeNodeAccessor<T> getNextSiblingNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		TreeNodeAccessor<T> GetParentNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		uint32 GetChildNodeCount(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		TreeNodeAccessor<T> GetChildNode(const TreeNodeAccessor<T>& nodeAccessor, const uint32 childNodeIndex) const noexcept;
+		TreeNodeAccessor<T> GetNextSiblingNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
 
 	public:
-		bool isValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
-		void setNodeData(const TreeNodeAccessor<T>& nodeAccessor, const T& nodeData) noexcept;
-		const T& getNodeData(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
-		T& getNodeDataXXX(const TreeNodeAccessor<T>& nodeAccessor) noexcept;
-		void swapNodeData(const TreeNodeAccessor<T>& nodeAccessorA, const TreeNodeAccessor<T>& nodeAccessorB) noexcept;
+		bool IsValidNode(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		void SetNodeData(const TreeNodeAccessor<T>& nodeAccessor, const T& nodeData) noexcept;
+		const T& GetNodeData(const TreeNodeAccessor<T>& nodeAccessor) const noexcept;
+		T& GetNodeDataXXX(const TreeNodeAccessor<T>& nodeAccessor) noexcept;
+		void SwapNodeData(const TreeNodeAccessor<T>& nodeAccessorA, const TreeNodeAccessor<T>& nodeAccessorB) noexcept;
 
 	private:
-		const TreeNode<T>& getNodeXXX(const TreeNodeAccessor<T>& nodeAccessor) const;
-		TreeNode<T>& getNodeXXX(const TreeNodeAccessor<T>& nodeAccessor);
+		const TreeNode<T>& GetNodeXXX(const TreeNodeAccessor<T>& nodeAccessor) const;
+		TreeNode<T>& GetNodeXXX(const TreeNodeAccessor<T>& nodeAccessor);
 
 	public:
-		TreeNodeAccessor<T> [[nodiscard]] insertChildNode(const TreeNodeAccessor<T>& nodeAccessor, const T& childNodeData);
-		void eraseChildNode(TreeNodeAccessor<T>& nodeAccessor, TreeNodeAccessor<T>& childNodeAccessor);
-		void clearChildNodes(TreeNodeAccessor<T>& nodeAccessor);
+		TreeNodeAccessor<T> [[nodiscard]] InsertChildNode(const TreeNodeAccessor<T>& nodeAccessor, const T& childNodeData);
+		void EraseChildNode(TreeNodeAccessor<T>& nodeAccessor, TreeNodeAccessor<T>& childNodeAccessor);
+		void ClearChildNodes(TreeNodeAccessor<T>& nodeAccessor);
 
 	public:
-		void moveToParent(TreeNodeAccessor<T>& nodeAccessor, const TreeNodeAccessor<T>& newParentNodeAccessor);
+		void MoveToParent(TreeNodeAccessor<T>& nodeAccessor, const TreeNodeAccessor<T>& newParentNodeAccessor);
 
 	private:
-		uint32 getAvailableNodeSlot();
+		uint32 GetAvailableNodeSlot();
 
 	private:
 		Vector<TreeNode<T>> _nodeArray;

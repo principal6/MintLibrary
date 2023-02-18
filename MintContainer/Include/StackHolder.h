@@ -28,13 +28,13 @@ namespace mint
 		StackHolder& operator=(StackHolder&& rhs) = delete;
 
 	public:
-		byte* registerSpace(const CountMetaDataType unitCount);
-		void deregisterSpace(byte*& ptr);
+		byte* RegisterSpace(const CountMetaDataType unitCount);
+		void DeregisterSpace(byte*& ptr);
 
 	private:
-		bool canRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
-		bool canDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
-		bool isInsider(const byte* const ptr) const noexcept;
+		bool CanRegister(const CountMetaDataType unitCount, uint32& outAllocMetaDataIndex, uint8& outBitOffset, BitMaskType& outBitMask) const noexcept;
+		bool CanDeregister(const byte* const ptr, const CountMetaDataType unitCount) const noexcept;
+		bool IsInsider(const byte* const ptr) const noexcept;
 
 	private:
 		static constexpr uint32 kBitMaskByteCount = sizeof(BitMaskType) * kBitsPerByte;

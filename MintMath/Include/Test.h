@@ -14,9 +14,9 @@ namespace mint
 	{
 		bool test();
 
-		bool test_intTypes();
-		bool test_floatTypes();
-		bool test_linearAlgebra();
+		bool Test_intTypes();
+		bool Test_floatTypes();
+		bool Test_linearAlgebra();
 	}
 }
 

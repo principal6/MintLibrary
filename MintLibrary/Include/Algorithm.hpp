@@ -21,11 +21,11 @@ namespace mint
 	template <typename T>
 	int32 binarySearch(const Vector<T>& vec, const T& value)
 	{
-		if (vec.empty() == true)
+		if (vec.IsEmpty() == true)
 		{
 			return kInvalidIndexInt32;
 		}
-		const int32 resultIndex = binarySearchInternal(vec, value, 0, static_cast<int32>(vec.size() - 1));
+		const int32 resultIndex = binarySearchInternal(vec, value, 0, static_cast<int32>(vec.Size() - 1));
 		if (vec[resultIndex] == value)
 		{
 			return resultIndex;
@@ -59,11 +59,11 @@ namespace mint
 	template<typename T, typename ValueType, typename Evaluator>
 	int32 binarySearch(const Vector<T>& vec, const ValueType& value, Evaluator evaluator)
 	{
-		if (vec.empty() == true)
+		if (vec.IsEmpty() == true)
 		{
 			return kInvalidIndexInt32;
 		}
-		const int32 resultIndex = binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.size() - 1));
+		const int32 resultIndex = binarySearchInternal(vec, value, evaluator, 0, static_cast<int32>(vec.Size() - 1));
 		if (vec[resultIndex] == value)
 		{
 			return resultIndex;
@@ -98,7 +98,7 @@ namespace mint
 	void quickSort(Vector<T>& vector, Comparator comparator)
 	{
 		const int32 begin = 0;
-		const int32 end = static_cast<int32>(vector.size() - 1);
+		const int32 end = static_cast<int32>(vector.Size() - 1);
 		quickSortInternal(vector, begin, end, comparator);
 	}
 

@@ -15,15 +15,15 @@ namespace mint
 	template<typename T>
 	inline StringView<T>::StringView(const T* const string)
 		: _rawString{ string }
-		, _length{ StringUtil::length(string) }
+		, _length{ StringUtil::Length(string) }
 	{
 		__noop;
 	}
 
 	template<typename T>
 	inline StringView<T>::StringView(const String<T>& string)
-		: _rawString{ string.c_str() }
-		, _length{ string.length() }
+		: _rawString{ string.CString() }
+		, _length{ string.Length() }
 	{
 		__noop;
 	}
@@ -31,8 +31,8 @@ namespace mint
 	template<typename T>
 	template<uint32 BufferSize>
 	inline StringView<T>::StringView(const StackString<T, BufferSize>& string)
-		: _rawString{ string.c_str() }
-		, _length{ string.length() }
+		: _rawString{ string.CString() }
+		, _length{ string.Length() }
 	{
 		__noop;
 	}
@@ -40,7 +40,7 @@ namespace mint
 	template<typename T>
 	bool StringView<T>::operator==(const StringView& rhs) const noexcept
 	{
-		return StringUtil::compare(_rawString, rhs._rawString);
+		return StringUtil::Equals(_rawString, rhs._rawString);
 	}
 
 	template<typename T>
@@ -56,7 +56,7 @@ namespace mint
 	}
 
 	template<typename T>
-	const T* StringView<T>::c_str() const noexcept
+	const T* StringView<T>::CString() const noexcept
 	{
 		return _rawString;
 	}

@@ -43,13 +43,13 @@ namespace mint
 
 		SafeResourceMapper::~SafeResourceMapper()
 		{
-			if (isValid() == true)
+			if (IsValid() == true)
 			{
 				_graphicDevice._deviceContext->Unmap(_resource, _subresource);
 			}
 		}
 
-		bool SafeResourceMapper::isValid() const noexcept
+		bool SafeResourceMapper::IsValid() const noexcept
 		{
 			return _mappedSubresource.pData != nullptr;
 		}
@@ -161,9 +161,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _vsShaderResources;
-			if (shaderResources.size() <= bindingSlot)
+			if (shaderResources.Size() <= bindingSlot)
 			{
-				shaderResources.resize(bindingSlot + 1);
+				shaderResources.Resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
@@ -182,9 +182,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _gsShaderResources;
-			if (shaderResources.size() <= bindingSlot)
+			if (shaderResources.Size() <= bindingSlot)
 			{
-				shaderResources.resize(bindingSlot + 1);
+				shaderResources.Resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
@@ -203,9 +203,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& shaderResources = _psShaderResources;
-			if (shaderResources.size() <= bindingSlot)
+			if (shaderResources.Size() <= bindingSlot)
 			{
-				shaderResources.resize(bindingSlot + 1);
+				shaderResources.Resize(bindingSlot + 1);
 			}
 			if (resource.needToBind() == true)
 			{
@@ -224,9 +224,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _vsConstantBuffers;
-			if (constantBuffers.size() <= bindingSlot)
+			if (constantBuffers.Size() <= bindingSlot)
 			{
-				constantBuffers.resize(bindingSlot + 1);
+				constantBuffers.Resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{
@@ -245,9 +245,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _gsConstantBuffers;
-			if (constantBuffers.size() <= bindingSlot)
+			if (constantBuffers.Size() <= bindingSlot)
 			{
-				constantBuffers.resize(bindingSlot + 1);
+				constantBuffers.Resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{
@@ -266,9 +266,9 @@ namespace mint
 			}
 
 			Vector<GraphicObjectID>& constantBuffers = _psConstantBuffers;
-			if (constantBuffers.size() <= bindingSlot)
+			if (constantBuffers.Size() <= bindingSlot)
 			{
-				constantBuffers.resize(bindingSlot + 1);
+				constantBuffers.Resize(bindingSlot + 1);
 			}
 			if (constantBuffer.needToBind() == true)
 			{

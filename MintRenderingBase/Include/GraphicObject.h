@@ -75,7 +75,7 @@ namespace mint
 			}
 
 		public:
-			MINT_INLINE bool isValid() const noexcept
+			MINT_INLINE bool IsValid() const noexcept
 			{
 				return _rawID != kInvalidGraphicObjectRawID;
 			}
@@ -90,7 +90,7 @@ namespace mint
 				return _objectType == objectType;
 			}
 
-			MINT_INLINE void invalidate() noexcept
+			MINT_INLINE void Invalidate() noexcept
 			{
 				_rawID = kInvalidGraphicObjectRawID;
 			}

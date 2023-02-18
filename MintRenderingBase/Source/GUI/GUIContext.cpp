@@ -64,7 +64,7 @@ namespace mint
 				ControlData& rootControlData = accessControlData(_rootControlID, ControlType::COUNT);
 				rootControlData._absolutePosition = Float2::kZero;
 				//rootControlData._size = windowSize;
-				_controlStack.push_back(_rootControlID);
+				_controlStack.PushBack(_rootControlID);
 			}
 
 			void GUIContext::processEvent() noexcept
@@ -89,7 +89,7 @@ namespace mint
 
 			void GUIContext::render() noexcept
 			{
-				MINT_ASSERT(_controlStack.size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
+				MINT_ASSERT(_controlStack.Size() <= 1, "begin- 호출 횟수가 end- 호출 횟수보다 많습니다!!!");
 
 				if (_focusingModule.isInteracting())
 				{
@@ -105,7 +105,7 @@ namespace mint
 						debugRender_control(controlData);
 					}
 				}
-				_controlIDsOfCurrentFrame.clear();
+				_controlIDsOfCurrentFrame.Clear();
 
 				_graphicDevice.accessWindow().setCursorType(_currentCursor);
 
@@ -143,7 +143,7 @@ namespace mint
 				static constexpr ControlType kControlType = ControlType::Label;
 				const ControlID parentControlID = accessStackParentControlData().getID();
 				const ControlID controlID = ControlData::generateID(fileLine, kControlType, labelDesc._text, parentControlID);
-				_controlIDsOfCurrentFrame.push_back(controlID);
+				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				ControlData& controlData = accessControlData(controlID, kControlType);
 				controlData._parentID = parentControlID;
@@ -157,7 +157,7 @@ namespace mint
 				static constexpr ControlType kControlType = ControlType::Button;
 				const ControlID parentControlID = accessStackParentControlData().getID();
 				const ControlID controlID = ControlData::generateID(fileLine, kControlType, buttonDesc._text, parentControlID);
-				_controlIDsOfCurrentFrame.push_back(controlID);
+				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				ControlData& controlData = accessControlData(controlID, kControlType);
 				controlData._parentID = parentControlID;
@@ -172,7 +172,7 @@ namespace mint
 				static constexpr ControlType kControlType = ControlType::Window;
 				const ControlID parentControlID = accessStackParentControlData().getID();
 				const ControlID controlID = ControlData::generateID(fileLine, kControlType, windowDesc._title, parentControlID);
-				_controlIDsOfCurrentFrame.push_back(controlID);
+				_controlIDsOfCurrentFrame.PushBack(controlID);
 
 				if (_isInBeginWindow)
 				{
@@ -208,7 +208,7 @@ namespace mint
 
 				updateControlData(controlData);
 				beginWindow_render(controlData);
-				_controlStack.push_back(controlID);
+				_controlStack.PushBack(controlID);
 
 				{
 					ButtonDesc closeButtonDesc;
@@ -234,14 +234,14 @@ namespace mint
 				_isInBeginWindow = false;
 				_rendererContext.accessLowLevelRenderer().endOrdinalRenderCommands();
 
-				if (_controlStack.empty())
+				if (_controlStack.IsEmpty())
 				{
 					MINT_ASSERT(false, "end- 호출 횟수가 begin- 호출 횟수보다 많습니다!");
 					return;
 				}
-				MINT_ASSERT(accessControlData(_controlStack.back()).getType() == ControlType::Window, "Control Stack 이 비정상적입니다!");
+				MINT_ASSERT(accessControlData(_controlStack.Back()).getType() == ControlType::Window, "Control Stack 이 비정상적입니다!");
 
-				_controlStack.pop_back();
+				_controlStack.PopBack();
 			}
 
 			void GUIContext::makeLabel_render(const LabelDesc& labelDesc, const ControlData& controlData)
@@ -287,8 +287,8 @@ namespace mint
 				const bool isFocused = _focusingModule.isInteractingWith(controlData.getID());
 				const float titleBarHeight = controlData._zones._titleBarZone.height();
 				StackVector<ShapeRendererContext::Split, 3> splits;
-				splits.push_back(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
-				splits.push_back(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
+				splits.PushBack(ShapeRendererContext::Split(titleBarHeight / controlData._size._y, (isFocused ? _theme._windowTitleBarFocusedColor : _theme._windowTitleBarUnfocusedColor)));
+				splits.PushBack(ShapeRendererContext::Split(1.0f, _theme._windowBackgroundColor));
 				_rendererContext.drawRoundedRectangleVertSplit(controlData._size, _theme._roundnessInPixel, splits, 0.0f);
 
 				FontRenderingOption titleBarFontRenderingOption;
@@ -303,8 +303,8 @@ namespace mint
 			ControlData& GUIContext::accessControlData(const ControlID& controlID) const
 			{
 				static ControlData invalid;
-				auto found = _controlDataMap.find(controlID);
-				if (found.isValid())
+				auto found = _controlDataMap.Find(controlID);
+				if (found.IsValid())
 				{
 					uint64& accessCount = const_cast<uint64&>(found._value->getAccessCount());
 					++accessCount;
@@ -318,8 +318,8 @@ namespace mint
 				ControlData& controlData = accessControlData(controlID);
 				if (controlData.getID() != controlID)
 				{
-					_controlDataMap.insert(controlID, ControlData(controlID, controlType));
-					return *_controlDataMap.find(controlID)._value;
+					_controlDataMap.Insert(controlID, ControlData(controlID, controlType));
+					return *_controlDataMap.Find(controlID)._value;
 				}
 				return controlData;
 			}
@@ -333,7 +333,7 @@ namespace mint
 				}
 
 				ControlID foundControlID = controlData._parentID;
-				while (foundControlID.isValid())
+				while (foundControlID.IsValid())
 				{
 					ControlData& currentControlData = accessControlData(foundControlID);
 					if (currentControlData.getType() == ControlType::Window)
@@ -347,7 +347,7 @@ namespace mint
 
 			ControlData& GUIContext::accessStackParentControlData()
 			{
-				return accessControlData(_controlStack.back());
+				return accessControlData(_controlStack.Back());
 			}
 
 			void GUIContext::updateControlData(ControlData& controlData)
@@ -449,7 +449,7 @@ namespace mint
 				if (isAutoSized)
 				{
 					const FontData& fontData = _rendererContext.getFontData();
-					const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::length(controlData._text));
+					const float textWidth = fontData.computeTextWidth(controlData._text, StringUtil::Length(controlData._text));
 					controlData._size._x = textWidth + _nextControlDesc._padding.horz();
 					controlData._size._y = _fontSize + _nextControlDesc._padding.vert();
 				}
@@ -486,7 +486,7 @@ namespace mint
 						// interaction 을 진행하지 않는다!
 						const ControlData& focusedControlData = accessControlData(_focusingModule.getControlID());
 						const Rect focusedControlRect = Rect(focusedControlData._absolutePosition, focusedControlData._size);
-						if (focusedControlRect.contains(mousePosition))
+						if (focusedControlRect.Contains(mousePosition))
 						{
 							return;
 						}
@@ -494,11 +494,11 @@ namespace mint
 				}
 
 				const bool isMouseLeftUp = inputContext.isMouseButtonUp(MouseButton::Left);
-				const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).contains(mousePosition);
+				const bool isMousePositionIn = Rect(controlData._absolutePosition, controlData._size).Contains(mousePosition);
 				const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
 				if (isMousePositionIn)
 				{
-					const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).contains(relativePressedMousePosition);
+					const bool isPressedMousePositionIn = Rect(Float2::kZero, controlData._size).Contains(relativePressedMousePosition);
 					controlData._mouseInteractionState = isPressedMousePositionIn ? ControlData::MouseInteractionState::Pressing : ControlData::MouseInteractionState::Hovering;
 					if (isPressedMousePositionIn == true && isMouseLeftUp == true)
 					{
@@ -562,7 +562,7 @@ namespace mint
 				Rect innerRect;
 				ResizingModule::makeOuterAndInenrRects(controlData, _theme._outerResizingDistances, _theme._innerResizingDistances, outerRect, innerRect);
 				const Float2& mousePosition = inputContext.getMousePosition();
-				if (outerRect.contains(mousePosition) == true && innerRect.contains(mousePosition) == false)
+				if (outerRect.Contains(mousePosition) == true && innerRect.Contains(mousePosition) == false)
 				{
 					// Hover
 					const ControlData::ResizingFlags resizingInteraction = ResizingModule::makeResizingFlags(mousePosition, controlData, outerRect, innerRect);
@@ -571,7 +571,7 @@ namespace mint
 
 				if (inputContext.isMouseButtonDown(MouseButton::Left))
 				{
-					if (outerRect.contains(_mousePressedPosition) == true && innerRect.contains(_mousePressedPosition) == false)
+					if (outerRect.Contains(_mousePressedPosition) == true && innerRect.Contains(_mousePressedPosition) == false)
 					{
 						ResizingModuleInput resizingModuleInput;
 						resizingModuleInput._controlID = controlData.getID();
@@ -614,7 +614,7 @@ namespace mint
 				if (_draggingModule.isInteractingWith(parentControlData.getID()))
 				{
 					const Float2 draggingRelativePressedMousePosition = _draggingModule.computeRelativeMousePressedPosition() - controlData.computeRelativePosition(parentControlData);
-					if (controlData._zones._visibleContentZone.contains(draggingRelativePressedMousePosition))
+					if (controlData._zones._visibleContentZone.Contains(draggingRelativePressedMousePosition))
 					{
 						_draggingModule.end();
 					}
@@ -622,7 +622,7 @@ namespace mint
 
 				// TODO: Draggable Control 에 대한 처리도 추가
 				const Float2 relativePressedMousePosition = _mousePressedPosition - controlData._absolutePosition;
-				if (controlData._zones._titleBarZone.contains(relativePressedMousePosition))
+				if (controlData._zones._titleBarZone.Contains(relativePressedMousePosition))
 				{
 					InteractionMousePressModuleInput interactionMousePressModuleInput;
 					interactionMousePressModuleInput._controlID = controlData.getID();

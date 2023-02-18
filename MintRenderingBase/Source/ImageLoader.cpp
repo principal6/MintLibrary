@@ -18,7 +18,7 @@ namespace mint
 		bool ImageLoader::loadImage(const StringReferenceA& fileName, ByteColorImage& outByteColorImage) const
 		{
 			BinaryFileReader binaryFileReader;
-			if (binaryFileReader.open(fileName.c_str()) == false)
+			if (binaryFileReader.open(fileName.CString()) == false)
 			{
 				return false;
 			}
@@ -32,7 +32,7 @@ namespace mint
 			int32 height{};
 			int32 comp{};
 			const int32 req_comp{ 4 };
-			stbi_uc* rawImageData = stbi_load_from_memory(bytes.data(), bytes.size(), &width, &height, &comp, req_comp);
+			stbi_uc* rawImageData = stbi_load_from_memory(bytes.Data(), bytes.Size(), &width, &height, &comp, req_comp);
 			outByteColorImage.setSize(Int2(width, height));
 			const int32 dimension = static_cast<int32>(static_cast<int64>(width) * height * req_comp);
 			for (int32 at = 0; at < dimension; ++at)
@@ -53,9 +53,9 @@ namespace mint
 			int32 height{};
 			int32 comp{};
 			const int32 req_comp{ static_cast<int32>(requiredComponents) };
-			stbi_uc* rawImageData = stbi_load_from_memory(inCompressedBytes.data(), inCompressedBytes.size(), &width, &height, &comp, req_comp);
+			stbi_uc* rawImageData = stbi_load_from_memory(inCompressedBytes.Data(), inCompressedBytes.Size(), &width, &height, &comp, req_comp);
 			const int32 dimension = static_cast<int32>(static_cast<int64>(width) * height * comp);
-			outDecompressedBytes.resize(dimension);
+			outDecompressedBytes.Resize(dimension);
 			for (int32 at = 0; at < dimension; ++at)
 			{
 				outDecompressedBytes[at] = rawImageData[at];
@@ -75,7 +75,7 @@ namespace mint
 			BinaryFileWriter binaryFileWriter;
 			if (saveImagePNG(decompressedBytes, width, height, components, binaryFileWriter, false) == true)
 			{
-				return binaryFileWriter.save(fileName.c_str());
+				return binaryFileWriter.save(fileName.CString());
 			}
 			return false;
 		}

@@ -78,7 +78,7 @@ namespace mint
 		serializer.deserialize_internal(deserializedTypeName);
 		if (_typeName != deserializedTypeName)
 		{
-			MINT_LOG_ERROR("type name of the class [%s] does not match that of the source binary [%s]", _typeName.c_str(), deserializedTypeName.c_str());
+			MINT_LOG_ERROR("type name of the class [%s] does not match that of the source binary [%s]", _typeName.CString(), deserializedTypeName.CString());
 			return false;
 		}
 
@@ -122,13 +122,13 @@ namespace mint
 		MINT_INLINE const char* getDepthPrefix(const uint32 depth) noexcept
 		{
 			static StringA result;
-			result.clear();
+			result.Clear();
 			for (uint32 iter = 0; iter < depth; ++iter)
 			{
 				result += "-";
 			}
 			result += " ";
-			return result.c_str();
+			return result.CString();
 		}
 	}
 
@@ -181,7 +181,7 @@ namespace mint
 			TypeBaseData* const typeData = reflectionData._typeData;
 			typeData->serialize(*this);
 
-			const uint32 memberCount = reflectionData._memberTypeDatas.size();
+			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				const TypeBaseData& memberTypeData = *reflectionData._memberTypeDatas[memberIndex];
@@ -205,9 +205,9 @@ namespace mint
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
-		serialize_internal(from.length());
+		serialize_internal(from.Length());
 
-		serialize_internal(from.c_str());
+		serialize_internal(from.CString());
 	}
 
 	template <typename T>
@@ -215,7 +215,7 @@ namespace mint
 	{
 		_MINT_LOG_SERIALIZATION_SPECIALIZED;
 
-		const uint32 count = from.size();
+		const uint32 count = from.Size();
 		serialize_internal(count);
 
 		for (uint32 index = 0; index < count; ++index)
@@ -260,7 +260,7 @@ namespace mint
 				return false;
 			}
 
-			const uint32 memberCount = reflectionData._memberTypeDatas.size();
+			const uint32 memberCount = reflectionData._memberTypeDatas.Size();
 			for (uint32 memberIndex = 0; memberIndex < memberCount; ++memberIndex)
 			{
 				TypeBaseData* const memberTypeData = reflectionData._memberTypeDatas[memberIndex];
@@ -287,7 +287,7 @@ namespace mint
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
 		const uint32 length = *_reader.read<uint32>();
-		to.reserve(length);
+		to.Reserve(length);
 		to = _reader.read<const T>(length + 1);
 		return true;
 	}
@@ -298,7 +298,7 @@ namespace mint
 		_MINT_LOG_DESERIALIZATION_SPECIALIZED;
 
 		const uint32 count = *_reader.read<decltype(count)>();
-		to.resize(count);
+		to.Resize(count);
 
 		for (uint32 index = 0; index < count; ++index)
 		{

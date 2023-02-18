@@ -25,7 +25,7 @@ namespace mint
 		StringRange(const uint64 offset, const uint64 length);
 
 	public:
-		bool isLengthSet() const noexcept;
+		bool IsLengthSet() const noexcept;
 
 	public:
 		uint32 _offset;
@@ -67,110 +67,110 @@ namespace mint
 
 
 	template <uint32 BufferSize>
-	void formatString(char(&buffer)[BufferSize], const char* format, ...);
-	void formatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
-	void formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...);
+	void FormatString(char(&buffer)[BufferSize], const char* format, ...);
+	void FormatString(char* const buffer, const uint32 bufferSize, const char* format, ...);
+	void FormatString(StringA& buffer, const uint32 bufferSize, const char* format, ...);
 	template <uint32 BufferSize>
-	void formatString(StackStringA<BufferSize>& buffer, const char* format, ...);
+	void FormatString(StackStringA<BufferSize>& buffer, const char* format, ...);
 
 	template <uint32 BufferSize>
-	void formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...);
-	void formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
-	void formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
+	void FormatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...);
+	void FormatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...);
+	void FormatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...);
 	template <uint32 BufferSize>
-	void formatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...);
+	void FormatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...);
 
 
 	namespace StringUtil
 	{
 		template<typename T>
-		constexpr bool isNullOrEmpty(const T* const string);
+		constexpr bool IsNullOrEmpty(const T* const string);
 
-		constexpr bool is7BitASCII(const char8_t* const string);
+		constexpr bool Is7BitASCII(const char8_t* const string);
 
 		// returns the count of items in the string
 		template <typename T>
-		constexpr uint32 length(const T* const string);
+		constexpr uint32 Length(const T* const string);
 
 		template <typename T>
-		constexpr uint32 countBytesFromLeadingByte(const T leadingByte);
-		constexpr uint32 countBytesInCharCode(const U8CharCode u8CharCode);
+		constexpr uint32 CountBytesFromLeadingByte(const T leadingByte);
+		constexpr uint32 CountBytesInCharCode(const U8CharCode u8CharCode);
 
 		template <typename T>
-		constexpr uint32 getBytePosition(const T* const string, const uint32 charPosition);
+		constexpr uint32 GetBytePosition(const T* const string, const uint32 charPosition);
 
 		// The implementation of this function is too naive.
 		// Prefer to use utf8 encoding (char8_t).
-		constexpr uint32 countChars(const char* const string);
-		constexpr uint32 countChars(const wchar_t* const string);
+		constexpr uint32 CountChars(const char* const string);
+		constexpr uint32 CountChars(const wchar_t* const string);
 		// returns the count of characters in the string
-		constexpr uint32 countChars(const char8_t* const string);
+		constexpr uint32 CountChars(const char8_t* const string);
 
 		// here 'offset' refers to character offset (not byte offset!)
 		template<typename T>
-		constexpr uint32 find(const T* const string, const T* const substring, const uint32 offset = 0);
+		constexpr uint32 Find(const T* const string, const T* const substring, const uint32 offset = 0);
 		
 		template<typename T>
-		constexpr bool contains(const T* const string, const T* const substring);
+		constexpr bool Contains(const T* const string, const T* const substring);
 
 		template <typename T>
-		constexpr bool compare(const T* const a, const T* const b);
+		constexpr bool Equals(const T* const a, const T* const b);
 
 		template<uint32 DestSize>
-		void copy(char8_t(&dest)[DestSize], const char8_t* const source);
+		void Copy(char8_t(&dest)[DestSize], const char8_t* const source);
 		template<uint32 DestSize>
-		void copy(char(&dest)[DestSize], const char* const source);
+		void Copy(char(&dest)[DestSize], const char* const source);
 		template<uint32 DestSize>
-		void copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
+		void Copy(wchar_t(&dest)[DestSize], const wchar_t* const source);
 		template<typename T>
-		void copy(T* dest, const T* const source, const uint32 byteCount);
+		void Copy(T* dest, const T* const source, const uint32 byteCount);
 
-		constexpr U8CharCode encode(const char8_t ch);
-		constexpr U8CharCode encode(const char8_t(&ch)[2]);
-		constexpr U8CharCode encode(const char8_t(&ch)[3]);
-		constexpr U8CharCode encode(const char8_t(&ch)[4]);
-		constexpr U8CharCode encode(const char8_t* const string, const uint32 byteAt);
-		StringU8 decode(const U8CharCode code);
+		constexpr U8CharCode Encode(const char8_t ch);
+		constexpr U8CharCode Encode(const char8_t(&ch)[2]);
+		constexpr U8CharCode Encode(const char8_t(&ch)[3]);
+		constexpr U8CharCode Encode(const char8_t(&ch)[4]);
+		constexpr U8CharCode Encode(const char8_t* const string, const uint32 byteAt);
+		StringU8 Decode(const U8CharCode code);
 
-		StringU8 convertWideStringToUTF8(const StringW& source);
-		StringW convertUTF8ToWideString(const StringU8& source);
-		void convertWideStringToString(const StringW& source, StringA& destination);
-		void convertWideStringToString(const std::wstring& source, std::string& destination);
-		void convertStringToWideString(const std::string& source, std::wstring& destination);
+		StringU8 ConvertWideStringToUTF8(const StringW& source);
+		StringW ConvertUTF8ToWideString(const StringU8& source);
+		void ConvertWideStringToString(const StringW& source, StringA& destination);
+		void ConvertWideStringToString(const std::wstring& source, std::string& destination);
+		void ConvertStringToWideString(const std::string& source, std::wstring& destination);
 
-		void convertStringAToStringW(const StringA& source, StringW& destination) noexcept;
-		void convertStringWToStringA(const StringW& source, StringA& destination) noexcept;
+		void ConvertStringAToStringW(const StringA& source, StringW& destination) noexcept;
+		void ConvertStringWToStringA(const StringW& source, StringA& destination) noexcept;
 
 		template <uint32 BufferSize>
-		void convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;
+		void ConvertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept;
 
-		void excludeExtension(std::string& inoutText);
+		void ExcludeExtension(std::string& inoutText);
 
 		template <typename T>
-		void tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens);
+		void Tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens);
 		template <typename T>
-		void tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens);
+		void Tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens);
 
 		template<typename INT, typename T>
-		std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<T>& outString);
+		std::enable_if_t<std::is_integral_v<INT>, void> ToString(const INT i, MutableString<T>& outString);
 		template<typename FLT, typename T>
-		std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<T>& outString);
+		std::enable_if_t<std::is_floating_point_v<FLT>, void> ToString(const FLT f, MutableString<T>& outString);
 
 		template <typename ValueType, typename CharType, typename = void>
 		struct isToStringAvailable : std::false_type {};
 
 		template <typename ValueType, typename CharType>
 		struct isToStringAvailable<ValueType, CharType,
-			std::void_t<decltype(toString(std::declval<const ValueType>(), std::declval<mint::MutableString<CharType>&>()))>> : std::true_type {};
+			std::void_t<decltype(ToString(std::declval<const ValueType>(), std::declval<mint::MutableString<CharType>&>()))>> : std::true_type {};
 
 		template<typename T>
-		int32 stringToInt32(const StringReference<T>& string);
+		int32 StringToInt32(const StringReference<T>& string);
 		template<typename T>
-		int64 stringToInt64(const StringReference<T>& string);
+		int64 StringToInt64(const StringReference<T>& string);
 		template<typename T>
-		float stringToFloat(const StringReference<T>& string);
+		float StringToFloat(const StringReference<T>& string);
 		template<typename T>
-		double stringToDouble(const StringReference<T>& string);
+		double StringToDouble(const StringReference<T>& string);
 	}
 }
 

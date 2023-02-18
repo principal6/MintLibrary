@@ -31,9 +31,9 @@ namespace mint
 		bool operator==(const StringView& rhs) const noexcept;
 		bool operator!=(const StringView& rhs) const noexcept;
 		const T& operator[](const uint32 at) const noexcept;
-		const T* c_str() const noexcept;
-		uint32 length() const noexcept { return _length; }
-		bool empty() const noexcept { return _length == 0; }
+		const T* CString() const noexcept;
+		uint32 Length() const noexcept { return _length; }
+		bool IsEmpty() const noexcept { return _length == 0; }
 
 	private:
 		const T* const _rawString;

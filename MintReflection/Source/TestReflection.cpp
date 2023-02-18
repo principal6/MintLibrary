@@ -44,9 +44,9 @@ namespace mint
 			outer0._inner._ui = 0xEEEEEEEE;
 			outer0._inner._f = 8.25f;
 			outer0._inner._str = "CHANGED_VALUE!";
-			outer0._uis.push_back(0xFE);
-			outer0._uis.push_back(0xDC);
-			outer0._uis.push_back(0xBA);
+			outer0._uis.PushBack(0xFE);
+			outer0._uis.PushBack(0xDC);
+			outer0._uis.PushBack(0xBA);
 			ReflectionTesterInner inner0;
 			Float3 float3_0 = Float3(1, 2, 3);
 			StructOfArrays struct_of_arrays0;
@@ -57,28 +57,28 @@ namespace mint
 			struct_of_arrays0._strs[1] = "WXYZ";
 
 			BinarySerializer serializer;
-			serializer.serialize(outer0, "assets/serialization_test_outer0.bin");
-			serializer.serialize(inner0, "assets/serialization_test_inner0.bin");
-			serializer.serialize(float3_0, "assets/serialization_test_float3_0.bin");
-			serializer.serialize(struct_of_arrays0, "assets/serialization_test_struct_of_arrays0.bin");
+			serializer.serialize(outer0, "assets/serialization_Test_outer0.bin");
+			serializer.serialize(inner0, "assets/serialization_Test_inner0.bin");
+			serializer.serialize(float3_0, "assets/serialization_Test_float3_0.bin");
+			serializer.serialize(struct_of_arrays0, "assets/serialization_Test_struct_of_arrays0.bin");
 
 			ReflectionTesterOuter outer1;
 			Float3 float3_1 = Float3(9, 9, 9);
 			StructOfArrays struct_of_arrays1;
-			serializer.deserialize("assets/serialization_test_outer0.bin", outer1);
-			//serializer.deserialize("assets/serialization_test_outer0.bin", inner0); // This line must fail!!!
-			serializer.deserialize("assets/serialization_test_float3_0.bin", float3_1);
-			serializer.deserialize("assets/serialization_test_struct_of_arrays0.bin", struct_of_arrays1);
+			serializer.deserialize("assets/serialization_Test_outer0.bin", outer1);
+			//serializer.deserialize("assets/serialization_Test_outer0.bin", inner0); // This line must fail!!!
+			serializer.deserialize("assets/serialization_Test_float3_0.bin", float3_1);
+			serializer.deserialize("assets/serialization_Test_struct_of_arrays0.bin", struct_of_arrays1);
 
 			//MINT_ASSURE(outer0 == outer1);
 			MINT_ASSURE(float3_0 == float3_1);
 			//MINT_ASSURE(struct_of_arrays0 == struct_of_arrays1);
 
 			JSONSerializer jsonSerializer;
-			jsonSerializer.serialize(outer0, "assets/serialization_test_outer0.json");
-			jsonSerializer.serialize(inner0, "assets/serialization_test_inner0.json");
-			//jsonSerializer.serialize(float3_0, "assets/serialization_test_float3_0.json"); // This line must fail!!!
-			jsonSerializer.serialize(struct_of_arrays0, "assets/serialization_test_struct_of_arrays0.json");
+			jsonSerializer.serialize(outer0, "assets/serialization_Test_outer0.json");
+			jsonSerializer.serialize(inner0, "assets/serialization_Test_inner0.json");
+			//jsonSerializer.serialize(float3_0, "assets/serialization_Test_float3_0.json"); // This line must fail!!!
+			jsonSerializer.serialize(struct_of_arrays0, "assets/serialization_Test_struct_of_arrays0.json");
 			return true;
 		}
 	}

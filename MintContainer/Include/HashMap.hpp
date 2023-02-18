@@ -61,20 +61,20 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline bool HashMap<Key, Value>::contains(const Key& key) const noexcept
+	inline bool HashMap<Key, Value>::Contains(const Key& key) const noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
-		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
-		return containsInternal(startBucketIndex, key);
+		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
+		return ContainsInternal(startBucketIndex, key);
 	}
 
 	template<typename Key, typename Value>
-	inline bool HashMap<Key, Value>::containsInternal(const uint32 startBucketIndex, const Key& key) const noexcept
+	inline bool HashMap<Key, Value>::ContainsInternal(const uint32 startBucketIndex, const Key& key) const noexcept
 	{
 		auto& startBucket = _bucketArray[startBucketIndex];
 		for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
 		{
-			if (startBucket._hopInfo.get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
+			if (startBucket._hopInfo.Get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
 			{
 				return true;
 			}
@@ -84,12 +84,12 @@ namespace mint
 
 	template<typename Key, typename Value>
 	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> HashMap<Key, Value>::insert(const Key& key, const V& value) noexcept
+	inline std::enable_if_t<std::is_copy_constructible<V>::value == true || std::is_default_constructible<V>::value, void> HashMap<Key, Value>::Insert(const Key& key, const V& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
-		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
+		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
 
-		if (containsInternal(startBucketIndex, key) == true)
+		if (ContainsInternal(startBucketIndex, key) == true)
 		{
 			return;
 		}
@@ -97,24 +97,24 @@ namespace mint
 		auto& startBucket = _bucketArray[startBucketIndex];
 		if (startBucket._isUsed == false)
 		{
-			setBucket(startBucketIndex, 0, key, value);
+			SetBucket(startBucketIndex, 0, key, value);
 			return;
 		}
 
 		uint32 hopDistance;
-		if (existsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
+		if (ExistsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
 		{
 			// Check if it is closest
 
 			if (hopDistance < kHopRange)
 			{
-				setBucket(startBucketIndex, hopDistance, key, value);
+				SetBucket(startBucketIndex, hopDistance, key, value);
 				return;
 			}
 
 			do
 			{
-				if (displace(startBucketIndex, hopDistance) == false)
+				if (Displace(startBucketIndex, hopDistance) == false)
 				{
 					break;
 				}
@@ -122,23 +122,23 @@ namespace mint
 
 			if (hopDistance < kHopRange)
 			{
-				setBucket(startBucketIndex, hopDistance, key, value);
+				SetBucket(startBucketIndex, hopDistance, key, value);
 				return;
 			}
 		}
 
-		resize();
-		insert(key, value);
+		Resize();
+		Insert(key, value);
 	}
 
 	template<typename Key, typename Value>
 	template<typename V>
-	inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void> HashMap<Key, Value>::insert(const Key& key, V&& value) noexcept
+	inline std::enable_if_t<std::is_copy_constructible<V>::value == false, void> HashMap<Key, Value>::Insert(const Key& key, V&& value) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
-		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
+		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
 
-		if (containsInternal(startBucketIndex, key) == true)
+		if (ContainsInternal(startBucketIndex, key) == true)
 		{
 			return;
 		}
@@ -146,24 +146,24 @@ namespace mint
 		auto& startBucket = _bucketArray[startBucketIndex];
 		if (startBucket._isUsed == false)
 		{
-			setBucket(startBucketIndex, 0, key, std::move(value));
+			SetBucket(startBucketIndex, 0, key, std::move(value));
 			return;
 		}
 
 		uint32 hopDistance;
-		if (existsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
+		if (ExistsEmptySlotInAddRange(startBucketIndex, hopDistance) == true)
 		{
 			// Check if it is closest
 
 			if (hopDistance < kHopRange)
 			{
-				setBucket(startBucketIndex, hopDistance, key, std::move(value));
+				SetBucket(startBucketIndex, hopDistance, key, std::move(value));
 				return;
 			}
 
 			do
 			{
-				if (displace(startBucketIndex, hopDistance) == false)
+				if (Displace(startBucketIndex, hopDistance) == false)
 				{
 					break;
 				}
@@ -171,22 +171,22 @@ namespace mint
 
 			if (hopDistance < kHopRange)
 			{
-				setBucket(startBucketIndex, hopDistance, key, std::move(value));
+				SetBucket(startBucketIndex, hopDistance, key, std::move(value));
 				return;
 			}
 		}
 
-		resize();
+		Resize();
 		insert(key, std::move(value));
 	}
 
 	template<typename Key, typename Value>
-	inline bool HashMap<Key, Value>::existsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept
+	inline bool HashMap<Key, Value>::ExistsEmptySlotInAddRange(const uint32 startBucketIndex, uint32& hopDistance) const noexcept
 	{
 		hopDistance = 0;
 		for (; hopDistance < kAddRange; ++hopDistance)
 		{
-			if (_bucketArray.size() <= startBucketIndex + hopDistance)
+			if (_bucketArray.Size() <= startBucketIndex + hopDistance)
 			{
 				break;
 			}
@@ -200,15 +200,15 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline KeyValuePair<Key, Value> HashMap<Key, Value>::find(const Key& key) const noexcept
+	inline KeyValuePair<Key, Value> HashMap<Key, Value>::Find(const Key& key) const noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
-		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
+		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
 		const Bucket<Key, Value>& startBucket = _bucketArray[startBucketIndex];
 		KeyValuePair<Key, Value> findResult;
 		for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
 		{
-			if (startBucket._hopInfo.get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
+			if (startBucket._hopInfo.Get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
 			{
 				findResult._key = &_bucketArray[startBucketIndex + hopAt]._key;
 				findResult._value = const_cast<Value*>(&_bucketArray[startBucketIndex + hopAt]._value);
@@ -219,29 +219,29 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline const Value& HashMap<Key, Value>::at(const Key& key) const noexcept
+	inline const Value& HashMap<Key, Value>::At(const Key& key) const noexcept
 	{
-		const Value* const value = find(key)._value;
-		return (value == nullptr) ? getInvalidValue() : *value;
+		const Value* const value = Find(key)._value;
+		return (value == nullptr) ? GetInvalidValue() : *value;
 	}
 
 	template<typename Key, typename Value>
-	inline Value& HashMap<Key, Value>::at(const Key& key) noexcept
+	inline Value& HashMap<Key, Value>::At(const Key& key) noexcept
 	{
-		Value* const value = find(key)._value;
-		return (value == nullptr) ? getInvalidValue() : *value;
+		Value* const value = Find(key)._value;
+		return (value == nullptr) ? GetInvalidValue() : *value;
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::erase(const Key& key) noexcept
+	inline void HashMap<Key, Value>::Erase(const Key& key) noexcept
 	{
 		const uint64 keyHash = Hasher<Key>()(key);
-		const uint32 startBucketIndex = computeStartBucketIndex(keyHash);
+		const uint32 startBucketIndex = ComputeStartBucketIndex(keyHash);
 		auto& startBucket = _bucketArray[startBucketIndex];
 		int32 hopDistance = -1;
 		for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
 		{
-			if (startBucket._hopInfo.get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
+			if (startBucket._hopInfo.Get(hopAt) == true && _bucketArray[startBucketIndex + hopAt]._key == key)
 			{
 				hopDistance = static_cast<int32>(hopAt);
 				break;
@@ -249,7 +249,7 @@ namespace mint
 		}
 		if (hopDistance >= 0)
 		{
-			startBucket._hopInfo.set(hopDistance, false);
+			startBucket._hopInfo.Set(hopDistance, false);
 
 			_bucketArray[startBucketIndex + hopDistance]._isUsed = false;
 
@@ -258,67 +258,67 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::clear() noexcept
+	inline void HashMap<Key, Value>::Clear() noexcept
 	{
-		_bucketArray.clear();
-		_bucketArray.resize(kSegmentLength);
+		_bucketArray.Clear();
+		_bucketArray.Resize(kSegmentLength);
 
 		_bucketCount = 0;
 	}
 
 	template<typename Key, typename Value>
-	inline Value& HashMap<Key, Value>::getInvalidValue() noexcept
+	inline Value& HashMap<Key, Value>::GetInvalidValue() noexcept
 	{
 		static Value invalidValue{};
 		return invalidValue;
 	}
 
 	template<typename Key, typename Value>
-	inline uint32 HashMap<Key, Value>::size() const noexcept
+	inline uint32 HashMap<Key, Value>::Size() const noexcept
 	{
 		return _bucketCount;
 	}
 
 	template<typename Key, typename Value>
-	inline bool HashMap<Key, Value>::empty() const noexcept
+	inline bool HashMap<Key, Value>::IsEmpty() const noexcept
 	{
 		return _bucketCount == 0;
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::resize() noexcept
+	inline void HashMap<Key, Value>::Resize() noexcept
 	{
-		const float load = static_cast<float>(_bucketCount) / static_cast<float>(_bucketArray.size());
-		MINT_LOG("HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.size());
+		const float load = static_cast<float>(_bucketCount) / static_cast<float>(_bucketArray.Size());
+		MINT_LOG("HashMap resizes with load [%f, %d/%d]", load, _bucketCount, _bucketArray.Size());
 
 		Vector<Bucket<Key, Value>> oldBucketArray = _bucketArray;
 
 		_bucketCount = 0;
 
-		_bucketArray.clear();
-		_bucketArray.resize(oldBucketArray.size() * 2);
+		_bucketArray.Clear();
+		_bucketArray.Resize(oldBucketArray.Size() * 2);
 
-		const uint32 oldBucketCount = oldBucketArray.size();
+		const uint32 oldBucketCount = oldBucketArray.Size();
 		for (uint32 oldBucketIndex = 0; oldBucketIndex < oldBucketCount; ++oldBucketIndex)
 		{
 			if (oldBucketArray[oldBucketIndex]._isUsed == true)
 			{
 				if constexpr (std::is_copy_constructible<Value>::value == true)
 				{
-					insert(oldBucketArray[oldBucketIndex]._key, oldBucketArray[oldBucketIndex]._value);
+					Insert(oldBucketArray[oldBucketIndex]._key, oldBucketArray[oldBucketIndex]._value);
 				}
 				else
 				{
-					insert(oldBucketArray[oldBucketIndex]._key, std::move(oldBucketArray[oldBucketIndex]._value));
+					Insert(oldBucketArray[oldBucketIndex]._key, std::move(oldBucketArray[oldBucketIndex]._value));
 				}
 			}
 		}
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept
+	inline void HashMap<Key, Value>::SetBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, const Value& value) noexcept
 	{
-		_bucketArray[bucketIndex]._hopInfo.set(hopDistance, true);
+		_bucketArray[bucketIndex]._hopInfo.Set(hopDistance, true);
 
 		_bucketArray[bucketIndex + hopDistance]._isUsed = true;
 		_bucketArray[bucketIndex + hopDistance]._key = key;
@@ -337,9 +337,9 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::setBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept
+	inline void HashMap<Key, Value>::SetBucket(const uint32 bucketIndex, const uint32 hopDistance, const Key& key, Value&& value) noexcept
 	{
-		_bucketArray[bucketIndex]._hopInfo.set(hopDistance, true);
+		_bucketArray[bucketIndex]._hopInfo.Set(hopDistance, true);
 
 		_bucketArray[bucketIndex + hopDistance]._isUsed = true;
 		_bucketArray[bucketIndex + hopDistance]._key = key;
@@ -358,15 +358,15 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline bool HashMap<Key, Value>::displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept
+	inline bool HashMap<Key, Value>::Displace(const uint32 startBucketIndex, uint32& hopDistance) noexcept
 	{
 		const uint32 bucketH_1Index = startBucketIndex + hopDistance - (kHopRange - 1);
 		auto& bucketH_1 = _bucketArray[bucketH_1Index];
 		for (uint32 hopAt = 0; hopAt < kHopRange; ++hopAt)
 		{
-			if (bucketH_1._hopInfo.get(hopAt) == true)
+			if (bucketH_1._hopInfo.Get(hopAt) == true)
 			{
-				displaceBucket(bucketH_1Index, hopAt, 3);
+				DisplaceBucket(bucketH_1Index, hopAt, 3);
 				hopDistance = bucketH_1Index + hopAt - startBucketIndex;
 				return true;
 			}
@@ -375,7 +375,7 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	inline void HashMap<Key, Value>::displaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept
+	inline void HashMap<Key, Value>::DisplaceBucket(const uint32 bucketIndex, const uint32 hopDistanceA, const uint32 hopDistanceB) noexcept
 	{
 		auto& baseBucket = _bucketArray[bucketIndex];
 		auto& bucketA = _bucketArray[bucketIndex + hopDistanceA];
@@ -384,8 +384,8 @@ namespace mint
 		MINT_ASSERT(hopDistanceB < kHopRange, "HopDistance 는 반드시 HopRange 안에 있어야 합니다!!!");
 		MINT_ASSERT(bucketB._isUsed == false, "BucketB 는 비어 있어야만 합니다!!!");
 
-		baseBucket._hopInfo.set(hopDistanceA, false);
-		baseBucket._hopInfo.set(hopDistanceB, true);
+		baseBucket._hopInfo.Set(hopDistanceA, false);
+		baseBucket._hopInfo.Set(hopDistanceB, true);
 
 		bucketA._isUsed = false;
 
@@ -404,21 +404,21 @@ namespace mint
 	}
 
 	template<typename Key, typename Value>
-	MINT_INLINE uint32 HashMap<Key, Value>::computeSegmentIndex(const uint64 keyHash) const noexcept
+	MINT_INLINE uint32 HashMap<Key, Value>::ComputeSegmentIndex(const uint64 keyHash) const noexcept
 	{
-		return keyHash % (_bucketArray.capacity() / kSegmentLength);
+		return keyHash % (_bucketArray.Capacity() / kSegmentLength);
 	}
 
 	template<typename Key, typename Value>
-	MINT_INLINE uint32 HashMap<Key, Value>::computeStartBucketIndex(const uint64 keyHash) const noexcept
+	MINT_INLINE uint32 HashMap<Key, Value>::ComputeStartBucketIndex(const uint64 keyHash) const noexcept
 	{
-		return (kSegmentLength * computeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
+		return (kSegmentLength * ComputeSegmentIndex(keyHash)) + keyHash % kSegmentLength;
 	}
 	
 	template<typename Key, typename Value>
-	MINT_INLINE uint32 HashMap<Key, Value>::getNextValidBucketIndex(const uint32 currentBucketIndex) const
+	MINT_INLINE uint32 HashMap<Key, Value>::GetNextValidBucketIndex(const uint32 currentBucketIndex) const
 	{
-		const uint32 bucketArraySize = _bucketArray.size();
+		const uint32 bucketArraySize = _bucketArray.Size();
 		for (uint32 bucketIndex = currentBucketIndex + 1; bucketIndex < bucketArraySize; ++bucketIndex)
 		{
 			if (_bucketArray[bucketIndex]._isUsed == true)
@@ -433,7 +433,7 @@ namespace mint
 	MINT_INLINE HashMap<Key, Value>::Iterator HashMap<Key, Value>::begin() noexcept
 	{
 		int32 firstBucketIndex = 0;
-		const int32 bucketArraySize = static_cast<int32>(_bucketArray.size());
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
 		for (int32 bucketIndex = 0; bucketIndex < bucketArraySize; ++bucketIndex)
 		{
 			if (_bucketArray[bucketIndex]._isUsed == true)
@@ -448,7 +448,7 @@ namespace mint
 	template<typename Key, typename Value>
 	MINT_INLINE HashMap<Key, Value>::Iterator HashMap<Key, Value>::end() noexcept
 	{
-		const int32 bucketArraySize = static_cast<int32>(_bucketArray.size());
+		const int32 bucketArraySize = static_cast<int32>(_bucketArray.Size());
 		return Iterator(*this, bucketArraySize);
 	}
 }

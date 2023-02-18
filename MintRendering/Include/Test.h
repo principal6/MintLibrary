@@ -17,10 +17,10 @@ namespace mint
 	{
 		bool test(Rendering::GraphicDevice& graphicDevice);
 
-		bool test_SplineGenerator(Rendering::GraphicDevice& graphicDevice);
-		bool test_Plotter(Rendering::GraphicDevice& graphicDevice);
-		bool test_MathExpressionRenderer(Rendering::GraphicDevice& graphicDevice);
-		bool test_GUI(Rendering::GraphicDevice& graphicDevice);
+		bool Test_SplineGenerator(Rendering::GraphicDevice& graphicDevice);
+		bool Test_Plotter(Rendering::GraphicDevice& graphicDevice);
+		bool Test_MathExpressionRenderer(Rendering::GraphicDevice& graphicDevice);
+		bool Test_GUI(Rendering::GraphicDevice& graphicDevice);
 	}
 }
 

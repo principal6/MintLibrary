@@ -107,12 +107,12 @@ namespace mint
 
 		void InputContext::flushInputEvents() noexcept
 		{
-			_events.flush();
+			_events.Flush();
 		}
 
 		void InputContext::pushInputEvent(const InputEvent& inputEvent) noexcept
 		{
-			_events.push(inputEvent);
+			_events.Push(inputEvent);
 		}
 
 		void InputContext::processEvents() noexcept
@@ -120,9 +120,9 @@ namespace mint
 			_mouseState.process();
 			_keyboardState.process();
 
-			while (_events.empty() == false)
+			while (_events.IsEmpty() == false)
 			{
-				InputEvent inputEvent = _events.peek();
+				InputEvent inputEvent = _events.Peek();
 
 				switch (inputEvent._type)
 				{
@@ -212,7 +212,7 @@ namespace mint
 					break;
 				}
 
-				_events.pop();
+				_events.Pop();
 			}
 		}
 

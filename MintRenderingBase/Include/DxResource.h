@@ -71,7 +71,7 @@ namespace mint
 			bool createTexture(const DxTextureFormat format, const void* const resourceContent, const uint32 width, const uint32 height);
 
 		public:
-			bool isValid() const noexcept;
+			bool IsValid() const noexcept;
 
 		public:
 			void updateBuffer(const void* const resourceContent, const uint32 elementCount);

@@ -5,7 +5,7 @@ namespace mint
 {
 	namespace Rendering
 	{
-		void ObjectComponentID::assignRawID(const uint32 rawID) noexcept
+		void ObjectComponentID::AssignRawID(const uint32 rawID) noexcept
 		{
 			_rawID = rawID;
 		}
@@ -21,7 +21,7 @@ namespace mint
 			: _ownerObject{ nullptr }
 			, _type{ type }
 		{
-			_id.assignRawID(IObjectComponent::_nextRawID);
+			_id.AssignRawID(IObjectComponent::_nextRawID);
 
 			++IObjectComponent::_nextRawID;
 		}

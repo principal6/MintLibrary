@@ -67,8 +67,8 @@ namespace mint
 		void expandRightBottom(const Rect& rhs) noexcept;
 		void shrinkByQuantity(const Rect& quantity) noexcept;
 		constexpr Float2 bound(const Float2& position) const noexcept;
-		constexpr bool contains(const Float2& position) const noexcept;
-		constexpr bool contains(const Rect& rhs) const noexcept;
+		constexpr bool Contains(const Float2& position) const noexcept;
+		constexpr bool Contains(const Rect& rhs) const noexcept;
 
 	public:
 		bool isNan() const noexcept;

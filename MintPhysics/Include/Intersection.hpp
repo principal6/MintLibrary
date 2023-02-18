@@ -53,7 +53,7 @@ namespace mint
 
 		MINT_INLINE bool intersect2D_aabb_point(const Rect& aabb, const Float2& point)
 		{
-			return aabb.contains(point);
+			return aabb.Contains(point);
 		}
 #pragma endregion
 	}

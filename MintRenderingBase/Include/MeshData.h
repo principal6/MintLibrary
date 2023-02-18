@@ -31,7 +31,7 @@ namespace mint
 			MeshData();
 
 		public:
-			bool isEmpty() const noexcept;
+			bool IsEmpty() const noexcept;
 			void clear() noexcept;
 			void shrinkToFit() noexcept;
 			void updateVertexFromPositions() noexcept;

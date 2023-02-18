@@ -21,7 +21,7 @@
 namespace mint
 {
 	template <uint32 BufferSize>
-	MINT_INLINE void formatString(char(&buffer)[BufferSize], const char* format, ...)
+	MINT_INLINE void FormatString(char(&buffer)[BufferSize], const char* format, ...)
 	{
 		va_list args;
 		va_start(args, format);
@@ -29,7 +29,7 @@ namespace mint
 		va_end(args);
 	}
 
-	MINT_INLINE void formatString(char* const buffer, const uint32 bufferSize, const char* format, ...)
+	MINT_INLINE void FormatString(char* const buffer, const uint32 bufferSize, const char* format, ...)
 	{
 		va_list args;
 		va_start(args, format);
@@ -37,9 +37,9 @@ namespace mint
 		va_end(args);
 	}
 
-	MINT_INLINE void formatString(StringA& buffer, const uint32 bufferSize, const char* format, ...)
+	MINT_INLINE void FormatString(StringA& buffer, const uint32 bufferSize, const char* format, ...)
 	{
-		buffer.resize(bufferSize);
+		buffer.Resize(bufferSize);
 
 		va_list args;
 		va_start(args, format);
@@ -48,21 +48,21 @@ namespace mint
 	}
 
 	template <uint32 BufferSize>
-	MINT_INLINE void formatString(StackStringA<BufferSize>& buffer, const char* format, ...)
+	MINT_INLINE void FormatString(StackStringA<BufferSize>& buffer, const char* format, ...)
 	{
 		StackStringA<BufferSize> temp;
 
 		va_list args;
 		va_start(args, format);
-		::vsprintf_s(temp.data(), BufferSize, format, args);
+		::vsprintf_s(temp.Data(), BufferSize, format, args);
 		va_end(args);
 
-		buffer.resize(temp.length());
-		buffer.assign(temp.c_str());
+		buffer.Resize(temp.Length());
+		buffer.Assign(temp.CString());
 	}
 
 	template <uint32 BufferSize>
-	MINT_INLINE void formatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...)
+	MINT_INLINE void FormatString(wchar_t(&buffer)[BufferSize], const wchar_t* format, ...)
 	{
 		va_list args;
 		va_start(args, format);
@@ -70,7 +70,7 @@ namespace mint
 		va_end(args);
 	}
 
-	MINT_INLINE void formatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...)
+	MINT_INLINE void FormatString(wchar_t* const buffer, const uint32 bufferSize, const wchar_t* format, ...)
 	{
 		va_list args;
 		va_start(args, format);
@@ -78,9 +78,9 @@ namespace mint
 		va_end(args);
 	}
 
-	MINT_INLINE void formatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...)
+	MINT_INLINE void FormatString(StringW& buffer, const uint32 bufferSize, const wchar_t* format, ...)
 	{
-		buffer.resize(bufferSize);
+		buffer.Resize(bufferSize);
 
 		va_list args;
 		va_start(args, format);
@@ -89,17 +89,17 @@ namespace mint
 	}
 
 	template <uint32 BufferSize>
-	MINT_INLINE void formatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...)
+	MINT_INLINE void FormatString(StackStringW<BufferSize>& buffer, const wchar_t* format, ...)
 	{
 		StackStringW<BufferSize> temp;
 
 		va_list args;
 		va_start(args, format);
-		::vswprintf_s(temp.data(), BufferSize, format, args);
+		::vswprintf_s(temp.Data(), BufferSize, format, args);
 		va_end(args);
 
-		buffer.resize(temp.length());
-		buffer.assign(temp.c_str());
+		buffer.Resize(temp.Length());
+		buffer.Assign(temp.CString());
 	}
 
 
@@ -117,29 +117,29 @@ namespace mint
 		__noop;
 	}
 
-	inline StringRange::StringRange(const uint32 offset, const uint32 length)
+	inline StringRange::StringRange(const uint32 offset, const uint32 Length)
 		: _offset{ offset }
-		, _length{ length }
+		, _length{ Length }
 	{
 		__noop;
 	}
 
 	// 나중에 string 구현하고 나면 없앨 것!!!
-	inline StringRange::StringRange(const uint64 offset, const uint32 length)
+	inline StringRange::StringRange(const uint64 offset, const uint32 Length)
 		: _offset{ static_cast<uint32>(offset) }
-		, _length{ length }
+		, _length{ Length }
 	{
 	}
 
 	// 나중에 string 구현하고 나면 없앨 것!!!
-	inline StringRange::StringRange(const uint64 offset, const uint64 length)
+	inline StringRange::StringRange(const uint64 offset, const uint64 Length)
 		: _offset{ static_cast<uint32>(offset) }
-		, _length{ static_cast<uint32>(length) }
+		, _length{ static_cast<uint32>(Length) }
 	{
 		__noop;
 	}
 
-	MINT_INLINE bool StringRange::isLengthSet() const noexcept
+	MINT_INLINE bool StringRange::IsLengthSet() const noexcept
 	{
 		return _length;
 	}
@@ -147,27 +147,27 @@ namespace mint
 
 	namespace StringUtil
 	{
-		MINT_INLINE constexpr U8CharCode encode(const char8_t ch)
+		MINT_INLINE constexpr U8CharCode Encode(const char8_t ch)
 		{
 			return static_cast<U8CharCode>(ch);
 		};
 
-		MINT_INLINE constexpr U8CharCode encode(const char8_t(&ch)[2])
+		MINT_INLINE constexpr U8CharCode Encode(const char8_t(&ch)[2])
 		{
 			return static_cast<U8CharCode>(ch[0] | (ch[1] << 8));
 		}
 
-		MINT_INLINE constexpr U8CharCode encode(const char8_t(&ch)[3])
+		MINT_INLINE constexpr U8CharCode Encode(const char8_t(&ch)[3])
 		{
 			return static_cast<U8CharCode>(ch[0] | (ch[1] << 8) | (ch[2] << 16));
 		}
 
-		MINT_INLINE constexpr U8CharCode encode(const char8_t(&ch)[4])
+		MINT_INLINE constexpr U8CharCode Encode(const char8_t(&ch)[4])
 		{
 			return static_cast<U8CharCode>(ch[0] | (ch[1] << 8) | (ch[2] << 16) | (ch[3] << 24));
 		}
 
-		MINT_INLINE constexpr U8CharCode encode(const char8_t* const string, const uint32 byteAt)
+		MINT_INLINE constexpr U8CharCode Encode(const char8_t* const string, const uint32 byteAt)
 		{
 			if (string == nullptr)
 			{
@@ -190,92 +190,92 @@ namespace mint
 			return charCode;
 		}
 
-		MINT_INLINE StringU8 decode(const U8CharCode code)
+		MINT_INLINE StringU8 Decode(const U8CharCode code)
 		{
 			char8_t ch[4]{ static_cast<uint8>(code), static_cast<uint8>(code >> 8), static_cast<uint8>(code >> 16), static_cast<uint8>(code >> 24) };
 			return StringU8(ch);
 		}
 
-		MINT_INLINE StringU8 convertWideStringToUTF8(const StringW& source)
+		MINT_INLINE StringU8 ConvertWideStringToUTF8(const StringW& source)
 		{
-			const int length = ::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
-			StringU8 destination(length, 0);
-			::WideCharToMultiByte(CP_UTF8, 0, source.c_str(), static_cast<int>(source.length()), reinterpret_cast<char*>(&destination[0]), length, nullptr, nullptr);
+			const int Length = ::WideCharToMultiByte(CP_UTF8, 0, source.CString(), static_cast<int>(source.Length()), nullptr, 0, nullptr, nullptr);
+			StringU8 destination(Length, 0);
+			::WideCharToMultiByte(CP_UTF8, 0, source.CString(), static_cast<int>(source.Length()), reinterpret_cast<char*>(&destination[0]), Length, nullptr, nullptr);
 			return destination;
 		}
 
-		MINT_INLINE StringW convertUTF8ToWideString(const StringU8& source)
+		MINT_INLINE StringW ConvertUTF8ToWideString(const StringU8& source)
 		{
-			const int length = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.c_str()), static_cast<int>(source.length()), nullptr, 0);
-			StringW destination(length, 0);
-			::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.c_str()), static_cast<int>(source.length()), &destination[0], length);
+			const int Length = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.CString()), static_cast<int>(source.Length()), nullptr, 0);
+			StringW destination(Length, 0);
+			::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(source.CString()), static_cast<int>(source.Length()), &destination[0], Length);
 			return destination;
 		}
 
-		MINT_INLINE void convertWideStringToString(const StringW& source, StringA& destination)
+		MINT_INLINE void ConvertWideStringToString(const StringW& source, StringA& destination)
 		{
-			const int length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
-			destination.resize(length);
+			const int Length = ::WideCharToMultiByte(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), nullptr, 0, nullptr, nullptr);
+			destination.Resize(Length);
+			::WideCharToMultiByte(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), &destination[0], static_cast<int>(destination.Length()), nullptr, nullptr);
+		}
+
+		MINT_INLINE void ConvertWideStringToString(const std::wstring& source, std::string& destination)
+		{
+			const int Length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
+			destination.resize(Length);
 			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
 		}
 
-		MINT_INLINE void convertWideStringToString(const std::wstring& source, std::string& destination)
+		MINT_INLINE void ConvertStringToWideString(const std::string& source, std::wstring& destination)
 		{
-			const int length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
-			destination.resize(length);
-			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
-		}
-
-		MINT_INLINE void convertStringToWideString(const std::string& source, std::wstring& destination)
-		{
-			const int length = ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0);
-			destination.resize(length);
+			const int Length = ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0);
+			destination.resize(Length);
 			::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()));
 		}
 
-		MINT_INLINE void convertStringAToStringW(const StringA& source, StringW& destination) noexcept
+		MINT_INLINE void ConvertStringAToStringW(const StringA& source, StringW& destination) noexcept
 		{
-			const int length = ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0);
-			destination.resize(length);
-			::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
+			const int Length = ::MultiByteToWideChar(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), nullptr, 0);
+			destination.Resize(Length);
+			::MultiByteToWideChar(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), &destination[0], static_cast<int>(source.Length()));
 		}
 
-		MINT_INLINE void convertStringWToStringA(const StringW& source, StringA& destination) noexcept
+		MINT_INLINE void ConvertStringWToStringA(const StringW& source, StringA& destination) noexcept
 		{
-			const int length = ::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0, nullptr, nullptr);
-			destination.resize(length);
-			::WideCharToMultiByte(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(destination.length()), nullptr, nullptr);
+			const int Length = ::WideCharToMultiByte(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), nullptr, 0, nullptr, nullptr);
+			destination.Resize(Length);
+			::WideCharToMultiByte(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), &destination[0], static_cast<int>(destination.Length()), nullptr, nullptr);
 		}
 
 		template<uint32 BufferSize>
-		inline void convertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept
+		inline void ConvertStackStringAToStackStringW(const StackStringA<BufferSize>& source, StackStringW<BufferSize>& destination) noexcept
 		{
-			const int length = ::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), nullptr, 0);
-			destination.resize(length);
-			::MultiByteToWideChar(CP_ACP, 0, source.c_str(), static_cast<int>(source.length()), &destination[0], static_cast<int>(source.length()));
+			const int Length = ::MultiByteToWideChar(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), nullptr, 0);
+			destination.Resize(Length);
+			::MultiByteToWideChar(CP_ACP, 0, source.CString(), static_cast<int>(source.Length()), &destination[0], static_cast<int>(source.Length()));
 		}
 
 		template<typename T>
 		MINT_INLINE uint32 computeExtenstionAt(const StringReference<T>& inoutText)
 		{
-			const uint32 length = inoutText.length();
-			uint32 found = inoutText.find('.', 1);
-			while (found < length - 1)
+			const uint32 Length = inoutText.Length();
+			uint32 found = inoutText.Find('.', 1);
+			while (found < Length - 1)
 			{
 				if (::isalpha(inoutText[found - 1]) == true && ::isalpha(inoutText[found + 1]) == true)
 				{
 					return found;
 				}
-				found = inoutText.find('.', found + 1);
+				found = inoutText.Find('.', found + 1);
 			}
 			return kStringNPos;
 		}
 
 		MINT_INLINE size_t computeExtenstionAt(std::string& inoutText)
 		{
-			const size_t length = inoutText.size();
+			const size_t Length = inoutText.size();
 			size_t found = inoutText.find('.', 1);
-			while (found < length - 1)
+			while (found < Length - 1)
 			{
 				if (::isalpha(inoutText[found - 1]) && ::isalpha(inoutText[found + 1]))
 				{
@@ -292,7 +292,7 @@ namespace mint
 			return (found != std::string::npos);
 		}
 
-		MINT_INLINE void excludeExtension(std::string& inoutText)
+		MINT_INLINE void ExcludeExtension(std::string& inoutText)
 		{
 			const size_t found = computeExtenstionAt(inoutText);
 			if (found != std::string::npos)
@@ -302,17 +302,17 @@ namespace mint
 		}
 
 		template <typename T>
-		inline void tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens)
+		inline void Tokenize(const std::basic_string<T>& inputString, const T delimiter, Vector<std::basic_string<T>>& outTokens)
 		{
 			Vector<char> delimiters;
-			delimiters.push_back(delimiter);
-			tokenize(inputString, delimiters, outTokens);
+			delimiters.PushBack(delimiter);
+			Tokenize(inputString, delimiters, outTokens);
 		}
 
 		template <typename T>
-		inline void tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens)
+		inline void Tokenize(const std::basic_string<T>& inputString, const Vector<T>& delimiters, Vector<std::basic_string<T>>& outTokens)
 		{
-			outTokens.clear();
+			outTokens.Clear();
 
 			if (inputString.empty() == true)
 			{
@@ -320,17 +320,17 @@ namespace mint
 			}
 
 			uint32 prevAt = 0;
-			const uint32 delimiterCount = static_cast<uint32>(delimiters.size());
-			const uint32 length = static_cast<uint32>(inputString.length());
-			for (uint32 at = 0; at < length; ++at)
+			const uint32 delimiterCount = static_cast<uint32>(delimiters.Size());
+			const uint32 Length = static_cast<uint32>(inputString.length());
+			for (uint32 at = 0; at < Length; ++at)
 			{
 				for (uint32 delimiterIndex = 0; delimiterIndex < delimiterCount; ++delimiterIndex)
 				{
-					if (inputString.at(at) == delimiters.at(delimiterIndex))
+					if (inputString.at(at) == delimiters.At(delimiterIndex))
 					{
 						if (prevAt < at)
 						{
-							outTokens.push_back(inputString.substr(prevAt, at - prevAt));
+							outTokens.PushBack(inputString.substr(prevAt, at - prevAt));
 						}
 
 						prevAt = at + 1;
@@ -338,14 +338,14 @@ namespace mint
 				}
 			}
 
-			if (prevAt < length)
+			if (prevAt < Length)
 			{
-				outTokens.push_back(inputString.substr(prevAt, length - prevAt));
+				outTokens.PushBack(inputString.substr(prevAt, Length - prevAt));
 			}
 		}
 
 		template<typename INT, typename T>
-		inline std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<T>& outString)
+		inline std::enable_if_t<std::is_integral_v<INT>, void> ToString(const INT i, MutableString<T>& outString)
 		{
 			constexpr uint32 kBufferSize = 32;
 			thread_local static char buffer[kBufferSize]{};
@@ -354,7 +354,7 @@ namespace mint
 		}
 
 		template<typename INT>
-		inline std::enable_if_t<std::is_integral_v<INT>, void> toString(const INT i, MutableString<wchar_t>& outString)
+		inline std::enable_if_t<std::is_integral_v<INT>, void> ToString(const INT i, MutableString<wchar_t>& outString)
 		{
 			constexpr uint32 kBufferSize = 32;
 			thread_local static wchar_t buffer[kBufferSize]{};
@@ -363,7 +363,7 @@ namespace mint
 		}
 
 		template<typename FLT, typename T>
-		inline std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<T>& outString)
+		inline std::enable_if_t<std::is_floating_point_v<FLT>, void> ToString(const FLT f, MutableString<T>& outString)
 		{
 			constexpr uint32 kBufferSize = 64;
 			thread_local static char buffer[kBufferSize]{};
@@ -372,7 +372,7 @@ namespace mint
 		}
 
 		template<typename FLT>
-		inline std::enable_if_t<std::is_floating_point_v<FLT>, void> toString(const FLT f, MutableString<wchar_t>& outString)
+		inline std::enable_if_t<std::is_floating_point_v<FLT>, void> ToString(const FLT f, MutableString<wchar_t>& outString)
 		{
 			constexpr uint32 kBufferSize = 64;
 			thread_local static wchar_t buffer[kBufferSize]{};
@@ -381,27 +381,27 @@ namespace mint
 		}
 
 		template<typename T>
-		inline int32 stringToInt32(const StringReference<T>& string)
+		inline int32 StringToInt32(const StringReference<T>& string)
 		{
-			return ::atoi(string.c_str());
+			return ::atoi(string.CString());
 		}
 
 		template<typename T>
-		inline int64 stringToInt64(const StringReference<T>& string)
+		inline int64 StringToInt64(const StringReference<T>& string)
 		{
-			return ::atoll(string.c_str());
+			return ::atoll(string.CString());
 		}
 
 		template<typename T>
-		inline float stringToFloat(const StringReference<T>& string)
+		inline float StringToFloat(const StringReference<T>& string)
 		{
-			return static_cast<float>(::atof(string.c_str()));
+			return static_cast<float>(::atof(string.CString()));
 		}
 
 		template<typename T>
-		inline double stringToDouble(const StringReference<T>& string)
+		inline double StringToDouble(const StringReference<T>& string)
 		{
-			return ::atof(string.c_str());
+			return ::atof(string.CString());
 		}
 	}
 }

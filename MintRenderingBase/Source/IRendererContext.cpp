@@ -42,19 +42,19 @@ namespace mint
 
 		void IRendererContext::flushTransformBuffer() noexcept
 		{
-			_sbTransformData.clear();
+			_sbTransformData.Clear();
 		}
 
 		void IRendererContext::prepareTransformBuffer() noexcept
 		{
-			if (_sbTransformData.empty())
+			if (_sbTransformData.IsEmpty())
 			{
 				return;
 			}
 
 			DxResourcePool& resourcePool = _graphicDevice.getResourcePool();
 			DxResource& sbTransform = resourcePool.getResource(_graphicDevice.getCommonSBTransformID());
-			sbTransform.updateBuffer(&_sbTransformData[0], _sbTransformData.size());
+			sbTransform.updateBuffer(&_sbTransformData[0], _sbTransformData.Size());
 		}
 	}
 }

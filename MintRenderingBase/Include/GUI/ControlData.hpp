@@ -18,7 +18,7 @@ namespace mint
 	template<>
 	inline uint64 Hasher<Rendering::GUI::ControlID>::operator()(const Rendering::GUI::ControlID& value) const noexcept
 	{
-		return computeHash(value.getRawID());
+		return ComputeHash(value.getRawID());
 	}
 
 
@@ -43,19 +43,19 @@ namespace mint
 				StackStringA<512> file = fileLine._file;
 				StackStringW<512> key;
 				StackStringW<512> conv;
-				StringUtil::convertStackStringAToStackStringW(file, key);
-				key.append(L"_");
-				StringUtil::toString(fileLine._line, conv);
-				key.append(conv);
-				key.append(L"_");
-				key.append(text);
-				key.append(L"_");
-				StringUtil::toString(static_cast<uint32>(type), conv);
-				key.append(conv);
-				key.append(L"_");
-				StringUtil::toString(parentControlID.getRawID(), conv);
-				key.append(conv);
-				return ControlID(key.computeHash());
+				StringUtil::ConvertStackStringAToStackStringW(file, key);
+				key.Append(L"_");
+				StringUtil::ToString(fileLine._line, conv);
+				key.Append(conv);
+				key.Append(L"_");
+				key.Append(text);
+				key.Append(L"_");
+				StringUtil::ToString(static_cast<uint32>(type), conv);
+				key.Append(conv);
+				key.Append(L"_");
+				StringUtil::ToString(parentControlID.getRawID(), conv);
+				key.Append(conv);
+				return ControlID(key.ComputeHash());
 			}
 
 			inline void ControlData::updateZones()
