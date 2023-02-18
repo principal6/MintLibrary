@@ -210,7 +210,7 @@ namespace mint
 	template<int32 N, typename T>
 	inline constexpr VectorR<N, T>::VectorR(const std::initializer_list<T>& initializerList)
 	{
-		const int32 count = min(static_cast<int32>(initializerList.size()), N);
+		const int32 count = Min(static_cast<int32>(initializerList.size()), N);
 		const T* const first = initializerList.begin();
 		for (int32 index = 0; index < count; ++index)
 		{

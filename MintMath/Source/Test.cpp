@@ -81,7 +81,7 @@ namespace mint
 						//c = a.cross(b);
 					}
 				}
-				auto logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
+				auto logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
 				*/
 
 				AffineVecF a;

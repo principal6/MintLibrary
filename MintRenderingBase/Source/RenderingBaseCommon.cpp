@@ -51,9 +51,9 @@ namespace mint
 			const int32 index = computeIndexFromXY(_size._x, at._x, at._y);
 			const ByteColor source = _pixels[index];
 			const ByteColor& destination = pixel;
-			_pixels[index].r() = min(static_cast<byte>((1.0f - alpha) * source.r()) + static_cast<byte>(alpha * destination.r()), 255);
-			_pixels[index].g() = min(static_cast<byte>((1.0f - alpha) * source.g()) + static_cast<byte>(alpha * destination.g()), 255);
-			_pixels[index].b() = min(static_cast<byte>((1.0f - alpha) * source.b()) + static_cast<byte>(alpha * destination.b()), 255);
+			_pixels[index].r() = Min(static_cast<byte>((1.0f - alpha) * source.r()) + static_cast<byte>(alpha * destination.r()), 255);
+			_pixels[index].g() = Min(static_cast<byte>((1.0f - alpha) * source.g()) + static_cast<byte>(alpha * destination.g()), 255);
+			_pixels[index].b() = Min(static_cast<byte>((1.0f - alpha) * source.b()) + static_cast<byte>(alpha * destination.b()), 255);
 			_pixels[index].a() = 255;
 		}
 
@@ -123,7 +123,7 @@ namespace mint
 			_byteColorImagePositions.push_back(byteColorImagePosition);
 			_byteColorImageSizes.push_back(byteColorImageSize);
 			_byteColorImages.push_back(std::move(byteColorImage));
-			_height = max(_height, byteColorImagePosition._y + byteColorImageSize._y);
+			_height = Max(_height, byteColorImagePosition._y + byteColorImageSize._y);
 			return static_cast<int32>(_byteColorImages.size() - 1);
 		}
 
@@ -139,7 +139,7 @@ namespace mint
 			_byteColorImagePositions.push_back(byteColorImagePosition);
 			_byteColorImageSizes.push_back(byteColorImage.getSize());
 			_byteColorImages.push_back(byteColorImage);
-			_height = max(_height, byteColorImagePosition._y + byteColorImage.getHeight());
+			_height = Max(_height, byteColorImagePosition._y + byteColorImage.getHeight());
 			return static_cast<int32>(_byteColorImages.size() - 1);
 		}
 
@@ -283,15 +283,15 @@ namespace mint
 				return;
 			}
 
-			const int32 beginX = mint::max(position._x, 0);
-			const int32 beginY = mint::max(position._y, 0);
+			const int32 beginX = Max(position._x, 0);
+			const int32 beginY = Max(position._y, 0);
 			if (_size._x <= beginX || _size._y <= beginY)
 			{
 				return;
 			}
 
-			const int32 endX = mint::min(position._x + size._x, _size._x);
-			const int32 endY = mint::min(position._y + size._y, _size._y);
+			const int32 endX = Min(position._x + size._x, _size._x);
+			const int32 endY = Min(position._y + size._y, _size._y);
 			if (endX < 0 || endY < 0)
 			{
 				return;
@@ -475,7 +475,7 @@ namespace mint
 
 		int32 ColorImage::convertXyToIndex(const uint32 x, const uint32 y) const noexcept
 		{
-			return mint::min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.size() - 1));
+			return Min(static_cast<int32>((_size._x * y) + x), static_cast<int32>(_colors.size() - 1));
 		}
 
 		const Color& ColorImage::getColorFromXy(const uint32 x, const uint32 y) const noexcept

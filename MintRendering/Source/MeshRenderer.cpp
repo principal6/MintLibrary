@@ -86,17 +86,17 @@ namespace mint
 			using namespace Language;
 
 			DxShaderPool& shaderPool = _graphicDevice.getShaderPool();
-			_vsDefaultID = shaderPool.addShader(Path::makeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::makeIncludeAssetPath("HlslBinary/"));
+			_vsDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "VsDefault.hlsl", "main", GraphicShaderType::VertexShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
 			const CppHlsl::Interpreter& interpreter = _graphicDevice.getCppHlslSteamData();
 			const TypeMetaData<CppHlsl::TypeCustomData>& vsInputTypeMetaData = interpreter.getTypeMetaData(typeid(VS_INPUT));
 			_inputLayoutDefaultID = shaderPool.addInputLayout(_vsDefaultID, vsInputTypeMetaData);
 
-			_psDefaultID = shaderPool.addShader(Path::makeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+			_psDefaultID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsDefault.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 
-			_gsNormalID = shaderPool.addShader(Path::makeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
-			_gsTriangleEdgeID = shaderPool.addShader(Path::makeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::makeIncludeAssetPath("HlslBinary/"));
-			_psTexCoordAsColorID = shaderPool.addShader(Path::makeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::makeIncludeAssetPath("HlslBinary/"));
+			_gsNormalID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsNormal.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_gsTriangleEdgeID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "GsTriangleEdge.hlsl", "main", GraphicShaderType::GeometryShader, Path::MakeIncludeAssetPath("HlslBinary/"));
+			_psTexCoordAsColorID = shaderPool.addShader(Path::MakeIncludeAssetPath("Hlsl/"), "PsTexCoordAsColor.hlsl", "main", GraphicShaderType::PixelShader, Path::MakeIncludeAssetPath("HlslBinary/"));
 		}
 	}
 }

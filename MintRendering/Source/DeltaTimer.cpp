@@ -27,7 +27,7 @@ namespace mint
 
 		float DeltaTimer::computeDeltaTimeSec() const noexcept
 		{
-			const uint64 currTimePointUs = Profiler::getCurrentTimeUs();
+			const uint64 currTimePointUs = Profiler::GetCurrentTimeUs();
 			const uint64 deltaTimeUs = currTimePointUs - _prevTimePointUs;
 
 			std::scoped_lock<std::mutex> scopedLock{ _mutex };

@@ -23,39 +23,39 @@
 namespace mint
 {
 	template<typename T>
-	MINT_INLINE constexpr const T& max(const T& a, const T& b)
+	MINT_INLINE constexpr const T& Max(const T& a, const T& b)
 	{
 		return (a < b) ? b : a;
 	}
 
 	template<typename T>
-	MINT_INLINE constexpr const T& max(T&& a, T&& b)
+	MINT_INLINE constexpr const T& Max(T&& a, T&& b)
 	{
 		return (a < b) ? b : a;
 	}
 
 	template<typename T>
-	MINT_INLINE constexpr const T& min(const T& a, const T& b)
+	MINT_INLINE constexpr const T& Min(const T& a, const T& b)
 	{
 		return (a > b) ? b : a;
 	}
 
 	template<typename T>
-	MINT_INLINE constexpr const T& min(T&& a, T&& b)
+	MINT_INLINE constexpr const T& Min(T&& a, T&& b)
 	{
 		return (a > b) ? b : a;
 	}
 
 	template<typename T>
-	MINT_INLINE constexpr const T& clamp(const T& value, const T& lowerBound, const T& upperBound)
+	MINT_INLINE constexpr const T& Clamp(const T& value, const T& lowerBound, const T& upperBound)
 	{
-		return min(max(value, lowerBound), upperBound);
+		return Min(Max(value, lowerBound), upperBound);
 	}
 
 	template<typename T>
-	MINT_INLINE constexpr const T& clamp(T&& value, T&& lowerBound, T&& upperBound)
+	MINT_INLINE constexpr const T& Clamp(T&& value, T&& lowerBound, T&& upperBound)
 	{
-		return min(max(value, lowerBound), upperBound);
+		return Min(Max(value, lowerBound), upperBound);
 	}
 }
 
@@ -94,7 +94,7 @@ static constexpr uint32 kStackSizeLimit = 1 << 14;
 
 // TODO: Index 를 class 로 만들 것
 static constexpr int32 kInvalidIndexInt32 = -1;
-constexpr bool isValidIndex(int32 index) { return index >= 0; }
+constexpr bool IsValidIndex(int32 index) { return index >= 0; }
 #pragma endregion
 
 
@@ -132,18 +132,18 @@ static constexpr int32 kErrorExitCode = -1;
 #define _MINT_LOG_ERROR_ACTION exit(kErrorExitCode)
 #endif
 
-#define MINT_LOG_UNTAGGED(format, ...) mint::Logger::getInstance().log(nullptr, nullptr, nullptr, nullptr, 0, format, __VA_ARGS__)
-#define MINT_LOG(format, ...) mint::Logger::getInstance().log(" _LOG_ ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-#define MINT_LOG_ALERT(format, ...) mint::Logger::getInstance().logAlert(" ALERT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
-#define MINT_LOG_ERROR(format, ...) mint::Logger::getInstance().logError(" ERROR ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
+#define MINT_LOG_UNTAGGED(format, ...) mint::Logger::GetInstance().Log(nullptr, nullptr, nullptr, nullptr, 0, format, __VA_ARGS__)
+#define MINT_LOG(format, ...) mint::Logger::GetInstance().Log(" _LOG_ ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+#define MINT_LOG_ALERT(format, ...) mint::Logger::GetInstance().LogAlert(" ALERT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__)
+#define MINT_LOG_ERROR(format, ...) mint::Logger::GetInstance().LogError(" ERROR ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION
 #pragma endregion
 
 
 #pragma region Assertion
-#define MINT_NEVER { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
+#define MINT_NEVER { mint::Logger::GetInstance().LogError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "THIS BRANCH IS NOT ALLOWED!"); _MINT_LOG_ERROR_ACTION; }
 // [DESCRIPTION]
 // Return false if expression is false!
-#define MINT_ASSURE(expression) if (!(expression)) { mint::Logger::getInstance().logError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
+#define MINT_ASSURE(expression) if (!(expression)) { mint::Logger::GetInstance().LogError(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); _MINT_LOG_ERROR_ACTION; return false; }
 
 #if defined MINT_LOG_FOR_ASSURE_SILENT
 #define MINT_ASSURE_SILENT(expression) if (!(expression)) { mint::Logger::getInstance().log(" ASSUR ", "MINT", __func__, __FILE__, __LINE__, "NOT ASSURED. RETURN FALSE!"); return false; }
@@ -152,7 +152,7 @@ static constexpr int32 kErrorExitCode = -1;
 #endif
 
 #if defined MINT_DEBUG
-#define MINT_ASSERT(expression, format, ...) if (!(expression)) { mint::Logger::getInstance().logError(" ASSRT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION; }
+#define MINT_ASSERT(expression, format, ...) if (!(expression)) { mint::Logger::GetInstance().LogError(" ASSRT ", "MINT", __func__, __FILE__, __LINE__, format, __VA_ARGS__); _MINT_LOG_ERROR_ACTION; }
 #else
 #define MINT_ASSERT(expression, format, ...)
 #endif
@@ -178,13 +178,13 @@ namespace mint
 		LoggerString& operator+=(const char* const rhs);
 
 	public:
-		MINT_INLINE bool empty() const noexcept { return _size == 0; }
-		MINT_INLINE const char* c_str() const noexcept { return _rawPointer; }
-		MINT_INLINE uint32 length() const noexcept { return _size; }
+		MINT_INLINE bool IsEmpty() const noexcept { return _size == 0; }
+		MINT_INLINE const char* CString() const noexcept { return _rawPointer; }
+		MINT_INLINE uint32 Length() const noexcept { return _size; }
 
 	private:
-		void reserve(const uint32 newCapacity) noexcept;
-		void release() noexcept;
+		void Reserve(const uint32 newCapacity) noexcept;
+		void Release() noexcept;
 
 	private:
 		uint32 _capacity;
@@ -206,16 +206,16 @@ namespace mint
 		~Logger();
 
 	public:
-		static Logger& getInstance() noexcept;
-		static void setOutputFileName(const char* const fileName) noexcept;
+		static Logger& GetInstance() noexcept;
+		static void SetOutputFileName(const char* const fileName) noexcept;
 
 	public:
-		void log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
-		void logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
-		void logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
+		void Log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
+		void LogAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
+		void LogError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...);
 
 	private:
-		void logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize]);
+		void LogInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize]);
 
 	private:
 		uint32 _basePathOffset;
@@ -228,13 +228,13 @@ namespace mint
 	class Path
 	{
 	public:
-		static void setAssetDirectory(const Path& assetDirectory) noexcept;
-		static void setIncludeAssetDirectory(const Path& includeAssetDirectory) noexcept;
+		static void SetAssetDirectory(const Path& assetDirectory) noexcept;
+		static void SetIncludeAssetDirectory(const Path& includeAssetDirectory) noexcept;
 
 		// WARNING!!! static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 된다!!!
-		static Path makeAssetPath(const Path& subDirectoryPath) noexcept;
+		static Path MakeAssetPath(const Path& subDirectoryPath) noexcept;
 		// WARNING!!! static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 된다!!!
-		static Path makeIncludeAssetPath(const Path& subDirectoryPath) noexcept;
+		static Path MakeIncludeAssetPath(const Path& subDirectoryPath) noexcept;
 
 	public:
 		Path();
@@ -250,16 +250,16 @@ namespace mint
 		Path& operator+=(const char* const rhs);
 		Path& operator+=(const char rhs);
 
-		operator const char* () const { return c_str(); }
+		operator const char* () const { return CString(); }
 
 	public:
-		void clear() noexcept { _rawString[0] = 0; _length = 0; }
-		char* data() noexcept { return _rawString; }
-		bool empty() const noexcept { return _length == 0; }
-		const char* c_str() const noexcept { return _rawString; }
+		void Clear() noexcept { _rawString[0] = 0; _length = 0; }
+		char* Data() noexcept { return _rawString; }
+		bool IsEmpty() const noexcept { return _length == 0; }
+		const char* CString() const noexcept { return _rawString; }
 
 	private:
-		bool endsWithSlash() const noexcept;
+		bool EndsWithSlash() const noexcept;
 
 	private:
 		char _rawString[kMaxPath + 1];
@@ -271,7 +271,7 @@ namespace mint
 		friend Path;
 
 	private:
-		static GlobalPaths& getInstance() noexcept;
+		static GlobalPaths& GetInstance() noexcept;
 		GlobalPaths();
 
 	public:

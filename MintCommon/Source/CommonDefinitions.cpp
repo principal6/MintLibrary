@@ -23,7 +23,7 @@ namespace mint
 	LoggerString::LoggerString(const uint32 capacity)
 		: LoggerString()
 	{
-		reserve(capacity);
+		Reserve(capacity);
 	}
 
 	LoggerString::LoggerString(const char* const rawString)
@@ -34,14 +34,14 @@ namespace mint
 
 	LoggerString::~LoggerString()
 	{
-		release();
+		Release();
 	}
 
 	LoggerString& LoggerString::operator=(const LoggerString& rhs)
 	{
 		if (this != &rhs)
 		{
-			*this = rhs.c_str();
+			*this = rhs.CString();
 		}
 		return *this;
 	}
@@ -49,7 +49,7 @@ namespace mint
 	LoggerString& LoggerString::operator=(const char* const rhs)
 	{
 		const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
-		reserve(rhsLength + 1);
+		Reserve(rhsLength + 1);
 		::strcpy_s(_rawPointer, _capacity, rhs);
 		_size = rhsLength;
 		return *this;
@@ -58,13 +58,13 @@ namespace mint
 	LoggerString& LoggerString::operator+=(const char* const rhs)
 	{
 		const uint32 rhsLength = static_cast<uint32>(::strlen(rhs));
-		reserve(max(_capacity * 2, _size + rhsLength + 1));
+		Reserve(Max(_capacity * 2, _size + rhsLength + 1));
 		::strcpy_s(&_rawPointer[_size], rhsLength + 1, rhs);
 		_size += rhsLength;
 		return *this;
 	}
 
-	void LoggerString::reserve(const uint32 newCapacity) noexcept
+	void LoggerString::Reserve(const uint32 newCapacity) noexcept
 	{
 		if (newCapacity <= _capacity)
 		{
@@ -90,7 +90,7 @@ namespace mint
 		_capacity = newCapacity;
 	}
 
-	void LoggerString::release() noexcept
+	void LoggerString::Release() noexcept
 	{
 		MINT_DELETE_ARRAY(_rawPointer);
 		_capacity = 0;
@@ -116,31 +116,31 @@ namespace mint
 	Logger::~Logger()
 	{
 		std::lock_guard<std::mutex> scopeLock{ _mutex };
-		if (_outputFileName.empty() == false)
+		if (_outputFileName.IsEmpty() == false)
 		{
 			std::ofstream ofs;
-			ofs.open(_outputFileName.c_str());
+			ofs.open(_outputFileName.CString());
 
-			ofs.write(_history.c_str(), _history.length());
+			ofs.write(_history.CString(), _history.Length());
 
 			ofs.close();
 		}
 	}
 
-	Logger& Logger::getInstance() noexcept
+	Logger& Logger::GetInstance() noexcept
 	{
 		static Logger logger;
 		return logger;
 	}
 
-	void Logger::setOutputFileName(const char* const fileName) noexcept
+	void Logger::SetOutputFileName(const char* const fileName) noexcept
 	{
-		Logger& logger = getInstance();
+		Logger& logger = GetInstance();
 		std::lock_guard<std::mutex> scopeLock{ logger._mutex };
 		logger._outputFileName = fileName;
 	}
 
-	void Logger::log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+	void Logger::Log(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
 	{
 		static char finalBuffer[kFinalBufferSize]{};
 		static char content[kFinalBufferSize]{};
@@ -153,12 +153,12 @@ namespace mint
 			va_end(vl);
 		}
 
-		logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
+		LogInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
 		printf(finalBuffer);
 	}
 
-	void Logger::logAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+	void Logger::LogAlert(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
 	{
 		static char finalBuffer[kFinalBufferSize]{};
 		static char content[kFinalBufferSize]{};
@@ -171,13 +171,13 @@ namespace mint
 			va_end(vl);
 		}
 
-		logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
+		LogInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
 		printf(finalBuffer);
 		::MessageBoxA(nullptr, content, "LOG ALERT", MB_ICONEXCLAMATION);
 	}
 
-	void Logger::logError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
+	void Logger::LogError(const char* const logTag, const char* const author, const char* const functionName, const char* const fileName, const uint32 lineNumber, const char* const format, ...)
 	{
 		static char finalBuffer[kFinalBufferSize]{};
 		static char content[kFinalBufferSize]{};
@@ -190,13 +190,13 @@ namespace mint
 			va_end(vl);
 		}
 
-		logInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
+		LogInternal(logTag, author, content, functionName, fileName, lineNumber, finalBuffer);
 
 		printf(finalBuffer);
 		::MessageBoxA(nullptr, content, "LOG ERROR", MB_ICONERROR);
 	}
 
-	void Logger::logInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize])
+	void Logger::LogInternal(const char* const logTag, const char* const author, const char* const content, const char* const functionName, const char* const fileName, const uint32 lineNumber, char(&outBuffer)[kFinalBufferSize])
 	{
 		static char timeBuffer[kTimeBufferSize]{};
 		{
@@ -233,26 +233,26 @@ namespace mint
 #pragma endregion
 
 #pragma region Path
-	void Path::setAssetDirectory(const Path& assetDirectory) noexcept
+	void Path::SetAssetDirectory(const Path& assetDirectory) noexcept
 	{
-		GlobalPaths::getInstance()._assetDirectory = assetDirectory;
+		GlobalPaths::GetInstance()._assetDirectory = assetDirectory;
 	}
 
-	void Path::setIncludeAssetDirectory(const Path& includeAssetDirectory) noexcept
+	void Path::SetIncludeAssetDirectory(const Path& includeAssetDirectory) noexcept
 	{
-		GlobalPaths::getInstance()._includeAssetDirectory = includeAssetDirectory;
+		GlobalPaths::GetInstance()._includeAssetDirectory = includeAssetDirectory;
 	}
 
-	Path Path::makeAssetPath(const Path& subDirectoryPath) noexcept
+	Path Path::MakeAssetPath(const Path& subDirectoryPath) noexcept
 	{
-		MINT_ASSERT(GlobalPaths::getInstance()._assetDirectory.empty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
-		return Path(GlobalPaths::getInstance()._assetDirectory, subDirectoryPath);
+		MINT_ASSERT(GlobalPaths::GetInstance()._assetDirectory.IsEmpty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
+		return Path(GlobalPaths::GetInstance()._assetDirectory, subDirectoryPath);
 	}
 
-	Path Path::makeIncludeAssetPath(const Path& subDirectoryPath) noexcept
+	Path Path::MakeIncludeAssetPath(const Path& subDirectoryPath) noexcept
 	{
-		MINT_ASSERT(GlobalPaths::getInstance()._includeAssetDirectory.empty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
-		return Path(GlobalPaths::getInstance()._includeAssetDirectory, subDirectoryPath);
+		MINT_ASSERT(GlobalPaths::GetInstance()._includeAssetDirectory.IsEmpty() == false, "이 함수를 static 변수 초기화나 static 변수의 멤버 초기화에 사용하면 안 됩니다!!!");
+		return Path(GlobalPaths::GetInstance()._includeAssetDirectory, subDirectoryPath);
 	}
 
 	Path::Path()
@@ -263,14 +263,14 @@ namespace mint
 	}
 
 	Path::Path(const Path& rhs)
-		: Path(rhs.c_str())
+		: Path(rhs.CString())
 	{
 		__noop;
 	}
 
 	Path::Path(const Path& directory, const Path& subDirectoryPath)
 	{
-		if (directory.empty())
+		if (directory.IsEmpty())
 		{
 			MINT_ASSERT(false, "directory 가 비어 있습니다!!!");
 			*this = subDirectoryPath;
@@ -278,11 +278,11 @@ namespace mint
 		else
 		{
 			Path normalizedDirectory = directory;
-			if (normalizedDirectory.endsWithSlash() == false)
+			if (normalizedDirectory.EndsWithSlash() == false)
 			{
 				normalizedDirectory += '/';
 
-				MINT_ASSERT(normalizedDirectory.endsWithSlash(), "directory 가 비정상적입니다!!!");
+				MINT_ASSERT(normalizedDirectory.EndsWithSlash(), "directory 가 비정상적입니다!!!");
 			}
 
 			*this = normalizedDirectory;
@@ -305,7 +305,7 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			*this = rhs.c_str();
+			*this = rhs.CString();
 		}
 		return *this;
 	}
@@ -321,7 +321,7 @@ namespace mint
 	{
 		if (this != &rhs)
 		{
-			*this += rhs.c_str();
+			*this += rhs.CString();
 		}
 		return *this;
 	}
@@ -344,14 +344,14 @@ namespace mint
 		return *this;
 	}
 
-	bool Path::endsWithSlash() const noexcept
+	bool Path::EndsWithSlash() const noexcept
 	{
 		return (_length == 0) ? false : _rawString[_length - 1] == '/';
 	}
 #pragma endregion
 
 #pragma region GlobalPaths
-	GlobalPaths& GlobalPaths::getInstance() noexcept
+	GlobalPaths& GlobalPaths::GetInstance() noexcept
 	{
 		static GlobalPaths instance;
 		return instance;

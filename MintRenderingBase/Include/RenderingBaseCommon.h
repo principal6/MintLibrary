@@ -58,7 +58,7 @@ namespace mint
 				const Float3 a = Float3(color.rAsFloat(), color.gAsFloat(), color.bAsFloat());
 				const Float3 b = Float3(colorKey.rAsFloat(), colorKey.gAsFloat(), colorKey.bAsFloat());
 				const float distance = (b - a).length();
-				return min(distance, 1.0f);
+				return Min(distance, 1.0f);
 			}
 
 		public:
@@ -227,8 +227,8 @@ namespace mint
 				MINT_INLINE T S() const noexcept { return _m[2][1]; }
 				MINT_INLINE T SE() const noexcept { return _m[2][2]; }
 
-				MINT_INLINE T maxAdjacent() const noexcept { return max(max(max(N(), S()), E()), W()); }
-				MINT_INLINE T minAdjacent() const noexcept { return min(min(min(N(), S()), E()), W()); }
+				MINT_INLINE T maxAdjacent() const noexcept { return Max(Max(Max(N(), S()), E()), W()); }
+				MINT_INLINE T minAdjacent() const noexcept { return Min(Min(Min(N(), S()), E()), W()); }
 
 				MINT_INLINE T sumAdjacent() const noexcept { return N() + S() + E() + W(); }
 				MINT_INLINE T sumCoAdjacent() const noexcept { return NW() + NE() + SW() + SE(); }

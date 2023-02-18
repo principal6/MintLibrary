@@ -63,12 +63,12 @@ namespace mint
 
 	void Float2x2::set(const uint32 row, const uint32 col, const float newValue) noexcept
 	{
-		_m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)] = newValue;
+		_m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)] = newValue;
 	}
 
 	float Float2x2::get(const uint32 row, const uint32 col) const noexcept
 	{
-		return _m[min(row - 1, Float2x2::kMaxIndex)][min(col - 1, Float2x2::kMaxIndex)];
+		return _m[Min(row - 1, Float2x2::kMaxIndex)][Min(col - 1, Float2x2::kMaxIndex)];
 	}
 
 	void Float2x2::setZero() noexcept

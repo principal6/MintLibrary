@@ -330,7 +330,7 @@ namespace mint
 			{
 				return;
 			}
-			const uint32 length = min(DestSize - 1, StringUtil::length(source));
+			const uint32 length = Min(DestSize - 1, StringUtil::length(source));
 			::memcpy_s(dest, sizeof(char8_t) * DestSize, source, sizeof(char8_t) * length);
 			dest[length] = 0;
 		}

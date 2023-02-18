@@ -10,9 +10,6 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{304c60ee-9cb6-4c25-aa0b-6dd5b0279b54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Hlsl">
-      <UniqueIdentifier>{85352f1c-219c-4bd2-9cf2-c83503e9c461}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\IObjectComponent.h">
@@ -113,26 +110,6 @@
     <ClCompile Include="Source\Test.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Assets\Hlsl\VsDefault.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\PsDefault.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\GsNormal.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\PsTexCoordAsColor.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\GsTriangleEdge.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Assets\Hlsl\PsColor.hlsl">
-      <Filter>Assets\Hlsl</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\Object.inl">

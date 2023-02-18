@@ -402,7 +402,7 @@ namespace mint
 
 		bool GraphicDevice::loadFontData()
 		{
-			static const Path kDefaultFontPath = Path::makeAssetPath("noto_sans_kr_medium");
+			static const Path kDefaultFontPath = Path::MakeAssetPath("noto_sans_kr_medium");
 			FontLoader fontLoader;
 			if (FontLoader::doesExistFont(kDefaultFontPath) == false)
 			{
@@ -519,7 +519,7 @@ namespace mint
 
 			// Stream data
 			{
-				_cppHlslStreamData.parseCppHlslFile(Path::makeIncludeAssetPath("CppHlsl/CppHlslStreamData.h"));
+				_cppHlslStreamData.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStreamData.h"));
 				_cppHlslStreamData.generateHlslString(Language::CppHlsl::CppHlslFileType::StreamData);
 				_shaderHeaderMemory.pushHeader("ShaderStructDefinitions", _cppHlslStreamData.getHlslString());
 			}
@@ -528,7 +528,7 @@ namespace mint
 
 			// Constant buffers
 			{
-				_cppHlslConstantBuffers.parseCppHlslFile(Path::makeIncludeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
+				_cppHlslConstantBuffers.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslConstantBuffers.h"));
 				_cppHlslConstantBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::ConstantBuffers);
 				_shaderHeaderMemory.pushHeader("ShaderConstantBuffers", _cppHlslConstantBuffers.getHlslString());
 
@@ -553,7 +553,7 @@ namespace mint
 
 			// Structured buffers
 			{
-				_cppHlslStructuredBuffers.parseCppHlslFile(Path::makeIncludeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
+				_cppHlslStructuredBuffers.parseCppHlslFile(Path::MakeIncludeAssetPath("CppHlsl/CppHlslStructuredBuffers.h"));
 				_cppHlslStructuredBuffers.generateHlslString(Language::CppHlsl::CppHlslFileType::StructuredBuffers);
 				_shaderHeaderMemory.pushHeader("ShaderStructuredBufferDefinitions", _cppHlslStructuredBuffers.getHlslString());
 

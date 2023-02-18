@@ -134,7 +134,7 @@ namespace mint
 		}
 
 		// 잦은 reserve 시 성능 최적화!!!
-		_capacity = mint::max(capacity, _capacity * 2);
+		_capacity = Max(capacity, _capacity * 2);
 
 		if (_size == 0)
 		{
@@ -391,14 +391,14 @@ namespace mint
 	MINT_INLINE T& Vector<T>::at(const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-		return _rawPointer[mint::min(index, _size - 1)];
+		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>
 	MINT_INLINE const T& Vector<T>::at(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-		return _rawPointer[mint::min(index, _size - 1)];
+		return _rawPointer[Min(index, _size - 1)];
 	}
 
 	template<typename T>

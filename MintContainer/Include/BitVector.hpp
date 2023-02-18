@@ -19,7 +19,7 @@ namespace mint
 		: _byteCapacity{ 0 }
 		, _bitCount{ 0 }
 	{
-		reserveByteCapacity(max(byteCapacity, kMinByteCapacity));
+		reserveByteCapacity(Max(byteCapacity, kMinByteCapacity));
 	}
 
 	MINT_INLINE BitVector::~BitVector()
@@ -77,7 +77,7 @@ namespace mint
 
 			if (temp != nullptr)
 			{
-				memcpy(_byteArray, temp, min(_byteCapacity, newByteCapacity));
+				memcpy(_byteArray, temp, Min(_byteCapacity, newByteCapacity));
 
 				MINT_DELETE_ARRAY(temp);
 			}
@@ -109,7 +109,7 @@ namespace mint
 
 		if (temp != nullptr)
 		{
-			memcpy(_byteArray, temp, min(_byteCapacity, newByteCapacity));
+			memcpy(_byteArray, temp, Min(_byteCapacity, newByteCapacity));
 
 			MINT_DELETE_ARRAY(temp);
 		}

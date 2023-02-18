@@ -121,7 +121,7 @@ bool run2DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			graphicDevice.endRendering();
 		}
 
-		Profiler::FPSCounter::count();
+		Profiler::FPSCounter::Count();
 	}
 	return true;
 }
@@ -250,7 +250,7 @@ bool run3DTestWindow(mint::Platform::IWindow& window, mint::Rendering::GraphicDe
 			graphicDevice.endRendering();
 		}
 
-		Profiler::FPSCounter::count();
+		Profiler::FPSCounter::Count();
 	}
 	return true;
 }

@@ -141,14 +141,14 @@ namespace mint
 	MINT_INLINE T& StackVector<T, Capacity>::at(const uint32 index) noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-		return _array[mint::min(index, _size - 1)];
+		return _array[Min(index, _size - 1)];
 	}
 
 	template<typename T, uint32 Capacity>
 	MINT_INLINE const T& StackVector<T, Capacity>::at(const uint32 index) const noexcept
 	{
 		MINT_ASSERT(index < _size, "범위를 벗어난 접근입니다.");
-		return _array[mint::min(index, _size - 1)];
+		return _array[Min(index, _size - 1)];
 	}
 }
 

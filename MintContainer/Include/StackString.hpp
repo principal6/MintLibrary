@@ -22,7 +22,7 @@ namespace mint
 	inline StackString<T, BufferSize>::StackString(const T* const rawString)
 		: StackString()
 	{
-		_length = min(StringUtil::length(rawString), BufferSize - 1);
+		_length = Min(StringUtil::length(rawString), BufferSize - 1);
 		StringUtil::copy(&_raw[0], rawString, _length);
 	}
 
@@ -160,7 +160,7 @@ namespace mint
 	inline StackString<T, BufferSize> StackString<T, BufferSize>::substr(const uint32 offset, const uint32 count) const noexcept
 	{
 		StackString<T, BufferSize> result; // { &_raw[offset] };
-		result._length = min(count, _length - offset - 1);
+		result._length = Min(count, _length - offset - 1);
 		StringUtil::copy(&result._raw[0], &_raw[offset], result._length);
 		return result;
 	}

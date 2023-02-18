@@ -512,7 +512,7 @@ namespace mint
 				return;
 			}
 
-			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+			const float radius = Min(size._x, size._y) * 0.5f * normalizedRoundness;
 			const Float2& halfSize = size * 0.5f;
 			const Float2& halfCoreSize = halfSize - Float2(radius);
 
@@ -1442,7 +1442,7 @@ namespace mint
 
 		void ShapeRendererContext::drawUpperHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float normalizedRoundness, const Color& color)
 		{
-			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+			const float radius = Min(size._x, size._y) * 0.5f * normalizedRoundness;
 			const Float2 halfSize = size * 0.5f;
 			const Float2 halfCoreSize = halfSize - Float2(radius);
 			const ShapeType shapeType = ShapeType::SolidTriangle;
@@ -1478,7 +1478,7 @@ namespace mint
 
 		void ShapeRendererContext::drawLowerHalfRoundedRectangleInternal(const Float2& offset, const Float2& size, const float normalizedRoundness, const Color& color)
 		{
-			const float radius = min(size._x, size._y) * 0.5f * normalizedRoundness;
+			const float radius = Min(size._x, size._y) * 0.5f * normalizedRoundness;
 			const Float2 halfSize = size * 0.5f;
 			const Float2 halfCoreSize = halfSize - Float2(radius);
 			const ShapeType shapeType = ShapeType::SolidTriangle;

@@ -153,7 +153,7 @@ namespace mint
 		GraphicObjectID DxShaderPool::addInputLayout(const GraphicObjectID& vertexShaderID, const TypeMetaData<TypeCustomData>& inputElementTypeMetaData)
 		{
 			const int32 vertexShaderIndex = getShaderIndex(GraphicShaderType::VertexShader, vertexShaderID);
-			if (isValidIndex(vertexShaderIndex) == false)
+			if (IsValidIndex(vertexShaderIndex) == false)
 			{
 				return GraphicObjectID::kInvalidGraphicObjectID;
 			}
@@ -391,6 +391,7 @@ namespace mint
 			StackStringA<20> version;
 			makeShaderVersion(version, shaderType, _shaderVersion);
 
+			TextFileReader textFileReader;
 			const char* content{};
 			const char* identifier{};
 			uint32 contentLength{};
@@ -402,7 +403,6 @@ namespace mint
 			}
 			else
 			{
-				TextFileReader textFileReader;
 				if (textFileReader.open(compileParam._inputFileName) == false)
 				{
 					MINT_LOG_ERROR("Input file not found : %s", compileParam._inputFileName);
@@ -487,7 +487,7 @@ namespace mint
 			}
 
 			const int32 shaderIndex = getShaderIndex(shaderType, objectID);
-			if (isValidIndex(shaderIndex) == false)
+			if (IsValidIndex(shaderIndex) == false)
 			{
 				return;
 			}
@@ -527,7 +527,7 @@ namespace mint
 			}
 
 			const int32 shaderIndex = getShaderIndex(shaderType, boundShaderID);
-			if (isValidIndex(shaderIndex) == false)
+			if (IsValidIndex(shaderIndex) == false)
 			{
 				MINT_NEVER;
 				return;

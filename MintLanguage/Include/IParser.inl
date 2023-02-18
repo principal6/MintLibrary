@@ -192,7 +192,7 @@ namespace mint
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>
 		inline void IParser<TypeCustomDataType, SyntaxClassifierType>::advanceSymbolPositionXXX(const uint32 advanceCount)
 		{
-			_symbolAt += max(advanceCount, static_cast<uint32>(1));
+			_symbolAt += Max(advanceCount, static_cast<uint32>(1));
 		}
 
 		template <typename TypeCustomDataType, typename SyntaxClassifierType>

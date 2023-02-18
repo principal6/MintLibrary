@@ -1,26 +1,27 @@
-# Coding Convention
+﻿# Coding Convention
 
 ## Case
 ### General Rule
-#### Use camel case for variables and functions.
+#### Use camelCase for variables.
 ```cpp
 int32 pickedObjectIndex = -1;
-void setPosition(Float3::kZero);
 ```
-#### Use pascal case for classes and structs.
+#### Use PascalCase for classes, structs and functions.
 ```cpp
 class Player;
 class GUIContext;
 struct RenderCommand;
+void SetPosition(Float3::kZero);
+PlayerID playerID = player.GetID();
 ```
 
 ### Acronyms
 #### Use all UPPER CASE for acronyms
 ```cpp
-uint32 getHP() const;
+uint32 GetHP() const;
 uint32 HP = 10;
-bool testGUI();
-void updateAI();
+bool TestGUI();
+void UpdateAI();
 ```
 
 ### Edge cases
@@ -62,20 +63,20 @@ static constexpr Float2 kZero = Float2(0.0f, 0.0f);
 ```
 
 ## Naming
-#### Prefer `compute-` to `calculate-`
-#### To access a field of a class, use `set-`/`get-`/`access-` methods.
-Although it seems meaningless using an `access-` method when you could just make the field **public**,
+#### Prefer `Compute-` to `Calculate-`
+#### To access a field of a class, use `Set-`/`Get-`/`Access-` methods.
+Although it seems meaningless using an `Access-` method when you could just make the field **public**,
 it's possible that in some cases you need to modify the field, but in other cases, you don't want it to be modified.
-In latter cases, it's better not to have a public field and you just call the `get-` method.
+In latter cases, it's better not to have a public field and you just call the `Get-` method.
 ```cpp
 class Life
 {
 public:
-    void            setHP(const uint32);
-    uint32          getHP() const;
+    void            SetHP(const uint32);
+    uint32          GetHP() const;
 
-    const String&   getName() const { return _name; }
-    String&         accessName() { return _name; }
+    const String&   GetName() const { return _name; }
+    String&         AccessName() { return _name; }
 
 private:
     uint32          _HP;
@@ -83,27 +84,27 @@ private:
 };
 ```
 
-#### make/generate/create/clone
-##### Use `make-` for simple objects or POD(Plain Old Data).
+#### Make/Generate/Create/Clone
+##### Use `Make-` for simple objects or POD(Plain Old Data).
 ```cpp
-Color makeColor(const float r, const float g, const float b);
+Color MakeColor(const float r, const float g, const float b);
 ```
 
-##### Use `generate-` for classes with more things to be done.
+##### Use `Generate-` for classes with more things to be done.
 ```cpp
-ControlID generateControlID(const char* const text, const ControlType type);
+ControlID GenerateControlID(const char* const text, const ControlType type);
 ```
 
-##### Use `clone-` to create objects whose data is based on the existing ones.
+##### Use `Clone-` to create objects whose data is based on the existing ones.
 ```cpp
-Color cloneAddRGB(const float r, const float g, const float b) const;
+Color CloneAddRGB(const float r, const float g, const float b) const;
 ```
 
-##### Do NOT use `create-`, since this makes you confuse it with ctor.
+##### Do NOT use `Create-`, since this makes you confuse it with ctor.
 
 
-#### getter/setter
-##### Do not use `get-` for bool getter. The condition statements get confusing.
+#### Getter/Setter
+##### Do not use `Get-` for bool getter. The condition statements get confusing.
 <table style="border: 2px;">
 <tr>
     <td><div style="text-align:center; color:#00AA00";>GOOD</div></td>
@@ -113,8 +114,8 @@ Color cloneAddRGB(const float r, const float g, const float b) const;
 <td>
 
 ```cpp
-setUseFullscreen(true);
-if (doesUseFullscreen()) // OR isUsingFullscreen()
+SetUseFullscreen(true);
+if (UsesFullscreen()) // OR IsUsingFullscreen()
 {
     // Do something.
 }
@@ -124,7 +125,8 @@ if (doesUseFullscreen()) // OR isUsingFullscreen()
 <td>
 
 ```cpp
-if (getUseFullscreen())
+SetUseFullscreen(true);
+if (GetUseFullscreen())
 {
     // Do something.
 }
@@ -158,7 +160,7 @@ Player player = Player(100.0f, 200.0f);
 #### If the parameter count for a function exceeds 3, consider grouping them into a class or struct
 ```cpp
 // NOT SO GOOD
-void hitTarget(const Float3& position, const float damage, const HitType hitType)
+void HitTarget(const Float3& position, const float damage, const HitType hitType)
 {
     // ...
 }
@@ -170,7 +172,7 @@ struct HitTargetInput
     float   _damage;
     HitType _hitType;
 };
-void hitTarget(const HitTargetInput& hitTargetInput)
+void HitTarget(const HitTargetInput& hitTargetInput)
 {
     // ...
 }
@@ -204,7 +206,7 @@ float MPvalue = 100.0f;
 <td>
 
 ```cpp
-if (isValid() == false)
+if (IsValid() == false)
 {
     return;
 }
@@ -214,7 +216,7 @@ if (isValid() == false)
 <td>
 
 ```cpp
-if (isValid() == false)
+if (IsValid() == false)
     return;
 ```
 
@@ -233,7 +235,7 @@ if (isValid() == false)
 <td>
 
 ```cpp
-if (isValid() == false)
+if (IsValid() == false)
 {
     return;
 }
@@ -243,7 +245,7 @@ if (isValid() == false)
 <td>
 
 ```cpp
-if (isValid() == false) {
+if (IsValid() == false) {
     return;
 }
 ```
@@ -263,12 +265,12 @@ if (isValid() == false) {
 <td>
 
 ```cpp
-if (isValid())
+if (IsValid())
 {
     return true;
 }
 
-if (isValid() && isVisible())
+if (IsValid() && IsVisible())
 {
     return true;
 }
@@ -278,7 +280,7 @@ if (isValid() && isVisible())
 <td>
 
 ```cpp
-if (isValid() == true)
+if (IsValid() == true)
 {
     return true;
 }
@@ -299,7 +301,7 @@ if (isValid() == true)
 <td>
 
 ```cpp
-if (isValid() == false)
+if (IsValid() == false)
 {
     return;
 }
@@ -309,7 +311,7 @@ if (isValid() == false)
 <td>
 
 ```cpp
-if (!isValid()) {
+if (!IsValid()) {
     return;
 }
 ```

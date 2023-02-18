@@ -114,11 +114,11 @@ namespace mint
 
 	MINT_INLINE float Float4::maxComponent() const noexcept
 	{
-		return max(max(_x, _y), max(_z, _w));
+		return Max(Max(_x, _y), Max(_z, _w));
 	}
 
 	MINT_INLINE float Float4::minComponent() const noexcept
 	{
-		return min(min(_x, _y), min(_z, _w));
+		return Min(Min(_x, _y), Min(_z, _w));
 	}
 }

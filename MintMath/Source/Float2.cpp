@@ -141,12 +141,12 @@ namespace mint
 
 	float Float2::maxElement() const noexcept
 	{
-		return mint::max(_x, _y);
+		return mint::Max(_x, _y);
 	}
 
 	float Float2::minElement() const noexcept
 	{
-		return mint::min(_x, _y);
+		return mint::Min(_x, _y);
 	}
 
 	void Float2::set(const float x, const float y) noexcept

@@ -337,7 +337,7 @@ namespace mint
 					}
 				}
 
-				std::vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
+				std::vector<Profiler::ScopedCPUProfiler::Log> logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
 				const bool isEmpty = logArray.empty();
 			}
 #endif
@@ -568,7 +568,7 @@ namespace mint
 				}
 			}
 
-			auto logArray = Profiler::ScopedCPUProfiler::getEntireLogArray();
+			auto logArray = Profiler::ScopedCPUProfiler::GetEntireLogData();
 			const bool isEmpty = logArray.empty();
 #endif
 #pragma endregion

@@ -154,8 +154,8 @@ namespace mint
 
 				if (curr._startWchar <= prev._endWchar)
 				{
-					curr._startWchar = mint::min(curr._startWchar, prev._startWchar);
-					curr._endWchar = mint::max(curr._endWchar, prev._endWchar);
+					curr._startWchar = mint::Min(curr._startWchar, prev._startWchar);
+					curr._endWchar = mint::Max(curr._endWchar, prev._endWchar);
 
 					deletionList.push_back(glyphRangeIndex - 1);
 				}
@@ -282,7 +282,7 @@ namespace mint
 			for (uint32 glyphRangeIndex = 0; glyphRangeIndex < glyphRangeCount; ++glyphRangeIndex)
 			{
 				const GlyphRange& glyphRange = _glyphRanges[glyphRangeIndex];
-				maxCharCode = max(maxCharCode, glyphRange._endWchar);
+				maxCharCode = Max(maxCharCode, glyphRange._endWchar);
 			}
 
 			_fontData._charCodeToGlyphIndexMap.resize(maxCharCode + 1);

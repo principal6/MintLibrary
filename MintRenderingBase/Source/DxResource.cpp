@@ -493,7 +493,7 @@ namespace mint
 			MINT_ASSERT(objectID.isObjectType(GraphicObjectType::Resource) == true, "Invalid parameter - ObjectType !!");
 
 			const int32 index = binarySearch(_resourceArray, objectID, GraphicObject::Evaluator());
-			if (isValidIndex(index) == false)
+			if (IsValidIndex(index) == false)
 			{
 				MINT_ASSERT(false, "Resource 를 찾지 못했습니다!!!");
 				return DxResource::s_invalidInstance;

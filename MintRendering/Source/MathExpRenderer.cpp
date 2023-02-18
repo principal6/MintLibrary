@@ -175,7 +175,7 @@ namespace mint
 			: _shapeFontRendererContexts{ graphicDevice, graphicDevice, graphicDevice, graphicDevice }
 		{
 			const char* const kFontFileNames[MathExpression::getModifierTypeCount()] =
-			{ Path::makeAssetPath("cmu_s_italic"), Path::makeAssetPath("cmu_s_bold"), Path::makeAssetPath("cmu_s_bold_italic"), Path::makeAssetPath("cmu_s_roman") };
+			{ Path::MakeAssetPath("cmu_s_italic"), Path::MakeAssetPath("cmu_s_bold"), Path::MakeAssetPath("cmu_s_bold_italic"), Path::MakeAssetPath("cmu_s_roman") };
 
 			FontLoader fontLoader;
 			for (uint32 modifierTypeIndex = 0; modifierTypeIndex < MathExpression::getModifierTypeCount(); ++modifierTypeIndex)

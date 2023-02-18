@@ -33,7 +33,7 @@ namespace mint
 	template<typename T>
 	MINT_INLINE void Queue<T>::reserve(uint32 capacity) noexcept
 	{
-		capacity = mint::max(capacity, static_cast<uint32>(1)); // capacity 가 0 이 되지 않도록 보장!
+		capacity = Max(capacity, static_cast<uint32>(1)); // capacity 가 0 이 되지 않도록 보장!
 		if (capacity < _capacity)
 		{
 			return;

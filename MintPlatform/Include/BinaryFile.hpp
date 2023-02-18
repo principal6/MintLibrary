@@ -11,7 +11,7 @@ namespace mint
 #pragma region BinaryPointerReader
 	MINT_INLINE void BinaryPointerReader::goTo(const uint32 at) const
 	{
-		_at = mint::min(at, _byteCount);
+		_at = mint::Min(at, _byteCount);
 	}
 
 	MINT_INLINE bool BinaryPointerReader::canRead(const uint32 count) const

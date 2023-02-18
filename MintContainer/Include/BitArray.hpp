@@ -40,7 +40,7 @@ namespace mint
 	template<uint32 BitCount>
 	inline void BitArray<BitCount>::setByte(const uint32 byteAt, const byte value) noexcept
 	{
-		_byteArray[mint::min(byteAt, kByteCount - 1)] = value;
+		_byteArray[mint::Min(byteAt, kByteCount - 1)] = value;
 	}
 
 	template<uint32 BitCount>
@@ -52,7 +52,7 @@ namespace mint
 	template<uint32 BitCount>
 	inline byte BitArray<BitCount>::getByte(const uint32 byteAt) const noexcept
 	{
-		return _byteArray[mint::min(byteAt, kByteCount - 1)];
+		return _byteArray[mint::Min(byteAt, kByteCount - 1)];
 	}
 
 	template<uint32 BitCount>
@@ -85,7 +85,7 @@ namespace mint
 	template<uint32 BitCount>
 	inline void BitArray<BitCount>::set(const uint32 byteAt, const uint8 bitOffset, const bool value) noexcept
 	{
-		BitVector::setBit(_byteArray[mint::min(byteAt, kByteCount - 1)], mint::min(bitOffset, kBitsPerByte - 1), value);
+		BitVector::setBit(_byteArray[mint::Min(byteAt, kByteCount - 1)], mint::Min(bitOffset, kBitsPerByte - 1), value);
 	}
 
 	template<uint32 BitCount>
@@ -97,7 +97,7 @@ namespace mint
 	template<uint32 BitCount>
 	inline bool BitArray<BitCount>::get(const uint32 bitAt) const noexcept
 	{
-		const uint32 clampedBitAt = mint::min(bitAt, BitCount - 1);
+		const uint32 clampedBitAt = mint::Min(bitAt, BitCount - 1);
 		const uint32 byteAt = BitVector::computeByteAt(clampedBitAt);
 		const uint32 bitOffset = BitVector::computeBitOffset(clampedBitAt);
 		return BitVector::getBit(_byteArray[byteAt], bitOffset);
@@ -114,7 +114,7 @@ namespace mint
 	template<uint32 BitCount>
 	inline bool BitArray<BitCount>::get(const uint32 byteAt, const uint8 bitOffset) const noexcept
 	{
-		const uint32 clampedByteAt = mint::min(byteAt, kByteCount - 1);
+		const uint32 clampedByteAt = mint::Min(byteAt, kByteCount - 1);
 		return BitVector::getBit(_byteArray[clampedByteAt], bitOffset);
 	}
 

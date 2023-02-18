@@ -233,7 +233,7 @@ namespace mint
 			return *this;
 		}
 
-		reserve(max(capacity() * 2, static_cast<uint32>(newLength + 1)));
+		reserve(Max(capacity() * 2, static_cast<uint32>(newLength + 1)));
 		return appendInternalLongXXX(rhs);
 	}
 
@@ -244,7 +244,7 @@ namespace mint
 		const uint64 newLength = _long._size + rhsLength;
 		if (_long._capacity <= newLength)
 		{
-			reserve(max(static_cast<uint32>(_long._capacity * 2), static_cast<uint32>(newLength + 1)));
+			reserve(Max(static_cast<uint32>(_long._capacity * 2), static_cast<uint32>(newLength + 1)));
 		}
 
 		__copyString(&_long._rawPointer[_long._size], rhs, rhsLength);
@@ -413,7 +413,7 @@ namespace mint
 		const uint32 stringSize = size();
 		if (offset < stringSize && count > 0)
 		{
-			const uint32 substringSize = min(count, stringSize - offset);
+			const uint32 substringSize = Min(count, stringSize - offset);
 			result.resize(substringSize);
 			for (uint32 iter = 0; iter < substringSize; ++iter)
 			{

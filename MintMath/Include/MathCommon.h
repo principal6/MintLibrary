@@ -40,13 +40,13 @@ namespace mint
 		template<typename T>
 		MINT_INLINE constexpr const T& clamp(const T& value, const T& limitMin, const T& limitMax)
 		{
-			return max(min(value, limitMax), limitMin);
+			return Max(Min(value, limitMax), limitMin);
 		}
 
 		template<typename T>
 		MINT_INLINE constexpr const T& clamp(const T& value, T&& limitMin, T&& limitMax)
 		{
-			return max(min(value, limitMax), limitMin);
+			return Max(Min(value, limitMax), limitMin);
 		}
 
 		MINT_INLINE constexpr float saturate(const float value)

@@ -32,11 +32,11 @@ namespace mint
 			const uint32 dataCount = xData.size();
 			for (uint32 dataIndex = 0; dataIndex < dataCount; ++dataIndex)
 			{
-				_min._x = min(_min._x, xData[dataIndex]);
-				_min._y = min(_min._y, yData[dataIndex]);
+				_min._x = Min(_min._x, xData[dataIndex]);
+				_min._y = Min(_min._y, yData[dataIndex]);
 
-				_max._x = max(_max._x, xData[dataIndex]);
-				_max._y = max(_max._y, yData[dataIndex]);
+				_max._x = Max(_max._x, xData[dataIndex]);
+				_max._y = Max(_max._y, yData[dataIndex]);
 			}
 
 			_range = _max - _min;

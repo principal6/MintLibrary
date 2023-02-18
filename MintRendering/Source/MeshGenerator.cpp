@@ -334,7 +334,7 @@ namespace mint
 			// Tris and quads
 			for (uint8 polarIter = 0; polarIter < polarDetail; ++polarIter)
 			{
-				const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
+				const int32 indexBase = 1 + Max(polarIter - 1, 0) * azimuthalDetail;
 				if (polarIter == 0)
 				{
 					// Top center included
@@ -474,7 +474,7 @@ namespace mint
 			// Tris and quads
 			for (uint8 polarIter = 0; polarIter < polarDetail + 1; ++polarIter)
 			{
-				const int32 indexBase = 1 + max(polarIter - 1, 0) * azimuthalDetail;
+				const int32 indexBase = 1 + Max(polarIter - 1, 0) * azimuthalDetail;
 				if (polarIter == 0)
 				{
 					// Top center included
@@ -705,8 +705,8 @@ namespace mint
 			{
 			public:
 				PositionEdge(const int32 positionIndexA, const int32 positionIndexB)
-					: _positionIndexA{ min(positionIndexA, positionIndexB) }
-					, _positionIndexB{ max(positionIndexA, positionIndexB) }
+					: _positionIndexA{ Min(positionIndexA, positionIndexB) }
+					, _positionIndexB{ Max(positionIndexA, positionIndexB) }
 				{
 					__noop;
 				}
